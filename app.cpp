@@ -74,13 +74,13 @@ sym_matrix<T> operator*(const sym_matrix<T>& a, const sym_matrix<T>& b) {
 
   for (int r = 0; r < a.num_rows(); r++) {
     for (int c = 0; c < b.num_cols(); c++) {
-      cout << "r = " << r << ", c = " << c << endl;
+      //cout << "r = " << r << ", c = " << c << endl;
 
       // TODO: Generalize to other types
       res(r, c) = qexpr(0);
 
       for (int k = 0; k < a.num_cols(); k++) {
-        cout << "a(" << r << ", " << k << ") = " << a(r, k) << endl;
+        //cout << "a(" << r << ", " << k << ") = " << a(r, k) << endl;
         res(r, c) = res(r, c) + a(r, k) * b(k, c);
       }
     }
@@ -296,7 +296,7 @@ vector<int> soda_offsets(const int app) {
 isl_basic_set* non_negative(isl_basic_set* fs, int var) {
   auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
   non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
-  cout << "non neg: " << str(non_neg) << endl;
+  //cout << "non neg: " << str(non_neg) << endl;
   fs = isl_basic_set_add_constraint(fs, non_neg);
 
   return fs;
@@ -315,10 +315,10 @@ isl_mat* equalities_to_inequalities(isl_basic_set* bset) {
       isl_dim_param);
 
   int new_num_ineqs = isl_mat_rows(orig_ineqs) + 2*isl_mat_rows(orig_eqs);
-  cout << "new num ineqs: " << new_num_ineqs << endl;
+  //cout << "new num ineqs: " << new_num_ineqs << endl;
 
-  cout << "original eqs" << endl;
-  cout << str(orig_eqs) << endl;
+  //cout << "original eqs" << endl;
+  //cout << str(orig_eqs) << endl;
 
   auto ineqs = isl_mat_alloc(ctx(bset), new_num_ineqs, isl_mat_cols(orig_ineqs));
   for (int r = 0; r < new_num_ineqs; r++) {
@@ -326,10 +326,10 @@ isl_mat* equalities_to_inequalities(isl_basic_set* bset) {
       if (r < isl_mat_rows(orig_ineqs)) {
         ineqs = isl_mat_set_element_val(ineqs, r, c, isl_mat_get_element_val(orig_ineqs, r, c));
       } else {
-        cout << "r = " << r << endl;
+        //cout << "r = " << r << endl;
         int orig_r = (r - isl_mat_rows(orig_ineqs)) / 2;
         isl_val* v = isl_mat_get_element_val(orig_eqs, orig_r, c);
-        cout << "orig r = " << orig_r << endl;
+        //cout << "orig r = " << orig_r << endl;
         if (r % 2 == 0) {
           v = mul(negone(ctx(bset)), v);
         }
@@ -352,8 +352,8 @@ isl_mat* equalities_to_inequalities(isl_basic_set* bset) {
   auto s = isl_space_set_alloc(ctx(bset),
       param_dims, set_dim);
 
-  cout << "new ineqs..." << endl;
-  cout << str(ineqs) << endl;
+  //cout << "new ineqs..." << endl;
+  //cout << str(ineqs) << endl;
   return ineqs;
   //assert(false);
 
@@ -370,11 +370,11 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   int cdim = cvals.size();
 
   //cout << "# of columns = " << isl_mat_cols(eqs) << endl;
-  cout << "cdim         = " << cdim << endl;
+  //cout << "cdim         = " << cdim << endl;
   assert(isl_mat_cols(ineqs) == cdim + 1);
 
-  cout << "Ineqs..." << endl;
-  cout << str(ineqs) << endl;
+  //cout << "Ineqs..." << endl;
+  //cout << str(ineqs) << endl;
 
   int num_farkas = isl_mat_rows(ineqs);
 
@@ -395,13 +395,13 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   int farkas_var_offset = cdim + 1;
   for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
     auto constraint = isl_constraint_alloc_equality(get_local_space(fs));
-    cout << "c " << c << " = " << cvals.at(c).second << endl;
+    //cout << "c " << c << " = " << cvals.at(c).second << endl;
     constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, c, 1);
     for (int i = 0; i < num_farkas; i++) {
       auto fc = mul(negone(ct), isl_mat_get_element_val(ineqs, i, c));
       constraint = isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, fc);
     }
-    cout << "adding farkas constraint: " << str(constraint) << endl;
+    //cout << "adding farkas constraint: " << str(constraint) << endl;
     fs = isl_basic_set_add_constraint(fs, constraint);
   }
 
@@ -411,17 +411,17 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   for (int i = 0; i < num_farkas; i++) {
     isl_val* b = isl_mat_get_element_val(ineqs, i, isl_mat_cols(ineqs) - 1);
     b = mul(negone(ct), b);
-    cout << "b " << i << " = " << str(b) << endl;
+    //cout << "b " << i << " = " << str(b) << endl;
     constraint = isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, b);
   }
 
   for (int i = 0; i < num_farkas; i++) {
-    cout << "adding non-negativity constraint on " << i << endl;
+    //cout << "adding non-negativity constraint on " << i << endl;
     fs = non_negative(fs, farkas_var_offset + i);
   }
   fs = non_negative(fs, farkas_var_offset + num_farkas);
 
-  cout << "adding constant constraint: " << str(constraint) << endl;
+  //cout << "adding constant constraint: " << str(constraint) << endl;
   fs = isl_basic_set_add_constraint(fs, constraint);
 
   return fs;
@@ -726,11 +726,11 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
 
     cout << "Setting delay var limits" << endl;
     for (auto d : deps) {
-      cout << "D = " << str(d) << endl;
+      //cout << "D = " << str(d) << endl;
       auto r = range_name(d);
-      cout << "r = " << r << endl;
+      //cout << "r = " << r << endl;
       auto c = domain_name(d);
-      cout << "c = " << c << endl;
+      //cout << "c = " << c << endl;
 
       cs.push_back(geq(delayvar(r), qexpr(0)));
       cs.push_back(geq(delayvar(c), qexpr(0)));
@@ -1262,14 +1262,14 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
   //}
 
   // All root IIs must be equal
-  for (auto s : get_sets(padded_domain)) {
-    for (auto other : get_sets(padded_domain)) {
-      string iis = ii_var(name(s), 0);
-      string iio = ii_var(name(other), 0);
-      cout << iis << " == " << iio << endl;
-      modulo_schedule.add_eq(iis, iio);
-    }
-  }
+  //for (auto s : get_sets(padded_domain)) {
+    //for (auto other : get_sets(padded_domain)) {
+      //string iis = ii_var(name(s), 0);
+      //string iio = ii_var(name(other), 0);
+      //cout << iis << " == " << iio << endl;
+      //modulo_schedule.add_eq(iis, iio);
+    //}
+  //}
 
   return modulo_schedule;
 }
@@ -1328,10 +1328,11 @@ hardware_schedule(
         }
 
         isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
+        cout << "constraint set: " << str(basic_set_for_map) << endl;
         auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
-        cout << "fs = " << str(fs) << endl;
+        //cout << "fs = " << str(fs) << endl;
 
-        cout << "dims in farkas: " << num_dims(fs) << endl;
+        //cout << "dims in farkas: " << num_dims(fs) << endl;
         int base_dims = num_in_dims(bm) + num_out_dims(bm) + 1;
         int num_farkas_mults = num_dims(fs) - base_dims;
         cout << "dims in res   : " << base_dims << endl;
@@ -1339,7 +1340,7 @@ hardware_schedule(
         fs = isl_basic_set_project_out(fs, isl_dim_set, base_dims, num_farkas_mults);
         cout << "projecting out: " << str(fs) << endl;
         fs = lift_divs(fs);
-        cout << "after lifting: " << str(fs) << endl;
+        //cout << "after lifting: " << str(fs) << endl;
 
         append_basic_set(modulo_schedule, fs);
 
@@ -1352,12 +1353,21 @@ hardware_schedule(
               zero(ct));
         }
 
-        modulo_schedule.add_eq({{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}},
+        isl_val* lat = isl_val_int_from_si(ct, map_find(domain_name(bm), latencies));
+        cout << "latency = " << str(lat) << endl;
+        vector<pair<string, isl_val*> > tms{{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}};
+            //{{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}},
+        modulo_schedule.add_eq(simplify(tms),
             mul(one(ct), isl_val_int_from_si(ct, map_find(domain_name(bm), latencies))));
             //zero(ct));
 
-        cout << "Builder set..." << endl;
-        cout << tab(1) << str(modulo_schedule.s) << endl;
+        //if (producer_delay == consumer_delay) {
+          //cout << "Builder set..." << endl;
+          //cout << tab(1) << str(modulo_schedule.s) << endl;
+          //modulo_schedule.add_eq({{ddiff, one(ct)}}, isl_val_int_from_si(ct, 4));
+          //cout << tab(1) << "pt = " << str(sample(modulo_schedule.s)) << endl;
+          //assert(false);
+        //}
 
         //cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
 
@@ -2022,11 +2032,11 @@ void print_hw_schedule(
 }
 
 void append_basic_set(ilp_builder& b, isl_basic_set* s) {
-  cout << "appending: " << str(s) << endl;
+  //cout << "appending: " << str(s) << endl;
   auto ineqs =
     equalities_to_inequalities(s);
-  cout << "Ineqs..." << endl;
-  cout << str(ineqs) << endl;
+  //cout << "Ineqs..." << endl;
+  //cout << str(ineqs) << endl;
   assert(num_div_dims(s) == 0);
   assert(num_param_dims(s) == 0);
 

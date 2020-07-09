@@ -10702,12 +10702,21 @@ void identity_stream_through_mem_coreir_test() {
 void reduce_stream_schedule_test() {
   auto ctx = isl_ctx_alloc();
 
-  auto dom = isl_union_set_read_from_str(ctx, "{ reduce[root = 0, r, k] : 0 <= r < 6 and 0 <= k <= 2 }");
+  //auto dom = isl_union_set_read_from_str(ctx, "{ reduce[root = 0, r, k] : 0 <= r < 6 and 0 <= k <= 2 }");
   //auto valid = rdmap(ctx, "{ reduce[x] -> reduce[e] : e > x }");
-  auto valid = rdmap(ctx, "{ reduce[root = 0, r, k] -> reduce[root' = 0, r' = r, k'] : 0 <= r <= 6 and 0 <= k <= 2 and k' > k and 0 <= k' <= 2 }");
-  //reduce_stream_coreir_test();
+  //auto dom = isl_union_set_read_from_str(ctx, "{ reduce[root = 0, r, k] : 0 <= r < 6 and 0 <= k <= 2; init[root = 0, r] : 0 <= r <= 6 }");
+  //auto valid = rdmap(ctx, "{ reduce[root = 0, r, k] -> reduce[root' = 0, r' = r, k'] : 0 <= r <= 6 and 0 <= k <= 2 and k' > k and 0 <= k' <= 2; init[root = 0, r] -> reduce[root' = 0, r' = r, k] : 0 <= r <= 6 and 0 <= k <= 7 }");
+
+  auto dom = isl_union_set_read_from_str(ctx, "{ reduce[r, k] : 0 <= r < 6 and 0 <= k <= 2; init[r] : 0 <= r <= 6 }");
+  auto valid = rdmap(ctx, "{ reduce[r, k] -> reduce[r' = r, k'] : 0 <= r <= 6 and 0 <= k <= 2 and k' > k and 0 <= k' <= 2; init[r] -> reduce[r' = r, k] : 0 <= r <= 6 and 0 <= k <= 2 }");
+
   auto prox = cpy(valid);
   auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "valids..." << endl;
+  for (auto d : get_maps(valid)) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "schedule..." << endl;
   for (auto m : get_maps(sched)) {
     cout << tab(1) << str(m) << endl;
   }
@@ -10732,11 +10741,11 @@ void reduce_stream_coreir_test() {
   auto rd = prg.add_loop("r", 0, 7);
   auto init = rd->add_op("init");
   init->add_function("set_zero_16");
-  //init->add_store("tmp", "r");
-  auto reduce = rd->add_loop("k", 0, 3)->add_op("reduce");
+  init->add_store("tmp", "r");
+  auto reduce = rd->add_loop("k", 0, 8)->add_op("reduce");
   reduce->add_function("fmadd_16");
   reduce->add_load("tmp", "r");
-  reduce->add_load("in_buf", "r + k");
+  //reduce->add_load("in_buf", "r + k");
   reduce->add_store("tmp", "r");
   
   auto st = prg.add_loop("y", 0, 7)->add_op("st");
@@ -12113,8 +12122,8 @@ void unet_coreir_test() {
 }
 
 void coreir_tests() {
-  reduce_stream_coreir_test();
   reduce_stream_schedule_test();
+  reduce_stream_coreir_test();
   //unet_coreir_test();
   
   identity_stream_through_mem_coreir_test();
