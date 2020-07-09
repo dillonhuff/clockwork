@@ -1285,6 +1285,9 @@ hardware_schedule(
   auto padded_validity = cpy(validity);
   auto padded_proximity = cpy(proximity);
 
+  cout << "validity : " << str(padded_validity) << endl;
+  //assert(false);
+
   auto ct = ctx(padded_domain);
 
   vector<std::string> sorted_sets =
@@ -1329,16 +1332,16 @@ hardware_schedule(
     string n = name(f);
     int dim = num_dims(f);
 
-    isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
-    isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
+    //isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
+    //isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
 
-    modulo_schedule.add_geq(hw_delay_var(n), (int) 0);
+    //modulo_schedule.add_geq(hw_delay_var(n), (int) 0);
 
     for (int i = 0; i < dim; i++) {
 
       //cout << "adding var " << ii_var(n, i) << endl;
 
-      modulo_schedule.add_gt(ii_var(n, i), (int) 0);
+      //modulo_schedule.add_gt(ii_var(n, i), (int) 0);
 
       if (i < dim - 1) {
         // TODO: Add product of domain at dimension i - 1
@@ -1363,12 +1366,12 @@ hardware_schedule(
 
   // TODO: Replace with more precise self-constraint
   // for reductions
-  //for (auto dep : get_maps(validity)) {
-    //if (domain_name(dep) == "reduce") {
-      //string iis = ii_var(domain_name(dep), num_in_dims(dep) - 1);
-      //modulo_schedule.add_geq(iis, (int) 2);
-    //}
-  //}
+  for (auto dep : get_maps(validity)) {
+    if (domain_name(dep) == "reduce") {
+      string iis = ii_var(domain_name(dep), num_in_dims(dep) - 1);
+      modulo_schedule.add_geq(iis, (int) 2);
+    }
+  }
 
   //// All root IIs must be equal
   //for (auto s : get_sets(padded_domain)) {
