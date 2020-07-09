@@ -12090,12 +12090,12 @@ void coreir_tests() {
   //unet_coreir_test();
   identity_stream_through_mem_coreir_test();
   identity_stream_2d_coreir_test();
-  reduce_stream_coreir_test();
   coreir_set_test();
   coreir_controller_test();
   identity_stream_coreir_test();
   weight_streaming_test();
 
+  reduce_stream_coreir_test();
   // Not yet working
   assert(false);
 }
