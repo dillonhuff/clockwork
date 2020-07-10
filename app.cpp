@@ -1278,7 +1278,9 @@ map<string, isl_aff*>
 hardware_schedule(
     uset* domain,
     umap* validity,
-    umap* proximity) {
+    umap* proximity,
+    map<string, int>& latencies,
+    map<string, int>& iis) {
 
   cout << "Creating hw schedule..." << endl;
   auto padded_domain = cpy(domain);
@@ -1294,12 +1296,6 @@ hardware_schedule(
   cout << "Sorted..." << endl;
   for (auto s : sorted_sets) {
     cout << tab(1) << s << endl;
-  }
-
-  // Dummy latencies
-  map<string, int> latencies;
-  for (auto f : get_sets(padded_domain)) {
-    latencies[name(f)] = 2;
   }
 
   ilp_builder modulo_schedule =
@@ -1433,7 +1429,43 @@ hardware_schedule(
   return hw_schedules;
 }
 
+map<string, isl_aff*>
+hardware_schedule(
+    uset* domain,
+    umap* validity,
+    umap* proximity) {
+  // Dummy latencies
+  map<string, int> latencies;
+  map<string, int> iis;
+  for (auto f : get_sets(domain)) {
+    latencies[name(f)] = 2;
+    iis[name(f)] = 1;
+  }
+
+  return hardware_schedule(domain, validity, proximity, latencies, iis);
+}
+
 umap* 
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity, map<string, int>& latencies, map<string, int>& iis) {
+  auto hs = hardware_schedule(domain, validity, proximity, latencies, iis);
+
+  auto ct = ctx(domain);
+  umap* schedmap = rdmap(ct, "{}");
+  for (auto s : get_sets(domain)) {
+    string n = name(s);
+    isl_aff* sched = map_find(n, hs);
+
+    isl_map* sm = isl_map_from_aff(sched);
+
+    cout << "schedule for n: " << str(sm) << endl;
+    schedmap = unn(schedmap, to_umap(sm));
+    cout << "schedmap = " << str(schedmap) << endl;
+  }
+
+  return schedmap;
+}
+
+umap*
 hardware_schedule_umap(uset* domain, umap* validity, umap* proximity) {
   auto hs = hardware_schedule(domain, validity, proximity);
 

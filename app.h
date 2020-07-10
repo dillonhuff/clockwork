@@ -1012,6 +1012,9 @@ hardware_schedule(uset* domain, umap* validity, umap* proximity);
 umap* 
 hardware_schedule_umap(uset* domain, umap* validity, umap* proximity);
 
+umap* 
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity, map<string, int>& latencies, map<string, int>& iis);
+
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
 
 static inline

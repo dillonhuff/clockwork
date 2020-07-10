@@ -12141,10 +12141,13 @@ void non_rate_matched_ds_test() {
   prg.pretty_print();
   prg.sanity_check();
 
+  map<string, int> latencies{{"ld", 2}, {"ds", 2}, {"ml", 2}};
+  map<string, int> iis{{"ld", 1}, {"ds", 1}, {"ml", 1}};
+ 
   auto dom = (prg.whole_iteration_domain());
   auto valid = (prg.validity_deps());
   auto prox = cpy(valid);
-  auto sched = hardware_schedule_umap(dom, valid, prox);
+  auto sched = hardware_schedule_umap(dom, valid, prox, latencies, iis);
   cout << "domains..." << endl;
   for (auto d : get_sets(dom)) {
     cout << tab(1) << str(d) << endl;
