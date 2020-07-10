@@ -5104,7 +5104,7 @@ struct App {
       string n = name;
       domain_boxes[n] = sbox;
     }
-    assert(false);
+    //assert(false);
 
     vector<string> buffers = sort_functions();
     assert(buffers.size() > 0);
@@ -5124,7 +5124,8 @@ struct App {
     }
     assert(found);
     //assert(buffers.at(0) == name);
-    for (int i = 1; i < (int) buffers.size(); i++) {
+    //for (int i = 1; i < (int) buffers.size(); i++) {
+    for (int i = bounds.size(); i < (int) buffers.size(); i++) {
       string next = buffers.at(i);
       cout << next << " has consumers " << endl;
       map<string, Box> needed_windows;
