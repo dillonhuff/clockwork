@@ -5610,7 +5610,12 @@ struct App {
     return buffers;
   }
 
-  void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
+  void populate_program(CodegenOptions& options,
+      prog& prg,
+      const string& name,
+      const std::vector<string>& outputs,
+      umap* m,
+      map<string, UBuffer>& buffers) {
 
     generate_compute_unit_file(prg.compute_unit_file);
 
@@ -5678,7 +5683,12 @@ struct App {
       //}
     //}
 
-    prg.outs = {name};
+    //prg.outs = {name};
+    //prg.outs = outputs;
+
+    for (auto out : outputs) {
+      prg.add_output(out);
+    }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg, buffers);
@@ -5841,7 +5851,8 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = prg.name + "_compute_units.h";
-    populate_program(options, prg, name, m, buffers);
+    //populate_program(options, prg, name, m, buffers);
+    populate_program(options, prg, name, {name}, m, buffers);
 
     return;
   }
@@ -6024,7 +6035,7 @@ struct App {
     return whole_dom;
   }
 
-  void schedule_and_codegen(CodegenOptions& options, const std::string& name) {
+  void schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
     time_t rawtime;
     struct tm * timeinfo;
     char buffer[80];
@@ -6069,7 +6080,8 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
 
-    populate_program(options, prg, name, m, buffers);
+    //populate_program(options, prg, name, m, buffers);
+    populate_program(options, prg, name, outputs, m, buffers);
 
     return;
   }
@@ -6164,7 +6176,7 @@ struct App {
       names.push_back(n.first);
     }
     string concat_name = sep_list(names, "", "", "_");
-    schedule_and_codegen(options, concat_name);
+    schedule_and_codegen(options, concat_name, names);
   }
 
   void realize(const std::string& name, const int d0, const int d1) {
