@@ -10743,17 +10743,17 @@ void reduce_stream_coreir_test() {
   auto init = rd->add_op("init");
   init->add_function("set_zero_16");
   init->add_store("tmp", "r");
-  auto reduce = rd->add_loop("k", 0, 8)->add_op("reduce");
+  auto reduce = rd->add_loop("k", 0, 3)->add_op("reduce");
   reduce->add_function("fmadd_16");
   reduce->add_load("tmp", "r");
-  //reduce->add_load("in_buf", "r + k");
+  reduce->add_load("in_buf", "r + k");
   reduce->add_store("tmp", "r");
   
   auto st = prg.add_loop("y", 0, 7)->add_op("st");
-  //st->add_load("tmp", "y");
+  st->add_load("tmp", "y");
   st->add_store("out", "y");
   prg.pretty_print();
-  //regression_test(prg);
+  regression_test(prg);
   //assert(false);
 
   CodegenOptions options;
@@ -12122,10 +12122,9 @@ void unet_coreir_test() {
 }
 
 void coreir_tests() {
-  identity_stream_coreir_test();
-  assert(false);
-  //reduce_stream_schedule_test();
   reduce_stream_coreir_test();
+  identity_stream_coreir_test();
+  //reduce_stream_schedule_test();
   identity_stream_through_mem_coreir_test();
   //unet_coreir_test();
   

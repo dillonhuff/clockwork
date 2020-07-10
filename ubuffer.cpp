@@ -818,6 +818,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     map<string, isl_set*> in_ports_to_conditions =
       input_ports_to_conditions(outpt, buf);
+    cout << "====== Conditions for ports..." << endl;
+    for (auto pt : in_ports_to_conditions) {
+      cout << tab(1) << pt.first << " -> " << str(pt.second) << endl;
+    }
+
     assert(in_ports_to_conditions.size() > 0);
     int num_select_vars = num_dims(pick(in_ports_to_conditions).second);
 

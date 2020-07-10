@@ -1244,10 +1244,10 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
       if (i < dim - 1) {
         // TODO: Add product of domain at dimension i - 1
         auto dp = project_all_but(f, i + 1);
-        auto tc =
-          sub(lexmaxval(dp), lexminval(dp));
         //auto tc =
-          //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+          //mul(isl_val_int_from_si(ct, 3), sub(lexmaxval(dp), lexminval(dp)));
+        auto tc =
+          add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
         modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
       }
 
