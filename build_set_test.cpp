@@ -6100,7 +6100,6 @@ struct App {
 
     string reference_update =
       sched_var_name(last_update(to_unroll_function).name());
-      //sched_var_name(last_update(reference_function).name());
     cout << "reference: " << reference_update << endl;
 
     cout << "to unroll: " << to_unroll_function << endl;
@@ -6163,10 +6162,21 @@ struct App {
       const vector<int>& dims,
       const std::string& unroll_target,
       const int unroll_factor) {
+    realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
+  }
+
+  void realize(CodegenOptions& options,
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
+      const std::string& unroll_target,
+      const int unroll_factor) {
+
       double total_elapsed = 0.;
       auto start = std::chrono::system_clock::now();
 
-      //assert(out_name == unroll_target);
+      assert(bounds.size() > 0);
+      string out_name = bounds.at(0).first;
+      vector<int> dims = bounds.at(0).second;
+
       set_unroll_factors(out_name, unroll_target, unroll_factor);
       realize_no_unroll(options, out_name, dims);
 
@@ -12227,7 +12237,28 @@ void resnet_test() {
   //assert(false);
 }
 
+void multi_output_app_test() {
+  App sobel;
+
+  sobel.func2d("in0_oc");
+  sobel.func2d("in1_oc");
+
+  sobel.func2d("in0", "id", "in0_oc", {1, 1}, {{0, 0}});
+  sobel.func2d("in1", "id", "in1_oc", {1, 1}, {{0, 0}});
+
+  sobel.func2d("out0", "id", "in0", {1, 1}, {{0, 0}});
+  sobel.func2d("out1", "id", "in1", {1, 1}, {{0, 0}});
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  sobel.realize(options, {{"out0", {30, 30}}, {"out1",{10, 10}}}, "out0", 1);
+ 
+  assert(false);
+}
+
 void application_tests() {
+  multi_output_app_test();
   coreir_tests();
 
   resnet_test();
