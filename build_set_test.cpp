@@ -5074,23 +5074,37 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const vector<int>& dims) {
+    fill_data_domain({{name, dims}});
+  }
 
-    Box sbox;
+  void fill_data_domain(const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
+    domain_boxes = {};
+
     int max_dims = data_dimension();
+    for (auto b : bounds) {
+      string name = b.first;
+      vector<int> dims = b.second;
+      Box sbox;
 
-    cout << "# dims = " << dims.size() << endl;
-    for (auto d : dims) {
-      cout << tab(1) << d << endl;
-      sbox.intervals.push_back({0, d - 1});
+      cout << "Filling: " << name << endl;
+      cout << "# dims = " << dims.size() << endl;
+      for (auto d : dims) {
+        cout << tab(1) << d << endl;
+        sbox.intervals.push_back({0, d - 1});
+      }
+      for (int i = dims.size(); i < max_dims; i++) {
+        sbox.intervals.push_back({0, 0});
+      }
+
+      cout << "padding to " << last_update(name).unroll_factor << endl;
+      sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
+
+      cout << "Filling data domain " << name << " from: " << sbox << endl;
+
+      string n = name;
+      domain_boxes[n] = sbox;
     }
-    for (int i = dims.size(); i < max_dims; i++) {
-      sbox.intervals.push_back({0, 0});
-    }
-
-    cout << "padding to " << last_update(name).unroll_factor << endl;
-    sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
-
-    cout << "Filling data domain " << name << " from: " << sbox << endl;
+    assert(false);
 
     vector<string> buffers = sort_functions();
     assert(buffers.size() > 0);
@@ -5102,14 +5116,14 @@ struct App {
       cout << tab(1) << b << endl;
     }
 
-    assert(buffers.at(0) == name);
-    string n = name;
-    domain_boxes = {};
-    domain_boxes[n] = sbox;
-    //for (auto update : app_dag.at(n).updates) {
-      //fill_compute_domain(n, update);
-    //}
-
+    bool found = false;
+    for (auto b : bounds) {
+      if (buffers.at(0) == b.first) {
+        found = true;
+      }
+    }
+    assert(found);
+    //assert(buffers.at(0) == name);
     for (int i = 1; i < (int) buffers.size(); i++) {
       string next = buffers.at(i);
       cout << next << " has consumers " << endl;
@@ -5156,6 +5170,7 @@ struct App {
       cout << f << " = " << d << endl;
     }
 
+    assert(false);
     //fill_compute_domain();
   }
 
@@ -6069,16 +6084,24 @@ struct App {
   void set_unroll_factors(const std::string& reference_function,
       const std::string& to_unroll_function,
       const int unroll_factor) {
+    int dummy_value = 10;
+    set_unroll_factors({{reference_function, {dummy_value, dummy_value}}}, to_unroll_function, unroll_factor);
+  }
+
+  void set_unroll_factors(
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
+      const std::string& to_unroll_function,
+      const int unroll_factor) {
     cout << "Unrolling " << to_unroll_function << " by " << unroll_factor << endl;
 
-    //assert(reference_function == to_unroll_function);
 
     // Preprocess application graph to compute qfactors
     App cpy = *this;
-    // TODO: Update to fill with ndims dimensions
-    int dummy_value = 10;
+    //// TODO: Update to fill with ndims dimensions
     cpy.no_unrolling();
-    cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
+    //cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
+    cpy.fill_data_domain(bounds);
+    //reference_function, {dummy_value, dummy_value});
     cpy.fill_compute_domain();
 
     cout << "Padding validity deps..." << endl;
@@ -6170,22 +6193,24 @@ struct App {
       const std::string& unroll_target,
       const int unroll_factor) {
 
-      double total_elapsed = 0.;
-      auto start = std::chrono::system_clock::now();
+    double total_elapsed = 0.;
+    auto start = std::chrono::system_clock::now();
 
-      assert(bounds.size() > 0);
-      string out_name = bounds.at(0).first;
-      vector<int> dims = bounds.at(0).second;
+    assert(bounds.size() > 0);
 
-      set_unroll_factors(out_name, unroll_target, unroll_factor);
-      realize_no_unroll(options, out_name, dims);
+    string out_name = bounds.at(0).first;
+    vector<int> dims = bounds.at(0).second;
 
-      auto end = std::chrono::system_clock::now();
-      std::chrono::duration<double> elapsed = end - start;
-      total_elapsed += elapsed.count();
-      ofstream schedule_info("./scratch/" + out_name + ".txt");
-      schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
-      schedule_info.close();
+    set_unroll_factors(bounds, unroll_target, unroll_factor);
+    //set_unroll_factors(out_name, unroll_target, unroll_factor);
+    realize_no_unroll(options, out_name, dims);
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    total_elapsed += elapsed.count();
+    ofstream schedule_info("./scratch/" + out_name + ".txt");
+    schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
+    schedule_info.close();
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
