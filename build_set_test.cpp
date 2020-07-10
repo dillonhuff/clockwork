@@ -12141,7 +12141,7 @@ void non_rate_matched_ds_test() {
   prg.pretty_print();
   prg.sanity_check();
 
-  map<string, int> latencies{{"ld", 2}, {"ds", 2}, {"ml", 2}};
+  map<string, int> latencies{{"ld", 0}, {"ds", 0}, {"ml", 2}};
   map<string, int> iis{{"ld", 1}, {"ds", 1}, {"ml", 2}};
  
   auto dom = (prg.whole_iteration_domain());
@@ -12158,9 +12158,10 @@ void non_rate_matched_ds_test() {
       for (int i = 0; i < dim; i++) {
         auto dp = project_all_but(f, i);
         auto tc =
-          add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+          sub(lexmaxval(dp), lexminval(dp));
+        //auto tc =
+          //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
         obj.push_back({ii_var(n, i), tc});
-        //obj.push_back({ii_var(n, i), one(ct)});
       }
       obj.push_back({hw_delay_var(n), one(ct)});
     }
@@ -12179,6 +12180,12 @@ void non_rate_matched_ds_test() {
     cout << tab(1) << str(m) << endl;
   }
 
+  auto later = lex_lt(sched, sched);
+  cout << "later = " << str(later) << endl;
+
+  auto violated = its(inv(later), valid);
+  cout << "violated = " << str(violated) << endl;
+  generate_trace(prg, its(sched, dom));
   assert(false);
 }
 
