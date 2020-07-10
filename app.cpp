@@ -1280,7 +1280,8 @@ hardware_schedule(
     umap* validity,
     umap* proximity,
     map<string, int>& latencies,
-    map<string, int>& iis) {
+    map<string, int>& iis,
+    vector<pair<string, isl_val*> >& obj) {
 
   cout << "Creating hw schedule..." << endl;
   auto padded_domain = cpy(domain);
@@ -1300,6 +1301,9 @@ hardware_schedule(
 
   ilp_builder modulo_schedule =
     modulo_constraints(domain, validity, latencies);
+  for (auto s : get_sets(padded_domain)) {
+    modulo_schedule.add_geq(ii_var(name(s), num_dims(s) - 1), map_find(name(s), iis));
+  }
 
   {
     for (auto m : get_maps(padded_validity)) {
@@ -1396,17 +1400,6 @@ hardware_schedule(
   //}
 
   //modulo_schedule.add_eq({{ii_var("reduce", 2), one(ct)}}, isl_val_int_from_si(ct, 2));
-  vector<pair<string, isl_val*> > obj;
-  for (auto f : get_sets(padded_domain)) {
-    string n = name(f);
-    int dim = num_dims(f);
-
-    for (int i = 0; i < dim; i++) {
-      obj.push_back({ii_var(n, i), one(ct)});
-    }
-
-  }
-
 
   modulo_schedule.minimize(simplify(obj));
 
@@ -1442,12 +1435,25 @@ hardware_schedule(
     iis[name(f)] = 1;
   }
 
-  return hardware_schedule(domain, validity, proximity, latencies, iis);
+  auto ct = ctx(domain);
+  vector<pair<string, isl_val*> > obj;
+  for (auto f : get_sets(domain)) {
+    string n = name(f);
+    int dim = num_dims(f);
+
+    for (int i = 0; i < dim; i++) {
+      obj.push_back({ii_var(n, i), one(ct)});
+    }
+
+  }
+
+  return hardware_schedule(domain, validity, proximity, latencies, iis, obj);
 }
 
 umap* 
-hardware_schedule_umap(uset* domain, umap* validity, umap* proximity, map<string, int>& latencies, map<string, int>& iis) {
-  auto hs = hardware_schedule(domain, validity, proximity, latencies, iis);
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
+    map<string, int>& latencies, map<string, int>& iis, vector<pair<string, isl_val*> >& obj) {
+  auto hs = hardware_schedule(domain, validity, proximity, latencies, iis, obj);
 
   auto ct = ctx(domain);
   umap* schedmap = rdmap(ct, "{}");
