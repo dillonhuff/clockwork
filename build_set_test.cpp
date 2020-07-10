@@ -12186,7 +12186,7 @@ void non_rate_matched_ds_test() {
   auto violated = its(inv(later), valid);
   cout << "violated = " << str(violated) << endl;
   generate_trace(prg, its(sched, dom));
-  assert(false);
+  //assert(false);
 }
 
 void coreir_tests() {
