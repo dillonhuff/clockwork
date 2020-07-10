@@ -1,3 +1,4 @@
+#include "example_progs.h"
 #include "prog_splitting_test.h"
 #include "prog.h"
 #include <cassert>
@@ -188,26 +189,37 @@ void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) 
 
 void toy_task(){
 
-	prog prg = brighten_blur();
-
+	prog prg = resnet();
 	cout << "Original program..." << endl;
 	prg.pretty_print();
-
+	
 	// Compile the application into
 	// one large module.
 	generate_optimized_code(prg);
-	//  assert(false);
-
-	// Run the code on a tiny test image
-	// and save it to brighten_blur_bmp_out.bmp
-	//  system("clang++ -std=c++11 brighten_blur_sw_bmp_test_harness.cpp brighten_blur.cpp -I ./aws_collateral/ -I .");
-	//  system("./a.out");
 
 	// Estimate the area required for each
 	// kernel in the application
 	TargetTechlibInfo target_info;
-	target_info.compute_unit_costs["multiply_by_two"] = INT_MULTIPLIER_COST;
-	target_info.compute_unit_costs["inc"] = INT_ADDER_COST*8 + INT_CONSTANT_DIVIDER_COST;
+	target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
+	target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_1"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_2"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_3"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_4"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_5"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_6"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_7"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_8"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_9"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_10"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_11"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_12"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_13"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_14"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_15"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_conv_stencil_16"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+	target_info.compute_unit_costs["hcompute_output_stencil"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
 	target_info.sram_cost_per_bit = 1;
 	target_info.reg_cost_per_bit = 1;
 

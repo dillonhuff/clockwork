@@ -32,36 +32,14 @@ struct blurred_blur_image_4_to_blurred_write_blurred_off_chip_7_cache {
 
 };
 
-struct blurred_blur_image_4_merged_banks_1_cache {
-	// RAM Box: {[0, 255], [0, 255]}
-	// Capacity: 1
-	// # of read delays: 1
-	fifo<hw_uint<16>, 1> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(0 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct blurred_cache {
   blurred_blur_image_4_to_blurred_write_blurred_off_chip_7_cache blurred_blur_image_4_to_blurred_write_blurred_off_chip_7;
-  blurred_blur_image_4_merged_banks_1_cache blurred_blur_image_4_merged_banks_1;
 };
 
 
 
 inline void blurred_blur_image_4_write(hw_uint<16>& blurred_blur_image_4, blurred_cache& blurred, int root, int y, int x, int dynamic_address) {
-  blurred.blurred_blur_image_4_merged_banks_1.push(blurred_blur_image_4);
+  blurred.blurred_blur_image_4_to_blurred_write_blurred_off_chip_7.push(blurred_blur_image_4);
 }
 
 inline hw_uint<16> blurred_write_blurred_off_chip_7_select(blurred_cache& blurred, int root, int m, int n, int dynamic_address) {
@@ -70,14 +48,9 @@ inline hw_uint<16> blurred_write_blurred_off_chip_7_select(blurred_cache& blurre
   // blurred_write_blurred_off_chip_7 read pattern: { write_blurred_off_chip[root = 0, m, n] -> blurred[n, m] : 0 <= m <= 255 and 0 <= n <= 255 }
   // Read schedule : { write_blurred_off_chip[root = 0, m, n] -> [m, n, 3] : 0 <= m <= 255 and 0 <= n <= 255 }
   // Write schedule: { blur_image[root = 0, y, x] -> [y, x, 2] : 0 <= y <= 255 and 0 <= x <= 255 }
-  // DD fold: {  }
-  auto value_blurred_blur_image_4 = blurred.blurred_blur_image_4_merged_banks_1.peek(/* one reader or all rams */ 0);
+  auto value_blurred_blur_image_4 = blurred.blurred_blur_image_4_to_blurred_write_blurred_off_chip_7.peek(/* one reader or all rams */ 0);
   return value_blurred_blur_image_4;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " m = " << m  << " n = " << n  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 // # of bundles = 2
@@ -123,36 +96,14 @@ struct brightened_brighten_image_2_to_brightened_blur_image_5_cache {
 
 };
 
-struct brightened_brighten_image_2_merged_banks_1_cache {
-	// RAM Box: {[0, 255], [0, 255]}
-	// Capacity: 1
-	// # of read delays: 1
-	fifo<hw_uint<16>, 1> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(0 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct brightened_cache {
   brightened_brighten_image_2_to_brightened_blur_image_5_cache brightened_brighten_image_2_to_brightened_blur_image_5;
-  brightened_brighten_image_2_merged_banks_1_cache brightened_brighten_image_2_merged_banks_1;
 };
 
 
 
 inline void brightened_brighten_image_2_write(hw_uint<16>& brightened_brighten_image_2, brightened_cache& brightened, int root, int bo, int bi, int dynamic_address) {
-  brightened.brightened_brighten_image_2_merged_banks_1.push(brightened_brighten_image_2);
+  brightened.brightened_brighten_image_2_to_brightened_blur_image_5.push(brightened_brighten_image_2);
 }
 
 inline hw_uint<16> brightened_blur_image_5_select(brightened_cache& brightened, int root, int y, int x, int dynamic_address) {
@@ -161,14 +112,9 @@ inline hw_uint<16> brightened_blur_image_5_select(brightened_cache& brightened, 
   // brightened_blur_image_5 read pattern: { blur_image[root = 0, y, x] -> brightened[x, y] : 0 <= y <= 255 and 0 <= x <= 255 }
   // Read schedule : { blur_image[root = 0, y, x] -> [y, x, 2] : 0 <= y <= 255 and 0 <= x <= 255 }
   // Write schedule: { brighten_image[root = 0, bo, bi] -> [bo, bi, 1] : 0 <= bo <= 255 and 0 <= bi <= 255 }
-  // DD fold: {  }
-  auto value_brightened_brighten_image_2 = brightened.brightened_brighten_image_2_merged_banks_1.peek(/* one reader or all rams */ 0);
+  auto value_brightened_brighten_image_2 = brightened.brightened_brighten_image_2_to_brightened_blur_image_5.peek(/* one reader or all rams */ 0);
   return value_brightened_brighten_image_2;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " y = " << y  << " x = " << x  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 // # of bundles = 2
@@ -214,36 +160,14 @@ struct in_load_image_from_off_chip_0_to_in_brighten_image_3_cache {
 
 };
 
-struct in_load_image_from_off_chip_0_merged_banks_1_cache {
-	// RAM Box: {[0, 255], [0, 255]}
-	// Capacity: 1
-	// # of read delays: 1
-	fifo<hw_uint<16>, 1> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(0 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct in_cache {
   in_load_image_from_off_chip_0_to_in_brighten_image_3_cache in_load_image_from_off_chip_0_to_in_brighten_image_3;
-  in_load_image_from_off_chip_0_merged_banks_1_cache in_load_image_from_off_chip_0_merged_banks_1;
 };
 
 
 
 inline void in_load_image_from_off_chip_0_write(hw_uint<16>& in_load_image_from_off_chip_0, in_cache& in, int root, int po, int pi, int dynamic_address) {
-  in.in_load_image_from_off_chip_0_merged_banks_1.push(in_load_image_from_off_chip_0);
+  in.in_load_image_from_off_chip_0_to_in_brighten_image_3.push(in_load_image_from_off_chip_0);
 }
 
 inline hw_uint<16> in_brighten_image_3_select(in_cache& in, int root, int bo, int bi, int dynamic_address) {
@@ -252,14 +176,9 @@ inline hw_uint<16> in_brighten_image_3_select(in_cache& in, int root, int bo, in
   // in_brighten_image_3 read pattern: { brighten_image[root = 0, bo, bi] -> in[bi, bo] : 0 <= bo <= 255 and 0 <= bi <= 255 }
   // Read schedule : { brighten_image[root = 0, bo, bi] -> [bo, bi, 1] : 0 <= bo <= 255 and 0 <= bi <= 255 }
   // Write schedule: { load_image_from_off_chip[root = 0, po, pi] -> [po, pi, 0] : 0 <= po <= 255 and 0 <= pi <= 255 }
-  // DD fold: {  }
-  auto value_in_load_image_from_off_chip_0 = in.in_load_image_from_off_chip_0_merged_banks_1.peek(/* one reader or all rams */ 0);
+  auto value_in_load_image_from_off_chip_0 = in.in_load_image_from_off_chip_0_to_in_brighten_image_3.peek(/* one reader or all rams */ 0);
   return value_in_load_image_from_off_chip_0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " bo = " << bo  << " bi = " << bi  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 // # of bundles = 2
@@ -372,6 +291,15 @@ void brighten_blur(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 *
 #endif // __VIVADO_SYNTH__
 
 // schedule: { blur_image[root = 0, y, x] -> [y, x, 2] : 0 <= y <= 255 and 0 <= x <= 255; load_image_from_off_chip[root = 0, po, pi] -> [po, pi, 0] : 0 <= po <= 255 and 0 <= pi <= 255; brighten_image[root = 0, bo, bi] -> [bo, bi, 1] : 0 <= bo <= 255 and 0 <= bi <= 255; write_blurred_off_chip[root = 0, m, n] -> [m, n, 3] : 0 <= m <= 255 and 0 <= n <= 255 }
+//   { blur_image[root = 0, y, x] -> [y, x, 2] : 0 <= y <= 255 and 0 <= x <= 255 }
+// Condition for blur_image(((-2 + i2 == 0) && (i0 >= 0) && (255 - i0 >= 0) && (i1 >= 0) && (255 - i1 >= 0)))
+//   { load_image_from_off_chip[root = 0, po, pi] -> [po, pi, 0] : 0 <= po <= 255 and 0 <= pi <= 255 }
+// Condition for load_image_from_off_chip(((i2 == 0) && (i0 >= 0) && (255 - i0 >= 0) && (i1 >= 0) && (255 - i1 >= 0)))
+//   { brighten_image[root = 0, bo, bi] -> [bo, bi, 1] : 0 <= bo <= 255 and 0 <= bi <= 255 }
+// Condition for brighten_image(((-1 + i2 == 0) && (i0 >= 0) && (255 - i0 >= 0) && (i1 >= 0) && (255 - i1 >= 0)))
+//   { write_blurred_off_chip[root = 0, m, n] -> [m, n, 3] : 0 <= m <= 255 and 0 <= n <= 255 }
+// Condition for write_blurred_off_chip(((-3 + i2 == 0) && (i0 >= 0) && (255 - i0 >= 0) && (i1 >= 0) && (255 - i1 >= 0)))
+
   /*
 for (int c0 = 0; c0 <= 255; c0 += 1)
   for (int c1 = 0; c1 <= 255; c1 += 1) {
@@ -396,8 +324,10 @@ for (int c0 = 0; c0 <= 255; c0 += 1)
 }
 
 #ifdef __VIVADO_SYNTH__
+  // { load_image_from_off_chip[root = 0, po, pi] -> off_chip_input[pi, po] : 0 <= po <= 255 and 0 <= pi <= 255 }
 const int load_image_from_off_chip_read_num_transfers = 65536;
-const int write_blurred_off_chip_write_num_transfers = 64516;
+  // { write_blurred_off_chip[root = 0, m, n] -> off_chip_output[n, m] : 0 <= m <= 255 and 0 <= n <= 255 }
+const int write_blurred_off_chip_write_num_transfers = 65536;
 
 
 extern "C" {
@@ -437,7 +367,7 @@ void brighten_blur_accel(hw_uint<16>* load_image_from_off_chip_read, hw_uint<16>
 
   read_load_image_from_off_chip_read(load_image_from_off_chip_read, load_image_from_off_chip_read_channel, size);
 
-  brighten_blur(load_image_from_off_chip_read_channel, write_blurred_off_chip_write_channel, size);
+  brighten_blur(load_image_from_off_chip_read_channel, write_blurred_off_chip_write_channel);
 
   write_write_blurred_off_chip_write(write_blurred_off_chip_write, write_blurred_off_chip_write_channel, size);
 }
