@@ -12154,10 +12154,16 @@ void non_rate_matched_ds_test() {
     string n = name(f);
     int dim = num_dims(f);
 
-    for (int i = 0; i < dim; i++) {
-      obj.push_back({ii_var(n, i), one(ct)});
+    if (n == "ml") {
+      for (int i = 0; i < dim; i++) {
+        auto dp = project_all_but(f, i);
+        auto tc =
+          add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+        obj.push_back({ii_var(n, i), tc});
+        //obj.push_back({ii_var(n, i), one(ct)});
+      }
+      obj.push_back({hw_delay_var(n), one(ct)});
     }
-
   }
   auto sched = hardware_schedule_umap(dom, valid, prox, latencies, iis, obj);
   cout << "domains..." << endl;
