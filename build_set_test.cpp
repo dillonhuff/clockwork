@@ -1994,7 +1994,7 @@ void conv33_test() {
 
   prog prg;
   prg.compute_unit_file = "vec_access.h";
-  prg.name = "vec";
+  prg.name = "conv33_naive_compute";
   prg.add_input("in");
   prg.add_output("out");
   //prg.buffer_port_widths["T"] = 32*3;
@@ -2025,24 +2025,35 @@ void conv33_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
-  cout << buffers_opt.at("buf") << endl;
-  buffers_opt.at("buf").port_group2bank(2, 2);
-  cout << buffers_opt.at("buf") << endl;
+  int max_inpt = 2, max_outpt = 2;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
+  //cout << buffers_opt.at("buf") << endl;
+  //buffers_opt.at("buf").port_group2bank(2, 2);
+  //cout << buffers_opt.at("buf") << endl;
 
 #ifdef COREIR
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
-  json config_reg_map = parse_config_file("sample_configuration.txt");
-  buffers_opt.at("buf").set_config(config_reg_map);
-  auto def = generate_coreir(opt, context, buffers_opt.at("buf"));
+  //json config_reg_map = parse_config_file("sample_configuration.txt");
+  //buffers_opt.at("buf").set_config(config_reg_map);
+  //auto def = generate_coreir(opt, context, buffers_opt.at("buf"));
 
-  if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json", def)) {
-    cout << "Could not save ubuffer coreir!" << endl;
-    context->die();
+  //if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json", def)) {
+  //  cout << "Could not save ubuffer coreir!" << endl;
+  //  context->die();
+  //}
+  //CoreIR::deleteContext(context);
+  for (auto& b : buffers_opt) {
+    b.second.generate_bank_and_merge(opt);
+
+    //Assign an configuration file,
+    json config_reg_map = parse_config_file("conv33_configuration.txt");
+    b.second.set_config(config_reg_map);
+
+    b.second.port_group2bank(max_inpt, max_outpt);
   }
-  CoreIR::deleteContext(context);
+  generate_coreir(opt, buffers_opt, prg, sched_naive);
 #endif
 
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
@@ -9720,7 +9731,6 @@ void application_tests() {
 
 void memory_tile_tests() {
   conv33_test();
-  assert(false);
   conv45_test();
   //assert(false);
   vec_test();

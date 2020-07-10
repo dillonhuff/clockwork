@@ -170,6 +170,7 @@ void generate_coreir(CodegenOptions& options,
     }
 
     def->addInstance(op->name, compute_unit);
+    def->connect(def->sel(op->name + ".reset"), def->sel("self.reset"));
 
   }
 
@@ -177,6 +178,7 @@ void generate_coreir(CodegenOptions& options,
     if (!prg.is_boundary(buf.first)) {
       auto ub_mod = generate_coreir(options, context, buf.second);
       def->addInstance(buf.second.name, ub_mod);
+      def->connect(def->sel(buf.second.name + ".reset"), def->sel("self.reset"));
     }
   }
 
