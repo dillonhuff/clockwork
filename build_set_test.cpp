@@ -6152,11 +6152,20 @@ struct App {
   void realize_no_unroll(CodegenOptions& options,
       const std::string& name,
       const std::vector<int>& dims) {
-    fill_data_domain(name, dims);
-    fill_compute_domain();
-    schedule_and_codegen(options, name);
+    realize_no_unroll(options, {{name, dims}});
   }
 
+  void realize_no_unroll(CodegenOptions& options,
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
+    fill_data_domain(bounds);
+    fill_compute_domain();
+    vector<string> names;
+    for (auto n : bounds) {
+      names.push_back(n.first);
+    }
+    string concat_name = sep_list(names, "", "", "_");
+    schedule_and_codegen(options, concat_name);
+  }
 
   void realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
@@ -6203,8 +6212,10 @@ struct App {
     vector<int> dims = bounds.at(0).second;
 
     set_unroll_factors(bounds, unroll_target, unroll_factor);
+    realize_no_unroll(options, bounds);
+
     //set_unroll_factors(out_name, unroll_target, unroll_factor);
-    realize_no_unroll(options, out_name, dims);
+    //realize_no_unroll(options, out_name, dims);
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed = end - start;
@@ -12284,12 +12295,12 @@ void multi_output_app_test() {
 }
 
 void application_tests() {
+  multi_output_app_test();
   seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
 
-  //multi_output_app_test();
 
   coreir_tests();
   resnet_test();
