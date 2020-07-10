@@ -12200,7 +12200,7 @@ void non_rate_matched_ds_test() {
   prg.pretty_print();
   prg.sanity_check();
 
-  map<string, int> latencies{{"ld", 0}, {"ds", 0}, {"ml", 2}};
+  map<string, int> latencies{{"ld", 2}, {"ds", 2}, {"ml", 2}};
   map<string, int> iis{{"ld", 1}, {"ds", 1}, {"ml", 2}};
  
   auto dom = (prg.whole_iteration_domain());
@@ -12245,11 +12245,16 @@ void non_rate_matched_ds_test() {
   auto violated = its(inv(later), valid);
   cout << "violated = " << str(violated) << endl;
   generate_trace(prg, its(sched, dom));
+  auto buffers = build_buffers(prg, its(sched, dom));
+  for (auto b : buffers) {
+    cout << b.second << endl;
+  }
   //assert(false);
+  generate_app_code(buffers, prg, its(sched, dom));
+  assert(false);
 }
 
 void coreir_tests() {
-  non_rate_matched_ds_test();
   //reduce_stream_schedule_test();
   reduce_stream_coreir_test();
   identity_stream_coreir_test();
@@ -12288,6 +12293,7 @@ void resnet_test() {
 
 void multi_output_app_test() {
   App sobel;
+  sobel.set_default_pixel_width(16);
 
   sobel.func2d("in0_oc");
   sobel.func2d("in1_oc");
@@ -12298,16 +12304,24 @@ void multi_output_app_test() {
   sobel.func2d("out0", "id", "in0", {1, 1}, {{0, 0}});
   sobel.func2d("out1", "id", "in1", {1, 1}, {{0, 0}});
 
+  int rows = 1080;
+  int cols = 1920;
+  int unroll = 32;
+
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  sobel.realize(options, {{"out0", {30, 30}}, {"out1",{10, 10}}}, "out0", 1);
- 
+  sobel.realize(options, {{"out0", {rows, cols}}, {"out1",{rows, cols}}}, "out0", unroll);
+
+  string name = "out0_out1";
+  move_to_benchmarks_folder(name);
+  assert(false);
 }
 
 void application_tests() {
-  iccad_tests();
   multi_output_app_test();
+  iccad_tests();
+  non_rate_matched_ds_test();
   seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
