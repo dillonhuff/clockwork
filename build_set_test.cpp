@@ -5171,7 +5171,7 @@ struct App {
       cout << f << " = " << d << endl;
     }
 
-    assert(false);
+    //assert(false);
     //fill_compute_domain();
   }
 
@@ -12284,21 +12284,20 @@ void multi_output_app_test() {
 }
 
 void application_tests() {
-  multi_output_app_test();
-  coreir_tests();
-
-  resnet_test();
-
-  //reuse_buffered_conv_test();
-
-  register_file_test();
-  reaccess_no_hierarchy_rolled_test();
-
-  //assert(false);
   seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
+
+  //multi_output_app_test();
+
+  coreir_tests();
+  resnet_test();
+  //reuse_buffered_conv_test();
+  register_file_test();
+  reaccess_no_hierarchy_rolled_test();
+
+  //assert(false);
 
   unet_conv_3_3_test();
   cyclic_banked_conv_test();
