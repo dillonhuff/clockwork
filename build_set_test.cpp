@@ -2081,6 +2081,85 @@ void conv33_test() {
   }
 }
 
+void conv33_large_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 64, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 62, "qi", 0, 14);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  }
+  read->add_store("out", "po, pi");
+
+  //unoptimized schedule
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  auto buffers = build_buffers(prg, sched_naive);
+
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  cout << buffers_opt.at("buf") << endl;
+  buffers_opt.at("buf").port_group2bank(2, 2);
+  cout << buffers_opt.at("buf") << endl;
+
+#ifdef COREIR
+  //CoreIR::Context* context = CoreIR::newContext();
+  //CoreIRLoadLibrary_commonlib(context);
+  //CoreIRLoadLibrary_cwlib(context);
+  //json config_reg_map = parse_config_file("sample_configuration.txt");
+  //buffers_opt.at("buf").set_config(config_reg_map);
+  //generate_coreir(opt, context, buffers_opt.at("buf"));
+
+  //if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json")) {
+  //  cout << "Could not save ubuffer coreir!" << endl;
+  //  context->die();
+  //}
+  //CoreIR::deleteContext(context);
+#endif
+
+  auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+  opt.conditional_merge = false;
+  auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+
+  for (auto it: post_proc_buffers) {
+    buffer_vectorization(it.first, 1, 4, rewrite_buffers);
+
+    //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+    auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
+    cout << codegen_c(opt_sched) << endl;
+
+    rewrite_buffers.erase(it.first);
+
+    HWconstraints sram = {4, 1, 512, false, true};
+
+    lattice_schedule_buf(prg.ctx, rewrite_buffers, opt_sched, sram);
+
+    TileConstraints tc{1,3,0};
+    emit_address_stream2file(rewrite_buffers, it.first+"_sram", it.first+"_sram", it.first+"_SRAM_large_address", false, tc);
+    emit_address_stream2file(rewrite_buffers, it.first+"_tb", it.first+"_agg", it.first+"_reg_TOP_large_address", true, tc);
+    //compare_to_gold(it.first+"_SRAM_address.csv", "SRAM_address_tapeout.csv");
+    //compare_to_gold(it.first+"_reg_TOP_address.csv", "TOP_address.csv");
+  }
+}
+
 void bankmerge_vec_test() {
 
   prog prg;
@@ -9731,8 +9810,9 @@ void application_tests() {
 
 void memory_tile_tests() {
   conv33_test();
+  conv33_large_test();
+  assert(false);
   conv45_test();
-  //assert(false);
   vec_test();
   bankmerge_vec_test();
   reaccess_test();
