@@ -1039,7 +1039,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     cout << tab(1) << out << endl;
     pipeline_delay[delay_var_name(out)] = one(ct);
   }
-  assert(outputs.size() == 1);
+  //assert(outputs.size() == 1);
 
   // Add shift register constraints
   //for (auto s : schedule_params) {
