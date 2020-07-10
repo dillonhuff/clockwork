@@ -144,14 +144,18 @@ nsduration = end - start;
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
-  std::ofstream regression_result("out0_update_0_write_accel_result.csv");
-  for (int i = 0; i < out0_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (out0_update_0_write.data()))[i] << std::endl;
-  }
-  std::ofstream regression_result("out1_update_0_write_accel_result.csv");
-  for (int i = 0; i < out1_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (out1_update_0_write.data()))[i] << std::endl;
-  }
+{
+    std::ofstream regression_result("out0_update_0_write_accel_result.csv");
+    for (int i = 0; i < out0_update_0_write_DATA_SIZE; i++) {
+      regression_result << ((uint16_t*) (out0_update_0_write.data()))[i] << std::endl;
+    }
+}
+{
+    std::ofstream regression_result("out1_update_0_write_accel_result.csv");
+    for (int i = 0; i < out1_update_0_write_DATA_SIZE; i++) {
+      regression_result << ((uint16_t*) (out1_update_0_write.data()))[i] << std::endl;
+    }
+}
 
   return 0;
 }
