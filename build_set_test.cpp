@@ -12303,10 +12303,10 @@ void multi_output_app_test() {
   options.simplify_address_expressions = true;
   sobel.realize(options, {{"out0", {30, 30}}, {"out1",{10, 10}}}, "out0", 1);
  
-  assert(false);
 }
 
 void application_tests() {
+  iccad_tests();
   multi_output_app_test();
   seidel2d_test();
   sobel_test();
@@ -12315,14 +12315,14 @@ void application_tests() {
 
 
   coreir_tests();
-  resnet_test();
+  //resnet_test();
   //reuse_buffered_conv_test();
   register_file_test();
   reaccess_no_hierarchy_rolled_test();
 
   //assert(false);
 
-  unet_conv_3_3_test();
+  //unet_conv_3_3_test();
   cyclic_banked_conv_test();
   //register_file_optimization_test();
   
@@ -12384,7 +12384,6 @@ void application_tests() {
 
   dummy_app_test();
 
-  iccad_tests();
   blur_and_downsample_test();
   halide_up_sample_test();
   denoise2d_test();
@@ -12401,7 +12400,6 @@ void application_tests() {
 
 
   halide_conv_layer_3D_test();
-  iccad_tests();
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
