@@ -1262,14 +1262,14 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
   //}
 
   // All root IIs must be equal
-  //for (auto s : get_sets(padded_domain)) {
-    //for (auto other : get_sets(padded_domain)) {
-      //string iis = ii_var(name(s), 0);
-      //string iio = ii_var(name(other), 0);
-      //cout << iis << " == " << iio << endl;
-      //modulo_schedule.add_eq(iis, iio);
-    //}
-  //}
+  for (auto s : get_sets(padded_domain)) {
+    for (auto other : get_sets(padded_domain)) {
+      string iis = ii_var(name(s), 0);
+      string iio = ii_var(name(other), 0);
+      cout << iis << " == " << iio << endl;
+      modulo_schedule.add_eq(iis, iio);
+    }
+  }
 
   return modulo_schedule;
 }

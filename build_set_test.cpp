@@ -12121,10 +12121,51 @@ void unet_coreir_test() {
 
 }
 
+void non_rate_matched_ds_test() {
+  prog prg("non_rate_matched_downsample");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  auto ld = prg.add_nest("ldy", 0, 8, "ldx", 0, 8)->add_op("ld");
+  ld->add_load("in_oc", "ldx, ldy");
+  ld->add_store("in", "ldx, ldy");
+
+  auto ds = prg.add_nest("dsy", 0, 4, "dsx", 0, 8)->add_op("ds");
+  ds->add_load("in", "dsx", "2*dsy");
+  ds->add_store("ds", "dsx, dsy");
+
+  auto ml = prg.add_nest("mly", 0, 4, "mlx", 0, 8)->add_op("ml");
+  ml->add_load("ds", "mlx, mly");
+  ml->add_store("out", "mlx, mly");
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto dom = (prg.whole_iteration_domain());
+  auto valid = (prg.validity_deps());
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "domains..." << endl;
+  for (auto d : get_sets(dom)) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "valid..." << endl;
+  for (auto v : get_maps(valid)) {
+    cout << tab(1) << str(v) << endl;
+  }
+  cout << "schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  assert(false);
+}
+
 void coreir_tests() {
+  non_rate_matched_ds_test();
+  //reduce_stream_schedule_test();
   reduce_stream_coreir_test();
   identity_stream_coreir_test();
-  //reduce_stream_schedule_test();
   identity_stream_through_mem_coreir_test();
   //unet_coreir_test();
   
