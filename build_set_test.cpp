@@ -10680,7 +10680,8 @@ prog simplified_conv_layer() {
 
 void run_verilator_tb(const std::string& name) {
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
+  int to_verilog_res = cmd("${COREIR}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -10980,14 +10981,15 @@ void identity_stream_coreir_test() {
 
   generate_coreir(options, bufs, prg, sched);
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
-  assert(to_verilog_res == 0);
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
-  assert(verilator_build == 0);
+  //int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
+  //assert(verilator_build == 0);
 
-  int verilator_run = cmd("./obj_dir/Videntity_stream");
-  assert(verilator_run == 0);
+  //int verilator_run = cmd("./obj_dir/Videntity_stream");
+  //assert(verilator_run == 0);
 
   //assert(false);
 #endif
@@ -11050,14 +11052,15 @@ void weight_streaming_test() {
 
   generate_coreir(options, bufs, prg, sched);
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
-  assert(to_verilog_res == 0);
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
-  assert(verilator_build == 0);
+  //int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  //assert(verilator_build == 0);
 
-  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
-  assert(verilator_run == 0);
+  //int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  //assert(verilator_run == 0);
 
   //assert(false);
 #endif
@@ -11101,14 +11104,15 @@ void halide_conv_layer_3D_test() {
 
   generate_coreir(options, bufs, prg, sched);
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
-  assert(to_verilog_res == 0);
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
-  assert(verilator_build == 0);
+  //int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  //assert(verilator_build == 0);
 
-  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
-  assert(verilator_build == 0);
+  //int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  //assert(verilator_build == 0);
 
   //assert(false);
 #endif
@@ -12256,7 +12260,7 @@ void non_rate_matched_ds_test() {
 
 void coreir_tests() {
   //reduce_stream_schedule_test();
-  reduce_stream_coreir_test();
+  //reduce_stream_coreir_test();
   identity_stream_coreir_test();
   identity_stream_through_mem_coreir_test();
   //unet_coreir_test();
@@ -12322,6 +12326,7 @@ void multi_output_app_test() {
 }
 
 void application_tests() {
+  coreir_tests();
   multi_output_app_test();
   iccad_tests();
   non_rate_matched_ds_test();
@@ -12331,7 +12336,6 @@ void application_tests() {
   jacobi_2d_test();
 
 
-  coreir_tests();
   //resnet_test();
   //reuse_buffered_conv_test();
   register_file_test();
