@@ -12261,7 +12261,7 @@ void non_rate_matched_ds_test() {
   }
   //assert(false);
   generate_app_code(buffers, prg, its(sched, dom));
-  assert(false);
+  //assert(false);
 }
 
 void coreir_tests() {
@@ -12411,6 +12411,7 @@ void psef_multi_output_test() {
   options.simplify_address_expressions = true;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
+  move_to_benchmarks_folder(out0 + "_" + out1);
   assert(false);
 
   //// Compute weights which measure the "quality" of
@@ -12460,6 +12461,7 @@ void application_tests() {
   multi_output_app_test();
   iccad_tests();
   non_rate_matched_ds_test();
+
   seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
