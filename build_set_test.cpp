@@ -12365,6 +12365,20 @@ string load_off_chip_two_channels(const std::string& prefix, App& lp) {
   return res;
 }
 
+pair<string, string> store_off_chip_two_channels(const std::string& input, App& lp) {
+
+  Window win0{input, {qconst(2), qconst(1)}, {{0, 0}}};;
+  Window win1{input, {qconst(2), qconst(1)}, {{1, 0}}};;
+  
+  string res0 = input + "_0";
+  string res1 = input + "_1";
+
+  lp.func2d(res0, "id", win0);
+  lp.func2d(res1, "id", win1);
+
+  return {res0, res1};
+}
+
 void psef_multi_output_test() {
   App lp;
   lp.set_default_pixel_width(16);
@@ -12382,16 +12396,20 @@ void psef_multi_output_test() {
 
   lp.func2d("psef_sum", "add", {pt("bright"), pt("dark")});
 
-  string out0 = "psef_sum";
+  pair<string, string> output_image = store_off_chip_two_channels("psef_sum", lp);
+
+  //string out0 = "psef_sum";
+  string out0 = output_image.first;
+  string out1 = output_image.second;
 
   int rows = 1080;
-  int cols = 1920;
+  int cols = 1920 / 2;
   int unroll = 32;
 
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  lp.realize(options, {{out0, {rows, cols}}}, out0, unroll);
+  lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   assert(false);
 
