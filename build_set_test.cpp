@@ -12295,14 +12295,17 @@ void multi_output_app_test() {
   App sobel;
   sobel.set_default_pixel_width(16);
 
+  string out0 = "out0";
+  string out1 = "out1_ac";
+
   sobel.func2d("in0_oc");
   sobel.func2d("in1_oc");
 
   sobel.func2d("in0", "id", "in0_oc", {1, 1}, {{0, 0}});
   sobel.func2d("in1", "id", "in1_oc", {1, 1}, {{0, 0}});
 
-  sobel.func2d("out0", "id", "in0", {1, 1}, {{0, 0}});
-  sobel.func2d("out1", "id", "in1", {1, 1}, {{0, 0}});
+  sobel.func2d(out0, "id", "in0", {1, 1}, {{0, 0}});
+  sobel.func2d(out1, "id", "in1", {1, 1}, {{0, 0}});
 
   int rows = 1080;
   int cols = 1920;
@@ -12311,9 +12314,9 @@ void multi_output_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  sobel.realize(options, {{"out0", {rows, cols}}, {"out1",{rows, cols}}}, "out0", unroll);
+  sobel.realize(options, {{out0, {rows, cols}}, {out1,{rows, cols}}}, out0, unroll);
 
-  string name = "out0_out1";
+  string name = out0 + "_" + out1;
   move_to_benchmarks_folder(name);
   assert(false);
 }
