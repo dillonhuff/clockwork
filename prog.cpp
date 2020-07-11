@@ -698,7 +698,7 @@ void generate_xilinx_multi_channel_accel_wrapper(
 
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
-  assert(driver_func.size() < 32);
+  //assert(driver_func.size()  32);
 
 
   for (auto eb : edge_buffers(buffers, prg)) {
