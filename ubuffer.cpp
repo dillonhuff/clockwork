@@ -37,6 +37,7 @@ std::string write_addrgen_name(const std::string& n) {
 }
 
 map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf) {
+  cout << "Getting input port conditions for " << outpt << " on buffer: " << buf.name << endl;
   map<string, isl_set*> in_ports_to_conditions;
   umap* reads_to_sources = buf.get_lexmax_events(outpt);
   cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
@@ -50,9 +51,13 @@ map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffe
   }
 
   auto read_map = buf.access_map.at(outpt);
+  cout << "read map = " << str(read_map) << endl;
+
   auto read_space = get_space(read_map);
   for (auto inpt : possible_ports) {
     auto write_map = buf.access_map.at(inpt);
+    cout << inpt << " write map = " << str(write_map) << endl;
+
     auto data_written = range(write_map);
 
     auto common_write_ops =
