@@ -12412,7 +12412,7 @@ void psef_multi_output_test() {
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   move_to_benchmarks_folder(out0 + "_" + out1);
-  assert(false);
+  //assert(false);
 
   //// Compute weights which measure the "quality" of
   //// pixels in each image
