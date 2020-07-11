@@ -5824,14 +5824,26 @@ struct App {
   }
 
   void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
+    realize_naive(options, {{name, dims}});
+  }
+
+  //void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
+  void realize_naive(CodegenOptions& options,
+      const std::vector<std::pair<string, std::vector<int> > >& bounds) {
+      //const std::string& name, const std::vector<int>& dims) {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
-      set_unroll_factors(name, name, unroll_factor);
+      //set_unroll_factors(name, name, unroll_factor);
+      set_unroll_factors(name, bounds, unroll_factor);
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
-    fill_data_domain(name, dims);
-    set_unroll_factors(name, name, 1);
+
+    //fill_data_domain(name, dims);
+    //set_unroll_factors(name, name, 1);
+
+    fill_data_domain(bounds);
+    set_unroll_factors(name, bounds, 1);
     fill_compute_domain();
 
     umap* m = nullptr;
@@ -5841,7 +5853,6 @@ struct App {
       assert(options.scheduling_algorithm == SCHEDULE_ALGORITHM_ISL);
       m = schedule_isl();
     }
-    //schedule_isl();
 
     assert(m != nullptr);
     cout << "Schedule: " << str(m) << endl;
@@ -5851,7 +5862,6 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = prg.name + "_compute_units.h";
-    //populate_program(options, prg, name, m, buffers);
     populate_program(options, prg, name, {name}, m, buffers);
 
     return;
@@ -12317,8 +12327,20 @@ void multi_output_app_test() {
   sobel.realize(options, {{out0, {rows, cols}}, {out1,{rows, cols}}}, out0, unroll);
 
   string name = out0 + "_" + out1;
-  move_to_benchmarks_folder(name);
+  auto opt = run_regression_tb(name + "_opt");
+
+  // Generate un-optimized code
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  sobel.realize_naive(options, {{out0, {rows, cols}}, {out1,{rows, cols}}}, out0, unroll);
+  auto naive = run_regression_tb("us_naive");
   assert(false);
+
+  assert(opt == naive);
+
+  move_to_benchmarks_folder(name);
 }
 
 void application_tests() {
