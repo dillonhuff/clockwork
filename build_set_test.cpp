@@ -12374,8 +12374,8 @@ pair<string, string> store_off_chip_two_channels(const std::string& input, App& 
   Window win0{input, {qconst(2), qconst(1)}, {{0, 0}}};;
   Window win1{input, {qconst(2), qconst(1)}, {{1, 0}}};;
   
-  string res0 = input + "_0";
-  string res1 = input + "_1";
+  string res0 = input + "0";
+  string res1 = input + "1";
 
   lp.func2d(res0, "id", win0);
   lp.func2d(res1, "id", win1);
@@ -12398,9 +12398,9 @@ void psef_multi_output_test() {
   lp.func2d("bright", "id", pt("in"));
   lp.func2d("dark", "scale_exposure", pt("in"));
 
-  lp.func2d("psef_sum", "add", {pt("bright"), pt("dark")});
+  lp.func2d("ps", "add", {pt("bright"), pt("dark")});
 
-  pair<string, string> output_image = store_off_chip_two_channels("psef_sum", lp);
+  pair<string, string> output_image = store_off_chip_two_channels("ps", lp);
 
   //string out0 = "psef_sum";
   string out0 = output_image.first;
@@ -12416,6 +12416,7 @@ void psef_multi_output_test() {
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   move_to_benchmarks_folder(out0 + "_" + out1);
+  assert(false);
   //assert(false);
 
   //// Compute weights which measure the "quality" of

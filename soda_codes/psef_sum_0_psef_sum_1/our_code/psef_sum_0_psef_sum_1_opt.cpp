@@ -18863,6 +18863,38 @@ inline void psef_sum_psef_sum_update_0_write_bundle_write(hw_uint<1024>& psef_su
 
 
 // Operation logic
+inline void bright_update_0(in_cache& in, bright_cache& bright, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_0_c__0_value = in_bright_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_64(in_0_c__0_value);
+	// Produce: bright
+	bright_bright_update_0_write_bundle_write(/* arg names */compute_result, bright, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip0_oc
+	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
+	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
+	// Produce: in_off_chip0
+	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_off_chip1_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip1_oc, in_off_chip1_cache& in_off_chip1, int d0, int d1) {
   // Dynamic address computation
 
@@ -18919,18 +18951,36 @@ inline void in_update_0(in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_i
 
 }
 
-inline void bright_update_0(in_cache& in, bright_cache& bright, int d0, int d1) {
+inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
   // Dynamic address computation
 
 	// Consume: in
-	auto in_0_c__0_value = in_bright_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
+	auto in_0_c__0_value = in_dark_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_64(in_0_c__0_value);
-	// Produce: bright
-	bright_bright_update_0_write_bundle_write(/* arg names */compute_result, bright, d0, d1, 0);
+	auto compute_result = scale_exposure_unrolled_64(in_0_c__0_value);
+	// Produce: dark
+	dark_dark_update_0_write_bundle_write(/* arg names */compute_result, dark, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void psef_sum_0_update_0(psef_sum_cache& psef_sum, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */psef_sum_0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: psef_sum
+	auto psef_sum_0_c__0_value = psef_sum_psef_sum_0_update_0_read_bundle_read(psef_sum/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_32(psef_sum_0_c__0_value);
+	// Produce: psef_sum_0
+	psef_sum_0.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -18973,56 +19023,6 @@ inline void psef_sum_1_update_0(psef_sum_cache& psef_sum, HWStream<hw_uint<512> 
 	auto compute_result = id_unrolled_32(psef_sum_0_c__0_value);
 	// Produce: psef_sum_1
 	psef_sum_1.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_0_c__0_value = in_dark_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = scale_exposure_unrolled_64(in_0_c__0_value);
-	// Produce: dark
-	dark_dark_update_0_write_bundle_write(/* arg names */compute_result, dark, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void psef_sum_0_update_0(psef_sum_cache& psef_sum, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */psef_sum_0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: psef_sum
-	auto psef_sum_0_c__0_value = psef_sum_psef_sum_0_update_0_read_bundle_read(psef_sum/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_32(psef_sum_0_c__0_value);
-	// Produce: psef_sum_0
-	psef_sum_0.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip0_oc
-	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
-	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
-	// Produce: in_off_chip0
-	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
