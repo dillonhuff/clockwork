@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer in_off_chip1_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_off_chip1_update_0_read_size_bytes, in_off_chip1_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(3, in_off_chip1_update_0_read_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(1036800 / 32);
+  uint64_t transfer_size = num_epochs*(1036800 / 2);
   OCL_CHECK(err, err = krnl_vector_add.setArg(4, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;

@@ -5957,12 +5957,14 @@ struct App {
           int input_bits = arg_width*lanes*offsets_per_lane;
 
           args_and_widths.push_back({input_bits, p.name});
-          //args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name).pts().size(), p.name});
         }
 
         vector<string> arg_decls;
         for (auto a : args_and_widths) {
           arg_decls.push_back("hw_uint<" + to_string(a.first) + ">& " + a.second);
+        }
+        for (auto index : u.index_variables_needed_by_compute()) {
+          arg_decls.push_back("int " + index);
         }
 
         string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
@@ -5979,7 +5981,6 @@ struct App {
             string p = arg.second;
             Window arg_input_window =
               data_window_needed_by_one_compute_lane(u.name(), p);
-              //data_window_needed_by_compute(u.name(), p);
             int offsets_per_lane =
               arg_input_window.pts().size();
             int input_bits = arg_width*offsets_per_lane;
@@ -5988,31 +5989,16 @@ struct App {
 
             arg_names.push_back(arg_name);
             cout << "getting window for " << u.name() << endl;
-            //Window orig_dw =
-              //data_window_needed_by_one_compute_lane(u.name(), p);
-            //Window win_needed =
-              //data_window_needed_by_one_compute_lane(u.name(), p).increment(orig_dw.stride(0), lane);
-            //cout << "Win needed: " << win_needed << endl;
 
             int base = lane*input_bits;
             int end = (lane + 1)*input_bits - 1;
 
             cfile << tab(1) << "hw_uint<" << input_bits << "> " << arg_name << ";" << endl;
             cfile << tab(1) << "set_at<0, " << input_bits << ", " << input_bits << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
-            //int win_pos = 0;
-            //for (auto off : win_needed.offsets) {
-              //cfile << tab(1) << "// Need offset: " << str(off) << endl;
-              //int npts = win_needed.pts().size()*arg_width;
-              //for (int i = 0; i < arg_input_window.offsets.size(); i++) {
-                //if (arg_input_window.offsets.at(i) == off) {
-                  //int base = i*arg_width;
-                  //int end = (i + 1)*arg_width - 1;
-                  //cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ", " << arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
-                //}
-              //}
-              //win_pos++;
-            //}
           }
+        for (auto index : u.index_variables_needed_by_compute()) {
+          arg_names.push_back(index);
+        }
           cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
           cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ", " << fwidth << ">(whole_result, result_" << lane << ");" << endl;
         }
@@ -12424,10 +12410,9 @@ void psef_multi_output_test() {
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
-  assert(false);
 
   move_to_benchmarks_folder(out0 + "_" + out1);
-  assert(false);
+  //assert(false);
   //assert(false);
 
   //// Compute weights which measure the "quality" of
