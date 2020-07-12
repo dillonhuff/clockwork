@@ -18863,6 +18863,34 @@ inline void ps_ps_update_0_write_bundle_write(hw_uint<1024>& ps_update_0_write, 
 
 
 // Operation logic
+inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip0_oc
+	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
+	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
+	// Produce: in_off_chip0
+	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_off_chip1_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip1_oc, in_off_chip1_cache& in_off_chip1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip1_oc
+	auto in_off_chip1_oc_0_c__0_value = in_off_chip1_oc.read();
+	auto compute_result = id_unrolled_32(in_off_chip1_oc_0_c__0_value);
+	// Produce: in_off_chip1
+	in_off_chip1_in_off_chip1_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip1, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_off_chip0_oc_in_off_chip1_oc_update_0(in_off_chip0_cache& in_off_chip0, in_off_chip1_cache& in_off_chip1, in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_in_off_chip1_oc, int d0, int d1) {
   // Dynamic address computation
 
@@ -18887,6 +18915,24 @@ inline void in_off_chip0_oc_in_off_chip1_oc_update_0(in_off_chip0_cache& in_off_
 
 }
 
+inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_0_c__0_value = in_dark_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = scale_exposure_unrolled_64(in_0_c__0_value);
+	// Produce: dark
+	dark_dark_update_0_write_bundle_write(/* arg names */compute_result, dark, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_update_0(in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_in_off_chip1_oc, in_cache& in, int d0, int d1) {
   // Dynamic address computation
 
@@ -18899,34 +18945,6 @@ inline void in_update_0(in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_i
 	auto compute_result = id_unrolled_64(in_off_chip0_oc_in_off_chip1_oc_0_c__0_value);
 	// Produce: in
 	in_in_update_0_write_bundle_write(/* arg names */compute_result, in, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip0_oc
-	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
-	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
-	// Produce: in_off_chip0
-	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void in_off_chip1_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip1_oc, in_off_chip1_cache& in_off_chip1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip1_oc
-	auto in_off_chip1_oc_0_c__0_value = in_off_chip1_oc.read();
-	auto compute_result = id_unrolled_32(in_off_chip1_oc_0_c__0_value);
-	// Produce: in_off_chip1
-	in_off_chip1_in_off_chip1_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip1, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -19005,24 +19023,6 @@ inline void ps0_update_0(ps_cache& ps, HWStream<hw_uint<512> >& /* buffer_args n
 	auto compute_result = id_unrolled_32(ps_0_c__0_value);
 	// Produce: ps0
 	ps0.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_0_c__0_value = in_dark_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = scale_exposure_unrolled_64(in_0_c__0_value);
-	// Produce: dark
-	dark_dark_update_0_write_bundle_write(/* arg names */compute_result, dark, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

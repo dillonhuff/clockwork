@@ -11088,10 +11088,10 @@ void halide_conv_layer_3D_test() {
 
   cout << "createing hw schedule" << endl;
 
-  auto hs = hardware_schedule(dom, valid, proximity);
-  for (auto h : hs) {
-    cout << tab(1) << h.first << " -> " << str(h.second) << endl;
-  }
+  //auto hs = hardware_schedule(dom, valid, proximity);
+  //for (auto h : hs) {
+    //cout << tab(1) << h.first << " -> " << str(h.second) << endl;
+  //}
   //assert(false);
 
   CodegenOptions options;
@@ -12416,7 +12416,7 @@ void psef_multi_output_test() {
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   move_to_benchmarks_folder(out0 + "_" + out1);
-  assert(false);
+  //assert(false);
   //assert(false);
 
   //// Compute weights which measure the "quality" of
@@ -12559,6 +12559,7 @@ void application_tests() {
 
 
   halide_conv_layer_3D_test();
+
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
