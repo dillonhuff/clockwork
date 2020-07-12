@@ -5074,23 +5074,37 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const vector<int>& dims) {
+    fill_data_domain({{name, dims}});
+  }
 
-    Box sbox;
+  void fill_data_domain(const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
+    domain_boxes = {};
+
     int max_dims = data_dimension();
+    for (auto b : bounds) {
+      string name = b.first;
+      vector<int> dims = b.second;
+      Box sbox;
 
-    cout << "# dims = " << dims.size() << endl;
-    for (auto d : dims) {
-      cout << tab(1) << d << endl;
-      sbox.intervals.push_back({0, d - 1});
+      cout << "Filling: " << name << endl;
+      cout << "# dims = " << dims.size() << endl;
+      for (auto d : dims) {
+        cout << tab(1) << d << endl;
+        sbox.intervals.push_back({0, d - 1});
+      }
+      for (int i = dims.size(); i < max_dims; i++) {
+        sbox.intervals.push_back({0, 0});
+      }
+
+      cout << "padding to " << last_update(name).unroll_factor << endl;
+      sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
+
+      cout << "Filling data domain " << name << " from: " << sbox << endl;
+
+      string n = name;
+      domain_boxes[n] = sbox;
     }
-    for (int i = dims.size(); i < max_dims; i++) {
-      sbox.intervals.push_back({0, 0});
-    }
-
-    cout << "padding to " << last_update(name).unroll_factor << endl;
-    sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
-
-    cout << "Filling data domain " << name << " from: " << sbox << endl;
+    //assert(false);
 
     vector<string> buffers = sort_functions();
     assert(buffers.size() > 0);
@@ -5102,15 +5116,16 @@ struct App {
       cout << tab(1) << b << endl;
     }
 
-    assert(buffers.at(0) == name);
-    string n = name;
-    domain_boxes = {};
-    domain_boxes[n] = sbox;
-    //for (auto update : app_dag.at(n).updates) {
-      //fill_compute_domain(n, update);
-    //}
-
-    for (int i = 1; i < (int) buffers.size(); i++) {
+    bool found = false;
+    for (auto b : bounds) {
+      if (buffers.at(0) == b.first) {
+        found = true;
+      }
+    }
+    assert(found);
+    //assert(buffers.at(0) == name);
+    //for (int i = 1; i < (int) buffers.size(); i++) {
+    for (int i = bounds.size(); i < (int) buffers.size(); i++) {
       string next = buffers.at(i);
       cout << next << " has consumers " << endl;
       map<string, Box> needed_windows;
@@ -5156,6 +5171,7 @@ struct App {
       cout << f << " = " << d << endl;
     }
 
+    //assert(false);
     //fill_compute_domain();
   }
 
@@ -5594,7 +5610,12 @@ struct App {
     return buffers;
   }
 
-  void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
+  void populate_program(CodegenOptions& options,
+      prog& prg,
+      const string& name,
+      const std::vector<string>& outputs,
+      umap* m,
+      map<string, UBuffer>& buffers) {
 
     generate_compute_unit_file(prg.compute_unit_file);
 
@@ -5662,7 +5683,12 @@ struct App {
       //}
     //}
 
-    prg.outs = {name};
+    //prg.outs = {name};
+    //prg.outs = outputs;
+
+    for (auto out : outputs) {
+      prg.add_output(out);
+    }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg, buffers);
@@ -5797,15 +5823,27 @@ struct App {
     realize_naive(options, name, {d0, d1});
   }
 
+  //void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
+    //realize_naive(options, {{name, dims}});
+  //}
+
   void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
+  //void realize_naive(CodegenOptions& options,
+      //const std::vector<std::pair<string, std::vector<int> > >& bounds) {
+      //const std::string& name, const std::vector<int>& dims) {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
       set_unroll_factors(name, name, unroll_factor);
+      //set_unroll_factors(name, bounds, unroll_factor);
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
+
     fill_data_domain(name, dims);
     set_unroll_factors(name, name, 1);
+
+    //fill_data_domain(bounds);
+    //set_unroll_factors(name, bounds, 1);
     fill_compute_domain();
 
     umap* m = nullptr;
@@ -5815,7 +5853,6 @@ struct App {
       assert(options.scheduling_algorithm == SCHEDULE_ALGORITHM_ISL);
       m = schedule_isl();
     }
-    //schedule_isl();
 
     assert(m != nullptr);
     cout << "Schedule: " << str(m) << endl;
@@ -5825,7 +5862,7 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = prg.name + "_compute_units.h";
-    populate_program(options, prg, name, m, buffers);
+    populate_program(options, prg, name, {name}, m, buffers);
 
     return;
   }
@@ -6008,7 +6045,7 @@ struct App {
     return whole_dom;
   }
 
-  void schedule_and_codegen(CodegenOptions& options, const std::string& name) {
+  void schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
     time_t rawtime;
     struct tm * timeinfo;
     char buffer[80];
@@ -6053,7 +6090,8 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
 
-    populate_program(options, prg, name, m, buffers);
+    //populate_program(options, prg, name, m, buffers);
+    populate_program(options, prg, name, outputs, m, buffers);
 
     return;
   }
@@ -6069,16 +6107,24 @@ struct App {
   void set_unroll_factors(const std::string& reference_function,
       const std::string& to_unroll_function,
       const int unroll_factor) {
+    int dummy_value = 10;
+    set_unroll_factors({{reference_function, {dummy_value, dummy_value}}}, to_unroll_function, unroll_factor);
+  }
+
+  void set_unroll_factors(
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
+      const std::string& to_unroll_function,
+      const int unroll_factor) {
     cout << "Unrolling " << to_unroll_function << " by " << unroll_factor << endl;
 
-    //assert(reference_function == to_unroll_function);
 
     // Preprocess application graph to compute qfactors
     App cpy = *this;
-    // TODO: Update to fill with ndims dimensions
-    int dummy_value = 10;
+    //// TODO: Update to fill with ndims dimensions
     cpy.no_unrolling();
-    cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
+    //cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
+    cpy.fill_data_domain(bounds);
+    //reference_function, {dummy_value, dummy_value});
     cpy.fill_compute_domain();
 
     cout << "Padding validity deps..." << endl;
@@ -6100,7 +6146,6 @@ struct App {
 
     string reference_update =
       sched_var_name(last_update(to_unroll_function).name());
-      //sched_var_name(last_update(reference_function).name());
     cout << "reference: " << reference_update << endl;
 
     cout << "to unroll: " << to_unroll_function << endl;
@@ -6129,11 +6174,20 @@ struct App {
   void realize_no_unroll(CodegenOptions& options,
       const std::string& name,
       const std::vector<int>& dims) {
-    fill_data_domain(name, dims);
-    fill_compute_domain();
-    schedule_and_codegen(options, name);
+    realize_no_unroll(options, {{name, dims}});
   }
 
+  void realize_no_unroll(CodegenOptions& options,
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
+    fill_data_domain(bounds);
+    fill_compute_domain();
+    vector<string> names;
+    for (auto n : bounds) {
+      names.push_back(n.first);
+    }
+    string concat_name = sep_list(names, "", "", "_");
+    schedule_and_codegen(options, concat_name, names);
+  }
 
   void realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
@@ -6163,19 +6217,34 @@ struct App {
       const vector<int>& dims,
       const std::string& unroll_target,
       const int unroll_factor) {
-      double total_elapsed = 0.;
-      auto start = std::chrono::system_clock::now();
+    realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
+  }
 
-      //assert(out_name == unroll_target);
-      set_unroll_factors(out_name, unroll_target, unroll_factor);
-      realize_no_unroll(options, out_name, dims);
+  void realize(CodegenOptions& options,
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
+      const std::string& unroll_target,
+      const int unroll_factor) {
 
-      auto end = std::chrono::system_clock::now();
-      std::chrono::duration<double> elapsed = end - start;
-      total_elapsed += elapsed.count();
-      ofstream schedule_info("./scratch/" + out_name + ".txt");
-      schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
-      schedule_info.close();
+    double total_elapsed = 0.;
+    auto start = std::chrono::system_clock::now();
+
+    assert(bounds.size() > 0);
+
+    string out_name = bounds.at(0).first;
+    vector<int> dims = bounds.at(0).second;
+
+    set_unroll_factors(bounds, unroll_target, unroll_factor);
+    realize_no_unroll(options, bounds);
+
+    //set_unroll_factors(out_name, unroll_target, unroll_factor);
+    //realize_no_unroll(options, out_name, dims);
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    total_elapsed += elapsed.count();
+    ofstream schedule_info("./scratch/" + out_name + ".txt");
+    schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
+    schedule_info.close();
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -10621,7 +10690,8 @@ prog simplified_conv_layer() {
 
 void run_verilator_tb(const std::string& name) {
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
+  int to_verilog_res = cmd("${COREIR}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -10668,6 +10738,10 @@ void identity_stream_through_mem_coreir_test() {
   auto prox = cpy(valid);
   auto sched = hardware_schedule_umap(dom, valid, prox);
   cout << "sched before its = " << str(sched) << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
   sched = its(sched, dom);
   cout << "sched after its = " << str(sched) << endl;
 
@@ -10696,6 +10770,32 @@ void identity_stream_through_mem_coreir_test() {
 
 }
 
+void reduce_stream_schedule_test() {
+  auto ctx = isl_ctx_alloc();
+
+  //auto dom = isl_union_set_read_from_str(ctx, "{ reduce[root = 0, r, k] : 0 <= r < 6 and 0 <= k <= 2 }");
+  //auto valid = rdmap(ctx, "{ reduce[x] -> reduce[e] : e > x }");
+  //auto dom = isl_union_set_read_from_str(ctx, "{ reduce[root = 0, r, k] : 0 <= r < 6 and 0 <= k <= 2; init[root = 0, r] : 0 <= r <= 6 }");
+  //auto valid = rdmap(ctx, "{ reduce[root = 0, r, k] -> reduce[root' = 0, r' = r, k'] : 0 <= r <= 6 and 0 <= k <= 2 and k' > k and 0 <= k' <= 2; init[root = 0, r] -> reduce[root' = 0, r' = r, k] : 0 <= r <= 6 and 0 <= k <= 7 }");
+
+  auto dom = isl_union_set_read_from_str(ctx, "{ reduce[r, k] : 0 <= r < 6 and 0 <= k <= 2; init[r] : 0 <= r <= 6 }");
+  auto valid = rdmap(ctx, "{ reduce[r, k] -> reduce[r' = r, k'] : 0 <= r <= 6 and 0 <= k <= 2 and k' > k and 0 <= k' <= 2; init[r] -> reduce[r' = r, k] : 0 <= r <= 6 and 0 <= k <= 2 }");
+
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "valids..." << endl;
+  for (auto d : get_maps(valid)) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  isl_ctx_free(ctx);
+  assert(false);
+}
+
 void reduce_stream_coreir_test() {
   prog prg("reduce_stream");
   prg.buffer_port_widths["in"] = 16;
@@ -10705,7 +10805,7 @@ void reduce_stream_coreir_test() {
 
   prg.add_input("in");
   prg.add_output("out");
-  auto ld = prg.add_loop("x", 0, 10)->add_op("ld");
+  auto ld = prg.add_loop("x", 0, 10)->add_loop("dx", 0, 1)->add_op("ld");
   ld->add_load("in", "x");
   ld->add_store("in_buf", "x");
   
@@ -10739,6 +10839,18 @@ void reduce_stream_coreir_test() {
   auto valid = (prg.validity_deps());
   auto prox = cpy(valid);
   auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "domains..." << endl;
+  for (auto d : get_sets(dom)) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "valid..." << endl;
+  for (auto v : get_maps(valid)) {
+    cout << tab(1) << str(v) << endl;
+  }
+  cout << "schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
   cout << "sched before its = " << str(sched) << endl;
   sched = its(sched, dom);
   cout << "sched after its = " << str(sched) << endl;
@@ -10879,14 +10991,15 @@ void identity_stream_coreir_test() {
 
   generate_coreir(options, bufs, prg, sched);
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
-  assert(to_verilog_res == 0);
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
-  assert(verilator_build == 0);
+  //int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
+  //assert(verilator_build == 0);
 
-  int verilator_run = cmd("./obj_dir/Videntity_stream");
-  assert(verilator_run == 0);
+  //int verilator_run = cmd("./obj_dir/Videntity_stream");
+  //assert(verilator_run == 0);
 
   //assert(false);
 #endif
@@ -10949,14 +11062,15 @@ void weight_streaming_test() {
 
   generate_coreir(options, bufs, prg, sched);
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
-  assert(to_verilog_res == 0);
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
-  assert(verilator_build == 0);
+  //int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  //assert(verilator_build == 0);
 
-  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
-  assert(verilator_run == 0);
+  //int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  //assert(verilator_run == 0);
 
   //assert(false);
 #endif
@@ -11000,14 +11114,15 @@ void halide_conv_layer_3D_test() {
 
   generate_coreir(options, bufs, prg, sched);
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
-  assert(to_verilog_res == 0);
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
-  assert(verilator_build == 0);
+  //int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  //assert(verilator_build == 0);
 
-  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
-  assert(verilator_build == 0);
+  //int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  //assert(verilator_build == 0);
 
   //assert(false);
 #endif
@@ -12015,6 +12130,7 @@ void coreir_set_test() {
   deleteContext(context);
 #endif // COREIR
 }
+
 void coreir_controller_test() {
 #ifdef COREIR
   CoreIR::Context* context = CoreIR::newContext();
@@ -12057,6 +12173,7 @@ void unet_coreir_test() {
     cout << tab(1) << str(m) << endl;
   }
 
+  assert(false);
   CodegenOptions options;
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
@@ -12077,14 +12194,90 @@ void unet_coreir_test() {
 
 }
 
+void non_rate_matched_ds_test() {
+  prog prg("non_rate_matched_downsample");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  auto ld = prg.add_nest("ldy", 0, 8, "ldx", 0, 8)->add_op("ld");
+  ld->add_load("in_oc", "ldx, ldy");
+  ld->add_store("in", "ldx, ldy");
+
+  auto ds = prg.add_nest("dsy", 0, 4, "dsx", 0, 8)->add_op("ds");
+  ds->add_load("in", "dsx", "2*dsy");
+  ds->add_store("ds", "dsx, dsy");
+
+  auto ml = prg.add_nest("mly", 0, 4, "mlx", 0, 8)->add_op("ml");
+  ml->add_load("ds", "mlx, mly");
+  ml->add_store("out", "mlx, mly");
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  map<string, int> latencies{{"ld", 2}, {"ds", 2}, {"ml", 2}};
+  map<string, int> iis{{"ld", 1}, {"ds", 1}, {"ml", 2}};
+ 
+  auto dom = (prg.whole_iteration_domain());
+  auto valid = (prg.validity_deps());
+  auto prox = cpy(valid);
+
+  auto ct = ctx(dom);
+  vector<pair<string, isl_val*> > obj;
+  for (auto f : get_sets(dom)) {
+    string n = name(f);
+    int dim = num_dims(f);
+
+    if (n == "ml") {
+      for (int i = 0; i < dim; i++) {
+        auto dp = project_all_but(f, i);
+        auto tc =
+          sub(lexmaxval(dp), lexminval(dp));
+        //auto tc =
+          //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+        obj.push_back({ii_var(n, i), tc});
+      }
+      obj.push_back({hw_delay_var(n), one(ct)});
+    }
+  }
+  auto sched = hardware_schedule_umap(dom, valid, prox, latencies, iis, obj);
+  cout << "domains..." << endl;
+  for (auto d : get_sets(dom)) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "valid..." << endl;
+  for (auto v : get_maps(valid)) {
+    cout << tab(1) << str(v) << endl;
+  }
+  cout << "schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  auto later = lex_lt(sched, sched);
+  cout << "later = " << str(later) << endl;
+
+  auto violated = its(inv(later), valid);
+  cout << "violated = " << str(violated) << endl;
+  generate_trace(prg, its(sched, dom));
+  auto buffers = build_buffers(prg, its(sched, dom));
+  for (auto b : buffers) {
+    cout << b.second << endl;
+  }
+  //assert(false);
+  generate_app_code(buffers, prg, its(sched, dom));
+  //assert(false);
+}
+
 void coreir_tests() {
-  //unet_coreir_test();
-  coreir_set_test();
-  reduce_stream_coreir_test();
-  coreir_controller_test();
-  identity_stream_2d_coreir_test();
+  //reduce_stream_schedule_test();
+  //reduce_stream_coreir_test();
   identity_stream_coreir_test();
   identity_stream_through_mem_coreir_test();
+  //unet_coreir_test();
+  
+  identity_stream_2d_coreir_test();
+  coreir_set_test();
+  coreir_controller_test();
   weight_streaming_test();
 
   // Not yet working
@@ -12094,7 +12287,7 @@ void coreir_tests() {
 void resnet_test() {
   auto prg = resnet();
   prg.pretty_print();
-  assert(false);
+  //assert(false);
   generate_unoptimized_code(prg);
 
   CodegenOptions options;
@@ -12103,7 +12296,7 @@ void resnet_test() {
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_MULTILINEAR;
   generate_optimized_code(options, prg);
-  assert(false);
+  //assert(false);
 
   //assert(false);
   //cout << "after adding rb" << endl;
@@ -12112,22 +12305,183 @@ void resnet_test() {
   //assert(false);
 }
 
-void application_tests() {
-  resnet_test();
-  assert(false);
+void multi_output_app_test() {
+  App sobel;
+  sobel.set_default_pixel_width(16);
 
-  reuse_buffered_conv_test();
+  string out0 = "out0";
+  string out1 = "out1_ac";
 
-  register_file_test();
-  reaccess_no_hierarchy_rolled_test();
+  sobel.func2d("in0_oc");
+  sobel.func2d("in1_oc");
 
+  sobel.func2d("in0", "id", "in0_oc", {1, 1}, {{0, 0}});
+  sobel.func2d("in1", "id", "in1_oc", {1, 1}, {{0, 0}});
+
+  sobel.func2d(out0, "id", "in0", {1, 1}, {{0, 0}});
+  sobel.func2d(out1, "id", "in1", {1, 1}, {{0, 0}});
+
+  int rows = 1080;
+  int cols = 1920;
+  int unroll = 32;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  sobel.realize(options, {{out0, {rows, cols}}, {out1,{rows, cols}}}, out0, unroll);
+
+  string name = out0 + "_" + out1;
+  //auto opt = run_regression_tb(name + "_opt");
+
+  // Generate un-optimized code
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  //sobel.realize_naive(options, {{out0, {rows, cols}}, {out1,{rows, cols}}}, out0, unroll);
+  //auto naive = run_regression_tb("us_naive");
   //assert(false);
+
+  //assert(opt == naive);
+
+  move_to_benchmarks_folder(name);
+}
+
+
+string load_off_chip_two_channels(const std::string& prefix, App& lp) {
+  string in0_oc = prefix + "0_oc";
+  string in1_oc = prefix + "1_oc";
+
+  lp.func2d(in0_oc);
+  lp.func2d(in1_oc);
+
+  string in0 = prefix + "0";
+  string in1 = prefix + "1";
+
+  lp.func2d(in0, "id", pt(in0_oc));
+  lp.func2d(in1, "id", pt(in1_oc));
+
+  Window in0_win{in0, {qconst(1, 2), qconst(1)}, {{0, 0}}};;
+  Window in1_win{in1, {qconst(1, 2), qconst(1)}, {{0, 0}}};;
+  
+  string res = in0_oc + "_" + in1_oc;
+  lp.func2d(res, "interleave", in0_win, in1_win);
+  return res;
+}
+
+pair<string, string> store_off_chip_two_channels(const std::string& input, App& lp) {
+
+  Window win0{input, {qconst(2), qconst(1)}, {{0, 0}}};;
+  Window win1{input, {qconst(2), qconst(1)}, {{1, 0}}};;
+  
+  string res0 = input + "0";
+  string res1 = input + "1";
+
+  lp.func2d(res0, "id", win0);
+  lp.func2d(res1, "id", win1);
+
+  return {res0, res1};
+}
+
+void psef_multi_output_test() {
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  string input_image = load_off_chip_two_channels("in_off_chip", lp);
+  //lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  //lp.func2d("in", "id", pt("in_off_chip"));
+  lp.func2d("in", "id", pt(input_image));
+
+  // Two synthetic exposures
+  lp.func2d("bright", "id", pt("in"));
+  lp.func2d("dark", "scale_exposure", pt("in"));
+
+  lp.func2d("ps", "add", {pt("bright"), pt("dark")});
+
+  pair<string, string> output_image = store_off_chip_two_channels("ps", lp);
+
+  //string out0 = "psef_sum";
+  string out0 = output_image.first;
+  string out1 = output_image.second;
+
+  int rows = 1080;
+  int cols = 1920 / 2;
+  int unroll = 32;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
+
+  move_to_benchmarks_folder(out0 + "_" + out1);
+  assert(false);
+  //assert(false);
+
+  //// Compute weights which measure the "quality" of
+  //// pixels in each image
+  //lp.func2d("bright_weights", "exposure_weight", pt("bright"));
+  //lp.func2d("dark_weights", "exposure_weight", pt("dark"));
+
+  //// Normalize weights so that the weight matrices entries sum to one
+  //lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
+  //lp.func2d("bright_weights_normed", "f_divide", pt("bright_weights"), pt("weight_sums"));
+  //lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
+
+
+  //// Create pyramids of the weights
+  //auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
+  //auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
+
+  //// Create laplacian pyramids of the synthetic exposures
+  //auto dark_pyramid = laplace_pyramid(4, "dark", lp);
+  //auto bright_pyramid = laplace_pyramid(4, "bright", lp);
+
+  //// Merge weighted pyramids
+  //vector<string> merged_images;
+  //for (int i = 0; i < dark_pyramid.size(); i++) {
+    //string fused = "fused_level_" + str(i);
+    //lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
+        //pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
+    //merged_images.push_back(fused);
+  //}
+
+  //// Collapse the blended pyramid into a single image
+  //assert(merged_images.size() == 4);
+  //string image = merged_images.back();
+  //for (int i = merged_images.size() - 2; i >= 0; i--) {
+    //string merged_level = "final_merged_" + str(i);
+    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    //image = merged_level;
+  //}
+
+  //lp.func2d(out_name, "id", pt(image));
+
+
+}
+
+void application_tests() {
+  psef_multi_output_test();
+  coreir_tests();
+  multi_output_app_test();
+  iccad_tests();
+  non_rate_matched_ds_test();
+
   seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
 
-  unet_conv_3_3_test();
+
+  //resnet_test();
+  //reuse_buffered_conv_test();
+  register_file_test();
+  reaccess_no_hierarchy_rolled_test();
+
+  //assert(false);
+
+  //unet_conv_3_3_test();
   cyclic_banked_conv_test();
   //register_file_optimization_test();
   
@@ -12189,7 +12543,6 @@ void application_tests() {
 
   dummy_app_test();
 
-  iccad_tests();
   blur_and_downsample_test();
   halide_up_sample_test();
   denoise2d_test();
@@ -12204,10 +12557,8 @@ void application_tests() {
   reduce_2d_test();
   ram_addr_unit_test();
 
-  coreir_tests();
 
   halide_conv_layer_3D_test();
-  iccad_tests();
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();

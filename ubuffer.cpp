@@ -37,6 +37,7 @@ std::string write_addrgen_name(const std::string& n) {
 }
 
 map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf) {
+  cout << "Getting input port conditions for " << outpt << " on buffer: " << buf.name << endl;
   map<string, isl_set*> in_ports_to_conditions;
   umap* reads_to_sources = buf.get_lexmax_events(outpt);
   cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
@@ -50,9 +51,13 @@ map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffe
   }
 
   auto read_map = buf.access_map.at(outpt);
+  cout << "read map = " << str(read_map) << endl;
+
   auto read_space = get_space(read_map);
   for (auto inpt : possible_ports) {
     auto write_map = buf.access_map.at(inpt);
+    cout << inpt << " write map = " << str(write_map) << endl;
+
     auto data_written = range(write_map);
 
     auto common_write_ops =
@@ -818,6 +823,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     map<string, isl_set*> in_ports_to_conditions =
       input_ports_to_conditions(outpt, buf);
+    cout << "====== Conditions for ports..." << endl;
+    for (auto pt : in_ports_to_conditions) {
+      cout << tab(1) << pt.first << " -> " << str(pt.second) << endl;
+    }
+
     assert(in_ports_to_conditions.size() > 0);
     int num_select_vars = num_dims(pick(in_ports_to_conditions).second);
 
@@ -848,6 +858,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
 
+      cout << "possible ports = " << possible_ports.size() << endl;
       assert(possible_ports.size() == 1 || possible_ports.size() == 2);
 
       //for (auto inpt : possible_ports) {
@@ -1137,7 +1148,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     out << "struct " << buf.name << "_cache {" << endl;
-
+    out << tab(1) << "// # of banks: " << buf.get_banks().size() << endl;
     for (auto b : buf.get_banks()) {
       out << tab(1)
         << b.name << "_cache "
@@ -1148,9 +1159,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     out << "};" << endl << endl;
 
     out << endl << endl;
-
-    //for (auto inpt : buf.get_in_ports()) {
-    //}
 
   }
 
@@ -2121,6 +2129,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
   void UBuffer::generate_banks(CodegenOptions& options) {
+    cout << "generating banks for " << name << endl;
     if (options.debug_options.expect_all_linebuffers) {
       assert(dynamic_ports.size() == 0);
     }
@@ -2168,9 +2177,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     } else {
 
+
       // Use naive banking that reaches target throughput
       for (auto outpt : get_out_ports()) {
+        cout << "Generating banks for " << outpt << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
+        cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
         uset* producers_for_outpt = range(reads_to_sources);
         for (auto inpt : get_in_ports()) {
           auto write_ops =
@@ -2202,6 +2214,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         //b.tp = INNER_BANK_OFFSET_LINEAR;
       //}
     //}
+    cout << tab(1) << "after banking there are " << bank_list.size() << " banks" << endl;
   }
 
   void UBuffer::generate_banks_and_merge(CodegenOptions& options) {

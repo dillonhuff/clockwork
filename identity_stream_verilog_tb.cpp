@@ -25,7 +25,7 @@ int main() {
   }
   vector<int> actual;
 
-  for (int t = 0; t < 120; t++) {
+  for (int t = 0; t < 400; t++) {
     if (num_reads < input.size()) {
       dut.in_ld_read_0 = input.at(num_reads);
     }

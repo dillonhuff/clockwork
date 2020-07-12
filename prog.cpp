@@ -623,10 +623,12 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   for (auto output : outputs(buffers, prg)) {
     auto buf = output.first;
     auto out_bundle = output.second;
-    out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
-    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << ".data()))[i] << std::endl;" << endl;
-    out << tab(1) << "}" << endl;
+    out << "{" << endl;
+    out << tab(2) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
+    out << tab(2) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
+    out << tab(3) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << ".data()))[i] << std::endl;" << endl;
+    out << tab(2) << "}" << endl;
+    out << "}" << endl;
   }
   out << endl;
 
@@ -696,6 +698,7 @@ void generate_xilinx_multi_channel_accel_wrapper(
 
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
+  //assert(driver_func.size()  32);
 
 
   for (auto eb : edge_buffers(buffers, prg)) {

@@ -241,6 +241,10 @@ T inc(T& src, T& a0) {
   //return src + a0;
 //}
 
+hw_uint<16> interleave(hw_uint<16>& src, hw_uint<16>& a0) {
+  return src + a0;
+}
+
 hw_uint<16> fmadd_16(hw_uint<16>& src, hw_uint<16>& a0) {
   return src + a0;
 }

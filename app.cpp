@@ -74,13 +74,13 @@ sym_matrix<T> operator*(const sym_matrix<T>& a, const sym_matrix<T>& b) {
 
   for (int r = 0; r < a.num_rows(); r++) {
     for (int c = 0; c < b.num_cols(); c++) {
-      cout << "r = " << r << ", c = " << c << endl;
+      //cout << "r = " << r << ", c = " << c << endl;
 
       // TODO: Generalize to other types
       res(r, c) = qexpr(0);
 
       for (int k = 0; k < a.num_cols(); k++) {
-        cout << "a(" << r << ", " << k << ") = " << a(r, k) << endl;
+        //cout << "a(" << r << ", " << k << ") = " << a(r, k) << endl;
         res(r, c) = res(r, c) + a(r, k) * b(k, c);
       }
     }
@@ -296,7 +296,7 @@ vector<int> soda_offsets(const int app) {
 isl_basic_set* non_negative(isl_basic_set* fs, int var) {
   auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
   non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
-  cout << "non neg: " << str(non_neg) << endl;
+  //cout << "non neg: " << str(non_neg) << endl;
   fs = isl_basic_set_add_constraint(fs, non_neg);
 
   return fs;
@@ -315,10 +315,10 @@ isl_mat* equalities_to_inequalities(isl_basic_set* bset) {
       isl_dim_param);
 
   int new_num_ineqs = isl_mat_rows(orig_ineqs) + 2*isl_mat_rows(orig_eqs);
-  cout << "new num ineqs: " << new_num_ineqs << endl;
+  //cout << "new num ineqs: " << new_num_ineqs << endl;
 
-  cout << "original eqs" << endl;
-  cout << str(orig_eqs) << endl;
+  //cout << "original eqs" << endl;
+  //cout << str(orig_eqs) << endl;
 
   auto ineqs = isl_mat_alloc(ctx(bset), new_num_ineqs, isl_mat_cols(orig_ineqs));
   for (int r = 0; r < new_num_ineqs; r++) {
@@ -326,10 +326,10 @@ isl_mat* equalities_to_inequalities(isl_basic_set* bset) {
       if (r < isl_mat_rows(orig_ineqs)) {
         ineqs = isl_mat_set_element_val(ineqs, r, c, isl_mat_get_element_val(orig_ineqs, r, c));
       } else {
-        cout << "r = " << r << endl;
+        //cout << "r = " << r << endl;
         int orig_r = (r - isl_mat_rows(orig_ineqs)) / 2;
         isl_val* v = isl_mat_get_element_val(orig_eqs, orig_r, c);
-        cout << "orig r = " << orig_r << endl;
+        //cout << "orig r = " << orig_r << endl;
         if (r % 2 == 0) {
           v = mul(negone(ctx(bset)), v);
         }
@@ -352,8 +352,8 @@ isl_mat* equalities_to_inequalities(isl_basic_set* bset) {
   auto s = isl_space_set_alloc(ctx(bset),
       param_dims, set_dim);
 
-  cout << "new ineqs..." << endl;
-  cout << str(ineqs) << endl;
+  //cout << "new ineqs..." << endl;
+  //cout << str(ineqs) << endl;
   return ineqs;
   //assert(false);
 
@@ -370,11 +370,11 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   int cdim = cvals.size();
 
   //cout << "# of columns = " << isl_mat_cols(eqs) << endl;
-  cout << "cdim         = " << cdim << endl;
+  //cout << "cdim         = " << cdim << endl;
   assert(isl_mat_cols(ineqs) == cdim + 1);
 
-  cout << "Ineqs..." << endl;
-  cout << str(ineqs) << endl;
+  //cout << "Ineqs..." << endl;
+  //cout << str(ineqs) << endl;
 
   int num_farkas = isl_mat_rows(ineqs);
 
@@ -395,13 +395,13 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   int farkas_var_offset = cdim + 1;
   for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
     auto constraint = isl_constraint_alloc_equality(get_local_space(fs));
-    cout << "c " << c << " = " << cvals.at(c).second << endl;
+    //cout << "c " << c << " = " << cvals.at(c).second << endl;
     constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, c, 1);
     for (int i = 0; i < num_farkas; i++) {
       auto fc = mul(negone(ct), isl_mat_get_element_val(ineqs, i, c));
       constraint = isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, fc);
     }
-    cout << "adding farkas constraint: " << str(constraint) << endl;
+    //cout << "adding farkas constraint: " << str(constraint) << endl;
     fs = isl_basic_set_add_constraint(fs, constraint);
   }
 
@@ -411,17 +411,17 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   for (int i = 0; i < num_farkas; i++) {
     isl_val* b = isl_mat_get_element_val(ineqs, i, isl_mat_cols(ineqs) - 1);
     b = mul(negone(ct), b);
-    cout << "b " << i << " = " << str(b) << endl;
+    //cout << "b " << i << " = " << str(b) << endl;
     constraint = isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, b);
   }
 
   for (int i = 0; i < num_farkas; i++) {
-    cout << "adding non-negativity constraint on " << i << endl;
+    //cout << "adding non-negativity constraint on " << i << endl;
     fs = non_negative(fs, farkas_var_offset + i);
   }
   fs = non_negative(fs, farkas_var_offset + num_farkas);
 
-  cout << "adding constant constraint: " << str(constraint) << endl;
+  //cout << "adding constant constraint: " << str(constraint) << endl;
   fs = isl_basic_set_add_constraint(fs, constraint);
 
   return fs;
@@ -726,11 +726,11 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
 
     cout << "Setting delay var limits" << endl;
     for (auto d : deps) {
-      cout << "D = " << str(d) << endl;
+      //cout << "D = " << str(d) << endl;
       auto r = range_name(d);
-      cout << "r = " << r << endl;
+      //cout << "r = " << r << endl;
       auto c = domain_name(d);
-      cout << "c = " << c << endl;
+      //cout << "c = " << c << endl;
 
       cs.push_back(geq(delayvar(r), qexpr(0)));
       cs.push_back(geq(delayvar(c), qexpr(0)));
@@ -1039,7 +1039,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     cout << tab(1) << out << endl;
     pipeline_delay[delay_var_name(out)] = one(ct);
   }
-  assert(outputs.size() == 1);
+  //assert(outputs.size() == 1);
 
   // Add shift register constraints
   //for (auto s : schedule_params) {
@@ -1244,11 +1244,19 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
       if (i < dim - 1) {
         // TODO: Add product of domain at dimension i - 1
         auto dp = project_all_but(f, i + 1);
-        auto tc =
-          sub(lexmaxval(dp), lexminval(dp));
         //auto tc =
-          //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
-        modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
+          //mul(isl_val_int_from_si(ct, 3), sub(lexmaxval(dp), lexminval(dp)));
+       
+        if (i > 0) {
+          auto tc =
+            add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+          modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
+        } else {
+
+          auto tc =
+            sub(lexmaxval(dp), lexminval(dp));
+          modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
+        }
       }
 
       obj.push_back({ii_var(n, i), one(ct)});
@@ -1262,14 +1270,14 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
   //}
 
   // All root IIs must be equal
-  //for (auto s : get_sets(padded_domain)) {
-    //for (auto other : get_sets(padded_domain)) {
-      //string iis = ii_var(name(s), 0);
-      //string iio = ii_var(name(other), 0);
-      //cout << iis << " == " << iio << endl;
-      //modulo_schedule.add_eq(iis, iio);
-    //}
-  //}
+  for (auto s : get_sets(padded_domain)) {
+    for (auto other : get_sets(padded_domain)) {
+      string iis = ii_var(name(s), 0);
+      string iio = ii_var(name(other), 0);
+      cout << iis << " == " << iio << endl;
+      modulo_schedule.add_eq(iis, iio);
+    }
+  }
 
   return modulo_schedule;
 }
@@ -1278,13 +1286,17 @@ map<string, isl_aff*>
 hardware_schedule(
     uset* domain,
     umap* validity,
-    umap* proximity) {
-
+    umap* proximity,
+    map<string, int>& latencies,
+    map<string, int>& iis,
+    vector<pair<string, isl_val*> >& obj) {
 
   cout << "Creating hw schedule..." << endl;
   auto padded_domain = cpy(domain);
   auto padded_validity = cpy(validity);
   auto padded_proximity = cpy(proximity);
+
+  cout << "validity : " << str(padded_validity) << endl;
 
   auto ct = ctx(padded_domain);
 
@@ -1295,118 +1307,109 @@ hardware_schedule(
     cout << tab(1) << s << endl;
   }
 
-
-  // Dummy latencies
-  map<string, int> latencies;
-  for (auto f : get_sets(padded_domain)) {
-    latencies[name(f)] = 1;
+  ilp_builder modulo_schedule =
+    modulo_constraints(domain, validity, latencies);
+  for (auto s : get_sets(padded_domain)) {
+    modulo_schedule.add_geq(ii_var(name(s), num_dims(s) - 1), map_find(name(s), iis));
   }
 
-  ilp_builder modulo_schedule(ct);
+  {
+    for (auto m : get_maps(padded_validity)) {
+      cout << tab(1) << str(m) << endl;
+      auto maps = get_basic_maps(m);
+      cout << tab(1) << maps.size() << " basic maps" << endl;
+      for (auto bm : maps) {
+        string producer_delay = hw_delay_var(domain_name(bm));
+        string consumer_delay = hw_delay_var(range_name(bm));
+        string ddiff = domain_name(bm) + "_to_" + range_name(bm) + "_ddiff";
 
-  // TODO: Replace with more sophisticated
-  // dependence analysis that allows fusion
-  for (auto m : get_maps(validity)) {
-    cout << str(m) << endl;
-    int diff = int_upper_bound(card(to_uset(::domain(m)))) *
-      latencies.at(domain_name(m));
-    cout << "diff = " << diff << endl;
+        cout << str(bm) << endl;
+        vector<pair<string, string> > diffs;
+        // This order of pushes to diffs is expected for
+        // matrix formatting
+        for (int d = 0; d < num_in_dims(bm); d++) {
+          diffs.push_back({"d_" + str(d), neg_ii_var(domain_name(bm), d)});
+        }
 
-    map<string, isl_val*> vals;
-    vals.insert({hw_delay_var(range_name(m)), one(ct)});
-    vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
-    modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -4*diff));
-    //hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
-    //modulo_schedule.add_geq(hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
-  }
-  //assert(false);
+        for (int d = 0; d < num_out_dims(bm); d++) {
+          diffs.push_back({"d_" + str(d), ii_var(range_name(bm), d)});
+        }
 
-  vector<pair<string, isl_val*> > obj;
-  for (auto f : get_sets(padded_domain)) {
-    string n = name(f);
-    int dim = num_dims(f);
+        isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
+        cout << "constraint set: " << str(basic_set_for_map) << endl;
+        auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
+        //cout << "fs = " << str(fs) << endl;
 
-    isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
-    isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
+        //cout << "dims in farkas: " << num_dims(fs) << endl;
+        int base_dims = num_in_dims(bm) + num_out_dims(bm) + 1;
+        int num_farkas_mults = num_dims(fs) - base_dims;
+        cout << "dims in res   : " << base_dims << endl;
+        cout << "farkas mults  : " << num_farkas_mults << endl;
+        fs = isl_basic_set_project_out(fs, isl_dim_set, base_dims, num_farkas_mults);
+        cout << "projecting out: " << str(fs) << endl;
+        fs = lift_divs(fs);
+        //cout << "after lifting: " << str(fs) << endl;
 
-    modulo_schedule.add_geq(hw_delay_var(n), (int) 0);
+        append_basic_set(modulo_schedule, fs);
 
-    for (int i = 0; i < dim; i++) {
+        //cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
+        //assert(false);
 
-      //cout << "adding var " << ii_var(n, i) << endl;
+        for (int d = 0; d < num_in_dims(bm); d++) {
+          string neg_consumer = neg_ii_var(domain_name(bm), d);
+          modulo_schedule.add_eq({{neg_consumer, one(ct)}, {ii_var(domain_name(bm), d), one(ct)}},
+              zero(ct));
+        }
 
-      modulo_schedule.add_gt(ii_var(n, i), (int) 0);
+        isl_val* lat = isl_val_int_from_si(ct, map_find(domain_name(bm), latencies));
+        cout << "latency = " << str(lat) << endl;
+        vector<pair<string, isl_val*> > tms{{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}};
+            //{{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}},
+        modulo_schedule.add_eq(simplify(tms),
+            mul(one(ct), isl_val_int_from_si(ct, map_find(domain_name(bm), latencies))));
+            //zero(ct));
 
-      if (i < dim - 1) {
-        // TODO: Add product of domain at dimension i - 1
-        auto dp = project_all_but(f, i + 1);
-        auto tc =
-          sub(lexmaxval(dp), lexminval(dp));
-        //auto tc =
-          //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
-        //modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
-        modulo_schedule.add_gt(ii_var(n, i), mul(isl_val_int_from_si(ct, 3), tc), ii_var(n, i + 1));
+        //if (producer_delay == consumer_delay) {
+          //cout << "Builder set..." << endl;
+          //cout << tab(1) << str(modulo_schedule.s) << endl;
+          //modulo_schedule.add_eq({{ddiff, one(ct)}}, isl_val_int_from_si(ct, 4));
+          //cout << tab(1) << "pt = " << str(sample(modulo_schedule.s)) << endl;
+          //assert(false);
+        //}
+
+        //cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
+
       }
 
-      obj.push_back({ii_var(n, i), one(ct)});
-    }
-
-  }
-
-  for (auto dep : get_maps(validity)) {
-    auto max_deps = isl_map_lexmax_pw_multi_aff(inv(dep));
-    cout << "lm = " << str(max_deps) << endl << endl;
-  }
-
-  // TODO: Replace with more precise self-constraint
-  // for reductions
-  for (auto dep : get_maps(validity)) {
-    if (domain_name(dep) == "reduce") {
-      string iis = ii_var(domain_name(dep), num_in_dims(dep) - 1);
-      modulo_schedule.add_geq(iis, (int) 2);
     }
   }
-  // All root IIs must be equal
-  for (auto s : get_sets(padded_domain)) {
-    for (auto other : get_sets(padded_domain)) {
-      string iis = ii_var(name(s), 0);
-      string iio = ii_var(name(other), 0);
-      cout << iis << " == " << iio << endl;
-      modulo_schedule.add_eq(iis, iio);
-    }
-  }
+
+  //// TODO: Replace with more sophisticated
+  //// dependence analysis that allows fusion
+  //for (auto m : get_maps(validity)) {
+    //cout << str(m) << endl;
+    //int diff = int_upper_bound(card(to_uset(::domain(m)))) *
+      //latencies.at(domain_name(m));
+    //cout << "diff = " << diff << endl;
+
+    //map<string, isl_val*> vals;
+    //vals.insert({hw_delay_var(range_name(m)), one(ct)});
+    //vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
+    //modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -4*diff));
+  //}
+
+  //// TODO: Replace with more precise self-constraint
+  //// for reductions
+  //for (auto dep : get_maps(validity)) {
+    //if (domain_name(dep) == "reduce") {
+      //string iis = ii_var(domain_name(dep), num_in_dims(dep) - 1);
+      //modulo_schedule.add_geq(iis, (int) map_find(domain_name(dep), latencies));
+    //}
+  //}
+
+  //modulo_schedule.add_eq({{ii_var("reduce", 2), one(ct)}}, isl_val_int_from_si(ct, 2));
 
   modulo_schedule.minimize(simplify(obj));
-
-  //auto clks = clockwork_schedule(padded_domain, padded_validity, padded_proximity);
-  //cout << "clockwork sched" << endl;
-
-  //map<string, vector<isl_val*> > iis;
-  //map<string, isl_val*> delays;
-  //for (auto c : clks) {
-    //vector<isl_val*> final_iss;
-
-    //cout << tab(1) << c.first << " ";
-    //int dim = 0;
-    //for (auto s : c.second) {
-      //cout << str(s) << ", ";
-      ////final_iss.push_back(mul(get_coeff(s, 0), modulo_schedule.value(ii_var(c.first, dim))));
-      //final_iss.push_back(modulo_schedule.value(ii_var(c.first, dim)));
-      //dim++;
-    //}
-    //cout << endl;
-    //iis[c.first] = final_iss;
-    //isl_val* opos = nullptr;
-    //for (int i = 0; i < sorted_sets.size(); i++) {
-      //if (sorted_sets.at(i) == c.first) {
-        //opos = isl_val_int_from_si(ct, i);
-        //break;
-      //}
-    //}
-    //assert(opos != nullptr);
-    ////delays[c.first] = add(d, opos);
-  //}
-  ////assert(false);
 
   map<string, isl_aff*> hw_schedules;
   for (auto f : get_sets(padded_domain)) {
@@ -1414,7 +1417,6 @@ hardware_schedule(
     string n = name(f);
 
     isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
-    //isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
 
     for (int i = 0; i < dim; i++) {
       cout << ii_var(n, i) << " = " << str(modulo_schedule.value(ii_var(n, i))) << endl;
@@ -1428,7 +1430,56 @@ hardware_schedule(
   return hw_schedules;
 }
 
+map<string, isl_aff*>
+hardware_schedule(
+    uset* domain,
+    umap* validity,
+    umap* proximity) {
+  // Dummy latencies
+  map<string, int> latencies;
+  map<string, int> iis;
+  for (auto f : get_sets(domain)) {
+    latencies[name(f)] = 2;
+    iis[name(f)] = 1;
+  }
+
+  auto ct = ctx(domain);
+  vector<pair<string, isl_val*> > obj;
+  for (auto f : get_sets(domain)) {
+    string n = name(f);
+    int dim = num_dims(f);
+
+    for (int i = 0; i < dim; i++) {
+      obj.push_back({ii_var(n, i), one(ct)});
+    }
+
+  }
+
+  return hardware_schedule(domain, validity, proximity, latencies, iis, obj);
+}
+
 umap* 
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
+    map<string, int>& latencies, map<string, int>& iis, vector<pair<string, isl_val*> >& obj) {
+  auto hs = hardware_schedule(domain, validity, proximity, latencies, iis, obj);
+
+  auto ct = ctx(domain);
+  umap* schedmap = rdmap(ct, "{}");
+  for (auto s : get_sets(domain)) {
+    string n = name(s);
+    isl_aff* sched = map_find(n, hs);
+
+    isl_map* sm = isl_map_from_aff(sched);
+
+    cout << "schedule for n: " << str(sm) << endl;
+    schedmap = unn(schedmap, to_umap(sm));
+    cout << "schedmap = " << str(schedmap) << endl;
+  }
+
+  return schedmap;
+}
+
+umap*
 hardware_schedule_umap(uset* domain, umap* validity, umap* proximity) {
   auto hs = hardware_schedule(domain, validity, proximity);
 
@@ -2027,11 +2078,11 @@ void print_hw_schedule(
 }
 
 void append_basic_set(ilp_builder& b, isl_basic_set* s) {
-  cout << "appending: " << str(s) << endl;
+  //cout << "appending: " << str(s) << endl;
   auto ineqs =
     equalities_to_inequalities(s);
-  cout << "Ineqs..." << endl;
-  cout << str(ineqs) << endl;
+  //cout << "Ineqs..." << endl;
+  //cout << str(ineqs) << endl;
   assert(num_div_dims(s) == 0);
   assert(num_param_dims(s) == 0);
 

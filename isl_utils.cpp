@@ -2805,13 +2805,13 @@ isl_basic_set* lift_divs(isl_basic_set* bm) {
   auto ineqs = isl_basic_set_inequalities_matrix(bm, isl_dim_set, isl_dim_div, isl_dim_cst, isl_dim_param);
   auto eqs = isl_basic_set_equalities_matrix(bm, isl_dim_set, isl_dim_div, isl_dim_cst, isl_dim_param);
 
-  cout << "bm = " << str(bm) << endl;
+  //cout << "bm = " << str(bm) << endl;
 
-  cout << "ineqs..." << endl;
-  cout << str(ineqs) << endl;
+  //cout << "ineqs..." << endl;
+  //cout << str(ineqs) << endl;
 
-  cout << "eqs..." << endl;
-  cout << str(eqs) << endl;
+  //cout << "eqs..." << endl;
+  //cout << str(eqs) << endl;
 
   int div_dims = num_div_dims(bm);
   //assert(div_dims == 0);
