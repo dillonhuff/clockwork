@@ -1423,3 +1423,4 @@ std::string optimized_code_string(prog& prg);
 void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
+void compile_compute(const std::string& name);

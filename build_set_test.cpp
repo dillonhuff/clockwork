@@ -4532,7 +4532,6 @@ struct App {
 
   int default_pixel_width;
   num_type default_num_type;
-  map<string, vector<int> > index_variables_needed_by_compute;
 
   App() {
     ctx = isl_ctx_alloc();
@@ -4545,7 +4544,7 @@ struct App {
   }
 
   void compute_unit_needs_index_variable(const int index, const std::string& func) {
-    index_variables_needed_by_compute[func].push_back(index);
+    app_dag[func].updates[0].index_variables_needed.push_back("d" + str(index));
   }
 
   void update(const string& func,
@@ -5668,6 +5667,9 @@ struct App {
           }
 
           op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
+          for (auto index : u.index_variables_needed_by_compute()) {
+            op->compute_unit_needs_index_variable(index);
+          }
           op->unroll_factor = u.unroll_factor;
 
           domain_map[u.name()] =
@@ -12414,14 +12416,15 @@ void psef_multi_output_test() {
 
   int rows = 1080;
   int cols = 1920 / 2;
-  int unroll = 32;
+  int unroll = 2;
 
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
-
+  compile_compute(out0 + "_" + out1 + "_opt.cpp");
+  assert(false);
 
   move_to_benchmarks_folder(out0 + "_" + out1);
   assert(false);
