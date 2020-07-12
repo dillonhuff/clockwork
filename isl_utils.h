@@ -545,6 +545,7 @@ isl_val* sub(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);
 isl_val* neg(isl_val* a);
 
+isl_aff* sub(isl_aff* a, isl_aff* b);
 int to_int(isl_val* a);
 
 isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v);

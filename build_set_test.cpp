@@ -11222,11 +11222,27 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
     store_addrs.push_back(v);
   }
   store_addrs.push_back(loop->name);
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  //cout << "Min: " << str(min) << endl;
+  //cout << "Max: " << str(max) << endl;
 
   for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+    int ext = to_int(const_coeff(diff)) + 1;
     //auto ps = project_all_but(read_data, d);
     int lb = 0;//to_int(lexminval(ps));
-    int ub = 0;//to_int(lexmaxval(ps)) + 1;
+    int ub = ext;//to_int(lexmaxval(ps)) + 1;
     string lname = prg.unique_name(buf + "_ld");
     next_lp = next_lp->add_loop(lname, lb, ub);
     load_addrs.push_back(lname);
