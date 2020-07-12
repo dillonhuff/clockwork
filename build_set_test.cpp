@@ -11211,6 +11211,33 @@ void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& p
   ld->add_store(buf, comma_list(load_addrs));
 }
 
+void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  for (auto v : surrounding_vars(loop, prg)) {
+    store_addrs.push_back(v);
+  }
+  store_addrs.push_back(loop->name);
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    //auto ps = project_all_but(read_data, d);
+    int lb = 0;//to_int(lexminval(ps));
+    int ub = 0;//to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
 void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
   assert(loop->is_loop);
 
@@ -11298,7 +11325,7 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   auto earlier = lex_gt(sched, sched);
   cout << "earlier = " << str(earlier) << endl;
  
-  auto read = prg.consumer_map();
+  auto read = prg.consumer_map(buffer);
   cout << "consumed = " << str(read) << endl;
   auto read_earlier = coalesce(dot(earlier, read));
   cout << "consumed earlier = " << str(read_earlier) << endl;
@@ -11306,86 +11333,107 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
   auto consumed_first_time = diff(read, consumed_earlier_and_now);
   cout << "first time read  = " << str(consumed_first_time) << endl;
-  for (auto m : get_maps(consumed_first_time)) {
-    if (range_name(m) == buffer) {
-      cout << "m = " << str(m) << endl;
-      auto pr = isl_map_project_out(cpy(m), isl_dim_in, 2, 2);
-      cout << "pr               = " << str(pr) << endl;
-    }
+  auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
+  cout << "not first        = " << str(not_first) << endl;
+  consumed_first_time = its(consumed_first_time, not_first);
+  consumed_first_time = coalesce(consumed_first_time);
+  cout << "first time read  = " << str(consumed_first_time) << endl;
 
-  }
-  assert(false);
-  for (auto m : get_maps(read_earlier)) {
-    if (range_name(m) == buffer) {
-      cout << tab(1) << str(m) << endl;
-      auto mp = isl_map_project_out(cpy(m), isl_dim_in, 3, 1);
-      cout << tab(2) << "projected: " << str(mp) << endl;
-    }
-  }
-  assert(false);
-  auto cm = prg.consumer_maps();
-  //auto buf_map = prg.consumer_map(buffer);
-  //cout << "buf map: " << str(buf_map) << endl;
+  auto maps = get_maps(consumed_first_time);
+  assert(maps.size() == 1);
+  auto pr = isl_map_project_out(cpy(maps.at(0)), isl_dim_in, 2, 2);
+  auto lmin = lexmin(pr);
+  auto lmax = lexmax(pr);
+  cout << "min              = " << str(lmin) << endl;
+  cout << "max              = " << str(lmax) << endl;
+  read_in_after(loop, pr, "in", prg);
 
-  cout << "Consumer maps: " << endl;
-  isl_set* read_data = nullptr;
-  isl_set* demands = nullptr;
-  for (auto op : users) {
-    auto consumed = map_find(op, cm);
+  //for (auto m : get_maps(consumed_first_time)) {
+    //if (range_name(m) == buffer) {
+      //cout << "m = " << str(m) << endl;
+      //auto pr = isl_map_project_out(cpy(m), isl_dim_in, 2, 2);
+      //cout << "pr               = " << str(pr) << endl;
+      //auto lmin = lexmin(pr);
+      //auto lmax = lexmax(pr);
+      //cout << "min              = " << str(lmin) << endl;
+      //cout << "max              = " << str(lmax) << endl;
+    //}
 
-    for (auto m : get_maps(consumed)) {
-      if (range_name(m) == buffer) {
-        if (read_data == nullptr) {
-          read_data = range(m);
-        } else {
-          read_data = unn(read_data, range(m));
-        }
+  //}
 
-        auto pm = data_demands(3, m);
-        cout << tab(1) << "demands: " << str(pm) << endl;
-        if (demands == nullptr) {
-          demands = pm;
-        } else {
-          demands = unn(demands, pm);
-        }
-      }
-    }
-  }
 
-  //for (auto m : get_maps(buf_map)) {
-    //auto pm = data_demands(3, m);
-    //cout << tab(1) << "demands: " << str(pm) << endl;
-    //if (demands == nullptr) {
-      //demands = pm;
-    //} else {
-      //demands = unn(demands, pm);
+  //assert(false);
+  //for (auto m : get_maps(read_earlier)) {
+    //if (range_name(m) == buffer) {
+      //cout << tab(1) << str(m) << endl;
+      //auto mp = isl_map_project_out(cpy(m), isl_dim_in, 3, 1);
+      //cout << tab(2) << "projected: " << str(mp) << endl;
     //}
   //}
-  demands = simplify(demands);
-  cout << "Total demands: " << str(demands) << endl;
-  cout << "lmin : " << str(lexmin(demands)) << endl;
-  cout << "lmax : " << str(lexmax(demands)) << endl;
-  assert(false);
+  //assert(false);
+  //auto cm = prg.consumer_maps();
+  ////auto buf_map = prg.consumer_map(buffer);
+  ////cout << "buf map: " << str(buf_map) << endl;
 
-  string rb_name = buffer + "_rb_at_" + level;
-  read_data = simplify(read_data);
-  cout << "All data from " << buffer << ": " << str(read_data) << endl;
+  //cout << "Consumer maps: " << endl;
+  //isl_set* read_data = nullptr;
+  //isl_set* demands = nullptr;
+  //for (auto op : users) {
+    //auto consumed = map_find(op, cm);
 
-  read_in(loop, read_data, rb_name, prg);
+    //for (auto m : get_maps(consumed)) {
+      //if (range_name(m) == buffer) {
+        //if (read_data == nullptr) {
+          //read_data = range(m);
+        //} else {
+          //read_data = unn(read_data, range(m));
+        //}
 
-  write_out(loop, read_data, rb_name, prg);
-  vector<string> prefixes = surrounding_vars(loop, prg);
-  prefixes.push_back(loop->name);
-  for (auto rd : users) {
-    rd->replace_reads_from(buffer, rb_name);
-    rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
-  }
+        //auto pm = data_demands(3, m);
+        //cout << tab(1) << "demands: " << str(pm) << endl;
+        //if (demands == nullptr) {
+          //demands = pm;
+        //} else {
+          //demands = unn(demands, pm);
+        //}
+      //}
+    //}
+  //}
+
+  ////for (auto m : get_maps(buf_map)) {
+    ////auto pm = data_demands(3, m);
+    ////cout << tab(1) << "demands: " << str(pm) << endl;
+    ////if (demands == nullptr) {
+      ////demands = pm;
+    ////} else {
+      ////demands = unn(demands, pm);
+    ////}
+  ////}
+  //demands = simplify(demands);
+  //cout << "Total demands: " << str(demands) << endl;
+  //cout << "lmin : " << str(lexmin(demands)) << endl;
+  //cout << "lmax : " << str(lexmax(demands)) << endl;
+  //assert(false);
+
+  //string rb_name = buffer + "_rb_at_" + level;
+  //read_data = simplify(read_data);
+  //cout << "All data from " << buffer << ": " << str(read_data) << endl;
+
+  //read_in(loop, read_data, rb_name, prg);
+
+  //write_out(loop, read_data, rb_name, prg);
+  //vector<string> prefixes = surrounding_vars(loop, prg);
+  //prefixes.push_back(loop->name);
+  //for (auto rd : users) {
+    //rd->replace_reads_from(buffer, rb_name);
+    //rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
+  //}
   
-  prefixes.push_back(loop->name);
-  for (auto rd : users) {
-    rd->replace_writes_to(buffer, rb_name);
-    rd->add_prefix_to_writes(comma_list(prefixes), rb_name);
-  }
+  //prefixes.push_back(loop->name);
+  //for (auto rd : users) {
+    //rd->replace_writes_to(buffer, rb_name);
+    //rd->add_prefix_to_writes(comma_list(prefixes), rb_name);
+  //}
 
 } 
 
@@ -12458,6 +12506,7 @@ void psef_multi_output_test() {
 }
 
 void application_tests() {
+  reuse_buffered_conv_test();
   psef_multi_output_test();
   coreir_tests();
   multi_output_app_test();
@@ -12471,7 +12520,6 @@ void application_tests() {
 
 
   //resnet_test();
-  //reuse_buffered_conv_test();
   register_file_test();
   reaccess_no_hierarchy_rolled_test();
 
