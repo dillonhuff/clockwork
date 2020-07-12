@@ -11346,7 +11346,8 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   auto lmax = lexmax(pr);
   cout << "min              = " << str(lmin) << endl;
   cout << "max              = " << str(lmax) << endl;
-  read_in_after(loop, pr, "in", prg);
+  string rb_name = buffer + "_rb_at_" + level;
+  read_in_after(loop, pr, rb_name, prg);
 
   //for (auto m : get_maps(consumed_first_time)) {
     //if (range_name(m) == buffer) {
@@ -11422,18 +11423,18 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   //read_in(loop, read_data, rb_name, prg);
 
   //write_out(loop, read_data, rb_name, prg);
-  //vector<string> prefixes = surrounding_vars(loop, prg);
-  //prefixes.push_back(loop->name);
-  //for (auto rd : users) {
-    //rd->replace_reads_from(buffer, rb_name);
-    //rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
-  //}
+  vector<string> prefixes = surrounding_vars(loop, prg);
+  prefixes.push_back(loop->name);
+  for (auto rd : users) {
+    rd->replace_reads_from(buffer, rb_name);
+    rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
+  }
   
-  //prefixes.push_back(loop->name);
-  //for (auto rd : users) {
-    //rd->replace_writes_to(buffer, rb_name);
-    //rd->add_prefix_to_writes(comma_list(prefixes), rb_name);
-  //}
+  prefixes.push_back(loop->name);
+  for (auto rd : users) {
+    rd->replace_writes_to(buffer, rb_name);
+    rd->add_prefix_to_writes(comma_list(prefixes), rb_name);
+  }
 
 } 
 
