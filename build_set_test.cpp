@@ -4532,6 +4532,7 @@ struct App {
 
   int default_pixel_width;
   num_type default_num_type;
+  map<string, vector<int> > index_variables_needed_by_compute;
 
   App() {
     ctx = isl_ctx_alloc();
@@ -4541,6 +4542,10 @@ struct App {
 
   ~App() {
     isl_ctx_free(ctx);
+  }
+
+  void compute_unit_needs_index_variable(const int index, const std::string& func) {
+    index_variables_needed_by_compute[func].push_back(index);
   }
 
   void update(const string& func,
@@ -12366,6 +12371,7 @@ string load_off_chip_two_channels(const std::string& prefix, App& lp) {
   
   string res = in0_oc + "_" + in1_oc;
   lp.func2d(res, "interleave", in0_win, in1_win);
+  lp.compute_unit_needs_index_variable(0, res);
   return res;
 }
 
@@ -12415,8 +12421,10 @@ void psef_multi_output_test() {
   options.simplify_address_expressions = true;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
+
+
   move_to_benchmarks_folder(out0 + "_" + out1);
-  //assert(false);
+  assert(false);
   //assert(false);
 
   //// Compute weights which measure the "quality" of
