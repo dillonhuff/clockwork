@@ -12405,8 +12405,8 @@ void resnet_test() {
   //assert(false);
   add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   prg.pretty_print();
-  //assert(false);
   generate_unoptimized_code(prg);
+  assert(false);
 
   CodegenOptions options;
   options.all_rams = true;

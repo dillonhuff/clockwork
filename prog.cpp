@@ -2336,6 +2336,7 @@ void generate_app_code(CodegenOptions& options,
   test_out.close();
 
   // Collateral generation
+  generate_vivado_tcl(prg.name);
   generate_sw_bmp_test_harness(buffers, prg);
   generate_app_code_header(buffers, prg);
   generate_soda_tb(options, buffers, prg);
@@ -2378,7 +2379,6 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
   cout << "Compute unit file: " << prg.compute_unit_file << endl;
   //assert(false);
   generate_app_code(options, buffers, prg, sched);
-  generate_vivado_tcl(prg.name);
 }
 
 void generate_optimized_code(prog& prg) {
