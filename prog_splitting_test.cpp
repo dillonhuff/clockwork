@@ -93,6 +93,39 @@ map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info
 	return costs;
 }
 
+ map<string, int> estimate_kernel_memory_area(prog& prg, TargetTechlibInfo& target_info){
+ map<string, int> estimated_areas;
+auto locations_written = prg.producer_maps();
+	
+	for (string kernel : get_kernels(prg)) {
+
+		op* loop = prg.find_loop(kernel);
+		auto ops_in_kernel = loop -> descendant_ops();
+		cout << "ops_in_kernel " << kernel << ":" << endl;
+		int kernel_cost = 0;
+		uset* all_locs_written = nullptr;
+		for (auto op: ops_in_kernel){
+			cout << tab(1) << op -> name << endl;
+			auto locs_written = map_find(op, locations_written);
+			cout << tab(2) << str(locs_written) << endl;
+			auto locs = range(locs_written);
+			cout << tab(2) << str(locs) << endl;
+			if(all_locs_written == nullptr){
+			 all_locs_written = to_uset(locs);
+			}else{
+				all_locs_written = unn(to_uset(locs), all_locs_written);
+			}
+		}
+
+		int num_locs_written = int_upper_bound(card(all_locs_written));
+		cout << tab(2) << "Number of locations written: " << num_locs_written << endl;
+		estimated_areas[kernel] = kernel_cost;
+		cout << "Kernel '" << kernel << "' cost: " << estimated_areas[kernel] << endl;
+	}
+
+return estimated_areas;
+}
+
 //-----------------------------------------GROUP_KERNELS_FOR_COMPILATION-------------------------------------------
 
 std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group){
@@ -190,12 +223,12 @@ void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) 
 void toy_task(){
 
 	prog prg = resnet();
+//	prog prg = brighten_blur();
 	cout << "Original program..." << endl;
 	prg.pretty_print();
-	
 	// Compile the application into
 	// one large module.
-	generate_optimized_code(prg);
+	generate_unoptimized_code(prg);
 
 	// Estimate the area required for each
 	// kernel in the application
@@ -223,6 +256,8 @@ void toy_task(){
 	target_info.sram_cost_per_bit = 1;
 	target_info.reg_cost_per_bit = 1;
 
+	estimate_kernel_memory_area(prg, target_info);
+//	assert(false);	
 	cout << endl << "Estimating area costs..." << endl;
 	map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
 	int total_cost = 0;
