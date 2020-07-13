@@ -11211,6 +11211,56 @@ void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& p
   ld->add_store(buf, comma_list(load_addrs));
 }
 
+void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(iloop->is_loop);
+  string container = surrounding_vars(iloop, prg).back();
+  op* loop = prg.find_loop(container);
+  
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  for (auto v : surrounding_vars(loop, prg)) {
+    store_addrs.push_back(v);
+  }
+  store_addrs.push_back(loop->name);
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+
+    int ext = to_int(const_coeff(diff)) + 1;
+    isl_aff* addr =
+      set_const_coeff(min, zero(prg.ctx));
+    
+    int lb = 0;
+    int ub = ext;
+    string lname = prg.unique_name(buf + "_ld");
+    if (d == 0) {
+      next_lp = next_lp->add_loop_before(iloop, lname, lb, ub);
+    } else {
+      next_lp = next_lp->add_loop(lname, lb, ub);
+    }
+    load_addrs.push_back(lname + " + " + codegen_c(addr));
+    store_addrs.push_back(lname + " + " + codegen_c(addr));
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
 void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, prog& prg) {
   assert(loop->is_loop);
 
@@ -11351,12 +11401,25 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   auto consumed_earlier_and_now = its(read_earlier, read);
   cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
   auto consumed_first_time = diff(read, consumed_earlier_and_now);
+  auto csf = cpy(consumed_first_time);
   cout << "first time read  = " << str(consumed_first_time) << endl;
   auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
   cout << "not first        = " << str(not_first) << endl;
   consumed_first_time = its(consumed_first_time, not_first);
   consumed_first_time = coalesce(consumed_first_time);
   cout << "first time read  = " << str(consumed_first_time) << endl;
+
+  string rb_name = buffer + "_rb_at_" + level;
+  {
+    auto maps = get_maps(read);
+    assert(maps.size() == 1);
+    auto initial_data = isl_map_fix_si(cpy(maps.at(0)), isl_dim_in, 1, 0);
+    cout << "initially read: " << str(initial_data) << endl;
+    auto pr = isl_map_project_out(cpy(initial_data), isl_dim_in, 2, 2);
+    read_in_before(loop, pr, rb_name, prg);
+    cout << "pr            : " << str(pr) << endl;
+    //assert(false);
+  }
 
   auto maps = get_maps(consumed_first_time);
   assert(maps.size() == 1);
@@ -11365,9 +11428,10 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   auto lmax = lexmax(pr);
   cout << "min              = " << str(lmin) << endl;
   cout << "max              = " << str(lmax) << endl;
-  string rb_name = buffer + "_rb_at_" + level;
   read_in_after(loop, pr, rb_name, prg);
 
+  cout << "pr = " << str(pr) << endl;
+  //assert(false);
   //for (auto m : get_maps(consumed_first_time)) {
     //if (range_name(m) == buffer) {
       //cout << "m = " << str(m) << endl;
