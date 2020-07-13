@@ -70,7 +70,7 @@ ifneq ($(TARGET), hw)
 	CLFLAGS += -g
 endif
 
-
+LDCLFLAGS += --config krnl_host_global.ini
 
 EXECUTABLE = host
 CMD_ARGS = $(BUILD_DIR)/$(APP_NAME).xclbin
