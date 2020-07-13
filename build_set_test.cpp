@@ -11427,13 +11427,11 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
 
   umap* first_reads = first_iteration_reads(reads, level, prg);
   cout << "first reads = " << str(first_reads) << endl;
-  //assert(false);
 
   cout << "Re-use " << buffer << " at" << endl;
   loop->pretty_print();
 
   auto sched = prg.unoptimized_schedule();
-  //cout << "sched = " << str(sched) << endl;
   auto earlier = lex_gt(sched, sched);
   cout << "earlier = " << str(earlier) << endl;
  
@@ -11446,42 +11444,39 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   auto consumed_first_time = diff(read, consumed_earlier_and_now);
   auto csf = cpy(consumed_first_time);
   cout << "first time read  = " << str(consumed_first_time) << endl;
-  auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
-  cout << "not first        = " << str(not_first) << endl;
-  consumed_first_time = its(consumed_first_time, not_first);
+  //uset* not_first = 
+  //auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
+  //cout << "not first        = " << str(not_first) << endl;
+  //consumed_first_time = its(consumed_first_time, not_first);
   consumed_first_time = coalesce(consumed_first_time);
   cout << "first time read  = " << str(consumed_first_time) << endl;
 
   string rb_name = buffer + "_rb_at_" + level;
-  {
-    isl_map* initial_data = nullptr;
-    for (auto m : get_maps(first_reads)) {
-      cout << "m = " << str(m) << endl;
-      assert(outer_vars < num_in_dims(m));
-      int to_remove = num_in_dims(m) - outer_vars;
-      cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
-      auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars, num_in_dims(m) - outer_vars);
-      if (initial_data == nullptr) {
-        initial_data = prj;
-      } else {
-        initial_data = unn(initial_data, prj);
-      }
+  isl_map* initial_data = nullptr;
+  for (auto m : get_maps(first_reads)) {
+    cout << "m = " << str(m) << endl;
+    assert(outer_vars < num_in_dims(m));
+    int to_remove = num_in_dims(m) - outer_vars;
+    cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
+    auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
+    if (initial_data == nullptr) {
+      initial_data = prj;
+    } else {
+      initial_data = unn(initial_data, prj);
     }
-    //auto initial_data = to_map(first_reads);
-    //auto maps = get_maps(read);
-    //assert(maps.size() == 1);
-    //auto initial_data = isl_map_fix_si(cpy(maps.at(0)), isl_dim_in, outer_vars, loop->start);
-    cout << "initially read: " << str(initial_data) << endl;
-    read_in_before(loop, initial_data, rb_name, prg);
-    //auto pr = isl_map_project_out(cpy(initial_data), isl_dim_in, outer_vars + 1, 2);
-    //read_in_before(loop, pr, rb_name, prg);
-    //cout << "pr            : " << str(pr) << endl;
   }
+  cout << "initially read: " << str(initial_data) << endl;
+  read_in_before(loop, initial_data, rb_name, prg);
 
   auto maps = get_maps(consumed_first_time);
   assert(maps.size() == 1);
   auto mpa = maps.at(0);
-  auto pr = isl_map_project_out(cpy(maps.at(0)), isl_dim_in, 2, 2);
+  cout << "mpa = " << str(mpa) << endl;
+  cout << "ini = " << str(initial_data) << endl;
+  //mpa = diff(mpa, initial_data);
+  //assert(false);
+  auto pr = isl_map_project_out(cpy(mpa), isl_dim_in, 2, 2);
+  pr = diff(pr, initial_data);
   auto lmin = lexmin(pr);
   auto lmax = lexmax(pr);
   cout << "min              = " << str(lmin) << endl;
@@ -11530,6 +11525,7 @@ void reuse_buffered_conv_test() {
   add_reuse_buffer("y", "in", prg);
 
   prg.pretty_print();
+  assert(false);
 
   CodegenOptions options;
   options.all_rams = true;
