@@ -8080,14 +8080,12 @@ App ef_cartoon(const std::string& out_name) {
   return lp;
 }
 
-App exposure_fusion_app(const std::string& out_name) {
-  App lp;
-  lp.set_default_pixel_width(16);
-  // The off chip input we are reading from
-  lp.func2d("in_off_chip");
+void exposure_fusion_app(
+    const std::string& in_name,
+    const std::string& out_name,
+    App& lp) {
 
-  // The temporary buffer we store the input image in
-  lp.func2d("in", "id", pt("in_off_chip"));
+  lp.func2d("in", "id", pt(in_name));
 
   // Two synthetic exposures
   lp.func2d("bright", "id", pt("in"));
@@ -8131,7 +8129,17 @@ App exposure_fusion_app(const std::string& out_name) {
   }
 
   lp.func2d(out_name, "id", pt(image));
+}
 
+App exposure_fusion_app(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  exposure_fusion_app("in_off_chip", out_name, lp);
+
+  // The temporary buffer we store the input image in
   return lp;
 }
 
@@ -12486,27 +12494,16 @@ void psef_multi_output_test() {
   lp.set_default_pixel_width(16);
   // The off chip input we are reading from
   string input_image = load_off_chip_two_channels("in_off_chip", lp);
-  //lp.func2d("in_off_chip");
-
-  // The temporary buffer we store the input image in
-  //lp.func2d("in", "id", pt("in_off_chip"));
-  lp.func2d("in", "id", pt(input_image));
-
-  // Two synthetic exposures
-  lp.func2d("bright", "id", pt("in"));
-  lp.func2d("dark", "scale_exposure", pt("in"));
-
-  lp.func2d("ps", "add", {pt("bright"), pt("dark")});
+  exposure_fusion_app(input_image, "ps", lp);
 
   pair<string, string> output_image = store_off_chip_two_channels("ps", lp);
 
-  //string out0 = "psef_sum";
   string out0 = output_image.first;
   string out1 = output_image.second;
 
   int rows = 1080;
   int cols = 1920 / 2;
-  int unroll = 2;
+  int unroll = 8;
 
   CodegenOptions options;
   options.internal = true;
@@ -12516,64 +12513,21 @@ void psef_multi_output_test() {
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
 
   move_to_benchmarks_folder(out0 + "_" + out1);
-  //assert(false);
-  //assert(false);
-
-  //// Compute weights which measure the "quality" of
-  //// pixels in each image
-  //lp.func2d("bright_weights", "exposure_weight", pt("bright"));
-  //lp.func2d("dark_weights", "exposure_weight", pt("dark"));
-
-  //// Normalize weights so that the weight matrices entries sum to one
-  //lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
-  //lp.func2d("bright_weights_normed", "f_divide", pt("bright_weights"), pt("weight_sums"));
-  //lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
-
-
-  //// Create pyramids of the weights
-  //auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
-  //auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
-
-  //// Create laplacian pyramids of the synthetic exposures
-  //auto dark_pyramid = laplace_pyramid(4, "dark", lp);
-  //auto bright_pyramid = laplace_pyramid(4, "bright", lp);
-
-  //// Merge weighted pyramids
-  //vector<string> merged_images;
-  //for (int i = 0; i < dark_pyramid.size(); i++) {
-    //string fused = "fused_level_" + str(i);
-    //lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
-        //pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
-    //merged_images.push_back(fused);
-  //}
-
-  //// Collapse the blended pyramid into a single image
-  //assert(merged_images.size() == 4);
-  //string image = merged_images.back();
-  //for (int i = merged_images.size() - 2; i >= 0; i--) {
-    //string merged_level = "final_merged_" + str(i);
-    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
-    //image = merged_level;
-  //}
-
-  //lp.func2d(out_name, "id", pt(image));
-
-
+  assert(false);
 }
 
 void application_tests() {
-  reuse_buffered_conv_test();
   psef_multi_output_test();
+  reuse_buffered_conv_test();
+  iccad_tests();
   coreir_tests();
   multi_output_app_test();
-  iccad_tests();
   non_rate_matched_ds_test();
 
   seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
-
 
   //resnet_test();
   register_file_test();
