@@ -11468,14 +11468,29 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   cout << "initially read: " << str(initial_data) << endl;
   read_in_before(loop, initial_data, rb_name, prg);
 
-  auto maps = get_maps(consumed_first_time);
-  assert(maps.size() == 1);
-  auto mpa = maps.at(0);
-  cout << "mpa = " << str(mpa) << endl;
-  cout << "ini = " << str(initial_data) << endl;
-  //mpa = diff(mpa, initial_data);
-  //assert(false);
-  auto pr = isl_map_project_out(cpy(mpa), isl_dim_in, 2, 2);
+  cout << "consumed first time = " << str(consumed_first_time) << endl;
+  isl_map* pr = nullptr;
+  for (auto m : get_maps(consumed_first_time)) {
+    cout << "m = " << str(m) << endl;
+    assert(outer_vars < num_in_dims(m));
+    int to_remove = num_in_dims(m) - outer_vars;
+    cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
+    auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
+    if (pr == nullptr) {
+      pr = prj;
+    } else {
+      pr = unn(pr, prj);
+    }
+  }
+
+  //auto maps = get_maps(consumed_first_time);
+  //assert(maps.size() == 1);
+  //auto mpa = maps.at(0);
+  //cout << "mpa = " << str(mpa) << endl;
+  //cout << "ini = " << str(initial_data) << endl;
+  ////mpa = diff(mpa, initial_data);
+  ////assert(false);
+  //auto pr = isl_map_project_out(cpy(mpa), isl_dim_in, 2, 2);
   pr = diff(pr, initial_data);
   auto lmin = lexmin(pr);
   auto lmax = lexmax(pr);
@@ -11525,7 +11540,7 @@ void reuse_buffered_conv_test() {
   add_reuse_buffer("y", "in", prg);
 
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.all_rams = true;
@@ -12390,7 +12405,7 @@ void resnet_test() {
   //assert(false);
   add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   prg.pretty_print();
-  assert(false);
+  //assert(false);
   generate_unoptimized_code(prg);
 
   CodegenOptions options;
