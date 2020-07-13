@@ -61,6 +61,7 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  void copy_fields_from(op* other);
   void copy_memory_operations_from(op* other);
 
   bool dynamic_writes(const std::string& buf) {
@@ -1438,6 +1439,8 @@ vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& pr
 
 void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg);
 
+std::vector<string> topologically_sort_kernels(prog& prg);
+
 std::set<string> buffers_written(op* p);
 
 bool writes(const std::string& target_buf, op* p);
@@ -1446,6 +1449,11 @@ op* find_writer(const std::string& target_buf, prog& prg);
 
 std::set<string> get_producers(string next_kernel, prog& prg);
 
+void deep_copy_child(op* dest, op* source, prog& original);
+
+std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original);
+
+std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original);
 void generate_verilog(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1459,3 +1467,5 @@ void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
 void compile_compute(const std::string& name);
+
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);

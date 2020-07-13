@@ -2883,6 +2883,32 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   }
 }
 
+std::vector<string> topologically_sort_kernels(prog& prg){
+	std::vector<string> topologically_sorted_kernels;
+	std::set<string> not_yet_sorted = get_kernels(prg);
+
+	while(not_yet_sorted.size() > 0){
+		for(auto next_kernel : not_yet_sorted){
+			std::set<string> producers = get_producers(next_kernel, prg);
+			producers.erase(next_kernel);
+			bool all_producers_sorted = true;
+			for(auto producer : producers){
+				if(!elem(producer, topologically_sorted_kernels)){
+					all_producers_sorted = false;
+					break;
+				}
+			}
+			if(all_producers_sorted){
+				topologically_sorted_kernels.push_back(next_kernel);
+				not_yet_sorted.erase(next_kernel);
+				break;
+			}
+		}
+	}
+
+	return topologically_sorted_kernels;
+}
+
 std::set<string> buffers_written(op* p) {
   assert(!p->is_loop);
 
@@ -2944,38 +2970,94 @@ void prog::sanity_check() {
 
 
 std::set<string> get_producers(string next_kernel, prog& prg){
+ 
+//   cout << "next kernel: " << next_kernel<< endl;
+   std::set<string> producers;
+   op* loop = prg.find_loop(next_kernel);
+ 
+   std::set<string> buffers_read;
+   for(auto op : prg.find_loop(next_kernel)->descendant_ops()){
+         for(auto buff : op -> buffers_read()){
+             buffers_read.insert(buff);
+//             cout << tab(1) << buff << endl;
+         }
+   }
+ 
+//   cout << "getting other_kernels"<< endl;
+   for(auto other_kernel : get_kernels(prg)){
+           if(other_kernel != next_kernel){
+                   std::set<string> buffers_written;
+                   for(auto op : prg.find_loop(other_kernel)->descendant_ops()){
+                           for(auto buff : op -> buffers_written()){
+                                   buffers_written.insert(buff);
+                           }
+                   }
+ 
+ 
+                   if(intersection(buffers_written, buffers_read).size() > 0){
+                           producers.insert(other_kernel);
+//                           cout << "producer name: " << other_kernel << endl;
+                   }
+           }
+ 
+   }
+   return producers;
+  }
 
-  cout << "next kernel: " << next_kernel<< endl;
-  std::set<string> producers;
-  op* loop = prg.find_loop(next_kernel);
 
-  std::set<string> buffers_read;
-  for(auto op : prg.find_loop(next_kernel)->descendant_ops()){
-	for(auto buff : op -> buffers_read()){
-	    buffers_read.insert(buff);
-	    cout << tab(1) << buff << endl;
+  void ir_node::copy_fields_from(op* other){
+	name = other->name;
+	start = other -> start;
+	end_exclusive = other -> end_exclusive;
+	produce_locs = other -> produce_locs;
+	unroll_factor = other -> unroll_factor;
+	dynamic_store_addresses = other -> dynamic_store_addresses;
+	consume_locs_pair = other -> consume_locs_pair;
+	dynamic_load_addresses = other -> dynamic_load_addresses;
+	index_variables_needed_by_compute = other -> index_variables_needed_by_compute;
+	func = other -> func;
+  }
+
+void deep_copy_child(op* dest, op* source, prog& original){
+	op* kernel_copy;
+	if(source -> is_loop){
+		kernel_copy = dest -> add_loop(source->name, original.start(source->name), original.end_exclusive(source->name));
+		for(auto child : original.find_loop(source->name)->children){
+			deep_copy_child(kernel_copy, child, original);
+		}
+	}else{
+		kernel_copy = dest -> add_op(source -> name);
+		kernel_copy->copy_fields_from(source);
 	}
-  }
 
-  cout << "getting other_kernels"<< endl;
-  for(auto other_kernel : get_kernels(prg)){
-	  if(other_kernel != next_kernel){
-		  std::set<string> buffers_written;
-		  for(auto op : prg.find_loop(other_kernel)->descendant_ops()){
-			  for(auto buff : op -> buffers_written()){
-				  buffers_written.insert(buff);
-			  }
-		  }
+}
 
+std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original){
+	std::set<string> all_consumed_buffers;
+	for(auto kernel_in_group : group){
+		auto kernel_ops = original.find_loop(kernel_in_group)->descendant_ops();
+		for(auto op : kernel_ops){
+			std::set<string> all_buffers_read = op->buffers_read();
+			for(auto buffer : all_buffers_read){
+				all_consumed_buffers.insert(buffer); 
+			}
+		}
+	}
+	return all_consumed_buffers;
+}
 
-		  if(intersection(buffers_written, buffers_read).size() > 0){
-			  producers.insert(other_kernel);
-			  cout << "producer name: " << other_kernel << endl;
-		  }
-	  }
-
-  }
-  return producers;
+std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original){
+	std::set<string> all_produced_buffers;
+	for(auto kernel_in_group : group){
+		auto kernel_ops = original.find_loop(kernel_in_group)->descendant_ops();
+		for(auto op : kernel_ops){
+			std::set<string> all_buffers_written = op->buffers_written();
+			for(auto buffer : all_buffers_written){
+				all_produced_buffers.insert(buffer);
+			}
+		}
+	}
+	return all_produced_buffers;
 }
 
 void generate_verilog_instance(CodegenOptions& options,
@@ -3289,3 +3371,44 @@ void ir_node::copy_memory_operations_from(op* other) {
   concat(dynamic_load_addresses, other->dynamic_load_addresses);
 }
 
+
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
+	prog extracted;
+	string prg_name = "Extracted_";
+	for(auto g : group){
+	prg_name += g + "_";
+	}
+	extracted.name = prg_name;
+
+	for(auto kernel : topologically_sort_kernels(original)){
+		if(elem(kernel, group)){
+			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
+			for(auto child : original.find_loop(kernel)->children){
+				deep_copy_child(kernel_copy, child, original);
+			}
+		}
+	}
+	cout << "Programs copied" << endl;
+
+	std::set<string> all_consumed_buffers = get_consumed_buffers(group, original);
+	std::set<string> all_produced_buffers = get_produced_buffers(group, original);
+	for(auto consumed : all_consumed_buffers){
+		if(!elem(consumed, all_produced_buffers)){
+			extracted.add_input(consumed);
+			cout << "Input added: " << consumed << endl;
+			 extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
+			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
+		}
+	}
+	
+	for(auto produced : all_produced_buffers){
+		if(!elem(produced, all_consumed_buffers)){
+			extracted.add_output(produced);
+			cout << "Output added: " << produced << endl;
+			extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
+			cout << "Output width: " << extracted.buffer_port_widths[produced] << endl;
+		}
+	}
+	
+	return extracted;
+}
