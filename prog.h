@@ -1431,3 +1431,5 @@ std::string optimized_code_string(prog& prg);
 void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
+
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);

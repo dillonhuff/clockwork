@@ -66,7 +66,6 @@ struct TargetTechlibInfo {
 
 map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info) {
 
-	// TODO: Come up with a better area estimate
 	map<string, int> costs;
 
 	for (string kernel : get_kernels(prg)) {
@@ -93,37 +92,40 @@ map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info
 	return costs;
 }
 
+//-----------------------------------------ESTIMATE_KERNEL_MEMORY_AREA-------------------------------------------
+
  map<string, int> estimate_kernel_memory_area(prog& prg, TargetTechlibInfo& target_info){
- map<string, int> estimated_areas;
-auto locations_written = prg.producer_maps();
-	
-	for (string kernel : get_kernels(prg)) {
+ 
+	 map<string, int> estimated_areas;
+	 auto locations_written = prg.producer_maps();
 
-		op* loop = prg.find_loop(kernel);
-		auto ops_in_kernel = loop -> descendant_ops();
-		cout << "ops_in_kernel " << kernel << ":" << endl;
-		int kernel_cost = 0;
-		uset* all_locs_written = nullptr;
-		for (auto op: ops_in_kernel){
-			cout << tab(1) << op -> name << endl;
-			auto locs_written = map_find(op, locations_written);
-			cout << tab(2) << str(locs_written) << endl;
-			auto locs = range(locs_written);
-			cout << tab(2) << str(locs) << endl;
-			if(all_locs_written == nullptr){
-			 all_locs_written = to_uset(locs);
-			}else{
-				all_locs_written = unn(to_uset(locs), all_locs_written);
-			}
-		}
+	 for (string kernel : get_kernels(prg)) {
 
-		int num_locs_written = int_upper_bound(card(all_locs_written));
-		cout << tab(2) << "Number of locations written: " << num_locs_written << endl;
-		estimated_areas[kernel] = kernel_cost;
-		cout << "Kernel '" << kernel << "' cost: " << estimated_areas[kernel] << endl;
-	}
+		 op* loop = prg.find_loop(kernel);
+		 auto ops_in_kernel = loop -> descendant_ops();
+		 cout << "ops_in_kernel " << kernel << ":" << endl;
+		 int kernel_cost = 0;
+		 uset* all_locs_written = nullptr;
+		 for (auto op: ops_in_kernel){
+			 cout << tab(1) << op -> name << endl;
+			 auto locs_written = map_find(op, locations_written);
+			 cout << tab(2) << str(locs_written) << endl;
+			 auto locs = range(locs_written);
+			 cout << tab(2) << str(locs) << endl;
+			 if(all_locs_written == nullptr){
+				 all_locs_written = to_uset(locs);
+			 }else{
+				 all_locs_written = unn(to_uset(locs), all_locs_written);
+			 }
+		 }
 
-return estimated_areas;
+		 int num_locs_written = int_upper_bound(card(all_locs_written));
+		 cout << tab(2) << "Number of locations written: " << num_locs_written << endl;
+		 estimated_areas[kernel] = kernel_cost;
+		 cout << "Kernel '" << kernel << "' cost: " << estimated_areas[kernel] << endl;
+	 }
+
+	 return estimated_areas;
 }
 
 //-----------------------------------------GROUP_KERNELS_FOR_COMPILATION-------------------------------------------
