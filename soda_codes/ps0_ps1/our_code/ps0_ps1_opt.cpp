@@ -1343,6 +1343,42 @@ inline void ps_ps_update_0_write_bundle_write(hw_uint<64>& ps_update_0_write, ps
 
 
 // Operation logic
+inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_0_c__0_value = in_dark_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = scale_exposure_unrolled_4(in_0_c__0_value);
+	// Produce: dark
+	dark_dark_update_0_write_bundle_write(/* arg names */compute_result, dark, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_update_0(in_cache& in, bright_cache& bright, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_0_c__0_value = in_bright_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_4(in_0_c__0_value);
+	// Produce: bright
+	bright_bright_update_0_write_bundle_write(/* arg names */compute_result, bright, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_off_chip0_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
   // Dynamic address computation
 
@@ -1413,60 +1449,6 @@ inline void in_update_0(in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_i
 
 }
 
-inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_0_c__0_value = in_dark_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = scale_exposure_unrolled_4(in_0_c__0_value);
-	// Produce: dark
-	dark_dark_update_0_write_bundle_write(/* arg names */compute_result, dark, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void ps1_update_0(ps_cache& ps, HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */ps1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: ps
-	auto ps_0_c__0_value = ps_ps1_update_0_read_bundle_read(ps/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_2(ps_0_c__0_value);
-	// Produce: ps1
-	ps1.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_update_0(in_cache& in, bright_cache& bright, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in
-	auto in_0_c__0_value = in_bright_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_4(in_0_c__0_value);
-	// Produce: bright
-	bright_bright_update_0_write_bundle_write(/* arg names */compute_result, bright, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void ps_update_0(bright_cache& bright, dark_cache& dark, ps_cache& ps, int d0, int d1) {
   // Dynamic address computation
 
@@ -1485,6 +1467,24 @@ inline void ps_update_0(bright_cache& bright, dark_cache& dark, ps_cache& ps, in
 	auto compute_result = add_unrolled_4(bright_0_c__0_value, dark_0_c__0_value);
 	// Produce: ps
 	ps_ps_update_0_write_bundle_write(/* arg names */compute_result, ps, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void ps1_update_0(ps_cache& ps, HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */ps1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: ps
+	auto ps_0_c__0_value = ps_ps1_update_0_read_bundle_read(ps/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_2(ps_0_c__0_value);
+	// Produce: ps1
+	ps1.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

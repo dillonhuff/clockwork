@@ -11191,10 +11191,10 @@ void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& p
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  for (auto v : surrounding_vars(loop, prg)) {
-    store_addrs.push_back(v);
-  }
-  store_addrs.push_back(loop->name);
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
 
   for (int d = 0; d < num_dims(read_data); d++) {
     auto ps = project_all_but(read_data, d);
@@ -11220,10 +11220,11 @@ void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, p
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  for (auto v : surrounding_vars(loop, prg)) {
-    store_addrs.push_back(v);
-  }
-  store_addrs.push_back(loop->name);
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
+  //store_addrs.push_back(str(iloop->start));
   auto minpw =
     isl_map_lexmin_pw_multi_aff(cpy(read_data));
   auto maxpw =
@@ -11268,10 +11269,10 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  for (auto v : surrounding_vars(loop, prg)) {
-    store_addrs.push_back(v);
-  }
-  store_addrs.push_back(loop->name);
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
   auto minpw =
     isl_map_lexmin_pw_multi_aff(cpy(read_data));
   auto maxpw =
@@ -11506,17 +11507,17 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   //read_in(loop, read_data, rb_name, prg);
 
   //write_out(loop, read_data, rb_name, prg);
-  vector<string> prefixes = surrounding_vars(loop, prg);
-  prefixes.push_back(loop->name);
+  //vector<string> prefixes = surrounding_vars(loop, prg);
+  //prefixes.push_back(loop->name);
   for (auto rd : users) {
     rd->replace_reads_from(buffer, rb_name);
-    rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
+    //rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
   }
   
-  prefixes.push_back(loop->name);
+  //prefixes.push_back(loop->name);
   for (auto rd : users) {
     rd->replace_writes_to(buffer, rb_name);
-    rd->add_prefix_to_writes(comma_list(prefixes), rb_name);
+    //rd->add_prefix_to_writes(comma_list(prefixes), rb_name);
   }
 
 } 
@@ -11526,21 +11527,33 @@ void reuse_buffered_conv_test() {
   prg.pretty_print();
   prg.sanity_check();
 
+  {
+    CodegenOptions options;
+    options.all_rams = true;
+    all_register_files(prg, options);
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+    generate_unoptimized_code(options, prg);
+
+  }
+
+  auto naive = run_regression_tb(prg);
+
   add_reuse_buffer("y", "in", prg);
 
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
-  umap* sched = prg.optimized_codegen();
-  umap* consumed = prg.consumer_map();
-  auto read_id = isl_union_set_identity(cpy(domain(consumed)));
-  auto same = diff(dot(consumed, inv(consumed)), read_id);
-  cout << endl << endl;
-  cout << "same = " << str(same) << endl;
-  auto earlier = lex_gt(sched, sched);
-  auto se = its(same, earlier);
-  cout << endl << endl;
-  cout << "se   = " << str(se) << endl;
+  //umap* sched = prg.optimized_codegen();
+  //umap* consumed = prg.consumer_map();
+  //auto read_id = isl_union_set_identity(cpy(domain(consumed)));
+  //auto same = diff(dot(consumed, inv(consumed)), read_id);
+  //cout << endl << endl;
+  //cout << "same = " << str(same) << endl;
+  //auto earlier = lex_gt(sched, sched);
+  //auto se = its(same, earlier);
+  //cout << endl << endl;
+  //cout << "se   = " << str(se) << endl;
 
   //umap* m = rdmap(prg.ctx, "{ B[k, 0] -> b[k]; B[k, 1] -> b[k + 1]}");
     //auto read_id = isl_union_set_identity(cpy(domain(m)));
@@ -11553,16 +11566,18 @@ void reuse_buffered_conv_test() {
       //auto pw = isl_pw_multi_aff_from_map(m);
       //cout << tab(1) << str(pw) << endl;
     //}
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.all_rams = true;
-  options.banking_strategies["in"] =
-  {"cyclic", {3, 1}};
+  all_register_files(prg, options);
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
 
-  generate_optimized_code(options, prg);
+  generate_unoptimized_code(options, prg);
+  auto opt = run_regression_tb(prg);
+
+  compare("reuse_buffered_conv", opt, naive);
 }
 
 void cyclic_banked_conv_test() {
