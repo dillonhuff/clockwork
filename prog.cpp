@@ -2417,7 +2417,8 @@ void generate_unoptimized_code(prog& prg) {
   options.all_rams = true;
   all_register_files(prg, options);
   options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_MULTILINEAR;
+    //INNER_BANK_OFFSET_MULTILINEAR;
+    INNER_BANK_OFFSET_LINEAR;
   //assert(false);
   generate_unoptimized_code(options, prg);
 }
@@ -2603,6 +2604,10 @@ void generate_regression_testbench(prog& prg) {
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();
+}
+
+void compile_compute(const std::string& name) {
+  int res = cmd("g++ -c -fstack-protector-all -std=c++11 " + name);
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {

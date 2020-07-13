@@ -4543,6 +4543,10 @@ struct App {
     isl_ctx_free(ctx);
   }
 
+  void compute_unit_needs_index_variable(const int index, const std::string& func) {
+    app_dag[func].updates[0].index_variables_needed.push_back("d" + str(index));
+  }
+
   void update(const string& func,
       const string& accum,
       const string& compute,
@@ -5663,6 +5667,9 @@ struct App {
           }
 
           op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
+          for (auto index : u.index_variables_needed_by_compute()) {
+            op->compute_unit_needs_index_variable(index);
+          }
           op->unroll_factor = u.unroll_factor;
 
           domain_map[u.name()] =
@@ -5950,12 +5957,14 @@ struct App {
           int input_bits = arg_width*lanes*offsets_per_lane;
 
           args_and_widths.push_back({input_bits, p.name});
-          //args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name).pts().size(), p.name});
         }
 
         vector<string> arg_decls;
         for (auto a : args_and_widths) {
           arg_decls.push_back("hw_uint<" + to_string(a.first) + ">& " + a.second);
+        }
+        for (auto index : u.index_variables_needed_by_compute()) {
+          arg_decls.push_back("int " + index);
         }
 
         string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
@@ -5972,7 +5981,6 @@ struct App {
             string p = arg.second;
             Window arg_input_window =
               data_window_needed_by_one_compute_lane(u.name(), p);
-              //data_window_needed_by_compute(u.name(), p);
             int offsets_per_lane =
               arg_input_window.pts().size();
             int input_bits = arg_width*offsets_per_lane;
@@ -5981,31 +5989,16 @@ struct App {
 
             arg_names.push_back(arg_name);
             cout << "getting window for " << u.name() << endl;
-            //Window orig_dw =
-              //data_window_needed_by_one_compute_lane(u.name(), p);
-            //Window win_needed =
-              //data_window_needed_by_one_compute_lane(u.name(), p).increment(orig_dw.stride(0), lane);
-            //cout << "Win needed: " << win_needed << endl;
 
             int base = lane*input_bits;
             int end = (lane + 1)*input_bits - 1;
 
             cfile << tab(1) << "hw_uint<" << input_bits << "> " << arg_name << ";" << endl;
             cfile << tab(1) << "set_at<0, " << input_bits << ", " << input_bits << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
-            //int win_pos = 0;
-            //for (auto off : win_needed.offsets) {
-              //cfile << tab(1) << "// Need offset: " << str(off) << endl;
-              //int npts = win_needed.pts().size()*arg_width;
-              //for (int i = 0; i < arg_input_window.offsets.size(); i++) {
-                //if (arg_input_window.offsets.at(i) == off) {
-                  //int base = i*arg_width;
-                  //int end = (i + 1)*arg_width - 1;
-                  //cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ", " << arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
-                //}
-              //}
-              //win_pos++;
-            //}
           }
+        for (auto index : u.index_variables_needed_by_compute()) {
+          arg_names.push_back(index);
+        }
           cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
           cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ", " << fwidth << ">(whole_result, result_" << lane << ");" << endl;
         }
@@ -8087,14 +8080,12 @@ App ef_cartoon(const std::string& out_name) {
   return lp;
 }
 
-App exposure_fusion_app(const std::string& out_name) {
-  App lp;
-  lp.set_default_pixel_width(16);
-  // The off chip input we are reading from
-  lp.func2d("in_off_chip");
+void exposure_fusion_app(
+    const std::string& in_name,
+    const std::string& out_name,
+    App& lp) {
 
-  // The temporary buffer we store the input image in
-  lp.func2d("in", "id", pt("in_off_chip"));
+  lp.func2d("in", "id", pt(in_name));
 
   // Two synthetic exposures
   lp.func2d("bright", "id", pt("in"));
@@ -8138,7 +8129,17 @@ App exposure_fusion_app(const std::string& out_name) {
   }
 
   lp.func2d(out_name, "id", pt(image));
+}
 
+App exposure_fusion_app(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  exposure_fusion_app("in_off_chip", out_name, lp);
+
+  // The temporary buffer we store the input image in
   return lp;
 }
 
@@ -11088,10 +11089,10 @@ void halide_conv_layer_3D_test() {
 
   cout << "createing hw schedule" << endl;
 
-  auto hs = hardware_schedule(dom, valid, proximity);
-  for (auto h : hs) {
-    cout << tab(1) << h.first << " -> " << str(h.second) << endl;
-  }
+  //auto hs = hardware_schedule(dom, valid, proximity);
+  //for (auto h : hs) {
+    //cout << tab(1) << h.first << " -> " << str(h.second) << endl;
+  //}
   //assert(false);
 
   CodegenOptions options;
@@ -11198,10 +11199,10 @@ void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& p
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  for (auto v : surrounding_vars(loop, prg)) {
-    store_addrs.push_back(v);
-  }
-  store_addrs.push_back(loop->name);
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
 
   for (int d = 0; d < num_dims(read_data); d++) {
     auto ps = project_all_but(read_data, d);
@@ -11216,6 +11217,103 @@ void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& p
   auto ld = next_lp->add_op(prg.unique_name("store_from_" + rb_name));
   ld->add_load(rb_name, comma_list(store_addrs));
   ld->add_store(buf, comma_list(load_addrs));
+}
+
+void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(iloop->is_loop);
+  string container = surrounding_vars(iloop, prg).back();
+  op* loop = prg.find_loop(container);
+  
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
+  //store_addrs.push_back(str(iloop->start));
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+
+    int ext = to_int(const_coeff(diff)) + 1;
+    isl_aff* addr =
+      set_const_coeff(min, zero(prg.ctx));
+    
+    int lb = 0;
+    int ub = ext;
+    string lname = prg.unique_name(buf + "_ld");
+    if (d == 0) {
+      next_lp = next_lp->add_loop_before(iloop, lname, lb, ub);
+    } else {
+      next_lp = next_lp->add_loop(lname, lb, ub);
+    }
+    load_addrs.push_back(lname + " + " + codegen_c(addr));
+    store_addrs.push_back(lname + " + " + codegen_c(addr));
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
+void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+
+    int ext = to_int(const_coeff(diff)) + 1;
+    isl_aff* addr =
+      set_const_coeff(min, zero(prg.ctx));
+    
+    int lb = 0;
+    int ub = ext;
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop(lname, lb, ub);
+    load_addrs.push_back(lname + " + " + codegen_c(addr));
+    store_addrs.push_back(lname + " + " + codegen_c(addr));
+    //load_addrs.push_back(lname);
+    //store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
 }
 
 void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
@@ -11277,18 +11375,131 @@ isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
 
 }
 
+umap* read_at(const std::string& level, const std::string& buffer, prog& prg) {
+  auto loop = prg.find_loop(level);
+  auto read_maps = get_maps(prg.consumer_map(buffer));
+
+  std::set<string> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op->name);
+    }
+  }
+
+  umap* all_reads = nullptr;
+  for (auto m : read_maps) {
+    if (elem(domain_name(m), users)) {
+      if (all_reads == nullptr) {
+        all_reads = to_umap(m);
+      } else {
+        all_reads = unn(all_reads, to_umap(m));
+      }
+    }
+  }
+
+  return all_reads;
+}
+
+umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg) {
+  auto loop = prg.find_loop(level);
+  int outer_vars = surrounding_vars(loop, prg).size();
+  int level_index = outer_vars;
+
+  umap* fst = nullptr;
+  for (auto m : get_maps(reads)) {
+    auto prj = isl_map_fix_si(m, isl_dim_in, level_index, loop->start);
+    if (fst == nullptr) {
+      fst = to_umap(prj);
+    } else {
+      fst = unn(fst, to_umap(prj));
+    }
+  }
+  return fst;
+}
+
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
-//{ op3[root = 0, y] -> in[o0, o1] : 0 <= y <= 7 and 0 <= o0 <= 9 and y <= o1 <= 2 + y and ((0 < o0 <= 8) or o0 >= 2 or o0 <= 7) }
-  //auto m = isl_map_read_from_str(prg.ctx,
-      //"[y] -> { in[o0, o1] -> [o1, o0] : 0 <= o0 <= 9 and y <= o1 <= 2 + y and ((0 < o0 <= 8) or o0 >= 2 or o0 <= 7) }");
-  //cout << "m = " << str(m) << endl;
-  //cout << "code..." << endl;
-  //cout << codegen_c(to_umap(m)) << endl;
-  //assert(false);
+
+  umap* reads = read_at(level, buffer, prg);
+  cout << "reads = " << str(reads) << endl;
 
   auto loop = prg.find_loop(level);
+  int outer_vars = surrounding_vars(loop, prg).size();
+
+  umap* first_reads = first_iteration_reads(reads, level, prg);
+  cout << "first reads = " << str(first_reads) << endl;
+
   cout << "Re-use " << buffer << " at" << endl;
   loop->pretty_print();
+
+  auto sched = prg.unoptimized_schedule();
+  auto earlier = lex_gt(sched, sched);
+  cout << "earlier = " << str(earlier) << endl;
+ 
+  auto read = prg.consumer_map(buffer);
+  cout << "consumed = " << str(read) << endl;
+  auto read_earlier = coalesce(dot(earlier, read));
+  cout << "consumed earlier = " << str(read_earlier) << endl;
+  auto consumed_earlier_and_now = its(read_earlier, read);
+  cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
+  auto consumed_first_time = diff(read, consumed_earlier_and_now);
+  auto csf = cpy(consumed_first_time);
+  cout << "first time read  = " << str(consumed_first_time) << endl;
+  //uset* not_first = 
+  //auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
+  //cout << "not first        = " << str(not_first) << endl;
+  //consumed_first_time = its(consumed_first_time, not_first);
+  consumed_first_time = coalesce(consumed_first_time);
+  cout << "first time read  = " << str(consumed_first_time) << endl;
+
+  string rb_name = buffer + "_rb_at_" + level;
+  isl_map* initial_data = nullptr;
+  for (auto m : get_maps(first_reads)) {
+    cout << "m = " << str(m) << endl;
+    assert(outer_vars < num_in_dims(m));
+    int to_remove = num_in_dims(m) - outer_vars;
+    cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
+    auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
+    if (initial_data == nullptr) {
+      initial_data = prj;
+    } else {
+      initial_data = unn(initial_data, prj);
+    }
+  }
+  cout << "initially read: " << str(initial_data) << endl;
+  read_in_before(loop, initial_data, rb_name, prg);
+
+  cout << "consumed first time = " << str(consumed_first_time) << endl;
+  isl_map* pr = nullptr;
+  for (auto m : get_maps(consumed_first_time)) {
+    cout << "m = " << str(m) << endl;
+    assert(outer_vars < num_in_dims(m));
+    int to_remove = num_in_dims(m) - outer_vars;
+    cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
+    auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
+    if (pr == nullptr) {
+      pr = prj;
+    } else {
+      pr = unn(pr, prj);
+    }
+  }
+
+  //auto maps = get_maps(consumed_first_time);
+  //assert(maps.size() == 1);
+  //auto mpa = maps.at(0);
+  //cout << "mpa = " << str(mpa) << endl;
+  //cout << "ini = " << str(initial_data) << endl;
+  ////mpa = diff(mpa, initial_data);
+  ////assert(false);
+  //auto pr = isl_map_project_out(cpy(mpa), isl_dim_in, 2, 2);
+  pr = diff(pr, initial_data);
+  auto lmin = lexmin(pr);
+  auto lmax = lexmax(pr);
+  cout << "min              = " << str(lmin) << endl;
+  cout << "max              = " << str(lmax) << endl;
+  read_in_after(loop, pr, rb_name, prg);
+
+  cout << "pr = " << str(pr) << endl;
+
   std::set<op*> users;
   for (auto op : loop->descendant_ops()) {
     if (elem(buffer, op->buffers_referenced())) {
@@ -11299,99 +11510,12 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   for (auto u : users) {
     cout << tab(1) << u->name << endl;
   }
-
-  auto sched = prg.unoptimized_schedule();
-  cout << "sched = " << str(sched) << endl;
-  auto earlier = lex_gt(sched, sched);
-  cout << "earlier = " << str(earlier) << endl;
- 
-  auto read = prg.consumer_map();
-  cout << "consumed = " << str(read) << endl;
-  auto read_earlier = coalesce(dot(earlier, read));
-  cout << "consumed earlier = " << str(read_earlier) << endl;
-  auto consumed_earlier_and_now = its(read_earlier, read);
-  cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
-  auto consumed_first_time = diff(read, consumed_earlier_and_now);
-  cout << "first time read  = " << str(consumed_first_time) << endl;
-  for (auto m : get_maps(consumed_first_time)) {
-    if (range_name(m) == buffer) {
-      cout << "m = " << str(m) << endl;
-      auto pr = isl_map_project_out(cpy(m), isl_dim_in, 2, 2);
-      cout << "pr               = " << str(pr) << endl;
-    }
-
-  }
-  assert(false);
-  for (auto m : get_maps(read_earlier)) {
-    if (range_name(m) == buffer) {
-      cout << tab(1) << str(m) << endl;
-      auto mp = isl_map_project_out(cpy(m), isl_dim_in, 3, 1);
-      cout << tab(2) << "projected: " << str(mp) << endl;
-    }
-  }
-  assert(false);
-  auto cm = prg.consumer_maps();
-  //auto buf_map = prg.consumer_map(buffer);
-  //cout << "buf map: " << str(buf_map) << endl;
-
-  cout << "Consumer maps: " << endl;
-  isl_set* read_data = nullptr;
-  isl_set* demands = nullptr;
-  for (auto op : users) {
-    auto consumed = map_find(op, cm);
-
-    for (auto m : get_maps(consumed)) {
-      if (range_name(m) == buffer) {
-        if (read_data == nullptr) {
-          read_data = range(m);
-        } else {
-          read_data = unn(read_data, range(m));
-        }
-
-        auto pm = data_demands(3, m);
-        cout << tab(1) << "demands: " << str(pm) << endl;
-        if (demands == nullptr) {
-          demands = pm;
-        } else {
-          demands = unn(demands, pm);
-        }
-      }
-    }
-  }
-
-  //for (auto m : get_maps(buf_map)) {
-    //auto pm = data_demands(3, m);
-    //cout << tab(1) << "demands: " << str(pm) << endl;
-    //if (demands == nullptr) {
-      //demands = pm;
-    //} else {
-      //demands = unn(demands, pm);
-    //}
-  //}
-  demands = simplify(demands);
-  cout << "Total demands: " << str(demands) << endl;
-  cout << "lmin : " << str(lexmin(demands)) << endl;
-  cout << "lmax : " << str(lexmax(demands)) << endl;
-  assert(false);
-
-  string rb_name = buffer + "_rb_at_" + level;
-  read_data = simplify(read_data);
-  cout << "All data from " << buffer << ": " << str(read_data) << endl;
-
-  read_in(loop, read_data, rb_name, prg);
-
-  write_out(loop, read_data, rb_name, prg);
-  vector<string> prefixes = surrounding_vars(loop, prg);
-  prefixes.push_back(loop->name);
   for (auto rd : users) {
     rd->replace_reads_from(buffer, rb_name);
-    rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
   }
   
-  prefixes.push_back(loop->name);
   for (auto rd : users) {
     rd->replace_writes_to(buffer, rb_name);
-    rd->add_prefix_to_writes(comma_list(prefixes), rb_name);
   }
 
 } 
@@ -11401,43 +11525,34 @@ void reuse_buffered_conv_test() {
   prg.pretty_print();
   prg.sanity_check();
 
+  {
+    CodegenOptions options;
+    options.all_rams = true;
+    all_register_files(prg, options);
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+    generate_unoptimized_code(options, prg);
+
+  }
+
+  auto naive = run_regression_tb(prg);
+
   add_reuse_buffer("y", "in", prg);
 
   prg.pretty_print();
-  assert(false);
-
-  umap* sched = prg.optimized_codegen();
-  umap* consumed = prg.consumer_map();
-  auto read_id = isl_union_set_identity(cpy(domain(consumed)));
-  auto same = diff(dot(consumed, inv(consumed)), read_id);
-  cout << endl << endl;
-  cout << "same = " << str(same) << endl;
-  auto earlier = lex_gt(sched, sched);
-  auto se = its(same, earlier);
-  cout << endl << endl;
-  cout << "se   = " << str(se) << endl;
-
-  //umap* m = rdmap(prg.ctx, "{ B[k, 0] -> b[k]; B[k, 1] -> b[k + 1]}");
-    //auto read_id = isl_union_set_identity(cpy(domain(m)));
-    //auto same = diff(dot(m, inv(m)), read_id);
-    //cout << "same = " << str(same) << endl;
-    //auto earlier = lex_gt(sched, sched);
-    //auto se = its(same, earlier);
-    //cout << "se   = " << str(se) << endl;
-    //for (auto m : get_maps(se)) {
-      //auto pw = isl_pw_multi_aff_from_map(m);
-      //cout << tab(1) << str(pw) << endl;
-    //}
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.all_rams = true;
-  options.banking_strategies["in"] =
-  {"cyclic", {3, 1}};
+  all_register_files(prg, options);
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
 
-  generate_optimized_code(options, prg);
+  generate_unoptimized_code(options, prg);
+  auto opt = run_regression_tb(prg);
+
+  compare("reuse_buffered_conv", opt, naive);
+  //assert(false);
 }
 
 void cyclic_banked_conv_test() {
@@ -12288,6 +12403,9 @@ void resnet_test() {
   auto prg = resnet();
   prg.pretty_print();
   //assert(false);
+  add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
+  prg.pretty_print();
+  //assert(false);
   generate_unoptimized_code(prg);
 
   CodegenOptions options;
@@ -12366,6 +12484,7 @@ string load_off_chip_two_channels(const std::string& prefix, App& lp) {
   
   string res = in0_oc + "_" + in1_oc;
   lp.func2d(res, "interleave", in0_win, in1_win);
+  lp.compute_unit_needs_index_variable(0, res);
   return res;
 }
 
@@ -12388,84 +12507,35 @@ void psef_multi_output_test() {
   lp.set_default_pixel_width(16);
   // The off chip input we are reading from
   string input_image = load_off_chip_two_channels("in_off_chip", lp);
-  //lp.func2d("in_off_chip");
-
-  // The temporary buffer we store the input image in
-  //lp.func2d("in", "id", pt("in_off_chip"));
-  lp.func2d("in", "id", pt(input_image));
-
-  // Two synthetic exposures
-  lp.func2d("bright", "id", pt("in"));
-  lp.func2d("dark", "scale_exposure", pt("in"));
-
-  lp.func2d("ps", "add", {pt("bright"), pt("dark")});
+  exposure_fusion_app(input_image, "ps", lp);
 
   pair<string, string> output_image = store_off_chip_two_channels("ps", lp);
 
-  //string out0 = "psef_sum";
   string out0 = output_image.first;
   string out1 = output_image.second;
 
   int rows = 1080;
   int cols = 1920 / 2;
-  int unroll = 32;
+  int unroll = 8;
 
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
+  compile_compute(out0 + "_" + out1 + "_opt.cpp");
+
   move_to_benchmarks_folder(out0 + "_" + out1);
   assert(false);
-  //assert(false);
-
-  //// Compute weights which measure the "quality" of
-  //// pixels in each image
-  //lp.func2d("bright_weights", "exposure_weight", pt("bright"));
-  //lp.func2d("dark_weights", "exposure_weight", pt("dark"));
-
-  //// Normalize weights so that the weight matrices entries sum to one
-  //lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
-  //lp.func2d("bright_weights_normed", "f_divide", pt("bright_weights"), pt("weight_sums"));
-  //lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
-
-
-  //// Create pyramids of the weights
-  //auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
-  //auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
-
-  //// Create laplacian pyramids of the synthetic exposures
-  //auto dark_pyramid = laplace_pyramid(4, "dark", lp);
-  //auto bright_pyramid = laplace_pyramid(4, "bright", lp);
-
-  //// Merge weighted pyramids
-  //vector<string> merged_images;
-  //for (int i = 0; i < dark_pyramid.size(); i++) {
-    //string fused = "fused_level_" + str(i);
-    //lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
-        //pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
-    //merged_images.push_back(fused);
-  //}
-
-  //// Collapse the blended pyramid into a single image
-  //assert(merged_images.size() == 4);
-  //string image = merged_images.back();
-  //for (int i = merged_images.size() - 2; i >= 0; i--) {
-    //string merged_level = "final_merged_" + str(i);
-    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
-    //image = merged_level;
-  //}
-
-  //lp.func2d(out_name, "id", pt(image));
-
-
 }
 
 void application_tests() {
+  reuse_buffered_conv_test();
+  resnet_test();
   psef_multi_output_test();
+  iccad_tests();
   coreir_tests();
   multi_output_app_test();
-  iccad_tests();
   non_rate_matched_ds_test();
 
   seidel2d_test();
@@ -12473,9 +12543,6 @@ void application_tests() {
   jacobi_2d_2_test();
   jacobi_2d_test();
 
-
-  //resnet_test();
-  //reuse_buffered_conv_test();
   register_file_test();
   reaccess_no_hierarchy_rolled_test();
 
@@ -12559,6 +12626,7 @@ void application_tests() {
 
 
   halide_conv_layer_3D_test();
+
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();

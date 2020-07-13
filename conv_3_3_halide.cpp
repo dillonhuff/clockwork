@@ -54,6 +54,7 @@ struct conv_stencil_hcompute_conv_stencil_1_3_to_conv_stencil_hcompute_hw_output
 };
 
 struct conv_stencil_cache {
+  // # of banks: 2
   conv_stencil_hcompute_conv_stencil_2_to_conv_stencil_hcompute_conv_stencil_1_4_cache conv_stencil_hcompute_conv_stencil_2_to_conv_stencil_hcompute_conv_stencil_1_4;
   conv_stencil_hcompute_conv_stencil_1_3_to_conv_stencil_hcompute_hw_output_stencil_7_cache conv_stencil_hcompute_conv_stencil_1_3_to_conv_stencil_hcompute_hw_output_stencil_7;
 };
@@ -153,6 +154,7 @@ struct hw_input_copy_stencil_hcompute_hw_input_copy_stencil_0_to_hw_input_copy_s
 };
 
 struct hw_input_copy_stencil_cache {
+  // # of banks: 1
   hw_input_copy_stencil_hcompute_hw_input_copy_stencil_0_to_hw_input_copy_stencil_hcompute_conv_stencil_1_5_cache hw_input_copy_stencil_hcompute_hw_input_copy_stencil_0_to_hw_input_copy_stencil_hcompute_conv_stencil_1_5;
 };
 

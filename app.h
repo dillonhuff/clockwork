@@ -335,6 +335,12 @@ struct Update {
   string compute_unit_impl;
   Expr* def;
 
+  vector<string> index_variables_needed;
+
+  vector<string> index_variables_needed_by_compute() {
+    return index_variables_needed;
+  }
+
   void pad_reduce_dimension(const int max_reduce_dimension) {
     for (auto& win : srcs) {
       if (win.reduce_dimension() < max_reduce_dimension) {

@@ -353,6 +353,41 @@ struct ir_node {
     return nullptr;
   }
 
+  op* add_loop_before(op* source, const std::string& name, const int l, const int u) {
+    assert(is_loop);
+
+    op* sr = container_child(source);
+    assert(sr != nullptr);
+
+    cout << "Before inserting " << name << " we have " << children.size() << " children" << endl;
+
+    auto lp = new op();
+    lp->name = name;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->is_loop = true;
+    lp->start = l;
+    lp->end_exclusive = u;
+    vector<op*> new_children;
+    bool found_sr = false;
+    for (auto c : children) {
+      if (c == sr) {
+        new_children.push_back(lp);
+        found_sr = true;
+      }
+      new_children.push_back(c);
+    }
+    cout << "After inserting " << name << " we have " << children.size() << " children" << endl;
+
+
+    assert(found_sr);
+    assert(new_children.size() == children.size() + 1);
+
+    this->children = new_children;
+
+    return lp;
+  }
+  
   op* add_loop_after(op* source, const std::string& name, const int l, const int u) {
     assert(is_loop);
 
@@ -1423,3 +1458,4 @@ std::string optimized_code_string(prog& prg);
 void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
+void compile_compute(const std::string& name);
