@@ -11368,13 +11368,6 @@ isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
 }
 
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
-//{ op3[root = 0, y] -> in[o0, o1] : 0 <= y <= 7 and 0 <= o0 <= 9 and y <= o1 <= 2 + y and ((0 < o0 <= 8) or o0 >= 2 or o0 <= 7) }
-  //auto m = isl_map_read_from_str(prg.ctx,
-      //"[y] -> { in[o0, o1] -> [o1, o0] : 0 <= o0 <= 9 and y <= o1 <= 2 + y and ((0 < o0 <= 8) or o0 >= 2 or o0 <= 7) }");
-  //cout << "m = " << str(m) << endl;
-  //cout << "code..." << endl;
-  //cout << codegen_c(to_umap(m)) << endl;
-  //assert(false);
 
   auto loop = prg.find_loop(level);
   cout << "Re-use " << buffer << " at" << endl;
@@ -11419,7 +11412,6 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
     auto pr = isl_map_project_out(cpy(initial_data), isl_dim_in, 2, 2);
     read_in_before(loop, pr, rb_name, prg);
     cout << "pr            : " << str(pr) << endl;
-    //assert(false);
   }
 
   auto maps = get_maps(consumed_first_time);
@@ -11500,24 +11492,13 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   //cout << "lmax : " << str(lexmax(demands)) << endl;
   //assert(false);
 
-  //string rb_name = buffer + "_rb_at_" + level;
-  //read_data = simplify(read_data);
-  //cout << "All data from " << buffer << ": " << str(read_data) << endl;
-
-  //read_in(loop, read_data, rb_name, prg);
-
-  //write_out(loop, read_data, rb_name, prg);
-  //vector<string> prefixes = surrounding_vars(loop, prg);
-  //prefixes.push_back(loop->name);
   for (auto rd : users) {
     rd->replace_reads_from(buffer, rb_name);
-    //rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
   }
   
   //prefixes.push_back(loop->name);
   for (auto rd : users) {
     rd->replace_writes_to(buffer, rb_name);
-    //rd->add_prefix_to_writes(comma_list(prefixes), rb_name);
   }
 
 } 
@@ -11542,31 +11523,6 @@ void reuse_buffered_conv_test() {
   add_reuse_buffer("y", "in", prg);
 
   prg.pretty_print();
-  //assert(false);
-
-  //umap* sched = prg.optimized_codegen();
-  //umap* consumed = prg.consumer_map();
-  //auto read_id = isl_union_set_identity(cpy(domain(consumed)));
-  //auto same = diff(dot(consumed, inv(consumed)), read_id);
-  //cout << endl << endl;
-  //cout << "same = " << str(same) << endl;
-  //auto earlier = lex_gt(sched, sched);
-  //auto se = its(same, earlier);
-  //cout << endl << endl;
-  //cout << "se   = " << str(se) << endl;
-
-  //umap* m = rdmap(prg.ctx, "{ B[k, 0] -> b[k]; B[k, 1] -> b[k + 1]}");
-    //auto read_id = isl_union_set_identity(cpy(domain(m)));
-    //auto same = diff(dot(m, inv(m)), read_id);
-    //cout << "same = " << str(same) << endl;
-    //auto earlier = lex_gt(sched, sched);
-    //auto se = its(same, earlier);
-    //cout << "se   = " << str(se) << endl;
-    //for (auto m : get_maps(se)) {
-      //auto pw = isl_pw_multi_aff_from_map(m);
-      //cout << tab(1) << str(pw) << endl;
-    //}
-  //assert(false);
 
   CodegenOptions options;
   options.all_rams = true;
@@ -11578,6 +11534,7 @@ void reuse_buffered_conv_test() {
   auto opt = run_regression_tb(prg);
 
   compare("reuse_buffered_conv", opt, naive);
+  //assert(false);
 }
 
 void cyclic_banked_conv_test() {
