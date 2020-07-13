@@ -11400,31 +11400,40 @@ umap* read_at(const std::string& level, const std::string& buffer, prog& prg) {
   return all_reads;
 }
 
+umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg) {
+  auto loop = prg.find_loop(level);
+  int outer_vars = surrounding_vars(loop, prg).size();
+  int level_index = outer_vars;
+
+  umap* fst = nullptr;
+  for (auto m : get_maps(reads)) {
+    auto prj = isl_map_fix_si(m, isl_dim_in, level_index, loop->start);
+    if (fst == nullptr) {
+      fst = to_umap(prj);
+    } else {
+      fst = unn(fst, to_umap(prj));
+    }
+  }
+  return fst;
+}
+
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
 
   umap* reads = read_at(level, buffer, prg);
   cout << "reads = " << str(reads) << endl;
-  assert(false);
-
 
   auto loop = prg.find_loop(level);
   int outer_vars = surrounding_vars(loop, prg).size();
 
+  umap* first_reads = first_iteration_reads(reads, level, prg);
+  cout << "first reads = " << str(first_reads) << endl;
+  //assert(false);
+
   cout << "Re-use " << buffer << " at" << endl;
   loop->pretty_print();
-  std::set<op*> users;
-  for (auto op : loop->descendant_ops()) {
-    if (elem(buffer, op->buffers_referenced())) {
-      users.insert(op);
-    }
-  }
-  cout << "Users..." << endl;
-  for (auto u : users) {
-    cout << tab(1) << u->name << endl;
-  }
 
   auto sched = prg.unoptimized_schedule();
-  cout << "sched = " << str(sched) << endl;
+  //cout << "sched = " << str(sched) << endl;
   auto earlier = lex_gt(sched, sched);
   cout << "earlier = " << str(earlier) << endl;
  
@@ -11445,13 +11454,28 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
 
   string rb_name = buffer + "_rb_at_" + level;
   {
-    auto maps = get_maps(read);
-    assert(maps.size() == 1);
-    auto initial_data = isl_map_fix_si(cpy(maps.at(0)), isl_dim_in, outer_vars, loop->start);
+    isl_map* initial_data = nullptr;
+    for (auto m : get_maps(first_reads)) {
+      cout << "m = " << str(m) << endl;
+      assert(outer_vars < num_in_dims(m));
+      int to_remove = num_in_dims(m) - outer_vars;
+      cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
+      auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars, num_in_dims(m) - outer_vars);
+      if (initial_data == nullptr) {
+        initial_data = prj;
+      } else {
+        initial_data = unn(initial_data, prj);
+      }
+    }
+    //auto initial_data = to_map(first_reads);
+    //auto maps = get_maps(read);
+    //assert(maps.size() == 1);
+    //auto initial_data = isl_map_fix_si(cpy(maps.at(0)), isl_dim_in, outer_vars, loop->start);
     cout << "initially read: " << str(initial_data) << endl;
-    auto pr = isl_map_project_out(cpy(initial_data), isl_dim_in, outer_vars + 1, 2);
-    read_in_before(loop, pr, rb_name, prg);
-    cout << "pr            : " << str(pr) << endl;
+    read_in_before(loop, initial_data, rb_name, prg);
+    //auto pr = isl_map_project_out(cpy(initial_data), isl_dim_in, outer_vars + 1, 2);
+    //read_in_before(loop, pr, rb_name, prg);
+    //cout << "pr            : " << str(pr) << endl;
   }
 
   auto maps = get_maps(consumed_first_time);
@@ -11466,6 +11490,16 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
 
   cout << "pr = " << str(pr) << endl;
 
+  std::set<op*> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op);
+    }
+  }
+  cout << "Users..." << endl;
+  for (auto u : users) {
+    cout << tab(1) << u->name << endl;
+  }
   for (auto rd : users) {
     rd->replace_reads_from(buffer, rb_name);
   }
