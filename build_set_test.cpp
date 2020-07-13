@@ -11375,9 +11375,41 @@ isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
 
 }
 
+umap* read_at(const std::string& level, const std::string& buffer, prog& prg) {
+  auto loop = prg.find_loop(level);
+  auto read_maps = get_maps(prg.consumer_map(buffer));
+
+  std::set<string> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op->name);
+    }
+  }
+
+  umap* all_reads = nullptr;
+  for (auto m : read_maps) {
+    if (elem(domain_name(m), users)) {
+      if (all_reads == nullptr) {
+        all_reads = to_umap(m);
+      } else {
+        all_reads = unn(all_reads, to_umap(m));
+      }
+    }
+  }
+
+  return all_reads;
+}
+
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
 
+  umap* reads = read_at(level, buffer, prg);
+  cout << "reads = " << str(reads) << endl;
+  assert(false);
+
+
   auto loop = prg.find_loop(level);
+  int outer_vars = surrounding_vars(loop, prg).size();
+
   cout << "Re-use " << buffer << " at" << endl;
   loop->pretty_print();
   std::set<op*> users;
@@ -11415,15 +11447,16 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   {
     auto maps = get_maps(read);
     assert(maps.size() == 1);
-    auto initial_data = isl_map_fix_si(cpy(maps.at(0)), isl_dim_in, 1, 0);
+    auto initial_data = isl_map_fix_si(cpy(maps.at(0)), isl_dim_in, outer_vars, loop->start);
     cout << "initially read: " << str(initial_data) << endl;
-    auto pr = isl_map_project_out(cpy(initial_data), isl_dim_in, 2, 2);
+    auto pr = isl_map_project_out(cpy(initial_data), isl_dim_in, outer_vars + 1, 2);
     read_in_before(loop, pr, rb_name, prg);
     cout << "pr            : " << str(pr) << endl;
   }
 
   auto maps = get_maps(consumed_first_time);
   assert(maps.size() == 1);
+  auto mpa = maps.at(0);
   auto pr = isl_map_project_out(cpy(maps.at(0)), isl_dim_in, 2, 2);
   auto lmin = lexmin(pr);
   auto lmax = lexmax(pr);
@@ -11432,79 +11465,11 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   read_in_after(loop, pr, rb_name, prg);
 
   cout << "pr = " << str(pr) << endl;
-  //assert(false);
-  //for (auto m : get_maps(consumed_first_time)) {
-    //if (range_name(m) == buffer) {
-      //cout << "m = " << str(m) << endl;
-      //auto pr = isl_map_project_out(cpy(m), isl_dim_in, 2, 2);
-      //cout << "pr               = " << str(pr) << endl;
-      //auto lmin = lexmin(pr);
-      //auto lmax = lexmax(pr);
-      //cout << "min              = " << str(lmin) << endl;
-      //cout << "max              = " << str(lmax) << endl;
-    //}
-
-  //}
-
-
-  //assert(false);
-  //for (auto m : get_maps(read_earlier)) {
-    //if (range_name(m) == buffer) {
-      //cout << tab(1) << str(m) << endl;
-      //auto mp = isl_map_project_out(cpy(m), isl_dim_in, 3, 1);
-      //cout << tab(2) << "projected: " << str(mp) << endl;
-    //}
-  //}
-  //assert(false);
-  //auto cm = prg.consumer_maps();
-  ////auto buf_map = prg.consumer_map(buffer);
-  ////cout << "buf map: " << str(buf_map) << endl;
-
-  //cout << "Consumer maps: " << endl;
-  //isl_set* read_data = nullptr;
-  //isl_set* demands = nullptr;
-  //for (auto op : users) {
-    //auto consumed = map_find(op, cm);
-
-    //for (auto m : get_maps(consumed)) {
-      //if (range_name(m) == buffer) {
-        //if (read_data == nullptr) {
-          //read_data = range(m);
-        //} else {
-          //read_data = unn(read_data, range(m));
-        //}
-
-        //auto pm = data_demands(3, m);
-        //cout << tab(1) << "demands: " << str(pm) << endl;
-        //if (demands == nullptr) {
-          //demands = pm;
-        //} else {
-          //demands = unn(demands, pm);
-        //}
-      //}
-    //}
-  //}
-
-  ////for (auto m : get_maps(buf_map)) {
-    ////auto pm = data_demands(3, m);
-    ////cout << tab(1) << "demands: " << str(pm) << endl;
-    ////if (demands == nullptr) {
-      ////demands = pm;
-    ////} else {
-      ////demands = unn(demands, pm);
-    ////}
-  ////}
-  //demands = simplify(demands);
-  //cout << "Total demands: " << str(demands) << endl;
-  //cout << "lmin : " << str(lexmin(demands)) << endl;
-  //cout << "lmax : " << str(lexmax(demands)) << endl;
-  //assert(false);
 
   for (auto rd : users) {
     rd->replace_reads_from(buffer, rb_name);
   }
   
-  //prefixes.push_back(loop->name);
   for (auto rd : users) {
     rd->replace_writes_to(buffer, rb_name);
   }
@@ -12393,6 +12358,9 @@ void resnet_test() {
   auto prg = resnet();
   prg.pretty_print();
   //assert(false);
+  add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
+  prg.pretty_print();
+  assert(false);
   generate_unoptimized_code(prg);
 
   CodegenOptions options;
@@ -12517,8 +12485,9 @@ void psef_multi_output_test() {
 }
 
 void application_tests() {
-  psef_multi_output_test();
   reuse_buffered_conv_test();
+  resnet_test();
+  psef_multi_output_test();
   iccad_tests();
   coreir_tests();
   multi_output_app_test();
@@ -12529,7 +12498,6 @@ void application_tests() {
   jacobi_2d_2_test();
   jacobi_2d_test();
 
-  //resnet_test();
   register_file_test();
   reaccess_no_hierarchy_rolled_test();
 
