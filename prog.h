@@ -62,10 +62,15 @@ struct ir_node {
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   void copy_fields_from(op* other);
 =======
   void copy_memory_operations_from(op* other);
 >>>>>>> origin
+=======
+  void copy_fields_from(op* other);
+  void copy_memory_operations_from(op* other);
+>>>>>>> origin/prog_splitting
 
   bool dynamic_writes(const std::string& buf) {
     for (auto d : dynamic_store_addresses) {
@@ -90,6 +95,34 @@ struct ir_node {
     return end_exclusive - start;
   }
 
+  void add_prefix_to_writes(const std::string& prefix,
+      const std::string& buf) {
+    for (auto& b : produce_locs) {
+      if (b.first == buf) {
+        b.second = prefix + ", " + b.second;
+      }
+    }
+  }
+
+  void add_prefix_to_reads(const std::string& prefix,
+      const std::string& buf) {
+    for (auto& b : consume_locs_pair) {
+      if (b.first == buf) {
+        for (auto& p : b.second) {
+          p.second = prefix + ", " + p.second;
+        }
+
+      }
+    }
+  }
+
+  void replace_writes_to(const std::string& source_buf, const std::string& replacement) {
+    for (auto& b : produce_locs) {
+      if (b.first == source_buf) {
+        b.first = replacement;
+      }
+    }
+  }
   void replace_reads_from(const std::string& source_buf, const std::string& replacement) {
     for (auto& b : consume_locs_pair) {
       if (b.first == source_buf) {
@@ -221,6 +254,10 @@ struct ir_node {
       for (auto c : children) {
           c->get_domain_boxes(b, domain_map);
       }
+  }
+
+  void pretty_print() const {
+    pretty_print(std::cout, 0);
   }
 
   void pretty_print(int level) const {
@@ -360,6 +397,21 @@ struct ir_node {
     return lp;
   }
   
+  op* add_loop_front(const std::string& name, const int l, const int u) {
+    assert(is_loop);
+    //assert(!elem(name, all_existing_loop_names()));
+
+    auto lp = new op();
+    lp->name = name;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->is_loop = true;
+    lp->start = l;
+    lp->end_exclusive = u;
+    children.insert(begin(children), lp);
+
+    return lp;
+  }
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop);
     //assert(!elem(name, all_existing_loop_names()));
@@ -1073,52 +1125,6 @@ struct prog {
     return m;
   }
 
-  //map<string, Result> data_demands_maps() {
-    //map<string, Result> m;
-    //auto ivars = iter_vars();
-    //auto doms = domains();
-
-    //auto ops = root->all_ops();
-    //for (auto op : ops) {
-        //if (!op->is_loop) {
-            //Window win;
-            //string result_buf = "";
-            //for (auto p : op->produces()) {
-                //result_buf= take_until(p, "[");
-                //cout << "Producer :" << p << endl;
-            //}
-            //assert(result_buf != "");
-
-            //auto vars = map_find(op, ivars);
-            ////TODO: fix this hack
-            ////reverse(vars);
-            ////vars.pop_back();
-            ////reverse(vars);
-            //string ivar_str = sep_list(vars, "[", "]", ", ");
-            //auto dom = map_find(op, doms);
-
-            //umap* pmap = rdmap(ctx, "{}");
-            //int cnt_ld_st_pair = 0;
-            //auto producers = op->produces();
-            //for (auto p : op->consumes()) {
-                //cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
-                //isl_union_map* vmap =
-                  //rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
-                  ////rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
-                //pmap = unn(pmap, vmap);
-                //cnt_ld_st_pair ++;
-                //cout << "Consumer map : " << str(pmap) << endl;
-            //}
-            //win.needed = pmap;
-            //Result res;
-            //res.srcs.push_back(win);
-            //m[op->name] = res;
-        //}
-    //}
-      //return m;
-  //}
-
-
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
@@ -1141,6 +1147,7 @@ struct prog {
     return m;
 
   }
+
   umap* producer_map(const std::string& buf_name) {
     auto ivars = iter_vars();
     auto doms = domains();
@@ -1193,18 +1200,37 @@ struct prog {
         }
      }
      m = unn(m, pmap);
-     // original
-     //for (auto p : op->consumes()) {
-       //string buf = take_until(p, "[");
-       //if (buf == buf_name) {
-         //umap* vmap =
-           //its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-         //pmap = unn(pmap, vmap);
-       //}
-     //}
-     //m = unn(m, pmap);
     }
     return m;
+  }
+
+  map<op*, umap*> consumer_maps() {
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    map<op*, umap*> maps;
+    for (auto op : ops) {
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+
+      // for boundary condition expressions
+      for (auto top_pair : op->consumes_pair()) {
+        string cond = "{ ";
+        for (auto sec_pair : top_pair.second) {
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+        cond = cond.substr(0, cond.length() - 2);
+        cond = cond + string(" }");
+        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
+        pmap = unn(pmap, vmap);
+      }
+      maps[op] = pmap;
+    }
+    return maps;
   }
 
   umap* consumer_map() {
@@ -1233,15 +1259,6 @@ struct prog {
      }
      m = unn(m, pmap);
 
-     // original case
-     //for (auto p : op-> consumes()){
-      ////cout << "second for loop" << endl;
-       //umap* vmap =
-          //its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-
-        //pmap = unn(pmap, vmap);
-      //}
-      //m = unn(m, pmap);
     }
     return m;
   }
@@ -1406,12 +1423,18 @@ op* find_writer(const std::string& target_buf, prog& prg);
 std::set<string> get_producers(string next_kernel, prog& prg);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/prog_splitting
 void deep_copy_child(op* dest, op* source, prog& original);
 
 std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original);
 
 std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original);
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> origin/prog_splitting
 void generate_verilog(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1424,4 +1447,7 @@ std::string optimized_code_string(prog& prg);
 void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
+<<<<<<< HEAD
 >>>>>>> origin
+=======
+>>>>>>> origin/prog_splitting

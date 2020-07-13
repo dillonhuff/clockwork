@@ -89,11 +89,7 @@ inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0, 
   // Write schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
   auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_64();
   return value_I_I_id0_0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0, int dynamic_address) {
@@ -104,11 +100,7 @@ inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0, 
   // Write schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
   auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_32();
   return value_I_I_id0_0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<16> I_out_blur_30_5_select(I_cache& I, int root, int d1, int d0, int dynamic_address) {
@@ -119,11 +111,7 @@ inline hw_uint<16> I_out_blur_30_5_select(I_cache& I, int root, int d1, int d0, 
   // Write schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
   auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_0();
   return value_I_I_id0_0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 // # of bundles = 2

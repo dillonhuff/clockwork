@@ -6,12 +6,19 @@
 #include "prog_splitting_test.h"
 #include "codegen.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "example_progs.h"
 =======
 #include "prog.h"
 #include "ubuffer.h"
 
 >>>>>>> origin
+=======
+#include "example_progs.h"
+#include "prog.h"
+#include "ubuffer.h"
+
+>>>>>>> origin/prog_splitting
 #include <chrono>
 
 #ifdef COREIR
@@ -8084,6 +8091,7 @@ App pointwise_add(const std::string output_name) {
 
 App multi_channel(const std::string output_name) {
   App jac;
+  jac.set_default_pixel_width(16);
   jac.func2d("in0_oc");
   jac.func2d("in1_oc");
   jac.func2d("in0", "id", pt("in0_oc"));
@@ -10011,8 +10019,9 @@ void register_file_optimization_test() {
   generate_regression_testbench(prg);
   auto opt = run_regression_tb(prg);
 
-  //compare(opt, unopt);
+  compare("register_file_optimization_test", opt, unopt);
 
+  assert(false);
 }
 
 prog conv_layer_3D() {
@@ -10568,8 +10577,7 @@ void load_buffer(const std::string& dest, const std::string& src, const vector<i
   op->add_store(dest, comma_list(vs));
 }
 
-
-void cyclic_banked_conv_test() {
+prog partially_unrolled_conv() {
   prog prg("cyclic_banked_conv");
   prg.add_input("in_oc");
   prg.add_output("out");
@@ -10582,6 +10590,288 @@ void cyclic_banked_conv_test() {
   }
   reduce->add_store("out", "x, y");
 
+  return prg;
+
+}
+
+vector<string> surrounding_vars(op* loop, prog& prg) {
+  vector<string> surrounding;
+  op* current = prg.root;
+  while (current != loop) {
+    surrounding.push_back(current->name);
+    current = current->container_child(loop);
+  }
+  return surrounding;
+}
+
+isl_map* next_iteration(isl_set* domain) {
+  vector<string> invars;
+  vector<string> outvars;
+  for (int d = 0; d < num_dims(domain); d++) {
+    string v = "v_" + str(d);
+    invars.push_back(v);
+    if (d == num_dims(domain) - 1) {
+      outvars.push_back(v + " + 1");
+    } else {
+      outvars.push_back(v);
+    }
+  }
+
+  string sname = name(domain);
+  return isl_map_read_from_str(ctx(domain), curlies(arrow(sname + bracket_list(invars), sname + bracket_list(outvars))).c_str());
+}
+
+void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  for (auto v : surrounding_vars(loop, prg)) {
+    store_addrs.push_back(v);
+  }
+  store_addrs.push_back(loop->name);
+
+  for (int d = 0; d < num_dims(read_data); d++) {
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_st");
+    next_lp = next_lp->add_loop(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("store_from_" + rb_name));
+  ld->add_load(rb_name, comma_list(store_addrs));
+  ld->add_store(buf, comma_list(load_addrs));
+}
+
+void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  for (auto v : surrounding_vars(loop, prg)) {
+    store_addrs.push_back(v);
+  }
+  store_addrs.push_back(loop->name);
+
+  for (int d = 0; d < num_dims(read_data); d++) {
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop_front(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
+isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
+
+  int num_params = start_of_inner_loops;
+  cout << "params in new set: " << num_params << endl;
+  auto pr = isl_map_project_out(cpy(m), isl_dim_in, start_of_inner_loops, num_in_dims(m) - start_of_inner_loops);
+  cout << "projected = " << str(pr) << endl;
+  auto bms = get_basic_maps(pr);
+  isl_set* demands = nullptr;
+  for (auto bm : bms) {
+    assert(num_div_dims(bm) == 0);
+    assert(num_param_dims(bm) == 0);
+
+    auto bs = flatten_bmap_to_bset(bm);
+    cout << "bs = " << str(bs) << endl;
+    auto eq = isl_basic_set_equalities_matrix(bs, isl_dim_set, isl_dim_param, isl_dim_div, isl_dim_cst);
+    auto ineq = isl_basic_set_inequalities_matrix(bs, isl_dim_set, isl_dim_param, isl_dim_div, isl_dim_cst);
+
+    auto space = isl_space_set_alloc(ctx(m), num_params, num_out_dims(pr) + num_in_dims(pr) - num_params);
+    auto ps = isl_basic_set_from_constraint_matrices(space, eq, ineq, isl_dim_param, isl_dim_set, isl_dim_div, isl_dim_cst);
+    cout << "ps = " << str(ps) << endl;
+    if (demands == nullptr) {
+      demands = to_set(ps);
+    } else {
+      demands = unn(demands, to_set(ps));
+    }
+  }
+  demands = set_name(demands, range_name(m));
+  //assert(false);
+  return demands;
+
+}
+
+void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
+//{ op3[root = 0, y] -> in[o0, o1] : 0 <= y <= 7 and 0 <= o0 <= 9 and y <= o1 <= 2 + y and ((0 < o0 <= 8) or o0 >= 2 or o0 <= 7) }
+  //auto m = isl_map_read_from_str(prg.ctx,
+      //"[y] -> { in[o0, o1] -> [o1, o0] : 0 <= o0 <= 9 and y <= o1 <= 2 + y and ((0 < o0 <= 8) or o0 >= 2 or o0 <= 7) }");
+  //cout << "m = " << str(m) << endl;
+  //cout << "code..." << endl;
+  //cout << codegen_c(to_umap(m)) << endl;
+  //assert(false);
+
+  auto loop = prg.find_loop(level);
+  cout << "Re-use " << buffer << " at" << endl;
+  loop->pretty_print();
+  std::set<op*> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op);
+    }
+  }
+  cout << "Users..." << endl;
+  for (auto u : users) {
+    cout << tab(1) << u->name << endl;
+  }
+
+  auto sched = prg.unoptimized_schedule();
+  cout << "sched = " << str(sched) << endl;
+  auto earlier = lex_gt(sched, sched);
+  cout << "earlier = " << str(earlier) << endl;
+ 
+  auto read = prg.consumer_map();
+  cout << "consumed = " << str(read) << endl;
+  auto read_earlier = coalesce(dot(earlier, read));
+  cout << "consumed earlier = " << str(read_earlier) << endl;
+  auto consumed_earlier_and_now = its(read_earlier, read);
+  cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
+  auto consumed_first_time = diff(read, consumed_earlier_and_now);
+  cout << "first time read  = " << str(consumed_first_time) << endl;
+  for (auto m : get_maps(consumed_first_time)) {
+    if (range_name(m) == buffer) {
+      cout << "m = " << str(m) << endl;
+      auto pr = isl_map_project_out(cpy(m), isl_dim_in, 2, 2);
+      cout << "pr               = " << str(pr) << endl;
+    }
+
+  }
+  assert(false);
+  for (auto m : get_maps(read_earlier)) {
+    if (range_name(m) == buffer) {
+      cout << tab(1) << str(m) << endl;
+      auto mp = isl_map_project_out(cpy(m), isl_dim_in, 3, 1);
+      cout << tab(2) << "projected: " << str(mp) << endl;
+    }
+  }
+  assert(false);
+  auto cm = prg.consumer_maps();
+  //auto buf_map = prg.consumer_map(buffer);
+  //cout << "buf map: " << str(buf_map) << endl;
+
+  cout << "Consumer maps: " << endl;
+  isl_set* read_data = nullptr;
+  isl_set* demands = nullptr;
+  for (auto op : users) {
+    auto consumed = map_find(op, cm);
+
+    for (auto m : get_maps(consumed)) {
+      if (range_name(m) == buffer) {
+        if (read_data == nullptr) {
+          read_data = range(m);
+        } else {
+          read_data = unn(read_data, range(m));
+        }
+
+        auto pm = data_demands(3, m);
+        cout << tab(1) << "demands: " << str(pm) << endl;
+        if (demands == nullptr) {
+          demands = pm;
+        } else {
+          demands = unn(demands, pm);
+        }
+      }
+    }
+  }
+
+  //for (auto m : get_maps(buf_map)) {
+    //auto pm = data_demands(3, m);
+    //cout << tab(1) << "demands: " << str(pm) << endl;
+    //if (demands == nullptr) {
+      //demands = pm;
+    //} else {
+      //demands = unn(demands, pm);
+    //}
+  //}
+  demands = simplify(demands);
+  cout << "Total demands: " << str(demands) << endl;
+  cout << "lmin : " << str(lexmin(demands)) << endl;
+  cout << "lmax : " << str(lexmax(demands)) << endl;
+  assert(false);
+
+  string rb_name = buffer + "_rb_at_" + level;
+  read_data = simplify(read_data);
+  cout << "All data from " << buffer << ": " << str(read_data) << endl;
+
+  read_in(loop, read_data, rb_name, prg);
+
+  write_out(loop, read_data, rb_name, prg);
+  vector<string> prefixes = surrounding_vars(loop, prg);
+  prefixes.push_back(loop->name);
+  for (auto rd : users) {
+    rd->replace_reads_from(buffer, rb_name);
+    rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
+  }
+  
+  prefixes.push_back(loop->name);
+  for (auto rd : users) {
+    rd->replace_writes_to(buffer, rb_name);
+    rd->add_prefix_to_writes(comma_list(prefixes), rb_name);
+  }
+
+} 
+
+void reuse_buffered_conv_test() {
+  prog prg = partially_unrolled_conv();
+  prg.pretty_print();
+  prg.sanity_check();
+
+  add_reuse_buffer("y", "in", prg);
+
+  prg.pretty_print();
+  assert(false);
+
+  umap* sched = prg.optimized_codegen();
+  umap* consumed = prg.consumer_map();
+  auto read_id = isl_union_set_identity(cpy(domain(consumed)));
+  auto same = diff(dot(consumed, inv(consumed)), read_id);
+  cout << endl << endl;
+  cout << "same = " << str(same) << endl;
+  auto earlier = lex_gt(sched, sched);
+  auto se = its(same, earlier);
+  cout << endl << endl;
+  cout << "se   = " << str(se) << endl;
+
+  //umap* m = rdmap(prg.ctx, "{ B[k, 0] -> b[k]; B[k, 1] -> b[k + 1]}");
+    //auto read_id = isl_union_set_identity(cpy(domain(m)));
+    //auto same = diff(dot(m, inv(m)), read_id);
+    //cout << "same = " << str(same) << endl;
+    //auto earlier = lex_gt(sched, sched);
+    //auto se = its(same, earlier);
+    //cout << "se   = " << str(se) << endl;
+    //for (auto m : get_maps(se)) {
+      //auto pw = isl_pw_multi_aff_from_map(m);
+      //cout << tab(1) << str(pw) << endl;
+    //}
+  assert(false);
+
+  CodegenOptions options;
+  options.all_rams = true;
+  options.banking_strategies["in"] =
+  {"cyclic", {3, 1}};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+
+  generate_optimized_code(options, prg);
+}
+
+void cyclic_banked_conv_test() {
+  prog prg = partially_unrolled_conv();
   prg.pretty_print();
   prg.sanity_check();
 
@@ -10593,26 +10883,6 @@ void cyclic_banked_conv_test() {
     INNER_BANK_OFFSET_LINEAR;
 
   generate_optimized_code(options, prg);
-  //regression_test(options, prg);
-  //assert(false);
-
-  //auto buffers = build_buffers(prg, prg.optimized_codegen());
-  //for (auto b : buffers) {
-    //auto buf = b.second;
-    //if (buf.get_out_ports().size() > 1) {
-      //cout << buf << endl << endl;
-      //isl_map* slot_func =
-        //isl_map_read_from_str(prg.ctx,
-            //"{in[x, y] -> M[x, y % 3]}");
-      //assert(inner_bank_offset_is_legal(slot_func, buf));
-
-      //isl_map* bank_func =
-        //isl_map_read_from_str(prg.ctx,
-            //"{in[x, y] -> B[x % 3]}");
-      //assert(banking_scheme_is_legal(bank_func, buf));
-    //}
-  //}
-  //assert(false);
 }
 void copy(const std::string& dst, const std::string& src, const std::vector<int>& dims, prog& prg) {
   op* lp = prg.root;
@@ -11239,6 +11509,7 @@ void unet_conv_3_3_test() {
 
   //prg.merge_ops("conv_s1_r_x");
   prg.pretty_print();
+  //assert(false);
 
   //auto sched = prg.unoptimized_schedule();
 
@@ -11253,12 +11524,13 @@ void unet_conv_3_3_test() {
 
   CodegenOptions options;
   options.all_rams = true;
-  //options.banking_strategies["conv_stencil"] = {"cyclic", {3, 3, -1}};
+  //options.banking_strategies["conv_stencil"] = {"cyclic", {3, 3, 1}};
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
   all_register_files(prg, options);
  
   //generate_optimized_code(options, prg);
+  //assert(false);
   regression_test(options, prg);
 }
 
@@ -11364,15 +11636,49 @@ void coreir_tests() {
   //assert(false);
 }
 
-void application_tests() {
-  unet_conv_3_3_test();
-  // Does not work with register files?
-  seidel2d_test();
-  //cnn_test();
+void resnet_test() {
+  auto prg = resnet();
+  prg.pretty_print();
+  assert(false);
+  generate_unoptimized_code(prg);
 
+  CodegenOptions options;
+  options.all_rams = true;
+  all_register_files(prg, options);
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  generate_optimized_code(options, prg);
+  assert(false);
+
+  //assert(false);
+  //cout << "after adding rb" << endl;
+  //add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
+  //prg.pretty_print();
+  //assert(false);
+}
+
+void application_tests() {
+  resnet_test();
+  assert(false);
+
+  reuse_buffered_conv_test();
+
+  register_file_test();
+  reaccess_no_hierarchy_rolled_test();
+
+  //assert(false);
+  seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
+
+  unet_conv_3_3_test();
+  cyclic_banked_conv_test();
+  //register_file_optimization_test();
+  
+  // Does not work with register files?
+  //cnn_test();
+
 
   two_input_mag_test();
   one_input_mag_test();
@@ -11432,7 +11738,6 @@ void application_tests() {
   blur_and_downsample_test();
   halide_up_sample_test();
   denoise2d_test();
-  cyclic_banked_conv_test();
 
   sum_diffs_test();
   denoise3d_reconvergence_test();
@@ -11452,7 +11757,6 @@ void application_tests() {
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
   up_unrolled_4_test();
-  register_file_optimization_test();
   reduce_rows_test();
   reaccess_no_hierarchy_test();
   //playground();
@@ -11510,11 +11814,6 @@ void application_tests() {
   conv_test();
   conv_2d_bc_test();
 
-  register_file_test();
-  reaccess_no_hierarchy_rolled_test();
-
-
-
   //two_input_denoise_pipeline_test();
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
@@ -11567,9 +11866,7 @@ void multi_channel_example() {
   int rows = 1080;
 
   const int unroll_factor = 32;
-  cout << "blur_xy" << endl;
-  cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-  string out_name = "blur_example";
+  string out_name = "three_channel_" + str(unroll_factor);
   multi_channel(out_name).realize(out_name, cols, rows, unroll_factor);
   move_to_benchmarks_folder(out_name);
 }
@@ -11610,6 +11907,11 @@ int main(int argc, char** argv) {
 
     if (cmd == "multi-channel-example") {
       multi_channel_example();
+      return 0;
+    }
+
+    if (cmd == "isabela-project") {
+      prog_splitting_tests();
       return 0;
     }
 
