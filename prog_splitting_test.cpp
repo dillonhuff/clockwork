@@ -181,7 +181,7 @@ void toy_task(){
 	cout << "Original program..." << endl;
 	prg.pretty_print();
 
-	generate_optimized_code(prg);
+	generate_unoptimized_code(prg);
 	assert(false);
 
 	// Estimate the area required for each
