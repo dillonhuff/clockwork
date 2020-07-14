@@ -7,54 +7,6 @@
 #define INT_ADDER_COST 1
 #define INT_CONSTANT_DIVIDER_COST 1
 
-prog brighten_blur() {
-  prog prg;
-  prg.compute_unit_file = "clockwork_standard_compute_units.h";
-  prg.name = "brighten_blur";
-  prg.add_input("off_chip_input");
-  prg.add_output("off_chip_output");
-  prg.buffer_port_widths["off_chip_input"] = 16;
-  prg.buffer_port_widths["in"] = 16;
-  prg.buffer_port_widths["brightened"] = 16;
-  prg.buffer_port_widths["blurred"] = 16;
-  prg.buffer_port_widths["off_chip_output"] = 16;
-
-
-  int input_image_rows = 256;
-  int input_image_cols = 256;
-
-  // Actually you dont have to fill these
-  // buffer bounds in. I am just adding them for completeness.
-  prg.buffer_bounds["off_chip_input"] = {input_image_cols, input_image_rows};
-  prg.buffer_bounds["in"] = {input_image_cols, input_image_rows};
-  prg.buffer_bounds["brightened"] = {input_image_cols, input_image_rows};
-  prg.buffer_bounds["blurred"] = {input_image_cols - 2, input_image_rows - 2};
-  prg.buffer_bounds["off_chip_output"] = {input_image_cols - 2, input_image_rows - 2};
-
-  auto p = prg.add_nest("po", 0, input_image_rows, "pi", 0, input_image_cols);
-  auto write = p->add_op("load_image_from_off_chip");
-  write->add_load("off_chip_input", "pi, po");
-  write->add_store("in", "pi, po");
-
-  auto br = prg.add_nest("bo", 0, input_image_rows, "bi", 0, input_image_cols);
-  auto scale = br->add_op("brighten_image");
-  scale->add_function("multiply_by_two");
-  scale->add_load("in", "bi, bo");
-  scale->add_store("brightened", "bi, bo");
-
-  auto blr = prg.add_nest("y", 0 , input_image_rows, "x", 0, input_image_cols);
-  auto blur = blr->add_op("blur_image");
-  blur->add_function("inc");
-  blur->add_load("brightened", "x","y");
-  blur->add_store("blurred", "x","y");
-
-  auto write_out = prg.add_nest("m", 0, input_image_rows, "n", 0, input_image_cols);
-  auto write_op = write_out->add_op("write_blurred_off_chip");
-  write_op->add_load("blurred", "n, m");
-  write_op->add_store("off_chip_output", "n, m");
-
-  return prg;
-}
 
 struct TargetTechlibInfo {
   map<string, int> compute_unit_costs;
@@ -66,7 +18,6 @@ struct TargetTechlibInfo {
 
 map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info) {
 
-	// TODO: Come up with a better area estimate
 	map<string, int> costs;
 
 	for (string kernel : get_kernels(prg)) {
@@ -91,6 +42,42 @@ map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info
 	}
 
 	return costs;
+}
+
+//-----------------------------------------ESTIMATE_KERNEL_MEMORY_AREA-------------------------------------------
+
+ map<string, int> estimate_kernel_memory_area(prog& prg, TargetTechlibInfo& target_info){
+ 
+	 map<string, int> estimated_areas;
+	 auto locations_written = prg.producer_maps();
+
+	 for (string kernel : get_kernels(prg)) {
+
+		 op* loop = prg.find_loop(kernel);
+		 auto ops_in_kernel = loop -> descendant_ops();
+		 cout << "ops_in_kernel " << kernel << ":" << endl;
+		 int kernel_cost = 0;
+		 uset* all_locs_written = nullptr;
+		 for (auto op: ops_in_kernel){
+			 cout << tab(1) << op -> name << endl;
+			 auto locs_written = map_find(op, locations_written);
+			 cout << tab(2) << str(locs_written) << endl;
+			 auto locs = range(locs_written);
+			 cout << tab(2) << str(locs) << endl;
+			 if(all_locs_written == nullptr){
+				 all_locs_written = to_uset(locs);
+			 }else{
+				 all_locs_written = unn(to_uset(locs), all_locs_written);
+			 }
+		 }
+
+		 int num_locs_written = int_upper_bound(card(all_locs_written));
+		 cout << tab(2) << "Number of locations written: " << num_locs_written << endl;
+		 estimated_areas[kernel] = kernel_cost;
+		 cout << "Kernel '" << kernel << "' cost: " << estimated_areas[kernel] << endl;
+	 }
+
+	 return estimated_areas;
 }
 
 //-----------------------------------------GROUP_KERNELS_FOR_COMPILATION-------------------------------------------
@@ -187,15 +174,15 @@ void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) 
   }
 }
 
+//--------------------------------------------------TOY_TASK----------------------------------------------------------
 void toy_task(){
 
-	prog prg = resnet();
+	prog prg = halide_harris();
 	cout << "Original program..." << endl;
 	prg.pretty_print();
-	
-	// Compile the application into
-	// one large module.
+
 	generate_unoptimized_code(prg);
+	assert(false);
 
 	// Estimate the area required for each
 	// kernel in the application
@@ -223,6 +210,8 @@ void toy_task(){
 	target_info.sram_cost_per_bit = 1;
 	target_info.reg_cost_per_bit = 1;
 
+	estimate_kernel_memory_area(prg, target_info);
+//	assert(false);	
 	cout << endl << "Estimating area costs..." << endl;
 	map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
 	int total_cost = 0;

@@ -61,16 +61,8 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  void copy_fields_from(op* other);
-=======
-  void copy_memory_operations_from(op* other);
->>>>>>> origin
-=======
   void copy_fields_from(op* other);
   void copy_memory_operations_from(op* other);
->>>>>>> origin/prog_splitting
 
   bool dynamic_writes(const std::string& buf) {
     for (auto d : dynamic_store_addresses) {
@@ -1422,19 +1414,12 @@ op* find_writer(const std::string& target_buf, prog& prg);
 
 std::set<string> get_producers(string next_kernel, prog& prg);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/prog_splitting
 void deep_copy_child(op* dest, op* source, prog& original);
 
 std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original);
 
 std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original);
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/prog_splitting
+
 void generate_verilog(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1447,7 +1432,5 @@ std::string optimized_code_string(prog& prg);
 void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
-<<<<<<< HEAD
->>>>>>> origin
-=======
->>>>>>> origin/prog_splitting
+
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);

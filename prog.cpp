@@ -3363,3 +3363,44 @@ void ir_node::copy_memory_operations_from(op* other) {
   concat(dynamic_load_addresses, other->dynamic_load_addresses);
 }
 
+
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
+	prog extracted;
+	string prg_name = "Extracted_";
+	for(auto g : group){
+	prg_name += g + "_";
+	}
+	extracted.name = prg_name;
+
+	for(auto kernel : topologically_sort_kernels(original)){
+		if(elem(kernel, group)){
+			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
+			for(auto child : original.find_loop(kernel)->children){
+				deep_copy_child(kernel_copy, child, original);
+			}
+		}
+	}
+	cout << "Programs copied" << endl;
+
+	std::set<string> all_consumed_buffers = get_consumed_buffers(group, original);
+	std::set<string> all_produced_buffers = get_produced_buffers(group, original);
+	for(auto consumed : all_consumed_buffers){
+		if(!elem(consumed, all_produced_buffers)){
+			extracted.add_input(consumed);
+			cout << "Input added: " << consumed << endl;
+			 extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
+			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
+		}
+	}
+	
+	for(auto produced : all_produced_buffers){
+		if(!elem(produced, all_consumed_buffers)){
+			extracted.add_output(produced);
+			cout << "Output added: " << produced << endl;
+			extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
+			cout << "Output width: " << extracted.buffer_port_widths[produced] << endl;
+		}
+	}
+	
+	return extracted;
+}
