@@ -12038,24 +12038,26 @@ pair<string, string> store_off_chip_two_channels(const std::string& input, App& 
 }
 
 void psef_multi_output_test() {
-  App lp;
-  lp.set_default_pixel_width(16);
-  // The off chip input we are reading from
-  string input_image = load_off_chip_two_channels("in_off_chip", lp);
-  exposure_fusion_app(input_image, "ps", lp);
-
-  pair<string, string> output_image = store_off_chip_two_channels("ps", lp);
-
-  string out0 = output_image.first;
-  string out1 = output_image.second;
-
   int rows = 1080;
   int cols = 1920 / 2;
   int unroll = 8;
 
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  string input_image = load_off_chip_two_channels("in_off_chip", lp);
+  exposure_fusion_app(input_image, "ps" + str(unroll), lp);
+
+
+  pair<string, string> output_image = store_off_chip_two_channels("ps" + str(unroll), lp);
+
+  string out0 = output_image.first;
+  string out1 = output_image.second;
+
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
   lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
 
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
@@ -12065,13 +12067,15 @@ void psef_multi_output_test() {
 }
 
 void application_tests() {
+  psef_multi_output_test();
+  assert(false);
+
+  non_rate_matched_ds_test();
   reuse_buffered_conv_test();
   resnet_test();
-  psef_multi_output_test();
   iccad_tests();
   coreir_tests();
   multi_output_app_test();
-  non_rate_matched_ds_test();
 
   seidel2d_test();
   sobel_test();
