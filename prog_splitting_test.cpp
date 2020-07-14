@@ -177,10 +177,11 @@ void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) 
 //--------------------------------------------------TOY_TASK----------------------------------------------------------
 void toy_task(){
 
-	prog prg = unet_conv_3_3();
+	prog prg = mini_conv_halide_fixed();
 	cout << "Original program..." << endl;
 	prg.pretty_print();
 
+//	generate_optimized_code(prg);
 	generate_unoptimized_code(prg);
 	assert(false);
 
