@@ -12040,7 +12040,7 @@ pair<string, string> store_off_chip_two_channels(const std::string& input, App& 
 void psef_multi_output_test() {
   int rows = 1080;
   int cols = 1920 / 2;
-  int unroll = 1;
+  int unroll = 16;
 
   App lp;
   lp.set_default_pixel_width(16);
