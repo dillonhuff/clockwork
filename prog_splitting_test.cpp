@@ -177,11 +177,11 @@ void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) 
 //--------------------------------------------------TOY_TASK----------------------------------------------------------
 void toy_task(){
 
-	prog prg = halide_harris();
+	prog prg = unet_conv_3_3();
 	cout << "Original program..." << endl;
 	prg.pretty_print();
 
-	generate_unoptimized_code(prg);
+	generate_optimized_code(prg);
 	assert(false);
 
 	// Estimate the area required for each
