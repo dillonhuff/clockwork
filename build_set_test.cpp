@@ -11083,8 +11083,16 @@ void lake_agg_sram_tb_config_test() {
   auto hs = hardware_schedule(lake_agg);
   hs = its(hs, lake_agg.whole_iteration_domain());
   cout << "schedule: " << codegen_c(hs) << endl;
-  assert(false);
+  //assert(false);
 
+  auto buffers = build_buffers(lake_agg, hs);
+  for (auto b : buffers) {
+    if (b.first == "agg") {
+      isl_map* fold_func = isl_map_read_from_str(lake_agg.ctx, "{ agg[x] -> M[x % 10] }");
+      assert(inner_bank_offset_is_legal(fold_func, b.second));
+      assert(false);
+    }
+  }
   cmd("mkdir -p ./lake_controllers/identity_stream/");
   for (auto op : lake_agg.all_ops()) {
     ofstream out(string("./lake_controllers/identity_stream/") + op->name + ".csv");
@@ -11854,11 +11862,12 @@ void weight_add_psef() {
 }
 
 void application_tests() {
-  weight_add_psef();
+  lake_agg_sram_tb_config_test();
   assert(false);
+
+  weight_add_psef();
   two_stage_psef();
   psef_multi_output_test();
-  lake_agg_sram_tb_config_test();
 
   non_rate_matched_ds_test();
   reuse_buffered_conv_test();
