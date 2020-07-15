@@ -1,0 +1,136 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* define if the compiler supports basic C++11 syntax */
+#undef HAVE_CXX11
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the <getopt.h> header file. */
+#undef HAVE_GETOPT_H
+
+/* Define to 1 if you have the <glpk.h> header file. */
+#undef HAVE_GLPK_H
+
+/* define if the compiler supports __gnu_cxx::hash_map */
+#undef HAVE_GNUCXX_HASHMAP
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `cddgmp' library (-lcddgmp). */
+#undef HAVE_LIBCDDGMP
+
+/* Define to 1 if you have the `glpk' library (-lglpk). */
+#undef HAVE_LIBGLPK
+
+/* Define to 1 if you have the `gmp' library (-lgmp). */
+#undef HAVE_LIBGMP
+
+/* Define to 1 if you have the `ntl' library (-lntl). */
+#undef HAVE_LIBNTL
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* use omega */
+#undef HAVE_OMEGA
+
+/* Define to 1 if you have the <omega.h> header file. */
+#undef HAVE_OMEGA_H
+
+/* use Pet */
+#undef HAVE_PET
+
+/* Define to 1 if you have the <polylib/polylibgmp.h> header file. */
+#undef HAVE_POLYLIB_POLYLIBGMP_H
+
+/* Define to 1 if you have the `sigaction' function. */
+#undef HAVE_SIGACTION
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/times.h> header file. */
+#undef HAVE_SYS_TIMES_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* define if std::unordered_map is available */
+#undef HAVE_UNORDERED_MAP
+
+/* define if your compiler has __attribute__ */
+#undef HAVE___ATTRIBUTE__
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#undef LT_OBJDIR
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Path of points2triangs */
+#undef POINTS2TRIANGS_PATH
+
+/* srcdir */
+#undef SRCDIR
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* use fdstream */
+#undef USE_FDSTREAM
+
+/* Use breadth-first incremental algorithm */
+#undef USE_INCREMENTAL_BF
+
+/* Use depth-first incremental algorithm */
+#undef USE_INCREMENTAL_DF
+
+/* use parker */
+#undef USE_PARKER
+
+/* use zsolve */
+#undef USE_ZSOLVE
+
+/* Version number of package */
+#undef VERSION
+
+/* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
+   `char[]'. */
+#undef YYTEXT_POINTER
+
+#include "config_post.h"

@@ -1,0 +1,9 @@
+<annotationInfo>
+<item  id="11" filename="conv_3_3_halide.cpp" linenumber="319" name="icmp_ln319" contextFuncName="conv_3_3_halide" moduleName="conv_3_3_halide" rtlName="icmp_ln319_fu_74_p2" latency="0" BRAM="-1" DSP="-1" FF="0" LUT="11" fileDirectory="/home/users/isabdr/clockwork"><\/item>
+<item  id="13" filename="conv_3_3_halide.cpp" linenumber="319" name="c0" contextFuncName="conv_3_3_halide" moduleName="conv_3_3_halide" rtlName="c0_fu_80_p2" latency="0" BRAM="-1" DSP="-1" FF="0" LUT="15" fileDirectory="/home/users/isabdr/clockwork"><\/item>
+<item  id="16" filename="conv_3_3_halide.cpp" linenumber="321" name="icmp_ln321" contextFuncName="conv_3_3_halide" moduleName="conv_3_3_halide" rtlName="icmp_ln321_fu_86_p2" latency="0" BRAM="-1" DSP="-1" FF="0" LUT="11" fileDirectory="/home/users/isabdr/clockwork"><\/item>
+<item  id="20" filename="conv_3_3_halide.cpp" linenumber="320" name="icmp_ln320" contextFuncName="conv_3_3_halide" moduleName="conv_3_3_halide" rtlName="icmp_ln320_fu_92_p2" latency="0" BRAM="-1" DSP="-1" FF="0" LUT="11" fileDirectory="/home/users/isabdr/clockwork"><\/item>
+<item  id="22" filename="conv_3_3_halide.cpp" linenumber="320" name="c1" contextFuncName="conv_3_3_halide" moduleName="conv_3_3_halide" rtlName="c1_fu_98_p2" latency="0" BRAM="-1" DSP="-1" FF="0" LUT="15" fileDirectory="/home/users/isabdr/clockwork"><\/item>
+<item  id="25" filename="conv_3_3_halide.cpp" linenumber="321" name="icmp_ln321_1" contextFuncName="conv_3_3_halide" moduleName="conv_3_3_halide" rtlName="icmp_ln321_1_fu_104_p2" latency="0" BRAM="-1" DSP="-1" FF="0" LUT="11" fileDirectory="/home/users/isabdr/clockwork"><\/item>
+<item  id="26" filename="conv_3_3_halide.cpp" linenumber="321" name="and_ln321" contextFuncName="conv_3_3_halide" moduleName="conv_3_3_halide" rtlName="and_ln321_fu_110_p2" latency="0" BRAM="-1" DSP="-1" FF="0" LUT="2" fileDirectory="/home/users/isabdr/clockwork"><\/item>
+</annotationInfo>

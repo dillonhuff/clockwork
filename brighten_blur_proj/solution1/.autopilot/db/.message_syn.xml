@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+	<Message severity="INFO" prefix="[SCHED 204-61]" key="SCHED_PIPELINING_STATUS_631" tag="SCHEDULE" content="Option &apos;relax_ii_for_timing&apos; is enabled, will increase II to preserve clock frequency constraints."/>
+	<Message severity="INFO" prefix="[HLS 200-10]" key="HLS_10_1312" tag="" content="Analyzing design file &apos;brighten_blur.cpp&apos; ..."/>
+	<Message severity="ERROR" prefix="[HLS 200-70]" key="HLS_70_1454" tag="" content="Compilation errors found: In file included from brighten_blur.cpp:1:
+brighten_blur.cpp:247:24: error: no matching function for call to &apos;inc&apos;
+ auto compute_result = inc(brightened_x_c__y_value);
+                       ^~~
+./clockwork_standard_compute_units.h:237:3: note: candidate function template not viable: requires 2 arguments, but 1 was provided
+T inc(T&amp; src, T&amp; a0) {
+  ^
+1 error generated."/>
+</Messages>

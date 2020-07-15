@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# We locate where this script is so we can call the executable zsolve which
+# should be in the same directory as this script.
+SCRIPT=`which $0`
+SCRIPTDIR=`dirname $SCRIPT`
+EXECUTABLE=zsolve
+
+# Check if zsolve executable exists.
+if [ ! -f "$SCRIPTDIR/$EXECUTABLE" ]
+then
+    echo "Error: Unable to find the executable '$EXECUTABLE'."
+    echo "Error: It should have been in the directory '$SCRIPTDIR'."
+    exit 1
+fi
+
+$SCRIPTDIR/$EXECUTABLE -H $@

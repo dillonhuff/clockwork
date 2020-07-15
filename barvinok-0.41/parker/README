@@ -1,0 +1,70 @@
+The files contained here implement the method for counting solutions to
+Presburger formulas described by Parker & Chatterjee in "An
+Automata-Theoretic Algorithm for Counting Solutions to Presburger Formulas"
+(Compiler Construction 2004).
+
+The method has essentially two phases.  It first takes a Presburger formula
+and represents it as a deterministic finite automaton (DFA), and then
+counts the number of accepting paths in the DFA to reveal the number of
+solutions to the original formula.
+
+This implementation uses two pre-existing tools.  
+  1.  It uses the automata-construction algorithms of Bartzis & Bultan to
+      construct DFA representations of linear equality and inequality
+      constraints.  The code for DFA construction is graciously provided by
+      Constantinos Bartzis in the file construction.c.  Please contact him
+      (bar@cs.uscb.edu) with any questions or comments regarding this code.
+  2.  It also uses the DFA Library of the MONA tool.  Please see
+      http://www.brics.dk/mona to download MONA.
+
+
+Description of files:
+  generate_code.pl -- A Perl script that takes a Presburger formula as input
+                      and generates the C source code for building a DFA
+		      representation of the formula and subsequently
+		      counting the number of accepting paths in the DFA to
+		      reveal the number of solutions to the original formula. 
+  count_solutions.h -- A header file containing declarations of the
+		       following functions called by the generated code:
+		       build_DFA_eq(), build_DFA_ineq(), count_accepting_paths().
+  construction.c -- Contains function definitions for build_DFA_eq() and
+		    build_DFA_ineq() (code provided by Bartzis).
+  count_paths.c -- Contains function definition for count_accepting_paths().
+
+
+Example 1:
+  The file example1.formula contains the representation of an example
+  Presburger formula with 4 free variables.  To count the number of
+  solutions to the formula, execute the following commands.
+	    
+	    generate_code.pl 4 < example1.formula > example1.c
+	    make in=example1
+	    count
+  
+  The output should be
+	    DFA: 12 states, 17 accepting paths, length of all accepting paths is 4.
+
+
+Example 2:
+  The file example2.formula contains the representation of an example
+  Presburger formula with 2 free variables.  To count the number of
+  solutions to the formula, execute the following commands.
+	    
+	    generate_code.pl 2 < example2.formula > example2.c
+	    make in=example2
+	    count
+  
+  The output should be
+	    DFA: 76 states, 16000 accepting paths, length of all accepting paths is 9.
+
+
+Direct any questions or comments to Erin Parker (parker@cs.unc.edu).
+
+PLEASE NOTE:  The input formula is assumed to be written in the style of
+the Omega Library (see http://www.cs.umd.edu/projects/omega for more on 
+the Omega Library).  The code contained here is certainly not guaranteed 
+to be bug-free.  It really is designed to process the sort of representations
+I typically see when using the Omega Library for the expression and
+manipulation of Presburger formulas of interest to me.  ---Erin
+
+
