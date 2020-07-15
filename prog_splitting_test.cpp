@@ -177,12 +177,12 @@ void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) 
 //--------------------------------------------------TOY_TASK----------------------------------------------------------
 void toy_task(){
 
-	prog prg = mini_conv_halide_fixed();
+	prog prg = unet_conv_3_3();
 	cout << "Original program..." << endl;
 	prg.pretty_print();
 
 //	generate_optimized_code(prg);
-	generate_unoptimized_code(prg);
+//	generate_unoptimized_code(prg);
 	assert(false);
 
 	// Estimate the area required for each
@@ -211,7 +211,21 @@ void toy_task(){
 	target_info.sram_cost_per_bit = 1;
 	target_info.reg_cost_per_bit = 1;
 
-	estimate_kernel_memory_area(prg, target_info);
+	target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
+	target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_1"] = 0;
+	target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_2"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_3"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_4"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_5"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_6"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_7"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_8"] = 0;
+	target_info.compute_unit_costs["hcompute_conv_stencil_9"] = 0;
+	target_info.compute_unit_costs["hcompute_hw_output_stencil"] = 0;
+//	estimate_kernel_memory_area(prg, target_info);
 //	assert(false);	
 	cout << endl << "Estimating area costs..." << endl;
 	map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
@@ -253,3 +267,4 @@ void toy_task(){
 void prog_splitting_tests() {
 	toy_task();
 }
+
