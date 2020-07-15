@@ -11834,7 +11834,7 @@ void psef_multi_output_test() {
 void weight_add_psef() {
   int rows = 1080;
   int cols = 1920 / 2;
-  int unroll = 16;
+  int unroll = 32;
 
   App lp;
   lp.set_default_pixel_width(16);
@@ -11862,10 +11862,10 @@ void weight_add_psef() {
 }
 
 void application_tests() {
-  lake_agg_sram_tb_config_test();
-  assert(false);
-
   weight_add_psef();
+  assert(false);
+  lake_agg_sram_tb_config_test();
+
   two_stage_psef();
   psef_multi_output_test();
 
