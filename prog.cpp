@@ -256,8 +256,9 @@ void ocl_timing_suffix(std::ostream& out) {
   out << tab(1) << "double bpersec = (dbytes / dsduration);" << endl;
   out << tab(1) << "double gbpersec = bpersec / ((double)1024 * 1024 * 1024);" << endl;
 
+  out << tab(1) << "std::cout << \"bytes       = \" << dbytes << std::endl;" << endl;
   out << tab(1) << "std::cout << \"bytes / sec = \" << bpersec << std::endl;" << endl;
-  out << tab(1) << "std::cout << \"GB / sec = \" << gbpersec << std::endl;" << endl;
+  out << tab(1) << "std::cout << \"GB / sec    = \" << gbpersec << std::endl;" << endl;
   out << tab(1) << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
 }
 
@@ -572,7 +573,6 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
       num_pixels = prg.buffer_size(buf);
     }
 
-    //out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << prg.buffer_size(buf) << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << num_pixels << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
     out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
