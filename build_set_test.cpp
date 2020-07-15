@@ -7231,6 +7231,58 @@ App ef_cartoon(const std::string& out_name) {
   return lp;
 }
 
+void two_level_exposure_fusion_app(
+    const std::string& in_name,
+    const std::string& out_name,
+    App& lp) {
+
+  lp.func2d("in", "id", pt(in_name));
+
+  // Two synthetic exposures
+  lp.func2d("bright", "id", pt("in"));
+  lp.func2d("dark", "scale_exposure", pt("in"));
+
+  // Compute weights which measure the "quality" of
+  // pixels in each image
+  lp.func2d("bright_weights", "exposure_weight", pt("bright"));
+  lp.func2d("dark_weights", "exposure_weight", pt("dark"));
+
+  // Normalize weights so that the weight matrices entries sum to one
+  lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
+  lp.func2d("bright_weights_normed", "f_divide", pt("bright_weights"), pt("weight_sums"));
+  lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
+
+
+  int n_levels = 2;
+  // Create pyramids of the weights
+  auto dark_weight_pyramid = gauss_pyramid(n_levels, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(n_levels, "bright_weights_normed", lp);
+
+  // Create laplacian pyramids of the synthetic exposures
+  auto dark_pyramid = laplace_pyramid(n_levels, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(n_levels, "bright", lp);
+
+  // Merge weighted pyramids
+  vector<string> merged_images;
+  for (int i = 0; i < dark_pyramid.size(); i++) {
+    string fused = "fused_level_" + str(i);
+    lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
+        pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
+    merged_images.push_back(fused);
+  }
+
+  // Collapse the blended pyramid into a single image
+  assert(merged_images.size() == n_levels);
+  string image = merged_images.back();
+  for (int i = merged_images.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    image = merged_level;
+  }
+
+  lp.func2d(out_name, "id", pt(image));
+}
+
 void exposure_fusion_app(
     const std::string& in_name,
     const std::string& out_name,
@@ -10965,6 +11017,9 @@ void lake_agg_sram_tb_config_test() {
   tb2out->add_load("tb", "ao0 + 4*ao1");
   tb2out->add_store("out", "ao0 + 4*ao1");
 
+  lake_agg.pretty_print();
+  //assert(false);
+
   auto valid = lake_agg.validity_deps();
 
   lake_agg.pretty_print();
@@ -10972,6 +11027,8 @@ void lake_agg_sram_tb_config_test() {
   cout << "Schedule..." << endl;
   auto hs = hardware_schedule(lake_agg);
   hs = its(hs, lake_agg.whole_iteration_domain());
+  cout << "schedule: " << codegen_c(hs) << endl;
+  assert(false);
 
   cmd("mkdir -p ./lake_controllers/identity_stream/");
   for (auto op : lake_agg.all_ops()) {
@@ -11653,6 +11710,35 @@ pair<string, string> store_off_chip_two_channels(const std::string& input, App& 
   return {res0, res1};
 }
 
+void two_stage_psef() {
+  int rows = 1080;
+  int cols = 1920 / 2;
+  int unroll = 16;
+
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  string input_image = load_off_chip_two_channels("in_off_chip", lp);
+  two_level_exposure_fusion_app(input_image, "ls" + str(unroll), lp);
+
+
+  pair<string, string> output_image = store_off_chip_two_channels("ls" + str(unroll), lp);
+
+  string out0 = output_image.first;
+  string out1 = output_image.second;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
+
+  compile_compute(out0 + "_" + out1 + "_opt.cpp");
+
+  move_to_benchmarks_folder(out0 + "_" + out1);
+  assert(false);
+}
+
 void psef_multi_output_test() {
   int rows = 1080;
   int cols = 1920 / 2;
@@ -11683,8 +11769,10 @@ void psef_multi_output_test() {
 }
 
 void application_tests() {
-  psef_multi_output_test();
+  two_stage_psef();
   assert(false);
+  psef_multi_output_test();
+  lake_agg_sram_tb_config_test();
 
   non_rate_matched_ds_test();
   reuse_buffered_conv_test();
@@ -11802,7 +11890,6 @@ void application_tests() {
   histogram_test();
   //assert(false);
   
-  lake_agg_sram_tb_config_test();
   halide_frontend_test();
   halide_cascade_test();
 
