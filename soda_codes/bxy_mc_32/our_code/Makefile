@@ -72,6 +72,7 @@ endif
 
 
 
+LDCLFLAGS += --config $(APP_NAME)_config.ini 
 EXECUTABLE = host
 CMD_ARGS = $(BUILD_DIR)/$(APP_NAME).xclbin
 EMCONFIG_DIR = $(TEMP_DIR)
