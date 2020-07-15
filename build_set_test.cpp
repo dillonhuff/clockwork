@@ -11831,6 +11831,37 @@ void psef_multi_output_test() {
   assert(false);
 }
 
+void add_four_channels() {
+  int rows = 1080;
+  int cols = 1920 / 2;
+  int unroll = 32;
+
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  string input_image = load_off_chip_two_channels("in_off_chip", lp);
+
+  string af = "af";
+  lp.func2d(af + str(unroll), "id", pt(input_image));
+
+
+  pair<string, string> output_image = store_off_chip_two_channels(af + str(unroll), lp);
+
+  string out0 = output_image.first;
+  string out1 = output_image.second;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
+
+  compile_compute(out0 + "_" + out1 + "_opt.cpp");
+
+  move_to_benchmarks_folder(out0 + "_" + out1);
+  assert(false);
+}
+
 void weight_add_psef() {
   int rows = 1080;
   int cols = 1920 / 2;
@@ -11862,8 +11893,9 @@ void weight_add_psef() {
 }
 
 void application_tests() {
-  weight_add_psef();
+  add_four_channels();
   assert(false);
+  weight_add_psef();
   lake_agg_sram_tb_config_test();
 
   two_stage_psef();

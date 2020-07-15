@@ -24,7 +24,6 @@ to_multi_aff(isl_ctx* context,
     brackets(addr);
   str = "{" + str + " }";
 
-  //cout << "str = " << str << endl;
   return isl_multi_aff_read_from_str(context, str.c_str());
 }
 
@@ -3370,7 +3369,6 @@ void ir_node::copy_memory_operations_from(op* other) {
   concat(consume_locs_pair, other->consume_locs_pair);
   concat(dynamic_load_addresses, other->dynamic_load_addresses);
 }
-
 
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
 	prog extracted;

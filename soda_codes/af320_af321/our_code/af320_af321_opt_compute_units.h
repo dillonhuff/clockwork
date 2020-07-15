@@ -626,7 +626,7 @@ hw_uint<1024>  interleave_unrolled_64(hw_uint<1024>& in_off_chip0, hw_uint<1024>
   return whole_result;
 }
 
-  // wa32_update_0 unroll factor: 64
+  // af32_update_0 unroll factor: 64
 hw_uint<1024>  id_unrolled_64(hw_uint<1024>& in_off_chip0_oc_in_off_chip1_oc) {
   hw_uint<1024> whole_result;
 
