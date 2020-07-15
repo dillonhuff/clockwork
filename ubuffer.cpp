@@ -429,6 +429,7 @@ void generate_bank(CodegenOptions& options,
 
     out << "\t// Capacity: " << maxdelay + 1 << endl;
     out << "\t// # of read delays: " << read_delays.size() << endl;
+    out << tab(1) << "// " << comma_list(read_delays) << endl;
 
     read_delays = sort_unique(read_delays);
 

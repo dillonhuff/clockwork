@@ -2220,6 +2220,10 @@ void generate_app_code(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     map<string, isl_set*>& domain_map) {
+  //for (auto b : buffers) {
+    //cout << b.second << endl;
+  //}
+  //assert(false);
 
   ofstream conv_out(prg.name + ".cpp");
 
@@ -2264,7 +2268,13 @@ void generate_app_code(CodegenOptions& options,
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
-      ignore_inter_deps(conv_out, b.second.name);
+      open_synth_scope(conv_out);
+      if (b.second.banking.partition == "register_file") {
+        assert(b.second.bank_list.size() == 1);
+        string var = b.second.name + "." + pick(b.second.bank_list).name + ".RAM";
+        conv_out << "#pragma HLS array_partition variable=" << var << " dim=0 complete" << endl;
+      }
+      close_synth_scope(conv_out);
     }
   }
 
@@ -2369,10 +2379,10 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
   auto buffers = build_buffers(prg, sched);
 
   cout << "Buffers..." << endl;
-  //for (auto b : buffers) {
-    ////b.second.generate_bank_and_merge(options);
-    //cout << b.second << endl;
-  //}
+  for (auto b : buffers) {
+    //b.second.generate_bank_and_merge(options);
+    cout << b.second << endl;
+  }
 
   assert(prg.compute_unit_file != "");
   cout << "Compute unit file: " << prg.compute_unit_file << endl;

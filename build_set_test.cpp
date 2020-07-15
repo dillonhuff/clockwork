@@ -11893,8 +11893,11 @@ void weight_add_psef() {
 }
 
 void application_tests() {
-  add_four_channels();
+  seidel2d_test();
   assert(false);
+
+  add_four_channels();
+  //assert(false);
   weight_add_psef();
   lake_agg_sram_tb_config_test();
 
@@ -11908,7 +11911,6 @@ void application_tests() {
   coreir_tests();
   multi_output_app_test();
 
-  seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
