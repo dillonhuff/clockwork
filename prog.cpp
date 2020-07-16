@@ -991,9 +991,9 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       cout << "bundle: " << bundle << endl;
 
       string out_bundle_tp = buf.bundle_type_string(bundle);
-      ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
-      ptr_args.push_back(bundle);
-      buffer_args.push_back(bundle + "_channel");
+      ptr_arg_decls.push_back(out_bundle_tp + "* " + pipe_cpy(bundle, pipe));
+      ptr_args.push_back(pipe_cpy(bundle, pipe));
+      buffer_args.push_back(pipe_cpy(bundle, pipe) + "_channel");
     }
 
     for (auto out : prg.outs) {
@@ -1002,9 +1002,9 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       for (auto bundle : buf.get_in_bundles()) {
         string in_bundle_tp = buf.bundle_type_string(bundle);
 
-        ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
-        ptr_args.push_back(bundle);
-        buffer_args.push_back(bundle + "_channel");
+        ptr_arg_decls.push_back(in_bundle_tp + "* " + pipe_cpy(bundle, pipe));
+        ptr_args.push_back(pipe_cpy(bundle, pipe));
+        buffer_args.push_back(pipe_cpy(bundle, pipe) + "_channel");
       }
     }
   }

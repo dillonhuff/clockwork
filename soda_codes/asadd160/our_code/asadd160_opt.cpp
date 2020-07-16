@@ -1494,6 +1494,24 @@ inline void in_off_chip0_in_off_chip0_update_0_write_bundle_write(hw_uint<256>& 
 
 
 // Operation logic
+inline void asadd160_update_0(asadd16_cache& asadd16, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */asadd160, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: asadd16
+	auto asadd16_0_c__0_value = asadd16_asadd160_update_0_read_bundle_read(asadd16/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_16(asadd16_0_c__0_value);
+	// Produce: asadd160
+	asadd160.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_off_chip0_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
   // Dynamic address computation
 
@@ -1520,24 +1538,6 @@ inline void asadd16_update_0(in_off_chip0_cache& in_off_chip0, asadd16_cache& as
 	auto compute_result = id_unrolled_16(in_off_chip0_0_c__0_value);
 	// Produce: asadd16
 	asadd16_asadd16_update_0_write_bundle_write(/* arg names */compute_result, asadd16, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void asadd160_update_0(asadd16_cache& asadd16, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */asadd160, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: asadd16
-	auto asadd16_0_c__0_value = asadd16_asadd160_update_0_read_bundle_read(asadd16/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_16(asadd16_0_c__0_value);
-	// Produce: asadd160
-	asadd160.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1644,17 +1644,17 @@ const int in_off_chip0_update_0_read_num_transfers = 64800;
 
 extern "C" {
 
-void asadd160_opt_accel(hw_uint<256>* in_off_chip0_update_0_read, hw_uint<256>* asadd160_update_0_write, hw_uint<256>* in_off_chip0_update_0_read, hw_uint<256>* asadd160_update_0_write, const int size) { 
+void asadd160_opt_accel(hw_uint<256>* in_off_chip0_update_0_read_pipe0, hw_uint<256>* asadd160_update_0_write_pipe0, hw_uint<256>* in_off_chip0_update_0_read_pipe1, hw_uint<256>* asadd160_update_0_write_pipe1, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = in_off_chip0_update_0_read offset = slave depth = 65536 bundle = gmem0
-#pragma HLS INTERFACE m_axi port = asadd160_update_0_write offset = slave depth = 65536 bundle = gmem1
-#pragma HLS INTERFACE m_axi port = in_off_chip0_update_0_read offset = slave depth = 65536 bundle = gmem2
-#pragma HLS INTERFACE m_axi port = asadd160_update_0_write offset = slave depth = 65536 bundle = gmem3
+#pragma HLS INTERFACE m_axi port = in_off_chip0_update_0_read_pipe0 offset = slave depth = 65536 bundle = gmem0
+#pragma HLS INTERFACE m_axi port = asadd160_update_0_write_pipe0 offset = slave depth = 65536 bundle = gmem1
+#pragma HLS INTERFACE m_axi port = in_off_chip0_update_0_read_pipe1 offset = slave depth = 65536 bundle = gmem2
+#pragma HLS INTERFACE m_axi port = asadd160_update_0_write_pipe1 offset = slave depth = 65536 bundle = gmem3
 
-#pragma HLS INTERFACE s_axilite port = in_off_chip0_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = asadd160_update_0_write bundle = control
-#pragma HLS INTERFACE s_axilite port = in_off_chip0_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = asadd160_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = in_off_chip0_update_0_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = asadd160_update_0_write_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = in_off_chip0_update_0_read_pipe1 bundle = control
+#pragma HLS INTERFACE s_axilite port = asadd160_update_0_write_pipe1 bundle = control
 #pragma HLS INTERFACE s_axilite port = size bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
@@ -1665,7 +1665,7 @@ void asadd160_opt_accel(hw_uint<256>* in_off_chip0_update_0_read, hw_uint<256>* 
 
   burst_read<256>(in_off_chip0_update_0_read_pipe0, in_off_chip0_update_0_read_pipe0_channel, in_off_chip0_update_0_read_num_transfers*size);
 
-  asadd160_opt(in_off_chip0_update_0_read_channel, asadd160_update_0_write_channel, in_off_chip0_update_0_read_channel, asadd160_update_0_write_channel);
+  asadd160_opt(in_off_chip0_update_0_read_pipe0_channel, asadd160_update_0_write_pipe0_channel, in_off_chip0_update_0_read_pipe1_channel, asadd160_update_0_write_pipe1_channel);
 
   burst_write<256>(asadd160_update_0_write_pipe0, asadd160_update_0_write_pipe0_channel, asadd160_update_0_write_num_transfers*size);
 
@@ -1675,7 +1675,7 @@ void asadd160_opt_accel(hw_uint<256>* in_off_chip0_update_0_read, hw_uint<256>* 
 
   burst_read<256>(in_off_chip0_update_0_read_pipe1, in_off_chip0_update_0_read_pipe1_channel, in_off_chip0_update_0_read_num_transfers*size);
 
-  asadd160_opt(in_off_chip0_update_0_read_channel, asadd160_update_0_write_channel, in_off_chip0_update_0_read_channel, asadd160_update_0_write_channel);
+  asadd160_opt(in_off_chip0_update_0_read_pipe0_channel, asadd160_update_0_write_pipe0_channel, in_off_chip0_update_0_read_pipe1_channel, asadd160_update_0_write_pipe1_channel);
 
   burst_write<256>(asadd160_update_0_write_pipe1, asadd160_update_0_write_pipe1_channel, asadd160_update_0_write_num_transfers*size);
 }
