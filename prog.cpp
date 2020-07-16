@@ -3,6 +3,9 @@
 #include "codegen.h"
 #include "app.h"
 
+std::string pipe_cpy(const std::string& a, const int pipe) {
+  return a + "_pipe" + str(pipe);
+}
 std::string us(const std::string& a, const std::string& b) {
   return a + "_" + b;
 }
@@ -976,33 +979,35 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   vector<string> ptr_args;
   vector<string> ptr_arg_decls;
   vector<string> buffer_args;
-  for (auto in : prg.ins) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
 
-    cout << "picking from bundle" << endl;
-    auto bundle = pick(buf.get_out_bundles());
-    cout << "bundle: " << bundle << endl;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto in : prg.ins) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      assert(buf.get_out_bundles().size() == 1);
 
-    string out_bundle_tp = buf.bundle_type_string(bundle);
-    ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
-    ptr_args.push_back(bundle);
-    buffer_args.push_back(bundle + "_channel");
-  }
+      cout << "picking from bundle" << endl;
+      auto bundle = pick(buf.get_out_bundles());
+      cout << "bundle: " << bundle << endl;
 
-  for (auto out : prg.outs) {
-    assert(contains_key(out, buffers));
-    auto& buf = buffers.at(out);
-    for (auto bundle : buf.get_in_bundles()) {
-      string in_bundle_tp = buf.bundle_type_string(bundle);
-
-      ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+      string out_bundle_tp = buf.bundle_type_string(bundle);
+      ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
       ptr_args.push_back(bundle);
       buffer_args.push_back(bundle + "_channel");
     }
-  }
 
+    for (auto out : prg.outs) {
+      assert(contains_key(out, buffers));
+      auto& buf = buffers.at(out);
+      for (auto bundle : buf.get_in_bundles()) {
+        string in_bundle_tp = buf.bundle_type_string(bundle);
+
+        ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+        ptr_args.push_back(bundle);
+        buffer_args.push_back(bundle + "_channel");
+      }
+    }
+  }
   vector<string> all_arg_decls = ptr_arg_decls;
   all_arg_decls.push_back("const int size");
 
@@ -1026,56 +1031,58 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   out << "#pragma HLS INTERFACE s_axilite port = return bundle = control" << endl;
   out << endl;
 
-  for (auto in : prg.ins) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    //assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_out_bundles());
-    string in_bundle_tp = buf.bundle_type_string(bundle);
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    out << endl;
+    out << tab(1) << "// Pipeline # " << pipe << endl;
+    for (auto in : prg.ins) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      auto bundle = pick(buf.get_out_bundles());
+      string in_bundle_tp = buf.bundle_type_string(bundle);
 
-    out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
-  }
-
-  for (auto in : prg.outs) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    //assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
-    string in_bundle_tp = buf.bundle_type_string(bundle);
-
-    out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
-  }
-
-  out << endl;
-
-  for (auto in : prg.ins) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
-    auto bundle = pick(buf.get_out_bundles());
-
-    string num_transfers = bundle + "_num_transfers*size";
-    if (options.num_input_epochs < 0) {
-    } else {
-      num_transfers = bundle + "_num_transfers" + "*" + str(options.num_input_epochs);
+      out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << pipe_cpy(bundle, pipe) << "_channel;" << endl;
     }
 
-    out << tab(1) << "burst_read<" << buf.port_bundle_width(bundle) << ">" << "(" << bundle << ", " << bundle << "_channel" << ", " << num_transfers << ");" << endl;
-  }
+    for (auto in : prg.outs) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      auto bundle = pick(buf.get_in_bundles());
+      string in_bundle_tp = buf.bundle_type_string(bundle);
 
-  out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
+      out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << pipe_cpy(bundle, pipe) << "_channel;" << endl;
+    }
 
-  for (auto in : prg.outs) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    for (auto bundle : buf.get_in_bundles()) {
+    out << endl;
+
+    for (auto in : prg.ins) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      assert(buf.get_out_bundles().size() == 1);
+      auto bundle = pick(buf.get_out_bundles());
+
       string num_transfers = bundle + "_num_transfers*size";
       if (options.num_input_epochs < 0) {
       } else {
         num_transfers = bundle + "_num_transfers" + "*" + str(options.num_input_epochs);
       }
 
-      out << tab(1) << "burst_write<" << buf.port_bundle_width(bundle) << ">" << "(" << bundle << ", " << bundle << "_channel" << ", " << num_transfers << ");" << endl;
+      out << tab(1) << "burst_read<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;
+    }
+
+    out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
+
+    for (auto in : prg.outs) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      for (auto bundle : buf.get_in_bundles()) {
+        string num_transfers = bundle + "_num_transfers*size";
+        if (options.num_input_epochs < 0) {
+        } else {
+          num_transfers = bundle + "_num_transfers" + "*" + str(options.num_input_epochs);
+        }
+
+        out << tab(1) << "burst_write<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;
+      }
     }
   }
 
