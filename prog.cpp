@@ -129,6 +129,32 @@ std::set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg)
   return edges;
 }
 
+std::vector<pair<string, string> > outgoing_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::vector<pair<string, string> > edges;
+  for (auto in : prg.outs) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_in_bundles().size() == 1);
+
+    auto bundle = pick(buf.get_in_bundles());
+    edges.push_back({in, bundle});
+  }
+  return edges;
+}
+
+std::vector<pair<string, string> > incoming_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::vector<pair<string, string> > edges;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+
+    auto bundle = pick(buf.get_out_bundles());
+    edges.push_back({in, bundle});
+  }
+  return edges;
+}
+
 std::set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
   std::set<string> edges;
   for (auto in : prg.ins) {
@@ -543,6 +569,7 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
 }
 
 void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
+
   ofstream out(prg.name + "_host.cpp");
 
   ocl_headers(out);
@@ -697,8 +724,6 @@ void generate_xilinx_multi_channel_accel_wrapper(
 
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
-  //assert(driver_func.size()  32);
-
 
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
@@ -942,32 +967,36 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   }
   out << endl;
 
-  string in_rep = pick(prg.ins);
-  UBuffer& in_buf = buffers.at(in_rep);
-  string in_bundle = pick(in_buf.port_bundles).first;
-  string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
+  //string in_rep = pick(prg.ins);
+  //UBuffer& in_buf = buffers.at(in_rep);
+  //string in_bundle = pick(in_buf.port_bundles).first;
+  //string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
 
-  cout << "Got in bundle" << endl;
+  //cout << "Got in bundle" << endl;
 
-  string out_rep = pick(prg.outs);
-  UBuffer& out_buf = buffers.at(out_rep);
-  string out_bundle = pick(out_buf.port_bundles).first;
-  string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+  //string out_rep = pick(prg.outs);
+  //UBuffer& out_buf = buffers.at(out_rep);
+  //string out_bundle = pick(out_buf.port_bundles).first;
+  //string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-  int in_pix = prg.buffer_size(in_rep);
-  int pix_per_in_burst =
-    in_buf.lanes_in_bundle(in_bundle);
-  int in_burst = in_pix / pix_per_in_burst;
+  //int in_pix = prg.buffer_size(in_rep);
+  //int pix_per_in_burst =
+    //in_buf.lanes_in_bundle(in_bundle);
+  //int in_burst = in_pix / pix_per_in_burst;
 
-  int out_pix = prg.buffer_size(out_rep);
-  int pix_per_out_burst =
-    out_buf.lanes_in_bundle(out_bundle);
-  int out_burst = out_pix / pix_per_out_burst;
+  //int out_pix = prg.buffer_size(out_rep);
+  //int pix_per_out_burst =
+    //out_buf.lanes_in_bundle(out_bundle);
+  //int out_burst = out_pix / pix_per_out_burst;
 
   out << endl;
   out << "extern \"C\" {" << endl << endl;
 
-  for (auto in_bundle : in_bundles(buffers, prg)) {
+  //for (auto in_bundle : in_bundles(buffers, prg)) {
+  for (auto in_b : incoming_bundles(buffers, prg)) {
+    string in_bundle = in_b.second;
+    auto in_buf = map_find(in_b.first, buffers);
+    string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
     out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
 
     out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
@@ -985,7 +1014,11 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     out << "}" << endl << endl;
   }
 
-  for (auto out_bundle : out_bundles(buffers, prg)) {
+  for (auto out_b : outgoing_bundles(buffers, prg)) {
+    string out_bundle = out_b.second;
+    auto out_buf = map_find(out_b.first, buffers);
+    string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+
     out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
     out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
     if (options.num_input_epochs < 0) {
@@ -1085,7 +1118,6 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     assert(buf.get_out_bundles().size() == 1);
     auto bundle = pick(buf.get_out_bundles());
 
-    //out << tab(1) << "read_input(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
     out << tab(1) << "read_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
   }
 
@@ -1095,7 +1127,6 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
     for (auto bundle : buf.get_in_bundles()) {
-      //auto bundle = pick(buf.get_in_bundles());
       out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
     }
   }

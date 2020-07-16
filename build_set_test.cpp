@@ -11739,6 +11739,16 @@ void multi_output_app_test() {
   move_to_benchmarks_folder(name);
 }
 
+string load_off_chip_one_channel(const std::string& prefix, App& lp) {
+  string in0_oc = prefix + "0_oc";
+
+  lp.func2d(in0_oc);
+
+  string in0 = prefix + "0";
+
+  lp.func2d(in0, "id", pt(in0_oc));
+  return in0;
+}
 
 string load_off_chip_two_channels(const std::string& prefix, App& lp) {
   string in0_oc = prefix + "0_oc";
@@ -11760,6 +11770,15 @@ string load_off_chip_two_channels(const std::string& prefix, App& lp) {
   lp.func2d(res, "interleave", in0_win, in1_win);
   lp.compute_unit_needs_index_variable(0, res);
   return res;
+}
+
+string store_off_chip_one_channel(const std::string& input, App& lp) {
+
+  string res0 = input + "0";
+
+  lp.func2d(res0, "id", pt(input));
+
+  return res0;
 }
 
 pair<string, string> store_off_chip_two_channels(const std::string& input, App& lp) {
@@ -11834,6 +11853,34 @@ void psef_multi_output_test() {
   assert(false);
 }
 
+void async_add_test() {
+  int rows = 1080 / 2;
+  int cols = 1920;
+  int unroll = 16;
+
+  App lp;
+  lp.set_default_pixel_width(16);
+
+  // The off chip input we are reading from
+  string input_image = load_off_chip_one_channel("in_off_chip", lp);
+
+  string af = "asadd";
+  lp.func2d(af + str(unroll), "id", pt(input_image));
+
+  string output_image = store_off_chip_one_channel(af + str(unroll), lp);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.use_custom_code_string = true;
+  options.num_pipelines = 2;
+  lp.realize(options, {{output_image, {cols, rows}}}, output_image, unroll);
+
+  compile_compute(output_image);
+
+  move_to_benchmarks_folder(output_image);
+  assert(false);
+}
+
 void add_four_channels() {
   int rows = 1080;
   int cols = 1920 / 2;
@@ -11896,11 +11943,9 @@ void weight_add_psef() {
 }
 
 void application_tests() {
+  async_add_test();
   seidel2d_test();
-  assert(false);
-
   add_four_channels();
-  //assert(false);
   weight_add_psef();
   lake_agg_sram_tb_config_test();
 
