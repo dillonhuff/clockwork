@@ -582,82 +582,97 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   ocl_check_args(options, out);
 
   out << tab(1) << "size_t total_size_bytes = 0;" << endl;
-  for (auto eb : edge_buffers(buffers, prg)) {
-    string edge_bundle = eb.second;
-    string buf = eb.first;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto eb : edge_buffers(buffers, prg)) {
+      string edge_bundle = eb.second;
+      string buf = eb.first;
 
-    int num_pixels = -1;
-    if (prg.is_input(buf)) {
-      auto cmap = prg.consumer_map(buf);
-      auto range_card = card(range(cmap));
-      num_pixels = int_upper_bound(range_card);
-    } else {
-      auto cmap = prg.producer_map(buf);
-      auto range_card = card(range(cmap));
-      num_pixels = int_upper_bound(range_card);
+      int num_pixels = -1;
+      if (prg.is_input(buf)) {
+        auto cmap = prg.consumer_map(buf);
+        auto range_card = card(range(cmap));
+        num_pixels = int_upper_bound(range_card);
+      } else {
+        auto cmap = prg.producer_map(buf);
+        auto range_card = card(range(cmap));
+        num_pixels = int_upper_bound(range_card);
+      }
+
+      // TODO: Unify prg and app size computation syntax
+      if (num_pixels < prg.buffer_size(buf)) {
+        num_pixels = prg.buffer_size(buf);
+      }
+
+      string ebd = pipe_cpy(edge_bundle, pipe);
+      out << tab(1) << "const int " << ebd << "_DATA_SIZE = num_epochs*" << num_pixels << ";" << endl;
+      out << tab(1) << "const int " << ebd << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
+      out << tab(1) << "size_t " << ebd << "_size_bytes = " << ebd << "_BYTES_PER_PIXEL * " << ebd << "_DATA_SIZE;" << endl << endl;
+      out << tab(1) << "total_size_bytes += " << ebd << "_size_bytes;" << endl;
     }
-
-    // TODO: Unify prg and app size computation syntax
-    if (num_pixels < prg.buffer_size(buf)) {
-      num_pixels = prg.buffer_size(buf);
-    }
-
-    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << num_pixels << ";" << endl;
-    out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
-    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
-    out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;
+    out << endl;
   }
-  out << endl;
 
   ocl_command_queue(out);
 
-  for (auto edge_bundle : edge_bundles(buffers, prg)) {
-    out << tab(1) << "std::vector<uint8_t, aligned_allocator<uint8_t> > " << edge_bundle << "(" << edge_bundle << "_size_bytes);" << endl;
-  }
-  out << endl;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto edge_bundle : edge_bundles(buffers, prg)) {
+      out << tab(1) << "std::vector<uint8_t, aligned_allocator<uint8_t> > " << pipe_cpy(edge_bundle, pipe) << "(" << pipe_cpy(edge_bundle, pipe) << "_size_bytes);" << endl;
+    }
 
-  for (auto edge_in : inputs(buffers, prg)) {
-    populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
+    out << endl;
   }
 
-  for (auto edge_out : outputs(buffers, prg)) {
-    auto edge_bundle = edge_out.second;
-    auto buf = edge_out.first;
-    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
-    out << tab(1) << "}" << endl << endl;
-  }
+  out << tab(1) << "// TODO: POPULATE BUFFERS FOR EACH PIPELINE" << endl;
+  //for (auto edge_in : inputs(buffers, prg)) {
+    //populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
+  //}
+
+  //for (auto edge_out : outputs(buffers, prg)) {
+    //auto edge_bundle = edge_out.second;
+    //auto buf = edge_out.first;
+    //out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+    //out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
+    //out << tab(1) << "}" << endl << endl;
+  //}
 
   ocl_program_device(out, prg, "_accel");
 
   int arg_pos = 0;
-  for (auto in_bundle : in_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
 
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
-    arg_pos++;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto in_bundle : in_bundles(buffers, prg)) {
+      string ibd = pipe_cpy(in_bundle, pipe);
+      out << tab(1) << "OCL_CHECK(err, cl::Buffer " << ibd << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << ibd << "_size_bytes, " << ibd << ".data(), &err));" << endl;
+
+      out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << ibd << "_ocl_buf));" << endl << endl;
+      arg_pos++;
+    }
+
+    for (auto in_bundle : out_bundles(buffers, prg)) {
+      string ibd = pipe_cpy(in_bundle, pipe);
+      out << tab(1) << "OCL_CHECK(err, cl::Buffer " << ibd << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << ibd << "_size_bytes, " << ibd << ".data(), &err));" << endl;
+      out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << ibd << "_ocl_buf));" << endl << endl;
+      arg_pos++;
+    }
+
   }
-
-  for (auto in_bundle : out_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
-    arg_pos++;
-  }
-
   out << endl;
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", num_epochs));" << endl << endl;
 
   run_kernel(out, buffers, prg);
 
-  for (auto output : outputs(buffers, prg)) {
-    auto buf = output.first;
-    auto out_bundle = output.second;
-    out << "{" << endl;
-    out << tab(2) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
-    out << tab(2) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(3) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << out_bundle << ".data()))[i] << std::endl;" << endl;
-    out << tab(2) << "}" << endl;
-    out << "}" << endl;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto output : outputs(buffers, prg)) {
+      auto buf = output.first;
+      auto out_bundle = output.second;
+      string obd = pipe_cpy(out_bundle, pipe);
+      out << "{" << endl;
+      out << tab(2) << "std::ofstream regression_result(\"" << obd << "_accel_result.csv\");" << endl;
+      out << tab(2) << "for (int i = 0; i < " << obd << "_DATA_SIZE; i++) {" << endl;
+      out << tab(3) << "regression_result << ((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << obd << ".data()))[i] << std::endl;" << endl;
+      out << tab(2) << "}" << endl;
+      out << "}" << endl;
+    }
   }
   out << endl;
 
