@@ -971,47 +971,47 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   out << endl;
   out << "extern \"C\" {" << endl << endl;
 
-  for (auto in_b : incoming_bundles(buffers, prg)) {
-    string in_bundle = in_b.second;
-    auto in_buf = map_find(in_b.first, buffers);
-    string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
-    out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
+  //for (auto in_b : incoming_bundles(buffers, prg)) {
+    //string in_bundle = in_b.second;
+    //auto in_buf = map_find(in_b.first, buffers);
+    //string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
+    //out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
 
-    out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-    if (options.num_input_epochs < 0) {
-      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
-    } else {
-      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    }
+    //out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
+    //if (options.num_input_epochs < 0) {
+      //out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
+    //} else {
+      //out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    //}
 
-    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    out << tab(2) << "burst_reg = input[i];" << endl;
-    out << tab(2) << "v.write(burst_reg);" << endl;
-    out << tab(1) << "}" << endl;
-    out << "}" << endl << endl;
-  }
+    //out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
+    //out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+    //out << tab(2) << "burst_reg = input[i];" << endl;
+    //out << tab(2) << "v.write(burst_reg);" << endl;
+    //out << tab(1) << "}" << endl;
+    //out << "}" << endl << endl;
+  //}
 
-  for (auto out_b : outgoing_bundles(buffers, prg)) {
-    string out_bundle = out_b.second;
-    auto out_buf = map_find(out_b.first, buffers);
-    string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+  //for (auto out_b : outgoing_bundles(buffers, prg)) {
+    //string out_bundle = out_b.second;
+    //auto out_buf = map_find(out_b.first, buffers);
+    //string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-    out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
-    out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
-    if (options.num_input_epochs < 0) {
-      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
-    } else {
-      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    }
+    //out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
+    //out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
+    //if (options.num_input_epochs < 0) {
+      //out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
+    //} else {
+      //out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    //}
 
-    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    out << tab(2) << "burst_reg = v.read();" << endl;
-    out << tab(2) << "output[i] = burst_reg;" << endl;
-    out << tab(1) << "}" << endl;
-    out << "}" << endl << endl;
-  }
+    //out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
+    //out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+    //out << tab(2) << "burst_reg = v.read();" << endl;
+    //out << tab(2) << "output[i] = burst_reg;" << endl;
+    //out << tab(1) << "}" << endl;
+    //out << "}" << endl << endl;
+  //}
 
   cout << "Generating arg list" << endl;
   vector<string> ptr_args;
@@ -1095,7 +1095,13 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     assert(buf.get_out_bundles().size() == 1);
     auto bundle = pick(buf.get_out_bundles());
 
-    out << tab(1) << "read_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    string num_transfers = bundle + "_num_transfers*size";
+    if (options.num_input_epochs < 0) {
+    } else {
+      num_transfers = bundle + "_num_transfers" + "*" + str(options.num_input_epochs);
+    }
+
+    out << tab(1) << "burst_read<" << buf.port_bundle_width(bundle) << ">" << "(" << bundle << ", " << bundle << "_channel" << ", " << num_transfers << ");" << endl;
   }
 
   out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
