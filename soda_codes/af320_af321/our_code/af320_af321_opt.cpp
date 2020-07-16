@@ -9944,9 +9944,13 @@ void af320_af321_opt_accel(hw_uint<512>* in_off_chip0_update_0_read, hw_uint<512
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
   static HWStream<hw_uint<512> > in_off_chip0_update_0_read_channel;
+#pragma HLS stream variable=in_off_chip0_update_0_read_channel.values depth=256
   static HWStream<hw_uint<512> > in_off_chip1_update_0_read_channel;
+#pragma HLS stream variable=in_off_chip1_update_0_read_channel.values depth=256
   static HWStream<hw_uint<512> > af320_update_0_write_channel;
+#pragma HLS stream variable=aff320_update_0_write_channel.values depth=256
   static HWStream<hw_uint<512> > af321_update_0_write_channel;
+#pragma HLS stream variable=aff321_update_0_write_channel.values depth=256
 
   read_in_off_chip0_update_0_read(in_off_chip0_update_0_read, in_off_chip0_update_0_read_channel, size);
   read_in_off_chip1_update_0_read(in_off_chip1_update_0_read, in_off_chip1_update_0_read_channel, size);
