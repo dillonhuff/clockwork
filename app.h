@@ -1025,6 +1025,7 @@ hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
 struct linear_constraint {
   vector<pair<string, int> > terms;
   int offset;
+  bool is_equality;
 };
 
 map<string, isl_aff*>
@@ -1035,7 +1036,7 @@ hardware_schedule(
     map<string, int>& latencies,
     map<string, int>& iis,
     vector<pair<string, isl_val*> >& obj,
-    const vector<linear_constraint>& extra_constraints);
+    const vector<linear_constraint>& extra_equality_constraints);
 
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
 

@@ -1315,7 +1315,11 @@ hardware_schedule(
     for (auto term : c.terms) {
       cs.push_back({term.first, isl_val_int_from_si(ct, term.second)});
     }
-    modulo_schedule.add_eq(simplify(cs), isl_val_int_from_si(ct, c.offset));
+    if (c.is_equality) {
+      modulo_schedule.add_eq(simplify(cs), isl_val_int_from_si(ct, c.offset));
+    } else {
+      modulo_schedule.add_geq(simplify(cs), isl_val_int_from_si(ct, c.offset));
+    }
   }
 
   for (auto s : get_sets(padded_domain)) {

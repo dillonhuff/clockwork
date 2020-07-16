@@ -11104,7 +11104,10 @@ void lake_agg_sram_tb_config_test() {
 
   vector<linear_constraint> extras;
   extras.push_back(linear_constraint{{{hw_delay_var("sram2tb"), 1},
-    {hw_delay_var("sram2tb") + "_ml", -2}}, 1});
+    {hw_delay_var("sram2tb") + "_ml", -2}}, 1, true});
+
+  extras.push_back(linear_constraint{{{ii_var("sram2tb", 2), 1}}, -4, true});
+  extras.push_back(linear_constraint{{{ii_var("agg2sram", 2), 1}}, -4, true});
 
   //auto valid = lake_agg.validity_deps();
   auto prox = cpy(valid);
