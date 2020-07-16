@@ -9461,12 +9461,14 @@ void compute_unit_with_index_variables_test() {
 }
 
 void travis_tests() {
+  register_file_test();
   reduce_1d_test();
   reduce_2d_test();
   compute_unit_with_index_variables_test();
   upsample2d_test();
   downsample2d_test();
   up_stencil_down_test();
+  gaussian_pyramid_test();
 
   return;
 
@@ -9489,7 +9491,6 @@ void travis_tests() {
   soda_blur_test();
   two_in_window_test();
   two_in_conv2d_test();
-  gaussian_pyramid_test();
   warp_and_upsample_test();
 }
 

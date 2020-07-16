@@ -2273,6 +2273,14 @@ void generate_app_code(CodegenOptions& options,
         assert(b.second.bank_list.size() == 1);
         string var = b.second.name + "." + pick(b.second.bank_list).name + ".RAM";
         conv_out << "#pragma HLS array_partition variable=" << var << " dim=0 complete" << endl;
+      } else if (b.second.banking.partition == "cyclic") {
+        //assert(b.second.bank_list.size() == 1);
+        for (int d = 0; d < b.second.logical_dimension(); d++) {
+          string var = b.second.name + "." + pick(b.second.bank_list).name + ".RAM";
+          assert(d < (int) b.second.banking.cycle_factors.size());
+          int factor = b.second.banking.cycle_factors.at(d);
+          conv_out << "#pragma HLS array_partition variable=" << var << " dim=" << d << " factor=" << factor << endl;
+        }
       }
       close_synth_scope(conv_out);
     }
