@@ -9464,15 +9464,17 @@ void travis_tests() {
   reduce_1d_test();
   reduce_2d_test();
   compute_unit_with_index_variables_test();
-  return;
-  heat_3d_test();
   upsample2d_test();
+  downsample2d_test();
+  up_stencil_down_test();
+
+  return;
+
+  heat_3d_test();
   halide_dnn_test();
 
   exposure_fusion();
 
-  downsample2d_test();
-  up_stencil_down_test();
   blur_and_downsample_test();
   downsample_and_blur_test();
   upsample_stencil_2d_test();
