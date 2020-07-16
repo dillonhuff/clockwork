@@ -978,9 +978,10 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   cout << "Generating arg list" << endl;
   vector<string> ptr_args;
   vector<string> ptr_arg_decls;
-  vector<string> buffer_args;
+  vector<vector<string> > buffer_args;
 
   for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    vector<string> bas;
     for (auto in : prg.ins) {
       assert(contains_key(in, buffers));
       auto& buf = buffers.at(in);
@@ -993,7 +994,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       string out_bundle_tp = buf.bundle_type_string(bundle);
       ptr_arg_decls.push_back(out_bundle_tp + "* " + pipe_cpy(bundle, pipe));
       ptr_args.push_back(pipe_cpy(bundle, pipe));
-      buffer_args.push_back(pipe_cpy(bundle, pipe) + "_channel");
+      bas.push_back(pipe_cpy(bundle, pipe) + "_channel");
     }
 
     for (auto out : prg.outs) {
@@ -1004,9 +1005,10 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
 
         ptr_arg_decls.push_back(in_bundle_tp + "* " + pipe_cpy(bundle, pipe));
         ptr_args.push_back(pipe_cpy(bundle, pipe));
-        buffer_args.push_back(pipe_cpy(bundle, pipe) + "_channel");
+        bas.push_back(pipe_cpy(bundle, pipe) + "_channel");
       }
     }
+    buffer_args.push_back(bas);
   }
   vector<string> all_arg_decls = ptr_arg_decls;
   all_arg_decls.push_back("const int size");
@@ -1069,7 +1071,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       out << tab(1) << "burst_read<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;
     }
 
-    out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
+    out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args.at(pipe)) << ");" << endl << endl;
 
     for (auto in : prg.outs) {
       assert(contains_key(in, buffers));

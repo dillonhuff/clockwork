@@ -1494,18 +1494,18 @@ inline void in_off_chip0_in_off_chip0_update_0_write_bundle_write(hw_uint<256>& 
 
 
 // Operation logic
-inline void asadd160_update_0(asadd16_cache& asadd16, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */asadd160, int d0, int d1) {
+inline void asadd16_update_0(in_off_chip0_cache& in_off_chip0, asadd16_cache& asadd16, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: asadd16
-	auto asadd16_0_c__0_value = asadd16_asadd160_update_0_read_bundle_read(asadd16/* source_delay */, d0, d1, 0);
+	// Consume: in_off_chip0
+	auto in_off_chip0_0_c__0_value = in_off_chip0_asadd16_update_0_read_bundle_read(in_off_chip0/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_16(asadd16_0_c__0_value);
-	// Produce: asadd160
-	asadd160.write(compute_result);
+	auto compute_result = id_unrolled_16(in_off_chip0_0_c__0_value);
+	// Produce: asadd16
+	asadd16_asadd16_update_0_write_bundle_write(/* arg names */compute_result, asadd16, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1526,18 +1526,18 @@ inline void in_off_chip0_update_0(HWStream<hw_uint<256> >& /* buffer_args num po
 
 }
 
-inline void asadd16_update_0(in_off_chip0_cache& in_off_chip0, asadd16_cache& asadd16, int d0, int d1) {
+inline void asadd160_update_0(asadd16_cache& asadd16, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */asadd160, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in_off_chip0
-	auto in_off_chip0_0_c__0_value = in_off_chip0_asadd16_update_0_read_bundle_read(in_off_chip0/* source_delay */, d0, d1, 0);
+	// Consume: asadd16
+	auto asadd16_0_c__0_value = asadd16_asadd160_update_0_read_bundle_read(asadd16/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_16(in_off_chip0_0_c__0_value);
-	// Produce: asadd16
-	asadd16_asadd16_update_0_write_bundle_write(/* arg names */compute_result, asadd16, d0, d1, 0);
+	auto compute_result = id_unrolled_16(asadd16_0_c__0_value);
+	// Produce: asadd160
+	asadd160.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1665,7 +1665,7 @@ void asadd160_opt_accel(hw_uint<256>* in_off_chip0_update_0_read_pipe0, hw_uint<
 
   burst_read<256>(in_off_chip0_update_0_read_pipe0, in_off_chip0_update_0_read_pipe0_channel, in_off_chip0_update_0_read_num_transfers*size);
 
-  asadd160_opt(in_off_chip0_update_0_read_pipe0_channel, asadd160_update_0_write_pipe0_channel, in_off_chip0_update_0_read_pipe1_channel, asadd160_update_0_write_pipe1_channel);
+  asadd160_opt(in_off_chip0_update_0_read_pipe0_channel, asadd160_update_0_write_pipe0_channel);
 
   burst_write<256>(asadd160_update_0_write_pipe0, asadd160_update_0_write_pipe0_channel, asadd160_update_0_write_num_transfers*size);
 
@@ -1675,7 +1675,7 @@ void asadd160_opt_accel(hw_uint<256>* in_off_chip0_update_0_read_pipe0, hw_uint<
 
   burst_read<256>(in_off_chip0_update_0_read_pipe1, in_off_chip0_update_0_read_pipe1_channel, in_off_chip0_update_0_read_num_transfers*size);
 
-  asadd160_opt(in_off_chip0_update_0_read_pipe0_channel, asadd160_update_0_write_pipe0_channel, in_off_chip0_update_0_read_pipe1_channel, asadd160_update_0_write_pipe1_channel);
+  asadd160_opt(in_off_chip0_update_0_read_pipe1_channel, asadd160_update_0_write_pipe1_channel);
 
   burst_write<256>(asadd160_update_0_write_pipe1, asadd160_update_0_write_pipe1_channel, asadd160_update_0_write_num_transfers*size);
 }
