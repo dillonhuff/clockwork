@@ -933,85 +933,44 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   string driver_func = prg.name + "_accel";
 
 
-  for (auto eb : edge_buffers(buffers, prg)) {
-    string out_rep = eb.first;
-    string out_bundle = eb.second;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto eb : edge_buffers(buffers, prg)) {
+      string out_rep = eb.first;
+      string out_bundle = eb.second;
 
-    UBuffer out_buf = map_find(out_rep, buffers);
-    string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+      UBuffer out_buf = map_find(out_rep, buffers);
+      string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-    int num_pixels = -1;
-    if (prg.is_input(out_rep)) {
+      int num_pixels = -1;
+      if (prg.is_input(out_rep)) {
 
-      auto cmap = prg.consumer_map(out_rep);
-      out << tab(1) << "// " << str(cmap) << endl;
-      auto range_card = card(range(cmap));
-      num_pixels = int_upper_bound(range_card);
-    } else {
-      auto cmap = prg.producer_map(out_rep);
-      out << tab(1) << "// " << str(cmap) << endl;
-      auto range_card = card(range(cmap));
-      num_pixels = int_upper_bound(range_card);
+        auto cmap = prg.consumer_map(out_rep);
+        out << tab(1) << "// " << str(cmap) << endl;
+        auto range_card = card(range(cmap));
+        num_pixels = int_upper_bound(range_card);
+      } else {
+        auto cmap = prg.producer_map(out_rep);
+        out << tab(1) << "// " << str(cmap) << endl;
+        auto range_card = card(range(cmap));
+        num_pixels = int_upper_bound(range_card);
+      }
+
+      assert(num_pixels >= 0);
+      // TODO: Unify prg and app size computation syntax
+      if (num_pixels < prg.buffer_size(out_rep)) {
+        num_pixels = prg.buffer_size(out_rep);
+      }
+
+      int pix_per_burst =
+        out_buf.lanes_in_bundle(out_bundle);
+      int num_in_bursts = num_pixels / pix_per_burst;
+
+      out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
     }
-
-    assert(num_pixels >= 0);
-    // TODO: Unify prg and app size computation syntax
-    if (num_pixels < prg.buffer_size(out_rep)) {
-      num_pixels = prg.buffer_size(out_rep);
-    }
-
-    int pix_per_burst =
-      out_buf.lanes_in_bundle(out_bundle);
-    int num_in_bursts = num_pixels / pix_per_burst;
-
-    out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
+    out << endl;
   }
   out << endl;
-
-  out << endl;
   out << "extern \"C\" {" << endl << endl;
-
-  //for (auto in_b : incoming_bundles(buffers, prg)) {
-    //string in_bundle = in_b.second;
-    //auto in_buf = map_find(in_b.first, buffers);
-    //string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
-    //out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
-
-    //out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-    //if (options.num_input_epochs < 0) {
-      //out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
-    //} else {
-      //out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    //}
-
-    //out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    //out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    //out << tab(2) << "burst_reg = input[i];" << endl;
-    //out << tab(2) << "v.write(burst_reg);" << endl;
-    //out << tab(1) << "}" << endl;
-    //out << "}" << endl << endl;
-  //}
-
-  //for (auto out_b : outgoing_bundles(buffers, prg)) {
-    //string out_bundle = out_b.second;
-    //auto out_buf = map_find(out_b.first, buffers);
-    //string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
-
-    //out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
-    //out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
-    //if (options.num_input_epochs < 0) {
-      //out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
-    //} else {
-      //out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    //}
-
-    //out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    //out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    //out << tab(2) << "burst_reg = v.read();" << endl;
-    //out << tab(2) << "output[i] = burst_reg;" << endl;
-    //out << tab(1) << "}" << endl;
-    //out << "}" << endl << endl;
-  //}
 
   cout << "Generating arg list" << endl;
   vector<string> ptr_args;
@@ -1110,7 +1069,13 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
     for (auto bundle : buf.get_in_bundles()) {
-      out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+      string num_transfers = bundle + "_num_transfers*size";
+      if (options.num_input_epochs < 0) {
+      } else {
+        num_transfers = bundle + "_num_transfers" + "*" + str(options.num_input_epochs);
+      }
+
+      out << tab(1) << "burst_write<" << buf.port_bundle_width(bundle) << ">" << "(" << bundle << ", " << bundle << "_channel" << ", " << num_transfers << ");" << endl;
     }
   }
 

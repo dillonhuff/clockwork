@@ -420,7 +420,7 @@ hw_uint<T> int32(const hw_uint<T>& in) {
 }
 
 template<int burst_width>
-void burst_load(hw_uint<burst_width>* input,
+void burst_read(hw_uint<burst_width>* input,
     HWStream<hw_uint<burst_width> >& v,
     const int num_transfers) {
 
@@ -433,7 +433,7 @@ void burst_load(hw_uint<burst_width>* input,
 }
 
 template<int burst_width>
-void burst_store(hw_uint<burst_width>* output,
+void burst_write(hw_uint<burst_width>* output,
     HWStream<hw_uint<burst_width> >& v,
     const int num_transfers) {
 
