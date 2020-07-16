@@ -11976,8 +11976,9 @@ void weight_add_psef() {
 }
 
 void application_tests() {
-  async_add_test();
   lake_agg_sram_tb_config_test();
+  assert(false);
+  async_add_test();
   seidel2d_test();
   add_four_channels();
   weight_add_psef();
