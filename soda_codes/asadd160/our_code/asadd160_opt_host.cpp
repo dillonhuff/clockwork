@@ -18,37 +18,40 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int asadd160_update_0_write_DATA_SIZE = num_epochs*1036800;
-  const int asadd160_update_0_write_BYTES_PER_PIXEL = 16 / 8;
-  size_t asadd160_update_0_write_size_bytes = asadd160_update_0_write_BYTES_PER_PIXEL * asadd160_update_0_write_DATA_SIZE;
+  const int asadd160_update_0_write_pipe0_DATA_SIZE = num_epochs*1036800;
+  const int asadd160_update_0_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t asadd160_update_0_write_pipe0_size_bytes = asadd160_update_0_write_pipe0_BYTES_PER_PIXEL * asadd160_update_0_write_pipe0_DATA_SIZE;
 
-  total_size_bytes += asadd160_update_0_write_size_bytes;
-  const int in_off_chip0_update_0_read_DATA_SIZE = num_epochs*1036800;
-  const int in_off_chip0_update_0_read_BYTES_PER_PIXEL = 16 / 8;
-  size_t in_off_chip0_update_0_read_size_bytes = in_off_chip0_update_0_read_BYTES_PER_PIXEL * in_off_chip0_update_0_read_DATA_SIZE;
+  total_size_bytes += asadd160_update_0_write_pipe0_size_bytes;
+  const int in_off_chip0_update_0_read_pipe0_DATA_SIZE = num_epochs*1036800;
+  const int in_off_chip0_update_0_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t in_off_chip0_update_0_read_pipe0_size_bytes = in_off_chip0_update_0_read_pipe0_BYTES_PER_PIXEL * in_off_chip0_update_0_read_pipe0_DATA_SIZE;
 
-  total_size_bytes += in_off_chip0_update_0_read_size_bytes;
+  total_size_bytes += in_off_chip0_update_0_read_pipe0_size_bytes;
+
+  const int asadd160_update_0_write_pipe1_DATA_SIZE = num_epochs*1036800;
+  const int asadd160_update_0_write_pipe1_BYTES_PER_PIXEL = 16 / 8;
+  size_t asadd160_update_0_write_pipe1_size_bytes = asadd160_update_0_write_pipe1_BYTES_PER_PIXEL * asadd160_update_0_write_pipe1_DATA_SIZE;
+
+  total_size_bytes += asadd160_update_0_write_pipe1_size_bytes;
+  const int in_off_chip0_update_0_read_pipe1_DATA_SIZE = num_epochs*1036800;
+  const int in_off_chip0_update_0_read_pipe1_BYTES_PER_PIXEL = 16 / 8;
+  size_t in_off_chip0_update_0_read_pipe1_size_bytes = in_off_chip0_update_0_read_pipe1_BYTES_PER_PIXEL * in_off_chip0_update_0_read_pipe1_DATA_SIZE;
+
+  total_size_bytes += in_off_chip0_update_0_read_pipe1_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > asadd160_update_0_write(asadd160_update_0_write_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > in_off_chip0_update_0_read(in_off_chip0_update_0_read_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > asadd160_update_0_write_pipe0(asadd160_update_0_write_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > in_off_chip0_update_0_read_pipe0(in_off_chip0_update_0_read_pipe0_size_bytes);
 
-  std::ofstream input_in_off_chip0_update_0_read("in_off_chip0_update_0_read.csv");
-  for (int i = 0; i < in_off_chip0_update_0_read_DATA_SIZE; i++) {
-    uint16_t val = (rand() % 256);
-    input_in_off_chip0_update_0_read << val << std::endl;
-    ((uint16_t*) (in_off_chip0_update_0_read.data()))[i] = val;
-  }
+  std::vector<uint8_t, aligned_allocator<uint8_t> > asadd160_update_0_write_pipe1(asadd160_update_0_write_pipe1_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > in_off_chip0_update_0_read_pipe1(in_off_chip0_update_0_read_pipe1_size_bytes);
 
-  input_in_off_chip0_update_0_read.close();
-  for (int i = 0; i < asadd160_update_0_write_DATA_SIZE; i++) {
-    ((uint16_t*) (asadd160_update_0_write.data()))[i] = 0;
-  }
-
+  // TODO: POPULATE BUFFERS FOR EACH PIPELINE
   auto devices = xcl::get_xil_devices();
   auto fileBuf = xcl::read_binary_file(binaryFile);
   cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};
@@ -78,14 +81,20 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer in_off_chip0_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_off_chip0_update_0_read_size_bytes, in_off_chip0_update_0_read.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, in_off_chip0_update_0_read_ocl_buf));
+  OCL_CHECK(err, cl::Buffer in_off_chip0_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_off_chip0_update_0_read_pipe0_size_bytes, in_off_chip0_update_0_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, in_off_chip0_update_0_read_pipe0_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer asadd160_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, asadd160_update_0_write_size_bytes, asadd160_update_0_write.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, asadd160_update_0_write_ocl_buf));
+  OCL_CHECK(err, cl::Buffer asadd160_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, asadd160_update_0_write_pipe0_size_bytes, asadd160_update_0_write_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, asadd160_update_0_write_pipe0_ocl_buf));
+
+  OCL_CHECK(err, cl::Buffer in_off_chip0_update_0_read_pipe1_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_off_chip0_update_0_read_pipe1_size_bytes, in_off_chip0_update_0_read_pipe1.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(2, in_off_chip0_update_0_read_pipe1_ocl_buf));
+
+  OCL_CHECK(err, cl::Buffer asadd160_update_0_write_pipe1_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, asadd160_update_0_write_pipe1_size_bytes, asadd160_update_0_write_pipe1.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(3, asadd160_update_0_write_pipe1_ocl_buf));
 
 
-  OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(4, num_epochs));
 
   std::cout << "Migrating memory" << std::endl;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_off_chip0_update_0_read_ocl_buf}, 0));
@@ -115,9 +124,15 @@ nsduration = end - start;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
 {
-    std::ofstream regression_result("asadd160_update_0_write_accel_result.csv");
-    for (int i = 0; i < asadd160_update_0_write_DATA_SIZE; i++) {
-      regression_result << ((uint16_t*) (asadd160_update_0_write.data()))[i] << std::endl;
+    std::ofstream regression_result("asadd160_update_0_write_pipe0_accel_result.csv");
+    for (int i = 0; i < asadd160_update_0_write_pipe0_DATA_SIZE; i++) {
+      regression_result << ((uint16_t*) (asadd160_update_0_write_pipe0.data()))[i] << std::endl;
+    }
+}
+{
+    std::ofstream regression_result("asadd160_update_0_write_pipe1_accel_result.csv");
+    for (int i = 0; i < asadd160_update_0_write_pipe1_DATA_SIZE; i++) {
+      regression_result << ((uint16_t*) (asadd160_update_0_write_pipe1.data()))[i] << std::endl;
     }
 }
 
