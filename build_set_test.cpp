@@ -11889,7 +11889,7 @@ void psef_multi_output_test() {
 void async_add_test() {
   int rows = 1080 / 2;
   int cols = 1920;
-  int unroll = 16;
+  int unroll = 32;
 
   App lp;
   lp.set_default_pixel_width(16);
@@ -11976,8 +11976,8 @@ void weight_add_psef() {
 }
 
 void application_tests() {
-  lake_agg_sram_tb_config_test();
   async_add_test();
+  lake_agg_sram_tb_config_test();
   seidel2d_test();
   add_four_channels();
   weight_add_psef();
@@ -12312,6 +12312,5 @@ int main(int argc, char** argv) {
   }
 
   return 0;
-
 }
 

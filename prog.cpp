@@ -1027,6 +1027,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
         bas.push_back(pipe_cpy(bundle, pipe) + "_channel");
       }
     }
+    bas.push_back("size");
     buffer_args.push_back(bas);
   }
   vector<string> all_arg_decls = ptr_arg_decls;
@@ -1090,7 +1091,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       out << tab(1) << "burst_read<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;
     }
 
-    out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args.at(pipe)) << ");" << endl << endl;
+    out << endl << tab(1) << prg.name << "_wrapper" << "(" << comma_list(buffer_args.at(pipe)) << ");" << endl << endl;
 
     for (auto in : prg.outs) {
       assert(contains_key(in, buffers));
@@ -2343,13 +2344,17 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << "}" << endl << endl;
 
-  //{
-    //conv_out << "void " << prg.name << outer_arg_buffers << " {" << endl << endl;
-    //vector<string> arg_strings = get_arg_names(buffers, prg);
-    //arg_strings.push_back("1");
-    //conv_out << tab(1) << prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
-    //conv_out << "}" << endl;
-  //}
+  {
+    vector<string> ls = arg_buf_list;
+    ls.push_back("const int num_epochs");
+    string outer_arg_buffers = sep_list(ls, "(", ")", ", ");
+    conv_out << "void " << prg.name << "_wrapper" << outer_arg_buffers << " {" << endl << endl;
+    vector<string> arg_strings = get_arg_names(buffers, prg);
+    conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
+    conv_out << tab(2) << prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
+    conv_out << tab(1) << "}" << endl;
+    conv_out << "}" << endl;
+  }
 
   open_synth_scope(conv_out);
   generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
