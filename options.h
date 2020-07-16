@@ -52,6 +52,7 @@ struct CodegenOptions {
   bool ignore_top_level_inter_deps;
 
   std::map<string, banking_strategy> banking_strategies;
+  int num_pipelines;
 
   DebugOptions debug_options;
 
@@ -64,7 +65,8 @@ struct CodegenOptions {
   use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
   scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
-  ignore_top_level_inter_deps(false)
+  ignore_top_level_inter_deps(false),
+  num_pipelines(0)
   {}
 
   banking_strategy get_banking_strategy(const std::string& buffer);

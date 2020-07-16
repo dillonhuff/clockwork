@@ -9460,19 +9460,62 @@ void compute_unit_with_index_variables_test() {
 
 }
 
+void register_file_test() {
+  prog prg("reduce_register_file");
+  prg.add_input("in_oc");
+  prg.add_output("out_oc");
+
+  int len = 1000;
+
+  auto load_in = prg.add_loop("li", 0, len);
+  auto ld = load_in->add_op("ld_in");
+  ld->add_load("in_oc", "li");
+  ld->add_store("in", "li");
+
+  auto clp = prg.add_loop("c", 0, len - 2);
+  auto init = clp->add_op("init_tmp");
+  init->add_function("set_zero_32");
+  init->add_store("tmp", "c");
+  auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
+  comp->add_function("add");
+  comp->add_load("tmp", "c");
+  comp->add_load("in", "c + i");
+  comp->add_store("tmp", "c");
+
+  auto st = clp->add_op("store_out");
+  st->add_load("tmp", "c");
+  st->add_store("out_oc", "c");
+
+  prg.pretty_print();
+  prg.sanity_check();
+  //assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  options.banking_strategies["tmp"] = {"register_file"};
+  options.banking_strategies["in"] = {"register_file"};
+  regression_test(options, prg);
+  //assert(false);
+}
 void travis_tests() {
+  register_file_test();
   reduce_1d_test();
   reduce_2d_test();
   compute_unit_with_index_variables_test();
-  return;
-  heat_3d_test();
   upsample2d_test();
+  downsample2d_test();
+  up_stencil_down_test();
+  gaussian_pyramid_test();
+
+  return;
+
+  heat_3d_test();
   halide_dnn_test();
 
   exposure_fusion();
 
-  downsample2d_test();
-  up_stencil_down_test();
   blur_and_downsample_test();
   downsample_and_blur_test();
   upsample_stencil_2d_test();
@@ -9487,7 +9530,6 @@ void travis_tests() {
   soda_blur_test();
   two_in_window_test();
   two_in_conv2d_test();
-  gaussian_pyramid_test();
   warp_and_upsample_test();
 }
 
@@ -9669,45 +9711,6 @@ vector<T> levels_below(const T& target_level, const std::vector<T>& c) {
   return above;
 }
 
-void register_file_test() {
-  prog prg("reduce_register_file");
-  prg.add_input("in_oc");
-  prg.add_output("out_oc");
-
-  int len = 1000;
-
-  auto load_in = prg.add_loop("li", 0, len);
-  auto ld = load_in->add_op("ld_in");
-  ld->add_load("in_oc", "li");
-  ld->add_store("in", "li");
-
-  auto clp = prg.add_loop("c", 0, len - 2);
-  auto init = clp->add_op("init_tmp");
-  init->add_function("set_zero_32");
-  init->add_store("tmp", "c");
-  auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
-  comp->add_function("add");
-  comp->add_load("tmp", "c");
-  comp->add_load("in", "c + i");
-  comp->add_store("tmp", "c");
-
-  auto st = clp->add_op("store_out");
-  st->add_load("tmp", "c");
-  st->add_store("out_oc", "c");
-
-  prg.pretty_print();
-  prg.sanity_check();
-  //assert(false);
-
-  CodegenOptions options;
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_LINEAR;
-  options.all_rams = true;
-  options.banking_strategies["tmp"] = {"register_file"};
-  options.banking_strategies["in"] = {"register_file"};
-  regression_test(options, prg);
-  //assert(false);
-}
 
 void register_file_optimization_test() {
   prog prg("register_file");
@@ -11736,6 +11739,16 @@ void multi_output_app_test() {
   move_to_benchmarks_folder(name);
 }
 
+string load_off_chip_one_channel(const std::string& prefix, App& lp) {
+  string in0_oc = prefix + "0_oc";
+
+  lp.func2d(in0_oc);
+
+  string in0 = prefix + "0";
+
+  lp.func2d(in0, "id", pt(in0_oc));
+  return in0;
+}
 
 string load_off_chip_two_channels(const std::string& prefix, App& lp) {
   string in0_oc = prefix + "0_oc";
@@ -11757,6 +11770,15 @@ string load_off_chip_two_channels(const std::string& prefix, App& lp) {
   lp.func2d(res, "interleave", in0_win, in1_win);
   lp.compute_unit_needs_index_variable(0, res);
   return res;
+}
+
+string store_off_chip_one_channel(const std::string& input, App& lp) {
+
+  string res0 = input + "0";
+
+  lp.func2d(res0, "id", pt(input));
+
+  return res0;
 }
 
 pair<string, string> store_off_chip_two_channels(const std::string& input, App& lp) {
@@ -11831,6 +11853,34 @@ void psef_multi_output_test() {
   assert(false);
 }
 
+void async_add_test() {
+  int rows = 1080 / 2;
+  int cols = 1920;
+  int unroll = 16;
+
+  App lp;
+  lp.set_default_pixel_width(16);
+
+  // The off chip input we are reading from
+  string input_image = load_off_chip_one_channel("in_off_chip", lp);
+
+  string af = "asadd";
+  lp.func2d(af + str(unroll), "id", pt(input_image));
+
+  string output_image = store_off_chip_one_channel(af + str(unroll), lp);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.use_custom_code_string = true;
+  options.num_pipelines = 2;
+  lp.realize(options, {{output_image, {cols, rows}}}, output_image, unroll);
+
+  compile_compute(output_image);
+
+  move_to_benchmarks_folder(output_image);
+  assert(false);
+}
+
 void add_four_channels() {
   int rows = 1080;
   int cols = 1920 / 2;
@@ -11893,8 +11943,9 @@ void weight_add_psef() {
 }
 
 void application_tests() {
+  async_add_test();
+  seidel2d_test();
   add_four_channels();
-  assert(false);
   weight_add_psef();
   lake_agg_sram_tb_config_test();
 
@@ -11908,7 +11959,6 @@ void application_tests() {
   coreir_tests();
   multi_output_app_test();
 
-  seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();

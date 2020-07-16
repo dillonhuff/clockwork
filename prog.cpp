@@ -3,6 +3,9 @@
 #include "codegen.h"
 #include "app.h"
 
+std::string pipe_cpy(const std::string& a, const int pipe) {
+  return a + "_pipe" + str(pipe);
+}
 std::string us(const std::string& a, const std::string& b) {
   return a + "_" + b;
 }
@@ -125,6 +128,32 @@ std::set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg)
 
     auto bundle = pick(buf.get_out_bundles());
     edges.insert({buf.name, bundle});
+  }
+  return edges;
+}
+
+std::vector<pair<string, string> > outgoing_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::vector<pair<string, string> > edges;
+  for (auto in : prg.outs) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_in_bundles().size() == 1);
+
+    auto bundle = pick(buf.get_in_bundles());
+    edges.push_back({in, bundle});
+  }
+  return edges;
+}
+
+std::vector<pair<string, string> > incoming_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::vector<pair<string, string> > edges;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+
+    auto bundle = pick(buf.get_out_bundles());
+    edges.push_back({in, bundle});
   }
   return edges;
 }
@@ -543,6 +572,7 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
 }
 
 void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
+
   ofstream out(prg.name + "_host.cpp");
 
   ocl_headers(out);
@@ -689,351 +719,295 @@ void generate_collector(
   out << "}" << endl << endl;
 }
 
-void generate_xilinx_multi_channel_accel_wrapper(
-    CodegenOptions& options,
-    std::ostream& out,
-    map<string, UBuffer>& buffers,
-    prog& prg) {
+//void generate_xilinx_multi_channel_accel_wrapper(
+    //CodegenOptions& options,
+    //std::ostream& out,
+    //map<string, UBuffer>& buffers,
+    //prog& prg) {
 
-  cout << "Generating accel wrapper" << endl;
-  string driver_func = prg.name + "_accel";
-  //assert(driver_func.size()  32);
+  //cout << "Generating accel wrapper" << endl;
+  //string driver_func = prg.name + "_accel";
 
+  //for (auto eb : edge_buffers(buffers, prg)) {
+    //string out_rep = eb.first;
+    //string out_bundle = eb.second;
 
-  for (auto eb : edge_buffers(buffers, prg)) {
-    string out_rep = eb.first;
-    string out_bundle = eb.second;
+    //UBuffer out_buf = map_find(out_rep, buffers);
+    //string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-    UBuffer out_buf = map_find(out_rep, buffers);
-    string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+    //generate_collector(options, out, out_buf, eb.second, prg);
+    //generate_distributor(options, out, out_buf, eb.second, prg);
 
-    generate_collector(options, out, out_buf, eb.second, prg);
-    generate_distributor(options, out, out_buf, eb.second, prg);
+    //int num_pixels = -1;
+    //if (prg.is_input(out_rep)) {
 
-    int num_pixels = -1;
-    if (prg.is_input(out_rep)) {
+      //auto cmap = prg.consumer_map(out_rep);
+      //out << tab(1) << "// " << str(cmap) << endl;
+      //auto range_card = card(range(cmap));
+      //num_pixels = int_upper_bound(range_card);
+    //} else {
+      //auto cmap = prg.producer_map(out_rep);
+      //out << tab(1) << "// " << str(cmap) << endl;
+      //auto range_card = card(range(cmap));
+      //num_pixels = int_upper_bound(range_card);
+    //}
 
-      auto cmap = prg.consumer_map(out_rep);
-      out << tab(1) << "// " << str(cmap) << endl;
-      auto range_card = card(range(cmap));
-      num_pixels = int_upper_bound(range_card);
-    } else {
-      auto cmap = prg.producer_map(out_rep);
-      out << tab(1) << "// " << str(cmap) << endl;
-      auto range_card = card(range(cmap));
-      num_pixels = int_upper_bound(range_card);
-    }
+    //assert(num_pixels >= 0);
+    //// TODO: Unify prg and app size computation syntax
+    //if (num_pixels < prg.buffer_size(out_rep)) {
+      //num_pixels = prg.buffer_size(out_rep);
+    //}
 
-    assert(num_pixels >= 0);
-    // TODO: Unify prg and app size computation syntax
-    if (num_pixels < prg.buffer_size(out_rep)) {
-      num_pixels = prg.buffer_size(out_rep);
-    }
+    //int pix_per_burst =
+      //out_buf.lanes_in_bundle(out_bundle);
+    //int num_in_bursts = num_pixels / pix_per_burst;
 
-    int pix_per_burst =
-      out_buf.lanes_in_bundle(out_bundle);
-    int num_in_bursts = num_pixels / pix_per_burst;
+    //out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
+  //}
+  //out << endl;
 
-    out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
-  }
-  out << endl;
+  //string in_rep = pick(prg.ins);
+  //UBuffer& in_buf = buffers.at(in_rep);
+  //string in_bundle = pick(in_buf.port_bundles).first;
+  //string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
 
-  string in_rep = pick(prg.ins);
-  UBuffer& in_buf = buffers.at(in_rep);
-  string in_bundle = pick(in_buf.port_bundles).first;
-  string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
+  //cout << "Got in bundle" << endl;
 
-  cout << "Got in bundle" << endl;
+  //string out_rep = pick(prg.outs);
+  //UBuffer& out_buf = buffers.at(out_rep);
+  //string out_bundle = pick(out_buf.port_bundles).first;
+  //string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-  string out_rep = pick(prg.outs);
-  UBuffer& out_buf = buffers.at(out_rep);
-  string out_bundle = pick(out_buf.port_bundles).first;
-  string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+  //int in_pix = prg.buffer_size(in_rep);
+  //int pix_per_in_burst =
+    //in_buf.lanes_in_bundle(in_bundle);
+  //int in_burst = in_pix / pix_per_in_burst;
 
-  int in_pix = prg.buffer_size(in_rep);
-  int pix_per_in_burst =
-    in_buf.lanes_in_bundle(in_bundle);
-  int in_burst = in_pix / pix_per_in_burst;
+  //int out_pix = prg.buffer_size(out_rep);
+  //int pix_per_out_burst =
+    //out_buf.lanes_in_bundle(out_bundle);
+  //int out_burst = out_pix / pix_per_out_burst;
 
-  int out_pix = prg.buffer_size(out_rep);
-  int pix_per_out_burst =
-    out_buf.lanes_in_bundle(out_bundle);
-  int out_burst = out_pix / pix_per_out_burst;
+  //out << endl;
+  //out << "extern \"C\" {" << endl << endl;
 
-  out << endl;
-  out << "extern \"C\" {" << endl << endl;
+  //for (auto in_bundle : in_bundles(buffers, prg)) {
 
-  for (auto in_bundle : in_bundles(buffers, prg)) {
+    //out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
 
-    out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
+    //out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
+    //if (options.num_input_epochs < 0) {
+      //out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
+    //} else {
+      //out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    //}
 
-    out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-    if (options.num_input_epochs < 0) {
-      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
-    } else {
-      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    }
+    //out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
+    //out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+    //out << tab(2) << "burst_reg = input[i];" << endl;
+    //out << tab(2) << "v.write(burst_reg);" << endl;
+    //out << tab(1) << "}" << endl;
+    //out << "}" << endl << endl;
+  //}
 
-    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    out << tab(2) << "burst_reg = input[i];" << endl;
-    out << tab(2) << "v.write(burst_reg);" << endl;
-    out << tab(1) << "}" << endl;
-    out << "}" << endl << endl;
-  }
+  //for (auto out_bundle : out_bundles(buffers, prg)) {
+    //out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
+    //out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
+    //if (options.num_input_epochs < 0) {
+      //out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
+    //} else {
+      //out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    //}
 
-  for (auto out_bundle : out_bundles(buffers, prg)) {
-    out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
-    out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
-    if (options.num_input_epochs < 0) {
-      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
-    } else {
-      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    }
+    //out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
+    //out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+    //out << tab(2) << "burst_reg = v.read();" << endl;
+    //out << tab(2) << "output[i] = burst_reg;" << endl;
+    //out << tab(1) << "}" << endl;
+    //out << "}" << endl << endl;
+  //}
 
-    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    out << tab(2) << "burst_reg = v.read();" << endl;
-    out << tab(2) << "output[i] = burst_reg;" << endl;
-    out << tab(1) << "}" << endl;
-    out << "}" << endl << endl;
-  }
+  //cout << "Generating arg list" << endl;
+  //vector<string> ptr_args;
+  //vector<string> ptr_arg_decls;
+  //vector<string> buffer_args;
+  //for (auto in : prg.ins) {
+    //assert(contains_key(in, buffers));
+    //auto& buf = buffers.at(in);
+    //assert(buf.get_out_bundles().size() == 1);
 
-  cout << "Generating arg list" << endl;
-  vector<string> ptr_args;
-  vector<string> ptr_arg_decls;
-  vector<string> buffer_args;
-  for (auto in : prg.ins) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
+    //cout << "picking from bundle" << endl;
+    //auto bundle = pick(buf.get_out_bundles());
+    //cout << "bundle: " << bundle << endl;
 
-    cout << "picking from bundle" << endl;
-    auto bundle = pick(buf.get_out_bundles());
-    cout << "bundle: " << bundle << endl;
+    //string out_bundle_tp = buf.bundle_type_string(bundle);
+    //ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
+    //ptr_args.push_back(bundle);
+    //buffer_args.push_back(bundle + "_channel");
+  //}
 
-    string out_bundle_tp = buf.bundle_type_string(bundle);
-    ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
-    ptr_args.push_back(bundle);
-    buffer_args.push_back(bundle + "_channel");
-  }
+  //for (auto out : prg.outs) {
+    //assert(contains_key(out, buffers));
+    //auto& buf = buffers.at(out);
+    //for (auto bundle : buf.get_in_bundles()) {
+      ////auto bundle = pick(buf.get_in_bundles());
+      //string in_bundle_tp = buf.bundle_type_string(bundle);
 
-  for (auto out : prg.outs) {
-    assert(contains_key(out, buffers));
-    auto& buf = buffers.at(out);
-    for (auto bundle : buf.get_in_bundles()) {
-      //auto bundle = pick(buf.get_in_bundles());
-      string in_bundle_tp = buf.bundle_type_string(bundle);
+      //ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+      //ptr_args.push_back(bundle);
+      //buffer_args.push_back(bundle + "_channel");
+    //}
+  //}
 
-      ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
-      ptr_args.push_back(bundle);
-      buffer_args.push_back(bundle + "_channel");
-    }
-  }
+  //vector<string> all_arg_decls = ptr_arg_decls;
+  //all_arg_decls.push_back("const int size");
 
-  vector<string> all_arg_decls = ptr_arg_decls;
-  all_arg_decls.push_back("const int size");
+  //cout << "Generating driver function" << endl;
 
-  cout << "Generating driver function" << endl;
+  //out << "void " << driver_func << "(" << comma_list(all_arg_decls) << ") { " << endl;
+  //out << "#pragma HLS dataflow" << endl;
 
-  out << "void " << driver_func << "(" << comma_list(all_arg_decls) << ") { " << endl;
-  out << "#pragma HLS dataflow" << endl;
+  //int bank_no = 0;
+  //for (auto pt : ptr_args) {
+    //out << "#pragma HLS INTERFACE m_axi port = " << pt << " offset = slave depth = 65536 bundle = gmem" << bank_no << endl;
+    //if (bank_no < 3) {
+      //bank_no++;
+    //}
+  //}
+  //out << endl;
+  //for (auto pt : ptr_args) {
+    //out << "#pragma HLS INTERFACE s_axilite port = " << pt << " bundle = control" << endl;
+  //}
+  //out << "#pragma HLS INTERFACE s_axilite port = size bundle = control" << endl;
+  //out << "#pragma HLS INTERFACE s_axilite port = return bundle = control" << endl;
+  //out << endl;
 
-  int bank_no = 0;
-  for (auto pt : ptr_args) {
-    out << "#pragma HLS INTERFACE m_axi port = " << pt << " offset = slave depth = 65536 bundle = gmem" << bank_no << endl;
-    if (bank_no < 3) {
-      bank_no++;
-    }
-  }
-  out << endl;
-  for (auto pt : ptr_args) {
-    out << "#pragma HLS INTERFACE s_axilite port = " << pt << " bundle = control" << endl;
-  }
-  out << "#pragma HLS INTERFACE s_axilite port = size bundle = control" << endl;
-  out << "#pragma HLS INTERFACE s_axilite port = return bundle = control" << endl;
-  out << endl;
+  //for (auto in : prg.ins) {
+    //assert(contains_key(in, buffers));
+    //auto& buf = buffers.at(in);
+    ////assert(buf.get_in_bundles().size() == 1);
+    //auto bundle = pick(buf.get_out_bundles());
+    //string in_bundle_tp = buf.bundle_type_string(bundle);
 
-  for (auto in : prg.ins) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    //assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_out_bundles());
-    string in_bundle_tp = buf.bundle_type_string(bundle);
+    //out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
+  //}
 
-    out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
-  }
+  //for (auto in : prg.outs) {
+    //assert(contains_key(in, buffers));
+    //auto& buf = buffers.at(in);
+    ////assert(buf.get_in_bundles().size() == 1);
+    //auto bundle = pick(buf.get_in_bundles());
+    //string in_bundle_tp = buf.bundle_type_string(bundle);
 
-  for (auto in : prg.outs) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    //assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
-    string in_bundle_tp = buf.bundle_type_string(bundle);
+    //out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
+  //}
 
-    out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
-  }
+  //out << endl;
 
-  out << endl;
+  //for (auto in : prg.ins) {
+    //assert(contains_key(in, buffers));
+    //auto& buf = buffers.at(in);
+    //assert(buf.get_out_bundles().size() == 1);
+    //auto bundle = pick(buf.get_out_bundles());
 
-  for (auto in : prg.ins) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
-    auto bundle = pick(buf.get_out_bundles());
+    ////out << tab(1) << "read_input(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    //out << tab(1) << "read_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+  //}
 
-    //out << tab(1) << "read_input(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-    out << tab(1) << "read_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-  }
+  //out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
 
-  out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
+  //for (auto in : prg.outs) {
+    //assert(contains_key(in, buffers));
+    //auto& buf = buffers.at(in);
+    //for (auto bundle : buf.get_in_bundles()) {
+      ////auto bundle = pick(buf.get_in_bundles());
+      //out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    //}
+  //}
 
-  for (auto in : prg.outs) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    for (auto bundle : buf.get_in_bundles()) {
-      //auto bundle = pick(buf.get_in_bundles());
-      out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-    }
-  }
+  //out << "}" << endl << endl;
+  //out << "}" << endl;
+  //cout << "Generated accel wrapper" << endl;
+//}
 
-  out << "}" << endl << endl;
-  out << "}" << endl;
-  cout << "Generated accel wrapper" << endl;
-}
 void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
 
 
-  for (auto eb : edge_buffers(buffers, prg)) {
-    string out_rep = eb.first;
-    string out_bundle = eb.second;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto eb : edge_buffers(buffers, prg)) {
+      string out_rep = eb.first;
+      string out_bundle = eb.second;
 
-    UBuffer out_buf = map_find(out_rep, buffers);
-    string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+      UBuffer out_buf = map_find(out_rep, buffers);
+      string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-    int num_pixels = -1;
-    if (prg.is_input(out_rep)) {
+      int num_pixels = -1;
+      if (prg.is_input(out_rep)) {
 
-      auto cmap = prg.consumer_map(out_rep);
-      out << tab(1) << "// " << str(cmap) << endl;
-      auto range_card = card(range(cmap));
-      num_pixels = int_upper_bound(range_card);
-    } else {
-      auto cmap = prg.producer_map(out_rep);
-      out << tab(1) << "// " << str(cmap) << endl;
-      auto range_card = card(range(cmap));
-      num_pixels = int_upper_bound(range_card);
+        auto cmap = prg.consumer_map(out_rep);
+        out << tab(1) << "// " << str(cmap) << endl;
+        auto range_card = card(range(cmap));
+        num_pixels = int_upper_bound(range_card);
+      } else {
+        auto cmap = prg.producer_map(out_rep);
+        out << tab(1) << "// " << str(cmap) << endl;
+        auto range_card = card(range(cmap));
+        num_pixels = int_upper_bound(range_card);
+      }
+
+      assert(num_pixels >= 0);
+      // TODO: Unify prg and app size computation syntax
+      if (num_pixels < prg.buffer_size(out_rep)) {
+        num_pixels = prg.buffer_size(out_rep);
+      }
+
+      int pix_per_burst =
+        out_buf.lanes_in_bundle(out_bundle);
+      int num_in_bursts = num_pixels / pix_per_burst;
+
+      out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
     }
-
-    assert(num_pixels >= 0);
-    // TODO: Unify prg and app size computation syntax
-    if (num_pixels < prg.buffer_size(out_rep)) {
-      num_pixels = prg.buffer_size(out_rep);
-    }
-
-    int pix_per_burst =
-      out_buf.lanes_in_bundle(out_bundle);
-    int num_in_bursts = num_pixels / pix_per_burst;
-
-    out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
+    out << endl;
   }
-  out << endl;
-
-  string in_rep = pick(prg.ins);
-  UBuffer& in_buf = buffers.at(in_rep);
-  string in_bundle = pick(in_buf.port_bundles).first;
-  string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
-
-  cout << "Got in bundle" << endl;
-
-  string out_rep = pick(prg.outs);
-  UBuffer& out_buf = buffers.at(out_rep);
-  string out_bundle = pick(out_buf.port_bundles).first;
-  string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
-
-  int in_pix = prg.buffer_size(in_rep);
-  int pix_per_in_burst =
-    in_buf.lanes_in_bundle(in_bundle);
-  int in_burst = in_pix / pix_per_in_burst;
-
-  int out_pix = prg.buffer_size(out_rep);
-  int pix_per_out_burst =
-    out_buf.lanes_in_bundle(out_bundle);
-  int out_burst = out_pix / pix_per_out_burst;
-
   out << endl;
   out << "extern \"C\" {" << endl << endl;
-
-  for (auto in_bundle : in_bundles(buffers, prg)) {
-    out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
-
-    out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-    if (options.num_input_epochs < 0) {
-      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
-    } else {
-      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    }
-
-    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    out << tab(2) << "burst_reg = input[i];" << endl;
-    out << tab(2) << "v.write(burst_reg);" << endl;
-    out << tab(1) << "}" << endl;
-    out << "}" << endl << endl;
-  }
-
-  for (auto out_bundle : out_bundles(buffers, prg)) {
-    out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
-    out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
-    if (options.num_input_epochs < 0) {
-      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
-    } else {
-      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    }
-
-    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    out << tab(2) << "burst_reg = v.read();" << endl;
-    out << tab(2) << "output[i] = burst_reg;" << endl;
-    out << tab(1) << "}" << endl;
-    out << "}" << endl << endl;
-  }
 
   cout << "Generating arg list" << endl;
   vector<string> ptr_args;
   vector<string> ptr_arg_decls;
   vector<string> buffer_args;
-  for (auto in : prg.ins) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
 
-    cout << "picking from bundle" << endl;
-    auto bundle = pick(buf.get_out_bundles());
-    cout << "bundle: " << bundle << endl;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto in : prg.ins) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      assert(buf.get_out_bundles().size() == 1);
 
-    string out_bundle_tp = buf.bundle_type_string(bundle);
-    ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
-    ptr_args.push_back(bundle);
-    buffer_args.push_back(bundle + "_channel");
-  }
+      cout << "picking from bundle" << endl;
+      auto bundle = pick(buf.get_out_bundles());
+      cout << "bundle: " << bundle << endl;
 
-  for (auto out : prg.outs) {
-    assert(contains_key(out, buffers));
-    auto& buf = buffers.at(out);
-    for (auto bundle : buf.get_in_bundles()) {
-      //auto bundle = pick(buf.get_in_bundles());
-      string in_bundle_tp = buf.bundle_type_string(bundle);
-
-      ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+      string out_bundle_tp = buf.bundle_type_string(bundle);
+      ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
       ptr_args.push_back(bundle);
       buffer_args.push_back(bundle + "_channel");
     }
-  }
 
+    for (auto out : prg.outs) {
+      assert(contains_key(out, buffers));
+      auto& buf = buffers.at(out);
+      for (auto bundle : buf.get_in_bundles()) {
+        string in_bundle_tp = buf.bundle_type_string(bundle);
+
+        ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+        ptr_args.push_back(bundle);
+        buffer_args.push_back(bundle + "_channel");
+      }
+    }
+  }
   vector<string> all_arg_decls = ptr_arg_decls;
   all_arg_decls.push_back("const int size");
 
@@ -1057,46 +1031,58 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   out << "#pragma HLS INTERFACE s_axilite port = return bundle = control" << endl;
   out << endl;
 
-  for (auto in : prg.ins) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    //assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_out_bundles());
-    string in_bundle_tp = buf.bundle_type_string(bundle);
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    out << endl;
+    out << tab(1) << "// Pipeline # " << pipe << endl;
+    for (auto in : prg.ins) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      auto bundle = pick(buf.get_out_bundles());
+      string in_bundle_tp = buf.bundle_type_string(bundle);
 
-    out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
-  }
+      out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << pipe_cpy(bundle, pipe) << "_channel;" << endl;
+    }
 
-  for (auto in : prg.outs) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    //assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
-    string in_bundle_tp = buf.bundle_type_string(bundle);
+    for (auto in : prg.outs) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      auto bundle = pick(buf.get_in_bundles());
+      string in_bundle_tp = buf.bundle_type_string(bundle);
 
-    out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
-  }
+      out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << pipe_cpy(bundle, pipe) << "_channel;" << endl;
+    }
 
-  out << endl;
+    out << endl;
 
-  for (auto in : prg.ins) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
-    auto bundle = pick(buf.get_out_bundles());
+    for (auto in : prg.ins) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      assert(buf.get_out_bundles().size() == 1);
+      auto bundle = pick(buf.get_out_bundles());
 
-    //out << tab(1) << "read_input(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-    out << tab(1) << "read_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-  }
+      string num_transfers = bundle + "_num_transfers*size";
+      if (options.num_input_epochs < 0) {
+      } else {
+        num_transfers = bundle + "_num_transfers" + "*" + str(options.num_input_epochs);
+      }
 
-  out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
+      out << tab(1) << "burst_read<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;
+    }
 
-  for (auto in : prg.outs) {
-    assert(contains_key(in, buffers));
-    auto& buf = buffers.at(in);
-    for (auto bundle : buf.get_in_bundles()) {
-      //auto bundle = pick(buf.get_in_bundles());
-      out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
+
+    for (auto in : prg.outs) {
+      assert(contains_key(in, buffers));
+      auto& buf = buffers.at(in);
+      for (auto bundle : buf.get_in_bundles()) {
+        string num_transfers = bundle + "_num_transfers*size";
+        if (options.num_input_epochs < 0) {
+        } else {
+          num_transfers = bundle + "_num_transfers" + "*" + str(options.num_input_epochs);
+        }
+
+        out << tab(1) << "burst_write<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;
+      }
     }
   }
 
@@ -2220,6 +2206,10 @@ void generate_app_code(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     map<string, isl_set*>& domain_map) {
+  //for (auto b : buffers) {
+    //cout << b.second << endl;
+  //}
+  //assert(false);
 
   ofstream conv_out(prg.name + ".cpp");
 
@@ -2264,7 +2254,21 @@ void generate_app_code(CodegenOptions& options,
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
-      ignore_inter_deps(conv_out, b.second.name);
+      open_synth_scope(conv_out);
+      if (b.second.banking.partition == "register_file") {
+        assert(b.second.bank_list.size() == 1);
+        string var = b.second.name + "." + pick(b.second.bank_list).name + ".RAM";
+        conv_out << "#pragma HLS array_partition variable=" << var << " dim=0 complete" << endl;
+      } else if (b.second.banking.partition == "cyclic") {
+        //assert(b.second.bank_list.size() == 1);
+        for (int d = 0; d < b.second.logical_dimension(); d++) {
+          string var = b.second.name + "." + pick(b.second.bank_list).name + ".RAM";
+          assert(d < (int) b.second.banking.cycle_factors.size());
+          int factor = b.second.banking.cycle_factors.at(d);
+          conv_out << "#pragma HLS array_partition variable=" << var << " dim=" << d << " factor=" << factor << endl;
+        }
+      }
+      close_synth_scope(conv_out);
     }
   }
 
@@ -2330,9 +2334,9 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << endl;
 
-  ofstream test_out("multi_channel_accel_wrapper.cpp");
-  generate_xilinx_multi_channel_accel_wrapper(options, test_out, buffers, prg);
-  test_out.close();
+  //ofstream test_out("multi_channel_accel_wrapper.cpp");
+  //generate_xilinx_multi_channel_accel_wrapper(options, test_out, buffers, prg);
+  //test_out.close();
 
   // Collateral generation
   generate_vivado_tcl(prg.name);
@@ -2369,10 +2373,10 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
   auto buffers = build_buffers(prg, sched);
 
   cout << "Buffers..." << endl;
-  //for (auto b : buffers) {
-    ////b.second.generate_bank_and_merge(options);
-    //cout << b.second << endl;
-  //}
+  for (auto b : buffers) {
+    //b.second.generate_bank_and_merge(options);
+    cout << b.second << endl;
+  }
 
   assert(prg.compute_unit_file != "");
   cout << "Compute unit file: " << prg.compute_unit_file << endl;

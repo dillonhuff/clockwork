@@ -642,3 +642,5 @@ static inline
 hw_uint<32> histogram_inc(hw_uint<64>& ignore, hw_uint<32>& val) {
   return val + 1;
 }
+
+
