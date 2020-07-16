@@ -968,7 +968,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
         out_buf.lanes_in_bundle(out_bundle);
       int num_in_bursts = num_pixels / pix_per_burst;
 
-      out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
+      out << "const int " << pipe_cpy(out_bundle, pipe) << "_num_transfers = " << num_in_bursts << ";" << endl;
     }
     out << endl;
   }
@@ -1062,10 +1062,10 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       assert(buf.get_out_bundles().size() == 1);
       auto bundle = pick(buf.get_out_bundles());
 
-      string num_transfers = bundle + "_num_transfers*size";
+      string num_transfers = pipe_cpy(bundle, pipe) + "_num_transfers*size";
       if (options.num_input_epochs < 0) {
       } else {
-        num_transfers = bundle + "_num_transfers" + "*" + str(options.num_input_epochs);
+        num_transfers = pipe_cpy(bundle, pipe) + "_num_transfers" + "*" + str(options.num_input_epochs);
       }
 
       out << tab(1) << "burst_read<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;
@@ -1077,10 +1077,10 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       assert(contains_key(in, buffers));
       auto& buf = buffers.at(in);
       for (auto bundle : buf.get_in_bundles()) {
-        string num_transfers = bundle + "_num_transfers*size";
+        string num_transfers = pipe_cpy(bundle, pipe) + "_num_transfers*size";
         if (options.num_input_epochs < 0) {
         } else {
-          num_transfers = bundle + "_num_transfers" + "*" + str(options.num_input_epochs);
+          num_transfers = pipe_cpy(bundle, pipe) + "_num_transfers" + "*" + str(options.num_input_epochs);
         }
 
         out << tab(1) << "burst_write<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;

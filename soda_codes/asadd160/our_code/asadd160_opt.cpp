@@ -1494,6 +1494,20 @@ inline void in_off_chip0_in_off_chip0_update_0_write_bundle_write(hw_uint<256>& 
 
 
 // Operation logic
+inline void in_off_chip0_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip0_oc
+	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
+	auto compute_result = id_unrolled_16(in_off_chip0_oc_0_c__0_value);
+	// Produce: in_off_chip0
+	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void asadd16_update_0(in_off_chip0_cache& in_off_chip0, asadd16_cache& asadd16, int d0, int d1) {
   // Dynamic address computation
 
@@ -1506,20 +1520,6 @@ inline void asadd16_update_0(in_off_chip0_cache& in_off_chip0, asadd16_cache& as
 	auto compute_result = id_unrolled_16(in_off_chip0_0_c__0_value);
 	// Produce: asadd16
 	asadd16_asadd16_update_0_write_bundle_write(/* arg names */compute_result, asadd16, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void in_off_chip0_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip0_oc
-	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
-	auto compute_result = id_unrolled_16(in_off_chip0_oc_0_c__0_value);
-	// Produce: in_off_chip0
-	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1632,14 +1632,14 @@ for (int c0 = 0; c0 <= 539; c0++) {
 
 #ifdef __VIVADO_SYNTH__
   // { asadd160_update_0[root = 0, asadd160_0, asadd160_1] -> asadd160[0, 0] : 0 <= asadd160_0 <= 119 and 0 <= asadd160_1 <= 539 }
-const int asadd160_update_0_write_num_transfers = 64800;
+const int asadd160_update_0_write_pipe0_num_transfers = 64800;
   // { in_off_chip0_update_0[root = 0, in_off_chip0_0, in_off_chip0_1] -> in_off_chip0_oc[0, 0] : 0 <= in_off_chip0_0 <= 119 and 0 <= in_off_chip0_1 <= 539 }
-const int in_off_chip0_update_0_read_num_transfers = 64800;
+const int in_off_chip0_update_0_read_pipe0_num_transfers = 64800;
 
   // { asadd160_update_0[root = 0, asadd160_0, asadd160_1] -> asadd160[0, 0] : 0 <= asadd160_0 <= 119 and 0 <= asadd160_1 <= 539 }
-const int asadd160_update_0_write_num_transfers = 64800;
+const int asadd160_update_0_write_pipe1_num_transfers = 64800;
   // { in_off_chip0_update_0[root = 0, in_off_chip0_0, in_off_chip0_1] -> in_off_chip0_oc[0, 0] : 0 <= in_off_chip0_0 <= 119 and 0 <= in_off_chip0_1 <= 539 }
-const int in_off_chip0_update_0_read_num_transfers = 64800;
+const int in_off_chip0_update_0_read_pipe1_num_transfers = 64800;
 
 
 extern "C" {
@@ -1663,21 +1663,21 @@ void asadd160_opt_accel(hw_uint<256>* in_off_chip0_update_0_read_pipe0, hw_uint<
   static HWStream<hw_uint<256> > in_off_chip0_update_0_read_pipe0_channel;
   static HWStream<hw_uint<256> > asadd160_update_0_write_pipe0_channel;
 
-  burst_read<256>(in_off_chip0_update_0_read_pipe0, in_off_chip0_update_0_read_pipe0_channel, in_off_chip0_update_0_read_num_transfers*size);
+  burst_read<256>(in_off_chip0_update_0_read_pipe0, in_off_chip0_update_0_read_pipe0_channel, in_off_chip0_update_0_read_pipe0_num_transfers*size);
 
   asadd160_opt(in_off_chip0_update_0_read_pipe0_channel, asadd160_update_0_write_pipe0_channel);
 
-  burst_write<256>(asadd160_update_0_write_pipe0, asadd160_update_0_write_pipe0_channel, asadd160_update_0_write_num_transfers*size);
+  burst_write<256>(asadd160_update_0_write_pipe0, asadd160_update_0_write_pipe0_channel, asadd160_update_0_write_pipe0_num_transfers*size);
 
   // Pipeline # 1
   static HWStream<hw_uint<256> > in_off_chip0_update_0_read_pipe1_channel;
   static HWStream<hw_uint<256> > asadd160_update_0_write_pipe1_channel;
 
-  burst_read<256>(in_off_chip0_update_0_read_pipe1, in_off_chip0_update_0_read_pipe1_channel, in_off_chip0_update_0_read_num_transfers*size);
+  burst_read<256>(in_off_chip0_update_0_read_pipe1, in_off_chip0_update_0_read_pipe1_channel, in_off_chip0_update_0_read_pipe1_num_transfers*size);
 
   asadd160_opt(in_off_chip0_update_0_read_pipe1_channel, asadd160_update_0_write_pipe1_channel);
 
-  burst_write<256>(asadd160_update_0_write_pipe1, asadd160_update_0_write_pipe1_channel, asadd160_update_0_write_num_transfers*size);
+  burst_write<256>(asadd160_update_0_write_pipe1, asadd160_update_0_write_pipe1_channel, asadd160_update_0_write_pipe1_num_transfers*size);
 }
 
 }
