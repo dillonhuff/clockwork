@@ -2214,9 +2214,11 @@ void generate_xilinx_aws_ddr_config(CodegenOptions& options, map<string, UBuffer
   ofstream out(prg.name + "_config.ini");
   out << "[connectivity]" << endl;
   int i = 0;
-  for (auto e : edge_bundles(buffers, prg)) {
-    out << "sp=" << prg.name << "_accel_1." << e << ":DDR[" << i << "]" << endl;
-    i++;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto e : edge_bundles(buffers, prg)) {
+      out << "sp=" << prg.name << "_accel_1." << pipe_cpy(e, pipe) << ":DDR[" << i << "]" << endl;
+      i++;
+    }
   }
 
   out.close();
