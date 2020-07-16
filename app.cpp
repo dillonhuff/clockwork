@@ -1310,6 +1310,14 @@ hardware_schedule(
 
   ilp_builder modulo_schedule =
     modulo_constraints(domain, validity, latencies);
+  for (auto c : extra_constraints) {
+    vector<pair<string, isl_val*> > cs;
+    for (auto term : c.terms) {
+      cs.push_back({term.first, isl_val_int_from_si(ct, term.second)});
+    }
+    modulo_schedule.add_eq(simplify(cs), isl_val_int_from_si(ct, c.offset));
+  }
+
   for (auto s : get_sets(padded_domain)) {
     modulo_schedule.add_geq(ii_var(name(s), num_dims(s) - 1), map_find(name(s), iis));
   }
@@ -1411,6 +1419,11 @@ hardware_schedule(
   //modulo_schedule.add_eq({{ii_var("reduce", 2), one(ct)}}, isl_val_int_from_si(ct, 2));
 
   modulo_schedule.minimize(simplify(obj));
+
+  cout << "Solution: " << endl;
+  for (auto v : modulo_schedule.variable_positions) {
+    cout << v.first << " = " << str(modulo_schedule.value(v.first)) << endl;
+  }
 
   map<string, isl_aff*> hw_schedules;
   for (auto f : get_sets(padded_domain)) {

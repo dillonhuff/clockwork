@@ -1023,7 +1023,7 @@ hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
     map<string, int>& latencies, map<string, int>& iis, vector<pair<string, isl_val*> >& obj);
 
 struct linear_constraint {
-  vector<pair<string, int> > constraints;
+  vector<pair<string, int> > terms;
   int offset;
 };
 
