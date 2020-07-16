@@ -1289,7 +1289,8 @@ hardware_schedule(
     umap* proximity,
     map<string, int>& latencies,
     map<string, int>& iis,
-    vector<pair<string, isl_val*> >& obj) {
+    vector<pair<string, isl_val*> >& obj,
+    const vector<linear_constraint>& extra_constraints) {
 
   cout << "Creating hw schedule..." << endl;
   auto padded_domain = cpy(domain);
@@ -1428,6 +1429,17 @@ hardware_schedule(
     hw_schedules[name(f)] = s;
   }
   return hw_schedules;
+}
+
+map<string, isl_aff*>
+hardware_schedule(
+    uset* domain,
+    umap* validity,
+    umap* proximity,
+    map<string, int>& latencies,
+    map<string, int>& iis,
+    vector<pair<string, isl_val*> >& obj) {
+  return hardware_schedule(domain, validity, proximity, latencies, iis, obj, {});
 }
 
 map<string, isl_aff*>

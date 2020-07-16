@@ -1494,6 +1494,24 @@ inline void in_off_chip0_in_off_chip0_update_0_write_bundle_write(hw_uint<256>& 
 
 
 // Operation logic
+inline void asadd160_update_0(asadd16_cache& asadd16, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */asadd160, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: asadd16
+	auto asadd16_0_c__0_value = asadd16_asadd160_update_0_read_bundle_read(asadd16/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_16(asadd16_0_c__0_value);
+	// Produce: asadd160
+	asadd160.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_off_chip0_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
   // Dynamic address computation
 
@@ -1520,24 +1538,6 @@ inline void asadd16_update_0(in_off_chip0_cache& in_off_chip0, asadd16_cache& as
 	auto compute_result = id_unrolled_16(in_off_chip0_0_c__0_value);
 	// Produce: asadd16
 	asadd16_asadd16_update_0_write_bundle_write(/* arg names */compute_result, asadd16, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void asadd160_update_0(asadd16_cache& asadd16, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */asadd160, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: asadd16
-	auto asadd16_0_c__0_value = asadd16_asadd160_update_0_read_bundle_read(asadd16/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_16(asadd16_0_c__0_value);
-	// Produce: asadd160
-	asadd160.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

@@ -11083,65 +11083,95 @@ void lake_agg_sram_tb_config_test() {
   lake_agg.pretty_print();
   cout << "validity: " << str(valid) << endl;
   cout << "Schedule..." << endl;
-  auto hs = hardware_schedule(lake_agg);
-  hs = its(hs, lake_agg.whole_iteration_domain());
-  cout << "schedule: " << codegen_c(hs) << endl;
+  map<string, int> latencies;
+  map<string, int> iis;
+  for (auto f : get_sets(lake_agg.whole_iteration_domain())) {
+    latencies[name(f)] = 2;
+    iis[name(f)] = 1;
+  }
+
+  auto ct = lake_agg.ctx;
+  vector<pair<string, isl_val*> > obj;
+  for (auto f : get_sets(lake_agg.whole_iteration_domain())) {
+    string n = name(f);
+    int dim = num_dims(f);
+
+    for (int i = 0; i < dim; i++) {
+      obj.push_back({ii_var(n, i), one(ct)});
+    }
+
+  }
+
+  vector<linear_constraint> extras;
+  extras.push_back(linear_constraint{{{hw_delay_var("sram2tb"), 2},
+    {hw_delay_var("sram2tb") + "_ml", -1}}, 1});
+
+  //auto valid = lake_agg.validity_deps();
+  auto prox = cpy(valid);
+  auto hs = hardware_schedule(lake_agg.whole_iteration_domain(), valid, prox, latencies, iis, obj, extras);
+  //hs = its(hs, lake_agg.whole_iteration_domain());
+  for (auto m : hs) {
+    cout << tab(1) << m.first << " -> " << str(m.second) << endl;
+    //cout << tab(1) << str(m) << endl;
+  }
+  assert(false);
+  //cout << "schedule: " << codegen_c(hs) << endl;
   //assert(false);
 
-  auto buffers = build_buffers(lake_agg, hs);
-  for (auto b : buffers) {
-    if (b.first == "agg") {
-      isl_map* fold_func = isl_map_read_from_str(lake_agg.ctx, "{ agg[x] -> M[x % 10] }");
-      assert(inner_bank_offset_is_legal(fold_func, b.second));
-      assert(false);
-    }
-  }
-  cmd("mkdir -p ./lake_controllers/identity_stream/");
-  for (auto op : lake_agg.all_ops()) {
-    ofstream out(string("./lake_controllers/identity_stream/") + op->name + ".csv");
+  //auto buffers = build_buffers(lake_agg, hs);
+  //for (auto b : buffers) {
+    //if (b.first == "agg") {
+      //isl_map* fold_func = isl_map_read_from_str(lake_agg.ctx, "{ agg[x] -> M[x % 10] }");
+      //assert(inner_bank_offset_is_legal(fold_func, b.second));
+      ////assert(false);
+    //}
+  //}
+  //cmd("mkdir -p ./lake_controllers/identity_stream/");
+  //for (auto op : lake_agg.all_ops()) {
+    //ofstream out(string("./lake_controllers/identity_stream/") + op->name + ".csv");
 
-    bool found = false;
-    for (auto m : get_maps(hs)) {
-      cout << tab(1) << domain_name(m) << endl;
-      if (domain_name(m) == op->name) {
-        found = true;
-        cout << tab(1) << str(m) << endl;
-        auto dom = domain(m);
-        auto write_sched = m;
-        //isl_aff* write_addr =
-          //rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
-        emit_lake_controller_config(out, dom, get_aff(write_sched));
-        //, write_addr);
-        break;
-      }
-    }
+    //bool found = false;
+    //for (auto m : get_maps(hs)) {
+      //cout << tab(1) << domain_name(m) << endl;
+      //if (domain_name(m) == op->name) {
+        //found = true;
+        //cout << tab(1) << str(m) << endl;
+        //auto dom = domain(m);
+        //auto write_sched = m;
+        ////isl_aff* write_addr =
+          ////rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
+        //emit_lake_controller_config(out, dom, get_aff(write_sched));
+        ////, write_addr);
+        //break;
+      //}
+    //}
 
-    assert(found);
+    //assert(found);
 
-    for (auto locs_written : op->produce_locs) {
-      out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
-      isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
-      out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
-      for (int d = 0; d < num_in_dims(write_addr); d++) {
-        int ldim = num_in_dims(write_addr) - d - 1;
-        out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
-      }
-    }
+    //for (auto locs_written : op->produce_locs) {
+      //out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
+      //isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
+      //out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
+      //for (int d = 0; d < num_in_dims(write_addr); d++) {
+        //int ldim = num_in_dims(write_addr) - d - 1;
+        //out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
+      //}
+    //}
 
-    for (auto locs_read : op->consume_locs_pair) {
-      out << "\"read\"," << "\"" << locs_read.first << "\"" << endl;
-      assert(locs_read.second.size() == 1);
-      auto lread = locs_read.second.at(0).second;
-      isl_aff* write_addr = get_aff_addr(op, locs_read.first, lread, lake_agg);
-      out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
-      for (int d = 0; d < num_in_dims(write_addr); d++) {
-        int ldim = num_in_dims(write_addr) - d - 1;
-        out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
-      }
-    }
+    //for (auto locs_read : op->consume_locs_pair) {
+      //out << "\"read\"," << "\"" << locs_read.first << "\"" << endl;
+      //assert(locs_read.second.size() == 1);
+      //auto lread = locs_read.second.at(0).second;
+      //isl_aff* write_addr = get_aff_addr(op, locs_read.first, lread, lake_agg);
+      //out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
+      //for (int d = 0; d < num_in_dims(write_addr); d++) {
+        //int ldim = num_in_dims(write_addr) - d - 1;
+        //out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
+      //}
+    //}
 
-    out.close();
-  }
+    //out.close();
+  //}
   //assert(false);
 }
 
@@ -11943,11 +11973,11 @@ void weight_add_psef() {
 }
 
 void application_tests() {
+  lake_agg_sram_tb_config_test();
   async_add_test();
   seidel2d_test();
   add_four_channels();
   weight_add_psef();
-  lake_agg_sram_tb_config_test();
 
   two_stage_psef();
   psef_multi_output_test();
