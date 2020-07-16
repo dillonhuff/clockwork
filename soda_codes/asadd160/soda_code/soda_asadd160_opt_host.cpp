@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_off_chip0_update_0_read_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_off_chip0_update_0_read_pipe0_ocl_buf, in_off_chip0_update_0_read_pipe1_ocl_buf}, 0));
 
 unsigned long start, end, nsduration;
 cl::Event event;
@@ -101,7 +101,8 @@ OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
 start = OCL_CHECK(err,
 event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
 nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({asadd160_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({asadd160_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({asadd160_update_0_write_pipe1_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 

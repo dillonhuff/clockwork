@@ -290,11 +290,13 @@ void ocl_timing_suffix(std::ostream& out) {
   out << tab(1) << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
 }
 
-void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
+void run_kernel(CodegenOptions& options, std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
   out << tab(1) << "std::cout << \"Migrating memory\" << std::endl;" << endl;
   vector<string> in_bufs;
-  for (auto b : in_bundles(buffers, prg)) {
-    in_bufs.push_back(b + "_ocl_buf");
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto b : in_bundles(buffers, prg)) {
+      in_bufs.push_back(pipe_cpy(b, pipe) + "_ocl_buf");
+    }
   }
 
   out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl << endl;
@@ -313,10 +315,12 @@ void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
   //out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl << endl;
 
-  for (auto out_bundle: out_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << out_bundle << "_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));" << endl;
+  for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
+    for (auto out_bundle: out_bundles(buffers, prg)) {
+      out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << pipe_cpy(out_bundle, pipe) << "_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));" << endl;
+    }
   }
-
+  
   out << endl;
   out << tab(1) << "q.finish();" << endl << endl;
 
@@ -545,7 +549,7 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
   out << tab(1) << "uint64_t transfer_size = num_epochs*(" << max_buf_size << " / " << unroll_factor << ");" << endl;
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << "transfer_size));" << endl << endl;
 
-  run_kernel(out, buffers, prg);
+  run_kernel(options, out, buffers, prg);
 
 
   for (auto output : outputs(buffers, prg)) {
@@ -659,7 +663,7 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   out << endl;
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", num_epochs));" << endl << endl;
 
-  run_kernel(out, buffers, prg);
+  run_kernel(options, out, buffers, prg);
 
   for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
     for (auto output : outputs(buffers, prg)) {
