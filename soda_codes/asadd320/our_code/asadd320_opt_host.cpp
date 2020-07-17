@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstdlib>
 
+using namespace std;
+
 class Timer {
     std::chrono::high_resolution_clock::time_point mTimeStart;
 
@@ -125,8 +127,8 @@ int main(int argc, char **argv) {
 
     std::cout << "timer stop     = " << timer_stop2 << " usec" << std::endl;
     std::cout << "total time sec = " << sec << " sec" << std::endl;
-    double bw = (4*in_off_chip0_update_0_read_pipe0_size_bytes) / sec;
-    std::cout << "time to transfer first arg to device: " << bw << " GB / sec" << std::endl;
+    double bw = (2*in_off_chip0_update_0_read_pipe0_size_bytes) / sec;
+    std::cout << "time to transfer first arg to device: " << bw << " Bytes / sec" << std::endl;
 
   }
 
@@ -141,16 +143,31 @@ OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
 start = OCL_CHECK(err,
 event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
 nsduration = end - start;
+
+  Timer arg1_time;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({asadd320_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({asadd320_update_0_write_pipe1_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
+  {
+    double timer_stop2 = arg1_time.stop();
+    double sec =  
+      timer_stop2 / 1000000.0;     // convert us to s;
+
+    std::cout << "timer stop     = " << timer_stop2 << " usec" << std::endl;
+    std::cout << "total time sec = " << sec << " sec" << std::endl;
+    double bw = (2*in_off_chip0_update_0_read_pipe0_size_bytes) / sec;
+    std::cout << "time to transfer first device to arg: " << bw << " Bytes / sec" << std::endl;
+
+  }
+
   double timer_stop2 = timer.stop();
   double sec =  
     timer_stop2 / 1000000.0;     // convert us to s;
 
+  std::cout << endl;
   std::cout << "timer stop     = " << timer_stop2 << " usec" << std::endl;
-  std::cout << "total time sec = " << sec << " usec" << std::endl;
+  std::cout << "total time sec = " << sec << " sec" << std::endl;
 
   double dnsduration = ((double)nsduration);
   double dsduration = dnsduration / ((double)1000000000);
