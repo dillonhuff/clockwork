@@ -11107,8 +11107,17 @@ void lake_agg_sram_tb_config_test() {
   extras.push_back(linear_constraint{{{hw_delay_var("sram2tb"), 1},
     {hw_delay_var("sram2tb") + "_ml", -2}}, 1, true});
 
-  extras.push_back(linear_constraint{{{ii_var("sram2tb", 2), 1}}, -4, true});
-  extras.push_back(linear_constraint{{{ii_var("agg2sram", 2), 1}}, -4, true});
+//  extras.push_back(linear_constraint{{{ii_var("sram2tb", 2), 1}}, -4, true});
+//  extras.push_back(linear_constraint{{{ii_var("agg2sram", 2), 1}}, -4, true});
+  extras.push_back(linear_constraint{{{hw_delay_var("agg2sram"), 1},
+    {hw_delay_var("agg2sram") + "_ml", -2}}, 0, true});
+
+  for(int i = 0; i < 3; i++){
+      extras.push_back(linear_constraint{{{ii_var("sram2tb", i), 1},
+              {ii_var("sram2tb", i) + "_half", -2}}, 0, true});
+      extras.push_back(linear_constraint{{{ii_var("agg2sram", i), 1},
+              {ii_var("agg2sram", i) + "_half", -2}}, 0, true});
+  }
 
   //auto valid = lake_agg.validity_deps();
   auto prox = cpy(valid);
