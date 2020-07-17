@@ -11100,6 +11100,7 @@ void lake_agg_sram_tb_config_test() {
       obj.push_back({ii_var(n, i), one(ct)});
     }
 
+    obj.push_back({hw_delay_var(n), one(ct)});
   }
 
   vector<linear_constraint> extras;
@@ -11117,16 +11118,15 @@ void lake_agg_sram_tb_config_test() {
     cout << tab(1) << m.first << " -> " << str(m.second) << endl;
     //cout << tab(1) << str(m) << endl;
   }
-  assert(false);
   //cout << "schedule: " << codegen_c(hs) << endl;
-  //assert(false);
+  assert(false);
 
   //auto buffers = build_buffers(lake_agg, hs);
   //for (auto b : buffers) {
     //if (b.first == "agg") {
       //isl_map* fold_func = isl_map_read_from_str(lake_agg.ctx, "{ agg[x] -> M[x % 10] }");
       //assert(inner_bank_offset_is_legal(fold_func, b.second));
-      ////assert(false);
+      //assert(false);
     //}
   //}
   //cmd("mkdir -p ./lake_controllers/identity_stream/");
@@ -11887,7 +11887,7 @@ void psef_multi_output_test() {
 }
 
 void async_add_test() {
-  int rows = 1080 / 2;
+  int rows = 1080;
   int cols = 1920;
   int unroll = 32;
 
@@ -11897,7 +11897,7 @@ void async_add_test() {
   // The off chip input we are reading from
   string input_image = load_off_chip_one_channel("in_off_chip", lp);
 
-  string af = "asadd";
+  string af = "asadd_op";
   lp.func2d(af + str(unroll), "id", pt(input_image));
 
   string output_image = store_off_chip_one_channel(af + str(unroll), lp);
@@ -11905,7 +11905,7 @@ void async_add_test() {
   CodegenOptions options;
   options.internal = true;
   options.use_custom_code_string = true;
-  options.num_pipelines = 2;
+  options.num_pipelines = 1;
   lp.realize(options, {{output_image, {cols, rows}}}, output_image, unroll);
 
   compile_compute(output_image);
@@ -11977,8 +11977,8 @@ void weight_add_psef() {
 
 void application_tests() {
   async_add_test();
-  lake_agg_sram_tb_config_test();
   assert(false);
+  lake_agg_sram_tb_config_test();
   seidel2d_test();
   add_four_channels();
   weight_add_psef();
