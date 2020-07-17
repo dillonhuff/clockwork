@@ -4,6 +4,23 @@
 #include <vector>
 #include <cstdlib>
 
+using namespace std;
+
+class Timer {
+    std::chrono::high_resolution_clock::time_point mTimeStart;
+
+  public:
+    Timer() { reset(); }
+    long long stop() {
+        std::chrono::high_resolution_clock::time_point timeEnd =
+            std::chrono::high_resolution_clock::now();
+        return std::chrono::duration_cast<std::chrono::microseconds>(timeEnd -
+                                                                     mTimeStart)
+            .count();
+    }
+    void reset() { mTimeStart = std::chrono::high_resolution_clock::now(); }
+};
+
 int main(int argc, char **argv) {
   srand(234);
   if (argc != 2) {
@@ -13,7 +30,7 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
 
-  int num_epochs = 1;
+  int num_epochs = 128;
 
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
@@ -81,8 +98,11 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
+  Timer timer;
+
   OCL_CHECK(err, cl::Buffer in_off_chip0_update_0_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_off_chip0_update_0_read_pipe0_size_bytes, in_off_chip0_update_0_read_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(0, in_off_chip0_update_0_read_pipe0_ocl_buf));
+
 
   OCL_CHECK(err, cl::Buffer asadd320_update_0_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, asadd320_update_0_write_pipe0_size_bytes, asadd320_update_0_write_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, asadd320_update_0_write_pipe0_ocl_buf));
@@ -97,7 +117,20 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, err = krnl_vector_add.setArg(4, num_epochs));
 
   std::cout << "Migrating memory" << std::endl;
+  Timer arg0_time;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_off_chip0_update_0_read_pipe0_ocl_buf, in_off_chip0_update_0_read_pipe1_ocl_buf}, 0));
+  q.finish();
+  {
+    double timer_stop2 = arg0_time.stop();
+    double sec =  
+      timer_stop2 / 1000000.0;     // convert us to s;
+
+    std::cout << "timer stop     = " << timer_stop2 << " usec" << std::endl;
+    std::cout << "total time sec = " << sec << " sec" << std::endl;
+    double bw = (2*in_off_chip0_update_0_read_pipe0_size_bytes) / sec;
+    std::cout << "time to transfer first arg to device: " << bw << " Bytes / sec" << std::endl;
+
+  }
 
 unsigned long start, end, nsduration;
 cl::Event event;
@@ -110,10 +143,31 @@ OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
 start = OCL_CHECK(err,
 event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
 nsduration = end - start;
+
+  Timer arg1_time;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({asadd320_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({asadd320_update_0_write_pipe1_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
+  {
+    double timer_stop2 = arg1_time.stop();
+    double sec =  
+      timer_stop2 / 1000000.0;     // convert us to s;
+
+    std::cout << "timer stop     = " << timer_stop2 << " usec" << std::endl;
+    std::cout << "total time sec = " << sec << " sec" << std::endl;
+    double bw = (2*in_off_chip0_update_0_read_pipe0_size_bytes) / sec;
+    std::cout << "time to transfer first device to arg: " << bw << " Bytes / sec" << std::endl;
+
+  }
+
+  double timer_stop2 = timer.stop();
+  double sec =  
+    timer_stop2 / 1000000.0;     // convert us to s;
+
+  std::cout << endl;
+  std::cout << "timer stop     = " << timer_stop2 << " usec" << std::endl;
+  std::cout << "total time sec = " << sec << " sec" << std::endl;
 
   double dnsduration = ((double)nsduration);
   double dsduration = dnsduration / ((double)1000000000);
@@ -124,18 +178,18 @@ nsduration = end - start;
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
-{
-    std::ofstream regression_result("asadd320_update_0_write_pipe0_accel_result.csv");
-    for (int i = 0; i < asadd320_update_0_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint16_t*) (asadd320_update_0_write_pipe0.data()))[i] << std::endl;
-    }
-}
-{
-    std::ofstream regression_result("asadd320_update_0_write_pipe1_accel_result.csv");
-    for (int i = 0; i < asadd320_update_0_write_pipe1_DATA_SIZE; i++) {
-      regression_result << ((uint16_t*) (asadd320_update_0_write_pipe1.data()))[i] << std::endl;
-    }
-}
+//{
+    //std::ofstream regression_result("asadd320_update_0_write_pipe0_accel_result.csv");
+    //for (int i = 0; i < asadd320_update_0_write_pipe0_DATA_SIZE; i++) {
+      //regression_result << ((uint16_t*) (asadd320_update_0_write_pipe0.data()))[i] << std::endl;
+    //}
+//}
+//{
+    //std::ofstream regression_result("asadd320_update_0_write_pipe1_accel_result.csv");
+    //for (int i = 0; i < asadd320_update_0_write_pipe1_DATA_SIZE; i++) {
+      //regression_result << ((uint16_t*) (asadd320_update_0_write_pipe1.data()))[i] << std::endl;
+    //}
+//}
 
   return 0;
 }

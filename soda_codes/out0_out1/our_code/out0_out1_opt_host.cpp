@@ -139,6 +139,7 @@ nsduration = end - start;
   double dnsduration = ((double)nsduration);
   double dsduration = dnsduration / ((double)1000000000);
   double dbytes = total_size_bytes;
+  std::cout << "total bytes = " << dbytes << std::endl;
   double bpersec = (dbytes / dsduration);
   double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
   std::cout << "bytes / sec = " << bpersec << std::endl;
