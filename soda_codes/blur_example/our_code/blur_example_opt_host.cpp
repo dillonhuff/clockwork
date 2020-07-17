@@ -86,7 +86,7 @@ cl::Event event;
   OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
   OCL_CHECK(err, err = event.wait());
   end =
-CL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
+OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
 start = OCL_CHECK(err,
 event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
 nsduration = end - start;

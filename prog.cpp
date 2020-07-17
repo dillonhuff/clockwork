@@ -310,7 +310,7 @@ void run_kernel(CodegenOptions& options, std::ostream& out, map<string, UBuffer>
   out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));" << endl;
   out << tab(1) << "OCL_CHECK(err, err = event.wait());" << endl;
   out << tab(1) << "end =" << endl;
-  out << "CL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));" << endl;
+  out << "OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));" << endl;
   out << "start = OCL_CHECK(err," << endl;
   out << "event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));" << endl;
   out << "nsduration = end - start;" << endl;
