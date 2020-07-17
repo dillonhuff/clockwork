@@ -291,6 +291,8 @@ void ocl_timing_suffix(std::ostream& out) {
 }
 
 void run_kernel(CodegenOptions& options, std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
+  assert(options.num_pipelines > 0);
+
   out << tab(1) << "std::cout << \"Migrating memory\" << std::endl;" << endl;
   vector<string> in_bufs;
   for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
@@ -305,10 +307,10 @@ void run_kernel(CodegenOptions& options, std::ostream& out, map<string, UBuffer>
   out << "cl::Event event;" << endl << endl;
 
   out << tab(1) << "std::cout << \"Starting kernel\" << std::endl;" << endl;
-  out << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));" << endl;
-  out << "OCL_CHECK(err, err = event.wait());" << endl;
-  out << "end =" << endl;
-  out << "OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));" << endl;
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));" << endl;
+  out << tab(1) << "OCL_CHECK(err, err = event.wait());" << endl;
+  out << tab(1) << "end =" << endl;
+  out << "CL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));" << endl;
   out << "start = OCL_CHECK(err," << endl;
   out << "event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));" << endl;
   out << "nsduration = end - start;" << endl;

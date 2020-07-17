@@ -66,7 +66,7 @@ struct CodegenOptions {
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
   scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
   ignore_top_level_inter_deps(false),
-  num_pipelines(0)
+  num_pipelines(1)
   {}
 
   banking_strategy get_banking_strategy(const std::string& buffer);

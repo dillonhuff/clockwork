@@ -3,4 +3,4 @@
 
 #include "hw_classes.h"
 
-void blur_example_opt(HWStream<hw_uint<1024> >& /* get_args num ports = 32 */in0_oc, HWStream<hw_uint<1024> >& /* get_args num ports = 32 */in1_oc, HWStream<hw_uint<1024> >& /* get_args num ports = 32 */blur_example);
+void blur_example_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */input_arg, HWStream<hw_uint<32> >& /* get_args num ports = 2 */blur_example);
