@@ -9,6 +9,12 @@
 
 using namespace std;
 
+struct dynamic_address {
+  std::string buffer;
+  std::string table;
+  std::string table_offset;
+};
+
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     if ( !v.empty()  ) {
@@ -18,21 +24,6 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     }
     return out;
 }
-
-enum bank_type {
-  BANK_TYPE_STACK,
-  BANK_TYPE_RAM
-};
-
-struct selector {
-  string buf_name;
-  string pt_type;
-  string out_port;
-  string name;
-  vector<string> vars;
-  vector<string> bank_conditions;
-  vector<string> inner_bank_offsets;
-};
 
 struct HWconstraints {
     size_t port_width;
@@ -50,7 +41,7 @@ struct TileConstraints{
 
 struct bank {
   std::string name;
-  bank_type tp;
+  InnerBankOffsetMode tp;
 
   // Stack bank properties
   std::string pt_type_string;
@@ -70,7 +61,7 @@ struct bank {
 
   //method to extract box from data_domain
   Box extract_layout() {
-    //cout << "extracting box from " << str(rddom) << endl;
+    cout << "extracting box from " << str(rddom) << endl;
     auto min_pt =
       parse_pt(sample(lexmin(rddom)));
     auto max_pt =
@@ -608,6 +599,8 @@ class UBuffer {
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
 
+    std::set<string> dynamic_ports;
+
     //Stencil valid domain for each port
     std::map<string, isl_set*> sv_domain;
 
@@ -615,8 +608,10 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
-    map<pair<string, string>, stack_bank > stack_banks;
-    map<string, selector> selectors;
+    banking_strategy banking;
+    std::vector<bank> bank_list;
+    map<string, std::set<string> > banks_to_inputs;
+    map<string, std::set<string> > banks_to_outputs;
 
     //lowering ubuffer to memtile
     vector<int> read_cycle, write_cycle;
@@ -641,6 +636,8 @@ class UBuffer {
     }
 #endif
 
+    int logical_dimension();
+
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
         for (auto it: port_bundles) {
@@ -653,6 +650,31 @@ class UBuffer {
         }
         assert(false);
         return false;
+    }
+
+    int bundle_offset(const std::string& port) {
+      for (auto b : port_bundles) {
+        if (elem(port, b.second)) {
+          for (int i = 0; i < (int) b.second.size(); i++) {
+            if (b.second.at(i) == port) {
+              return i;
+            }
+          }
+        }
+      }
+
+      cout << "Error: No bundle for " << port << endl;
+      assert(false);
+    }
+
+    std::string container_bundle(const std::string& port) {
+      for (auto b : port_bundles) {
+        if (elem(port, b.second)) {
+          return b.first;
+        }
+      }
+      cout << "Error: No bundle for " << port << endl;
+      assert(false);
     }
 
     bool is_wr(isl_point* pt) {
@@ -916,64 +938,136 @@ class UBuffer {
     }
 
     bank get_bank(const std::string& name) const {
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          return b.second;
+      for (auto bank : bank_list) {
+        if (bank.name == name) {
+          return bank;
         }
       }
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //return b.second;
+        //}
+      //}
       cout << "Error: No such bank as: " << name << endl;
       assert(false);
       return {};
     }
 
     string get_bank_input(const std::string& name) const {
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          return b.first.first;
-        }
-      }
-      cout << "Error: No such bank as: " << name << endl;
-      assert(false);
-      return "";
+      auto inputs = get_bank_inputs(name);
+      assert(inputs.size() == 1);
+      return *(std::begin(inputs));
     }
 
     std::set<string> get_bank_inputs(const std::string& name) const {
+      assert(contains_key(name, banks_to_inputs));
+
       std::set<string> ret;
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          ret.insert(b.first.first);
-        }
+      for (auto in : map_find(name, banks_to_inputs)) {
+        ret.insert(in);
       }
       return ret;
+
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //ret.insert(b.first.first);
+        //}
+      //}
+      //return ret;
     }
 
     std::set<string> get_bank_outputs(const std::string& name) const {
+      if (!(contains_key(name, banks_to_outputs))) {
+        cout << "Error: No outputs for bank " << name << endl;
+      }
+      assert(contains_key(name, banks_to_outputs));
       std::set<string> ret;
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          ret.insert(b.first.second);
-        }
+      for (auto out : map_find(name, banks_to_outputs)) {
+        ret.insert(out);
       }
       return ret;
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //ret.insert(b.first.second);
+        //}
+      //}
+      //return ret;
+    }
+
+    bool has_bank(const std::string& name) {
+      for (auto& bnk : bank_list) {
+        if (bnk.name == name) {
+          return true;
+        }
+      }
+      return false;
     }
 
     void replace_bank(stack_bank& target, stack_bank& replacement) {
-      for (auto bnk : stack_banks) {
-        if (bnk.second.name == target.name) {
-          stack_banks[bnk.first] = replacement;
-          break;
+      if (!has_bank(replacement.name)) {
+        bank_list.push_back(replacement);
+      }
+
+      for (auto in : get_bank_inputs(target.name)) {
+        banks_to_inputs[replacement.name].insert(in);
+      }
+
+      for (auto out : get_bank_outputs(target.name)) {
+        banks_to_outputs[replacement.name].insert(out);
+      }
+
+      remove_bank(target);
+      //banks_to_inputs[target.name] = {};
+      //banks_to_outputs[target.name] = {};
+
+      //for (auto bnk : stack_banks) {
+        //if (bnk.second.name == target.name) {
+          //stack_banks[bnk.first] = replacement;
+          //break;
+        //}
+      //}
+    }
+
+    void remove_bank(const bank& to_remove) {
+      vector<bank> replace;
+      for (auto bnk : get_banks()) {
+        if (bnk.name == to_remove.name) {
+          banks_to_inputs.erase(bnk.name);
+          banks_to_outputs.erase(bnk.name);
+        } else {
+          replace.push_back(bnk);
         }
       }
+      bank_list = replace;
+
+      //map<pair<string, string>, bank> replace;
+      //for (auto bnk : stack_banks) {
+        //if (bnk.first.second != pt_name) {
+          //replace.insert(bnk);
+        //}
+      //}
+      //stack_banks = replace;
     }
 
     void remove_bank(string pt_name) {
-        map<pair<string, string>, bank> replace;
-        for (auto bnk : stack_banks) {
-            if (bnk.first.second != pt_name) {
-                replace.insert(bnk);
-            }
+      vector<bank> replace;
+      for (auto bnk : get_banks()) {
+        if (elem(pt_name, get_bank_outputs(bnk.name))) {
+          banks_to_inputs.erase(bnk.name);
+          banks_to_outputs.erase(bnk.name);
+        } else {
+          replace.push_back(bnk);
         }
-        stack_banks = replace;
+      }
+      bank_list = replace;
+
+      //map<pair<string, string>, bank> replace;
+      //for (auto bnk : stack_banks) {
+        //if (bnk.first.second != pt_name) {
+          //replace.insert(bnk);
+        //}
+      //}
+      //stack_banks = replace;
     }
 
     //The method replace the original access map and add a valid domain
@@ -985,38 +1079,78 @@ class UBuffer {
     }
 
     vector<stack_bank> get_banks() {
-      vector<stack_bank> bnk;
-      std::set<string> done;
-      for (auto bs : stack_banks) {
-        if (!elem(bs.second.name, done)) {
-          bnk.push_back(bs.second);
-          done.insert(bs.second.name);
-        }
-      }
-      return bnk;
+      return bank_list;
+      //vector<stack_bank> bnk;
+      //std::set<string> done;
+      //for (auto bs : stack_banks) {
+        //if (!elem(bs.second.name, done)) {
+          //bnk.push_back(bs.second);
+          //done.insert(bs.second.name);
+        //}
+      //}
+      //return bnk;
     }
 
-    void add_bank_between(const std::string& inpt, const std::string& outpt, stack_bank& bank) {
-      stack_banks[{inpt, outpt}] = bank;
+    void add_bank_between(const std::string& inpt, const std::string& outpt, const stack_bank& bank) {
+      if (!has_bank(bank.name)) {
+        bank_list.push_back(bank);
+      }
+      banks_to_inputs[bank.name].insert(inpt);
+      banks_to_outputs[bank.name].insert(outpt);
+
+      assert(get_bank_outputs(bank.name).size() >= 0);
+      assert(get_bank_inputs(bank.name).size() >= 0);
+
+      //stack_banks[{inpt, outpt}] = bank;
+    }
+
+    void add_bank_between(const std::set<string>& inpt_set, const std::set<string>& outpt_set, const stack_bank& bank) {
+      if (!has_bank(bank.name)) {
+        bank_list.push_back(bank);
+      }
+      for (auto inpt: inpt_set) {
+        banks_to_inputs[bank.name].insert(inpt);
+      }
+      for (auto outpt: outpt_set) {
+        banks_to_outputs[bank.name].insert(outpt);
+      }
+
+      assert(get_bank_outputs(bank.name).size() >= 0);
+      assert(get_bank_inputs(bank.name).size() >= 0);
+
     }
 
     bool has_bank_between(const std::string& inpt, const std::string& outpt) const {
-      for (auto bs : stack_banks) {
-        if (bs.first.first == inpt && bs.first.second == outpt) {
+      for (auto b : bank_list) {
+        if (elem(inpt, map_find(b.name, banks_to_inputs)) &&
+            elem(outpt, map_find(b.name, banks_to_outputs))) {
           return true;
         }
       }
-
       return false;
+      //for (auto bs : stack_banks) {
+        //if (bs.first.first == inpt && bs.first.second == outpt) {
+          //return true;
+        //}
+      //}
+
+      //return false;
     }
 
     string bank_between(const std::string& inpt, const std::string& outpt) const {
 
-      for (auto bs : stack_banks) {
-        if (bs.first.first == inpt && bs.first.second == outpt) {
-          return bs.second.name;
+      for (auto b : bank_list) {
+        if (elem(inpt, map_find(b.name, banks_to_inputs)) &&
+            elem(outpt, map_find(b.name, banks_to_outputs))) {
+          return b.name;
         }
       }
+      //return false;
+      //for (auto bs : stack_banks) {
+        //if (bs.first.first == inpt && bs.first.second == outpt) {
+          //return bs.second.name;
+        //}
+      //}
 
       cout << "Error: No bank between: " << inpt << " and " << outpt << endl;
       assert(false);
@@ -1030,18 +1164,22 @@ class UBuffer {
 
     vector<stack_bank> receiver_banks(const std::string& inpt) {
       vector<stack_bank> bnks;
-      vector<string> done;
-      for (auto bs : stack_banks) {
-        if (bs.first.first == inpt) {
-
-          if (!elem(bs.second.name, done)) {
-            bnks.push_back(bs.second);
-            done.push_back(bs.second.name);
-          }
-
-          //assert(bnks.back().read_delays.size() == bs.second.read_delays.size());
+      for (auto b : bank_list) {
+        if (elem(inpt, map_find(b.name, banks_to_inputs))) {
+          bnks.push_back(b);
         }
       }
+      //vector<stack_bank> bnks;
+      //vector<string> done;
+      //for (auto bs : stack_banks) {
+        //if (bs.first.first == inpt) {
+          //if (!elem(bs.second.name, done)) {
+            //bnks.push_back(bs.second);
+            //done.push_back(bs.second.name);
+          //}
+
+        //}
+      //}
       return bnks;
     }
 
@@ -1085,8 +1223,9 @@ class UBuffer {
       for (auto inpt: get_in_ports()) {
           for (auto outpt: get_out_ports()) {
               if (buf.has_bank_between(inpt, outpt)) {
-                  stack_banks[make_pair(inpt, outpt)] =
-                      buf.get_bank_between(inpt, outpt);
+                add_bank_between(inpt, outpt, buf.get_bank_between(inpt, outpt));
+                  //stack_banks[make_pair(inpt, outpt)] =
+                      //buf.get_bank_between(inpt, outpt);
               }
           }
       }
@@ -1171,6 +1310,14 @@ class UBuffer {
       uset* s = isl_union_set_read_from_str(ctx, "{ }");
       for (auto other : domain) {
         s = unn(s, to_uset(cpy(other.second)));
+      }
+      return s;
+    }
+
+    isl_union_set* global_range() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      for (auto other : access_map) {
+        s = unn(s, (range(other.second)));
       }
       return s;
     }
@@ -1329,6 +1476,20 @@ class UBuffer {
       return outpts;
     }
 
+    int num_out_ports() const {
+      return get_out_ports().size();
+    }
+
+    int num_in_ports() const {
+      return get_in_ports().size();
+    }
+
+    vector<string> get_all_ports() const {
+      auto in = get_in_ports();
+      concat(in, get_out_ports());
+      return in;
+    }
+
     vector<string> get_in_ports() const {
       vector<string> outpts;
       for (auto m : isIn) {
@@ -1382,20 +1543,30 @@ class UBuffer {
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 
     void print_bank_info();
+
     umap* get_lexmax_events(const std::string& outpt) const;
     umap* get_lexmax_events(const std::string& inpt, const std::string& outpt);
     umap* get_lexmax_events(umap* insched, umap* outsched, const std::string& inpt, const std::string& outpt);
+
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
-    bank compute_bank_info(const std::string& inpt, const std::string& outpt);
+
+    bank compute_bank_info();
+    bank compute_bank_info(uset*, isl_point*, std::set<string>, std::set<string>);
+    bank compute_bank_info(CodegenOptions& options, const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
+
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
-    void generate_bank_and_merge(CodegenOptions& options);
+
+    void generate_banks(CodegenOptions& options);
+    void generate_banks_and_merge(CodegenOptions& options);
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
 
 #ifdef COREIR
+    CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
 #endif
 
@@ -1404,7 +1575,9 @@ class UBuffer {
     umap* separate_offset_dim(const std::string& pt);
     Box get_bundle_box(const std::string& pt);
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
-    string generate_linearize_ram_addr(const std::string& pt);
+    //string generate_linearize_ram_addr(const std::string& pt);
+    string generate_linearize_ram_addr(const std::string& pt, bank& bank);
+
     vector<UBuffer> port_grouping(int port_width);
 
     //helper function for port group2bank
@@ -1455,6 +1628,7 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
     out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
+    out << "\t\t\tacc range: " << str(range(buf.access_map.at(inpt))) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
     out << endl;
@@ -1512,9 +1686,9 @@ string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
-void generate_ram_bank(CodegenOptions& options,
-    std::ostream& out,
-    stack_bank& bank);
+//void generate_ram_bank(CodegenOptions& options,
+    //std::ostream& out,
+    //stack_bank& bank);
 
 void generate_bank(CodegenOptions& options,
     std::ostream& out,
@@ -1538,3 +1712,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
+
+
+bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf);
+bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf);
+
+bool inner_bank_offset_is_legal(isl_map* slot_func,
+    umap* op_writes,
+    umap* op_reads,
+    umap* sched);

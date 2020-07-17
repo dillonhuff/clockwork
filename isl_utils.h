@@ -2,7 +2,6 @@
 
 extern "C" {
 #include <isl/id.h>
-#include <isl/aff.h>
 #include <isl/set.h>
 #include <isl/flow.h>
 #include <isl/polynomial.h>
@@ -17,6 +16,7 @@ extern "C" {
 #include <isl_ast_build_expr.h>
 #include <isl/options.h>
 #include <isl/map.h>
+#include <isl/aff.h>
 }
 
 #include "barvinok/barvinok.h"
@@ -37,6 +37,8 @@ std::string dim_name(isl_aff* const a, const int d);
 
 std::string name(isl_space* const s);
 std::string name(isl_set* const s);
+std::string name(isl_union_set* const s);
+
 isl_pw_aff* cpy(isl_pw_aff* const s);
 isl_multi_aff* cpy(isl_multi_aff* const s);
 
@@ -46,6 +48,7 @@ isl_basic_map* cpy(isl_basic_map* const s);
 isl_schedule* cpy(isl_schedule* const s);
 
 isl_pw_multi_aff* cpy(isl_pw_multi_aff* const s);
+//isl_union_pw_multi_aff* cpy(isl_union_pw_multi_aff* const s);
 
 isl_qpolynomial* cpy(isl_qpolynomial* const s);
 
@@ -85,6 +88,7 @@ bool is_zero(isl_val* c);
 isl_local_space* get_local_space(isl_set* const m);
 isl_local_space* get_local_space(isl_constraint* const m);
 isl_local_space* get_local_space(isl_basic_set* const m);
+isl_local_space* get_local_space(isl_basic_map* const m);
 isl_local_space* get_local_space(isl_aff* const m);
 isl_space* get_space(isl_constraint* const m);
 
@@ -94,6 +98,7 @@ isl_space* get_space(isl_map* const m);
 
 isl_space* get_space(isl_set* const m);
 isl_space* get_space(isl_basic_set* const m);
+isl_space* get_space(isl_basic_map* const m);
 isl_space* get_space(isl_union_set* const m);
 isl_space* get_space(isl_aff* const m);
 
@@ -109,6 +114,7 @@ bool equal(isl_space* const l, isl_space* const r);
 bool equal(isl_set* const l, isl_set* const r);
 bool equal(uset* const l, uset* const r);
 
+bool empty(umap* const s);
 bool empty(isl_basic_set* const s);
 bool empty(uset* const s);
 bool empty(isl_set* const s);
@@ -127,6 +133,9 @@ std::string str(isl_local_space* const id);
 std::string domain_name(isl_map* const s);
 std::string range_name(isl_map* const s);
 
+std::string domain_name(isl_basic_map* const s);
+std::string range_name(isl_basic_map* const s);
+
 std::string domain_name(isl_space* const s);
 std::string range_name(isl_space* const s);
 
@@ -143,6 +152,8 @@ isl_map* add_range_suffix(isl_map* const m, string suffix);
 
 isl_union_set* to_uset(isl_set* const m);
 isl_set* to_set(isl_basic_set* const m);
+isl_set* to_set(isl_union_set* const m);
+isl_set* to_set(isl_point* const m);
 
 vector<isl_point*> get_points(isl_set* m);
 
@@ -155,12 +166,14 @@ map<string, isl_map*> get_maps_in_map(isl_union_map* m);
 vector<isl_set*> get_sets(isl_union_set* m);
 vector<isl_basic_map*> get_basic_maps(isl_map* m);
 vector<isl_basic_set*> get_basic_sets(isl_set* m);
+isl_basic_set* to_bset(isl_set* m);
 
 std::string str(umap* const m);
 
 std::string str(isl_pw_multi_aff* const pma);
 std::string str(isl_multi_aff* const pma);
 
+std::string str(isl_union_pw_multi_aff* const pma);
 std::string str(isl_multi_union_pw_aff* const pma);
 
 vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
@@ -206,6 +219,7 @@ isl_map* to_map(isl_union_map* const m);
 isl_map* to_map(isl_basic_map* const m);
 
 isl_union_map* to_umap(isl_map* const m);
+isl_union_map* to_umap(isl_union_set* const m);
 
 isl_ctx* ctx(isl_pw_aff* const m);
 
@@ -216,6 +230,7 @@ isl_ctx* ctx(isl_point* const m);
 isl_ctx* ctx(isl_constraint* const m);
 
 isl_ctx* ctx(isl_basic_set* const m);
+isl_ctx* ctx(isl_basic_map* const m);
 isl_ctx* ctx(isl_set* const m);
 
 isl_ctx* ctx(isl_space* const m);
@@ -226,6 +241,7 @@ isl_ctx* ctx(isl_qpolynomial* const m);
 isl_ctx* ctx(isl_union_pw_qpolynomial* const m);
 
 isl_ctx* ctx(isl_aff* const m);
+isl_ctx* ctx(isl_multi_aff* const m);
 
 isl_ctx* ctx(isl_val* const m);
 
@@ -251,6 +267,7 @@ umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val);
 std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_union_set* bset);
 std::string codegen_c(isl_constraint* const bset);
+std::string codegen_c(isl_multi_aff* const bset);
 
 std::string codegen_c(isl_schedule* const bset);
 
@@ -396,6 +413,7 @@ isl_union_map* dot(isl_union_map* const m0, isl_map* const m1);
 
 isl_map* dot(isl_map* const m0, isl_map* const m1);
 
+isl_set* simplify(isl_set* const m);
 isl_union_set* simplify(uset* const m);
 isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 
@@ -479,6 +497,7 @@ get_polynomial_folds(isl_union_pw_qpolynomial_fold* p);
 vector<isl_pw_qpolynomial*>
 get_polynomials(isl_union_pw_qpolynomial* p);
 
+vector<isl_constraint*> constraints(isl_basic_set* s);
 vector<isl_constraint*> constraints(isl_set* s);
 vector<isl_constraint*> constraints(isl_map* s);
 
@@ -488,10 +507,14 @@ isl_set* universe(isl_space* s);
 isl_set* add_constraint(isl_set* s, isl_constraint* c);
 
 
+int num_div_dims(isl_local_space* const ls);
 int num_out_dims(isl_space* const s);
 int num_in_dims(isl_space* const s);
+int num_param_dims(isl_space* const s);
 int num_in_dims(isl_local_space* const s);
 int num_out_dims(isl_local_space* const s);
+
+int num_in_dims(isl_multi_aff* const s);
 
 int num_dims(isl_aff* const s);
 int num_in_dims(isl_aff* const s);
@@ -500,6 +523,14 @@ int num_out_dims(isl_aff* const s);
 
 int num_out_dims(isl_map* const s);
 int num_in_dims(isl_map* const s);
+
+int num_out_dims(isl_basic_map* const s);
+int num_in_dims(isl_basic_map* const s);
+int num_div_dims(isl_basic_map* const s);
+int num_param_dims(isl_basic_map* const s);
+
+int num_div_dims(isl_basic_set* const s);
+int num_param_dims(isl_basic_set* const s);
 
 vector<int> parse_pt(isl_point* p);
 
@@ -546,3 +577,24 @@ bool lex_gt_pt(isl_point* const l, isl_point* const r);
 
 isl_val* get_coeff(isl_constraint* c, enum isl_dim_type type, int pos);
 isl_val* eval(isl_aff* a, isl_point* p);
+
+
+isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1);
+
+
+isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);
+
+isl_aff* get_aff(isl_map* m);
+
+
+string str(isl_mat* const ineqmat);
+
+isl_basic_set* lift_divs(isl_basic_set* bm);
+isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm);
+isl_basic_set* negative(isl_basic_set* fs, const int var);
+isl_basic_set* positive(isl_basic_set* fs, const int var);
+isl_basic_set* zero(isl_basic_set* fs, const int var);
+
+
+std::string codegen_c(isl_aff* const bset);
+isl_set* set_name(isl_set* const m, string new_name);

@@ -34,6 +34,8 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
             for (size_t i = 0; i < input_num; i ++) {
                 recordparams.push_back({"datain_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
+                recordparams.push_back({"chainin_" + std::to_string(i),
+                        c->BitIn()->Arr(width)});
                 recordparams.push_back({"wen_" + std::to_string(i),
                         c->BitIn()});
             }
