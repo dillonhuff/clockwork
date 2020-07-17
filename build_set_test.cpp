@@ -12214,8 +12214,6 @@ void blur_example() {
   cout << tab(1) << "unroll factor: " << unroll_factor << endl;
   string out_name = "blur_example";
   blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
-  move_to_benchmarks_folder(out_name);
-  assert(false);
 
   string synth_dir =
     "./" + out_name;
