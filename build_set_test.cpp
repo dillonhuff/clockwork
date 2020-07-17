@@ -11112,14 +11112,20 @@ void lake_agg_sram_tb_config_test() {
 
   //auto valid = lake_agg.validity_deps();
   auto prox = cpy(valid);
-  auto hs = hardware_schedule(lake_agg.whole_iteration_domain(), valid, prox, latencies, iis, obj, extras);
+  auto hs =
+        //hardware_schedule(lake_agg.whole_iteration_domain(), valid, prox, latencies, iis, obj, extras);
+    to_umap(
+        lake_agg.whole_iteration_domain(),
+        hardware_schedule(lake_agg.whole_iteration_domain(), valid, prox, latencies, iis, obj, extras));
+  hs = its(hs, lake_agg.whole_iteration_domain());
+  cout << "hs = " << str(hs) << endl;
   //hs = its(hs, lake_agg.whole_iteration_domain());
-  for (auto m : hs) {
-    cout << tab(1) << m.first << " -> " << str(m.second) << endl;
-    //cout << tab(1) << str(m) << endl;
-  }
+  //for (auto m : hs) {
+    //cout << tab(1) << m.first << " -> " << str(m.second) << endl;
+    ////cout << tab(1) << str(m) << endl;
+  //}
   //cout << "schedule: " << codegen_c(hs) << endl;
-  assert(false);
+  //assert(false);
 
   //auto buffers = build_buffers(lake_agg, hs);
   //for (auto b : buffers) {
@@ -11129,25 +11135,26 @@ void lake_agg_sram_tb_config_test() {
       //assert(false);
     //}
   //}
-  //cmd("mkdir -p ./lake_controllers/identity_stream/");
-  //for (auto op : lake_agg.all_ops()) {
-    //ofstream out(string("./lake_controllers/identity_stream/") + op->name + ".csv");
+  cmd("mkdir -p ./lake_controllers/identity_stream/");
+  for (auto op : lake_agg.all_ops()) {
+    ofstream out(string("./lake_controllers/identity_stream/") + op->name + ".csv");
 
-    //bool found = false;
-    //for (auto m : get_maps(hs)) {
-      //cout << tab(1) << domain_name(m) << endl;
-      //if (domain_name(m) == op->name) {
-        //found = true;
-        //cout << tab(1) << str(m) << endl;
-        //auto dom = domain(m);
-        //auto write_sched = m;
-        ////isl_aff* write_addr =
-          ////rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
-        //emit_lake_controller_config(out, dom, get_aff(write_sched));
-        ////, write_addr);
-        //break;
-      //}
-    //}
+    bool found = false;
+    for (auto m : get_maps(hs)) {
+      cout << tab(1) << domain_name(m) << endl;
+      if (domain_name(m) == op->name) {
+        found = true;
+        cout << tab(1) << str(m) << endl;
+        auto dom = domain(m);
+        auto write_sched = m;
+        //isl_aff* write_addr =
+          //rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
+        emit_lake_controller_config(out, dom, get_aff(write_sched));
+        //, write_addr);
+        break;
+      }
+    }
+  }
 
     //assert(found);
 
@@ -11976,9 +11983,9 @@ void weight_add_psef() {
 }
 
 void application_tests() {
-  async_add_test();
-  assert(false);
   lake_agg_sram_tb_config_test();
+  assert(false);
+  async_add_test();
   seidel2d_test();
   add_four_channels();
   weight_add_psef();

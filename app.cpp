@@ -1487,11 +1487,7 @@ hardware_schedule(
   return hardware_schedule(domain, validity, proximity, latencies, iis, obj);
 }
 
-umap* 
-hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
-    map<string, int>& latencies, map<string, int>& iis, vector<pair<string, isl_val*> >& obj) {
-  auto hs = hardware_schedule(domain, validity, proximity, latencies, iis, obj);
-
+umap* to_umap(uset* domain, const map<string, isl_aff*>& hs) {
   auto ct = ctx(domain);
   umap* schedmap = rdmap(ct, "{}");
   for (auto s : get_sets(domain)) {
@@ -1506,6 +1502,14 @@ hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
   }
 
   return schedmap;
+
+}
+
+umap* 
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
+    map<string, int>& latencies, map<string, int>& iis, vector<pair<string, isl_val*> >& obj) {
+  auto hs = hardware_schedule(domain, validity, proximity, latencies, iis, obj);
+  return to_umap(domain, hs);
 }
 
 umap*
