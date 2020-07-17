@@ -11896,28 +11896,31 @@ void psef_multi_output_test() {
 void async_add_test() {
   int rows = 1080;
   int cols = 1920;
-  int unroll = 32;
+  //int unroll = 32;
 
-  App lp;
-  lp.set_default_pixel_width(16);
+  vector<int> ufs{1, 2, 4, 8, 16, 32};
+  for (int unroll : ufs) {
+    App lp;
+    lp.set_default_pixel_width(16);
 
-  // The off chip input we are reading from
-  string input_image = load_off_chip_one_channel("in_off_chip", lp);
+    // The off chip input we are reading from
+    string input_image = load_off_chip_one_channel("in_off_chip", lp);
 
-  string af = "asadd_op";
-  lp.func2d(af + str(unroll), "id", pt(input_image));
+    string af = "one_pipe";
+    lp.func2d(af + str(unroll), "id", pt(input_image));
 
-  string output_image = store_off_chip_one_channel(af + str(unroll), lp);
+    string output_image = store_off_chip_one_channel(af + str(unroll), lp);
 
-  CodegenOptions options;
-  options.internal = true;
-  options.use_custom_code_string = true;
-  options.num_pipelines = 1;
-  lp.realize(options, {{output_image, {cols, rows}}}, output_image, unroll);
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    options.num_pipelines = 1;
+    lp.realize(options, {{output_image, {cols, rows}}}, output_image, unroll);
 
-  compile_compute(output_image);
+    compile_compute(output_image);
 
-  move_to_benchmarks_folder(output_image);
+    move_to_benchmarks_folder(output_image);
+  }
   assert(false);
 }
 
@@ -11983,9 +11986,9 @@ void weight_add_psef() {
 }
 
 void application_tests() {
-  lake_agg_sram_tb_config_test();
-  assert(false);
   async_add_test();
+  assert(false);
+  lake_agg_sram_tb_config_test();
   seidel2d_test();
   add_four_channels();
   weight_add_psef();
