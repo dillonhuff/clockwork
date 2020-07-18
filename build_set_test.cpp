@@ -12230,7 +12230,7 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
 
     string current_level = prg.unique_name(pr + "_buf");
     string current_gs = output_levels.at(i);
-    string next_level = upsample(output_levels.at(i + 1), prg);
+    string next_level = upsample(lgs.at(i + 1), prg);
 
     auto ns = prg.add_nest(y, 0, 1, x, 0, 1)->add_op(prg.un("rc"));
     ns->add_function("add");
