@@ -12296,6 +12296,13 @@ void llf_test() {
 
   cout << "# loop levels = " << prg.root->children.size() << endl;
   cout << "# kernels     = " << get_kernels(prg).size() << endl;
+  auto producers = get_producers("color_out_to_color431", prg);
+  cout << "Producers for " << "color_out_to_color_431" << endl;
+  for (auto p : producers) {
+    cout << tab(1) << p << endl;
+  }
+
+  assert(false);
 
   infer_bounds("color_out", {3, 1920, 1080}, prg);
 
