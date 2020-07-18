@@ -752,6 +752,8 @@ struct prog {
 
   void sanity_check();
 
+  op* parent(op* p);
+
   std::string unique_name(const std::string& prefix) {
     auto name = prefix + str(unique_num);
     unique_num++;
@@ -1468,4 +1470,5 @@ void generate_trace(prog& prg, umap* sched);
 void all_register_files(prog& prg, CodegenOptions& options);
 void compile_compute(const std::string& name);
 
+vector<string> surrounding_vars(op* loop, prog& prg);
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);

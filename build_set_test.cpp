@@ -10426,16 +10426,6 @@ prog partially_unrolled_conv() {
 
 }
 
-vector<string> surrounding_vars(op* loop, prog& prg) {
-  vector<string> surrounding;
-  op* current = prg.root;
-  while (current != loop) {
-    surrounding.push_back(current->name);
-    current = current->container_child(loop);
-  }
-  return surrounding;
-}
-
 isl_map* next_iteration(isl_set* domain) {
   vector<string> invars;
   vector<string> outvars;
@@ -11955,6 +11945,15 @@ void add_four_channels() {
   assert(false);
 }
 
+vector<int> indexes(op* p) {
+  assert(p->is_loop);
+  vector<int> inds;
+  for (int i = p->start; i < p->end_exclusive; i++) {
+    inds.push_back(i);
+  }
+  return inds;
+}
+
 void weight_add_psef() {
   int rows = 1080;
   int cols = 1920 / 2;
@@ -11985,16 +11984,50 @@ void weight_add_psef() {
   assert(false);
 }
 
+void unroll(prog& prg, const std::string& var) {
+  op* p = prg.find_loop(var);
+  vector<op*> children = p->children;
+  op* container = prg.parent(p);
+
+  for (auto v : indexes(p)) {
+    container->add_op(prg.unique_name(var));
+  }
+}
+
+void prg_unroll_test() {
+  prog prg("pre_roll");
+
+  prg.add_input("in");
+  prg.add_output("out");
+
+  auto ns = prg.add_nest("x", 0, 10, "y", 0, 3);
+  auto p = ns->add_op("hello");
+  p->add_load("in", "x", "y");
+  p->add_store("out", "x", "y");
+
+  cout << "before unrolling" << endl;
+  prg.pretty_print();
+
+  unroll(prg, "y");
+
+  cout << "after unrolling" << endl;
+  prg.pretty_print();
+
+  assert(false);
+}
+
 void application_tests() {
+  prg_unroll_test();
+
+  assert(false);
+
   halide_frontend_test();
-  //halide_cascade_test();
   halide_harris_test();
   halide_up_sample_test();
   halide_conv_layer_3D_test();
   conv_3_3_halide_test();
 
   async_add_test();
-  assert(false);
   lake_agg_sram_tb_config_test();
   seidel2d_test();
   add_four_channels();

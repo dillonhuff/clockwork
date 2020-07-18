@@ -3444,3 +3444,18 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 	
 	return extracted;
 }
+
+vector<string> surrounding_vars(op* loop, prog& prg) {
+  vector<string> surrounding;
+  op* current = prg.root;
+  while (current != loop) {
+    surrounding.push_back(current->name);
+    current = current->container_child(loop);
+  }
+  return surrounding;
+}
+
+
+op* prog::parent(op* p) {
+  return find_loop(surrounding_vars(p, *this).back());
+}
