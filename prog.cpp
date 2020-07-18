@@ -2682,6 +2682,18 @@ void regression_test(prog& prg) {
   regression_test(options, prg);
 }
 
+std::vector<string> unoptimized_result(prog& prg) {
+  generate_unoptimized_code(prg);
+
+  cout << "Built unoptimized code" << endl;
+  auto old_name = prg.name;
+  prg.name = "unoptimized_" + old_name;
+  generate_regression_testbench(prg);
+  vector<string> unoptimized_res = run_regression_tb(prg);
+  prg.name = old_name;
+  return unoptimized_res;
+}
+
 void regression_test(CodegenOptions& options,
     prog& prg) {
   generate_unoptimized_code(prg);
@@ -3458,4 +3470,33 @@ vector<string> surrounding_vars(op* loop, prog& prg) {
 
 op* prog::parent(op* p) {
   return find_loop(surrounding_vars(p, *this).back());
+}
+
+address
+replace_variable(const address& addr, const std::string& var, const int v) {
+  cout << "addr = " << addr << endl;
+  vector<string> comps = split_at(addr, ",");
+  vector<string> new_addr;
+  for (auto c : comps) {
+    cout << tab(1) << c << endl;
+    new_addr.push_back(ReplaceString(c, var, str(v)));
+  }
+  return comma_list(new_addr);
+}
+
+void ir_node::replace_variable(const std::string& var, const int val) {
+
+  for (auto& addr : produce_locs) {
+    addr.second =
+      ::replace_variable(addr.second, var, val);
+  }
+
+  for (auto& addr : consume_locs_pair) {
+    piecewise_address pw;
+    for (auto& comp : addr.second) {
+      pw.push_back({comp.first, ::replace_variable(comp.second, var, val)});
+    }
+    addr.second = pw;
+  }
+
 }

@@ -47,10 +47,11 @@ struct ir_node {
   std::vector<dynamic_address> dynamic_store_addresses;
 
   // Locations read
-  std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
+  //std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
+  std::vector<pair<buffer_name, piecewise_address> > consume_locs_pair;
   std::vector<dynamic_address> dynamic_load_addresses;
 
-  // The name of the HL C++ function that this op invokes
+  // The name of the HLS C++ function that this op invokes
   std::string func;
   // Name of loop index variables used by this unit
   std::vector<std::string> index_variables_needed_by_compute;
@@ -63,6 +64,17 @@ struct ir_node {
 
   void copy_fields_from(op* other);
   void copy_memory_operations_from(op* other);
+  void replace_variable(const std::string& var, const int val);
+
+  void delete_child(op* c) {
+    vector<op*> new_children;
+    for (auto ch : children) {
+      if (ch != c) {
+        new_children.push_back(ch);
+      }
+    }
+    children = new_children;
+  }
 
   bool dynamic_writes(const std::string& buf) {
     for (auto d : dynamic_store_addresses) {
@@ -1419,6 +1431,7 @@ vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buf
 vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
 
 
+std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
 

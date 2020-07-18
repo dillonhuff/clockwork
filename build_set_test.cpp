@@ -11990,8 +11990,16 @@ void unroll(prog& prg, const std::string& var) {
   op* container = prg.parent(p);
 
   for (auto v : indexes(p)) {
-    container->add_op(prg.unique_name(var));
+    for (auto child : children) {
+      string name = prg.unique_name(child->name + "_" + var + "_" + str(v));
+      auto val = container->add_op(prg.unique_name(child->name + "_" + var + "_" + str(v)));
+      val->copy_fields_from(child);
+      val->replace_variable(var, v);
+      val->name = name;
+    }
   }
+
+  container->delete_child(p);
 }
 
 void prg_unroll_test() {
@@ -12000,20 +12008,36 @@ void prg_unroll_test() {
   prg.add_input("in");
   prg.add_output("out");
 
+  {
+    auto ns = prg.add_nest("xi", 0, 10, "yi", 0, 3);
+    auto p = ns->add_op("inw");
+    p->add_load("in", "xi", "yi");
+    p->add_store("a", "xi", "yi");
+  }
+
   auto ns = prg.add_nest("x", 0, 10, "y", 0, 3);
   auto p = ns->add_op("hello");
-  p->add_load("in", "x", "y");
-  p->add_store("out", "x", "y");
+  p->add_load("a", "x", "y");
+  p->add_store("b", "x", "y");
+
+  auto ot = prg.add_nest("xo", 0, 10, "yo", 0, 3);
+  auto px = ot->add_op("outw");
+  px->add_load("b", "xo", "yo");
+  px->add_store("out", "xo", "yo");
 
   cout << "before unrolling" << endl;
   prg.pretty_print();
+
+  auto pre = unoptimized_result(prg);
 
   unroll(prg, "y");
 
   cout << "after unrolling" << endl;
   prg.pretty_print();
 
-  assert(false);
+  auto post = unoptimized_result(prg);
+
+  compare("unroll_test", pre, post);
 }
 
 void application_tests() {
