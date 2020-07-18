@@ -9640,32 +9640,14 @@ inline void in_off_chip1_in_off_chip1_update_0_write_bundle_write(hw_uint<512>& 
 
 
 // Operation logic
-inline void in_off_chip1_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip1_oc, in_off_chip1_cache& in_off_chip1, int d0, int d1) {
+inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in_off_chip1_oc
-	auto in_off_chip1_oc_0_c__0_value = in_off_chip1_oc.read();
-	auto compute_result = id_unrolled_32(in_off_chip1_oc_0_c__0_value);
-	// Produce: in_off_chip1
-	in_off_chip1_in_off_chip1_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip1, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void af320_update_0(af32_cache& af32, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */af320, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: af32
-	auto af32_0_c__0_value = af32_af320_update_0_read_bundle_read(af32/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_32(af32_0_c__0_value);
-	// Produce: af320
-	af320.write(compute_result);
+	// Consume: in_off_chip0_oc
+	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
+	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
+	// Produce: in_off_chip0
+	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -9690,6 +9672,20 @@ inline void in_off_chip0_oc_in_off_chip1_oc_update_0(in_off_chip0_cache& in_off_
 	auto compute_result = interleave_unrolled_64(in_off_chip0_0_c__0_value, in_off_chip1_0_c__0_value, d0);
 	// Produce: in_off_chip0_oc_in_off_chip1_oc
 	in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0_oc_in_off_chip1_oc, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_off_chip1_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip1_oc, in_off_chip1_cache& in_off_chip1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip1_oc
+	auto in_off_chip1_oc_0_c__0_value = in_off_chip1_oc.read();
+	auto compute_result = id_unrolled_32(in_off_chip1_oc_0_c__0_value);
+	// Produce: in_off_chip1
+	in_off_chip1_in_off_chip1_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip1, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -9732,14 +9728,18 @@ inline void af321_update_0(af32_cache& af32, HWStream<hw_uint<512> >& /* buffer_
 
 }
 
-inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
+inline void af320_update_0(af32_cache& af32, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */af320, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in_off_chip0_oc
-	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
-	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
-	// Produce: in_off_chip0
-	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
+	// Consume: af32
+	auto af32_0_c__0_value = af32_af320_update_0_read_bundle_read(af32/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_32(af32_0_c__0_value);
+	// Produce: af320
+	af320.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

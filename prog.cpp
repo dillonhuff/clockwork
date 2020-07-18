@@ -2439,7 +2439,6 @@ void generate_optimized_code(prog& prg) {
 
 
 void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
-  prg.sanity_check();
 
   string old_name = prg.name;
 

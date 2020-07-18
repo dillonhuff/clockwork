@@ -11878,7 +11878,6 @@ void psef_multi_output_test() {
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
 
   move_to_benchmarks_folder(out0 + "_" + out1);
-  assert(false);
 }
 
 void async_add_test() {
@@ -11970,6 +11969,56 @@ void weight_add_psef() {
   move_to_benchmarks_folder(out0 + "_" + out1);
 }
 
+void us_unroll_test() {
+  prog prg("us_unroll");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  {
+    auto in = prg.add_nest("iy", 0, 20, "ix", 0, 20)->add_op("inrd");
+    in->add_load("in", "ix, iy");
+    in->add_store("a", "ix, iy");
+  }
+
+  {
+    auto ol = prg.add_nest("y", 0, 10, "x", 0, 10);
+    auto init = ol->add_op("init");
+    init->add_store("comp", "x, y");
+    init->add_function("set_zero_32");
+    auto il = ol->add_nest("yi", 0, 3, "xi", 0, 3)->add_op("update");
+    il->add_load("comp", "x, y");
+    il->add_load("a", "x + floor(xi / 2), y + floor(yi / 2)");
+    il->add_store("comp", "x, y");
+    il->add_function("add");
+  }
+
+  {
+    auto in = prg.add_nest("oy", 0, 10, "ox", 0, 10)->add_op("outwr");
+    in->add_load("comp", "ox, oy");
+    in->add_store("out", "ox, oy");
+  }
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+
+  auto pre = unoptimized_result(prg);
+
+  //assert(false);
+
+  unroll(prg, "xi");
+  unroll(prg, "yi");
+  
+  prg.pretty_print();
+  //assert(false);
+
+  auto post = unoptimized_result(prg);
+  compare("us_unroll_test", pre, post);
+
+  assert(false);
+
+}
+
 void ds_unroll_test() {
   prog prg("ds_unroll");
   prg.add_input("in");
@@ -12016,7 +12065,6 @@ void ds_unroll_test() {
   auto post = unoptimized_result(prg);
   compare("ds_unroll_test", pre, post);
 
-  assert(false);
 }
 
 void prg_unroll_test() {
@@ -12054,6 +12102,7 @@ void prg_unroll_test() {
 }
 
 void application_tests() {
+  //us_unroll_test();
   ds_unroll_test();
   prg_unroll_test();
 
