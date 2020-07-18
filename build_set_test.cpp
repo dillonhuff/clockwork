@@ -12217,12 +12217,31 @@ string llf_interpolate_intensity(const std::string& gray, const std::vector<stri
 }
 
 string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg) {
+  assert(output_levels.size() >= 2);
 
-  for (int i = 1; i < (int) output_levels.size(); i++) {
+  vector<string> lgs;
+  lgs.resize(output_levels.size());
+  lgs[output_levels.size()] = output_levels.back();
+
+  for (int i = output_levels.size() - 2; i >= 0; i--) {
     string pr = prg.unique_name(output_levels.at(i) + "_reconstruct_lp");
-    prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+    string y = prg.un(pr);
+    string x = prg.un(pr);
+
+    string current_level = prg.unique_name(pr + "_buf");
+    string current_gs = output_levels.at(i);
+    string next_level = upsample(output_levels.at(i + 1), prg);
+
+    auto ns = prg.add_nest(y, 0, 1, x, 0, 1)->add_op(prg.un("rc"));
+    ns->add_function("add");
+    ns->add_load(current_level, x, y);
+    ns->add_load(next_level, x, y);
+    ns->add_store(current_gs);
+
+    lgs[i] = current_level;
   }
-  return prg.unique_name("reconstructed");
+
+  return lgs[0]
 }
 
 void llf_test() {
