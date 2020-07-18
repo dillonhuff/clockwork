@@ -12143,35 +12143,43 @@ vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_lev
   return gls;
 }
 
-void reconstruct_gaussian(const int num_pyramid_levels, prog& prg) {
-  for (int j = 1; j < num_pyramid_levels; j++) {
-    string pr = "rcp_" + str(j);
-    prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
-  }
+string upsample(const std::string& in, prog& prg) {
+  string pr = "us_" + in;
+  string current_level = prg.unique_name(in + "_us");
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+
+  auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
+  auto update = ol->add_op(prg.un("us"));
+  update->add_load(in, "floor(" + x + " / 2)", "floor(" + y + " / 2)");
+  update->add_store(current_level, x, y);
+
+  return current_level;
 }
 
 vector<string> laplacian_pyramid(const std::string& in, const int num_pyramid_levels, prog prg) {
   vector<string> gls = gaussian_pyramid(in, num_pyramid_levels, prg);
+  assert((int) gls.size() == num_pyramid_levels);
+
   vector<string> lls;
   lls.resize(num_pyramid_levels);
-  lls[0] = gls[0];
-  for (int j = 1; j < num_pyramid_levels; j++) {
+  lls[num_pyramid_levels - 1] = gls[num_pyramid_levels - 1];
+
+  for (int j = num_pyramid_levels - 2; j >= 0; j--) {
+    string us_pyramid = upsample(gls.at(j + 1), prg);
+    string current_gs = gls.at(j);
+
     string pr = "lp_" + in + "_" + str(j);
-    string last_level = lls[j - 1];
     string current_level = prg.unique_name(pr + "_buf");
     string y = prg.unique_name(pr);
     string x = prg.unique_name(pr);
-    string yi = prg.unique_name(pr);
-    string xi = prg.unique_name(pr);
 
     auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
-    auto init = ol->add_op(prg.un("init"));
-    init->add_function("set_zero_32");
-    init->add_load(current_level, x, y);
-    auto il = ol->add_nest(yi, -1, 1, xi, -1, 1);
-    auto update = il->add_op(prg.un("update"));
-    update->add_load(current_level, x, y);
-    update->add_load(last_level, "2*" + x + " + " + xi, "2*" + y + " + " + yi);
+    auto init = ol->add_op(prg.un("diff"));
+    init->add_function("diff");
+    init->add_load(current_gs, x, y);
+    init->add_load(us_pyramid, x, y);
+    init->add_store(current_level, x, y);
   }
   return lls;
 }
