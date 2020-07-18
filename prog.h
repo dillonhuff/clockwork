@@ -47,7 +47,6 @@ struct ir_node {
   std::vector<dynamic_address> dynamic_store_addresses;
 
   // Locations read
-  //std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
   std::vector<pair<buffer_name, piecewise_address> > consume_locs_pair;
   std::vector<dynamic_address> dynamic_load_addresses;
 
@@ -1485,3 +1484,8 @@ void compile_compute(const std::string& name);
 
 vector<string> surrounding_vars(op* loop, prog& prg);
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
+
+
+void unroll(prog& prg, const std::string& var);
+
+vector<int> indexes(op* p);

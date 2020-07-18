@@ -124,10 +124,14 @@ std::set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg)
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
 
-    auto bundle = pick(buf.get_out_bundles());
-    edges.insert({buf.name, bundle});
+    //assert(buf.get_out_bundles().size() == 1);
+    //auto bundle = pick(buf.get_out_bundles());
+    //edges.insert({buf.name, bundle});
+
+    for (auto bundle : buf.get_out_bundles()) {
+      edges.insert({buf.name, bundle});
+    }
   }
   return edges;
 }
@@ -1006,16 +1010,29 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     for (auto in : prg.ins) {
       assert(contains_key(in, buffers));
       auto& buf = buffers.at(in);
-      assert(buf.get_out_bundles().size() == 1);
 
-      cout << "picking from bundle" << endl;
-      auto bundle = pick(buf.get_out_bundles());
-      cout << "bundle: " << bundle << endl;
+      for (auto bundle : buf.get_out_bundles()) {
+        //cout << "picking from bundle" << endl;
+        //auto bundle = pick(buf.get_out_bundles());
+        //cout << "bundle: " << bundle << endl;
 
-      string out_bundle_tp = buf.bundle_type_string(bundle);
-      ptr_arg_decls.push_back(out_bundle_tp + "* " + pipe_cpy(bundle, pipe));
-      ptr_args.push_back(pipe_cpy(bundle, pipe));
-      bas.push_back(pipe_cpy(bundle, pipe) + "_channel");
+        string out_bundle_tp = buf.bundle_type_string(bundle);
+        ptr_arg_decls.push_back(out_bundle_tp + "* " + pipe_cpy(bundle, pipe));
+        ptr_args.push_back(pipe_cpy(bundle, pipe));
+        bas.push_back(pipe_cpy(bundle, pipe) + "_channel");
+
+      }
+
+      //assert(buf.get_out_bundles().size() == 1);
+
+      //cout << "picking from bundle" << endl;
+      //auto bundle = pick(buf.get_out_bundles());
+      //cout << "bundle: " << bundle << endl;
+
+      //string out_bundle_tp = buf.bundle_type_string(bundle);
+      //ptr_arg_decls.push_back(out_bundle_tp + "* " + pipe_cpy(bundle, pipe));
+      //ptr_args.push_back(pipe_cpy(bundle, pipe));
+      //bas.push_back(pipe_cpy(bundle, pipe) + "_channel");
     }
 
     for (auto out : prg.outs) {
@@ -2422,6 +2439,8 @@ void generate_optimized_code(prog& prg) {
 
 
 void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
+  prg.sanity_check();
+
   string old_name = prg.name;
 
   prg.name = "unoptimized_" + prg.name;
@@ -2980,6 +2999,8 @@ op* find_writer(const std::string& target_buf, prog& prg) {
 }
 
 void prog::sanity_check() {
+  std::set<string> buffer_names;
+
   std::set<string> op_names;
   for (auto op : all_ops()) {
     assert(!elem(op->name, op_names));
@@ -2994,12 +3015,23 @@ void prog::sanity_check() {
 
   for (auto op : all_ops()) {
     for (auto b : op->buffers_read()) {
+      buffer_names.insert(b);
       assert(!is_output(b));
     }
 
     for (auto b : op->buffers_written()) {
+      buffer_names.insert(b);
+      if (is_input(b)) {
+        cout << "Error: " << b << " is written, but is not an input" << endl;
+      }
       assert(!is_input(b));
     }
+  }
+  for (auto b : buffer_names) {
+    if (elem(b, op_names)) {
+      cout << "Error: Buffer " << b << " has the same name as an op" << endl;
+    }
+    assert(!elem(b, op_names));
   }
 
   //auto ivars = iter_vars();
@@ -3500,3 +3532,31 @@ void ir_node::replace_variable(const std::string& var, const int val) {
   }
 
 }
+
+void unroll(prog& prg, const std::string& var) {
+  op* p = prg.find_loop(var);
+  vector<op*> children = p->children;
+  op* container = prg.parent(p);
+
+  for (auto v : indexes(p)) {
+    for (auto child : children) {
+      string name = prg.unique_name(child->name + "_" + var + "_" + str(v));
+      auto val = container->add_op(prg.unique_name(child->name + "_" + var + "_" + str(v)));
+      val->copy_fields_from(child);
+      val->replace_variable(var, v);
+      val->name = name;
+    }
+  }
+
+  container->delete_child(p);
+}
+
+vector<int> indexes(op* p) {
+  assert(p->is_loop);
+  vector<int> inds;
+  for (int i = p->start; i < p->end_exclusive; i++) {
+    inds.push_back(i);
+  }
+  return inds;
+}
+

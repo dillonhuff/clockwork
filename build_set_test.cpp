@@ -11172,7 +11172,6 @@ void lake_agg_sram_tb_config_test() {
 
     out.close();
   }
-  assert(false);
 }
 
 //void lake_accessor_config_test() {
@@ -11851,7 +11850,6 @@ void two_stage_psef() {
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
 
   move_to_benchmarks_folder(out0 + "_" + out1);
-  assert(false);
 }
 
 void psef_multi_output_test() {
@@ -11911,7 +11909,6 @@ void async_add_test() {
 
     move_to_benchmarks_folder(output_image);
   }
-  assert(false);
 }
 
 void add_four_channels() {
@@ -11942,16 +11939,6 @@ void add_four_channels() {
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
 
   move_to_benchmarks_folder(out0 + "_" + out1);
-  assert(false);
-}
-
-vector<int> indexes(op* p) {
-  assert(p->is_loop);
-  vector<int> inds;
-  for (int i = p->start; i < p->end_exclusive; i++) {
-    inds.push_back(i);
-  }
-  return inds;
 }
 
 void weight_add_psef() {
@@ -11981,25 +11968,55 @@ void weight_add_psef() {
   compile_compute(out0 + "_" + out1 + "_opt.cpp");
 
   move_to_benchmarks_folder(out0 + "_" + out1);
-  assert(false);
 }
 
-void unroll(prog& prg, const std::string& var) {
-  op* p = prg.find_loop(var);
-  vector<op*> children = p->children;
-  op* container = prg.parent(p);
+void ds_unroll_test() {
+  prog prg("ds_unroll");
+  prg.add_input("in");
+  prg.add_output("out");
 
-  for (auto v : indexes(p)) {
-    for (auto child : children) {
-      string name = prg.unique_name(child->name + "_" + var + "_" + str(v));
-      auto val = container->add_op(prg.unique_name(child->name + "_" + var + "_" + str(v)));
-      val->copy_fields_from(child);
-      val->replace_variable(var, v);
-      val->name = name;
-    }
+  {
+    auto in = prg.add_nest("iy", 0, 20, "ix", 0, 20)->add_op("inrd");
+    in->add_load("in", "ix, iy");
+    in->add_store("a", "ix, iy");
   }
 
-  container->delete_child(p);
+  {
+    auto ol = prg.add_nest("y", 0, 10, "x", 0, 10);
+    auto init = ol->add_op("init");
+    init->add_store("comp", "x, y");
+    init->add_function("set_zero_32");
+    auto il = ol->add_nest("yi", 0, 3, "xi", 0, 3)->add_op("update");
+    il->add_load("comp", "x, y");
+    il->add_load("a", "x + 2*xi, y + 2*yi");
+    il->add_store("comp", "x, y");
+    il->add_function("add");
+  }
+
+  {
+    auto in = prg.add_nest("oy", 0, 10, "ox", 0, 10)->add_op("outwr");
+    in->add_load("comp", "ox, oy");
+    in->add_store("out", "ox, oy");
+  }
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+
+  auto pre = unoptimized_result(prg);
+
+  //assert(false);
+
+  unroll(prg, "xi");
+  unroll(prg, "yi");
+  
+  prg.pretty_print();
+  //assert(false);
+
+  auto post = unoptimized_result(prg);
+  compare("ds_unroll_test", pre, post);
+
+  assert(false);
 }
 
 void prg_unroll_test() {
@@ -12025,25 +12042,20 @@ void prg_unroll_test() {
   px->add_load("b", "xo", "yo");
   px->add_store("out", "xo", "yo");
 
-  cout << "before unrolling" << endl;
   prg.pretty_print();
-
   auto pre = unoptimized_result(prg);
 
   unroll(prg, "y");
-
-  cout << "after unrolling" << endl;
+  
   prg.pretty_print();
-
   auto post = unoptimized_result(prg);
 
   compare("unroll_test", pre, post);
 }
 
 void application_tests() {
+  ds_unroll_test();
   prg_unroll_test();
-
-  assert(false);
 
   halide_frontend_test();
   halide_harris_test();
