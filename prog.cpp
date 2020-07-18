@@ -3023,12 +3023,12 @@ void prog::sanity_check() {
       assert(!is_input(b));
     }
   }
-  for (auto b : buffer_names) {
-    if (elem(b, op_names)) {
-      cout << "Error: Buffer " << b << " has the same name as an op" << endl;
-    }
-    assert(!elem(b, op_names));
-  }
+  //for (auto b : buffer_names) {
+    //if (elem(b, op_names)) {
+      //cout << "Error: Buffer " << b << " has the same name as an op" << endl;
+    //}
+    //assert(!elem(b, op_names));
+  //}
 
   //auto ivars = iter_vars();
   //for (auto op : all_ops()) {

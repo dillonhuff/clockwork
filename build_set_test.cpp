@@ -9642,7 +9642,6 @@ void histogram_test() {
   update->add_dynamic_load("buckets", "image", "i");
   update->add_dynamic_store("buckets", "image", "i");
 
-
   auto st = prg.add_loop("sm", 0, 20)->
     add_op("store_results");
   st->add_load("buckets", "sm");
@@ -9664,8 +9663,6 @@ void histogram_test() {
 
   int run_res = system("./a.out");
   assert(run_res == 0);
-
-  //assert(false);
 }
 
 template<typename T>
@@ -12001,22 +11998,15 @@ void us_unroll_test() {
   prg.pretty_print();
   prg.sanity_check();
 
-
   auto pre = unoptimized_result(prg);
-
-  //assert(false);
 
   unroll(prg, "xi");
   unroll(prg, "yi");
   
   prg.pretty_print();
-  //assert(false);
 
   auto post = unoptimized_result(prg);
   compare("us_unroll_test", pre, post);
-
-  assert(false);
-
 }
 
 void ds_unroll_test() {
@@ -12101,7 +12091,52 @@ void prg_unroll_test() {
   compare("unroll_test", pre, post);
 }
 
+void llf_to_grayscale(const std::string& out, const std::string& in, prog& prg) {
+  string pr = in + "_to_gray";
+  prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+}
+
+void llf_to_color(const std::string& out, prog& prg) {
+  string pr = out + "_to_color";
+  prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+}
+
+void llf_test() {
+  int num_pyramid_levels = 4;
+  int num_intensity_levels = 8;
+
+  prog prg("local_laplacian_filters");
+
+  prg.add_input("color_in");
+  prg.add_output("color_out");
+
+  llf_to_grayscale("gray", "color_in", prg);
+
+  //// Make intensity pyramids
+  //for (int i = 0; i < num_intensity_levels; i++) {
+    //laplacian_pyramid("lpyramid_" + str(i), "gray", num_pyramid_levels, prg);
+  //}
+
+  //// Make input Gaussian pyramid
+  //gaussian_pyramid("gpyramid", "gray", num_pyramid_levels, prg);
+
+
+  //// Compute levels for interpolated output
+  //for (int i = 0; i < num_pyramid_levels; i++) {
+    //llf_interpolate_intensity(num_intensity_levels, prg);
+  //}
+
+  //reconstruct_gaussian(num_pyramid_levels, prg);
+
+  llf_to_color("color_out", prg);
+
+  prg.pretty_print();
+
+  assert(false);
+}
+
 void application_tests() {
+  llf_test();
   us_unroll_test();
   ds_unroll_test();
   prg_unroll_test();
