@@ -12093,12 +12093,28 @@ void prg_unroll_test() {
 
 void llf_to_grayscale(const std::string& out, const std::string& in, prog& prg) {
   string pr = in + "_to_gray";
-  prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+  auto cn = prg.add_nest(y, 0, 1, x, 0, 1);
+  auto convert = cn->add_op(prg.unique_name("to_gray"));
+  convert->add_load(in, x, y, "0");
+  convert->add_load(in, x, y, "1");
+  convert->add_load(in, x, y, "2");
+  convert->add_store(out, x, y);
 }
 
-void llf_to_color(const std::string& out, prog& prg) {
+void llf_to_color(const std::string& out, const std::string& original, const std::string& scales, const std::string& gray, prog& prg) {
   string pr = out + "_to_color";
-  prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+  string b = prg.unique_name(pr);
+  auto cn = prg.add_nest(y, 0, 1, x, 0, 1, b, 0, 3);
+
+  auto convert = cn->add_op(prg.unique_name("cc"));
+  convert->add_load(scales, x, y);
+  convert->add_load(original, b, x, y);
+  convert->add_load(gray, x, y);
+  convert->add_store(out, b, x, y);
 }
 
 vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_levels, prog prg) {
@@ -12177,9 +12193,9 @@ void llf_test() {
     output_levels.push_back(llf_interpolate_intensity(gray_levels.at(i), intensities_at_level, prg));
   }
 
-  reconstruct_gaussian(output_levels, prg);
+  string scales = reconstruct_gaussian(output_levels, prg);
 
-  llf_to_color("color_out", prg);
+  llf_to_color("color_out", "color_in", scales, "gray", prg);
 
   prg.pretty_print();
   cout << "# loop levels = " << prg.root->children.size() << endl;
