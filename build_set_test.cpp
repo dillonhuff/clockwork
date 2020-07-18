@@ -12139,6 +12139,7 @@ vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_lev
     update->add_load(current_level, x, y);
     update->add_load(last_level, "2*" + x + " + " + xi, "2*" + y + " + " + yi);
     update->add_store(current_level, x, y);
+    gls[j] = current_level;
   }
   return gls;
 }
@@ -12165,6 +12166,12 @@ vector<string> laplacian_pyramid(const std::string& in, const int num_pyramid_le
   lls.resize(num_pyramid_levels);
   lls[num_pyramid_levels - 1] = gls[num_pyramid_levels - 1];
 
+  cout << "input laplacians..." << endl;
+  int i = 0;
+  for (auto l : lls) {
+    cout << tab(1) << i << " = " << l << endl;
+    i++;
+  }
   for (int j = num_pyramid_levels - 2; j >= 0; j--) {
     string us_pyramid = upsample(gls.at(j + 1), prg);
     string current_gs = gls.at(j);
@@ -12180,14 +12187,33 @@ vector<string> laplacian_pyramid(const std::string& in, const int num_pyramid_le
     init->add_load(current_gs, x, y);
     init->add_load(us_pyramid, x, y);
     init->add_store(current_level, x, y);
+    lls[j] = current_level;
+  }
+  cout << "output laplacians..." << endl;
+  int ip = 0;
+  for (auto l : lls) {
+    cout << tab(1) << ip << " = " << l << endl;
+    ip++;
   }
   return lls;
 }
 
 string llf_interpolate_intensity(const std::string& gray, const std::vector<string>& intensity_levels, prog& prg) {
+  string out = prg.unique_name(gray + "_interpolated");
+
   string pr = prg.unique_name(gray + "_interpolate_lp");
-  prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
-  return prg.unique_name(gray + "_interpolated");
+  string y = prg.un(pr);
+  string x = prg.un(pr);
+  auto in = prg.add_nest(y, 0, 1, x, 0, 1)->add_op(prg.un("interp"));
+  in->add_function("llf_interpolate");
+  for (auto i : intensity_levels) {
+    assert(i != "");
+    in->add_load(i, x, y);
+  }
+  in->add_load(gray, x, y);
+  in->add_store(out, x, y);
+
+  return out;
 }
 
 string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg) {
@@ -12225,6 +12251,7 @@ void llf_test() {
   for (int i = 0; i < num_pyramid_levels; i++) {
     vector<string> intensities_at_level;
     for (auto pyramid : intensity_level_pyramids) {
+      assert(pyramid.at(i) != "");
       intensities_at_level.push_back(pyramid.at(i));
     }
     output_levels.push_back(llf_interpolate_intensity(gray_levels.at(i), intensities_at_level, prg));
