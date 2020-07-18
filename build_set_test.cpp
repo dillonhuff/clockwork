@@ -6084,41 +6084,41 @@ void halide_cascade_test() {
   cout << "Created program..." << endl;
   prg.pretty_print();
 
-  auto domain = prg.whole_iteration_domain();
+  //auto domain = prg.whole_iteration_domain();
 
-  auto order_deps = prg.relative_orders();
-  cout << "Getting validity deps..." << endl;
-  isl_union_map *raw_deps = prg.validity_deps();
-  cout << "Got validity deps..." << endl;
-  cout << "Validity: " << str(raw_deps) << endl;
-  auto validity =
-    unn(order_deps, raw_deps);
-  isl_union_map *proximity =
-    cpy(raw_deps);
+  //auto order_deps = prg.relative_orders();
+  //cout << "Getting validity deps..." << endl;
+  //isl_union_map *raw_deps = prg.validity_deps();
+  //cout << "Got validity deps..." << endl;
+  //cout << "Validity: " << str(raw_deps) << endl;
+  //auto validity =
+    //unn(order_deps, raw_deps);
+  //isl_union_map *proximity =
+    //cpy(raw_deps);
 
-  auto clksched = clockwork_schedule(domain, validity, proximity);
-  cout << "---- Clockwork schedule:" << endl;
-  isl_space* test_space = map_space(prg.ctx, 2, 3);
-  isl_local_space* aff_space = local_set_space(prg.ctx, 2);
-  for (auto s : clksched) {
-    auto ma = isl_multi_aff_zero(test_space);
+  //auto clksched = clockwork_schedule(domain, validity, proximity);
+  //cout << "---- Clockwork schedule:" << endl;
+  //isl_space* test_space = map_space(prg.ctx, 2, 3);
+  //isl_local_space* aff_space = local_set_space(prg.ctx, 2);
+  //for (auto s : clksched) {
+    //auto ma = isl_multi_aff_zero(test_space);
 
-    cout << tab(1) << s.first << " -> ";
-    int i = 0;
-    for (auto v : s.second) {
-      cout << str(v) << ", ";
-      isl_aff* av = isl_aff_zero_on_domain(aff_space);
-      av = set_const_coeff(av, const_coeff(v));
-      isl_multi_aff_set_aff(ma, i, av);
-      i++;
-    }
-    cout << endl;
-    cout << tab(2) << "ma = " << str(ma) << endl;
-  }
+    //cout << tab(1) << s.first << " -> ";
+    //int i = 0;
+    //for (auto v : s.second) {
+      //cout << str(v) << ", ";
+      //isl_aff* av = isl_aff_zero_on_domain(aff_space);
+      //av = set_const_coeff(av, const_coeff(v));
+      //isl_multi_aff_set_aff(ma, i, av);
+      //i++;
+    //}
+    //cout << endl;
+    //cout << tab(2) << "ma = " << str(ma) << endl;
+  //}
 
   //generate_optimized_code(prg);
 
-  //regression_test(prg);
+  regression_test(prg);
 }
 
 void halide_frontend_test() {
@@ -11986,6 +11986,13 @@ void weight_add_psef() {
 }
 
 void application_tests() {
+  halide_frontend_test();
+  //halide_cascade_test();
+  halide_harris_test();
+  halide_up_sample_test();
+  halide_conv_layer_3D_test();
+  conv_3_3_halide_test();
+
   async_add_test();
   assert(false);
   lake_agg_sram_tb_config_test();
@@ -12075,7 +12082,6 @@ void application_tests() {
   dummy_app_test();
 
   blur_and_downsample_test();
-  halide_up_sample_test();
   denoise2d_test();
 
   sum_diffs_test();
@@ -12088,8 +12094,6 @@ void application_tests() {
   reduce_2d_test();
   ram_addr_unit_test();
 
-
-  halide_conv_layer_3D_test();
 
   upsample2d_test();
   upsample_stencil_2d_test();
@@ -12111,15 +12115,12 @@ void application_tests() {
   histogram_test();
   //assert(false);
   
-  halide_frontend_test();
-  halide_cascade_test();
 
   //mmul_outer_prod_test();
 
   tricky_shift_register_reconvergence_test();
 
   mmul_outer_prod_test();
-  conv_3_3_halide_test();
 
   mini_conv_halide_test();
   grayscale_conversion_test();
@@ -12158,7 +12159,6 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //up_stencil_down_unrolled_test();
   //laplacian_pyramid_app_test();
-  //halide_harris_test();
 }
 
 void affine_controller_test() {
