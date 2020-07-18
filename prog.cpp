@@ -39,9 +39,6 @@ to_pw_multi_aff(isl_ctx* context,
   for (auto piece : addr) {
     affs.push_back(to_multi_aff(context, vars, piece.second));
   }
-  //for (auto a : affs) {
-    //cout << tab(1) << str(a) << endl;
-  //}
   assert(affs.size() == 1);
   return isl_pw_multi_aff_from_multi_aff(affs.at(0));
 }
@@ -3503,6 +3500,37 @@ op* prog::parent(op* p) {
   return find_loop(surrounding_vars(p, *this).back());
 }
 
+string simplify_address_component(const std::string& addr_comp_orig) {
+  string addr_comp = addr_comp_orig;
+
+  bool matched = true;
+  while (matched) {
+    matched = false;
+    regex re("\\s*floor\\(\\s*(.*)\\s*/\\s*(.*)\\s*\\)\\s*");
+    smatch sm;
+
+    cout << "Simplifying: " << addr_comp << endl;
+    auto res = regex_search(addr_comp, sm, re);
+    string num = sm[1];
+    string denom = sm[2];
+    if (res && is_number(num) && is_number(denom)) {
+      matched = true;
+      for (int i = 0; i < sm.size(); i++) {
+        cout << tab(1) << sm[i] << endl;
+      }
+      assert(sm.size() == 3);
+      int inum = stoi(num);
+      int idenom = stoi(denom);
+      int iquot = floor(inum / idenom);
+      addr_comp = ReplaceString(addr_comp, sm[0], str(iquot));
+    }
+  }
+
+  return addr_comp;
+  //string simplified = regex_replace(addr_comp, re, "$1" + op->name + "(" + args_list + ", $2);");
+  //return simplified;
+}
+
 address
 replace_variable(const address& addr, const std::string& var, const int v) {
   cout << "addr = " << addr << endl;
@@ -3510,7 +3538,7 @@ replace_variable(const address& addr, const std::string& var, const int v) {
   vector<string> new_addr;
   for (auto c : comps) {
     cout << tab(1) << c << endl;
-    new_addr.push_back(ReplaceString(c, var, str(v)));
+    new_addr.push_back(simplify_address_component(ReplaceString(c, var, str(v))));
   }
   return comma_list(new_addr);
 }

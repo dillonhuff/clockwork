@@ -123,3 +123,28 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   make_exe("run_tb.sh");
   system(("mv run_tb.sh " + soda_dir).c_str());
 }
+
+bool is_int( const std::string& str ) { // check with regex (does not accept leading zeroes before first digit)
+
+    static constexpr auto max_digits = std::numeric_limits<int>::digits10 ;
+    static const std::string ub = std::to_string(max_digits-1) ;
+    static const std::regex int_re( "^\\s*([+-]?[1-9]\\d{0," + ub + "}|0)\\s*$" ) ;
+
+    return std::regex_match( str, int_re ) ;
+}
+
+bool is_number(string s) {
+  return is_int(s);
+
+  //if (s[0] != '-' && !isdigit(s[0])) {
+    //return false;
+  //}
+
+  //for (int i = 1; i < s.length(); i++)  {
+    //if (isdigit(s[i]) == false) {
+      //return false;
+    //}
+  //}
+  //return true;
+}
+

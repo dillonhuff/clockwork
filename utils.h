@@ -77,20 +77,7 @@ string take_btw(const std::string& s, const std::string& ldel, const std::string
   return s.substr(found_l, found_r - found_l);
 }
 
-static inline
-bool is_number(string s) {
-
-  if (s[0] != '-' && !isdigit(s[0])) {
-    return false;
-  }
-
-  for (int i = 1; i < s.length(); i++)  {
-    if (isdigit(s[i]) == false) {
-      return false;
-    }
-  }
-  return true;
-}
+bool is_number(string s);
 
 static inline
 int safe_stoi(const string s) {

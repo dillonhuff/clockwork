@@ -12102,7 +12102,7 @@ void prg_unroll_test() {
 }
 
 void application_tests() {
-  //us_unroll_test();
+  us_unroll_test();
   ds_unroll_test();
   prg_unroll_test();
 
