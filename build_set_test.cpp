@@ -12234,9 +12234,9 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
 
     auto ns = prg.add_nest(y, 0, 1, x, 0, 1)->add_op(prg.un("rc"));
     ns->add_function("add");
-    ns->add_load(current_level, x, y);
+    ns->add_load(current_gs, x, y);
     ns->add_load(next_level, x, y);
-    ns->add_store(current_gs, x, y);
+    ns->add_store(current_level, x, y);
 
     lgs[i] = current_level;
   }
