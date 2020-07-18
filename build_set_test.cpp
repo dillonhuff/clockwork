@@ -12302,7 +12302,7 @@ void llf_test() {
     cout << tab(1) << p << endl;
   }
 
-  assert(false);
+  //assert(false);
 
   infer_bounds("color_out", {3, 1920, 1080}, prg);
 
