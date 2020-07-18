@@ -2966,6 +2966,7 @@ std::vector<string> topologically_sort_kernels(prog& prg){
 		}
 	}
 
+  assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
 	return topologically_sorted_kernels;
 }
 
@@ -2999,6 +3000,9 @@ void prog::sanity_check() {
 
   std::set<string> op_names;
   for (auto op : all_ops()) {
+    if (!(!elem(op->name, op_names))) {
+      cout << "Error: Multiple ops named: " << op->name << endl;
+    }
     assert(!elem(op->name, op_names));
     op_names.insert(op->name);
   }

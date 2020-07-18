@@ -12117,7 +12117,7 @@ void llf_to_color(const std::string& out, const std::string& original, const std
   convert->add_store(out, b, x, y);
 }
 
-vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_levels, prog prg) {
+vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_levels, prog& prg) {
   vector<string> gls;
   gls.resize(num_pyramid_levels);
   gls[0] = in;
@@ -12158,7 +12158,7 @@ string upsample(const std::string& in, prog& prg) {
   return current_level;
 }
 
-vector<string> laplacian_pyramid(const std::string& in, const int num_pyramid_levels, prog prg) {
+vector<string> laplacian_pyramid(const std::string& in, const int num_pyramid_levels, prog& prg) {
   vector<string> gls = gaussian_pyramid(in, num_pyramid_levels, prg);
   assert((int) gls.size() == num_pyramid_levels);
 
@@ -12244,6 +12244,17 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
   return lgs[0];
 }
 
+void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& prg) {
+  prg.buffer_bounds[buf] = bounds;
+
+  auto kernels = topologically_sort_kernels(prg);
+  cout << "Kernels..." << endl;
+  for (auto k : kernels) {
+    cout << tab(1) << k << endl;
+  }
+  assert(false);
+}
+
 void llf_test() {
   int num_pyramid_levels = 4;
   int num_intensity_levels = 8;
@@ -12281,9 +12292,17 @@ void llf_test() {
   llf_to_color("color_out", "color_in", scales, "gray", prg);
 
   prg.pretty_print();
-  cout << "# loop levels = " << prg.root->children.size() << endl;
+  prg.sanity_check();
 
-  //assert(false);
+  cout << "# loop levels = " << prg.root->children.size() << endl;
+  cout << "# kernels     = " << get_kernels(prg).size() << endl;
+
+  infer_bounds("color_out", {3, 1920, 1080}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  assert(false);
 }
 
 void application_tests() {
