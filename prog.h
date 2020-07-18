@@ -765,6 +765,10 @@ struct prog {
 
   op* parent(op* p);
 
+  std::string un(const std::string& prefix) {
+    return unique_name(prefix);
+  }
+
   std::string unique_name(const std::string& prefix) {
     auto name = prefix + str(unique_num);
     unique_num++;

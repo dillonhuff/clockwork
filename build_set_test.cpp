@@ -12123,7 +12123,22 @@ vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_lev
   gls[0] = in;
   for (int j = 1; j < num_pyramid_levels; j++) {
     string pr = "gp_" + in + "_" + str(j);
-    prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+    string last_level = gls[j - 1];
+    string current_level = prg.unique_name(pr + "_buf");
+    string y = prg.unique_name(pr);
+    string x = prg.unique_name(pr);
+    string yi = prg.unique_name(pr);
+    string xi = prg.unique_name(pr);
+
+    auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
+    auto init = ol->add_op(prg.un("init"));
+    init->add_function("set_zero_32");
+    init->add_load(current_level, x, y);
+    auto il = ol->add_nest(yi, -1, 1, xi, -1, 1);
+    auto update = il->add_op(prg.un("update"));
+    update->add_load(current_level, x, y);
+    update->add_load(last_level, "2*" + x + " + " + xi, "2*" + y + " + " + yi);
+    update->add_store(current_level, x, y);
   }
   return gls;
 }
@@ -12142,7 +12157,21 @@ vector<string> laplacian_pyramid(const std::string& in, const int num_pyramid_le
   lls[0] = gls[0];
   for (int j = 1; j < num_pyramid_levels; j++) {
     string pr = "lp_" + in + "_" + str(j);
-    prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+    string last_level = lls[j - 1];
+    string current_level = prg.unique_name(pr + "_buf");
+    string y = prg.unique_name(pr);
+    string x = prg.unique_name(pr);
+    string yi = prg.unique_name(pr);
+    string xi = prg.unique_name(pr);
+
+    auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
+    auto init = ol->add_op(prg.un("init"));
+    init->add_function("set_zero_32");
+    init->add_load(current_level, x, y);
+    auto il = ol->add_nest(yi, -1, 1, xi, -1, 1);
+    auto update = il->add_op(prg.un("update"));
+    update->add_load(current_level, x, y);
+    update->add_load(last_level, "2*" + x + " + " + xi, "2*" + y + " + " + yi);
   }
   return lls;
 }
