@@ -12101,6 +12101,51 @@ void llf_to_color(const std::string& out, prog& prg) {
   prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
 }
 
+vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_levels, prog prg) {
+  vector<string> gls;
+  gls.resize(num_pyramid_levels);
+  gls[0] = in;
+  for (int j = 1; j < num_pyramid_levels; j++) {
+    string pr = "gp_" + in + "_" + str(j);
+    prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+  }
+  return gls;
+}
+
+void reconstruct_gaussian(const int num_pyramid_levels, prog& prg) {
+  for (int j = 1; j < num_pyramid_levels; j++) {
+    string pr = "rcp_" + str(j);
+    prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+  }
+}
+
+vector<string> laplacian_pyramid(const std::string& in, const int num_pyramid_levels, prog prg) {
+  vector<string> gls = gaussian_pyramid(in, num_pyramid_levels, prg);
+  vector<string> lls;
+  lls.resize(num_pyramid_levels);
+  lls[0] = gls[0];
+  for (int j = 1; j < num_pyramid_levels; j++) {
+    string pr = "lp_" + in + "_" + str(j);
+    prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+  }
+  return lls;
+}
+
+string llf_interpolate_intensity(const std::string& gray, const std::vector<string>& intensity_levels, prog& prg) {
+  string pr = prg.unique_name(gray + "_interpolate_lp");
+  prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+  return prg.unique_name(gray + "_interpolated");
+}
+
+string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg) {
+
+  for (int i = 1; i < (int) output_levels.size(); i++) {
+    string pr = prg.unique_name(output_levels.at(i) + "_reconstruct_lp");
+    prg.add_nest(prg.unique_name(pr), 0, 1, prg.unique_name(pr), 0, 1);
+  }
+  return prg.unique_name("reconstructed");
+}
+
 void llf_test() {
   int num_pyramid_levels = 4;
   int num_intensity_levels = 8;
@@ -12112,25 +12157,32 @@ void llf_test() {
 
   llf_to_grayscale("gray", "color_in", prg);
 
-  //// Make intensity pyramids
-  //for (int i = 0; i < num_intensity_levels; i++) {
-    //laplacian_pyramid("lpyramid_" + str(i), "gray", num_pyramid_levels, prg);
-  //}
+  // Make intensity pyramids
+  vector<vector<string> > intensity_level_pyramids;
+  for (int i = 0; i < num_intensity_levels; i++) {
+    intensity_level_pyramids.push_back(laplacian_pyramid("gray", num_pyramid_levels, prg));
+  }
 
-  //// Make input Gaussian pyramid
-  //gaussian_pyramid("gpyramid", "gray", num_pyramid_levels, prg);
+  // Make input Gaussian pyramid
+  vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
 
 
-  //// Compute levels for interpolated output
-  //for (int i = 0; i < num_pyramid_levels; i++) {
-    //llf_interpolate_intensity(num_intensity_levels, prg);
-  //}
+  // Compute levels for interpolated output
+  vector<string> output_levels;
+  for (int i = 0; i < num_pyramid_levels; i++) {
+    vector<string> intensities_at_level;
+    for (auto pyramid : intensity_level_pyramids) {
+      intensities_at_level.push_back(pyramid.at(i));
+    }
+    output_levels.push_back(llf_interpolate_intensity(gray_levels.at(i), intensities_at_level, prg));
+  }
 
-  //reconstruct_gaussian(num_pyramid_levels, prg);
+  reconstruct_gaussian(output_levels, prg);
 
   llf_to_color("color_out", prg);
 
   prg.pretty_print();
+  cout << "# loop levels = " << prg.root->children.size() << endl;
 
   assert(false);
 }
