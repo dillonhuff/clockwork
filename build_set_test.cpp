@@ -12221,7 +12221,7 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
 
   vector<string> lgs;
   lgs.resize(output_levels.size());
-  lgs[output_levels.size()] = output_levels.back();
+  lgs[output_levels.size() - 1] = output_levels.back();
 
   for (int i = output_levels.size() - 2; i >= 0; i--) {
     string pr = prg.unique_name(output_levels.at(i) + "_reconstruct_lp");
@@ -12236,12 +12236,12 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
     ns->add_function("add");
     ns->add_load(current_level, x, y);
     ns->add_load(next_level, x, y);
-    ns->add_store(current_gs);
+    ns->add_store(current_gs, x, y);
 
     lgs[i] = current_level;
   }
 
-  return lgs[0]
+  return lgs[0];
 }
 
 void llf_test() {
@@ -12283,7 +12283,7 @@ void llf_test() {
   prg.pretty_print();
   cout << "# loop levels = " << prg.root->children.size() << endl;
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
