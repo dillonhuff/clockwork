@@ -2947,13 +2947,18 @@ std::vector<string> topologically_sort_kernels(prog& prg){
 	std::vector<string> topologically_sorted_kernels;
 	std::set<string> not_yet_sorted = get_kernels(prg);
 
+  map<string, std::set<string> > other_producers;
+  for (auto next_kernel : not_yet_sorted) {
+    std::set<string> producers = get_producers(next_kernel, prg);
+    producers.erase(next_kernel);
+    other_producers[next_kernel] = producers;
+  }
+
 	while(not_yet_sorted.size() > 0){
 		for(auto next_kernel : not_yet_sorted){
-			std::set<string> producers = get_producers(next_kernel, prg);
-			producers.erase(next_kernel);
 			bool all_producers_sorted = true;
-			for(auto producer : producers){
-				if(!elem(producer, topologically_sorted_kernels)){
+			for (auto producer : other_producers.at(next_kernel)) {
+				if(!elem(producer, topologically_sorted_kernels)) {
 					all_producers_sorted = false;
 					break;
 				}
