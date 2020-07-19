@@ -12374,7 +12374,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
   }
 
   prg.pretty_print();
-  assert(false);
+  //assert(false);
   //auto ms = prg.consumer_maps();
   //cout << "Consumer maps..." << endl;
   //for (auto m : ms) {
@@ -12437,7 +12437,7 @@ void llf_test() {
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
