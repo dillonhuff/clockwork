@@ -3114,7 +3114,15 @@ void deep_copy_child(op* dest, op* source, prog& original){
 
 }
 
-std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original){
+std::set<string> get_consumed_buffers(const std::string& kernel, prog& original){
+  return get_consumed_buffers(std::set<string>{kernel}, original);
+}
+
+std::set<string> get_produced_buffers(const std::string& kernel, prog& original){
+  return get_produced_buffers(std::set<string>{kernel}, original);
+}
+
+std::set<string> get_consumed_buffers(const std::set<std::string>& group, prog& original){
 	std::set<string> all_consumed_buffers;
 	for(auto kernel_in_group : group){
 		auto kernel_ops = original.find_loop(kernel_in_group)->descendant_ops();
@@ -3128,7 +3136,7 @@ std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& origin
 	return all_consumed_buffers;
 }
 
-std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original){
+std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original){
 	std::set<string> all_produced_buffers;
 	for(auto kernel_in_group : group){
 		auto kernel_ops = original.find_loop(kernel_in_group)->descendant_ops();

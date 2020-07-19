@@ -12254,11 +12254,18 @@ void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& 
     cout << tab(1) << k << endl;
   }
 
-  auto ms = prg.consumer_maps();
-  cout << "Consumer maps..." << endl;
-  for (auto m : ms) {
-    cout << tab(1) << m.first->name << "-> " << str(m.second) << endl;
+  for (auto k : kernels) {
+    if (elem(buf, get_produced_buffers(k, prg))) {
+      cout << "Kernel: " << k << " produces " << buf << endl;
+      assert(false);
+    }
   }
+
+  //auto ms = prg.consumer_maps();
+  //cout << "Consumer maps..." << endl;
+  //for (auto m : ms) {
+    //cout << tab(1) << m.first->name << "-> " << str(m.second) << endl;
+  //}
   assert(false);
 }
 
