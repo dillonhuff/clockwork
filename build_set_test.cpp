@@ -12378,8 +12378,27 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
       cout << tab(1) << str(s) << endl;
     }
 
+    vector<int> int_bounds_for_s;
+    for (int d = 0; d < num_dims(bound_set); d++) {
+      auto pr = project_all_but(bound_set, d);
+      int lb = to_int(lexminval(pr));
+      int ub = to_int(lexmaxval(pr)) + 1;
+      int_bounds_for_s.push_back(ub - lb);
+    }
+    prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
     bounded.insert(name(bound_set));
 
+  }
+
+  for (auto bound_set : bounds) {
+    vector<int> int_bounds_for_s;
+    for (int d = 0; d < num_dims(bound_set); d++) {
+      auto pr = project_all_but(bound_set, d);
+      int lb = to_int(lexminval(pr));
+      int ub = to_int(lexmaxval(pr)) + 1;
+      int_bounds_for_s.push_back(ub - lb);
+    }
+    prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
   }
 
   prg.pretty_print();
@@ -12406,6 +12425,28 @@ void load_input(const std::string& in, const std::string& out, const int dim, pr
   string vlist = comma_list(vars);
   ld->add_load(in, vlist);
   ld->add_store(out, vlist);
+}
+
+void gf_test() {
+  prog prg("gray_convert");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("color_in_oc");
+  prg.add_output("gray");
+
+  load_input("color_in_oc", "color_in", 3, prg);
+  llf_to_grayscale("gray", "color_in", prg);
+
+
+  infer_bounds("gray", {256, 256}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  generate_unoptimized_code(prg);
+  compile_compute("unoptimized_" + prg.name + ".cpp");
+
+  assert(false);
 }
 
 void llf_test() {
@@ -12470,6 +12511,7 @@ void llf_test() {
 }
 
 void application_tests() {
+  gf_test();
   llf_test();
   us_unroll_test();
   ds_unroll_test();

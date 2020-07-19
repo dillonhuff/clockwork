@@ -181,6 +181,19 @@ std::string bracket_list(const std::vector<std::string>& strs) {
   return sep_list(strs, "[", "]", ", ");
 }
 
+
+template<typename T>
+static inline
+std::string bracket_list(const std::vector<T>& vals) {
+  vector<string> strs;
+  for (auto v : vals) {
+    ostringstream ss;
+    ss << v;
+    strs.push_back(ss.str());
+  }
+  return sep_list(strs, "[", "]", ", ");
+}
+
 template<typename T>
 static inline
 std::string comma_list(const std::vector<T>& vals) {

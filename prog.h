@@ -876,7 +876,7 @@ struct prog {
     cout << "program: " << name << endl;
     cout << "buffers..." << endl;
     for (auto b : buffer_bounds) {
-      cout << tab(1) << b.first << endl;
+      cout << tab(1) << b.first << bracket_list(b.second) << endl;
     }
     cout << "operations..." << endl;
     root->pretty_print(cout, 0);
