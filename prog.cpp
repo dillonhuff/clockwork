@@ -455,13 +455,10 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
         out << tab(4) << in_rep.second << "_channel.write(pix.green);" << endl;
         out << tab(4) << in_rep.second << "_channel.write(pix.blue);" << endl;
 
-        //out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
-        //out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
-          //"packed, val);" << endl;
-        //out << tab(3) << "} else {" << endl;
-        //out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
-          //"packed, 0);" << endl;
-        //out << tab(3) << "}" << endl;
+        out << tab(3) << "} else {" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
+        out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
         out << tab(3) << "}" << endl;
       }
 

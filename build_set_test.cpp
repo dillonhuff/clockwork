@@ -12523,7 +12523,7 @@ void llf_test() {
 
   //assert(false);
 
-  infer_bounds("color_out", {3, 256, 256}, prg);
+  infer_bounds("color_out", {3, 24, 24}, prg);
 
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
@@ -12535,9 +12535,9 @@ void llf_test() {
 }
 
 void application_tests() {
+  llf_test();
   lchannel_test();
   gf_test();
-  llf_test();
   us_unroll_test();
   ds_unroll_test();
   prg_unroll_test();

@@ -17,8 +17,7 @@ hw_uint<32> llf_to_gray_float(const hw_uint<96>& pix) {
 hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
     const hw_uint<32>& original,
     const hw_uint<32>& gray) {
-  assert(false);
-  return 0;
+  return original;
 }
 
 
@@ -32,6 +31,5 @@ hw_uint<32> llf_interpolate_float(
     const hw_uint<32>& intensity_6,
     const hw_uint<32>& intensity_7,
     const hw_uint<32>& gray) {
-  assert(false);
-  return 0;
+  return gray;
 }
