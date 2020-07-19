@@ -12334,8 +12334,9 @@ void resnet_test() {
   CodegenOptions options;
   options.all_rams = true;
   all_register_files(prg, options);
-  options.banking_strategies["conv_stencil"] =
-  {"cyclic", {1, 1, 4}};
+  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
+  options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
+  options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_MULTILINEAR;
   //generate_optimized_code(options, prg);
@@ -12358,12 +12359,15 @@ void resnet_test() {
     if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
         continue;
     b.second.generate_banks_and_merge(options);
+    b.second.print_bank_info();
 
     //Assign an configuration file,
     //json config_reg_map = parse_config_file("conv33_configuration.txt");
     //b.second.set_config(config_reg_map);
 
-    //b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.print_bank_info();
+
     CoreIR::Context* context = CoreIR::newContext();
     CoreIRLoadLibrary_commonlib(context);
     CoreIRLoadLibrary_cwlib(context);

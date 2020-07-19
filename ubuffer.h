@@ -1581,7 +1581,7 @@ class UBuffer {
     vector<UBuffer> port_grouping(int port_width);
 
     //helper function for port group2bank
-    void create_subbank_branch(
+    uset* create_subbank_branch(
             std::set<string> & inpt_set,
             std::set<string> & outpt_set,
             map<string, pair<isl_map*, isl_map*> > & outpt_merge,

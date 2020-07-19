@@ -790,6 +790,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           }
         } else {
           def->connect(buf->sel("datain_" + to_string(inpt_cnt)), wire2out.at(inpt));
+          cout << "Input port: " << inpt << endl;
           def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
           //also connect ren
           for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
@@ -1969,8 +1970,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //we just need connection information
     int maxdelay = 0;
     vector<int> read_delays{0};
+    string inpt_name = pick(inpt_set);
+    auto rddom = isl_union_set_empty(
+            get_space(range(access_map.at(inpt_name))));
+
     for (auto inpt : inpt_set) {
       for (auto outpt: outpt_set) {
+        //get the rddom for the supper bank
+        auto local_rddom = its(range(access_map.at(inpt)), range(access_map.at(outpt)));
+        rddom = unn(rddom, local_rddom);
+
         int delay = 0;
         if (isIn.at(inpt)) {
           delay = compute_dd_bound(outpt, inpt, true);
@@ -1991,8 +2000,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     string pt_type_string = port_type_string();
     string name = pick(inpt_set) + "_to_" + pick(outpt_set);
 
-    string inpt_name = pick(inpt_set);
-    auto rddom = isl_union_set_universe(range(access_map.at(inpt_name)));
 
     //initial the delay map
     map<string, int> delay_map = {};
@@ -2036,7 +2043,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           std::set<string> outpt_set) {
     int maxdelay = -1;
 
-    vector<int> read_delays;
+    vector<int> read_delays{0};
     int num_readers = outpt_set.size();
 
     string pt_type_string = port_type_string();
@@ -2081,7 +2088,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
 
       auto rddom =
-        unn(range(access_map.at(inpt)),
+        its(range(access_map.at(inpt)),
             range(access_map.at(outpt)));
 
       //initial the delay map
@@ -2102,17 +2109,32 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       return bank;
     } else {
       cout << "linear offset" << endl;
-      int maxdelay = -1;
-      vector<int> read_delays;
+      int maxdelay = compute_dd_bound(outpt, inpt, true);
+      vector<int> read_delays{0};
       int num_readers = 0;
 
+      auto in_actions = domain.at(inpt);
+      auto lex_max_events = get_lexmax_events(inpt, outpt);
+      auto act_dom =
+        ::domain(its_range(lex_max_events, to_uset(in_actions)));
+
+      if (!isl_union_set_is_empty(act_dom)) {
+        num_readers++;
+        int qpd = compute_dd_bound(outpt, inpt, true);
+        int lb = compute_dd_bound(outpt, inpt, false);
+
+        for (int i = lb; i < qpd + 1; i++) {
+          read_delays.push_back(i);
+        }
+      }
+
       auto rddom =
-        unn(range(access_map.at(inpt)),
+        its(range(access_map.at(inpt)),
             range(access_map.at(outpt)));
 
       cout << "got rddom" << endl;
       //initial the delay map
-      map<string, int> delay_map = {};
+      map<string, int> delay_map = {{outpt, read_delays.back()}};
 
       string pt_type_string = port_type_string();
       string name = inpt + "_to_" + outpt;
@@ -2233,6 +2255,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //find the lexmin of all out port
     for (auto itr: get_banks()) {
       cout << itr.name << endl;
+      for (auto it: banks_to_inputs.at(itr.name)) {
+          cout << "\tinpt: " << it << endl;
+      }
+
+      for (auto it: banks_to_outputs.at(itr.name)) {
+          cout << "\toutpt: " << it << endl;
+      }
+      cout << endl;
       //string inpt = itr.first.first;
       //string outpt = itr.first.second;
       //cout << "\tpt: [" << outpt << "] -> pt:[" << inpt
@@ -2455,6 +2485,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     //heruistic solution for chain the port output
     pair<string, string> last_bank_IO;
+    uset* last_bank_rddom;
 
     //Using set for reoccuring port, single input multi output available
     std::set<string> inpt_set, outpt_set;
@@ -2467,6 +2498,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     while(!bank_pool.empty()) {
       auto bk = bank_pool.top();
       cout << bk.name << endl;
+      //First check if this bank already have saturized the hardware memory
+      if (get_bank_inputs(bk.name).size() == in_port_width) {
+          bank_pool.pop();
+          continue;
+      }
+
       auto input = get_bank_input(bk.name);
 
       group_in_port_width = inpt_set.size();
@@ -2477,13 +2514,18 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         bank_pool.pop();
 
         //add it to the set
-        //If they share the input port we should insert the latest output port
+        //If they share the input port we should insert the latest output port, only if the new bank
+        //read domain is subsumed by the old one
         string bank_input = input;
+        //if (last_bank_rddom) {
+        //    cout << "last bank rddom: "<< last_bank_IO.first << last_bank_IO.second <<"\t" << str(last_bank_rddom);
+        //}
+        //cout << "\n current bank rddom: " << bk.name << "\t" << str(bk.rddom) << endl;
         if (last_bank_IO.first == "") {
           inpt_set.insert(input);
           bank_input = input;
         }
-        else if (last_bank_IO.first != input) {
+        else if ((last_bank_IO.first != input) || (empty(its(last_bank_rddom, bk.rddom)))) {
           inpt_set.insert(input);
           bank_input = input;
         }
@@ -2515,7 +2557,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
         //check if this should be a separate bank
         if (bk.onlySR()) {
-          create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
+          last_bank_rddom = create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
           cout << "Reset Counter for shift reg" << endl;
           group_in_port_width = 0;
           group_out_port_width = 0;
@@ -2529,8 +2571,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         //update the input port
         last_bank_IO.first = input;
         last_bank_IO.second = pt_vec.front();
-
-        create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
+        last_bank_rddom = create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
 
         //reset the grouping counter
         cout << "Reset Counter" << endl;
@@ -2556,9 +2597,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
    * | _______
    * -[ 1-in  ]-[]-[]
    *  [_2-out_]-[]-[]
+   *
+   *  This functional will return the read domain of the supper bank
    * */
 
-  void UBuffer::create_subbank_branch(
+  uset* UBuffer::create_subbank_branch(
       std::set<string> & inpt_set,
       std::set<string> & outpt_set,
       map<string, pair<isl_map*, isl_map*> > & outpt_merge,
@@ -2603,6 +2646,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     outpt_set.clear();
     outpt_merge.clear();
     back_edge.clear();
+    return super_bk.rddom;
   }
 
   vector<UBuffer> UBuffer::port_grouping(int port_width) {
