@@ -12141,6 +12141,11 @@ vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_lev
     update->add_load(current_level, x, y);
     update->add_load(last_level, "2*" + x + " + " + xi, "2*" + y + " + " + yi);
     update->add_store(current_level, x, y);
+    auto avg = ol->add_op(prg.un("avg"));
+    avg->add_function("avg_9_float");
+    avg->add_load(current_level, x, y);
+    avg->add_store(current_level, x, y);
+
     gls[j] = current_level;
   }
   return gls;

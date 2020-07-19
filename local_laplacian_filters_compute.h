@@ -2,6 +2,12 @@
 
 #include "clockwork_standard_compute_units.h"
 
+hw_uint<32> avg_9_float(const hw_uint<32>& pix) {
+  float r = to_float(pix);
+  float res = r / 9.0f;
+  return to_bits(res);
+}
+
 hw_uint<32> llf_to_gray_float(const hw_uint<96>& pix) {
   hw_uint<32> v0 = pix.extract<0, 31>();
   hw_uint<32> v1 = pix.extract<32, 63>();
@@ -18,7 +24,7 @@ hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
     const hw_uint<32>& original,
     const hw_uint<32>& gray) {
   float eps = 0.01f;
-  return scales * ((original + eps) / (gray + eps));
+  return to_bits(to_float(scales) * ((to_float(original) + eps) / (to_float(gray) + eps)));
 }
 
 
