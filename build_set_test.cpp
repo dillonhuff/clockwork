@@ -12257,8 +12257,8 @@ isl_set* make_bound_set(const std::string& buf, const std::vector<int>& bounds, 
   return rdset(prg.ctx, sstr);
 }
 
-void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& prg) {
-  prg.buffer_bounds[buf] = bounds;
+void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg) {
+  prg.buffer_bounds[buf] = int_bounds;
 
   auto kernels = topologically_sort_kernels(prg);
   reverse(kernels);
@@ -12267,37 +12267,65 @@ void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& 
     cout << tab(1) << k << endl;
   }
 
+  isl_set* bound_set = make_bound_set(buf, int_bounds, prg);
+
+  std::set<isl_set*> bounds{bound_set};
+
   auto m = prg.producer_maps_no_domain();
-  for (auto k : kernels) {
-    if (elem(buf, get_produced_buffers(k, prg))) {
-      cout << "Kernel: " << k << " produces " << buf << endl;
-      isl_set* bound_set = make_bound_set(buf, bounds, prg);
-      op* dop = nullptr;
-      for (auto op : prg.find_loop(k)->descendant_ops()) {
-        if (!op->is_loop) {
-          dop = op;
-          break;
-        }
-      }
-      assert(dop != nullptr);
 
-      isl_map* prod = map_find(dop, m);
-      cout << "bounds: " << str(bound_set) << endl;
-      cout << "prod  : " << str(prod) << endl;
-      auto loop_bounds =
-        domain(its_range(prod, bound_set));
-      cout << "loop bounds: " << str(loop_bounds) << endl;
-      // i = 1 at start because root is always 1
-      for (int i = 1; i < num_dims(loop_bounds); i++) {
-        auto pr = project_all_but(loop_bounds, i);
-        string val = dim_name(loop_bounds, i);
-        int lb = to_int(lexminval(pr));
-        int ub = to_int(lexmaxval(pr)) + 1;
-        prg.set_bounds(val, lb, ub);
-      }
+  while (bounds.size() > 0) {
+    auto bound_set = pick(bounds);
+    bounds.erase(bound_set);
+    string buf = name(bound_set);
 
-      //assert(false);
+    string next_kernel = "";
+    for (auto k : kernels) {
+      if (elem(buf, get_produced_buffers(k, prg))) {
+        next_kernel = k;
+      }
     }
+
+    assert(next_kernel != "");
+
+    cout << "Kernel: " << next_kernel << " produces " << buf << endl;
+    op* dop = nullptr;
+    for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
+      if (!op->is_loop) {
+        dop = op;
+        break;
+      }
+    }
+    assert(dop != nullptr);
+
+    isl_map* prod = map_find(dop, m);
+    cout << "bounds: " << str(bound_set) << endl;
+    cout << "prod  : " << str(prod) << endl;
+    auto loop_bounds =
+      domain(its_range(prod, bound_set));
+    cout << "loop bounds: " << str(loop_bounds) << endl;
+    // i = 1 at start because root is always 1
+    for (int i = 1; i < num_dims(loop_bounds); i++) {
+      auto pr = project_all_but(loop_bounds, i);
+      string val = dim_name(loop_bounds, i);
+      int lb = to_int(lexminval(pr));
+      int ub = to_int(lexmaxval(pr)) + 1;
+      prg.set_bounds(val, lb, ub);
+    }
+
+    auto cm = prg.consumer_maps();
+    //vector<isl_set*> bound_sets;
+    for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
+      auto ms = coalesce(range(map_find(op, cm)));
+      for (auto s : get_sets(ms)) {
+        bounds.insert(s);
+      }
+    }
+
+    cout << "Next bound sets..." << endl;
+    for (auto s : bounds){
+      cout << tab(1) << str(s) << endl;
+    }
+
   }
 
   prg.pretty_print();
