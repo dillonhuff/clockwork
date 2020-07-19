@@ -12277,6 +12277,18 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
   while (bounds.size() > 0) {
     isl_set* bound_set = nullptr;
 
+    bool all_inputs = true;
+    for (auto b : bounds) {
+      if (!prg.is_input(name(b))) {
+        all_inputs = false;
+        break;
+      }
+    }
+
+    if (all_inputs) {
+      break;
+    }
+
     string next_kernel = "";
     for (auto k : kernels) {
       for (auto prod : get_produced_buffers(k, prg)) {
