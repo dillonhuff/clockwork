@@ -500,41 +500,56 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
     } else {
       out_cols = prg.buffer_bounds[out_rep.first].at(1);
       out_rows = prg.buffer_bounds[out_rep.first].at(2);
+      int d = 0;
       for (auto sz : prg.buffer_bounds[out_rep.first]) {
-        sizes.push_back(str(sz));
+        if (d > 0) {
+          sizes.push_back(str(sz));
+        }
+        d++;
       }
     }
 
     out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
 
-    if (prg.buffer_bounds[out_rep.first].size() != 2) {
-      out << tab(1) << "// Error: BMP Harness generation is not supported for programs with " << prg.buffer_bounds.size() << " dimensional buffers" << endl;
-      out << "}" << endl;
-      //return;
+    out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
+    out << tab(2) << "for (int cl = 0; cl < " << out_cols << " / " << lanes << "; cl++) {" << endl;
+    if (out_rgb) {
+      out << tab(3) << "int c = " << lanes << "*cl + " << "0" << ";" << endl;
+      out << tab(3) << "rgb_t pix;" << endl;
+
+      out << tab(3) << "auto red = " << out_rep.second << "_channel.read();" << endl;
+      out << tab(3) << "auto g = " << out_rep.second << "_channel.read();" << endl;
+      out << tab(3) << "auto b = " << out_rep.second << "_channel.read();" << endl;
+
+
+      out << tab(3) << "pix.red = " << "red" << ";" << endl;
+      out << tab(3) << "pix.green = " << "g" << ";" << endl;
+      out << tab(3) << "pix.blue = " << "b" << ";" << endl;
+      out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
+
     } else {
-
-      out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
-      out << tab(2) << "for (int cl = 0; cl < " << out_cols << " / " << lanes << "; cl++) {" << endl;
-      out << tab(3) << out_bundle_tp << " packed;" << endl;
-
       out << tab(3) << "auto packed_val = " << out_rep.second << "_channel.read();" << endl;
       vector<string> unpacked_values =
         split_bv(3, out, "packed_val", pixel_width, lanes);
       for (int l = 0; l < lanes; l++) {
-        out << tab(3) << "{" << endl;
         out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+        out << tab(3) << "{" << endl;
+        out << tab(3) << out_bundle_tp << " packed;" << endl;
+
+        out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+
         string val = unpacked_values.at(l);
-        //out << tab(3) << "auto val_ " << l << " = " << out_rep.second << "_channel.read();" << endl;
         out << tab(3) << "rgb_t pix;" << endl;
         out << tab(3) << "pix.red = " << val << ";" << endl;
         out << tab(3) << "pix.green = " << val << ";" << endl;
         out << tab(3) << "pix.blue = " << val << ";" << endl;
         out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
-        out << tab(2) << "}" << endl;
       }
-      out << tab(1) << "}" << endl;
-      out << tab(1) << "}" << endl;
+
     }
+
+    out << tab(2) << "}" << endl;
+    out << tab(1) << "}" << endl;
     out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
     out << "}" << endl;
   }

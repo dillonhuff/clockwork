@@ -12427,6 +12427,30 @@ void load_input(const std::string& in, const std::string& out, const int dim, pr
   ld->add_store(out, vlist);
 }
 
+void lchannel_test() {
+  prog prg("lchannel");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("color_in_oc");
+  prg.add_output("color_out");
+
+  load_input("color_in_oc", "color_in", 3, prg);
+  load_input("color_in", "color_out", 3, prg);
+
+  cout << "Before bounds inference..." << endl;
+  prg.pretty_print();
+
+  infer_bounds("color_out", {3, 256, 256}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  generate_unoptimized_code(prg);
+  compile_compute("unoptimized_" + prg.name + ".cpp");
+
+  assert(false);
+}
+
 void gf_test() {
   prog prg("gray_convert");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
@@ -12511,6 +12535,7 @@ void llf_test() {
 }
 
 void application_tests() {
+  lchannel_test();
   gf_test();
   llf_test();
   us_unroll_test();
