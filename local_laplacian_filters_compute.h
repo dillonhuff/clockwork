@@ -17,7 +17,8 @@ hw_uint<32> llf_to_gray_float(const hw_uint<96>& pix) {
 hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
     const hw_uint<32>& original,
     const hw_uint<32>& gray) {
-  return original;
+  float eps = 0.01f;
+  return scales * ((original + eps) / (gray + eps));
 }
 
 
