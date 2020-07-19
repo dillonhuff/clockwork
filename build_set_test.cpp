@@ -12097,9 +12097,9 @@ void llf_to_grayscale(const std::string& out, const std::string& in, prog& prg) 
   string x = prg.unique_name(pr);
   auto cn = prg.add_nest(y, 0, 1, x, 0, 1);
   auto convert = cn->add_op(prg.unique_name("to_gray"));
-  convert->add_load(in, x, y, "0");
-  convert->add_load(in, x, y, "1");
-  convert->add_load(in, x, y, "2");
+  convert->add_load(in, "0", x, y);
+  convert->add_load(in, "1", x, y);
+  convert->add_load(in, "2", x, y);
   convert->add_store(out, x, y);
 }
 
