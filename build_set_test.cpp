@@ -12097,6 +12097,7 @@ void llf_to_grayscale(const std::string& out, const std::string& in, prog& prg) 
   string x = prg.unique_name(pr);
   auto cn = prg.add_nest(y, 0, 1, x, 0, 1);
   auto convert = cn->add_op(prg.unique_name("to_gray"));
+  convert->add_function("llf_to_gray_float");
   convert->add_load(in, "0", x, y);
   convert->add_load(in, "1", x, y);
   convert->add_load(in, "2", x, y);
@@ -12111,6 +12112,7 @@ void llf_to_color(const std::string& out, const std::string& original, const std
   auto cn = prg.add_nest(y, 0, 1, x, 0, 1, b, 0, 3);
 
   auto convert = cn->add_op(prg.unique_name("cc"));
+  convert->add_function("llf_to_color_float");
   convert->add_load(scales, x, y);
   convert->add_load(original, b, x, y);
   convert->add_load(gray, x, y);
@@ -12205,7 +12207,7 @@ string llf_interpolate_intensity(const std::string& gray, const std::vector<stri
   string y = prg.un(pr);
   string x = prg.un(pr);
   auto in = prg.add_nest(y, 0, 1, x, 0, 1)->add_op(prg.un("interp"));
-  in->add_function("llf_interpolate");
+  in->add_function("llf_interpolate_float");
   for (auto i : intensity_levels) {
     assert(i != "");
     in->add_load(i, x, y);
@@ -12358,7 +12360,14 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
       cout << tab(1) << "dom  : " << str(domain(data_read)) << endl;
       cout << tab(1) << "range: " << str(ms) << endl;
       for (auto s : get_sets(ms)) {
-        if (!elem(name(s), bounded) && name(s) != buf) {
+        bool obvious_duplicate = false;
+        for (auto other : bounds) {
+          if (isl_set_plain_is_equal(s, other)) {
+            obvious_duplicate = true;
+            break;
+          }
+        }
+        if (!obvious_duplicate && !elem(name(s), bounded) && name(s) != buf) {
           bounds.insert(s);
         }
       }
@@ -12383,17 +12392,34 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
   //assert(false);
 }
 
+void load_input(const std::string& in, const std::string& out, const int dim, prog& prg) {
+  string pr = prg.un("oc_load_" + in);
+  op* lp = prg.root;
+  vector<string> vars;
+  for (int d = 0; d < dim; d++) {
+    string var = prg.un(pr);
+    lp = lp->add_loop(var, 0, 1);
+    vars.push_back(var);
+  }
+  reverse(vars);
+  auto ld = lp->add_op(prg.un(pr));
+  string vlist = comma_list(vars);
+  ld->add_load(in, vlist);
+  ld->add_store(out, vlist);
+}
+
 void llf_test() {
   int num_pyramid_levels = 4;
   int num_intensity_levels = 8;
 
   prog prg("local_laplacian_filters");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
 
-  prg.add_input("color_in");
+  prg.add_input("color_in_oc");
   prg.add_output("color_out");
 
+  load_input("color_in_oc", "color_in", 3, prg);
   llf_to_grayscale("gray", "color_in", prg);
-
   // Make intensity pyramids
   vector<vector<string> > intensity_level_pyramids;
   for (int i = 0; i < num_intensity_levels; i++) {
@@ -12424,11 +12450,11 @@ void llf_test() {
 
   cout << "# loop levels = " << prg.root->children.size() << endl;
   cout << "# kernels     = " << get_kernels(prg).size() << endl;
-  auto producers = get_producers("color_out_to_color431", prg);
-  cout << "Producers for " << "color_out_to_color_431" << endl;
-  for (auto p : producers) {
-    cout << tab(1) << p << endl;
-  }
+  //auto producers = get_producers("color_out_to_color431", prg);
+  //cout << "Producers for " << "color_out_to_color_431" << endl;
+  //for (auto p : producers) {
+    //cout << tab(1) << p << endl;
+  //}
 
   //assert(false);
 
@@ -12437,7 +12463,10 @@ void llf_test() {
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
 
-  //assert(false);
+  generate_unoptimized_code(prg);
+  compile_compute("unoptimized_" + prg.name + ".cpp");
+
+  assert(false);
 }
 
 void application_tests() {

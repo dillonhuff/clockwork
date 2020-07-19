@@ -1095,6 +1095,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     for (auto in : prg.ins) {
       assert(contains_key(in, buffers));
       auto& buf = buffers.at(in);
+      cout << "buf = " << buf.name << endl;
       assert(buf.get_out_bundles().size() == 1);
       auto bundle = pick(buf.get_out_bundles());
 
