@@ -3604,3 +3604,26 @@ vector<int> indexes(op* p) {
   return inds;
 }
 
+  map<op*, isl_map*> prog::producer_maps_no_domain() {
+    map<op*, isl_map*> m;
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    for (auto op : ops) {
+      cout << "producer map for: " << op->name << endl;
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      umap* pmap = rdmap(ctx, "{}");
+      for (auto p : op->produces()) {
+        cout << tab(1) << "produced: " << p << endl;
+          isl_union_map* vmap =
+            rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
+          pmap = unn(pmap, vmap);
+      }
+      m[op] = to_map(pmap);
+    }
+    return m;
+  }

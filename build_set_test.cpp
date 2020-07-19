@@ -12133,7 +12133,7 @@ vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_lev
     auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
     auto init = ol->add_op(prg.un("init"));
     init->add_function("set_zero_32");
-    init->add_load(current_level, x, y);
+    init->add_store(current_level, x, y);
     auto il = ol->add_nest(yi, -1, 1, xi, -1, 1);
     auto update = il->add_op(prg.un("update"));
     update->add_load(current_level, x, y);
@@ -12244,6 +12244,19 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
   return lgs[0];
 }
 
+isl_set* make_bound_set(const std::string& buf, const std::vector<int>& bounds, prog& prg) {
+  vector<string> vars;
+  vector<string> bnds;
+  int d = 0;
+  for (int b : bounds) {
+    vars.push_back("d" + str(d));
+    bnds.push_back("0 <= " + vars.at(d) + " < " + str(b));
+    d++;
+  }
+  string sstr = curlies(buf + bracket_list(vars) + " : " + sep_list(bnds, "", "", " and "));
+  return rdset(prg.ctx, sstr);
+}
+
 void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& prg) {
   prg.buffer_bounds[buf] = bounds;
 
@@ -12254,9 +12267,26 @@ void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& 
     cout << tab(1) << k << endl;
   }
 
+  auto m = prg.producer_maps_no_domain();
   for (auto k : kernels) {
     if (elem(buf, get_produced_buffers(k, prg))) {
       cout << "Kernel: " << k << " produces " << buf << endl;
+      isl_set* bound_set = make_bound_set(buf, bounds, prg);
+      op* dop = nullptr;
+      for (auto op : prg.find_loop(k)->descendant_ops()) {
+        if (!op->is_loop) {
+          dop = op;
+          break;
+        }
+      }
+      assert(dop != nullptr);
+
+      isl_map* prod = map_find(dop, m);
+      cout << "bounds: " << str(bound_set) << endl;
+      cout << "prod  : " << str(prod) << endl;
+      auto loop_bounds =
+        domain(its_range(prod, bound_set));
+      cout << "loop bounds: " << str(loop_bounds) << endl;
       assert(false);
     }
   }
@@ -12264,7 +12294,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& 
   //auto ms = prg.consumer_maps();
   //cout << "Consumer maps..." << endl;
   //for (auto m : ms) {
-    //cout << tab(1) << m.first->name << "-> " << str(m.second) << endl;
+  //cout << tab(1) << m.first->name << "-> " << str(m.second) << endl;
   //}
   assert(false);
 }
