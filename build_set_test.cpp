@@ -12416,6 +12416,24 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
   //assert(false);
 }
 
+void pointwise(const std::string& out, const std::string& func, const std::string& in, const int dim, prog& prg) {
+  string pr = prg.un("pw_math_" + in);
+  op* lp = prg.root;
+  vector<string> vars;
+  for (int d = 0; d < dim; d++) {
+    string var = prg.un(pr);
+    lp = lp->add_loop(var, 0, 1);
+    vars.push_back(var);
+  }
+  reverse(vars);
+  auto ld = lp->add_op(prg.un(pr));
+  string vlist = comma_list(vars);
+  ld->add_load(in, vlist);
+  ld->add_function(func);
+  ld->add_store(out, vlist);
+
+}
+
 void load_input(const std::string& in, const std::string& out, const int dim, prog& prg) {
   string pr = prg.un("oc_load_" + in);
   op* lp = prg.root;
@@ -12488,7 +12506,9 @@ void llf_test() {
   prg.add_input("color_in_oc");
   prg.add_output("color_out");
 
-  load_input("color_in_oc", "color_in", 3, prg);
+  load_input("color_in_oc", "color_in_int", 3, prg);
+  pointwise("color_in", "llf_int_to_float", "color_in_int", 3, prg);
+
   llf_to_grayscale("gray", "color_in", prg);
   // Make intensity pyramids
   vector<vector<string> > intensity_level_pyramids;
@@ -12513,7 +12533,8 @@ void llf_test() {
 
   string scales = reconstruct_gaussian(output_levels, prg);
 
-  llf_to_color("color_out", "color_in", scales, "gray", prg);
+  llf_to_color("color_out_float", "color_in", scales, "gray", prg);
+  pointwise("color_out", "llf_float_to_int", "color_out_float", 3, prg);
 
   prg.pretty_print();
   prg.sanity_check();

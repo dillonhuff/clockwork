@@ -2,6 +2,16 @@
 
 #include "clockwork_standard_compute_units.h"
 
+hw_uint<32> llf_int_to_float(const hw_uint<32>& pix) {
+  return to_bits(int_to_float(pix));
+}
+
+hw_uint<32> llf_float_to_int(const hw_uint<32>& pix) {
+  float fval = to_float(pix);
+  int fi = fval;
+  return fi;
+}
+
 hw_uint<32> avg_9_float(const hw_uint<32>& pix) {
   float r = to_float(pix);
   float res = r / 9.0f;
@@ -23,8 +33,11 @@ hw_uint<32> llf_to_gray_float(const hw_uint<96>& pix) {
 hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
     const hw_uint<32>& original,
     const hw_uint<32>& gray) {
-  float eps = 0.01f;
-  return to_bits(to_float(scales) * ((to_float(original) + eps) / (to_float(gray) + eps)));
+  float original_f = to_float(original);
+  cout << "float = " << original_f << endl;
+  //float eps = 0.01f;
+  //return to_bits(to_float(scales) * ((to_float(original) + eps) / (to_float(gray) + eps)));
+  return original;
 }
 
 
