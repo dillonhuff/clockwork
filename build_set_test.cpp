@@ -12270,20 +12270,42 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
   isl_set* bound_set = make_bound_set(buf, int_bounds, prg);
 
   std::set<isl_set*> bounds{bound_set};
+  std::set<string> bounded;
 
   auto m = prg.producer_maps_no_domain();
 
   while (bounds.size() > 0) {
-    auto bound_set = pick(bounds);
-    bounds.erase(bound_set);
-    string buf = name(bound_set);
+    isl_set* bound_set = nullptr;
 
     string next_kernel = "";
     for (auto k : kernels) {
-      if (elem(buf, get_produced_buffers(k, prg))) {
-        next_kernel = k;
+      for (auto prod : get_produced_buffers(k, prg)) {
+        for (auto s : bounds) {
+          if (name(s) == prod) {
+            next_kernel = k;
+            bound_set = s;
+            break;
+          }
+        }
       }
     }
+    assert(bound_set != nullptr);
+
+    cout << "Inferring bounds for buffer: " << name(bound_set) << ", produced by: " << next_kernel << endl;
+    //auto bound_set = pick(bounds);
+    
+    bounds.erase(bound_set);
+    string buf = name(bound_set);
+    if (prg.is_input(buf)) {
+      continue;
+    }
+
+    //string next_kernel = "";
+    //for (auto k : kernels) {
+      //if (elem(buf, get_produced_buffers(k, prg))) {
+        //next_kernel = k;
+      //}
+    //}
 
     assert(next_kernel != "");
 
@@ -12297,27 +12319,31 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     }
     assert(dop != nullptr);
 
+    std::vector<string> wvs = write_vars(buf, dop, prg);
+
     isl_map* prod = map_find(dop, m);
     cout << "bounds: " << str(bound_set) << endl;
     cout << "prod  : " << str(prod) << endl;
     auto loop_bounds =
       domain(its_range(prod, bound_set));
     cout << "loop bounds: " << str(loop_bounds) << endl;
-    // i = 1 at start because root is always 1
-    for (int i = 1; i < num_dims(loop_bounds); i++) {
-      auto pr = project_all_but(loop_bounds, i);
+    for (int i = 0; i < num_dims(loop_bounds); i++) {
       string val = dim_name(loop_bounds, i);
-      int lb = to_int(lexminval(pr));
-      int ub = to_int(lexmaxval(pr)) + 1;
-      prg.set_bounds(val, lb, ub);
+      if (elem(val, wvs)) {
+        auto pr = project_all_but(loop_bounds, i);
+        int lb = to_int(lexminval(pr));
+        int ub = to_int(lexmaxval(pr)) + 1;
+        prg.extend_bounds(val, lb, ub);
+      }
     }
 
     auto cm = prg.consumer_maps();
-    //vector<isl_set*> bound_sets;
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
       auto ms = coalesce(range(map_find(op, cm)));
       for (auto s : get_sets(ms)) {
-        bounds.insert(s);
+        if (!elem(name(s), bounded) && name(s) != buf) {
+          bounds.insert(s);
+        }
       }
     }
 
@@ -12325,6 +12351,8 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     for (auto s : bounds){
       cout << tab(1) << str(s) << endl;
     }
+
+    bounded.insert(name(bound_set));
 
   }
 

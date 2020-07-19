@@ -766,6 +766,7 @@ struct prog {
   op* parent(op* p);
 
   void set_bounds(const std::string& loop, const int start, const int end_exclusive);
+  void extend_bounds(const std::string& loop, const int start, const int end_exclusive);
 
   std::string un(const std::string& prefix) {
     return unique_name(prefix);
@@ -1500,3 +1501,4 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 void unroll(prog& prg, const std::string& var);
 
 vector<int> indexes(op* p);
+vector<string> write_vars(const std::string& target_buf, op* reader, prog& prg);

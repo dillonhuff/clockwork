@@ -3629,6 +3629,12 @@ vector<int> indexes(op* p) {
   }
 
 
+void prog::extend_bounds(const std::string& loop, const int start, const int end_exclusive) {
+  auto lp = find_loop(loop);
+  lp->start = min(start, lp->start);
+  lp->end_exclusive = max(end_exclusive, lp->end_exclusive);
+}
+
 void prog::set_bounds(const std::string& loop, const int start, const int end_exclusive) {
   auto lp = find_loop(loop);
   lp->start = start;
