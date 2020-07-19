@@ -3,8 +3,15 @@
 #include "clockwork_standard_compute_units.h"
 
 hw_uint<32> llf_to_gray_float(const hw_uint<96>& pix) {
-  assert(false);
-  return 0;
+  hw_uint<32> v0 = pix.extract<0, 31>();
+  hw_uint<32> v1 = pix.extract<32, 63>();
+  hw_uint<32> v2 = pix.extract<64, 95>();
+  float r = to_float(v0);
+  float g = to_float(v1);
+  float b = to_float(v2);
+
+  float res = 0.299f * r + 0.587f * g + 0.114f * b;
+  return to_bits(res);
 }
 
 hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,

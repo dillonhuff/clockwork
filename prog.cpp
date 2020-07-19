@@ -399,42 +399,47 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
   int pixel_width = in_buf.port_widths;
   int lanes = in_buf.port_bundles.at(in_rep.second).size();
   out << tab(1) << "// In lanes = " << lanes << endl;
-  if (prg.buffer_bounds[in_rep.first].size() != 2) {
-    out << tab(1) << "// Error: BMP Harness generation is not supported for programs with " << prg.buffer_bounds.size() << " dimensional buffers" << endl;
-    out << "}" << endl;
-    return;
+  if (prg.buffer_bounds[in_rep.first].size() == 2) {
+
+    //if (prg.buffer_bounds[in_rep.first].size() != 2) {
+    //out << tab(1) << "// Error: BMP Harness generation is not supported for programs with " << prg.buffer_bounds.size() << " dimensional buffers" << endl;
+    //out << "}" << endl;
+    //return;
+    //}
+    int in_cols = prg.buffer_bounds[in_rep.first].at(0);
+    int in_rows = prg.buffer_bounds[in_rep.first].at(1);
+
+    assert(in_cols % lanes == 0);
+
+    out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
+    out << tab(2) << "for (int cl = 0; cl < " << in_cols << " / " << lanes << "; cl++) {" << endl;
+    out << tab(3) << in_bundle_tp << " packed;" << endl;
+
+    for (int l = 0; l < lanes; l++) {
+      out << tab(3) << "{" << endl;
+
+      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+      out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
+      out << tab(4) << "rgb_t pix;" << endl;
+      out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
+      out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
+      out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
+        "packed, val);" << endl;
+      out << tab(3) << "} else {" << endl;
+      out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
+        "packed, 0);" << endl;
+      out << tab(3) << "}" << endl;
+      out << tab(3) << "}" << endl;
+
+    }
+
+    out << tab(4) << in_rep.second << "_channel.write(packed);" << endl;
+    out << tab(2) << "}" << endl;
+    out << tab(1) << "}" << endl;
+
+  } else {
+    out << tab(1) << "// RGB!!!" << endl;
   }
-  int in_cols = prg.buffer_bounds[in_rep.first].at(0);
-  int in_rows = prg.buffer_bounds[in_rep.first].at(1);
-
-  assert(in_cols % lanes == 0);
-
-  out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
-  out << tab(2) << "for (int cl = 0; cl < " << in_cols << " / " << lanes << "; cl++) {" << endl;
-  out << tab(3) << in_bundle_tp << " packed;" << endl;
-
-  for (int l = 0; l < lanes; l++) {
-    out << tab(3) << "{" << endl;
-
-    out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
-    out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
-    out << tab(4) << "rgb_t pix;" << endl;
-    out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
-    out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
-    out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
-      "packed, val);" << endl;
-    out << tab(3) << "} else {" << endl;
-    out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
-      "packed, 0);" << endl;
-    out << tab(3) << "}" << endl;
-    out << tab(3) << "}" << endl;
-
-  }
-
-  out << tab(4) << in_rep.second << "_channel.write(packed);" << endl;
-  out << tab(2) << "}" << endl;
-  out << tab(1) << "}" << endl;
-
   out << tab(1) << prg.name << sep_list(args, "(", ")", ", ") << ";" << endl;
 
   {
