@@ -66,6 +66,13 @@ hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
 }
 
 
+static inline
+hw_uint<32> scale_by(const float level_f, const float intensity_0_f, const float intensity_1_f) {
+  float res = (1.0 - level_f) * intensity_0_f + level_f * intensity_1_f;
+  return to_bits(res);
+}
+
+static inline
 hw_uint<32> llf_interpolate_float(
     const hw_uint<32>& intensity_0,
     const hw_uint<32>& intensity_1,
@@ -77,13 +84,44 @@ hw_uint<32> llf_interpolate_float(
     const hw_uint<32>& intensity_7,
     const hw_uint<32>& gray) {
 
+  float intensity_0_f = to_float(intensity_0);
+  float intensity_1_f = to_float(intensity_1);
+  float intensity_2_f = to_float(intensity_2);
+  float intensity_3_f = to_float(intensity_3);
+  float intensity_4_f = to_float(intensity_4);
+  float intensity_5_f = to_float(intensity_5);
+  float intensity_6_f = to_float(intensity_6);
+  float intensity_7_f = to_float(intensity_7);
+
   const int num_levels = 8;
 
   float gray_f = to_float(gray);
-  float level = gray_f * ((float) num_levels);
+  float level = gray_f * ((float) num_levels - 1);
   int level_i = clamp_val((int) level, 0, num_levels - 2);
   cout << "level_i = " << level_i << endl;
   float level_f = level - (float) level_i;
   cout << "level_f = " << level_f << endl << endl;
-  return gray;
+  if (level_i == 0) {
+    return scale_by(level_f, intensity_0_f, intensity_1_f);
+  }
+  if (level_i == 1) {
+    return scale_by(level_f, intensity_1_f, intensity_2_f);
+  }
+  if (level_i == 2) {
+    return scale_by(level_f, intensity_2_f, intensity_3_f);
+  }
+  if (level_i == 3) {
+    return scale_by(level_f, intensity_3_f, intensity_4_f);
+  }
+  if (level_i == 4) {
+    return scale_by(level_f, intensity_4_f, intensity_5_f);
+  }
+  if (level_i == 5) {
+    return scale_by(level_f, intensity_5_f, intensity_6_f);
+  }
+  if (level_i == 6) {
+    return scale_by(level_f, intensity_6_f, intensity_7_f);
+  }
+  assert(false);
+  return 0;
 }
