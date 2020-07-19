@@ -2,14 +2,33 @@
 
 #include "clockwork_standard_compute_units.h"
 
+hw_uint<32> llf_set_zero_float_32() {
+  float zero_f = 0.0f;
+  return to_bits(zero_f);
+}
+
 hw_uint<32> llf_int_to_float(const hw_uint<32>& pix) {
-  return to_bits(int_to_float(pix));
+  return to_bits(int_to_float(pix) / 255.0f);
 }
 
 hw_uint<32> llf_float_to_int(const hw_uint<32>& pix) {
-  float fval = to_float(pix);
+  float fval = 255.0f * to_float(pix);
   int fi = fval;
   return fi;
+}
+
+hw_uint<32> llf_diff_float_32(const hw_uint<32>& a, const hw_uint<32>& b) {
+  float fa = to_float(a);
+  float fb = to_float(b);
+  float res = fa - fb;
+  return to_bits(res);
+}
+
+hw_uint<32> llf_add_float_32(const hw_uint<32>& a, const hw_uint<32>& b) {
+  float fa = to_float(a);
+  float fb = to_float(b);
+  float res = fa + fb;
+  return to_bits(res);
 }
 
 hw_uint<32> avg_9_float(const hw_uint<32>& pix) {
@@ -34,10 +53,16 @@ hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
     const hw_uint<32>& original,
     const hw_uint<32>& gray) {
   float original_f = to_float(original);
-  cout << "float = " << original_f << endl;
-  //float eps = 0.01f;
+  float gray_f = to_float(gray);
+  float scales_f = to_float(scales);
+  //cout << "gray = " << gray_f << endl;
+  //cout << "scales = " << scales_f << endl;
+  float eps = 0.01f;
+  float res = (scales_f * (original_f + eps)) / (gray_f + eps);
+  return to_bits(res);
+
   //return to_bits(to_float(scales) * ((to_float(original) + eps) / (to_float(gray) + eps)));
-  return original;
+  //return original;
 }
 
 
@@ -51,5 +76,14 @@ hw_uint<32> llf_interpolate_float(
     const hw_uint<32>& intensity_6,
     const hw_uint<32>& intensity_7,
     const hw_uint<32>& gray) {
+
+  const int num_levels = 8;
+
+  float gray_f = to_float(gray);
+  float level = gray_f * ((float) num_levels);
+  int level_i = clamp_val((int) level, 0, num_levels - 2);
+  cout << "level_i = " << level_i << endl;
+  float level_f = level - (float) level_i;
+  cout << "level_f = " << level_f << endl << endl;
   return gray;
 }

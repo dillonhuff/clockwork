@@ -12134,13 +12134,16 @@ vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_lev
 
     auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
     auto init = ol->add_op(prg.un("init"));
-    init->add_function("set_zero_32");
+    init->add_function("llf_set_zero_float_32");
     init->add_store(current_level, x, y);
     auto il = ol->add_nest(yi, -1, 1, xi, -1, 1);
+
     auto update = il->add_op(prg.un("update"));
+    update->add_function("llf_add_float_32");
     update->add_load(current_level, x, y);
     update->add_load(last_level, "2*" + x + " + " + xi, "2*" + y + " + " + yi);
     update->add_store(current_level, x, y);
+
     auto avg = ol->add_op(prg.un("avg"));
     avg->add_function("avg_9_float");
     avg->add_load(current_level, x, y);
@@ -12190,7 +12193,7 @@ vector<string> laplacian_pyramid(const std::string& in, const int num_pyramid_le
 
     auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
     auto init = ol->add_op(prg.un("diff"));
-    init->add_function("diff");
+    init->add_function("llf_diff_float_32");
     init->add_load(current_gs, x, y);
     init->add_load(us_pyramid, x, y);
     init->add_store(current_level, x, y);
@@ -12240,7 +12243,7 @@ string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg)
     string next_level = upsample(lgs.at(i + 1), prg);
 
     auto ns = prg.add_nest(y, 0, 1, x, 0, 1)->add_op(prg.un("rc"));
-    ns->add_function("add");
+    ns->add_function("llf_add_float_32");
     ns->add_load(current_gs, x, y);
     ns->add_load(next_level, x, y);
     ns->add_store(current_level, x, y);
