@@ -12287,7 +12287,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& 
       auto loop_bounds =
         domain(its_range(prod, bound_set));
       cout << "loop bounds: " << str(loop_bounds) << endl;
-      assert(false);
+      //assert(false);
     }
   }
 
@@ -12296,7 +12296,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& 
   //for (auto m : ms) {
   //cout << tab(1) << m.first->name << "-> " << str(m.second) << endl;
   //}
-  assert(false);
+  //assert(false);
 }
 
 void llf_test() {
