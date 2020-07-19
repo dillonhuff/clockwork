@@ -12287,10 +12287,21 @@ void infer_bounds(const std::string& buf, const std::vector<int>& bounds, prog& 
       auto loop_bounds =
         domain(its_range(prod, bound_set));
       cout << "loop bounds: " << str(loop_bounds) << endl;
+      // i = 1 at start because root is always 1
+      for (int i = 1; i < num_dims(loop_bounds); i++) {
+        auto pr = project_all_but(loop_bounds, i);
+        string val = dim_name(loop_bounds, i);
+        int lb = to_int(lexminval(pr));
+        int ub = to_int(lexmaxval(pr)) + 1;
+        prg.set_bounds(val, lb, ub);
+      }
+
       //assert(false);
     }
   }
 
+  prg.pretty_print();
+  assert(false);
   //auto ms = prg.consumer_maps();
   //cout << "Consumer maps..." << endl;
   //for (auto m : ms) {

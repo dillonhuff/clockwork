@@ -3627,3 +3627,10 @@ vector<int> indexes(op* p) {
     }
     return m;
   }
+
+
+void prog::set_bounds(const std::string& loop, const int start, const int end_exclusive) {
+  auto lp = find_loop(loop);
+  lp->start = start;
+  lp->end_exclusive = end_exclusive;
+}

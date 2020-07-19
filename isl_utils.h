@@ -33,6 +33,7 @@ using std::pair;
 using std::map;
 using std::string;
 
+std::string dim_name(isl_set* const a, const int d);
 std::string dim_name(isl_aff* const a, const int d);
 
 std::string name(isl_space* const s);

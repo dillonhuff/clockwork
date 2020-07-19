@@ -765,6 +765,8 @@ struct prog {
 
   op* parent(op* p);
 
+  void set_bounds(const std::string& loop, const int start, const int end_exclusive);
+
   std::string un(const std::string& prefix) {
     return unique_name(prefix);
   }
