@@ -12260,7 +12260,7 @@ isl_set* make_bound_set(const std::string& buf, const std::vector<int>& bounds, 
 void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg) {
   prg.buffer_bounds[buf] = int_bounds;
 
-  auto kernels = topologically_sort_kernels(prg);
+  std::vector<string> kernels = topologically_sort_kernels(prg);
   reverse(kernels);
   cout << "Reverse order kernels..." << endl;
   for (auto k : kernels) {
@@ -12290,20 +12290,28 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     }
 
     string next_kernel = "";
+    bool found = false;
     for (auto k : kernels) {
       for (auto prod : get_produced_buffers(k, prg)) {
         for (auto s : bounds) {
           if (name(s) == prod) {
             next_kernel = k;
             bound_set = s;
+            found = true;
             break;
           }
         }
+        if (found) {
+          break;
+        }
+      }
+      if (found) {
+        break;
       }
     }
     assert(bound_set != nullptr);
 
-    cout << "Inferring bounds for buffer: " << name(bound_set) << ", produced by: " << next_kernel << endl;
+    cout << "==== Inferring bounds for buffer: " << name(bound_set) << ", produced by: " << next_kernel << endl;
     //auto bound_set = pick(bounds);
     
     bounds.erase(bound_set);
@@ -12311,13 +12319,6 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     if (prg.is_input(buf)) {
       continue;
     }
-
-    //string next_kernel = "";
-    //for (auto k : kernels) {
-      //if (elem(buf, get_produced_buffers(k, prg))) {
-        //next_kernel = k;
-      //}
-    //}
 
     assert(next_kernel != "");
 
@@ -12334,11 +12335,11 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     std::vector<string> wvs = write_vars(buf, dop, prg);
 
     isl_map* prod = map_find(dop, m);
-    cout << "bounds: " << str(bound_set) << endl;
-    cout << "prod  : " << str(prod) << endl;
+    cout << tab(1) << "bounds: " << str(bound_set) << endl;
+    cout << tab(1) << "prod  : " << str(prod) << endl;
     auto loop_bounds =
       domain(its_range(prod, bound_set));
-    cout << "loop bounds: " << str(loop_bounds) << endl;
+    cout << tab(1) << "loop bounds: " << str(loop_bounds) << endl;
     for (int i = 0; i < num_dims(loop_bounds); i++) {
       string val = dim_name(loop_bounds, i);
       if (elem(val, wvs)) {
@@ -12351,7 +12352,11 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
 
     auto cm = prg.consumer_maps();
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
-      auto ms = coalesce(range(map_find(op, cm)));
+      auto data_read = map_find(op, cm);
+      cout << tab(1) << "op: " << op->name << " reads: " << str(data_read) << endl;
+      auto ms = coalesce(range(data_read));
+      cout << tab(1) << "dom  : " << str(domain(data_read)) << endl;
+      cout << tab(1) << "range: " << str(ms) << endl;
       for (auto s : get_sets(ms)) {
         if (!elem(name(s), bounded) && name(s) != buf) {
           bounds.insert(s);
