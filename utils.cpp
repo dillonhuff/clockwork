@@ -97,7 +97,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv " + out_name + "*.ini " + synth_dir).c_str());
   system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
-  system(("mv regression_tb_" + out_name + ".cpp " + synth_dir).c_str());
+  //system(("mv regression_tb_" + out_name + ".cpp " + synth_dir).c_str());
 
   make_exe("run_tb_" + out_name + ".sh");
   system(("mv run_tb_" + out_name + ".sh " + synth_dir).c_str());
@@ -111,7 +111,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   make_exe("aws_compare_regressions.sh");
   system(("mv aws_compare_regressions.sh " + app_dir).c_str());
 
-  system(("mv " + out_name + ".soda " + soda_dir).c_str());
+  //system(("mv " + out_name + ".soda " + soda_dir).c_str());
 
   system(("mv soda_" + out_name + "*_host.cpp " + soda_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
@@ -121,6 +121,8 @@ void move_to_benchmarks_folder(const std::string& app_name) {
 
   make_exe("run_tb.sh");
   system(("mv run_tb.sh " + soda_dir).c_str());
+
+  cout << "INFO: Moved code and collateral for " << app_name << " to " << app_dir << endl;
 }
 
 bool is_int( const std::string& str ) { // check with regex (does not accept leading zeroes before first digit)
