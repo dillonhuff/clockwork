@@ -3711,3 +3711,168 @@ void prog::set_bounds(const std::string& loop, const int start, const int end_ex
   lp->start = start;
   lp->end_exclusive = end_exclusive;
 }
+
+isl_set* make_bound_set(const std::string& buf, const std::vector<int>& bounds, prog& prg) {
+  vector<string> vars;
+  vector<string> bnds;
+  int d = 0;
+  for (int b : bounds) {
+    vars.push_back("d" + str(d));
+    bnds.push_back("0 <= " + vars.at(d) + " < " + str(b));
+    d++;
+  }
+  string sstr = curlies(buf + bracket_list(vars) + " : " + sep_list(bnds, "", "", " and "));
+  return rdset(prg.ctx, sstr);
+}
+
+void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg) {
+  prg.buffer_bounds[buf] = int_bounds;
+
+  std::vector<string> kernels = topologically_sort_kernels(prg);
+  reverse(kernels);
+  cout << "Reverse order kernels..." << endl;
+  for (auto k : kernels) {
+    cout << tab(1) << k << endl;
+  }
+
+  isl_set* bound_set = make_bound_set(buf, int_bounds, prg);
+
+  std::set<isl_set*> bounds{bound_set};
+  std::set<string> bounded;
+
+  auto m = prg.producer_maps_no_domain();
+
+  while (bounds.size() > 0) {
+    isl_set* bound_set = nullptr;
+
+    bool all_inputs = true;
+    for (auto b : bounds) {
+      if (!prg.is_input(name(b))) {
+        all_inputs = false;
+        break;
+      }
+    }
+
+    if (all_inputs) {
+      break;
+    }
+
+    string next_kernel = "";
+    bool found = false;
+    for (auto k : kernels) {
+      for (auto prod : get_produced_buffers(k, prg)) {
+        for (auto s : bounds) {
+          if (name(s) == prod) {
+            next_kernel = k;
+            bound_set = s;
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          break;
+        }
+      }
+      if (found) {
+        break;
+      }
+    }
+    assert(bound_set != nullptr);
+
+    cout << "==== Inferring bounds for buffer: " << name(bound_set) << ", produced by: " << next_kernel << endl;
+    //auto bound_set = pick(bounds);
+    
+    bounds.erase(bound_set);
+    string buf = name(bound_set);
+    if (prg.is_input(buf)) {
+      continue;
+    }
+
+    assert(next_kernel != "");
+
+    cout << "Kernel: " << next_kernel << " produces " << buf << endl;
+    op* dop = nullptr;
+    for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
+      if (!op->is_loop) {
+        dop = op;
+        break;
+      }
+    }
+    assert(dop != nullptr);
+
+    std::vector<string> wvs = write_vars(buf, dop, prg);
+
+    isl_map* prod = map_find(dop, m);
+    cout << tab(1) << "bounds: " << str(bound_set) << endl;
+    cout << tab(1) << "prod  : " << str(prod) << endl;
+    auto loop_bounds =
+      domain(its_range(prod, bound_set));
+    cout << tab(1) << "loop bounds: " << str(loop_bounds) << endl;
+    for (int i = 0; i < num_dims(loop_bounds); i++) {
+      string val = dim_name(loop_bounds, i);
+      if (elem(val, wvs)) {
+        auto pr = project_all_but(loop_bounds, i);
+        int lb = to_int(lexminval(pr));
+        int ub = to_int(lexmaxval(pr)) + 1;
+        prg.extend_bounds(val, lb, ub);
+      }
+    }
+
+    auto cm = prg.consumer_maps();
+    for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
+      auto data_read = map_find(op, cm);
+      cout << tab(1) << "op: " << op->name << " reads: " << str(data_read) << endl;
+      auto ms = coalesce(range(data_read));
+      cout << tab(1) << "dom  : " << str(domain(data_read)) << endl;
+      cout << tab(1) << "range: " << str(ms) << endl;
+      for (auto s : get_sets(ms)) {
+        bool obvious_duplicate = false;
+        for (auto other : bounds) {
+          if (isl_set_plain_is_equal(s, other)) {
+            obvious_duplicate = true;
+            break;
+          }
+        }
+        if (!obvious_duplicate && !elem(name(s), bounded) && name(s) != buf) {
+          bounds.insert(s);
+        }
+      }
+    }
+
+    cout << "Next bound sets..." << endl;
+    for (auto s : bounds){
+      cout << tab(1) << str(s) << endl;
+    }
+
+    vector<int> int_bounds_for_s;
+    for (int d = 0; d < num_dims(bound_set); d++) {
+      auto pr = project_all_but(bound_set, d);
+      int lb = to_int(lexminval(pr));
+      int ub = to_int(lexmaxval(pr)) + 1;
+      int_bounds_for_s.push_back(ub - lb);
+    }
+    prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
+    bounded.insert(name(bound_set));
+
+  }
+
+  for (auto bound_set : bounds) {
+    vector<int> int_bounds_for_s;
+    for (int d = 0; d < num_dims(bound_set); d++) {
+      auto pr = project_all_but(bound_set, d);
+      int lb = to_int(lexminval(pr));
+      int ub = to_int(lexmaxval(pr)) + 1;
+      int_bounds_for_s.push_back(ub - lb);
+    }
+    prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
+  }
+
+  //prg.pretty_print();
+  //assert(false);
+  //auto ms = prg.consumer_maps();
+  //cout << "Consumer maps..." << endl;
+  //for (auto m : ms) {
+  //cout << tab(1) << m.first->name << "-> " << str(m.second) << endl;
+  //}
+  //assert(false);
+}

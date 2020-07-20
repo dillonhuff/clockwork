@@ -1502,3 +1502,5 @@ void unroll(prog& prg, const std::string& var);
 
 vector<int> indexes(op* p);
 vector<string> write_vars(const std::string& target_buf, op* reader, prog& prg);
+
+void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg);
