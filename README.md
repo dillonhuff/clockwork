@@ -58,7 +58,7 @@ This will run the accelerator in simulation on a `bmp` image and write the outpu
 
 # Creating your own inputs
 
-A simple example of how to generate and compile clockwork programs can be found in [./simple\_example\_progs.cpp]. It can be run with the command:
+A simple example of how to generate and compile clockwork programs can be found in [./simple\_example\_progs.cpp](./simple_example_progs.cpp). It can be run with the command:
 
     ./rebuild_and_run.sh simple-example-progs
 
