@@ -56,6 +56,12 @@ This will write HLS code for the accelerator and several different test drivers 
 
 This will run the accelerator in simulation on a `bmp` image and write the output to `blur_example_opt_bmp_out.bmp`.
 
+# Creating your own inputs
+
+A simple example of how to generate and compile clockwork programs can be found in [./simple\_example\_progs.cpp]. It can be run with the command:
+
+    ./rebuild_and_run.sh simple-example-progs
+
 # Running all tests
 
 * Default build and execute script which will execute all tests:

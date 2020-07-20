@@ -12409,9 +12409,7 @@ void llf_test() {
 }
 
 void application_tests() {
-  generate_simple_example_progs();
-
-  //blur_example();
+  blur_example();
   llf_test();
   lchannel_test();
   gf_test();
@@ -12674,6 +12672,11 @@ int main(int argc, char** argv) {
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+
+    if (cmd == "simple-example-progs") {
+      generate_simple_example_progs();
+      return 0;
+    }
 
     if (cmd == "multi-channel-example") {
       multi_channel_example();

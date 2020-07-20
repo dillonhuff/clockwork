@@ -52,5 +52,4 @@ void upsample_2d() {
 
 void generate_simple_example_progs() {
   upsample_2d();
-  assert(false);
 }
