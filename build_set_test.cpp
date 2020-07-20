@@ -11808,6 +11808,21 @@ void lake_identity_stream_autovec_test() {
   buffer_vectorization("buf", 1, 4, buffers_opt);
   auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
   cout << codegen_c(new_opt_sched) << endl;
+
+  //produce the schedule config
+
+  for (auto m : get_maps(new_opt_sched)) {
+    cout << tab(1) << domain_name(m) << endl;
+    string op_name = domain_name(m);
+    ofstream out(string("./lake_controllers/identity_stream/") + op_name + ".csv");
+    cout << tab(1) << str(m) << endl;
+    auto dom = domain(m);
+    auto write_sched = m;
+      //isl_aff* write_addr =
+        //rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
+    emit_lake_controller_config(out, dom, get_aff(write_sched));
+      //, write_addr);
+  }
   assert(false);
 
   auto valid = lake_agg.validity_deps();
