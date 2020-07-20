@@ -6,6 +6,7 @@
 #include "prog_splitting_test.h"
 #include "codegen.h"
 #include "example_progs.h"
+#include "simple_example_progs.h"
 #include "prog.h"
 #include "ubuffer.h"
 
@@ -14,6 +15,8 @@
 #ifdef COREIR
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 #endif
+
+void blur_example();
 
 prog mini_conv_halide() {
   prog prg;
@@ -12570,6 +12573,9 @@ void llf_test() {
 }
 
 void application_tests() {
+  generate_simple_example_progs();
+
+  //blur_example();
   llf_test();
   lchannel_test();
   gf_test();
@@ -12823,6 +12829,8 @@ void blur_example() {
   make_exe("set_app.sh");
   system(("mv set_app.sh " + synth_dir).c_str());
 
+  int res = cmd("g++ -std=c++11 ./blur_example/blur_example_opt_sw_bmp_test_harness.cpp ./blur_example/blur_example_opt.cpp -I ./aws_collateral/ -I .");
+  assert(res == 0);
 }
 
 int main(int argc, char** argv) {
