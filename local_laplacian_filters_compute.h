@@ -19,7 +19,7 @@ hw_uint<32> llf_float_to_int(const hw_uint<32>& pix) {
 }
 
 float llf_remap(const float x) {
-  float alpha = 20.0;
+  float alpha = 1.0;
   //cout << "x = " << x << endl;
   float fx = x / 256.0f;
   //cout << "fx = " << fx << endl;
@@ -33,11 +33,12 @@ float llf_remap(const float x) {
 }
 
 hw_uint<32> llf_level_entry(const hw_uint<32>& in, const int k) {
+  const float beta = 2.0f;
   const int levels = 8;
 
   float gray = to_float(in);
 
-  //float level = k*(1.0f / (((float) levels) - 1));
+  float level = k*(1.0f / (((float) levels) - 1));
 
   float idx = gray * (float) (levels - 1) * 256.0f;
   int idx_i = clamp_val((int) idx, 0, (levels - 1) * 256);
@@ -45,11 +46,11 @@ hw_uint<32> llf_level_entry(const hw_uint<32>& in, const int k) {
   //cout << "remap addr = " << remap_addr << endl;
   float llf_coeff = llf_remap(remap_addr);
   //cout << "llf coeff = " << llf_coeff << endl;
-  float res = gray + llf_coeff;
+  float res = beta * (gray - level) + level + llf_coeff;
   //float res = gray + llf_remap(idx_i - 256 * k);
   //float res = gray + llf_remap(idx_i - 128 * k);
   //return to_bits(res);
-  return to_bits(gray);
+  return to_bits(res);
 }
 
 hw_uint<32> llf_level_entry_0(const hw_uint<32>& in) {
@@ -122,8 +123,9 @@ hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
   float original_f = to_float(original);
   float gray_f = to_float(gray);
   float scales_f = to_float(scales);
-  cout << "gray = " << gray_f << endl;
+  cout << "gray   = " << gray_f << endl;
   cout << "scales = " << scales_f << endl;
+  //assert(gray == scales);
   cout << endl;
   float eps = 0.01f;
   float res = (scales_f * (original_f + eps)) / (gray_f + eps);
