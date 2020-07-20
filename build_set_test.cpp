@@ -12409,8 +12409,8 @@ void llf_test() {
 }
 
 void application_tests() {
-  blur_example();
   llf_test();
+  blur_example();
   lchannel_test();
   gf_test();
   us_unroll_test();
