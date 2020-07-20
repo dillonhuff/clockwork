@@ -409,7 +409,7 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
   int in_dim = prg.buffer_bounds[in_rep.first].size();
   cout << "in dim = " << in_dim << endl;
   bool in_rgb = in_dim == 3;
-  if (!(in_dim > 0 && in_dim <= 3)) {
+  if (!(in_dim > 1 && in_dim <= 3)) {
     out << tab(1) << "Unsupported input dimension: " << in_dim << endl;
     return;
   }
