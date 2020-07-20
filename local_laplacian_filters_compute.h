@@ -19,7 +19,7 @@ hw_uint<32> llf_float_to_int(const hw_uint<32>& pix) {
 }
 
 float llf_remap(const float x) {
-  float alpha = 1.0;
+  float alpha = 2.0;
   //cout << "x = " << x << endl;
   float fx = x / 256.0f;
   //cout << "fx = " << fx << endl;
@@ -33,7 +33,7 @@ float llf_remap(const float x) {
 }
 
 hw_uint<32> llf_level_entry(const hw_uint<32>& in, const int k) {
-  const float beta = 2.0f;
+  const float beta = 1.0f;
   const int levels = 8;
 
   float gray = to_float(in);
