@@ -2,6 +2,7 @@
 
 #include "clockwork_standard_compute_units.h"
 
+
 hw_uint<32> llf_set_zero_float_32() {
   float zero_f = 0.0f;
   return to_bits(zero_f);
@@ -15,6 +16,72 @@ hw_uint<32> llf_float_to_int(const hw_uint<32>& pix) {
   float fval = 255.0f * to_float(pix);
   int fi = fval;
   return fi;
+}
+
+float llf_remap(const float x) {
+  float alpha = 2.0;
+  cout << "x = " << x << endl;
+  float fx = x / 256.0f;
+  cout << "fx = " << fx << endl;
+  float exp_pow = -fx * fx / 2.0f;
+  cout << "exp pow = " << exp_pow << endl;
+  float exp_val = exp(exp_pow);
+  cout << "exp = " << exp_val << endl;
+  float res = alpha * fx * exp_val;
+  
+  return res;
+}
+
+hw_uint<32> llf_level_entry(const hw_uint<32>& in, const int k) {
+  const int levels = 8;
+
+  float gray = to_float(in);
+
+  //float level = k*(1.0f / (((float) levels) - 1));
+
+  float idx = gray * (float) (levels - 1) * 256.0f;
+  int idx_i = clamp_val((int) idx, 0, (levels - 1) * 256);
+  float remap_addr = idx_i - 256*k;
+  cout << "remap addr = " << remap_addr << endl;
+  float llf_coeff = llf_remap(remap_addr);
+  cout << "llf coeff = " << llf_coeff << endl;
+  float res = gray + llf_coeff;
+  //float res = gray + llf_remap(idx_i - 256 * k);
+  //float res = gray + llf_remap(idx_i - 128 * k);
+  //return to_bits(res);
+  return to_bits(gray);
+}
+
+hw_uint<32> llf_level_entry_0(const hw_uint<32>& in) {
+  return llf_level_entry(in, 0);
+}
+
+hw_uint<32> llf_level_entry_1(const hw_uint<32>& in) {
+  return llf_level_entry(in, 1);
+}
+
+hw_uint<32> llf_level_entry_2(const hw_uint<32>& in) {
+  return llf_level_entry(in, 2);
+}
+
+hw_uint<32> llf_level_entry_3(const hw_uint<32>& in) {
+  return llf_level_entry(in, 3);
+}
+
+hw_uint<32> llf_level_entry_4(const hw_uint<32>& in) {
+  return llf_level_entry(in, 4);
+}
+
+hw_uint<32> llf_level_entry_5(const hw_uint<32>& in) {
+  return llf_level_entry(in, 5);
+}
+
+hw_uint<32> llf_level_entry_6(const hw_uint<32>& in) {
+  return llf_level_entry(in, 6);
+}
+
+hw_uint<32> llf_level_entry_7(const hw_uint<32>& in) {
+  return llf_level_entry(in, 7);
 }
 
 hw_uint<32> llf_diff_float_32(const hw_uint<32>& a, const hw_uint<32>& b) {
@@ -98,9 +165,9 @@ hw_uint<32> llf_interpolate_float(
   float gray_f = to_float(gray);
   float level = gray_f * ((float) num_levels - 1);
   int level_i = clamp_val((int) level, 0, num_levels - 2);
-  cout << "level_i = " << level_i << endl;
+  //cout << "level_i = " << level_i << endl;
   float level_f = level - (float) level_i;
-  cout << "level_f = " << level_f << endl << endl;
+  //cout << "level_f = " << level_f << endl << endl;
   if (level_i == 0) {
     return scale_by(level_f, intensity_0_f, intensity_1_f);
   }

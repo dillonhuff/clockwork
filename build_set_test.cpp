@@ -12513,10 +12513,16 @@ void llf_test() {
   pointwise("color_in", "llf_int_to_float", "color_in_int", 3, prg);
 
   llf_to_grayscale("gray", "color_in", prg);
+
   // Make intensity pyramids
   vector<vector<string> > intensity_level_pyramids;
   for (int i = 0; i < num_intensity_levels; i++) {
-    intensity_level_pyramids.push_back(laplacian_pyramid("gray", num_pyramid_levels, prg));
+    string pw = prg.un("level_table");
+    pointwise(pw, "llf_level_entry_" + str(i), "gray", 2, prg);
+
+    intensity_level_pyramids.push_back(laplacian_pyramid(pw, num_pyramid_levels, prg));
+
+    //intensity_level_pyramids.push_back(laplacian_pyramid("gray", num_pyramid_levels, prg));
   }
 
   // Make input Gaussian pyramid
