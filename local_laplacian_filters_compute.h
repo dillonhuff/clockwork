@@ -19,14 +19,14 @@ hw_uint<32> llf_float_to_int(const hw_uint<32>& pix) {
 }
 
 float llf_remap(const float x) {
-  float alpha = 2.0;
-  cout << "x = " << x << endl;
+  float alpha = 20.0;
+  //cout << "x = " << x << endl;
   float fx = x / 256.0f;
-  cout << "fx = " << fx << endl;
+  //cout << "fx = " << fx << endl;
   float exp_pow = -fx * fx / 2.0f;
-  cout << "exp pow = " << exp_pow << endl;
+  //cout << "exp pow = " << exp_pow << endl;
   float exp_val = exp(exp_pow);
-  cout << "exp = " << exp_val << endl;
+  //cout << "exp = " << exp_val << endl;
   float res = alpha * fx * exp_val;
   
   return res;
@@ -42,9 +42,9 @@ hw_uint<32> llf_level_entry(const hw_uint<32>& in, const int k) {
   float idx = gray * (float) (levels - 1) * 256.0f;
   int idx_i = clamp_val((int) idx, 0, (levels - 1) * 256);
   float remap_addr = idx_i - 256*k;
-  cout << "remap addr = " << remap_addr << endl;
+  //cout << "remap addr = " << remap_addr << endl;
   float llf_coeff = llf_remap(remap_addr);
-  cout << "llf coeff = " << llf_coeff << endl;
+  //cout << "llf coeff = " << llf_coeff << endl;
   float res = gray + llf_coeff;
   //float res = gray + llf_remap(idx_i - 256 * k);
   //float res = gray + llf_remap(idx_i - 128 * k);
@@ -122,8 +122,9 @@ hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
   float original_f = to_float(original);
   float gray_f = to_float(gray);
   float scales_f = to_float(scales);
-  //cout << "gray = " << gray_f << endl;
-  //cout << "scales = " << scales_f << endl;
+  cout << "gray = " << gray_f << endl;
+  cout << "scales = " << scales_f << endl;
+  cout << endl;
   float eps = 0.01f;
   float res = (scales_f * (original_f + eps)) / (gray_f + eps);
   return to_bits(res);
