@@ -11790,6 +11790,83 @@ isl_aff* get_aff_addr(op* op, const std::string& buf_name,
   return isl_multi_aff_get_aff(pwaff, 0);
 }
 
+
+void lake_identity_stream_autovec_test() {
+  prog lake_agg("lake_agg_test");
+  lake_agg.add_input("in");
+  lake_agg.add_output("out");
+
+  auto in2buf = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2buf");
+  in2buf->add_load("in", "a1, a0");
+  in2buf->add_store("buf", "a1, a0");
+
+  auto buf2out= lake_agg.add_nest("b1", 0, 8, "b0", 0, 8)->add_op("buf2out");
+  buf2out->add_load("buf", "b1, b0");
+  buf2out->add_store("out", "b1, b0");
+
+  auto buffers_opt = build_buffers(lake_agg);
+  buffer_vectorization("buf", 1, 4, buffers_opt);
+  auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
+  cout << codegen_c(new_opt_sched) << endl;
+  assert(false);
+
+  auto valid = lake_agg.validity_deps();
+
+  lake_agg.pretty_print();
+  cout << "validity: " << str(valid) << endl;
+  cout << "Schedule..." << endl;
+  auto hs = hardware_schedule(lake_agg);
+  hs = its(hs, lake_agg.whole_iteration_domain());
+
+  cmd("mkdir -p ./lake_controllers/identity_stream/");
+  for (auto op : lake_agg.all_ops()) {
+    ofstream out(string("./lake_controllers/identity_stream/") + op->name + ".csv");
+
+    bool found = false;
+    for (auto m : get_maps(hs)) {
+      cout << tab(1) << domain_name(m) << endl;
+      if (domain_name(m) == op->name) {
+        found = true;
+        cout << tab(1) << str(m) << endl;
+        auto dom = domain(m);
+        auto write_sched = m;
+        //isl_aff* write_addr =
+          //rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
+        emit_lake_controller_config(out, dom, get_aff(write_sched));
+        //, write_addr);
+        break;
+      }
+    }
+
+    assert(found);
+
+    for (auto locs_written : op->produce_locs) {
+      out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
+      isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
+      out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
+      for (int d = 0; d < num_in_dims(write_addr); d++) {
+        int ldim = num_in_dims(write_addr) - d - 1;
+        out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
+      }
+    }
+
+    for (auto locs_read : op->consume_locs_pair) {
+      out << "\"read\"," << "\"" << locs_read.first << "\"" << endl;
+      assert(locs_read.second.size() == 1);
+      auto lread = locs_read.second.at(0).second;
+      isl_aff* write_addr = get_aff_addr(op, locs_read.first, lread, lake_agg);
+      out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
+      for (int d = 0; d < num_in_dims(write_addr); d++) {
+        int ldim = num_in_dims(write_addr) - d - 1;
+        out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
+      }
+    }
+
+    out.close();
+  }
+  //assert(false);
+}
+
 void lake_agg_sram_tb_config_test() {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
@@ -12397,6 +12474,9 @@ void resnet_test() {
 void application_tests() {
   //coreir_tests();
 
+  //lake_agg_sram_tb_config_test();
+  lake_identity_stream_autovec_test();
+  assert(false);
   resnet_test();
 
   reuse_buffered_conv_test();
