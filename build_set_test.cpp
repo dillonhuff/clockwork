@@ -12405,7 +12405,7 @@ void llf_test() {
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
