@@ -176,6 +176,9 @@ std::string str(isl_multi_aff* const pma);
 std::string str(isl_union_pw_multi_aff* const pma);
 std::string str(isl_multi_union_pw_aff* const pma);
 
+isl_map* linear_address_map(isl_set* s);
+isl_map* linear_address_map_lake(isl_set* s);
+
 vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
 
 //TODO: not consider pw affine, should add a condition on the set

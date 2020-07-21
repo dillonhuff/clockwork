@@ -1247,6 +1247,17 @@ void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<
     //}
     //return ret;
 //}
+isl_union_map* global_access_map_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_acc_map = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_acc_map = unn(buf.producer_map(), global_acc_map);
+        global_acc_map = unn(buf.consumer_map(), global_acc_map);
+    }
+    cout << "Global access map: " << str(global_acc_map) << endl;
+    return global_acc_map;
+}
 
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
     isl_ctx* ctx = pick(buffers).second.ctx;
@@ -1338,6 +1349,7 @@ isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer
     isl_union_set* domain = ::domain(global_sched);
 
     cout << "Global Schedule: " << str(global_sched) << endl;
+    cout << codegen_c(global_sched) << endl;
     auto order_deps = get_rel_order(ctx, global_sched);
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     auto validity = unn(order_deps, raw_deps);
@@ -11807,13 +11819,33 @@ void lake_identity_stream_autovec_test() {
   auto buffers_opt = build_buffers(lake_agg);
   buffer_vectorization("buf", 1, 4, buffers_opt);
   auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
+  cout << "\t optimized schedule map: " << str(new_opt_sched) << endl;
   cout << codegen_c(new_opt_sched) << endl;
 
-  //produce the schedule config
+  auto glb_access_map = global_access_map_from_buffers(buffers_opt);
+  auto access_maps = get_maps(glb_access_map);
 
+  //produce the schedule config
   for (auto m : get_maps(new_opt_sched)) {
     cout << tab(1) << domain_name(m) << endl;
     string op_name = domain_name(m);
+    for (auto access_map: access_maps) {
+      if (domain_name(access_map) == op_name) {
+        cout << "\taddress info: " << str(access_map) << endl;
+        cout << "\tproject result: " << str(project_all_but(access_map, 1)) << endl;
+        cout << "acc map = " << str(access_map) << endl;
+        //TODO: not work for multiple port, should use bank.rddom
+        auto reduce_map = linear_address_map_lake(range(access_map));
+        cout << "reduce map = " << str(reduce_map) << endl;
+        auto addr_expr = dot(access_map, reduce_map);
+        cout << "composition = " << str(addr_expr) << endl;
+
+        //chances are that we have multi-aff expression
+        for(auto addr_expr_map: get_basic_maps(addr_expr)) {
+          cout << str(get_aff(to_map(addr_expr_map))) << endl;
+        }
+      }
+    }
     ofstream out(string("./lake_controllers/identity_stream/") + op_name + ".csv");
     cout << tab(1) << str(m) << endl;
     auto dom = domain(m);
