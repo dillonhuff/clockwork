@@ -5064,21 +5064,6 @@ struct App {
       }
     }
 
-    //cout << "Op consume / produce locs..." << endl;
-    //for (auto op : prg.all_ops()) {
-      //cout << "### " << op->name << endl;
-      //for (auto l : op->produce_locs) {
-        //cout << tab(1) << l.first << endl;
-      //}
-      ////cout << "Consume..." << endl;
-      //for (auto l : op->consume_locs) {
-        //cout << tab(1) << l.first << endl;
-      //}
-    //}
-
-    //prg.outs = {name};
-    //prg.outs = outputs;
-
     for (auto out : outputs) {
       prg.add_output(out);
     }
@@ -7491,13 +7476,17 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 2, 4, 8, 16, 32};
+  vector<int> throughputs{1, 8, 16, 32};
   for (auto throughput : throughputs) {
     //const int throughput = 4;
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
     int rows = 1080;
     int cols = 1920;
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
     lp.realize(name, cols, rows, throughput);
     move_to_benchmarks_folder(name + "_opt");
   }
@@ -12402,6 +12391,14 @@ void llf_test() {
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
 
+  cout << "Getting optimized schedule..." << endl;
+  auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  cout << "Optimized schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  assert(false);
+
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
 
@@ -12409,6 +12406,8 @@ void llf_test() {
 }
 
 void application_tests() {
+  exposure_fusion_iccad_apps("ef_tc");
+  assert(false);
   llf_test();
   blur_example();
   lchannel_test();

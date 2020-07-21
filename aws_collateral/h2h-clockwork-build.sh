@@ -13,7 +13,7 @@ export CC_=gcc-7
 export CXX=g++-7
 export CC=gcc-7
 
-./test/scripts/before_install_travis.sh
+source ./test/scripts/before_install_travis.sh
 
 export LLVM_CONFIG="/usr/bin/llvm-config-6.0"
 export LLVM_DIR="/usr/lib/llvm-6.0/cmake"

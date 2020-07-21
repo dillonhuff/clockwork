@@ -1355,30 +1355,7 @@ struct prog {
     return validity;
   }
 
-  isl_schedule* optimized_schedule() {
-    auto domain = whole_iteration_domain();
-
-    auto order_deps = relative_orders();
-    cout << "Order deps..." << endl;
-    cout << tab(1) << str(order_deps) << endl;
-    cout << "Getting validity deps..." << endl;
-    isl_union_map *raw_deps = validity_deps();
-    cout << "Got validity deps..." << endl;
-    auto validity =
-      unn(order_deps, raw_deps);
-    isl_union_map *proximity =
-      cpy(raw_deps);
-
-    cout << "Computing schedule for: " << str(domain) << endl << tab(1) << " subject to " << str(validity) << endl;
-    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
-
-    cout << endl;
-    cout << "Result: " << str(sched) << endl;
-
-    //assert(false);
-
-    return sched;
-  }
+  isl_schedule* optimized_schedule();
 
   isl_union_map* optimized_codegen() {
     auto domain = whole_iteration_domain();

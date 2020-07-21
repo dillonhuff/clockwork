@@ -428,8 +428,8 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
   out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
   out << tab(2) << "for (int cl = 0; cl < " << in_cols << " / " << lanes << "; cl++) {" << endl;
 
+  out << tab(3) << in_bundle_tp << " packed;" << endl;
   for (int l = 0; l < lanes; l++) {
-    out << tab(3) << in_bundle_tp << " packed;" << endl;
     out << tab(3) << "{" << endl;
 
     if (!in_rgb) {
@@ -444,7 +444,6 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
       out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
         "packed, 0);" << endl;
       out << tab(3) << "}" << endl;
-      out << tab(4) << in_rep.second << "_channel.write(packed);" << endl;
     } else {
       out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
       out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
@@ -463,7 +462,9 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
 
     out << tab(3) << "}" << endl;
   }
-
+  if (!in_rgb) {
+    out << tab(4) << in_rep.second << "_channel.write(packed);" << endl;
+  }
   out << tab(2) << "}" << endl;
   out << tab(1) << "}" << endl;
 
@@ -528,7 +529,7 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
     vector<string> unpacked_values =
       split_bv(3, out, "packed_val", pixel_width, lanes);
     for (int l = 0; l < lanes; l++) {
-      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+      //out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
       out << tab(3) << "{" << endl;
       out << tab(3) << out_bundle_tp << " packed;" << endl;
 
@@ -3876,3 +3877,31 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
   //}
   //assert(false);
 }
+
+isl_schedule* prog::optimized_schedule() {
+  auto domain = whole_iteration_domain();
+
+  auto order_deps = relative_orders();
+  cout << "Order deps..." << endl;
+  cout << tab(1) << str(order_deps) << endl;
+  cout << "Getting validity deps..." << endl;
+  isl_union_map *raw_deps = validity_deps();
+  cout << "Got validity deps..." << endl;
+  auto validity =
+    unn(order_deps, raw_deps);
+  isl_union_map *proximity =
+    cpy(raw_deps);
+
+  cout << "Computing schedule for: " << str(domain) << endl << tab(1) << " subject to " << str(validity) << endl;
+  cout << "Getting schedule..." << endl;
+
+  isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+
+  cout << endl;
+  cout << "Result: " << str(sched) << endl;
+
+  //assert(false);
+
+  return sched;
+}
+
