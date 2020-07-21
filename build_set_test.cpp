@@ -12391,13 +12391,13 @@ void llf_test() {
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
 
-  cout << "Getting optimized schedule..." << endl;
-  auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
-  cout << "Optimized schedule..." << endl;
-  for (auto m : get_maps(sched)) {
-    cout << tab(1) << str(m) << endl;
-  }
-  assert(false);
+  //cout << "Getting optimized schedule..." << endl;
+  //auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  //cout << "Optimized schedule..." << endl;
+  //for (auto m : get_maps(sched)) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+  //assert(false);
 
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
@@ -12406,16 +12406,16 @@ void llf_test() {
 }
 
 void application_tests() {
-  exposure_fusion_iccad_apps("ef_tc");
-  assert(false);
+  //exposure_fusion_iccad_apps("ef_tc");
+  
   llf_test();
-  blur_example();
-  lchannel_test();
-  gf_test();
   us_unroll_test();
   ds_unroll_test();
   prg_unroll_test();
+  lchannel_test();
+  gf_test();
 
+  blur_example();
   halide_frontend_test();
   halide_harris_test();
   halide_up_sample_test();
