@@ -2877,8 +2877,8 @@ isl_val* eval(isl_aff* a, isl_point* p) {
 
 isl_aff* get_aff(isl_map* m) {
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
-  cout << tab(1) << str(m) << endl;
-  cout << tab(2) << "lexmax: " << str(lm) << endl;
+  //cout << tab(1) << str(m) << endl;
+  //cout << tab(2) << "lexmax: " << str(lm) << endl;
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(lm);
   assert(pieces.size() == 1);
@@ -2890,8 +2890,8 @@ isl_aff* get_aff(isl_map* m) {
 
 std::vector<isl_aff*> get_aff_vec(isl_map* m) {
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
-  cout << tab(1) << str(m) << endl;
-  cout << tab(2) << "lexmax: " << str(lm) << endl;
+  //cout << tab(1) << str(m) << endl;
+  //cout << tab(2) << "lexmax: " << str(lm) << endl;
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(lm);
   assert(pieces.size() == 1);

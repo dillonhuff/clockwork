@@ -11882,6 +11882,68 @@ void emit_lake_controller_config(std::ostream& out, isl_set* write_domain, isl_a
   }
 }
 
+void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_opt, vector<isl_map*> access_maps, string op_name) {
+  for (auto access_map: access_maps) {
+    if (domain_name(access_map) == op_name) {
+      cout << "\taddress info: " << str(access_map) << endl;
+      cout << "\tproject result: " << str(project_all_but(access_map, 1)) << endl;
+      //cout << "acc map = " << str(access_map) << endl;
+      //TODO: not work for multiple port, should use bank.rddom
+      auto reduce_map = linear_address_map_lake(range(access_map));
+      //cout << "reduce map = " << str(reduce_map) << endl;
+      auto addr_expr = dot(access_map, reduce_map);
+      //cout << "composition = " << str(addr_expr) << endl;
+      for(auto addr_expr_map: get_basic_maps(addr_expr)) {
+        string buf_name = range_name(access_map);
+        auto ubuf = buffers_opt.at(buf_name);
+        bool is_rd = ubuf.is_read_op(op_name);
+        isl_aff* addr = get_aff(to_map(addr_expr_map));
+        cout << "\t address generator aff expr:" << str(get_aff(to_map(addr_expr_map))) << endl;
+
+        if (is_rd) {
+            out << "\"write\"," << "\"" << buf_name << "\"" << endl;
+        } else {
+            out << "\"read\"," << "\"" << buf_name  << "\"" << endl;
+        }
+        out << "\"data_starting_addr\"," << to_int(const_coeff(addr)) << ",0" << endl;
+        for (int d = 0; d < num_in_dims(addr); d++) {
+          int ldim = num_in_dims(addr) - d - 1;
+          out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(addr, d)) << ",0" << endl;
+        }
+      }
+    }
+  }
+}
+
+void emit_lake_config(map<string, UBuffer>& buffers_opt,
+        umap* hardware_schedule, string dir) {
+  auto glb_access_map = global_access_map_from_buffers(buffers_opt);
+  auto glb_domain = global_domain_from_buffers(buffers_opt);
+  auto dom_map = get_sets_in_map(glb_domain);
+  auto access_maps = get_maps(glb_access_map);
+
+  //produce the schedule config
+  for (auto m : get_maps(hardware_schedule)) {
+    cout << tab(1) << domain_name(m) << endl;
+    string op_name = domain_name(m);
+    isl_set* dom = dom_map.at(op_name);
+
+    //chances are that we have multi-aff expression
+
+    ofstream out(string(dir) + op_name + ".csv");
+    cout << tab(1) << str(m) << endl;
+
+    //transform the iteration domain back to it's original dimension
+    auto write_sched = retrive_map_domain_dim(m, dom);
+    emit_lake_controller_config(out, dom, get_aff(write_sched));
+
+    //emit address config
+    emit_lake_addrgen_config(out, buffers_opt, access_maps, op_name);
+
+    out.close();
+  }
+}
+
 isl_aff* get_aff_addr(op* op, const std::string& buf_name,
     const address& addr,
     prog& prg) {
@@ -11978,6 +12040,7 @@ void lake_identity_stream_autovec_test() {
   lake_agg.add_output("out");
 
   int app_target_II = 1;
+
   //corresponding to the aggI/O, sramI/O, TBI/O latency
   map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
           {{"in2buf_vec", "buf2out_vec"}, 1},
@@ -12001,117 +12064,8 @@ void lake_identity_stream_autovec_test() {
   cout << str(hsh) << endl;
   cout << codegen_c(hsh) << endl;
 
-  //there is read and write port for the buffer
-  auto glb_access_map = global_access_map_from_buffers(buffers_opt);
-  auto glb_domain = global_domain_from_buffers(buffers_opt);
-  auto dom_map = get_sets_in_map(glb_domain);
-  auto access_maps = get_maps(glb_access_map);
+  emit_lake_config(buffers_opt, hsh, "./lake_controllers/identity_stream/");
 
-  //produce the schedule config
-  for (auto m : get_maps(hsh)) {
-    cout << tab(1) << domain_name(m) << endl;
-    string op_name = domain_name(m);
-    isl_set* dom = dom_map.at(op_name);
-
-    //chances are that we have multi-aff expression
-
-    ofstream out(string("./lake_controllers/identity_stream/") + op_name + ".csv");
-    cout << tab(1) << str(m) << endl;
-
-    //emit address config
-    for (auto access_map: access_maps) {
-      if (domain_name(access_map) == op_name) {
-        cout << "\taddress info: " << str(access_map) << endl;
-        cout << "\tproject result: " << str(project_all_but(access_map, 1)) << endl;
-        cout << "acc map = " << str(access_map) << endl;
-        //TODO: not work for multiple port, should use bank.rddom
-        auto reduce_map = linear_address_map_lake(range(access_map));
-        cout << "reduce map = " << str(reduce_map) << endl;
-        auto addr_expr = dot(access_map, reduce_map);
-        cout << "composition = " << str(addr_expr) << endl;
-        for(auto addr_expr_map: get_basic_maps(addr_expr)) {
-          string buf_name = range_name(access_map);
-          auto ubuf = buffers_opt.at(buf_name);
-          bool is_rd = ubuf.is_read_op(op_name);
-          isl_aff* addr = get_aff(to_map(addr_expr_map));
-          cout << "\t address generator aff expr:" << str(get_aff(to_map(addr_expr_map))) << endl;
-
-          if (is_rd) {
-              out << "\"write\"," << "\"" << buf_name << "\"" << endl;
-          } else {
-              out << "\"read\"," << "\"" << buf_name  << "\"" << endl;
-          }
-          out << "\"data_starting_addr\"," << to_int(const_coeff(addr)) << ",0" << endl;
-          for (int d = 0; d < num_in_dims(addr); d++) {
-            int ldim = num_in_dims(addr) - d - 1;
-            out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(addr, d)) << ",0" << endl;
-          }
-        }
-      }
-    }
-
-    auto write_sched = retrive_map_domain_dim(m, dom);
-
-    emit_lake_controller_config(out, dom, get_aff(write_sched));
-
-  }
-  assert(false);
-
-  auto valid = lake_agg.validity_deps();
-
-  lake_agg.pretty_print();
-  cout << "validity: " << str(valid) << endl;
-  cout << "Schedule..." << endl;
-  auto hs = hardware_schedule(lake_agg);
-  hs = its(hs, lake_agg.whole_iteration_domain());
-
-  cmd("mkdir -p ./lake_controllers/identity_stream/");
-  for (auto op : lake_agg.all_ops()) {
-    ofstream out(string("./lake_controllers/identity_stream/") + op->name + ".csv");
-
-    bool found = false;
-    for (auto m : get_maps(hs)) {
-      cout << tab(1) << domain_name(m) << endl;
-      if (domain_name(m) == op->name) {
-        found = true;
-        cout << tab(1) << str(m) << endl;
-        auto dom = domain(m);
-        auto write_sched = m;
-        //isl_aff* write_addr =
-          //rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
-        emit_lake_controller_config(out, dom, get_aff(write_sched));
-        //, write_addr);
-        break;
-      }
-    }
-
-    assert(found);
-
-    for (auto locs_written : op->produce_locs) {
-      out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
-      isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
-      out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
-      for (int d = 0; d < num_in_dims(write_addr); d++) {
-        int ldim = num_in_dims(write_addr) - d - 1;
-        out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
-      }
-    }
-
-    for (auto locs_read : op->consume_locs_pair) {
-      out << "\"read\"," << "\"" << locs_read.first << "\"" << endl;
-      assert(locs_read.second.size() == 1);
-      auto lread = locs_read.second.at(0).second;
-      isl_aff* write_addr = get_aff_addr(op, locs_read.first, lread, lake_agg);
-      out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
-      for (int d = 0; d < num_in_dims(write_addr); d++) {
-        int ldim = num_in_dims(write_addr) - d - 1;
-        out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
-      }
-    }
-
-    out.close();
-  }
-  //assert(false);
 }
 
 void lake_agg_sram_tb_config_test() {
