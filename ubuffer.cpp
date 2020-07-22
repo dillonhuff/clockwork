@@ -353,9 +353,10 @@ void generate_bank(CodegenOptions& options,
   auto read_delays = bank.read_delays;
   auto num_readers = bank.num_readers;
   auto maxdelay = bank.maxdelay;
+  auto layout = bank.extract_layout();
 
   out << "struct " << name << "_cache" <<  " {" << endl;
-  out << "\t// RAM Box: " << bank.extract_layout() << endl;
+  out << "\t// RAM Box: " << layout << endl;
 
   //C array with read and write method
   if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
@@ -363,7 +364,18 @@ void generate_bank(CodegenOptions& options,
       bank.get_partitions();
     int partition_size = partitions.size();
     //add a ram capacity compute pass is different from stack bank
-    int capacity = int_upper_bound(card(bank.rddom));
+    int capacity = 1;
+    auto dsets = get_sets(bank.rddom);
+    int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
+    for (int i = 0; i < dims; i++) {
+      auto s = project_all_but(to_set(bank.rddom), i);
+      auto min = to_int(lexminval(s));
+      auto max = to_int(lexmaxval(s));
+      int length = max - min + 1;
+      capacity *= length;
+    }
+
+    //int_upper_bound(card(bank.rddom));
     out << "\t// Capacity: " << capacity << endl;
     open_synth_scope(out);
     out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;

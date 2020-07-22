@@ -8962,7 +8962,9 @@ void two_in_window_test() {
   }
   cpi->add_op({"out", "c"}, "conv_1_3", ld);
 
+  prg.pretty_print();
   regression_test(prg);
+  assert(false);
 }
 
 void upsample_reduce_test() {
@@ -12411,9 +12413,9 @@ void application_tests() {
   //assert(false);
 
   // Failing?
+   two_in_window_test();
    jacobi_2d_2_test();
    soda_blur_test();
-   two_in_window_test();
    two_in_conv2d_test();
    assert(false);
   
