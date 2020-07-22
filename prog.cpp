@@ -2508,6 +2508,30 @@ void generate_optimized_code(prog& prg) {
 }
 
 
+void generate_vanilla_hls_code(prog& prg) {
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  all_unbanked(prg, options);
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  string old_name = prg.name;
+
+  prg.name = "vanilla_" + prg.name;
+
+  //cout << "Unoptimized schedule..." << endl;
+  auto sched = prg.unoptimized_schedule();
+  //cout << tab(1) << ": " << str(sched) << endl;
+  //cout << codegen_c(prg.unoptimized_schedule());
+
+  auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+
+  generate_app_code(options, buffers, prg, sched);
+
+  prg.name = old_name;
+}
+
 void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
 
   string old_name = prg.name;

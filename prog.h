@@ -1377,6 +1377,7 @@ struct prog {
 
 // Schedules all loops in sequential order
 // and emits HLS C++ code for the program
+void generate_vanilla_hls_code(prog& prg);
 void generate_unoptimized_code(prog& prg);
 void generate_unoptimized_code(CodegenOptions& options, prog& prg);
 

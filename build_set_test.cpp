@@ -8964,7 +8964,7 @@ void two_in_window_test() {
 
   prg.pretty_print();
   regression_test(prg);
-  assert(false);
+  //assert(false);
 }
 
 void upsample_reduce_test() {
@@ -12409,15 +12409,15 @@ void llf_test() {
 }
 
 void application_tests() {
-  //blur_example();
+  blur_example();
   //assert(false);
 
   // Failing?
-   two_in_window_test();
-   jacobi_2d_2_test();
-   soda_blur_test();
-   two_in_conv2d_test();
-   assert(false);
+  two_in_window_test();
+  jacobi_2d_2_test();
+  soda_blur_test();
+  two_in_conv2d_test();
+  //assert(false);
   
   //parse_denoise3d_test();
   //app added for cnn
