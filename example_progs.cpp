@@ -14,7 +14,7 @@ prog brighten_blur() {
 
   int input_image_rows = 256;
   int input_image_cols = 256;
-
+// testing
   // Actually you dont have to fill these
   // buffer bounds in. I am just adding them for completeness.
   prg.buffer_bounds["off_chip_input"] = {input_image_cols, input_image_rows};
