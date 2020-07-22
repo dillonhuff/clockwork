@@ -12407,13 +12407,15 @@ void llf_test() {
 }
 
 void application_tests() {
-  blur_example();
-  assert(false);
+  //blur_example();
+  //assert(false);
+
   // Failing?
-  // jacobi_2d_2_test();
-  // soda_blur_test();
-  // two_in_window_test();
-  // two_in_conv2d_test();
+   jacobi_2d_2_test();
+   soda_blur_test();
+   two_in_window_test();
+   two_in_conv2d_test();
+   assert(false);
   
   //parse_denoise3d_test();
   //app added for cnn
