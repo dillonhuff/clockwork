@@ -485,6 +485,7 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
   vector<string> sizes;
   if (!(out_dims > 0 && out_dims <= 3)) {
     out << tab(1) << "Unsupported output dimension: " << out_dims << endl;
+    return;
   }
   int out_cols;
   int out_rows;

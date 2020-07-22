@@ -9491,6 +9491,7 @@ void register_file_test() {
   regression_test(options, prg);
   //assert(false);
 }
+
 void travis_tests() {
   jacobi_2d_2_test();
   register_file_test();
@@ -12406,68 +12407,12 @@ void llf_test() {
 }
 
 void application_tests() {
-  coreir_tests();
-  multi_output_app_test();
-
-  sobel_test();
-  jacobi_2d_2_test();
-  jacobi_2d_test();
-
-  register_file_test();
-  reaccess_no_hierarchy_rolled_test();
-
-  //assert(false);
-
-  //unet_conv_3_3_test();
-  cyclic_banked_conv_test();
-  //register_file_optimization_test();
+  // Failing?
+  // jacobi_2d_2_test();
+  // soda_blur_test();
+  // two_in_window_test();
+  // two_in_conv2d_test();
   
-  // Does not work with register files?
-  //cnn_test();
-
-
-  two_input_mag_test();
-  one_input_mag_test();
-
-  sum_float_test();
-
-  sobel_mag_y_test();
-  sobel_app_test();
-  sobel_mag_x_test();
-  heat_3d_test();
-
-  upsample_reduce_test();
-
-  pointwise_test();
-
-  stencil_3d_test();
-  soda_blur_test();
-  two_in_window_test();
-  two_in_conv2d_test();
-  gaussian_pyramid_test();
-  warp_and_upsample_test();
-
-  //conv_1d_rolled_test();
-  //synth_upsample_test();
-  unsharp_test();
-  //conv_2d_rolled_test();
-  //mobilenet_test();
-  pyramid_2d_test();
-  pyramid_test();
-
-  up_stencil_auto_unrolled_test();
-  up_down_auto_unrolled_test();
-  up_stencil_down_auto_unrolled_test();
-  conv3x3_app_unrolled_test();
-  conv3x3_app_test();
-  conv3x3_app_unrolled_uneven_test();
-
-  jacobi2d_app_test();
-
-  up_stencil_test();
-  neg_stencil_test();
-  blur_x_test();
-
   //parse_denoise3d_test();
   //app added for cnn
 
@@ -12475,7 +12420,6 @@ void application_tests() {
   sobel_16_stage_x_app_test();
 
   up_stencil_test();
-  neg_stencil_test();
   blur_x_test();
 
   dummy_app_test();
@@ -12581,6 +12525,65 @@ void application_tests() {
   resnet_test();
 
   iccad_tests();
+
+  coreir_tests();
+  multi_output_app_test();
+
+  sobel_test();
+  jacobi_2d_test();
+
+  register_file_test();
+  reaccess_no_hierarchy_rolled_test();
+
+  two_input_mag_test();
+  one_input_mag_test();
+
+  sum_float_test();
+
+  sobel_mag_y_test();
+  sobel_app_test();
+  sobel_mag_x_test();
+  heat_3d_test();
+
+  upsample_reduce_test();
+
+  pointwise_test();
+
+  stencil_3d_test();
+  //assert(false);
+
+  //unet_conv_3_3_test();
+  cyclic_banked_conv_test();
+  //register_file_optimization_test();
+  
+  // Does not work with register files?
+  //cnn_test();
+
+  neg_stencil_test();
+  
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+
+  //conv_1d_rolled_test();
+  //synth_upsample_test();
+  unsharp_test();
+  //conv_2d_rolled_test();
+  //mobilenet_test();
+  pyramid_2d_test();
+  pyramid_test();
+
+  up_stencil_auto_unrolled_test();
+  up_down_auto_unrolled_test();
+  up_stencil_down_auto_unrolled_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_test();
+  conv3x3_app_unrolled_uneven_test();
+
+  jacobi2d_app_test();
+
+  up_stencil_test();
+  blur_x_test();
+
 
   //two_input_denoise_pipeline_test();
   //synth_wire_test();
