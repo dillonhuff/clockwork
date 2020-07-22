@@ -485,6 +485,7 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
   vector<string> sizes;
   if (!(out_dims > 0 && out_dims <= 3)) {
     out << tab(1) << "Unsupported output dimension: " << out_dims << endl;
+    return;
   }
   int out_cols;
   int out_rows;
@@ -2535,7 +2536,7 @@ void generate_unoptimized_code(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  all_register_files(prg, options);
+  all_unbanked(prg, options);
   options.inner_bank_offset_mode =
     //INNER_BANK_OFFSET_MULTILINEAR;
     INNER_BANK_OFFSET_LINEAR;
@@ -3500,6 +3501,14 @@ void generate_trace(prog& prg, umap* schedmap) {
   conv_out << endl;
 
   conv_out.close();
+}
+
+void all_unbanked(prog& prg, CodegenOptions& options) {
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_referenced()) {
+      options.banking_strategies[b] = {"none"};
+    }
+  }
 }
 
 void all_register_files(prog& prg, CodegenOptions& options) {

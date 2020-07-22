@@ -54,7 +54,7 @@ This will write HLS code for the accelerator and several different test drivers 
     clang++ -std=c++11 ./blur_example/blur_example_opt_sw_bmp_test_harness.cpp ./blur_example/blur_example_opt.cpp -I ./aws_collateral/ -I .
     ./a.out
 
-This will run the accelerator in simulation on a `bmp` image and write the output to `blur_example_opt_bmp_out.bmp`.
+This will run the accelerator in simulation on a `bmp` image and write the output to `./images/blur_example_opt_bmp_out.bmp`.
 
 # Creating your own inputs
 

@@ -15,6 +15,7 @@ struct in0_in0_update_0_write0_to_out0_rd0_cache {
 	// RAM Box: {[0, 1056], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -36,6 +37,7 @@ struct in0_in0_update_0_write1_to_out0_rd1_cache {
 	// RAM Box: {[1, 1057], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -57,6 +59,7 @@ struct in0_in0_update_0_write10_to_out0_rd10_cache {
 	// RAM Box: {[10, 1066], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -78,6 +81,7 @@ struct in0_in0_update_0_write11_to_out0_rd11_cache {
 	// RAM Box: {[11, 1067], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -99,6 +103,7 @@ struct in0_in0_update_0_write12_to_out0_rd12_cache {
 	// RAM Box: {[12, 1068], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -120,6 +125,7 @@ struct in0_in0_update_0_write13_to_out0_rd13_cache {
 	// RAM Box: {[13, 1069], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -141,6 +147,7 @@ struct in0_in0_update_0_write14_to_out0_rd14_cache {
 	// RAM Box: {[14, 1070], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -162,6 +169,7 @@ struct in0_in0_update_0_write15_to_out0_rd15_cache {
 	// RAM Box: {[15, 1071], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -183,6 +191,7 @@ struct in0_in0_update_0_write16_to_out0_rd16_cache {
 	// RAM Box: {[16, 1072], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -204,6 +213,7 @@ struct in0_in0_update_0_write17_to_out0_rd17_cache {
 	// RAM Box: {[17, 1073], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -225,6 +235,7 @@ struct in0_in0_update_0_write18_to_out0_rd18_cache {
 	// RAM Box: {[18, 1074], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -246,6 +257,7 @@ struct in0_in0_update_0_write19_to_out0_rd19_cache {
 	// RAM Box: {[19, 1075], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -267,6 +279,7 @@ struct in0_in0_update_0_write2_to_out0_rd2_cache {
 	// RAM Box: {[2, 1058], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -288,6 +301,7 @@ struct in0_in0_update_0_write20_to_out0_rd20_cache {
 	// RAM Box: {[20, 1076], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -309,6 +323,7 @@ struct in0_in0_update_0_write21_to_out0_rd21_cache {
 	// RAM Box: {[21, 1077], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -330,6 +345,7 @@ struct in0_in0_update_0_write22_to_out0_rd22_cache {
 	// RAM Box: {[22, 1078], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -351,6 +367,7 @@ struct in0_in0_update_0_write23_to_out0_rd23_cache {
 	// RAM Box: {[23, 1079], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -372,6 +389,7 @@ struct in0_in0_update_0_write24_to_out0_rd24_cache {
 	// RAM Box: {[24, 1080], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -393,6 +411,7 @@ struct in0_in0_update_0_write25_to_out0_rd25_cache {
 	// RAM Box: {[25, 1081], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -414,6 +433,7 @@ struct in0_in0_update_0_write26_to_out0_rd26_cache {
 	// RAM Box: {[26, 1082], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -435,6 +455,7 @@ struct in0_in0_update_0_write27_to_out0_rd27_cache {
 	// RAM Box: {[27, 1083], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -456,6 +477,7 @@ struct in0_in0_update_0_write28_to_out0_rd28_cache {
 	// RAM Box: {[28, 1084], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -477,6 +499,7 @@ struct in0_in0_update_0_write29_to_out0_rd29_cache {
 	// RAM Box: {[29, 1085], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -498,6 +521,7 @@ struct in0_in0_update_0_write3_to_out0_rd3_cache {
 	// RAM Box: {[3, 1059], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -519,6 +543,7 @@ struct in0_in0_update_0_write30_to_out0_rd30_cache {
 	// RAM Box: {[30, 1086], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -540,6 +565,7 @@ struct in0_in0_update_0_write31_to_out0_rd31_cache {
 	// RAM Box: {[31, 1087], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -561,6 +587,7 @@ struct in0_in0_update_0_write4_to_out0_rd4_cache {
 	// RAM Box: {[4, 1060], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -582,6 +609,7 @@ struct in0_in0_update_0_write5_to_out0_rd5_cache {
 	// RAM Box: {[5, 1061], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -603,6 +631,7 @@ struct in0_in0_update_0_write6_to_out0_rd6_cache {
 	// RAM Box: {[6, 1062], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -624,6 +653,7 @@ struct in0_in0_update_0_write7_to_out0_rd7_cache {
 	// RAM Box: {[7, 1063], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -645,6 +675,7 @@ struct in0_in0_update_0_write8_to_out0_rd8_cache {
 	// RAM Box: {[8, 1064], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -666,6 +697,7 @@ struct in0_in0_update_0_write9_to_out0_rd9_cache {
 	// RAM Box: {[9, 1065], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1444,6 +1476,7 @@ struct in1_in1_update_0_write0_to_out1_ac_rd0_cache {
 	// RAM Box: {[0, 1056], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1465,6 +1498,7 @@ struct in1_in1_update_0_write1_to_out1_ac_rd1_cache {
 	// RAM Box: {[1, 1057], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1486,6 +1520,7 @@ struct in1_in1_update_0_write10_to_out1_ac_rd10_cache {
 	// RAM Box: {[10, 1066], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1507,6 +1542,7 @@ struct in1_in1_update_0_write11_to_out1_ac_rd11_cache {
 	// RAM Box: {[11, 1067], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1528,6 +1564,7 @@ struct in1_in1_update_0_write12_to_out1_ac_rd12_cache {
 	// RAM Box: {[12, 1068], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1549,6 +1586,7 @@ struct in1_in1_update_0_write13_to_out1_ac_rd13_cache {
 	// RAM Box: {[13, 1069], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1570,6 +1608,7 @@ struct in1_in1_update_0_write14_to_out1_ac_rd14_cache {
 	// RAM Box: {[14, 1070], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1591,6 +1630,7 @@ struct in1_in1_update_0_write15_to_out1_ac_rd15_cache {
 	// RAM Box: {[15, 1071], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1612,6 +1652,7 @@ struct in1_in1_update_0_write16_to_out1_ac_rd16_cache {
 	// RAM Box: {[16, 1072], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1633,6 +1674,7 @@ struct in1_in1_update_0_write17_to_out1_ac_rd17_cache {
 	// RAM Box: {[17, 1073], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1654,6 +1696,7 @@ struct in1_in1_update_0_write18_to_out1_ac_rd18_cache {
 	// RAM Box: {[18, 1074], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1675,6 +1718,7 @@ struct in1_in1_update_0_write19_to_out1_ac_rd19_cache {
 	// RAM Box: {[19, 1075], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1696,6 +1740,7 @@ struct in1_in1_update_0_write2_to_out1_ac_rd2_cache {
 	// RAM Box: {[2, 1058], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1717,6 +1762,7 @@ struct in1_in1_update_0_write20_to_out1_ac_rd20_cache {
 	// RAM Box: {[20, 1076], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1738,6 +1784,7 @@ struct in1_in1_update_0_write21_to_out1_ac_rd21_cache {
 	// RAM Box: {[21, 1077], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1759,6 +1806,7 @@ struct in1_in1_update_0_write22_to_out1_ac_rd22_cache {
 	// RAM Box: {[22, 1078], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1780,6 +1828,7 @@ struct in1_in1_update_0_write23_to_out1_ac_rd23_cache {
 	// RAM Box: {[23, 1079], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1801,6 +1850,7 @@ struct in1_in1_update_0_write24_to_out1_ac_rd24_cache {
 	// RAM Box: {[24, 1080], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1822,6 +1872,7 @@ struct in1_in1_update_0_write25_to_out1_ac_rd25_cache {
 	// RAM Box: {[25, 1081], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1843,6 +1894,7 @@ struct in1_in1_update_0_write26_to_out1_ac_rd26_cache {
 	// RAM Box: {[26, 1082], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1864,6 +1916,7 @@ struct in1_in1_update_0_write27_to_out1_ac_rd27_cache {
 	// RAM Box: {[27, 1083], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1885,6 +1938,7 @@ struct in1_in1_update_0_write28_to_out1_ac_rd28_cache {
 	// RAM Box: {[28, 1084], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1906,6 +1960,7 @@ struct in1_in1_update_0_write29_to_out1_ac_rd29_cache {
 	// RAM Box: {[29, 1085], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1927,6 +1982,7 @@ struct in1_in1_update_0_write3_to_out1_ac_rd3_cache {
 	// RAM Box: {[3, 1059], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1948,6 +2004,7 @@ struct in1_in1_update_0_write30_to_out1_ac_rd30_cache {
 	// RAM Box: {[30, 1086], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1969,6 +2026,7 @@ struct in1_in1_update_0_write31_to_out1_ac_rd31_cache {
 	// RAM Box: {[31, 1087], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -1990,6 +2048,7 @@ struct in1_in1_update_0_write4_to_out1_ac_rd4_cache {
 	// RAM Box: {[4, 1060], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -2011,6 +2070,7 @@ struct in1_in1_update_0_write5_to_out1_ac_rd5_cache {
 	// RAM Box: {[5, 1061], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -2032,6 +2092,7 @@ struct in1_in1_update_0_write6_to_out1_ac_rd6_cache {
 	// RAM Box: {[6, 1062], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -2053,6 +2114,7 @@ struct in1_in1_update_0_write7_to_out1_ac_rd7_cache {
 	// RAM Box: {[7, 1063], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -2074,6 +2136,7 @@ struct in1_in1_update_0_write8_to_out1_ac_rd8_cache {
 	// RAM Box: {[8, 1064], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -2095,6 +2158,7 @@ struct in1_in1_update_0_write9_to_out1_ac_rd9_cache {
 	// RAM Box: {[9, 1065], [0, 1919]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -2870,24 +2934,6 @@ inline hw_uint<512> in1_out1_ac_update_0_read_bundle_read(in1_cache& in1, int d0
 
 
 // Operation logic
-inline void out0_update_0(in0_cache& in0, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */out0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in0
-	auto in0_0_c__0_value = in0_out0_update_0_read_bundle_read(in0/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_32(in0_0_c__0_value);
-	// Produce: out0
-	out0.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void out1_ac_update_0(in1_cache& in1, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */out1_ac, int d0, int d1) {
   // Dynamic address computation
 
@@ -2900,6 +2946,24 @@ inline void out1_ac_update_0(in1_cache& in1, HWStream<hw_uint<512> >& /* buffer_
 	auto compute_result = id_unrolled_32(in1_0_c__0_value);
 	// Produce: out1_ac
 	out1_ac.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void out0_update_0(in0_cache& in0, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */out0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in0
+	auto in0_0_c__0_value = in0_out0_update_0_read_bundle_read(in0/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_32(in0_0_c__0_value);
+	// Produce: out0
+	out0.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2984,85 +3048,53 @@ for (int c0 = 0; c0 <= 1919; c0 += 1)
 #endif //__VIVADO_SYNTH__
 }
 
+void out0_out1_ac_opt_wrapper(HWStream<hw_uint<512> >& /* get_args num ports = 32 */in0_oc, HWStream<hw_uint<512> >& /* get_args num ports = 32 */in1_oc, HWStream<hw_uint<512> >& /* get_args num ports = 32 */out0, HWStream<hw_uint<512> >& /* get_args num ports = 32 */out1_ac, const int num_epochs) {
+
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
+    out0_out1_ac_opt(in0_oc, in1_oc, out0, out1_ac);
+  }
+}
 #ifdef __VIVADO_SYNTH__
   // { in0_update_0[root = 0, in0_0, in0_1] -> in0_oc[0, 0] : 0 <= in0_0 <= 33 and 0 <= in0_1 <= 1919 }
-const int in0_update_0_read_num_transfers = 65280;
+const int in0_update_0_read_pipe0_num_transfers = 65280;
   // { in1_update_0[root = 0, in1_0, in1_1] -> in1_oc[0, 0] : 0 <= in1_0 <= 33 and 0 <= in1_1 <= 1919 }
-const int in1_update_0_read_num_transfers = 65280;
+const int in1_update_0_read_pipe0_num_transfers = 65280;
   // { out0_update_0[root = 0, out0_0, out0_1] -> out0[0, 0] : 0 <= out0_0 <= 33 and 0 <= out0_1 <= 1919 }
-const int out0_update_0_write_num_transfers = 65280;
+const int out0_update_0_write_pipe0_num_transfers = 65280;
   // { out1_ac_update_0[root = 0, out1_ac_0, out1_ac_1] -> out1_ac[0, 0] : 0 <= out1_ac_0 <= 33 and 0 <= out1_ac_1 <= 1919 }
-const int out1_ac_update_0_write_num_transfers = 65280;
+const int out1_ac_update_0_write_pipe0_num_transfers = 65280;
 
 
 extern "C" {
 
-static void read_in0_update_0_read(hw_uint<512>* input, HWStream<hw_uint<512> >& v, const int size) {
-  hw_uint<512> burst_reg;
-  int num_transfers = in0_update_0_read_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = input[i];
-    v.write(burst_reg);
-  }
-}
-
-static void read_in1_update_0_read(hw_uint<512>* input, HWStream<hw_uint<512> >& v, const int size) {
-  hw_uint<512> burst_reg;
-  int num_transfers = in1_update_0_read_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = input[i];
-    v.write(burst_reg);
-  }
-}
-
-static void write_out0_update_0_write(hw_uint<512>* output, HWStream<hw_uint<512> >& v, const int size) {
-  hw_uint<512> burst_reg;
-  int num_transfers = out0_update_0_write_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = v.read();
-    output[i] = burst_reg;
-  }
-}
-
-static void write_out1_ac_update_0_write(hw_uint<512>* output, HWStream<hw_uint<512> >& v, const int size) {
-  hw_uint<512> burst_reg;
-  int num_transfers = out1_ac_update_0_write_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = v.read();
-    output[i] = burst_reg;
-  }
-}
-
-void out0_out1_ac_opt_accel(hw_uint<512>* in0_update_0_read, hw_uint<512>* in1_update_0_read, hw_uint<512>* out0_update_0_write, hw_uint<512>* out1_ac_update_0_write, const int size) { 
+void out0_out1_ac_opt_accel(hw_uint<512>* in0_update_0_read_pipe0, hw_uint<512>* in1_update_0_read_pipe0, hw_uint<512>* out0_update_0_write_pipe0, hw_uint<512>* out1_ac_update_0_write_pipe0, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = in0_update_0_read offset = slave depth = 65536 bundle = gmem0
-#pragma HLS INTERFACE m_axi port = in1_update_0_read offset = slave depth = 65536 bundle = gmem1
-#pragma HLS INTERFACE m_axi port = out0_update_0_write offset = slave depth = 65536 bundle = gmem2
-#pragma HLS INTERFACE m_axi port = out1_ac_update_0_write offset = slave depth = 65536 bundle = gmem3
+#pragma HLS INTERFACE m_axi port = in0_update_0_read_pipe0 offset = slave depth = 65536 bundle = gmem0
+#pragma HLS INTERFACE m_axi port = in1_update_0_read_pipe0 offset = slave depth = 65536 bundle = gmem1
+#pragma HLS INTERFACE m_axi port = out0_update_0_write_pipe0 offset = slave depth = 65536 bundle = gmem2
+#pragma HLS INTERFACE m_axi port = out1_ac_update_0_write_pipe0 offset = slave depth = 65536 bundle = gmem3
 
-#pragma HLS INTERFACE s_axilite port = in0_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = in1_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = out0_update_0_write bundle = control
-#pragma HLS INTERFACE s_axilite port = out1_ac_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = in0_update_0_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = in1_update_0_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = out0_update_0_write_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = out1_ac_update_0_write_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = size bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
-  static HWStream<hw_uint<512> > in0_update_0_read_channel;
-  static HWStream<hw_uint<512> > in1_update_0_read_channel;
-  static HWStream<hw_uint<512> > out0_update_0_write_channel;
-  static HWStream<hw_uint<512> > out1_ac_update_0_write_channel;
 
-  read_in0_update_0_read(in0_update_0_read, in0_update_0_read_channel, size);
-  read_in1_update_0_read(in1_update_0_read, in1_update_0_read_channel, size);
+  // Pipeline # 0
+  static HWStream<hw_uint<512> > in0_update_0_read_pipe0_channel;
+  static HWStream<hw_uint<512> > in1_update_0_read_pipe0_channel;
+  static HWStream<hw_uint<512> > out0_update_0_write_pipe0_channel;
+  static HWStream<hw_uint<512> > out1_ac_update_0_write_pipe0_channel;
 
-  out0_out1_ac_opt(in0_update_0_read_channel, in1_update_0_read_channel, out0_update_0_write_channel, out1_ac_update_0_write_channel);
+  burst_read<512>(in0_update_0_read_pipe0, in0_update_0_read_pipe0_channel, in0_update_0_read_pipe0_num_transfers*size);
+  burst_read<512>(in1_update_0_read_pipe0, in1_update_0_read_pipe0_channel, in1_update_0_read_pipe0_num_transfers*size);
 
-  write_out0_update_0_write(out0_update_0_write, out0_update_0_write_channel, size);
-  write_out1_ac_update_0_write(out1_ac_update_0_write, out1_ac_update_0_write_channel, size);
+  out0_out1_ac_opt_wrapper(in0_update_0_read_pipe0_channel, in1_update_0_read_pipe0_channel, out0_update_0_write_pipe0_channel, out1_ac_update_0_write_pipe0_channel, size);
+
+  burst_write<512>(out0_update_0_write_pipe0, out0_update_0_write_pipe0_channel, out0_update_0_write_pipe0_num_transfers*size);
+  burst_write<512>(out1_ac_update_0_write_pipe0, out1_ac_update_0_write_pipe0_channel, out1_ac_update_0_write_pipe0_num_transfers*size);
 }
 
 }
