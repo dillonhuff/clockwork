@@ -12407,6 +12407,8 @@ void llf_test() {
 }
 
 void application_tests() {
+  blur_example();
+  assert(false);
   // Failing?
   // jacobi_2d_2_test();
   // soda_blur_test();
@@ -12504,7 +12506,6 @@ void application_tests() {
   lchannel_test();
   gf_test();
 
-  blur_example();
   halide_frontend_test();
   halide_harris_test();
   halide_up_sample_test();
