@@ -1361,6 +1361,20 @@ class UBuffer {
       return s;
     }
 
+    //check the operation is read the buffer or not
+    bool is_read_op(const std::string& name) const {
+      for ( auto it : schedule ) {
+        cout << "\tspace: " << str(get_space(it.second)) <<endl;
+        cout << "\tschedule: " << str((it.second)) <<endl;
+        string op_name = domain_name(it.second);
+        if (op_name == name) {
+          return is_out_pt(it.first);
+        }
+      }
+      cout << "Not found statement named: " << name << "in this buffer.\n";
+      assert(false);
+    }
+
     bool is_in_pt(const std::string& name) const {
       cout << "Checking if " << name << " is an input..." << endl;
       assert(contains_key(name, isIn));

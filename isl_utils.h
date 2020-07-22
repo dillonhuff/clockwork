@@ -140,7 +140,7 @@ std::string range_name(isl_basic_map* const s);
 std::string domain_name(isl_space* const s);
 std::string range_name(isl_space* const s);
 
-std::string domain_name(isl_map* const m);
+std::string domain_name(umap* const m);
 
 std::string range_name(isl_map* const m);
 
@@ -165,6 +165,7 @@ isl_stat get_maps(isl_map* m, void* user);
 vector<isl_map*> get_maps(isl_union_map* m);
 map<string, isl_map*> get_maps_in_map(isl_union_map* m);
 vector<isl_set*> get_sets(isl_union_set* m);
+map<string, isl_set*> get_sets_in_map(isl_union_set* m);
 vector<isl_basic_map*> get_basic_maps(isl_map* m);
 vector<isl_basic_set*> get_basic_sets(isl_set* m);
 isl_basic_set* to_bset(isl_set* m);
@@ -373,6 +374,7 @@ umap* flatten_map_domain_with_ii(isl_map* s, int ii);
 umap* flatten_map_domain_trans(isl_map* s, int ii);
 isl_stat umap_lex_lt(isl_map* s,  void* user);
 isl_bool with_domain_name(isl_map* m, void* user);
+isl_map* retrive_map_domain_dim(isl_map*, isl_set*);
 
 isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 isl_map* get_shift_map(isl_map* s);

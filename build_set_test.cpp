@@ -1263,6 +1263,17 @@ isl_union_map* global_access_map_from_buffers(const map<string, UBuffer> &buffer
     return global_acc_map;
 }
 
+isl_union_set* global_domain_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_dom = unn(buf.global_domain(), global_dom);
+    }
+    cout << "Global domain: " << str(global_dom) << endl;
+    return global_dom;
+}
+
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
     isl_ctx* ctx = pick(buffers).second.ctx;
     isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
@@ -11989,15 +12000,25 @@ void lake_identity_stream_autovec_test() {
   auto hsh = generate_hardware_schedule_heu(new_opt_sched, buffers_opt, latency, app_target_II);
   cout << str(hsh) << endl;
   cout << codegen_c(hsh) << endl;
-  assert(false);
 
+  //there is read and write port for the buffer
   auto glb_access_map = global_access_map_from_buffers(buffers_opt);
+  auto glb_domain = global_domain_from_buffers(buffers_opt);
+  auto dom_map = get_sets_in_map(glb_domain);
   auto access_maps = get_maps(glb_access_map);
 
   //produce the schedule config
-  for (auto m : get_maps(new_opt_sched)) {
+  for (auto m : get_maps(hsh)) {
     cout << tab(1) << domain_name(m) << endl;
     string op_name = domain_name(m);
+    isl_set* dom = dom_map.at(op_name);
+
+    //chances are that we have multi-aff expression
+
+    ofstream out(string("./lake_controllers/identity_stream/") + op_name + ".csv");
+    cout << tab(1) << str(m) << endl;
+
+    //emit address config
     for (auto access_map: access_maps) {
       if (domain_name(access_map) == op_name) {
         cout << "\taddress info: " << str(access_map) << endl;
@@ -12008,21 +12029,31 @@ void lake_identity_stream_autovec_test() {
         cout << "reduce map = " << str(reduce_map) << endl;
         auto addr_expr = dot(access_map, reduce_map);
         cout << "composition = " << str(addr_expr) << endl;
-
-        //chances are that we have multi-aff expression
         for(auto addr_expr_map: get_basic_maps(addr_expr)) {
-          cout << str(get_aff(to_map(addr_expr_map))) << endl;
+          string buf_name = range_name(access_map);
+          auto ubuf = buffers_opt.at(buf_name);
+          bool is_rd = ubuf.is_read_op(op_name);
+          isl_aff* addr = get_aff(to_map(addr_expr_map));
+          cout << "\t address generator aff expr:" << str(get_aff(to_map(addr_expr_map))) << endl;
+
+          if (is_rd) {
+              out << "\"write\"," << "\"" << buf_name << "\"" << endl;
+          } else {
+              out << "\"read\"," << "\"" << buf_name  << "\"" << endl;
+          }
+          out << "\"data_starting_addr\"," << to_int(const_coeff(addr)) << ",0" << endl;
+          for (int d = 0; d < num_in_dims(addr); d++) {
+            int ldim = num_in_dims(addr) - d - 1;
+            out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(addr, d)) << ",0" << endl;
+          }
         }
       }
     }
-    ofstream out(string("./lake_controllers/identity_stream/") + op_name + ".csv");
-    cout << tab(1) << str(m) << endl;
-    auto dom = domain(m);
-    auto write_sched = m;
-      //isl_aff* write_addr =
-        //rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
+
+    auto write_sched = retrive_map_domain_dim(m, dom);
+
     emit_lake_controller_config(out, dom, get_aff(write_sched));
-      //, write_addr);
+
   }
   assert(false);
 

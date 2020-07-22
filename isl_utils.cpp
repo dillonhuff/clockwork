@@ -307,6 +307,10 @@ std::string domain_name(isl_map* const s) {
   return domain_name(get_space(s));
 }
 
+std::string domain_name(umap* const s) {
+  return domain_name(get_space(to_map(s)));
+}
+
 std::string range_name(isl_map* const s) {
   return range_name(get_space(s));
 }
@@ -425,6 +429,19 @@ vector<isl_set*> get_sets(isl_union_set* m) {
   isl_union_set_foreach_set(m, get_set, &map_vec);
 
   return map_vec;
+}
+
+map<string, isl_set*> get_sets_in_map(isl_union_set* m) {
+  assert(m != nullptr);
+
+  vector<isl_set*> map_vec;
+  isl_union_set_foreach_set(m, get_set, &map_vec);
+
+  map<string, isl_set*> set_map;
+  for (auto s: map_vec) {
+      set_map.insert(make_pair(name(s), s));
+  }
+  return set_map;
 }
 
 vector<isl_map*> get_maps(isl_union_map* m) {
@@ -1648,6 +1665,43 @@ umap* flatten_map_domain_with_ii(isl_map* s, int ii) {
 }
 
 
+
+umap* flatten_set_trans(isl_set* s, int ii) {
+    auto dom = s;
+    vector<int> dom_range;
+    for (size_t i = 0; i < get_dim(s); i ++) {
+        dom_range.push_back(get_dim_max(dom, i)+1);
+    }
+    vector<int> rolling_dim;
+    for (size_t i = 0; i < dom_range.size(); i ++) {
+        int dim = std::accumulate(dom_range.rbegin(),
+                dom_range.rbegin() + i,
+                ii, std::multiplies<int>());
+        rolling_dim.push_back(dim);
+    }
+    std::reverse(rolling_dim.begin(), rolling_dim.end());
+    auto ctx = isl_set_get_ctx(dom);
+    umap* trans = isl_union_map_read_from_str(ctx, "{}");
+    for (int itr = 0; itr < ii; itr ++) {
+      vector<string> var_list, origin_var_list;
+      origin_var_list.push_back("0");
+      for (size_t i = 0; i < rolling_dim.size() - 1; i ++) {
+          auto var_name = "i" + to_string(i);
+          var_list.push_back(string(var_name) + "*" + to_string(rolling_dim.at(i+1)));
+          origin_var_list.push_back(string(var_name));
+      }
+      var_list.push_back(to_string(itr));
+      string var = sep_list(var_list, "", "", "+");
+      var = "[0, " + var +"]";
+      string origin_var = sep_list(origin_var_list, "[", "]", ",");
+      string dom_name = name(dom);
+      string map_str = "{" + dom_name + origin_var + "->" + dom_name + var +"}";
+      isl_map* flatten_trans = isl_map_read_from_str(ctx, map_str.c_str());
+      trans = unn(to_umap(flatten_trans), trans);
+    }
+    return trans;
+}
+
 umap* flatten_map_domain_trans(isl_map* s, int ii) {
     auto dom = domain(s);
     vector<int> dom_range;
@@ -1682,6 +1736,12 @@ umap* flatten_map_domain_trans(isl_map* s, int ii) {
       trans = unn(to_umap(flatten_trans), trans);
     }
     return trans;
+}
+
+isl_map* retrive_map_domain_dim(isl_map* flat_map, isl_set* dom) {
+    auto trans = flatten_set_trans(dom, 1);
+    auto new_sched = dot(trans, to_umap(flat_map));
+    return to_map(new_sched);
 }
 
 
