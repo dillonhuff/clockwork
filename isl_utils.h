@@ -33,6 +33,7 @@ using std::pair;
 using std::map;
 using std::string;
 
+std::string dim_name(isl_set* const a, const int d);
 std::string dim_name(isl_aff* const a, const int d);
 
 std::string name(isl_space* const s);
@@ -197,6 +198,7 @@ isl_stat isl_pw_aff_set_var_name( isl_set *set,  isl_aff *aff, void *user);
 isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name);
 
 isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
+isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
 
 unsigned get_dim(isl_set* const s);
 
@@ -552,6 +554,7 @@ isl_val* sub(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);
 isl_val* neg(isl_val* a);
 
+isl_aff* sub(isl_aff* a, isl_aff* b);
 int to_int(isl_val* a);
 
 isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v);
@@ -586,8 +589,10 @@ isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1);
 
 
 isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);
+isl_map* diff(isl_map* const m0, isl_map* const m1);
 
 isl_aff* get_aff(isl_map* m);
+std::vector<isl_aff*> get_aff_vec(isl_map* m);
 
 
 string str(isl_mat* const ineqmat);

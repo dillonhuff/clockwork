@@ -25,6 +25,20 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     return out;
 }
 
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::map<string, T>& m) {
+    if ( !m.empty()  ) {
+      for (const auto &p : m)
+      {
+        out << p.first << ": ";
+        out << p.second << ' ';
+        out << std::endl;
+      }
+
+    }
+    return out;
+}
+
 struct HWconstraints {
     size_t port_width;
     size_t port_number;

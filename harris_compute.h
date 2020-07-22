@@ -17,7 +17,7 @@ hw_uint<16> hcompute_grad_x_stencil(hw_uint<96>& padded16_stencil) {
   hw_uint<16> padded16_stencil_5 = padded16_stencil.extract<64, 79>();
   hw_uint<16> padded16_stencil_6 = padded16_stencil.extract<80, 95>();
 
-  return max(min(((((padded16_stencil_1 + (padded16_stencil_2 + (padded16_stencil_3*(int16)2))) - padded16_stencil_4) - (padded16_stencil_5*(int16)2)) - padded16_stencil_6), (int16)255), (int16)-255);
+  return max(min(((((padded16_stencil_1 + (padded16_stencil_2 + (padded16_stencil_3*2))) - padded16_stencil_4) - (padded16_stencil_5*2)) - padded16_stencil_6), 255), -255);
 }
 
 //store is: lxx.stencil(lxx.s0.x, lxx.s0.y) = ((int32(grad_x.stencil(lxx.s0.x, lxx.s0.y))*int32(grad_x.stencil(lxx.s0.x, lxx.s0.y)))/128)
@@ -54,7 +54,7 @@ hw_uint<16> hcompute_grad_y_stencil(hw_uint<96>& padded16_stencil) {
   hw_uint<16> padded16_stencil_8 = padded16_stencil.extract<64, 79>();
   hw_uint<16> padded16_stencil_9 = padded16_stencil.extract<80, 95>();
 
-  return max(min(((((padded16_stencil_7 + (padded16_stencil_8 + (padded16_stencil_9*(int16)2))) - padded16_stencil_10) - (padded16_stencil_11*(int16)2)) - padded16_stencil_12), (int16)255), (int16)-255);
+  return max(min(((((padded16_stencil_7 + (padded16_stencil_8 + (padded16_stencil_9*2))) - padded16_stencil_10) - (padded16_stencil_11*2)) - padded16_stencil_12), 255), -255);
 }
 
 //store is: lxy.stencil(lxy.s0.x, lxy.s0.y) = ((int32(grad_x.stencil(lxy.s0.x, lxy.s0.y))*int32(grad_y.stencil(lxy.s0.x, lxy.s0.y)))/128)

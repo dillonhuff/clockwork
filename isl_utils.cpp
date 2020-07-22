@@ -1,6 +1,11 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+std::string dim_name(isl_set* const a, const int d) {
+  string str(isl_set_get_dim_name(a, isl_dim_set, d));
+  return str;
+}
+
 std::string dim_name(isl_aff* const a, const int d) {
   string str(isl_aff_get_dim_name(a, isl_dim_in, d));
   return str;
@@ -679,6 +684,15 @@ isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string o
     return isl_map_read_from_str(ctx, string("{" + op_name + vars + " -> " + sched + "}").c_str());
 }
 
+isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, std::vector<string> sched_vec, string op_name) {
+    vector<string> var_list;
+    var_list.push_back("root");
+    var_list.push_back("i1");
+    string vars = sep_list(var_list, "[", "]", ",");
+    string sched = sep_list(sched_vec, "[", "]", ",");
+    return isl_map_read_from_str(ctx, string("{" + op_name + vars + " -> " + sched + "}").c_str());
+}
+
 unsigned get_in_dim(isl_map* const m) {
     return isl_map_dim(cpy(m), isl_dim_in);
 }
@@ -1329,6 +1343,10 @@ isl_map* inv(isl_map* const m0) {
 
 isl_set* unn(isl_set* const m0, isl_set* const m1) {
   return isl_set_union(cpy(m0), cpy(m1));
+}
+
+isl_map* diff(isl_map* const m0, isl_map* const m1) {
+  return isl_map_subtract(cpy(m0), cpy(m1));
 }
 
 isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1) {
@@ -2810,6 +2828,23 @@ isl_aff* get_aff(isl_map* m) {
   return aff;
 }
 
+std::vector<isl_aff*> get_aff_vec(isl_map* m) {
+  auto lm = isl_pw_multi_aff_from_map(cpy(m));
+  cout << tab(1) << str(m) << endl;
+  cout << tab(2) << "lexmax: " << str(lm) << endl;
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(lm);
+  assert(pieces.size() == 1);
+
+  vector<isl_aff*> ret;
+  auto saff = pieces.at(0).second;
+  for (int i = 0; i < get_size(saff); i ++) {
+    auto aff = isl_multi_aff_get_aff(saff, i);
+    ret.push_back(aff);
+  }
+  return ret;
+}
+
 isl_basic_set* to_bset(isl_set* m) {
   auto sets = get_basic_sets(m);
   assert(sets.size() == 1);
@@ -2952,3 +2987,6 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
   return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
 }
 
+isl_aff* sub(isl_aff* a, isl_aff* b) {
+  return isl_aff_sub(cpy(a), cpy(b));
+}

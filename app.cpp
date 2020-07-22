@@ -140,7 +140,7 @@ map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& ob
 
   string aff_str =
     "{ " +
-    sep_list(ds, "[", "]", ", ") + " -> " + 
+    sep_list(ds, "[", "]", ", ") + " -> " +
     "[" + isl_str(objective) + "] }";
 
   //cout << "Aff str: " << aff_str << endl;
@@ -224,10 +224,10 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
         "{ " + varspx + " -> [" + lhs_str + "] }");
     isl_constraint* cc = nullptr;
     if (normed.is_eq) {
-      cc = 
+      cc =
         isl_equality_from_aff(affc);
     } else {
-      cc = 
+      cc =
         isl_inequality_from_aff(affc);
     }
     assert(cc != nullptr);
@@ -241,7 +241,7 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
 
   string aff_str =
     "{ " +
-    sep_list(ds, "[", "]", ", ") + " -> " + 
+    sep_list(ds, "[", "]", ", ") + " -> " +
     "[" + isl_str(objective) + "] }";
 
   //cout << "Aff str: " << aff_str << endl;
@@ -948,7 +948,7 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
   return qfs;
 }
 
-map<string, isl_val*> 
+map<string, isl_val*>
 compute_qfactors(vector<isl_map*>& deps) {
   auto schedule_params =
     extract_schedule_params(deps);
@@ -1000,7 +1000,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   cout << "Deps..." << endl;
   assert(deps.size() > 0);
   isl_ctx* ct = ctx(deps.at(0));
-  
+
   auto schedule_params =
     extract_schedule_params(deps);
 
@@ -1039,7 +1039,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     cout << tab(1) << out << endl;
     pipeline_delay[delay_var_name(out)] = one(ct);
   }
-  assert(outputs.size() == 1);
+  //assert(outputs.size() == 1);
 
   // Add shift register constraints
   //for (auto s : schedule_params) {
@@ -1115,7 +1115,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   for (auto s : schedule_params) {
     string consumer = domain_name(s.first);
     string producer = range_name(s.first);
-    
+
     isl_set* pset = find_set(producer, domains);
     //isl_val* min = lexminval(cset);
     isl_val* lp = lexmaxval(pset);
@@ -1145,7 +1145,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
 
     //delay_obj[dc] = negone(ct);
     //delay_obj[dp] = negone(ct);
-    
+
     //delay_obj[dc] = one(ct);
     //delay_obj[dp] = one(ct);
 
@@ -1163,7 +1163,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay});
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, delay_obj});
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, linebuffer_obj, delay_obj});
-  
+
   vector<map<string, isl_val*> > objectives;
   objectives.push_back(pipeline_delay);
   //concat(objectives, lb_objs);
@@ -1175,7 +1175,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     isl_val* rate = map_find(sched_var_name(f), qfactors);
     isl_val* delay = delay_problem.value(delay_var_name(f));
     cout << "f rate: " << str(rate) << ", delay: " << str(delay) << endl;
-    string aff_str = 
+    string aff_str =
       "{ [i] -> [(" + str(rate) + "*i + " + str(delay) + ")]}";
     cout << tab(1) << "aff str: " << aff_str << endl;
     schedule_functions[f] = rdaff(ct, aff_str);
@@ -1246,9 +1246,17 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
         auto dp = project_all_but(f, i + 1);
         //auto tc =
           //mul(isl_val_int_from_si(ct, 3), sub(lexmaxval(dp), lexminval(dp)));
-        auto tc =
-          add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
-        modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
+
+        if (i > 0) {
+          auto tc =
+            add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+          modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
+        } else {
+
+          auto tc =
+            sub(lexmaxval(dp), lexminval(dp));
+          modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
+        }
       }
 
       obj.push_back({ii_var(n, i), one(ct)});
@@ -1262,14 +1270,14 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
   //}
 
   // All root IIs must be equal
-  //for (auto s : get_sets(padded_domain)) {
-    //for (auto other : get_sets(padded_domain)) {
-      //string iis = ii_var(name(s), 0);
-      //string iio = ii_var(name(other), 0);
-      //cout << iis << " == " << iio << endl;
-      //modulo_schedule.add_eq(iis, iio);
-    //}
-  //}
+  for (auto s : get_sets(padded_domain)) {
+    for (auto other : get_sets(padded_domain)) {
+      string iis = ii_var(name(s), 0);
+      string iio = ii_var(name(other), 0);
+      cout << iis << " == " << iio << endl;
+      modulo_schedule.add_eq(iis, iio);
+    }
+  }
 
   return modulo_schedule;
 }
@@ -1278,7 +1286,11 @@ map<string, isl_aff*>
 hardware_schedule(
     uset* domain,
     umap* validity,
-    umap* proximity) {
+    umap* proximity,
+    map<string, int>& latencies,
+    map<string, int>& iis,
+    vector<pair<string, isl_val*> >& obj,
+    const vector<linear_constraint>& extra_constraints) {
 
   cout << "Creating hw schedule..." << endl;
   auto padded_domain = cpy(domain);
@@ -1296,14 +1308,23 @@ hardware_schedule(
     cout << tab(1) << s << endl;
   }
 
-  // Dummy latencies
-  map<string, int> latencies;
-  for (auto f : get_sets(padded_domain)) {
-    latencies[name(f)] = 2;
-  }
-
   ilp_builder modulo_schedule =
     modulo_constraints(domain, validity, latencies);
+  for (auto c : extra_constraints) {
+    vector<pair<string, isl_val*> > cs;
+    for (auto term : c.terms) {
+      cs.push_back({term.first, isl_val_int_from_si(ct, term.second)});
+    }
+    if (c.is_equality) {
+      modulo_schedule.add_eq(simplify(cs), isl_val_int_from_si(ct, c.offset));
+    } else {
+      modulo_schedule.add_geq(simplify(cs), isl_val_int_from_si(ct, c.offset));
+    }
+  }
+
+  for (auto s : get_sets(padded_domain)) {
+    modulo_schedule.add_geq(ii_var(name(s), num_dims(s) - 1), map_find(name(s), iis));
+  }
 
   {
     for (auto m : get_maps(padded_validity)) {
@@ -1400,19 +1421,13 @@ hardware_schedule(
   //}
 
   //modulo_schedule.add_eq({{ii_var("reduce", 2), one(ct)}}, isl_val_int_from_si(ct, 2));
-  vector<pair<string, isl_val*> > obj;
-  for (auto f : get_sets(padded_domain)) {
-    string n = name(f);
-    int dim = num_dims(f);
-
-    for (int i = 0; i < dim; i++) {
-      obj.push_back({ii_var(n, i), one(ct)});
-    }
-
-  }
-
 
   modulo_schedule.minimize(simplify(obj));
+
+  cout << "Solution: " << endl;
+  for (auto v : modulo_schedule.variable_positions) {
+    cout << v.first << " = " << str(modulo_schedule.value(v.first)) << endl;
+  }
 
   map<string, isl_aff*> hw_schedules;
   for (auto f : get_sets(padded_domain)) {
@@ -1433,7 +1448,71 @@ hardware_schedule(
   return hw_schedules;
 }
 
-umap* 
+map<string, isl_aff*>
+hardware_schedule(
+    uset* domain,
+    umap* validity,
+    umap* proximity,
+    map<string, int>& latencies,
+    map<string, int>& iis,
+    vector<pair<string, isl_val*> >& obj) {
+  return hardware_schedule(domain, validity, proximity, latencies, iis, obj, {});
+}
+
+map<string, isl_aff*>
+hardware_schedule(
+    uset* domain,
+    umap* validity,
+    umap* proximity) {
+  // Dummy latencies
+  map<string, int> latencies;
+  map<string, int> iis;
+  for (auto f : get_sets(domain)) {
+    latencies[name(f)] = 2;
+    iis[name(f)] = 1;
+  }
+
+  auto ct = ctx(domain);
+  vector<pair<string, isl_val*> > obj;
+  for (auto f : get_sets(domain)) {
+    string n = name(f);
+    int dim = num_dims(f);
+
+    for (int i = 0; i < dim; i++) {
+      obj.push_back({ii_var(n, i), one(ct)});
+    }
+
+  }
+
+  return hardware_schedule(domain, validity, proximity, latencies, iis, obj);
+}
+
+umap* to_umap(uset* domain, const map<string, isl_aff*>& hs) {
+  auto ct = ctx(domain);
+  umap* schedmap = rdmap(ct, "{}");
+  for (auto s : get_sets(domain)) {
+    string n = name(s);
+    isl_aff* sched = map_find(n, hs);
+
+    isl_map* sm = isl_map_from_aff(sched);
+
+    cout << "schedule for n: " << str(sm) << endl;
+    schedmap = unn(schedmap, to_umap(sm));
+    cout << "schedmap = " << str(schedmap) << endl;
+  }
+
+  return schedmap;
+
+}
+
+umap*
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
+    map<string, int>& latencies, map<string, int>& iis, vector<pair<string, isl_val*> >& obj) {
+  auto hs = hardware_schedule(domain, validity, proximity, latencies, iis, obj);
+  return to_umap(domain, hs);
+}
+
+umap*
 hardware_schedule_umap(uset* domain, umap* validity, umap* proximity) {
   auto hs = hardware_schedule(domain, validity, proximity);
 
@@ -1464,7 +1543,7 @@ hardware_schedule_umap(uset* domain, umap* validity, umap* proximity) {
   //}
 
   //vector<isl_set*> padded;
-  //map<isl_set*, int> 
+  //map<isl_set*, int>
   //for (auto d : domains) {
     //padded = pad_set(d, max_dims);
   //}
@@ -1974,7 +2053,7 @@ void print_hw_schedule(const std::string& latency_to_minimize,
       cout << "projecting out: " << str(fs) << endl;
       fs = lift_divs(fs);
       cout << "after lifting: " << str(fs) << endl;
-      
+
       append_basic_set(builder, fs);
 
       //cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;

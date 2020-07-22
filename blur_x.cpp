@@ -72,6 +72,7 @@ struct I_I_id0_0_merged_banks_3_cache {
 };
 
 struct I_cache {
+  // # of banks: 1
   I_I_id0_0_merged_banks_3_cache I_I_id0_0_merged_banks_3;
 };
 

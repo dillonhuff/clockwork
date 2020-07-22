@@ -47,10 +47,10 @@ struct ir_node {
   std::vector<dynamic_address> dynamic_store_addresses;
 
   // Locations read
-  std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
+  std::vector<pair<buffer_name, piecewise_address> > consume_locs_pair;
   std::vector<dynamic_address> dynamic_load_addresses;
 
-  // The name of the HL C++ function that this op invokes
+  // The name of the HLS C++ function that this op invokes
   std::string func;
   // Name of loop index variables used by this unit
   std::vector<std::string> index_variables_needed_by_compute;
@@ -61,7 +61,19 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  void copy_fields_from(op* other);
   void copy_memory_operations_from(op* other);
+  void replace_variable(const std::string& var, const int val);
+
+  void delete_child(op* c) {
+    vector<op*> new_children;
+    for (auto ch : children) {
+      if (ch != c) {
+        new_children.push_back(ch);
+      }
+    }
+    children = new_children;
+  }
 
   bool dynamic_writes(const std::string& buf) {
     for (auto d : dynamic_store_addresses) {
@@ -353,6 +365,41 @@ struct ir_node {
     return nullptr;
   }
 
+  op* add_loop_before(op* source, const std::string& name, const int l, const int u) {
+    assert(is_loop);
+
+    op* sr = container_child(source);
+    assert(sr != nullptr);
+
+    cout << "Before inserting " << name << " we have " << children.size() << " children" << endl;
+
+    auto lp = new op();
+    lp->name = name;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->is_loop = true;
+    lp->start = l;
+    lp->end_exclusive = u;
+    vector<op*> new_children;
+    bool found_sr = false;
+    for (auto c : children) {
+      if (c == sr) {
+        new_children.push_back(lp);
+        found_sr = true;
+      }
+      new_children.push_back(c);
+    }
+    cout << "After inserting " << name << " we have " << children.size() << " children" << endl;
+
+
+    assert(found_sr);
+    assert(new_children.size() == children.size() + 1);
+
+    this->children = new_children;
+
+    return lp;
+  }
+  
   op* add_loop_after(op* source, const std::string& name, const int l, const int u) {
     assert(is_loop);
 
@@ -716,6 +763,15 @@ struct prog {
 
   void sanity_check();
 
+  op* parent(op* p);
+
+  void set_bounds(const std::string& loop, const int start, const int end_exclusive);
+  void extend_bounds(const std::string& loop, const int start, const int end_exclusive);
+
+  std::string un(const std::string& prefix) {
+    return unique_name(prefix);
+  }
+
   std::string unique_name(const std::string& prefix) {
     auto name = prefix + str(unique_num);
     unique_num++;
@@ -820,7 +876,7 @@ struct prog {
     cout << "program: " << name << endl;
     cout << "buffers..." << endl;
     for (auto b : buffer_bounds) {
-      cout << tab(1) << b.first << endl;
+      cout << tab(1) << b.first << bracket_list(b.second) << endl;
     }
     cout << "operations..." << endl;
     root->pretty_print(cout, 0);
@@ -1116,6 +1172,8 @@ struct prog {
     return m;
   }
 
+  map<op*, isl_map*> producer_maps_no_domain();
+
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
@@ -1381,6 +1439,7 @@ vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buf
 vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
 
 
+std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
 
@@ -1403,6 +1462,8 @@ vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& pr
 
 void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg);
 
+std::vector<string> topologically_sort_kernels(prog& prg);
+
 std::set<string> buffers_written(op* p);
 
 bool writes(const std::string& target_buf, op* p);
@@ -1410,6 +1471,14 @@ bool writes(const std::string& target_buf, op* p);
 op* find_writer(const std::string& target_buf, prog& prg);
 
 std::set<string> get_producers(string next_kernel, prog& prg);
+
+void deep_copy_child(op* dest, op* source, prog& original);
+
+std::set<string> get_consumed_buffers(const std::string& kernel, prog& original);
+std::set<string> get_produced_buffers(const std::string& kernel, prog& original);
+
+std::set<string> get_consumed_buffers(const std::set<std::string>& group, prog& original);
+std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
 
 void generate_verilog(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -1423,3 +1492,15 @@ std::string optimized_code_string(prog& prg);
 void generate_trace(prog& prg, umap* sched);
 
 void all_register_files(prog& prg, CodegenOptions& options);
+void compile_compute(const std::string& name);
+
+vector<string> surrounding_vars(op* loop, prog& prg);
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
+
+
+void unroll(prog& prg, const std::string& var);
+
+vector<int> indexes(op* p);
+vector<string> write_vars(const std::string& target_buf, op* reader, prog& prg);
+
+void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg);

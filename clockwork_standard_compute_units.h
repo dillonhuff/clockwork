@@ -4,6 +4,17 @@
 
 typedef int16_t int16;
 
+template<typename T>
+T clamp_val(const T& a, const T& lo, const T& hi) {
+  if (a < lo) {
+    return lo;
+  }
+  if (a > hi) {
+    return hi;
+  }
+  return a;
+}
+
 static inline
 float int_to_float(const hw_uint<32>& in) {
   return (float) in.to_int();
@@ -240,6 +251,10 @@ T inc(T& src, T& a0) {
 //int inc(int& src, int& a0) {
   //return src + a0;
 //}
+
+hw_uint<16> interleave(hw_uint<16>& src, hw_uint<16>& a0, const int column_index) {
+  return (column_index % 2) == 0 ? src : a0;
+}
 
 hw_uint<16> fmadd_16(hw_uint<16>& src, hw_uint<16>& a0) {
   return src + a0;
@@ -638,3 +653,5 @@ static inline
 hw_uint<32> histogram_inc(hw_uint<64>& ignore, hw_uint<32>& val) {
   return val + 1;
 }
+
+

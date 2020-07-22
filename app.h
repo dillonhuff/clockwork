@@ -254,7 +254,7 @@ struct FiniteRegion {
     assert(v.num == 1);
     return floor(max_result_addr / (float) v.denom);
   }
-  
+
   QAV reduce_var_stride(const int dim) const {
     if (dim >= reduce_var_ranges.dimension()) {
       return qconst(0);
@@ -334,6 +334,12 @@ struct Update {
 
   string compute_unit_impl;
   Expr* def;
+
+  vector<string> index_variables_needed;
+
+  vector<string> index_variables_needed_by_compute() {
+    return index_variables_needed;
+  }
 
   void pad_reduce_dimension(const int max_reduce_dimension) {
     for (auto& win : srcs) {
@@ -859,7 +865,7 @@ isl_map* last_comp_needed(
 }
 
 static inline
-map<string, map<string, vector<QExpr> > > 
+map<string, map<string, vector<QExpr> > >
 build_compute_deps(
     int schedule_dim,
     vector<string> sorted_functions,
@@ -1009,8 +1015,28 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity);
 map<string, isl_aff*>
 hardware_schedule(uset* domain, umap* validity, umap* proximity);
 
-umap* 
+umap*
 hardware_schedule_umap(uset* domain, umap* validity, umap* proximity);
+
+umap*
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
+    map<string, int>& latencies, map<string, int>& iis, vector<pair<string, isl_val*> >& obj);
+
+struct linear_constraint {
+  vector<pair<string, int> > terms;
+  int offset;
+  bool is_equality;
+};
+
+map<string, isl_aff*>
+hardware_schedule(
+    uset* domain,
+    umap* validity,
+    umap* proximity,
+    map<string, int>& latencies,
+    map<string, int>& iis,
+    vector<pair<string, isl_val*> >& obj,
+    const vector<linear_constraint>& extra_equality_constraints);
 
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
 
@@ -1036,7 +1062,7 @@ string compute_unit_string(const num_type tp,
     "return " + "uint" + str(pixel_width) + "_t" + parens(res) + ";\n}";
 }
 
-map<string, isl_val*> 
+map<string, isl_val*>
 compute_qfactors(vector<isl_map*>& deps);
 
 map<string, vector<int> >
@@ -1120,7 +1146,7 @@ struct ilp_builder {
 
   void add_geq(const int v, const std::string& a) {
     add_geq({{a, negone(ctx)}}, isl_val_int_from_si(ctx, v));
-  } 
+  }
 
   void add_eq(const std::string& a, const std::string& b) {
     //add_eq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
@@ -1291,3 +1317,4 @@ string next_name(const std::string& prefix, ilp_builder& b) {
   return prefix + "_" + str(b.variable_positions.size());
 }
 
+umap* to_umap(uset* domain, const map<string, isl_aff*>& hs);

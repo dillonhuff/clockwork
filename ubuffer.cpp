@@ -37,6 +37,7 @@ std::string write_addrgen_name(const std::string& n) {
 }
 
 map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf) {
+  cout << "Getting input port conditions for " << outpt << " on buffer: " << buf.name << endl;
   map<string, isl_set*> in_ports_to_conditions;
   umap* reads_to_sources = buf.get_lexmax_events(outpt);
   cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
@@ -50,9 +51,13 @@ map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffe
   }
 
   auto read_map = buf.access_map.at(outpt);
+  cout << "read map = " << str(read_map) << endl;
+
   auto read_space = get_space(read_map);
   for (auto inpt : possible_ports) {
     auto write_map = buf.access_map.at(inpt);
+    cout << inpt << " write map = " << str(write_map) << endl;
+
     auto data_written = range(write_map);
 
     auto common_write_ops =
@@ -304,39 +309,16 @@ void generate_multilinear_bank(CodegenOptions& options,
     range_strs.push_back("[" + str(r) + "]");
   }
 
-  //out << "\t// Capacity: " << capacity << endl;
-  //out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
   out << tab(1) << pt_type_string << " RAM" << sep_list(range_strs, "", "", "") << ";" << endl;
 
   out << tab(1) << "inline " + pt_type_string + " read(" << comma_list(decls) << ") {" << endl;
 
-  //open_debug_scope(out);
-  //out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
-  //out << tab(2) << "cout << \"Read error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
-  //out << tab(2) << "}" << endl;
-  //out << tab(2) << "assert(addr < " << capacity << ");" << endl;
-  //out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
-  //close_debug_scope(out);
-
-  //ignore_inter_deps(out, "RAM");
   out << tab(2) << "return RAM" << sep_list(args, "", "", "") << ";" << endl;
   out << tab(1) << "}" << endl << endl;
 
   out << endl << endl;
 
   out << "\tinline void write(const " + pt_type_string + " value, " << comma_list(decls) << ") {" << endl;
-  //open_debug_scope(out);
-  //out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
-  //out << tab(2) << "cout << \"Write error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
-  //out << tab(2) << "}" << endl;
-  //out << tab(2) << "assert(addr < " << capacity << ");" << endl;
-  //out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
-  //close_debug_scope(out);
-
-  //if (options.add_dependence_pragmas) {
-    //ignore_inter_deps(out, "RAM");
-  //}
-  //out << tab(2) << "RAM[addr] = value;" << endl;
   out << tab(2) << "RAM" << sep_list(args, "", "", "") << " = value;" << endl;
   out << tab(1) << "}" << endl << endl;
 
@@ -365,7 +347,21 @@ void generate_bank(CodegenOptions& options,
     //add a ram capacity compute pass is different from stack bank
     int capacity = int_upper_bound(card(bank.rddom));
     out << "\t// Capacity: " << capacity << endl;
+    open_synth_scope(out);
     out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
+    close_synth_scope(out);
+
+    open_debug_scope(out);
+    out << tab(1) << pt_type_string << "* RAM;" << endl;
+    out << tab(1) << name << "_cache()" <<  " {" << endl;
+    out << tab(2) << "RAM = (" << pt_type_string << "*) malloc(sizeof(" << pt_type_string << ")*" << capacity << ");" << endl;
+    out << tab(1) << "}" << endl;
+
+    out << tab(1) << "~" << name << "_cache()" <<  " {" << endl;
+    out << tab(2) << "free(RAM);" << endl;
+    out << tab(1) << "}" << endl;
+    close_debug_scope(out);
+
     out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
 
     open_debug_scope(out);
@@ -406,6 +402,7 @@ void generate_bank(CodegenOptions& options,
 
     out << "\t// Capacity: " << maxdelay + 1 << endl;
     out << "\t// # of read delays: " << read_delays.size() << endl;
+    out << tab(1) << "// " << comma_list(read_delays) << endl;
 
     read_delays = sort_unique(read_delays);
 
@@ -1217,7 +1214,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     out << "struct " << buf.name << "_cache {" << endl;
-
+    out << tab(1) << "// # of banks: " << buf.get_banks().size() << endl;
     for (auto b : buf.get_banks()) {
       out << tab(1)
         << b.name << "_cache "
@@ -1228,9 +1225,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     out << "};" << endl << endl;
 
     out << endl << endl;
-
-    //for (auto inpt : buf.get_in_ports()) {
-    //}
 
   }
 
@@ -2253,6 +2247,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
   void UBuffer::generate_banks(CodegenOptions& options) {
+    cout << "generating banks for " << name << endl;
     if (options.debug_options.expect_all_linebuffers) {
       assert(dynamic_ports.size() == 0);
     }
@@ -2333,9 +2328,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     } else {
 
+
       // Use naive banking that reaches target throughput
       for (auto outpt : get_out_ports()) {
+        cout << "Generating banks for " << outpt << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
+        cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
         uset* producers_for_outpt = range(reads_to_sources);
         for (auto inpt : get_in_ports()) {
           auto write_ops =
@@ -2367,6 +2365,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         //b.tp = INNER_BANK_OFFSET_LINEAR;
       //}
     //}
+    cout << tab(1) << "after banking there are " << bank_list.size() << " banks" << endl;
   }
 
   void UBuffer::generate_banks_and_merge(CodegenOptions& options) {
