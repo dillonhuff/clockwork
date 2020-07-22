@@ -9492,6 +9492,7 @@ void register_file_test() {
   //assert(false);
 }
 void travis_tests() {
+  jacobi_2d_2_test();
   register_file_test();
   reduce_1d_test();
   reduce_2d_test();
@@ -11698,7 +11699,7 @@ void resnet_test() {
   add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   prg.pretty_print();
   generate_unoptimized_code(prg);
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.all_rams = true;
@@ -12302,7 +12303,7 @@ void lchannel_test() {
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
 
-  assert(false);
+  //assert(false);
 }
 
 void gf_test() {
@@ -12324,7 +12325,6 @@ void gf_test() {
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
 
-  assert(false);
 }
 
 void llf_test() {
@@ -12406,35 +12406,6 @@ void llf_test() {
 }
 
 void application_tests() {
-  //exposure_fusion_iccad_apps("ef_tc");
-  
-  llf_test();
-  us_unroll_test();
-  ds_unroll_test();
-  prg_unroll_test();
-  lchannel_test();
-  gf_test();
-
-  blur_example();
-  halide_frontend_test();
-  halide_harris_test();
-  halide_up_sample_test();
-  halide_conv_layer_3D_test();
-  conv_3_3_halide_test();
-
-  async_add_test();
-  lake_agg_sram_tb_config_test();
-  seidel2d_test();
-  add_four_channels();
-  weight_add_psef();
-
-  two_stage_psef();
-  psef_multi_output_test();
-
-  non_rate_matched_ds_test();
-  reuse_buffered_conv_test();
-  resnet_test();
-  iccad_tests();
   coreir_tests();
   multi_output_app_test();
 
@@ -12579,6 +12550,37 @@ void application_tests() {
   reduce_stream_coreir_test();
   conv_test();
   conv_2d_bc_test();
+
+  //exposure_fusion_iccad_apps("ef_tc");
+  
+  llf_test();
+  us_unroll_test();
+  ds_unroll_test();
+  prg_unroll_test();
+  lchannel_test();
+  gf_test();
+
+  blur_example();
+  halide_frontend_test();
+  halide_harris_test();
+  halide_up_sample_test();
+  halide_conv_layer_3D_test();
+  conv_3_3_halide_test();
+
+  async_add_test();
+  lake_agg_sram_tb_config_test();
+  seidel2d_test();
+  add_four_channels();
+  weight_add_psef();
+
+  two_stage_psef();
+  psef_multi_output_test();
+
+  non_rate_matched_ds_test();
+  reuse_buffered_conv_test();
+  resnet_test();
+
+  iccad_tests();
 
   //two_input_denoise_pipeline_test();
   //synth_wire_test();
