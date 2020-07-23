@@ -73,8 +73,8 @@ map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info
 
 		 int num_locs_written = int_upper_bound(card(all_locs_written));
 		 cout << tab(2) << "Number of locations written: " << num_locs_written << endl;
-		 estimated_areas[kernel] = kernel_cost;
-		 cout << "Kernel '" << kernel << "' cost: " << estimated_areas[kernel] << endl;
+		 estimated_areas[kernel] = num_locs_written;
+		 cout << "Kernel " << kernel << " MEMORY  cost: " << estimated_areas[kernel] << endl;
 	 }
 
 	 return estimated_areas;
@@ -177,88 +177,105 @@ void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) 
 //--------------------------------------------------TOY_TASK----------------------------------------------------------
 void toy_task(){
 
-	prog prg = unet_conv_3_3();
-	cout << "Original program..." << endl;
-	prg.pretty_print();
+	vector<prog> example_progs;
+	example_progs.push_back(unet_conv_3_3());
+	example_progs.push_back(resnet());
 
-//	generate_optimized_code(prg);
-//	generate_unoptimized_code(prg);
-	assert(false);
+	vector<pair<string, int>> prog_costs;
 
-	// Estimate the area required for each
-	// kernel in the application
-	TargetTechlibInfo target_info;
-	target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
-	target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_1"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_2"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_3"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_4"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_5"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_6"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_7"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_8"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_9"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_10"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_11"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_12"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_13"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_14"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_15"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_conv_stencil_16"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.compute_unit_costs["hcompute_output_stencil"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-	target_info.sram_cost_per_bit = 1;
-	target_info.reg_cost_per_bit = 1;
+	for(auto prg : example_progs){
+//		cout << "Original program..." << endl;
+//		prg.pretty_print();
 
-	target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
-	target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_1"] = 0;
-	target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_2"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_3"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_4"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_5"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_6"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_7"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_8"] = 0;
-	target_info.compute_unit_costs["hcompute_conv_stencil_9"] = 0;
-	target_info.compute_unit_costs["hcompute_hw_output_stencil"] = 0;
-//	estimate_kernel_memory_area(prg, target_info);
-//	assert(false);	
-	cout << endl << "Estimating area costs..." << endl;
-	map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
-	int total_cost = 0;
-	for(auto estimate_area : kernel_areas){
-		total_cost += estimate_area.second;
-	}
-	cout << "TOTAL ESTIMATE COST: " << total_cost << endl;
-	assert(false);
-	
-	cout << endl << "Grouping kernels..." << endl;
-	int max_area_cost_per_group = 9;
-	std::set<std::set<string>> kernel_grouping = group_kernels_for_compilation(prg, kernel_areas, max_area_cost_per_group);
-	assert(kernel_grouping.size() == 2);
+		//	generate_optimized_code(prg);
+		//	generate_unoptimized_code(prg);
+		//	assert(false);
 
-	for(auto group : kernel_grouping){
-		cout << "current group: "<< endl;
-		for(auto kernel : group){
-			cout << tab(1) << kernel << endl;
+		// Estimate the area required for each kernel in the application
+		TargetTechlibInfo target_info;
+		target_info.sram_cost_per_bit = 1;
+		target_info.reg_cost_per_bit = 1;
+
+		if(prg.name == "resnet"){
+		target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
+		target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_1"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_2"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_3"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_4"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_5"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_6"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_7"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_8"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_9"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_10"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_11"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_12"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_13"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_14"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_15"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_conv_stencil_16"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		target_info.compute_unit_costs["hcompute_output_stencil"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		} else if(prg.name = "conv_3_3"){
+		target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
+		target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_1"] = 0;
+		target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_2"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_3"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_4"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_5"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_6"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_7"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_8"] = 0;
+		target_info.compute_unit_costs["hcompute_conv_stencil_9"] = 0;
+		target_info.compute_unit_costs["hcompute_hw_output_stencil"] = 0;
 		}
+
+		estimate_kernel_memory_area(prg, target_info);
+//		assert(false);	
+
+		map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
+		int total_cost = 0;
+		for(auto estimate_area : kernel_areas){
+			total_cost += estimate_area.second;
+	//		cout << "Each cost: " << estimate_area.second << endl;
+		}
+/*
+		cout << endl << "Grouping kernels..." << endl;
+		int max_area_cost_per_group = 9;
+		std::set<std::set<string>> kernel_grouping = group_kernels_for_compilation(prg, kernel_areas, max_area_cost_per_group);
+//		assert(kernel_grouping.size() == 2);
+
+		for(auto group : kernel_grouping){
+			cout << "current group: "<< endl;
+			for(auto kernel : group){
+				cout << tab(1) << kernel << endl;
+			}
+		}
+
+		vector<prog> group_programs;
+		cout << endl << "Extracting progs..." << endl;
+		for (auto group : kernel_grouping) {
+			prog prog_for_group = extract_group_to_separate_prog(group, prg);
+			cout << "Group program..." << endl;
+			prog_for_group.pretty_print();
+			group_programs.push_back(prog_for_group);
+		}
+*/
+		pair<string, int> result;
+		result.first = prg.name;
+		result.second = total_cost; 
+		prog_costs.push_back(result);
 	}
-
-	vector<prog> group_programs;
-	cout << endl << "Extracting progs..." << endl;
-	for (auto group : kernel_grouping) {
-		prog prog_for_group = extract_group_to_separate_prog(group, prg);
-		cout << "Group program..." << endl;
-		prog_for_group.pretty_print();
-		group_programs.push_back(prog_for_group);
+	//	generate_optimized_code_for_program_dag(group_programs);
+	
+	cout << endl << "Programs costs:" << endl;
+	for(auto cost : prog_costs){
+		cout << cost.first << " => " << cost.second << endl;
 	}
-
-	generate_optimized_code_for_program_dag(group_programs);
-
 	assert(false);
 
 }
