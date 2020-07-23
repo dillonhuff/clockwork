@@ -11900,7 +11900,7 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
         isl_aff* addr = get_aff(to_map(addr_expr_map));
         cout << "\t address generator aff expr:" << str(get_aff(to_map(addr_expr_map))) << endl;
 
-        if (is_rd) {
+        if (!is_rd) {
             out << "\"write\"," << "\"" << buf_name << "\"" << endl;
         } else {
             out << "\"read\"," << "\"" << buf_name  << "\"" << endl;

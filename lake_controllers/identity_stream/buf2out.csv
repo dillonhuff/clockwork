@@ -6,12 +6,12 @@
 "cycle_stride_1",8,0
 "extent_0",8,0
 "cycle_stride_0",1,0
-"read","out"
+"write","out"
 "data_starting_addr",0,0
 "data_stride_2",0,0
 "data_stride_1",8,0
 "data_stride_0",1,0
-"write","buf_tb"
+"read","buf_tb"
 "data_starting_addr",0,0
 "data_stride_2",0,0
 "data_stride_1",8,0
