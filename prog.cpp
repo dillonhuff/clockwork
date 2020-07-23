@@ -2392,6 +2392,9 @@ void generate_app_code(CodegenOptions& options,
   if (!options.use_custom_code_string) {
     code_string = codegen_c(schedmap);
     //code_string = perfect_loop_codegen(schedmap);
+  } else {
+    cout << "Code string = " << code_string << endl;
+    //assert(false);
   }
 
   string original_isl_code_string = code_string;

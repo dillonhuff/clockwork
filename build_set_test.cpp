@@ -7476,9 +7476,8 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 8, 16, 32};
+  vector<int> throughputs{1};
   for (auto throughput : throughputs) {
-    //const int throughput = 4;
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
     int rows = 1080;
@@ -7487,7 +7486,7 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
-    lp.realize(name, cols, rows, throughput);
+    lp.realize(options, name, cols, rows, throughput);
     move_to_benchmarks_folder(name + "_opt");
   }
 }
@@ -12409,7 +12408,10 @@ void llf_test() {
 }
 
 void application_tests() {
+  exposure_fusion_iccad_apps("ef_cc");
+  assert(false);
   blur_example();
+
   //assert(false);
 
   // Failing?
@@ -12501,7 +12503,6 @@ void application_tests() {
   conv_test();
   conv_2d_bc_test();
 
-  //exposure_fusion_iccad_apps("ef_tc");
   
   llf_test();
   us_unroll_test();
