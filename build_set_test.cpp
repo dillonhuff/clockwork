@@ -7478,7 +7478,6 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
 void exposure_fusion_iccad_apps(const std::string& prefix) {
   vector<int> throughputs{1, 8, 16, 32};
   for (auto throughput : throughputs) {
-    //const int throughput = 4;
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
     int rows = 1080;
@@ -7487,7 +7486,7 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
-    lp.realize(name, cols, rows, throughput);
+    lp.realize(options, name, cols, rows, throughput);
     move_to_benchmarks_folder(name + "_opt");
   }
 }
@@ -8962,7 +8961,9 @@ void two_in_window_test() {
   }
   cpi->add_op({"out", "c"}, "conv_1_3", ld);
 
+  prg.pretty_print();
   regression_test(prg);
+  //assert(false);
 }
 
 void upsample_reduce_test() {
@@ -9491,7 +9492,9 @@ void register_file_test() {
   regression_test(options, prg);
   //assert(false);
 }
+
 void travis_tests() {
+  jacobi_2d_2_test();
   register_file_test();
   reduce_1d_test();
   reduce_2d_test();
@@ -11698,7 +11701,7 @@ void resnet_test() {
   add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   prg.pretty_print();
   generate_unoptimized_code(prg);
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.all_rams = true;
@@ -12302,7 +12305,7 @@ void lchannel_test() {
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
 
-  assert(false);
+  //assert(false);
 }
 
 void gf_test() {
@@ -12324,7 +12327,6 @@ void gf_test() {
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
 
-  assert(false);
 }
 
 void llf_test() {
@@ -12391,13 +12393,13 @@ void llf_test() {
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
 
-  cout << "Getting optimized schedule..." << endl;
-  auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
-  cout << "Optimized schedule..." << endl;
-  for (auto m : get_maps(sched)) {
-    cout << tab(1) << str(m) << endl;
-  }
-  assert(false);
+  //cout << "Getting optimized schedule..." << endl;
+  //auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  //cout << "Optimized schedule..." << endl;
+  //for (auto m : get_maps(sched)) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+  //assert(false);
 
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
@@ -12405,98 +12407,33 @@ void llf_test() {
   //assert(false);
 }
 
-void application_tests() {
-  exposure_fusion_iccad_apps("ef_tc");
+void halide_camera_pipeline_test() {
+  prog prg = camera_pipeline();
+  prg.sanity_check();
+  regression_test(prg);
   assert(false);
-  llf_test();
-  blur_example();
-  lchannel_test();
-  gf_test();
-  us_unroll_test();
-  ds_unroll_test();
-  prg_unroll_test();
+}
 
-  halide_frontend_test();
-  halide_harris_test();
-  halide_up_sample_test();
-  halide_conv_layer_3D_test();
-  conv_3_3_halide_test();
-
-  async_add_test();
-  lake_agg_sram_tb_config_test();
-  seidel2d_test();
-  add_four_channels();
-  weight_add_psef();
-
-  two_stage_psef();
-  psef_multi_output_test();
-
-  non_rate_matched_ds_test();
+void application_tests() {
+  //halide_camera_pipeline_test();
   reuse_buffered_conv_test();
-  resnet_test();
-  iccad_tests();
-  coreir_tests();
-  multi_output_app_test();
-
-  sobel_test();
-  jacobi_2d_2_test();
-  jacobi_2d_test();
-
+  assert(false);
   register_file_test();
-  reaccess_no_hierarchy_rolled_test();
+  assert(false);
+
+  exposure_fusion_iccad_apps("ef_cc");
+  assert(false);
+  blur_example();
 
   //assert(false);
 
-  //unet_conv_3_3_test();
-  cyclic_banked_conv_test();
-  //register_file_optimization_test();
-  
-  // Does not work with register files?
-  //cnn_test();
-
-
-  two_input_mag_test();
-  one_input_mag_test();
-
-  sum_float_test();
-
-  sobel_mag_y_test();
-  sobel_app_test();
-  sobel_mag_x_test();
-  heat_3d_test();
-
-  upsample_reduce_test();
-
-  pointwise_test();
-
-  stencil_3d_test();
-  soda_blur_test();
+  // Failing?
   two_in_window_test();
+  jacobi_2d_2_test();
+  soda_blur_test();
   two_in_conv2d_test();
-  gaussian_pyramid_test();
-  warp_and_upsample_test();
-
-  //conv_1d_rolled_test();
-  //synth_upsample_test();
-  unsharp_test();
-  //conv_2d_rolled_test();
-  //mobilenet_test();
-  pyramid_2d_test();
-  pyramid_test();
-
-  up_stencil_auto_unrolled_test();
-  up_down_auto_unrolled_test();
-  up_stencil_down_auto_unrolled_test();
-  conv3x3_app_unrolled_test();
-  conv3x3_app_test();
-  conv3x3_app_unrolled_uneven_test();
-
-  jacobi2d_app_test();
-
-  up_stencil_test();
-  neg_stencil_test();
-  blur_x_test();
-
+  //assert(false);
+  
   //parse_denoise3d_test();
   //app added for cnn
 
@@ -12504,7 +12441,6 @@ void application_tests() {
   sobel_16_stage_x_app_test();
 
   up_stencil_test();
-  neg_stencil_test();
   blur_x_test();
 
   dummy_app_test();
@@ -12579,6 +12515,92 @@ void application_tests() {
   reduce_stream_coreir_test();
   conv_test();
   conv_2d_bc_test();
+
+  
+  llf_test();
+  us_unroll_test();
+  ds_unroll_test();
+  prg_unroll_test();
+  lchannel_test();
+  gf_test();
+
+  halide_frontend_test();
+  halide_harris_test();
+  halide_up_sample_test();
+  halide_conv_layer_3D_test();
+  conv_3_3_halide_test();
+
+  async_add_test();
+  lake_agg_sram_tb_config_test();
+  seidel2d_test();
+  add_four_channels();
+  weight_add_psef();
+
+  two_stage_psef();
+  psef_multi_output_test();
+
+  non_rate_matched_ds_test();
+  resnet_test();
+
+  iccad_tests();
+
+  coreir_tests();
+  multi_output_app_test();
+
+  sobel_test();
+  jacobi_2d_test();
+
+  reaccess_no_hierarchy_rolled_test();
+
+  two_input_mag_test();
+  one_input_mag_test();
+
+  sum_float_test();
+
+  sobel_mag_y_test();
+  sobel_app_test();
+  sobel_mag_x_test();
+  heat_3d_test();
+
+  upsample_reduce_test();
+
+  pointwise_test();
+
+  stencil_3d_test();
+  //assert(false);
+
+  //unet_conv_3_3_test();
+  cyclic_banked_conv_test();
+  //register_file_optimization_test();
+  
+  // Does not work with register files?
+  //cnn_test();
+
+  neg_stencil_test();
+  
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+
+  //conv_1d_rolled_test();
+  //synth_upsample_test();
+  unsharp_test();
+  //conv_2d_rolled_test();
+  //mobilenet_test();
+  pyramid_2d_test();
+  pyramid_test();
+
+  up_stencil_auto_unrolled_test();
+  up_down_auto_unrolled_test();
+  up_stencil_down_auto_unrolled_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_test();
+  conv3x3_app_unrolled_uneven_test();
+
+  jacobi2d_app_test();
+
+  up_stencil_test();
+  blur_x_test();
+
 
   //two_input_denoise_pipeline_test();
   //synth_wire_test();

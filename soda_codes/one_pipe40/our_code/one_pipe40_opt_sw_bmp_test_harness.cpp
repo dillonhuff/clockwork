@@ -64,7 +64,6 @@ int main(int argc, char **argv) {
   bitmap_image output(1920, 1080);
   for (int r = 0; r < 1080; r++) {
     for (int cl = 0; cl < 1920 / 4; cl++) {
-      hw_uint<64> packed;
       auto packed_val = one_pipe40_update_0_write_channel.read();
       hw_uint<16> packed_val_lane_0;
       set_at<0, 16, 16>(packed_val_lane_0, packed_val.extract<0, 15>());
@@ -75,38 +74,42 @@ int main(int argc, char **argv) {
       hw_uint<16> packed_val_lane_3;
       set_at<0, 16, 16>(packed_val_lane_3, packed_val.extract<48, 63>());
       {
+      hw_uint<64> packed;
       int c = 4*cl + 0;
       rgb_t pix;
       pix.red = packed_val_lane_0;
       pix.green = packed_val_lane_0;
       pix.blue = packed_val_lane_0;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<64> packed;
       int c = 4*cl + 1;
       rgb_t pix;
       pix.red = packed_val_lane_1;
       pix.green = packed_val_lane_1;
       pix.blue = packed_val_lane_1;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<64> packed;
       int c = 4*cl + 2;
       rgb_t pix;
       pix.red = packed_val_lane_2;
       pix.green = packed_val_lane_2;
       pix.blue = packed_val_lane_2;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<64> packed;
       int c = 4*cl + 3;
       rgb_t pix;
       pix.red = packed_val_lane_3;
       pix.green = packed_val_lane_3;
       pix.blue = packed_val_lane_3;
       output.set_pixel(c, r, pix);
+      }
     }
-  }
   }
   output.save_image("./images/one_pipe40_opt_bmp_out.bmp");
 }

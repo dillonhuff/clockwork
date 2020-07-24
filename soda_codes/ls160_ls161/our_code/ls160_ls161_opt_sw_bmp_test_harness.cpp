@@ -198,7 +198,6 @@ int main(int argc, char **argv) {
   bitmap_image output(960, 1080);
   for (int r = 0; r < 1080; r++) {
     for (int cl = 0; cl < 960 / 16; cl++) {
-      hw_uint<256> packed;
       auto packed_val = ls160_update_0_write_channel.read();
       hw_uint<16> packed_val_lane_0;
       set_at<0, 16, 16>(packed_val_lane_0, packed_val.extract<0, 15>());
@@ -233,134 +232,150 @@ int main(int argc, char **argv) {
       hw_uint<16> packed_val_lane_15;
       set_at<0, 16, 16>(packed_val_lane_15, packed_val.extract<240, 255>());
       {
+      hw_uint<256> packed;
       int c = 16*cl + 0;
       rgb_t pix;
       pix.red = packed_val_lane_0;
       pix.green = packed_val_lane_0;
       pix.blue = packed_val_lane_0;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 1;
       rgb_t pix;
       pix.red = packed_val_lane_1;
       pix.green = packed_val_lane_1;
       pix.blue = packed_val_lane_1;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 2;
       rgb_t pix;
       pix.red = packed_val_lane_2;
       pix.green = packed_val_lane_2;
       pix.blue = packed_val_lane_2;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 3;
       rgb_t pix;
       pix.red = packed_val_lane_3;
       pix.green = packed_val_lane_3;
       pix.blue = packed_val_lane_3;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 4;
       rgb_t pix;
       pix.red = packed_val_lane_4;
       pix.green = packed_val_lane_4;
       pix.blue = packed_val_lane_4;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 5;
       rgb_t pix;
       pix.red = packed_val_lane_5;
       pix.green = packed_val_lane_5;
       pix.blue = packed_val_lane_5;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 6;
       rgb_t pix;
       pix.red = packed_val_lane_6;
       pix.green = packed_val_lane_6;
       pix.blue = packed_val_lane_6;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 7;
       rgb_t pix;
       pix.red = packed_val_lane_7;
       pix.green = packed_val_lane_7;
       pix.blue = packed_val_lane_7;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 8;
       rgb_t pix;
       pix.red = packed_val_lane_8;
       pix.green = packed_val_lane_8;
       pix.blue = packed_val_lane_8;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 9;
       rgb_t pix;
       pix.red = packed_val_lane_9;
       pix.green = packed_val_lane_9;
       pix.blue = packed_val_lane_9;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 10;
       rgb_t pix;
       pix.red = packed_val_lane_10;
       pix.green = packed_val_lane_10;
       pix.blue = packed_val_lane_10;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 11;
       rgb_t pix;
       pix.red = packed_val_lane_11;
       pix.green = packed_val_lane_11;
       pix.blue = packed_val_lane_11;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 12;
       rgb_t pix;
       pix.red = packed_val_lane_12;
       pix.green = packed_val_lane_12;
       pix.blue = packed_val_lane_12;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 13;
       rgb_t pix;
       pix.red = packed_val_lane_13;
       pix.green = packed_val_lane_13;
       pix.blue = packed_val_lane_13;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 14;
       rgb_t pix;
       pix.red = packed_val_lane_14;
       pix.green = packed_val_lane_14;
       pix.blue = packed_val_lane_14;
       output.set_pixel(c, r, pix);
-    }
+      }
       {
+      hw_uint<256> packed;
       int c = 16*cl + 15;
       rgb_t pix;
       pix.red = packed_val_lane_15;
       pix.green = packed_val_lane_15;
       pix.blue = packed_val_lane_15;
       output.set_pixel(c, r, pix);
+      }
     }
-  }
   }
   output.save_image("./images/ls160_ls161_opt_bmp_out.bmp");
 }

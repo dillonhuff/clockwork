@@ -485,6 +485,7 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
   vector<string> sizes;
   if (!(out_dims > 0 && out_dims <= 3)) {
     out << tab(1) << "Unsupported output dimension: " << out_dims << endl;
+    return;
   }
   int out_cols;
   int out_rows;
@@ -1374,8 +1375,11 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cond = cond.substr(0, cond.length() - 2);
       cond = cond + string(" }");
 
+      cout << "cond = " << cond.c_str() << endl;
       isl_map* consumed_here =
         its(isl_map_read_from_str(buf.ctx, cond.c_str()), cpy(domains.at(op)));
+
+      assert(consumed_here != nullptr);
 
       assert(contains_key(op, domains));
 
@@ -2391,6 +2395,9 @@ void generate_app_code(CodegenOptions& options,
   if (!options.use_custom_code_string) {
     code_string = codegen_c(schedmap);
     //code_string = perfect_loop_codegen(schedmap);
+  } else {
+    cout << "Code string = " << code_string << endl;
+    //assert(false);
   }
 
   string original_isl_code_string = code_string;
@@ -2507,6 +2514,30 @@ void generate_optimized_code(prog& prg) {
 }
 
 
+void generate_vanilla_hls_code(prog& prg) {
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  all_unbanked(prg, options);
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  string old_name = prg.name;
+
+  prg.name = "vanilla_" + prg.name;
+
+  //cout << "Unoptimized schedule..." << endl;
+  auto sched = prg.unoptimized_schedule();
+  //cout << tab(1) << ": " << str(sched) << endl;
+  //cout << codegen_c(prg.unoptimized_schedule());
+
+  auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+
+  generate_app_code(options, buffers, prg, sched);
+
+  prg.name = old_name;
+}
+
 void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
 
   string old_name = prg.name;
@@ -2535,7 +2566,7 @@ void generate_unoptimized_code(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  all_register_files(prg, options);
+  all_unbanked(prg, options);
   options.inner_bank_offset_mode =
     //INNER_BANK_OFFSET_MULTILINEAR;
     INNER_BANK_OFFSET_LINEAR;
@@ -3075,6 +3106,16 @@ op* find_writer(const std::string& target_buf, prog& prg) {
 void prog::sanity_check() {
   std::set<string> buffer_names;
 
+  for (auto op : all_ops()) {
+    auto surrounding = surrounding_vars(op, *this);
+    for (auto compute_var : op->index_variables_needed_by_compute) {
+      if (!(elem(compute_var, surrounding))) {
+        cout << "Error: " << op->name << "'s compute unit needs index variable: " << compute_var << ", but this variable is not one of its surrounding loop index variables, which are: " << comma_list(surrounding) << endl;
+      }
+      assert(elem(compute_var, surrounding));
+    }
+  }
+
   std::set<string> op_names;
   for (auto op : all_ops()) {
     if (!(!elem(op->name, op_names))) {
@@ -3500,6 +3541,14 @@ void generate_trace(prog& prg, umap* schedmap) {
   conv_out << endl;
 
   conv_out.close();
+}
+
+void all_unbanked(prog& prg, CodegenOptions& options) {
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_referenced()) {
+      options.banking_strategies[b] = {"none"};
+    }
+  }
 }
 
 void all_register_files(prog& prg, CodegenOptions& options) {

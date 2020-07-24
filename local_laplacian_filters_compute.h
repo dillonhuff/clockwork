@@ -123,10 +123,10 @@ hw_uint<32> llf_to_color_float(const hw_uint<32>& scales,
   float original_f = to_float(original);
   float gray_f = to_float(gray);
   float scales_f = to_float(scales);
-  cout << "gray   = " << gray_f << endl;
-  cout << "scales = " << scales_f << endl;
+  //cout << "gray   = " << gray_f << endl;
+  //cout << "scales = " << scales_f << endl;
   //assert(gray == scales);
-  cout << endl;
+  //cout << endl;
   float eps = 0.01f;
   float res = (scales_f * (original_f + eps)) / (gray_f + eps);
   return to_bits(res);
