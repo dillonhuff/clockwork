@@ -1375,8 +1375,11 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cond = cond.substr(0, cond.length() - 2);
       cond = cond + string(" }");
 
+      cout << "cond = " << cond.c_str() << endl;
       isl_map* consumed_here =
         its(isl_map_read_from_str(buf.ctx, cond.c_str()), cpy(domains.at(op)));
+
+      assert(consumed_here != nullptr);
 
       assert(contains_key(op, domains));
 
@@ -3102,6 +3105,16 @@ op* find_writer(const std::string& target_buf, prog& prg) {
 
 void prog::sanity_check() {
   std::set<string> buffer_names;
+
+  for (auto op : all_ops()) {
+    auto surrounding = surrounding_vars(op, *this);
+    for (auto compute_var : op->index_variables_needed_by_compute) {
+      if (!(elem(compute_var, surrounding))) {
+        cout << "Error: " << op->name << "'s compute unit needs index variable: " << compute_var << ", but this variable is not one of its surrounding loop index variables, which are: " << comma_list(surrounding) << endl;
+      }
+      assert(elem(compute_var, surrounding));
+    }
+  }
 
   std::set<string> op_names;
   for (auto op : all_ops()) {

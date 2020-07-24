@@ -12407,7 +12407,15 @@ void llf_test() {
   //assert(false);
 }
 
+void halide_camera_pipeline_test() {
+  prog prg = camera_pipeline();
+  prg.sanity_check();
+  regression_test(prg);
+  assert(false);
+}
+
 void application_tests() {
+  //halide_camera_pipeline_test();
   reuse_buffered_conv_test();
   assert(false);
   register_file_test();
