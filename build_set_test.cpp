@@ -7476,7 +7476,7 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1};
+  vector<int> throughputs{1, 8, 16, 32};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
@@ -12408,6 +12408,11 @@ void llf_test() {
 }
 
 void application_tests() {
+  reuse_buffered_conv_test();
+  assert(false);
+  register_file_test();
+  assert(false);
+
   exposure_fusion_iccad_apps("ef_cc");
   assert(false);
   blur_example();
@@ -12527,7 +12532,6 @@ void application_tests() {
   psef_multi_output_test();
 
   non_rate_matched_ds_test();
-  reuse_buffered_conv_test();
   resnet_test();
 
   iccad_tests();
@@ -12538,7 +12542,6 @@ void application_tests() {
   sobel_test();
   jacobi_2d_test();
 
-  register_file_test();
   reaccess_no_hierarchy_rolled_test();
 
   two_input_mag_test();
