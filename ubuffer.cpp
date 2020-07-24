@@ -327,39 +327,16 @@ void generate_multilinear_bank(CodegenOptions& options,
     range_strs.push_back("[" + str(r) + "]");
   }
 
-  //out << "\t// Capacity: " << capacity << endl;
-  //out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
   out << tab(1) << pt_type_string << " RAM" << sep_list(range_strs, "", "", "") << ";" << endl;
 
   out << tab(1) << "inline " + pt_type_string + " read(" << comma_list(decls) << ") {" << endl;
 
-  //open_debug_scope(out);
-  //out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
-  //out << tab(2) << "cout << \"Read error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
-  //out << tab(2) << "}" << endl;
-  //out << tab(2) << "assert(addr < " << capacity << ");" << endl;
-  //out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
-  //close_debug_scope(out);
-
-  //ignore_inter_deps(out, "RAM");
   out << tab(2) << "return RAM" << sep_list(args, "", "", "") << ";" << endl;
   out << tab(1) << "}" << endl << endl;
 
   out << endl << endl;
 
   out << "\tinline void write(const " + pt_type_string + " value, " << comma_list(decls) << ") {" << endl;
-  //open_debug_scope(out);
-  //out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
-  //out << tab(2) << "cout << \"Write error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
-  //out << tab(2) << "}" << endl;
-  //out << tab(2) << "assert(addr < " << capacity << ");" << endl;
-  //out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
-  //close_debug_scope(out);
-
-  //if (options.add_dependence_pragmas) {
-    //ignore_inter_deps(out, "RAM");
-  //}
-  //out << tab(2) << "RAM[addr] = value;" << endl;
   out << tab(2) << "RAM" << sep_list(args, "", "", "") << " = value;" << endl;
   out << tab(1) << "}" << endl << endl;
 
@@ -388,7 +365,21 @@ void generate_bank(CodegenOptions& options,
     //add a ram capacity compute pass is different from stack bank
     int capacity = int_upper_bound(card(bank.rddom));
     out << "\t// Capacity: " << capacity << endl;
+    open_synth_scope(out);
     out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
+    close_synth_scope(out);
+
+    open_debug_scope(out);
+    out << tab(1) << pt_type_string << "* RAM;" << endl;
+    out << tab(1) << name << "_cache()" <<  " {" << endl;
+    out << tab(2) << "RAM = (" << pt_type_string << "*) malloc(sizeof(" << pt_type_string << ")*" << capacity << ");" << endl;
+    out << tab(1) << "}" << endl;
+
+    out << tab(1) << "~" << name << "_cache()" <<  " {" << endl;
+    out << tab(2) << "free(RAM);" << endl;
+    out << tab(1) << "}" << endl;
+    close_debug_scope(out);
+
     out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
 
     open_debug_scope(out);

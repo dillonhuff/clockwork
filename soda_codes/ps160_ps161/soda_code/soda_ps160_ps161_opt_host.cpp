@@ -118,21 +118,21 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, err = krnl_vector_add.setArg(4, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_off_chip0_update_0_read_ocl_buf, in_off_chip1_update_0_read_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_off_chip0_update_0_read_pipe0_ocl_buf, in_off_chip1_update_0_read_pipe0_ocl_buf}, 0));
 
 unsigned long start, end, nsduration;
 cl::Event event;
 
   std::cout << "Starting kernel" << std::endl;
-OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
-OCL_CHECK(err, err = event.wait());
-end =
+  OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
+  OCL_CHECK(err, err = event.wait());
+  end =
 OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
 start = OCL_CHECK(err,
 event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
 nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({ps160_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({ps161_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({ps160_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({ps161_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -141,8 +141,9 @@ nsduration = end - start;
   double dbytes = total_size_bytes;
   double bpersec = (dbytes / dsduration);
   double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+  std::cout << "bytes       = " << dbytes << std::endl;
   std::cout << "bytes / sec = " << bpersec << std::endl;
-  std::cout << "GB / sec = " << gbpersec << std::endl;
+  std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("ps160_update_0_write_accel_result.csv");
   for (int i = 0; i < ps160_update_0_write_DATA_SIZE; i++) {

@@ -1,6 +1,11 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+std::string dim_name(isl_set* const a, const int d) {
+  string str(isl_set_get_dim_name(a, isl_dim_set, d));
+  return str;
+}
+
 std::string dim_name(isl_aff* const a, const int d) {
   string str(isl_aff_get_dim_name(a, isl_dim_in, d));
   return str;

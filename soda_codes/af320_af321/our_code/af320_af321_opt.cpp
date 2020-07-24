@@ -9640,32 +9640,18 @@ inline void in_off_chip1_in_off_chip1_update_0_write_bundle_write(hw_uint<512>& 
 
 
 // Operation logic
-inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
+inline void af321_update_0(af32_cache& af32, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */af321, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in_off_chip0_oc
-	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
-	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
-	// Produce: in_off_chip0
-	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
+	// Consume: af32
+	auto af32_0_c__0_value = af32_af321_update_0_read_bundle_read(af32/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-}
-
-inline void af32_update_0(in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_in_off_chip1_oc, af32_cache& af32, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip0_oc_in_off_chip1_oc
-	auto in_off_chip0_oc_in_off_chip1_oc_0_c__0_value = in_off_chip0_oc_in_off_chip1_oc_af32_update_0_read_bundle_read(in_off_chip0_oc_in_off_chip1_oc/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_64(in_off_chip0_oc_in_off_chip1_oc_0_c__0_value);
-	// Produce: af32
-	af32_af32_update_0_write_bundle_write(/* arg names */compute_result, af32, d0, d1, 0);
+	auto compute_result = id_unrolled_32(af32_0_c__0_value);
+	// Produce: af321
+	af321.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -9710,18 +9696,32 @@ inline void in_off_chip0_oc_in_off_chip1_oc_update_0(in_off_chip0_cache& in_off_
 
 }
 
-inline void af321_update_0(af32_cache& af32, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */af321, int d0, int d1) {
+inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: af32
-	auto af32_0_c__0_value = af32_af321_update_0_read_bundle_read(af32/* source_delay */, d0, d1, 0);
+	// Consume: in_off_chip0_oc
+	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
+	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
+	// Produce: in_off_chip0
+	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_32(af32_0_c__0_value);
-	// Produce: af321
-	af321.write(compute_result);
+}
+
+inline void af32_update_0(in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_in_off_chip1_oc, af32_cache& af32, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip0_oc_in_off_chip1_oc
+	auto in_off_chip0_oc_in_off_chip1_oc_0_c__0_value = in_off_chip0_oc_in_off_chip1_oc_af32_update_0_read_bundle_read(in_off_chip0_oc_in_off_chip1_oc/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_64(in_off_chip0_oc_in_off_chip1_oc_0_c__0_value);
+	// Produce: af32
+	af32_af32_update_0_write_bundle_write(/* arg names */compute_result, af32, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -9876,89 +9876,53 @@ for (int c0 = 0; c0 <= 1079; c0++) {
 #endif //__VIVADO_SYNTH__
 }
 
+void af320_af321_opt_wrapper(HWStream<hw_uint<512> >& /* get_args num ports = 32 */in_off_chip0_oc, HWStream<hw_uint<512> >& /* get_args num ports = 32 */in_off_chip1_oc, HWStream<hw_uint<512> >& /* get_args num ports = 32 */af320, HWStream<hw_uint<512> >& /* get_args num ports = 32 */af321, const int num_epochs) {
+
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
+    af320_af321_opt(in_off_chip0_oc, in_off_chip1_oc, af320, af321);
+  }
+}
 #ifdef __VIVADO_SYNTH__
   // { af320_update_0[root = 0, af320_0, af320_1] -> af320[0, 0] : 0 <= af320_0 <= 29 and 0 <= af320_1 <= 1079 }
-const int af320_update_0_write_num_transfers = 32400;
+const int af320_update_0_write_pipe0_num_transfers = 32400;
   // { af321_update_0[root = 0, af321_0, af321_1] -> af321[0, 0] : 0 <= af321_0 <= 29 and 0 <= af321_1 <= 1079 }
-const int af321_update_0_write_num_transfers = 32400;
+const int af321_update_0_write_pipe0_num_transfers = 32400;
   // { in_off_chip0_update_0[root = 0, in_off_chip0_0, in_off_chip0_1] -> in_off_chip0_oc[0, 0] : 0 <= in_off_chip0_0 <= 29 and 0 <= in_off_chip0_1 <= 1079 }
-const int in_off_chip0_update_0_read_num_transfers = 32400;
+const int in_off_chip0_update_0_read_pipe0_num_transfers = 32400;
   // { in_off_chip1_update_0[root = 0, in_off_chip1_0, in_off_chip1_1] -> in_off_chip1_oc[0, 0] : 0 <= in_off_chip1_0 <= 29 and 0 <= in_off_chip1_1 <= 1079 }
-const int in_off_chip1_update_0_read_num_transfers = 32400;
+const int in_off_chip1_update_0_read_pipe0_num_transfers = 32400;
 
 
 extern "C" {
 
-static void read_in_off_chip0_update_0_read(hw_uint<512>* input, HWStream<hw_uint<512> >& v, const int size) {
-  hw_uint<512> burst_reg;
-  int num_transfers = in_off_chip0_update_0_read_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = input[i];
-    v.write(burst_reg);
-  }
-}
-
-static void read_in_off_chip1_update_0_read(hw_uint<512>* input, HWStream<hw_uint<512> >& v, const int size) {
-  hw_uint<512> burst_reg;
-  int num_transfers = in_off_chip1_update_0_read_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = input[i];
-    v.write(burst_reg);
-  }
-}
-
-static void write_af320_update_0_write(hw_uint<512>* output, HWStream<hw_uint<512> >& v, const int size) {
-  hw_uint<512> burst_reg;
-  int num_transfers = af320_update_0_write_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = v.read();
-    output[i] = burst_reg;
-  }
-}
-
-static void write_af321_update_0_write(hw_uint<512>* output, HWStream<hw_uint<512> >& v, const int size) {
-  hw_uint<512> burst_reg;
-  int num_transfers = af321_update_0_write_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = v.read();
-    output[i] = burst_reg;
-  }
-}
-
-void af320_af321_opt_accel(hw_uint<512>* in_off_chip0_update_0_read, hw_uint<512>* in_off_chip1_update_0_read, hw_uint<512>* af320_update_0_write, hw_uint<512>* af321_update_0_write, const int size) { 
+void af320_af321_opt_accel(hw_uint<512>* in_off_chip0_update_0_read_pipe0, hw_uint<512>* in_off_chip1_update_0_read_pipe0, hw_uint<512>* af320_update_0_write_pipe0, hw_uint<512>* af321_update_0_write_pipe0, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = in_off_chip0_update_0_read offset = slave depth = 65536 bundle = gmem0
-#pragma HLS INTERFACE m_axi port = in_off_chip1_update_0_read offset = slave depth = 65536 bundle = gmem1
-#pragma HLS INTERFACE m_axi port = af320_update_0_write offset = slave depth = 65536 bundle = gmem2
-#pragma HLS INTERFACE m_axi port = af321_update_0_write offset = slave depth = 65536 bundle = gmem3
+#pragma HLS INTERFACE m_axi port = in_off_chip0_update_0_read_pipe0 offset = slave depth = 65536 bundle = gmem0
+#pragma HLS INTERFACE m_axi port = in_off_chip1_update_0_read_pipe0 offset = slave depth = 65536 bundle = gmem1
+#pragma HLS INTERFACE m_axi port = af320_update_0_write_pipe0 offset = slave depth = 65536 bundle = gmem2
+#pragma HLS INTERFACE m_axi port = af321_update_0_write_pipe0 offset = slave depth = 65536 bundle = gmem3
 
-#pragma HLS INTERFACE s_axilite port = in_off_chip0_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = in_off_chip1_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = af320_update_0_write bundle = control
-#pragma HLS INTERFACE s_axilite port = af321_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = in_off_chip0_update_0_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = in_off_chip1_update_0_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = af320_update_0_write_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = af321_update_0_write_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = size bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
-  static HWStream<hw_uint<512> > in_off_chip0_update_0_read_channel;
-#pragma HLS stream variable=in_off_chip0_update_0_read_channel.values depth=256
-  static HWStream<hw_uint<512> > in_off_chip1_update_0_read_channel;
-#pragma HLS stream variable=in_off_chip1_update_0_read_channel.values depth=256
-  static HWStream<hw_uint<512> > af320_update_0_write_channel;
-#pragma HLS stream variable=aff320_update_0_write_channel.values depth=256
-  static HWStream<hw_uint<512> > af321_update_0_write_channel;
-#pragma HLS stream variable=aff321_update_0_write_channel.values depth=256
 
-  read_in_off_chip0_update_0_read(in_off_chip0_update_0_read, in_off_chip0_update_0_read_channel, size);
-  read_in_off_chip1_update_0_read(in_off_chip1_update_0_read, in_off_chip1_update_0_read_channel, size);
+  // Pipeline # 0
+  static HWStream<hw_uint<512> > in_off_chip0_update_0_read_pipe0_channel;
+  static HWStream<hw_uint<512> > in_off_chip1_update_0_read_pipe0_channel;
+  static HWStream<hw_uint<512> > af320_update_0_write_pipe0_channel;
+  static HWStream<hw_uint<512> > af321_update_0_write_pipe0_channel;
 
-  af320_af321_opt(in_off_chip0_update_0_read_channel, in_off_chip1_update_0_read_channel, af320_update_0_write_channel, af321_update_0_write_channel);
+  burst_read<512>(in_off_chip0_update_0_read_pipe0, in_off_chip0_update_0_read_pipe0_channel, in_off_chip0_update_0_read_pipe0_num_transfers*size);
+  burst_read<512>(in_off_chip1_update_0_read_pipe0, in_off_chip1_update_0_read_pipe0_channel, in_off_chip1_update_0_read_pipe0_num_transfers*size);
 
-  write_af320_update_0_write(af320_update_0_write, af320_update_0_write_channel, size);
-  write_af321_update_0_write(af321_update_0_write, af321_update_0_write_channel, size);
+  af320_af321_opt_wrapper(in_off_chip0_update_0_read_pipe0_channel, in_off_chip1_update_0_read_pipe0_channel, af320_update_0_write_pipe0_channel, af321_update_0_write_pipe0_channel, size);
+
+  burst_write<512>(af320_update_0_write_pipe0, af320_update_0_write_pipe0_channel, af320_update_0_write_pipe0_num_transfers*size);
+  burst_write<512>(af321_update_0_write_pipe0, af321_update_0_write_pipe0_channel, af321_update_0_write_pipe0_num_transfers*size);
 }
 
 }

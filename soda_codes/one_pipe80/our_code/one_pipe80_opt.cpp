@@ -774,20 +774,6 @@ inline void one_pipe8_one_pipe8_update_0_write_bundle_write(hw_uint<128>& one_pi
 
 
 // Operation logic
-inline void in_off_chip0_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip0_oc
-	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
-	auto compute_result = id_unrolled_8(in_off_chip0_oc_0_c__0_value);
-	// Produce: in_off_chip0
-	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void one_pipe80_update_0(one_pipe8_cache& one_pipe8, HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */one_pipe80, int d0, int d1) {
   // Dynamic address computation
 
@@ -800,6 +786,20 @@ inline void one_pipe80_update_0(one_pipe8_cache& one_pipe8, HWStream<hw_uint<128
 	auto compute_result = id_unrolled_8(one_pipe8_0_c__0_value);
 	// Produce: one_pipe80
 	one_pipe80.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_off_chip0_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip0_oc
+	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
+	auto compute_result = id_unrolled_8(in_off_chip0_oc_0_c__0_value);
+	// Produce: in_off_chip0
+	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

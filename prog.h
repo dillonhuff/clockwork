@@ -47,10 +47,10 @@ struct ir_node {
   std::vector<dynamic_address> dynamic_store_addresses;
 
   // Locations read
-  std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
+  std::vector<pair<buffer_name, piecewise_address> > consume_locs_pair;
   std::vector<dynamic_address> dynamic_load_addresses;
 
-  // The name of the HL C++ function that this op invokes
+  // The name of the HLS C++ function that this op invokes
   std::string func;
   // Name of loop index variables used by this unit
   std::vector<std::string> index_variables_needed_by_compute;
@@ -63,6 +63,17 @@ struct ir_node {
 
   void copy_fields_from(op* other);
   void copy_memory_operations_from(op* other);
+  void replace_variable(const std::string& var, const int val);
+
+  void delete_child(op* c) {
+    vector<op*> new_children;
+    for (auto ch : children) {
+      if (ch != c) {
+        new_children.push_back(ch);
+      }
+    }
+    children = new_children;
+  }
 
   bool dynamic_writes(const std::string& buf) {
     for (auto d : dynamic_store_addresses) {
@@ -752,6 +763,15 @@ struct prog {
 
   void sanity_check();
 
+  op* parent(op* p);
+
+  void set_bounds(const std::string& loop, const int start, const int end_exclusive);
+  void extend_bounds(const std::string& loop, const int start, const int end_exclusive);
+
+  std::string un(const std::string& prefix) {
+    return unique_name(prefix);
+  }
+
   std::string unique_name(const std::string& prefix) {
     auto name = prefix + str(unique_num);
     unique_num++;
@@ -856,7 +876,7 @@ struct prog {
     cout << "program: " << name << endl;
     cout << "buffers..." << endl;
     for (auto b : buffer_bounds) {
-      cout << tab(1) << b.first << endl;
+      cout << tab(1) << b.first << bracket_list(b.second) << endl;
     }
     cout << "operations..." << endl;
     root->pretty_print(cout, 0);
@@ -1152,6 +1172,8 @@ struct prog {
     return m;
   }
 
+  map<op*, isl_map*> producer_maps_no_domain();
+
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
@@ -1333,30 +1355,7 @@ struct prog {
     return validity;
   }
 
-  isl_schedule* optimized_schedule() {
-    auto domain = whole_iteration_domain();
-
-    auto order_deps = relative_orders();
-    cout << "Order deps..." << endl;
-    cout << tab(1) << str(order_deps) << endl;
-    cout << "Getting validity deps..." << endl;
-    isl_union_map *raw_deps = validity_deps();
-    cout << "Got validity deps..." << endl;
-    auto validity =
-      unn(order_deps, raw_deps);
-    isl_union_map *proximity =
-      cpy(raw_deps);
-
-    cout << "Computing schedule for: " << str(domain) << endl << tab(1) << " subject to " << str(validity) << endl;
-    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
-
-    cout << endl;
-    cout << "Result: " << str(sched) << endl;
-
-    //assert(false);
-
-    return sched;
-  }
+  isl_schedule* optimized_schedule();
 
   isl_union_map* optimized_codegen() {
     auto domain = whole_iteration_domain();
@@ -1417,6 +1416,7 @@ vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buf
 vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
 
 
+std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
 
@@ -1451,9 +1451,12 @@ std::set<string> get_producers(string next_kernel, prog& prg);
 
 void deep_copy_child(op* dest, op* source, prog& original);
 
-std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original);
+std::set<string> get_consumed_buffers(const std::string& kernel, prog& original);
+std::set<string> get_produced_buffers(const std::string& kernel, prog& original);
 
-std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original);
+std::set<string> get_consumed_buffers(const std::set<std::string>& group, prog& original);
+std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
+
 void generate_verilog(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1468,4 +1471,13 @@ void generate_trace(prog& prg, umap* sched);
 void all_register_files(prog& prg, CodegenOptions& options);
 void compile_compute(const std::string& name);
 
+vector<string> surrounding_vars(op* loop, prog& prg);
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
+
+
+void unroll(prog& prg, const std::string& var);
+
+vector<int> indexes(op* p);
+vector<string> write_vars(const std::string& target_buf, op* reader, prog& prg);
+
+void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg);

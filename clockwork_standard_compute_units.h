@@ -4,6 +4,17 @@
 
 typedef int16_t int16;
 
+template<typename T>
+T clamp_val(const T& a, const T& lo, const T& hi) {
+  if (a < lo) {
+    return lo;
+  }
+  if (a > hi) {
+    return hi;
+  }
+  return a;
+}
+
 static inline
 float int_to_float(const hw_uint<32>& in) {
   return (float) in.to_int();

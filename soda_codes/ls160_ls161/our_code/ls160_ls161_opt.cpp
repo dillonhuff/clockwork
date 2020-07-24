@@ -15,6 +15,7 @@ struct bright_bright_update_0_write0_to_bright_laplace_diff_0_rd0_cache {
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -36,6 +37,7 @@ struct bright_bright_update_0_write1_to_bright_laplace_diff_0_rd1_cache {
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -57,6 +59,7 @@ struct bright_bright_update_0_write10_to_bright_laplace_diff_0_rd10_cache {
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -78,6 +81,7 @@ struct bright_bright_update_0_write11_to_bright_laplace_diff_0_rd11_cache {
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -99,6 +103,7 @@ struct bright_bright_update_0_write12_to_bright_laplace_diff_0_rd12_cache {
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -120,6 +125,7 @@ struct bright_bright_update_0_write13_to_bright_laplace_diff_0_rd13_cache {
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -141,6 +147,7 @@ struct bright_bright_update_0_write14_to_bright_laplace_diff_0_rd14_cache {
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -162,6 +169,7 @@ struct bright_bright_update_0_write15_to_bright_laplace_diff_0_rd15_cache {
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -183,6 +191,7 @@ struct bright_bright_update_0_write16_to_bright_laplace_diff_0_rd16_cache {
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -204,6 +213,7 @@ struct bright_bright_update_0_write17_to_bright_laplace_diff_0_rd17_cache {
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -225,6 +235,7 @@ struct bright_bright_update_0_write18_to_bright_laplace_diff_0_rd18_cache {
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -246,6 +257,7 @@ struct bright_bright_update_0_write19_to_bright_laplace_diff_0_rd19_cache {
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -267,6 +279,7 @@ struct bright_bright_update_0_write2_to_bright_laplace_diff_0_rd2_cache {
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -288,6 +301,7 @@ struct bright_bright_update_0_write20_to_bright_laplace_diff_0_rd20_cache {
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -309,6 +323,7 @@ struct bright_bright_update_0_write21_to_bright_laplace_diff_0_rd21_cache {
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -330,6 +345,7 @@ struct bright_bright_update_0_write22_to_bright_laplace_diff_0_rd22_cache {
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -351,6 +367,7 @@ struct bright_bright_update_0_write23_to_bright_laplace_diff_0_rd23_cache {
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -372,6 +389,7 @@ struct bright_bright_update_0_write24_to_bright_laplace_diff_0_rd24_cache {
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -393,6 +411,7 @@ struct bright_bright_update_0_write25_to_bright_laplace_diff_0_rd25_cache {
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -414,6 +433,7 @@ struct bright_bright_update_0_write26_to_bright_laplace_diff_0_rd26_cache {
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -435,6 +455,7 @@ struct bright_bright_update_0_write27_to_bright_laplace_diff_0_rd27_cache {
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -456,6 +477,7 @@ struct bright_bright_update_0_write28_to_bright_laplace_diff_0_rd28_cache {
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -477,6 +499,7 @@ struct bright_bright_update_0_write29_to_bright_laplace_diff_0_rd29_cache {
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -498,6 +521,7 @@ struct bright_bright_update_0_write3_to_bright_laplace_diff_0_rd3_cache {
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -519,6 +543,7 @@ struct bright_bright_update_0_write30_to_bright_laplace_diff_0_rd30_cache {
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -540,6 +565,7 @@ struct bright_bright_update_0_write31_to_bright_laplace_diff_0_rd31_cache {
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -561,6 +587,7 @@ struct bright_bright_update_0_write4_to_bright_laplace_diff_0_rd4_cache {
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -582,6 +609,7 @@ struct bright_bright_update_0_write5_to_bright_laplace_diff_0_rd5_cache {
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -603,6 +631,7 @@ struct bright_bright_update_0_write6_to_bright_laplace_diff_0_rd6_cache {
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -624,6 +653,7 @@ struct bright_bright_update_0_write7_to_bright_laplace_diff_0_rd7_cache {
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -645,6 +675,7 @@ struct bright_bright_update_0_write8_to_bright_laplace_diff_0_rd8_cache {
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -666,6 +697,7 @@ struct bright_bright_update_0_write9_to_bright_laplace_diff_0_rd9_cache {
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -687,6 +719,7 @@ struct bright_bright_update_0_write0_merged_banks_10_cache {
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 6
+  // 0, 1, 61, 62, 122, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 59> f3;
@@ -774,6 +807,7 @@ struct bright_bright_update_0_write1_merged_banks_10_cache {
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 6
+  // 0, 1, 61, 62, 122, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 59> f3;
@@ -861,6 +895,7 @@ struct bright_bright_update_0_write10_merged_banks_10_cache {
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -930,6 +965,7 @@ struct bright_bright_update_0_write11_merged_banks_10_cache {
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -999,6 +1035,7 @@ struct bright_bright_update_0_write12_merged_banks_10_cache {
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1068,6 +1105,7 @@ struct bright_bright_update_0_write13_merged_banks_10_cache {
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1137,6 +1175,7 @@ struct bright_bright_update_0_write14_merged_banks_10_cache {
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1206,6 +1245,7 @@ struct bright_bright_update_0_write15_merged_banks_10_cache {
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1275,6 +1315,7 @@ struct bright_bright_update_0_write16_merged_banks_10_cache {
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1344,6 +1385,7 @@ struct bright_bright_update_0_write17_merged_banks_10_cache {
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1413,6 +1455,7 @@ struct bright_bright_update_0_write18_merged_banks_10_cache {
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1482,6 +1525,7 @@ struct bright_bright_update_0_write19_merged_banks_10_cache {
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1551,6 +1595,7 @@ struct bright_bright_update_0_write2_merged_banks_10_cache {
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1620,6 +1665,7 @@ struct bright_bright_update_0_write20_merged_banks_10_cache {
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1689,6 +1735,7 @@ struct bright_bright_update_0_write21_merged_banks_10_cache {
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1758,6 +1805,7 @@ struct bright_bright_update_0_write22_merged_banks_10_cache {
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1827,6 +1875,7 @@ struct bright_bright_update_0_write23_merged_banks_10_cache {
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1896,6 +1945,7 @@ struct bright_bright_update_0_write24_merged_banks_10_cache {
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -1965,6 +2015,7 @@ struct bright_bright_update_0_write25_merged_banks_10_cache {
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2034,6 +2085,7 @@ struct bright_bright_update_0_write26_merged_banks_10_cache {
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2103,6 +2155,7 @@ struct bright_bright_update_0_write27_merged_banks_10_cache {
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2172,6 +2225,7 @@ struct bright_bright_update_0_write28_merged_banks_10_cache {
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2241,6 +2295,7 @@ struct bright_bright_update_0_write29_merged_banks_10_cache {
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2310,6 +2365,7 @@ struct bright_bright_update_0_write3_merged_banks_10_cache {
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2379,6 +2435,7 @@ struct bright_bright_update_0_write30_merged_banks_10_cache {
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2448,6 +2505,7 @@ struct bright_bright_update_0_write31_merged_banks_10_cache {
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2517,6 +2575,7 @@ struct bright_bright_update_0_write4_merged_banks_10_cache {
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2586,6 +2645,7 @@ struct bright_bright_update_0_write5_merged_banks_10_cache {
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2655,6 +2715,7 @@ struct bright_bright_update_0_write6_merged_banks_10_cache {
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2724,6 +2785,7 @@ struct bright_bright_update_0_write7_merged_banks_10_cache {
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2793,6 +2855,7 @@ struct bright_bright_update_0_write8_merged_banks_10_cache {
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -2862,6 +2925,7 @@ struct bright_bright_update_0_write9_merged_banks_10_cache {
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -8568,6 +8632,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write0_to_bright_gauss_d
 	// RAM Box: {[0, 1888], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8589,6 +8654,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write2_to_bright_gauss_d
 	// RAM Box: {[2, 1890], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8610,6 +8676,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write20_to_bright_gauss_
 	// RAM Box: {[20, 1908], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8631,6 +8698,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write22_to_bright_gauss_
 	// RAM Box: {[22, 1910], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8652,6 +8720,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write24_to_bright_gauss_
 	// RAM Box: {[24, 1912], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8673,6 +8742,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write26_to_bright_gauss_
 	// RAM Box: {[26, 1914], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8694,6 +8764,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write28_to_bright_gauss_
 	// RAM Box: {[28, 1916], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8715,6 +8786,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write30_to_bright_gauss_
 	// RAM Box: {[30, 1918], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8736,6 +8808,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write4_to_bright_gauss_d
 	// RAM Box: {[4, 1892], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8757,6 +8830,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write6_to_bright_gauss_d
 	// RAM Box: {[6, 1894], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8778,6 +8852,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write8_to_bright_gauss_d
 	// RAM Box: {[8, 1896], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8799,6 +8874,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write10_to_bright_gauss_
 	// RAM Box: {[10, 1898], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8820,6 +8896,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write12_to_bright_gauss_
 	// RAM Box: {[12, 1900], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8841,6 +8918,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write14_to_bright_gauss_
 	// RAM Box: {[14, 1902], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8862,6 +8940,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write16_to_bright_gauss_
 	// RAM Box: {[16, 1904], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -8883,6 +8962,7 @@ struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write18_to_bright_gauss_
 	// RAM Box: {[18, 1906], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9389,6 +9469,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_us_
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9410,6 +9491,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_us_
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9431,6 +9513,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write5_to_bright_laplace_us_
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9452,6 +9535,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write5_to_bright_laplace_us_
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9473,6 +9557,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write6_to_bright_laplace_us_
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9494,6 +9579,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write6_to_bright_laplace_us_
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9515,6 +9601,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write7_to_bright_laplace_us_
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9536,6 +9623,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write7_to_bright_laplace_us_
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9557,6 +9645,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write8_to_bright_laplace_us_
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9578,6 +9667,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write8_to_bright_laplace_us_
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9599,6 +9689,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write9_to_bright_laplace_us_
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9620,6 +9711,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write9_to_bright_laplace_us_
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9641,6 +9733,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write1_to_bright_laplace_us_
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9662,6 +9755,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write10_to_bright_laplace_us
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9683,6 +9777,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write10_to_bright_laplace_us
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9704,6 +9799,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write11_to_bright_laplace_us
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9725,6 +9821,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write11_to_bright_laplace_us
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9746,6 +9843,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write12_to_bright_laplace_us
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9767,6 +9865,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write12_to_bright_laplace_us
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9788,6 +9887,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write13_to_bright_laplace_us
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9809,6 +9909,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write13_to_bright_laplace_us
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9830,6 +9931,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write14_to_bright_laplace_us
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9851,6 +9953,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write14_to_bright_laplace_us
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9872,6 +9975,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write1_to_bright_laplace_us_
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9893,6 +9997,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write15_to_bright_laplace_us
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9914,6 +10019,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write15_to_bright_laplace_us
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9935,6 +10041,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write2_to_bright_laplace_us_
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9956,6 +10063,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write2_to_bright_laplace_us_
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9977,6 +10085,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write3_to_bright_laplace_us_
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -9998,6 +10107,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write3_to_bright_laplace_us_
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10019,6 +10129,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write4_to_bright_laplace_us_
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10040,6 +10151,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write4_to_bright_laplace_us_
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10061,6 +10173,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_fused_level_1_rd0_
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10082,6 +10195,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write1_to_fused_level_1_rd1_
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10103,6 +10217,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write10_to_fused_level_1_rd1
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10124,6 +10239,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write11_to_fused_level_1_rd1
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10145,6 +10261,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write12_to_fused_level_1_rd1
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10166,6 +10283,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write13_to_fused_level_1_rd1
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10187,6 +10305,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write14_to_fused_level_1_rd1
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10208,6 +10327,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write15_to_fused_level_1_rd1
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10229,6 +10349,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write2_to_fused_level_1_rd2_
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10250,6 +10371,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write3_to_fused_level_1_rd3_
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10271,6 +10393,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write4_to_fused_level_1_rd4_
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10292,6 +10415,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write5_to_fused_level_1_rd5_
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10313,6 +10437,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write6_to_fused_level_1_rd6_
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10334,6 +10459,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write7_to_fused_level_1_rd7_
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10355,6 +10481,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write8_to_fused_level_1_rd8_
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -10376,6 +10503,7 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write9_to_fused_level_1_rd9_
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11338,6 +11466,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write0_to_fused_leve
 	// RAM Box: {[0, 1888], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11359,6 +11488,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write1_to_fused_leve
 	// RAM Box: {[1, 1889], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11380,6 +11510,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write10_to_fused_lev
 	// RAM Box: {[10, 1898], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11401,6 +11532,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write11_to_fused_lev
 	// RAM Box: {[11, 1899], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11422,6 +11554,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write12_to_fused_lev
 	// RAM Box: {[12, 1900], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11443,6 +11576,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write13_to_fused_lev
 	// RAM Box: {[13, 1901], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11464,6 +11598,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write14_to_fused_lev
 	// RAM Box: {[14, 1902], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11485,6 +11620,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write15_to_fused_lev
 	// RAM Box: {[15, 1903], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11506,6 +11642,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write16_to_fused_lev
 	// RAM Box: {[16, 1904], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11527,6 +11664,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write17_to_fused_lev
 	// RAM Box: {[17, 1905], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11548,6 +11686,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write18_to_fused_lev
 	// RAM Box: {[18, 1906], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11569,6 +11708,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write19_to_fused_lev
 	// RAM Box: {[19, 1907], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11590,6 +11730,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write2_to_fused_leve
 	// RAM Box: {[2, 1890], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11611,6 +11752,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write20_to_fused_lev
 	// RAM Box: {[20, 1908], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11632,6 +11774,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write21_to_fused_lev
 	// RAM Box: {[21, 1909], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11653,6 +11796,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write22_to_fused_lev
 	// RAM Box: {[22, 1910], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11674,6 +11818,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write23_to_fused_lev
 	// RAM Box: {[23, 1911], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11695,6 +11840,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write24_to_fused_lev
 	// RAM Box: {[24, 1912], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11716,6 +11862,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write25_to_fused_lev
 	// RAM Box: {[25, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11737,6 +11884,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write26_to_fused_lev
 	// RAM Box: {[26, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11758,6 +11906,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write27_to_fused_lev
 	// RAM Box: {[27, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11779,6 +11928,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write28_to_fused_lev
 	// RAM Box: {[28, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11800,6 +11950,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write29_to_fused_lev
 	// RAM Box: {[29, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11821,6 +11972,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write3_to_fused_leve
 	// RAM Box: {[3, 1891], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11842,6 +11994,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write30_to_fused_lev
 	// RAM Box: {[30, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11863,6 +12016,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write31_to_fused_lev
 	// RAM Box: {[31, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11884,6 +12038,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write4_to_fused_leve
 	// RAM Box: {[4, 1892], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11905,6 +12060,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write5_to_fused_leve
 	// RAM Box: {[5, 1893], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11926,6 +12082,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write6_to_fused_leve
 	// RAM Box: {[6, 1894], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11947,6 +12104,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write7_to_fused_leve
 	// RAM Box: {[7, 1895], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11968,6 +12126,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write8_to_fused_leve
 	// RAM Box: {[8, 1896], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -11989,6 +12148,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write9_to_fused_leve
 	// RAM Box: {[9, 1897], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12767,6 +12927,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write0_to_bright_laplace
 	// RAM Box: {[0, 1888], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12788,6 +12949,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write1_to_bright_laplace
 	// RAM Box: {[1, 1889], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12809,6 +12971,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write10_to_bright_laplac
 	// RAM Box: {[10, 1898], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12830,6 +12993,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write11_to_bright_laplac
 	// RAM Box: {[11, 1899], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12851,6 +13015,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write12_to_bright_laplac
 	// RAM Box: {[12, 1900], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12872,6 +13037,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write13_to_bright_laplac
 	// RAM Box: {[13, 1901], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12893,6 +13059,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write14_to_bright_laplac
 	// RAM Box: {[14, 1902], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12914,6 +13081,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write15_to_bright_laplac
 	// RAM Box: {[15, 1903], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12935,6 +13103,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write16_to_bright_laplac
 	// RAM Box: {[16, 1904], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12956,6 +13125,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write17_to_bright_laplac
 	// RAM Box: {[17, 1905], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12977,6 +13147,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write18_to_bright_laplac
 	// RAM Box: {[18, 1906], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -12998,6 +13169,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write19_to_bright_laplac
 	// RAM Box: {[19, 1907], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13019,6 +13191,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write2_to_bright_laplace
 	// RAM Box: {[2, 1890], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13040,6 +13213,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write20_to_bright_laplac
 	// RAM Box: {[20, 1908], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13061,6 +13235,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write21_to_bright_laplac
 	// RAM Box: {[21, 1909], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13082,6 +13257,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write22_to_bright_laplac
 	// RAM Box: {[22, 1910], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13103,6 +13279,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write23_to_bright_laplac
 	// RAM Box: {[23, 1911], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13124,6 +13301,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write24_to_bright_laplac
 	// RAM Box: {[24, 1912], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13145,6 +13323,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write25_to_bright_laplac
 	// RAM Box: {[25, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13166,6 +13345,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write26_to_bright_laplac
 	// RAM Box: {[26, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13187,6 +13367,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write27_to_bright_laplac
 	// RAM Box: {[27, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13208,6 +13389,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write28_to_bright_laplac
 	// RAM Box: {[28, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13229,6 +13411,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write29_to_bright_laplac
 	// RAM Box: {[29, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13250,6 +13433,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write3_to_bright_laplace
 	// RAM Box: {[3, 1891], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13271,6 +13455,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write30_to_bright_laplac
 	// RAM Box: {[30, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13292,6 +13477,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write31_to_bright_laplac
 	// RAM Box: {[31, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13313,6 +13499,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write4_to_bright_laplace
 	// RAM Box: {[4, 1892], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13334,6 +13521,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write5_to_bright_laplace
 	// RAM Box: {[5, 1893], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13355,6 +13543,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write6_to_bright_laplace
 	// RAM Box: {[6, 1894], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13376,6 +13565,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write7_to_bright_laplace
 	// RAM Box: {[7, 1895], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13397,6 +13587,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write8_to_bright_laplace
 	// RAM Box: {[8, 1896], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -13418,6 +13609,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write9_to_bright_laplace
 	// RAM Box: {[9, 1897], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -14196,6 +14388,7 @@ struct bright_weights_bright_weights_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14216,6 +14409,7 @@ struct bright_weights_bright_weights_update_0_write1_merged_banks_2_cache {
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14236,6 +14430,7 @@ struct bright_weights_bright_weights_update_0_write10_merged_banks_2_cache {
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14256,6 +14451,7 @@ struct bright_weights_bright_weights_update_0_write11_merged_banks_2_cache {
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14276,6 +14472,7 @@ struct bright_weights_bright_weights_update_0_write12_merged_banks_2_cache {
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14296,6 +14493,7 @@ struct bright_weights_bright_weights_update_0_write13_merged_banks_2_cache {
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14316,6 +14514,7 @@ struct bright_weights_bright_weights_update_0_write14_merged_banks_2_cache {
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14336,6 +14535,7 @@ struct bright_weights_bright_weights_update_0_write15_merged_banks_2_cache {
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14356,6 +14556,7 @@ struct bright_weights_bright_weights_update_0_write16_merged_banks_2_cache {
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14376,6 +14577,7 @@ struct bright_weights_bright_weights_update_0_write17_merged_banks_2_cache {
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14396,6 +14598,7 @@ struct bright_weights_bright_weights_update_0_write18_merged_banks_2_cache {
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14416,6 +14619,7 @@ struct bright_weights_bright_weights_update_0_write19_merged_banks_2_cache {
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14436,6 +14640,7 @@ struct bright_weights_bright_weights_update_0_write2_merged_banks_2_cache {
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14456,6 +14661,7 @@ struct bright_weights_bright_weights_update_0_write20_merged_banks_2_cache {
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14476,6 +14682,7 @@ struct bright_weights_bright_weights_update_0_write21_merged_banks_2_cache {
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14496,6 +14703,7 @@ struct bright_weights_bright_weights_update_0_write22_merged_banks_2_cache {
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14516,6 +14724,7 @@ struct bright_weights_bright_weights_update_0_write23_merged_banks_2_cache {
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14536,6 +14745,7 @@ struct bright_weights_bright_weights_update_0_write24_merged_banks_2_cache {
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14556,6 +14766,7 @@ struct bright_weights_bright_weights_update_0_write25_merged_banks_2_cache {
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14576,6 +14787,7 @@ struct bright_weights_bright_weights_update_0_write26_merged_banks_2_cache {
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14596,6 +14808,7 @@ struct bright_weights_bright_weights_update_0_write27_merged_banks_2_cache {
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14616,6 +14829,7 @@ struct bright_weights_bright_weights_update_0_write28_merged_banks_2_cache {
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14636,6 +14850,7 @@ struct bright_weights_bright_weights_update_0_write29_merged_banks_2_cache {
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14656,6 +14871,7 @@ struct bright_weights_bright_weights_update_0_write3_merged_banks_2_cache {
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14676,6 +14892,7 @@ struct bright_weights_bright_weights_update_0_write30_merged_banks_2_cache {
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14696,6 +14913,7 @@ struct bright_weights_bright_weights_update_0_write31_merged_banks_2_cache {
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14716,6 +14934,7 @@ struct bright_weights_bright_weights_update_0_write4_merged_banks_2_cache {
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14736,6 +14955,7 @@ struct bright_weights_bright_weights_update_0_write5_merged_banks_2_cache {
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14756,6 +14976,7 @@ struct bright_weights_bright_weights_update_0_write6_merged_banks_2_cache {
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14776,6 +14997,7 @@ struct bright_weights_bright_weights_update_0_write7_merged_banks_2_cache {
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14796,6 +15018,7 @@ struct bright_weights_bright_weights_update_0_write8_merged_banks_2_cache {
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -14816,6 +15039,7 @@ struct bright_weights_bright_weights_update_0_write9_merged_banks_2_cache {
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -16081,6 +16305,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write0_to_fused_leve
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16102,6 +16327,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write1_to_fused_leve
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16123,6 +16349,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write10_to_fused_lev
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16144,6 +16371,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write11_to_fused_lev
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16165,6 +16393,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write12_to_fused_lev
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16186,6 +16415,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write13_to_fused_lev
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16207,6 +16437,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write14_to_fused_lev
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16228,6 +16459,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write15_to_fused_lev
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16249,6 +16481,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write16_to_fused_lev
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16270,6 +16503,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write17_to_fused_lev
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16291,6 +16525,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write18_to_fused_lev
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16312,6 +16547,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write19_to_fused_lev
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16333,6 +16569,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write2_to_fused_leve
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16354,6 +16591,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write20_to_fused_lev
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16375,6 +16613,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write21_to_fused_lev
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16396,6 +16635,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write22_to_fused_lev
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16417,6 +16657,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write23_to_fused_lev
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16438,6 +16679,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write24_to_fused_lev
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16459,6 +16701,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write25_to_fused_lev
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16480,6 +16723,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write26_to_fused_lev
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16501,6 +16745,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write27_to_fused_lev
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16522,6 +16767,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write28_to_fused_lev
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16543,6 +16789,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write29_to_fused_lev
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16564,6 +16811,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write3_to_fused_leve
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16585,6 +16833,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write30_to_fused_lev
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16606,6 +16855,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write31_to_fused_lev
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16627,6 +16877,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write4_to_fused_leve
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16648,6 +16899,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write5_to_fused_leve
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16669,6 +16921,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write6_to_fused_leve
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16690,6 +16943,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write7_to_fused_leve
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16711,6 +16965,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write8_to_fused_leve
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16732,6 +16987,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write9_to_fused_leve
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -16753,6 +17009,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 6
+  // 0, 1, 61, 62, 122, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 59> f3;
@@ -16840,6 +17097,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 6
+  // 0, 1, 61, 62, 122, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 59> f3;
@@ -16927,6 +17185,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write10_merged_banks
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -16996,6 +17255,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write11_merged_banks
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17065,6 +17325,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write12_merged_banks
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17134,6 +17395,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write13_merged_banks
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17203,6 +17465,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write14_merged_banks
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17272,6 +17535,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write15_merged_banks
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17341,6 +17605,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write16_merged_banks
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17410,6 +17675,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write17_merged_banks
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17479,6 +17745,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write18_merged_banks
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17548,6 +17815,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write19_merged_banks
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17617,6 +17885,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write2_merged_banks_
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17686,6 +17955,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write20_merged_banks
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17755,6 +18025,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write21_merged_banks
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17824,6 +18095,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write22_merged_banks
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17893,6 +18165,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write23_merged_banks
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -17962,6 +18235,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write24_merged_banks
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18031,6 +18305,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write25_merged_banks
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18100,6 +18375,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write26_merged_banks
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18169,6 +18445,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write27_merged_banks
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18238,6 +18515,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write28_merged_banks
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18307,6 +18585,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write29_merged_banks
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18376,6 +18655,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write3_merged_banks_
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18445,6 +18725,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write30_merged_banks
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18514,6 +18795,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write31_merged_banks
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18583,6 +18865,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write4_merged_banks_
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18652,6 +18935,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write5_merged_banks_
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18721,6 +19005,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write6_merged_banks_
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18790,6 +19075,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write7_merged_banks_
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18859,6 +19145,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write8_merged_banks_
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -18928,6 +19215,7 @@ struct bright_weights_normed_bright_weights_normed_update_0_write9_merged_banks_
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -24146,6 +24434,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[0, 1888], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24167,6 +24456,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[2, 1890], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24188,6 +24478,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[20, 1908], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24209,6 +24500,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[22, 1910], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24230,6 +24522,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[24, 1912], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24251,6 +24544,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[26, 1914], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24272,6 +24566,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[28, 1916], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24293,6 +24588,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[30, 1918], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24314,6 +24610,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[4, 1892], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24335,6 +24632,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[6, 1894], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24356,6 +24654,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[8, 1896], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24377,6 +24676,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[10, 1898], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24398,6 +24698,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[12, 1900], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24419,6 +24720,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[14, 1902], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24440,6 +24742,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[16, 1904], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24461,6 +24764,7 @@ struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_upd
 	// RAM Box: {[18, 1906], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24967,6 +25271,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -24988,6 +25293,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25009,6 +25315,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25030,6 +25337,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25051,6 +25359,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25072,6 +25381,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25093,6 +25403,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25114,6 +25425,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25135,6 +25447,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25156,6 +25469,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25177,6 +25491,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25198,6 +25513,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25219,6 +25535,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25240,6 +25557,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25261,6 +25579,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25282,6 +25601,7 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25692,6 +26012,7 @@ struct dark_dark_update_0_write0_to_dark_laplace_diff_0_rd0_cache {
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25713,6 +26034,7 @@ struct dark_dark_update_0_write1_to_dark_laplace_diff_0_rd1_cache {
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25734,6 +26056,7 @@ struct dark_dark_update_0_write10_to_dark_laplace_diff_0_rd10_cache {
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25755,6 +26078,7 @@ struct dark_dark_update_0_write11_to_dark_laplace_diff_0_rd11_cache {
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25776,6 +26100,7 @@ struct dark_dark_update_0_write12_to_dark_laplace_diff_0_rd12_cache {
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25797,6 +26122,7 @@ struct dark_dark_update_0_write13_to_dark_laplace_diff_0_rd13_cache {
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25818,6 +26144,7 @@ struct dark_dark_update_0_write14_to_dark_laplace_diff_0_rd14_cache {
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25839,6 +26166,7 @@ struct dark_dark_update_0_write15_to_dark_laplace_diff_0_rd15_cache {
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25860,6 +26188,7 @@ struct dark_dark_update_0_write16_to_dark_laplace_diff_0_rd16_cache {
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25881,6 +26210,7 @@ struct dark_dark_update_0_write17_to_dark_laplace_diff_0_rd17_cache {
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25902,6 +26232,7 @@ struct dark_dark_update_0_write18_to_dark_laplace_diff_0_rd18_cache {
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25923,6 +26254,7 @@ struct dark_dark_update_0_write19_to_dark_laplace_diff_0_rd19_cache {
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25944,6 +26276,7 @@ struct dark_dark_update_0_write2_to_dark_laplace_diff_0_rd2_cache {
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25965,6 +26298,7 @@ struct dark_dark_update_0_write20_to_dark_laplace_diff_0_rd20_cache {
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -25986,6 +26320,7 @@ struct dark_dark_update_0_write21_to_dark_laplace_diff_0_rd21_cache {
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26007,6 +26342,7 @@ struct dark_dark_update_0_write22_to_dark_laplace_diff_0_rd22_cache {
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26028,6 +26364,7 @@ struct dark_dark_update_0_write23_to_dark_laplace_diff_0_rd23_cache {
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26049,6 +26386,7 @@ struct dark_dark_update_0_write24_to_dark_laplace_diff_0_rd24_cache {
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26070,6 +26408,7 @@ struct dark_dark_update_0_write25_to_dark_laplace_diff_0_rd25_cache {
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26091,6 +26430,7 @@ struct dark_dark_update_0_write26_to_dark_laplace_diff_0_rd26_cache {
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26112,6 +26452,7 @@ struct dark_dark_update_0_write27_to_dark_laplace_diff_0_rd27_cache {
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26133,6 +26474,7 @@ struct dark_dark_update_0_write28_to_dark_laplace_diff_0_rd28_cache {
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26154,6 +26496,7 @@ struct dark_dark_update_0_write29_to_dark_laplace_diff_0_rd29_cache {
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26175,6 +26518,7 @@ struct dark_dark_update_0_write3_to_dark_laplace_diff_0_rd3_cache {
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26196,6 +26540,7 @@ struct dark_dark_update_0_write30_to_dark_laplace_diff_0_rd30_cache {
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26217,6 +26562,7 @@ struct dark_dark_update_0_write31_to_dark_laplace_diff_0_rd31_cache {
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26238,6 +26584,7 @@ struct dark_dark_update_0_write4_to_dark_laplace_diff_0_rd4_cache {
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26259,6 +26606,7 @@ struct dark_dark_update_0_write5_to_dark_laplace_diff_0_rd5_cache {
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26280,6 +26628,7 @@ struct dark_dark_update_0_write6_to_dark_laplace_diff_0_rd6_cache {
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26301,6 +26650,7 @@ struct dark_dark_update_0_write7_to_dark_laplace_diff_0_rd7_cache {
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26322,6 +26672,7 @@ struct dark_dark_update_0_write8_to_dark_laplace_diff_0_rd8_cache {
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26343,6 +26694,7 @@ struct dark_dark_update_0_write9_to_dark_laplace_diff_0_rd9_cache {
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -26364,6 +26716,7 @@ struct dark_dark_update_0_write0_merged_banks_10_cache {
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 6
+  // 0, 1, 61, 62, 122, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 59> f3;
@@ -26451,6 +26804,7 @@ struct dark_dark_update_0_write1_merged_banks_10_cache {
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 6
+  // 0, 1, 61, 62, 122, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 59> f3;
@@ -26538,6 +26892,7 @@ struct dark_dark_update_0_write10_merged_banks_10_cache {
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -26607,6 +26962,7 @@ struct dark_dark_update_0_write11_merged_banks_10_cache {
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -26676,6 +27032,7 @@ struct dark_dark_update_0_write12_merged_banks_10_cache {
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -26745,6 +27102,7 @@ struct dark_dark_update_0_write13_merged_banks_10_cache {
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -26814,6 +27172,7 @@ struct dark_dark_update_0_write14_merged_banks_10_cache {
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -26883,6 +27242,7 @@ struct dark_dark_update_0_write15_merged_banks_10_cache {
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -26952,6 +27312,7 @@ struct dark_dark_update_0_write16_merged_banks_10_cache {
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27021,6 +27382,7 @@ struct dark_dark_update_0_write17_merged_banks_10_cache {
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27090,6 +27452,7 @@ struct dark_dark_update_0_write18_merged_banks_10_cache {
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27159,6 +27522,7 @@ struct dark_dark_update_0_write19_merged_banks_10_cache {
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27228,6 +27592,7 @@ struct dark_dark_update_0_write2_merged_banks_10_cache {
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27297,6 +27662,7 @@ struct dark_dark_update_0_write20_merged_banks_10_cache {
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27366,6 +27732,7 @@ struct dark_dark_update_0_write21_merged_banks_10_cache {
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27435,6 +27802,7 @@ struct dark_dark_update_0_write22_merged_banks_10_cache {
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27504,6 +27872,7 @@ struct dark_dark_update_0_write23_merged_banks_10_cache {
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27573,6 +27942,7 @@ struct dark_dark_update_0_write24_merged_banks_10_cache {
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27642,6 +28012,7 @@ struct dark_dark_update_0_write25_merged_banks_10_cache {
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27711,6 +28082,7 @@ struct dark_dark_update_0_write26_merged_banks_10_cache {
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27780,6 +28152,7 @@ struct dark_dark_update_0_write27_merged_banks_10_cache {
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27849,6 +28222,7 @@ struct dark_dark_update_0_write28_merged_banks_10_cache {
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27918,6 +28292,7 @@ struct dark_dark_update_0_write29_merged_banks_10_cache {
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -27987,6 +28362,7 @@ struct dark_dark_update_0_write3_merged_banks_10_cache {
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -28056,6 +28432,7 @@ struct dark_dark_update_0_write30_merged_banks_10_cache {
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -28125,6 +28502,7 @@ struct dark_dark_update_0_write31_merged_banks_10_cache {
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -28194,6 +28572,7 @@ struct dark_dark_update_0_write4_merged_banks_10_cache {
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -28263,6 +28642,7 @@ struct dark_dark_update_0_write5_merged_banks_10_cache {
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -28332,6 +28712,7 @@ struct dark_dark_update_0_write6_merged_banks_10_cache {
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -28401,6 +28782,7 @@ struct dark_dark_update_0_write7_merged_banks_10_cache {
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -28470,6 +28852,7 @@ struct dark_dark_update_0_write8_merged_banks_10_cache {
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -28539,6 +28922,7 @@ struct dark_dark_update_0_write9_merged_banks_10_cache {
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -34245,6 +34629,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write0_to_dark_gauss_ds_1_rd
 	// RAM Box: {[0, 1888], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34266,6 +34651,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write2_to_dark_gauss_ds_1_rd
 	// RAM Box: {[2, 1890], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34287,6 +34673,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write20_to_dark_gauss_ds_1_r
 	// RAM Box: {[20, 1908], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34308,6 +34695,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write22_to_dark_gauss_ds_1_r
 	// RAM Box: {[22, 1910], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34329,6 +34717,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write24_to_dark_gauss_ds_1_r
 	// RAM Box: {[24, 1912], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34350,6 +34739,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write26_to_dark_gauss_ds_1_r
 	// RAM Box: {[26, 1914], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34371,6 +34761,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write28_to_dark_gauss_ds_1_r
 	// RAM Box: {[28, 1916], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34392,6 +34783,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write30_to_dark_gauss_ds_1_r
 	// RAM Box: {[30, 1918], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34413,6 +34805,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write4_to_dark_gauss_ds_1_rd
 	// RAM Box: {[4, 1892], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34434,6 +34827,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write6_to_dark_gauss_ds_1_rd
 	// RAM Box: {[6, 1894], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34455,6 +34849,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write8_to_dark_gauss_ds_1_rd
 	// RAM Box: {[8, 1896], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34476,6 +34871,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write10_to_dark_gauss_ds_1_r
 	// RAM Box: {[10, 1898], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34497,6 +34893,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write12_to_dark_gauss_ds_1_r
 	// RAM Box: {[12, 1900], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34518,6 +34915,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write14_to_dark_gauss_ds_1_r
 	// RAM Box: {[14, 1902], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34539,6 +34937,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write16_to_dark_gauss_ds_1_r
 	// RAM Box: {[16, 1904], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -34560,6 +34959,7 @@ struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write18_to_dark_gauss_ds_1_r
 	// RAM Box: {[18, 1906], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35066,6 +35466,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_us_0_rd0_
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35087,6 +35488,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_us_0_rd1_
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35108,6 +35510,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write5_to_dark_laplace_us_0_rd10
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35129,6 +35532,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write5_to_dark_laplace_us_0_rd11
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35150,6 +35554,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write6_to_dark_laplace_us_0_rd12
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35171,6 +35576,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write6_to_dark_laplace_us_0_rd13
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35192,6 +35598,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write7_to_dark_laplace_us_0_rd14
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35213,6 +35620,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write7_to_dark_laplace_us_0_rd15
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35234,6 +35642,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write8_to_dark_laplace_us_0_rd16
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35255,6 +35664,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write8_to_dark_laplace_us_0_rd17
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35276,6 +35686,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write9_to_dark_laplace_us_0_rd18
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35297,6 +35708,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write9_to_dark_laplace_us_0_rd19
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35318,6 +35730,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write1_to_dark_laplace_us_0_rd2_
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35339,6 +35752,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write10_to_dark_laplace_us_0_rd2
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35360,6 +35774,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write10_to_dark_laplace_us_0_rd2
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35381,6 +35796,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write11_to_dark_laplace_us_0_rd2
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35402,6 +35818,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write11_to_dark_laplace_us_0_rd2
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35423,6 +35840,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write12_to_dark_laplace_us_0_rd2
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35444,6 +35862,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write12_to_dark_laplace_us_0_rd2
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35465,6 +35884,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write13_to_dark_laplace_us_0_rd2
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35486,6 +35906,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write13_to_dark_laplace_us_0_rd2
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35507,6 +35928,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write14_to_dark_laplace_us_0_rd2
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35528,6 +35950,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write14_to_dark_laplace_us_0_rd2
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35549,6 +35972,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write1_to_dark_laplace_us_0_rd3_
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35570,6 +35994,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write15_to_dark_laplace_us_0_rd3
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35591,6 +36016,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write15_to_dark_laplace_us_0_rd3
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35612,6 +36038,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write2_to_dark_laplace_us_0_rd4_
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35633,6 +36060,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write2_to_dark_laplace_us_0_rd5_
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35654,6 +36082,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write3_to_dark_laplace_us_0_rd6_
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35675,6 +36104,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write3_to_dark_laplace_us_0_rd7_
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35696,6 +36126,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write4_to_dark_laplace_us_0_rd8_
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35717,6 +36148,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write4_to_dark_laplace_us_0_rd9_
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35738,6 +36170,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_fused_level_1_rd0_cach
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35759,6 +36192,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write1_to_fused_level_1_rd1_cach
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35780,6 +36214,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write10_to_fused_level_1_rd10_ca
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35801,6 +36236,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write11_to_fused_level_1_rd11_ca
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35822,6 +36258,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write12_to_fused_level_1_rd12_ca
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35843,6 +36280,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write13_to_fused_level_1_rd13_ca
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35864,6 +36302,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write14_to_fused_level_1_rd14_ca
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35885,6 +36324,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write15_to_fused_level_1_rd15_ca
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35906,6 +36346,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write2_to_fused_level_1_rd2_cach
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35927,6 +36368,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write3_to_fused_level_1_rd3_cach
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35948,6 +36390,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write4_to_fused_level_1_rd4_cach
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35969,6 +36412,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write5_to_fused_level_1_rd5_cach
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -35990,6 +36434,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write6_to_fused_level_1_rd6_cach
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -36011,6 +36456,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write7_to_fused_level_1_rd7_cach
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -36032,6 +36478,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write8_to_fused_level_1_rd8_cach
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -36053,6 +36500,7 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write9_to_fused_level_1_rd9_cach
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37015,6 +37463,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write0_to_fused_level_0_
 	// RAM Box: {[0, 1888], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37036,6 +37485,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write1_to_fused_level_0_
 	// RAM Box: {[1, 1889], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37057,6 +37507,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write10_to_fused_level_0
 	// RAM Box: {[10, 1898], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37078,6 +37529,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write11_to_fused_level_0
 	// RAM Box: {[11, 1899], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37099,6 +37551,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write12_to_fused_level_0
 	// RAM Box: {[12, 1900], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37120,6 +37573,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write13_to_fused_level_0
 	// RAM Box: {[13, 1901], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37141,6 +37595,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write14_to_fused_level_0
 	// RAM Box: {[14, 1902], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37162,6 +37617,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write15_to_fused_level_0
 	// RAM Box: {[15, 1903], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37183,6 +37639,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write16_to_fused_level_0
 	// RAM Box: {[16, 1904], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37204,6 +37661,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write17_to_fused_level_0
 	// RAM Box: {[17, 1905], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37225,6 +37683,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write18_to_fused_level_0
 	// RAM Box: {[18, 1906], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37246,6 +37705,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write19_to_fused_level_0
 	// RAM Box: {[19, 1907], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37267,6 +37727,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write2_to_fused_level_0_
 	// RAM Box: {[2, 1890], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37288,6 +37749,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write20_to_fused_level_0
 	// RAM Box: {[20, 1908], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37309,6 +37771,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write21_to_fused_level_0
 	// RAM Box: {[21, 1909], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37330,6 +37793,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write22_to_fused_level_0
 	// RAM Box: {[22, 1910], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37351,6 +37815,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write23_to_fused_level_0
 	// RAM Box: {[23, 1911], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37372,6 +37837,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write24_to_fused_level_0
 	// RAM Box: {[24, 1912], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37393,6 +37859,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write25_to_fused_level_0
 	// RAM Box: {[25, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37414,6 +37881,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write26_to_fused_level_0
 	// RAM Box: {[26, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37435,6 +37903,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write27_to_fused_level_0
 	// RAM Box: {[27, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37456,6 +37925,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write28_to_fused_level_0
 	// RAM Box: {[28, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37477,6 +37947,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write29_to_fused_level_0
 	// RAM Box: {[29, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37498,6 +37969,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write3_to_fused_level_0_
 	// RAM Box: {[3, 1891], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37519,6 +37991,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write30_to_fused_level_0
 	// RAM Box: {[30, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37540,6 +38013,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write31_to_fused_level_0
 	// RAM Box: {[31, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37561,6 +38035,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write4_to_fused_level_0_
 	// RAM Box: {[4, 1892], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37582,6 +38057,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write5_to_fused_level_0_
 	// RAM Box: {[5, 1893], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37603,6 +38079,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write6_to_fused_level_0_
 	// RAM Box: {[6, 1894], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37624,6 +38101,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write7_to_fused_level_0_
 	// RAM Box: {[7, 1895], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37645,6 +38123,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write8_to_fused_level_0_
 	// RAM Box: {[8, 1896], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -37666,6 +38145,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write9_to_fused_level_0_
 	// RAM Box: {[9, 1897], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38444,6 +38924,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write0_to_dark_laplace_diff_
 	// RAM Box: {[0, 1888], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38465,6 +38946,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write1_to_dark_laplace_diff_
 	// RAM Box: {[1, 1889], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38486,6 +38968,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write10_to_dark_laplace_diff
 	// RAM Box: {[10, 1898], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38507,6 +38990,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write11_to_dark_laplace_diff
 	// RAM Box: {[11, 1899], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38528,6 +39012,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write12_to_dark_laplace_diff
 	// RAM Box: {[12, 1900], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38549,6 +39034,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write13_to_dark_laplace_diff
 	// RAM Box: {[13, 1901], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38570,6 +39056,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write14_to_dark_laplace_diff
 	// RAM Box: {[14, 1902], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38591,6 +39078,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write15_to_dark_laplace_diff
 	// RAM Box: {[15, 1903], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38612,6 +39100,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write16_to_dark_laplace_diff
 	// RAM Box: {[16, 1904], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38633,6 +39122,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write17_to_dark_laplace_diff
 	// RAM Box: {[17, 1905], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38654,6 +39144,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write18_to_dark_laplace_diff
 	// RAM Box: {[18, 1906], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38675,6 +39166,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write19_to_dark_laplace_diff
 	// RAM Box: {[19, 1907], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38696,6 +39188,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write2_to_dark_laplace_diff_
 	// RAM Box: {[2, 1890], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38717,6 +39210,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write20_to_dark_laplace_diff
 	// RAM Box: {[20, 1908], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38738,6 +39232,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write21_to_dark_laplace_diff
 	// RAM Box: {[21, 1909], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38759,6 +39254,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write22_to_dark_laplace_diff
 	// RAM Box: {[22, 1910], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38780,6 +39276,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write23_to_dark_laplace_diff
 	// RAM Box: {[23, 1911], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38801,6 +39298,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write24_to_dark_laplace_diff
 	// RAM Box: {[24, 1912], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38822,6 +39320,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write25_to_dark_laplace_diff
 	// RAM Box: {[25, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38843,6 +39342,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write26_to_dark_laplace_diff
 	// RAM Box: {[26, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38864,6 +39364,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write27_to_dark_laplace_diff
 	// RAM Box: {[27, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38885,6 +39386,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write28_to_dark_laplace_diff
 	// RAM Box: {[28, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38906,6 +39408,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write29_to_dark_laplace_diff
 	// RAM Box: {[29, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38927,6 +39430,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write3_to_dark_laplace_diff_
 	// RAM Box: {[3, 1891], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38948,6 +39452,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write30_to_dark_laplace_diff
 	// RAM Box: {[30, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38969,6 +39474,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write31_to_dark_laplace_diff
 	// RAM Box: {[31, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -38990,6 +39496,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write4_to_dark_laplace_diff_
 	// RAM Box: {[4, 1892], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -39011,6 +39518,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write5_to_dark_laplace_diff_
 	// RAM Box: {[5, 1893], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -39032,6 +39540,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write6_to_dark_laplace_diff_
 	// RAM Box: {[6, 1894], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -39053,6 +39562,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write7_to_dark_laplace_diff_
 	// RAM Box: {[7, 1895], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -39074,6 +39584,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write8_to_dark_laplace_diff_
 	// RAM Box: {[8, 1896], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -39095,6 +39606,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write9_to_dark_laplace_diff_
 	// RAM Box: {[9, 1897], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -39873,6 +40385,7 @@ struct dark_weights_dark_weights_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -39893,6 +40406,7 @@ struct dark_weights_dark_weights_update_0_write1_merged_banks_2_cache {
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -39913,6 +40427,7 @@ struct dark_weights_dark_weights_update_0_write10_merged_banks_2_cache {
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -39933,6 +40448,7 @@ struct dark_weights_dark_weights_update_0_write11_merged_banks_2_cache {
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -39953,6 +40469,7 @@ struct dark_weights_dark_weights_update_0_write12_merged_banks_2_cache {
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -39973,6 +40490,7 @@ struct dark_weights_dark_weights_update_0_write13_merged_banks_2_cache {
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -39993,6 +40511,7 @@ struct dark_weights_dark_weights_update_0_write14_merged_banks_2_cache {
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40013,6 +40532,7 @@ struct dark_weights_dark_weights_update_0_write15_merged_banks_2_cache {
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40033,6 +40553,7 @@ struct dark_weights_dark_weights_update_0_write16_merged_banks_2_cache {
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40053,6 +40574,7 @@ struct dark_weights_dark_weights_update_0_write17_merged_banks_2_cache {
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40073,6 +40595,7 @@ struct dark_weights_dark_weights_update_0_write18_merged_banks_2_cache {
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40093,6 +40616,7 @@ struct dark_weights_dark_weights_update_0_write19_merged_banks_2_cache {
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40113,6 +40637,7 @@ struct dark_weights_dark_weights_update_0_write2_merged_banks_2_cache {
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40133,6 +40658,7 @@ struct dark_weights_dark_weights_update_0_write20_merged_banks_2_cache {
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40153,6 +40679,7 @@ struct dark_weights_dark_weights_update_0_write21_merged_banks_2_cache {
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40173,6 +40700,7 @@ struct dark_weights_dark_weights_update_0_write22_merged_banks_2_cache {
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40193,6 +40721,7 @@ struct dark_weights_dark_weights_update_0_write23_merged_banks_2_cache {
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40213,6 +40742,7 @@ struct dark_weights_dark_weights_update_0_write24_merged_banks_2_cache {
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40233,6 +40763,7 @@ struct dark_weights_dark_weights_update_0_write25_merged_banks_2_cache {
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40253,6 +40784,7 @@ struct dark_weights_dark_weights_update_0_write26_merged_banks_2_cache {
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40273,6 +40805,7 @@ struct dark_weights_dark_weights_update_0_write27_merged_banks_2_cache {
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40293,6 +40826,7 @@ struct dark_weights_dark_weights_update_0_write28_merged_banks_2_cache {
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40313,6 +40847,7 @@ struct dark_weights_dark_weights_update_0_write29_merged_banks_2_cache {
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40333,6 +40868,7 @@ struct dark_weights_dark_weights_update_0_write3_merged_banks_2_cache {
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40353,6 +40889,7 @@ struct dark_weights_dark_weights_update_0_write30_merged_banks_2_cache {
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40373,6 +40910,7 @@ struct dark_weights_dark_weights_update_0_write31_merged_banks_2_cache {
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40393,6 +40931,7 @@ struct dark_weights_dark_weights_update_0_write4_merged_banks_2_cache {
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40413,6 +40952,7 @@ struct dark_weights_dark_weights_update_0_write5_merged_banks_2_cache {
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40433,6 +40973,7 @@ struct dark_weights_dark_weights_update_0_write6_merged_banks_2_cache {
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40453,6 +40994,7 @@ struct dark_weights_dark_weights_update_0_write7_merged_banks_2_cache {
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40473,6 +41015,7 @@ struct dark_weights_dark_weights_update_0_write8_merged_banks_2_cache {
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -40493,6 +41036,7 @@ struct dark_weights_dark_weights_update_0_write9_merged_banks_2_cache {
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -41758,6 +42302,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write0_to_fused_level_0_
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41779,6 +42324,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write1_to_fused_level_0_
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41800,6 +42346,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write10_to_fused_level_0
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41821,6 +42368,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write11_to_fused_level_0
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41842,6 +42390,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write12_to_fused_level_0
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41863,6 +42412,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write13_to_fused_level_0
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41884,6 +42434,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write14_to_fused_level_0
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41905,6 +42456,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write15_to_fused_level_0
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41926,6 +42478,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write16_to_fused_level_0
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41947,6 +42500,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write17_to_fused_level_0
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41968,6 +42522,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write18_to_fused_level_0
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -41989,6 +42544,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write19_to_fused_level_0
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42010,6 +42566,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write2_to_fused_level_0_
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42031,6 +42588,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write20_to_fused_level_0
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42052,6 +42610,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write21_to_fused_level_0
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42073,6 +42632,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write22_to_fused_level_0
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42094,6 +42654,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write23_to_fused_level_0
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42115,6 +42676,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write24_to_fused_level_0
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42136,6 +42698,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write25_to_fused_level_0
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42157,6 +42720,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write26_to_fused_level_0
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42178,6 +42742,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write27_to_fused_level_0
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42199,6 +42764,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write28_to_fused_level_0
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42220,6 +42786,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write29_to_fused_level_0
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42241,6 +42808,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write3_to_fused_level_0_
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42262,6 +42830,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write30_to_fused_level_0
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42283,6 +42852,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write31_to_fused_level_0
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42304,6 +42874,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write4_to_fused_level_0_
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42325,6 +42896,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write5_to_fused_level_0_
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42346,6 +42918,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write6_to_fused_level_0_
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42367,6 +42940,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write7_to_fused_level_0_
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42388,6 +42962,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write8_to_fused_level_0_
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42409,6 +42984,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write9_to_fused_level_0_
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 63
+  // 0, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
 	fifo<hw_uint<16>, 124> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -42430,6 +43006,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_9_ca
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 6
+  // 0, 1, 61, 62, 122, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 59> f3;
@@ -42517,6 +43094,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_9_ca
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 6
+  // 0, 1, 61, 62, 122, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 59> f3;
@@ -42604,6 +43182,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write10_merged_banks_9_c
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -42673,6 +43252,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write11_merged_banks_9_c
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -42742,6 +43322,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write12_merged_banks_9_c
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -42811,6 +43392,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write13_merged_banks_9_c
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -42880,6 +43462,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write14_merged_banks_9_c
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -42949,6 +43532,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write15_merged_banks_9_c
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43018,6 +43602,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write16_merged_banks_9_c
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43087,6 +43672,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write17_merged_banks_9_c
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43156,6 +43742,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write18_merged_banks_9_c
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43225,6 +43812,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write19_merged_banks_9_c
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43294,6 +43882,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write2_merged_banks_9_ca
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43363,6 +43952,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write20_merged_banks_9_c
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43432,6 +44022,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write21_merged_banks_9_c
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43501,6 +44092,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write22_merged_banks_9_c
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43570,6 +44162,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write23_merged_banks_9_c
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43639,6 +44232,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write24_merged_banks_9_c
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43708,6 +44302,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write25_merged_banks_9_c
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43777,6 +44372,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write26_merged_banks_9_c
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43846,6 +44442,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write27_merged_banks_9_c
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43915,6 +44512,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write28_merged_banks_9_c
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -43984,6 +44582,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write29_merged_banks_9_c
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -44053,6 +44652,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write3_merged_banks_9_ca
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -44122,6 +44722,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write30_merged_banks_9_c
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -44191,6 +44792,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write31_merged_banks_9_c
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -44260,6 +44862,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write4_merged_banks_9_ca
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -44329,6 +44932,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write5_merged_banks_9_ca
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -44398,6 +45002,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write6_merged_banks_9_ca
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -44467,6 +45072,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write7_merged_banks_9_ca
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -44536,6 +45142,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write8_merged_banks_9_ca
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -44605,6 +45212,7 @@ struct dark_weights_normed_dark_weights_normed_update_0_write9_merged_banks_9_ca
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 124
 	// # of read delays: 4
+  // 0, 1, 62, 123
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	fifo<hw_uint<16>, 60> f3;
@@ -49823,6 +50431,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[0, 1888], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -49844,6 +50453,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[2, 1890], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -49865,6 +50475,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[20, 1908], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -49886,6 +50497,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[22, 1910], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -49907,6 +50519,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[24, 1912], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -49928,6 +50541,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[26, 1914], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -49949,6 +50563,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[28, 1916], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -49970,6 +50585,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[30, 1918], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -49991,6 +50607,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[4, 1892], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50012,6 +50629,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[6, 1894], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50033,6 +50651,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[8, 1896], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50054,6 +50673,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[10, 1898], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50075,6 +50695,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[12, 1900], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50096,6 +50717,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[14, 1902], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50117,6 +50739,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[16, 1904], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50138,6 +50761,7 @@ struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_
 	// RAM Box: {[18, 1906], [0, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50644,6 +51268,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50665,6 +51290,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50686,6 +51312,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50707,6 +51334,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50728,6 +51356,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50749,6 +51378,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50770,6 +51400,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50791,6 +51422,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50812,6 +51444,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50833,6 +51466,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50854,6 +51488,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50875,6 +51510,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50896,6 +51532,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50917,6 +51554,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50938,6 +51576,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -50959,6 +51598,7 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51369,6 +52009,7 @@ struct final_merged_0_final_merged_0_update_0_write0_to_ls16_rd0_cache {
 	// RAM Box: {[0, 1888], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51390,6 +52031,7 @@ struct final_merged_0_final_merged_0_update_0_write1_to_ls16_rd1_cache {
 	// RAM Box: {[1, 1889], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51411,6 +52053,7 @@ struct final_merged_0_final_merged_0_update_0_write10_to_ls16_rd10_cache {
 	// RAM Box: {[10, 1898], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51432,6 +52075,7 @@ struct final_merged_0_final_merged_0_update_0_write11_to_ls16_rd11_cache {
 	// RAM Box: {[11, 1899], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51453,6 +52097,7 @@ struct final_merged_0_final_merged_0_update_0_write12_to_ls16_rd12_cache {
 	// RAM Box: {[12, 1900], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51474,6 +52119,7 @@ struct final_merged_0_final_merged_0_update_0_write13_to_ls16_rd13_cache {
 	// RAM Box: {[13, 1901], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51495,6 +52141,7 @@ struct final_merged_0_final_merged_0_update_0_write14_to_ls16_rd14_cache {
 	// RAM Box: {[14, 1902], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51516,6 +52163,7 @@ struct final_merged_0_final_merged_0_update_0_write15_to_ls16_rd15_cache {
 	// RAM Box: {[15, 1903], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51537,6 +52185,7 @@ struct final_merged_0_final_merged_0_update_0_write16_to_ls16_rd16_cache {
 	// RAM Box: {[16, 1904], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51558,6 +52207,7 @@ struct final_merged_0_final_merged_0_update_0_write17_to_ls16_rd17_cache {
 	// RAM Box: {[17, 1905], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51579,6 +52229,7 @@ struct final_merged_0_final_merged_0_update_0_write18_to_ls16_rd18_cache {
 	// RAM Box: {[18, 1906], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51600,6 +52251,7 @@ struct final_merged_0_final_merged_0_update_0_write19_to_ls16_rd19_cache {
 	// RAM Box: {[19, 1907], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51621,6 +52273,7 @@ struct final_merged_0_final_merged_0_update_0_write2_to_ls16_rd2_cache {
 	// RAM Box: {[2, 1890], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51642,6 +52295,7 @@ struct final_merged_0_final_merged_0_update_0_write20_to_ls16_rd20_cache {
 	// RAM Box: {[20, 1908], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51663,6 +52317,7 @@ struct final_merged_0_final_merged_0_update_0_write21_to_ls16_rd21_cache {
 	// RAM Box: {[21, 1909], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51684,6 +52339,7 @@ struct final_merged_0_final_merged_0_update_0_write22_to_ls16_rd22_cache {
 	// RAM Box: {[22, 1910], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51705,6 +52361,7 @@ struct final_merged_0_final_merged_0_update_0_write23_to_ls16_rd23_cache {
 	// RAM Box: {[23, 1911], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51726,6 +52383,7 @@ struct final_merged_0_final_merged_0_update_0_write24_to_ls16_rd24_cache {
 	// RAM Box: {[24, 1912], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51747,6 +52405,7 @@ struct final_merged_0_final_merged_0_update_0_write25_to_ls16_rd25_cache {
 	// RAM Box: {[25, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51768,6 +52427,7 @@ struct final_merged_0_final_merged_0_update_0_write26_to_ls16_rd26_cache {
 	// RAM Box: {[26, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51789,6 +52449,7 @@ struct final_merged_0_final_merged_0_update_0_write27_to_ls16_rd27_cache {
 	// RAM Box: {[27, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51810,6 +52471,7 @@ struct final_merged_0_final_merged_0_update_0_write28_to_ls16_rd28_cache {
 	// RAM Box: {[28, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51831,6 +52493,7 @@ struct final_merged_0_final_merged_0_update_0_write29_to_ls16_rd29_cache {
 	// RAM Box: {[29, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51852,6 +52515,7 @@ struct final_merged_0_final_merged_0_update_0_write3_to_ls16_rd3_cache {
 	// RAM Box: {[3, 1891], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51873,6 +52537,7 @@ struct final_merged_0_final_merged_0_update_0_write30_to_ls16_rd30_cache {
 	// RAM Box: {[30, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51894,6 +52559,7 @@ struct final_merged_0_final_merged_0_update_0_write31_to_ls16_rd31_cache {
 	// RAM Box: {[31, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51915,6 +52581,7 @@ struct final_merged_0_final_merged_0_update_0_write4_to_ls16_rd4_cache {
 	// RAM Box: {[4, 1892], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51936,6 +52603,7 @@ struct final_merged_0_final_merged_0_update_0_write5_to_ls16_rd5_cache {
 	// RAM Box: {[5, 1893], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51957,6 +52625,7 @@ struct final_merged_0_final_merged_0_update_0_write6_to_ls16_rd6_cache {
 	// RAM Box: {[6, 1894], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51978,6 +52647,7 @@ struct final_merged_0_final_merged_0_update_0_write7_to_ls16_rd7_cache {
 	// RAM Box: {[7, 1895], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -51999,6 +52669,7 @@ struct final_merged_0_final_merged_0_update_0_write8_to_ls16_rd8_cache {
 	// RAM Box: {[8, 1896], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52020,6 +52691,7 @@ struct final_merged_0_final_merged_0_update_0_write9_to_ls16_rd9_cache {
 	// RAM Box: {[9, 1897], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52798,6 +53470,7 @@ struct fused_level_0_fused_level_0_update_0_write0_to_final_merged_0_rd0_cache {
 	// RAM Box: {[0, 1888], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52819,6 +53492,7 @@ struct fused_level_0_fused_level_0_update_0_write1_to_final_merged_0_rd1_cache {
 	// RAM Box: {[1, 1889], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52840,6 +53514,7 @@ struct fused_level_0_fused_level_0_update_0_write10_to_final_merged_0_rd10_cache
 	// RAM Box: {[10, 1898], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52861,6 +53536,7 @@ struct fused_level_0_fused_level_0_update_0_write11_to_final_merged_0_rd11_cache
 	// RAM Box: {[11, 1899], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52882,6 +53558,7 @@ struct fused_level_0_fused_level_0_update_0_write12_to_final_merged_0_rd12_cache
 	// RAM Box: {[12, 1900], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52903,6 +53580,7 @@ struct fused_level_0_fused_level_0_update_0_write13_to_final_merged_0_rd13_cache
 	// RAM Box: {[13, 1901], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52924,6 +53602,7 @@ struct fused_level_0_fused_level_0_update_0_write14_to_final_merged_0_rd14_cache
 	// RAM Box: {[14, 1902], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52945,6 +53624,7 @@ struct fused_level_0_fused_level_0_update_0_write15_to_final_merged_0_rd15_cache
 	// RAM Box: {[15, 1903], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52966,6 +53646,7 @@ struct fused_level_0_fused_level_0_update_0_write16_to_final_merged_0_rd16_cache
 	// RAM Box: {[16, 1904], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -52987,6 +53668,7 @@ struct fused_level_0_fused_level_0_update_0_write17_to_final_merged_0_rd17_cache
 	// RAM Box: {[17, 1905], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53008,6 +53690,7 @@ struct fused_level_0_fused_level_0_update_0_write18_to_final_merged_0_rd18_cache
 	// RAM Box: {[18, 1906], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53029,6 +53712,7 @@ struct fused_level_0_fused_level_0_update_0_write19_to_final_merged_0_rd19_cache
 	// RAM Box: {[19, 1907], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53050,6 +53734,7 @@ struct fused_level_0_fused_level_0_update_0_write2_to_final_merged_0_rd2_cache {
 	// RAM Box: {[2, 1890], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53071,6 +53756,7 @@ struct fused_level_0_fused_level_0_update_0_write20_to_final_merged_0_rd20_cache
 	// RAM Box: {[20, 1908], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53092,6 +53778,7 @@ struct fused_level_0_fused_level_0_update_0_write21_to_final_merged_0_rd21_cache
 	// RAM Box: {[21, 1909], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53113,6 +53800,7 @@ struct fused_level_0_fused_level_0_update_0_write22_to_final_merged_0_rd22_cache
 	// RAM Box: {[22, 1910], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53134,6 +53822,7 @@ struct fused_level_0_fused_level_0_update_0_write23_to_final_merged_0_rd23_cache
 	// RAM Box: {[23, 1911], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53155,6 +53844,7 @@ struct fused_level_0_fused_level_0_update_0_write24_to_final_merged_0_rd24_cache
 	// RAM Box: {[24, 1912], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53176,6 +53866,7 @@ struct fused_level_0_fused_level_0_update_0_write25_to_final_merged_0_rd25_cache
 	// RAM Box: {[25, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53197,6 +53888,7 @@ struct fused_level_0_fused_level_0_update_0_write26_to_final_merged_0_rd26_cache
 	// RAM Box: {[26, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53218,6 +53910,7 @@ struct fused_level_0_fused_level_0_update_0_write27_to_final_merged_0_rd27_cache
 	// RAM Box: {[27, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53239,6 +53932,7 @@ struct fused_level_0_fused_level_0_update_0_write28_to_final_merged_0_rd28_cache
 	// RAM Box: {[28, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53260,6 +53954,7 @@ struct fused_level_0_fused_level_0_update_0_write29_to_final_merged_0_rd29_cache
 	// RAM Box: {[29, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53281,6 +53976,7 @@ struct fused_level_0_fused_level_0_update_0_write3_to_final_merged_0_rd3_cache {
 	// RAM Box: {[3, 1891], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53302,6 +53998,7 @@ struct fused_level_0_fused_level_0_update_0_write30_to_final_merged_0_rd30_cache
 	// RAM Box: {[30, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53323,6 +54020,7 @@ struct fused_level_0_fused_level_0_update_0_write31_to_final_merged_0_rd31_cache
 	// RAM Box: {[31, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53344,6 +54042,7 @@ struct fused_level_0_fused_level_0_update_0_write4_to_final_merged_0_rd4_cache {
 	// RAM Box: {[4, 1892], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53365,6 +54064,7 @@ struct fused_level_0_fused_level_0_update_0_write5_to_final_merged_0_rd5_cache {
 	// RAM Box: {[5, 1893], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53386,6 +54086,7 @@ struct fused_level_0_fused_level_0_update_0_write6_to_final_merged_0_rd6_cache {
 	// RAM Box: {[6, 1894], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53407,6 +54108,7 @@ struct fused_level_0_fused_level_0_update_0_write7_to_final_merged_0_rd7_cache {
 	// RAM Box: {[7, 1895], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53428,6 +54130,7 @@ struct fused_level_0_fused_level_0_update_0_write8_to_final_merged_0_rd8_cache {
 	// RAM Box: {[8, 1896], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -53449,6 +54152,7 @@ struct fused_level_0_fused_level_0_update_0_write9_to_final_merged_0_rd9_cache {
 	// RAM Box: {[9, 1897], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54227,6 +54931,7 @@ struct fused_level_1_fused_level_1_update_0_write0_to_final_merged_0_rd0_cache {
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54248,6 +54953,7 @@ struct fused_level_1_fused_level_1_update_0_write0_to_final_merged_0_rd1_cache {
 	// RAM Box: {[0, 944], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54269,6 +54975,7 @@ struct fused_level_1_fused_level_1_update_0_write5_to_final_merged_0_rd10_cache 
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54290,6 +54997,7 @@ struct fused_level_1_fused_level_1_update_0_write5_to_final_merged_0_rd11_cache 
 	// RAM Box: {[5, 949], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54311,6 +55019,7 @@ struct fused_level_1_fused_level_1_update_0_write6_to_final_merged_0_rd12_cache 
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54332,6 +55041,7 @@ struct fused_level_1_fused_level_1_update_0_write6_to_final_merged_0_rd13_cache 
 	// RAM Box: {[6, 950], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54353,6 +55063,7 @@ struct fused_level_1_fused_level_1_update_0_write7_to_final_merged_0_rd14_cache 
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54374,6 +55085,7 @@ struct fused_level_1_fused_level_1_update_0_write7_to_final_merged_0_rd15_cache 
 	// RAM Box: {[7, 951], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54395,6 +55107,7 @@ struct fused_level_1_fused_level_1_update_0_write8_to_final_merged_0_rd16_cache 
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54416,6 +55129,7 @@ struct fused_level_1_fused_level_1_update_0_write8_to_final_merged_0_rd17_cache 
 	// RAM Box: {[8, 952], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54437,6 +55151,7 @@ struct fused_level_1_fused_level_1_update_0_write9_to_final_merged_0_rd18_cache 
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54458,6 +55173,7 @@ struct fused_level_1_fused_level_1_update_0_write9_to_final_merged_0_rd19_cache 
 	// RAM Box: {[9, 953], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54479,6 +55195,7 @@ struct fused_level_1_fused_level_1_update_0_write1_to_final_merged_0_rd2_cache {
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54500,6 +55217,7 @@ struct fused_level_1_fused_level_1_update_0_write10_to_final_merged_0_rd20_cache
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54521,6 +55239,7 @@ struct fused_level_1_fused_level_1_update_0_write10_to_final_merged_0_rd21_cache
 	// RAM Box: {[10, 954], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54542,6 +55261,7 @@ struct fused_level_1_fused_level_1_update_0_write11_to_final_merged_0_rd22_cache
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54563,6 +55283,7 @@ struct fused_level_1_fused_level_1_update_0_write11_to_final_merged_0_rd23_cache
 	// RAM Box: {[11, 955], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54584,6 +55305,7 @@ struct fused_level_1_fused_level_1_update_0_write12_to_final_merged_0_rd24_cache
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54605,6 +55327,7 @@ struct fused_level_1_fused_level_1_update_0_write12_to_final_merged_0_rd25_cache
 	// RAM Box: {[12, 956], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54626,6 +55349,7 @@ struct fused_level_1_fused_level_1_update_0_write13_to_final_merged_0_rd26_cache
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54647,6 +55371,7 @@ struct fused_level_1_fused_level_1_update_0_write13_to_final_merged_0_rd27_cache
 	// RAM Box: {[13, 957], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54668,6 +55393,7 @@ struct fused_level_1_fused_level_1_update_0_write14_to_final_merged_0_rd28_cache
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54689,6 +55415,7 @@ struct fused_level_1_fused_level_1_update_0_write14_to_final_merged_0_rd29_cache
 	// RAM Box: {[14, 958], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54710,6 +55437,7 @@ struct fused_level_1_fused_level_1_update_0_write1_to_final_merged_0_rd3_cache {
 	// RAM Box: {[1, 945], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54731,6 +55459,7 @@ struct fused_level_1_fused_level_1_update_0_write15_to_final_merged_0_rd30_cache
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54752,6 +55481,7 @@ struct fused_level_1_fused_level_1_update_0_write15_to_final_merged_0_rd31_cache
 	// RAM Box: {[15, 959], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54773,6 +55503,7 @@ struct fused_level_1_fused_level_1_update_0_write2_to_final_merged_0_rd4_cache {
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54794,6 +55525,7 @@ struct fused_level_1_fused_level_1_update_0_write2_to_final_merged_0_rd5_cache {
 	// RAM Box: {[2, 946], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54815,6 +55547,7 @@ struct fused_level_1_fused_level_1_update_0_write3_to_final_merged_0_rd6_cache {
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54836,6 +55569,7 @@ struct fused_level_1_fused_level_1_update_0_write3_to_final_merged_0_rd7_cache {
 	// RAM Box: {[3, 947], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54857,6 +55591,7 @@ struct fused_level_1_fused_level_1_update_0_write4_to_final_merged_0_rd8_cache {
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -54878,6 +55613,7 @@ struct fused_level_1_fused_level_1_update_0_write4_to_final_merged_0_rd9_cache {
 	// RAM Box: {[4, 948], [0, 539]}
 	// Capacity: 60
 	// # of read delays: 60
+  // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
 	fifo<hw_uint<16>, 60> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -55560,6 +56296,7 @@ struct in_in_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55580,6 +56317,7 @@ struct in_in_update_0_write1_merged_banks_2_cache {
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55600,6 +56338,7 @@ struct in_in_update_0_write10_merged_banks_2_cache {
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55620,6 +56359,7 @@ struct in_in_update_0_write11_merged_banks_2_cache {
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55640,6 +56380,7 @@ struct in_in_update_0_write12_merged_banks_2_cache {
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55660,6 +56401,7 @@ struct in_in_update_0_write13_merged_banks_2_cache {
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55680,6 +56422,7 @@ struct in_in_update_0_write14_merged_banks_2_cache {
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55700,6 +56443,7 @@ struct in_in_update_0_write15_merged_banks_2_cache {
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55720,6 +56464,7 @@ struct in_in_update_0_write16_merged_banks_2_cache {
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55740,6 +56485,7 @@ struct in_in_update_0_write17_merged_banks_2_cache {
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55760,6 +56506,7 @@ struct in_in_update_0_write18_merged_banks_2_cache {
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55780,6 +56527,7 @@ struct in_in_update_0_write19_merged_banks_2_cache {
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55800,6 +56548,7 @@ struct in_in_update_0_write2_merged_banks_2_cache {
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55820,6 +56569,7 @@ struct in_in_update_0_write20_merged_banks_2_cache {
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55840,6 +56590,7 @@ struct in_in_update_0_write21_merged_banks_2_cache {
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55860,6 +56611,7 @@ struct in_in_update_0_write22_merged_banks_2_cache {
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55880,6 +56632,7 @@ struct in_in_update_0_write23_merged_banks_2_cache {
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55900,6 +56653,7 @@ struct in_in_update_0_write24_merged_banks_2_cache {
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55920,6 +56674,7 @@ struct in_in_update_0_write25_merged_banks_2_cache {
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55940,6 +56695,7 @@ struct in_in_update_0_write26_merged_banks_2_cache {
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55960,6 +56716,7 @@ struct in_in_update_0_write27_merged_banks_2_cache {
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -55980,6 +56737,7 @@ struct in_in_update_0_write28_merged_banks_2_cache {
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56000,6 +56758,7 @@ struct in_in_update_0_write29_merged_banks_2_cache {
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56020,6 +56779,7 @@ struct in_in_update_0_write3_merged_banks_2_cache {
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56040,6 +56800,7 @@ struct in_in_update_0_write30_merged_banks_2_cache {
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56060,6 +56821,7 @@ struct in_in_update_0_write31_merged_banks_2_cache {
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56080,6 +56842,7 @@ struct in_in_update_0_write4_merged_banks_2_cache {
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56100,6 +56863,7 @@ struct in_in_update_0_write5_merged_banks_2_cache {
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56120,6 +56884,7 @@ struct in_in_update_0_write6_merged_banks_2_cache {
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56140,6 +56905,7 @@ struct in_in_update_0_write7_merged_banks_2_cache {
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56160,6 +56926,7 @@ struct in_in_update_0_write8_merged_banks_2_cache {
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -56180,6 +56947,7 @@ struct in_in_update_0_write9_merged_banks_2_cache {
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57445,6 +58213,7 @@ struct in_off_chip0_in_off_chip0_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[0, 960], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57465,6 +58234,7 @@ struct in_off_chip0_in_off_chip0_update_0_write1_merged_banks_2_cache {
 	// RAM Box: {[1, 961], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57485,6 +58255,7 @@ struct in_off_chip0_in_off_chip0_update_0_write10_merged_banks_2_cache {
 	// RAM Box: {[10, 970], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57505,6 +58276,7 @@ struct in_off_chip0_in_off_chip0_update_0_write11_merged_banks_2_cache {
 	// RAM Box: {[11, 971], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57525,6 +58297,7 @@ struct in_off_chip0_in_off_chip0_update_0_write12_merged_banks_2_cache {
 	// RAM Box: {[12, 972], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57545,6 +58318,7 @@ struct in_off_chip0_in_off_chip0_update_0_write13_merged_banks_2_cache {
 	// RAM Box: {[13, 973], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57565,6 +58339,7 @@ struct in_off_chip0_in_off_chip0_update_0_write14_merged_banks_2_cache {
 	// RAM Box: {[14, 974], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57585,6 +58360,7 @@ struct in_off_chip0_in_off_chip0_update_0_write15_merged_banks_2_cache {
 	// RAM Box: {[15, 975], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57605,6 +58381,7 @@ struct in_off_chip0_in_off_chip0_update_0_write2_merged_banks_2_cache {
 	// RAM Box: {[2, 962], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57625,6 +58402,7 @@ struct in_off_chip0_in_off_chip0_update_0_write3_merged_banks_2_cache {
 	// RAM Box: {[3, 963], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57645,6 +58423,7 @@ struct in_off_chip0_in_off_chip0_update_0_write4_merged_banks_2_cache {
 	// RAM Box: {[4, 964], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57665,6 +58444,7 @@ struct in_off_chip0_in_off_chip0_update_0_write5_merged_banks_2_cache {
 	// RAM Box: {[5, 965], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57685,6 +58465,7 @@ struct in_off_chip0_in_off_chip0_update_0_write6_merged_banks_2_cache {
 	// RAM Box: {[6, 966], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57705,6 +58486,7 @@ struct in_off_chip0_in_off_chip0_update_0_write7_merged_banks_2_cache {
 	// RAM Box: {[7, 967], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57725,6 +58507,7 @@ struct in_off_chip0_in_off_chip0_update_0_write8_merged_banks_2_cache {
 	// RAM Box: {[8, 968], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -57745,6 +58528,7 @@ struct in_off_chip0_in_off_chip0_update_0_write9_merged_banks_2_cache {
 	// RAM Box: {[9, 969], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -58394,6 +59178,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58415,6 +59200,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58436,6 +59222,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58457,6 +59244,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58478,6 +59266,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58499,6 +59288,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58520,6 +59310,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58541,6 +59332,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58562,6 +59354,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58583,6 +59376,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58604,6 +59398,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58625,6 +59420,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58646,6 +59442,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58667,6 +59464,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58688,6 +59486,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58709,6 +59508,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58730,6 +59530,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58751,6 +59552,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58772,6 +59574,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58793,6 +59596,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58814,6 +59618,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58835,6 +59640,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58856,6 +59662,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58877,6 +59684,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58898,6 +59706,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58919,6 +59728,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58940,6 +59750,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58961,6 +59772,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -58982,6 +59794,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -59003,6 +59816,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -59024,6 +59838,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -59045,6 +59860,7 @@ struct in_off_chip0_oc_in_off_chip1_oc_in_off_chip0_oc_in_off_chip1_oc_update_0_
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -59823,6 +60639,7 @@ struct in_off_chip1_in_off_chip1_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[0, 960], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -59843,6 +60660,7 @@ struct in_off_chip1_in_off_chip1_update_0_write1_merged_banks_2_cache {
 	// RAM Box: {[1, 961], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -59863,6 +60681,7 @@ struct in_off_chip1_in_off_chip1_update_0_write10_merged_banks_2_cache {
 	// RAM Box: {[10, 970], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -59883,6 +60702,7 @@ struct in_off_chip1_in_off_chip1_update_0_write11_merged_banks_2_cache {
 	// RAM Box: {[11, 971], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -59903,6 +60723,7 @@ struct in_off_chip1_in_off_chip1_update_0_write12_merged_banks_2_cache {
 	// RAM Box: {[12, 972], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -59923,6 +60744,7 @@ struct in_off_chip1_in_off_chip1_update_0_write13_merged_banks_2_cache {
 	// RAM Box: {[13, 973], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -59943,6 +60765,7 @@ struct in_off_chip1_in_off_chip1_update_0_write14_merged_banks_2_cache {
 	// RAM Box: {[14, 974], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -59963,6 +60786,7 @@ struct in_off_chip1_in_off_chip1_update_0_write15_merged_banks_2_cache {
 	// RAM Box: {[15, 975], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -59983,6 +60807,7 @@ struct in_off_chip1_in_off_chip1_update_0_write2_merged_banks_2_cache {
 	// RAM Box: {[2, 962], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -60003,6 +60828,7 @@ struct in_off_chip1_in_off_chip1_update_0_write3_merged_banks_2_cache {
 	// RAM Box: {[3, 963], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -60023,6 +60849,7 @@ struct in_off_chip1_in_off_chip1_update_0_write4_merged_banks_2_cache {
 	// RAM Box: {[4, 964], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -60043,6 +60870,7 @@ struct in_off_chip1_in_off_chip1_update_0_write5_merged_banks_2_cache {
 	// RAM Box: {[5, 965], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -60063,6 +60891,7 @@ struct in_off_chip1_in_off_chip1_update_0_write6_merged_banks_2_cache {
 	// RAM Box: {[6, 966], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -60083,6 +60912,7 @@ struct in_off_chip1_in_off_chip1_update_0_write7_merged_banks_2_cache {
 	// RAM Box: {[7, 967], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -60103,6 +60933,7 @@ struct in_off_chip1_in_off_chip1_update_0_write8_merged_banks_2_cache {
 	// RAM Box: {[8, 968], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -60123,6 +60954,7 @@ struct in_off_chip1_in_off_chip1_update_0_write9_merged_banks_2_cache {
 	// RAM Box: {[9, 969], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -60772,6 +61604,7 @@ struct ls16_ls16_update_0_write0_to_ls160_rd0_cache {
 	// RAM Box: {[0, 1888], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60793,6 +61626,7 @@ struct ls16_ls16_update_0_write2_to_ls160_rd1_cache {
 	// RAM Box: {[2, 1890], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60814,6 +61648,7 @@ struct ls16_ls16_update_0_write20_to_ls160_rd10_cache {
 	// RAM Box: {[20, 1908], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60835,6 +61670,7 @@ struct ls16_ls16_update_0_write22_to_ls160_rd11_cache {
 	// RAM Box: {[22, 1910], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60856,6 +61692,7 @@ struct ls16_ls16_update_0_write24_to_ls160_rd12_cache {
 	// RAM Box: {[24, 1912], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60877,6 +61714,7 @@ struct ls16_ls16_update_0_write26_to_ls160_rd13_cache {
 	// RAM Box: {[26, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60898,6 +61736,7 @@ struct ls16_ls16_update_0_write28_to_ls160_rd14_cache {
 	// RAM Box: {[28, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60919,6 +61758,7 @@ struct ls16_ls16_update_0_write30_to_ls160_rd15_cache {
 	// RAM Box: {[30, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60940,6 +61780,7 @@ struct ls16_ls16_update_0_write4_to_ls160_rd2_cache {
 	// RAM Box: {[4, 1892], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60961,6 +61802,7 @@ struct ls16_ls16_update_0_write6_to_ls160_rd3_cache {
 	// RAM Box: {[6, 1894], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -60982,6 +61824,7 @@ struct ls16_ls16_update_0_write8_to_ls160_rd4_cache {
 	// RAM Box: {[8, 1896], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61003,6 +61846,7 @@ struct ls16_ls16_update_0_write10_to_ls160_rd5_cache {
 	// RAM Box: {[10, 1898], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61024,6 +61868,7 @@ struct ls16_ls16_update_0_write12_to_ls160_rd6_cache {
 	// RAM Box: {[12, 1900], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61045,6 +61890,7 @@ struct ls16_ls16_update_0_write14_to_ls160_rd7_cache {
 	// RAM Box: {[14, 1902], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61066,6 +61912,7 @@ struct ls16_ls16_update_0_write16_to_ls160_rd8_cache {
 	// RAM Box: {[16, 1904], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61087,6 +61934,7 @@ struct ls16_ls16_update_0_write18_to_ls160_rd9_cache {
 	// RAM Box: {[18, 1906], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61108,6 +61956,7 @@ struct ls16_ls16_update_0_write1_to_ls161_rd0_cache {
 	// RAM Box: {[1, 1889], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61129,6 +61978,7 @@ struct ls16_ls16_update_0_write3_to_ls161_rd1_cache {
 	// RAM Box: {[3, 1891], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61150,6 +62000,7 @@ struct ls16_ls16_update_0_write21_to_ls161_rd10_cache {
 	// RAM Box: {[21, 1909], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61171,6 +62022,7 @@ struct ls16_ls16_update_0_write23_to_ls161_rd11_cache {
 	// RAM Box: {[23, 1911], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61192,6 +62044,7 @@ struct ls16_ls16_update_0_write25_to_ls161_rd12_cache {
 	// RAM Box: {[25, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61213,6 +62066,7 @@ struct ls16_ls16_update_0_write27_to_ls161_rd13_cache {
 	// RAM Box: {[27, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61234,6 +62088,7 @@ struct ls16_ls16_update_0_write29_to_ls161_rd14_cache {
 	// RAM Box: {[29, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61255,6 +62110,7 @@ struct ls16_ls16_update_0_write31_to_ls161_rd15_cache {
 	// RAM Box: {[31, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61276,6 +62132,7 @@ struct ls16_ls16_update_0_write5_to_ls161_rd2_cache {
 	// RAM Box: {[5, 1893], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61297,6 +62154,7 @@ struct ls16_ls16_update_0_write7_to_ls161_rd3_cache {
 	// RAM Box: {[7, 1895], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61318,6 +62176,7 @@ struct ls16_ls16_update_0_write9_to_ls161_rd4_cache {
 	// RAM Box: {[9, 1897], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61339,6 +62198,7 @@ struct ls16_ls16_update_0_write11_to_ls161_rd5_cache {
 	// RAM Box: {[11, 1899], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61360,6 +62220,7 @@ struct ls16_ls16_update_0_write13_to_ls161_rd6_cache {
 	// RAM Box: {[13, 1901], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61381,6 +62242,7 @@ struct ls16_ls16_update_0_write15_to_ls161_rd7_cache {
 	// RAM Box: {[15, 1903], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61402,6 +62264,7 @@ struct ls16_ls16_update_0_write17_to_ls161_rd8_cache {
 	// RAM Box: {[17, 1905], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -61423,6 +62286,7 @@ struct ls16_ls16_update_0_write19_to_ls161_rd9_cache {
 	// RAM Box: {[19, 1907], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 2
+  // 0, 0
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
@@ -62209,6 +63073,7 @@ struct weight_sums_weight_sums_update_0_write0_merged_banks_2_cache {
 	// RAM Box: {[0, 1920], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62229,6 +63094,7 @@ struct weight_sums_weight_sums_update_0_write1_merged_banks_2_cache {
 	// RAM Box: {[1, 1921], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62249,6 +63115,7 @@ struct weight_sums_weight_sums_update_0_write10_merged_banks_2_cache {
 	// RAM Box: {[10, 1930], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62269,6 +63136,7 @@ struct weight_sums_weight_sums_update_0_write11_merged_banks_2_cache {
 	// RAM Box: {[11, 1931], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62289,6 +63157,7 @@ struct weight_sums_weight_sums_update_0_write12_merged_banks_2_cache {
 	// RAM Box: {[12, 1932], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62309,6 +63178,7 @@ struct weight_sums_weight_sums_update_0_write13_merged_banks_2_cache {
 	// RAM Box: {[13, 1933], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62329,6 +63199,7 @@ struct weight_sums_weight_sums_update_0_write14_merged_banks_2_cache {
 	// RAM Box: {[14, 1934], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62349,6 +63220,7 @@ struct weight_sums_weight_sums_update_0_write15_merged_banks_2_cache {
 	// RAM Box: {[15, 1935], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62369,6 +63241,7 @@ struct weight_sums_weight_sums_update_0_write16_merged_banks_2_cache {
 	// RAM Box: {[16, 1936], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62389,6 +63262,7 @@ struct weight_sums_weight_sums_update_0_write17_merged_banks_2_cache {
 	// RAM Box: {[17, 1937], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62409,6 +63283,7 @@ struct weight_sums_weight_sums_update_0_write18_merged_banks_2_cache {
 	// RAM Box: {[18, 1938], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62429,6 +63304,7 @@ struct weight_sums_weight_sums_update_0_write19_merged_banks_2_cache {
 	// RAM Box: {[19, 1939], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62449,6 +63325,7 @@ struct weight_sums_weight_sums_update_0_write2_merged_banks_2_cache {
 	// RAM Box: {[2, 1922], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62469,6 +63346,7 @@ struct weight_sums_weight_sums_update_0_write20_merged_banks_2_cache {
 	// RAM Box: {[20, 1940], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62489,6 +63367,7 @@ struct weight_sums_weight_sums_update_0_write21_merged_banks_2_cache {
 	// RAM Box: {[21, 1941], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62509,6 +63388,7 @@ struct weight_sums_weight_sums_update_0_write22_merged_banks_2_cache {
 	// RAM Box: {[22, 1942], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62529,6 +63409,7 @@ struct weight_sums_weight_sums_update_0_write23_merged_banks_2_cache {
 	// RAM Box: {[23, 1943], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62549,6 +63430,7 @@ struct weight_sums_weight_sums_update_0_write24_merged_banks_2_cache {
 	// RAM Box: {[24, 1944], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62569,6 +63451,7 @@ struct weight_sums_weight_sums_update_0_write25_merged_banks_2_cache {
 	// RAM Box: {[25, 1945], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62589,6 +63472,7 @@ struct weight_sums_weight_sums_update_0_write26_merged_banks_2_cache {
 	// RAM Box: {[26, 1946], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62609,6 +63493,7 @@ struct weight_sums_weight_sums_update_0_write27_merged_banks_2_cache {
 	// RAM Box: {[27, 1947], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62629,6 +63514,7 @@ struct weight_sums_weight_sums_update_0_write28_merged_banks_2_cache {
 	// RAM Box: {[28, 1948], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62649,6 +63535,7 @@ struct weight_sums_weight_sums_update_0_write29_merged_banks_2_cache {
 	// RAM Box: {[29, 1949], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62669,6 +63556,7 @@ struct weight_sums_weight_sums_update_0_write3_merged_banks_2_cache {
 	// RAM Box: {[3, 1923], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62689,6 +63577,7 @@ struct weight_sums_weight_sums_update_0_write30_merged_banks_2_cache {
 	// RAM Box: {[30, 1950], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62709,6 +63598,7 @@ struct weight_sums_weight_sums_update_0_write31_merged_banks_2_cache {
 	// RAM Box: {[31, 1951], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62729,6 +63619,7 @@ struct weight_sums_weight_sums_update_0_write4_merged_banks_2_cache {
 	// RAM Box: {[4, 1924], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62749,6 +63640,7 @@ struct weight_sums_weight_sums_update_0_write5_merged_banks_2_cache {
 	// RAM Box: {[5, 1925], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62769,6 +63661,7 @@ struct weight_sums_weight_sums_update_0_write6_merged_banks_2_cache {
 	// RAM Box: {[6, 1926], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62789,6 +63682,7 @@ struct weight_sums_weight_sums_update_0_write7_merged_banks_2_cache {
 	// RAM Box: {[7, 1927], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62809,6 +63703,7 @@ struct weight_sums_weight_sums_update_0_write8_merged_banks_2_cache {
 	// RAM Box: {[8, 1928], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -62829,6 +63724,7 @@ struct weight_sums_weight_sums_update_0_write9_merged_banks_2_cache {
 	// RAM Box: {[9, 1929], [0, 1080]}
 	// Capacity: 1
 	// # of read delays: 1
+  // 0
 	hw_uint<16> f1;
 
 
@@ -64091,74 +64987,18 @@ inline void weight_sums_weight_sums_update_0_write_bundle_write(hw_uint<512>& we
 
 
 // Operation logic
-inline void final_merged_0_update_0(fused_level_1_cache& fused_level_1, fused_level_0_cache& fused_level_0, final_merged_0_cache& final_merged_0, int d0, int d1) {
+inline void in_update_0(in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_in_off_chip1_oc, in_cache& in, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: fused_level_1
-	auto fused_level_1_0_c__0_value = fused_level_1_final_merged_0_update_0_read_bundle_read(fused_level_1/* source_delay */, d0, d1, 0);
+	// Consume: in_off_chip0_oc_in_off_chip1_oc
+	auto in_off_chip0_oc_in_off_chip1_oc_0_c__0_value = in_off_chip0_oc_in_off_chip1_oc_in_update_0_read_bundle_read(in_off_chip0_oc_in_off_chip1_oc/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	// Consume: fused_level_0
-	auto fused_level_0_0_c__0_value = fused_level_0_final_merged_0_update_0_read_bundle_read(fused_level_0/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = add_unrolled_32(fused_level_1_0_c__0_value, fused_level_0_0_c__0_value);
-	// Produce: final_merged_0
-	final_merged_0_final_merged_0_update_0_write_bundle_write(/* arg names */compute_result, final_merged_0, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void ls16_update_0(final_merged_0_cache& final_merged_0, ls16_cache& ls16, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: final_merged_0
-	auto final_merged_0_0_c__0_value = final_merged_0_ls16_update_0_read_bundle_read(final_merged_0/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_32(final_merged_0_0_c__0_value);
-	// Produce: ls16
-	ls16_ls16_update_0_write_bundle_write(/* arg names */compute_result, ls16, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void ls161_update_0(ls16_cache& ls16, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */ls161, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: ls16
-	auto ls16_0_c__0_value = ls16_ls161_update_0_read_bundle_read(ls16/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_16(ls16_0_c__0_value);
-	// Produce: ls161
-	ls161.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void in_off_chip1_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip1_oc, in_off_chip1_cache& in_off_chip1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip1_oc
-	auto in_off_chip1_oc_0_c__0_value = in_off_chip1_oc.read();
-	auto compute_result = id_unrolled_16(in_off_chip1_oc_0_c__0_value);
-	// Produce: in_off_chip1
-	in_off_chip1_in_off_chip1_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip1, d0, d1, 0);
+	auto compute_result = id_unrolled_32(in_off_chip0_oc_in_off_chip1_oc_0_c__0_value);
+	// Produce: in
+	in_in_update_0_write_bundle_write(/* arg names */compute_result, in, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -64189,18 +65029,14 @@ inline void in_off_chip0_oc_in_off_chip1_oc_update_0(in_off_chip0_cache& in_off_
 
 }
 
-inline void in_update_0(in_off_chip0_oc_in_off_chip1_oc_cache& in_off_chip0_oc_in_off_chip1_oc, in_cache& in, int d0, int d1) {
+inline void in_off_chip1_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip1_oc, in_off_chip1_cache& in_off_chip1, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in_off_chip0_oc_in_off_chip1_oc
-	auto in_off_chip0_oc_in_off_chip1_oc_0_c__0_value = in_off_chip0_oc_in_off_chip1_oc_in_update_0_read_bundle_read(in_off_chip0_oc_in_off_chip1_oc/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_32(in_off_chip0_oc_in_off_chip1_oc_0_c__0_value);
-	// Produce: in
-	in_in_update_0_write_bundle_write(/* arg names */compute_result, in, d0, d1, 0);
+	// Consume: in_off_chip1_oc
+	auto in_off_chip1_oc_0_c__0_value = in_off_chip1_oc.read();
+	auto compute_result = id_unrolled_16(in_off_chip1_oc_0_c__0_value);
+	// Produce: in_off_chip1
+	in_off_chip1_in_off_chip1_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip1, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -64219,44 +65055,6 @@ inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
 	auto compute_result = scale_exposure_unrolled_32(in_0_c__0_value);
 	// Produce: dark
 	dark_dark_update_0_write_bundle_write(/* arg names */compute_result, dark, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_laplace_diff_0_update_0(dark_cache& dark, dark_laplace_us_0_cache& dark_laplace_us_0, dark_laplace_diff_0_cache& dark_laplace_diff_0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: dark
-	auto dark_0_c__0_value = dark_dark_laplace_diff_0_update_0_read_bundle_read(dark/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: dark_laplace_us_0
-	auto dark_laplace_us_0_0_c__0_value = dark_laplace_us_0_dark_laplace_diff_0_update_0_read_bundle_read(dark_laplace_us_0/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_unrolled_32(dark_0_c__0_value, dark_laplace_us_0_0_c__0_value);
-	// Produce: dark_laplace_diff_0
-	dark_laplace_diff_0_dark_laplace_diff_0_update_0_write_bundle_write(/* arg names */compute_result, dark_laplace_diff_0, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void in_off_chip0_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip0_oc
-	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
-	auto compute_result = id_unrolled_16(in_off_chip0_oc_0_c__0_value);
-	// Produce: in_off_chip0
-	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -64425,24 +65223,6 @@ inline void bright_gauss_blur_1_update_0(bright_cache& bright, bright_gauss_blur
 
 }
 
-inline void dark_weights_normed_gauss_blur_1_update_0(dark_weights_normed_cache& dark_weights_normed, dark_weights_normed_gauss_blur_1_cache& dark_weights_normed_gauss_blur_1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: dark_weights_normed
-	auto dark_weights_normed_0_c__0_value = dark_weights_normed_dark_weights_normed_gauss_blur_1_update_0_read_bundle_read(dark_weights_normed/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_32(dark_weights_normed_0_c__0_value);
-	// Produce: dark_weights_normed_gauss_blur_1
-	dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_0_write_bundle_write(/* arg names */compute_result, dark_weights_normed_gauss_blur_1, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void dark_gauss_ds_1_update_0(dark_gauss_blur_1_cache& dark_gauss_blur_1, dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
   // Dynamic address computation
 
@@ -64515,18 +65295,24 @@ inline void dark_weights_normed_gauss_ds_1_update_0(dark_weights_normed_gauss_bl
 
 }
 
-inline void dark_laplace_us_0_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1, dark_laplace_us_0_cache& dark_laplace_us_0, int d0, int d1) {
+inline void dark_laplace_diff_0_update_0(dark_cache& dark, dark_laplace_us_0_cache& dark_laplace_us_0, dark_laplace_diff_0_cache& dark_laplace_diff_0, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: dark_gauss_ds_1
-	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_dark_laplace_us_0_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1, 0);
+	// Consume: dark
+	auto dark_0_c__0_value = dark_dark_laplace_diff_0_update_0_read_bundle_read(dark/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_32(dark_gauss_ds_1_0_c__0_value);
-	// Produce: dark_laplace_us_0
-	dark_laplace_us_0_dark_laplace_us_0_update_0_write_bundle_write(/* arg names */compute_result, dark_laplace_us_0, d0, d1, 0);
+	// Consume: dark_laplace_us_0
+	auto dark_laplace_us_0_0_c__0_value = dark_laplace_us_0_dark_laplace_diff_0_update_0_read_bundle_read(dark_laplace_us_0/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_unrolled_32(dark_0_c__0_value, dark_laplace_us_0_0_c__0_value);
+	// Produce: dark_laplace_diff_0
+	dark_laplace_diff_0_dark_laplace_diff_0_update_0_write_bundle_write(/* arg names */compute_result, dark_laplace_diff_0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -64593,42 +65379,6 @@ inline void bright_laplace_diff_0_update_0(bright_cache& bright, bright_laplace_
 
 }
 
-inline void fused_level_1_update_0(bright_gauss_ds_1_cache& bright_gauss_ds_1, dark_gauss_ds_1_cache& dark_gauss_ds_1, bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, fused_level_1_cache& fused_level_1, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright_gauss_ds_1
-	auto bright_gauss_ds_1_0_c__0_value = bright_gauss_ds_1_fused_level_1_update_0_read_bundle_read(bright_gauss_ds_1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: dark_gauss_ds_1
-	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_fused_level_1_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: bright_weights_normed_gauss_ds_1
-	auto bright_weights_normed_gauss_ds_1_0_c__0_value = bright_weights_normed_gauss_ds_1_fused_level_1_update_0_read_bundle_read(bright_weights_normed_gauss_ds_1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: dark_weights_normed_gauss_ds_1
-	auto dark_weights_normed_gauss_ds_1_0_c__0_value = dark_weights_normed_gauss_ds_1_fused_level_1_update_0_read_bundle_read(dark_weights_normed_gauss_ds_1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = merge_exposures_unrolled_16(bright_gauss_ds_1_0_c__0_value, dark_gauss_ds_1_0_c__0_value, bright_weights_normed_gauss_ds_1_0_c__0_value, dark_weights_normed_gauss_ds_1_0_c__0_value);
-	// Produce: fused_level_1
-	fused_level_1_fused_level_1_update_0_write_bundle_write(/* arg names */compute_result, fused_level_1, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void fused_level_0_update_0(bright_laplace_diff_0_cache& bright_laplace_diff_0, dark_laplace_diff_0_cache& dark_laplace_diff_0, bright_weights_normed_cache& bright_weights_normed, dark_weights_normed_cache& dark_weights_normed, fused_level_0_cache& fused_level_0, int d0, int d1) {
   // Dynamic address computation
 
@@ -64665,6 +65415,24 @@ inline void fused_level_0_update_0(bright_laplace_diff_0_cache& bright_laplace_d
 
 }
 
+inline void ls161_update_0(ls16_cache& ls16, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */ls161, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: ls16
+	auto ls16_0_c__0_value = ls16_ls161_update_0_read_bundle_read(ls16/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_16(ls16_0_c__0_value);
+	// Produce: ls161
+	ls161.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void ls160_update_0(ls16_cache& ls16, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */ls160, int d0, int d1) {
   // Dynamic address computation
 
@@ -64677,6 +65445,134 @@ inline void ls160_update_0(ls16_cache& ls16, HWStream<hw_uint<256> >& /* buffer_
 	auto compute_result = id_unrolled_16(ls16_0_c__0_value);
 	// Produce: ls160
 	ls160.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_off_chip0_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip0_oc
+	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
+	auto compute_result = id_unrolled_16(in_off_chip0_oc_0_c__0_value);
+	// Produce: in_off_chip0
+	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_laplace_us_0_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1, dark_laplace_us_0_cache& dark_laplace_us_0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: dark_gauss_ds_1
+	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_dark_laplace_us_0_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_32(dark_gauss_ds_1_0_c__0_value);
+	// Produce: dark_laplace_us_0
+	dark_laplace_us_0_dark_laplace_us_0_update_0_write_bundle_write(/* arg names */compute_result, dark_laplace_us_0, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void fused_level_1_update_0(bright_gauss_ds_1_cache& bright_gauss_ds_1, dark_gauss_ds_1_cache& dark_gauss_ds_1, bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, fused_level_1_cache& fused_level_1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: bright_gauss_ds_1
+	auto bright_gauss_ds_1_0_c__0_value = bright_gauss_ds_1_fused_level_1_update_0_read_bundle_read(bright_gauss_ds_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: dark_gauss_ds_1
+	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_fused_level_1_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: bright_weights_normed_gauss_ds_1
+	auto bright_weights_normed_gauss_ds_1_0_c__0_value = bright_weights_normed_gauss_ds_1_fused_level_1_update_0_read_bundle_read(bright_weights_normed_gauss_ds_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: dark_weights_normed_gauss_ds_1
+	auto dark_weights_normed_gauss_ds_1_0_c__0_value = dark_weights_normed_gauss_ds_1_fused_level_1_update_0_read_bundle_read(dark_weights_normed_gauss_ds_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = merge_exposures_unrolled_16(bright_gauss_ds_1_0_c__0_value, dark_gauss_ds_1_0_c__0_value, bright_weights_normed_gauss_ds_1_0_c__0_value, dark_weights_normed_gauss_ds_1_0_c__0_value);
+	// Produce: fused_level_1
+	fused_level_1_fused_level_1_update_0_write_bundle_write(/* arg names */compute_result, fused_level_1, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void final_merged_0_update_0(fused_level_1_cache& fused_level_1, fused_level_0_cache& fused_level_0, final_merged_0_cache& final_merged_0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: fused_level_1
+	auto fused_level_1_0_c__0_value = fused_level_1_final_merged_0_update_0_read_bundle_read(fused_level_1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: fused_level_0
+	auto fused_level_0_0_c__0_value = fused_level_0_final_merged_0_update_0_read_bundle_read(fused_level_0/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = add_unrolled_32(fused_level_1_0_c__0_value, fused_level_0_0_c__0_value);
+	// Produce: final_merged_0
+	final_merged_0_final_merged_0_update_0_write_bundle_write(/* arg names */compute_result, final_merged_0, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void ls16_update_0(final_merged_0_cache& final_merged_0, ls16_cache& ls16, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: final_merged_0
+	auto final_merged_0_0_c__0_value = final_merged_0_ls16_update_0_read_bundle_read(final_merged_0/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_32(final_merged_0_0_c__0_value);
+	// Produce: ls16
+	ls16_ls16_update_0_write_bundle_write(/* arg names */compute_result, ls16, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_gauss_blur_1_update_0(dark_weights_normed_cache& dark_weights_normed, dark_weights_normed_gauss_blur_1_cache& dark_weights_normed_gauss_blur_1, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: dark_weights_normed
+	auto dark_weights_normed_0_c__0_value = dark_weights_normed_dark_weights_normed_gauss_blur_1_update_0_read_bundle_read(dark_weights_normed/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_32(dark_weights_normed_0_c__0_value);
+	// Produce: dark_weights_normed_gauss_blur_1
+	dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_0_write_bundle_write(/* arg names */compute_result, dark_weights_normed_gauss_blur_1, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -65158,85 +66054,53 @@ for (int c0 = 0; c0 <= 1081; c0++) {
 #endif //__VIVADO_SYNTH__
 }
 
+void ls160_ls161_opt_wrapper(HWStream<hw_uint<256> >& /* get_args num ports = 16 */in_off_chip0_oc, HWStream<hw_uint<256> >& /* get_args num ports = 16 */in_off_chip1_oc, HWStream<hw_uint<256> >& /* get_args num ports = 16 */ls160, HWStream<hw_uint<256> >& /* get_args num ports = 16 */ls161, const int num_epochs) {
+
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
+    ls160_ls161_opt(in_off_chip0_oc, in_off_chip1_oc, ls160, ls161);
+  }
+}
 #ifdef __VIVADO_SYNTH__
   // { in_off_chip0_update_0[root = 0, in_off_chip0_0, in_off_chip0_1] -> in_off_chip0_oc[0, 0] : 0 <= in_off_chip0_0 <= 60 and 0 <= in_off_chip0_1 <= 1080 }
-const int in_off_chip0_update_0_read_num_transfers = 65941;
+const int in_off_chip0_update_0_read_pipe0_num_transfers = 65941;
   // { in_off_chip1_update_0[root = 0, in_off_chip1_0, in_off_chip1_1] -> in_off_chip1_oc[0, 0] : 0 <= in_off_chip1_0 <= 60 and 0 <= in_off_chip1_1 <= 1080 }
-const int in_off_chip1_update_0_read_num_transfers = 65941;
+const int in_off_chip1_update_0_read_pipe0_num_transfers = 65941;
   // { ls160_update_0[root = 0, ls160_0, ls160_1] -> ls160[0, 0] : 0 <= ls160_0 <= 59 and 0 <= ls160_1 <= 1079 }
-const int ls160_update_0_write_num_transfers = 64800;
+const int ls160_update_0_write_pipe0_num_transfers = 64800;
   // { ls161_update_0[root = 0, ls161_0, ls161_1] -> ls161[0, 0] : 0 <= ls161_0 <= 59 and 0 <= ls161_1 <= 1079 }
-const int ls161_update_0_write_num_transfers = 64800;
+const int ls161_update_0_write_pipe0_num_transfers = 64800;
 
 
 extern "C" {
 
-static void read_in_off_chip0_update_0_read(hw_uint<256>* input, HWStream<hw_uint<256> >& v, const int size) {
-  hw_uint<256> burst_reg;
-  int num_transfers = in_off_chip0_update_0_read_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = input[i];
-    v.write(burst_reg);
-  }
-}
-
-static void read_in_off_chip1_update_0_read(hw_uint<256>* input, HWStream<hw_uint<256> >& v, const int size) {
-  hw_uint<256> burst_reg;
-  int num_transfers = in_off_chip1_update_0_read_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = input[i];
-    v.write(burst_reg);
-  }
-}
-
-static void write_ls160_update_0_write(hw_uint<256>* output, HWStream<hw_uint<256> >& v, const int size) {
-  hw_uint<256> burst_reg;
-  int num_transfers = ls160_update_0_write_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = v.read();
-    output[i] = burst_reg;
-  }
-}
-
-static void write_ls161_update_0_write(hw_uint<256>* output, HWStream<hw_uint<256> >& v, const int size) {
-  hw_uint<256> burst_reg;
-  int num_transfers = ls161_update_0_write_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = v.read();
-    output[i] = burst_reg;
-  }
-}
-
-void ls160_ls161_opt_accel(hw_uint<256>* in_off_chip0_update_0_read, hw_uint<256>* in_off_chip1_update_0_read, hw_uint<256>* ls160_update_0_write, hw_uint<256>* ls161_update_0_write, const int size) { 
+void ls160_ls161_opt_accel(hw_uint<256>* in_off_chip0_update_0_read_pipe0, hw_uint<256>* in_off_chip1_update_0_read_pipe0, hw_uint<256>* ls160_update_0_write_pipe0, hw_uint<256>* ls161_update_0_write_pipe0, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = in_off_chip0_update_0_read offset = slave depth = 65536 bundle = gmem0
-#pragma HLS INTERFACE m_axi port = in_off_chip1_update_0_read offset = slave depth = 65536 bundle = gmem1
-#pragma HLS INTERFACE m_axi port = ls160_update_0_write offset = slave depth = 65536 bundle = gmem2
-#pragma HLS INTERFACE m_axi port = ls161_update_0_write offset = slave depth = 65536 bundle = gmem3
+#pragma HLS INTERFACE m_axi port = in_off_chip0_update_0_read_pipe0 offset = slave depth = 65536 bundle = gmem0
+#pragma HLS INTERFACE m_axi port = in_off_chip1_update_0_read_pipe0 offset = slave depth = 65536 bundle = gmem1
+#pragma HLS INTERFACE m_axi port = ls160_update_0_write_pipe0 offset = slave depth = 65536 bundle = gmem2
+#pragma HLS INTERFACE m_axi port = ls161_update_0_write_pipe0 offset = slave depth = 65536 bundle = gmem3
 
-#pragma HLS INTERFACE s_axilite port = in_off_chip0_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = in_off_chip1_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = ls160_update_0_write bundle = control
-#pragma HLS INTERFACE s_axilite port = ls161_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = in_off_chip0_update_0_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = in_off_chip1_update_0_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = ls160_update_0_write_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = ls161_update_0_write_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = size bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
-  static HWStream<hw_uint<256> > in_off_chip0_update_0_read_channel;
-  static HWStream<hw_uint<256> > in_off_chip1_update_0_read_channel;
-  static HWStream<hw_uint<256> > ls160_update_0_write_channel;
-  static HWStream<hw_uint<256> > ls161_update_0_write_channel;
 
-  read_in_off_chip0_update_0_read(in_off_chip0_update_0_read, in_off_chip0_update_0_read_channel, size);
-  read_in_off_chip1_update_0_read(in_off_chip1_update_0_read, in_off_chip1_update_0_read_channel, size);
+  // Pipeline # 0
+  static HWStream<hw_uint<256> > in_off_chip0_update_0_read_pipe0_channel;
+  static HWStream<hw_uint<256> > in_off_chip1_update_0_read_pipe0_channel;
+  static HWStream<hw_uint<256> > ls160_update_0_write_pipe0_channel;
+  static HWStream<hw_uint<256> > ls161_update_0_write_pipe0_channel;
 
-  ls160_ls161_opt(in_off_chip0_update_0_read_channel, in_off_chip1_update_0_read_channel, ls160_update_0_write_channel, ls161_update_0_write_channel);
+  burst_read<256>(in_off_chip0_update_0_read_pipe0, in_off_chip0_update_0_read_pipe0_channel, in_off_chip0_update_0_read_pipe0_num_transfers*size);
+  burst_read<256>(in_off_chip1_update_0_read_pipe0, in_off_chip1_update_0_read_pipe0_channel, in_off_chip1_update_0_read_pipe0_num_transfers*size);
 
-  write_ls160_update_0_write(ls160_update_0_write, ls160_update_0_write_channel, size);
-  write_ls161_update_0_write(ls161_update_0_write, ls161_update_0_write_channel, size);
+  ls160_ls161_opt_wrapper(in_off_chip0_update_0_read_pipe0_channel, in_off_chip1_update_0_read_pipe0_channel, ls160_update_0_write_pipe0_channel, ls161_update_0_write_pipe0_channel, size);
+
+  burst_write<256>(ls160_update_0_write_pipe0, ls160_update_0_write_pipe0_channel, ls160_update_0_write_pipe0_num_transfers*size);
+  burst_write<256>(ls161_update_0_write_pipe0, ls161_update_0_write_pipe0_channel, ls161_update_0_write_pipe0_num_transfers*size);
 }
 
 }
