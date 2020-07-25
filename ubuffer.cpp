@@ -3064,6 +3064,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     sram.name = name + "_sram";
     sram.ctx = ctx;
     sram.port_widths = port_widths;
+    sram.hardware.port_width = fetch_width;
 
     vector<string> in_bundle = get_in_bundles();
     vector<string> out_bundle = get_out_bundles();

@@ -11893,6 +11893,7 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
       //cout << "reduce map = " << str(reduce_map) << endl;
       auto addr_expr = dot(access_map, reduce_map);
       //cout << "composition = " << str(addr_expr) << endl;
+
       for(auto addr_expr_map: get_basic_maps(addr_expr)) {
         string buf_name = range_name(access_map);
         auto ubuf = buffers_opt.at(buf_name);
@@ -11905,11 +11906,15 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
         } else {
             out << "\"read\"," << "\"" << buf_name  << "\"" << endl;
         }
-        out << "\"data_starting_addr\"," << to_int(const_coeff(addr)) << ",0" << endl;
+        out << "\"data_starting_addr\"," <<
+            to_int(const_coeff(addr)) / ubuf.hardware.port_width << ",0" << endl;
         for (int d = 0; d < num_in_dims(addr); d++) {
           int ldim = num_in_dims(addr) - d - 1;
-          out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(addr, d)) << ",0" << endl;
+          out << "\"data_stride_" << ldim << "\"," <<
+              to_int(get_coeff(addr, d)) / ubuf.hardware.port_width << ",0" << endl;
         }
+        if (ubuf.hardware.port_width > 1)
+            break;
       }
     }
   }

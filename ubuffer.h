@@ -40,11 +40,11 @@ std::ostream& operator<< (std::ostream& out, const std::map<string, T>& m) {
 }
 
 struct HWconstraints {
-    size_t port_width;
-    size_t port_number;
-    size_t capacity;
-    bool raw_same_cycle;
-    bool war_same_cycle;
+    size_t port_width = 1;
+    size_t port_number = 1;
+    size_t capacity = 512;
+    bool raw_same_cycle = false;
+    bool war_same_cycle = false;
 };
 
 struct TileConstraints{
