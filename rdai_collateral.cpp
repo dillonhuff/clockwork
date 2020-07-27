@@ -53,7 +53,7 @@ void generate_xilinx_accel_rdai_wrapper(CodegenOptions& options, std::ostream& o
     }
   }
   out << endl;
-  out << "#pragma HLS INTERFACE ap_control_none port = return" << endl;
+  out << "#pragma HLS INTERFACE ap_ctrl_none port = return" << endl;
   out << endl;
 
   for (int pipe = 0; pipe < options.num_pipelines; pipe++) {
