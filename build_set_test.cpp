@@ -12416,7 +12416,7 @@ void halide_camera_pipeline_test() {
 
 void application_tests() {
   blur_example();
-  assert(false);
+  //assert(false);
   //halide_camera_pipeline_test();
   reuse_buffered_conv_test();
   register_file_test();
