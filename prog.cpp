@@ -3954,3 +3954,44 @@ isl_schedule* prog::optimized_schedule() {
   return sched;
 }
 
+void get_variable_levels(op* node, map<string,int>& variable_map, int current_level){
+	if(!node->is_loop){
+		return;
+	}else{
+		variable_map[node->name] = current_level;
+		current_level++;
+		for(auto child : node->children){
+			get_variable_levels(child, variable_map, current_level);
+		}
+	}
+}
+
+map<string, int> get_variable_levels(prog& prg){
+	map<string, int> variable_map;
+	get_variable_levels(prg.root, variable_map, 0);
+	return variable_map;
+}
+
+std::set<string> all_buffers(prog& prg){
+	std::set<string> buffers;
+
+	for(auto op : prg.all_ops()){
+		for(auto buff : op->buffers_referenced()){
+			buffers.insert(buff);
+		}
+	}
+
+	return buffers;
+}
+
+std::set<op*> find_readers(const string& buff, prog& prg){
+	std::set<op*> readers;
+
+	for(auto op : prg.all_ops()){
+		if(elem(buff, op->buffers_read())){
+			readers.insert(op);
+		}
+	}
+
+	return readers;
+}
