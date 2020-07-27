@@ -12039,6 +12039,81 @@ isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
   return hw_sched;
 }
 
+void lake_conv33_autovec_test() {
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "conv33_naive_compute";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["buf"] = 16;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 14);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  }
+  read->add_store("out", "po, pi");
+
+
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl;
+    if (b.first == "in" || b.first == "out")
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+  cout << "post processing buf" << endl;
+  cout << buffers_opt.at("buf");
+
+  auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+  opt.conditional_merge = false;
+  auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+  for (auto it: post_proc_buffers) {
+    cout << "post: " << it.first << ": " << it.second << endl;
+  }
+  for (auto it: rewrite_buffers) {
+    cout << "rewrite_buffers: " << it.first << ": " << it.second << endl;
+  }
+
+  cmd("mkdir -p ./lake_controllers/conv_3_3/");
+  map<pair<string, string>, int> latency({{{"input", "input_vec"}, 1},
+          {{"output_2", "output_2_vec"}, -1}});
+  for (auto it : post_proc_buffers) {
+    cout << "Vectorizing " << it.first << endl;
+    cout << it.second << endl;
+    buffer_vectorization(it.first, 1, 4, rewrite_buffers);
+    cout << "Done with vectorization" << endl;
+
+    //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+    auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
+    cout << codegen_c(opt_sched) << endl;
+
+    int app_target_II = 1;
+    auto hsh = generate_hardware_schedule_heu(opt_sched, rewrite_buffers, latency, app_target_II);
+    cout << str(hsh) << endl;
+    cout << codegen_c(hsh) << endl;
+
+    emit_lake_config(rewrite_buffers, hsh, "./lake_controllers/conv_3_3/");
+  }
+}
 void lake_identity_stream_autovec_test() {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
@@ -13484,9 +13559,26 @@ void llf_test() {
   //assert(false);
 }
 
+void union_test() {
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_union_map* um0 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 0]->buf[i0, i1]: 0<=i0<=7 and 0<=i1<=7}");
+  cout << str(um0) << endl;
+  isl_union_map* um1 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 1]->buf[1+i0, i1]: 0<=i0<=7 and 0<=i1<=7}");
+  cout << str(um1) << endl;
+  auto out = unn(um0, um1);
+  cout << str(coalesce(out)) << endl;
+
+  isl_union_map* sched0 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 0]->[1, i0, i1,0]: 0<=i0<=7 and 0<=i1<=7}");
+  isl_union_map* sched1 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 1]->[1, i0, i1,1]: 0<=i0<=7 and 0<=i1<=7}");
+  auto out_sched = unn(sched0, sched1);
+  cout << str(coalesce(out_sched)) << endl;
+}
+
 void application_tests() {
 
   lake_identity_stream_autovec_test();
+  //union_test();
+  lake_conv33_autovec_test();
   assert(false);
   resnet_test();
 

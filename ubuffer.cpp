@@ -532,6 +532,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
   print_bank_info();
   map<string, UBuffer> buffers;
   for (auto b : get_banks()) {
+    cout << "Bank: " << b.name << " has max delay: " << b.maxdelay << endl;
     if (get_bank_outputs(b.name).size() == 0 ||
         get_bank_inputs(b.name).size() == 0) {
       continue;
@@ -541,6 +542,10 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
       if (b.maxdelay <= options.merge_threshold) {
         continue;
       }
+    }
+    if (b.maxdelay == 1) {
+      //TODO: find a better way to filter out shift register
+      continue;
     }
     UBuffer buf;
     string bname = b.name + "_ubuf";
@@ -3012,6 +3017,58 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
 
+  void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out) {
+
+    vector<umap*> ap_vec;
+    for (int i = 0; i < fetch_width; i ++) {
+      umap* merge_acc_pattern = isl_union_map_read_from_str(ctx, "{}");
+      ap_vec.push_back(merge_acc_pattern);
+    }
+    umap* merge_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it: rewrite_buf2op_map) {
+      string origin_pt_name = it.first;
+      auto sched = to_umap(sched_map.at(origin_pt_name));
+      merge_sched = coalesce(unn(sched, merge_sched));
+      auto rewrite_buf2op = it.second;
+      AccessPattern acc_pattern = AccessPattern(
+          to_map(access_map.at(origin_pt_name)), ctx);
+      auto constraint_slices =
+        acc_pattern.get_buf_slice(ctx, target_buf.name, dim_id, fetch_width);
+      int slice_cnt = 0;
+      for (auto slice: constraint_slices) {
+        auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
+        ap_vec.at(slice_cnt) = coalesce(unn(ap_vec.at(slice_cnt), rewrite_access_map));
+        slice_cnt ++;
+      }
+    }
+
+    string origin_pt_name = pick(rewrite_buf2op_map).first;
+    for (int new_pt_cnt= 0; new_pt_cnt < fetch_width; new_pt_cnt++) {
+      auto rewrite_access_map = ap_vec.at(new_pt_cnt);
+      isl_set* dom = ::domain(to_map(rewrite_access_map));
+      if (is_out) {
+        string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
+        target_buf.port_bundles[bd_name].push_back(pt_name);
+        target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), merge_sched);
+      }
+      else {
+        string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
+        target_buf.port_bundles[bd_name].push_back(pt_name);
+        target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), merge_sched);
+
+        //LOOK at the name to judge if we need to remap the buffer
+        size_t found = target_buf.name.find("tb");
+        if(found != string::npos) {
+          //auto acc_pt = target_buf.access_pattern.at(pt_name);
+          auto acc_pt = AccessPattern(to_map(target_buf.access_map[pt_name]), target_buf.ctx);
+          auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+          cout << "out pt decouple: " << str(decouple_acc_map) << endl;
+          target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
+        }
+      }
+    }
+  }
+
   void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out) {
 
     AccessPattern acc_pattern = AccessPattern(
@@ -3111,7 +3168,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     for (auto bd_name: out_bundle) {
       cout << "Vectorize output port bundle: " << bd_name << endl;
-
+      int port_cnt = 0;
+      map<string, umap*> rewrite_buf2op_map;
+      map<string, isl_map*> op_sched_map;
+      int port_width_per_bd = port_bundles.at(bd_name).size();
       for (auto out_pt_name : port_bundles.at(bd_name) ) {
         cout << "\tVectorize output port: " << out_pt_name << endl;
         auto acc_pattern = AccessPattern(
@@ -3123,21 +3183,53 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width);
         std::cout << "transform rewrite: " << str(op_trans) << endl;
 
+        //TODO: need to figure out reuse
+        int time_stamp = port_cnt;
+        isl_map* pad_trans = acc_pattern.pad_one_dim_to_dom(ctx, time_stamp);
+        std::cout << "pad rewrite: " << str(pad_trans) << endl;
+
         auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
         auto op_sched = new_sched.at(::name(new_op_domain));
+        cout << "op schedule: " << str(op_sched) << endl;
 
-        auto outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
-        outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
+        //rewrite the sram out schedule
+        if (port_width_per_bd > 1) {
+          rewrite_buf2op = dot(rewrite_buf2op, inv(pad_trans));
+          cout << "op schedule rewrite: " << str(delay_schedule_inner_most(op_sched, time_stamp)) << endl;
+          op_sched = delay_schedule_inner_most(op_sched, time_stamp);
+          op_sched = dot(pad_trans, op_sched);
+
+        }
+
+        op_sched_map[out_pt_name] = op_sched;
+        rewrite_buf2op_map[out_pt_name] = rewrite_buf2op;
+
+        auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_tb");
+        if (port_width_per_bd > 1){
+            outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
+            outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
+        }
         cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
         tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
         tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
 
         //add out port to tb
-        add_vectorized_pt_to_ubuf(tb, rewrite_buf2op, op_sched, out_pt_name, bd_name+"_tb_in", dim_id, fetch_width, false);
+        //add_vectorized_pt_to_ubuf(tb, rewrite_buf2op, op_sched, out_pt_name, bd_name+"_tb_in", dim_id, fetch_width, false);
 
         //add in port to sram
-        add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, op_sched, out_pt_name, bd_name, dim_id, fetch_width, true);
+        //add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, op_sched, out_pt_name, bd_name, dim_id, fetch_width, true);
+
+        port_cnt ++;
+      }
+      add_vectorized_pt_to_ubuf(tb, rewrite_buf2op_map, op_sched_map, bd_name+"_tb_in", dim_id, fetch_width, false);
+      add_vectorized_pt_to_ubuf(sram, rewrite_buf2op_map, op_sched_map ,bd_name, dim_id, fetch_width, true);
+
+      //Add another pass the distribute the access based on the hardware portwidth
+      int new_dim = 0, pt_cnt = 0;
+      for (auto outpt_pt_name : sram.port_bundles.at(bd_name)) {
+        cout << "Got pt: " << outpt_pt_name << endl << str(sram.access_map.at(outpt_pt_name)) << endl;
+        pt_cnt ++;
       }
     }
 

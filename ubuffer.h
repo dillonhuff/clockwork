@@ -280,7 +280,7 @@ class AccessPattern {
           return to_umap(its(access_map, domain));
       }
 
-      isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id) {
+      isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, bool rm_const=false) {
           vector<string> var_list(var_dim);
           for (auto itr: name2idx) {
               if (itr.first == "const")
@@ -317,7 +317,17 @@ class AccessPattern {
                       nd_expr.push_back(std::to_string(row.front()));
               }
           }
-          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          vector<string> nd_expr_new ;
+          if (rm_const) {
+            for (auto expr: nd_expr) {
+              if (!is_number(expr)) {
+                nd_expr_new.push_back(expr);
+              }
+            }
+          } else {
+            nd_expr_new = nd_expr;
+          }
+          string nd_expr_str = sep_list(nd_expr_new, "[", "]", ", ");
           cout << "access map expr:" << nd_expr_str << endl;
           auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name  + nd_expr_str + "}").c_str());
           auto domain = get_domain(ctx);
@@ -532,6 +542,26 @@ class AccessPattern {
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
           cout <<"OP name: " << op_name << endl;
           isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name +"_vec" + vars + "}").c_str()));
+          return multi_map;
+      }
+
+      isl_map* pad_one_dim_to_dom(isl_ctx* ctx, int time_stamp) {
+          vector<string> var_list(var_dim);
+          vector<string> origin_var_list(var_dim);
+          var_list.front() = "root";
+          origin_var_list.front() = "root";
+          for (auto it: name2idx) {
+              if (it.first == "const")
+                  continue;
+              var_list[it.second] = it.first;
+              origin_var_list[it.second] = it.first;
+          }
+          origin_var_list.push_back(to_string(time_stamp));
+
+          auto vars = sep_list(var_list, "[", "]", "," );
+          auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
+          cout <<"OP name: " << op_name << endl;
+          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name +"_vec" + origin_vars + " -> " + op_name +"_vec" + vars + "}").c_str()));
           return multi_map;
       }
 
@@ -1565,6 +1595,7 @@ class UBuffer {
     void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
 
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
+    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 

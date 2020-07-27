@@ -1955,6 +1955,25 @@ isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
   return isl_stat_ok;
 }
 
+isl_map* delay_schedule_inner_most(isl_map* m, int delay) {
+  auto c_vec = constraints(m);
+  for (auto & c: c_vec) {
+    size_t dom_dim = isl_constraint_dim(c, isl_dim_out);
+    bool involve = isl_constraint_involves_dims(c, isl_dim_out, dom_dim - 1, 1);
+    if (involve && isl_constraint_is_equality(c)) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      //This is the schedule vector you need to increment
+      c = isl_constraint_set_constant_si(c, val - delay);
+    }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
 //Get the map for shift reg
 isl_map* get_shift_map(isl_map* m) {
 
