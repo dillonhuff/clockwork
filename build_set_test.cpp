@@ -12415,15 +12415,13 @@ void halide_camera_pipeline_test() {
 }
 
 void application_tests() {
+  blur_example();
+  assert(false);
   //halide_camera_pipeline_test();
   reuse_buffered_conv_test();
-  assert(false);
   register_file_test();
-  assert(false);
 
   exposure_fusion_iccad_apps("ef_cc");
-  assert(false);
-  blur_example();
 
   //assert(false);
 
