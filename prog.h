@@ -15,6 +15,11 @@ typedef std::string buffer_name;
 typedef std::string address;
 typedef std::vector<std::pair<std::string, std::string> > piecewise_address;
 
+static inline
+std::string pipe_cpy(const std::string& a, const int pipe) {
+  return a + "_pipe" + str(pipe);
+}
+
 isl_multi_aff*
 to_multi_aff(isl_ctx* context, const std::vector<std::string>& vars, const std::string& addr);
 
