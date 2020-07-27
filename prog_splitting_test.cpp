@@ -44,41 +44,134 @@ map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info
 	return costs;
 }
 
+
+//------------------------------------------------IS_POINTWISE--------------------------------------------------
+
+bool is_pointwise(const string& buff, prog& prg){
+
+	std::set<op*> buff_readers = find_readers(buff, prg);
+	op* buff_writer = find_writer(buff, prg);
+	std::set<address> addresses;
+	auto levels = get_variable_levels(prg);
+	std::set<address> normalized_addresses;
+
+	// Add addresses from reader ops
+	for(auto reader : buff_readers){
+		for(auto addr : reader->read_addrs(buff)){
+			if(addr.size() != 1){
+				return false; //what does this mean?
+			}else{
+				addresses.insert(addr.at(0).second);
+			}	
+		}
+	}
+
+	// Add addresses from writer op
+	for(auto addr : buff_writer->write_addrs(buff)){
+		if(addr.size() != 1){
+			return false;
+		}else{
+			addresses.insert(addr.at(0).second);
+		}	
+	}
+
+	// Change every address' variable name for its <level>
+	for(auto addr : addresses){
+		address normalized = addr;
+		for(auto level : levels){
+			string var = level.first;
+			int level_index = level.second;
+			string new_var_name = "<" + str(level_index) + ">";
+			normalized = ReplaceString(normalized, var, new_var_name); 
+		}
+		normalized_addresses.insert(normalized);
+	}
+
+	// Print addresses before and after being normalized
+	cout << "Addresses in:  " << buff << endl;
+	for(auto addr : addresses){
+		cout << addr << endl;
+
+	}
+	cout << "Normalized addresses in:  " << buff << endl;
+	for(auto addr : normalized_addresses){
+		cout << addr << endl;
+
+	}
+
+	// Check if it's pointwise
+	if(normalized_addresses.size() == 1){
+		cout << buff << " is POINTWISE!" << endl;
+		return true;
+	}	
+
+	return false;
+}
+
+//----------------------------------------------NUM_LOCS_WRITTEN------------------------------------------------
+
+int num_locs_written(const string& buff, prog& prg){
+
+	return 0;
+}
+
 //-----------------------------------------ESTIMATE_KERNEL_MEMORY_AREA-------------------------------------------
 
  map<string, int> estimate_kernel_memory_area(prog& prg, TargetTechlibInfo& target_info){
- 
+
+	 prg.pretty_print();
+
+	 // Get and print all var levels
+	 auto levels = get_variable_levels(prg);
+	 cout << "Variable levels: " << endl;
+	 for(auto level : levels){
+		 cout << tab(1) << level.first << " -> " << level.second << endl;
+	 }
+
+	 std::set<string> buffers = all_buffers(prg);
+	 map<string, int> estimated_buffer_sizes;
+
+	 // Check each buff to estimate its size
+	 for(auto buff : buffers){
+		 if(is_pointwise(buff, prg)){
+			 estimated_buffer_sizes[buff] = 0;
+		 }else{
+			 estimated_buffer_sizes[buff] = num_locs_written(buff, prg);
+		 }
+	 }
+
 	 map<string, int> estimated_areas;
 	 auto locations_written = prg.producer_maps();
 
-	 for (string kernel : get_kernels(prg)) {
+	// Loop through all kernels
+	for (string kernel : get_kernels(prg)) {
+		op* loop = prg.find_loop(kernel);
+		auto ops_in_kernel = loop -> descendant_ops();
+		cout << "ops_in_kernel " << kernel << ":" << endl;
+		int kernel_cost = 0;
+		uset* all_locs_written = nullptr;
+		// Loop through all ops in the kernel
+		for (auto op: ops_in_kernel){
+			cout << tab(1) << op -> name << endl;
+			auto locs_written = map_find(op, locations_written);
+			cout << tab(2) << str(locs_written) << endl;
+			auto locs = range(locs_written);
+			cout << tab(2) << str(locs) << endl;
+			if(all_locs_written == nullptr){
+				all_locs_written = to_uset(locs);
+			}else{
+				all_locs_written = unn(to_uset(locs), all_locs_written);
+			}
+		}
 
-		 op* loop = prg.find_loop(kernel);
-		 auto ops_in_kernel = loop -> descendant_ops();
-		 cout << "ops_in_kernel " << kernel << ":" << endl;
-		 int kernel_cost = 0;
-		 uset* all_locs_written = nullptr;
-		 for (auto op: ops_in_kernel){
-			 cout << tab(1) << op -> name << endl;
-			 auto locs_written = map_find(op, locations_written);
-			 cout << tab(2) << str(locs_written) << endl;
-			 auto locs = range(locs_written);
-			 cout << tab(2) << str(locs) << endl;
-			 if(all_locs_written == nullptr){
-				 all_locs_written = to_uset(locs);
-			 }else{
-				 all_locs_written = unn(to_uset(locs), all_locs_written);
-			 }
-		 }
+		int num_locs_written = int_upper_bound(card(all_locs_written));
+		cout << tab(2) << "Number of locations written: " << num_locs_written << endl;
+		estimated_areas[kernel] = num_locs_written;
+		cout << "Kernel " << kernel << " MEMORY  cost: " << estimated_areas[kernel] << endl;
+	}
 
-		 int num_locs_written = int_upper_bound(card(all_locs_written));
-		 cout << tab(2) << "Number of locations written: " << num_locs_written << endl;
-		 estimated_areas[kernel] = num_locs_written;
-		 cout << "Kernel " << kernel << " MEMORY  cost: " << estimated_areas[kernel] << endl;
-	 }
-
-	 return estimated_areas;
-}
+	return estimated_areas;
+ }
 
 //-----------------------------------------GROUP_KERNELS_FOR_COMPILATION-------------------------------------------
 
@@ -178,15 +271,13 @@ void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) 
 void toy_task(){
 
 	vector<prog> example_progs;
+	example_progs.push_back(brighten_blur());
 	example_progs.push_back(unet_conv_3_3());
 	example_progs.push_back(resnet());
 
 	vector<pair<string, int>> prog_costs;
 
 	for(auto prg : example_progs){
-//		cout << "Original program..." << endl;
-//		prg.pretty_print();
-
 		//	generate_optimized_code(prg);
 		//	generate_unoptimized_code(prg);
 		//	assert(false);
@@ -197,81 +288,81 @@ void toy_task(){
 		target_info.reg_cost_per_bit = 1;
 
 		if(prg.name == "resnet"){
-		target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
-		target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_1"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_2"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_3"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_4"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_5"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_6"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_7"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_8"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_9"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_10"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_11"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_12"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_13"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_14"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_15"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_conv_stencil_16"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		target_info.compute_unit_costs["hcompute_output_stencil"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
-		} else if(prg.name = "conv_3_3"){
-		target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
-		target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_1"] = 0;
-		target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_2"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_3"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_4"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_5"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_6"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_7"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_8"] = 0;
-		target_info.compute_unit_costs["hcompute_conv_stencil_9"] = 0;
-		target_info.compute_unit_costs["hcompute_hw_output_stencil"] = 0;
+			target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
+			target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_1"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_2"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_3"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_4"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_5"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_6"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_7"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_8"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_9"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_10"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_11"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_12"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_13"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_14"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_15"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_conv_stencil_16"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+			target_info.compute_unit_costs["hcompute_output_stencil"] = INT_ADDER_COST*2 + INT_MULTIPLIER_COST*2;
+		} else if(prg.name == "conv_3_3"){
+			target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
+			target_info.compute_unit_costs["hcompute_hw_kernel_stencil"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_1"] = 0;
+			target_info.compute_unit_costs["hcompute_hw_input_stencil"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_2"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_3"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_4"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_5"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_6"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_7"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_8"] = 0;
+			target_info.compute_unit_costs["hcompute_conv_stencil_9"] = 0;
+			target_info.compute_unit_costs["hcompute_hw_output_stencil"] = 0;
 		}
 
 		estimate_kernel_memory_area(prg, target_info);
-//		assert(false);	
+		assert(false);	
 
 		map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
 		int total_cost = 0;
 		for(auto estimate_area : kernel_areas){
 			total_cost += estimate_area.second;
-	//		cout << "Each cost: " << estimate_area.second << endl;
+			//		cout << "Each cost: " << estimate_area.second << endl;
 		}
-/*
-		cout << endl << "Grouping kernels..." << endl;
-		int max_area_cost_per_group = 9;
-		std::set<std::set<string>> kernel_grouping = group_kernels_for_compilation(prg, kernel_areas, max_area_cost_per_group);
-//		assert(kernel_grouping.size() == 2);
+		/*
+		   cout << endl << "Grouping kernels..." << endl;
+		   int max_area_cost_per_group = 9;
+		   std::set<std::set<string>> kernel_grouping = group_kernels_for_compilation(prg, kernel_areas, max_area_cost_per_group);
+		//		assert(kernel_grouping.size() == 2);
 
 		for(auto group : kernel_grouping){
-			cout << "current group: "<< endl;
-			for(auto kernel : group){
-				cout << tab(1) << kernel << endl;
-			}
+		cout << "current group: "<< endl;
+		for(auto kernel : group){
+		cout << tab(1) << kernel << endl;
+		}
 		}
 
 		vector<prog> group_programs;
 		cout << endl << "Extracting progs..." << endl;
 		for (auto group : kernel_grouping) {
-			prog prog_for_group = extract_group_to_separate_prog(group, prg);
-			cout << "Group program..." << endl;
-			prog_for_group.pretty_print();
-			group_programs.push_back(prog_for_group);
+		prog prog_for_group = extract_group_to_separate_prog(group, prg);
+		cout << "Group program..." << endl;
+		prog_for_group.pretty_print();
+		group_programs.push_back(prog_for_group);
 		}
-*/
+		 */
 		pair<string, int> result;
 		result.first = prg.name;
 		result.second = total_cost; 
 		prog_costs.push_back(result);
 	}
 	//	generate_optimized_code_for_program_dag(group_programs);
-	
+
 	cout << endl << "Programs costs:" << endl;
 	for(auto cost : prog_costs){
 		cout << cost.first << " => " << cost.second << endl;

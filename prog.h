@@ -1482,3 +1482,9 @@ vector<string> write_vars(const std::string& target_buf, op* reader, prog& prg);
 
 void all_unbanked(prog& prg, CodegenOptions& options);
 void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg);
+
+void get_variable_levels(op* node, map<string,int>& variable_map, int current_level);
+map<string, int> get_variable_levels(prog& prg);
+
+std::set<string> all_buffers(prog& prg);
+std::set<op*> find_readers(const string& buff, prog& prg);
