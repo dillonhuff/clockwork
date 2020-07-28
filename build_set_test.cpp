@@ -1932,6 +1932,48 @@ void flatten_sched_test() {
   cout << str(new_opt_sched) << endl;
 }
 
+void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
+  ofstream out(fname+"_SMT.csv");
+  cout << "fname: " << fname << endl;
+
+  //TODO: put this into a tile constraint file
+  int input_width = pick(write_addr).size();
+  int output_width = pick(read_addr).size();
+
+  int cycle = 0;
+  size_t rd_itr = 0;
+  size_t wr_itr = 0;
+  //out << "data_in, data_out, cycle" << endl;
+  while (rd_itr < read_cycle.size() || wr_itr < write_cycle.size()) {
+    auto addr_in = vector<int>(input_width, 0);
+    auto addr_out = vector<int>(output_width, 0);
+    if (rd_itr < read_cycle.size()) {
+      if (read_cycle.at(rd_itr) == cycle) {
+        for (size_t i = 0; i < read_addr.at(rd_itr).size(); i ++)
+          addr_out.at(i) = read_addr.at(rd_itr).at(i);
+
+        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+        out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr_out, "[", "]", " ") << endl;
+        rd_itr ++;
+      }
+    }
+    if (wr_itr < write_cycle.size()) {
+      if (write_cycle.at(wr_itr) == cycle) {
+        for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
+          addr_in.at(i) = write_addr.at(wr_itr).at(i);
+        //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
+        out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr_in, "[", "]", " ") << endl;
+        //out << cycle << tab(1) << "wr"  << endl;
+        wr_itr ++;
+      }
+    }
+
+    cycle ++;
+  }
+  out.close();
+}
+
 void emit_top_address_stream(string fname, TileConstraints lake_mem_tile, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
   ofstream out(fname+".csv");
@@ -2076,6 +2118,63 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
 
 }
 
+void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched) {
+
+  //compute the bound of the schedule
+  cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
+  auto bound = Box(opt_sched);
+  isl_set* sched_set = bound.to_set(buffer.ctx, "");
+  auto bset_vec = constraints(sched_set);
+  for (auto bset: bset_vec) {
+      cout << "constraints: " << str(bset) << endl;
+  }
+
+  //Initialize the variable for lattice count
+  size_t cycle = 0;
+  cout << str(sched_set) << endl;
+  auto point_vec = get_points(sched_set);
+  std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
+  auto & buf = buffer;
+  for (auto point : point_vec) {
+    //cout << str(point) << endl;
+    //auto input_sched = op2sched.at("input");
+    //auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
+    //cout <<"Card Expr: " << str(isExeQP) << endl;
+    //bool isExe = int_lower_bound(isExeQP) == 1;
+    //cout << "input OP execute in this point = " << isExe << endl;
+    //cout << "Buffer: " << buf.name << endl;
+    //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+    //cout << str(point) << " write = " << buf.is_wr(point) << endl;
+    //tcout << endl;
+
+
+    if (buf.is_wr(point) ) {
+      auto pt = pick(buf.get_in_ports());
+      auto rd_sched = to_map(buf.schedule.at(pt));
+      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+      buf.mark_write(cycle, iter_set);
+
+      cout << "Buffer: " << buf.name << endl;
+      //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+      cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+      cout << endl;
+
+    }
+    if (buf.is_rd(point)) {
+      auto pt = pick(buf.get_out_ports());
+      auto rd_sched = to_map(buf.schedule.at(pt));
+      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+      buf.mark_read(cycle, iter_set);
+
+      cout << "Buffer: " << buf.name << endl;
+      cout << str(point) << " read = " << buf.is_rd(point) << " at cycle:" << cycle << endl;
+      //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+      cout << endl;
+    }
+    cycle ++;
+  }
+}
+
 void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap* opt_sched, HWconstraints sram) {
 
   //cout << "Lattice schedule: " << str(opt_sched) << endl;
@@ -2199,6 +2298,21 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
     emit_top_address_stream(file_name, tc, sram_read, sram_write, read_addr, write_addr);
   } else {
     emit_sram_address_stream(file_name, sram_read, sram_write, read_addr, write_addr);
+  }
+}
+
+void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir) {
+  for (auto it: buffers_opt) {
+    string buf_name = it.first;
+    UBuffer buf = it.second;
+    if (buf.get_in_ports().size() == 0 || buf.get_out_ports().size() == 0) {
+      continue;
+    }
+    vector<int> sram_read = buf.read_cycle;
+    vector<int> sram_write = buf.write_cycle;
+    auto read_addr = buf.read_addr;
+    auto write_addr = buf.write_addr;
+    emit_top_address_stream(dir + "/" + buf_name , sram_read, sram_write, read_addr, write_addr);
   }
 }
 
@@ -11920,6 +12034,19 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
   }
 }
 
+void emit_lake_stream(map<string, UBuffer>& buffers_opt,
+        umap* hardware_schedule, string dir) {
+  //assign the hardware schedule to each buffer
+  auto op2sched = get_op2sched(buffers_opt, hardware_schedule);
+  for (auto & it : buffers_opt) {
+    if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
+      continue;
+    }
+    lattice_schedule_buf(it.second, hardware_schedule);
+  }
+  emit_lake_address_stream2file(buffers_opt, dir);
+}
+
 void emit_lake_config(map<string, UBuffer>& buffers_opt,
         umap* hardware_schedule, string dir) {
   auto glb_access_map = global_access_map_from_buffers(buffers_opt);
@@ -12039,6 +12166,70 @@ isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
   return hw_sched;
 }
 
+void lake_resnet_test() {
+  auto prg = resnet_hc();
+  prg.pretty_print();
+
+  CodegenOptions options;
+  options.all_rams = true;
+  all_register_files(prg, options);
+  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
+  options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
+  options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  //generate_optimized_code(options, prg);
+
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg, sched_naive);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
+  //cout << buffers_opt.at("buf") << endl;
+  //buffers_opt.at("buf").port_group2bank(2, 2);
+  //cout << buffers_opt.at("buf") << endl;
+
+  for (auto& b : buffers_opt) {
+    cout << b.first << endl << b.second << endl;
+    if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
+        continue;
+    b.second.generate_banks_and_merge(options);
+    b.second.print_bank_info();
+
+    //Assign an configuration file,
+    //json config_reg_map = parse_config_file("conv33_configuration.txt");
+    //b.second.set_config(config_reg_map);
+
+    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.print_bank_info();
+  }
+
+  auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  opt.conditional_merge = false;
+  auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  for (auto it: post_proc_buffers) {
+    cout << "\tpost: " << it.first << ": " << it.second << endl;
+  }
+  for (auto it: rewrite_buffers) {
+    cout << "\trewrite_buffers: " << it.first << ": " << it.second << endl;
+  }
+
+  for (auto it : post_proc_buffers) {
+    cout << "Vectorizing " << it.first << endl;
+    cout << it.second << endl;
+    buffer_vectorization(it.first, 0, 0, 4, rewrite_buffers);
+    cout << "Done with vectorization" << endl;
+
+    //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+    auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
+    cout << codegen_c(opt_sched) << endl;
+
+  }
+}
+
 void lake_conv33_autovec_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
@@ -12144,7 +12335,11 @@ void lake_identity_stream_autovec_test() {
   cout << str(hsh) << endl;
   cout << codegen_c(hsh) << endl;
 
+  cmd("mkdir -p ./lake_controllers/identity_stream/");
   emit_lake_config(buffers_opt, hsh, "./lake_controllers/identity_stream/");
+  cmd("mkdir -p ./lake_stream/identity_stream/");
+  emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
+
 
 }
 
@@ -13577,9 +13772,10 @@ void union_test() {
 void application_tests() {
 
   lake_identity_stream_autovec_test();
+  assert(false);
   //union_test();
   lake_conv33_autovec_test();
-  assert(false);
+  lake_resnet_test();
   resnet_test();
 
   llf_test();
