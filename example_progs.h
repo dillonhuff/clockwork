@@ -15,4 +15,6 @@ prog unet_conv_3_3();
 prog resnet();
 prog mini_conv_halide_fixed();
 prog camera_pipeline();
-
+prog up_sample();
+prog down_sample();
+prog conv_layer();
