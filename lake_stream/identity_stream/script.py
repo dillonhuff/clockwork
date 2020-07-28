@@ -1,27 +1,25 @@
 import csv
 
+def zero_arr(width):
+    data0 = '['
+    for i in range(width):
+        data0 += '0 '
+    data0 = data0[0:-1] + ']'
+    return data0
+
 def parse(csv_file_name, data_in_width, data_out_width):
     with open(csv_file_name[:-4] + '_parse.csv', 'w') as parsefile:
         filewriter = csv.writer(parsefile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
-
         # file headings
         filewriter.writerow(['cycle num', 'data_in', 'data_out'])
-
         # input file
         csv_file = open(csv_file_name, "r")
         reader = csv.reader(csv_file, delimiter=',')
 
         # zeros for input / output data when there is no write / read
-        data_in0 = '['
-        for i in range(data_in_width):
-            data_in0 += '0 '
-        data_in0 = data_in0[0:-1] + ']'
-
-        data_out0 = '['
-        for i in range(data_out_width):
-            data_out0 += '0 '
-        data_out0 = data_out0[0:-1] + ']'
+        data_in0 = zero_arr(data_in_width)
+        data_out0 = zero_arr(data_out_width)
         
         # TODO clean this up -> issues with initializing array?
         data = []
