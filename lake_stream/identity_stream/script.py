@@ -1,25 +1,5 @@
 import csv
 
-#def add_comma_brackets(string):
-#    new_string = string
-#    ni = 0
-#    for i in range(len(string)):
-#        print("new string: ", new_string)
-#        print("i ", i, " ni ", ni)
-#        print("1 : ", new_string[:ni])
-#        print("2 : ", new_string[ni:])
-#        if i == 1:
-#            ni = i
-#        if (i + 1) % 2 == 0:
-#            ni = ni + 1
-#            new_string = new_string[:ni] + '[' + new_string[ni:]
-#            #ni = ni + 1
-#        elif i % 2 == 0 and i > 0:
-#            ni = ni + 2
-#            new_string = new_string[:ni] + '],' + new_string[ni:]
-#            #ni = ni + 2
-#    return new_string
-
 def parse(csv_file_name, data_in_width, data_out_width):
     with open(csv_file_name[:-4] + '_parse.csv', 'w') as parsefile:
         filewriter = csv.writer(parsefile, delimiter=',',
