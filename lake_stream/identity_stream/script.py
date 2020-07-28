@@ -19,6 +19,7 @@ def parse(csv_file_name, data_in_width, data_out_width):
 
         data = []
         for row in reader:
+            # there is a read and write on this cycle
             if len(data) - 1 == int(row[0][3:]):
                 if row[0][0:2] == "rd":
                     data[int(row[0][3:])][2] = row[1][5:]
