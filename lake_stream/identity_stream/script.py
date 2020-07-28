@@ -25,17 +25,11 @@ def parse(csv_file_name, data_in_width, data_out_width):
         data = []
         for row in reader:
             # there is a read and write on this cycle
-            if len(data) > 0:
-                if int(data[len(data) - 1][0]) == int(row[0][3:]):
-                    if row[0][0:2] == "rd":
-                        data[len(data) - 1][2] = row[1][5:]
-                    else:
-                        data[len(data) - 1][1] = row[1][5:]
+            if len(data) > 0 and (int(data[len(data) - 1][0]) == int(row[0][3:])):
+                if row[0][0:2] == "rd":
+                    data[len(data) - 1][2] = row[1][5:]
                 else:
-                    if row[0][0:2] == "rd":
-                        data.append([row[0][3:], data_in0, row[1][5:]])
-                    else:
-                        data.append([row[0][3:], row[1][5:], data_out0])
+                    data[len(data) - 1][1] = row[1][5:]
             else:
                 if row[0][0:2] == "rd":
                     data.append([row[0][3:], data_in0, row[1][5:]])
