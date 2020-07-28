@@ -12656,6 +12656,48 @@ void multi_channel_example() {
   move_to_benchmarks_folder(out_name);
 }
 
+Window hblur_3(const std::string& name) {
+  return Window{name, {qconst(2), qconst(1)}, {{-1, 0}, {0, 0}, {1, 0}}};
+}
+
+string as_ds(const std::string& input, App& ds) {
+  ds.func2d("as_ds", "hblur_3", hblur_3(input));
+  return "as_ds";
+}
+
+void asplos_ds_test() {
+  App ds;
+  ds.func2d("in_oc");
+  ds.func2d("in", "id", pt("in_oc"));
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+
+  string hblur = as_ds("in", ds);
+  ds.realize(options, hblur, 30, 30, 1);
+}
+
+void asplos_gp_test() {
+
+}
+
+void asplos_lp_test() {
+
+}
+
+void asplos_ef_test() {
+
+}
+
+void generate_asplos_examples() {
+  asplos_ds_test();
+  asplos_gp_test();
+  asplos_lp_test();
+  asplos_ef_test();
+}
+
 void blur_example() {
   int cols = 1920;
   int rows = 1080;
@@ -12691,6 +12733,11 @@ int main(int argc, char** argv) {
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+
+    if (cmd == "asplos-examples") {
+      generate_asplos_examples();
+      return 0;
+    }
 
     if (cmd == "simple-example-progs") {
       generate_simple_example_progs();
