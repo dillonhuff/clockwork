@@ -66,6 +66,8 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  ~ir_node();
+
   void copy_fields_from(op* other);
   void copy_memory_operations_from(op* other);
   void replace_variable(const std::string& var, const int val);
@@ -1494,3 +1496,6 @@ map<string, int> get_variable_levels(prog& prg);
 
 std::set<string> all_buffers(prog& prg);
 std::set<op*> find_readers(const string& buff, prog& prg);
+
+void release(ir_node* op);
+void release(prog& prg);

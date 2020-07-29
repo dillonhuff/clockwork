@@ -5457,6 +5457,8 @@ struct App {
     //populate_program(options, prg, name, m, buffers);
     populate_program(options, prg, name, outputs, m, buffers);
 
+    release(prg);
+
     return;
   }
 
@@ -12421,7 +12423,7 @@ void application_tests() {
   reuse_buffered_conv_test();
   register_file_test();
 
-  exposure_fusion_iccad_apps("ef_cc");
+  //exposure_fusion_iccad_apps("ef_cc");
 
   //assert(false);
 
@@ -12657,18 +12659,70 @@ void multi_channel_example() {
 }
 
 Window hblur_3(const std::string& name) {
-  return Window{name, {qconst(2), qconst(1)}, {{-1, 0}, {0, 0}, {1, 0}}};
+  return Window{name, {qconst(2), qconst(2)}, {{0, 0}, {1, 0}}};
 }
 
 string as_ds(const std::string& input, App& ds) {
-  ds.func2d("as_ds", "hblur_3", hblur_3(input));
-  return "as_ds";
+  string hb = input + "_hblur";
+
+  ds.func2d(hb, "as_hblur", hblur_3(input));
+  return hb;
+}
+
+vector<string> as_gauss_pyramid(const int num_levels, const string& func, App& app) {
+  string last = func;
+  vector<string> gauss_levels;
+  gauss_levels.push_back(last);
+  for (int l = 1; l < num_levels; l++) {
+    string next_blur = func + "_gauss_blur_" + str(l);
+    string next_out = func + "_gauss_ds_" + str(l);
+
+    //vector<vector<int > > offsets{{1, 0}, {0, 0}};
+    //Window blur_window{last, {qconst(1), qconst(1)}, offsets};
+    app.func2d(next_out, "as_hblur", hblur_3(last));
+
+    last = next_out;
+    gauss_levels.push_back(last);
+  }
+
+  assert(gauss_levels.size() == num_levels);
+
+  return gauss_levels;
+}
+
+vector<string> as_laplace_pyramid(const int num_levels, const string& func, App& app) {
+  auto gauss_levels = as_gauss_pyramid(num_levels, func, app);
+
+  vector<string> laplace_levels;
+  for (int l = 0; l < num_levels - 1; l++) {
+    string larger_image = gauss_levels.at(l);
+    string smaller_image = gauss_levels.at(l + 1);
+
+    string next_us = func + "_laplace_us_" + str(l);
+    string next_out = func + "_laplace_diff_" + str(l);
+
+    // Upsample the image
+    app.func2d(next_us, "id", smaller_image, {qconst(1, 2), qconst(1, 2)}, {{0, 0}});
+
+    Window ad{larger_image, {qconst(1), qconst(1)}, {{0, 0}}};
+    Window ud{next_us, {qconst(1), qconst(1)}, {{0, 0}}};
+    app.func2d(next_out, "diff", {ad, ud});
+
+    laplace_levels.push_back(next_out);
+  }
+
+  laplace_levels.push_back(gauss_levels.back());
+
+  assert(laplace_levels.size() == num_levels);
+
+  return laplace_levels;
 }
 
 void asplos_ds_test() {
   App ds;
   ds.func2d("in_oc");
   ds.func2d("in", "id", pt("in_oc"));
+
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
@@ -12680,11 +12734,45 @@ void asplos_ds_test() {
 }
 
 void asplos_gp_test() {
+  App ds;
+  ds.func2d("in_oc");
+  ds.func2d("in", "id", pt("in_oc"));
 
+  auto gp = as_gauss_pyramid(4, "in", ds);
+  cout << "GP functions" << endl;
+  for (auto g : gp) {
+    cout << tab(1) << g << endl;
+  }
+
+  string hblur = gp.back();
+  cout << "hblur = " << hblur << endl;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  ds.realize(options, hblur, 30, 30, 1);
 }
 
 void asplos_lp_test() {
+  App ds;
+  ds.func2d("in_oc");
+  ds.func2d("in", "id", pt("in_oc"));
 
+  auto lp = as_laplace_pyramid(4, "in", ds);
+  string image = lp.back();
+  for (int i = lp.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    ds.func2d(merged_level, "add", {upsample(2, image), pt(lp.at(i))});
+    image = merged_level;
+  }
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  ds.realize(options, image, 30, 30, 1);
 }
 
 void asplos_ef_test() {

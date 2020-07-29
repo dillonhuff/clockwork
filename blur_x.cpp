@@ -258,5 +258,22 @@ void blur_x_accel(hw_uint<16>* I_id0_read_pipe0, hw_uint<16>* out_blur_30_write_
 }
 
 }
+extern "C" {
+
+void blur_x_rdai(HWStream<hw_uint<16> >& I_id0_read_pipe0, HWStream<hw_uint<16> >&  out_blur_30_write_pipe0) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE axis register port = I_id0_read_pipe0
+#pragma HLS INTERFACE axis register port = out_blur_30_write_pipe0
+
+#pragma HLS INTERFACE ap_ctrl_none port = return
+
+
+  // Pipeline # 0
+
+  blur_x(I_id0_read_pipe0, out_blur_30_write_pipe0);
+
+}
+
+}
 #endif //__VIVADO_SYNTH__
 

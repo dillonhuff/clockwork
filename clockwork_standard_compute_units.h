@@ -654,4 +654,9 @@ hw_uint<32> histogram_inc(hw_uint<64>& ignore, hw_uint<32>& val) {
   return val + 1;
 }
 
-
+static inline
+hw_uint<16> as_hblur(const hw_uint<16*2>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  return (v0 + v1) >> 1;
+}

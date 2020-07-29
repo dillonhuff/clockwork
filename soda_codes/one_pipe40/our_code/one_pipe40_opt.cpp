@@ -414,6 +414,24 @@ inline void one_pipe4_one_pipe4_update_0_write_bundle_write(hw_uint<64>& one_pip
 
 
 // Operation logic
+inline void one_pipe40_update_0(one_pipe4_cache& one_pipe4, HWStream<hw_uint<64> >& /* buffer_args num ports = 4 */one_pipe40, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: one_pipe4
+	auto one_pipe4_0_c__0_value = one_pipe4_one_pipe40_update_0_read_bundle_read(one_pipe4/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_4(one_pipe4_0_c__0_value);
+	// Produce: one_pipe40
+	one_pipe40.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_off_chip0_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 4 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
   // Dynamic address computation
 
@@ -440,24 +458,6 @@ inline void one_pipe4_update_0(in_off_chip0_cache& in_off_chip0, one_pipe4_cache
 	auto compute_result = id_unrolled_4(in_off_chip0_0_c__0_value);
 	// Produce: one_pipe4
 	one_pipe4_one_pipe4_update_0_write_bundle_write(/* arg names */compute_result, one_pipe4, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void one_pipe40_update_0(one_pipe4_cache& one_pipe4, HWStream<hw_uint<64> >& /* buffer_args num ports = 4 */one_pipe40, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: one_pipe4
-	auto one_pipe4_0_c__0_value = one_pipe4_one_pipe40_update_0_read_bundle_read(one_pipe4/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_4(one_pipe4_0_c__0_value);
-	// Produce: one_pipe40
-	one_pipe40.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -585,6 +585,23 @@ void one_pipe40_opt_accel(hw_uint<64>* in_off_chip0_update_0_read_pipe0, hw_uint
   one_pipe40_opt_wrapper(in_off_chip0_update_0_read_pipe0_channel, one_pipe40_update_0_write_pipe0_channel, size);
 
   burst_write<64>(one_pipe40_update_0_write_pipe0, one_pipe40_update_0_write_pipe0_channel, one_pipe40_update_0_write_pipe0_num_transfers*size);
+}
+
+}
+extern "C" {
+
+void one_pipe40_opt_rdai(HWStream<hw_uint<64> >& in_off_chip0_update_0_read_pipe0, HWStream<hw_uint<64> >&  one_pipe40_update_0_write_pipe0) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE axis register port = in_off_chip0_update_0_read_pipe0
+#pragma HLS INTERFACE axis register port = one_pipe40_update_0_write_pipe0
+
+#pragma HLS INTERFACE ap_ctrl_none port = return
+
+
+  // Pipeline # 0
+
+  one_pipe40_opt(in_off_chip0_update_0_read_pipe0, one_pipe40_update_0_write_pipe0);
+
 }
 
 }

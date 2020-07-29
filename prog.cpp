@@ -2767,6 +2767,9 @@ std::vector<std::string> run_regression_tb(const std::string& name) {
   assert(res == 0);
 
   res = system("./a.out");
+  if (!(res == 0)) {
+    cout << "Error: testbench for " << name << " did not run to completion" << endl;
+  }
   assert(res == 0);
 
   ifstream infile("regression_result_" + name + ".txt");
@@ -3994,4 +3997,19 @@ std::set<op*> find_readers(const string& buff, prog& prg){
 	}
 
 	return readers;
+}
+
+
+void release(ir_node* op) {
+  delete op;
+}
+
+void release(prog& prg) {
+  delete prg.root;
+}
+
+ir_node::~ir_node() {
+  for (auto c : children) {
+    release(c);
+  }
 }
