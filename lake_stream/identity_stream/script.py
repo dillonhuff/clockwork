@@ -76,7 +76,8 @@ def parse(csv_file_name, data_in_width, data_out_width):
         filewriter = csv.writer(parsefile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
         # file headings
-        filewriter.writerow(['cycle num', 'data_in', 'data_out'])
+        # filewriter.writerow(['cycle num', 'data_in', 'data_out'])
+        filewriter.writerow(['data_in', 'data_out'])
         # input file
         csv_file = open(csv_file_name, "r")
         reader = csv.reader(csv_file, delimiter=',')
@@ -108,13 +109,15 @@ def parse(csv_file_name, data_in_width, data_out_width):
         while i < len(data):
             dat = data[i]
             if int(dat[0]) == prev_dat + 1:
-                filewriter.writerow(dat)
+                filewriter.writerow(dat[1:])
+                # filewriter.writerow(dat)
                 # break condition
                 i += 1
                 prev_dat = int(dat[0])
             else:
                 prev_dat += 1
-                filewriter.writerow([str(prev_dat), data_in0, data_out0])
+                filewriter.writerow([data_in0, data_out0])
+                # filewriter.writerow([str(prev_dat), data_in0, data_out0])
 
 
 if __name__ == "__main__":
