@@ -12220,7 +12220,7 @@ void lake_resnet_test() {
   for (auto it : post_proc_buffers) {
     cout << "Vectorizing " << it.first << endl;
     cout << it.second << endl;
-    buffer_vectorization(it.first, 0, 0, 4, rewrite_buffers);
+    buffer_vectorization(it.first, 0, 4, rewrite_buffers);
     cout << "Done with vectorization" << endl;
 
     //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
@@ -13772,10 +13772,10 @@ void union_test() {
 void application_tests() {
 
   lake_identity_stream_autovec_test();
-  assert(false);
   //union_test();
   lake_conv33_autovec_test();
   lake_resnet_test();
+  assert(false);
   resnet_test();
 
   llf_test();

@@ -605,7 +605,7 @@ isl_stat isl_pw_aff_get_coefficient( isl_set *set,  isl_aff *aff, void *user) {
 			continue;
         }
 		//auto dim_name = isl_aff_get_dim_name(aff, isl_dim_in, i);
-		string dim_name = "p" + to_string(i);
+		string dim_name = "i" + to_string(i);
         isl_val *v = isl_aff_get_coefficient_val(aff, isl_dim_in, i);
         int int_v =  isl_val_get_num_si(v);
         coef_list->insert(std::make_pair(dim_name, int_v));
@@ -663,11 +663,11 @@ isl_stat isl_pw_aff_get_var_id( isl_set *set,  isl_aff *aff, void *user) {
 	int n_div = isl_aff_dim(aff, isl_dim_in);
 	for (int i = 0; i < n_div; ++i) {
 
-		if (!isl_aff_involves_dims(aff, isl_dim_in, i, 1))
-        {
-			continue;
-        }
-        string dim_name = "p" + to_string(i);
+		//if (!isl_aff_involves_dims(aff, isl_dim_in, i, 1))
+        //{
+		//	continue;
+        //}
+        string dim_name = "i" + to_string(i);
         //0 is reserved for constant
         name2idx_related->insert(std::make_pair(dim_name, i));
 	}

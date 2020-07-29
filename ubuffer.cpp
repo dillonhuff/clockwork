@@ -2790,7 +2790,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     vector<string> var_list, map_var_list, bank_id_list;
     bank_id_list.push_back("0");
     for (size_t  dim = 0; dim < pt_block.dimension(); dim ++) {
-      string var = "p"+to_string(dim);
+      string var = "i"+to_string(dim);
       var_list.push_back(var);
       if (pt_block.length(dim) != 1) {
         int div = pt_block.length(dim);
@@ -2832,7 +2832,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     vector<vector<int>> acc_matrix = get_access_matrix_from_map(pt_access_map);
     vector<string> id2name;
     for (size_t i = 0; i < var_dim; i ++) {
-      id2name.push_back("p" + to_string(i));
+      id2name.push_back("i" + to_string(i));
       if (isl_map_has_dim_id(pt_access_map, isl_dim_in, i)) {
         //rename with its name, position 0 (root) will save const
         string name = str(isl_map_get_dim_id(pt_access_map, isl_dim_in, i));
@@ -2956,6 +2956,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto out_sched = schedule.at(out_pt_name);
     auto in_sched_vec = collect_sched_vec(in_sched);
     auto out_sched_vec = collect_sched_vec(out_sched);
+    cout << "\tin_sched: " << str(in_sched) << "\t\nout_sched: " << str(out_sched) << endl;
+    cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
     assert(in_sched_vec.size() == out_sched_vec.size());
 
     //the new generated schedule vectors
@@ -2977,7 +2979,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           find_sched_dim = true;
           int in_sched_stamp = safe_stoi(in_sched_vec[dim-1]);
           int out_sched_stamp = safe_stoi(out_sched_vec[dim-1]);
-          if (in_sched_stamp == out_sched_stamp - 1) {
+          if (in_sched_stamp <= out_sched_stamp - 1) {
             in_new_sched_vec.push_back("0");
             in_vectorized_sched_vec.push_back( "1" );
             out_vectorized_sched_vec[dim-1] = to_string(in_sched_stamp);
@@ -3036,8 +3038,15 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         acc_pattern.get_buf_slice(ctx, target_buf.name, dim_id, fetch_width);
       int slice_cnt = 0;
       for (auto slice: constraint_slices) {
+          cout << "\t slice : " << str(slice) << endl;
         auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
+          cout << "\t single map: " << str(rewrite_access_map) << endl;
+          for (auto m : get_maps(rewrite_access_map)) {
+            for ( auto aff: get_aff_vec(m) )
+              cout << "\tbmap: " << str(aff) << endl;
+          }
         ap_vec.at(slice_cnt) = coalesce(unn(ap_vec.at(slice_cnt), rewrite_access_map));
+          cout << "\t ap vec: " << str(ap_vec.at(slice_cnt)) << endl;
         slice_cnt ++;
       }
     }
@@ -3045,6 +3054,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     string origin_pt_name = pick(rewrite_buf2op_map).first;
     for (int new_pt_cnt= 0; new_pt_cnt < fetch_width; new_pt_cnt++) {
       auto rewrite_access_map = ap_vec.at(new_pt_cnt);
+      cout << "rewrite access map: " << str(rewrite_access_map) << endl;
       isl_set* dom = ::domain(to_map(rewrite_access_map));
       if (is_out) {
         string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
@@ -3060,7 +3070,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         size_t found = target_buf.name.find("tb");
         if(found != string::npos) {
           //auto acc_pt = target_buf.access_pattern.at(pt_name);
+          cout << pt_name << ": " << str(target_buf.access_map[pt_name]) << endl;
           auto acc_pt = AccessPattern(to_map(target_buf.access_map[pt_name]), target_buf.ctx);
+          cout << acc_pt << endl;
           auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
           cout << "out pt decouple: " << str(decouple_acc_map) << endl;
           target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
@@ -3189,6 +3201,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         std::cout << "pad rewrite: " << str(pad_trans) << endl;
 
         auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
+        cout << str(inv(access_map.at(out_pt_name))) << endl << str(rewrite_buf2op) << endl;
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
         auto op_sched = new_sched.at(::name(new_op_domain));
         cout << "op schedule: " << str(op_sched) << endl;
@@ -3232,7 +3245,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         pt_cnt ++;
       }
     }
-
     cout << "AGG : " << agg_buf << endl;
     cout << "SRAM: " << sram << endl;
     cout << "TB  : " << tb << endl;

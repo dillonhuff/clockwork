@@ -222,16 +222,16 @@ class AccessPattern {
       }
 
       isl_set* get_domain(isl_ctx* ctx) {
-          vector<string> var_list(var_dim);
+          vector<string> var_list(var_dim-1);
           vector<string> bd_list(var_dim-1);
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
-              var_list[itr.second] = itr.first;
+              var_list[itr.second-1] = itr.first;
               string bd = "0 <= " + itr.first + " <= " + std::to_string(in_range[itr.second-1]-1);
               bd_list[itr.second-1] = bd;
           }
-          var_list[0] = "root=0";
+          //var_list[0] = "root=0";
           auto vars = sep_list(var_list, "[", "]", "," );
           auto ds = sep_list(bd_list, "", "", " and ");
           return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
@@ -247,13 +247,13 @@ class AccessPattern {
       }
 
       umap* get_access_map(isl_ctx* ctx) {
-          vector<string> var_list(var_dim);
+          vector<string> var_list(var_dim-1);
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
-              var_list[itr.second] = itr.first;
+              var_list[itr.second-1] = itr.first;
           }
-          var_list[0] = "root=0";
+          //var_list[0] = "root=0";
           auto vars = sep_list(var_list, "[", "]", "," );
           vector<string> nd_expr;
           for (auto row: access_matrix) {
@@ -281,11 +281,11 @@ class AccessPattern {
       }
 
       isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, bool rm_const=false) {
-          vector<string> var_list(var_dim);
+          vector<string> var_list(var_dim-1);
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
-              var_list[itr.second] = itr.first;
+              var_list[itr.second-1] = itr.first;
           }
           var_list[0] = "root=0";
           auto vars = sep_list(var_list, "[", "]", "," );
@@ -294,8 +294,9 @@ class AccessPattern {
               auto row = access_matrix[row_cnt];
               vector<string> sum_list;
               for(auto itr = row.begin() + 1; itr != row.end(); itr ++) {
+                  //skip const.
                   int item = *itr;
-                  int cnt = itr - row.begin() ;
+                  int cnt = itr - row.begin() - 1;
                   if (item == 0)
                       continue;
                   if (row_cnt < dim_id) {
@@ -519,23 +520,24 @@ class AccessPattern {
 
       isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width) {
           vector<int> & stride_in_target = access_matrix[dim_id];
-          vector<string> var_list(var_dim);
-          vector<string> origin_var_list(var_dim);
-          var_list.front() = "root";
-          origin_var_list.front() = "root";
+          vector<string> var_list(var_dim-1);
+          vector<string> origin_var_list(var_dim-1);
+          //var_list.front() = "root";
+          //origin_var_list.front() = "root";
           //TODO: handle reuse pattern
           for (auto it: name2idx) {
               if (it.first == "const")
                   continue;
-              int id = it.second;
-              if (stride_in_target[id] != 0 && (stride_in_target[id] < 4)) {
-                  string trans = "floor("+ it.first + "/" + to_string(fetch_width) + ")";
-                  var_list[it.second] = trans;
-                  origin_var_list[it.second] = it.first;
+              int id = it.second-1;
+              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4)) {
+                  int factor = fetch_width / stride_in_target[it.second];
+                  string trans = "floor("+ it.first + "/" + to_string(factor) + ")";
+                  var_list[id] = trans;
+                  origin_var_list[id] = it.first;
               }
               else {
-                  var_list[it.second] = it.first;
-                  origin_var_list[it.second] = it.first;
+                  var_list[id] = it.first;
+                  origin_var_list[id] = it.first;
               }
           }
           auto vars = sep_list(var_list, "[", "]", "," );
@@ -546,15 +548,15 @@ class AccessPattern {
       }
 
       isl_map* pad_one_dim_to_dom(isl_ctx* ctx, int time_stamp) {
-          vector<string> var_list(var_dim);
-          vector<string> origin_var_list(var_dim);
-          var_list.front() = "root";
-          origin_var_list.front() = "root";
+          vector<string> var_list(var_dim-1);
+          vector<string> origin_var_list(var_dim-1);
+          //var_list.front() = "root";
+          //origin_var_list.front() = "root";
           for (auto it: name2idx) {
               if (it.first == "const")
                   continue;
-              var_list[it.second] = it.first;
-              origin_var_list[it.second] = it.first;
+              var_list[it.second-1] = it.first;
+              origin_var_list[it.second-1] = it.first;
           }
           origin_var_list.push_back(to_string(time_stamp));
 
@@ -572,12 +574,12 @@ class AccessPattern {
           vector<string> var_list;
           vector<isl_map*> slices;
           for (size_t dim = 0; dim < addr_dim; dim ++) {
-              var_list.push_back("p" + to_string(dim));
+              var_list.push_back("i" + to_string(dim));
           }
 
           auto vars = sep_list(var_list, "[", "]", ",");
           for(size_t i = 0; i < fetch_width; i ++) {
-              string constraint = "p" + to_string(dim_id) + "%" + to_string(fetch_width) + "=" + to_string(i);
+              string constraint = "i" + to_string(dim_id) + "%" + to_string(fetch_width) + "=" + to_string(i);
               isl_map* slice_constriant = to_map(rdmap(ctx, string("{" + buf_name + vars + " -> " + new_buf_name + vars + ":" +constraint + "}" ).c_str()));
               slices.push_back(slice_constriant);
           }
@@ -1582,7 +1584,7 @@ class UBuffer {
         string new_buf_name = name + suffix;
         vector<string> addr_var;
         for (size_t i = 0; i < get_out_dim(to_map(origin_map)); i ++) {
-            addr_var.push_back("p" + to_string(i));
+            addr_var.push_back("i" + to_string(i));
         }
         string vars = sep_list(addr_var, "[", "]", ",");
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
