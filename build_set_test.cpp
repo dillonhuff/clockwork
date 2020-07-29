@@ -12776,6 +12776,41 @@ void asplos_lp_test() {
 }
 
 void asplos_ef_test() {
+  App ds;
+  ds.func2d("in_oc");
+  ds.func2d("in", "id", pt("in_oc"));
+  
+  ds.func2d("dark", "id", pt("in"));
+  ds.func2d("bright", "as_ef_scale", pt("in"));
+
+  ds.func2d("dark_weights", "as_ef_weight", pt("dark"));
+  ds.func2d("bright_weights", "as_ef_weight", pt("bright"));
+
+  auto dp = as_laplace_pyramid(4, "dark", ds);
+  auto bp = as_laplace_pyramid(4, "bright", ds);
+
+  auto dwp = as_gauss_pyramid(4, "dark_weights", ds);
+  auto bwp = as_gauss_pyramid(4, "bright_weights", ds);
+
+  vector<string> lp;
+  for (int i = 0; i < dp.size(); i++) {
+    string merged = "merged_weights_" + str(i);
+    ds.func2d(merged, "as_ef_merge", {pt(dp.at(i)), pt(dwp.at(i)), pt(bp.at(i)), pt(bwp.at(i))});
+    lp.push_back(merged);
+  }
+
+  string image = lp.back();
+  for (int i = lp.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    ds.func2d(merged_level, "add", {upsample(2, image), pt(lp.at(i))});
+    image = merged_level;
+  }
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  ds.realize(options, image, 30, 30, 1);
 
 }
 
