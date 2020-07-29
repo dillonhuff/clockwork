@@ -1944,7 +1944,7 @@ void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> w
   int cycle = 0;
   size_t rd_itr = 0;
   size_t wr_itr = 0;
-  //out << "data_in, data_out, cycle" << endl;
+  out << "data_in, data_out" << endl;
   while (rd_itr < read_cycle.size() || wr_itr < write_cycle.size()) {
     auto addr_in = vector<int>(input_width, 0);
     auto addr_out = vector<int>(output_width, 0);
@@ -1954,7 +1954,7 @@ void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> w
           addr_out.at(i) = read_addr.at(rd_itr).at(i);
 
         //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
-        out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr_out, "[", "]", " ") << endl;
+        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr_out, "[", "]", " ") << endl;
         rd_itr ++;
       }
     }
@@ -1963,11 +1963,24 @@ void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> w
         for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
           addr_in.at(i) = write_addr.at(wr_itr).at(i);
         //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
-        out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr_in, "[", "]", " ") << endl;
+        //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr_in, "[", "]", " ") << endl;
         //out << cycle << tab(1) << "wr"  << endl;
         wr_itr ++;
       }
     }
+
+    int out_width = pick(read_addr).size();
+    int in_width = pick(write_addr).size();
+    int mul_out = pow(2, out_width) - 1;
+    int mul_in = pow(2, in_width) - 1;
+
+    //Some fix for the output format
+    string l_in = addr_in.size() > 1 ? "[[" : "";
+    string l_out = addr_out.size() > 1 ? "[[" : "";
+    string r_in = addr_in.size() > 1 ? "]]" : "";
+    string r_out = addr_out.size() > 1 ? "]]" : "";
+
+    out << sep_list(addr_in, l_in, r_in, "],[") << ", " << sep_list(addr_out, l_out, r_out, "],[") << endl;
 
     cycle ++;
   }
@@ -12343,6 +12356,40 @@ void lake_identity_stream_autovec_test() {
 
 }
 
+void lake_identity_stream_SMT_test(int x, int y, string suffix) {
+  prog lake_agg("lake_agg_test");
+  lake_agg.add_input("in");
+  lake_agg.add_output("out");
+
+  int app_target_II = 1;
+
+  //corresponding to the aggI/O, sramI/O, TBI/O latency
+  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
+          {{"in2buf_vec", "buf2out_vec"}, 1},
+          {{"buf2out_vec", "buf2out"}, 1}});
+
+  auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
+  in2buf->add_load("in", "a1, a0");
+  in2buf->add_store("buf", "a1, a0");
+
+  auto buf2out= lake_agg.add_nest("b1", 0, y, "b0", 0, x)->add_op("buf2out");
+  buf2out->add_load("buf", "b1, b0");
+  buf2out->add_store("out", "b1, b0");
+
+  auto buffers_opt = build_buffers(lake_agg);
+  buffer_vectorization("buf", 1, 4, buffers_opt);
+  auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
+  cout << "\t optimized schedule map: " << str(new_opt_sched) << endl;
+  cout << codegen_c(new_opt_sched) << endl;
+
+  auto hsh = generate_hardware_schedule_heu(new_opt_sched, buffers_opt, latency, app_target_II);
+  cout << str(hsh) << endl;
+  cout << codegen_c(hsh) << endl;
+
+  cmd("mkdir -p ./lake_stream/identity_stream_"+suffix+"/");
+  emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream_"+suffix+"/");
+}
+
 void lake_agg_sram_tb_config_test() {
   prog lake_agg("lake_agg_test");
   lake_agg.add_input("in");
@@ -13771,6 +13818,8 @@ void union_test() {
 
 void application_tests() {
 
+  lake_identity_stream_SMT_test(32, 32, "32x32");
+  assert(false);
   lake_identity_stream_autovec_test();
   //union_test();
   lake_conv33_autovec_test();
