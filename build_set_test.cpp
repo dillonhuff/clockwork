@@ -12365,7 +12365,7 @@ void lake_identity_stream_SMT_test(int x, int y, string suffix) {
 
   //corresponding to the aggI/O, sramI/O, TBI/O latency
   map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
-          {{"in2buf_vec", "buf2out_vec"}, 1},
+          {{"in2buf_vec", "buf2out_vec"}, 2},
           {{"buf2out_vec", "buf2out"}, 1}});
 
   auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
@@ -13818,7 +13818,11 @@ void union_test() {
 
 void application_tests() {
 
-  lake_identity_stream_SMT_test(32, 32, "32x32");
+  //lake_identity_stream_SMT_test(128, 128, "128x128");
+  //lake_identity_stream_SMT_test(64, 64, "64x64");
+  //lake_identity_stream_SMT_test(32, 32, "32x32");
+  //lake_identity_stream_SMT_test(16, 16, "16x16");
+  lake_identity_stream_SMT_test(44, 44, "44x44");
   assert(false);
   lake_identity_stream_autovec_test();
   //union_test();
