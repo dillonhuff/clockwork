@@ -76,6 +76,7 @@ def parse(csv_file_name, data_in_width, data_out_width):
         filewriter = csv.writer(parsefile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
         # file headings
+        # for no cycle number for now
         # filewriter.writerow(['cycle num', 'data_in', 'data_out'])
         filewriter.writerow(['data_in', 'data_out'])
         # input file
@@ -110,6 +111,7 @@ def parse(csv_file_name, data_in_width, data_out_width):
             dat = data[i]
             if int(dat[0]) == prev_dat + 1:
                 filewriter.writerow(dat[1:])
+                # for no cycle number for now
                 # filewriter.writerow(dat)
                 # break condition
                 i += 1
@@ -117,6 +119,7 @@ def parse(csv_file_name, data_in_width, data_out_width):
             else:
                 prev_dat += 1
                 filewriter.writerow([data_in0, data_out0])
+                # for no cycle number for now
                 # filewriter.writerow([str(prev_dat), data_in0, data_out0])
 
 
