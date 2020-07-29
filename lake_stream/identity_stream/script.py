@@ -22,17 +22,13 @@ def format_comma_bracket(string):
             ni = 1
         try:
             if isinstance(int(char), int):
-                try:
-                    if isinstance(int(l[i-1]), int):
-                        assert True
-                except:
-                    newl.insert(ni, '[')
-                    if l[i + 1] == ']':
-                        newl.insert(ni + 2, ']')
-                        ni += 2
-                    else:
-                        newl.insert(ni + 2, '],')
-                        ni += 2
+                newl.insert(ni, '[')
+                if l[i + 1] == ']':
+                    newl.insert(ni + 2, ']')
+                    ni += 2
+                else:
+                    newl.insert(ni + 2, '],')
+                    ni += 2
         except ValueError:
             assert True
 
@@ -91,5 +87,5 @@ def parse(csv_file_name, data_in_width, data_out_width):
 
 if __name__ == "__main__":
     parse('buf_agg_SMT.csv', 1, 4)
-    #parse('buf_sram_SMT.csv', 4, 4)
-    #parse('buf_tb_SMT.csv', 4, 1)
+    parse('buf_sram_SMT.csv', 4, 4)
+    parse('buf_tb_SMT.csv', 4, 1)
