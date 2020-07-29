@@ -12327,7 +12327,7 @@ void lake_identity_stream_autovec_test() {
 
   //corresponding to the aggI/O, sramI/O, TBI/O latency
   map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
-          {{"in2buf_vec", "buf2out_vec"}, 1},
+          {{"in2buf_vec", "buf2out_vec"}, 2},
           {{"buf2out_vec", "buf2out"}, 1}});
 
   auto in2buf = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2buf");
