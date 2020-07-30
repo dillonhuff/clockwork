@@ -12355,6 +12355,76 @@ std::set<op*> get_inner_loops(prog& prg) {
   return inner;
 }
 
+struct cu_val {
+  bool is_arg;
+  string name;
+  int arg_buf_pos;
+};
+
+struct compute_unit_internals {
+  std::string name;
+  vector<op*> operations;
+  map<op*, vector<cu_val> > arg_names;
+
+  vector<string> args;
+  map<op*, map<string, map<address, string> > > res_names;
+  vector<pair<buffer_name, piecewise_address> > raddrs;
+};
+
+compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
+  compute_unit_internals cu;
+  cu.name = prg.un(loop->name + "_cu");
+  cu.operations = loop->children;
+
+  //map<simplified_addr, cu_val> addr_sources;
+  //for (auto op : cu.operations) {
+    //for (auto b : op->buffers_read()) {
+      //for (auto ar : op->read_addrs(b)) {
+        //simplified_addr as = simplify(ar);
+        //if (elem(as, addr_sources)) {
+          //auto val = addr_sources[as];
+          //cu.arg_names[op].push_back(val);
+        //} else {
+          //cu.arg_names[op].
+        //}
+      //}
+    //}
+
+    //for (auto b : op->buffers_written()) {
+      //// Update addr_sources
+      //for (auto ar : op->write_addrs(b)) {
+
+      //}
+    //}
+  //}
+
+
+  //std::set<string> buffers_read;
+
+  //for (auto c : loop->children) {
+    //for (auto b : c->buffers_read()) {
+      //buffers_read.insert(b);
+      //for (auto r : c->read_addrs(b)) {
+        //pair<buffer_name, piecewise_address> na = {b, remove_whitespace(r)};
+        //if (!elem(na, cu.raddrs)) {
+          //cu.raddrs.push_back(na);
+        //}
+      //}
+    //}
+  //}
+
+  //for (auto r : buffers_read) {
+    //int num_lanes = 0;
+    //for (auto ra : raddrs) {
+      //if (ra.first == r) {
+        //num_lanes++;
+      //}
+    //}
+    //cu.args.push_back("hw_uint<32*" + str(addrs.size()) + ">& " + r);
+  //}
+  return cu;
+}
+
 void merge_basic_block_ops(prog& prg) {
   std::set<op*> inner_loops = get_inner_loops(prg);
 
@@ -12365,6 +12435,8 @@ void merge_basic_block_ops(prog& prg) {
 
   for (auto loop : inner_loops) {
     if (loop->children.size() > 1) {
+      auto compute_unit = compound_compute_unit(loop, prg);
+
       vector<string> args;
       std::set<string> buffers_read;
       vector<pair<buffer_name, piecewise_address> > addrs;
@@ -12386,29 +12458,38 @@ void merge_basic_block_ops(prog& prg) {
       }
 
       vector<string> child_calls;
-      string last_res = "";
-      for (auto c : loop->children) {
-        ostringstream cc;
-        string name = "res_" + c->name;
-        cc << "auto " << name << " = " << c->func << "();" << endl;
-        child_calls.push_back(cc.str());
-        last_res = name;
-      }
-      child_calls.push_back("return " + last_res + ";");
-      assert(last_res != "");
+      //string last_res = "";
+      //for (auto c : loop->children) {
+        //ostringstream cc;
+        //string name = "res_" + c->name;
+        //cc << "auto " << name << " = " << c->func << "();" << endl;
+        //child_calls.push_back(cc.str());
+        //last_res = name;
+      //}
+      //child_calls.push_back("return " + last_res + ";");
+      //assert(last_res != "");
 
       out << "hw_uint<32> " << loop->name << "_merged_cu" << "(" << comma_list(args) << ") {" << endl;
-      op* merged = prg.merge_ops(loop->name);
-      for (auto r : buffers_read) {
-        int num_lanes = merged->read_addrs(r).size();
-        int pixel_width = prg.buffer_port_width(r);
-        auto args = split_bv(1, out, r, pixel_width, num_lanes);
-      }
+
+      //op* merged = prg.merge_ops(loop->name);
+      //for (auto r : buffers_read) {
+        //int num_lanes = merged->read_addrs(r).size();
+        //int pixel_width = prg.buffer_port_width(r);
+        //auto args = split_bv(1, out, r, pixel_width, num_lanes);
+      //}
 
       out << "\n\t" << endl;
       out << sep_list(child_calls, "", "", "\n\t");
       out << endl;
       out << "}" << endl << endl;
+
+      for (auto c : compute_unit.operations) {
+        loop->delete_child(c);
+      }
+      assert(loop->children.size() == 0);
+
+      auto merged = loop->add_op(prg.un(loop->name + "_merged"));
+      merged->add_function(compute_unit.name);
     }
   }
 
