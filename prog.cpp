@@ -3768,7 +3768,8 @@ void unroll_reduce_loops(prog& prg) {
   auto rvars = reduce_vars(prg);
   cout << "Reduce vars..." << endl;
   for (auto v : rvars) {
-    cout << tab(1) << v << endl;
+    auto lp = prg.find_loop(v);
+    cout << tab(1) << v << " [" << lp->start << ", " << lp->end_exclusive << "]" << endl;
   }
 
   auto levels = get_variable_levels(prg);
