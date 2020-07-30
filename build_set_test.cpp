@@ -12335,6 +12335,17 @@ void cpy(const std::string& dst, const std::string& src, const int l, prog& prg)
   pointwise(dst, "id", src, l, prg);
 }
 
+void merge_basic_block_ops(prog& prg) {
+
+  string new_compute_file = prg.name + "_merged_compute_units.h";
+  ofstream out(new_compute_file);
+  out << "#include \"" << prg.compute_unit_file << ".h\"" << endl << endl;
+  out.close();
+
+  prg.compute_unit_file = new_compute_file;
+
+}
+
 void llf_pyramid_test() {
   int num_pyramid_levels = 4;
 
@@ -12351,21 +12362,30 @@ void llf_pyramid_test() {
 
   infer_bounds("color_out", {16, 16}, prg);
 
-  std::vector<string> orig_result =
-    unoptimized_result(prg);
+  //std::vector<string> orig_result =
+    //unoptimized_result(prg);
 
   prg.pretty_print();
   prg.sanity_check();
 
   unroll_reduce_loops(prg);
 
-  std::vector<string> unrolled_result =
-    unoptimized_result(prg);
+  //std::vector<string> unrolled_result =
+    //unoptimized_result(prg);
   cout << "======================================" << endl;
   cout << "========= After unrolling reduce loops" << endl;
   prg.pretty_print();
 
-  compare("llf_pyramid", orig_result, unrolled_result);
+  //compare("llf_pyramid", orig_result, unrolled_result);
+
+  merge_basic_block_ops(prg);
+  prg.pretty_print();
+  assert(false);
+  
+  //std::vector<string> merged_result =
+    //unoptimized_result(prg);
+
+  //compare("llf_pyramid_folded", orig_result, merged_result);
 
   assert(false);
 }
