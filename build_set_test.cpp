@@ -12401,7 +12401,7 @@ void llf_test() {
   cout << "========= After unrolling reduce loops" << endl;
   prg.pretty_print();
 
-  assert(false);
+  //assert(false);
 
   //auto valid = prg.validity_deps();
   //cout << "Got valid" << endl;
@@ -12415,7 +12415,7 @@ void llf_test() {
   //for (auto m : get_maps(sched)) {
     //cout << tab(1) << str(m) << endl;
   //}
-  assert(false);
+  //assert(false);
 
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
