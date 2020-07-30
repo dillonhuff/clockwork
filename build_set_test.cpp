@@ -12364,6 +12364,7 @@ struct cu_val {
 struct compute_unit_internals {
   std::string name;
   vector<op*> operations;
+  map<op*, string> result_names;
   map<op*, vector<cu_val> > arg_names;
 
   vector<string> args;
@@ -12375,6 +12376,11 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
   compute_unit_internals cu;
   cu.name = prg.un(loop->name + "_cu");
   cu.operations = loop->children;
+
+  for (auto op : cu.operations) {
+    string name = "res_" + op->name;
+    cu.result_names[op] = name;
+  }
 
   //map<simplified_addr, cu_val> addr_sources;
   //for (auto op : cu.operations) {
@@ -12438,38 +12444,37 @@ void merge_basic_block_ops(prog& prg) {
       auto compute_unit = compound_compute_unit(loop, prg);
 
       vector<string> args;
-      std::set<string> buffers_read;
-      vector<pair<buffer_name, piecewise_address> > addrs;
+      //std::set<string> buffers_read;
+      //vector<pair<buffer_name, piecewise_address> > addrs;
 
-      for (auto c : loop->children) {
-        for (auto b : c->buffers_read()) {
-          buffers_read.insert(b);
-          for (auto r : c->read_addrs(b)) {
-            pair<buffer_name, piecewise_address> na = {b, remove_whitespace(r)};
-            if (!elem(na, addrs)) {
-              addrs.push_back(na);
-            }
-          }
-        }
-      }
+      //for (auto c : loop->children) {
+        //for (auto b : c->buffers_read()) {
+          //buffers_read.insert(b);
+          //for (auto r : c->read_addrs(b)) {
+            //pair<buffer_name, piecewise_address> na = {b, remove_whitespace(r)};
+            //if (!elem(na, addrs)) {
+              //addrs.push_back(na);
+            //}
+          //}
+        //}
+      //}
 
-      for (auto r : buffers_read) {
-        args.push_back("hw_uint<32*" + str(addrs.size()) + ">& " + r);
-      }
+      //for (auto r : buffers_read) {
+        //args.push_back("hw_uint<32*" + str(addrs.size()) + ">& " + r);
+      //}
 
       vector<string> child_calls;
-      //string last_res = "";
-      //for (auto c : loop->children) {
-        //ostringstream cc;
-        //string name = "res_" + c->name;
-        //cc << "auto " << name << " = " << c->func << "();" << endl;
-        //child_calls.push_back(cc.str());
-        //last_res = name;
-      //}
-      //child_calls.push_back("return " + last_res + ";");
-      //assert(last_res != "");
+      string last_res = "";
+      for (auto c : compute_unit.operations) {
+        ostringstream cc;
+        cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "();" << endl;
+        child_calls.push_back(cc.str());
+        last_res = map_find(c, compute_unit.result_names);
+      }
+      child_calls.push_back("return " + last_res + ";");
+      assert(last_res != "");
 
-      out << "hw_uint<32> " << loop->name << "_merged_cu" << "(" << comma_list(args) << ") {" << endl;
+      out << "hw_uint<32> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
 
       //op* merged = prg.merge_ops(loop->name);
       //for (auto r : buffers_read) {
