@@ -12365,7 +12365,7 @@ void merge_basic_block_ops(prog& prg) {
 
   string new_compute_file = prg.name + "_merged_compute_units.h";
   ofstream out(new_compute_file);
-  out << "#include \"" << prg.compute_unit_file << ".h\"" << endl << endl;
+  out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   out.close();
 
   prg.compute_unit_file = new_compute_file;
@@ -12406,10 +12406,9 @@ void llf_pyramid_test() {
 
   merge_basic_block_ops(prg);
   prg.pretty_print();
-  assert(false);
   
-  //std::vector<string> merged_result =
-    //unoptimized_result(prg);
+  std::vector<string> merged_result =
+    unoptimized_result(prg);
 
   //compare("llf_pyramid_folded", orig_result, merged_result);
 

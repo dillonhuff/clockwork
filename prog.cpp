@@ -3638,13 +3638,19 @@ void prog::merge_ops(const std::string& loop) {
     assert(!c->is_loop);
     merged->copy_memory_operations_from(c);
   }
+  merged->add_function(un(loop + "_merged_cu"));
   lp->pretty_print(1);
 }
 
 void ir_node::copy_memory_operations_from(op* other) {
   assert(!other->is_loop);
 
-  concat(produce_locs, other->produce_locs);
+  for (auto pl : other->produce_locs) {
+    if (!elem(pl, produce_locs)) {
+      produce_locs.push_back(pl);
+    } 
+  }
+  //concat(produce_locs, other->produce_locs);
   concat(dynamic_store_addresses, other->dynamic_store_addresses);
   concat(consume_locs_pair, other->consume_locs_pair);
   concat(dynamic_load_addresses, other->dynamic_load_addresses);
