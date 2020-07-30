@@ -12440,7 +12440,8 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
     for (auto b : op->buffers_written()) {
       // Update addr_sources
       for (auto ar : op->write_addrs(b)) {
-
+        auto norm = simplify(ar);
+        addr_sources[norm] = {false, map_find(op, cu.result_names)};
       }
     }
   }
