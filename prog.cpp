@@ -3795,7 +3795,7 @@ void unroll(prog& prg, const std::string& var) {
     for (auto child : children) {
       if (!child->is_loop) {
         string name = prg.unique_name(child->name + "_" + var + "_" + str(v));
-        auto val = container->add_op(prg.unique_name(child->name + "_" + var + "_" + str(v)));
+        auto val = container->add_op_after(p, prg.unique_name(child->name + "_" + var + "_" + str(v)));
         val->copy_fields_from(child);
         val->replace_variable(var, v);
         val->name = name;
@@ -4102,4 +4102,31 @@ ir_node::~ir_node() {
   for (auto c : children) {
     release(c);
   }
+}
+
+op* ir_node::add_op_after(op* after, const std::string& name) {
+    auto fo = new op();
+    fo->parent = this;
+    fo->name = name;
+    fo->ctx = ctx;
+
+    vector<op*> new_children;
+    bool found_sr = false;
+    for (auto c : children) {
+      new_children.push_back(c);
+      if (c == after) {
+        new_children.push_back(fo);
+        found_sr = true;
+      }
+    }
+    cout << "After inserting " << name << " we have " << children.size() << " children" << endl;
+
+
+    assert(found_sr);
+    assert(new_children.size() == children.size() + 1);
+
+    this->children = new_children;
+
+    return fo;
+
 }

@@ -415,6 +415,8 @@ struct ir_node {
     return lp;
   }
   
+  op* add_op_after(op* source, const std::string& name);
+
   op* add_loop_after(op* source, const std::string& name, const int l, const int u) {
     assert(is_loop);
 

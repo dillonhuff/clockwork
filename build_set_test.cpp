@@ -12133,7 +12133,7 @@ vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_lev
     auto init = ol->add_op(prg.un("init"));
     init->add_function("llf_set_zero_float_32");
     init->add_store(current_level, x, y);
-    auto il = ol->add_nest(yi, -1, 1, xi, -1, 1);
+    auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
 
     auto update = il->add_op(prg.un("update"));
     update->add_function("llf_add_float_32");
