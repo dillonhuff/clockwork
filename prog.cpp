@@ -3771,6 +3771,11 @@ void unroll_reduce_loops(prog& prg) {
     cout << tab(1) << v << endl;
   }
 
+  auto levels = get_variable_levels(prg);
+  sort_gt(rvars, [&levels](const std::string& v) {
+      return map_find(v, levels);
+      });
+
   //assert(false);
   cout << "Starting to unroll..." << endl;
   for (auto v : rvars) {
@@ -3787,11 +3792,16 @@ void unroll(prog& prg, const std::string& var) {
 
   for (auto v : indexes(p)) {
     for (auto child : children) {
-      string name = prg.unique_name(child->name + "_" + var + "_" + str(v));
-      auto val = container->add_op(prg.unique_name(child->name + "_" + var + "_" + str(v)));
-      val->copy_fields_from(child);
-      val->replace_variable(var, v);
-      val->name = name;
+      if (!child->is_loop) {
+        string name = prg.unique_name(child->name + "_" + var + "_" + str(v));
+        auto val = container->add_op(prg.unique_name(child->name + "_" + var + "_" + str(v)));
+        val->copy_fields_from(child);
+        val->replace_variable(var, v);
+        val->name = name;
+      } else {
+        cout << "Error: Unrolling loop that contains a loop" << endl;
+        assert(false);
+      }
     }
   }
 
