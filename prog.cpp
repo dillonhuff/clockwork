@@ -3650,20 +3650,21 @@ void ir_node::copy_memory_operations_from(op* other) {
   assert(!other->is_loop);
 
   for (auto pl : other->produce_locs) {
-    if (!elem(pl, produce_locs)) {
+    if (!elem(remove_whitespace(pl), produce_locs)) {
       cout << pl.first << ", " << pl.second << " is not one of" << endl;
       for (auto p : produce_locs) {
         cout << tab(1) << p.first << ", " << p.second << endl;
       }
-      produce_locs.push_back(pl);
+      produce_locs.push_back(remove_whitespace(pl));
     }  else {
     }
   }
   //concat(produce_locs, other->produce_locs);
   concat(dynamic_store_addresses, other->dynamic_store_addresses);
   for (auto pl : other->consume_locs_pair) {
-    if (!elem(pl, consume_locs_pair)) {
-      consume_locs_pair.push_back(pl);
+    pair<string, piecewise_address> simpl{pl.first, remove_whitespace(pl.second)};
+    if (!elem(simpl, consume_locs_pair)) {
+      consume_locs_pair.push_back(simpl);
     }
   }
   //concat(consume_locs_pair, other->consume_locs_pair);
@@ -4151,4 +4152,26 @@ op* ir_node::add_op_after(op* after, const std::string& name) {
 
     return fo;
 
+}
+
+std::string remove_whitespace(const std::string& addr) {
+  string fresh = "";
+  for (auto c : addr) {
+    if (!isspace(c)) {
+      fresh += c;
+    }
+  }
+  return fresh;
+}
+
+piecewise_address remove_whitespace(const piecewise_address& addr) {
+  piecewise_address r;
+  for (auto a : addr) {
+    r.push_back({remove_whitespace(a.first), remove_whitespace(a.second)});
+  }
+  return r;
+}
+
+pair<std::string, std::string> remove_whitespace(const pair<std::string, std::string>& addr) {
+  return {remove_whitespace(addr.first), remove_whitespace(addr.second)};
 }

@@ -1519,3 +1519,7 @@ split_bv(const int indent,
     const string& value,
     const int lane_width,
     const int nlanes);
+
+pair<std::string, std::string> remove_whitespace(const pair<std::string, std::string>& addr);
+std::string remove_whitespace(const std::string& addr);
+piecewise_address remove_whitespace(const piecewise_address& addr);

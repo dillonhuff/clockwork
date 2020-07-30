@@ -12373,7 +12373,7 @@ void merge_basic_block_ops(prog& prg) {
         for (auto b : c->buffers_read()) {
           buffers_read.insert(b);
           for (auto r : c->read_addrs(b)) {
-            pair<buffer_name, piecewise_address> na = {b, r};
+            pair<buffer_name, piecewise_address> na = {b, remove_whitespace(r)};
             if (!elem(na, addrs)) {
               addrs.push_back(na);
             }
@@ -12398,13 +12398,13 @@ void merge_basic_block_ops(prog& prg) {
       assert(last_res != "");
 
       out << "hw_uint<32> " << loop->name << "_merged_cu" << "(" << comma_list(args) << ") {" << endl;
+      op* merged = prg.merge_ops(loop->name);
       for (auto r : buffers_read) {
-        int num_lanes = addrs.size();
+        int num_lanes = merged->read_addrs(r).size();
         int pixel_width = prg.buffer_port_width(r);
         auto args = split_bv(1, out, r, pixel_width, num_lanes);
       }
 
-      op* merged = prg.merge_ops(loop->name);
       out << "\n\t" << endl;
       out << sep_list(child_calls, "", "", "\n\t");
       out << endl;
@@ -12452,7 +12452,7 @@ void llf_pyramid_test() {
 
   merge_basic_block_ops(prg);
   prg.pretty_print();
-  //assert(false);
+  assert(false);
   
   std::vector<string> merged_result =
     unoptimized_result(prg);
