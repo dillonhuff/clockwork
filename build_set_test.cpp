@@ -12416,6 +12416,7 @@ void llf_pyramid_test() {
 
   merge_basic_block_ops(prg);
   prg.pretty_print();
+  assert(false);
   
   std::vector<string> merged_result =
     unoptimized_result(prg);

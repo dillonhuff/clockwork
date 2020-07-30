@@ -3651,8 +3651,13 @@ void ir_node::copy_memory_operations_from(op* other) {
 
   for (auto pl : other->produce_locs) {
     if (!elem(pl, produce_locs)) {
+      cout << pl.first << ", " << pl.second << " is not one of" << endl;
+      for (auto p : produce_locs) {
+        cout << tab(1) << p.first << ", " << p.second << endl;
+      }
       produce_locs.push_back(pl);
-    } 
+    }  else {
+    }
   }
   //concat(produce_locs, other->produce_locs);
   concat(dynamic_store_addresses, other->dynamic_store_addresses);
