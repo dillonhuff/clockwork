@@ -3628,9 +3628,12 @@ void all_register_files(prog& prg, CodegenOptions& options) {
 }
 
 
-void prog::merge_ops(const std::string& loop) {
+op* prog::merge_ops(const std::string& loop) {
   cout << "Merging ops at: " << loop << endl;
   auto lp = find_loop(loop);
+  if (lp->children.size() == 1) {
+    return pick(lp->children);
+  }
   vector<op*> children_copies = lp->children;
   lp->children = {};
   op* merged = lp->add_op(unique_name("merged"));
@@ -3640,6 +3643,7 @@ void prog::merge_ops(const std::string& loop) {
   }
   merged->add_function(un(loop + "_merged_cu"));
   lp->pretty_print(1);
+  return merged;
 }
 
 void ir_node::copy_memory_operations_from(op* other) {
@@ -3652,7 +3656,12 @@ void ir_node::copy_memory_operations_from(op* other) {
   }
   //concat(produce_locs, other->produce_locs);
   concat(dynamic_store_addresses, other->dynamic_store_addresses);
-  concat(consume_locs_pair, other->consume_locs_pair);
+  for (auto pl : other->consume_locs_pair) {
+    if (!elem(pl, consume_locs_pair)) {
+      consume_locs_pair.push_back(pl);
+    }
+  }
+  //concat(consume_locs_pair, other->consume_locs_pair);
   concat(dynamic_load_addresses, other->dynamic_load_addresses);
 }
 

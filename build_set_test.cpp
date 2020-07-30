@@ -12356,16 +12356,26 @@ std::set<op*> get_inner_loops(prog& prg) {
 }
 
 void merge_basic_block_ops(prog& prg) {
-
   std::set<op*> inner_loops = get_inner_loops(prg);
 
-  for (auto loop : inner_loops) {
-    prg.merge_ops(loop->name);
-  }
-
   string new_compute_file = prg.name + "_merged_compute_units.h";
+
   ofstream out(new_compute_file);
   out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+
+  for (auto loop : inner_loops) {
+    if (loop->children.size() > 1) {
+      op* merged = prg.merge_ops(loop->name);
+      vector<string> args;
+      for (auto r : merged->buffers_read()) {
+        auto addrs = merged->read_addrs(r);
+        args.push_back("hw_uint<32*" + str(addrs.size()) + ">& " + r);
+      }
+      out << "hw_uint<32> " << merged->func << "(" << comma_list(args) << ") {" << endl;
+      out << "}" << endl << endl;
+    }
+  }
+
   out.close();
 
   prg.compute_unit_file = new_compute_file;

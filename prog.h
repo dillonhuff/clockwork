@@ -795,7 +795,7 @@ struct prog {
     return name;
   }
 
-  void merge_ops(const std::string& loop);
+  op* merge_ops(const std::string& loop);
 
   op* add_loop(const int l, const int u) {
     return add_loop(unique_name("l"), l, u);
