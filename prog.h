@@ -151,6 +151,14 @@ struct ir_node {
     assert(false);
   }
 
+  vector<piecewise_address> write_addrs() const {
+    vector<piecewise_address> addrs;
+    for (auto l : produce_locs) {
+      addrs.push_back({l});
+    }
+    return addrs;
+  }
+
   vector<piecewise_address> write_addrs(const std::string& buf) const {
     vector<piecewise_address> addrs;
     for (auto l : produce_locs) {
@@ -1499,3 +1507,5 @@ std::set<op*> find_readers(const string& buff, prog& prg);
 
 void release(ir_node* op);
 void release(prog& prg);
+
+void unroll_reduce_loops(prog& prg);

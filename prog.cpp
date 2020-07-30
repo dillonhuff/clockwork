@@ -2929,6 +2929,65 @@ vector<string> used_vars(const std::string& target_buf, op* reader, prog& prg) {
   return upsamples;
 }
 
+vector<string> reduce_vars(prog& prg) {
+
+  auto levels = get_variable_levels(prg);
+  vector<string> reduce_vars;
+  for (auto p : levels) {
+    string loop_var = p.first;
+
+    op* loop = prg.find_loop(loop_var);
+    auto lower_ops = loop->descendant_ops();
+    bool used_in_write = false;
+    for (auto op : lower_ops) {
+      std::set<string> vars;
+      auto all_vars = map_find(op, prg.iter_vars());
+
+      for (auto a : op->write_addrs()) {
+        assert(a.size() > 0);
+        for (auto ar : a) {
+          isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, ar.second);
+          cout << tab(2) << str(a) << endl;
+          cout << tab(2) << str(ma) << endl;
+          for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
+            auto aff = isl_multi_aff_get_aff(ma, i);
+            cout << tab(3) << i << ": " << str(aff) << endl;
+
+            for (int d = 0; d < num_in_dims(aff); d++) {
+              isl_val* coeff = get_coeff(aff, d);
+              if (!is_zero(coeff)) {
+                vars.insert(dim_name(aff, d));
+              }
+            }
+          }
+        }
+      }
+
+      if (elem(loop_var, vars)) {
+        used_in_write = true;
+        break;
+      }
+    }
+
+    if (!used_in_write) {
+      reduce_vars.push_back(loop_var);
+    }
+  }
+
+  return reduce_vars;
+  //auto all_vars = map_find(reader, prg.iter_vars());
+  //vector<string> vars_used_in_read;
+  //for (auto a : addrs_referenced(reader, target_buf)) {
+  //}
+
+  //vector<string> upsamples;
+  //for (auto v : all_vars) {
+    //if (prg.trip_count(v) > 1 && !elem(v, vars_used_in_read)) {
+      //upsamples.push_back(v);
+    //}
+  //}
+  //return upsamples;
+}
 vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& prg) {
 
   auto all_vars = map_find(reader, prg.iter_vars());
@@ -3699,6 +3758,15 @@ void ir_node::replace_variable(const std::string& var, const int val) {
     addr.second = pw;
   }
 
+}
+
+void unroll_reduce_loops(prog& prg) {
+  auto rvars = reduce_vars(prg);
+  cout << "Reduce vars..." << endl;
+  for (auto v : rvars) {
+    cout << tab(1) << v << endl;
+  }
+  assert(false);
 }
 
 void unroll(prog& prg, const std::string& var) {

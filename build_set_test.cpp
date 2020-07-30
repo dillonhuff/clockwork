@@ -12395,13 +12395,27 @@ void llf_test() {
   cout << "After bounds inference..." << endl;
   prg.pretty_print();
 
+  unroll_reduce_loops(prg);
+
+  cout << "======================================" << endl;
+  cout << "========= After unrolling reduce loops" << endl;
+  prg.pretty_print();
+
+  assert(false);
+
+  //auto valid = prg.validity_deps();
+  //cout << "Got valid" << endl;
+  //auto valid_maps = get_maps(valid);
+  //auto qfs = compute_qfactors(valid_maps);
+  //cout << "Q factors" << endl;
+
   //cout << "Getting optimized schedule..." << endl;
   //auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
   //cout << "Optimized schedule..." << endl;
   //for (auto m : get_maps(sched)) {
     //cout << tab(1) << str(m) << endl;
   //}
-  //assert(false);
+  assert(false);
 
   generate_unoptimized_code(prg);
   compile_compute("unoptimized_" + prg.name + ".cpp");
@@ -12417,6 +12431,7 @@ void halide_camera_pipeline_test() {
 }
 
 void application_tests() {
+  llf_test();
   blur_example();
   //assert(false);
   //halide_camera_pipeline_test();
@@ -12517,7 +12532,6 @@ void application_tests() {
   conv_2d_bc_test();
 
   
-  llf_test();
   us_unroll_test();
   ds_unroll_test();
   prg_unroll_test();
