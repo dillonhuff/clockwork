@@ -12335,7 +12335,33 @@ void cpy(const std::string& dst, const std::string& src, const int l, prog& prg)
   pointwise(dst, "id", src, l, prg);
 }
 
+std::set<op*> get_inner_loops(prog& prg) {
+  std::set<op*> inner;
+  //vector<string> ivars = prg.iter_vars();
+  for (auto lp_pair : get_variable_levels(prg)) {
+    bool all_children_ops = true;
+    string vr = lp_pair.first;
+    auto v = prg.find_loop(vr);
+    for (auto c : v->children) {
+      if (c->is_loop) {
+        all_children_ops = false;
+        break;
+      }
+    }
+    if (all_children_ops) {
+      inner.insert(v);
+    }
+  }
+  return inner;
+}
+
 void merge_basic_block_ops(prog& prg) {
+
+  std::set<op*> inner_loops = get_inner_loops(prg);
+
+  for (auto loop : inner_loops) {
+    prg.merge_ops(loop->name);
+  }
 
   string new_compute_file = prg.name + "_merged_compute_units.h";
   ofstream out(new_compute_file);
