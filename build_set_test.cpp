@@ -12444,6 +12444,12 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
         auto as = simplify(ar);
         as = b + brackets(as);
         addr_sources[as] = {false, map_find(op, cu.result_names)};
+
+        assert(ar.size() == 1);
+        pair<string, address> wa{b, remove_whitespace(ar.at(0).second)};
+        if (!elem(wa, cu.waddrs)) {
+          cu.waddrs.push_back(wa);
+        }
       }
     }
   }
@@ -12508,6 +12514,10 @@ void merge_basic_block_ops(prog& prg) {
       assert(last_res != "");
 
       out << "hw_uint<32> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
+      for (auto r : compute_unit.buffers_read()) {
+        split_bv(1, out, r, prg.buffer_port_width(r), compute_unit.num_lanes(r));
+        //args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+      }
 
       out << "\n\t" << endl;
       out << sep_list(child_calls, "", "", "\n\t");
@@ -12522,6 +12532,9 @@ void merge_basic_block_ops(prog& prg) {
       auto merged = loop->add_op(prg.un(loop->name + "_merged"));
       for (auto a : compute_unit.raddrs) {
         merged->add_load(a.first, a.second);
+      }
+      for (auto a : compute_unit.waddrs) {
+        merged->add_store(a.first, a.second);
       }
       merged->add_function(compute_unit.name);
     }
@@ -12549,30 +12562,30 @@ void llf_pyramid_test() {
 
   infer_bounds("color_out", {16, 16}, prg);
 
-  //std::vector<string> orig_result =
-    //unoptimized_result(prg);
+  std::vector<string> orig_result =
+    unoptimized_result(prg);
 
   prg.pretty_print();
   prg.sanity_check();
 
   unroll_reduce_loops(prg);
 
-  //std::vector<string> unrolled_result =
-    //unoptimized_result(prg);
+  std::vector<string> unrolled_result =
+    unoptimized_result(prg);
   cout << "======================================" << endl;
   cout << "========= After unrolling reduce loops" << endl;
   prg.pretty_print();
 
-  //compare("llf_pyramid", orig_result, unrolled_result);
+  compare("llf_pyramid", orig_result, unrolled_result);
 
   merge_basic_block_ops(prg);
   prg.pretty_print();
-  assert(false);
+  //assert(false);
   
   std::vector<string> merged_result =
     unoptimized_result(prg);
 
-  //compare("llf_pyramid_folded", orig_result, merged_result);
+  compare("llf_pyramid_folded", orig_result, merged_result);
 
   assert(false);
 }
