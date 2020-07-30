@@ -2934,7 +2934,11 @@ vector<string> reduce_vars(prog& prg) {
   auto levels = get_variable_levels(prg);
   vector<string> reduce_vars;
   for (auto p : levels) {
+
     string loop_var = p.first;
+    if (loop_var == "root") {
+      continue;
+    }
 
     op* loop = prg.find_loop(loop_var);
     auto lower_ops = loop->descendant_ops();
@@ -3766,10 +3770,17 @@ void unroll_reduce_loops(prog& prg) {
   for (auto v : rvars) {
     cout << tab(1) << v << endl;
   }
-  assert(false);
+
+  //assert(false);
+  cout << "Starting to unroll..." << endl;
+  for (auto v : rvars) {
+    unroll(prg, v);
+    cout << "Unrolled: " << tab(1) << v << endl;
+  }
 }
 
 void unroll(prog& prg, const std::string& var) {
+  cout << "Unrolling: " << var << endl;
   op* p = prg.find_loop(var);
   vector<op*> children = p->children;
   op* container = prg.parent(p);
