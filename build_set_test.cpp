@@ -12365,13 +12365,50 @@ void merge_basic_block_ops(prog& prg) {
 
   for (auto loop : inner_loops) {
     if (loop->children.size() > 1) {
-      op* merged = prg.merge_ops(loop->name);
       vector<string> args;
-      for (auto r : merged->buffers_read()) {
-        auto addrs = merged->read_addrs(r);
+      std::set<string> buffers_read;
+      vector<pair<buffer_name, piecewise_address> > addrs;
+
+      for (auto c : loop->children) {
+        for (auto b : c->buffers_read()) {
+          buffers_read.insert(b);
+          for (auto r : c->read_addrs(b)) {
+            pair<buffer_name, piecewise_address> na = {b, r};
+            if (!elem(na, addrs)) {
+              addrs.push_back(na);
+            }
+          }
+        }
+      }
+
+      for (auto r : buffers_read) {
         args.push_back("hw_uint<32*" + str(addrs.size()) + ">& " + r);
       }
-      out << "hw_uint<32> " << merged->func << "(" << comma_list(args) << ") {" << endl;
+
+      out << "hw_uint<32> " << loop->name << "_merged_cu" << "(" << comma_list(args) << ") {" << endl;
+      for (auto r : buffers_read) {
+        int num_lanes = addrs.size();
+        int pixel_width = prg.buffer_port_width(r);
+        auto args = split_bv(1, out, r, pixel_width, num_lanes);
+      }
+
+
+      vector<string> child_calls;
+      string last_res = "";
+      for (auto c : loop->children) {
+        ostringstream cc;
+        string name = "res_" + c->name;
+        cc << "auto " << name << " = " << c->func << "();" << endl;
+        child_calls.push_back(cc.str());
+        last_res = name;
+      }
+      child_calls.push_back("return " + last_res + ";");
+      assert(last_res != "");
+
+      op* merged = prg.merge_ops(loop->name);
+      out << "\n\t" << endl;
+      out << sep_list(child_calls, "", "", "\n\t");
+      out << endl;
       out << "}" << endl << endl;
     }
   }

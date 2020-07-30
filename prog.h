@@ -1511,3 +1511,11 @@ void release(ir_node* op);
 void release(prog& prg);
 
 void unroll_reduce_loops(prog& prg);
+
+
+vector<string>
+split_bv(const int indent,
+    ostream& conv_out,
+    const string& value,
+    const int lane_width,
+    const int nlanes);
