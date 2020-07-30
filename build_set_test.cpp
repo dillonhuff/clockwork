@@ -12385,14 +12385,6 @@ void merge_basic_block_ops(prog& prg) {
         args.push_back("hw_uint<32*" + str(addrs.size()) + ">& " + r);
       }
 
-      out << "hw_uint<32> " << loop->name << "_merged_cu" << "(" << comma_list(args) << ") {" << endl;
-      for (auto r : buffers_read) {
-        int num_lanes = addrs.size();
-        int pixel_width = prg.buffer_port_width(r);
-        auto args = split_bv(1, out, r, pixel_width, num_lanes);
-      }
-
-
       vector<string> child_calls;
       string last_res = "";
       for (auto c : loop->children) {
@@ -12404,6 +12396,13 @@ void merge_basic_block_ops(prog& prg) {
       }
       child_calls.push_back("return " + last_res + ";");
       assert(last_res != "");
+
+      out << "hw_uint<32> " << loop->name << "_merged_cu" << "(" << comma_list(args) << ") {" << endl;
+      for (auto r : buffers_read) {
+        int num_lanes = addrs.size();
+        int pixel_width = prg.buffer_port_width(r);
+        auto args = split_bv(1, out, r, pixel_width, num_lanes);
+      }
 
       op* merged = prg.merge_ops(loop->name);
       out << "\n\t" << endl;
@@ -12435,32 +12434,32 @@ void llf_pyramid_test() {
 
   infer_bounds("color_out", {16, 16}, prg);
 
-  //std::vector<string> orig_result =
-    //unoptimized_result(prg);
+  std::vector<string> orig_result =
+    unoptimized_result(prg);
 
   prg.pretty_print();
   prg.sanity_check();
 
   unroll_reduce_loops(prg);
 
-  //std::vector<string> unrolled_result =
-    //unoptimized_result(prg);
+  std::vector<string> unrolled_result =
+    unoptimized_result(prg);
   cout << "======================================" << endl;
   cout << "========= After unrolling reduce loops" << endl;
   prg.pretty_print();
 
-  //compare("llf_pyramid", orig_result, unrolled_result);
+  compare("llf_pyramid", orig_result, unrolled_result);
 
   merge_basic_block_ops(prg);
   prg.pretty_print();
-  assert(false);
+  //assert(false);
   
-  std::vector<string> merged_result =
-    unoptimized_result(prg);
+  //std::vector<string> merged_result =
+    //unoptimized_result(prg);
 
   //compare("llf_pyramid_folded", orig_result, merged_result);
 
-  assert(false);
+  //assert(false);
 }
 
 void llf_test() {
