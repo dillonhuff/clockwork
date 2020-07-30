@@ -12426,6 +12426,7 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
     for (auto b : op->buffers_read()) {
       for (auto ar : op->read_addrs(b)) {
         simplified_addr as = simplify(ar);
+        as = b + brackets(as);
         if (contains_key(as, addr_sources)) {
           auto val = addr_sources[as];
           cu.arg_names[op].push_back(val);
@@ -12440,8 +12441,9 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
     for (auto b : op->buffers_written()) {
       // Update addr_sources
       for (auto ar : op->write_addrs(b)) {
-        auto norm = simplify(ar);
-        addr_sources[norm] = {false, map_find(op, cu.result_names)};
+        auto as = simplify(ar);
+        as = b + brackets(as);
+        addr_sources[as] = {false, map_find(op, cu.result_names)};
       }
     }
   }
