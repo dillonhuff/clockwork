@@ -12355,10 +12355,20 @@ std::set<op*> get_inner_loops(prog& prg) {
   return inner;
 }
 
+typedef std::string simplified_addr;
+
 struct cu_val {
   bool is_arg;
   string name;
   int arg_buf_pos;
+
+  std::string str() const {
+    if (is_arg) {
+      return name + "_lane_" + ::str(arg_buf_pos);
+    } else {
+      return name;
+    }
+  }
 };
 
 struct compute_unit_internals {
@@ -12367,10 +12377,37 @@ struct compute_unit_internals {
   map<op*, string> result_names;
   map<op*, vector<cu_val> > arg_names;
 
-  vector<string> args;
   map<op*, map<string, map<address, string> > > res_names;
   vector<pair<buffer_name, piecewise_address> > raddrs;
+  vector<pair<buffer_name, address> > waddrs;
+
+  vector<string> buffers_read() {
+    vector<string> br;
+    for (auto b : raddrs) {
+      if (!elem(b.first, br)) {
+        br.push_back(b.first);
+      }
+    }
+    return br;
+  }
+
+  int num_lanes(const std::string& buf) {
+    int cnt = 0;
+    for (auto b : raddrs) {
+      if (b.first == buf) {
+        cnt++;
+      }
+    }
+    return cnt;
+  }
+
 };
+
+simplified_addr simplify(const piecewise_address& ar) {
+  simplified_addr sa = "";
+
+  return sa;
+}
 
 compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
   compute_unit_internals cu;
@@ -12382,27 +12419,31 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
     cu.result_names[op] = name;
   }
 
-  //map<simplified_addr, cu_val> addr_sources;
-  //for (auto op : cu.operations) {
-    //for (auto b : op->buffers_read()) {
-      //for (auto ar : op->read_addrs(b)) {
-        //simplified_addr as = simplify(ar);
-        //if (elem(as, addr_sources)) {
-          //auto val = addr_sources[as];
-          //cu.arg_names[op].push_back(val);
-        //} else {
-          //cu.arg_names[op].
-        //}
-      //}
-    //}
+  map<simplified_addr, cu_val> addr_sources;
+  for (auto op : cu.operations) {
+    cu.arg_names[op] = {};
 
-    //for (auto b : op->buffers_written()) {
-      //// Update addr_sources
-      //for (auto ar : op->write_addrs(b)) {
+    for (auto b : op->buffers_read()) {
+      for (auto ar : op->read_addrs(b)) {
+        simplified_addr as = simplify(ar);
+        if (contains_key(as, addr_sources)) {
+          auto val = addr_sources[as];
+          cu.arg_names[op].push_back(val);
+        } else {
+          int index = cu.num_lanes(b);
+          cu.arg_names[op].push_back({true, b, index});
+          cu.raddrs.push_back({b, ar});
+        }
+      }
+    }
 
-      //}
-    //}
-  //}
+    for (auto b : op->buffers_written()) {
+      // Update addr_sources
+      for (auto ar : op->write_addrs(b)) {
+
+      }
+    }
+  }
 
 
   //std::set<string> buffers_read;
@@ -12459,15 +12500,19 @@ void merge_basic_block_ops(prog& prg) {
         //}
       //}
 
-      //for (auto r : buffers_read) {
-        //args.push_back("hw_uint<32*" + str(addrs.size()) + ">& " + r);
-      //}
+      for (auto r : compute_unit.buffers_read()) {
+        args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+      }
 
       vector<string> child_calls;
       string last_res = "";
       for (auto c : compute_unit.operations) {
         ostringstream cc;
-        cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "();" << endl;
+        vector<string> arg_names;
+        for (auto entry : map_find(c, compute_unit.arg_names)) {
+          arg_names.push_back(entry.str());
+        }
+        cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
         child_calls.push_back(cc.str());
         last_res = map_find(c, compute_unit.result_names);
       }
