@@ -12485,21 +12485,6 @@ void merge_basic_block_ops(prog& prg) {
       auto compute_unit = compound_compute_unit(loop, prg);
 
       vector<string> args;
-      //std::set<string> buffers_read;
-      //vector<pair<buffer_name, piecewise_address> > addrs;
-
-      //for (auto c : loop->children) {
-        //for (auto b : c->buffers_read()) {
-          //buffers_read.insert(b);
-          //for (auto r : c->read_addrs(b)) {
-            //pair<buffer_name, piecewise_address> na = {b, remove_whitespace(r)};
-            //if (!elem(na, addrs)) {
-              //addrs.push_back(na);
-            //}
-          //}
-        //}
-      //}
-
       for (auto r : compute_unit.buffers_read()) {
         args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
       }
@@ -12521,13 +12506,6 @@ void merge_basic_block_ops(prog& prg) {
 
       out << "hw_uint<32> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
 
-      //op* merged = prg.merge_ops(loop->name);
-      //for (auto r : buffers_read) {
-        //int num_lanes = merged->read_addrs(r).size();
-        //int pixel_width = prg.buffer_port_width(r);
-        //auto args = split_bv(1, out, r, pixel_width, num_lanes);
-      //}
-
       out << "\n\t" << endl;
       out << sep_list(child_calls, "", "", "\n\t");
       out << endl;
@@ -12539,6 +12517,9 @@ void merge_basic_block_ops(prog& prg) {
       assert(loop->children.size() == 0);
 
       auto merged = loop->add_op(prg.un(loop->name + "_merged"));
+      for (auto a : compute_unit.raddrs) {
+        merged->add_load(a.first, a.second);
+      }
       merged->add_function(compute_unit.name);
     }
   }
