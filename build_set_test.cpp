@@ -12434,32 +12434,32 @@ void llf_pyramid_test() {
 
   infer_bounds("color_out", {16, 16}, prg);
 
-  std::vector<string> orig_result =
-    unoptimized_result(prg);
+  //std::vector<string> orig_result =
+    //unoptimized_result(prg);
 
   prg.pretty_print();
   prg.sanity_check();
 
   unroll_reduce_loops(prg);
 
-  std::vector<string> unrolled_result =
-    unoptimized_result(prg);
+  //std::vector<string> unrolled_result =
+    //unoptimized_result(prg);
   cout << "======================================" << endl;
   cout << "========= After unrolling reduce loops" << endl;
   prg.pretty_print();
 
-  compare("llf_pyramid", orig_result, unrolled_result);
+  //compare("llf_pyramid", orig_result, unrolled_result);
 
   merge_basic_block_ops(prg);
   prg.pretty_print();
   //assert(false);
   
-  //std::vector<string> merged_result =
-    //unoptimized_result(prg);
+  std::vector<string> merged_result =
+    unoptimized_result(prg);
 
   //compare("llf_pyramid_folded", orig_result, merged_result);
 
-  //assert(false);
+  assert(false);
 }
 
 void llf_test() {
