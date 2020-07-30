@@ -1167,16 +1167,18 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       assert(contains_key(in, buffers));
       auto& buf = buffers.at(in);
       cout << "buf = " << buf.name << endl;
-      assert(buf.get_out_bundles().size() == 1);
-      auto bundle = pick(buf.get_out_bundles());
+      //assert(buf.get_out_bundles().size() == 1);
+      //auto bundle = pick(buf.get_out_bundles());
 
-      string num_transfers = pipe_cpy(bundle, pipe) + "_num_transfers*size";
-      if (options.num_input_epochs < 0) {
-      } else {
-        num_transfers = pipe_cpy(bundle, pipe) + "_num_transfers" + "*" + str(options.num_input_epochs);
+      for (auto bundle : buf.get_out_bundles()) {
+        string num_transfers = pipe_cpy(bundle, pipe) + "_num_transfers*size";
+        if (options.num_input_epochs < 0) {
+        } else {
+          num_transfers = pipe_cpy(bundle, pipe) + "_num_transfers" + "*" + str(options.num_input_epochs);
+        }
+
+        out << tab(1) << "burst_read<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;
       }
-
-      out << tab(1) << "burst_read<" << buf.port_bundle_width(bundle) << ">" << "(" << pipe_cpy(bundle, pipe) << ", " << pipe_cpy(bundle, pipe) << "_channel" << ", " << num_transfers << ");" << endl;
     }
 
     out << endl << tab(1) << prg.name << "_wrapper" << "(" << comma_list(buffer_args.at(pipe)) << ");" << endl << endl;
@@ -3794,7 +3796,7 @@ void unroll(prog& prg, const std::string& var) {
   for (auto v : indexes(p)) {
     for (auto child : children) {
       if (!child->is_loop) {
-        string name = prg.unique_name(child->name + "_" + var + "_" + str(v));
+        string name = prg.unique_name(isl_sanitize(child->name + "_" + var + "_" + str(v)));
         auto val = container->add_op_after(p, prg.unique_name(child->name + "_" + var + "_" + str(v)));
         val->copy_fields_from(child);
         val->replace_variable(var, v);

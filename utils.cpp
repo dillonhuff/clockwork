@@ -149,3 +149,15 @@ bool is_number(string s) {
   //return true;
 }
 
+string isl_sanitize(const std::string& str) {
+  string res = "";
+  for (auto c : str) {
+    if (c == '-') {
+      res += "_m_";
+    } else {
+      res += c;
+    }
+  }
+  return res;
+
+}

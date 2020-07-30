@@ -12331,6 +12331,45 @@ void gf_test() {
 
 }
 
+void cpy(const std::string& dst, const std::string& src, const int l, prog& prg) {
+  pointwise(dst, "id", src, l, prg);
+}
+
+void llf_pyramid_test() {
+  int num_pyramid_levels = 4;
+
+  prog prg("llf_pyramid_test");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("color_in_oc");
+  prg.add_output("color_out");
+
+  cpy("color_in_int", "color_in_oc", 2, prg);
+  vector<string> gray_levels = gaussian_pyramid("color_in_int", num_pyramid_levels, prg);
+
+  cpy("color_out", gray_levels.back(), 2, prg);
+
+  infer_bounds("color_out", {16, 16}, prg);
+
+  std::vector<string> orig_result =
+    unoptimized_result(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+
+  std::vector<string> unrolled_result =
+    unoptimized_result(prg);
+  cout << "======================================" << endl;
+  cout << "========= After unrolling reduce loops" << endl;
+  prg.pretty_print();
+
+  compare("llf_pyramid", orig_result, unrolled_result);
+
+  assert(false);
+}
+
 void llf_test() {
   int num_pyramid_levels = 4;
   int num_intensity_levels = 8;
@@ -12431,6 +12470,7 @@ void halide_camera_pipeline_test() {
 }
 
 void application_tests() {
+  llf_pyramid_test();
   llf_test();
   blur_example();
   //assert(false);
