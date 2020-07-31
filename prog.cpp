@@ -1810,8 +1810,10 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
     }
   }
 
-  for (auto p : op->produce_locs) {
-    auto buf_name = p.first;
+  //for (auto p : op->produce_locs) {
+  for (auto p : op->buffers_written()) {
+    //auto buf_name = p.first;
+    auto buf_name = p;
     if (!elem(buf_name, done)) {
       buf_srcs.push_back(buf_name);
       done.insert(buf_name);
@@ -1823,8 +1825,10 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   vector<string> incoming;
   std::set<string> done;
-  for (auto p : op->produce_locs) {
-    auto buf_name = p.first;
+  //for (auto p : op->produce_locs) {
+  for (auto p : op->buffers_written()) {
+    //auto buf_name = p.first;
+    auto buf_name = p;
     if (!elem(buf_name, done)) {
       incoming.push_back(buf_name);
       done.insert(buf_name);
@@ -1868,8 +1872,11 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
       done.insert(buf_name);
     }
   }
-  for (auto p : op->produce_locs) {
-    auto buf_name = p.first;
+
+  //for (auto p : op->produce_locs) {
+  for (auto p : op->buffers_written()) {
+    //auto buf_name = p.first;
+    auto buf_name = p;
     if (!elem(buf_name, done)) {
       if (prg.is_boundary(buf_name)) {
         auto& buf = buffers.at(buf_name);
@@ -1992,8 +1999,10 @@ compute_kernel generate_compute_op(
 
   cout << "finding out buffers" << endl;
   std::set<string> out_buffers;
-  for (auto con : op->produce_locs) {
-    out_buffers.insert(con.first);
+  //for (auto con : op->produce_locs) {
+  for (auto con : op->buffers_written()) {
+    out_buffers.insert(con);
+    //out_buffers.insert(con.first);
   }
   if (!(out_buffers.size() == 1)) {
     cout << "Error: " << out_buffers.size() << " out_buffers in " << op->name << endl;
@@ -2911,22 +2920,24 @@ std::set<std::string> get_kernels(prog& prg) {
 }
 
 std::vector<piecewise_address> addrs_written(op* p, const std::string& buffer) {
-  vector<piecewise_address> addrs;
-  for (auto b : p->produce_locs) {
-    if (b.first == buffer) {
-      addrs.push_back({{"", b.second}});
-    }
-  }
-  return addrs;
+  return p->write_addrs(buffer);
+  //vector<piecewise_address> addrs;
+  //for (auto b : p->produce_locs) {
+    //if (b.first == buffer) {
+      //addrs.push_back({{"", b.second}});
+    //}
+  //}
+  //return addrs;
 }
 
 std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer) {
   vector<piecewise_address> addrs;
-  for (auto b : p->produce_locs) {
-    if (b.first == buffer) {
-      addrs.push_back({{"", b.second}});
-    }
-  }
+  concat(addrs, addrs_written(p, buffer));
+  //for (auto b : p->produce_locs) {
+    //if (b.first == buffer) {
+      //addrs.push_back({{"", b.second}});
+    //}
+  //}
 
   for (auto b : p->consume_locs_pair) {
     if (b.first == buffer) {
@@ -3214,9 +3225,12 @@ std::set<string> buffers_written(op* p) {
   assert(!p->is_loop);
 
   std::set<string> bufs;
-  for (auto b : p->produce_locs) {
-    bufs.insert(b.first);
+  for (auto b : p->buffers_written()) {
+    bufs.insert(b);
   }
+  //for (auto b : p->produce_locs) {
+    //bufs.insert(b.first);
+  //}
   return bufs;
 }
 
