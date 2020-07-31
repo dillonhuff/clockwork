@@ -12514,7 +12514,8 @@ void merge_basic_block_ops(prog& prg) {
       }
 
       // Output should be the result names for all ops with a distinct write addr?
-      child_calls.push_back("return " + last_res + ";");
+      //child_calls.push_back("return " + last_res + ";");
+      child_calls.push_back("return 0;");
       assert(last_res != "");
 
       int write_width = 0;
