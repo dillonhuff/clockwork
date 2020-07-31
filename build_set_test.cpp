@@ -12700,6 +12700,17 @@ void strip_mine(const int factor, op* loop, prog& prg) {
   loop->start = new_start;
   loop->end_exclusive = new_tc;
 
+  auto children = loop->children;
+  // Remove the strip mined loop
+  children.pop_back();
+
+  for (auto c : children) {
+    inner->children.push_back(c);
+  }
+
+  loop->children = {};
+  loop->children.push_back(inner);
+
   assert(inner->trip_count() * loop->trip_count() == original_trip_count);
 }
 
