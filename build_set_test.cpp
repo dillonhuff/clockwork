@@ -12587,7 +12587,7 @@ void llf_pyramid_test() {
 
   compare("llf_pyramid_folded", orig_result, merged_result);
 
-  assert(false);
+  //assert(false);
 }
 
 void llf_test() {
@@ -12686,10 +12686,56 @@ void halide_camera_pipeline_test() {
   prog prg = camera_pipeline();
   prg.sanity_check();
   regression_test(prg);
+}
+
+void strip_mine(const int factor, op* loop, prog& prg) {
+  assert(loop->is_loop);
+  assert(loop->trip_count() % factor == 0);
+
+  int original_trip_count = loop->trip_count();
+  int new_tc = loop->trip_count() / factor;
+  int new_start = loop->start;
+
+  auto inner = loop->add_loop(prg.un("sm"), 0, factor);
+  loop->start = new_start;
+  loop->end_exclusive = new_tc;
+
+  assert(inner->trip_count() * loop->trip_count() == original_trip_count);
+}
+
+void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg) {
+  std::set<op*> inner_loops = get_inner_loops(prg);
+
+  for (auto loop : inner_loops) {
+    int tc = loop->trip_count();
+    assert(tc % unroll_factor == 0);
+    strip_mine(unroll_factor, loop, prg);
+  }
+
+  //op* writer = find_writer(buf);
+  //vector<string> loops = surrounding_vars(writer);
+  //string to_unroll = loops.back();
+
+
+}
+
+void infer_bounds_unrolled_test() {
+  prog prg("infer_bounds_unroll");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+  cpy("in", "in_oc", 2, prg);
+  cpy("out", "in", 2, prg);
+
+  infer_bounds("out", {32, 32}, prg);
+  unroll_producer_matching("out", 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
   assert(false);
 }
 
 void application_tests() {
+  infer_bounds_unrolled_test();
   llf_pyramid_test();
   llf_test();
   blur_example();
