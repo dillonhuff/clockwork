@@ -12732,17 +12732,36 @@ void unroll_producer_matching(const std::string& buf, const int unroll_factor, p
 }
 
 void infer_bounds_unrolled_test() {
-  prog prg("infer_bounds_unroll");
-  prg.add_input("in_oc");
-  prg.add_output("out");
-  cpy("in", "in_oc", 2, prg);
-  cpy("out", "in", 2, prg);
 
-  infer_bounds("out", {32, 32}, prg);
-  unroll_producer_matching("out", 4, prg);
+  vector<string> correct;
+  {
+    prog prg("infer_bounds_unroll");
+    prg.add_input("in_oc");
+    prg.add_output("out");
+    cpy("in", "in_oc", 2, prg);
+    cpy("out", "in", 2, prg);
+    infer_bounds("out", {32, 32}, prg);
 
-  prg.pretty_print();
-  prg.sanity_check();
+    correct = unoptimized_result(prg);
+  }
+
+  vector<string> actual;
+  {
+    prog prg("infer_bounds_unroll");
+    prg.add_input("in_oc");
+    prg.add_output("out");
+    cpy("in", "in_oc", 2, prg);
+    cpy("out", "in", 2, prg);
+
+    infer_bounds("out", {32, 32}, prg);
+    unroll_producer_matching("out", 4, prg);
+    merge_basic_block_ops(prg);
+
+    actual = unoptimized_result(prg);
+  }
+
+  compare("strip_mine_unroll_test", correct, actual);
+
   assert(false);
 }
 
