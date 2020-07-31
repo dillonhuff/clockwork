@@ -11143,8 +11143,12 @@ void lake_agg_sram_tb_config_test() {
     //assert(found);
 
     for (auto locs_written : op->produce_locs) {
+    //for (auto locs_written : op->write_addrs()) {
+      //assert(locs_written.size() == 1);
+      //auto loc_sec = locs_written.at(0).second;
       out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
       isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
+      //isl_aff* write_addr = get_aff_addr(op, locs_written.first, loc_sec, lake_agg);
       out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
       for (int d = 0; d < num_in_dims(write_addr); d++) {
         int ldim = num_in_dims(write_addr) - d - 1;
@@ -12757,6 +12761,34 @@ void unroll_producer_matching(const std::string& buf, const int unroll_factor, p
   }
 }
 
+void infer_uneven_bounds_test() {
+  prog prg("infer_bounds_unroll");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+  cpy("in", "in_oc", 2, prg);
+
+  auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+  auto init = lp->add_op(prg.un("init"));
+  init->add_store("c", "x, y");
+  init->add_function("set_zero_32");
+  auto red = lp->add_nest("ry", 0, 3, "rx", 0, 3)->add_op(prg.un("r"));
+  red->add_load("c", "x, y");
+  red->add_load("in", "x + rx, y + ry");
+  red->add_store("c", "x, y");
+  red->add_function("fma");
+
+  cpy("out", "c", 2, prg);
+  infer_bounds("out", {16, 16}, prg);
+  unroll_reduce_loops(prg);
+  //unroll_producer_matching("out", 4, prg);
+  merge_basic_block_ops(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  assert(false);
+}
+
 void infer_bounds_unrolled_test() {
 
   vector<string> correct;
@@ -12791,6 +12823,7 @@ void infer_bounds_unrolled_test() {
 }
 
 void application_tests() {
+  infer_uneven_bounds_test();
   llf_pyramid_test();
   infer_bounds_unrolled_test();
   llf_test();

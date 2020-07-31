@@ -1248,10 +1248,14 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
 
-  for (auto consumed : op->produce_locs) {
-    if (contains_key(consumed.first, buffers)) {
-      decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
+  //for (auto consumed : op->produce_locs) {
+  for (auto consumed : op->buffers_written()) {
+    if (contains_key(consumed, buffers)) {
+      decls.push_back(buffers.at(consumed).bundle_type_string(op->name) + "& " + consumed);
     }
+    //if (contains_key(consumed.first, buffers)) {
+      //decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
+    //}
   }
   out << "void " << name << sep_list(decls, "(", ")", ", ") << "{}";
   out.close();
@@ -3328,18 +3332,18 @@ std::set<string> get_producers(string next_kernel, prog& prg) {
 }
 
 
-  void ir_node::copy_fields_from(op* other){
-	name = other->name;
-	start = other -> start;
-	end_exclusive = other -> end_exclusive;
-	produce_locs = other -> produce_locs;
-	unroll_factor = other -> unroll_factor;
-	dynamic_store_addresses = other -> dynamic_store_addresses;
-	consume_locs_pair = other -> consume_locs_pair;
-	dynamic_load_addresses = other -> dynamic_load_addresses;
-	index_variables_needed_by_compute = other -> index_variables_needed_by_compute;
-	func = other -> func;
-  }
+void ir_node::copy_fields_from(op* other){
+  name = other->name;
+  start = other -> start;
+  end_exclusive = other -> end_exclusive;
+  produce_locs = other -> produce_locs;
+  unroll_factor = other -> unroll_factor;
+  dynamic_store_addresses = other -> dynamic_store_addresses;
+  consume_locs_pair = other -> consume_locs_pair;
+  dynamic_load_addresses = other -> dynamic_load_addresses;
+  index_variables_needed_by_compute = other -> index_variables_needed_by_compute;
+  func = other -> func;
+}
 
 void deep_copy_child(op* dest, op* source, prog& original){
 	op* kernel_copy;
@@ -3719,7 +3723,7 @@ void ir_node::copy_memory_operations_from(op* other) {
     }  else {
     }
   }
-  //concat(produce_locs, other->produce_locs);
+
   concat(dynamic_store_addresses, other->dynamic_store_addresses);
   for (auto pl : other->consume_locs_pair) {
     pair<string, piecewise_address> simpl{pl.first, remove_whitespace(pl.second)};
