@@ -52,7 +52,7 @@ void compare(const std::string& name,
   for (size_t i = 0; i < unoptimized_res.size(); i++) {
 
     if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
-      cout << "Error: After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
+      cout << "Error in " << name << ": After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
       cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
       cout << "\toptimized   = " << optimized_res.at(i) << endl;
       assert(unoptimized_res.at(i) == optimized_res.at(i));

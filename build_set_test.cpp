@@ -12761,8 +12761,8 @@ void infer_bounds_unrolled_test() {
 }
 
 void application_tests() {
-  infer_bounds_unrolled_test();
   llf_pyramid_test();
+  infer_bounds_unrolled_test();
   llf_test();
   blur_example();
   //assert(false);
