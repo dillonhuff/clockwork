@@ -12452,10 +12452,41 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
         pair<string, address> wa{b, remove_whitespace(ar.at(0).second)};
         if (!elem(wa, cu.waddrs)) {
           cu.waddrs.push_back(wa);
-          cu.output_producers.push_back(op);
         }
       }
     }
+  }
+
+  auto rev_children = cu.operations;
+  reverse(rev_children);
+
+  for (auto w : cu.waddrs) {
+
+    bool found_last_writer = false;
+    for (auto op : rev_children) {
+      for (auto b : op->buffers_written()) {
+        if (b == w.first) {
+          for (auto ar : op->write_addrs(b)) {
+            pair<string, address> wa{b, remove_whitespace(ar.at(0).second)};
+            if (wa == w) {
+              cout << "Found last writer" << endl;
+              cu.output_producers.push_back(op);
+              found_last_writer = true;
+              break;
+            }
+          }
+        }
+        if (found_last_writer) {
+          break;
+        }
+      }
+
+      if (found_last_writer) {
+        break;
+      }
+    }
+
+    assert(found_last_writer);
   }
 
   return cu;
