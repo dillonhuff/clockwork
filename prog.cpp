@@ -2639,6 +2639,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
     optimized_streams.push_back(bundle);
   }
+
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
@@ -2734,9 +2735,18 @@ void generate_regression_testbench(prog& prg) {
   //vector<string> unoptimized_streams;
   vector<string> optimized_streams;
   for (auto in : prg.ins) {
-    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
+    auto readers = find_readers(in, prg);
+    int width = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->read_addrs(in)) {
+        width += prg.buffer_port_width(in);
+      }
+    }
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << in << ";" << endl;
+    //rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
     optimized_streams.push_back(in);
   }
+
   for (auto out : prg.outs) {
     rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
     optimized_streams.push_back(out);
