@@ -48,9 +48,7 @@ struct ir_node {
   // Operation fields
   std::string name;
   // Locations written
-  protected:
   std::vector<pair<buffer_name, address> > produce_locs;
-  public:
   std::vector<dynamic_address> dynamic_store_addresses;
 
   // Locations read

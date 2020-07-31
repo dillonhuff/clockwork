@@ -1327,7 +1327,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   auto domains = prg.domains();
   for (auto op : prg.all_ops()) {
 
-    cout << "# of produced locations: " << op->produce_locs.size() << endl;
+    //cout << "# of produced locations: " << op->produce_locs.size() << endl;
     for (auto produced : op->produce_locs) {
       string name = produced.first;
 
