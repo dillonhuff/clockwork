@@ -92,6 +92,25 @@ void ocl_headers(ostream& out) {
   out << "#include <cstdlib>" << endl << endl;
 }
 
+void
+pack_bv(const int indent,
+    ostream& conv_out,
+    const string& value,
+    const std::vector<string>& lanes,
+    const int lane_width) {
+
+  int nlanes = lanes.size();
+
+  conv_out << tab(indent) << "hw_uint<" << lane_width*nlanes << " > " << value << ";" << endl;
+  int total_width = nlanes*lane_width;
+  for (int i = 0; i < nlanes; i++) {
+    string ln = lanes.at(i);
+    int base = i*lane_width;
+    conv_out << tab(indent)
+      << "set_at<" << base << ", " << total_width << ", " << lane_width << ">(" << value << ", " << ln << ");" << endl;
+  }
+}
+
 vector<string>
 split_bv(const int indent,
     ostream& conv_out,

@@ -1514,6 +1514,13 @@ void release(prog& prg);
 void unroll_reduce_loops(prog& prg);
 
 
+void
+pack_bv(const int indent,
+    ostream& conv_out,
+    const string& value,
+    const std::vector<string>& lanes,
+    const int lane_width);
+
 vector<string>
 split_bv(const int indent,
     ostream& conv_out,

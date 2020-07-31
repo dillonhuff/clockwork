@@ -12376,6 +12376,7 @@ struct compute_unit_internals {
   vector<op*> operations;
   map<op*, string> result_names;
   map<op*, vector<cu_val> > arg_names;
+  vector<op*> output_producers;
 
   map<op*, map<string, map<address, string> > > res_names;
   vector<pair<buffer_name, piecewise_address> > raddrs;
@@ -12451,35 +12452,12 @@ compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
         pair<string, address> wa{b, remove_whitespace(ar.at(0).second)};
         if (!elem(wa, cu.waddrs)) {
           cu.waddrs.push_back(wa);
+          cu.output_producers.push_back(op);
         }
       }
     }
   }
 
-
-  //std::set<string> buffers_read;
-
-  //for (auto c : loop->children) {
-    //for (auto b : c->buffers_read()) {
-      //buffers_read.insert(b);
-      //for (auto r : c->read_addrs(b)) {
-        //pair<buffer_name, piecewise_address> na = {b, remove_whitespace(r)};
-        //if (!elem(na, cu.raddrs)) {
-          //cu.raddrs.push_back(na);
-        //}
-      //}
-    //}
-  //}
-
-  //for (auto r : buffers_read) {
-    //int num_lanes = 0;
-    //for (auto ra : raddrs) {
-      //if (ra.first == r) {
-        //num_lanes++;
-      //}
-    //}
-    //cu.args.push_back("hw_uint<32*" + str(addrs.size()) + ">& " + r);
-  //}
   return cu;
 }
 
@@ -12515,7 +12493,13 @@ void merge_basic_block_ops(prog& prg) {
 
       // Output should be the result names for all ops with a distinct write addr?
       //child_calls.push_back("return " + last_res + ";");
-      child_calls.push_back("return 0;");
+
+      vector<string> prods;
+      for (auto prod : compute_unit.output_producers) {
+        prods.push_back(map_find(prod, compute_unit.result_names));
+      }
+
+      string rname = prg.un("return_value");
       assert(last_res != "");
 
       int write_width = 0;
@@ -12530,6 +12514,8 @@ void merge_basic_block_ops(prog& prg) {
 
       out << "\n\t" << endl;
       out << sep_list(child_calls, "", "", "\n\t");
+      pack_bv(1, out, rname, prods, 32);
+      out << tab(1) << "return " << rname << ";" << endl;
       out << endl;
       out << "}" << endl << endl;
 
