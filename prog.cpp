@@ -2516,11 +2516,11 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
 
   auto buffers = build_buffers(prg, sched);
 
-  cout << "Buffers..." << endl;
-  for (auto b : buffers) {
-    //b.second.generate_bank_and_merge(options);
-    cout << b.second << endl;
-  }
+  //cout << "Buffers..." << endl;
+  //for (auto b : buffers) {
+    ////b.second.generate_bank_and_merge(options);
+    //cout << b.second << endl;
+  //}
 
   assert(prg.compute_unit_file != "");
   cout << "Compute unit file: " << prg.compute_unit_file << endl;
