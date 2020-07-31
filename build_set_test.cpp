@@ -12405,7 +12405,9 @@ struct compute_unit_internals {
 
 simplified_addr simplify(const piecewise_address& ar) {
   simplified_addr sa = "";
-
+  for (auto piece : ar) {
+    sa += brackets(remove_whitespace(piece.first) + " ? " + remove_whitespace(piece.second));
+  }
   return sa;
 }
 
@@ -12510,13 +12512,19 @@ void merge_basic_block_ops(prog& prg) {
         child_calls.push_back(cc.str());
         last_res = map_find(c, compute_unit.result_names);
       }
+
+      // Output should be the result names for all ops with a distinct write addr?
       child_calls.push_back("return " + last_res + ";");
       assert(last_res != "");
 
-      out << "hw_uint<32> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
+      int write_width = 0;
+      for (auto w : compute_unit.waddrs) {
+        write_width += prg.buffer_port_width(w.first);
+      }
+
+      out << "hw_uint<" << write_width << "> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
       for (auto r : compute_unit.buffers_read()) {
         split_bv(1, out, r, prg.buffer_port_width(r), compute_unit.num_lanes(r));
-        //args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
       }
 
       out << "\n\t" << endl;
