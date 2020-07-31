@@ -2748,7 +2748,15 @@ void generate_regression_testbench(prog& prg) {
   }
 
   for (auto out : prg.outs) {
-    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
+    auto readers = find_writers(out, prg);
+    int width = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->write_addrs(out)) {
+        width += prg.buffer_port_width(out);
+      }
+    }
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << out << ";" << endl;
+    //rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
     optimized_streams.push_back(out);
   }
 
@@ -4156,6 +4164,17 @@ std::set<string> all_buffers(prog& prg){
 	return buffers;
 }
 
+std::set<op*> find_writers(const string& buff, prog& prg){
+	std::set<op*> readers;
+
+	for(auto op : prg.all_ops()){
+		if(elem(buff, op->buffers_written())){
+			readers.insert(op);
+		}
+	}
+
+	return readers;
+}
 std::set<op*> find_readers(const string& buff, prog& prg){
 	std::set<op*> readers;
 

@@ -1531,3 +1531,5 @@ split_bv(const int indent,
 pair<std::string, std::string> remove_whitespace(const pair<std::string, std::string>& addr);
 std::string remove_whitespace(const std::string& addr);
 piecewise_address remove_whitespace(const piecewise_address& addr);
+
+std::set<op*> find_writers(const string& buff, prog& prg);
