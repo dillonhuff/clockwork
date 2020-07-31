@@ -3759,8 +3759,19 @@ string simplify_address_component(const std::string& addr_comp_orig) {
 }
 
 address
+replace_variable(const address& addr, const std::string& var, const std::string& val) {
+  vector<string> comps = split_at(addr, ",");
+  vector<string> new_addr;
+  for (auto c : comps) {
+    cout << tab(1) << c << endl;
+    new_addr.push_back(simplify_address_component(ReplaceString(c, var, val)));
+  }
+  return comma_list(new_addr);
+}
+
+address
 replace_variable(const address& addr, const std::string& var, const int v) {
-  cout << "addr = " << addr << endl;
+
   vector<string> comps = split_at(addr, ",");
   vector<string> new_addr;
   for (auto c : comps) {
@@ -3770,6 +3781,22 @@ replace_variable(const address& addr, const std::string& var, const int v) {
   return comma_list(new_addr);
 }
 
+void ir_node::replace_variable(const std::string& var, const std::string& val) {
+
+  for (auto& addr : produce_locs) {
+    addr.second =
+      ::replace_variable(addr.second, var, val);
+  }
+
+  for (auto& addr : consume_locs_pair) {
+    piecewise_address pw;
+    for (auto& comp : addr.second) {
+      pw.push_back({comp.first, ::replace_variable(comp.second, var, val)});
+    }
+    addr.second = pw;
+  }
+
+}
 void ir_node::replace_variable(const std::string& var, const int val) {
 
   for (auto& addr : produce_locs) {

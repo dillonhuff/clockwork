@@ -71,6 +71,7 @@ struct ir_node {
   void copy_fields_from(op* other);
   void copy_memory_operations_from(op* other);
   void replace_variable(const std::string& var, const int val);
+  void replace_variable(const std::string& var, const std::string& val);
 
   void delete_child(op* c) {
     vector<op*> new_children;

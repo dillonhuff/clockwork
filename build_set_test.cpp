@@ -12704,7 +12704,10 @@ void strip_mine(const int factor, op* loop, prog& prg) {
   // Remove the strip mined loop
   children.pop_back();
 
+  string index =
+    parens(str(factor) + "*" + loop->name + " + " + inner->name);
   for (auto c : children) {
+    c->replace_variable(loop->name, index);
     inner->children.push_back(c);
   }
 
@@ -12716,18 +12719,16 @@ void strip_mine(const int factor, op* loop, prog& prg) {
 
 void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg) {
   std::set<op*> inner_loops = get_inner_loops(prg);
-
   for (auto loop : inner_loops) {
     int tc = loop->trip_count();
     assert(tc % unroll_factor == 0);
     strip_mine(unroll_factor, loop, prg);
   }
 
-  //op* writer = find_writer(buf);
-  //vector<string> loops = surrounding_vars(writer);
-  //string to_unroll = loops.back();
-
-
+  std::set<op*> new_inner_loops = get_inner_loops(prg);
+  for (auto loop : new_inner_loops) {
+    unroll(prg, loop->name);
+  }
 }
 
 void infer_bounds_unrolled_test() {
