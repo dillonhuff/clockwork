@@ -1536,3 +1536,67 @@ std::set<op*> find_writers(const string& buff, prog& prg);
 
 
 void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog& prg);
+
+
+void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg);
+
+void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg);
+
+void strip_mine(const int factor, op* loop, prog& prg);
+
+
+typedef std::string simplified_addr;
+
+struct cu_val {
+  bool is_arg;
+  string name;
+  int arg_buf_pos;
+
+  std::string str() const {
+    if (is_arg) {
+      return name + "_lane_" + ::str(arg_buf_pos);
+    } else {
+      return name;
+    }
+  }
+};
+
+struct compute_unit_internals {
+  std::string name;
+  vector<op*> operations;
+  map<op*, string> result_names;
+  map<op*, vector<cu_val> > arg_names;
+  vector<op*> output_producers;
+
+  map<op*, map<string, map<address, string> > > res_names;
+  vector<pair<buffer_name, piecewise_address> > raddrs;
+  vector<pair<buffer_name, address> > waddrs;
+
+  vector<string> buffers_read() {
+    vector<string> br;
+    for (auto b : raddrs) {
+      if (!elem(b.first, br)) {
+        br.push_back(b.first);
+      }
+    }
+    return br;
+  }
+
+  int num_lanes(const std::string& buf) {
+    int cnt = 0;
+    for (auto b : raddrs) {
+      if (b.first == buf) {
+        cnt++;
+      }
+    }
+    return cnt;
+  }
+
+};
+
+simplified_addr simplify(const piecewise_address& ar);
+
+
+void merge_basic_block_ops(prog& prg);
+
+std::set<op*> get_inner_loops(prog& prg);

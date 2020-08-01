@@ -4455,3 +4455,245 @@ piecewise_address remove_whitespace(const piecewise_address& addr) {
 pair<std::string, std::string> remove_whitespace(const pair<std::string, std::string>& addr) {
   return {remove_whitespace(addr.first), remove_whitespace(addr.second)};
 }
+
+void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg) {
+
+  infer_bounds("out", {16, 16}, prg);
+  extend_bounds_to_multiple_of(4, "out", prg);
+  unroll_reduce_loops(prg);
+  unroll_producer_matching("out", 4, prg);
+  merge_basic_block_ops(prg);
+
+}
+
+void strip_mine(const int factor, op* loop, prog& prg) {
+  assert(loop->is_loop);
+  assert(loop->trip_count() % factor == 0);
+
+  int original_trip_count = loop->trip_count();
+  int new_tc = loop->trip_count() / factor;
+  int new_start = loop->start;
+
+  auto inner = loop->add_loop(prg.un("sm"), 0, factor);
+  loop->start = new_start;
+  loop->end_exclusive = new_tc;
+
+  auto children = loop->children;
+  // Remove the strip mined loop
+  children.pop_back();
+
+  string index =
+    parens(str(factor) + "*" + loop->name + " + " + inner->name);
+  for (auto c : children) {
+    c->replace_variable(loop->name, index);
+    inner->children.push_back(c);
+  }
+
+  loop->children = {};
+  loop->children.push_back(inner);
+
+  assert(inner->trip_count() * loop->trip_count() == original_trip_count);
+}
+
+void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg) {
+  std::set<op*> inner_loops = get_inner_loops(prg);
+  for (auto loop : inner_loops) {
+    int tc = loop->trip_count();
+    assert(tc % unroll_factor == 0);
+    strip_mine(unroll_factor, loop, prg);
+  }
+
+  std::set<op*> new_inner_loops = get_inner_loops(prg);
+  for (auto loop : new_inner_loops) {
+    unroll(prg, loop->name);
+  }
+}
+
+simplified_addr simplify(const piecewise_address& ar) {
+  simplified_addr sa = "";
+  for (auto piece : ar) {
+    sa += brackets(remove_whitespace(piece.first) + " ? " + remove_whitespace(piece.second));
+  }
+  return sa;
+}
+
+compute_unit_internals compound_compute_unit(op* loop, prog& prg) {
+  compute_unit_internals cu;
+  cu.name = prg.un(loop->name + "_cu");
+  cu.operations = loop->children;
+
+  for (auto op : cu.operations) {
+    string name = "res_" + op->name;
+    cu.result_names[op] = name;
+  }
+
+  map<simplified_addr, cu_val> addr_sources;
+  for (auto op : cu.operations) {
+    cu.arg_names[op] = {};
+
+    for (auto b : op->buffers_read()) {
+      for (auto ar : op->read_addrs(b)) {
+        simplified_addr as = simplify(ar);
+        as = b + brackets(as);
+        if (contains_key(as, addr_sources)) {
+          auto val = addr_sources[as];
+          cu.arg_names[op].push_back(val);
+        } else {
+          int index = cu.num_lanes(b);
+          cu.arg_names[op].push_back({true, b, index});
+          cu.raddrs.push_back({b, ar});
+        }
+      }
+    }
+
+    for (auto b : op->buffers_written()) {
+      // Update addr_sources
+      for (auto ar : op->write_addrs(b)) {
+        auto as = simplify(ar);
+        as = b + brackets(as);
+        addr_sources[as] = {false, map_find(op, cu.result_names)};
+
+        assert(ar.size() == 1);
+        pair<string, address> wa{b, remove_whitespace(ar.at(0).second)};
+        if (!elem(wa, cu.waddrs)) {
+          cu.waddrs.push_back(wa);
+        }
+      }
+    }
+  }
+
+  auto rev_children = cu.operations;
+  reverse(rev_children);
+
+  for (auto w : cu.waddrs) {
+
+    bool found_last_writer = false;
+    for (auto op : rev_children) {
+      for (auto b : op->buffers_written()) {
+        if (b == w.first) {
+          for (auto ar : op->write_addrs(b)) {
+            pair<string, address> wa{b, remove_whitespace(ar.at(0).second)};
+            if (wa == w) {
+              cout << "Found last writer" << endl;
+              cu.output_producers.push_back(op);
+              found_last_writer = true;
+              break;
+            }
+          }
+        }
+        if (found_last_writer) {
+          break;
+        }
+      }
+
+      if (found_last_writer) {
+        break;
+      }
+    }
+
+    assert(found_last_writer);
+  }
+
+  return cu;
+}
+
+void merge_basic_block_ops(prog& prg) {
+  std::set<op*> inner_loops = get_inner_loops(prg);
+
+  string new_compute_file = prg.name + "_merged_compute_units.h";
+
+  ofstream out(new_compute_file);
+  out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+
+  for (auto loop : inner_loops) {
+    if (loop->children.size() > 1) {
+      auto compute_unit = compound_compute_unit(loop, prg);
+
+      vector<string> args;
+      for (auto r : compute_unit.buffers_read()) {
+        args.push_back("hw_uint<32*" + str(compute_unit.num_lanes(r)) + ">& " + r);
+      }
+
+      vector<string> child_calls;
+      string last_res = "";
+      for (auto c : compute_unit.operations) {
+        ostringstream cc;
+        vector<string> arg_names;
+        for (auto entry : map_find(c, compute_unit.arg_names)) {
+          arg_names.push_back(entry.str());
+        }
+        cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
+        child_calls.push_back(cc.str());
+        last_res = map_find(c, compute_unit.result_names);
+      }
+
+      // Output should be the result names for all ops with a distinct write addr?
+      //child_calls.push_back("return " + last_res + ";");
+
+      vector<string> prods;
+      for (auto prod : compute_unit.output_producers) {
+        prods.push_back(map_find(prod, compute_unit.result_names));
+      }
+
+      string rname = prg.un("return_value");
+      assert(last_res != "");
+
+      int write_width = 0;
+      for (auto w : compute_unit.waddrs) {
+        write_width += prg.buffer_port_width(w.first);
+      }
+
+      out << "hw_uint<" << write_width << "> " << compute_unit.name << "(" << comma_list(args) << ") {" << endl;
+      for (auto r : compute_unit.buffers_read()) {
+        split_bv(1, out, r, prg.buffer_port_width(r), compute_unit.num_lanes(r));
+      }
+
+      out << "\n\t" << endl;
+      out << sep_list(child_calls, "", "", "\n\t");
+      pack_bv(1, out, rname, prods, 32);
+      out << tab(1) << "return " << rname << ";" << endl;
+      out << endl;
+      out << "}" << endl << endl;
+
+      for (auto c : compute_unit.operations) {
+        loop->delete_child(c);
+      }
+      assert(loop->children.size() == 0);
+
+      auto merged = loop->add_op(prg.un(loop->name + "_merged"));
+      for (auto a : compute_unit.raddrs) {
+        merged->add_load(a.first, a.second);
+      }
+      for (auto a : compute_unit.waddrs) {
+        merged->add_store(a.first, a.second);
+      }
+      merged->add_function(compute_unit.name);
+    }
+  }
+
+  out.close();
+
+  prg.compute_unit_file = new_compute_file;
+
+}
+
+std::set<op*> get_inner_loops(prog& prg) {
+  std::set<op*> inner;
+  //vector<string> ivars = prg.iter_vars();
+  for (auto lp_pair : get_variable_levels(prg)) {
+    bool all_children_ops = true;
+    string vr = lp_pair.first;
+    auto v = prg.find_loop(vr);
+    for (auto c : v->children) {
+      if (c->is_loop) {
+        all_children_ops = false;
+        break;
+      }
+    }
+    if (all_children_ops) {
+      inner.insert(v);
+    }
+  }
+  return inner;
+}
+
