@@ -4496,6 +4496,9 @@ void strip_mine(const int factor, op* loop, prog& prg) {
 }
 
 map<string, int> compute_unroll_factors(const std::string& buf, const int unroll_factor, prog& prg) {
+
+  prg.pretty_print();
+
   umap* deps = pad_map(prg.validity_deps());
   cout << "Done padding validity deps" << endl;
   auto umaps = get_maps(deps);
@@ -4511,11 +4514,24 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
     cout << tab(1) << q.first << " -> " << str(q.second) << endl;
   }
 
-  assert(false);
+  auto writers = find_writers(buf, prg);
+  cout << "Writers of " << buf << endl;
+  for (auto w : writers) {
+    cout << tab(1) << w->name << endl;
+    assert(!w->is_loop);
+  }
+  string src = pick(writers)->name;
+  cout << "src = " << src << endl;
+  int src_q = to_int(map_find("s_" + src, qfs));
+  cout << "src_q = " << src_q << endl;
+
+  //assert(false);
   map<string, int> factors;
   std::set<op*> inner_loops = get_inner_loops(prg);
   for (auto loop : inner_loops) {
-    factors[loop->name] = unroll_factor;
+    auto op = pick(loop->children);
+    int qf = to_int(map_find("s_" + op->name, qfs));
+    factors[loop->name] = ceil(unroll_factor / qf);
   }
 
   return factors;
