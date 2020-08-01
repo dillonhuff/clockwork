@@ -12799,6 +12799,8 @@ void infer_uneven_bounds_test() {
   //  - Fold bounds inference into rolling
   infer_bounds("out", {16, 16}, prg);
   extend_bounds_to_multiple_of(4, "out", prg);
+  prg.pretty_print();
+  assert(false);
   unroll_reduce_loops(prg);
   unroll_producer_matching("out", 4, prg);
   merge_basic_block_ops(prg);

@@ -4140,6 +4140,7 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
       int ub = to_int(lexmaxval(pr)) + 1;
       int_bounds_for_s.push_back(ub - lb);
     }
+    int_bounds_for_s = extend_bounds_to_multiple(factor, name(bound_set), prg);
     prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
     bounded.insert(name(bound_set));
   }
