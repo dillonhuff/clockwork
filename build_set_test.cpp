@@ -12776,11 +12776,31 @@ void infer_uneven_bounds_test() {
   red->add_load("in", "x + rx, y + ry");
   red->add_store("c", "x, y");
   red->add_function("fma");
-
   cpy("out", "c", 2, prg);
+
+  // For unrolled bounds what do I
+  // want to do?
+  // What is the problem?
+  // The problem is that I want to be
+  // able to unroll inner loops in the program
+  // by factors that do not evenly divide
+  // the trip count of the inner loop.
+  //
+  // Misc: What if the innermost loop is
+  // actually very small relative to the
+  // unroll factor, unroll_factor > innermost
+  // bound? Have to unroll outer loops until
+  // the number of writes in the unrolled body
+  // is larger than the unroll factor
+  //
+  // Possible solutions:
+  //  - Re-infer bounds when the user
+  //    requests unrolling?
+  //  - Fold bounds inference into rolling
   infer_bounds("out", {16, 16}, prg);
+  extend_bounds_to_multiple_of(4, "out", prg);
   unroll_reduce_loops(prg);
-  //unroll_producer_matching("out", 4, prg);
+  unroll_producer_matching("out", 4, prg);
   merge_basic_block_ops(prg);
 
   prg.pretty_print();

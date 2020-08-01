@@ -1533,3 +1533,6 @@ std::string remove_whitespace(const std::string& addr);
 piecewise_address remove_whitespace(const piecewise_address& addr);
 
 std::set<op*> find_writers(const string& buff, prog& prg);
+
+
+void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog& prg);
