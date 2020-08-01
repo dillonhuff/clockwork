@@ -4458,10 +4458,10 @@ pair<std::string, std::string> remove_whitespace(const pair<std::string, std::st
 
 void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg) {
 
-  infer_bounds("out", {16, 16}, prg);
-  extend_bounds_to_multiple_of(4, "out", prg);
+  infer_bounds(out, bounds, prg);
+  extend_bounds_to_multiple_of(unroll_factor, out, prg);
   unroll_reduce_loops(prg);
-  unroll_producer_matching("out", 4, prg);
+  unroll_producer_matching(out, unroll_factor, prg);
   merge_basic_block_ops(prg);
 
 }
@@ -4496,6 +4496,22 @@ void strip_mine(const int factor, op* loop, prog& prg) {
 }
 
 map<string, int> compute_unroll_factors(const std::string& buf, const int unroll_factor, prog& prg) {
+  umap* deps = pad_map(prg.validity_deps());
+  cout << "Done padding validity deps" << endl;
+  auto umaps = get_maps(deps);
+  vector<isl_map*> projected_deps;
+  for (auto m : umaps) {
+    isl_map* projected = project_all_but(m, 0);
+    projected_deps.push_back(projected);
+  }
+  cout << "Computing qfactors..." << endl;
+  map<string, isl_val*> qfs = compute_qfactors(projected_deps);
+  cout << "Got qfactors..." << endl;
+  for (auto q : qfs) {
+    cout << tab(1) << q.first << " -> " << str(q.second) << endl;
+  }
+
+  assert(false);
   map<string, int> factors;
   std::set<op*> inner_loops = get_inner_loops(prg);
   for (auto loop : inner_loops) {
