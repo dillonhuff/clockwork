@@ -12504,6 +12504,7 @@ void infer_uneven_bounds_test() {
   prg.sanity_check();
 
   regression_test(prg);
+  assert(false);
 }
 
 void infer_bounds_unrolled_test() {

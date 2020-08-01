@@ -4495,12 +4495,25 @@ void strip_mine(const int factor, op* loop, prog& prg) {
   assert(inner->trip_count() * loop->trip_count() == original_trip_count);
 }
 
-void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg) {
+map<string, int> compute_unroll_factors(const std::string& buf, const int unroll_factor, prog& prg) {
+  map<string, int> factors;
   std::set<op*> inner_loops = get_inner_loops(prg);
   for (auto loop : inner_loops) {
+    factors[loop->name] = unroll_factor;
+  }
+
+  return factors;
+}
+
+void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg) {
+  std::set<op*> inner_loops = get_inner_loops(prg);
+  std::map<string, int> unroll_factors =
+    compute_unroll_factors(buf, unroll_factor, prg);
+  for (auto loop : inner_loops) {
+    int factor = map_find(loop->name, unroll_factors);
     int tc = loop->trip_count();
-    assert(tc % unroll_factor == 0);
-    strip_mine(unroll_factor, loop, prg);
+    assert(tc % factor == 0);
+    strip_mine(factor, loop, prg);
   }
 
   std::set<op*> new_inner_loops = get_inner_loops(prg);
@@ -4679,7 +4692,6 @@ void merge_basic_block_ops(prog& prg) {
 
 std::set<op*> get_inner_loops(prog& prg) {
   std::set<op*> inner;
-  //vector<string> ivars = prg.iter_vars();
   for (auto lp_pair : get_variable_levels(prg)) {
     bool all_children_ops = true;
     string vr = lp_pair.first;
