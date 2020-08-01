@@ -4103,6 +4103,9 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
         auto pr = project_all_but(loop_bounds, i);
         int lb = to_int(lexminval(pr));
         int ub = to_int(lexmaxval(pr)) + 1;
+        if (val == wvs.front()) {
+          ub = nearest_larger_multiple_of(factor, ub);
+        }
         prg.extend_bounds(val, lb, ub);
       }
     }
