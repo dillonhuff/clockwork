@@ -4763,7 +4763,17 @@ isl_set* iteration_domain(op* loop, prog& prg) {
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
   auto reads = read_at(loop->name, b, prg);
   isl_map* m = nullptr;
-  for (auto r : get_maps(reads)) {
+  auto level = map_find(loop->name, get_variable_levels(prg));
+
+  for (auto rm : get_maps(reads)) {
+    int base = num_in_dims(rm) - 1;
+    assert(base >= level);
+    int diff = base - level;
+    auto r = rm;
+    if (diff != 0) {
+      cout << "Projecting out " << diff << " levels from " << str(r) << endl;
+      r = isl_map_project_out(r, isl_dim_in, level + 1, diff);
+    }
     r = set_domain_name(r, level_name(loop->name));
     m = unn(m, r);
   }
