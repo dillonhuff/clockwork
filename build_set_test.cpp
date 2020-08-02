@@ -12621,7 +12621,12 @@ isl_set* iteration_domain(op* loop, prog& prg) {
   surrounding.push_back(loop->name);
 
   string dom = level_name(loop->name) + brackets(comma_list(surrounding));
-  string bound_str = curlies(dom);
+  vector<string> ranges;
+  for (auto l : surrounding) {
+    auto loop = prg.find_loop(l);
+    ranges.push_back(str(loop->start) + " <= " + loop->name + " < " + str(loop->end_exclusive));
+  }
+  string bound_str = curlies(dom + " : " + sep_list(ranges, "", "", " and "));
   isl_set* bounds = isl_set_read_from_str(prg.ctx, bound_str.c_str());
   return bounds;
 }
