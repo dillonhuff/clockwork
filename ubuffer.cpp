@@ -3262,30 +3262,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         auto op_sched = new_sched.at(::name(new_op_domain));
         cout << "op schedule: " << str(op_sched) << endl;
 
-        //TODO: need to figure out reuse
-        //isl_map* pad_trans = acc_pattern.pad_one_dim_to_dom(ctx, time_stamp);
-        //std::cout << "pad rewrite: " << str(pad_trans) << endl;
-
-        ////rewrite the sram out schedule
-        //if (port_width_per_bd > 2) {
-        //  rewrite_buf2op = dot(rewrite_buf2op, inv(pad_trans));
-        //  cout << "op schedule rewrite: " << str(delay_schedule_inner_most(op_sched, time_stamp)) << endl;
-        //  op_sched = delay_schedule_inner_most(op_sched, time_stamp);
-        //  op_sched = dot(pad_trans, op_sched);
-
-        //}
 
         op_sched_map[out_pt_name] = op_sched;
         rewrite_buf2op_map[out_pt_name] = rewrite_buf2op;
 
-        //auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_tb");
-        //if (port_width_per_bd > 2){
-        //    outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
-        //    outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
-        //}
-        //cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
-        //tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
-        //tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
       }
 
       add_vectorized_pt_to_ubuf(tb, rewrite_buf2op_map, op_sched_map, bd_name+"_tb_in", dim_id, fetch_width, false);
