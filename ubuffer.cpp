@@ -3202,11 +3202,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     cout << "in bundle  = " << in_bundle.size() << endl;
     cout << "out bundle = " << out_bundle.size() << endl;
     //Only test bundle size = 1
-    assert(in_bundle.size() == 1 && out_bundle.size() == 1);
+    //assert(in_bundle.size() == 1 && out_bundle.size() == 1);
 
     //produce naive schedule for the rewritten buffer
     map<string, isl_map*> new_sched =  produce_vectorized_schedule(pick(in_bundle), pick(out_bundle));
-    //assert(false);
+    assert(false);
 
     for (auto bd_name : in_bundle) {
       cout << "Vectorize input port bundle: " << bd_name << endl;

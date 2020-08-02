@@ -12317,9 +12317,10 @@ void lake_resnet_test() {
   }
 
   //auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
-  auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
+  //auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
+  auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
   opt.conditional_merge = false;
-  auto rewrite_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
+  auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
   for (auto it: post_proc_buffers) {
     cout << "\tpost: " << it.first << ": " << it.second << endl;
   }
@@ -12457,6 +12458,40 @@ void lake_identity_stream_autovec_test() {
   cmd("mkdir -p ./lake_controllers/identity_stream/");
   auto op_vec = emit_lake_config(buffers_opt, hsh, "./lake_controllers/identity_stream/");
   check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
+  //cmd("mkdir -p ./lake_stream/identity_stream/");
+  //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
+
+
+}
+
+void lake_dual_port_test() {
+  prog lake_agg("lake_agg_test");
+  lake_agg.add_input("in");
+  lake_agg.add_output("out");
+
+  int app_target_II = 1;
+  map<pair<string, string>, int> latency({{{"in2buf", "buf2out"}, 1}});
+
+  auto in2buf = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2buf");
+  in2buf->add_load("in", "a1, a0");
+  in2buf->add_store("buf", "a1, a0");
+
+  auto buf2out= lake_agg.add_nest("b1", 0, 8, "b0", 0, 8, "r", 0, 2)->add_op("buf2out");
+  buf2out->add_load("buf", "b1, b0");
+  buf2out->add_store("out", "b1, b0");
+
+  auto buffers_opt = build_buffers(lake_agg);
+  auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
+  cout << "\t optimized schedule map: " << str(new_opt_sched) << endl;
+  cout << codegen_c(new_opt_sched) << endl;
+
+  auto hsh = generate_hardware_schedule_heu(new_opt_sched, buffers_opt, latency, app_target_II);
+  cout << str(hsh) << endl;
+  cout << codegen_c(hsh) << endl;
+
+  cmd("mkdir -p ./lake_controllers/dual_port_test/");
+  auto op_vec = emit_lake_config(buffers_opt, hsh, "./lake_controllers/dual_port_test/");
+  //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
 
@@ -13931,11 +13966,12 @@ void application_tests() {
   //lake_identity_stream_SMT_test(16, 16, "16x16");
   //lake_identity_stream_SMT_test(20, 20, "20x20");
   //double_buffer_test();
-  lake_identity_stream_autovec_test();
+  //lake_identity_stream_autovec_test();
   //union_test();
-  lake_conv33_autovec_test();
-  lake_resnet_test();
+  //lake_conv33_autovec_test();
+  lake_dual_port_test();
   assert(false);
+  lake_resnet_test();
   resnet_test();
 
   llf_test();
