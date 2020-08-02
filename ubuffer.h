@@ -1592,12 +1592,15 @@ class UBuffer {
         return to_map(dot(origin_map, buf_map));
     }
 
+    umap* pad_dom_buf2op(AccessPattern , umap* , int);
+
+    isl_map* pad_dom_sched(AccessPattern , isl_map* , int);
 
     //change the input and output and return the agg and tb ubuffer stucture
     void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
 
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
-    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out);
+    int add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 

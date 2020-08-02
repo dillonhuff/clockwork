@@ -365,6 +365,18 @@ void compare_to_gold(const std::string& name, const std::string& gold_name) {
 }
 
 static inline
+void compare_to_gold_file(const std::string& name, const std::string& gold_name) {
+  std::ifstream t(name);
+  std::string test_str((std::istreambuf_iterator<char>(t)),
+      std::istreambuf_iterator<char>());
+
+  std::ifstream gold(gold_name);
+  std::string gold_str((std::istreambuf_iterator<char>(gold)),
+      std::istreambuf_iterator<char>());
+  assert(test_str == gold_str);
+}
+
+static inline
 void compare_to_gold(const std::string& name) {
   compare_to_gold(name, name);
 }

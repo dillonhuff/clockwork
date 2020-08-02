@@ -3018,19 +3018,39 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return new_sched;
   }
 
+  umap* UBuffer::pad_dom_buf2op(
+          AccessPattern acc_pattern,
+          umap* rewrite_buf2op,
+          int time_stamp) {
+    //TODO: need to figure out reuse
+    isl_map* pad_trans = acc_pattern.pad_one_dim_to_dom(ctx, time_stamp);
+    std::cout << "pad rewrite: " << str(pad_trans) << endl;
 
-  void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out) {
+    //rewrite the sram out schedule
+    rewrite_buf2op = dot(rewrite_buf2op, inv(pad_trans));
+    return rewrite_buf2op;
+  }
 
-    vector<umap*> ap_vec;
-    for (int i = 0; i < fetch_width; i ++) {
-      umap* merge_acc_pattern = isl_union_map_read_from_str(ctx, "{}");
-      ap_vec.push_back(merge_acc_pattern);
-    }
-    umap* merge_sched = isl_union_map_read_from_str(ctx, "{}");
+  isl_map* UBuffer::pad_dom_sched(
+          AccessPattern acc_pattern,
+          isl_map* op_sched,
+          int time_stamp) {
+    //TODO: need to figure out reuse
+    isl_map* pad_trans = acc_pattern.pad_one_dim_to_dom(ctx, time_stamp);
+    std::cout << "pad rewrite: " << str(pad_trans) << endl;
+
+    op_sched = delay_schedule_inner_most(op_sched, time_stamp);
+    op_sched = dot(pad_trans, op_sched);
+    return op_sched;
+  }
+
+
+  int UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out) {
+
+    //first round check how many port we need to have, do we need to coalesce scheduel
+    vector<int> access_cnt_per_port(fetch_width, 0);
     for (auto it: rewrite_buf2op_map) {
       string origin_pt_name = it.first;
-      auto sched = to_umap(sched_map.at(origin_pt_name));
-      merge_sched = coalesce(unn(sched, merge_sched));
       auto rewrite_buf2op = it.second;
       AccessPattern acc_pattern = AccessPattern(
           to_map(access_map.at(origin_pt_name)), ctx);
@@ -3040,15 +3060,55 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       for (auto slice: constraint_slices) {
           cout << "\t slice : " << str(slice) << endl;
         auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
-          cout << "\t single map: " << str(rewrite_access_map) << endl;
-          for (auto m : get_maps(rewrite_access_map)) {
-            for ( auto aff: get_aff_vec(m) )
-              cout << "\tbmap: " << str(aff) << endl;
-          }
-        ap_vec.at(slice_cnt) = coalesce(unn(ap_vec.at(slice_cnt), rewrite_access_map));
-          cout << "\t ap vec: " << str(ap_vec.at(slice_cnt)) << endl;
+        if (!empty(rewrite_access_map)) {
+          access_cnt_per_port.at(slice_cnt) ++;
+        }
+        cout << "\t single map: " << str(rewrite_access_map) << endl;
         slice_cnt ++;
       }
+    }
+    cout << "access per port" << access_cnt_per_port << endl;
+
+
+    vector<umap*> ap_vec;
+    vector<int> access_num_port(fetch_width, 0);
+    for (int i = 0; i < fetch_width; i ++) {
+      umap* merge_acc_pattern = isl_union_map_read_from_str(ctx, "{}");
+      ap_vec.push_back(merge_acc_pattern);
+    }
+    umap* merge_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it: rewrite_buf2op_map) {
+      string origin_pt_name = it.first;
+      auto sched = sched_map.at(origin_pt_name);
+      AccessPattern acc_pattern = AccessPattern(
+          to_map(access_map.at(origin_pt_name)), ctx);
+      auto constraint_slices =
+        acc_pattern.get_buf_slice(ctx, target_buf.name, dim_id, fetch_width);
+      int slice_cnt = 0;
+      if (pick(access_cnt_per_port) > 1) {
+        sched = pad_dom_sched(acc_pattern, sched, pick(access_num_port));
+      }
+      for (auto slice: constraint_slices) {
+        cout << "\t slice : " << str(slice) << endl;
+        auto rewrite_buf2op = it.second;
+        if (access_cnt_per_port.at(slice_cnt) > 1) {
+        rewrite_buf2op = pad_dom_buf2op(acc_pattern, rewrite_buf2op, access_num_port.at(slice_cnt));
+        }
+        cout << "rewrite buf2op: " << str(rewrite_buf2op) << endl;
+        auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
+        if (!empty(rewrite_access_map)) {
+          access_num_port.at(slice_cnt) ++;
+        }
+        cout << "\t single map: " << str(rewrite_access_map) << endl;
+        for (auto m : get_maps(rewrite_access_map)) {
+          for ( auto aff: get_aff_vec(m) )
+            cout << "\tbmap: " << str(aff) << endl;
+        }
+        ap_vec.at(slice_cnt) = coalesce(unn(ap_vec.at(slice_cnt), rewrite_access_map));
+        cout << "\t ap vec: " << str(ap_vec.at(slice_cnt)) << endl;
+        slice_cnt ++;
+      }
+      merge_sched = coalesce(unn(to_umap(sched), merge_sched));
     }
 
     string origin_pt_name = pick(rewrite_buf2op_map).first;
@@ -3079,6 +3139,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
     }
+    return pick(access_cnt_per_port);
   }
 
   void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out) {
@@ -3180,7 +3241,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     for (auto bd_name: out_bundle) {
       cout << "Vectorize output port bundle: " << bd_name << endl;
-      int port_cnt = 0;
       map<string, umap*> rewrite_buf2op_map;
       map<string, isl_map*> op_sched_map;
       int port_width_per_bd = port_bundles.at(bd_name).size();
@@ -3195,10 +3255,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width);
         std::cout << "transform rewrite: " << str(op_trans) << endl;
 
-        //TODO: need to figure out reuse
-        int time_stamp = port_cnt;
-        isl_map* pad_trans = acc_pattern.pad_one_dim_to_dom(ctx, time_stamp);
-        std::cout << "pad rewrite: " << str(pad_trans) << endl;
 
         auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
         cout << str(inv(access_map.at(out_pt_name))) << endl << str(rewrite_buf2op) << endl;
@@ -3206,43 +3262,52 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         auto op_sched = new_sched.at(::name(new_op_domain));
         cout << "op schedule: " << str(op_sched) << endl;
 
-        //rewrite the sram out schedule
-        if (port_width_per_bd > 1) {
-          rewrite_buf2op = dot(rewrite_buf2op, inv(pad_trans));
-          cout << "op schedule rewrite: " << str(delay_schedule_inner_most(op_sched, time_stamp)) << endl;
-          op_sched = delay_schedule_inner_most(op_sched, time_stamp);
-          op_sched = dot(pad_trans, op_sched);
+        //TODO: need to figure out reuse
+        //isl_map* pad_trans = acc_pattern.pad_one_dim_to_dom(ctx, time_stamp);
+        //std::cout << "pad rewrite: " << str(pad_trans) << endl;
 
-        }
+        ////rewrite the sram out schedule
+        //if (port_width_per_bd > 2) {
+        //  rewrite_buf2op = dot(rewrite_buf2op, inv(pad_trans));
+        //  cout << "op schedule rewrite: " << str(delay_schedule_inner_most(op_sched, time_stamp)) << endl;
+        //  op_sched = delay_schedule_inner_most(op_sched, time_stamp);
+        //  op_sched = dot(pad_trans, op_sched);
+
+        //}
 
         op_sched_map[out_pt_name] = op_sched;
         rewrite_buf2op_map[out_pt_name] = rewrite_buf2op;
 
+        //auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_tb");
+        //if (port_width_per_bd > 2){
+        //    outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
+        //    outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
+        //}
+        //cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
+        //tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
+        //tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
+      }
+
+      add_vectorized_pt_to_ubuf(tb, rewrite_buf2op_map, op_sched_map, bd_name+"_tb_in", dim_id, fetch_width, false);
+      auto output_cnt = add_vectorized_pt_to_ubuf(sram, rewrite_buf2op_map, op_sched_map ,bd_name, dim_id, fetch_width, true);
+
+      //Add another pass to build the access pattern on the tb output,
+      //whether decouple the address
+      for (auto out_pt_name : port_bundles.at(bd_name) ) {
+        cout << "\tAdd TB output port: " << out_pt_name << endl;
+        auto acc_pattern = AccessPattern(
+            to_map(access_map.at(out_pt_name)), ctx);
+
         auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_tb");
-        if (port_width_per_bd > 1){
+        if (output_cnt > 1){
             outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
-            outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
+        } else {
+            outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, true);
         }
+        outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
         cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
         tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
         tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
-
-        //add out port to tb
-        //add_vectorized_pt_to_ubuf(tb, rewrite_buf2op, op_sched, out_pt_name, bd_name+"_tb_in", dim_id, fetch_width, false);
-
-        //add in port to sram
-        //add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, op_sched, out_pt_name, bd_name, dim_id, fetch_width, true);
-
-        port_cnt ++;
-      }
-      add_vectorized_pt_to_ubuf(tb, rewrite_buf2op_map, op_sched_map, bd_name+"_tb_in", dim_id, fetch_width, false);
-      add_vectorized_pt_to_ubuf(sram, rewrite_buf2op_map, op_sched_map ,bd_name, dim_id, fetch_width, true);
-
-      //Add another pass the distribute the access based on the hardware portwidth
-      int new_dim = 0, pt_cnt = 0;
-      for (auto outpt_pt_name : sram.port_bundles.at(bd_name)) {
-        cout << "Got pt: " << outpt_pt_name << endl << str(sram.access_map.at(outpt_pt_name)) << endl;
-        pt_cnt ++;
       }
     }
     cout << "AGG : " << agg_buf << endl;
