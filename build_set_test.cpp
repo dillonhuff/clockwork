@@ -12658,10 +12658,12 @@ void stencil_cgra_tests() {
     cout << str(idom) << endl;
     auto earlier = its_range(its(isl_map_lex_gt(get_space(idom)), idom), idom);
     cout << "earlier = " << str(earlier) << endl;
+    auto earlier_in_same_level = cpy(earlier);
 
     auto later_in_same_level = its_range(its(isl_map_lex_lt(get_space(idom)), idom), idom);
     for (int i = 0; i < num_in_dims(later_in_same_level) - 1; i++) {
       later_in_same_level = isl_map_equate(later_in_same_level, isl_dim_in, i, isl_dim_out, i);
+      earlier_in_same_level = isl_map_equate(earlier_in_same_level, isl_dim_in, i, isl_dim_out, i);
     }
     cout << "later in same level = " << str(later_in_same_level) << endl;
     auto next = lexmin(later_in_same_level);
@@ -12680,6 +12682,12 @@ void stencil_cgra_tests() {
       auto reads = consumer_map(loop, b, prg);
       auto read_by_next_iter = dot(next, reads);
       print_box_bounds("read by next iter", read_by_next_iter);
+      auto read_before = dot(dot(next, earlier_in_same_level), reads);
+      print_box_bounds("already loaded to RB", read_before);
+      cout << endl;
+
+      auto diff_data = diff(read_by_next_iter, read_before);
+      print_box_bounds("need to load to RB", diff_data);
       //cout << tab(1) << str(reads) << endl;
       //string level = loop->name;
       //isl_map* initial_data = get_initial_data(level, b, prg);
