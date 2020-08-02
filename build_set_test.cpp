@@ -12668,6 +12668,7 @@ void stencil_cgra_tests() {
     cout << "next iter: " << str(next) << endl;
     cout << endl;
 
+
     std::set<string> bufs;
     for (auto op : ops) {
       for (auto b : op->buffers_read()) {
@@ -12677,9 +12678,11 @@ void stencil_cgra_tests() {
 
     for (auto b : bufs) {
       auto reads = consumer_map(loop, b, prg);
-      cout << tab(1) << str(reads) << endl;
-      string level = loop->name;
-      isl_map* initial_data = get_initial_data(level, b, prg);
+      auto read_by_next_iter = dot(next, reads);
+      print_box_bounds("read by next iter", read_by_next_iter);
+      //cout << tab(1) << str(reads) << endl;
+      //string level = loop->name;
+      //isl_map* initial_data = get_initial_data(level, b, prg);
 
       //if (!prg.is_input(b)) {
         //cout << "Adding reuse buffer at: " << loop->name << " for " << b << endl;
