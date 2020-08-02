@@ -12592,20 +12592,21 @@ void stencil_cgra_tests() {
     }
 
     for (auto b : bufs) {
-      auto reads = consumer_map(loop, b, prg);
-      auto read_by_next_iter = dot(next, reads);
-      print_box_bounds("read by next iter", read_by_next_iter);
-      auto read_before = dot(dot(next, earlier_in_same_level), reads);
-      print_box_bounds("already loaded to RB", read_before);
-      cout << endl;
+      add_reuse_buffer(loop->name, b, prg);
+      //auto reads = consumer_map(loop, b, prg);
+      //auto read_by_next_iter = dot(next, reads);
+      //print_box_bounds("read by next iter", read_by_next_iter);
+      //auto read_before = dot(dot(next, earlier_in_same_level), reads);
+      //print_box_bounds("already loaded to RB", read_before);
+      //cout << endl;
 
-      auto diff_data = diff(read_by_next_iter, read_before);
-      print_box_bounds("need to load to RB", diff_data);
+      //auto diff_data = diff(read_by_next_iter, read_before);
+      //print_box_bounds("need to load to RB", diff_data);
     }
   }
 
-  //prg.pretty_print();
-  //prg.sanity_check();
+  prg.pretty_print();
+  prg.sanity_check();
   assert(false);
 }
 
