@@ -4741,3 +4741,125 @@ std::set<op*> get_inner_loops(prog& prg) {
   return inner;
 }
 
+std::string level_name(const std::string& n) {
+  return "for_" + n;
+}
+
+isl_set* iteration_domain(op* loop, prog& prg) {
+  auto surrounding = surrounding_vars(loop, prg);
+  surrounding.push_back(loop->name);
+
+  string dom = level_name(loop->name) + brackets(comma_list(surrounding));
+  vector<string> ranges;
+  for (auto l : surrounding) {
+    auto loop = prg.find_loop(l);
+    ranges.push_back(str(loop->start) + " <= " + loop->name + " < " + str(loop->end_exclusive));
+  }
+  string bound_str = curlies(dom + " : " + sep_list(ranges, "", "", " and "));
+  isl_set* bounds = isl_set_read_from_str(prg.ctx, bound_str.c_str());
+  return bounds;
+}
+
+isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
+  auto reads = read_at(loop->name, b, prg);
+  isl_map* m = nullptr;
+  for (auto r : get_maps(reads)) {
+    r = set_domain_name(r, level_name(loop->name));
+    m = unn(m, r);
+  }
+  assert(m != nullptr);
+  return m;
+}
+
+umap* read_at(const std::string& level, const std::string& buffer, prog& prg) {
+  auto loop = prg.find_loop(level);
+  auto read_maps = get_maps(prg.consumer_map(buffer));
+
+  std::set<string> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op->name);
+    }
+  }
+
+  umap* all_reads = nullptr;
+  for (auto m : read_maps) {
+    if (elem(domain_name(m), users)) {
+      if (all_reads == nullptr) {
+        all_reads = to_umap(m);
+      } else {
+        all_reads = unn(all_reads, to_umap(m));
+      }
+    }
+  }
+
+  return all_reads;
+}
+
+umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg) {
+  auto loop = prg.find_loop(level);
+  int outer_vars = surrounding_vars(loop, prg).size();
+  int level_index = outer_vars;
+
+  umap* fst = nullptr;
+  for (auto m : get_maps(reads)) {
+    auto prj = isl_map_fix_si(m, isl_dim_in, level_index, loop->start);
+    if (fst == nullptr) {
+      fst = to_umap(prj);
+    } else {
+      fst = unn(fst, to_umap(prj));
+    }
+  }
+  return fst;
+}
+
+isl_map* get_initial_data(const std::string& level, const std::string& buffer, prog& prg) {
+
+  umap* reads = read_at(level, buffer, prg);
+  //cout << "reads = " << str(reads) << endl;
+
+  auto loop = prg.find_loop(level);
+  int outer_vars = surrounding_vars(loop, prg).size();
+
+  umap* first_reads = first_iteration_reads(reads, level, prg);
+  //cout << "first reads = " << str(first_reads) << endl;
+
+  //cout << "Re-use " << buffer << " at" << endl;
+  //loop->pretty_print();
+
+  //auto sched = prg.unoptimized_schedule();
+  //auto earlier = lex_gt(sched, sched);
+  //cout << "earlier = " << str(earlier) << endl;
+ 
+  //auto read = prg.consumer_map(buffer);
+  //cout << "consumed = " << str(read) << endl;
+  //auto read_earlier = coalesce(dot(earlier, read));
+  //cout << "consumed earlier = " << str(read_earlier) << endl;
+  //auto consumed_earlier_and_now = its(read_earlier, read);
+  //cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
+  //auto consumed_first_time = diff(read, consumed_earlier_and_now);
+  //auto csf = cpy(consumed_first_time);
+  //cout << "first time read  = " << str(consumed_first_time) << endl;
+  //uset* not_first = 
+  //auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
+  //cout << "not first        = " << str(not_first) << endl;
+  //consumed_first_time = its(consumed_first_time, not_first);
+  //consumed_first_time = coalesce(consumed_first_time);
+  //cout << "first time read  = " << str(consumed_first_time) << endl;
+
+  isl_map* initial_data = nullptr;
+  for (auto m : get_maps(first_reads)) {
+    //cout << "m = " << str(m) << endl;
+    assert(outer_vars < num_in_dims(m));
+    int to_remove = num_in_dims(m) - outer_vars;
+    //cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
+    auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
+    if (initial_data == nullptr) {
+      initial_data = prj;
+    } else {
+      initial_data = unn(initial_data, prj);
+    }
+  }
+  return initial_data;
+}
+
