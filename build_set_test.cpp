@@ -12612,6 +12612,31 @@ void infer_bounds_unrolled_test() {
 
 }
 
+std::string level_name(const std::string& n) {
+  return "for_" + n;
+}
+
+isl_set* iteration_domain(op* loop, prog& prg) {
+  auto surrounding = surrounding_vars(loop, prg);
+  surrounding.push_back(loop->name);
+
+  string dom = level_name(loop->name) + brackets(comma_list(surrounding));
+  string bound_str = curlies(dom);
+  isl_set* bounds = isl_set_read_from_str(prg.ctx, bound_str.c_str());
+  return bounds;
+}
+
+isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
+  auto reads = read_at(loop->name, b, prg);
+  isl_map* m = nullptr;
+  for (auto r : get_maps(reads)) {
+    r = set_domain_name(r, level_name(loop->name));
+    m = unn(m, r);
+  }
+  assert(m != nullptr);
+  return m;
+}
+
 void stencil_cgra_tests() {
 
   prog prg = cascade();
@@ -12623,6 +12648,10 @@ void stencil_cgra_tests() {
   auto level_map = get_variable_levels(prg);
   for (auto loop : inner_loops) {
     auto ops = loop->descendant_ops();
+
+    auto idom = iteration_domain(loop, prg);
+    cout << str(idom) << endl;
+
     std::set<string> bufs;
     for (auto op : ops) {
       for (auto b : op->buffers_read()) {
@@ -12631,35 +12660,38 @@ void stencil_cgra_tests() {
     }
 
     for (auto b : bufs) {
-      if (!prg.is_input(b)) {
-        cout << "Adding reuse buffer at: " << loop->name << " for " << b << endl;
-        string level = loop->name;
-        isl_map* initial_data = get_initial_data(level, b, prg);
-        print_box_bounds(b + " at " + level, initial_data);
-        umap* reads = read_at(level, b, prg);
-        cout << endl;
-        cout << "====== All reads " << endl;
-        print_box_bounds(b + " at " + level, reads);
+      auto reads = consumer_map(loop, b, prg);
+      cout << tab(1) << str(reads) << endl;
 
-        for (auto m : get_maps(reads)) {
-          auto sp = get_space(domain(m));
-          cout << "loop iteration space: " << str(sp) << endl;
-          auto lt = isl_map_lex_gt(sp);
-          cout << "lex order           : " << str(lt) << endl;
-          int level = map_find(loop->name, level_map);
-          for (int i = 0; i < level; i++) {
-            lt = isl_map_equate(lt, isl_dim_in, i, isl_dim_out, i);
-          }
-          cout << "iters before at same level: " << str(lt) << endl;
-          //auto next_iteration = lexmin(lt);
-          //cout << "next iteration      : " << str(next_iteration) << endl;
-        }
-        assert(false);
-        //cout << tab(1) << str(reads) << endl;
-        //add_reuse_buffer(loop->name, b, prg);
-        //cout << "After adding buffer..." << endl;
-        //prg.pretty_print();
-      }
+      //if (!prg.is_input(b)) {
+        //cout << "Adding reuse buffer at: " << loop->name << " for " << b << endl;
+        //string level = loop->name;
+        //isl_map* initial_data = get_initial_data(level, b, prg);
+        //print_box_bounds(b + " at " + level, initial_data);
+        //umap* reads = read_at(level, b, prg);
+        //cout << endl;
+        //cout << "====== All reads " << endl;
+        //print_box_bounds(b + " at " + level, reads);
+
+        //for (auto m : get_maps(reads)) {
+          //auto sp = get_space(domain(m));
+          //cout << "loop iteration space: " << str(sp) << endl;
+          //auto lt = isl_map_lex_gt(sp);
+          //cout << "lex order           : " << str(lt) << endl;
+          //int level = map_find(loop->name, level_map);
+          //for (int i = 0; i < level; i++) {
+            //lt = isl_map_equate(lt, isl_dim_in, i, isl_dim_out, i);
+          //}
+          //cout << "iters before at same level: " << str(lt) << endl;
+          //// Next data size is: next iteration
+
+        //}
+        //assert(false);
+        ////cout << tab(1) << str(reads) << endl;
+        ////add_reuse_buffer(loop->name, b, prg);
+        ////cout << "After adding buffer..." << endl;
+        ////prg.pretty_print();
+      //}
     }
   }
 

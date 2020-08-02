@@ -1306,6 +1306,9 @@ isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
 }
 
 isl_map* unn(isl_map* const m0, isl_map* const m1) {
+  if (m0 == nullptr) {
+    return m1;
+  }
   return isl_map_union(cpy(m0), cpy(m1));
 }
 
