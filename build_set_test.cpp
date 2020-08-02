@@ -10631,97 +10631,132 @@ void print_box_bounds(const std::string& name, T* pr){
   cout << tab(1) << "max              = " << str(lmax) << endl;
 }
 
+isl_map* delta_data(loop* loop, const std::string& buffer, prog& prg) {
+  auto level_map = get_variable_levels(prg);
+  auto ops = loop->descendant_ops();
+
+  auto idom = iteration_domain(loop, prg);
+  cout << str(idom) << endl;
+  auto earlier = its_range(its(isl_map_lex_gt(get_space(idom)), idom), idom);
+  cout << "earlier = " << str(earlier) << endl;
+  auto earlier_in_same_level = cpy(earlier);
+
+  auto later_in_same_level = its_range(its(isl_map_lex_lt(get_space(idom)), idom), idom);
+  for (int i = 0; i < num_in_dims(later_in_same_level) - 1; i++) {
+    later_in_same_level = isl_map_equate(later_in_same_level, isl_dim_in, i, isl_dim_out, i);
+    earlier_in_same_level = isl_map_equate(earlier_in_same_level, isl_dim_in, i, isl_dim_out, i);
+  }
+  cout << "later in same level = " << str(later_in_same_level) << endl;
+  auto next = lexmin(later_in_same_level);
+  cout << "next iter: " << str(next) << endl;
+  cout << endl;
+
+
+  auto reads = consumer_map(loop, buffer, prg);
+  auto read_by_next_iter = dot(next, reads);
+  print_box_bounds("read by next iter", read_by_next_iter);
+  auto read_before = dot(dot(next, earlier_in_same_level), reads);
+  print_box_bounds("already loaded to RB", read_before);
+  cout << endl;
+
+  auto diff_data = diff(read_by_next_iter, read_before);
+
+  return diff_data;
+}
+
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
 
-  umap* reads = read_at(level, buffer, prg);
-  cout << "reads = " << str(reads) << endl;
+  //umap* reads = read_at(level, buffer, prg);
+  //cout << "reads = " << str(reads) << endl;
 
   auto loop = prg.find_loop(level);
-  int outer_vars = surrounding_vars(loop, prg).size();
+  //int outer_vars = surrounding_vars(loop, prg).size();
 
-  umap* first_reads = first_iteration_reads(reads, level, prg);
-  cout << "first reads = " << str(first_reads) << endl;
+  //umap* first_reads = first_iteration_reads(reads, level, prg);
+  //cout << "first reads = " << str(first_reads) << endl;
 
-  cout << "Re-use " << buffer << " at" << endl;
-  loop->pretty_print();
+  //cout << "Re-use " << buffer << " at" << endl;
+  //loop->pretty_print();
 
-  auto sched = prg.unoptimized_schedule();
-  auto earlier = lex_gt(sched, sched);
-  cout << "earlier = " << str(earlier) << endl;
+  //auto sched = prg.unoptimized_schedule();
+  //auto earlier = lex_gt(sched, sched);
+  //cout << "earlier = " << str(earlier) << endl;
  
-  auto read = prg.consumer_map(buffer);
-  cout << "consumed = " << str(read) << endl;
-  for (auto m : get_maps(read)) {
-    print_box_bounds(domain_name(m), m);
-  }
-  cout << endl;
+  //auto read = prg.consumer_map(buffer);
+  //cout << "consumed = " << str(read) << endl;
+  //for (auto m : get_maps(read)) {
+    //print_box_bounds(domain_name(m), m);
+  //}
+  //cout << endl;
 
-  auto read_earlier = coalesce(dot(earlier, read));
-  cout << "consumed earlier = " << str(read_earlier) << endl;
-  for (auto m : get_maps(read_earlier)) {
-    print_box_bounds(domain_name(m), m);
-  }
-  cout << endl;
+  //auto read_earlier = coalesce(dot(earlier, read));
+  //cout << "consumed earlier = " << str(read_earlier) << endl;
+  //for (auto m : get_maps(read_earlier)) {
+    //print_box_bounds(domain_name(m), m);
+  //}
+  //cout << endl;
 
-  auto consumed_earlier_and_now = its(read_earlier, read);
-  cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
-  auto consumed_first_time = diff(read, consumed_earlier_and_now);
-  auto csf = cpy(consumed_first_time);
-  cout << "first time read  = " << str(consumed_first_time) << endl;
-  //uset* not_first = 
-  //auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
-  //cout << "not first        = " << str(not_first) << endl;
-  //consumed_first_time = its(consumed_first_time, not_first);
-  consumed_first_time = coalesce(consumed_first_time);
-  cout << "first time read  = " << str(consumed_first_time) << endl;
+  //auto consumed_earlier_and_now = its(read_earlier, read);
+  //cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
+  //auto consumed_first_time = diff(read, consumed_earlier_and_now);
+  //auto csf = cpy(consumed_first_time);
+  //cout << "first time read  = " << str(consumed_first_time) << endl;
+  ////uset* not_first = 
+  ////auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
+  ////cout << "not first        = " << str(not_first) << endl;
+  ////consumed_first_time = its(consumed_first_time, not_first);
+  //consumed_first_time = coalesce(consumed_first_time);
+  //cout << "first time read  = " << str(consumed_first_time) << endl;
 
   isl_map* initial_data = get_initial_data(level, buffer, prg);
   cout << "initially read: " << str(initial_data) << endl;
   string rb_name = buffer + "_rb_at_" + level;
   read_in_before(loop, initial_data, rb_name, prg);
-  {
-    auto lmin = lexmin(initial_data);
-    auto lmax = lexmax(initial_data);
-    cout << "Initial data min/max" << endl;
-    cout << tab(1) << "min              = " << str(lmin) << endl;
-    cout << tab(1) << "max              = " << str(lmax) << endl;
-  }
+  //{
+    //auto lmin = lexmin(initial_data);
+    //auto lmax = lexmax(initial_data);
+    //cout << "Initial data min/max" << endl;
+    //cout << tab(1) << "min              = " << str(lmin) << endl;
+    //cout << tab(1) << "max              = " << str(lmax) << endl;
+  //}
 
-  cout << "consumed first time = " << str(consumed_first_time) << endl;
-  isl_map* pr = nullptr;
-  for (auto m : get_maps(consumed_first_time)) {
-    cout << "m = " << str(m) << endl;
-    assert(outer_vars < num_in_dims(m));
-    int to_remove = num_in_dims(m) - outer_vars;
-    cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
-    auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
-    if (pr == nullptr) {
-      pr = prj;
-    } else {
-      pr = unn(pr, prj);
-    }
-  }
+  //cout << "consumed first time = " << str(consumed_first_time) << endl;
+  //isl_map* pr = nullptr;
+  //for (auto m : get_maps(consumed_first_time)) {
+    //cout << "m = " << str(m) << endl;
+    //assert(outer_vars < num_in_dims(m));
+    //int to_remove = num_in_dims(m) - outer_vars;
+    //cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
+    //auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
+    //if (pr == nullptr) {
+      //pr = prj;
+    //} else {
+      //pr = unn(pr, prj);
+    //}
+  //}
 
-  //auto maps = get_maps(consumed_first_time);
-  //assert(maps.size() == 1);
-  //auto mpa = maps.at(0);
-  //cout << "mpa = " << str(mpa) << endl;
-  cout << "initial data = " << str(initial_data) << endl;
-  ////mpa = diff(mpa, initial_data);
-  ////assert(false);
-  //auto pr = isl_map_project_out(cpy(mpa), isl_dim_in, 2, 2);
-  cout << "pr = " << str(pr) << endl;
-  {
-    auto lmin = lexmin(pr);
-    auto lmax = lexmax(pr);
-    cout << "pre-diff pr min              = " << str(lmin) << endl;
-    cout << "pre-diff pr max              = " << str(lmax) << endl;
-  }
-  pr = diff(pr, initial_data);
-  auto lmin = lexmin(pr);
-  auto lmax = lexmax(pr);
-  cout << "min              = " << str(lmin) << endl;
-  cout << "max              = " << str(lmax) << endl;
+  ////auto maps = get_maps(consumed_first_time);
+  ////assert(maps.size() == 1);
+  ////auto mpa = maps.at(0);
+  ////cout << "mpa = " << str(mpa) << endl;
+  //cout << "initial data = " << str(initial_data) << endl;
+  //////mpa = diff(mpa, initial_data);
+  //////assert(false);
+  ////auto pr = isl_map_project_out(cpy(mpa), isl_dim_in, 2, 2);
+  //cout << "pr = " << str(pr) << endl;
+  //{
+    //auto lmin = lexmin(pr);
+    //auto lmax = lexmax(pr);
+    //cout << "pre-diff pr min              = " << str(lmin) << endl;
+    //cout << "pre-diff pr max              = " << str(lmax) << endl;
+  //}
+  //pr = diff(pr, initial_data);
+  //auto lmin = lexmin(pr);
+  //auto lmax = lexmax(pr);
+  //cout << "min              = " << str(lmin) << endl;
+  //cout << "max              = " << str(lmax) << endl;
+ 
+  auto pr = delta_data(loop, buffer, prg);
   read_in_after(loop, pr, rb_name, prg);
 
   cout << "pr = " << str(pr) << endl;
@@ -12566,37 +12601,6 @@ void stencil_cgra_tests() {
 
       auto diff_data = diff(read_by_next_iter, read_before);
       print_box_bounds("need to load to RB", diff_data);
-      //cout << tab(1) << str(reads) << endl;
-      //string level = loop->name;
-      //isl_map* initial_data = get_initial_data(level, b, prg);
-
-      //if (!prg.is_input(b)) {
-        //cout << "Adding reuse buffer at: " << loop->name << " for " << b << endl;
-        //print_box_bounds(b + " at " + level, initial_data);
-        //umap* reads = read_at(level, b, prg);
-        //cout << endl;
-        //cout << "====== All reads " << endl;
-        //print_box_bounds(b + " at " + level, reads);
-
-        //for (auto m : get_maps(reads)) {
-          //auto sp = get_space(domain(m));
-          //cout << "loop iteration space: " << str(sp) << endl;
-          //auto lt = isl_map_lex_gt(sp);
-          //cout << "lex order           : " << str(lt) << endl;
-          //int level = map_find(loop->name, level_map);
-          //for (int i = 0; i < level; i++) {
-            //lt = isl_map_equate(lt, isl_dim_in, i, isl_dim_out, i);
-          //}
-          //cout << "iters before at same level: " << str(lt) << endl;
-          //// Next data size is: next iteration
-
-        //}
-        //assert(false);
-        ////cout << tab(1) << str(reads) << endl;
-        ////add_reuse_buffer(loop->name, b, prg);
-        ////cout << "After adding buffer..." << endl;
-        ////prg.pretty_print();
-      //}
     }
   }
 
