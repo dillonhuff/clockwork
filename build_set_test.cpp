@@ -12611,6 +12611,7 @@ void stencil_cgra_tests() {
 }
 
 void application_tests() {
+  reuse_buffered_conv_test();
   infer_uneven_bounds_test();
   llf_pyramid_test();
   infer_bounds_unrolled_test();
@@ -12618,7 +12619,6 @@ void application_tests() {
   blur_example();
   //assert(false);
   //halide_camera_pipeline_test();
-  reuse_buffered_conv_test();
   register_file_test();
 
   //exposure_fusion_iccad_apps("ef_cc");
@@ -13136,7 +13136,7 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    stencil_cgra_tests();
+    //stencil_cgra_tests();
     application_tests();
     memory_tile_tests();
     //prog_splitting_tests();
