@@ -399,7 +399,7 @@ struct ir_node {
 
     return lp;
   }
-  
+
   op* add_loop_after(op* source, const std::string& name, const int l, const int u) {
     assert(is_loop);
 
@@ -434,7 +434,7 @@ struct ir_node {
 
     return lp;
   }
-  
+
   op* add_loop_front(const std::string& name, const int l, const int u) {
     assert(is_loop);
     //assert(!elem(name, all_existing_loop_names()));

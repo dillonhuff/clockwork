@@ -323,7 +323,7 @@ void run_kernel(CodegenOptions& options, std::ostream& out, map<string, UBuffer>
       out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << pipe_cpy(out_bundle, pipe) << "_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));" << endl;
     }
   }
-  
+
   out << endl;
   out << tab(1) << "q.finish();" << endl << endl;
 
@@ -1299,7 +1299,14 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
   map<string, UBuffer> buffers;
   auto domains = prg.domains();
-  for (auto op : prg.all_ops()) {
+  auto all_op = prg.all_ops();
+
+  //sort all ops by its name instead of ptr addres
+  //to avoid uncertainty in buffer name
+  vector<op*> all_op_vec(all_op.begin(), all_op.end());
+  std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->func > r->func;});
+
+  for (auto op : all_op_vec) {
 
     cout << "# of produced locations: " << op->produce_locs.size() << endl;
     for (auto produced : op->produce_locs) {
@@ -3200,7 +3207,7 @@ std::set<string> get_consumed_buffers(const std::set<std::string>& group, prog& 
 		for(auto op : kernel_ops){
 			std::set<string> all_buffers_read = op->buffers_read();
 			for(auto buffer : all_buffers_read){
-				all_consumed_buffers.insert(buffer); 
+				all_consumed_buffers.insert(buffer);
 			}
 		}
 	}
@@ -3560,7 +3567,7 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
 		}
 	}
-	
+
 	for(auto produced : all_produced_buffers){
 		if(!elem(produced, all_consumed_buffers)){
 			extracted.add_output(produced);
@@ -3569,7 +3576,7 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 			cout << "Output width: " << extracted.buffer_port_widths[produced] << endl;
 		}
 	}
-	
+
 	return extracted;
 }
 
@@ -3781,7 +3788,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
 
     cout << "==== Inferring bounds for buffer: " << name(bound_set) << ", produced by: " << next_kernel << endl;
     //auto bound_set = pick(bounds);
-    
+
     bounds.erase(bound_set);
     string buf = name(bound_set);
     if (prg.is_input(buf)) {

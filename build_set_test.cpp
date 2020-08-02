@@ -7045,16 +7045,16 @@ prog halide_cascade() {
   int size = 64;
 //consuming hw_input.stencil
 ////producing conv1.stencil
-  auto loop_conv1_s0_y = prg.add_loop("conv1_s0_y", 0, size);
-  auto loop_conv1_s0_x = loop_conv1_s0_y->add_loop("conv1_s0_x", 0, size);
+  auto loop_conv1_s0_y = prg.add_loop("conv1_s0_x", 0, size);
+  auto loop_conv1_s0_x = loop_conv1_s0_y->add_loop("conv1_s0_y", 0, size);
 
 //store is: conv1.stencil(conv1.s0.x, conv1.s0.y) = 0
   auto compute_conv1_stencil = loop_conv1_s0_x->add_op("compute_conv1_stencil");
   compute_conv1_stencil->add_function("compute_conv1_stencil");
   prg.buffer_port_widths["conv1_stencil"] = 16;
   compute_conv1_stencil->add_store("conv1_stencil", "conv1_s0_x", "conv1_s0_y");
-  auto loop_conv1_s1_y = prg.add_loop("conv1_s1_y", 0, size);
-  auto loop_conv1_s1_x = loop_conv1_s1_y->add_loop("conv1_s1_x", 0, size);
+  auto loop_conv1_s1_y = prg.add_loop("conv1_s1_x", 0, size);
+  auto loop_conv1_s1_x = loop_conv1_s1_y->add_loop("conv1_s1_y", 0, size);
 
 //store is: conv1.stencil(conv1.s1.x, conv1.s1.y) = (((((conv1.stencil(conv1.s1.x, conv1.s1.y) + (((((int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 1)))*2) + (int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 2))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 1))))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 1)))) + int32(hw_input.stencil((conv1.s1.x + 1), conv1.s1.y)))*2)) + int32(hw_input.stencil(conv1.s1.x, conv1.s1.y))) + int32(hw_input.stencil((conv1.s1.x + 2), conv1.s1.y))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 2)))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 2))))
   auto compute_conv1_stencil_1 = loop_conv1_s1_x->add_op("compute_conv1_stencil_1");
@@ -7071,8 +7071,8 @@ prog halide_cascade() {
   compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "(conv1_s1_y + 2)");
   compute_conv1_stencil_1->add_store("conv1_stencil", "conv1_s1_x", "conv1_s1_y");
 ////producing conv2.stencil
-  auto loop_conv2_s0_y = prg.add_loop("conv2_s0_y", 0, size - 2);
-  auto loop_conv2_s0_x = loop_conv2_s0_y->add_loop("conv2_s0_x", 0, size - 2);
+  auto loop_conv2_s0_y = prg.add_loop("conv2_s0_x", 0, size - 2);
+  auto loop_conv2_s0_x = loop_conv2_s0_y->add_loop("conv2_s0_y", 0, size - 2);
 
 //store is: conv2.stencil(conv2.s0.x, conv2.s0.y) = 0
   auto compute_conv2_stencil = loop_conv2_s0_x->add_op("compute_conv2_stencil");
@@ -7081,8 +7081,8 @@ prog halide_cascade() {
   compute_conv2_stencil->add_store("conv2_stencil", "conv2_s0_x", "conv2_s0_y");
 
 //consuming conv1.stencil
-  auto loop_conv2_s1_y = prg.add_loop("conv2_s1_y", 0, size - 2);
-  auto loop_conv2_s1_x = loop_conv2_s1_y->add_loop("conv2_s1_x", 0, size - 2);
+  auto loop_conv2_s1_y = prg.add_loop("conv2_s1_x", 0, size - 2);
+  auto loop_conv2_s1_x = loop_conv2_s1_y->add_loop("conv2_s1_y", 0, size - 2);
 
 //store is: conv2.stencil(conv2.s1.x, conv2.s1.y) = (conv1.stencil(conv2.s1.x, conv2.s1.y) + (conv2.stencil(conv2.s1.x, conv2.s1.y) + ((conv1.stencil((conv2.s1.x + 1), conv2.s1.y)*2) + (conv1.stencil((conv2.s1.x + 2), conv2.s1.y) + ((conv1.stencil(conv2.s1.x, (conv2.s1.y + 1))*2) + ((conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 1))*4) + ((conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 1))*2) + (conv1.stencil(conv2.s1.x, (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 2))*2))))))))))
   auto compute_conv2_stencil_1 = loop_conv2_s1_x->add_op("compute_conv2_stencil_1");
@@ -7100,8 +7100,8 @@ prog halide_cascade() {
   compute_conv2_stencil_1->add_store("conv2_stencil", "conv2_s1_x", "conv2_s1_y");
 
 //consuming conv2.stencil
-  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, size - 2);
-  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, size - 2);
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_x_xo", 0, size - 2);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_y_yo", 0, size - 2);
 
 //store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv2.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
   auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
@@ -12349,6 +12349,68 @@ void lake_resnet_test() {
   }
 }
 
+void lake_cascade_autovec_test() {
+  //prog prg = halide_cascade();
+  //cout << "Created program..." << endl;
+  //prg.pretty_print();
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "cascade_naive_compute";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["buf1"] = 16;
+  prg.buffer_port_widths["buf2"] = 16;
+
+  auto p = prg.add_nest("po", 0, 16, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf1", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 14, "qi", 0, 14);
+  auto read = q->add_op("conv");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf1", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  }
+  read->add_store("buf2", "qo, qi");
+
+  auto k = prg.add_nest("ko", 0, 12, "ki", 0, 12);
+  auto read_ = k->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read_->add_load("buf2", "ko+" + to_string(wy) + ", ki+" + to_string(wx));
+      }
+  }
+  read_->add_store("out", "ko, ki");
+
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl;
+    if (b.first == "in" || b.first == "out")
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+  cout << "post processing buf" << endl;
+  for (auto it: buffers_opt) {
+    auto post_proc_buffers = it.second.generate_ubuffer(opt);
+    for (auto it: post_proc_buffers) {
+      cout << "post: " << it.first << endl;
+    }
+  }
+}
+
 void lake_conv33_autovec_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
@@ -12372,7 +12434,7 @@ void lake_conv33_autovec_test() {
         read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
       }
   }
-  read->add_store("out", "po, pi");
+  read->add_store("out", "qo, qi");
 
 
   //optimized schedule
@@ -13966,10 +14028,11 @@ void application_tests() {
   //lake_identity_stream_SMT_test(16, 16, "16x16");
   //lake_identity_stream_SMT_test(20, 20, "20x20");
   //double_buffer_test();
-  //lake_identity_stream_autovec_test();
+  lake_identity_stream_autovec_test();
   //union_test();
-  //lake_conv33_autovec_test();
+  lake_conv33_autovec_test();
   lake_dual_port_test();
+  lake_cascade_autovec_test();
   assert(false);
   lake_resnet_test();
   resnet_test();
