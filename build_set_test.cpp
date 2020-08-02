@@ -10667,43 +10667,43 @@ umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg) {
 isl_map* get_initial_data(const std::string& level, const std::string& buffer, prog& prg) {
 
   umap* reads = read_at(level, buffer, prg);
-  cout << "reads = " << str(reads) << endl;
+  //cout << "reads = " << str(reads) << endl;
 
   auto loop = prg.find_loop(level);
   int outer_vars = surrounding_vars(loop, prg).size();
 
   umap* first_reads = first_iteration_reads(reads, level, prg);
-  cout << "first reads = " << str(first_reads) << endl;
+  //cout << "first reads = " << str(first_reads) << endl;
 
-  cout << "Re-use " << buffer << " at" << endl;
-  loop->pretty_print();
+  //cout << "Re-use " << buffer << " at" << endl;
+  //loop->pretty_print();
 
-  auto sched = prg.unoptimized_schedule();
-  auto earlier = lex_gt(sched, sched);
-  cout << "earlier = " << str(earlier) << endl;
+  //auto sched = prg.unoptimized_schedule();
+  //auto earlier = lex_gt(sched, sched);
+  //cout << "earlier = " << str(earlier) << endl;
  
-  auto read = prg.consumer_map(buffer);
-  cout << "consumed = " << str(read) << endl;
-  auto read_earlier = coalesce(dot(earlier, read));
-  cout << "consumed earlier = " << str(read_earlier) << endl;
-  auto consumed_earlier_and_now = its(read_earlier, read);
-  cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
-  auto consumed_first_time = diff(read, consumed_earlier_and_now);
-  auto csf = cpy(consumed_first_time);
-  cout << "first time read  = " << str(consumed_first_time) << endl;
+  //auto read = prg.consumer_map(buffer);
+  //cout << "consumed = " << str(read) << endl;
+  //auto read_earlier = coalesce(dot(earlier, read));
+  //cout << "consumed earlier = " << str(read_earlier) << endl;
+  //auto consumed_earlier_and_now = its(read_earlier, read);
+  //cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
+  //auto consumed_first_time = diff(read, consumed_earlier_and_now);
+  //auto csf = cpy(consumed_first_time);
+  //cout << "first time read  = " << str(consumed_first_time) << endl;
   //uset* not_first = 
   //auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
   //cout << "not first        = " << str(not_first) << endl;
   //consumed_first_time = its(consumed_first_time, not_first);
-  consumed_first_time = coalesce(consumed_first_time);
-  cout << "first time read  = " << str(consumed_first_time) << endl;
+  //consumed_first_time = coalesce(consumed_first_time);
+  //cout << "first time read  = " << str(consumed_first_time) << endl;
 
   isl_map* initial_data = nullptr;
   for (auto m : get_maps(first_reads)) {
-    cout << "m = " << str(m) << endl;
+    //cout << "m = " << str(m) << endl;
     assert(outer_vars < num_in_dims(m));
     int to_remove = num_in_dims(m) - outer_vars;
-    cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
+    //cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
     auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
     if (initial_data == nullptr) {
       initial_data = prj;
@@ -10712,6 +10712,15 @@ isl_map* get_initial_data(const std::string& level, const std::string& buffer, p
     }
   }
   return initial_data;
+}
+
+template<typename T>
+void print_box_bounds(const std::string& name, T* pr){
+  auto lmin = lexmin(pr);
+  auto lmax = lexmax(pr);
+  cout << "======= Box bounds for " << name << endl;
+  cout << tab(1) << "min              = " << str(lmin) << endl;
+  cout << tab(1) << "max              = " << str(lmax) << endl;
 }
 
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
@@ -10734,8 +10743,18 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
  
   auto read = prg.consumer_map(buffer);
   cout << "consumed = " << str(read) << endl;
+  for (auto m : get_maps(read)) {
+    print_box_bounds(domain_name(m), m);
+  }
+  cout << endl;
+
   auto read_earlier = coalesce(dot(earlier, read));
   cout << "consumed earlier = " << str(read_earlier) << endl;
+  for (auto m : get_maps(read_earlier)) {
+    print_box_bounds(domain_name(m), m);
+  }
+  cout << endl;
+
   auto consumed_earlier_and_now = its(read_earlier, read);
   cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
   auto consumed_first_time = diff(read, consumed_earlier_and_now);
@@ -10749,19 +10768,6 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   cout << "first time read  = " << str(consumed_first_time) << endl;
 
   isl_map* initial_data = get_initial_data(level, buffer, prg);
-  //isl_map* initial_data = nullptr;
-  //for (auto m : get_maps(first_reads)) {
-    //cout << "m = " << str(m) << endl;
-    //assert(outer_vars < num_in_dims(m));
-    //int to_remove = num_in_dims(m) - outer_vars;
-    //cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
-    //auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
-    //if (initial_data == nullptr) {
-      //initial_data = prj;
-    //} else {
-      //initial_data = unn(initial_data, prj);
-    //}
-  //}
   cout << "initially read: " << str(initial_data) << endl;
   string rb_name = buffer + "_rb_at_" + level;
   read_in_before(loop, initial_data, rb_name, prg);
@@ -12626,15 +12632,22 @@ void stencil_cgra_tests() {
     for (auto b : bufs) {
       if (!prg.is_input(b)) {
         cout << "Adding reuse buffer at: " << loop->name << " for " << b << endl;
-        add_reuse_buffer(loop->name, b, prg);
-        cout << "After adding buffer..." << endl;
-        prg.pretty_print();
+        string level = loop->name;
+        isl_map* initial_data = get_initial_data(level, b, prg);
+        print_box_bounds(b + " at " + level, initial_data);
+        umap* reads = read_at(level, b, prg);
+        cout << "====== All reads " << endl;
+        print_box_bounds(b + " at " + level, reads);
+        //cout << tab(1) << str(reads) << endl;
+        //add_reuse_buffer(loop->name, b, prg);
+        //cout << "After adding buffer..." << endl;
+        //prg.pretty_print();
       }
     }
   }
 
-  prg.pretty_print();
-  prg.sanity_check();
+  //prg.pretty_print();
+  //prg.sanity_check();
   assert(false);
 }
 
