@@ -12620,6 +12620,7 @@ void stencil_cgra_tests() {
 
 
   auto inner_loops = get_inner_loops(prg);
+  auto level_map = get_variable_levels(prg);
   for (auto loop : inner_loops) {
     auto ops = loop->descendant_ops();
     std::set<string> bufs;
@@ -12636,8 +12637,24 @@ void stencil_cgra_tests() {
         isl_map* initial_data = get_initial_data(level, b, prg);
         print_box_bounds(b + " at " + level, initial_data);
         umap* reads = read_at(level, b, prg);
+        cout << endl;
         cout << "====== All reads " << endl;
         print_box_bounds(b + " at " + level, reads);
+
+        for (auto m : get_maps(reads)) {
+          auto sp = get_space(domain(m));
+          cout << "loop iteration space: " << str(sp) << endl;
+          auto lt = isl_map_lex_gt(sp);
+          cout << "lex order           : " << str(lt) << endl;
+          int level = map_find(loop->name, level_map);
+          for (int i = 0; i < level; i++) {
+            lt = isl_map_equate(lt, isl_dim_in, i, isl_dim_out, i);
+          }
+          cout << "iters before at same level: " << str(lt) << endl;
+          //auto next_iteration = lexmin(lt);
+          //cout << "next iteration      : " << str(next_iteration) << endl;
+        }
+        assert(false);
         //cout << tab(1) << str(reads) << endl;
         //add_reuse_buffer(loop->name, b, prg);
         //cout << "After adding buffer..." << endl;
