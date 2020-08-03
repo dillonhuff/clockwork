@@ -12555,11 +12555,98 @@ void infer_bounds_unrolled_test() {
 
 }
 
-void stencil_cgra_tests() {
+struct schedule_info {
 
+  // Schedule constraints
+  map<string, int> buffer_load_latencies;
+  map<string, int> buffer_store_latencies;
+  map<string, int> compute_unit_latencies;
+
+  // Schedule offsets
+  map<string, int> loop_iis;
+  map<string, int> loop_latencies;
+  map<string, int> event_offset_from_container_loop;
+  map<string, int> completion_time;
+  map<op*, int> total_op_latencies;
+};
+
+void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
+  cout << "scheduling: " << op->name << endl;
+
+  if (!op->is_loop) {
+    int total_latency = 0;
+
+    // Account for time to load data from inputs
+    vector<int> load_latencies;
+    for (auto b : op->buffers_read()) {
+      load_latencies.push_back(map_find(b, hwinfo.buffer_load_latencies));
+    }
+    sort(begin(load_latencies), end(load_latencies));
+    if (load_latencies.size() > 0) {
+      total_latency += load_latencies.back();
+    }
+
+    // Then we need to wait for the compute unit to finish
+    if (op->func != "") {
+      total_latency += map_find(op->func, hwinfo.compute_unit_latencies);
+    }
+
+    // Then we need to wait for the data that comes out of the compute
+    // unit to be finished
+    vector<int> store_latencies;
+    for (auto b : op->buffers_read()) {
+      store_latencies.push_back(map_find(b, hwinfo.buffer_store_latencies));
+    }
+    sort(begin(store_latencies), end(store_latencies));
+    if (store_latencies.size() > 0) {
+      total_latency += store_latencies.back();
+    }
+
+    hwinfo.total_op_latencies[op] = total_latency;
+    return;
+  }
+
+  for (auto op : op->children) {
+    sequential_schedule(hwinfo, op, prg);
+  }
+
+  int ii = 0;
+  for (auto op : op->children) {
+    if (op->is_loop) {
+      int inner_ii = map_find(op->name, hwinfo.loop_iis);
+      ii += inner_ii*prg.trip_count(op->name);
+    } else {
+      ii += map_find(op, hwinfo.total_op_latencies);
+    }
+  }
+
+  hwinfo.loop_iis[op->name] = max(ii, 1);
+  hwinfo.loop_latencies[op->name] = ii;
+}
+
+void stencil_cgra_tests() {
   prog prg = cascade();
   prg.pretty_print();
   prg.sanity_check();
+
+  schedule_info sched;
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      sched.compute_unit_latencies[op->func] = 0;
+    }
+
+    for (auto b : op->buffers_referenced()) {
+      sched.buffer_load_latencies[b] = 1;
+      sched.buffer_store_latencies[b] = 1;
+    }
+  }
+  sequential_schedule(sched, prg.root, prg);
+
+  cout << "iis" << endl;
+  for (auto e : sched.loop_iis) {
+    cout << tab(1) << e.first << " -> " << e.second << endl;
+  }
+  assert(false);
 
 
   auto inner_loops = get_inner_loops(prg);
@@ -12611,6 +12698,7 @@ void stencil_cgra_tests() {
 }
 
 void application_tests() {
+  stencil_cgra_tests();
   reuse_buffered_conv_test();
   infer_uneven_bounds_test();
   llf_pyramid_test();
@@ -13136,7 +13224,6 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    //stencil_cgra_tests();
     application_tests();
     memory_tile_tests();
     //prog_splitting_tests();
