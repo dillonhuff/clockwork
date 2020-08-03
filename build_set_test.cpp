@@ -12717,7 +12717,8 @@ void infer_bounds_color_downsample_test() {
   prg.pretty_print();
   prg.sanity_check();
 
-  infer_bounds_and_unroll("out", {20, 20, 3}, 2, prg);
+  //infer_bounds_and_unroll("out", {20, 20, 3}, 2, prg);
+  infer_bounds("out", {20, 20, 3}, prg);
 
   prg.pretty_print();
   prg.sanity_check();
@@ -12727,7 +12728,7 @@ void infer_bounds_color_downsample_test() {
 }
 
 void application_tests() {
-  //infer_bounds_color_downsample_test();
+  infer_bounds_color_downsample_test();
 
   //stencil_cgra_tests();
   reuse_buffered_conv_test();
