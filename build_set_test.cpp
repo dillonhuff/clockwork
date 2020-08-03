@@ -12725,7 +12725,7 @@ void infer_bounds_negative_conv_test() {
 
   prg.pretty_print();
   prg.sanity_check();
-  assert(false);
+  //assert(false);
 
   regression_test(prg);
 

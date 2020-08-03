@@ -4113,7 +4113,15 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
         int lb = to_int(lexminval(pr));
         int ub = to_int(lexmaxval(pr)) + 1;
         if (val == wvs.front()) {
-          ub = nearest_larger_multiple_of(factor, ub);
+          int length = prg.trip_count(val);
+          cout << "original length = " << length << endl;
+          length = nearest_larger_multiple_of(factor, length);
+          int old_ub = ub;
+          ub = lb + length;
+          cout << "old_ub = " << old_ub << endl;
+          cout << "len    = " << length << endl;
+          assert(ub >= old_ub);
+          //assert(lb >= 0);
         }
         prg.extend_bounds(val, lb, ub);
       }
@@ -4481,13 +4489,17 @@ void strip_mine(const int factor, op* loop, prog& prg) {
   assert(loop->is_loop);
   assert(loop->trip_count() % factor == 0);
 
+  cout << "strip mining loop: " << loop->name << ", start: " << loop->start << ", end exclusive: " << loop->end_exclusive << endl;
+  cout << tab(1) << "trip count: " << loop->trip_count() << endl;
+
   int original_trip_count = loop->trip_count();
   int new_tc = loop->trip_count() / factor;
+  cout << tab(1) << "new tc = " << new_tc << endl;
   int new_start = loop->start;
 
   auto inner = loop->add_loop(prg.un("sm"), 0, factor);
   loop->start = new_start;
-  loop->end_exclusive = new_tc;
+  loop->end_exclusive = new_start + new_tc;
 
   auto children = loop->children;
   // Remove the strip mined loop
@@ -4503,6 +4515,9 @@ void strip_mine(const int factor, op* loop, prog& prg) {
   loop->children = {};
   loop->children.push_back(inner);
 
+  cout << "inner tc = " << inner->trip_count() << endl;
+  cout << "outer tc = " << loop->trip_count() << endl;
+  cout << "orig     = " << original_trip_count << endl;
   assert(inner->trip_count() * loop->trip_count() == original_trip_count);
 }
 
