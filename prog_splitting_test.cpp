@@ -2,6 +2,7 @@
 #include "prog_splitting_test.h"
 #include "prog.h"
 #include <cassert>
+#include <iostream>
 
 #define INT_MULTIPLIER_COST 1
 #define INT_ADDER_COST 1
@@ -65,7 +66,7 @@ std::set<normalized_address> get_normalized_addresses(const string& buff, prog& 
 		addresses.insert(addr.at(0).second);	
 	}
 
-	// Change every address' variable name for its <level>
+	// Change every address' variable name for its <level> (normalize it)
 	for(auto addr : addresses){
 		normalized_address normalized = addr;
 		for(auto level : levels){
@@ -91,10 +92,38 @@ std::set<normalized_address> get_normalized_addresses(const string& buff, prog& 
 	return normalized_addresses;
 }
 
+//-------------------------------------------------STRIDE-------------------------------------------------------
+int stride(int variable, normalized_address addr){
+
+	int stride = 0;
+	vector<string> vars = split_at(addr, ",");
+	vector<string> strs = split_at(vars.at(variable), "<");
+	if(strs.at(0) == "" || strs.at(0) == " "){
+		stride = 0;
+	} else{
+		stride = std::stoi(strs.at(0));
+	}
+
+	return stride;
+}
+
+//-----------------------------------------VARIABLES_WITH_NONZERO_STRIDE-----------------------------------------
+
+std::set<int> variables_with_nonzero_stride(normalized_address addr){
+	std::set<int> nonzero_variables;
+	int var = 2;
+	for(int i = 0; i < var; i++){
+		if(stride(i, addr) > 0){
+			nonzero_variables.insert(var);
+		}
+	}
+	
+	return nonzero_variables;
+}
+
 //------------------------------------------------IS_POINTWISE--------------------------------------------------
 
 bool is_pointwise(const string& buff, prog& prg){
-	// Check if it's pointwise
 	if(get_normalized_addresses(buff, prg).size() == 1){
 		cout << buff << " is POINTWISE!" << endl;
 		return true;
@@ -103,10 +132,41 @@ bool is_pointwise(const string& buff, prog& prg){
 	return false;
 }
 
+//------------------------------------------------IS_STENCIL--------------------------------------------------
 
 bool is_stencil(const string& buff, prog& prg){
+	// Get the normalized addresses
+	std::set<normalized_address> normalized_addresses = get_normalized_addresses(buff, prg);
+	std::set<int> variable_counts;
 
-	return false;
+	// For each addr get the number of variables with nonzero stride
+	for(auto addr : normalized_addresses){
+		int num_nonzero_variables = variables_with_nonzero_stride(addr).size();
+		variable_counts.insert(num_nonzero_variables);
+		cout << "num_nonzero_variables = " << num_nonzero_variables << endl;
+	}
+
+	// If not all the addrs have the same amount of nonzero-stride vars, the buff isn't stencil
+	if(variable_counts.size() != 1){
+		cout << "NOT STENCIL!"<< endl;
+		return false;
+	}
+
+	// If all the addrs have the same amount of nonzero-stride vars, get that number 
+	for(auto variable : variable_counts){ // Isn't this going to be a single value?
+		std::set<int> strides;
+		for(auto addr : normalized_addresses){
+			strides.insert(stride(variable, addr)); 
+		}
+		// If all the strides aren't the same value, the buff isn't stencil
+		if(strides.size() != 1){
+			cout << "NOT STENCIL!"<< endl;
+			return false;
+		}
+	}
+
+	cout << buff << " is STENCIL!" << endl;
+	return true;
 }
 
 //----------------------------------------------NUM_LOCS_WRITTEN------------------------------------------------
@@ -144,31 +204,35 @@ int num_locs_written(const string& buff, prog& prg){
 
  map<string, int> estimate_kernel_memory_area(prog& prg, TargetTechlibInfo& target_info){
 
-	 prg.pretty_print();
+	prg.pretty_print();
 
-	 // Get and print all var levels
-	 auto levels = get_variable_levels(prg);
-	 cout << "Variable levels: " << endl;
-	 for(auto level : levels){
-		 cout << tab(1) << level.first << " -> " << level.second << endl;
-	 }
+	// Get and print all var levels
+	auto levels = get_variable_levels(prg);
+	cout << "Variable levels: " << endl;
+	for(auto level : levels){
+		cout << tab(1) << level.first << " -> " << level.second << endl;
+	}
 
-	 std::set<string> buffers = all_buffers(prg);
-	 map<string, int> estimated_buffer_sizes;
+	// Get all buffers
+	std::set<string> buffers = all_buffers(prg);
+	map<string, int> estimated_buffer_sizes;
 
-	 // Check each buff to estimate its size
-	 for(auto buff : buffers){
-		 if(prg.is_boundary(buff)){
-			 estimated_buffer_sizes[buff] = 0;
-		 } else if(is_pointwise(buff, prg)){
-			 estimated_buffer_sizes[buff] = 0;
-		 } else if(is_stencil(buff, prg)){	
-			 estimated_buffer_sizes[buff] = 0; //To be implemented!
-		 } else{
-			 estimated_buffer_sizes[buff] = num_locs_written(buff, prg);
-		 }
-	 }
+	// Check each buff to estimate its size
+	for(auto buff : buffers){
+		if(prg.is_boundary(buff)){
+			estimated_buffer_sizes[buff] = 0;
+		} else if(is_pointwise(buff, prg)){
+			estimated_buffer_sizes[buff] = 0;
+		} else if(is_stencil(buff, prg)){	
+			estimated_buffer_sizes[buff] = 0; //To be implemented!
+			cout << "Access to " << buff << " is a STENCIL!" << endl;
+			assert(false);
+		} else{
+			estimated_buffer_sizes[buff] = num_locs_written(buff, prg);
+		}
+	}
 
+	
 	map<string, int> estimated_areas;
 	auto locations_written = prg.producer_maps();
 
@@ -296,7 +360,7 @@ prog simple_stencil(){
   auto write_out = prg.add_nest("m", 0, input_image_rows-2, "n", 0, input_image_cols-2);
   auto write_op = write_out->add_op("write_blurred_off_chip");
   write_op->add_load("in", "n, m");
-  write_op->add_load("in", "n, m+1");
+  write_op->add_load("in", "23n, m+1");
   write_op->add_load("in", "n, m+2");
   write_op->add_load("in", "n+1, m");
   write_op->add_load("in", "n+1, m+1");
@@ -368,7 +432,7 @@ void toy_task(){
 			target_info.compute_unit_costs["hcompute_conv_stencil_8"] = 0;
 			target_info.compute_unit_costs["hcompute_conv_stencil_9"] = 0;
 			target_info.compute_unit_costs["hcompute_hw_output_stencil"] = 0;
-		} else if(prg.name == "brighten_blur"){
+		} else if(prg.name == "brighten_blur" || prg.name == "simple_stencil"){
 			target_info.compute_unit_costs["multiply_by_two"] = INT_MULTIPLIER_COST;
 			target_info.compute_unit_costs["blur_3_3"] = INT_ADDER_COST*8 + INT_CONSTANT_DIVIDER_COST;
 			target_info.compute_unit_costs["inc"] = INT_ADDER_COST*8 + INT_CONSTANT_DIVIDER_COST;
