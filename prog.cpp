@@ -3954,3 +3954,81 @@ std::set<op*> find_readers(const string& buff, prog& prg){
 
 	return readers;
 }
+
+
+std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group){
+
+	std::vector<string> topologically_sorted_kernels = topologically_sort_kernels(prg); 
+	std::set<std::set<string>> groups;
+	std::set<string> current_group;
+	int current_group_cost = 0;
+
+	assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
+
+	cout << "Topologically sorted kernels:" << endl;
+	for(auto kernel : topologically_sorted_kernels){
+		cout << kernel << endl;
+		if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
+			groups.insert(current_group);
+			current_group = {kernel};
+			current_group_cost = map_find(kernel, kernel_costs);
+		} else {
+			current_group.insert({kernel});
+			current_group_cost += map_find(kernel, kernel_costs);
+		}
+	}
+
+	groups.insert(current_group);
+
+	// Sanity check
+	int num_kernels_in_groups = 0;
+	for (auto g : groups) {
+		num_kernels_in_groups += g.size();
+	}
+
+	assert(num_kernels_in_groups == get_kernels(prg).size());
+
+	return groups;
+}
+
+
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
+	prog extracted;
+	string prg_name = "Extracted_";
+	for(auto g : group){
+	prg_name += g + "_";
+	}
+	extracted.name = prg_name;
+
+	for(auto kernel : topologically_sort_kernels(original)){
+		if(elem(kernel, group)){
+			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
+			for(auto child : original.find_loop(kernel)->children){
+				deep_copy_child(kernel_copy, child, original);
+			}
+		}
+	}
+	cout << "Programs copied" << endl;
+
+	std::set<string> all_consumed_buffers = get_consumed_buffers(group, original);
+	std::set<string> all_produced_buffers = get_produced_buffers(group, original);
+	for(auto consumed : all_consumed_buffers){
+		if(!elem(consumed, all_produced_buffers)){
+			extracted.add_input(consumed);
+			cout << "Input added: " << consumed << endl;
+			extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
+			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
+		}
+	}
+	
+	for(auto produced : all_produced_buffers){
+		if(!elem(produced, all_consumed_buffers)){
+			extracted.add_output(produced);
+			cout << "Output added: " << produced << endl;
+			extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
+			cout << "Output width: " << extracted.buffer_port_widths[produced] << endl;
+		}
+	}
+	
+	return extracted;
+}
