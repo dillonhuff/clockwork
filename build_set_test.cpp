@@ -12605,18 +12605,18 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
     return;
   }
 
-  for (auto op : op->children) {
-    sequential_schedule(hwinfo, op, prg);
+  for (auto other : op->children) {
+    sequential_schedule(hwinfo, other, prg);
   }
 
   int latency = 0;
-  for (auto op : op->children) {
-    hwinfo.op_offset_within_parent[op] = latency;
-    if (op->is_loop) {
-      int inner_ii = map_find(op->name, hwinfo.loop_iis);
-      latency += inner_ii*prg.trip_count(op->name);
+  for (auto other : op->children) {
+    hwinfo.op_offset_within_parent[other] = latency;
+    if (other->is_loop) {
+      int inner_ii = map_find(other->name, hwinfo.loop_iis);
+      latency += inner_ii*prg.trip_count(other->name);
     } else {
-      latency += map_find(op, hwinfo.total_op_latencies);
+      latency += map_find(other, hwinfo.total_op_latencies);
     }
   }
 
