@@ -12629,6 +12629,20 @@ void stencil_cgra_tests() {
   prg.pretty_print();
   prg.sanity_check();
 
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  all_exhaustive_banked(prg, options);
+
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+
+  auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+  generate_app_code(options, buffers, prg, prg.unoptimized_schedule());
+  cout << "Output name: " << prg.name << endl;
+
+  assert(false);
+
   schedule_info sched;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
@@ -12715,24 +12729,26 @@ void infer_bounds_negative_conv_test() {
   red->add_load("in", "x, y - 1");
   red->add_load("in", "x, y");
   red->add_store("down", "x, y");
+  red->add_function("blur_2x2_32");
 
   cpy("out", "down", 2, prg);
 
   prg.pretty_print();
   prg.sanity_check();
 
-  infer_bounds_and_unroll("out", {20, 20}, 2, prg);
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
 
   prg.pretty_print();
   prg.sanity_check();
   //assert(false);
 
   regression_test(prg);
+  assert(false);
 
 }
 
 void infer_bounds_color_downsample_test() {
-  prog prg("infer_bounds_unroll");
+  prog prg("infer_bounds_negative_conv");
   prg.add_input("in_oc");
   prg.add_output("out");
   cpy("in", "in_oc", 3, prg);
@@ -12747,8 +12763,7 @@ void infer_bounds_color_downsample_test() {
   prg.pretty_print();
   prg.sanity_check();
 
-  infer_bounds_and_unroll("out", {20, 20, 3}, 2, prg);
-  //infer_bounds("out", {20, 20, 3}, prg);
+  infer_bounds_and_unroll("out", {20, 20, 3}, 4, prg);
 
   prg.pretty_print();
   prg.sanity_check();
@@ -12757,11 +12772,18 @@ void infer_bounds_color_downsample_test() {
   regression_test(prg);
 }
 
+void remove_reduce_inits_test() {
+  assert(false);
+}
+
 void application_tests() {
+  stencil_cgra_tests();
+  assert(false);
+
+  //remove_reduce_inits_test();
   infer_bounds_negative_conv_test();
   infer_bounds_color_downsample_test();
 
-  //stencil_cgra_tests();
   reuse_buffered_conv_test();
   infer_uneven_bounds_test();
   llf_pyramid_test();

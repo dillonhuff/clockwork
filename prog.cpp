@@ -2535,15 +2535,9 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
 
   auto buffers = build_buffers(prg, sched);
 
-  //cout << "Buffers..." << endl;
-  //for (auto b : buffers) {
-    ////b.second.generate_bank_and_merge(options);
-    //cout << b.second << endl;
-  //}
-
   assert(prg.compute_unit_file != "");
-  cout << "Compute unit file: " << prg.compute_unit_file << endl;
-  //assert(false);
+  cout << "Compute unit file: "
+    << prg.compute_unit_file << endl;
   generate_app_code(options, buffers, prg, sched);
 }
 
@@ -2566,10 +2560,7 @@ void generate_vanilla_hls_code(prog& prg) {
 
   prg.name = "vanilla_" + prg.name;
 
-  //cout << "Unoptimized schedule..." << endl;
   auto sched = prg.unoptimized_schedule();
-  //cout << tab(1) << ": " << str(sched) << endl;
-  //cout << codegen_c(prg.unoptimized_schedule());
 
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
 
@@ -3693,6 +3684,14 @@ void generate_trace(prog& prg, umap* schedmap) {
   conv_out << endl;
 
   conv_out.close();
+}
+
+void all_exhaustive_banked(prog& prg, CodegenOptions& options) {
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_referenced()) {
+      options.banking_strategies[b] = {"exhaustive"};
+    }
+  }
 }
 
 void all_unbanked(prog& prg, CodegenOptions& options) {
