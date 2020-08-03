@@ -4515,7 +4515,7 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
   auto umaps = get_maps(deps);
   vector<isl_map*> projected_deps;
   for (auto m : umaps) {
-    isl_map* projected = project_all_but(m, 0);
+    isl_map* projected = project_all_but(m, num_in_dims(m) - 1);
     projected_deps.push_back(projected);
   }
   cout << "Computing qfactors..." << endl;
@@ -4552,6 +4552,13 @@ void unroll_producer_matching(const std::string& buf, const int unroll_factor, p
   std::set<op*> inner_loops = get_inner_loops(prg);
   std::map<string, int> unroll_factors =
     compute_unroll_factors(buf, unroll_factor, prg);
+
+  prg.pretty_print();
+  cout << "Unroll factors..." << endl;
+  for (auto f : unroll_factors) {
+    cout << tab(1) << f.first << " -> " << f.second << endl;
+  }
+  //assert(false);
   for (auto loop : inner_loops) {
     int factor = map_find(loop->name, unroll_factors);
     int tc = loop->trip_count();
