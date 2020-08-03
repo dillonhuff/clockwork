@@ -12646,6 +12646,10 @@ void stencil_cgra_tests() {
   for (auto e : sched.loop_iis) {
     cout << tab(1) << e.first << " -> " << e.second << endl;
   }
+  cout << "op completion times" << endl;
+  for (auto o : sched.op_total_completion_times) {
+    cout << tab(1) << o.first->name << " -> " << o.second << endl;
+  }
   assert(false);
 
 
