@@ -12701,6 +12701,36 @@ void stencil_cgra_tests() {
   assert(false);
 }
 
+void infer_bounds_negative_conv_test() {
+  prog prg("negative_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+  auto red = lp->add_op(prg.un("ds"));
+  red->add_load("in", "x - 1, y - 1");
+  red->add_load("in", "x - 1, y");
+  red->add_load("in", "x, y - 1");
+  red->add_load("in", "x, y");
+  red->add_store("down", "x, y");
+
+  cpy("out", "down", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds_and_unroll("out", {20, 20}, 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+  assert(false);
+
+  regression_test(prg);
+
+}
+
 void infer_bounds_color_downsample_test() {
   prog prg("infer_bounds_unroll");
   prg.add_input("in_oc");
@@ -12728,6 +12758,7 @@ void infer_bounds_color_downsample_test() {
 }
 
 void application_tests() {
+  infer_bounds_negative_conv_test();
   infer_bounds_color_downsample_test();
 
   //stencil_cgra_tests();
