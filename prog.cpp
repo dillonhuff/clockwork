@@ -440,7 +440,13 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
     in_cols = prg.buffer_bounds[in_rep.first].at(1);
     in_rows = prg.buffer_bounds[in_rep.first].at(2);
   }
-  assert(in_cols % lanes == 0);
+  cout << "in_cols = " << in_cols << endl;
+  cout << "lanes   = " << lanes << endl;
+  if (!(in_cols % lanes == 0)) {
+    out << tab(1) << "// Error: no support for uneven lanes in sw bmp test harness generation" << endl;
+    return;
+  }
+  //assert(in_cols % lanes == 0);
 
   out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
   out << tab(2) << "for (int cl = 0; cl < " << in_cols << " / " << lanes << "; cl++) {" << endl;
@@ -4092,8 +4098,11 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     std::vector<string> wvs = write_vars(buf, dop, prg);
 
     isl_map* prod = map_find(dop, m);
+    cout << tab(1) << "op    : " << dop->name << endl;
     cout << tab(1) << "bounds: " << str(bound_set) << endl;
     cout << tab(1) << "prod  : " << str(prod) << endl;
+
+
     auto loop_bounds =
       domain(its_range(prod, bound_set));
     cout << tab(1) << "loop bounds: " << str(loop_bounds) << endl;
@@ -4215,7 +4224,6 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     assert(bound_set != nullptr);
 
     cout << "==== Inferring bounds for buffer: " << name(bound_set) << ", produced by: " << next_kernel << endl;
-    //auto bound_set = pick(bounds);
     
     bounds.erase(bound_set);
     string buf = name(bound_set);
@@ -4225,7 +4233,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
 
     assert(next_kernel != "");
 
-    cout << "Kernel: " << next_kernel << " produces " << buf << endl;
+    cout << tab(1) << "Kernel: " << next_kernel << " produces " << buf << endl;
     op* dop = nullptr;
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
       if (!op->is_loop) {
@@ -4459,6 +4467,9 @@ pair<std::string, std::string> remove_whitespace(const pair<std::string, std::st
 void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg) {
 
   infer_bounds(out, bounds, prg);
+  //cout << "After first bounds inference" << endl;
+  //prg.pretty_print();
+  //assert(false);
   extend_bounds_to_multiple_of(unroll_factor, out, prg);
   unroll_reduce_loops(prg);
   unroll_producer_matching(out, unroll_factor, prg);

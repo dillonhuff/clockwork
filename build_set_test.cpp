@@ -12556,7 +12556,6 @@ void infer_bounds_unrolled_test() {
 }
 
 struct schedule_info {
-
   // Schedule constraints
   map<string, int> buffer_load_latencies;
   map<string, int> buffer_store_latencies;
@@ -12565,7 +12564,7 @@ struct schedule_info {
   // Schedule offsets
   map<string, int> loop_iis;
   map<string, int> loop_latencies;
-  map<string, int> event_offset_from_container_loop;
+  map<op*, int> op_offset_within_parent;
   map<string, int> completion_time;
   map<op*, int> total_op_latencies;
 };
@@ -12610,18 +12609,19 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
     sequential_schedule(hwinfo, op, prg);
   }
 
-  int ii = 0;
+  int latency = 0;
   for (auto op : op->children) {
+    hwinfo.op_offset_within_parent[op] = latency;
     if (op->is_loop) {
       int inner_ii = map_find(op->name, hwinfo.loop_iis);
-      ii += inner_ii*prg.trip_count(op->name);
+      latency += inner_ii*prg.trip_count(op->name);
     } else {
-      ii += map_find(op, hwinfo.total_op_latencies);
+      latency += map_find(op, hwinfo.total_op_latencies);
     }
   }
 
-  hwinfo.loop_iis[op->name] = max(ii, 1);
-  hwinfo.loop_latencies[op->name] = ii;
+  hwinfo.loop_iis[op->name] = max(latency, 1);
+  hwinfo.loop_latencies[op->name] = latency;
 }
 
 void stencil_cgra_tests() {
@@ -12647,7 +12647,7 @@ void stencil_cgra_tests() {
     cout << tab(1) << e.first << " -> " << e.second << endl;
   }
   cout << "op completion times" << endl;
-  for (auto o : sched.op_total_completion_times) {
+  for (auto o : sched.total_op_latencies) {
     cout << tab(1) << o.first->name << " -> " << o.second << endl;
   }
   assert(false);
@@ -12701,8 +12701,35 @@ void stencil_cgra_tests() {
   assert(false);
 }
 
+void infer_bounds_color_downsample_test() {
+  prog prg("infer_bounds_unroll");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+  cpy("in", "in_oc", 3, prg);
+
+  auto lp = prg.add_nest("c", 0, 1, "y", 0, 1, "x", 0, 1);
+  auto red = lp->add_op(prg.un("ds"));
+  red->add_load("in", "2*x, 2*y, c");
+  red->add_store("down", "x, y, c");
+
+  cpy("out", "down", 3, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds_and_unroll("out", {20, 20, 3}, 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+  //assert(false);
+
+  regression_test(prg);
+}
+
 void application_tests() {
-  stencil_cgra_tests();
+  //infer_bounds_color_downsample_test();
+
+  //stencil_cgra_tests();
   reuse_buffered_conv_test();
   infer_uneven_bounds_test();
   llf_pyramid_test();
