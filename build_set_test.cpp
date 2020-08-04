@@ -12732,6 +12732,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     //  latency of lower levels?
     //
 
+    vector<int> level_iis;
+    level_iis.resize(num_levels, 0);
     for (int i = num_levels - 1; i >= 0; i--) {
       for (auto other : prg.all_ops()) {
         auto surrounding = surrounding_vars(other, prg);
@@ -12741,7 +12743,15 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         string lname = surrounding.at(i);
         op* loop = prg.find_loop(lname);
         sched.op_offset_within_parent[loop] = 0;
-        sched.loop_iis[lname] = 1;
+        int lii = -1;
+        if (i == num_levels - 1) {
+          lii = 1;
+        } else {
+          lii = loop->trip_count()*level_iis.at(i + 1);
+        }
+        assert(lii > 0);
+        sched.loop_iis[lname] = lii;
+        level_iis.at(i) = lii;
       }
     }
   } else {
@@ -12838,19 +12848,20 @@ void cgra_flow_tests() {
 
   vector<prog> test_programs;
   test_programs.push_back(cascade());
-  test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(strided_conv());
-  test_programs.push_back(resnet());
   test_programs.push_back(up_sample());
   test_programs.push_back(conv_multi());
-
-  // Passing
   test_programs.push_back(unsharp());
   test_programs.push_back(accumulation());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(pointwise());
   test_programs.push_back(down_sample());
   test_programs.push_back(camera_pipeline());
+
+  // DNNs
+  test_programs.push_back(unet_conv_3_3());
+  test_programs.push_back(resnet());
+
 
   // Failing in coreir codegen?
   test_programs.push_back(harris());
