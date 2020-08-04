@@ -12937,9 +12937,9 @@ void infer_bounds_multi_stage_negative_conv_test() {
   prg.pretty_print();
   prg.sanity_check();
 
-  regression_test(prg);
+  //regression_test(prg);
 
-  assert(false);
+  //assert(false);
 }
 
 void infer_bounds_negative_conv_test() {
@@ -13003,9 +13003,9 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
-  infer_bounds_multi_stage_negative_conv_test();
   infer_bounds_color_downsample_test();
   infer_bounds_negative_conv_test();
+  infer_bounds_multi_stage_negative_conv_test();
 
   //remove_reduce_inits_test();
 
