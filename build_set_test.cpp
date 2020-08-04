@@ -12699,8 +12699,9 @@ void stencil_cgra_tests() {
   QExpr root_sched{{root_sched_t}};
 
   map<op*, QExpr> schedule_exprs{{root, root_sched}};
-  map<op*, isl_aff*> schedule_affs;
+  map<string, isl_aff*> schedule_affs;
   build_schedule_exprs(root, schedule_exprs, sched, prg);
+
   cout << "==== Schedules..." << endl;
   for (auto opl : schedule_exprs) {
     auto op = opl.first;
@@ -12710,14 +12711,17 @@ void stencil_cgra_tests() {
     if (!op->is_loop) {
       isl_aff* aff = isl_aff_read_from_str(prg.ctx,
           curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
-      schedule_affs[op] = aff;
+      schedule_affs[op->name] = aff;
     }
   }
 
   cout << "==== Affine schedule expressions" << endl;
   for (auto ef : schedule_affs) {
-    cout << tab(1) << ef.first->name << " -> " << str(ef.second) << endl;
+    cout << tab(1) << ef.first<< " -> " << str(ef.second) << endl;
   }
+
+  auto hw_sched = to_umap(prg.whole_iteration_domain(), schedule_affs);
+  cout << "Hw schedule..." << str(hw_sched) << endl;
   assert(false);
 
   //auto sched = prg.unoptimized_schedule();
