@@ -12661,6 +12661,17 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   auto rvars = reduce_vars(prg);
   if (rvars.size() == 0) {
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    auto cs = clockwork_schedule(dom, valid, cpy(valid));
+    cout << "Clockwork schedule..." << endl;
+    for (auto op : cs) {
+      cout << tab(1) << op.first << " -> ";
+      for (auto aff : op.second) {
+        cout << str(aff) << " ";
+      }
+      cout << endl;
+    }
     assert(false);
   }
   sequential_schedule(sched, root, prg);
