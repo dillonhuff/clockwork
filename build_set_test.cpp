@@ -12897,6 +12897,39 @@ void cgra_flow_tests() {
   }
 }
 
+void infer_bounds_single_stage_negative_conv_test() {
+  prog prg("negative_single_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("in", "x - 1, y - 1");
+    red->add_load("in", "x - 1, y");
+    red->add_load("in", "x, y - 1");
+    red->add_load("in", "x, y");
+    red->add_store("down", "x, y");
+    red->add_function("blur_2x2_32");
+  }
+
+  cpy("out", "down", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  regression_test(prg);
+
+  assert(false);
+}
+
 void infer_bounds_multi_stage_negative_conv_test() {
   prog prg("negative_multi_stage_conv_test");
   prg.add_input("in_oc");
@@ -12937,7 +12970,7 @@ void infer_bounds_multi_stage_negative_conv_test() {
   prg.pretty_print();
   prg.sanity_check();
 
-  //regression_test(prg);
+  regression_test(prg);
 
   //assert(false);
 }
@@ -13003,9 +13036,10 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
+  infer_bounds_single_stage_negative_conv_test();
+  infer_bounds_multi_stage_negative_conv_test();
   infer_bounds_color_downsample_test();
   infer_bounds_negative_conv_test();
-  infer_bounds_multi_stage_negative_conv_test();
 
   //remove_reduce_inits_test();
 
