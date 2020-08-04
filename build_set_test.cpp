@@ -12807,6 +12807,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
+  // Compute units do not compile in C++
+  test_programs.push_back(cascade());
   test_programs.push_back(strided_conv());
   test_programs.push_back(resnet());
   test_programs.push_back(up_sample());
@@ -12832,8 +12834,6 @@ void cgra_flow_tests() {
   // Fails sanity check before compilation with bad loop name?
   //test_programs.push_back(unet_conv_3_3());
 
-  // Compute units do not compile in C++
-  test_programs.push_back(cascade());
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
