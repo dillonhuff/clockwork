@@ -12730,12 +12730,13 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
-  test_programs.push_back(resnet());
+  test_programs.push_back(partially_unrolled_conv());
+  //test_programs.push_back(resnet());
   for (auto& prg : test_programs) {
     prg.sanity_check();
 
     auto cpu = unoptimized_result(prg);
-    assert(false);
+    //assert(false);
 
     compile_for_garnet_dual_port_mem(prg);
     generate_regression_testbench(prg);
