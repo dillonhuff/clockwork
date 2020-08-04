@@ -12625,8 +12625,33 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   hwinfo.loop_latencies[op->name] = latency;
 }
 
-void build_schedule_exprs(op* root, map<op*, QExpr>& schedule_exprs, schedule_info& hwinfo, prog& prg) {
+void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
+  if (!parent->is_loop) {
+    return;
+  }
 
+  QExpr parent_sched = map_find(parent, schedule_exprs);
+  for (auto c : parent->children) {
+    if (c->is_loop) {
+      QTerm root_sched_t{{qconst(map_find(c->name, sched.loop_iis)), qvar(c->name)}};
+      QExpr root_sched{{root_sched_t}};
+
+      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QTerm delayt{{delayv}};
+      QExpr delay{{delayt}};
+
+      root_sched = parent_sched + root_sched + delay;
+      schedule_exprs[c] = root_sched;
+    } else {
+      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QTerm delayt{{delayv}};
+      QExpr delay{{delayt}};
+
+      auto root_sched = parent_sched + delay;
+      schedule_exprs[c] = root_sched;
+    }
+    build_schedule_exprs(c, schedule_exprs, sched, prg);
+  }
 }
 
 void stencil_cgra_tests() {
@@ -12670,14 +12695,28 @@ void stencil_cgra_tests() {
   }
 
   op* root = prg.root;
-  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar("ii_" + root->name)}};
+  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
   QExpr root_sched{{root_sched_t}};
 
   map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  map<op*, isl_aff*> schedule_affs;
   build_schedule_exprs(root, schedule_exprs, sched, prg);
   cout << "==== Schedules..." << endl;
-  for (auto op : schedule_exprs) {
-    cout << tab(1) << op.first->name << " -> " << op.second << endl;
+  for (auto opl : schedule_exprs) {
+    auto op = opl.first;
+    cout << tab(1) << op->name << " -> " << opl.second << endl;
+    ostringstream ss;
+    ss << opl.second;
+    if (!op->is_loop) {
+      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
+          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
+      schedule_affs[op] = aff;
+    }
+  }
+
+  cout << "==== Affine schedule expressions" << endl;
+  for (auto ef : schedule_affs) {
+    cout << tab(1) << ef.first->name << " -> " << str(ef.second) << endl;
   }
   assert(false);
 
