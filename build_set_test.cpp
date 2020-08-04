@@ -12724,17 +12724,13 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
   auto buffers = build_buffers(prg, hw_sched);
   generate_app_code(options, buffers, prg, hw_sched);
-
+  // Insert coreir generation here
 }
 
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
-  // Sanity check program I wrote myself
   test_programs.push_back(partially_unrolled_conv());
-
-  // Fails sanity check?
-  //test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(resnet());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(camera_pipeline());
@@ -12749,6 +12745,9 @@ void cgra_flow_tests() {
   test_programs.push_back(unsharp());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
+
+  // Fails sanity check before compilation with bad loop name?
+  //test_programs.push_back(unet_conv_3_3());
 
   // Compute units do not compile?
   //test_programs.push_back(cascade());
