@@ -12655,9 +12655,11 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
 }
 
 void stencil_cgra_tests() {
-  prog prg = cascade();
+  prog prg = harris();
   prg.pretty_print();
   prg.sanity_check();
+
+  auto cpu = unoptimized_result(prg);
 
   CodegenOptions options;
   options.internal = true;
@@ -12728,6 +12730,9 @@ void stencil_cgra_tests() {
 
   auto buffers = build_buffers(prg, hw_sched);
   generate_app_code(options, buffers, prg, hw_sched);
+  auto cgra_sim = unoptimized_result(prg);
+  compare("cgra_cascade", cpu, cgra_sim);
+
   cout << "Output name: " << prg.name << endl;
   assert(false);
 
