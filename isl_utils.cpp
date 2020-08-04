@@ -1698,16 +1698,29 @@ isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card)
 }
 
 isl_set* rdset(isl_ctx* ctx, const std::string& str) {
-  return isl_set_read_from_str(ctx, str.c_str());
+  auto res = isl_set_read_from_str(ctx, str.c_str());
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_set: " << str << endl;
+    assert(false);
+  }
+  return res;
 }
 
 isl_aff* rdaff(isl_ctx* ctx, const std::string& str) {
-  return isl_aff_read_from_str(ctx, str.c_str());
+  auto res = isl_aff_read_from_str(ctx, str.c_str());
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_aff: " << str << endl;
+    assert(false);
+  }
+  return res;
 }
 
 umap* rdmap(isl_ctx* ctx, const std::string& s) {
   auto res = isl_union_map_read_from_str(ctx, s.c_str());
-  assert(res != nullptr);
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_map: " << s << endl;
+    assert(false);
+  }
   return res;
 }
 
