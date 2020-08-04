@@ -12796,12 +12796,11 @@ void infer_bounds_negative_conv_test() {
   //assert(false);
 
   regression_test(prg);
-  assert(false);
 
 }
 
 void infer_bounds_color_downsample_test() {
-  prog prg("infer_bounds_negative_conv");
+  prog prg("infer_bounds_downsample");
   prg.add_input("in_oc");
   prg.add_output("out");
   cpy("in", "in_oc", 3, prg);
@@ -12830,10 +12829,10 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
+  infer_bounds_color_downsample_test();
+  infer_bounds_negative_conv_test();
 
   //remove_reduce_inits_test();
-  infer_bounds_negative_conv_test();
-  infer_bounds_color_downsample_test();
 
   reuse_buffered_conv_test();
   infer_uneven_bounds_test();
