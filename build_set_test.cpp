@@ -12692,6 +12692,15 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
   }
 }
 
+int max_loop_depth(prog& prg) {
+  int maxl = -1;
+  for (auto op : prg.all_ops()) {
+    int l = surrounding_vars(op, prg).size();
+    maxl = max(l, maxl);
+  }
+  return maxl;
+}
+
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   //sequential_schedule(sched, root, prg);
   //return;
@@ -12714,12 +12723,27 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       sched.op_offset_within_parent[other] = 0;
     }
 
+    int num_levels = max_loop_depth(prg);
+
     // Offset of ops in parents we can assume will always be 0 (for now)
     // Offset of a loop within its parent will be delay_at_level * ii at that level
     // II at a given level will be?
     //  1 at level 1
     //  latency of lower levels?
-    assert(false);
+    //
+
+    for (int i = num_levels - 1; i >= 0; i--) {
+      for (auto other : prg.all_ops()) {
+        auto surrounding = surrounding_vars(other, prg);
+        cout << "# surrounding = " << surrounding.size() << endl;
+        cout << "i = " << i << endl;
+        assert(surrounding.size() > i);
+        string lname = surrounding.at(i);
+        op* loop = prg.find_loop(lname);
+        sched.op_offset_within_parent[loop] = 0;
+        sched.loop_iis[lname] = 1;
+      }
+    }
   } else {
     sequential_schedule(sched, root, prg);
   }
@@ -12813,8 +12837,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
-  test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(cascade());
+  test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(strided_conv());
   test_programs.push_back(resnet());
   test_programs.push_back(up_sample());
