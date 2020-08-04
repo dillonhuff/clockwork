@@ -823,11 +823,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* c, const string& outpt, UBuffer& buf) {
     int width = buf.port_widths;
 
-    cout << "creating select for " << outpt << endl;
+    cout << "====== creating select for " << outpt << " on buffer " << buf.name << endl;
+    //cout << buf << endl;
+    //cout << "====== end of buffer" << endl;
 
     map<string, isl_set*> in_ports_to_conditions =
       input_ports_to_conditions(outpt, buf);
-    cout << "====== Conditions for ports..." << endl;
+    cout << tab(1) << "====== Conditions for ports..." << endl;
     for (auto pt : in_ports_to_conditions) {
       cout << tab(1) << pt.first << " -> " << str(pt.second) << endl;
     }
@@ -844,7 +846,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         if (elem(outpt, buf.get_bank_outputs(b.name))) {
           ub_field.push_back({b.name, c->BitIn()->Arr(width)});
           possible_source_banks.push_back(b.name);
-          cout << "adding field for source bank: " << b.name << endl;
+          cout << tab(2) << "adding field for source bank: " << b.name << endl;
         }
       }
 
@@ -862,7 +864,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
 
-      cout << "possible ports = " << possible_ports.size() << endl;
+      cout << tab(2) << "possible ports = " << possible_ports.size() << endl;
       assert(possible_ports.size() == 1 || possible_ports.size() == 2);
 
       //for (auto inpt : possible_ports) {
@@ -875,7 +877,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       if (possible_ports.size() == 1) {
       //if (true) {
         //possible_ports.size() == 1) {
-        cout << "only one possible port: " << possible_ports.at(0);
+        cout << tab(2) << "only one possible port: " << possible_ports.at(0);
         for (auto inpt : possible_ports) {
           auto b = buf.get_bank_between(inpt, outpt);
           bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
@@ -887,7 +889,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         string b0_name = buf.bank_between(pt0, outpt);
         string pt1 = possible_ports.at(1);
         string b1_name = buf.bank_between(pt1, outpt);
-        cout << "creating coreir for set: " << str(map_find(pt1, in_ports_to_conditions)) << endl;
+        cout << tab(2) << "creating coreir for set: " << str(map_find(pt1, in_ports_to_conditions)) << endl;
         CoreIR::Module* in_set_mod = coreir_for_set(c, map_find(pt1, in_ports_to_conditions));
         auto in_set = bdef->addInstance("set_select", in_set_mod);
         bdef->connect(in_set->sel("d"), bdef->sel("self.d"));
@@ -1130,7 +1132,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     if (true) {
       generate_synthesizable_functional_model(options, buf, def);
     } else {
-      buf.generate_coreir(options, def);
+      //buf.generate_coreir(options, def);
     }
 
     ub->setDef(def);

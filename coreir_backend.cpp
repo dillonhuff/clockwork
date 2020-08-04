@@ -179,6 +179,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   auto context = def->getContext();
   auto ns = context->getNamespace("global");
 
+  cout << "Generating compute unit for " << op->name << endl;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
   for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
@@ -189,13 +190,12 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     int pix_per_burst =
       buf.lanes_in_bundle(bundle_name);
 
-    cout << "Bundle = " << bundle.second << endl;
-    cout << "Possible bundles..." << endl;
+    cout << tab(1) << "Adding bundle: " << bundle_name << ", pix width = " << pixel_width << ", burst width = " << pix_per_burst << endl;
+
     for (auto bndl : buf.port_bundles) {
       cout << tab(1) << bndl.first << endl;
     }
     assert(buf.is_output_bundle(bundle.second));
-    //ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_en", context->BitIn()));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
   }
 
@@ -203,13 +203,11 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     string buf_name = bundle.first;
     string bundle_name = bundle.second;
     auto buf = map_find(buf_name, buffers);
-    //int bundle_width = buf.port_bundle_width(bundle_name);
     int pixel_width = buf.port_widths;
     int pix_per_burst =
       buf.lanes_in_bundle(bundle_name);
 
     assert(buf.is_input_bundle(bundle.second));
-    //ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_valid", context->Bit()));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
   }
 
@@ -266,7 +264,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
         string buf_name = bundle.first;
         string bundle_name = bundle.second;
 
-        cout << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
+        cout << tab(1) << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
 
         auto buf = map_find(buf_name, buffers);
         int pix_width = buf.port_widths;
@@ -276,13 +274,14 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
         CoreIR::Wireable* bsel =
           def->sel("self." + pg(buf_name, bundle_name));
         for (int l = 0; l < nlanes; l++) {
-          int lo = l*pix_width;
-          int hi = lo + pix_width;
-          assert(hi - lo == pix_width);
-          auto w =
-            def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
-          def->connect(w->sel("in"), bsel->sel(0));
-          inputs.push_back(w->sel("out"));
+          inputs.push_back(bsel->sel(l));
+          //int lo = l*pix_width;
+          //int hi = lo + pix_width;
+          //assert(hi - lo == pix_width);
+          //auto w =
+            //def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
+          //def->connect(w->sel("in"), bsel->sel(0));
+          //inputs.push_back(w->sel("out"));
         }
       }
       auto result = addList(def, inputs);
@@ -731,30 +730,17 @@ CoreIR::Wireable* delay_array(ModuleDef* def,
 }
 
 CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
-      const std::string name,
-      CoreIR::Wireable* w,
-      const int width) {
-    auto c = bdef->getContext();
-    auto r = bdef->addInstance(
-        name,
-        "mantle.reg",
-        {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
-    bdef->connect(r->sel("in"), w);
-    return r->sel("out");
-  }
-
-  //CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
-      //CoreIR::Wireable* w,
-      //const int width) {
-    //auto c = bdef->getContext();
-    //auto r = bdef->addInstance(
-        //"delay_reg_" + c->getUnique(),
-        //"mantle.reg",
-        //{{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
-    //bdef->connect(r->sel("in"), w);
-    //return r->sel("out");
-  //}
-
+    const std::string name,
+    CoreIR::Wireable* w,
+    const int width) {
+  auto c = bdef->getContext();
+  auto r = bdef->addInstance(
+      name,
+      "mantle.reg",
+      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
+  bdef->connect(r->sel("in"), w);
+  return r->sel("out");
+}
 
 CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   auto ns = context->getNamespace("global");

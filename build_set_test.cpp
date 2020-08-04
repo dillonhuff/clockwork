@@ -12611,12 +12611,16 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 
   int latency = 0;
   for (auto other : op->children) {
+    int old_latency = latency;
     hwinfo.op_offset_within_parent[other] = latency;
     if (other->is_loop) {
       int inner_ii = map_find(other->name, hwinfo.loop_iis);
       latency += inner_ii*prg.trip_count(other->name);
     } else {
       latency += map_find(other, hwinfo.total_op_latencies);
+    }
+    if (old_latency == latency) {
+      latency += 1;
     }
   }
 
@@ -12711,6 +12715,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     }
   }
 
+  prg.pretty_print();
+
   cout << "==== Affine schedule expressions" << endl;
   for (auto ef : schedule_affs) {
     cout << tab(1) << ef.first<< " -> " << str(ef.second) << endl;
@@ -12722,35 +12728,50 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     cout << tab(1) << str(m) << endl;
   }
 
+  //assert(false);
   auto buffers = build_buffers(prg, hw_sched);
   generate_app_code(options, buffers, prg, hw_sched);
+
+#ifdef COREIR
+
+  generate_coreir(options,
+    buffers,
+    prg,
+    hw_sched);
   // Insert coreir generation here
+#endif
 }
 
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
-  test_programs.push_back(partially_unrolled_conv());
-  test_programs.push_back(resnet());
-  test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(up_sample());
-  test_programs.push_back(down_sample());
-  test_programs.push_back(conv_layer());
-  test_programs.push_back(halide_harris());
-  test_programs.push_back(harris());
-  test_programs.push_back(conv_multi());
   test_programs.push_back(strided_conv());
-  test_programs.push_back(accumulation());
+  test_programs.push_back(resnet());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(conv_multi());
+
+  // Passing
   test_programs.push_back(unsharp());
-  test_programs.push_back(gaussian());
+  test_programs.push_back(accumulation());
+  test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(pointwise());
+  test_programs.push_back(down_sample());
+  test_programs.push_back(camera_pipeline());
+
+  // Failing?
+  test_programs.push_back(harris());
+  test_programs.push_back(halide_harris());
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(gaussian());
+  
+  // Does not work in coreir because its not 16 bits
+  test_programs.push_back(partially_unrolled_conv());
 
   // Fails sanity check before compilation with bad loop name?
   //test_programs.push_back(unet_conv_3_3());
 
-  // Compute units do not compile?
-  //test_programs.push_back(cascade());
+  // Compute units do not compile in C++
+  test_programs.push_back(cascade());
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
@@ -12765,6 +12786,8 @@ void cgra_flow_tests() {
 
     cout << "Output name: " << prg.name << endl;
     compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
+    cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/");
+    //assert(false);
   }
 }
 
