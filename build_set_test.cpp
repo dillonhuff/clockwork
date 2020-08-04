@@ -12730,9 +12730,31 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
+  // Sanity check program I wrote myself
   test_programs.push_back(partially_unrolled_conv());
-  //test_programs.push_back(resnet());
+
+  // Fails sanity check?
+  //test_programs.push_back(unet_conv_3_3());
+  test_programs.push_back(resnet());
+  test_programs.push_back(mini_conv_halide_fixed());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(down_sample());
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(halide_harris());
+  test_programs.push_back(harris());
+  test_programs.push_back(conv_multi());
+  test_programs.push_back(strided_conv());
+  test_programs.push_back(accumulation());
+  test_programs.push_back(unsharp());
+  test_programs.push_back(gaussian());
+  test_programs.push_back(pointwise());
+
+  // Compute units do not compile?
+  //test_programs.push_back(cascade());
+
   for (auto& prg : test_programs) {
+    cout << "====== Running CGRA test for " << prg.name << endl;
     prg.sanity_check();
 
     auto cpu = unoptimized_result(prg);
@@ -12742,10 +12764,8 @@ void cgra_flow_tests() {
     generate_regression_testbench(prg);
     auto cgra_sim = run_regression_tb(prg.name);
 
-    compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
-
     cout << "Output name: " << prg.name << endl;
-    assert(false);
+    compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
   }
 }
 
@@ -12811,8 +12831,6 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
-  cgra_flow_tests();
-  assert(false);
 
   //remove_reduce_inits_test();
   infer_bounds_negative_conv_test();
@@ -13260,6 +13278,11 @@ int main(int argc, char** argv) {
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+
+    if (cmd == "cgra-flow") {
+      cgra_flow_tests();
+      return 0;
+    }
 
     if (cmd == "asplos-examples") {
       generate_asplos_examples();
