@@ -12611,7 +12611,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 
   int latency = 0;
   for (auto other : op->children) {
-    hwinfo.op_offset_within_parent[other] = 0; //latency;
+    hwinfo.op_offset_within_parent[other] = latency;
     if (other->is_loop) {
       int inner_ii = map_find(other->name, hwinfo.loop_iis);
       latency += inner_ii*prg.trip_count(other->name);
@@ -12620,9 +12620,9 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
     }
   }
 
-  hwinfo.loop_iis[op->name] = 1; //max(latency, 1);
-  hwinfo.total_op_latencies[op] = 0; //latency;
-  hwinfo.loop_latencies[op->name] = 0; //latency;
+  hwinfo.loop_iis[op->name] = max(latency, 1);
+  hwinfo.total_op_latencies[op] = latency;
+  hwinfo.loop_latencies[op->name] = latency;
 }
 
 void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
