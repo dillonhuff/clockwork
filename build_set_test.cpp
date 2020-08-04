@@ -12720,16 +12720,21 @@ void stencil_cgra_tests() {
     cout << tab(1) << ef.first<< " -> " << str(ef.second) << endl;
   }
 
-  auto hw_sched = to_umap(prg.whole_iteration_domain(), schedule_affs);
+  auto hw_sched = its(to_umap(prg.whole_iteration_domain(), schedule_affs), prg.whole_iteration_domain());
   cout << "Hw schedule..." << str(hw_sched) << endl;
+  for (auto m : get_maps(hw_sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  auto buffers = build_buffers(prg, hw_sched);
+  generate_app_code(options, buffers, prg, hw_sched);
+  cout << "Output name: " << prg.name << endl;
+  assert(false);
+
   assert(false);
 
   //auto sched = prg.unoptimized_schedule();
 
-  //auto buffers = build_buffers(prg, sched);
-  //generate_app_code(options, buffers, prg, sched);
-  //cout << "Output name: " << prg.name << endl;
-  //assert(false);
 
 
   auto inner_loops = get_inner_loops(prg);
