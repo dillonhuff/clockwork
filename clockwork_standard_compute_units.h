@@ -662,6 +662,14 @@ hw_uint<16> as_hblur(const hw_uint<16*2>& in) {
 }
 
 static inline
+hw_uint<32> blur_1x3_32(const hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  return v0 + v1 + v2;
+}
+
+static inline
 hw_uint<32> blur_2x2_32(const hw_uint<32*4>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
