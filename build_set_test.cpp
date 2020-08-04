@@ -12621,7 +12621,12 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   }
 
   hwinfo.loop_iis[op->name] = max(latency, 1);
+  hwinfo.total_op_latencies[op] = latency;
   hwinfo.loop_latencies[op->name] = latency;
+}
+
+void build_schedule_exprs(op* root, map<op*, QExpr>& schedule_exprs, schedule_info& hwinfo, prog& prg) {
+
 }
 
 void stencil_cgra_tests() {
@@ -12637,12 +12642,6 @@ void stencil_cgra_tests() {
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
 
-  auto buffers = build_buffers(prg, prg.unoptimized_schedule());
-  generate_app_code(options, buffers, prg, prg.unoptimized_schedule());
-  cout << "Output name: " << prg.name << endl;
-
-  assert(false);
-
   schedule_info sched;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
@@ -12650,8 +12649,13 @@ void stencil_cgra_tests() {
     }
 
     for (auto b : op->buffers_referenced()) {
-      sched.buffer_load_latencies[b] = 1;
-      sched.buffer_store_latencies[b] = 1;
+      if (!prg.is_boundary(b)) {
+        sched.buffer_load_latencies[b] = 1;
+        sched.buffer_store_latencies[b] = 1;
+      } else {
+        sched.buffer_load_latencies[b] = 0;
+        sched.buffer_store_latencies[b] = 0;
+      }
     }
   }
   sequential_schedule(sched, prg.root, prg);
@@ -12664,7 +12668,25 @@ void stencil_cgra_tests() {
   for (auto o : sched.total_op_latencies) {
     cout << tab(1) << o.first->name << " -> " << o.second << endl;
   }
+
+  op* root = prg.root;
+  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar("ii_" + root->name)}};
+  QExpr root_sched{{root_sched_t}};
+
+  map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  build_schedule_exprs(root, schedule_exprs, sched, prg);
+  cout << "==== Schedules..." << endl;
+  for (auto op : schedule_exprs) {
+    cout << tab(1) << op.first->name << " -> " << op.second << endl;
+  }
   assert(false);
+
+  //auto sched = prg.unoptimized_schedule();
+
+  //auto buffers = build_buffers(prg, sched);
+  //generate_app_code(options, buffers, prg, sched);
+  //cout << "Output name: " << prg.name << endl;
+  //assert(false);
 
 
   auto inner_loops = get_inner_loops(prg);
