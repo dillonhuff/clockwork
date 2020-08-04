@@ -12724,15 +12724,20 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
   auto buffers = build_buffers(prg, hw_sched);
   generate_app_code(options, buffers, prg, hw_sched);
+
+#ifdef COREIR
+
+  generate_coreir(options,
+    buffers,
+    prg,
+    hw_sched);
   // Insert coreir generation here
+#endif
 }
 
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
-  test_programs.push_back(partially_unrolled_conv());
-  test_programs.push_back(resnet());
-  test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(up_sample());
   test_programs.push_back(down_sample());
@@ -12744,7 +12749,14 @@ void cgra_flow_tests() {
   test_programs.push_back(accumulation());
   test_programs.push_back(unsharp());
   test_programs.push_back(gaussian());
+  test_programs.push_back(resnet());
+
   test_programs.push_back(pointwise());
+
+  // Does not work in coreir because of empty ports_to_conditions?
+  test_programs.push_back(mini_conv_halide_fixed());
+  // Does not work in coreir because its not 16 bits
+  test_programs.push_back(partially_unrolled_conv());
 
   // Fails sanity check before compilation with bad loop name?
   //test_programs.push_back(unet_conv_3_3());
@@ -12765,6 +12777,7 @@ void cgra_flow_tests() {
 
     cout << "Output name: " << prg.name << endl;
     compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
+    //assert(false);
   }
 }
 

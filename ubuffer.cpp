@@ -1128,9 +1128,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto def = ub->newModuleDef();
 
     if (true) {
-      generate_synthesizable_functional_model(options, buf, def);
+      //generate_synthesizable_functional_model(options, buf, def);
     } else {
-      buf.generate_coreir(options, def);
+      //buf.generate_coreir(options, def);
     }
 
     ub->setDef(def);
