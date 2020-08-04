@@ -12742,18 +12742,22 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         assert(surrounding.size() > i);
         string lname = surrounding.at(i);
         op* loop = prg.find_loop(lname);
-        sched.op_offset_within_parent[loop] = 0;
         int lii = -1;
+        int qfactor = to_int(get_coeff(map_find(other->name, cs).at(i), 0));
+        int delay = to_int(int_const_coeff(map_find(other->name, cs).at(i)));
+
         if (i == num_levels - 1) {
-          lii = 1;
+          lii = qfactor;
         } else {
-          lii = loop->trip_count()*level_iis.at(i + 1);
+          lii = qfactor*loop->trip_count()*level_iis.at(i + 1);
         }
         assert(lii > 0);
         sched.loop_iis[lname] = lii;
         level_iis.at(i) = lii;
+        sched.op_offset_within_parent[loop] = lii*delay;
       }
     }
+    //assert(false);
   } else {
     sequential_schedule(sched, root, prg);
   }
@@ -12847,8 +12851,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
-  test_programs.push_back(cascade());
   test_programs.push_back(strided_conv());
+  test_programs.push_back(cascade());
   test_programs.push_back(up_sample());
   test_programs.push_back(conv_multi());
   test_programs.push_back(unsharp());
