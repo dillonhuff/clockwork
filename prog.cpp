@@ -4118,8 +4118,10 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
           length = nearest_larger_multiple_of(factor, length);
           int old_ub = ub;
           ub = lb + length;
+          cout << "lb     = " << lb << endl;
           cout << "old_ub = " << old_ub << endl;
           cout << "len    = " << length << endl;
+          cout << "ub     = " << ub << endl;
           assert(ub >= old_ub);
           //assert(lb >= 0);
         }
