@@ -12693,6 +12693,9 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
 }
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+  sequential_schedule(sched, root, prg);
+  return;
+
   auto rvars = reduce_vars(prg);
   if (rvars.size() == 0) {
     auto valid = prg.validity_deps();
