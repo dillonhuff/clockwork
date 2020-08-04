@@ -4696,6 +4696,41 @@ void merge_basic_block_ops(prog& prg) {
       for (auto c : compute_unit.operations) {
         ostringstream cc;
         vector<string> arg_names;
+
+        //vector<cu_val> args = map_find(c, compute_unit.arg_names);
+        //vector<vector<cu_val> > arg_groups;
+        //vector<cu_val> next;
+        //for (int i = 0; i < (int) args.size() - 1; i++) {
+          //cu_val a = args.at(i);
+          //cu_val b = args.at(i + 1);
+          //if ((a.is_arg || b.is_arg) && a.name == b.name) {
+            //next.push_back(a);
+          //} else {
+          //}
+        //}
+
+        //cout << "got args" << endl;
+
+        //if (next.size() > 0) {
+          //arg_groups.push_back(next);
+        //}
+
+        //for (vector<cu_val> ag : arg_groups) {
+          //assert(ag.size() > 0);
+
+          //vector<string> lanes;
+          //for (auto v : ag) {
+            //lanes.push_back(v.str());
+          //}
+          //pack_bv(1,
+              //out,
+              //ag.back().str() + "_pack",
+              //lanes,
+              //32);
+          //arg_names.push_back(ag.back().str() + "_pack");
+        //}
+
+
         for (auto entry : map_find(c, compute_unit.arg_names)) {
           arg_names.push_back(entry.str());
         }
@@ -4703,9 +4738,6 @@ void merge_basic_block_ops(prog& prg) {
         child_calls.push_back(cc.str());
         last_res = map_find(c, compute_unit.result_names);
       }
-
-      // Output should be the result names for all ops with a distinct write addr?
-      //child_calls.push_back("return " + last_res + ";");
 
       vector<string> prods;
       for (auto prod : compute_unit.output_producers) {
