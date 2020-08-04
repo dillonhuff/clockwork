@@ -13077,9 +13077,10 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
-  infer_bounds_multi_stage_negative_conv1d_test();
+  //infer_bounds_multi_stage_negative_conv1d_test();
+  //infer_bounds_multi_stage_negative_conv_test();
+  
   infer_bounds_single_stage_negative_conv_test();
-  infer_bounds_multi_stage_negative_conv_test();
   infer_bounds_color_downsample_test();
   infer_bounds_negative_conv_test();
 

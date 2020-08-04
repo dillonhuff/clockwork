@@ -666,6 +666,8 @@ hw_uint<32> blur_1x3_32(const hw_uint<32*3>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
   hw_uint<32> v2 = in.extract<64, 95>();
+
+  cout << "v0 = " << v0 << endl;
   return v0 + v1 + v2;
 }
 
