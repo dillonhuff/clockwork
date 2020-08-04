@@ -2829,8 +2829,9 @@ void generate_regression_testbench(prog& prg) {
   rgtb.close();
 }
 
-void compile_compute(const std::string& name) {
+int compile_compute(const std::string& name) {
   int res = cmd("g++ -c -fstack-protector-all -std=c++11 " + name);
+  return res;
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {

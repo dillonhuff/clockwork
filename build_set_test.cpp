@@ -12693,8 +12693,8 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
 }
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-  sequential_schedule(sched, root, prg);
-  return;
+  //sequential_schedule(sched, root, prg);
+  //return;
 
   auto rvars = reduce_vars(prg);
   if (rvars.size() == 0) {
@@ -12713,6 +12713,12 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     for (auto other : prg.all_ops()) {
       sched.op_offset_within_parent[other] = 0;
     }
+
+    // Offset of ops in parents we can assume will always be 0 (for now)
+    // Offset of a loop within its parent will be delay_at_level * ii at that level
+    // II at a given level will be?
+    //  1 at level 1
+    //  latency of lower levels?
     assert(false);
   } else {
     sequential_schedule(sched, root, prg);
