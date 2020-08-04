@@ -12658,6 +12658,14 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
   }
 }
 
+void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+  auto rvars = reduce_vars(prg);
+  if (rvars.size() == 0) {
+    assert(false);
+  }
+  sequential_schedule(sched, root, prg);
+}
+
 void compile_for_garnet_dual_port_mem(prog& prg) {
   CodegenOptions options;
   options.internal = true;
@@ -12683,7 +12691,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
       }
     }
   }
-  sequential_schedule(sched, prg.root, prg);
+  garnet_dual_port_ram_schedule(sched, prg.root, prg);
+  //sequential_schedule(sched, prg.root, prg);
 
   cout << "iis" << endl;
   for (auto e : sched.loop_iis) {

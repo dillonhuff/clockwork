@@ -1611,3 +1611,6 @@ isl_map* get_initial_data(const std::string& level, const std::string& buffer, p
 
 
 void all_exhaustive_banked(prog& prg, CodegenOptions& options);
+
+
+vector<string> reduce_vars(prog& prg);
