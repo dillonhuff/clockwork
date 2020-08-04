@@ -3271,6 +3271,9 @@ void prog::sanity_check() {
 
   std::set<string> loop_names;
   for (auto lp : all_loops()) {
+    if (!(!elem(lp->name, loop_names))) {
+      cout << "Error: Loop named " << lp->name << " is duplicated! Loop index variable names must be unique" << endl;
+    }
     assert(!elem(lp->name, loop_names));
     loop_names.insert(lp->name);
   }
@@ -4114,18 +4117,29 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
         int ub = to_int(lexmaxval(pr)) + 1;
         if (val == wvs.front()) {
           int length = prg.trip_count(val);
+          auto val_loop = prg.find_loop(val);
+
+          cout << "ufactor         = " << factor << endl;
+          cout << "access lower    = " << lb << endl;
+          cout << "access upper    = " << ub << endl;
+          cout << "original start  = " << val_loop->start << endl;
+          cout << "original endex  = " << val_loop->end_exclusive << endl;
           cout << "original length = " << length << endl;
+
+          int new_length = nearest_larger_multiple_of(factor, length);
+
+          cout << "new length      = " << new_length << endl;
           length = nearest_larger_multiple_of(factor, length);
-          int old_ub = ub;
-          ub = lb + length;
+          int old_ub = val_loop->end_exclusive;
+          int new_ub = lb + length;
           cout << "lb     = " << lb << endl;
           cout << "old_ub = " << old_ub << endl;
           cout << "len    = " << length << endl;
           cout << "ub     = " << ub << endl;
-          assert(ub >= old_ub);
+          assert(new_ub >= old_ub);
           //assert(lb >= 0);
+          prg.extend_bounds(val, lb, new_ub);
         }
-        prg.extend_bounds(val, lb, ub);
       }
     }
 

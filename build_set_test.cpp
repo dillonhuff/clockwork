@@ -12702,8 +12702,8 @@ int max_loop_depth(prog& prg) {
 }
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-  //sequential_schedule(sched, root, prg);
-  //return;
+  sequential_schedule(sched, root, prg);
+  return;
 
   auto rvars = reduce_vars(prg);
   if (rvars.size() == 0) {
@@ -12897,6 +12897,51 @@ void cgra_flow_tests() {
   }
 }
 
+void infer_bounds_multi_stage_negative_conv_test() {
+  prog prg("negative_multi_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("in", "x - 1, y - 1");
+    red->add_load("in", "x - 1, y");
+    red->add_load("in", "x, y - 1");
+    red->add_load("in", "x, y");
+    red->add_store("down", "x, y");
+    red->add_function("blur_2x2_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("down", "x2 - 1, y2 - 1");
+    red->add_load("down", "x2 - 1, y2");
+    red->add_load("down", "x2, y2 - 1");
+    red->add_load("down", "x2, y2");
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_2x2_32");
+  }
+
+
+  cpy("out", "down1", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  regression_test(prg);
+
+  assert(false);
+}
+
 void infer_bounds_negative_conv_test() {
   prog prg("negative_conv_test");
   prg.add_input("in_oc");
@@ -12958,6 +13003,7 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
+  infer_bounds_multi_stage_negative_conv_test();
   infer_bounds_color_downsample_test();
   infer_bounds_negative_conv_test();
 
