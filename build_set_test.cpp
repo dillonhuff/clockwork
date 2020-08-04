@@ -12611,7 +12611,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 
   int latency = 0;
   for (auto other : op->children) {
-    hwinfo.op_offset_within_parent[other] = latency;
+    hwinfo.op_offset_within_parent[other] = 0; //latency;
     if (other->is_loop) {
       int inner_ii = map_find(other->name, hwinfo.loop_iis);
       latency += inner_ii*prg.trip_count(other->name);
@@ -12620,9 +12620,9 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
     }
   }
 
-  hwinfo.loop_iis[op->name] = max(latency, 1);
-  hwinfo.total_op_latencies[op] = latency;
-  hwinfo.loop_latencies[op->name] = latency;
+  hwinfo.loop_iis[op->name] = 1; //max(latency, 1);
+  hwinfo.total_op_latencies[op] = 0; //latency;
+  hwinfo.loop_latencies[op->name] = 0; //latency;
 }
 
 void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
@@ -12654,13 +12654,7 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
   }
 }
 
-void stencil_cgra_tests() {
-  prog prg = harris();
-  prg.pretty_print();
-  prg.sanity_check();
-
-  auto cpu = unoptimized_result(prg);
-
+void compile_for_garnet_dual_port_mem(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
@@ -12730,64 +12724,28 @@ void stencil_cgra_tests() {
 
   auto buffers = build_buffers(prg, hw_sched);
   generate_app_code(options, buffers, prg, hw_sched);
-  auto cgra_sim = unoptimized_result(prg);
-  compare("cgra_cascade", cpu, cgra_sim);
 
-  cout << "Output name: " << prg.name << endl;
-  assert(false);
+}
 
-  assert(false);
+void cgra_flow_tests() {
 
-  //auto sched = prg.unoptimized_schedule();
+  vector<prog> test_programs;
+  test_programs.push_back(resnet());
+  for (auto& prg : test_programs) {
+    prg.sanity_check();
 
+    auto cpu = unoptimized_result(prg);
+    assert(false);
 
+    compile_for_garnet_dual_port_mem(prg);
+    generate_regression_testbench(prg);
+    auto cgra_sim = run_regression_tb(prg.name);
 
-  auto inner_loops = get_inner_loops(prg);
-  auto level_map = get_variable_levels(prg);
-  for (auto loop : inner_loops) {
-    auto ops = loop->descendant_ops();
+    compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
 
-    auto idom = iteration_domain(loop, prg);
-    cout << str(idom) << endl;
-    auto earlier = its_range(its(isl_map_lex_gt(get_space(idom)), idom), idom);
-    cout << "earlier = " << str(earlier) << endl;
-    auto earlier_in_same_level = cpy(earlier);
-
-    auto later_in_same_level = its_range(its(isl_map_lex_lt(get_space(idom)), idom), idom);
-    for (int i = 0; i < num_in_dims(later_in_same_level) - 1; i++) {
-      later_in_same_level = isl_map_equate(later_in_same_level, isl_dim_in, i, isl_dim_out, i);
-      earlier_in_same_level = isl_map_equate(earlier_in_same_level, isl_dim_in, i, isl_dim_out, i);
-    }
-    cout << "later in same level = " << str(later_in_same_level) << endl;
-    auto next = lexmin(later_in_same_level);
-    cout << "next iter: " << str(next) << endl;
-    cout << endl;
-
-
-    std::set<string> bufs;
-    for (auto op : ops) {
-      for (auto b : op->buffers_read()) {
-        bufs.insert(b);
-      }
-    }
-
-    for (auto b : bufs) {
-      add_reuse_buffer(loop->name, b, prg);
-      //auto reads = consumer_map(loop, b, prg);
-      //auto read_by_next_iter = dot(next, reads);
-      //print_box_bounds("read by next iter", read_by_next_iter);
-      //auto read_before = dot(dot(next, earlier_in_same_level), reads);
-      //print_box_bounds("already loaded to RB", read_before);
-      //cout << endl;
-
-      //auto diff_data = diff(read_by_next_iter, read_before);
-      //print_box_bounds("need to load to RB", diff_data);
-    }
+    cout << "Output name: " << prg.name << endl;
+    assert(false);
   }
-
-  prg.pretty_print();
-  prg.sanity_check();
-  assert(false);
 }
 
 void infer_bounds_negative_conv_test() {
@@ -12852,7 +12810,7 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
-  stencil_cgra_tests();
+  cgra_flow_tests();
   assert(false);
 
   //remove_reduce_inits_test();
