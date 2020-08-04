@@ -12807,7 +12807,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
-  // Compute units do not compile in C++
+  test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(cascade());
   test_programs.push_back(strided_conv());
   test_programs.push_back(resnet());
@@ -12822,7 +12822,7 @@ void cgra_flow_tests() {
   test_programs.push_back(down_sample());
   test_programs.push_back(camera_pipeline());
 
-  // Failing?
+  // Failing in coreir codegen?
   test_programs.push_back(harris());
   test_programs.push_back(halide_harris());
   test_programs.push_back(conv_layer());
@@ -12832,7 +12832,6 @@ void cgra_flow_tests() {
   test_programs.push_back(partially_unrolled_conv());
 
   // Fails sanity check before compilation with bad loop name?
-  //test_programs.push_back(unet_conv_3_3());
 
 
   for (auto& prg : test_programs) {
