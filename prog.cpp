@@ -4697,17 +4697,22 @@ void merge_basic_block_ops(prog& prg) {
         ostringstream cc;
         vector<string> arg_names;
 
-        //vector<cu_val> args = map_find(c, compute_unit.arg_names);
-        //vector<vector<cu_val> > arg_groups;
-        //vector<cu_val> next;
-        //for (int i = 0; i < (int) args.size() - 1; i++) {
-          //cu_val a = args.at(i);
-          //cu_val b = args.at(i + 1);
-          //if ((a.is_arg || b.is_arg) && a.name == b.name) {
-            //next.push_back(a);
-          //} else {
-          //}
-        //}
+        vector<cu_val> args = map_find(c, compute_unit.arg_names);
+        vector<vector<cu_val> > arg_groups;
+
+        if (args.size() > 0) {
+          arg_groups.push_back({args.at(0)});
+        }
+
+        for (int i = 1; i < (int) args.size(); i++) {
+          cu_val a = arg_groups.back().back();
+          cu_val b = args.at(i);
+          if ((a.is_arg || b.is_arg) && a.name == b.name) {
+            arg_groups.back().push_back(b);
+          } else {
+            arg_groups.push_back({b});
+          }
+        }
 
         //cout << "got args" << endl;
 
@@ -4715,25 +4720,26 @@ void merge_basic_block_ops(prog& prg) {
           //arg_groups.push_back(next);
         //}
 
-        //for (vector<cu_val> ag : arg_groups) {
-          //assert(ag.size() > 0);
+        for (vector<cu_val> ag : arg_groups) {
+          assert(ag.size() > 0);
 
-          //vector<string> lanes;
-          //for (auto v : ag) {
-            //lanes.push_back(v.str());
-          //}
-          //pack_bv(1,
-              //out,
-              //ag.back().str() + "_pack",
-              //lanes,
-              //32);
-          //arg_names.push_back(ag.back().str() + "_pack");
+          vector<string> lanes;
+          for (auto v : ag) {
+            lanes.push_back(v.str());
+          }
+          pack_bv(1,
+              cc,
+              ag.back().str() + "_pack",
+              lanes,
+              32);
+          arg_names.push_back(ag.back().str() + "_pack");
+        }
+
+
+        //for (auto entry : map_find(c, compute_unit.arg_names)) {
+          //arg_names.push_back(entry.str());
         //}
 
-
-        for (auto entry : map_find(c, compute_unit.arg_names)) {
-          arg_names.push_back(entry.str());
-        }
         cc << "auto " << map_find(c, compute_unit.result_names) << " = " << c->func << "(" << comma_list(arg_names) << ");" << endl;
         child_calls.push_back(cc.str());
         last_res = map_find(c, compute_unit.result_names);
