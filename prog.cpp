@@ -4992,7 +4992,7 @@ void generate_verilator_tb(prog& prg,
 
 
   rgtb << "int main() {" << endl;
-  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "cycle_accurate_regression_result_" << prg.name << ".csv\");" << endl;
 
   vector<string> optimized_streams;
   map<string, int> unroll_factor;
@@ -5055,6 +5055,12 @@ void generate_verilator_tb(prog& prg,
   }
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
+  for (auto out : inputs(buffers, prg)) {
+    string data_name =
+      out.first + "_" + out.second + "_0";
+    rgtb << tab(1) << "dut." << data_name << " = 13;" << endl;
+  }
+
   rgtb << tab(1) << "dut.clk = 0;" << endl;
   rgtb << tab(1) << "dut.eval();" << endl;
   rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;

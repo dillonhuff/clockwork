@@ -12898,7 +12898,11 @@ void cgra_flow_tests() {
     cout << "Output name: " << prg.name << endl;
     compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
     run_verilator_tb(prg.name);
-    cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/");
+    cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
+    cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/raw_sram/" + prg.name + "/");
     assert(false);
   }
 }
