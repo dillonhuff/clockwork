@@ -245,6 +245,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
       }
 
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+        auto buf = map_find(bundle.first, buffers);
         bool found = false;
         cout << "# of selects = " << halide_cu->getSelects().size() << endl;
         cout << CoreIR::toString(halide_cu) << endl;
@@ -253,6 +254,9 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
           cout << "name = " << name << endl;
           if (is_prefix("out", name) &&
               contains(name, bundle.first)) {
+            int lanes = buf.lanes_in_bundle(bundle.second);
+            assert(lanes == 1);
+
             def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
             found = true;
             break;

@@ -12844,6 +12844,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     buffers,
     prg,
     hw_sched);
+  generate_verilator_tb(prg, hw_sched);
+
   // Insert coreir generation here
 #endif
 }
@@ -12895,7 +12897,7 @@ void cgra_flow_tests() {
     cout << "Output name: " << prg.name << endl;
     compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
     cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/");
-    //assert(false);
+    assert(false);
   }
 }
 
