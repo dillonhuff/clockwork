@@ -1614,3 +1614,5 @@ void all_exhaustive_banked(prog& prg, CodegenOptions& options);
 
 
 vector<string> reduce_vars(prog& prg);
+
+void sanity_check_all_reads_defined(prog& prg);

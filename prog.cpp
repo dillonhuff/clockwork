@@ -4078,7 +4078,6 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     assert(bound_set != nullptr);
 
     cout << "==== Inferring bounds for buffer: " << name(bound_set) << ", produced by: " << next_kernel << endl;
-    //auto bound_set = pick(bounds);
     
     bounds.erase(bound_set);
     string buf = name(bound_set);
@@ -4105,7 +4104,6 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     cout << tab(1) << "bounds: " << str(bound_set) << endl;
     cout << tab(1) << "prod  : " << str(prod) << endl;
 
-
     auto loop_bounds =
       domain(its_range(prod, bound_set));
     cout << tab(1) << "loop bounds: " << str(loop_bounds) << endl;
@@ -4115,6 +4113,8 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
         auto pr = project_all_but(loop_bounds, i);
         int lb = to_int(lexminval(pr));
         int ub = to_int(lexmaxval(pr)) + 1;
+        prg.extend_bounds(val, lb, ub);
+
         if (val == wvs.front()) {
           int length = prg.trip_count(val);
           auto val_loop = prg.find_loop(val);
@@ -4137,8 +4137,8 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
           cout << "len    = " << length << endl;
           cout << "ub     = " << ub << endl;
           assert(new_ub >= old_ub);
-          //assert(lb >= 0);
           prg.extend_bounds(val, lb, new_ub);
+        } else {
         }
       }
     }
@@ -4191,6 +4191,8 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     }
     prg.buffer_bounds[name(bound_set)] = int_bounds_for_s;
   }
+
+  prg.pretty_print();
 }
 
 void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg) {
@@ -4958,5 +4960,24 @@ isl_map* get_initial_data(const std::string& level, const std::string& buffer, p
     }
   }
   return initial_data;
+}
+
+void sanity_check_all_reads_defined(prog& prg) {
+  auto read = prg.consumer_map();
+  auto written = prg.producer_map();
+
+  auto read_locs = range(read);
+  auto written_locs = range(written);
+  auto read_but_never_written = diff(read_locs, written_locs);
+
+  cout << "Read but never written..." << endl;
+  for (auto m : get_sets(read_but_never_written)) {
+    string mname = name(m);
+    //cout << tab(1) << str(m) << endl;
+    if (!prg.is_input(mname)) {
+      cout << "Error: Buffer " << mname << " is read but not written at: " << str(m) << endl;
+      assert(false);
+    }
+  }
 }
 

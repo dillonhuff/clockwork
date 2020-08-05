@@ -12938,8 +12938,8 @@ void infer_bounds_multi_stage_negative_conv1d_test() {
   {
     auto lp = prg.add_nest("x", 0, 1);
     auto red = lp->add_op(prg.un("ds"));
-    red->add_load("in", "x - 2");
-    red->add_load("in", "x - 1");
+    red->add_load("in", "x + 2");
+    red->add_load("in", "x + 1");
     red->add_load("in", "x");
     red->add_store("down", "x");
     red->add_function("blur_1x3_32");
@@ -12948,8 +12948,8 @@ void infer_bounds_multi_stage_negative_conv1d_test() {
   {
     auto lp = prg.add_nest("x2", 0, 1);
     auto red = lp->add_op(prg.un("ds"));
-    red->add_load("down", "x2 - 2");
-    red->add_load("down", "x2 - 1");
+    red->add_load("down", "x2 + 2");
+    red->add_load("down", "x2 + 1");
     red->add_load("down", "x2");
     red->add_store("down1", "x2");
     red->add_function("blur_1x3_32");
@@ -12965,10 +12965,11 @@ void infer_bounds_multi_stage_negative_conv1d_test() {
 
   prg.pretty_print();
   prg.sanity_check();
+  sanity_check_all_reads_defined(prg);
+
+  // Add inferred buffer size check too
 
   regression_test(prg);
-
-  assert(false);
 }
 
 void infer_bounds_multi_stage_negative_conv_test() {
@@ -13006,10 +13007,13 @@ void infer_bounds_multi_stage_negative_conv_test() {
   prg.pretty_print();
   prg.sanity_check();
 
+
   infer_bounds_and_unroll("out", {20, 20}, 4, prg);
 
   prg.pretty_print();
   prg.sanity_check();
+
+  assert(false);
 
   regression_test(prg);
 
@@ -13077,7 +13081,7 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
-  //infer_bounds_multi_stage_negative_conv1d_test();
+  infer_bounds_multi_stage_negative_conv1d_test();
   //infer_bounds_multi_stage_negative_conv_test();
   
   infer_bounds_single_stage_negative_conv_test();
