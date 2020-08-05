@@ -190,11 +190,11 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     int pix_per_burst =
       buf.lanes_in_bundle(bundle_name);
 
-    cout << tab(1) << "Adding bundle: " << bundle_name << ", pix width = " << pixel_width << ", burst width = " << pix_per_burst << endl;
+    //cout << tab(1) << "Adding bundle: " << bundle_name << ", pix width = " << pixel_width << ", burst width = " << pix_per_burst << endl;
 
-    for (auto bndl : buf.port_bundles) {
-      cout << tab(1) << bndl.first << endl;
-    }
+    //for (auto bndl : buf.port_bundles) {
+      //cout << tab(1) << bndl.first << endl;
+    //}
     assert(buf.is_output_bundle(bundle.second));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
   }
@@ -221,6 +221,8 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
       auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        auto buf = map_find(bundle.first, buffers);
+
         bool found = false;
         cout << "# of selects = " << halide_cu->getSelects().size() << endl;
         cout << CoreIR::toString(halide_cu) << endl;
@@ -229,7 +231,12 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
           cout << "name = " << name << endl;
           if (is_prefix("in", name) &&
               contains(name, bundle.first)) {
-            def->connect(halide_cu->sel(name)->sel(0), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+              //def->connect(halide_cu->sel(name)->sel(0), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+            
+            int lanes = buf.lanes_in_bundle(bundle.second);
+            for (int l = 0; l < lanes; l++) {
+              def->connect(halide_cu->sel(name)->sel(l), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(l));
+            }
             found = true;
             break;
           }

@@ -377,7 +377,7 @@ prog cascade() {
   prg.buffer_port_widths["hw_input_copy_stencil"] = 16;
 // Stencil<uint8_t, 60, 60> &hw_output_stencil = arg_1;
   prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 8;
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input.stencil
   auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 64);
@@ -1026,7 +1026,7 @@ prog unet_conv_3_3() {
   prg.buffer_port_widths["kernel_copy_stencil"] = 16;
 // Stencil<uint8_t, 14, 14, 4> &hw_output_stencil = arg_2;
   prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 8;
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input.stencil
   auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 16);

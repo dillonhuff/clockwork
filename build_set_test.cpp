@@ -12851,16 +12851,18 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
+  test_programs.push_back(unsharp());
   test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
-  test_programs.push_back(up_sample());
-  test_programs.push_back(conv_multi());
-  test_programs.push_back(unsharp());
-  test_programs.push_back(accumulation());
-  test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(pointwise());
   test_programs.push_back(down_sample());
   test_programs.push_back(camera_pipeline());
+
+  test_programs.push_back(conv_multi());
+  test_programs.push_back(accumulation());
+  test_programs.push_back(mini_conv_halide_fixed());
+
+  test_programs.push_back(up_sample());
 
   // DNNs
   test_programs.push_back(unet_conv_3_3());
