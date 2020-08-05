@@ -5014,6 +5014,138 @@ void sanity_check_all_reads_defined(prog& prg) {
   }
 }
 
+void generate_verilator_tb(prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers) {
+  ofstream rgtb(prg.name + "_verilog_tb.cpp");
+  rgtb << "#include \"hw_classes.h\"" << endl;
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include \"verilated.h\"" << endl;
+  rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
+
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "cycle_accurate_regression_result_" << prg.name << ".csv\");" << endl;
+
+  vector<string> optimized_streams;
+  map<string, int> unroll_factor;
+  for (auto in : prg.ins) {
+    auto readers = find_readers(in, prg);
+    int width = 0;
+    int unroll = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->read_addrs(in)) {
+        width += prg.buffer_port_width(in);
+        unroll++;
+      }
+    }
+    unroll_factor[in] = unroll;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << in << ";" << endl;
+    optimized_streams.push_back(in);
+  }
+
+  for (auto out : prg.outs) {
+    auto readers = find_writers(out, prg);
+    int width = 0;
+    int unroll = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->write_addrs(out)) {
+        width += prg.buffer_port_width(out);
+        unroll++;
+      }
+    }
+    unroll_factor[out] = unroll;
+    rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << out << ";" << endl;
+    optimized_streams.push_back(out);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in : prg.ins) {
+    auto cmap = prg.consumer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+    int unroll = map_find(in, unroll_factor);
+    int lane_width = prg.buffer_port_width(in);
+    int bundle_width = lane_width*unroll;
+
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "// rng card: " << str(range_card) << endl;
+    int num_transfers = num_pushes;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
+    vector<string> inds;
+    for (int i = 0; i < unroll; i++) {
+      inds.push_back(str(unroll) + "*i + " + str(i));
+    }
+    pack_bv(2, rgtb, "value", inds, lane_width);
+    rgtb << tab(2) << in << ".write(value);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
+  for (auto out : inputs(buffers, prg)) {
+    string data_name =
+      out.first + "_" + out.second + "_0";
+    rgtb << tab(1) << "dut." << data_name << " = 13;" << endl;
+  }
+
+  rgtb << tab(1) << "dut.clk = 0;" << endl;
+  rgtb << tab(1) << "dut.eval();" << endl;
+  rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
+
+  for (auto out : inputs(buffers, prg)) {
+    string ctrl_name =
+      out.first + "_" + out.second + "_valid";
+    string data_name =
+      out.first + "_" + out.second + "_0";
+    rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
+    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) dut." << data_name << " << endl;" << endl;
+  }
+
+  for (auto out : outputs(buffers, prg)) {
+    string ctrl_name =
+      out.first + "_" + out.second + "_en";
+    string data_name =
+      out.first + "_" + out.second + "_0";
+    rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
+    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) dut." << data_name << " << endl;" << endl;
+  }
+
+  rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;
+  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  rgtb << tab(1) << tab(1) << "dut.clk = 1;" << endl;
+  rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  rgtb << tab(1) << "}" << endl;
+
+  //for (auto out : prg.outs) {
+    //auto cmap = prg.producer_map(out);
+    //auto read_map = inv(cmap);
+    //auto rng = range(read_map);
+    //auto range_card = card(rng);
+    //int num_pops = int_upper_bound(range_card);
+    //int unroll = map_find(out, unroll_factor);
+    //int lane_width = prg.buffer_port_width(out);
+    //int bundle_width = lane_width*unroll;
+
+    //rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    //rgtb << tab(2) << "auto actual = " << out << ".read();" << endl;
+    //vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
+    //for (auto r : results) {
+      //rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
+    //}
+    ////rgtb << tab(2) << "fout << actual << endl;" << endl;
+    //rgtb << tab(1) << "}" << endl << endl;
+  //}
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
   map<op*, umap*> prog::consumer_maps() {
     auto ivars = iter_vars();
     auto doms = domains();

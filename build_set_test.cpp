@@ -9947,7 +9947,7 @@ prog simplified_conv_layer() {
 void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
-  int to_verilog_res = cmd("${COREIR}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -10198,6 +10198,7 @@ void identity_stream_2d_coreir_test() {
 #endif
 
 }
+
 void identity_stream_coreir_test() {
   prog prg("identity_stream");
   prg.buffer_port_widths["in"] = 16;
@@ -12891,6 +12892,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     buffers,
     prg,
     hw_sched);
+  generate_verilator_tb(prg, hw_sched, buffers);
+
   // Insert coreir generation here
 #endif
 }
@@ -12898,16 +12901,18 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
+  test_programs.push_back(pointwise());
+  test_programs.push_back(unsharp());
   test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
-  test_programs.push_back(up_sample());
-  test_programs.push_back(conv_multi());
-  test_programs.push_back(unsharp());
-  test_programs.push_back(accumulation());
-  test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(pointwise());
   test_programs.push_back(down_sample());
   test_programs.push_back(camera_pipeline());
+
+  test_programs.push_back(conv_multi());
+  test_programs.push_back(accumulation());
+  test_programs.push_back(mini_conv_halide_fixed());
+
+  test_programs.push_back(up_sample());
 
   // DNNs
   test_programs.push_back(unet_conv_3_3());
@@ -12939,8 +12944,13 @@ void cgra_flow_tests() {
 
     cout << "Output name: " << prg.name << endl;
     compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
-    cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/");
-    //assert(false);
+    run_verilator_tb(prg.name);
+    cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
+    cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/raw_sram/" + prg.name + "/");
+    assert(false);
   }
 }
 
