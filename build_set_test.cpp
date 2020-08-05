@@ -85,7 +85,7 @@ prog resnet_hc() {
   auto hcompute_conv_stencil_1 = conv_s1_ic->add_op("op_hcompute_conv_stencil_1");
   hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
   for (int oc_unroll = 0; oc_unroll < 4; oc_unroll ++) {
-    hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "conv_s1_oc*4+" +  to_string(oc_unroll));
+    hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_y", "conv_s1_x", "conv_s1_oc*4+" +  to_string(oc_unroll));
       for (int ic_unroll = 0; ic_unroll < 2; ic_unroll ++) {
         if (oc_unroll == 0)
           hcompute_conv_stencil_1->add_load("hw_input_stencil",
@@ -97,7 +97,7 @@ prog resnet_hc() {
                 to_string(oc_unroll) + "+conv_s1_oc*4",
                 to_string(ic_unroll) + "+conv_s1_ic*2");
       }
-    hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", to_string(oc_unroll) + "+conv_s1_oc*4");
+    hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_y", "conv_s1_x", to_string(oc_unroll) + "+conv_s1_oc*4");
   }
 
 //consuming conv.stencil

@@ -3026,8 +3026,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto out_vec_sched = gen_map_from_sched_vec(ctx, out_vectorized_sched_vec, out_op + "_vec");
     new_sched.insert(make_pair(out_op + "_vec", out_vec_sched));
     auto acc_sched_new = gen_map_from_sched_vec(ctx, acc_new_sched_vec, acc_op);
-    auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_in_vec");
-    auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, out_op + "_out_vec");
+    auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_vec_in");
+    auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, acc_op + "_vec_out");
 
     auto loop_access_map = access_map.at(self_loop_name);
     auto rel_vec = relation_map(to_map(loop_access_map));
@@ -3045,8 +3045,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
             acc_out_vec_sched, inner_most_address_related_dim_id, -1);
 
     new_sched.insert(make_pair(acc_op, acc_sched_new));
-    new_sched.insert(make_pair(acc_op+"_in_vec", acc_in_vec_sched));
-    new_sched.insert(make_pair(acc_op+"_out_vec", acc_out_vec_sched));
+    new_sched.insert(make_pair(acc_op+"_vec_in", acc_in_vec_sched));
+    new_sched.insert(make_pair(acc_op+"_vec_out", acc_out_vec_sched));
 
     //cout << "\tnew in map: " << str(in_sched_new)
     //<< "\n\tvec in map: " << str(in_vec_sched)
@@ -3355,8 +3355,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       for (auto it: new_sched) {
         cout << it.first << ", " << str(it.second) << endl;
       }
-      assert(false);
     }
+
 
     for (auto bd_name : in_bundle) {
       cout << "Vectorize input port bundle: " << bd_name << endl;
@@ -3367,8 +3367,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         std::cout << "before rewrite: " << acc_pattern << endl;
 
         //produce the operation transfomation
-        isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width);
+        string suffix = "_vec";
+        if (is_self_loop(in_pt_name)) {
+          suffix += "_in";
+        }
+        isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
         std::cout << "transform rewrite: " << str(op_trans) << endl;
+        cout << "IS loop: " << is_self_loop(in_pt_name) << endl;
 
         auto rewrite_buf2op = dot(inv(access_map.at(in_pt_name)), op_trans);
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
@@ -3402,7 +3407,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         std::cout << "before rewrite: " << acc_pattern << endl;
 
         //produce the operation transfomation
-        isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width);
+        string suffix = "_vec";
+        if (is_self_loop(out_pt_name)) {
+          suffix += "_out";
+        }
+        isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
         std::cout << "transform rewrite: " << str(op_trans) << endl;
 
 

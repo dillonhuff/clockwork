@@ -518,7 +518,7 @@ class AccessPattern {
           }
       }
 
-      isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width) {
+      isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
           vector<int> & stride_in_target = access_matrix[dim_id];
           vector<string> var_list(var_dim-1);
           vector<string> origin_var_list(var_dim-1);
@@ -543,7 +543,7 @@ class AccessPattern {
           auto vars = sep_list(var_list, "[", "]", "," );
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
           cout <<"OP name: " << op_name << endl;
-          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name +"_vec" + vars + "}").c_str()));
+          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name + suffix + vars + "}").c_str()));
           return multi_map;
       }
 
@@ -1590,6 +1590,46 @@ class UBuffer {
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
         //cout <<"origin: " << str(origin_map) <<", transform: " << str(buf_map) << endl;
         return to_map(dot(origin_map, buf_map));
+    }
+
+    map<string, std::set<string> > get_stmt2bd() {
+      map<string, std::set<string> > stmt2bd;
+      for (auto it: schedule) {
+        string bd = get_bundle(it.first);
+        auto sched = it.second;
+        string stmt_name = domain_name(sched);
+        stmt2bd[stmt_name].insert(bd);
+      }
+      return stmt2bd;
+    }
+
+    bool is_self_loop(string pt_name) {
+      auto stmt2bd = get_stmt2bd();
+      auto op_name = domain_name(access_map.at(pt_name));
+      auto bd_vec = stmt2bd.at(op_name);
+      return bd_vec.size() > 1;
+    }
+
+    bool is_self_loop_in(string pt_name) {
+      auto stmt2bd = get_stmt2bd();
+      auto op_name = domain_name(access_map.at(pt_name));
+      auto bd_set = stmt2bd.at(op_name);
+      if (bd_set.size() == 1) {
+        return false;
+      } else {
+        return is_in_pt(pt_name);
+      }
+    }
+
+    bool is_self_loop_out(string pt_name) {
+      auto stmt2bd = get_stmt2bd();
+      auto op_name = domain_name(access_map.at(pt_name));
+      auto bd_set = stmt2bd.at(op_name);
+      if (bd_set.size() == 1) {
+        return false;
+      } else {
+        return is_out_pt(pt_name);
+      }
     }
 
     umap* pad_dom_buf2op(AccessPattern , umap* , int);
