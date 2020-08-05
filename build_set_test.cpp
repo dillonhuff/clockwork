@@ -12888,6 +12888,12 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
 #ifdef COREIR
 
+  generate_coreir_addrgen_in_tile(options,
+    buffers,
+    prg,
+    hw_sched);
+  assert(false);
+
   generate_coreir(options,
     buffers,
     prg,

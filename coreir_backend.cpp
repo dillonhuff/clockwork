@@ -383,6 +383,26 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   return controller;
 }
 
+void generate_coreir_addrgen_in_tile(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap) {
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_cgralib(context);
+  auto c = context;
+
+  auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
+
+  auto ns = context->getNamespace("global");
+  if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  deleteContext(context);
+
+}
+
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
