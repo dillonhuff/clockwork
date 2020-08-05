@@ -647,83 +647,32 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   Generator* ram = cgralib->newGeneratorDecl("raw_dual_port_sram_tile", ramTG, params);
   ram->setGeneratorDefFromFun(
     [](Context* c, Values args, ModuleDef* def) {
-      Type* type = args.at("type")->get<Type*>();
-      bool en = args.at("has_en")->get<bool>();
-      bool clr = args.at("has_clr")->get<bool>();
-      bool rst = args.at("has_rst")->get<bool>();
-      int init = args.at("init")->get<int>();
-      Type* cType = type;
 
-      // identify type size
-      vector<uint> lengths;
-      uint bitwidth = 1;
-      while (!cType->isBaseType()) {
-        assert(cType->getKind() == Type::TypeKind::TK_Array);
-        ArrayType* aType = static_cast<ArrayType*>(cType);
-        uint length = aType->getLen();
+    int width = 16;
+    int depth = args.at("depth")->get<int>();
+  uint awidth = (uint)ceil(log2(depth));
+  CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
+    {"lo", CoreIR::Const::make(c, 0)},
+    {"hi", CoreIR::Const::make(c, awidth)}};
+  def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
+  def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
 
-        cType = aType->getElemType();
-        if (cType->isBaseType()) { bitwidth = length; }
-        else {
-          // lengths.insert(lengths.begin(), length);
-          lengths.push_back(length);
-        }
-      }
-
-      // create and connect the interface
-      Wireable* pt_in = def->addInstance(
-        "pt_in",
-        "mantle.wire",
-        {{"type", Const::make(c, type)}});
-      Wireable* pt_out = def->addInstance(
-        "pt_out",
-        "mantle.wire",
-        {{"type", Const::make(c, type)}});
-      def->connect("self.in", "pt_in.in");
-      def->connect("self.out", "pt_out.out");
-
-      // collect all interface wires
-      std::vector<Wireable*> in_wires;
-      in_wires.push_back(pt_in->sel("out"));
-      std::vector<Wireable*> out_wires;
-      out_wires.push_back(pt_out->sel("in"));
-      for (uint dim_length : lengths) {
-        std::vector<Wireable*> in_temp;
-        std::vector<Wireable*> out_temp;
-        in_temp.reserve(in_wires.size() * dim_length);
-        out_temp.reserve(out_wires.size() * dim_length);
-
-        for (uint i = 0; i < dim_length; ++i) {
-          for (auto in_wire : in_wires) { in_temp.push_back(in_wire->sel(i)); }
-          for (auto out_wire : out_wires) {
-            out_temp.push_back(out_wire->sel(i));
-          }
-        }
-        in_wires = in_temp;
-        out_wires = out_temp;
-      }
-
-      // create and wire up registers
-      assert(in_wires.size() == out_wires.size());
-      for (uint i = 0; i < in_wires.size(); ++i) {
-        std::string reg_name = "reg_" + std::to_string(i);
-        Values reg_args = {{"width", Const::make(c, bitwidth)},
-                           {"has_en", Const::make(c, en)},
-                           {"has_clr", Const::make(c, clr)},
-                           {"has_rst", Const::make(c, rst)}};
-        Values reg_configargs = {
-          {"init", Const::make(c, BitVector(bitwidth, init))}};
-        Wireable* reg = def->addInstance(
-          reg_name,
-          "mantle.reg",
-          reg_args,
-          reg_configargs);
-        if (en) { def->connect("self.en", reg_name + ".en"); }
-        if (clr) { def->connect("self.clr", reg_name + ".clr"); }
-        if (rst) { def->connect("self.rst", reg_name + ".rst"); }
-        def->connect(in_wires[i], reg->sel("in"));
-        def->connect(reg->sel("out"), out_wires[i]);
-      }
+  def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+  def->addInstance(
+      "readreg",
+      "mantle.reg",
+      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
+  def->connect("self.clk", "readreg.clk");
+  def->connect("self.clk", "mem.clk");
+  def->connect("self.wdata", "mem.wdata");
+  def->connect("self.waddr", "waddr_slice.in");
+  def->connect("waddr_slice.out", "mem.waddr");
+  def->connect("self.wen", "mem.wen");
+  def->connect("mem.rdata", "readreg.in");
+  def->connect("self.rdata", "readreg.out");
+  def->connect("self.raddr", "raddr_slice.in");
+  def->connect("raddr_slice.out", "mem.raddr");
+  def->connect("self.ren", "readreg.en");
     });
 
 }
