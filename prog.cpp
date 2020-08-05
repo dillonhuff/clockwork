@@ -4982,10 +4982,12 @@ void sanity_check_all_reads_defined(prog& prg) {
 }
 
 void generate_verilator_tb(prog& prg, umap* hw_sched) {
-  ofstream rgtb("verilator_regression_tb_" + prg.name + ".cpp");
+  ofstream rgtb(prg.name + "_verilog_tb.cpp");
+  rgtb << "#include \"hw_classes.h\"" << endl;
   rgtb << "#include <fstream>" << endl;
-  rgtb << "#include <verilated>" << endl;
+  rgtb << "#include \"verilated.h\"" << endl;
   rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
+
 
   rgtb << "int main() {" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
@@ -5050,7 +5052,7 @@ void generate_verilator_tb(prog& prg, umap* hw_sched) {
     rgtb << tab(1) << "}" << endl << endl;
   }
 
-  rgtb << tab(1) << prg.name << " dut;" << endl;
+  rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
   rgtb << tab(1) << "for (int t = 0; t < 1000; t++) {" << endl;
   rgtb << tab(1) << "}" << endl;
 
