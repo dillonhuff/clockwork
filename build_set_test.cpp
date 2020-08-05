@@ -13143,7 +13143,7 @@ void infer_bounds_multi_5x5_stage_negative_conv_test() {
       }
     }
     red->add_store("down", "x, y");
-    red->add_function("blur_2x2_32");
+    red->add_function("blur_5x5_32");
   }
 
   {
@@ -13155,7 +13155,7 @@ void infer_bounds_multi_5x5_stage_negative_conv_test() {
       }
     }
     red->add_store("down1", "x2, y2");
-    red->add_function("blur_2x2_32");
+    red->add_function("blur_5x5_32");
   }
 
 
@@ -13214,7 +13214,7 @@ void infer_bounds_multi_stage_negative_conv_test() {
   prg.sanity_check();
 
 
-  infer_bounds_and_unroll("out", {4000, 4000}, 4, prg);
+  infer_bounds_and_unroll("out", {50, 55}, 4, prg);
 
   prg.pretty_print();
   prg.sanity_check();
