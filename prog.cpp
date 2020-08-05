@@ -4981,7 +4981,9 @@ void sanity_check_all_reads_defined(prog& prg) {
   }
 }
 
-void generate_verilator_tb(prog& prg, umap* hw_sched) {
+void generate_verilator_tb(prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers) {
   ofstream rgtb(prg.name + "_verilog_tb.cpp");
   rgtb << "#include \"hw_classes.h\"" << endl;
   rgtb << "#include <fstream>" << endl;
@@ -5053,28 +5055,32 @@ void generate_verilator_tb(prog& prg, umap* hw_sched) {
   }
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
-  rgtb << tab(1) << "for (int t = 0; t < 1000; t++) {" << endl;
+  rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
+
+  for (auto out : outputs(buffers, prg)) {
+    rgtb << tab(1) << "cout << \"@\" << t << \": \" << (int) dut." << out.first << "_" << out.second << "_0" << " << endl;" << endl;
+  }
   rgtb << tab(1) << "}" << endl;
 
-  for (auto out : prg.outs) {
-    auto cmap = prg.producer_map(out);
-    auto read_map = inv(cmap);
-    auto rng = range(read_map);
-    auto range_card = card(rng);
-    int num_pops = int_upper_bound(range_card);
-    int unroll = map_find(out, unroll_factor);
-    int lane_width = prg.buffer_port_width(out);
-    int bundle_width = lane_width*unroll;
+  //for (auto out : prg.outs) {
+    //auto cmap = prg.producer_map(out);
+    //auto read_map = inv(cmap);
+    //auto rng = range(read_map);
+    //auto range_card = card(rng);
+    //int num_pops = int_upper_bound(range_card);
+    //int unroll = map_find(out, unroll_factor);
+    //int lane_width = prg.buffer_port_width(out);
+    //int bundle_width = lane_width*unroll;
 
-    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
-    rgtb << tab(2) << "auto actual = " << out << ".read();" << endl;
-    vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
-    for (auto r : results) {
-      rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
-    }
-    //rgtb << tab(2) << "fout << actual << endl;" << endl;
-    rgtb << tab(1) << "}" << endl << endl;
-  }
+    //rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    //rgtb << tab(2) << "auto actual = " << out << ".read();" << endl;
+    //vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
+    //for (auto r : results) {
+      //rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
+    //}
+    ////rgtb << tab(2) << "fout << actual << endl;" << endl;
+    //rgtb << tab(1) << "}" << endl << endl;
+  //}
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();
