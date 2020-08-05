@@ -46,15 +46,20 @@ map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info
 	return costs;
 }
 
-std::set<normalized_address> get_normalized_addresses(const string& buff, prog& prg){
-	
+struct normalized_address_components {
+vector<vector<int>> components;
+vector<int> offsets;
+};
+ 
+std::set<normalized_address_components> get_normalized_addresses(const string& buff, prog& prg){
+	/*
 	std::set<op*> buff_readers = find_readers(buff, prg);
 	op* buff_writer = find_writer(buff, prg);
 	std::set<address> addresses;
 	auto levels = get_variable_levels(prg);
-	std::set<normalized_address> normalized_addresses;
+*/	std::set<normalized_address_components> normalized_addresses;
 
-	// Add addresses from reader ops
+/*	// Add addresses from reader ops
 	for(auto reader : buff_readers){
 		for(auto addr : reader->read_addrs(buff)){
 			addresses.insert(addr.at(0).second);	
@@ -88,32 +93,85 @@ std::set<normalized_address> get_normalized_addresses(const string& buff, prog& 
 	for(auto addr : normalized_addresses){
 		cout << addr << endl;
 	}
-
+*/
 	return normalized_addresses;
 }
 
-//-------------------------------------------------STRIDE-------------------------------------------------------
-int stride(int variable, normalized_address addr){
 
-	int stride = 0;
-	vector<string> vars = split_at(addr, ",");
-	vector<string> strs = split_at(vars.at(variable), "<");
-	if(strs.at(0) == "" || strs.at(0) == " "){
-		stride = 0;
-	} else{
-		stride = std::stoi(strs.at(0));
+normalized_address_components get_components(const normalized_address& addr, prog& prg, op* op){
+	normalized_address_components all_comps;
+
+	int total_variables = surrounding_vars(op, prg).size();
+	// First split: creating components
+	vector<string> components = split_at(addr, ",");
+	vector<vector<int>> comp_strides;
+	for(auto comp : components){
+		// Second split: creating terms of a component
+		vector<string> terms = split_at(comp, "+");
+		vector<string> consts;
+		vector<string> vars;
+		// Sorting the terms into constants or variables
+		for(auto term : terms){
+			if(contains(term, "<")){
+				vars.push_back(term);
+			} else{
+				consts.push_back(term);
+			}
+		}
+
+		// Calculating the sum of constants
+		int accum = 0;
+		for(auto c : consts){
+			accum += std::stoi(c);
+		}
+		all_comps.offsets.push_back(accum);
+
+		// Calculating the sum of variable strides
+		map<string, vector<int>> variable_strides;
+		for(auto v : vars){
+			vector<string> parts = split_at(v,"<");
+			assert(parts.size() <= 2);
+			assert(parts.size() > 0);
+			if(parts.size() == 1){ // In this case stride is 1
+				vector<string> remaining_part = split_at(parts.at(0),">");
+				variable_strides[remaining_part.at(0)].push_back(1);
+			} else{ // In this case we have to find the stride
+				int stride_value = std::stoi(parts.at(0));
+				vector<string> remaining_part = split_at(parts.at(1),">");
+				variable_strides[remaining_part.at(0)].push_back(stride_value);
+			}
+		}
+		
+		vector<int> reduced_strides;
+		reduced_strides.resize(total_variables, 0);
+		for(auto pair : variable_strides){
+			int variable_index = std::stoi(pair.first);
+			int accum_strides = 0;
+			for(auto value : pair.second){
+				accum_strides += value;
+			}
+			assert(variable_index < reduced_strides.size());
+			reduced_strides[variable_index] = accum_strides;
+		}
+
+		all_comps.components.push_back(reduced_strides);
+
 	}
+	return all_comps;
+}
 
-	return stride;
+//-------------------------------------------------STRIDE-------------------------------------------------------
+int stride(int variable, int component, normalized_address_components addr){
+	return addr.components.at(component).at(variable);
 }
 
 //-----------------------------------------VARIABLES_WITH_NONZERO_STRIDE-----------------------------------------
 
-std::set<int> variables_with_nonzero_stride(normalized_address addr){
+std::set<int> variables_with_nonzero_stride(int component, normalized_address_components addr){
 	std::set<int> nonzero_variables;
 	int var = 2;
 	for(int i = 0; i < var; i++){
-		if(stride(i, addr) > 0){
+		if(stride(i, component, addr) > 0){
 			nonzero_variables.insert(var);
 		}
 	}
@@ -136,32 +194,35 @@ bool is_pointwise(const string& buff, prog& prg){
 
 bool is_stencil(const string& buff, prog& prg){
 	// Get the normalized addresses
-	std::set<normalized_address> normalized_addresses = get_normalized_addresses(buff, prg);
-	std::set<int> variable_counts;
+	std::set<normalized_address_components> normalized_addresses = get_normalized_addresses(buff, prg);
 
-	// For each addr get the number of variables with nonzero stride
-	for(auto addr : normalized_addresses){
-		int num_nonzero_variables = variables_with_nonzero_stride(addr).size();
-		variable_counts.insert(num_nonzero_variables);
-		cout << "num_nonzero_variables = " << num_nonzero_variables << endl;
-	}
+	for(int component = 0; component < 2; component++){
+		std::set<int> variable_counts;
 
-	// If not all the addrs have the same amount of nonzero-stride vars, the buff isn't stencil
-	if(variable_counts.size() != 1){
-		cout << "NOT STENCIL!"<< endl;
-		return false;
-	}
-
-	// If all the addrs have the same amount of nonzero-stride vars, get that number 
-	for(auto variable : variable_counts){ // Isn't this going to be a single value?
-		std::set<int> strides;
+		// For each addr get the number of variables with nonzero stride
 		for(auto addr : normalized_addresses){
-			strides.insert(stride(variable, addr)); 
+			int num_nonzero_variables = variables_with_nonzero_stride(component, addr).size();
+			variable_counts.insert(num_nonzero_variables);
+			cout << "num_nonzero_variables = " << num_nonzero_variables << endl;
 		}
-		// If all the strides aren't the same value, the buff isn't stencil
-		if(strides.size() != 1){
+
+		// If not all the addrs have the same amount of nonzero-stride vars, the buff isn't stencil
+		if(variable_counts.size() != 1){
 			cout << "NOT STENCIL!"<< endl;
 			return false;
+		}
+
+		// If all the addrs have the same amount of nonzero-stride vars, get that number 
+		for(auto variable : variable_counts){ // Isn't this going to be a single value?
+			std::set<int> strides;
+			for(auto addr : normalized_addresses){
+				strides.insert(stride(variable, component,addr)); 
+			}
+			// If all the strides aren't the same value, the buff isn't stencil
+			if(strides.size() != 1){
+				cout << "NOT STENCIL!"<< endl;
+				return false;
+			}
 		}
 	}
 
@@ -226,8 +287,8 @@ int num_locs_written(const string& buff, prog& prg){
 		} else if(is_stencil(buff, prg)){	
 			estimated_buffer_sizes[buff] = 0; //To be implemented!
 			cout << "Access to " << buff << " is a STENCIL!" << endl;
-			assert(false);
 		} else{
+			cout << tab(3) << "NOT pointwise or stencil..." << endl;
 			estimated_buffer_sizes[buff] = num_locs_written(buff, prg);
 		}
 	}
@@ -242,8 +303,6 @@ int num_locs_written(const string& buff, prog& prg){
 //-----------------------------------------GROUP_KERNELS_FOR_COMPILATION-------------------------------------------
 
 std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group){
-
-	// TODO: Improve this greedy algorithm
 
 	std::vector<string> topologically_sorted_kernels = topologically_sort_kernels(prg); 
 	std::set<std::set<string>> groups;
@@ -282,7 +341,6 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
 //-----------------------------------------GROUP_TO_SEPARATE_PROG-----------------------------------------------------
 
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
-	// TODO: Implement this function
 	prog extracted;
 	string prg_name = "Extracted_";
 	for(auto g : group){
@@ -306,8 +364,7 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 		if(!elem(consumed, all_produced_buffers)){
 			extracted.add_input(consumed);
 			cout << "Input added: " << consumed << endl;
-			// Do I need to calculate the width?
-			 extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
+			extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
 			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
 		}
 	}
@@ -381,8 +438,8 @@ void toy_task(){
 	vector<prog> example_progs;
 	example_progs.push_back(simple_stencil());
 	example_progs.push_back(brighten_blur());
-	//example_progs.push_back(unet_conv_3_3());
-	//example_progs.push_back(resnet());
+	example_progs.push_back(unet_conv_3_3());
+	example_progs.push_back(resnet());
 
 	vector<pair<string, int>> prog_costs;
 
@@ -439,36 +496,36 @@ void toy_task(){
 		}
 
 		estimate_kernel_memory_area(prg, target_info);
-		assert(false);	
-
+//		assert(false);	
+/*
 		map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
 		int total_cost = 0;
 		for(auto estimate_area : kernel_areas){
 			total_cost += estimate_area.second;
 			//		cout << "Each cost: " << estimate_area.second << endl;
 		}
-		
-		   cout << endl << "Grouping kernels..." << endl;
-		   int max_area_cost_per_group = 9;
-		   std::set<std::set<string>> kernel_grouping = group_kernels_for_compilation(prg, kernel_areas, max_area_cost_per_group);
+
+		cout << endl << "Grouping kernels..." << endl;
+		int max_area_cost_per_group = 9;
+		std::set<std::set<string>> kernel_grouping = group_kernels_for_compilation(prg, kernel_areas, max_area_cost_per_group);
 		//		assert(kernel_grouping.size() == 2);
 
 		for(auto group : kernel_grouping){
-		cout << "current group: "<< endl;
-		for(auto kernel : group){
-		cout << tab(1) << kernel << endl;
-		}
+			cout << "current group: "<< endl;
+			for(auto kernel : group){
+				cout << tab(1) << kernel << endl;
+			}
 		}
 
 		vector<prog> group_programs;
 		cout << endl << "Extracting progs..." << endl;
 		for (auto group : kernel_grouping) {
-		prog prog_for_group = extract_group_to_separate_prog(group, prg);
-		cout << "Group program..." << endl;
-		prog_for_group.pretty_print();
-		group_programs.push_back(prog_for_group);
+			prog prog_for_group = extract_group_to_separate_prog(group, prg);
+			cout << "Group program..." << endl;
+			prog_for_group.pretty_print();
+			group_programs.push_back(prog_for_group);
 		}
-		 
+
 		pair<string, int> result;
 		result.first = prg.name;
 		result.second = total_cost; 
@@ -479,8 +536,9 @@ void toy_task(){
 	cout << endl << "Programs costs:" << endl;
 	for(auto cost : prog_costs){
 		cout << cost.first << " => " << cost.second << endl;
+*/
 	}
-	assert(false);
+//	assert(false);
 
 }
 
