@@ -4,7 +4,15 @@
 #include "cwlib.h"
 #include "coreir_backend.h"
 
+using CoreIR::CoreIRType;
+using CoreIR::Context;
+using CoreIR::Params;
 using CoreIR::ModuleDef;
+using CoreIR::Generator;
+using CoreIR::TypeGen;
+using CoreIR::Type;
+using CoreIR::Values;
+
 #endif
 #include "coreir_backend.h"
 
@@ -607,7 +615,45 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 
 #ifdef COREIR
 
+void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
+  cout << "$$$$ Adding raw dual port sram" << endl;
+
+  auto cgralib = c->getNamespace("global");
+  CoreIR::Params params = {{"depth",c->String()}};
+
+  Params reg_array_args = {{"type", CoreIRType::make(c)},
+                           {"has_en", c->Bool()},
+                           {"has_clr", c->Bool()},
+                           {"has_rst", c->Bool()},
+                           {"init", c->Int()}};
+  TypeGen* ramTG = cgralib->newTypeGen(
+    "raw_dual_port_sram_TG",
+    params,
+    [](Context* c, Values args) {
+    int width = 16;
+    int depth = args.at("depth")->get<int>();
+
+  auto tp = c->Record({
+      {"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)},
+      {"waddr", c->BitIn()->Arr(width)},
+      {"wen", c->BitIn()},
+      {"rdata", c->Bit()->Arr(width)},
+      {"raddr", c->BitIn()->Arr(width)},
+      {"ren", c->BitIn()}});
+  return tp;
+    });
+  Generator* ram = cgralib->newGeneratorDecl("raw_dual_port_sram_tile", ramTG, params);
+}
+
 CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth) {
+  auto ns = c->getNamespace("global");
+
+  if (!ns->hasGenerator("raw_dual_port_sram_tile")) {
+    add_raw_dual_port_sram_generator(c);
+    assert(ns->hasGenerator("raw_dual_port_sram_tile"));
+  }
+
   auto tp = c->Record({
       {"clk", c->Named("coreir.clkIn")},
       {"wdata", c->BitIn()->Arr(width)},

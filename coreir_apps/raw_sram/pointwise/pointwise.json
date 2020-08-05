@@ -1630,6 +1630,15 @@
           ["waddr_slice.in","self.waddr"]
         ]
       }
+    },
+    "generators":{
+      "raw_dual_port_sram_tile":{
+        "typegen":"global.raw_dual_port_sram_TG",
+        "genparams":{"depth":"String"}
+      }
+    },
+    "typegens":{
+      "raw_dual_port_sram_TG":[{"depth":"String"},"implicit"]
     }
   }
 }
