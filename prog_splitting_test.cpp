@@ -52,14 +52,15 @@ vector<int> offsets;
 };
  
 std::set<normalized_address_components> get_normalized_addresses(const string& buff, prog& prg){
-	/*
+// string -> normalized_address_components struct
+	
 	std::set<op*> buff_readers = find_readers(buff, prg);
 	op* buff_writer = find_writer(buff, prg);
 	std::set<address> addresses;
 	auto levels = get_variable_levels(prg);
-*/	std::set<normalized_address_components> normalized_addresses;
+	std::set<normalized_address> normalized_addresses;
 
-/*	// Add addresses from reader ops
+	// Add addresses from reader ops
 	for(auto reader : buff_readers){
 		for(auto addr : reader->read_addrs(buff)){
 			addresses.insert(addr.at(0).second);	
@@ -93,8 +94,9 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 	for(auto addr : normalized_addresses){
 		cout << addr << endl;
 	}
-*/
-	return normalized_addresses;
+
+	std::set<normalized_address_components> normalized_addresses_comps;
+	return normalized_addresses_comps;
 }
 
 
