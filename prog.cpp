@@ -5059,10 +5059,22 @@ void generate_verilator_tb(prog& prg,
   rgtb << tab(1) << "dut.eval();" << endl;
   rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
 
+  for (auto out : inputs(buffers, prg)) {
+    string ctrl_name =
+      out.first + "_" + out.second + "_valid";
+    string data_name =
+      out.first + "_" + out.second + "_0";
+    rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
+    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) dut." << data_name << " << endl;" << endl;
+  }
+
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
       out.first + "_" + out.second + "_en";
+    string data_name =
+      out.first + "_" + out.second + "_0";
     rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
+    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) dut." << data_name << " << endl;" << endl;
   }
 
   rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;
