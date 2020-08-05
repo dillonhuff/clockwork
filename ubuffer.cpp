@@ -2445,8 +2445,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto ret = pad_to_domain_map(s, depth);
     auto ret_sched = pad_to_domain_map(sched, depth);
     string dom_name = domain_name(ret);
-    ret = set_domain_name(ret, dom_name + "_" + to_string(depth));
-    ret_sched = set_domain_name(ret_sched, dom_name + "_" + to_string(depth));
+    if (depth > 0) {
+        ret = set_domain_name(ret, dom_name + "_" + to_string(depth));
+        ret_sched = set_domain_name(ret_sched, dom_name + "_" + to_string(depth));
+    }
     cout << "Rewrited output port map: " << str(ret) << endl;
     return make_pair(ret, ret_sched);
   }
@@ -2943,6 +2945,117 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //return sep_list(addr_vec_out, "", "", " + ");
   }
 
+  map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, string self_loop_bd) {
+    /*
+     * Previously we have two ops, input and output.In order to do the vectorization
+     * we need to create 2 other ops, input_vec and output_vec
+     * */
+    string in_pt_name = pick(port_bundles.at(in_bd_name));
+    string out_pt_name = pick(port_bundles.at(out_bd_name));
+    string self_loop_name = pick(port_bundles.at(self_loop_bd));
+    string in_op = domain_name(to_map(access_map.at(in_pt_name)));
+    string out_op = domain_name(to_map(access_map.at(out_pt_name)));
+    string acc_op = domain_name(to_map(access_map.at(self_loop_name)));
+    auto in_sched = schedule.at(in_pt_name);
+    auto out_sched = schedule.at(out_pt_name);
+    auto acc_sched = schedule.at(self_loop_name);
+    auto in_sched_vec = collect_sched_vec(in_sched);
+    auto out_sched_vec = collect_sched_vec(out_sched);
+    auto acc_sched_vec = collect_sched_vec(acc_sched);
+    cout << "\tin_sched: " << str(in_sched) <<
+        "\n\tout_sched: " << str(out_sched) <<
+        "\n\tacc_sched: " << str(acc_sched) << endl;
+    cout << "\tin_sched vec: " << in_sched_vec <<
+        "\n\tout_sched vec: " << out_sched_vec <<
+        "\n\tacc_sched vec: " << acc_sched_vec << endl;
+    assert(in_sched_vec.size() == out_sched_vec.size());
+
+    //the new generated schedule vectors
+    vector<string> in_vectorized_sched_vec, out_vectorized_sched_vec, in_new_sched_vec, out_new_sched_vec;
+    vector<string> acc_in_vectorized_sched_vec, acc_out_vectorized_sched_vec, acc_new_sched_vec;
+    bool find_sched_dim = false;
+    size_t sched_dim = 0;
+    for (size_t dim = 0; dim < in_sched_vec.size(); dim ++) {
+      if (!(is_number(in_sched_vec[dim]) || find_sched_dim)) {
+        if (dim == 0){
+          find_sched_dim = true;
+          in_vectorized_sched_vec.push_back("1");
+          in_new_sched_vec.push_back("0");
+          out_vectorized_sched_vec.push_back("2");
+          out_new_sched_vec.push_back("3");
+        }
+        else {
+          //this is the situation we did not run any schedule optimization
+          //First try
+          find_sched_dim = true;
+          int in_sched_stamp = safe_stoi(in_sched_vec[dim-1]);
+          int out_sched_stamp = safe_stoi(out_sched_vec[dim-1]);
+          if (in_sched_stamp <= out_sched_stamp - 1) {
+            in_new_sched_vec.push_back("0");
+            in_vectorized_sched_vec.push_back( "1" );
+            out_vectorized_sched_vec.push_back( "0");
+            out_new_sched_vec.push_back("1");
+            acc_new_sched_vec.push_back("0");
+            acc_out_vectorized_sched_vec.push_back("0");
+            acc_in_vectorized_sched_vec.push_back("0");
+          }
+          else {
+            cout << "ERROR: The schedule is not considered\n\tin vec: " << in_sched_vec << "\n\tout vec: " << out_sched_vec << endl;
+            assert(false);
+          }
+        }
+      }
+      in_vectorized_sched_vec.push_back(in_sched_vec[dim]);
+      in_new_sched_vec.push_back(in_sched_vec[dim]);
+      out_vectorized_sched_vec.push_back(out_sched_vec[dim]);
+      out_new_sched_vec.push_back(out_sched_vec[dim]);
+      acc_new_sched_vec.push_back(acc_sched_vec[dim]);
+      acc_out_vectorized_sched_vec.push_back(acc_sched_vec[dim]);
+      acc_in_vectorized_sched_vec.push_back(acc_sched_vec[dim]);
+    }
+
+    //cout << "\tin: " << in_new_sched_vec << "\n\tout: " << out_new_sched_vec << endl;
+    //cout << "\tin vec: " << in_vectorized_sched_vec << "\n\tout vec: " << out_vectorized_sched_vec << endl;
+    map<string, isl_map*> new_sched;
+    auto in_sched_new = gen_map_from_sched_vec(ctx, in_new_sched_vec, in_op);
+    new_sched.insert(make_pair(in_op, in_sched_new));
+    auto out_sched_new = gen_map_from_sched_vec(ctx, out_new_sched_vec, out_op);
+    new_sched.insert(make_pair(out_op, out_sched_new));
+    auto in_vec_sched = gen_map_from_sched_vec(ctx, in_vectorized_sched_vec, in_op + "_vec");
+    new_sched.insert(make_pair(in_op + "_vec", in_vec_sched));
+    auto out_vec_sched = gen_map_from_sched_vec(ctx, out_vectorized_sched_vec, out_op + "_vec");
+    new_sched.insert(make_pair(out_op + "_vec", out_vec_sched));
+    auto acc_sched_new = gen_map_from_sched_vec(ctx, acc_new_sched_vec, acc_op);
+    auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_in_vec");
+    auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, out_op + "_out_vec");
+
+    auto loop_access_map = access_map.at(self_loop_name);
+    auto rel_vec = relation_map(to_map(loop_access_map));
+    cout << str(get_aff(to_map(loop_access_map))) << rel_vec << endl;
+    int inner_most_address_related_dim_id;
+    for (size_t i = rel_vec.size() - 1; i >= 0; i -- ) {
+      if (rel_vec.at(i) != 0) {
+        inner_most_address_related_dim_id = i;
+        break;
+      }
+    }
+    acc_in_vec_sched = peel_schedule_domain_dim(
+            acc_in_vec_sched, inner_most_address_related_dim_id, 1);
+    acc_out_vec_sched = peel_schedule_domain_dim(
+            acc_out_vec_sched, inner_most_address_related_dim_id, -1);
+
+    new_sched.insert(make_pair(acc_op, acc_sched_new));
+    new_sched.insert(make_pair(acc_op+"_in_vec", acc_in_vec_sched));
+    new_sched.insert(make_pair(acc_op+"_out_vec", acc_out_vec_sched));
+
+    //cout << "\tnew in map: " << str(in_sched_new)
+    //<< "\n\tvec in map: " << str(in_vec_sched)
+    //<< "\n\tnew out map: " << str(out_sched_new)
+    //<< "\n\tvec out map: " << str(out_vec_sched) << endl;
+
+    return new_sched;
+  }
+
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {
     /*
      * Previously we have two ops, input and output.In order to do the vectorization
@@ -3152,9 +3265,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     isl_set* dom = range(to_map(rewrite_buf2op));
 
     for (auto slice : constraint_slices) {
-      //cout << "Constraint: " << str(slice) << endl;
-      //cout << "origin: " << str(rewrite_buf2op) << endl;
-      //cout << "Rewrited Access Map" << str(dot(inv(rewrite_buf2op), slice)) << endl;
+      cout << "Constraint: " << str(slice) << endl;
+      cout << "origin: " << str(rewrite_buf2op) << endl;
+      cout << "Rewrited Access Map" << str(dot(inv(rewrite_buf2op), slice)) << endl;
       auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
       if (is_out) {
         string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
@@ -3202,11 +3315,48 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     cout << "in bundle  = " << in_bundle.size() << endl;
     cout << "out bundle = " << out_bundle.size() << endl;
     //Only test bundle size = 1
-    assert(in_bundle.size() == 1 && out_bundle.size() == 1);
+    //assert(in_bundle.size() == 1 && out_bundle.size() == 1);
 
     //produce naive schedule for the rewritten buffer
-    map<string, isl_map*> new_sched =  produce_vectorized_schedule(pick(in_bundle), pick(out_bundle));
-    //assert(false);
+    map<string, isl_map*> new_sched;
+    if (in_bundle.size() == 1 && out_bundle.size() == 1) {
+      new_sched = produce_vectorized_schedule(pick(in_bundle), pick(out_bundle));
+    } else {
+      auto bd2sched = std::map<string, umap*,
+        std::function<bool(const string&, const string&)>>{
+        [this](const string& a, const string& b) {
+          assert(port_bundles.at(a).size() == 1);
+          assert(port_bundles.at(b).size() == 1);
+          string pt_a = pick(port_bundles.at(a));
+          string pt_b = pick(port_bundles.at(b));
+          auto sched_a = schedule.at(pt_a);
+          auto sched_b = schedule.at(pt_b);
+          return empty(lex_gt(sched_a, sched_b));
+        }
+      };
+      for (auto it: in_bundle) {
+        string pt = pick(port_bundles.at(it));
+        bd2sched.insert(make_pair(it, schedule.at(pt)));
+      }
+      for (auto it: out_bundle) {
+        string pt = pick(port_bundles.at(it));
+        bd2sched.insert(make_pair(it, schedule.at(pt)));
+      }
+      vector<string> bd_vec;
+      for (auto it: bd2sched) {
+        cout << "name:" << it.first << ": " << str(it.second) << endl;
+        bd_vec.push_back(it.first);
+      }
+      //only consider the accumulation buffer
+      assert(bd_vec.size() ==3 );
+      auto tmp = produce_vectorized_schedule(bd_vec.at(0), bd_vec.at(2), bd_vec.at(1));
+      new_sched.insert(tmp.begin(), tmp.end());
+
+      for (auto it: new_sched) {
+        cout << it.first << ", " << str(it.second) << endl;
+      }
+      assert(false);
+    }
 
     for (auto bd_name : in_bundle) {
       cout << "Vectorize input port bundle: " << bd_name << endl;

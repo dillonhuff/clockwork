@@ -1603,6 +1603,7 @@ class UBuffer {
     int add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt);
 
     void print_bank_info();
 

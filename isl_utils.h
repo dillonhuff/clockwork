@@ -379,6 +379,9 @@ isl_map* retrive_map_domain_dim(isl_map*, isl_set*);
 isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 isl_map* get_shift_map(isl_map* s);
 isl_map* delay_schedule_inner_most(isl_map* s, int delay);
+isl_map* delay_schedule_domain_dim(isl_map* s, int dom_dim, int delay);
+vector<bool> relation_map(isl_map* m);
+isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay);
 
 //some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);

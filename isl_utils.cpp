@@ -1974,6 +1974,69 @@ isl_map* delay_schedule_inner_most(isl_map* m, int delay) {
   return isl_map_from_basic_map(b_ret);
 }
 
+isl_map* delay_schedule_domain_dim(isl_map* m, int dom_dim, int delay) {
+  auto c_vec = constraints(m);
+  for (auto & c: c_vec) {
+    bool involve = isl_constraint_involves_dims(c, isl_dim_in, dom_dim, 1);
+    if (involve && isl_constraint_is_equality(c)) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      //This is the schedule vector you need to increment
+      c = isl_constraint_set_constant_si(c, val - delay);
+    }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
+isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay) {
+  auto c_vec = constraints(m);
+  auto out_dim = num_out_dims(m);
+  int target_dim;
+  for (auto & c: c_vec) {
+    bool involve = isl_constraint_involves_dims(c, isl_dim_in, dom_dim, 1);
+    if (involve && isl_constraint_is_equality(c)) {
+      for (int i = 0; i < out_dim; i ++) {
+        if (isl_constraint_involves_dims(c, isl_dim_out, i, 1)) {
+          target_dim = i;
+          break;
+        }
+      }
+      break;
+    }
+  }
+  for (auto & c: c_vec) {
+    bool involve = isl_constraint_involves_dims(c, isl_dim_out, target_dim + 1, 1);
+    if(involve && isl_constraint_is_equality(c)) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      //This is the schedule vector you need to increment
+      c = isl_constraint_set_constant_si(c, val - delay);
+    }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
+vector<bool> relation_map(isl_map* m) {
+  size_t dom_dim = num_in_dims(m);
+  vector<bool> rel(dom_dim, false);
+  for (auto aff: get_aff_vec(m)){
+      for (int i = 0; i < dom_dim; i ++) {
+        if (isl_aff_involves_dims(aff, isl_dim_in, i, 1)) {
+          rel.at(i) = true;
+        }
+      }
+  }
+  return rel;
+}
+
 //Get the map for shift reg
 isl_map* get_shift_map(isl_map* m) {
 
