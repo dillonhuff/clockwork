@@ -383,6 +383,117 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   return controller;
 }
 
+CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context) {
+  bool found_compute = true;
+  if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
+    found_compute = false;
+  }
+
+  auto ns = context->getNamespace("global");
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", context->Named("coreir.clkIn")}};
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+
+    int pixel_width = out_buf.port_widths;
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+
+    if (prg.is_input(out_rep)) {
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
+    } else {
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+    }
+  }
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto ub = ns->newModuleDecl(prg.name, utp);
+  auto def = ub->newModuleDef();
+
+  auto sched_maps = get_maps(schedmap);
+  for (auto op : prg.all_ops()) {
+    generate_coreir_op_controller(def, op, sched_maps);
+    generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
+  }
+
+  for (auto& buf : buffers) {
+    if (!prg.is_boundary(buf.first)) {
+      auto ub_mod = generate_coreir(options, context, buf.second);
+      def->addInstance(buf.second.name, ub_mod);
+    }
+  }
+
+  // Connect compute units to buffers
+  for (auto op : prg.all_ops()) {
+    for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+      string buf_name = bundle.first;
+      string bundle_name = bundle.second;
+      auto buf = map_find(buf_name, buffers);
+      int pixel_width = buf.port_widths;
+
+      assert(buf.is_input_bundle(bundle.second));
+
+      if (prg.is_output(buf_name)) {
+        auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
+        def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        def->connect(def->sel(output_en),
+            write_start_wire(def, op->name));
+      } else {
+        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
+            write_start_wire(def, op->name));
+        def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
+            write_start_control_vars(def, op->name));
+      }
+    }
+
+    for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+      string buf_name = bundle.first;
+      string bundle_name = bundle.second;
+      auto buf = map_find(buf_name, buffers);
+
+      assert(buf.is_output_bundle(bundle.second));
+
+      if (prg.is_input(buf_name)) {
+        auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
+        auto input_bus = "self." + pg(buf_name, bundle_name);
+        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
+        //def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        // TODO: This delayed input is a hack that I insert to
+        // ensure that I can assume all buffer reads take 1 cycle
+        def->connect(delayed_input,
+            def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
+        def->connect(def->sel(output_valid),
+            read_start_wire(def, op->name));
+      } else {
+        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
+            read_start_wire(def, op->name));
+        def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
+            read_start_control_vars(def, op->name));
+      }
+    }
+  }
+
+  ub->setDef(def);
+
+  ub->print();
+
+  connect_signal("reset", ub);
+  context->runPasses({"wireclocks-coreir"});
+
+  return ub;
+}
+
 void generate_coreir_addrgen_in_tile(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -391,7 +502,7 @@ void generate_coreir_addrgen_in_tile(CodegenOptions& options,
   CoreIRLoadLibrary_cgralib(context);
   auto c = context;
 
-  auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
+  auto prg_mod = generate_coreir_addrgen_in_tile(options, buffers, prg, schedmap, context);
 
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
