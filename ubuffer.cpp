@@ -4,8 +4,11 @@
 #include "cwlib.h"
 #include "coreir_backend.h"
 
+using CoreIR::Wireable;
 using CoreIR::CoreIRType;
+using CoreIR::ArrayType;
 using CoreIR::Context;
+using CoreIR::Const;
 using CoreIR::Params;
 using CoreIR::ModuleDef;
 using CoreIR::Generator;
@@ -616,8 +619,6 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 #ifdef COREIR
 
 void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
-  cout << "$$$$ Adding raw dual port sram" << endl;
-
   auto cgralib = c->getNamespace("global");
   CoreIR::Params params = {{"depth",c->String()}};
 
@@ -644,6 +645,87 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   return tp;
     });
   Generator* ram = cgralib->newGeneratorDecl("raw_dual_port_sram_tile", ramTG, params);
+  ram->setGeneratorDefFromFun(
+    [](Context* c, Values args, ModuleDef* def) {
+      Type* type = args.at("type")->get<Type*>();
+      bool en = args.at("has_en")->get<bool>();
+      bool clr = args.at("has_clr")->get<bool>();
+      bool rst = args.at("has_rst")->get<bool>();
+      int init = args.at("init")->get<int>();
+      Type* cType = type;
+
+      // identify type size
+      vector<uint> lengths;
+      uint bitwidth = 1;
+      while (!cType->isBaseType()) {
+        assert(cType->getKind() == Type::TypeKind::TK_Array);
+        ArrayType* aType = static_cast<ArrayType*>(cType);
+        uint length = aType->getLen();
+
+        cType = aType->getElemType();
+        if (cType->isBaseType()) { bitwidth = length; }
+        else {
+          // lengths.insert(lengths.begin(), length);
+          lengths.push_back(length);
+        }
+      }
+
+      // create and connect the interface
+      Wireable* pt_in = def->addInstance(
+        "pt_in",
+        "mantle.wire",
+        {{"type", Const::make(c, type)}});
+      Wireable* pt_out = def->addInstance(
+        "pt_out",
+        "mantle.wire",
+        {{"type", Const::make(c, type)}});
+      def->connect("self.in", "pt_in.in");
+      def->connect("self.out", "pt_out.out");
+
+      // collect all interface wires
+      std::vector<Wireable*> in_wires;
+      in_wires.push_back(pt_in->sel("out"));
+      std::vector<Wireable*> out_wires;
+      out_wires.push_back(pt_out->sel("in"));
+      for (uint dim_length : lengths) {
+        std::vector<Wireable*> in_temp;
+        std::vector<Wireable*> out_temp;
+        in_temp.reserve(in_wires.size() * dim_length);
+        out_temp.reserve(out_wires.size() * dim_length);
+
+        for (uint i = 0; i < dim_length; ++i) {
+          for (auto in_wire : in_wires) { in_temp.push_back(in_wire->sel(i)); }
+          for (auto out_wire : out_wires) {
+            out_temp.push_back(out_wire->sel(i));
+          }
+        }
+        in_wires = in_temp;
+        out_wires = out_temp;
+      }
+
+      // create and wire up registers
+      assert(in_wires.size() == out_wires.size());
+      for (uint i = 0; i < in_wires.size(); ++i) {
+        std::string reg_name = "reg_" + std::to_string(i);
+        Values reg_args = {{"width", Const::make(c, bitwidth)},
+                           {"has_en", Const::make(c, en)},
+                           {"has_clr", Const::make(c, clr)},
+                           {"has_rst", Const::make(c, rst)}};
+        Values reg_configargs = {
+          {"init", Const::make(c, BitVector(bitwidth, init))}};
+        Wireable* reg = def->addInstance(
+          reg_name,
+          "mantle.reg",
+          reg_args,
+          reg_configargs);
+        if (en) { def->connect("self.en", reg_name + ".en"); }
+        if (clr) { def->connect("self.clr", reg_name + ".clr"); }
+        if (rst) { def->connect("self.rst", reg_name + ".rst"); }
+        def->connect(in_wires[i], reg->sel("in"));
+        def->connect(reg->sel("out"), out_wires[i]);
+      }
+    });
+
 }
 
 CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth) {
@@ -665,46 +747,6 @@ CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth)
 
   auto m = c->getNamespace("global")->newModuleDecl("ram_" + c->getUnique(), tp);
   auto def = m->newModuleDef();
-  //auto bnk = def->addInstance(
-      //"bank",
-      //"coreir.mem",
-      //{{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
-      ////{{"mode", CoreIR::Const::make(c, "SRAM")}});
-  ////auto bnk = def->addInstance(
-      ////"bank",
-      ////"cgralib.Mem",
-      ////{{"width", CoreIR::Const::make(c, width)}, {"total_depth", CoreIR::Const::make(c, depth)}},
-      ////{{"mode", CoreIR::Const::make(c, "SRAM")}});
-
-  //auto constant = def->addInstance(c->getUnique(),
-      //"corebit.const",
-      //{{"value", CoreIR::Const::make(c, true)}});
-
-  ////def->connect(constant->sel("out"), bnk->sel("cg_en"));
-
-  //auto next_val = def->addInstance("addr_select", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
-  //def->connect(next_val->sel("sel"), def->sel("self.wen"));
-  //def->connect(next_val->sel("in0"), def->sel("self.waddr"));
-  //def->connect(next_val->sel("in1"), def->sel("self.raddr"));
-  //def->connect(next_val->sel("out"), bnk->sel("addr"));
-
-  ////def->connect(def->sel("self.clk"), bnk->sel("clk"));
-  //def->connect(def->sel("self.wdata"), bnk->sel("wdata"));
-  //def->connect(def->sel("self.rdata"), bnk->sel("rdata"));
-  //def->connect(def->sel("self.wen"), bnk->sel("wen"));
-  //def->connect(def->sel("self.ren"), bnk->sel("ren"));
-
-  //def->connect("self.clk", "mem.clk");
-  //def->connect("self.wdata", "mem.wdata");
-  //def->connect("self.waddr", "waddr_slice.in");
-  //def->connect("waddr_slice.out", "mem.waddr");
-  //def->connect("self.wen", "mem.wen");
-  //def->connect("mem.rdata", "readreg.in");
-  //def->connect("self.rdata", "readreg.out");
-  //def->connect("self.raddr", "raddr_slice.in");
-  //def->connect("raddr_slice.out", "mem.raddr");
-  //def->connect("self.ren", "readreg.en");
-
   uint awidth = (uint)ceil(log2(depth));
   CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
     {"lo", CoreIR::Const::make(c, 0)},
