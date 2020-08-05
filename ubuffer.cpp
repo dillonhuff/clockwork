@@ -620,7 +620,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 
 void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   auto cgralib = c->getNamespace("global");
-  CoreIR::Params params = {{"depth",c->String()}};
+  CoreIR::Params params = {{"depth",c->Int()}};
 
   Params reg_array_args = {{"type", CoreIRType::make(c)},
                            {"has_en", c->Bool()},
@@ -684,6 +684,8 @@ CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth)
     add_raw_dual_port_sram_generator(c);
     assert(ns->hasGenerator("raw_dual_port_sram_tile"));
   }
+
+  auto ramgen = ns->getGenerator("raw_dual_port_sram_tile");
 
   auto tp = c->Record({
       {"clk", c->Named("coreir.clkIn")},
@@ -1039,9 +1041,15 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     for (auto bank : buf.get_banks()) {
       int capacity = int_upper_bound(card(bank.rddom));
       int addr_width = minihls::clog2(capacity);
+      ram_module(c, width, capacity);
       auto bnk = def->addInstance(
           bank.name,
-          ram_module(c, width, capacity));
+          "global.raw_dual_port_sram_tile",
+          {{"depth", COREMK(c, capacity)}}
+          );
+      //auto bnk = def->addInstance(
+          //bank.name,
+          //ram_module(c, width, capacity));
 
       {
         auto bank_readers = buf.get_bank_outputs(bank.name);

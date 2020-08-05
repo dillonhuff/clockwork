@@ -543,7 +543,8 @@ CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
   ub->print();
 
   connect_signal("reset", ub);
-  context->runPasses({"wireclocks-coreir"});
+  //context->runPasses({"wireclocks-coreir"});
+  context->runPasses({"rungenerators", "wireclocks-coreir"});
 
   return ub;
 }
@@ -675,7 +676,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ub->print();
 
   connect_signal("reset", ub);
-  context->runPasses({"wireclocks-coreir"});
+  context->runPasses({"rungenerators", "wireclocks-coreir"});
 
   return ub;
   //assert(false);

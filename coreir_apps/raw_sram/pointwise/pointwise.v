@@ -211,59 +211,7 @@ module coreir_mem #(
   assign rdata = data[raddr];
 endmodule
 
-module ram__U66 (
-    input clk,
-    input [15:0] wdata,
-    input [15:0] waddr,
-    input wen,
-    output [15:0] rdata,
-    input [15:0] raddr,
-    input ren
-);
-wire [15:0] mem_rdata;
-wire [11:0] raddr_slice_out;
-wire [15:0] readreg_out;
-wire [11:0] waddr_slice_out;
-coreir_mem #(
-    .depth(4096),
-    .has_init(1'b0),
-    .width(16)
-) mem (
-    .clk(clk),
-    .wdata(wdata),
-    .waddr(waddr_slice_out),
-    .wen(wen),
-    .rdata(mem_rdata),
-    .raddr(raddr_slice_out)
-);
-coreir_slice #(
-    .hi(12),
-    .lo(0),
-    .width(16)
-) raddr_slice (
-    .in(raddr),
-    .out(raddr_slice_out)
-);
-mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
-    .init(16'h0000)
-) readreg (
-    .in(mem_rdata),
-    .clk(clk),
-    .out(readreg_out),
-    .en(ren)
-);
-coreir_slice #(
-    .hi(12),
-    .lo(0),
-    .width(16)
-) waddr_slice (
-    .in(waddr),
-    .out(waddr_slice_out)
-);
-assign rdata = readreg_out;
-endmodule
-
-module ram__U51 (
+module raw_dual_port_sram_tile__depth4096 (
     input clk,
     input [15:0] wdata,
     input [15:0] waddr,
@@ -734,7 +682,7 @@ mult_stencil_op_hcompute_mult_stencil_2_broadcast mult_stencil_op_hcompute_mult_
     .valid(mult_stencil_op_hcompute_mult_stencil_2_broadcast_valid),
     .mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5(mult_stencil_op_hcompute_mult_stencil_2_broadcast_mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5)
 );
-ram__U66 mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5 (
+raw_dual_port_sram_tile__depth4096 mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5 (
     .clk(clk),
     .wdata(mult_stencil_op_hcompute_mult_stencil_2_broadcast_mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5),
     .waddr(mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_write_addrgen_out),
@@ -953,7 +901,7 @@ hw_input_stencil_op_hcompute_hw_input_stencil_0_broadcast hw_input_stencil_op_hc
     .valid(hw_input_stencil_op_hcompute_hw_input_stencil_0_broadcast_valid),
     .hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3(hw_input_stencil_op_hcompute_hw_input_stencil_0_broadcast_hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3)
 );
-ram__U51 hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3 (
+raw_dual_port_sram_tile__depth4096 hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3 (
     .clk(clk),
     .wdata(hw_input_stencil_op_hcompute_hw_input_stencil_0_broadcast_hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3),
     .waddr(hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3_write_addrgen_out),
