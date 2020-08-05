@@ -415,6 +415,51 @@ CoreIR::Module* create_prog_declaration(CodegenOptions& options,
   return ub;
 }
 
+CoreIR::Module* generate_dual_port_addrgen_buf(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
+
+  CoreIRLoadLibrary_commonlib(context);
+
+  auto ns = context->getNamespace("global");
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", context->Named("coreir.clkIn")}};
+
+  for (auto b : buf.port_bundles) {
+    int pt_width = buf.port_widths;
+    int bd_width = buf.lanes_in_bundle(b.first);
+    string name = b.first;
+    string pt_rep = pick(b.second);
+    auto acc_maps = get_maps(buf.access_map.at(pt_rep));
+    assert(acc_maps.size() > 0);
+    int control_dimension = num_in_dims(pick(acc_maps));
+    if (buf.is_input_bundle(b.first)) {
+      ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
+      ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+
+      //ub_field.push_back(make_pair(name + "_en", context->BitIn()));
+      ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
+    } else {
+      ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
+      ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+
+      //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
+      ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
+    }
+  }
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
+  auto def = ub->newModuleDef();
+
+  if (true) {
+    //generate_synthesizable_functional_model(options, buf, def);
+  } else {
+    //buf.generate_coreir(options, def);
+  }
+
+  ub->setDef(def);
+  return ub;
+}
+
 CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -436,7 +481,7 @@ CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
 
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
-      auto ub_mod = generate_coreir(options, context, buf.second);
+      auto ub_mod = generate_dual_port_addrgen_buf(options, context, buf.second);
       def->addInstance(buf.second.name, ub_mod);
     }
   }
