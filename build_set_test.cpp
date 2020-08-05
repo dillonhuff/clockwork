@@ -9947,7 +9947,7 @@ prog simplified_conv_layer() {
 void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
-  int to_verilog_res = cmd("${COREIR}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -10198,6 +10198,7 @@ void identity_stream_2d_coreir_test() {
 #endif
 
 }
+
 void identity_stream_coreir_test() {
   prog prg("identity_stream");
   prg.buffer_port_widths["in"] = 16;
@@ -12896,6 +12897,7 @@ void cgra_flow_tests() {
 
     cout << "Output name: " << prg.name << endl;
     compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
+    run_verilator_tb(prg.name);
     cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/");
     assert(false);
   }
