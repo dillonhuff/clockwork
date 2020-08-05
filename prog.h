@@ -1271,35 +1271,8 @@ struct prog {
     return m;
   }
 
-  map<op*, umap*> consumer_maps() {
-    auto ivars = iter_vars();
-    auto doms = domains();
-
-    auto ops = root->all_ops();
-    map<op*, umap*> maps;
-    for (auto op : ops) {
-      auto vars = map_find(op, ivars);
-      string ivar_str = sep_list(vars, "[", "]", ", ");
-      auto dom = map_find(op, doms);
-
-      umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-
-      // for boundary condition expressions
-      for (auto top_pair : op->consumes_pair()) {
-        string cond = "{ ";
-        for (auto sec_pair : top_pair.second) {
-          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
-        }
-        cond = cond.substr(0, cond.length() - 2);
-        cond = cond + string(" }");
-        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
-        pmap = unn(pmap, vmap);
-      }
-      maps[op] = pmap;
-    }
-    return maps;
-  }
-
+  map<op*, umap*> consumer_maps();
+  
   umap* consumer_map() {
     auto ivars = iter_vars();
     auto doms = domains();
@@ -1617,8 +1590,17 @@ vector<string> reduce_vars(prog& prg);
 
 void sanity_check_all_reads_defined(prog& prg);
 
-
 void generate_verilator_tb(prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers);
 
+template<typename T>
+void print_box_bounds(const std::string& name, T* pr){
+  auto lmin = lexmin(pr);
+  auto lmax = lexmax(pr);
+  cout << "======= Box bounds for " << name << endl;
+  cout << tab(1) << "min              = " << str(lmin) << endl;
+  cout << tab(1) << "max              = " << str(lmax) << endl;
+}
+
+void normalize_bounds(prog& prg);

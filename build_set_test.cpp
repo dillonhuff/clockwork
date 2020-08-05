@@ -10623,15 +10623,6 @@ isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
 
 }
 
-template<typename T>
-void print_box_bounds(const std::string& name, T* pr){
-  auto lmin = lexmin(pr);
-  auto lmax = lexmax(pr);
-  cout << "======= Box bounds for " << name << endl;
-  cout << tab(1) << "min              = " << str(lmin) << endl;
-  cout << tab(1) << "max              = " << str(lmax) << endl;
-}
-
 isl_map* delta_data(loop* loop, const std::string& buffer, prog& prg) {
   auto level_map = get_variable_levels(prg);
   auto ops = loop->descendant_ops();
@@ -12693,6 +12684,62 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
   }
 }
 
+map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg) {
+  op* root = prg.root;
+  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
+  QExpr root_sched{{root_sched_t}};
+
+  map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  map<op*, isl_aff*> schedule_affs;
+  build_schedule_exprs(root, schedule_exprs, sched, prg);
+
+  cout << "==== Schedules..." << endl;
+  for (auto opl : schedule_exprs) {
+    auto op = opl.first;
+    cout << tab(1) << op->name << " -> " << opl.second << endl;
+    ostringstream ss;
+    ss << opl.second;
+    if (!op->is_loop) {
+      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
+          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
+      schedule_affs[op] = aff;
+    }
+  }
+
+  return schedule_affs;
+}
+
+map<op*, isl_aff*> op_start_end(schedule_info& sched, prog& prg) {
+  op* root = prg.root;
+  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
+  QExpr root_sched{{root_sched_t}};
+
+  map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  map<op*, isl_aff*> schedule_affs;
+  build_schedule_exprs(root, schedule_exprs, sched, prg);
+
+  cout << "==== Schedules..." << endl;
+  for (auto opl : schedule_exprs) {
+    auto op = opl.first;
+    QExpr expr = opl.second;
+    QAV val = qconst(map_find(op, sched.total_op_latencies));
+    QTerm offsett{{val}};
+    QExpr offset{{offsett}};
+    expr = expr + offset;
+    cout << tab(1) << op->name << " -> " << expr << endl;
+    ostringstream ss;
+    ss << expr;
+    if (!op->is_loop) {
+      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
+          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
+      schedule_affs[op] = aff;
+    }
+  }
+
+  return schedule_affs;
+
+}
+
 int max_loop_depth(prog& prg) {
   int maxl = -1;
   for (auto op : prg.all_ops()) {
@@ -12982,6 +13029,165 @@ void infer_bounds_multi_stage_negative_conv1d_test() {
   regression_test(prg);
 }
 
+void infer_bounds_three_stage_negative_conv_test() {
+  prog prg("negative_three_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("in", "x - 1, y - 1");
+    red->add_load("in", "x - 1, y");
+    red->add_load("in", "x, y - 1");
+    red->add_load("in", "x, y");
+    red->add_store("down", "x, y");
+    red->add_function("blur_2x2_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("down", "x2 - 1, y2 - 1");
+    red->add_load("down", "x2 - 1, y2");
+    red->add_load("down", "x2, y2 - 1");
+    red->add_load("down", "x2, y2");
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_2x2_32");
+  }
+
+
+  {
+    auto lp = prg.add_nest("y3", 0, 1, "x3", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("down1", "x3 - 1, y3 - 1");
+    red->add_load("down1", "x3 - 1, y3");
+    red->add_load("down1", "x3, y3 - 1");
+    red->add_load("down1", "x3, y3");
+    red->add_store("down2", "x3, y3");
+    red->add_function("blur_2x2_32");
+  }
+  cpy("out", "down2", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+
+  //assert(false);
+}
+
+void infer_bounds_multi_5x1_stage_negative_conv_test() {
+  prog prg("negative_multi_5x1_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("incp", "in_oc", 1, prg);
+  cpy("in", "incp", 1, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int y = -2; y <= 2; y++) {
+      red->add_load("in", "y + " + str(y));
+    }
+    red->add_store("down", "y");
+    red->add_function("blur_5x1_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int y = -2; y <= 2; y++) {
+      red->add_load("down", "y2 + " + str(y));
+    }
+    red->add_store("down1", "y2");
+    red->add_function("blur_5x1_32");
+  }
+
+
+  cpy("out", "down1", 1, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //assert(false);
+
+  infer_bounds_and_unroll("out", {20}, 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+  //assert(false);
+}
+
+void infer_bounds_multi_5x5_stage_negative_conv_test() {
+  prog prg("negative_multi_5x5_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("incp", "in_oc", 2, prg);
+  cpy("in", "incp", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("in", "x + " + str(x), "y + " + str(y));
+      }
+    }
+    red->add_store("down", "x, y");
+    red->add_function("blur_5x5_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("down", "x2 + " + str(x), "y2 + " + str(y));
+      }
+    }
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_5x5_32");
+  }
+
+
+  cpy("out", "down1", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //assert(false);
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+
+  //assert(false);
+}
 void infer_bounds_multi_stage_negative_conv_test() {
   prog prg("negative_multi_stage_conv_test");
   prg.add_input("in_oc");
@@ -13018,12 +13224,13 @@ void infer_bounds_multi_stage_negative_conv_test() {
   prg.sanity_check();
 
 
-  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+  infer_bounds_and_unroll("out", {50, 55}, 4, prg);
 
   prg.pretty_print();
   prg.sanity_check();
 
-  assert(false);
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
 
   regression_test(prg);
 
@@ -13081,6 +13288,7 @@ void infer_bounds_color_downsample_test() {
 
   prg.pretty_print();
   prg.sanity_check();
+  sanity_check_all_reads_defined(prg);
   //assert(false);
 
   regression_test(prg);
@@ -13091,11 +13299,14 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
+  infer_bounds_multi_5x1_stage_negative_conv_test();
+  infer_bounds_multi_5x5_stage_negative_conv_test();
+  infer_bounds_multi_stage_negative_conv_test();
+  infer_bounds_color_downsample_test();
   infer_bounds_multi_stage_negative_conv1d_test();
-  //infer_bounds_multi_stage_negative_conv_test();
+  infer_bounds_three_stage_negative_conv_test();
   
   infer_bounds_single_stage_negative_conv_test();
-  infer_bounds_color_downsample_test();
   infer_bounds_negative_conv_test();
 
   //remove_reduce_inits_test();

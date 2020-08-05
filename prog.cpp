@@ -4193,6 +4193,7 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
   }
 
   prg.pretty_print();
+  sanity_check_all_reads_defined(prg);
 }
 
 void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg) {
@@ -4287,9 +4288,14 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
       }
     }
 
+    cout << "Got bounds..." << endl;
+
     auto cm = prg.consumer_maps();
+
+    cout << "Got consumer maps" << endl;
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
       auto data_read = map_find(op, cm);
+      cout << tab(1) << "Getting op " << op->name << endl;
       cout << tab(1) << "op: " << op->name << " reads: " << str(data_read) << endl;
       auto ms = coalesce(range(data_read));
       cout << tab(1) << "dom  : " << str(domain(data_read)) << endl;
@@ -4498,9 +4504,35 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
   //assert(false);
   extend_bounds_to_multiple_of(unroll_factor, out, prg);
   unroll_reduce_loops(prg);
+  cout << "Sanity checking after unrolling reduce loops..." << endl;
+  sanity_check_all_reads_defined(prg);
+  normalize_bounds(prg);
   unroll_producer_matching(out, unroll_factor, prg);
+  cout << "Sanity checking after unrolling strip mined loops..." << endl;
+  sanity_check_all_reads_defined(prg);
   merge_basic_block_ops(prg);
+  sanity_check_all_reads_defined(prg);
+}
 
+void normalize_bounds(prog& prg) {
+  auto loops = prg.all_loops();
+  for (auto l : loops) {
+    if (l->start != 0) {
+      int old_tc = l->trip_count();
+      int old_start = l->start;
+      int old_end = l->end_exclusive;
+
+      l->start = 0;
+      l->end_exclusive = old_tc;
+
+      string replacement =
+        parens(l->name + " + " + str(old_start));
+      for (auto c : l->descendant_ops()) {
+        c->replace_variable(l->name, replacement);
+      }
+      assert(old_tc == l->trip_count());
+    }
+  }
 }
 
 void strip_mine(const int factor, op* loop, prog& prg) {
@@ -4976,6 +5008,7 @@ void sanity_check_all_reads_defined(prog& prg) {
     //cout << tab(1) << str(m) << endl;
     if (!prg.is_input(mname)) {
       cout << "Error: Buffer " << mname << " is read but not written at: " << str(m) << endl;
+      print_box_bounds(mname, m);
       assert(false);
     }
   }
@@ -5112,4 +5145,33 @@ void generate_verilator_tb(prog& prg,
   rgtb << "}" << endl;
   rgtb.close();
 }
+
+  map<op*, umap*> prog::consumer_maps() {
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    map<op*, umap*> maps;
+    for (auto op : ops) {
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+
+      // for boundary condition expressions
+      for (auto top_pair : op->consumes_pair()) {
+        string cond = "{ ";
+        for (auto sec_pair : top_pair.second) {
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+        cond = cond.substr(0, cond.length() - 2);
+        cond = cond + string(" }");
+        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
+        pmap = unn(pmap, vmap);
+      }
+      maps[op] = pmap;
+    }
+    return maps;
+  }
 
