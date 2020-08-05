@@ -383,16 +383,11 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   return controller;
 }
 
-CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
+CoreIR::Module* create_prog_declaration(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
-    CoreIR::Context* context) {
-  bool found_compute = true;
-  if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
-    found_compute = false;
-  }
-
+    CoreIR::Context* context) { 
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
@@ -417,6 +412,20 @@ CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto ub = ns->newModuleDecl(prg.name, utp);
+  return ub;
+}
+
+CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context) {
+  bool found_compute = true;
+  if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
+    found_compute = false;
+  }
+
+  auto ub = create_prog_declaration(options, buffers, prg, schedmap, context);
   auto def = ub->newModuleDef();
 
   auto sched_maps = get_maps(schedmap);
