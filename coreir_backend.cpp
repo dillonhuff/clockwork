@@ -1390,7 +1390,7 @@ void garnet_map_module(Module* top) {
   c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
 
   auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
-  string postmap = "after_mapping_" + top->getName();
+  string postmap = "after_mapping_" + top->getName() + ".json";
   ////Create file here.
   std::ofstream file(postmap);
   jpass->writeToStream(file,top->getRefName());
