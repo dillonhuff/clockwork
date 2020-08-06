@@ -425,7 +425,7 @@ void load_cgramapping(Context* c) {
 void LoadDefinition_cgralib(Context* c) {
 
   //load_mem_ext(c);
-  //load_commonlib_ext(c);
+  load_commonlib_ext(c);
   load_opsubstitution(c);
   //load_corebit2lut(c);
   load_cgramapping(c);
