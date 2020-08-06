@@ -1729,9 +1729,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           its(dot(outmap,
                 inv(inmap)), beforeAcc);
       } else {
-        src_map =
-          unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
+        auto a = its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc);
+        src_map = unn(src_map, a);
+        release(a);
+        //src_map =
+          //unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
       }
+      release(beforeAcc);
     }
     assert(src_map != nullptr);
 
@@ -1747,87 +1751,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto lex_max_events =
       dot(lexmax(dot(src_map, sched)), time_to_event);
 
+    release(time_to_event);
+    release(src_map);
+    release(after);
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
     return lex_max_events;
 
-    //umap* writes = isl_union_map_read_from_str(ctx, "{}");
-
-    //cout << "Buffer = " << name << endl;
-    //assert(get_in_ports().size() > 0);
-    //for (auto inpt : get_in_ports()) {
-      //writes = unn(writes, access_map.at(inpt));
-
-      ////auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
-      ////if (src_map == nullptr) {
-        ////auto outmap = access_map.at(outpt);
-        ////auto inmap = access_map.at(inpt);
-        ////src_map =
-          ////its(dot(outmap,
-                ////inv(inmap)), beforeAcc);
-      ////} else {
-        ////src_map =
-          ////unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
-      ////}
-    //}
-
-    ////auto reads = access_map.at(outpt);
-    ////auto sched = global_schedule();
-    ////auto before = lex_lt(sched, sched);
-
-    ////auto raw = its(before, dot(writes, inv(reads)));
-
-    ////return lexmax(inv(raw));
-
-    ////assert(src_map != nullptr);
-
-    //////cout << "src map done: " << str(src_map) << endl;
-
-    ////src_map = its(src_map, after);
-    ////src_map = lexmax(src_map);
-
-    ////auto time_to_event = inv(sched);
-
-    ////auto lex_max_events =
-      ////dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    //////cout << "Done" << outpt << endl;
-    ////assert(lex_max_events != nullptr);
-    ////return lex_max_events;
-
-    ////umap* src_map = nullptr;
-    ////cout << "Buffer = " << name << endl;
-    ////assert(get_in_ports().size() > 0);
-    ////for (auto inpt : get_in_ports()) {
-      ////auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
-      ////if (src_map == nullptr) {
-        ////auto outmap = access_map.at(outpt);
-        ////auto inmap = access_map.at(inpt);
-        ////src_map =
-          ////its(dot(outmap,
-                ////inv(inmap)), beforeAcc);
-      ////} else {
-        ////src_map =
-          ////unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
-      ////}
-    ////}
-    ////assert(src_map != nullptr);
-
-    //////cout << "src map done: " << str(src_map) << endl;
-    ////auto sched = global_schedule();
-    ////auto after = lex_gt(sched, sched);
-
-    ////src_map = its(src_map, after);
-    ////src_map = lexmax(src_map);
-
-    ////auto time_to_event = inv(sched);
-
-    ////auto lex_max_events =
-      ////dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    //////cout << "Done" << outpt << endl;
-    ////assert(lex_max_events != nullptr);
-    ////return lex_max_events;
   }
 
   umap* UBuffer::get_lexmax_events(const std::string& inpt, const std::string& outpt) {
