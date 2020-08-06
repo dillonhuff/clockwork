@@ -1862,6 +1862,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
 
     auto c = card(WritesBtwn);
+    release(WritesBtwn);
+    release(WritesAfterProduction);
+    release(WritesBeforeRead);
+    release(WriteThatProducesReadData);
+    release(WritesAfterWrite);
     //cout << "got card" << endl;
     return c;
   }
