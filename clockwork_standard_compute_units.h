@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hw_classes.h"
+#include <cstring>
 
 typedef int16_t int16;
 
@@ -698,4 +699,14 @@ hw_uint<32> blur_2x2_32(const hw_uint<32*4>& in) {
   hw_uint<32> v2 = in.extract<64, 95>();
   hw_uint<32> v3 = in.extract<96, 127>();
   return v0 + v1 + v2 + v3;
+}
+
+template<typename A, typename B>
+inline A reinterpret(const B &b) {
+    A a;
+    std::memcpy(&a, &b, sizeof(a));
+    return a;
+}
+inline float float_from_bits(uint32_t bits) {
+    return reinterpret<float, uint32_t>(bits);
 }
