@@ -90,7 +90,18 @@ map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffe
       in_ports_to_conditions[inpt] =
         to_set(simplify(readers_that_use_this_port));
     }
+
+    release(readers_that_use_this_port);
+    release(read_ops);
+    release(overlap);
+    release(op_overlap);
+    release(write_ops);
+    release(common_write_ops);
+    release(data_written);
   }
+
+  release(reads_to_sources);
+  release(producers_for_outpt);
   return in_ports_to_conditions;
 }
 
