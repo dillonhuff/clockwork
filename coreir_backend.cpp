@@ -2,6 +2,14 @@
 
 #ifdef COREIR
 
+using CoreIR::SelectPath;
+using CoreIR::join;
+using CoreIR::BitType;
+using CoreIR::BitInType;
+using CoreIR::isa;
+using CoreIR::dyn_cast;
+using CoreIR::ArrayType;
+using CoreIR::Type;
 using CoreIR::Params;
 using CoreIR::Wireable;
 using CoreIR::JsonType;
@@ -12,6 +20,7 @@ using CoreIR::Context;
 using CoreIR::Values;
 using CoreIR::Generator;
 using CoreIR::ModuleDef;
+using CoreIR::Module;
 
 std::string exe_start_name(const std::string& n) {
   return n + "_exe_start";
@@ -856,6 +865,82 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   return cgralib;
 }
 
+typedef struct {
+  vector<SelectPath> IO16;
+  vector<SelectPath> IO16in;
+  vector<SelectPath> IO1;
+  vector<SelectPath> IO1in;
+} IOpaths;
+
+void getAllIOPaths(Wireable* w, IOpaths& paths) {
+  Type* t = w->getType();
+  if (auto at = dyn_cast<ArrayType>(t)) {
+    if (at->getLen()==16 && isa<BitType>(at->getElemType())) {
+      paths.IO16.push_back(w->getSelectPath());
+    }
+    else if (at->getLen() == 16 && isa<BitInType>(at->getElemType())) {
+      paths.IO16in.push_back(w->getSelectPath());
+    }
+    else {
+      for (auto selstr : t->getSelects()) {
+        getAllIOPaths(w->sel(selstr),paths);
+      }
+    }
+  }
+  else if (isa<BitType>(t)) {
+    paths.IO1.push_back(w->getSelectPath());
+  }
+  else if (isa<BitInType>(t)) {
+    paths.IO1in.push_back(w->getSelectPath());
+  }
+  else {
+    for (auto sw : w->getSelects()) {
+      getAllIOPaths(sw.second,paths);
+    }
+  }
+  
+}
+
+void addIOs(Context* c, Module* top) {
+  ModuleDef* mdef = top->getDef();
+
+  Values aWidth({{"width",Const::make(c,16)}});
+  IOpaths iopaths;
+  getAllIOPaths(mdef->getInterface(), iopaths);
+  Instance* pt = addPassthrough(mdef->getInterface(),"_self");
+  for (auto path : iopaths.IO16) {
+    string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO16in) {
+    string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"out")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+  }
+  for (auto path : iopaths.IO1) {
+    string ioname = "io1in_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"in")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO1in) {
+    string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"out")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+  }
+  mdef->disconnect(mdef->getInterface());
+  inlineInstance(pt);
+}
+
+
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -868,6 +953,10 @@ void generate_coreir(CodegenOptions& options,
   //
   auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
 
+  addIOs(context, prg_mod);
+
+  prg_mod->print();
+  assert(false);
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
