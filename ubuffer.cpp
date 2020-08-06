@@ -145,35 +145,35 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   return lex_max_events;
 }
 
-umap* last_reads(const string& inpt, UBuffer& buf) {
-  auto sched = buf.global_schedule();
-  //cout << "Port: " << inpt << endl;
-  auto writes = buf.access_map.at(inpt);
-  //cout << "Access map: " << str(writes) << endl;
-  auto writers = inv(writes);
-  //cout << "Writer map: " << str(writers) << endl;
-  uset* written_values = (range(writes));
-  isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
-  for (auto outpt : buf.get_out_ports()) {
-    reads_from_fifo =
-      unn(reads_from_fifo, (buf.access_map.at(outpt)));
-  }
-  reads_from_fifo = its_range(reads_from_fifo, written_values);
-  //cout << "Reads: " << str(reads_from_fifo) << endl;
+//umap* last_reads(const string& inpt, UBuffer& buf) {
+  //auto sched = buf.global_schedule();
+  ////cout << "Port: " << inpt << endl;
+  //auto writes = buf.access_map.at(inpt);
+  ////cout << "Access map: " << str(writes) << endl;
+  //auto writers = inv(writes);
+  ////cout << "Writer map: " << str(writers) << endl;
+  //uset* written_values = (range(writes));
+  //isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
+  //for (auto outpt : buf.get_out_ports()) {
+    //reads_from_fifo =
+      //unn(reads_from_fifo, (buf.access_map.at(outpt)));
+  //}
+  //reads_from_fifo = its_range(reads_from_fifo, written_values);
+  ////cout << "Reads: " << str(reads_from_fifo) << endl;
 
-  auto write_sched = its(sched, domain(writes));
-  //cout << "Write schedule: " << str(write_sched) << endl;
+  //auto write_sched = its(sched, domain(writes));
+  ////cout << "Write schedule: " << str(write_sched) << endl;
 
-  auto read_sched = its(sched, domain(reads_from_fifo));
-  //cout << "Read schedule: " << str(read_sched) << endl;
-  auto vals_to_reads = inv(reads_from_fifo);
+  //auto read_sched = its(sched, domain(reads_from_fifo));
+  ////cout << "Read schedule: " << str(read_sched) << endl;
+  //auto vals_to_reads = inv(reads_from_fifo);
 
-  //cout << "vals to reads: " << str(reads_from_fifo) << endl;
-  // TODO: Should be lexmax in the schedule
-  auto last_read = lexmax(vals_to_reads);
-  return last_read;
+  ////cout << "vals to reads: " << str(reads_from_fifo) << endl;
+  //// TODO: Should be lexmax in the schedule
+  //auto last_read = lexmax(vals_to_reads);
+  //return last_read;
 
-}
+//}
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
 
@@ -200,7 +200,12 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
   auto c = card(WritesBtwn);
 
-  isl_union_map_free(sched);
+  release(sched);
+  release(WritesBtwn);
+  release(WritesAfterProduction);
+  release(WriteThatProducesReadData);
+  release(WritesBeforeRead);
+  release(WritesAfterWrite);
   return c;
 }
 
