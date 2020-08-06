@@ -253,6 +253,26 @@ void load_corebit2lut(Context* c) {
     mod->setDef(def);
   }
 
+  //{
+    //// bitconst -> lut
+    //Module* mod = c->getModule("corebit.const");
+    //ModuleDef* def = mod->newModuleDef();
+
+    //bool val = mod->getModArgs().at("value")->get<bool>();
+    //assert(val == 0 || val == 1);
+
+    //int lutval = 0;
+    //if (val) {
+      //lutval = ~lutval;
+    //}
+    //def->addInstance("lut","commonlib.lutN",{{"N", Const::make(c, 3)}},{{"init",Const::make(c,8,lutval)}});
+    //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    //def->connect("self.in","lut.in.0");
+    //def->connect("c0.out","lut.in.1");
+    //def->connect("c0.out","lut.in.2");
+    //def->connect("lut.out","self.out");
+    //mod->setDef(def);
+  //}
   {
     //unary
     Module* mod = c->getModule("corebit.not");
@@ -1383,6 +1403,98 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
   }
 };
 
+namespace MapperPasses {
+class MemConst : public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    MemConst() : InstanceVisitorPass(ID,"replace mem wen const with lut") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+bool ConstReplace(Instance* cnst) {
+  //cout << "cnstreplace" << endl;
+  //cout << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+  auto conns = cnst->sel("out")->getConnectedWireables();
+  //cout << "Connections=" << conns.size() << endl;
+  if (conns.size()==0) {
+    return false;
+  }
+  ASSERT(conns.size()==1,"size: " + to_string(conns.size()));
+  for (auto conn : conns) {
+    if (auto conInst = dyn_cast<Instance>(conn->getTopParent())) {
+      cout << "  coninst= " << toString(conInst) << endl;
+      //cout << "  conn= " << toString(conn->getSelectPath()) << endl;
+      //if (conInst->getModuleRef()->getRefName() != "cgralib.Mem" || conn->getSelectPath().back()!="wen") {
+      if (conInst->getModuleRef()->getRefName() != "cgralib.Mem") {
+        return false;
+      }
+    }
+  }
+  cout << "REPLACING!" << endl;
+  ModuleDef* def = cnst->getContainer();
+  uint val = cnst->getModArgs().at("value")->get<bool>() ? 63 : 0;
+  Values bitPEArgs({{"lut_value",Const::make(c,8,val)}});
+  Instance* lut = def->addInstance(cnst->getInstname()+"_lutcnst","cgralib.PE",{{"op_kind",Const::make(c,"bit")}},bitPEArgs);
+  for (auto conn : conns) {
+    def->connect(lut->sel("bit")->sel("out"),conn);
+  }
+  def->removeInstance(cnst);
+  return true;
+}
+
+std::string MapperPasses::MemConst::ID = "memconst";
+void MapperPasses::MemConst::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasModule("corebit.const")) {
+    addVisitorFunction(c->getModule("corebit.const"),ConstReplace);
+  }
+
+}
+namespace MapperPasses {
+class ConstDuplication : public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    ConstDuplication() : InstanceVisitorPass(ID,"duplicate all constants") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+bool ConstDup(Instance* cnst) {
+  Module* modRef = cnst->getModuleRef();
+
+  auto connSet = cnst->sel("out")->getConnectedWireables();
+  if (connSet.size() < 1) {
+    return false;
+  }
+  vector<Wireable*> conns(connSet.begin(),connSet.end());
+
+  ModuleDef* def = cnst->getContainer();
+  for (uint i=1; i< conns.size(); ++i) {
+    Wireable* conn = conns[i];
+    cout << "replacing connection to : " << conn->toString() << endl;
+    Instance* newconst = def->addInstance(cnst->getInstname() + to_string(i),modRef,cnst->getModArgs());
+    def->connect(newconst->sel("out"),conn);
+    def->disconnect(cnst->sel("out"),conn);
+  }
+  return true;
+}
+
+std::string MapperPasses::ConstDuplication::ID = "constduplication";
+void MapperPasses::ConstDuplication::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasModule("corebit.const")) {
+    addVisitorFunction(c->getModule("corebit.const"),ConstDup);
+  }
+  if (c->hasGenerator("coreir.const")) {
+    addVisitorFunction(c->getGenerator("coreir.const"),ConstDup);
+  }
+
+}
+
 void garnet_map_module(Module* top) {
   auto c = top->getContext();
 
@@ -1394,7 +1506,11 @@ void garnet_map_module(Module* top) {
   c->runPasses({"cullgraph"}); 
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
-  c->runPasses({"removewires"});
+  c->addPass(new MapperPasses::ConstDuplication);
+  c->runPasses({"constduplication"});
+  c->addPass(new MapperPasses::MemConst);
+  c->runPasses({"memconst"});
+
   //c->runPasses({"flatten"});
   c->runPasses({"cullgraph"});
   c->getPassManager()->printLog();
