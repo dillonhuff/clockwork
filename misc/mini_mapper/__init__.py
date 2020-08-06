@@ -578,6 +578,21 @@ def get_tile_op(instance, blk_id, changed_pe, rename_op=True):
                 return "alu", 0
         else:
             return None, None
+    elif pe_type == "global.raw_dual_port_sram_tile":
+        if rename_op:
+            # this depends on the mode
+            mode = "sram"
+            assert mode in {"sram", "linebuffer", "unified_buffer"}
+            if mode == "linebuffer":
+                op = "mem_lb_" + str(instance["modargs"]["depth"][-1])
+            elif mode == "sram":
+                op = "mem_sram_[]"
+ #                    json.dumps(instance["modargs"]["init"][-1]["init"])
+            else:
+                op = "mem_ub_" + get_ub_params(instance)
+        else:
+            op = "mem"
+        print_order = 3
     elif pe_type == "cgralib.Mem":
         if rename_op:
             # this depends on the mode
@@ -596,6 +611,7 @@ def get_tile_op(instance, blk_id, changed_pe, rename_op=True):
     elif pe_type == "cgralib.IO":
         return None, None  # don't care yet
     else:
+        print(instance)
         op = instance["genargs"]["op_kind"][-1]
         if op == "bit":
             lut_type = instance["modargs"]["lut_value"][-1][3:].lower()
