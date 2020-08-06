@@ -13302,7 +13302,7 @@ void application_tests() {
   infer_bounds_multi_5x1_stage_negative_conv_test();
   infer_bounds_multi_5x5_stage_negative_conv_test();
   infer_bounds_multi_stage_negative_conv_test();
-  infer_bounds_color_downsample_test();
+  //infer_bounds_color_downsample_test();
   infer_bounds_multi_stage_negative_conv1d_test();
   infer_bounds_three_stage_negative_conv_test();
   

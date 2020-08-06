@@ -188,6 +188,8 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
 
   auto c = card(WritesBtwn);
+
+  isl_union_map_free(sched);
   return c;
 }
 
