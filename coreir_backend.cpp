@@ -2,6 +2,8 @@
 
 #ifdef COREIR
 
+#include "coreir/passes/analysis/coreirjson.h"
+
 using CoreIR::SelectPath;
 using CoreIR::join;
 using CoreIR::BitType;
@@ -940,6 +942,159 @@ void addIOs(Context* c, Module* top) {
   inlineInstance(pt);
 }
 
+void load_cgramapping(Context* c) {
+  //commonlib.lut def
+  {
+    Module* mod = c->getGenerator("commonlib.lutN")->getModule({{"N",Const::make(c,3)}});
+    ModuleDef* def = mod->newModuleDef();
+    Values bitPEArgs({{"lut_value",mod->getArg("init")}});
+    def->addInstance(+"lut","cgralib.PE",{{"op_kind",Const::make(c,"bit")}},bitPEArgs);
+    
+    def->connect("self.in","lut.bit.in");
+    def->connect("lut.bit.out","self.out");
+    mod->setDef(def);
+  }
+  /*{
+    //TODO not specified in the PE spec
+    //unary op (width)->width
+    std::vector<std::tuple<string,string,uint>> unops = {
+      //std::make_tuple("not","inv",0),
+    };
+    for (auto op : unops) {
+      string opstr = std::get<0>(op);
+      string alu_op = std::get<1>(op);
+      uint is_signed = std::get<2>(op);
+      Module* mod = c->getGenerator("coreir."+opstr)->getModule({{"width",Const::make(c,16)}});
+      ModuleDef* def = mod->newModuleDef();
+      Values dataPEArgs({
+        {"alu_op",Const::make(c,alu_op)},
+        {"signed",Const::make(c,(bool) is_signed)}});
+      def->addInstance("binop","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},dataPEArgs);
+    
+      def->connect("self.in","binop.data.in.0");
+      def->connect("self.out","binop.data.out");
+      mod->setDef(def);
+    }
+    }*/
+  {
+    //binary op (width,width)->width
+    std::vector<std::tuple<string,string,uint>> binops({
+      std::make_tuple("add","add",0),
+      std::make_tuple("sub","sub",0),
+      std::make_tuple("mul","mult_0",0),
+      std::make_tuple("or","or",0),
+      std::make_tuple("and","and",0),
+      std::make_tuple("xor","xor",0),
+      std::make_tuple("ashr","rshft",1),
+      std::make_tuple("lshr","rshft",0),
+      std::make_tuple("shl","lshft",0),
+    });
+    for (auto op : binops) {
+      string opstr = std::get<0>(op);
+      string alu_op = std::get<1>(op);
+      uint is_signed = std::get<2>(op);
+      Module* mod = c->getGenerator("coreir."+opstr)->getModule({{"width",Const::make(c,16)}});
+      ModuleDef* def = mod->newModuleDef();
+      Values dataPEArgs({
+        {"alu_op",Const::make(c,alu_op)},
+        {"signed",Const::make(c,(bool) is_signed)}});
+      def->addInstance("binop","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},dataPEArgs);
+    
+      def->connect("self.in0","binop.data.in.0");
+      def->connect("self.in1","binop.data.in.1");
+      def->connect("self.out","binop.data.out");
+      mod->setDef(def);
+    }
+  }
+  //Mux
+  {
+    Module* mod = c->getGenerator("coreir.mux")->getModule({{"width",Const::make(c,16)}});
+    ModuleDef* def = mod->newModuleDef();
+    Values PEArgs({
+      {"alu_op",Const::make(c,"sel")},
+      {"flag_sel",Const::make(c,"pe")},
+      {"signed",Const::make(c,false)}
+    });
+    def->addInstance("mux","cgralib.PE",{{"op_kind",Const::make(c,"combined")}},PEArgs);
+    def->connect("self.in0","mux.data.in.1");
+    def->connect("self.in1","mux.data.in.0");
+    def->connect("self.sel","mux.bit.in.0");
+    def->connect("mux.data.out","self.out");
+    mod->setDef(def);
+  }
+  {
+    //comp op (width,width)->bit
+    std::vector<std::tuple<string,string,string,uint>> compops({
+      std::make_tuple("eq","eq","eq",0),
+      std::make_tuple("neq","neq","ne",0),
+      std::make_tuple("sge","ge","pe",1),
+      std::make_tuple("uge","uge","pe",0),
+      std::make_tuple("sle","le","pe",1),
+      std::make_tuple("ule","ule","pe",0),
+      std::make_tuple("sgt","gt","pe",1),
+      std::make_tuple("ugt","ugt","pe",0),
+      std::make_tuple("slt","lt","pe",1),
+      std::make_tuple("ult","ult","pe",0),
+    });
+    for (auto op : compops) {
+      string opstr = std::get<0>(op);
+      string alu_op = std::get<1>(op);
+      string flag_sel = std::get<2>(op);
+      uint is_signed = std::get<3>(op);
+      Module* mod = c->getGenerator("coreir."+opstr)->getModule({{"width",Const::make(c,16)}});
+      ModuleDef* def = mod->newModuleDef();
+      Values PEArgs({
+        {"alu_op",Const::make(c,alu_op)},
+        {"flag_sel",Const::make(c,flag_sel)},
+        {"signed",Const::make(c,(bool) is_signed)}
+      });
+      def->addInstance("compop","cgralib.PE",{{"op_kind",Const::make(c,"combined")}},PEArgs);
+    
+      def->connect("self.in0","compop.data.in.0");
+      def->connect("self.in1","compop.data.in.1");
+      def->connect("self.out","compop.bit.out");
+      mod->setDef(def);
+    }
+  }
+  
+  //term
+  {
+    Module* mod = c->getGenerator("coreir.term")->getModule({{"width",Const::make(c,16)}});
+    ModuleDef* def = mod->newModuleDef();
+    mod->setDef(def); 
+  }
+
+  //bitterm
+  {
+    Module* mod = c->getModule("corebit.term");
+    ModuleDef* def = mod->newModuleDef();
+    mod->setDef(def);
+  }
+
+
+}
+
+void garnet_map_module(Module* top) {
+  auto c = top->getContext();
+
+  load_cgramapping(c);
+  c->runPasses({"deletedeadinstances"});
+  c->runPasses({"removewires"});
+  addIOs(c,top);
+  c->runPasses({"cullgraph"}); 
+  c->runPasses({"flatten"});
+  c->runPasses({"cullgraph"});
+  c->getPassManager()->printLog();
+  cout << "Trying to save" << endl;
+  c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+
+  auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
+  string postmap = "after_mapping_" + top->getName();
+  ////Create file here.
+  std::ofstream file(postmap);
+  jpass->writeToStream(file,top->getRefName());
+}
+
 
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -953,7 +1108,7 @@ void generate_coreir(CodegenOptions& options,
   //
   auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
 
-  addIOs(context, prg_mod);
+  garnet_map_module(prg_mod);
 
   prg_mod->print();
   assert(false);
