@@ -2929,3 +2929,19 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
 isl_aff* sub(isl_aff* a, isl_aff* b) {
   return isl_aff_sub(cpy(a), cpy(b));
 }
+
+void release(isl_set* s) {
+  isl_set_free(s);
+}
+
+void release(isl_map* m) {
+  isl_map_free(m);
+}
+
+void release(isl_union_set* s) {
+  isl_union_set_free(s);
+}
+
+void release(isl_union_map* m) {
+  isl_union_map_free(m);
+}
