@@ -13305,53 +13305,6 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
-  infer_bounds_multi_5x1_stage_negative_conv_test();
-  infer_bounds_multi_5x5_stage_negative_conv_test();
-  infer_bounds_multi_stage_negative_conv_test();
-  //infer_bounds_color_downsample_test();
-  infer_bounds_multi_stage_negative_conv1d_test();
-  infer_bounds_three_stage_negative_conv_test();
-  
-  infer_bounds_single_stage_negative_conv_test();
-  infer_bounds_negative_conv_test();
-
-  //remove_reduce_inits_test();
-
-  reuse_buffered_conv_test();
-  infer_uneven_bounds_test();
-  llf_pyramid_test();
-  infer_bounds_unrolled_test();
-  llf_test();
-  blur_example();
-  //assert(false);
-  //halide_camera_pipeline_test();
-  register_file_test();
-
-  //exposure_fusion_iccad_apps("ef_cc");
-
-  //assert(false);
-
-  // Failing?
-  two_in_window_test();
-  jacobi_2d_2_test();
-  soda_blur_test();
-  two_in_conv2d_test();
-  //assert(false);
-  
-  //parse_denoise3d_test();
-  //app added for cnn
-
-
-  sobel_16_stage_x_app_test();
-
-  up_stencil_test();
-  blur_x_test();
-
-  dummy_app_test();
-
-  blur_and_downsample_test();
-  denoise2d_test();
-
   sum_diffs_test();
   denoise3d_reconvergence_test();
   tricky_shift_register_reconvergence_test();
@@ -13503,6 +13456,53 @@ void application_tests() {
 
   up_stencil_test();
   blur_x_test();
+
+  infer_bounds_multi_5x1_stage_negative_conv_test();
+  infer_bounds_multi_5x5_stage_negative_conv_test();
+  infer_bounds_multi_stage_negative_conv_test();
+  //infer_bounds_color_downsample_test();
+  infer_bounds_multi_stage_negative_conv1d_test();
+  infer_bounds_three_stage_negative_conv_test();
+  
+  infer_bounds_single_stage_negative_conv_test();
+  infer_bounds_negative_conv_test();
+
+  //remove_reduce_inits_test();
+
+  reuse_buffered_conv_test();
+  infer_uneven_bounds_test();
+  llf_pyramid_test();
+  infer_bounds_unrolled_test();
+  llf_test();
+  blur_example();
+  //assert(false);
+  //halide_camera_pipeline_test();
+  register_file_test();
+
+  //exposure_fusion_iccad_apps("ef_cc");
+
+  //assert(false);
+
+  // Failing?
+  two_in_window_test();
+  jacobi_2d_2_test();
+  soda_blur_test();
+  two_in_conv2d_test();
+  //assert(false);
+  
+  //parse_denoise3d_test();
+  //app added for cnn
+
+
+  sobel_16_stage_x_app_test();
+
+  up_stencil_test();
+  blur_x_test();
+
+  dummy_app_test();
+
+  blur_and_downsample_test();
+  denoise2d_test();
 
 
   //two_input_denoise_pipeline_test();
