@@ -1250,8 +1250,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto pieces = get_pieces(qpd);
     uset* pieces_dom = isl_union_set_read_from_str(ctx(qpd), "{}");
     for (auto p : pieces) {
-      auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
-      pieces_dom = unn(pieces_dom, to_uset(p.first));
+      auto usp = to_uset(p.first);
+      pieces_dom = unn(pieces_dom, usp);
+      release(usp);
+      //auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
+      //pieces_dom = unn(pieces_dom, to_uset(p.first));
     }
 
     bool pieces_are_complete =
@@ -1263,6 +1266,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       return ub == lb;
     }
 
+    release(qpd);
+    release(pieces_dom);
     return false;
   }
 
@@ -1729,9 +1734,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           its(dot(outmap,
                 inv(inmap)), beforeAcc);
       } else {
+        auto inv_in =
+          inv(access_map.at(inpt));
+        auto dt =  
+          dot(access_map.at(outpt), inv(access_map.at(inpt)));
         auto a = its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc);
         src_map = unn(src_map, a);
+
         release(a);
+        release(dt);
+        release(inv_in);
         //src_map =
           //unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
       }
@@ -1766,8 +1778,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto outmap = access_map.at(outpt);
     auto inmap = access_map.at(inpt);
     inmap = coalesce(unn(inmap, outmap));
-    //cout << "before access: " << str(beforeAcc) << endl;
-    //cout << "Coalesce map: " << str(inmap) << endl;
+    
     src_map = its(dot(outmap, inv(inmap)), beforeAcc);
     assert(src_map != nullptr);
 
@@ -1785,11 +1796,22 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //cout << "time 2 event: " << str(time_to_event) << endl;
     //cout << "lexmax :" << str(lexmax(dot(src_map, sched))) << endl;
 
+    auto lmm = lexmax(dot(src_map, sched));
     auto lex_max_events =
-      dot(lexmax(dot(src_map, sched)), time_to_event);
+      dot(lmm, time_to_event);
+    //auto lex_max_events =
+      //dot(lexmax(dot(src_map, sched)), time_to_event);
 
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
+
+    release(lmm);
+    release(time_to_event);
+    release(src_map);
+    release(after);
+    release(inmap);
+    release(beforeAcc);
+    release(sched);
     return lex_max_events;
   }
 
@@ -1828,6 +1850,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
+
+    release(time_to_event);
+    release(src_map);
+    release(after);
+    release(sched);
+    release(inmap);
+    release(beforeAcc);
     return lex_max_events;
   }
 

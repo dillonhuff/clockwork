@@ -602,3 +602,4 @@ void release(isl_set* s);
 void release(isl_map* m);
 void release(isl_union_set* s);
 void release(isl_union_map* m);
+void release(isl_union_pw_qpolynomial* m);
