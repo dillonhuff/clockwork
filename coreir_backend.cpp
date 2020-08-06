@@ -250,7 +250,8 @@ void load_corebit2lut(Context* c) {
     Module* mod = c->getModule("corebit.not");
     ModuleDef* def = mod->newModuleDef();
     //Add the Lut
-    def->addInstance("lut","commonlib.lutN",Values(),{{"init",Const::make(c,8,~B0)}});
+    //def->addInstance("lut","commonlib.lutN",Values(),{{"init",Const::make(c,8,~B0)}});
+    def->addInstance("lut","commonlib.lutN",{{"N", Const::make(c, 3)}},{{"init",Const::make(c,8,~B0)}});
     def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
     def->connect("self.in","lut.in.0");
     def->connect("c0.out","lut.in.1");
@@ -264,7 +265,8 @@ void load_corebit2lut(Context* c) {
     Module* mod = c->getModule("corebit."+op.first);
     ModuleDef* def = mod->newModuleDef();
     //Add the Lut
-    def->addInstance("lut","commonlib.lutN",Values(),{{"init",lutval}});
+    //def->addInstance("lut","commonlib.lutN",Values(),{{"init",lutval}});
+    def->addInstance("lut","commonlib.lutN",{{"N", Const::make(c, 3)}},{{"init",lutval}});
     def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
     def->connect("self.in0","lut.in.0");
     def->connect("self.in1","lut.in.1");
@@ -277,7 +279,8 @@ void load_corebit2lut(Context* c) {
     Module* mod = c->getModule("corebit.mux");
     ModuleDef* def = mod->newModuleDef();
     //Add the Lut
-    def->addInstance("lut","commonlib.lutN",Values(),{{"init",Const::make(c,8,(B2&B1)|((~B2)&B0))}});
+    //def->addInstance("lut","commonlib.lutN",Values(),{{"init",Const::make(c,8,(B2&B1)|((~B2)&B0))}});
+    def->addInstance("lut","commonlib.lutN",{{"N", Const::make(c, 3)}},{{"init",Const::make(c,8,(B2&B1)|((~B2)&B0))}});
     def->connect("self.in0","lut.in.0");
     def->connect("self.in1","lut.in.1");
     def->connect("self.sel","lut.in.2");
@@ -427,7 +430,7 @@ void LoadDefinition_cgralib(Context* c) {
   //load_mem_ext(c);
   load_commonlib_ext(c);
   load_opsubstitution(c);
-  //load_corebit2lut(c);
+  load_corebit2lut(c);
   load_cgramapping(c);
   //lad_float(c);
 }
