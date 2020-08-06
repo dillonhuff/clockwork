@@ -135,9 +135,17 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
         its(dot(outmap,
               inv(inmap)), beforeAcc);
     } else {
+      auto a =
+        its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc);
       src_map =
-        unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+        unn(src_map, a);
+
+      release(a);
+      //src_map =
+        //unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
     }
+
+    release(beforeAcc);
   }
   assert(src_map != nullptr);
 
@@ -153,6 +161,10 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
     dot(lexmax(dot(src_map, sched)), time_to_event);
 
   assert(lex_max_events != nullptr);
+  release(time_to_event);
+  release(src_map);
+  release(after);
+
   return lex_max_events;
 }
 
