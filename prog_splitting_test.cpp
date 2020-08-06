@@ -51,54 +51,7 @@ vector<vector<int>> components;
 vector<int> offsets;
 };
  
-std::set<normalized_address_components> get_normalized_addresses(const string& buff, prog& prg){
-// string -> normalized_address_components struct
-	
-	std::set<op*> buff_readers = find_readers(buff, prg);
-	op* buff_writer = find_writer(buff, prg);
-	std::set<address> addresses;
-	auto levels = get_variable_levels(prg);
-	std::set<normalized_address> normalized_addresses;
-
-	// Add addresses from reader ops
-	for(auto reader : buff_readers){
-		for(auto addr : reader->read_addrs(buff)){
-			addresses.insert(addr.at(0).second);	
-		}
-	}
-
-	// Add addresses from writer op
-	for(auto addr : buff_writer->write_addrs(buff)){
-		addresses.insert(addr.at(0).second);	
-	}
-
-	// Change every address' variable name for its <level> (normalize it)
-	for(auto addr : addresses){
-		normalized_address normalized = addr;
-		for(auto level : levels){
-			string var = level.first;
-			int level_index = level.second;
-			string new_var_name = "<" + str(level_index) + ">";
-			normalized = ReplaceString(normalized, var, new_var_name); 
-		}
-		normalized_addresses.insert(normalized);
-	}
-
-	// Print addresses before and after being normalized
-	cout << "Addresses in:  " << buff << endl;
-	for(auto addr : addresses){
-		cout << addr << endl;
-
-	}
-	cout << "Normalized addresses in:  " << buff << endl;
-	for(auto addr : normalized_addresses){
-		cout << addr << endl;
-	}
-
-	std::set<normalized_address_components> normalized_addresses_comps;
-	return normalized_addresses_comps;
-}
-
+//-----------------------------------------GET_COMPONENTS-------------------------------------------
 
 normalized_address_components get_components(const normalized_address& addr, prog& prg, op* op){
 	normalized_address_components all_comps;
@@ -145,9 +98,13 @@ normalized_address_components get_components(const normalized_address& addr, pro
 		}
 		
 		vector<int> reduced_strides;
+		cout << "REDUCED_STRIDES SIZE: "<< reduced_strides.size() << endl;
 		reduced_strides.resize(total_variables, 0);
+		cout << "total_variables: " << total_variables << endl;
+		cout << "REDUCED_STRIDES SIZE after resize: "<< reduced_strides.size() << endl;
 		for(auto pair : variable_strides){
 			int variable_index = std::stoi(pair.first);
+			cout << "variable_index: " << variable_index << endl;
 			int accum_strides = 0;
 			for(auto value : pair.second){
 				accum_strides += value;
@@ -161,6 +118,67 @@ normalized_address_components get_components(const normalized_address& addr, pro
 	}
 	return all_comps;
 }
+
+//-----------------------------------------GET_NORMALIZED_ADDRESSES------------------------------------------
+
+std::set<normalized_address_components> get_normalized_addresses(const string& buff, prog& prg){
+	// Create a map here from key = buff to value = addr
+	std::set<op*> buff_readers = find_readers(buff, prg);
+	op* buff_writer = find_writer(buff, prg);
+	std::set<address> addresses;
+	auto levels = get_variable_levels(prg);
+	std::set<normalized_address> normalized_addresses;
+	map<address, op*> buffer_addresses;
+
+	// Add addresses from reader ops
+	for(auto reader : buff_readers){
+		for(auto addr : reader->read_addrs(buff)){
+			addresses.insert(addr.at(0).second);
+			//fill the map	
+			buffer_addresses[addr.at(0).second] = reader;
+		}
+	}
+
+	// Add addresses from writer op
+	for(auto addr : buff_writer->write_addrs(buff)){
+		addresses.insert(addr.at(0).second);	
+		//fill the map
+		buffer_addresses[addr.at(0).second] = buff_writer;
+	}
+
+	// Change every address' variable name for its <level> (normalize it)
+	for(auto addr : addresses){
+		normalized_address normalized = addr;
+		for(auto level : levels){
+			string var = level.first;
+			int level_index = level.second;
+			string new_var_name = "<" + str(level_index) + ">";
+			normalized = ReplaceString(normalized, var, new_var_name); 
+		}
+		normalized_addresses.insert(normalized);
+	}
+
+	// Print addresses before and after being normalized
+	cout << "Addresses in:  " << buff << endl;
+	for(auto addr : addresses){
+		cout << addr << endl;
+
+	}
+	cout << "Normalized addresses in:  " << buff << endl;
+	for(auto addr : normalized_addresses){
+		cout << addr << endl;
+	}
+
+	std::set<normalized_address_components> normalized_addresses_comps;
+	// Create a loop here to go through each addr and call get components
+	for(auto addr : normalized_addresses){
+		op* buff = buffer_addresses[addr];
+		normalized_address_components component = get_components(addr, prg, buff);
+//		normalized_addresses_comps.insert(get_components(addr, prg, op));
+	}
+	return normalized_addresses_comps;
+}
+
 
 //-------------------------------------------------STRIDE-------------------------------------------------------
 int stride(int variable, int component, normalized_address_components addr){
@@ -440,8 +458,8 @@ void toy_task(){
 	vector<prog> example_progs;
 	example_progs.push_back(simple_stencil());
 	example_progs.push_back(brighten_blur());
-	example_progs.push_back(unet_conv_3_3());
-	example_progs.push_back(resnet());
+//	example_progs.push_back(unet_conv_3_3());
+//	example_progs.push_back(resnet());
 
 	vector<pair<string, int>> prog_costs;
 
