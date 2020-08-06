@@ -244,7 +244,15 @@ void load_corebit2lut(Context* c) {
 #define B0 170
 #define B1 (12*17)
 #define B2 (15*16)
-  
+ 
+  {
+    //wire
+    Module* mod = c->getModule("corebit.wire");
+    ModuleDef* def = mod->newModuleDef();
+    def->connect("self.in","self.out");
+    mod->setDef(def);
+  }
+
   {
     //unary
     Module* mod = c->getModule("corebit.not");
@@ -1386,6 +1394,7 @@ void garnet_map_module(Module* top) {
   c->runPasses({"cullgraph"}); 
   c->addPass(new CustomFlatten);
   c->runPasses({"customflatten"});
+  c->runPasses({"removewires"});
   //c->runPasses({"flatten"});
   c->runPasses({"cullgraph"});
   c->getPassManager()->printLog();
