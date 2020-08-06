@@ -1355,7 +1355,20 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
   static std::string ID;
   CustomFlatten() : InstanceGraphPass("customflatten", "Flattens everything except the new time!") {}
   bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
-    assert(false);
+    bool changed = false;
+    // int i = 0;
+    for (auto inst : node.getInstanceList()) {
+       //cout << "inlining " << inst->getName() << endl;
+       Module* m = inst->getModuleRef();
+       if (m->isGenerated()) {
+         auto g = m->getGenerator();
+         if (g->getName() == "raw_dual_port_sram_tile") {
+           continue;
+         }
+       }
+      changed |= inlineInstance(inst);
+    }
+    return changed;
   }
 };
 
