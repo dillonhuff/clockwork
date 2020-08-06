@@ -658,6 +658,21 @@
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0001"]}
           },
+          "_U81":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U82":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U83":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
           "_U9":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
@@ -883,13 +898,21 @@
           "true":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
+          },
+          "true1":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "true2":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
           }
         },
         "connections":[
           ["d_0_inc$binop.data.in.1","_U8.out"],
-          ["d_1_inc$binop.data.in.1","_U8.out"],
-          ["d_2_inc$binop.data.in.1","_U8.out"],
-          ["inc_time$binop.data.in.1","_U8.out"],
+          ["d_1_inc$binop.data.in.1","_U81.out"],
+          ["d_2_inc$binop.data.in.1","_U82.out"],
+          ["inc_time$binop.data.in.1","_U83.out"],
           ["cmp_time$compop.data.in.1","_U9.out"],
           ["affine_func$mul_d0__U2$binop.data.out","affine_func$add_all__U5$binop.data.in.0"],
           ["affine_func$mul_d1__U3$binop.data.out","affine_func$add_all__U5$binop.data.in.1"],
@@ -914,7 +937,7 @@
           ["inc_time$binop.data.in.0","cycle_time$reg0.out"],
           ["time_diff$binop.data.in.1","cycle_time$reg0.out"],
           ["d_0_am__U10$lut$lut.bit.in.2","d_0_am__U10$c0.out"],
-          ["true.out","d_0_am__U10$lut$lut.bit.in.0"],
+          ["true1.out","d_0_am__U10$lut$lut.bit.in.0"],
           ["d_1_at_max$compop.bit.out","d_0_am__U10$lut$lut.bit.in.1"],
           ["d_0_am__U11$lut$lut.bit.in.0","d_0_am__U10$lut$lut.bit.out"],
           ["d_0_am__U11$lut$lut.bit.in.2","d_0_am__U11$c0.out"],
@@ -934,7 +957,7 @@
           ["self.clk","d_0_reg$reg0.clk"],
           ["self.d.0","d_0_reg$reg0.out"],
           ["d_1_am__U12$lut$lut.bit.in.2","d_1_am__U12$c0.out"],
-          ["true.out","d_1_am__U12$lut$lut.bit.in.0"],
+          ["true2.out","d_1_am__U12$lut$lut.bit.in.0"],
           ["d_2_at_max$compop.bit.out","d_1_am__U12$lut$lut.bit.in.1"],
           ["d_1_next_value$mux.bit.in.0","d_1_am__U12$lut$lut.bit.out"],
           ["d_1_next_value_at_max$mux.bit.in.0","d_1_at_max$compop.bit.out"],
@@ -974,6 +997,21 @@
         ]],
         "instances":{
           "_U25":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U251":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U252":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U253":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0001"]}
@@ -1203,13 +1241,21 @@
           "true":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
+          },
+          "true1":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "true2":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
           }
         },
         "connections":[
           ["d_0_inc$binop.data.in.1","_U25.out"],
-          ["d_1_inc$binop.data.in.1","_U25.out"],
-          ["d_2_inc$binop.data.in.1","_U25.out"],
-          ["inc_time$binop.data.in.1","_U25.out"],
+          ["d_1_inc$binop.data.in.1","_U251.out"],
+          ["d_2_inc$binop.data.in.1","_U252.out"],
+          ["inc_time$binop.data.in.1","_U253.out"],
           ["cmp_time$compop.data.in.1","_U26.out"],
           ["affine_func$mul_d0__U19$binop.data.out","affine_func$add_all__U22$binop.data.in.0"],
           ["affine_func$mul_d1__U20$binop.data.out","affine_func$add_all__U22$binop.data.in.1"],
@@ -1234,7 +1280,7 @@
           ["inc_time$binop.data.in.0","cycle_time$reg0.out"],
           ["time_diff$binop.data.in.1","cycle_time$reg0.out"],
           ["d_0_am__U27$lut$lut.bit.in.2","d_0_am__U27$c0.out"],
-          ["true.out","d_0_am__U27$lut$lut.bit.in.0"],
+          ["true1.out","d_0_am__U27$lut$lut.bit.in.0"],
           ["d_1_at_max$compop.bit.out","d_0_am__U27$lut$lut.bit.in.1"],
           ["d_0_am__U28$lut$lut.bit.in.0","d_0_am__U27$lut$lut.bit.out"],
           ["d_0_am__U28$lut$lut.bit.in.2","d_0_am__U28$c0.out"],
@@ -1254,7 +1300,7 @@
           ["self.clk","d_0_reg$reg0.clk"],
           ["self.d.0","d_0_reg$reg0.out"],
           ["d_1_am__U29$lut$lut.bit.in.2","d_1_am__U29$c0.out"],
-          ["true.out","d_1_am__U29$lut$lut.bit.in.0"],
+          ["true2.out","d_1_am__U29$lut$lut.bit.in.0"],
           ["d_2_at_max$compop.bit.out","d_1_am__U29$lut$lut.bit.in.1"],
           ["d_1_next_value$mux.bit.in.0","d_1_am__U29$lut$lut.bit.out"],
           ["d_1_next_value_at_max$mux.bit.in.0","d_1_at_max$compop.bit.out"],
@@ -1294,6 +1340,21 @@
         ]],
         "instances":{
           "_U42":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U421":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U422":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "_U423":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0001"]}
@@ -1523,13 +1584,21 @@
           "true":{
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
+          },
+          "true1":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "true2":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
           }
         },
         "connections":[
           ["d_0_inc$binop.data.in.1","_U42.out"],
-          ["d_1_inc$binop.data.in.1","_U42.out"],
-          ["d_2_inc$binop.data.in.1","_U42.out"],
-          ["inc_time$binop.data.in.1","_U42.out"],
+          ["d_1_inc$binop.data.in.1","_U421.out"],
+          ["d_2_inc$binop.data.in.1","_U422.out"],
+          ["inc_time$binop.data.in.1","_U423.out"],
           ["cmp_time$compop.data.in.1","_U43.out"],
           ["affine_func$mul_d0__U36$binop.data.out","affine_func$add_all__U39$binop.data.in.0"],
           ["affine_func$mul_d1__U37$binop.data.out","affine_func$add_all__U39$binop.data.in.1"],
@@ -1554,7 +1623,7 @@
           ["inc_time$binop.data.in.0","cycle_time$reg0.out"],
           ["time_diff$binop.data.in.1","cycle_time$reg0.out"],
           ["d_0_am__U44$lut$lut.bit.in.2","d_0_am__U44$c0.out"],
-          ["true.out","d_0_am__U44$lut$lut.bit.in.0"],
+          ["true1.out","d_0_am__U44$lut$lut.bit.in.0"],
           ["d_1_at_max$compop.bit.out","d_0_am__U44$lut$lut.bit.in.1"],
           ["d_0_am__U45$lut$lut.bit.in.0","d_0_am__U44$lut$lut.bit.out"],
           ["d_0_am__U45$lut$lut.bit.in.2","d_0_am__U45$c0.out"],
@@ -1574,7 +1643,7 @@
           ["self.clk","d_0_reg$reg0.clk"],
           ["self.d.0","d_0_reg$reg0.out"],
           ["d_1_am__U46$lut$lut.bit.in.2","d_1_am__U46$c0.out"],
-          ["true.out","d_1_am__U46$lut$lut.bit.in.0"],
+          ["true2.out","d_1_am__U46$lut$lut.bit.in.0"],
           ["d_2_at_max$compop.bit.out","d_1_am__U46$lut$lut.bit.in.1"],
           ["d_1_next_value$mux.bit.in.0","d_1_am__U46$lut$lut.bit.out"],
           ["d_1_next_value_at_max$mux.bit.in.0","d_1_at_max$compop.bit.out"],
@@ -2391,6 +2460,21 @@
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0001"]}
           },
+          "op_hcompute_hw_input_stencil_port_controller$_U81":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "op_hcompute_hw_input_stencil_port_controller$_U82":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "op_hcompute_hw_input_stencil_port_controller$_U83":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
           "op_hcompute_hw_input_stencil_port_controller$_U9":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
@@ -2617,6 +2701,14 @@
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
+          "op_hcompute_hw_input_stencil_port_controller$true1":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "op_hcompute_hw_input_stencil_port_controller$true2":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
           "op_hcompute_hw_input_stencil_write_start_control_vars$_U14$reg0":{
             "genref":"coreir.reg",
             "genargs":{"width":["Int",16]},
@@ -2637,6 +2729,21 @@
             "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
           },
           "op_hcompute_hw_output_stencil_port_controller$_U42":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "op_hcompute_hw_output_stencil_port_controller$_U421":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "op_hcompute_hw_output_stencil_port_controller$_U422":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "op_hcompute_hw_output_stencil_port_controller$_U423":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0001"]}
@@ -2867,6 +2974,14 @@
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
+          "op_hcompute_hw_output_stencil_port_controller$true1":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "op_hcompute_hw_output_stencil_port_controller$true2":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
           "op_hcompute_mult_stencil$inner_compute$const2__259":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
@@ -2882,6 +2997,21 @@
             "modargs":{"clk_posedge":["Bool",true], "init":["Bool",false]}
           },
           "op_hcompute_mult_stencil_port_controller$_U25":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "op_hcompute_mult_stencil_port_controller$_U251":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "op_hcompute_mult_stencil_port_controller$_U252":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0001"]}
+          },
+          "op_hcompute_mult_stencil_port_controller$_U253":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0001"]}
@@ -3112,6 +3242,14 @@
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
+          "op_hcompute_mult_stencil_port_controller$true1":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "op_hcompute_mult_stencil_port_controller$true2":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
           "op_hcompute_mult_stencil_write_start_control_vars$_U31$reg0":{
             "genref":"coreir.reg",
             "genargs":{"width":["Int",16]},
@@ -3194,9 +3332,9 @@
           ["op_hcompute_mult_stencil_write_start_control_vars$_U33$reg0.out","mult_stencil$mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_write_addrgen$mul_d2__U75$binop.data.in.1"],
           ["op_hcompute_hw_input_stencil_port_controller$cmp_time$compop.bit.out","op_hcompute_hw_input_stencil_exe_start.in"],
           ["op_hcompute_hw_input_stencil_port_controller$d_0_inc$binop.data.in.1","op_hcompute_hw_input_stencil_port_controller$_U8.out"],
-          ["op_hcompute_hw_input_stencil_port_controller$d_1_inc$binop.data.in.1","op_hcompute_hw_input_stencil_port_controller$_U8.out"],
-          ["op_hcompute_hw_input_stencil_port_controller$d_2_inc$binop.data.in.1","op_hcompute_hw_input_stencil_port_controller$_U8.out"],
-          ["op_hcompute_hw_input_stencil_port_controller$inc_time$binop.data.in.1","op_hcompute_hw_input_stencil_port_controller$_U8.out"],
+          ["op_hcompute_hw_input_stencil_port_controller$d_1_inc$binop.data.in.1","op_hcompute_hw_input_stencil_port_controller$_U81.out"],
+          ["op_hcompute_hw_input_stencil_port_controller$d_2_inc$binop.data.in.1","op_hcompute_hw_input_stencil_port_controller$_U82.out"],
+          ["op_hcompute_hw_input_stencil_port_controller$inc_time$binop.data.in.1","op_hcompute_hw_input_stencil_port_controller$_U83.out"],
           ["op_hcompute_hw_input_stencil_port_controller$cmp_time$compop.data.in.1","op_hcompute_hw_input_stencil_port_controller$_U9.out"],
           ["op_hcompute_hw_input_stencil_port_controller$affine_func$mul_d0__U2$binop.data.out","op_hcompute_hw_input_stencil_port_controller$affine_func$add_all__U5$binop.data.in.0"],
           ["op_hcompute_hw_input_stencil_port_controller$affine_func$mul_d1__U3$binop.data.out","op_hcompute_hw_input_stencil_port_controller$affine_func$add_all__U5$binop.data.in.1"],
@@ -3219,7 +3357,7 @@
           ["op_hcompute_hw_input_stencil_port_controller$inc_time$binop.data.in.0","op_hcompute_hw_input_stencil_port_controller$cycle_time$reg0.out"],
           ["op_hcompute_hw_input_stencil_port_controller$time_diff$binop.data.in.1","op_hcompute_hw_input_stencil_port_controller$cycle_time$reg0.out"],
           ["op_hcompute_hw_input_stencil_port_controller$d_0_am__U10$lut$lut.bit.in.2","op_hcompute_hw_input_stencil_port_controller$d_0_am__U10$c0.out"],
-          ["op_hcompute_hw_input_stencil_port_controller$true.out","op_hcompute_hw_input_stencil_port_controller$d_0_am__U10$lut$lut.bit.in.0"],
+          ["op_hcompute_hw_input_stencil_port_controller$true1.out","op_hcompute_hw_input_stencil_port_controller$d_0_am__U10$lut$lut.bit.in.0"],
           ["op_hcompute_hw_input_stencil_port_controller$d_1_at_max$compop.bit.out","op_hcompute_hw_input_stencil_port_controller$d_0_am__U10$lut$lut.bit.in.1"],
           ["op_hcompute_hw_input_stencil_port_controller$d_0_am__U11$lut$lut.bit.in.0","op_hcompute_hw_input_stencil_port_controller$d_0_am__U10$lut$lut.bit.out"],
           ["op_hcompute_hw_input_stencil_port_controller$d_0_am__U11$lut$lut.bit.in.2","op_hcompute_hw_input_stencil_port_controller$d_0_am__U11$c0.out"],
@@ -3238,7 +3376,7 @@
           ["op_hcompute_hw_input_stencil_port_controller$d_0_reg$reg0.in","op_hcompute_hw_input_stencil_port_controller$d_0_reg$enMux$mux.data.out"],
           ["op_hcompute_hw_input_stencil_write_start_control_vars$_U14$reg0.in","op_hcompute_hw_input_stencil_port_controller$d_0_reg$reg0.out"],
           ["op_hcompute_hw_input_stencil_port_controller$d_1_am__U12$lut$lut.bit.in.2","op_hcompute_hw_input_stencil_port_controller$d_1_am__U12$c0.out"],
-          ["op_hcompute_hw_input_stencil_port_controller$true.out","op_hcompute_hw_input_stencil_port_controller$d_1_am__U12$lut$lut.bit.in.0"],
+          ["op_hcompute_hw_input_stencil_port_controller$true2.out","op_hcompute_hw_input_stencil_port_controller$d_1_am__U12$lut$lut.bit.in.0"],
           ["op_hcompute_hw_input_stencil_port_controller$d_2_at_max$compop.bit.out","op_hcompute_hw_input_stencil_port_controller$d_1_am__U12$lut$lut.bit.in.1"],
           ["op_hcompute_hw_input_stencil_port_controller$d_1_next_value$mux.bit.in.0","op_hcompute_hw_input_stencil_port_controller$d_1_am__U12$lut$lut.bit.out"],
           ["op_hcompute_hw_input_stencil_port_controller$d_1_next_value_at_max$mux.bit.in.0","op_hcompute_hw_input_stencil_port_controller$d_1_at_max$compop.bit.out"],
@@ -3268,9 +3406,9 @@
           ["op_hcompute_hw_input_stencil_write_start_control_vars$_U16$reg0.in","op_hcompute_hw_input_stencil_port_controller$d_2_reg$reg0.out"],
           ["op_hcompute_hw_output_stencil_port_controller$cmp_time$compop.bit.out","op_hcompute_hw_output_stencil_exe_start.in"],
           ["op_hcompute_hw_output_stencil_port_controller$d_0_inc$binop.data.in.1","op_hcompute_hw_output_stencil_port_controller$_U42.out"],
-          ["op_hcompute_hw_output_stencil_port_controller$d_1_inc$binop.data.in.1","op_hcompute_hw_output_stencil_port_controller$_U42.out"],
-          ["op_hcompute_hw_output_stencil_port_controller$d_2_inc$binop.data.in.1","op_hcompute_hw_output_stencil_port_controller$_U42.out"],
-          ["op_hcompute_hw_output_stencil_port_controller$inc_time$binop.data.in.1","op_hcompute_hw_output_stencil_port_controller$_U42.out"],
+          ["op_hcompute_hw_output_stencil_port_controller$d_1_inc$binop.data.in.1","op_hcompute_hw_output_stencil_port_controller$_U421.out"],
+          ["op_hcompute_hw_output_stencil_port_controller$d_2_inc$binop.data.in.1","op_hcompute_hw_output_stencil_port_controller$_U422.out"],
+          ["op_hcompute_hw_output_stencil_port_controller$inc_time$binop.data.in.1","op_hcompute_hw_output_stencil_port_controller$_U423.out"],
           ["op_hcompute_hw_output_stencil_port_controller$cmp_time$compop.data.in.1","op_hcompute_hw_output_stencil_port_controller$_U43.out"],
           ["op_hcompute_hw_output_stencil_port_controller$affine_func$mul_d0__U36$binop.data.out","op_hcompute_hw_output_stencil_port_controller$affine_func$add_all__U39$binop.data.in.0"],
           ["op_hcompute_hw_output_stencil_port_controller$affine_func$mul_d1__U37$binop.data.out","op_hcompute_hw_output_stencil_port_controller$affine_func$add_all__U39$binop.data.in.1"],
@@ -3293,7 +3431,7 @@
           ["op_hcompute_hw_output_stencil_port_controller$inc_time$binop.data.in.0","op_hcompute_hw_output_stencil_port_controller$cycle_time$reg0.out"],
           ["op_hcompute_hw_output_stencil_port_controller$time_diff$binop.data.in.1","op_hcompute_hw_output_stencil_port_controller$cycle_time$reg0.out"],
           ["op_hcompute_hw_output_stencil_port_controller$d_0_am__U44$lut$lut.bit.in.2","op_hcompute_hw_output_stencil_port_controller$d_0_am__U44$c0.out"],
-          ["op_hcompute_hw_output_stencil_port_controller$true.out","op_hcompute_hw_output_stencil_port_controller$d_0_am__U44$lut$lut.bit.in.0"],
+          ["op_hcompute_hw_output_stencil_port_controller$true1.out","op_hcompute_hw_output_stencil_port_controller$d_0_am__U44$lut$lut.bit.in.0"],
           ["op_hcompute_hw_output_stencil_port_controller$d_1_at_max$compop.bit.out","op_hcompute_hw_output_stencil_port_controller$d_0_am__U44$lut$lut.bit.in.1"],
           ["op_hcompute_hw_output_stencil_port_controller$d_0_am__U45$lut$lut.bit.in.0","op_hcompute_hw_output_stencil_port_controller$d_0_am__U44$lut$lut.bit.out"],
           ["op_hcompute_hw_output_stencil_port_controller$d_0_am__U45$lut$lut.bit.in.2","op_hcompute_hw_output_stencil_port_controller$d_0_am__U45$c0.out"],
@@ -3311,7 +3449,7 @@
           ["op_hcompute_hw_output_stencil_port_controller$d_0_reg$reg0.out","op_hcompute_hw_output_stencil_port_controller$d_0_reg$enMux$mux.data.in.1"],
           ["op_hcompute_hw_output_stencil_port_controller$d_0_reg$reg0.in","op_hcompute_hw_output_stencil_port_controller$d_0_reg$enMux$mux.data.out"],
           ["op_hcompute_hw_output_stencil_port_controller$d_1_am__U46$lut$lut.bit.in.2","op_hcompute_hw_output_stencil_port_controller$d_1_am__U46$c0.out"],
-          ["op_hcompute_hw_output_stencil_port_controller$true.out","op_hcompute_hw_output_stencil_port_controller$d_1_am__U46$lut$lut.bit.in.0"],
+          ["op_hcompute_hw_output_stencil_port_controller$true2.out","op_hcompute_hw_output_stencil_port_controller$d_1_am__U46$lut$lut.bit.in.0"],
           ["op_hcompute_hw_output_stencil_port_controller$d_2_at_max$compop.bit.out","op_hcompute_hw_output_stencil_port_controller$d_1_am__U46$lut$lut.bit.in.1"],
           ["op_hcompute_hw_output_stencil_port_controller$d_1_next_value$mux.bit.in.0","op_hcompute_hw_output_stencil_port_controller$d_1_am__U46$lut$lut.bit.out"],
           ["op_hcompute_hw_output_stencil_port_controller$d_1_next_value_at_max$mux.bit.in.0","op_hcompute_hw_output_stencil_port_controller$d_1_at_max$compop.bit.out"],
@@ -3340,9 +3478,9 @@
           ["op_hcompute_mult_stencil$inner_compute$mul_hw_input_stencil_1_259_260$binop.data.in.1","op_hcompute_mult_stencil$inner_compute$const2__259.out"],
           ["op_hcompute_mult_stencil_port_controller$cmp_time$compop.bit.out","op_hcompute_mult_stencil_exe_start.in"],
           ["op_hcompute_mult_stencil_port_controller$d_0_inc$binop.data.in.1","op_hcompute_mult_stencil_port_controller$_U25.out"],
-          ["op_hcompute_mult_stencil_port_controller$d_1_inc$binop.data.in.1","op_hcompute_mult_stencil_port_controller$_U25.out"],
-          ["op_hcompute_mult_stencil_port_controller$d_2_inc$binop.data.in.1","op_hcompute_mult_stencil_port_controller$_U25.out"],
-          ["op_hcompute_mult_stencil_port_controller$inc_time$binop.data.in.1","op_hcompute_mult_stencil_port_controller$_U25.out"],
+          ["op_hcompute_mult_stencil_port_controller$d_1_inc$binop.data.in.1","op_hcompute_mult_stencil_port_controller$_U251.out"],
+          ["op_hcompute_mult_stencil_port_controller$d_2_inc$binop.data.in.1","op_hcompute_mult_stencil_port_controller$_U252.out"],
+          ["op_hcompute_mult_stencil_port_controller$inc_time$binop.data.in.1","op_hcompute_mult_stencil_port_controller$_U253.out"],
           ["op_hcompute_mult_stencil_port_controller$cmp_time$compop.data.in.1","op_hcompute_mult_stencil_port_controller$_U26.out"],
           ["op_hcompute_mult_stencil_port_controller$affine_func$mul_d0__U19$binop.data.out","op_hcompute_mult_stencil_port_controller$affine_func$add_all__U22$binop.data.in.0"],
           ["op_hcompute_mult_stencil_port_controller$affine_func$mul_d1__U20$binop.data.out","op_hcompute_mult_stencil_port_controller$affine_func$add_all__U22$binop.data.in.1"],
@@ -3365,7 +3503,7 @@
           ["op_hcompute_mult_stencil_port_controller$inc_time$binop.data.in.0","op_hcompute_mult_stencil_port_controller$cycle_time$reg0.out"],
           ["op_hcompute_mult_stencil_port_controller$time_diff$binop.data.in.1","op_hcompute_mult_stencil_port_controller$cycle_time$reg0.out"],
           ["op_hcompute_mult_stencil_port_controller$d_0_am__U27$lut$lut.bit.in.2","op_hcompute_mult_stencil_port_controller$d_0_am__U27$c0.out"],
-          ["op_hcompute_mult_stencil_port_controller$true.out","op_hcompute_mult_stencil_port_controller$d_0_am__U27$lut$lut.bit.in.0"],
+          ["op_hcompute_mult_stencil_port_controller$true1.out","op_hcompute_mult_stencil_port_controller$d_0_am__U27$lut$lut.bit.in.0"],
           ["op_hcompute_mult_stencil_port_controller$d_1_at_max$compop.bit.out","op_hcompute_mult_stencil_port_controller$d_0_am__U27$lut$lut.bit.in.1"],
           ["op_hcompute_mult_stencil_port_controller$d_0_am__U28$lut$lut.bit.in.0","op_hcompute_mult_stencil_port_controller$d_0_am__U27$lut$lut.bit.out"],
           ["op_hcompute_mult_stencil_port_controller$d_0_am__U28$lut$lut.bit.in.2","op_hcompute_mult_stencil_port_controller$d_0_am__U28$c0.out"],
@@ -3384,7 +3522,7 @@
           ["op_hcompute_mult_stencil_port_controller$d_0_reg$reg0.in","op_hcompute_mult_stencil_port_controller$d_0_reg$enMux$mux.data.out"],
           ["op_hcompute_mult_stencil_write_start_control_vars$_U31$reg0.in","op_hcompute_mult_stencil_port_controller$d_0_reg$reg0.out"],
           ["op_hcompute_mult_stencil_port_controller$d_1_am__U29$lut$lut.bit.in.2","op_hcompute_mult_stencil_port_controller$d_1_am__U29$c0.out"],
-          ["op_hcompute_mult_stencil_port_controller$true.out","op_hcompute_mult_stencil_port_controller$d_1_am__U29$lut$lut.bit.in.0"],
+          ["op_hcompute_mult_stencil_port_controller$true2.out","op_hcompute_mult_stencil_port_controller$d_1_am__U29$lut$lut.bit.in.0"],
           ["op_hcompute_mult_stencil_port_controller$d_2_at_max$compop.bit.out","op_hcompute_mult_stencil_port_controller$d_1_am__U29$lut$lut.bit.in.1"],
           ["op_hcompute_mult_stencil_port_controller$d_1_next_value$mux.bit.in.0","op_hcompute_mult_stencil_port_controller$d_1_am__U29$lut$lut.bit.out"],
           ["op_hcompute_mult_stencil_port_controller$d_1_next_value_at_max$mux.bit.in.0","op_hcompute_mult_stencil_port_controller$d_1_at_max$compop.bit.out"],
