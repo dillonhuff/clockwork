@@ -17,6 +17,7 @@ using CoreIR::Wireable;
 using CoreIR::JsonType;
 using CoreIR::Namespace;
 using CoreIR::Instance;
+using CoreIR::InstanceGraphPass;
 using CoreIR::Const;
 using CoreIR::Context;
 using CoreIR::Values;
@@ -1349,9 +1350,14 @@ void addIOs(Context* c, Module* top) {
 }
 
 
-void flatten_excluding(const std::set<string>& excluded, CoreIR::Context* c) {
-
-}
+class CustomFlatten : public CoreIR::InstanceGraphPass {
+ public:
+  static std::string ID;
+  CustomFlatten() : InstanceGraphPass("customflatten", "Flattens everything except the new time!") {}
+  bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
+    assert(false);
+  }
+};
 
 void garnet_map_module(Module* top) {
   auto c = top->getContext();
@@ -1362,8 +1368,9 @@ void garnet_map_module(Module* top) {
   c->runPasses({"removewires"});
   addIOs(c,top);
   c->runPasses({"cullgraph"}); 
-  flatten_excluding({"raw_dual_port_sram_TG"}, c);
-  c->runPasses({"flatten"});
+  c->addPass(new CustomFlatten);
+  c->runPasses({"customflatten"});
+  //c->runPasses({"flatten"});
   c->runPasses({"cullgraph"});
   c->getPassManager()->printLog();
   cout << "Trying to save" << endl;
