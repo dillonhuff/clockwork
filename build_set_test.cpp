@@ -9947,7 +9947,7 @@ prog simplified_conv_layer() {
 void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -12887,6 +12887,12 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   generate_app_code(options, buffers, prg, hw_sched);
 
 #ifdef COREIR
+
+  //generate_coreir_addrgen_in_tile(options,
+    //buffers,
+    //prg,
+    //hw_sched);
+  //assert(false);
 
   generate_coreir(options,
     buffers,

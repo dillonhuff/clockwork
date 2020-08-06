@@ -25,6 +25,17 @@ CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom);
 
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
+void generate_coreir_addrgen_in_tile(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap);
+
+CoreIR::Module* generate_coreir(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context);
+
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -48,4 +59,9 @@ CoreIR::Wireable* delay_array(CoreIR::ModuleDef* def,
     CoreIR::Wireable* input,
     int elem_width,
     int num_elems);
+
+void add_cgralib(CoreIR::Context* context);
+
+CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
+
 #endif
