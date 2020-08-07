@@ -1457,6 +1457,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
+  void generate_duplicate_select(CodegenOptions& options, std::ostream& out, const string& implemented, const std::string& duplicated, UBuffer& buf) {
+    generate_select_decl(options, out, duplicated, buf);
+
+
+    out << tab(1) << "assert(false);" << endl;
+    out << "}" << endl;
+  }
+
   void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
     generate_select_decl(options, out, outpt, buf);
 
@@ -1618,8 +1626,24 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       generate_broadcast(options, out, inpt, buf);
     }
 
-    for (auto outpt : buf.get_out_ports()) {
-      generate_select(options, out, outpt, buf);
+    map<string, std::set<string> > unique_outs =
+      get_unique_output_ports(buf);
+
+    if (buf.banking.partition == "exhaustive") { 
+      for (auto outptg : unique_outs) {
+        string outpt = outptg.first;
+        generate_select(options, out, outpt, buf);
+
+        for (auto pt : outptg.second) {
+          if (pt != outpt) {
+            generate_duplicate_select(options, out, outpt, pt, buf);
+          }
+        }
+      }
+    } else {
+      for (auto outpt : buf.get_out_ports()) {
+        generate_select(options, out, outpt, buf);
+      }
     }
 
     generate_bundles(options, out, buf);
@@ -2267,7 +2291,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
 
       // Use naive banking that reaches target throughput
-      for (auto outpt : get_out_ports()) {
+      //for (auto outpt : get_out_ports()) {
+      for (auto outptg : unique_outs) {
+        string outpt = outptg.first;
         cout << "Generating banks for " << outpt << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
