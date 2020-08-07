@@ -1647,7 +1647,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     map<string, std::set<string> > unique_outs =
       get_unique_output_ports(buf);
 
-    if (buf.banking.partition == "exhaustive") { 
+    //if (buf.banking.partition == "exhaustive") { 
+    if (false) {
       for (auto outptg : unique_outs) {
         string outpt = outptg.first;
         generate_select(options, out, outpt, buf);
@@ -2309,9 +2310,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
 
       // Use naive banking that reaches target throughput
-      //for (auto outpt : get_out_ports()) {
-      for (auto outptg : unique_outs) {
-        string outpt = outptg.first;
+      for (auto outpt : get_out_ports()) {
+      //for (auto outptg : unique_outs) {
+        //string outpt = outptg.first;
+        
+        
         cout << "Generating banks for " << outpt << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
