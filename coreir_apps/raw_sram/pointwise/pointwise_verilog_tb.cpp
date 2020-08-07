@@ -22,6 +22,7 @@ int main() {
 
   Vpointwise dut;
   dut.input_copy_stencil_op_hcompute_hw_input_stencil_read_0 = 13;
+  int hw_output_stencil_op_hcompute_hw_output_stencil_write_en_count = 0;
   dut.clk = 0;
   dut.eval();
   for (int t = 0; t < 30000; t++) {
@@ -29,10 +30,12 @@ int main() {
     fout << t << "," << "input_copy_stencil_op_hcompute_hw_input_stencil_read_0" << "," << (int) dut.input_copy_stencil_op_hcompute_hw_input_stencil_read_0 << endl;
     fout << t << "," << "hw_output_stencil_op_hcompute_hw_output_stencil_write_en" << "," << (int) dut.hw_output_stencil_op_hcompute_hw_output_stencil_write_en << endl;
     fout << t << "," << "hw_output_stencil_op_hcompute_hw_output_stencil_write_0" << "," << (int) dut.hw_output_stencil_op_hcompute_hw_output_stencil_write_0 << endl;
+  hw_output_stencil_op_hcompute_hw_output_stencil_write_en_count += dut.hw_output_stencil_op_hcompute_hw_output_stencil_write_en;
     dut.clk = 0;
     dut.eval();
     dut.clk = 1;
     dut.eval();
   }
+    cout << hw_output_stencil_op_hcompute_hw_output_stencil_write_en_count << endl;
   return 0;
 }

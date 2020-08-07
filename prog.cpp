@@ -5094,6 +5094,12 @@ void generate_verilator_tb(prog& prg,
     rgtb << tab(1) << "dut." << data_name << " = 13;" << endl;
   }
 
+  for (auto out : outputs(buffers, prg)) {
+    string ctrl_name =
+      out.first + "_" + out.second + "_en";
+    rgtb << tab(1) << "int " << ctrl_name << "_count = 0;" << endl;
+  }
+
   rgtb << tab(1) << "dut.clk = 0;" << endl;
   rgtb << tab(1) << "dut.eval();" << endl;
   rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
@@ -5114,6 +5120,7 @@ void generate_verilator_tb(prog& prg,
       out.first + "_" + out.second + "_0";
     rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
     rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) dut." << data_name << " << endl;" << endl;
+    rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
   }
 
   rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;
@@ -5121,6 +5128,12 @@ void generate_verilator_tb(prog& prg,
   rgtb << tab(1) << tab(1) << "dut.clk = 1;" << endl;
   rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
   rgtb << tab(1) << "}" << endl;
+
+  for (auto out : outputs(buffers, prg)) {
+    string ctrl_name =
+      out.first + "_" + out.second + "_en";
+    rgtb << tab(2) << "cout << " << ctrl_name << "_count << endl;" << endl;
+  }
 
   //for (auto out : prg.outs) {
     //auto cmap = prg.producer_map(out);
