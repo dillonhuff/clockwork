@@ -1,3 +1,6 @@
+git config --global user.email "dillonhuff@gmail.com"
+git config --global user.name "Dillon Huff"
+
 apt-get update
 apt-get install -y vim
 apt-get install -y tmux
