@@ -639,6 +639,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   auto cgralib = c->getNamespace("global");
   CoreIR::Params params = {{"depth",c->Int()}};
+  //CoreIR::Params params;
 
   Params reg_array_args = {{"type", CoreIRType::make(c)},
                            {"has_en", c->Bool()},
@@ -650,7 +651,8 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
     params,
     [](Context* c, Values args) {
     int width = 16;
-    int depth = args.at("depth")->get<int>();
+    //int depth = args.at("depth")->get<int>();
+    //int depth = args.at("depth")->get<int>();
 
   auto tp = c->Record({
       {"clk", c->Named("coreir.clkIn")},
@@ -663,6 +665,8 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   return tp;
     });
   Generator* ram = cgralib->newGeneratorDecl("raw_dual_port_sram_tile", ramTG, params);
+
+  /* Replace with verilog
   ram->setGeneratorDefFromFun(
     [](Context* c, Values args, ModuleDef* def) {
 
@@ -691,10 +695,24 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   def->connect("self.raddr", "raddr_slice.in");
   def->connect("raddr_slice.out", "mem.raddr");
   def->connect("self.ren", "readreg.en");
-    });
+    }); */
 
 }
 
+CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
+  auto ns = c->getNamespace("global");
+  if (ns->hasModule("lake_rf")) {
+
+  }
+  auto m = ns->newModuleDecl("lake_rf");
+
+  return m;
+
+  //if (!ns->hasGenerator("raw_dual_port_sram_tile")) {
+    //add_raw_dual_port_sram_generator(c);
+    //assert(ns->hasGenerator("raw_dual_port_sram_tile"));
+  //}
+}
 //CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth) {
 void ram_module(CoreIR::Context* c, const int width, const int depth) {
   auto ns = c->getNamespace("global");
@@ -703,45 +721,6 @@ void ram_module(CoreIR::Context* c, const int width, const int depth) {
     add_raw_dual_port_sram_generator(c);
     assert(ns->hasGenerator("raw_dual_port_sram_tile"));
   }
-
-  //auto ramgen = ns->getGenerator("raw_dual_port_sram_tile");
-
-  //auto tp = c->Record({
-      //{"clk", c->Named("coreir.clkIn")},
-      //{"wdata", c->BitIn()->Arr(width)},
-      //{"waddr", c->BitIn()->Arr(width)},
-      //{"wen", c->BitIn()},
-      //{"rdata", c->Bit()->Arr(width)},
-      //{"raddr", c->BitIn()->Arr(width)},
-      //{"ren", c->BitIn()}});
-
-  //auto m = c->getNamespace("global")->newModuleDecl("ram_" + c->getUnique(), tp);
-  //auto def = m->newModuleDef();
-  //uint awidth = (uint)ceil(log2(depth));
-  //CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
-    //{"lo", CoreIR::Const::make(c, 0)},
-    //{"hi", CoreIR::Const::make(c, awidth)}};
-  //def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
-  //def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
-
-  //def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
-  //def->addInstance(
-      //"readreg",
-      //"mantle.reg",
-      //{{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
-  //def->connect("self.clk", "readreg.clk");
-  //def->connect("self.clk", "mem.clk");
-  //def->connect("self.wdata", "mem.wdata");
-  //def->connect("self.waddr", "waddr_slice.in");
-  //def->connect("waddr_slice.out", "mem.waddr");
-  //def->connect("self.wen", "mem.wen");
-  //def->connect("mem.rdata", "readreg.in");
-  //def->connect("self.rdata", "readreg.out");
-  //def->connect("self.raddr", "raddr_slice.in");
-  //def->connect("raddr_slice.out", "mem.raddr");
-  //def->connect("self.ren", "readreg.en");
-  //m->setDef(def);
-  //return m;
 }
 
 //generate/realize the rewrite structure inside ubuffer node
@@ -1061,6 +1040,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       int capacity = int_upper_bound(card(bank.rddom));
       int addr_width = minihls::clog2(capacity);
       ram_module(c, width, capacity);
+      //auto bnk = def->addInstance(
+          //bank.name,
+          //"global.raw_dual_port_sram_tile",
+          //{}
+          //);
       auto bnk = def->addInstance(
           bank.name,
           "global.raw_dual_port_sram_tile",

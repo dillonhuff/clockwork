@@ -9948,6 +9948,7 @@ void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
   int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
+  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
