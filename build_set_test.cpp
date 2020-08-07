@@ -12882,7 +12882,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     cout << tab(1) << str(m) << endl;
   }
 
-  //assert(false);
+  assert(false);
   auto buffers = build_buffers(prg, hw_sched);
   generate_app_code(options, buffers, prg, hw_sched);
 
@@ -13300,11 +13300,77 @@ void infer_bounds_color_downsample_test() {
   regression_test(prg);
 }
 
+void infer_bounds_16_stage_5x5_conv_test() {
+  prog prg("conv_16_stage_5x5_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("incp", "in_oc", 2, prg);
+  cpy("in", "incp", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("in", "x + " + str(x), "y + " + str(y));
+      }
+    }
+    red->add_store("down", "x, y");
+    red->add_function("blur_5x5_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("down", "x2 + " + str(x), "y2 + " + str(y));
+      }
+    }
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_5x5_32");
+  }
+
+
+  cpy("out", "down1", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //assert(false);
+
+  infer_bounds_and_unroll("out", {20, 20}, 16, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+
+  assert(false);
+
+}
+
 void remove_reduce_inits_test() {
   assert(false);
 }
 
 void application_tests() {
+  infer_bounds_16_stage_5x5_conv_test();
+  infer_bounds_multi_5x1_stage_negative_conv_test();
+  infer_bounds_multi_5x5_stage_negative_conv_test();
+  infer_bounds_multi_stage_negative_conv_test();
+  //infer_bounds_color_downsample_test();
+  infer_bounds_multi_stage_negative_conv1d_test();
+  infer_bounds_three_stage_negative_conv_test();
+  
+  infer_bounds_single_stage_negative_conv_test();
+  infer_bounds_negative_conv_test();
+
+  
   sum_diffs_test();
   denoise3d_reconvergence_test();
   tricky_shift_register_reconvergence_test();
@@ -13456,16 +13522,6 @@ void application_tests() {
 
   up_stencil_test();
   blur_x_test();
-
-  infer_bounds_multi_5x1_stage_negative_conv_test();
-  infer_bounds_multi_5x5_stage_negative_conv_test();
-  infer_bounds_multi_stage_negative_conv_test();
-  //infer_bounds_color_downsample_test();
-  infer_bounds_multi_stage_negative_conv1d_test();
-  infer_bounds_three_stage_negative_conv_test();
-  
-  infer_bounds_single_stage_negative_conv_test();
-  infer_bounds_negative_conv_test();
 
   //remove_reduce_inits_test();
 
