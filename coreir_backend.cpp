@@ -1538,10 +1538,10 @@ void generate_coreir(CodegenOptions& options,
   //
   auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
 
-  //garnet_map_module(prg_mod);
+  garnet_map_module(prg_mod);
 
-  //prg_mod->print();
-  //assert(false);
+  prg_mod->print();
+  assert(false);
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
