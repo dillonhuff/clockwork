@@ -1696,3 +1696,7 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
     umap* op_writes,
     umap* op_reads,
     umap* sched);
+
+
+map<string, std::set<string> >
+get_unique_output_ports(UBuffer& buf);

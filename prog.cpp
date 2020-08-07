@@ -2539,6 +2539,8 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
   cout << "Compute unit file: "
     << prg.compute_unit_file << endl;
   generate_app_code(options, buffers, prg, sched);
+
+  release(sched);
 }
 
 void generate_optimized_code(prog& prg) {
@@ -5182,6 +5184,8 @@ void generate_verilator_tb(prog& prg,
         cond = cond + string(" }");
         umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
+
+        release(vmap);
       }
       maps[op] = pmap;
     }

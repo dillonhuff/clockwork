@@ -1504,6 +1504,14 @@ std::string codegen_c(isl_union_map* res) {
   std::string code_string(code_str);
   free(code_str);
 
+  //for (auto m : maps) {
+    //release(m);
+  //}
+  //release(range_rep);
+  //isl_ast_node_free(code);
+  isl_ast_build_free(build);
+  //release(options);
+
   return code_string;
 }
 
@@ -2944,4 +2952,8 @@ void release(isl_union_set* s) {
 
 void release(isl_union_map* m) {
   isl_union_map_free(m);
+}
+
+void release(isl_union_pw_qpolynomial* m) {
+  isl_union_pw_qpolynomial_free(m);
 }

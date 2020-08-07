@@ -135,9 +135,17 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
         its(dot(outmap,
               inv(inmap)), beforeAcc);
     } else {
+      auto a =
+        its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc);
       src_map =
-        unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+        unn(src_map, a);
+
+      release(a);
+      //src_map =
+        //unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
     }
+
+    release(beforeAcc);
   }
   assert(src_map != nullptr);
 
@@ -153,6 +161,10 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
     dot(lexmax(dot(src_map, sched)), time_to_event);
 
   assert(lex_max_events != nullptr);
+  release(time_to_event);
+  release(src_map);
+  release(after);
+
   return lex_max_events;
 }
 
@@ -1222,8 +1234,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto pieces = get_pieces(qpd);
     uset* pieces_dom = isl_union_set_read_from_str(ctx(qpd), "{}");
     for (auto p : pieces) {
-      auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
-      pieces_dom = unn(pieces_dom, to_uset(p.first));
+      auto usp = to_uset(p.first);
+      pieces_dom = unn(pieces_dom, usp);
+      release(usp);
+      //auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
+      //pieces_dom = unn(pieces_dom, to_uset(p.first));
     }
 
     bool pieces_are_complete =
@@ -1235,6 +1250,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       return ub == lb;
     }
 
+    release(qpd);
+    release(pieces_dom);
     return false;
   }
 
@@ -1386,18 +1403,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       cout << "next bcar = " << str(card(next_bank)) << endl;
       auto bank_delta = isl_map_deltas_map(cpy(next_bank));
       cout << "nb delta  = " << str(bank_delta) << endl;
-      //assert(false);
-
-      //auto next = lexmin(its(isl_map_lex_lt(get_space(writes)), writes));
-
-      //out << tab(1) << "// Next         : " << str(next) << endl;
-      //out << tab(1) << "// Next bank    : " << str(next_bank) << endl;
-      //out << tab(1) << "// Bank function: " << str(bank_function) << endl;
-      //out << tab(1) << "// Bank func aff: " << str(get_aff(bank_function)) << endl;
-      //out << tab(1) << "// Access func  : " << str(acc_map) << endl;
-      //isl_union_map* target = dot(acc_map, to_umap(bank_function));
-      //out << tab(1) << "// Bank mapping : " << str(target) << endl;
-      //out << tab(1) << "// Bank aff     : " << str(get_aff(get_maps(acc_map).at(0))) << endl;
 
       // TODO: Replace with actual bank computation
       for (auto sb : buf.get_banks()) {
@@ -1422,6 +1427,44 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     out << "}" << endl << endl;
 
+  }
+
+  void generate_duplicate_select(CodegenOptions& options, std::ostream& out, const string& implemented, const std::string& duplicated, UBuffer& buf) {
+    generate_select_decl(options, out, duplicated, buf);
+
+    string outpt = implemented;
+
+    string rep = implemented;
+    isl_space* s = get_space(buf.domain.at(rep));
+    assert(isl_space_is_set(s));
+    vector<string> dim_decls;
+    vector<string> dim_args;
+    for (int i = 0; i < num_dims(s); i++) {
+      if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+        string dn = "d" + to_string(i);
+        auto new_id = id(buf.ctx, dn);
+        assert(new_id != nullptr);
+        s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+      }
+      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+    }
+    dim_decls.push_back("int dynamic_address");
+    dim_args.push_back("dynamic_address");
+
+    vector<string> all_decls;
+    vector<string> all_args;
+
+    all_decls.push_back(buf.name + "_cache& " + buf.name);
+    concat(all_decls, dim_decls);
+
+    all_args.push_back(buf.name);
+    concat(all_args, dim_args);
+
+    string arg_string = sep_list(all_args, "", "", ", ");
+    out << "\t" << buf.port_type_string() << " " << outpt << "_res = " << outpt << "_select(" << arg_string << ");" << endl;
+    out << tab(1) << "return " << outpt << "_res;" << endl;
+    out << "}" << endl << endl;
   }
 
   void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
@@ -1585,8 +1628,25 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       generate_broadcast(options, out, inpt, buf);
     }
 
-    for (auto outpt : buf.get_out_ports()) {
-      generate_select(options, out, outpt, buf);
+    map<string, std::set<string> > unique_outs =
+      get_unique_output_ports(buf);
+
+    //if (buf.banking.partition == "exhaustive") { 
+    if (false) {
+      for (auto outptg : unique_outs) {
+        string outpt = outptg.first;
+        generate_select(options, out, outpt, buf);
+
+        for (auto pt : outptg.second) {
+          if (pt != outpt) {
+            generate_duplicate_select(options, out, outpt, pt, buf);
+          }
+        }
+      }
+    } else {
+      for (auto outpt : buf.get_out_ports()) {
+        generate_select(options, out, outpt, buf);
+      }
     }
 
     generate_bundles(options, out, buf);
@@ -1701,9 +1761,20 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           its(dot(outmap,
                 inv(inmap)), beforeAcc);
       } else {
-        src_map =
-          unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
+        auto inv_in =
+          inv(access_map.at(inpt));
+        auto dt =  
+          dot(access_map.at(outpt), inv(access_map.at(inpt)));
+        auto a = its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc);
+        src_map = unn(src_map, a);
+
+        release(a);
+        release(dt);
+        release(inv_in);
+        //src_map =
+          //unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
       }
+      release(beforeAcc);
     }
     assert(src_map != nullptr);
 
@@ -1719,87 +1790,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto lex_max_events =
       dot(lexmax(dot(src_map, sched)), time_to_event);
 
+    release(time_to_event);
+    release(src_map);
+    release(after);
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
     return lex_max_events;
 
-    //umap* writes = isl_union_map_read_from_str(ctx, "{}");
-
-    //cout << "Buffer = " << name << endl;
-    //assert(get_in_ports().size() > 0);
-    //for (auto inpt : get_in_ports()) {
-      //writes = unn(writes, access_map.at(inpt));
-
-      ////auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
-      ////if (src_map == nullptr) {
-        ////auto outmap = access_map.at(outpt);
-        ////auto inmap = access_map.at(inpt);
-        ////src_map =
-          ////its(dot(outmap,
-                ////inv(inmap)), beforeAcc);
-      ////} else {
-        ////src_map =
-          ////unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
-      ////}
-    //}
-
-    ////auto reads = access_map.at(outpt);
-    ////auto sched = global_schedule();
-    ////auto before = lex_lt(sched, sched);
-
-    ////auto raw = its(before, dot(writes, inv(reads)));
-
-    ////return lexmax(inv(raw));
-
-    ////assert(src_map != nullptr);
-
-    //////cout << "src map done: " << str(src_map) << endl;
-
-    ////src_map = its(src_map, after);
-    ////src_map = lexmax(src_map);
-
-    ////auto time_to_event = inv(sched);
-
-    ////auto lex_max_events =
-      ////dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    //////cout << "Done" << outpt << endl;
-    ////assert(lex_max_events != nullptr);
-    ////return lex_max_events;
-
-    ////umap* src_map = nullptr;
-    ////cout << "Buffer = " << name << endl;
-    ////assert(get_in_ports().size() > 0);
-    ////for (auto inpt : get_in_ports()) {
-      ////auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
-      ////if (src_map == nullptr) {
-        ////auto outmap = access_map.at(outpt);
-        ////auto inmap = access_map.at(inpt);
-        ////src_map =
-          ////its(dot(outmap,
-                ////inv(inmap)), beforeAcc);
-      ////} else {
-        ////src_map =
-          ////unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
-      ////}
-    ////}
-    ////assert(src_map != nullptr);
-
-    //////cout << "src map done: " << str(src_map) << endl;
-    ////auto sched = global_schedule();
-    ////auto after = lex_gt(sched, sched);
-
-    ////src_map = its(src_map, after);
-    ////src_map = lexmax(src_map);
-
-    ////auto time_to_event = inv(sched);
-
-    ////auto lex_max_events =
-      ////dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    //////cout << "Done" << outpt << endl;
-    ////assert(lex_max_events != nullptr);
-    ////return lex_max_events;
   }
 
   umap* UBuffer::get_lexmax_events(const std::string& inpt, const std::string& outpt) {
@@ -1808,8 +1805,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto outmap = access_map.at(outpt);
     auto inmap = access_map.at(inpt);
     inmap = coalesce(unn(inmap, outmap));
-    //cout << "before access: " << str(beforeAcc) << endl;
-    //cout << "Coalesce map: " << str(inmap) << endl;
+    
     src_map = its(dot(outmap, inv(inmap)), beforeAcc);
     assert(src_map != nullptr);
 
@@ -1827,11 +1823,22 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //cout << "time 2 event: " << str(time_to_event) << endl;
     //cout << "lexmax :" << str(lexmax(dot(src_map, sched))) << endl;
 
+    auto lmm = lexmax(dot(src_map, sched));
     auto lex_max_events =
-      dot(lexmax(dot(src_map, sched)), time_to_event);
+      dot(lmm, time_to_event);
+    //auto lex_max_events =
+      //dot(lexmax(dot(src_map, sched)), time_to_event);
 
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
+
+    release(lmm);
+    release(time_to_event);
+    release(src_map);
+    release(after);
+    release(inmap);
+    release(beforeAcc);
+    release(sched);
     return lex_max_events;
   }
 
@@ -1870,6 +1877,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
+
+    release(time_to_event);
+    release(src_map);
+    release(after);
+    release(sched);
+    release(inmap);
+    release(beforeAcc);
     return lex_max_events;
   }
 
@@ -2078,6 +2092,38 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
   }
 
+  map<string, std::set<string> > 
+ get_unique_output_ports(UBuffer& buf) {
+   map<string, std::set<string> > outmap;
+   for (auto pt : buf.get_out_ports()) {
+
+     bool is_duplicate = false;
+     auto m = map_find(pt, buf.access_map);
+     auto sched = map_find(pt, buf.schedule);
+     auto dom = map_find(pt, buf.domain);
+
+     for (auto existing_pair : outmap) {
+       string existing = existing_pair.first;
+       auto e_m = map_find(existing, buf.access_map);
+       auto e_sched = map_find(existing, buf.schedule);
+       auto e_dom = map_find(existing, buf.domain);
+
+       if (isl_union_map_is_equal(e_m, m) &&
+           isl_set_is_equal(e_dom, dom) &&
+           isl_union_map_is_equal(e_sched, sched)) {
+         is_duplicate = true;
+         outmap[existing].insert(pt);
+         break;
+       }
+     }
+
+     if (!is_duplicate) {
+       outmap[pt] = {pt};
+     }
+   }
+   return outmap;
+ }
+
   void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank> mergeable) {
     if (!options.conditional_merge){
       stack_bank merged;
@@ -2236,9 +2282,23 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     } else {
 
+      map<string, std::set<string> > unique_outs =
+        get_unique_output_ports(*this);
+
+      cout << "===== Unique ports" << endl;
+      for (auto ptg : unique_outs) {
+        cout << tab(1) << ptg.first << endl;
+        for (auto pt : ptg.second) {
+          cout << tab(2) << pt << endl;
+        }
+      }
 
       // Use naive banking that reaches target throughput
       for (auto outpt : get_out_ports()) {
+      //for (auto outptg : unique_outs) {
+        //string outpt = outptg.first;
+        
+        
         cout << "Generating banks for " << outpt << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
@@ -2267,12 +2327,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
     }
 
-    //if (options.inner_bank_offset_mode ==
-        //INNER_BANK_OFFSET_LINEAR) {
-      //for (auto& b : bank_list) {
-        //b.tp = INNER_BANK_OFFSET_LINEAR;
-      //}
-    //}
     cout << tab(1) << "after banking there are " << bank_list.size() << " banks" << endl;
   }
 
