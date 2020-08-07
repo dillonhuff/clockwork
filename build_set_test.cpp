@@ -12883,7 +12883,6 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     cout << tab(1) << str(m) << endl;
   }
 
-  assert(false);
   auto buffers = build_buffers(prg, hw_sched);
   generate_app_code(options, buffers, prg, hw_sched);
 

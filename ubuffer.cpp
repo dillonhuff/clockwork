@@ -678,7 +678,7 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
     });
   Generator* ram = cgralib->newGeneratorDecl("raw_dual_port_sram_tile", ramTG, params);
 
-  /* Replace with verilog
+
   ram->setGeneratorDefFromFun(
     [](Context* c, Values args, ModuleDef* def) {
 
@@ -707,16 +707,18 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   def->connect("self.raddr", "raddr_slice.in");
   def->connect("raddr_slice.out", "mem.raddr");
   def->connect("self.ren", "readreg.en");
-    }); */
+    });
 
 }
 
 CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
   auto ns = c->getNamespace("global");
-  if (ns->hasModule("lake_rf")) {
-
+  if (ns->hasModule("register_file")) {
+    return ns->getModule("register_file");
   }
-  auto m = ns->newModuleDecl("lake_rf");
+
+  vector<pair<string, CoreIR::Type*> > rf_fields;
+  auto m = ns->newModuleDecl("register_file", c->Record(rf_fields));
 
   return m;
 
@@ -1051,6 +1053,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     for (auto bank : buf.get_banks()) {
       int capacity = int_upper_bound(card(bank.rddom));
       int addr_width = minihls::clog2(capacity);
+      //auto bnk = def->addInstance(bank.name, lake_rf(width, capacity));
       ram_module(c, width, capacity);
       //auto bnk = def->addInstance(
           //bank.name,
