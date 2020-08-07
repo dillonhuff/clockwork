@@ -10,6 +10,16 @@ cp ./VimSetup/.vimrc ~/.vimrc
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 vim +PluginInstall +qall
 
+cd garnet
+git pull
+git checkout lake_diet_dual
+cd ..
+
+cd lake
+git pull
+git checkout shared_range_formal
+cd ..
+
 # to build:
 # dont forget to change memory_core_magma to return [] for configs
 python garnet.py --width 16 --height 16 --no-pd --input-app ../clockwork/coreir_apps/raw_sram/pointwise/after_mapping_pointwise.json --interconnect-only --input-file fake.txt --output-file pointwise.bs --gold-file fake.txt
