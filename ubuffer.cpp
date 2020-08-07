@@ -2081,11 +2081,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
        auto e_sched = map_find(existing, buf.schedule);
        auto e_dom = map_find(existing, buf.domain);
 
-       if (isl_union_map_plain_is_equal(e_m, m) &&
-           isl_set_plain_is_equal(e_dom, dom) &&
-           isl_union_map_plain_is_equal(e_sched, sched)) {
-
+       if (isl_union_map_is_equal(e_m, m) &&
+           isl_set_is_equal(e_dom, dom) &&
+           isl_union_map_is_equal(e_sched, sched)) {
          is_duplicate = true;
+         outmap[existing].insert(pt);
          break;
        }
      }
@@ -2258,6 +2258,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       map<string, std::set<string> > unique_outs =
         get_unique_output_ports(*this);
 
+      cout << "===== Unique ports" << endl;
+      for (auto ptg : unique_outs) {
+        cout << tab(1) << ptg.first << endl;
+        for (auto pt : ptg.second) {
+          cout << tab(2) << pt << endl;
+        }
+      }
+
       // Use naive banking that reaches target throughput
       for (auto outpt : get_out_ports()) {
         cout << "Generating banks for " << outpt << endl;
@@ -2288,12 +2296,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
     }
 
-    //if (options.inner_bank_offset_mode ==
-        //INNER_BANK_OFFSET_LINEAR) {
-      //for (auto& b : bank_list) {
-        //b.tp = INNER_BANK_OFFSET_LINEAR;
-      //}
-    //}
     cout << tab(1) << "after banking there are " << bank_list.size() << " banks" << endl;
   }
 
