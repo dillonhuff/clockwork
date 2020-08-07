@@ -2065,6 +2065,38 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
   }
 
+  map<string, std::set<string> > 
+ get_unique_output_ports(UBuffer& buf) {
+   map<string, std::set<string> > outmap;
+   for (auto pt : buf.get_out_ports()) {
+
+     bool is_duplicate = false;
+     auto m = map_find(pt, buf.access_map);
+     auto sched = map_find(pt, buf.schedule);
+     auto dom = map_find(pt, buf.domain);
+
+     for (auto existing_pair : outmap) {
+       string existing = existing_pair.first;
+       auto e_m = map_find(existing, buf.access_map);
+       auto e_sched = map_find(existing, buf.schedule);
+       auto e_dom = map_find(existing, buf.domain);
+
+       if (isl_union_map_plain_is_equal(e_m, m) &&
+           isl_set_plain_is_equal(e_dom, dom) &&
+           isl_union_map_plain_is_equal(e_sched, sched)) {
+
+         is_duplicate = true;
+         break;
+       }
+     }
+
+     if (!is_duplicate) {
+       outmap[pt] = {pt};
+     }
+   }
+   return outmap;
+ }
+
   void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank> mergeable) {
     if (!options.conditional_merge){
       stack_bank merged;
@@ -2223,6 +2255,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     } else {
 
+      map<string, std::set<string> > unique_outs =
+        get_unique_output_ports(*this);
 
       // Use naive banking that reaches target throughput
       for (auto outpt : get_out_ports()) {
