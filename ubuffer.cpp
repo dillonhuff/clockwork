@@ -1419,18 +1419,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       cout << "next bcar = " << str(card(next_bank)) << endl;
       auto bank_delta = isl_map_deltas_map(cpy(next_bank));
       cout << "nb delta  = " << str(bank_delta) << endl;
-      //assert(false);
-
-      //auto next = lexmin(its(isl_map_lex_lt(get_space(writes)), writes));
-
-      //out << tab(1) << "// Next         : " << str(next) << endl;
-      //out << tab(1) << "// Next bank    : " << str(next_bank) << endl;
-      //out << tab(1) << "// Bank function: " << str(bank_function) << endl;
-      //out << tab(1) << "// Bank func aff: " << str(get_aff(bank_function)) << endl;
-      //out << tab(1) << "// Access func  : " << str(acc_map) << endl;
-      //isl_union_map* target = dot(acc_map, to_umap(bank_function));
-      //out << tab(1) << "// Bank mapping : " << str(target) << endl;
-      //out << tab(1) << "// Bank aff     : " << str(get_aff(get_maps(acc_map).at(0))) << endl;
 
       // TODO: Replace with actual bank computation
       for (auto sb : buf.get_banks()) {
@@ -1460,9 +1448,39 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   void generate_duplicate_select(CodegenOptions& options, std::ostream& out, const string& implemented, const std::string& duplicated, UBuffer& buf) {
     generate_select_decl(options, out, duplicated, buf);
 
+    string outpt = implemented;
 
-    out << tab(1) << "assert(false);" << endl;
-    out << "}" << endl;
+    string rep = implemented;
+    isl_space* s = get_space(buf.domain.at(rep));
+    assert(isl_space_is_set(s));
+    vector<string> dim_decls;
+    vector<string> dim_args;
+    for (int i = 0; i < num_dims(s); i++) {
+      if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+        string dn = "d" + to_string(i);
+        auto new_id = id(buf.ctx, dn);
+        assert(new_id != nullptr);
+        s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+      }
+      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+    }
+    dim_decls.push_back("int dynamic_address");
+    dim_args.push_back("dynamic_address");
+
+    vector<string> all_decls;
+    vector<string> all_args;
+
+    all_decls.push_back(buf.name + "_cache& " + buf.name);
+    concat(all_decls, dim_decls);
+
+    all_args.push_back(buf.name);
+    concat(all_args, dim_args);
+
+    string arg_string = sep_list(all_args, "", "", ", ");
+    out << "\t" << buf.port_type_string() << " " << outpt << "_res = " << outpt << "_select(" << arg_string << ");" << endl;
+    out << tab(1) << "return " << outpt << "_res;" << endl;
+    out << "}" << endl << endl;
   }
 
   void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
