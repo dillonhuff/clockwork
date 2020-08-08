@@ -28,6 +28,16 @@ struct schedule_info {
   map<op*, int> op_offset_within_parent;
   map<string, int> completion_time;
   map<op*, int> total_op_latencies;
+
+  int instance_latency(op* op) {
+    return map_find(op, total_op_latencies);
+  }
+
+  int II(op* op) {
+    assert(op->is_loop);
+    return map_find(op->name, loop_iis);
+  }
+
 };
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
@@ -12753,19 +12763,40 @@ int max_loop_depth(prog& prg) {
   return maxl;
 }
 
+void tighten_iis(schedule_info& sched, prog& prg) {
+  bool tightened = true;
+  while (tightened) {
+    tightened = false;
+    for (auto loop : prg.all_loops()) {
+      int L = sched.instance_latency(loop);
+      int ii = sched.II(loop);
+      if (ii > L) {
+        sched.loop_iis[loop->name] = L;
+        tightened = true;
+      }
+    }
+  }
+}
+
 void adjust_inner_iis(schedule_info& sched, prog& prg) {
+  cout << "Adjusting iis of " << prg.name << endl;
   for (auto lp : get_inner_loops(prg)) {
+    cout << "Adjusting ii of " << lp->name << endl;
     int old_ii = map_find(lp->name, sched.loop_iis);
     int try_ii = 1;
+    bool found_smaller_ii = false;
     while (try_ii < old_ii) {
       sched.loop_iis[lp->name] = try_ii;
       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_ii = true;
         break;
       }
       try_ii *= 2;
     }
 
-    sched.loop_iis[lp->name] = old_ii;
+    if (!found_smaller_ii) {
+      sched.loop_iis[lp->name] = old_ii;
+    }
   }
 }
 
@@ -12773,6 +12804,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
+  tighten_iis(sched, prg);
   return;
 
   auto rvars = reduce_vars(prg);
@@ -12988,10 +13020,10 @@ void cgra_flow_tests() {
 #endif // COREIR
 
   vector<prog> test_programs;
+  test_programs.push_back(resnet());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(pointwise());
   test_programs.push_back(unsharp());
-  test_programs.push_back(resnet());
   test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
@@ -13025,6 +13057,11 @@ void cgra_flow_tests() {
     prg.pretty_print();
 
     assert(no_violated_cycle_accurate_dependencies(sched, prg));
+    auto ss = op_start_times_map(sched, prg);
+    for (auto m : get_maps(ss)) {
+      cout << tab(1) << str(m) << endl;
+    }
+    assert(false);
   }
 
   assert(false);
