@@ -24,13 +24,38 @@ struct schedule_info {
 
   // Schedule offsets
   map<string, int> loop_iis;
-  map<string, int> loop_latencies;
+  map<op*, int> instance_latencies;
+
+  //map<string, int> loop_latencies;
   map<op*, int> op_offset_within_parent;
-  map<string, int> completion_time;
-  map<op*, int> total_op_latencies;
+  //map<string, int> completion_time;
+  //map<op*, int> total_op_latencies;
+
+  int offset_in_parent(op* c) {
+    return map_find(c, op_offset_within_parent);
+  }
+
+  int last_update_delay(op* op) {
+    assert(op->is_loop);
+    int last_delay = 0;
+    for (auto c : op->children) {
+      int delay = offset_in_parent(c) + total_latency(c);
+      if (delay > last_delay) {
+        last_delay = delay;
+      }
+    }
+    return last_delay;
+  }
+
+  int total_latency(op* op) {
+    if (!op->is_loop) {
+      return map_find(op, instance_latencies);
+    }
+    return II(op)*(op->trip_count() - 1) + instance_latency(op);
+  }
 
   int instance_latency(op* op) {
-    return map_find(op, total_op_latencies);
+    return map_find(op, instance_latencies);
   }
 
   int II(op* op) {
@@ -12611,7 +12636,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 
   if (!op->is_loop) {
     int total_latency = op_latency(op, hwinfo);
-    hwinfo.total_op_latencies[op] = total_latency;
+    hwinfo.instance_latencies[op] = total_latency;
     return;
   }
 
@@ -12623,12 +12648,13 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   for (auto other : op->children) {
     int old_latency = latency;
     hwinfo.op_offset_within_parent[other] = latency;
-    if (other->is_loop) {
-      int inner_ii = map_find(other->name, hwinfo.loop_iis);
-      latency += inner_ii*prg.trip_count(other->name);
-    } else {
-      latency += map_find(other, hwinfo.total_op_latencies);
-    }
+    latency += hwinfo.total_latency(other);
+    //if (other->is_loop) {
+      //int inner_ii = map_find(other->name, hwinfo.loop_iis);
+      //latency += inner_ii*prg.trip_count(other->name);
+    //} else {
+      //latency += map_find(other, hwinfo.total_op_latencies);
+    //}
     if (old_latency == latency) {
       latency += 1;
     }
@@ -12642,8 +12668,8 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   //}
   hwinfo.loop_iis[op->name] = max(latency, 1);
 
-  hwinfo.total_op_latencies[op] = latency;
-  hwinfo.loop_latencies[op->name] = latency;
+  hwinfo.instance_latencies[op] = latency;
+  //hwinfo.loop_latencies[op->name] = latency;
 }
 
 void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
@@ -12713,7 +12739,7 @@ map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
   for (auto opl : schedule_exprs) {
     auto op = opl.first;
     QExpr expr = opl.second;
-    QAV val = qconst(map_find(op, sched.total_op_latencies));
+    QAV val = qconst(sched.total_latency(op)); //map_find(op, sched.total_op_latencies));
     QTerm offsett{{val}};
     QExpr offset{{offsett}};
     expr = expr + offset;
@@ -12788,7 +12814,7 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
     bool found_smaller_ii = false;
     while (try_ii < old_ii) {
       sched.loop_iis[lp->name] = try_ii;
-      sched.total_op_latencies[lp] = try_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
+      //sched.total_op_latencies[lp] = try_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
         found_smaller_ii = true;
         break;
@@ -12798,7 +12824,7 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
 
     if (!found_smaller_ii) {
       sched.loop_iis[lp->name] = old_ii;
-      sched.total_op_latencies[lp] = old_total_latency;
+      //sched.total_op_latencies[lp] = old_total_latency;
     }
   }
 }
@@ -12908,10 +12934,10 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   for (auto e : sched.loop_iis) {
     cout << tab(1) << e.first << " -> " << e.second << endl;
   }
-  cout << "op completion times" << endl;
-  for (auto o : sched.total_op_latencies) {
-    cout << tab(1) << o.first->name << " -> " << o.second << endl;
-  }
+  //cout << "op completion times" << endl;
+  //for (auto o : sched.total_op_latencies) {
+    //cout << tab(1) << o.first->name << " -> " << o.second << endl;
+  //}
 
   op* root = prg.root;
   QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
