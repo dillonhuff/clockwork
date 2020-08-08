@@ -4,6 +4,18 @@
 
 #include "coreir/passes/analysis/coreirjson.h"
 
+using CoreIR::Wireable;
+using CoreIR::CoreIRType;
+using CoreIR::ArrayType;
+using CoreIR::Context;
+using CoreIR::Const;
+using CoreIR::Params;
+using CoreIR::ModuleDef;
+using CoreIR::Generator;
+using CoreIR::TypeGen;
+using CoreIR::Type;
+using CoreIR::Values;
+
 using CoreIR::SelectPath;
 using CoreIR::join;
 using CoreIR::BitType;
@@ -462,6 +474,7 @@ void LoadDefinition_cgralib(Context* c) {
   load_cgramapping(c);
   //lad_float(c);
 }
+
 std::string exe_start_name(const std::string& n) {
   return n + "_exe_start";
 }
@@ -1914,6 +1927,150 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
 
   m->setDef(def);
   return m;
+}
+
+void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
+  auto cgralib = c->getNamespace("global");
+  CoreIR::Params params = {{"depth",c->Int()}};
+  //CoreIR::Params params;
+
+  Params reg_array_args = {{"type", CoreIRType::make(c)},
+                           {"has_en", c->Bool()},
+                           {"has_clr", c->Bool()},
+                           {"has_rst", c->Bool()},
+                           {"init", c->Int()}};
+  TypeGen* ramTG = cgralib->newTypeGen(
+    "raw_dual_port_sram_TG",
+    params,
+    [](Context* c, Values args) {
+    int width = 16;
+    //int depth = args.at("depth")->get<int>();
+    //int depth = args.at("depth")->get<int>();
+
+  auto tp = c->Record({
+      {"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)},
+      {"waddr", c->BitIn()->Arr(width)},
+      {"wen", c->BitIn()},
+      {"rdata", c->Bit()->Arr(width)},
+      {"raddr", c->BitIn()->Arr(width)},
+      {"ren", c->BitIn()}});
+  return tp;
+    });
+  Generator* ram = cgralib->newGeneratorDecl("raw_dual_port_sram_tile", ramTG, params);
+
+
+  ram->setGeneratorDefFromFun(
+    [](Context* c, Values args, ModuleDef* def) {
+
+    int width = 16;
+    int depth = args.at("depth")->get<int>();
+  uint awidth = (uint)ceil(log2(depth));
+  CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
+    {"lo", CoreIR::Const::make(c, 0)},
+    {"hi", CoreIR::Const::make(c, awidth)}};
+  def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
+  def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
+
+  def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+  def->addInstance(
+      "readreg",
+      "mantle.reg",
+      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
+  def->connect("self.clk", "readreg.clk");
+  def->connect("self.clk", "mem.clk");
+  def->connect("self.wdata", "mem.wdata");
+  def->connect("self.waddr", "waddr_slice.in");
+  def->connect("waddr_slice.out", "mem.waddr");
+  def->connect("self.wen", "mem.wen");
+  def->connect("mem.rdata", "readreg.in");
+  def->connect("self.rdata", "readreg.out");
+  def->connect("self.raddr", "raddr_slice.in");
+  def->connect("raddr_slice.out", "mem.raddr");
+  def->connect("self.ren", "readreg.en");
+    });
+
+}
+
+CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
+  auto ns = c->getNamespace("global");
+  if (ns->hasModule("register_file")) {
+    return ns->getModule("register_file");
+  }
+
+  vector<pair<string, CoreIR::Type*> > rf_fields;
+  auto m = ns->newModuleDecl("register_file", c->Record(rf_fields));
+
+  return m;
+
+  //if (!ns->hasGenerator("raw_dual_port_sram_tile")) {
+    //add_raw_dual_port_sram_generator(c);
+    //assert(ns->hasGenerator("raw_dual_port_sram_tile"));
+  //}
+}
+//CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth) {
+void ram_module(CoreIR::Context* c, const int width, const int depth) {
+  auto ns = c->getNamespace("global");
+
+  if (!ns->hasGenerator("raw_dual_port_sram_tile")) {
+    add_raw_dual_port_sram_generator(c);
+    assert(ns->hasGenerator("raw_dual_port_sram_tile"));
+  }
+}
+
+
+void mini_sram_garnet_test() {
+
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cgralib(context);
+  auto c = context;
+
+  auto ns = context->getNamespace("global");
+
+  vector<pair<string, Type*> > fields = {{"clk", c->Named("coreir.clkIn")},
+    {"in", c->BitIn()->Arr(16)},
+    {"out", c->Bit()->Arr(16)}};
+
+  auto prg_mod = ns->newModuleDecl("one_raw_sram_tile_probe", c->Record(fields));
+  auto def = prg_mod->newModuleDef();
+  prg_mod->setDef(def);
+
+  ram_module(c, 16, 256);
+
+  auto bnk = def->addInstance(
+      "test_ram",
+      "global.raw_dual_port_sram_tile",
+      {{"depth", COREMK(c, 256)}}
+      );
+
+  auto self = def->sel("self");
+
+  auto addr_zero = mkConst(def, 16, 0);
+  auto one = 
+    def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}})->sel("out");
+  //auto zero = 
+    //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
+
+  def->connect(bnk->sel("clk"), self->sel("clk"));
+  def->connect(bnk->sel("wen"), one);
+  def->connect(bnk->sel("waddr"), addr_zero);
+  def->connect(bnk->sel("raddr"), addr_zero);
+  def->connect(bnk->sel("ren"), one);
+  def->connect(bnk->sel("wdata"), self->sel("in"));
+  def->connect(bnk->sel("rdata"), self->sel("out"));
+
+  garnet_map_module(prg_mod);
+
+  context->runPasses({"rungenerators", "wireclocks-coreir"});
+  if(!saveToFile(ns, prg_mod->getName() + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  deleteContext(context);
+
+  assert(false);
 }
 
 #endif

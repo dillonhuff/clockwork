@@ -1,0 +1,293 @@
+{"top":"global.one_raw_sram_tile_probe",
+"namespaces":{
+  "commonlib":{
+    "generators":{
+      "MAD":{
+        "typegen":"coreir.ternary",
+        "genparams":{"width":"Int"}
+      },
+      "abs":{
+        "typegen":"coreir.unary",
+        "genparams":{"width":"Int"}
+      },
+      "absd":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "accumulation_register":{
+        "typegen":"commonlib.accumulation_register_type",
+        "genparams":{"iterations":"Int", "width":"Int"}
+      },
+      "bitopn":{
+        "typegen":"commonlib.bitopN_type",
+        "genparams":{"N":"Int", "operator":"String"}
+      },
+      "const_array":{
+        "typegen":"coreir.constArrayTG",
+        "genparams":{"type":"CoreIRType", "value":"Int"},
+        "defaultgenargs":{"value":["Int",0]}
+      },
+      "counter":{
+        "typegen":"commonlib.counter_type",
+        "genparams":{"inc":"Int", "max":"Int", "min":"Int", "width":"Int"}
+      },
+      "deserializer":{
+        "typegen":"commonlib.deserializer_type",
+        "genparams":{"rate":"Int", "width":"Int"}
+      },
+      "div":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "lutN":{
+        "typegen":"commonlib.lutNType",
+        "genparams":{"N":"Int"},
+        "modules":[
+          [{"N":["Int",3]},{
+            "type":["Record",[
+              ["in",["Array",3,"BitIn"]],
+              ["out","Bit"]
+            ]],
+            "modparams":{"init":["BitVector",8]},
+            "instances":{
+              "lut":{
+                "genref":"cgralib.PE",
+                "genargs":{"numbitports":["Int",3], "numdataports":["Int",2], "op_kind":["String","bit"], "width":["Int",16]},
+                "modargs":{"bit0_mode":["String","BYPASS"], "bit0_value":["Bool",false], "bit1_mode":["String","BYPASS"], "bit1_value":["Bool",false], "bit2_mode":["String","BYPASS"], "bit2_value":["Bool",false], "flag_sel":["String","lut"], "lut_value":[["BitVector",8],"Arg","init"]}
+              }
+            },
+            "connections":[
+              ["self.in","lut.bit.in"],
+              ["self.out","lut.bit.out"]
+            ]
+          }]
+        ],
+        "metadata":{"verilog":{"definition":"  assign out = init[in];","interface":["input [N-1:0] in","output out"],"parameters":["init"]}}
+      },
+      "muxn":{
+        "typegen":"commonlib.muxN_type",
+        "genparams":{"N":"Int", "width":"Int"}
+      },
+      "opn":{
+        "typegen":"commonlib.opN_type",
+        "genparams":{"N":"Int", "operator":"String", "width":"Int"}
+      },
+      "reg_array":{
+        "typegen":"coreir.regArrayTG",
+        "genparams":{"has_clr":"Bool", "has_en":"Bool", "has_rst":"Bool", "init":"Int", "type":"CoreIRType"},
+        "defaultgenargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "init":["Int",0]}
+      },
+      "reshape":{
+        "typegen":"commonlib.reshape_type",
+        "genparams":{"input_type":"CoreIRType", "output_type":"CoreIRType"}
+      },
+      "sclamp":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "serializer":{
+        "typegen":"commonlib.serializer_type",
+        "genparams":{"rate":"Int", "width":"Int"}
+      },
+      "smax":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "smin":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "transpose":{
+        "typegen":"commonlib.transpose_type",
+        "genparams":{"input_type":"CoreIRType"}
+      },
+      "transpose_reshape":{
+        "typegen":"commonlib.reshape_type",
+        "genparams":{"input_type":"CoreIRType", "output_type":"CoreIRType"}
+      },
+      "uclamp":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "umax":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      },
+      "umin":{
+        "typegen":"coreir.binary",
+        "genparams":{"width":"Int"}
+      }
+    },
+    "typegens":{
+      "accumulation_register_type":[{"iterations":"Int", "width":"Int"},"implicit"],
+      "bitopN_type":[{"N":"Int", "operator":"String"},"implicit"],
+      "counter_type":[{"inc":"Int", "max":"Int", "min":"Int", "width":"Int"},"implicit"],
+      "deserializer_type":[{"rate":"Int", "width":"Int"},"implicit"],
+      "lutNType":[{"N":"Int"},"sparse",[
+        [{"N":["Int",3]},["Record",[["in",["Array",3,"BitIn"]],["out","Bit"]]]]
+      ]],
+      "muxN_type":[{"N":"Int", "width":"Int"},"implicit"],
+      "opN_type":[{"N":"Int", "operator":"String", "width":"Int"},"implicit"],
+      "reshape_type":[{"input_type":"CoreIRType", "output_type":"CoreIRType"},"implicit"],
+      "serializer_type":[{"rate":"Int", "width":"Int"},"implicit"],
+      "transpose_type":[{"input_type":"CoreIRType"},"implicit"]
+    }
+  },
+  "global":{
+    "modules":{
+      "one_raw_sram_tile_probe":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["in",["Array",16,"BitIn"]],
+          ["out",["Array",16,"Bit"]]
+        ]],
+        "instances":{
+          "_U0":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "_U01":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "c1":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "c11":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
+          },
+          "io16_out":{
+            "genref":"cgralib.IO",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"mode":["String","out"]}
+          },
+          "io16in_in":{
+            "genref":"cgralib.IO",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"mode":["String","in"]}
+          },
+          "test_ram":{
+            "genref":"global.raw_dual_port_sram_tile",
+            "genargs":{"depth":["Int",256]}
+          }
+        },
+        "connections":[
+          ["test_ram.waddr","_U0.out"],
+          ["test_ram.raddr","_U01.out"],
+          ["test_ram.wen","c1.out"],
+          ["test_ram.ren","c11.out"],
+          ["test_ram.rdata","io16_out.in"],
+          ["test_ram.wdata","io16in_in.out"],
+          ["test_ram.clk","self.clk"]
+        ]
+      }
+    },
+    "generators":{
+      "raw_dual_port_sram_tile":{
+        "typegen":"global.raw_dual_port_sram_TG",
+        "genparams":{"depth":"Int"},
+        "modules":[
+          [{"depth":["Int",256]},{
+            "type":["Record",[
+              ["clk",["Named","coreir.clkIn"]],
+              ["wdata",["Array",16,"BitIn"]],
+              ["waddr",["Array",16,"BitIn"]],
+              ["wen","BitIn"],
+              ["rdata",["Array",16,"Bit"]],
+              ["raddr",["Array",16,"BitIn"]],
+              ["ren","BitIn"]
+            ]],
+            "instances":{
+              "mem":{
+                "genref":"coreir.mem",
+                "genargs":{"depth":["Int",256], "has_init":["Bool",false], "width":["Int",16]}
+              },
+              "raddr_slice":{
+                "genref":"coreir.slice",
+                "genargs":{"hi":["Int",8], "lo":["Int",0], "width":["Int",16]}
+              },
+              "readreg":{
+                "genref":"mantle.reg",
+                "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
+                "modargs":{"init":[["BitVector",16],"16'h0000"]}
+              },
+              "waddr_slice":{
+                "genref":"coreir.slice",
+                "genargs":{"hi":["Int",8], "lo":["Int",0], "width":["Int",16]}
+              }
+            },
+            "connections":[
+              ["self.clk","mem.clk"],
+              ["raddr_slice.out","mem.raddr"],
+              ["readreg.in","mem.rdata"],
+              ["waddr_slice.out","mem.waddr"],
+              ["self.wdata","mem.wdata"],
+              ["self.wen","mem.wen"],
+              ["self.raddr","raddr_slice.in"],
+              ["self.clk","readreg.clk"],
+              ["self.ren","readreg.en"],
+              ["self.rdata","readreg.out"],
+              ["waddr_slice.in","self.waddr"]
+            ]
+          }]
+        ]
+      }
+    },
+    "typegens":{
+      "raw_dual_port_sram_TG":[{"depth":"Int"},"sparse",[
+        [{"depth":["Int",256]},["Record",[["clk",["Named","coreir.clkIn"]],["wdata",["Array",16,"BitIn"]],["waddr",["Array",16,"BitIn"]],["wen","BitIn"],["rdata",["Array",16,"Bit"]],["raddr",["Array",16,"BitIn"]],["ren","BitIn"]]]]
+      ]]
+    }
+  },
+  "mantle":{
+    "generators":{
+      "add":{
+        "typegen":"mantle.addType",
+        "genparams":{"has_cin":"Bool", "has_cout":"Bool", "width":"Int"},
+        "defaultgenargs":{"has_cin":["Bool",false], "has_cout":["Bool",false]}
+      },
+      "counter":{
+        "typegen":"mantle.counter_type",
+        "genparams":{"has_en":"Bool", "has_max":"Bool", "has_srst":"Bool", "width":"Int"},
+        "defaultgenargs":{"has_en":["Bool",false], "has_max":["Bool",false], "has_srst":["Bool",false]}
+      },
+      "reg":{
+        "typegen":"mantle.regType",
+        "genparams":{"has_clr":"Bool", "has_en":"Bool", "has_rst":"Bool", "width":"Int"},
+        "defaultgenargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false]}
+      },
+      "regCE":{
+        "typegen":"mantle.regCEType",
+        "genparams":{"width":"Int"},
+        "metadata":{"verilog":{"definition":"  reg [width-1:0] value;\n  always @(posedge clk) begin\n    if (ce) begin\n      value <= in;\n    end\n  end\n  assign out = value;","interface":["input [width-1:0] in","input ce","output [width-1:0] out","input clk"]}}
+      },
+      "regCE_arst":{
+        "typegen":"mantle.regCEArstType",
+        "genparams":{"width":"Int"},
+        "metadata":{"verilog":{"definition":"  reg [width-1:0] value;\n  always @(posedge clk, posedge arst) begin\n    if (arst) begin\n      value <= init;\n    end\n    else if (ce) begin\n      value <= in;\n    end\n  end\n  assign out = value;","interface":["input [width-1:0] in","input ce","output [width-1:0] out","input clk","input arst"],"parameters":["init"]}}
+      },
+      "sub":{
+        "typegen":"mantle.addType",
+        "genparams":{"has_cin":"Bool", "has_cout":"Bool", "width":"Int"},
+        "defaultgenargs":{"has_cin":["Bool",false], "has_cout":["Bool",false]}
+      },
+      "wire":{
+        "typegen":"mantle.wire",
+        "genparams":{"type":"CoreIRType"}
+      }
+    },
+    "typegens":{
+      "addType":[{"has_cin":"Bool", "has_cout":"Bool", "width":"Int"},"implicit"],
+      "counter_type":[{"has_en":"Bool", "has_max":"Bool", "has_srst":"Bool", "width":"Int"},"implicit"],
+      "regCEArstType":[{"width":"Int"},"implicit"],
+      "regCEType":[{"width":"Int"},"implicit"],
+      "regType":[{"has_clr":"Bool", "has_en":"Bool", "has_rst":"Bool", "width":"Int"},"implicit"],
+      "wire":[{"type":"CoreIRType"},"implicit"]
+    }
+  }
+}
+}
