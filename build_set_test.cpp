@@ -12650,7 +12650,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
     }
   }
 
-  hwinfo.loop_iis[op->name] = max(latency, 1);
+  hwinfo.loop_iis[op->name] = 1; //max(latency, 1);
   hwinfo.total_op_latencies[op] = latency;
   hwinfo.loop_latencies[op->name] = latency;
 }
@@ -12822,7 +12822,9 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         } else {
           lii = qfactor*loop->trip_count()*level_iis.at(i + 1);
         }
+        lii = 1;
         assert(lii > 0);
+
         sched.loop_iis[lname] = lii;
         level_iis.at(i) = lii;
         sched.op_offset_within_parent[loop] = lii*delay;
@@ -12993,7 +12995,8 @@ void cgra_flow_tests() {
     auto deps = cycle_accurate_deps(sched, prg);
     cout << tab(1) << "Cycle deps: " << str(deps) << endl;
 
-    auto earlier = lex_gt(all_times, all_times);
+    deps = inv(deps);
+    auto earlier = lex_lt(all_times, all_times);
 
     cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
 
@@ -13002,7 +13005,6 @@ void cgra_flow_tests() {
     cout << tab(1) << "Violated deps: " << str(violated) << endl;
     assert(empty(violated));
   }
-
 
   assert(false);
 
