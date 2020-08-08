@@ -12783,10 +12783,12 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
   for (auto lp : get_inner_loops(prg)) {
     cout << "Adjusting ii of " << lp->name << endl;
     int old_ii = map_find(lp->name, sched.loop_iis);
+    int old_total_latency = old_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
     int try_ii = 1;
     bool found_smaller_ii = false;
     while (try_ii < old_ii) {
       sched.loop_iis[lp->name] = try_ii;
+      sched.total_op_latencies[lp] = try_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
         found_smaller_ii = true;
         break;
@@ -12796,6 +12798,7 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
 
     if (!found_smaller_ii) {
       sched.loop_iis[lp->name] = old_ii;
+      sched.total_op_latencies[lp] = old_total_latency;
     }
   }
 }
@@ -12982,7 +12985,15 @@ umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
   return final_dep;
 }
 
+void sanity_check_iis(schedule_info& sched) {
+  for (auto lii : sched.loop_iis) {
+    assert(lii.second > 0);
+  }
+}
+
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
+  sanity_check_iis(sched);
+
   auto start_times = op_start_times_map(sched, prg);
   auto end_times = op_end_times_map(sched, prg);
   auto all_times = unn(start_times, end_times);
@@ -13061,7 +13072,7 @@ void cgra_flow_tests() {
     for (auto m : get_maps(ss)) {
       cout << tab(1) << str(m) << endl;
     }
-    //assert(false);
+    assert(false);
   }
 
   assert(false);
