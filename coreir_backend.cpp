@@ -2060,6 +2060,12 @@ void mini_sram_garnet_test() {
   def->connect(bnk->sel("wdata"), self->sel("in"));
   def->connect(bnk->sel("rdata"), self->sel("out"));
 
+  if(!saveToFile(ns, "pre_mapped_" + prg_mod->getName() + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+
   garnet_map_module(prg_mod);
 
   context->runPasses({"rungenerators", "wireclocks-coreir"});
