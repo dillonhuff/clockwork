@@ -9221,16 +9221,20 @@ void playground() {
   isl_union_map *proximity =
     cpy(raw_deps);
 
-  auto clksched = clockwork_schedule(domain, validity, proximity);
-  cout << "---- Clockwork schedule:" << endl;
-  for (auto s : clksched) {
-    cout << tab(1) << s.first << " -> ";
-    for (auto v : s.second) {
-      cout << str(v) << ", ";
-    }
-    cout << endl;
-  }
+  umap* clksched_map = clockwork_schedule_umap(domain, validity, proximity);
+  //map<string, isl_aff*> clksched = clockwork_schedule(domain, validity, proximity);
+  //cout << "---- Clockwork schedule:" << endl;
+  //for (auto s : clksched) {
+    //cout << tab(1) << s.first << " -> ";
+    //for (auto v : s.second) {
+      //cout << str(v) << ", ";
+    //}
+    //cout << endl;
+  //}
 
+  //auto clksched_map = its(to_umap(clksched), domain);
+  cout << "sched map: " << str(clksched_map) << endl;
+  //assert(false);
   //cout << "Program code without optimization..." << endl;
   //prg.unoptimized_codegen();
   //cout << endl;
@@ -12830,6 +12834,19 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
 }
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+  auto rvars = reduce_vars(prg);
+  if (rvars.size() == 0) {
+    prg.pretty_print();
+    cout << prg.name << " is a stencil pipeline" << endl;
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+    cout << "Clockwork schedule..." << endl;
+    for (auto m : get_maps(clksched_map)) {
+      cout << tab(1) << str(m) << endl;
+    }
+    assert(false);
+  }
   sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
@@ -12837,64 +12854,64 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   //assert(false);
   return;
 
-  auto rvars = reduce_vars(prg);
-  if (rvars.size() == 0) {
-    auto valid = prg.validity_deps();
-    auto dom = prg.whole_iteration_domain();
-    auto cs = clockwork_schedule(dom, valid, cpy(valid));
-    cout << "Clockwork schedule..." << endl;
-    for (auto op : cs) {
-      cout << tab(1) << op.first << " -> ";
-      for (auto aff : op.second) {
-        cout << str(aff) << " ";
-      }
-      cout << endl;
-    }
+  //auto rvars = reduce_vars(prg);
+  //if (rvars.size() == 0) {
+    //auto valid = prg.validity_deps();
+    //auto dom = prg.whole_iteration_domain();
+    //auto cs = clockwork_schedule(dom, valid, cpy(valid));
+    //cout << "Clockwork schedule..." << endl;
+    //for (auto op : cs) {
+      //cout << tab(1) << op.first << " -> ";
+      //for (auto aff : op.second) {
+        //cout << str(aff) << " ";
+      //}
+      //cout << endl;
+    //}
 
-    for (auto other : prg.all_ops()) {
-      sched.op_offset_within_parent[other] = 0;
-    }
+    //for (auto other : prg.all_ops()) {
+      //sched.op_offset_within_parent[other] = 0;
+    //}
 
-    int num_levels = max_loop_depth(prg);
+    //int num_levels = max_loop_depth(prg);
 
-    // Offset of ops in parents we can assume will always be 0 (for now)
-    // Offset of a loop within its parent will be delay_at_level * ii at that level
-    // II at a given level will be?
-    //  1 at level 1
-    //  latency of lower levels?
-    //
+    //// Offset of ops in parents we can assume will always be 0 (for now)
+    //// Offset of a loop within its parent will be delay_at_level * ii at that level
+    //// II at a given level will be?
+    ////  1 at level 1
+    ////  latency of lower levels?
+    ////
 
-    vector<int> level_iis;
-    level_iis.resize(num_levels, 0);
-    for (int i = num_levels - 1; i >= 0; i--) {
-      for (auto other : prg.all_ops()) {
-        auto surrounding = surrounding_vars(other, prg);
-        cout << "# surrounding = " << surrounding.size() << endl;
-        cout << "i = " << i << endl;
-        assert(surrounding.size() > i);
-        string lname = surrounding.at(i);
-        op* loop = prg.find_loop(lname);
-        int lii = -1;
-        int qfactor = to_int(get_coeff(map_find(other->name, cs).at(i), 0));
-        int delay = to_int(int_const_coeff(map_find(other->name, cs).at(i)));
+    //vector<int> level_iis;
+    //level_iis.resize(num_levels, 0);
+    //for (int i = num_levels - 1; i >= 0; i--) {
+      //for (auto other : prg.all_ops()) {
+        //auto surrounding = surrounding_vars(other, prg);
+        //cout << "# surrounding = " << surrounding.size() << endl;
+        //cout << "i = " << i << endl;
+        //assert(surrounding.size() > i);
+        //string lname = surrounding.at(i);
+        //op* loop = prg.find_loop(lname);
+        //int lii = -1;
+        //int qfactor = to_int(get_coeff(map_find(other->name, cs).at(i), 0));
+        //int delay = to_int(int_const_coeff(map_find(other->name, cs).at(i)));
 
-        if (i == num_levels - 1) {
-          lii = qfactor;
-        } else {
-          lii = qfactor*loop->trip_count()*level_iis.at(i + 1);
-        }
-        lii = 1;
-        assert(lii > 0);
+        //if (i == num_levels - 1) {
+          //lii = qfactor;
+        //} else {
+          //lii = qfactor*loop->trip_count()*level_iis.at(i + 1);
+        //}
+        //lii = 1;
+        //assert(lii > 0);
 
-        sched.loop_iis[lname] = lii;
-        level_iis.at(i) = lii;
-        sched.op_offset_within_parent[loop] = lii*delay;
-      }
-    }
-    //assert(false);
-  } else {
-    sequential_schedule(sched, root, prg);
-  }
+        //sched.loop_iis[lname] = lii;
+        //level_iis.at(i) = lii;
+        //sched.op_offset_within_parent[loop] = lii*delay;
+      //}
+    //}
+    ////assert(false);
+  //} else {
+    //sequential_schedule(sched, root, prg);
+  //}
 }
 
 schedule_info garnet_schedule_info(prog& prg) {
@@ -13048,33 +13065,27 @@ void cgra_flow_tests() {
 #endif // COREIR
 
   vector<prog> test_programs;
+
+  test_programs.push_back(harris());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(pointwise());
+  test_programs.push_back(gaussian());
+  test_programs.push_back(mini_conv_halide_fixed());
+  test_programs.push_back(halide_harris());
+
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(partially_unrolled_conv());
+  test_programs.push_back(accumulation());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(strided_conv());
+  test_programs.push_back(down_sample());
+  test_programs.push_back(resnet());
+
   //test_programs.push_back(cascade());
   //test_programs.push_back(unsharp());
   //test_programs.push_back(conv_multi());
   //test_programs.push_back(unet_conv_3_3());
-
-  // DNNs
-
-
-  // Failing in coreir codegen?
-  test_programs.push_back(harris());
-  test_programs.push_back(halide_harris());
-  test_programs.push_back(conv_layer());
-  test_programs.push_back(gaussian());
   
-  // Does not work in coreir because its not 16 bits
-  test_programs.push_back(partially_unrolled_conv());
-
-  // Working
-  //test_programs.push_back(accumulation());
-  //test_programs.push_back(mini_conv_halide_fixed());
-  //test_programs.push_back(up_sample());
-  //test_programs.push_back(strided_conv());
-  //test_programs.push_back(down_sample());
-  //test_programs.push_back(pointwise());
-  //test_programs.push_back(camera_pipeline());
-  //test_programs.push_back(resnet());
-
   for (auto& prg : test_programs) {
     schedule_info sched =
       garnet_schedule_info(prg);
