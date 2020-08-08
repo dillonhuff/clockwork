@@ -12709,7 +12709,7 @@ map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg) {
   return schedule_affs;
 }
 
-map<op*, isl_aff*> op_start_end(schedule_info& sched, prog& prg) {
+map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
   op* root = prg.root;
   QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
   QExpr root_sched{{root_sched_t}};
@@ -12739,6 +12739,29 @@ map<op*, isl_aff*> op_start_end(schedule_info& sched, prog& prg) {
   return schedule_affs;
 
 }
+
+umap* op_start_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_start_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs["start_" + a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
+
+umap* op_end_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_end_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs["end_" + a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
+
 
 int max_loop_depth(prog& prg) {
   int maxl = -1;
@@ -12811,15 +12834,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   }
 }
 
-void compile_for_garnet_dual_port_mem(prog& prg) {
-  CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-  all_exhaustive_banked(prg, options);
-
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_LINEAR;
-
+schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
@@ -12836,6 +12851,20 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
       }
     }
   }
+
+  return sched;
+}
+
+void compile_for_garnet_dual_port_mem(prog& prg) {
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  all_exhaustive_banked(prg, options);
+
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+
+  schedule_info sched = garnet_schedule_info(prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
   //sequential_schedule(sched, prg.root, prg);
 
@@ -12904,6 +12933,23 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 #endif
 }
 
+umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
+  auto valid = prg.validity_deps();
+  umap* final_dep = rdmap(prg.ctx, "{}");
+  for (auto m : get_maps(valid)) {
+    string dom_name = "end_" + domain_name(m);
+    string rname = "start_" + range_name(m);
+    m = set_domain_name(set_range_name(m, rname), dom_name);
+    auto um = to_umap(m);
+    final_dep = unn(final_dep, um);
+    release(m);
+    release(um);
+  }
+
+  release(valid);
+  return final_dep;
+}
+
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
@@ -12936,6 +12982,29 @@ void cgra_flow_tests() {
 
   // Fails sanity check before compilation with bad loop name?
 
+  for (auto& prg : test_programs) {
+    schedule_info sched =
+      garnet_schedule_info(prg);
+    sequential_schedule(sched, prg.root, prg);
+    auto start_times = op_start_times_map(sched, prg);
+    auto end_times = op_end_times_map(sched, prg);
+    auto all_times = unn(start_times, end_times);
+
+    auto deps = cycle_accurate_deps(sched, prg);
+    cout << tab(1) << "Cycle deps: " << str(deps) << endl;
+
+    auto earlier = lex_gt(all_times, all_times);
+
+    cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
+
+    auto violated = its(earlier, deps);
+
+    cout << tab(1) << "Violated deps: " << str(violated) << endl;
+    assert(empty(violated));
+  }
+
+
+  assert(false);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;

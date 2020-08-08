@@ -1487,6 +1487,26 @@ hardware_schedule(
   return hardware_schedule(domain, validity, proximity, latencies, iis, obj);
 }
 
+umap* to_umap(const map<string, isl_aff*>& hs) {
+  assert(hs.size() > 0);
+
+  auto ct = ctx(pick(hs).second);
+  umap* schedmap = rdmap(ct, "{}");
+  for (auto sp : hs) {
+    string n = sp.first;
+    isl_aff* sched = sp.second;
+
+    isl_map* sm = isl_map_from_aff(sched);
+    sm = set_domain_name(sm, n);
+
+    cout << "schedule for n: " << str(sm) << endl;
+    schedmap = unn(schedmap, to_umap(sm));
+    cout << "schedmap = " << str(schedmap) << endl;
+  }
+
+  return schedmap;
+}
+
 umap* to_umap(uset* domain, const map<string, isl_aff*>& hs) {
   auto ct = ctx(domain);
   umap* schedmap = rdmap(ct, "{}");
