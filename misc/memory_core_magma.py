@@ -285,7 +285,7 @@ class MemCore(ConfigurableCore):
                              add_clk_enable=self.add_clk_enable,
                              add_flush=self.add_flush,
                              name=lake_name,
-                             gen_addr=True)
+                             gen_addr=False)
 
             change_sram_port_pass = change_sram_port_names(use_sram_stub, sram_macro_info)
             circ = kts.util.to_magma(lt_dut,
