@@ -24,10 +24,3 @@ cd ..
 cp ./clockwork/misc/mini_mapper/*.py ./garnet/mini_mapper/
 cp ./clockwork/misc/memory_core_magma.py ./garnet/memory_core/
 
-cd garnet
-
-# to build:
-# dont forget to change memory_core_magma to return [] for configs
-python garnet.py --width 16 --height 16 --no-pd --input-app ../clockwork/coreir_apps/raw_sram/pointwise/after_mapping_pointwise.json --interconnect-only --input-file fake.txt --output-file pointwise.bs --gold-file fake.txt
-
-cd ..

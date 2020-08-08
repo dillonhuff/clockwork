@@ -9948,6 +9948,7 @@ void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
   int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
+  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -12913,7 +12914,6 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     cout << tab(1) << str(m) << endl;
   }
 
-  assert(false);
   auto buffers = build_buffers(prg, hw_sched);
   generate_app_code(options, buffers, prg, hw_sched);
 
@@ -12979,6 +12979,10 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
 }
 
 void cgra_flow_tests() {
+
+#ifdef COREIR
+  mini_sram_garnet_test();
+#endif // COREIR
 
   vector<prog> test_programs;
   test_programs.push_back(pointwise());
