@@ -12599,33 +12599,6 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 
   if (!op->is_loop) {
     int total_latency = op_latency(op, hwinfo);
-
-    //// Account for time to load data from inputs
-    //vector<int> load_latencies;
-    //for (auto b : op->buffers_read()) {
-      //load_latencies.push_back(map_find(b, hwinfo.buffer_load_latencies));
-    //}
-    //sort(begin(load_latencies), end(load_latencies));
-    //if (load_latencies.size() > 0) {
-      //total_latency += load_latencies.back();
-    //}
-
-    //// Then we need to wait for the compute unit to finish
-    //if (op->func != "") {
-      //total_latency += map_find(op->func, hwinfo.compute_unit_latencies);
-    //}
-
-    //// Then we need to wait for the data that comes out of the compute
-    //// unit to be finished
-    //vector<int> store_latencies;
-    //for (auto b : op->buffers_read()) {
-      //store_latencies.push_back(map_find(b, hwinfo.buffer_store_latencies));
-    //}
-    //sort(begin(store_latencies), end(store_latencies));
-    //if (store_latencies.size() > 0) {
-      //total_latency += store_latencies.back();
-    //}
-
     hwinfo.total_op_latencies[op] = total_latency;
     return;
   }
@@ -12649,7 +12622,14 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
     }
   }
 
+  //auto inner = get_inner_loops(prg);
+  //if (elem(op, inner)) {
+    //hwinfo.loop_iis[op->name] = 2; //max(latency, 1);
+  //} else {
+    //hwinfo.loop_iis[op->name] = max(latency, 1);
+  //}
   hwinfo.loop_iis[op->name] = max(latency, 1);
+
   hwinfo.total_op_latencies[op] = latency;
   hwinfo.loop_latencies[op->name] = latency;
 }
@@ -12771,8 +12751,16 @@ int max_loop_depth(prog& prg) {
   return maxl;
 }
 
+void adjust_inner_iis(schedule_info& sched, prog& prg) {
+  for (auto lp : get_inner_loops(prg)) {
+    sched.loop_iis[lp->name] = 1;
+  }
+}
+
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   sequential_schedule(sched, root, prg);
+
+  adjust_inner_iis(sched, prg);
   return;
 
   auto rvars = reduce_vars(prg);
@@ -12991,6 +12979,7 @@ void cgra_flow_tests() {
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(pointwise());
   test_programs.push_back(unsharp());
+  test_programs.push_back(resnet());
   test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
@@ -13003,7 +12992,6 @@ void cgra_flow_tests() {
 
   // DNNs
   test_programs.push_back(unet_conv_3_3());
-  test_programs.push_back(resnet());
 
 
   // Failing in coreir codegen?
@@ -13020,15 +13008,14 @@ void cgra_flow_tests() {
   for (auto& prg : test_programs) {
     schedule_info sched =
       garnet_schedule_info(prg);
-    sequential_schedule(sched, prg.root, prg);
+    garnet_dual_port_ram_schedule(sched, prg.root, prg);
     cout << "Checking " << prg.name << " schedule" << endl;
     prg.pretty_print();
 
     assert(no_violated_cycle_accurate_dependencies(sched, prg));
-    //assert(false);
   }
 
-  //assert(false);
+  assert(false);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
