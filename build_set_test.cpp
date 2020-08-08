@@ -13061,7 +13061,7 @@ void cgra_flow_tests() {
     for (auto m : get_maps(ss)) {
       cout << tab(1) << str(m) << endl;
     }
-    assert(false);
+    //assert(false);
   }
 
   assert(false);
