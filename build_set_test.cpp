@@ -12984,7 +12984,7 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
 void cgra_flow_tests() {
 
 #ifdef COREIR
-  mini_sram_garnet_test();
+  //mini_sram_garnet_test();
 #endif // COREIR
 
   vector<prog> test_programs;
@@ -13025,10 +13025,10 @@ void cgra_flow_tests() {
     prg.pretty_print();
 
     assert(no_violated_cycle_accurate_dependencies(sched, prg));
-    assert(false);
+    //assert(false);
   }
 
-  assert(false);
+  //assert(false);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;

@@ -644,6 +644,9 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   cout << "Generating compute unit for " << op->name << endl;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
+  for (auto var : op->index_variables_needed_by_compute) {
+    ub_field.push_back({var, context->BitIn()->Arr(16)});
+  }
   for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
     string buf_name = bundle.first;
     string bundle_name = bundle.second;
@@ -652,11 +655,6 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     int pix_per_burst =
       buf.lanes_in_bundle(bundle_name);
 
-    //cout << tab(1) << "Adding bundle: " << bundle_name << ", pix width = " << pixel_width << ", burst width = " << pix_per_burst << endl;
-
-    //for (auto bndl : buf.port_bundles) {
-      //cout << tab(1) << bndl.first << endl;
-    //}
     assert(buf.is_output_bundle(bundle.second));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
   }
@@ -680,6 +678,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   {
     auto def = compute_unit->newModuleDef();
     if (found_compute) {
+      cout << "Found compute file for " << prg.name << endl;
       auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
@@ -1038,8 +1037,16 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     CoreIR::Context* context) {
 
   bool found_compute = true;
-  if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+    //assert(false);
+  }
+  if (!loadFromFile(context, compute_file)) {
     found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    //assert(false);
   }
 
   auto ns = context->getNamespace("global");
@@ -1989,7 +1996,6 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   def->connect("raddr_slice.out", "mem.raddr");
   def->connect("self.ren", "readreg.en");
     });
-
 }
 
 CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
@@ -2002,13 +2008,8 @@ CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
   auto m = ns->newModuleDecl("register_file", c->Record(rf_fields));
 
   return m;
-
-  //if (!ns->hasGenerator("raw_dual_port_sram_tile")) {
-    //add_raw_dual_port_sram_generator(c);
-    //assert(ns->hasGenerator("raw_dual_port_sram_tile"));
-  //}
 }
-//CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth) {
+
 void ram_module(CoreIR::Context* c, const int width, const int depth) {
   auto ns = c->getNamespace("global");
 
