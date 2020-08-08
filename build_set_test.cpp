@@ -12953,29 +12953,34 @@ umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
 }
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
-    auto start_times = op_start_times_map(sched, prg);
-    auto end_times = op_end_times_map(sched, prg);
-    auto all_times = unn(start_times, end_times);
+  auto start_times = op_start_times_map(sched, prg);
+  auto end_times = op_end_times_map(sched, prg);
+  auto all_times = unn(start_times, end_times);
 
-    auto deps = cycle_accurate_deps(sched, prg);
-    cout << tab(1) << "Cycle deps: " << str(deps) << endl;
+  cout << "Schedule..." << endl;
+  for (auto m : get_maps(start_times)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+  auto deps = cycle_accurate_deps(sched, prg);
+  cout << tab(1) << "Cycle deps: " << str(deps) << endl;
 
-    deps = inv(deps);
-    auto earlier = lex_lt(all_times, all_times);
+  deps = inv(deps);
+  auto earlier = lex_lt(all_times, all_times);
 
-    cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
+  cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
 
-    auto violated = its(earlier, deps);
+  auto violated = its(earlier, deps);
 
-    cout << tab(1) << "Violated deps: " << str(violated) << endl;
-    bool safe = empty(violated);
+  cout << tab(1) << "Violated deps: " << str(violated) << endl;
+  bool safe = empty(violated);
 
-    release(violated);
-    release(earlier);
-    release(start_times);
-    release(end_times);
-    release(all_times);
-    return safe;
+  release(violated);
+  release(earlier);
+  release(start_times);
+  release(end_times);
+  release(all_times);
+  return safe;
 }
 
 void cgra_flow_tests() {
@@ -12985,12 +12990,12 @@ void cgra_flow_tests() {
 #endif // COREIR
 
   vector<prog> test_programs;
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(pointwise());
   test_programs.push_back(unsharp());
   test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
-  test_programs.push_back(camera_pipeline());
 
   test_programs.push_back(conv_multi());
   test_programs.push_back(accumulation());
@@ -13022,6 +13027,7 @@ void cgra_flow_tests() {
     prg.pretty_print();
 
     assert(no_violated_cycle_accurate_dependencies(sched, prg));
+    assert(false);
   }
 
   assert(false);
