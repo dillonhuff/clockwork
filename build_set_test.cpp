@@ -12906,6 +12906,10 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
 void cgra_flow_tests() {
 
+#ifdef COREIR
+  mini_sram_garnet_test();
+#endif // COREIR
+
   vector<prog> test_programs;
   test_programs.push_back(pointwise());
   test_programs.push_back(unsharp());
