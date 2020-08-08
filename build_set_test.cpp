@@ -12650,7 +12650,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
     }
   }
 
-  hwinfo.loop_iis[op->name] = 1; //max(latency, 1);
+  hwinfo.loop_iis[op->name] = max(latency, 1);
   hwinfo.total_op_latencies[op] = latency;
   hwinfo.loop_latencies[op->name] = latency;
 }
@@ -12952,6 +12952,32 @@ umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
   return final_dep;
 }
 
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
+    auto start_times = op_start_times_map(sched, prg);
+    auto end_times = op_end_times_map(sched, prg);
+    auto all_times = unn(start_times, end_times);
+
+    auto deps = cycle_accurate_deps(sched, prg);
+    cout << tab(1) << "Cycle deps: " << str(deps) << endl;
+
+    deps = inv(deps);
+    auto earlier = lex_lt(all_times, all_times);
+
+    cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
+
+    auto violated = its(earlier, deps);
+
+    cout << tab(1) << "Violated deps: " << str(violated) << endl;
+    bool safe = empty(violated);
+
+    release(violated);
+    release(earlier);
+    release(start_times);
+    release(end_times);
+    release(all_times);
+    return safe;
+}
+
 void cgra_flow_tests() {
 
   vector<prog> test_programs;
@@ -12988,22 +13014,10 @@ void cgra_flow_tests() {
     schedule_info sched =
       garnet_schedule_info(prg);
     sequential_schedule(sched, prg.root, prg);
-    auto start_times = op_start_times_map(sched, prg);
-    auto end_times = op_end_times_map(sched, prg);
-    auto all_times = unn(start_times, end_times);
+    cout << "Checking " << prg.name << " schedule" << endl;
+    prg.pretty_print();
 
-    auto deps = cycle_accurate_deps(sched, prg);
-    cout << tab(1) << "Cycle deps: " << str(deps) << endl;
-
-    deps = inv(deps);
-    auto earlier = lex_lt(all_times, all_times);
-
-    cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
-
-    auto violated = its(earlier, deps);
-
-    cout << tab(1) << "Violated deps: " << str(violated) << endl;
-    assert(empty(violated));
+    assert(no_violated_cycle_accurate_dependencies(sched, prg));
   }
 
   assert(false);
