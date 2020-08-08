@@ -16,6 +16,22 @@
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 #endif
 
+struct schedule_info {
+  // Schedule constraints
+  map<string, int> buffer_load_latencies;
+  map<string, int> buffer_store_latencies;
+  map<string, int> compute_unit_latencies;
+
+  // Schedule offsets
+  map<string, int> loop_iis;
+  map<string, int> loop_latencies;
+  map<op*, int> op_offset_within_parent;
+  map<string, int> completion_time;
+  map<op*, int> total_op_latencies;
+};
+
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+
 void blur_example();
 
 prog mini_conv_halide() {
@@ -12546,20 +12562,6 @@ void infer_bounds_unrolled_test() {
 
 }
 
-struct schedule_info {
-  // Schedule constraints
-  map<string, int> buffer_load_latencies;
-  map<string, int> buffer_store_latencies;
-  map<string, int> compute_unit_latencies;
-
-  // Schedule offsets
-  map<string, int> loop_iis;
-  map<string, int> loop_latencies;
-  map<op*, int> op_offset_within_parent;
-  map<string, int> completion_time;
-  map<op*, int> total_op_latencies;
-};
-
 int op_latency(op* op, const schedule_info& hwinfo) {
   assert(!op->is_loop);
 
@@ -12753,7 +12755,17 @@ int max_loop_depth(prog& prg) {
 
 void adjust_inner_iis(schedule_info& sched, prog& prg) {
   for (auto lp : get_inner_loops(prg)) {
-    sched.loop_iis[lp->name] = 1;
+    int old_ii = map_find(lp->name, sched.loop_iis);
+    int try_ii = 1;
+    while (try_ii < old_ii) {
+      sched.loop_iis[lp->name] = try_ii;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        break;
+      }
+      try_ii *= 2;
+    }
+
+    sched.loop_iis[lp->name] = old_ii;
   }
 }
 
