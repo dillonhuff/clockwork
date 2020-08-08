@@ -25,11 +25,7 @@ struct schedule_info {
   // Schedule offsets
   map<string, int> loop_iis;
   map<op*, int> instance_latencies;
-
-  //map<string, int> loop_latencies;
   map<op*, int> op_offset_within_parent;
-  //map<string, int> completion_time;
-  //map<op*, int> total_op_latencies;
 
   int offset_in_parent(op* c) {
     return map_find(c, op_offset_within_parent);
@@ -12794,11 +12790,15 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   while (tightened) {
     tightened = false;
     for (auto loop : prg.all_loops()) {
-      int L = sched.instance_latency(loop);
       int ii = sched.II(loop);
-      if (ii > L) {
-        sched.loop_iis[loop->name] = L;
-        tightened = true;
+      if (ii != 1) {
+        int L = sched.last_update_delay(loop);
+        if (ii > L) {
+          cout << "Tightening ii " << loop->name << " from " << ii << " to " << L << endl;
+          sched.loop_iis[loop->name] = max(L, 1);
+          tightened = true;
+          break;
+        }
       }
     }
   }
@@ -12834,6 +12834,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);
+  //assert(false);
   return;
 
   auto rvars = reduce_vars(prg);
@@ -12928,16 +12929,6 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
   schedule_info sched = garnet_schedule_info(prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
-  //sequential_schedule(sched, prg.root, prg);
-
-  cout << "iis" << endl;
-  for (auto e : sched.loop_iis) {
-    cout << tab(1) << e.first << " -> " << e.second << endl;
-  }
-  //cout << "op completion times" << endl;
-  //for (auto o : sched.total_op_latencies) {
-    //cout << tab(1) << o.first->name << " -> " << o.second << endl;
-  //}
 
   op* root = prg.root;
   QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
@@ -12984,11 +12975,11 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     //hw_sched);
   //assert(false);
 
-  generate_coreir(options,
-    buffers,
-    prg,
-    hw_sched);
-  generate_verilator_tb(prg, hw_sched, buffers);
+  //generate_coreir(options,
+    //buffers,
+    //prg,
+    //hw_sched);
+  //generate_verilator_tb(prg, hw_sched, buffers);
 
   // Insert coreir generation here
 #endif
@@ -13057,22 +13048,12 @@ void cgra_flow_tests() {
 #endif // COREIR
 
   vector<prog> test_programs;
-  test_programs.push_back(resnet());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(pointwise());
-  test_programs.push_back(unsharp());
-  test_programs.push_back(strided_conv());
-  test_programs.push_back(cascade());
-  test_programs.push_back(down_sample());
-
-  test_programs.push_back(conv_multi());
-  test_programs.push_back(accumulation());
-  test_programs.push_back(mini_conv_halide_fixed());
-
-  test_programs.push_back(up_sample());
+  //test_programs.push_back(cascade());
+  //test_programs.push_back(unsharp());
+  //test_programs.push_back(conv_multi());
+  //test_programs.push_back(unet_conv_3_3());
 
   // DNNs
-  test_programs.push_back(unet_conv_3_3());
 
 
   // Failing in coreir codegen?
@@ -13084,7 +13065,15 @@ void cgra_flow_tests() {
   // Does not work in coreir because its not 16 bits
   test_programs.push_back(partially_unrolled_conv());
 
-  // Fails sanity check before compilation with bad loop name?
+  // Working
+  //test_programs.push_back(accumulation());
+  //test_programs.push_back(mini_conv_halide_fixed());
+  //test_programs.push_back(up_sample());
+  //test_programs.push_back(strided_conv());
+  //test_programs.push_back(down_sample());
+  //test_programs.push_back(pointwise());
+  //test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(resnet());
 
   for (auto& prg : test_programs) {
     schedule_info sched =
@@ -13098,10 +13087,10 @@ void cgra_flow_tests() {
     for (auto m : get_maps(ss)) {
       cout << tab(1) << str(m) << endl;
     }
-    assert(false);
+    //assert(false);
   }
 
-  assert(false);
+  //assert(false);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
@@ -13116,13 +13105,13 @@ void cgra_flow_tests() {
 
     cout << "Output name: " << prg.name << endl;
     compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
-    run_verilator_tb(prg.name);
-    cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
-    cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
-    cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
-    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/raw_sram/" + prg.name + "/");
-    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/raw_sram/" + prg.name + "/");
-    assert(false);
+    //run_verilator_tb(prg.name);
+    //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
+    //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
+    //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
+    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/raw_sram/" + prg.name + "/");
+    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/raw_sram/" + prg.name + "/");
+    //assert(false);
   }
 }
 
