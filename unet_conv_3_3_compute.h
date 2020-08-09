@@ -140,11 +140,10 @@ hw_uint<16> hcompute_conv_stencil_9(hw_uint<16>& conv_stencil, hw_uint<16>& hw_i
   return _794;
 }
 
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, hw_output_s0_w) = uint8(conv.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, hw_output_s0_w))
-hw_uint<8> hcompute_hw_output_stencil(hw_uint<16>& conv_stencil) {
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, hw_output_s0_w) = conv.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, hw_output_s0_w)
+hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& conv_stencil) {
   uint16_t _conv_stencil_10 = (uint16_t) conv_stencil.extract<0, 15>();
 
-  uint8_t _810 = (uint8_t)(_conv_stencil_10);
-  return _810;
+  return _conv_stencil_10;
 }
 
