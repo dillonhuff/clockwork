@@ -12899,6 +12899,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
         cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
         sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
+        cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
     assert(false);
