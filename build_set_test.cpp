@@ -16,6 +16,53 @@
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 #endif
 
+struct schedule_info {
+  // Schedule constraints
+  map<string, int> buffer_load_latencies;
+  map<string, int> buffer_store_latencies;
+  map<string, int> compute_unit_latencies;
+
+  // Schedule offsets
+  map<string, int> loop_iis;
+  map<op*, int> instance_latencies;
+  map<op*, int> op_offset_within_parent;
+
+  int offset_in_parent(op* c) {
+    return map_find(c, op_offset_within_parent);
+  }
+
+  int last_update_delay(op* op) {
+    assert(op->is_loop);
+    int last_delay = 0;
+    for (auto c : op->children) {
+      int delay = offset_in_parent(c) + total_latency(c);
+      if (delay > last_delay) {
+        last_delay = delay;
+      }
+    }
+    return last_delay;
+  }
+
+  int total_latency(op* op) {
+    if (!op->is_loop) {
+      return map_find(op, instance_latencies);
+    }
+    return II(op)*(op->trip_count() - 1) + instance_latency(op);
+  }
+
+  int instance_latency(op* op) {
+    return map_find(op, instance_latencies);
+  }
+
+  int II(op* op) {
+    assert(op->is_loop);
+    return map_find(op->name, loop_iis);
+  }
+
+};
+
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+
 void blur_example();
 
 prog mini_conv_halide() {
@@ -9174,16 +9221,20 @@ void playground() {
   isl_union_map *proximity =
     cpy(raw_deps);
 
-  auto clksched = clockwork_schedule(domain, validity, proximity);
-  cout << "---- Clockwork schedule:" << endl;
-  for (auto s : clksched) {
-    cout << tab(1) << s.first << " -> ";
-    for (auto v : s.second) {
-      cout << str(v) << ", ";
-    }
-    cout << endl;
-  }
+  umap* clksched_map = clockwork_schedule_umap(domain, validity, proximity);
+  //map<string, isl_aff*> clksched = clockwork_schedule(domain, validity, proximity);
+  //cout << "---- Clockwork schedule:" << endl;
+  //for (auto s : clksched) {
+    //cout << tab(1) << s.first << " -> ";
+    //for (auto v : s.second) {
+      //cout << str(v) << ", ";
+    //}
+    //cout << endl;
+  //}
 
+  //auto clksched_map = its(to_umap(clksched), domain);
+  cout << "sched map: " << str(clksched_map) << endl;
+  //assert(false);
   //cout << "Program code without optimization..." << endl;
   //prg.unoptimized_codegen();
   //cout << endl;
@@ -9946,9 +9997,8 @@ prog simplified_conv_layer() {
 
 void run_verilator_tb(const std::string& name) {
 
-  //int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
-  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
+  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -12548,20 +12598,6 @@ void infer_bounds_unrolled_test() {
 
 }
 
-struct schedule_info {
-  // Schedule constraints
-  map<string, int> buffer_load_latencies;
-  map<string, int> buffer_store_latencies;
-  map<string, int> compute_unit_latencies;
-
-  // Schedule offsets
-  map<string, int> loop_iis;
-  map<string, int> loop_latencies;
-  map<op*, int> op_offset_within_parent;
-  map<string, int> completion_time;
-  map<op*, int> total_op_latencies;
-};
-
 int op_latency(op* op, const schedule_info& hwinfo) {
   assert(!op->is_loop);
 
@@ -12601,34 +12637,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 
   if (!op->is_loop) {
     int total_latency = op_latency(op, hwinfo);
-
-    //// Account for time to load data from inputs
-    //vector<int> load_latencies;
-    //for (auto b : op->buffers_read()) {
-      //load_latencies.push_back(map_find(b, hwinfo.buffer_load_latencies));
-    //}
-    //sort(begin(load_latencies), end(load_latencies));
-    //if (load_latencies.size() > 0) {
-      //total_latency += load_latencies.back();
-    //}
-
-    //// Then we need to wait for the compute unit to finish
-    //if (op->func != "") {
-      //total_latency += map_find(op->func, hwinfo.compute_unit_latencies);
-    //}
-
-    //// Then we need to wait for the data that comes out of the compute
-    //// unit to be finished
-    //vector<int> store_latencies;
-    //for (auto b : op->buffers_read()) {
-      //store_latencies.push_back(map_find(b, hwinfo.buffer_store_latencies));
-    //}
-    //sort(begin(store_latencies), end(store_latencies));
-    //if (store_latencies.size() > 0) {
-      //total_latency += store_latencies.back();
-    //}
-
-    hwinfo.total_op_latencies[op] = total_latency;
+    hwinfo.instance_latencies[op] = total_latency;
     return;
   }
 
@@ -12640,20 +12649,28 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   for (auto other : op->children) {
     int old_latency = latency;
     hwinfo.op_offset_within_parent[other] = latency;
-    if (other->is_loop) {
-      int inner_ii = map_find(other->name, hwinfo.loop_iis);
-      latency += inner_ii*prg.trip_count(other->name);
-    } else {
-      latency += map_find(other, hwinfo.total_op_latencies);
-    }
+    latency += hwinfo.total_latency(other);
+    //if (other->is_loop) {
+      //int inner_ii = map_find(other->name, hwinfo.loop_iis);
+      //latency += inner_ii*prg.trip_count(other->name);
+    //} else {
+      //latency += map_find(other, hwinfo.total_op_latencies);
+    //}
     if (old_latency == latency) {
       latency += 1;
     }
   }
 
+  //auto inner = get_inner_loops(prg);
+  //if (elem(op, inner)) {
+    //hwinfo.loop_iis[op->name] = 2; //max(latency, 1);
+  //} else {
+    //hwinfo.loop_iis[op->name] = max(latency, 1);
+  //}
   hwinfo.loop_iis[op->name] = max(latency, 1);
-  hwinfo.total_op_latencies[op] = latency;
-  hwinfo.loop_latencies[op->name] = latency;
+
+  hwinfo.instance_latencies[op] = latency;
+  //hwinfo.loop_latencies[op->name] = latency;
 }
 
 void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
@@ -12723,7 +12740,7 @@ map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
   for (auto opl : schedule_exprs) {
     auto op = opl.first;
     QExpr expr = opl.second;
-    QAV val = qconst(map_find(op, sched.total_op_latencies));
+    QAV val = qconst(sched.total_latency(op)); //map_find(op, sched.total_op_latencies));
     QTerm offsett{{val}};
     QExpr offset{{offsett}};
     expr = expr + offset;
@@ -12773,68 +12790,129 @@ int max_loop_depth(prog& prg) {
   return maxl;
 }
 
+void tighten_iis(schedule_info& sched, prog& prg) {
+  bool tightened = true;
+  while (tightened) {
+    tightened = false;
+    for (auto loop : prg.all_loops()) {
+      int ii = sched.II(loop);
+      if (ii != 1) {
+        int L = sched.last_update_delay(loop);
+        if (ii > L) {
+          cout << "Tightening ii " << loop->name << " from " << ii << " to " << L << endl;
+          sched.loop_iis[loop->name] = max(L, 1);
+          tightened = true;
+          break;
+        }
+      }
+    }
+  }
+}
+
+void adjust_inner_iis(schedule_info& sched, prog& prg) {
+  cout << "Adjusting iis of " << prg.name << endl;
+  for (auto lp : get_inner_loops(prg)) {
+    cout << "Adjusting ii of " << lp->name << endl;
+    int old_ii = map_find(lp->name, sched.loop_iis);
+    int old_total_latency = old_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
+    int try_ii = 1;
+    bool found_smaller_ii = false;
+    while (try_ii < old_ii) {
+      sched.loop_iis[lp->name] = try_ii;
+      //sched.total_op_latencies[lp] = try_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_ii = true;
+        break;
+      }
+      try_ii *= 2;
+    }
+
+    if (!found_smaller_ii) {
+      sched.loop_iis[lp->name] = old_ii;
+      //sched.total_op_latencies[lp] = old_total_latency;
+    }
+  }
+}
+
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+  //auto rvars = reduce_vars(prg);
+  //if (rvars.size() == 0) {
+    //prg.pretty_print();
+    //cout << prg.name << " is a stencil pipeline" << endl;
+    //auto valid = prg.validity_deps();
+    //auto dom = prg.whole_iteration_domain();
+    //umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+    //cout << "Clockwork schedule..." << endl;
+    //for (auto m : get_maps(clksched_map)) {
+      //cout << tab(1) << str(m) << endl;
+    //}
+    //assert(false);
+  //}
   sequential_schedule(sched, root, prg);
+
+  adjust_inner_iis(sched, prg);
+  tighten_iis(sched, prg);
+  //assert(false);
   return;
 
-  auto rvars = reduce_vars(prg);
-  if (rvars.size() == 0) {
-    auto valid = prg.validity_deps();
-    auto dom = prg.whole_iteration_domain();
-    auto cs = clockwork_schedule(dom, valid, cpy(valid));
-    cout << "Clockwork schedule..." << endl;
-    for (auto op : cs) {
-      cout << tab(1) << op.first << " -> ";
-      for (auto aff : op.second) {
-        cout << str(aff) << " ";
-      }
-      cout << endl;
-    }
+  //auto rvars = reduce_vars(prg);
+  //if (rvars.size() == 0) {
+    //auto valid = prg.validity_deps();
+    //auto dom = prg.whole_iteration_domain();
+    //auto cs = clockwork_schedule(dom, valid, cpy(valid));
+    //cout << "Clockwork schedule..." << endl;
+    //for (auto op : cs) {
+      //cout << tab(1) << op.first << " -> ";
+      //for (auto aff : op.second) {
+        //cout << str(aff) << " ";
+      //}
+      //cout << endl;
+    //}
 
-    for (auto other : prg.all_ops()) {
-      sched.op_offset_within_parent[other] = 0;
-    }
+    //for (auto other : prg.all_ops()) {
+      //sched.op_offset_within_parent[other] = 0;
+    //}
 
-    int num_levels = max_loop_depth(prg);
+    //int num_levels = max_loop_depth(prg);
 
-    // Offset of ops in parents we can assume will always be 0 (for now)
-    // Offset of a loop within its parent will be delay_at_level * ii at that level
-    // II at a given level will be?
-    //  1 at level 1
-    //  latency of lower levels?
-    //
+    //// Offset of ops in parents we can assume will always be 0 (for now)
+    //// Offset of a loop within its parent will be delay_at_level * ii at that level
+    //// II at a given level will be?
+    ////  1 at level 1
+    ////  latency of lower levels?
+    ////
 
-    vector<int> level_iis;
-    level_iis.resize(num_levels, 0);
-    for (int i = num_levels - 1; i >= 0; i--) {
-      for (auto other : prg.all_ops()) {
-        auto surrounding = surrounding_vars(other, prg);
-        cout << "# surrounding = " << surrounding.size() << endl;
-        cout << "i = " << i << endl;
-        assert(surrounding.size() > i);
-        string lname = surrounding.at(i);
-        op* loop = prg.find_loop(lname);
-        int lii = -1;
-        int qfactor = to_int(get_coeff(map_find(other->name, cs).at(i), 0));
-        int delay = to_int(int_const_coeff(map_find(other->name, cs).at(i)));
+    //vector<int> level_iis;
+    //level_iis.resize(num_levels, 0);
+    //for (int i = num_levels - 1; i >= 0; i--) {
+      //for (auto other : prg.all_ops()) {
+        //auto surrounding = surrounding_vars(other, prg);
+        //cout << "# surrounding = " << surrounding.size() << endl;
+        //cout << "i = " << i << endl;
+        //assert(surrounding.size() > i);
+        //string lname = surrounding.at(i);
+        //op* loop = prg.find_loop(lname);
+        //int lii = -1;
+        //int qfactor = to_int(get_coeff(map_find(other->name, cs).at(i), 0));
+        //int delay = to_int(int_const_coeff(map_find(other->name, cs).at(i)));
 
-        if (i == num_levels - 1) {
-          lii = qfactor;
-        } else {
-          lii = qfactor*loop->trip_count()*level_iis.at(i + 1);
-        }
-        lii = 1;
-        assert(lii > 0);
+        //if (i == num_levels - 1) {
+          //lii = qfactor;
+        //} else {
+          //lii = qfactor*loop->trip_count()*level_iis.at(i + 1);
+        //}
+        //lii = 1;
+        //assert(lii > 0);
 
-        sched.loop_iis[lname] = lii;
-        level_iis.at(i) = lii;
-        sched.op_offset_within_parent[loop] = lii*delay;
-      }
-    }
-    //assert(false);
-  } else {
-    sequential_schedule(sched, root, prg);
-  }
+        //sched.loop_iis[lname] = lii;
+        //level_iis.at(i) = lii;
+        //sched.op_offset_within_parent[loop] = lii*delay;
+      //}
+    //}
+    ////assert(false);
+  //} else {
+    //sequential_schedule(sched, root, prg);
+  //}
 }
 
 schedule_info garnet_schedule_info(prog& prg) {
@@ -12869,16 +12947,6 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
   schedule_info sched = garnet_schedule_info(prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
-  //sequential_schedule(sched, prg.root, prg);
-
-  cout << "iis" << endl;
-  for (auto e : sched.loop_iis) {
-    cout << tab(1) << e.first << " -> " << e.second << endl;
-  }
-  cout << "op completion times" << endl;
-  for (auto o : sched.total_op_latencies) {
-    cout << tab(1) << o.first->name << " -> " << o.second << endl;
-  }
 
   op* root = prg.root;
   QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
@@ -12952,7 +13020,15 @@ umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
   return final_dep;
 }
 
+void sanity_check_iis(schedule_info& sched) {
+  for (auto lii : sched.loop_iis) {
+    assert(lii.second > 0);
+  }
+}
+
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
+  sanity_check_iis(sched);
+
   auto start_times = op_start_times_map(sched, prg);
   auto end_times = op_end_times_map(sched, prg);
   auto all_times = unn(start_times, end_times);
@@ -12986,52 +13062,48 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
 void cgra_flow_tests() {
 
 #ifdef COREIR
-  mini_sram_garnet_test();
+  //mini_sram_garnet_test();
 #endif // COREIR
 
   vector<prog> test_programs;
   test_programs.push_back(camera_pipeline_dse_1());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(pointwise());
-  test_programs.push_back(unsharp());
-  test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
-  test_programs.push_back(down_sample());
-
-  test_programs.push_back(conv_multi());
-  test_programs.push_back(accumulation());
-  test_programs.push_back(mini_conv_halide_fixed());
-
-  test_programs.push_back(up_sample());
-
-  // DNNs
   test_programs.push_back(unet_conv_3_3());
+
+  test_programs.push_back(harris());
+  test_programs.push_back(gaussian());
+  test_programs.push_back(mini_conv_halide_fixed());
+  test_programs.push_back(halide_harris());
+
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(partially_unrolled_conv());
+  test_programs.push_back(accumulation());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(strided_conv());
+  test_programs.push_back(down_sample());
   test_programs.push_back(resnet());
 
-
-  // Failing in coreir codegen?
-  test_programs.push_back(harris());
-  test_programs.push_back(halide_harris());
-  test_programs.push_back(conv_layer());
-  test_programs.push_back(gaussian());
+  //test_programs.push_back(unsharp());
+  //test_programs.push_back(conv_multi());
   
-  // Does not work in coreir because its not 16 bits
-  test_programs.push_back(partially_unrolled_conv());
+  //for (auto& prg : test_programs) {
+    //schedule_info sched =
+      //garnet_schedule_info(prg);
+    //garnet_dual_port_ram_schedule(sched, prg.root, prg);
+    //cout << "Checking " << prg.name << " schedule" << endl;
+    //prg.pretty_print();
 
-  // Fails sanity check before compilation with bad loop name?
+    //assert(no_violated_cycle_accurate_dependencies(sched, prg));
+    //auto ss = op_start_times_map(sched, prg);
+    //for (auto m : get_maps(ss)) {
+      //cout << tab(1) << str(m) << endl;
+    //}
+    ////assert(false);
+  //}
 
-  for (auto& prg : test_programs) {
-    schedule_info sched =
-      garnet_schedule_info(prg);
-    sequential_schedule(sched, prg.root, prg);
-    cout << "Checking " << prg.name << " schedule" << endl;
-    prg.pretty_print();
-
-    assert(no_violated_cycle_accurate_dependencies(sched, prg));
-    assert(false);
-  }
-
-  assert(false);
+  ////assert(false);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;

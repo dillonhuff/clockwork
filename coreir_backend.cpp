@@ -644,6 +644,9 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   cout << "Generating compute unit for " << op->name << endl;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
+  for (auto var : op->index_variables_needed_by_compute) {
+    ub_field.push_back({var, context->BitIn()->Arr(16)});
+  }
   for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
     string buf_name = bundle.first;
     string bundle_name = bundle.second;
@@ -652,11 +655,6 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     int pix_per_burst =
       buf.lanes_in_bundle(bundle_name);
 
-    //cout << tab(1) << "Adding bundle: " << bundle_name << ", pix width = " << pixel_width << ", burst width = " << pix_per_burst << endl;
-
-    //for (auto bndl : buf.port_bundles) {
-      //cout << tab(1) << bndl.first << endl;
-    //}
     assert(buf.is_output_bundle(bundle.second));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
   }
@@ -680,7 +678,11 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   {
     auto def = compute_unit->newModuleDef();
     if (found_compute) {
+      cout << "Found compute file for " << prg.name << endl;
       auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+      for (auto var : op->index_variables_needed_by_compute) {
+        def->connect(halide_cu->sel(var), def->sel("self")->sel(var));
+      }
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
         auto buf = map_find(bundle.first, buffers);
@@ -780,6 +782,10 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   def->addInstance(op->name, compute_unit);
 }
 
+Wireable* exe_start_control_vars(ModuleDef* def, const std::string& opname) {
+  return def->sel(exe_start_control_vars_name(opname))->sel("out");
+}
+
 Wireable* read_start_control_vars(ModuleDef* def, const std::string& opname) {
   return def->sel(controller_name(opname))->sel("d");
   //return def->sel(read_start_control_vars_name(opname))->sel("out");
@@ -842,6 +848,11 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
       controller->sel("d"),
       16,
       num_dims(dom));
+  delay_array(def, exe_start_control_vars_name(op->name),
+      controller->sel("d"),
+      16,
+      num_dims(dom));
+
   return controller;
 }
 
@@ -948,8 +959,16 @@ CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
     }
   }
 
+  auto levels = get_variable_levels(prg);
   // Connect compute units to buffers
   for (auto op : prg.all_ops()) {
+    vector<string> surrounding = surrounding_vars(op, prg);
+    for (auto var : op->index_variables_needed_by_compute) {
+      int level = map_find(var, levels);
+      auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
+      def->connect(def->sel(op->name)->sel(var), var_wire);
+    }
+
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
@@ -1038,8 +1057,16 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     CoreIR::Context* context) {
 
   bool found_compute = true;
-  if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+    assert(false);
+  }
+  if (!loadFromFile(context, compute_file)) {
     found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    assert(false);
   }
 
   auto ns = context->getNamespace("global");
@@ -1081,8 +1108,16 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     }
   }
 
+  auto levels = get_variable_levels(prg);
   // Connect compute units to buffers
   for (auto op : prg.all_ops()) {
+    vector<string> surrounding = surrounding_vars(op, prg);
+    for (auto var : op->index_variables_needed_by_compute) {
+      int level = map_find(var, levels);
+      auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
+      def->connect(def->sel(op->name)->sel(var), var_wire);
+    }
+
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
@@ -1544,6 +1579,7 @@ void generate_coreir(CodegenOptions& options,
     prog& prg,
     umap* schedmap) {
   CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cgralib(context);
   auto c = context;
 
@@ -1551,10 +1587,10 @@ void generate_coreir(CodegenOptions& options,
   //
   auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
 
-  garnet_map_module(prg_mod);
+  //garnet_map_module(prg_mod);
 
-  prg_mod->print();
-  assert(false);
+  //prg_mod->print();
+  //assert(false);
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
@@ -1989,7 +2025,6 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   def->connect("raddr_slice.out", "mem.raddr");
   def->connect("self.ren", "readreg.en");
     });
-
 }
 
 CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
@@ -2002,13 +2037,8 @@ CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
   auto m = ns->newModuleDecl("register_file", c->Record(rf_fields));
 
   return m;
-
-  //if (!ns->hasGenerator("raw_dual_port_sram_tile")) {
-    //add_raw_dual_port_sram_generator(c);
-    //assert(ns->hasGenerator("raw_dual_port_sram_tile"));
-  //}
 }
-//CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth) {
+
 void ram_module(CoreIR::Context* c, const int width, const int depth) {
   auto ns = c->getNamespace("global");
 
@@ -2059,6 +2089,12 @@ void mini_sram_garnet_test() {
   def->connect(bnk->sel("ren"), one);
   def->connect(bnk->sel("wdata"), self->sel("in"));
   def->connect(bnk->sel("rdata"), self->sel("out"));
+
+  if(!saveToFile(ns, "pre_mapped_" + prg_mod->getName() + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
 
   garnet_map_module(prg_mod);
 
