@@ -12625,7 +12625,7 @@ int op_latency(op* op, const schedule_info& hwinfo) {
   // Then we need to wait for the data that comes out of the compute
   // unit to be finished
   vector<int> store_latencies;
-  for (auto b : op->buffers_read()) {
+  for (auto b : op->buffers_written()) {
     store_latencies.push_back(map_find(b, hwinfo.buffer_store_latencies));
   }
   sort(begin(store_latencies), end(store_latencies));
