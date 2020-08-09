@@ -13140,6 +13140,26 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
   return safe;
 }
 
+void test_schedules(vector<prog>& test_programs) {
+  
+  for (auto& prg : test_programs) {
+    schedule_info sched =
+      garnet_schedule_info(prg);
+    garnet_dual_port_ram_schedule(sched, prg.root, prg);
+    cout << "Checking " << prg.name << " schedule" << endl;
+    prg.pretty_print();
+
+    assert(no_violated_cycle_accurate_dependencies(sched, prg));
+    auto ss = op_start_times_map(sched, prg);
+    for (auto m : get_maps(ss)) {
+      cout << tab(1) << str(m) << endl;
+    }
+    //assert(false);
+  }
+
+  assert(false);
+}
+
 void cgra_flow_tests() {
 
 #ifdef COREIR
@@ -13169,37 +13189,22 @@ void cgra_flow_tests() {
 
   test_programs.push_back(unsharp());
   test_programs.push_back(conv_multi());
-  
-  for (auto& prg : test_programs) {
-    schedule_info sched =
-      garnet_schedule_info(prg);
-    garnet_dual_port_ram_schedule(sched, prg.root, prg);
-    cout << "Checking " << prg.name << " schedule" << endl;
-    prg.pretty_print();
 
-    assert(no_violated_cycle_accurate_dependencies(sched, prg));
-    auto ss = op_start_times_map(sched, prg);
-    for (auto m : get_maps(ss)) {
-      cout << tab(1) << str(m) << endl;
-    }
-    assert(false);
-  }
-
-  assert(false);
+  //test_schedules(test_programs);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
     prg.sanity_check();
 
-    auto cpu = unoptimized_result(prg);
+    //auto cpu = unoptimized_result(prg);
     //assert(false);
 
     compile_for_garnet_dual_port_mem(prg);
-    generate_regression_testbench(prg);
-    auto cgra_sim = run_regression_tb(prg.name);
+    //generate_regression_testbench(prg);
+    //auto cgra_sim = run_regression_tb(prg.name);
 
     cout << "Output name: " << prg.name << endl;
-    compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
+    //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
     run_verilator_tb(prg.name);
     cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
     cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
