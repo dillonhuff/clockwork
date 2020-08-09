@@ -12990,6 +12990,7 @@ void cgra_flow_tests() {
 #endif // COREIR
 
   vector<prog> test_programs;
+  test_programs.push_back(camera_pipeline_dse_1());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(pointwise());
   test_programs.push_back(unsharp());
