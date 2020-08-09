@@ -365,7 +365,7 @@ module corebit_and (
   assign out = in0 & in1;
 endmodule
 
-module array_delay_U47 (
+module array_delay_U59 (
     input clk,
     input [15:0] in_0,
     input [15:0] in_1,
@@ -374,36 +374,36 @@ module array_delay_U47 (
     output [15:0] out_1,
     output [15:0] out_2
 );
-wire [15:0] _U48_out;
-wire [15:0] _U49_out;
-wire [15:0] _U50_out;
+wire [15:0] _U60_out;
+wire [15:0] _U61_out;
+wire [15:0] _U62_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U48 (
+) _U60 (
     .in(in_0),
     .clk(clk),
-    .out(_U48_out)
+    .out(_U60_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U49 (
+) _U61 (
     .in(in_1),
     .clk(clk),
-    .out(_U49_out)
+    .out(_U61_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U50 (
+) _U62 (
     .in(in_2),
     .clk(clk),
-    .out(_U50_out)
+    .out(_U62_out)
 );
-assign out_0 = _U48_out;
-assign out_1 = _U49_out;
-assign out_2 = _U50_out;
+assign out_0 = _U60_out;
+assign out_1 = _U61_out;
+assign out_2 = _U62_out;
 endmodule
 
-module array_delay_U30 (
+module array_delay_U55 (
     input clk,
     input [15:0] in_0,
     input [15:0] in_1,
@@ -412,33 +412,147 @@ module array_delay_U30 (
     output [15:0] out_1,
     output [15:0] out_2
 );
-wire [15:0] _U31_out;
-wire [15:0] _U32_out;
-wire [15:0] _U33_out;
+wire [15:0] _U56_out;
+wire [15:0] _U57_out;
+wire [15:0] _U58_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U31 (
+) _U56 (
     .in(in_0),
     .clk(clk),
-    .out(_U31_out)
+    .out(_U56_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U32 (
+) _U57 (
     .in(in_1),
     .clk(clk),
-    .out(_U32_out)
+    .out(_U57_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U33 (
+) _U58 (
     .in(in_2),
     .clk(clk),
-    .out(_U33_out)
+    .out(_U58_out)
 );
-assign out_0 = _U31_out;
-assign out_1 = _U32_out;
-assign out_2 = _U33_out;
+assign out_0 = _U56_out;
+assign out_1 = _U57_out;
+assign out_2 = _U58_out;
+endmodule
+
+module array_delay_U38 (
+    input clk,
+    input [15:0] in_0,
+    input [15:0] in_1,
+    input [15:0] in_2,
+    output [15:0] out_0,
+    output [15:0] out_1,
+    output [15:0] out_2
+);
+wire [15:0] _U39_out;
+wire [15:0] _U40_out;
+wire [15:0] _U41_out;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U39 (
+    .in(in_0),
+    .clk(clk),
+    .out(_U39_out)
+);
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U40 (
+    .in(in_1),
+    .clk(clk),
+    .out(_U40_out)
+);
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U41 (
+    .in(in_2),
+    .clk(clk),
+    .out(_U41_out)
+);
+assign out_0 = _U39_out;
+assign out_1 = _U40_out;
+assign out_2 = _U41_out;
+endmodule
+
+module array_delay_U34 (
+    input clk,
+    input [15:0] in_0,
+    input [15:0] in_1,
+    input [15:0] in_2,
+    output [15:0] out_0,
+    output [15:0] out_1,
+    output [15:0] out_2
+);
+wire [15:0] _U35_out;
+wire [15:0] _U36_out;
+wire [15:0] _U37_out;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U35 (
+    .in(in_0),
+    .clk(clk),
+    .out(_U35_out)
+);
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U36 (
+    .in(in_1),
+    .clk(clk),
+    .out(_U36_out)
+);
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U37 (
+    .in(in_2),
+    .clk(clk),
+    .out(_U37_out)
+);
+assign out_0 = _U35_out;
+assign out_1 = _U36_out;
+assign out_2 = _U37_out;
+endmodule
+
+module array_delay_U17 (
+    input clk,
+    input [15:0] in_0,
+    input [15:0] in_1,
+    input [15:0] in_2,
+    output [15:0] out_0,
+    output [15:0] out_1,
+    output [15:0] out_2
+);
+wire [15:0] _U18_out;
+wire [15:0] _U19_out;
+wire [15:0] _U20_out;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U18 (
+    .in(in_0),
+    .clk(clk),
+    .out(_U18_out)
+);
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U19 (
+    .in(in_1),
+    .clk(clk),
+    .out(_U19_out)
+);
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U20 (
+    .in(in_2),
+    .clk(clk),
+    .out(_U20_out)
+);
+assign out_0 = _U18_out;
+assign out_1 = _U19_out;
+assign out_2 = _U20_out;
 endmodule
 
 module array_delay_U13 (
@@ -479,42 +593,42 @@ assign out_1 = _U15_out;
 assign out_2 = _U16_out;
 endmodule
 
-module aff__U72 (
+module aff__U84 (
     input [15:0] d_0,
     input [15:0] d_1,
     input [15:0] d_2,
     output [15:0] out
 );
-wire [15:0] add_all__U76_out;
-wire [15:0] add_all__U77_out;
-wire [15:0] add_all__U78_out;
+wire [15:0] add_all__U88_out;
+wire [15:0] add_all__U89_out;
+wire [15:0] add_all__U90_out;
 wire [15:0] coeff_0_out;
 wire [15:0] coeff_1_out;
 wire [15:0] coeff_2_out;
 wire [15:0] const_term_out;
-wire [15:0] mul_d0__U73_out;
-wire [15:0] mul_d1__U74_out;
-wire [15:0] mul_d2__U75_out;
+wire [15:0] mul_d0__U85_out;
+wire [15:0] mul_d1__U86_out;
+wire [15:0] mul_d2__U87_out;
 coreir_add #(
     .width(16)
-) add_all__U76 (
-    .in0(mul_d0__U73_out),
-    .in1(mul_d1__U74_out),
-    .out(add_all__U76_out)
+) add_all__U88 (
+    .in0(mul_d0__U85_out),
+    .in1(mul_d1__U86_out),
+    .out(add_all__U88_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U77 (
-    .in0(add_all__U76_out),
-    .in1(mul_d2__U75_out),
-    .out(add_all__U77_out)
+) add_all__U89 (
+    .in0(add_all__U88_out),
+    .in1(mul_d2__U87_out),
+    .out(add_all__U89_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U78 (
-    .in0(add_all__U77_out),
+) add_all__U90 (
+    .in0(add_all__U89_out),
     .in1(const_term_out),
-    .out(add_all__U78_out)
+    .out(add_all__U90_out)
 );
 coreir_const #(
     .value(16'h0000),
@@ -542,64 +656,64 @@ coreir_const #(
 );
 coreir_mul #(
     .width(16)
-) mul_d0__U73 (
+) mul_d0__U85 (
     .in0(coeff_0_out),
     .in1(d_0),
-    .out(mul_d0__U73_out)
+    .out(mul_d0__U85_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d1__U74 (
+) mul_d1__U86 (
     .in0(coeff_1_out),
     .in1(d_1),
-    .out(mul_d1__U74_out)
+    .out(mul_d1__U86_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d2__U75 (
+) mul_d2__U87 (
     .in0(coeff_2_out),
     .in1(d_2),
-    .out(mul_d2__U75_out)
+    .out(mul_d2__U87_out)
 );
-assign out = add_all__U78_out;
+assign out = add_all__U90_out;
 endmodule
 
-module aff__U65 (
+module aff__U77 (
     input [15:0] d_0,
     input [15:0] d_1,
     input [15:0] d_2,
     output [15:0] out
 );
-wire [15:0] add_all__U69_out;
-wire [15:0] add_all__U70_out;
-wire [15:0] add_all__U71_out;
+wire [15:0] add_all__U81_out;
+wire [15:0] add_all__U82_out;
+wire [15:0] add_all__U83_out;
 wire [15:0] coeff_0_out;
 wire [15:0] coeff_1_out;
 wire [15:0] coeff_2_out;
 wire [15:0] const_term_out;
-wire [15:0] mul_d0__U66_out;
-wire [15:0] mul_d1__U67_out;
-wire [15:0] mul_d2__U68_out;
+wire [15:0] mul_d0__U78_out;
+wire [15:0] mul_d1__U79_out;
+wire [15:0] mul_d2__U80_out;
 coreir_add #(
     .width(16)
-) add_all__U69 (
-    .in0(mul_d0__U66_out),
-    .in1(mul_d1__U67_out),
-    .out(add_all__U69_out)
+) add_all__U81 (
+    .in0(mul_d0__U78_out),
+    .in1(mul_d1__U79_out),
+    .out(add_all__U81_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U70 (
-    .in0(add_all__U69_out),
-    .in1(mul_d2__U68_out),
-    .out(add_all__U70_out)
+) add_all__U82 (
+    .in0(add_all__U81_out),
+    .in1(mul_d2__U80_out),
+    .out(add_all__U82_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U71 (
-    .in0(add_all__U70_out),
+) add_all__U83 (
+    .in0(add_all__U82_out),
     .in1(const_term_out),
-    .out(add_all__U71_out)
+    .out(add_all__U83_out)
 );
 coreir_const #(
     .value(16'h0000),
@@ -627,26 +741,26 @@ coreir_const #(
 );
 coreir_mul #(
     .width(16)
-) mul_d0__U66 (
+) mul_d0__U78 (
     .in0(coeff_0_out),
     .in1(d_0),
-    .out(mul_d0__U66_out)
+    .out(mul_d0__U78_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d1__U67 (
+) mul_d1__U79 (
     .in0(coeff_1_out),
     .in1(d_1),
-    .out(mul_d1__U67_out)
+    .out(mul_d1__U79_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d2__U68 (
+) mul_d2__U80 (
     .in0(coeff_2_out),
     .in1(d_2),
-    .out(mul_d2__U68_out)
+    .out(mul_d2__U80_out)
 );
-assign out = add_all__U71_out;
+assign out = add_all__U83_out;
 endmodule
 
 module mult_stencil_ub (
@@ -691,13 +805,13 @@ raw_dual_port_sram_tile__depth4096 mult_stencil_op_hcompute_mult_stencil_2_to_mu
     .raddr(mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_read_addrgen_out),
     .ren(op_hcompute_hw_output_stencil_read_ren)
 );
-aff__U65 mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_read_addrgen (
+aff__U77 mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_read_addrgen (
     .d_0(op_hcompute_hw_output_stencil_read_ctrl_vars_0),
     .d_1(op_hcompute_hw_output_stencil_read_ctrl_vars_1),
     .d_2(op_hcompute_hw_output_stencil_read_ctrl_vars_2),
     .out(mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_read_addrgen_out)
 );
-aff__U72 mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_write_addrgen (
+aff__U84 mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_write_addrgen (
     .d_0(op_hcompute_mult_stencil_write_ctrl_vars_0),
     .d_1(op_hcompute_mult_stencil_write_ctrl_vars_1),
     .d_2(op_hcompute_mult_stencil_write_ctrl_vars_2),
@@ -706,42 +820,42 @@ aff__U72 mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_
 assign op_hcompute_hw_output_stencil_read_0 = mult_stencil_op_hcompute_hw_output_stencil_5_select_out;
 endmodule
 
-module aff__U58 (
+module aff__U70 (
     input [15:0] d_0,
     input [15:0] d_1,
     input [15:0] d_2,
     output [15:0] out
 );
-wire [15:0] add_all__U62_out;
-wire [15:0] add_all__U63_out;
-wire [15:0] add_all__U64_out;
+wire [15:0] add_all__U74_out;
+wire [15:0] add_all__U75_out;
+wire [15:0] add_all__U76_out;
 wire [15:0] coeff_0_out;
 wire [15:0] coeff_1_out;
 wire [15:0] coeff_2_out;
 wire [15:0] const_term_out;
-wire [15:0] mul_d0__U59_out;
-wire [15:0] mul_d1__U60_out;
-wire [15:0] mul_d2__U61_out;
+wire [15:0] mul_d0__U71_out;
+wire [15:0] mul_d1__U72_out;
+wire [15:0] mul_d2__U73_out;
 coreir_add #(
     .width(16)
-) add_all__U62 (
-    .in0(mul_d0__U59_out),
-    .in1(mul_d1__U60_out),
-    .out(add_all__U62_out)
+) add_all__U74 (
+    .in0(mul_d0__U71_out),
+    .in1(mul_d1__U72_out),
+    .out(add_all__U74_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U63 (
-    .in0(add_all__U62_out),
-    .in1(mul_d2__U61_out),
-    .out(add_all__U63_out)
+) add_all__U75 (
+    .in0(add_all__U74_out),
+    .in1(mul_d2__U73_out),
+    .out(add_all__U75_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U64 (
-    .in0(add_all__U63_out),
+) add_all__U76 (
+    .in0(add_all__U75_out),
     .in1(const_term_out),
-    .out(add_all__U64_out)
+    .out(add_all__U76_out)
 );
 coreir_const #(
     .value(16'h0000),
@@ -769,64 +883,64 @@ coreir_const #(
 );
 coreir_mul #(
     .width(16)
-) mul_d0__U59 (
+) mul_d0__U71 (
     .in0(coeff_0_out),
     .in1(d_0),
-    .out(mul_d0__U59_out)
+    .out(mul_d0__U71_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d1__U60 (
+) mul_d1__U72 (
     .in0(coeff_1_out),
     .in1(d_1),
-    .out(mul_d1__U60_out)
+    .out(mul_d1__U72_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d2__U61 (
+) mul_d2__U73 (
     .in0(coeff_2_out),
     .in1(d_2),
-    .out(mul_d2__U61_out)
+    .out(mul_d2__U73_out)
 );
-assign out = add_all__U64_out;
+assign out = add_all__U76_out;
 endmodule
 
-module aff__U51 (
+module aff__U63 (
     input [15:0] d_0,
     input [15:0] d_1,
     input [15:0] d_2,
     output [15:0] out
 );
-wire [15:0] add_all__U55_out;
-wire [15:0] add_all__U56_out;
-wire [15:0] add_all__U57_out;
+wire [15:0] add_all__U67_out;
+wire [15:0] add_all__U68_out;
+wire [15:0] add_all__U69_out;
 wire [15:0] coeff_0_out;
 wire [15:0] coeff_1_out;
 wire [15:0] coeff_2_out;
 wire [15:0] const_term_out;
-wire [15:0] mul_d0__U52_out;
-wire [15:0] mul_d1__U53_out;
-wire [15:0] mul_d2__U54_out;
+wire [15:0] mul_d0__U64_out;
+wire [15:0] mul_d1__U65_out;
+wire [15:0] mul_d2__U66_out;
 coreir_add #(
     .width(16)
-) add_all__U55 (
-    .in0(mul_d0__U52_out),
-    .in1(mul_d1__U53_out),
-    .out(add_all__U55_out)
+) add_all__U67 (
+    .in0(mul_d0__U64_out),
+    .in1(mul_d1__U65_out),
+    .out(add_all__U67_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U56 (
-    .in0(add_all__U55_out),
-    .in1(mul_d2__U54_out),
-    .out(add_all__U56_out)
+) add_all__U68 (
+    .in0(add_all__U67_out),
+    .in1(mul_d2__U66_out),
+    .out(add_all__U68_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U57 (
-    .in0(add_all__U56_out),
+) add_all__U69 (
+    .in0(add_all__U68_out),
     .in1(const_term_out),
-    .out(add_all__U57_out)
+    .out(add_all__U69_out)
 );
 coreir_const #(
     .value(16'h0000),
@@ -854,26 +968,26 @@ coreir_const #(
 );
 coreir_mul #(
     .width(16)
-) mul_d0__U52 (
+) mul_d0__U64 (
     .in0(coeff_0_out),
     .in1(d_0),
-    .out(mul_d0__U52_out)
+    .out(mul_d0__U64_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d1__U53 (
+) mul_d1__U65 (
     .in0(coeff_1_out),
     .in1(d_1),
-    .out(mul_d1__U53_out)
+    .out(mul_d1__U65_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d2__U54 (
+) mul_d2__U66 (
     .in0(coeff_2_out),
     .in1(d_2),
-    .out(mul_d2__U54_out)
+    .out(mul_d2__U66_out)
 );
-assign out = add_all__U57_out;
+assign out = add_all__U69_out;
 endmodule
 
 module hw_input_stencil_ub (
@@ -910,13 +1024,13 @@ raw_dual_port_sram_tile__depth4096 hw_input_stencil_op_hcompute_hw_input_stencil
     .raddr(hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3_read_addrgen_out),
     .ren(op_hcompute_mult_stencil_read_ren)
 );
-aff__U51 hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3_read_addrgen (
+aff__U63 hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3_read_addrgen (
     .d_0(op_hcompute_mult_stencil_read_ctrl_vars_0),
     .d_1(op_hcompute_mult_stencil_read_ctrl_vars_1),
     .d_2(op_hcompute_mult_stencil_read_ctrl_vars_2),
     .out(hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3_read_addrgen_out)
 );
-aff__U58 hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3_write_addrgen (
+aff__U70 hw_input_stencil_op_hcompute_hw_input_stencil_0_to_hw_input_stencil_op_hcompute_mult_stencil_3_write_addrgen (
     .d_0(op_hcompute_hw_input_stencil_write_ctrl_vars_0),
     .d_1(op_hcompute_hw_input_stencil_write_ctrl_vars_1),
     .d_2(op_hcompute_hw_input_stencil_write_ctrl_vars_2),
@@ -933,42 +1047,42 @@ hw_input_stencil_op_hcompute_mult_stencil_3_select hw_input_stencil_op_hcompute_
 assign op_hcompute_mult_stencil_read_0 = hw_input_stencil_op_hcompute_mult_stencil_3_select_out;
 endmodule
 
-module aff__U35 (
+module aff__U43 (
     input [15:0] d_0,
     input [15:0] d_1,
     input [15:0] d_2,
     output [15:0] out
 );
-wire [15:0] add_all__U39_out;
-wire [15:0] add_all__U40_out;
-wire [15:0] add_all__U41_out;
+wire [15:0] add_all__U47_out;
+wire [15:0] add_all__U48_out;
+wire [15:0] add_all__U49_out;
 wire [15:0] coeff_0_out;
 wire [15:0] coeff_1_out;
 wire [15:0] coeff_2_out;
 wire [15:0] const_term_out;
-wire [15:0] mul_d0__U36_out;
-wire [15:0] mul_d1__U37_out;
-wire [15:0] mul_d2__U38_out;
+wire [15:0] mul_d0__U44_out;
+wire [15:0] mul_d1__U45_out;
+wire [15:0] mul_d2__U46_out;
 coreir_add #(
     .width(16)
-) add_all__U39 (
-    .in0(mul_d0__U36_out),
-    .in1(mul_d1__U37_out),
-    .out(add_all__U39_out)
+) add_all__U47 (
+    .in0(mul_d0__U44_out),
+    .in1(mul_d1__U45_out),
+    .out(add_all__U47_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U40 (
-    .in0(add_all__U39_out),
-    .in1(mul_d2__U38_out),
-    .out(add_all__U40_out)
+) add_all__U48 (
+    .in0(add_all__U47_out),
+    .in1(mul_d2__U46_out),
+    .out(add_all__U48_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U41 (
-    .in0(add_all__U40_out),
+) add_all__U49 (
+    .in0(add_all__U48_out),
     .in1(const_term_out),
-    .out(add_all__U41_out)
+    .out(add_all__U49_out)
 );
 coreir_const #(
     .value(16'h0000),
@@ -977,13 +1091,13 @@ coreir_const #(
     .out(coeff_0_out)
 );
 coreir_const #(
-    .value(16'h0080),
+    .value(16'h0041),
     .width(16)
 ) coeff_1 (
     .out(coeff_1_out)
 );
 coreir_const #(
-    .value(16'h0002),
+    .value(16'h0001),
     .width(16)
 ) coeff_2 (
     .out(coeff_2_out)
@@ -996,42 +1110,42 @@ coreir_const #(
 );
 coreir_mul #(
     .width(16)
-) mul_d0__U36 (
+) mul_d0__U44 (
     .in0(coeff_0_out),
     .in1(d_0),
-    .out(mul_d0__U36_out)
+    .out(mul_d0__U44_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d1__U37 (
+) mul_d1__U45 (
     .in0(coeff_1_out),
     .in1(d_1),
-    .out(mul_d1__U37_out)
+    .out(mul_d1__U45_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d2__U38 (
+) mul_d2__U46 (
     .in0(coeff_2_out),
     .in1(d_2),
-    .out(mul_d2__U38_out)
+    .out(mul_d2__U46_out)
 );
-assign out = add_all__U41_out;
+assign out = add_all__U49_out;
 endmodule
 
-module affine_controller__U34 (
+module affine_controller__U42 (
     input clk,
     output [15:0] d_0,
     output [15:0] d_1,
     output [15:0] d_2,
     output valid
 );
-wire [15:0] _U42_out;
-wire [15:0] _U43_out;
+wire [15:0] _U50_out;
+wire [15:0] _U51_out;
 wire [15:0] affine_func_out;
 wire cmp_time_out;
 wire [15:0] cycle_time_out;
-wire d_0_am__U44_out;
-wire d_0_am__U45_out;
+wire d_0_am__U52_out;
+wire d_0_am__U53_out;
 wire d_0_at_max_out;
 wire [15:0] d_0_inc_out;
 wire [15:0] d_0_max_out;
@@ -1039,7 +1153,7 @@ wire [15:0] d_0_min_out;
 wire [15:0] d_0_next_value_out;
 wire [15:0] d_0_next_value_at_max_out;
 wire [15:0] d_0_reg_out;
-wire d_1_am__U46_out;
+wire d_1_am__U54_out;
 wire d_1_at_max_out;
 wire [15:0] d_1_inc_out;
 wire [15:0] d_1_max_out;
@@ -1060,16 +1174,16 @@ wire true_out;
 coreir_const #(
     .value(16'h0001),
     .width(16)
-) _U42 (
-    .out(_U42_out)
+) _U50 (
+    .out(_U50_out)
 );
 coreir_const #(
     .value(16'h0000),
     .width(16)
-) _U43 (
-    .out(_U43_out)
+) _U51 (
+    .out(_U51_out)
 );
-aff__U35 affine_func (
+aff__U43 affine_func (
     .d_0(d_0_reg_out),
     .d_1(d_1_reg_out),
     .d_2(d_2_reg_out),
@@ -1079,7 +1193,7 @@ coreir_eq #(
     .width(16)
 ) cmp_time (
     .in0(time_diff_out),
-    .in1(_U43_out),
+    .in1(_U51_out),
     .out(cmp_time_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
@@ -1089,15 +1203,15 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(clk),
     .out(cycle_time_out)
 );
-corebit_and d_0_am__U44 (
+corebit_and d_0_am__U52 (
     .in0(true_out),
     .in1(d_1_at_max_out),
-    .out(d_0_am__U44_out)
+    .out(d_0_am__U52_out)
 );
-corebit_and d_0_am__U45 (
-    .in0(d_0_am__U44_out),
+corebit_and d_0_am__U53 (
+    .in0(d_0_am__U52_out),
     .in1(d_2_at_max_out),
-    .out(d_0_am__U45_out)
+    .out(d_0_am__U53_out)
 );
 coreir_eq #(
     .width(16)
@@ -1110,7 +1224,7 @@ coreir_add #(
     .width(16)
 ) d_0_inc (
     .in0(d_0_reg_out),
-    .in1(_U42_out),
+    .in1(_U50_out),
     .out(d_0_inc_out)
 );
 coreir_const #(
@@ -1130,7 +1244,7 @@ coreir_mux #(
 ) d_0_next_value (
     .in0(d_0_reg_out),
     .in1(d_0_next_value_at_max_out),
-    .sel(d_0_am__U45_out),
+    .sel(d_0_am__U53_out),
     .out(d_0_next_value_out)
 );
 coreir_mux #(
@@ -1149,10 +1263,10 @@ mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
     .out(d_0_reg_out),
     .en(cmp_time_out)
 );
-corebit_and d_1_am__U46 (
+corebit_and d_1_am__U54 (
     .in0(true_out),
     .in1(d_2_at_max_out),
-    .out(d_1_am__U46_out)
+    .out(d_1_am__U54_out)
 );
 coreir_eq #(
     .width(16)
@@ -1165,7 +1279,7 @@ coreir_add #(
     .width(16)
 ) d_1_inc (
     .in0(d_1_reg_out),
-    .in1(_U42_out),
+    .in1(_U50_out),
     .out(d_1_inc_out)
 );
 coreir_const #(
@@ -1185,7 +1299,7 @@ coreir_mux #(
 ) d_1_next_value (
     .in0(d_1_reg_out),
     .in1(d_1_next_value_at_max_out),
-    .sel(d_1_am__U46_out),
+    .sel(d_1_am__U54_out),
     .out(d_1_next_value_out)
 );
 coreir_mux #(
@@ -1215,7 +1329,7 @@ coreir_add #(
     .width(16)
 ) d_2_inc (
     .in0(d_2_reg_out),
-    .in1(_U42_out),
+    .in1(_U50_out),
     .out(d_2_inc_out)
 );
 coreir_const #(
@@ -1258,7 +1372,7 @@ coreir_add #(
     .width(16)
 ) inc_time (
     .in0(cycle_time_out),
-    .in1(_U42_out),
+    .in1(_U50_out),
     .out(inc_time_out)
 );
 coreir_sub #(
@@ -1279,42 +1393,42 @@ assign d_2 = d_2_reg_out;
 assign valid = cmp_time_out;
 endmodule
 
-module aff__U18 (
+module aff__U22 (
     input [15:0] d_0,
     input [15:0] d_1,
     input [15:0] d_2,
     output [15:0] out
 );
-wire [15:0] add_all__U22_out;
-wire [15:0] add_all__U23_out;
-wire [15:0] add_all__U24_out;
+wire [15:0] add_all__U26_out;
+wire [15:0] add_all__U27_out;
+wire [15:0] add_all__U28_out;
 wire [15:0] coeff_0_out;
 wire [15:0] coeff_1_out;
 wire [15:0] coeff_2_out;
 wire [15:0] const_term_out;
-wire [15:0] mul_d0__U19_out;
-wire [15:0] mul_d1__U20_out;
-wire [15:0] mul_d2__U21_out;
+wire [15:0] mul_d0__U23_out;
+wire [15:0] mul_d1__U24_out;
+wire [15:0] mul_d2__U25_out;
 coreir_add #(
     .width(16)
-) add_all__U22 (
-    .in0(mul_d0__U19_out),
-    .in1(mul_d1__U20_out),
-    .out(add_all__U22_out)
+) add_all__U26 (
+    .in0(mul_d0__U23_out),
+    .in1(mul_d1__U24_out),
+    .out(add_all__U26_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U23 (
-    .in0(add_all__U22_out),
-    .in1(mul_d2__U21_out),
-    .out(add_all__U23_out)
+) add_all__U27 (
+    .in0(add_all__U26_out),
+    .in1(mul_d2__U25_out),
+    .out(add_all__U27_out)
 );
 coreir_add #(
     .width(16)
-) add_all__U24 (
-    .in0(add_all__U23_out),
+) add_all__U28 (
+    .in0(add_all__U27_out),
     .in1(const_term_out),
-    .out(add_all__U24_out)
+    .out(add_all__U28_out)
 );
 coreir_const #(
     .value(16'h0000),
@@ -1323,13 +1437,13 @@ coreir_const #(
     .out(coeff_0_out)
 );
 coreir_const #(
-    .value(16'h0080),
+    .value(16'h0041),
     .width(16)
 ) coeff_1 (
     .out(coeff_1_out)
 );
 coreir_const #(
-    .value(16'h0002),
+    .value(16'h0001),
     .width(16)
 ) coeff_2 (
     .out(coeff_2_out)
@@ -1342,42 +1456,42 @@ coreir_const #(
 );
 coreir_mul #(
     .width(16)
-) mul_d0__U19 (
+) mul_d0__U23 (
     .in0(coeff_0_out),
     .in1(d_0),
-    .out(mul_d0__U19_out)
+    .out(mul_d0__U23_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d1__U20 (
+) mul_d1__U24 (
     .in0(coeff_1_out),
     .in1(d_1),
-    .out(mul_d1__U20_out)
+    .out(mul_d1__U24_out)
 );
 coreir_mul #(
     .width(16)
-) mul_d2__U21 (
+) mul_d2__U25 (
     .in0(coeff_2_out),
     .in1(d_2),
-    .out(mul_d2__U21_out)
+    .out(mul_d2__U25_out)
 );
-assign out = add_all__U24_out;
+assign out = add_all__U28_out;
 endmodule
 
-module affine_controller__U17 (
+module affine_controller__U21 (
     input clk,
     output [15:0] d_0,
     output [15:0] d_1,
     output [15:0] d_2,
     output valid
 );
-wire [15:0] _U25_out;
-wire [15:0] _U26_out;
+wire [15:0] _U29_out;
+wire [15:0] _U30_out;
 wire [15:0] affine_func_out;
 wire cmp_time_out;
 wire [15:0] cycle_time_out;
-wire d_0_am__U27_out;
-wire d_0_am__U28_out;
+wire d_0_am__U31_out;
+wire d_0_am__U32_out;
 wire d_0_at_max_out;
 wire [15:0] d_0_inc_out;
 wire [15:0] d_0_max_out;
@@ -1385,7 +1499,7 @@ wire [15:0] d_0_min_out;
 wire [15:0] d_0_next_value_out;
 wire [15:0] d_0_next_value_at_max_out;
 wire [15:0] d_0_reg_out;
-wire d_1_am__U29_out;
+wire d_1_am__U33_out;
 wire d_1_at_max_out;
 wire [15:0] d_1_inc_out;
 wire [15:0] d_1_max_out;
@@ -1406,16 +1520,16 @@ wire true_out;
 coreir_const #(
     .value(16'h0001),
     .width(16)
-) _U25 (
-    .out(_U25_out)
+) _U29 (
+    .out(_U29_out)
 );
 coreir_const #(
     .value(16'h0000),
     .width(16)
-) _U26 (
-    .out(_U26_out)
+) _U30 (
+    .out(_U30_out)
 );
-aff__U18 affine_func (
+aff__U22 affine_func (
     .d_0(d_0_reg_out),
     .d_1(d_1_reg_out),
     .d_2(d_2_reg_out),
@@ -1425,7 +1539,7 @@ coreir_eq #(
     .width(16)
 ) cmp_time (
     .in0(time_diff_out),
-    .in1(_U26_out),
+    .in1(_U30_out),
     .out(cmp_time_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
@@ -1435,15 +1549,15 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(clk),
     .out(cycle_time_out)
 );
-corebit_and d_0_am__U27 (
+corebit_and d_0_am__U31 (
     .in0(true_out),
     .in1(d_1_at_max_out),
-    .out(d_0_am__U27_out)
+    .out(d_0_am__U31_out)
 );
-corebit_and d_0_am__U28 (
-    .in0(d_0_am__U27_out),
+corebit_and d_0_am__U32 (
+    .in0(d_0_am__U31_out),
     .in1(d_2_at_max_out),
-    .out(d_0_am__U28_out)
+    .out(d_0_am__U32_out)
 );
 coreir_eq #(
     .width(16)
@@ -1456,7 +1570,7 @@ coreir_add #(
     .width(16)
 ) d_0_inc (
     .in0(d_0_reg_out),
-    .in1(_U25_out),
+    .in1(_U29_out),
     .out(d_0_inc_out)
 );
 coreir_const #(
@@ -1476,7 +1590,7 @@ coreir_mux #(
 ) d_0_next_value (
     .in0(d_0_reg_out),
     .in1(d_0_next_value_at_max_out),
-    .sel(d_0_am__U28_out),
+    .sel(d_0_am__U32_out),
     .out(d_0_next_value_out)
 );
 coreir_mux #(
@@ -1495,10 +1609,10 @@ mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
     .out(d_0_reg_out),
     .en(cmp_time_out)
 );
-corebit_and d_1_am__U29 (
+corebit_and d_1_am__U33 (
     .in0(true_out),
     .in1(d_2_at_max_out),
-    .out(d_1_am__U29_out)
+    .out(d_1_am__U33_out)
 );
 coreir_eq #(
     .width(16)
@@ -1511,7 +1625,7 @@ coreir_add #(
     .width(16)
 ) d_1_inc (
     .in0(d_1_reg_out),
-    .in1(_U25_out),
+    .in1(_U29_out),
     .out(d_1_inc_out)
 );
 coreir_const #(
@@ -1531,7 +1645,7 @@ coreir_mux #(
 ) d_1_next_value (
     .in0(d_1_reg_out),
     .in1(d_1_next_value_at_max_out),
-    .sel(d_1_am__U29_out),
+    .sel(d_1_am__U33_out),
     .out(d_1_next_value_out)
 );
 coreir_mux #(
@@ -1561,7 +1675,7 @@ coreir_add #(
     .width(16)
 ) d_2_inc (
     .in0(d_2_reg_out),
-    .in1(_U25_out),
+    .in1(_U29_out),
     .out(d_2_inc_out)
 );
 coreir_const #(
@@ -1604,7 +1718,7 @@ coreir_add #(
     .width(16)
 ) inc_time (
     .in0(cycle_time_out),
-    .in1(_U25_out),
+    .in1(_U29_out),
     .out(inc_time_out)
 );
 coreir_sub #(
@@ -1978,11 +2092,14 @@ module pointwise (
     input [15:0] input_copy_stencil_op_hcompute_hw_input_stencil_read_0,
     output input_copy_stencil_op_hcompute_hw_input_stencil_read_valid
 );
-wire [15:0] _U79_out;
+wire [15:0] _U91_out;
 wire [15:0] hw_input_stencil_op_hcompute_mult_stencil_read_0;
 wire [15:0] mult_stencil_op_hcompute_hw_output_stencil_read_0;
 wire [15:0] op_hcompute_hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_write_0;
 wire op_hcompute_hw_input_stencil_exe_start_out;
+wire [15:0] op_hcompute_hw_input_stencil_exe_start_control_vars_out_0;
+wire [15:0] op_hcompute_hw_input_stencil_exe_start_control_vars_out_1;
+wire [15:0] op_hcompute_hw_input_stencil_exe_start_control_vars_out_2;
 wire [15:0] op_hcompute_hw_input_stencil_port_controller_d_0;
 wire [15:0] op_hcompute_hw_input_stencil_port_controller_d_1;
 wire [15:0] op_hcompute_hw_input_stencil_port_controller_d_2;
@@ -1994,6 +2111,9 @@ wire [15:0] op_hcompute_hw_input_stencil_write_start_control_vars_out_1;
 wire [15:0] op_hcompute_hw_input_stencil_write_start_control_vars_out_2;
 wire [15:0] op_hcompute_hw_output_stencil_hw_output_stencil_op_hcompute_hw_output_stencil_write_0;
 wire op_hcompute_hw_output_stencil_exe_start_out;
+wire [15:0] op_hcompute_hw_output_stencil_exe_start_control_vars_out_0;
+wire [15:0] op_hcompute_hw_output_stencil_exe_start_control_vars_out_1;
+wire [15:0] op_hcompute_hw_output_stencil_exe_start_control_vars_out_2;
 wire [15:0] op_hcompute_hw_output_stencil_port_controller_d_0;
 wire [15:0] op_hcompute_hw_output_stencil_port_controller_d_1;
 wire [15:0] op_hcompute_hw_output_stencil_port_controller_d_2;
@@ -2005,6 +2125,9 @@ wire [15:0] op_hcompute_hw_output_stencil_write_start_control_vars_out_1;
 wire [15:0] op_hcompute_hw_output_stencil_write_start_control_vars_out_2;
 wire [15:0] op_hcompute_mult_stencil_mult_stencil_op_hcompute_mult_stencil_write_0;
 wire op_hcompute_mult_stencil_exe_start_out;
+wire [15:0] op_hcompute_mult_stencil_exe_start_control_vars_out_0;
+wire [15:0] op_hcompute_mult_stencil_exe_start_control_vars_out_1;
+wire [15:0] op_hcompute_mult_stencil_exe_start_control_vars_out_2;
 wire [15:0] op_hcompute_mult_stencil_port_controller_d_0;
 wire [15:0] op_hcompute_mult_stencil_port_controller_d_1;
 wire [15:0] op_hcompute_mult_stencil_port_controller_d_2;
@@ -2016,10 +2139,10 @@ wire [15:0] op_hcompute_mult_stencil_write_start_control_vars_out_1;
 wire [15:0] op_hcompute_mult_stencil_write_start_control_vars_out_2;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U79 (
+) _U91 (
     .in(input_copy_stencil_op_hcompute_hw_input_stencil_read_0),
     .clk(clk),
-    .out(_U79_out)
+    .out(_U91_out)
 );
 hw_input_stencil_ub hw_input_stencil (
     .clk(clk),
@@ -2050,7 +2173,7 @@ mult_stencil_ub mult_stencil (
 cu_op_hcompute_hw_input_stencil op_hcompute_hw_input_stencil (
     .clk(clk),
     .hw_input_stencil_op_hcompute_hw_input_stencil_write_0(op_hcompute_hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_write_0),
-    .input_copy_stencil_op_hcompute_hw_input_stencil_read_0(_U79_out)
+    .input_copy_stencil_op_hcompute_hw_input_stencil_read_0(_U91_out)
 );
 corebit_reg #(
     .clk_posedge(1'b1),
@@ -2059,6 +2182,15 @@ corebit_reg #(
     .clk(clk),
     .in(op_hcompute_hw_input_stencil_port_controller_valid),
     .out(op_hcompute_hw_input_stencil_exe_start_out)
+);
+array_delay_U17 op_hcompute_hw_input_stencil_exe_start_control_vars (
+    .clk(clk),
+    .in_0(op_hcompute_hw_input_stencil_port_controller_d_0),
+    .in_1(op_hcompute_hw_input_stencil_port_controller_d_1),
+    .in_2(op_hcompute_hw_input_stencil_port_controller_d_2),
+    .out_0(op_hcompute_hw_input_stencil_exe_start_control_vars_out_0),
+    .out_1(op_hcompute_hw_input_stencil_exe_start_control_vars_out_1),
+    .out_2(op_hcompute_hw_input_stencil_exe_start_control_vars_out_2)
 );
 affine_controller__U0 op_hcompute_hw_input_stencil_port_controller (
     .clk(clk),
@@ -2097,7 +2229,16 @@ corebit_reg #(
     .in(op_hcompute_hw_output_stencil_port_controller_valid),
     .out(op_hcompute_hw_output_stencil_exe_start_out)
 );
-affine_controller__U34 op_hcompute_hw_output_stencil_port_controller (
+array_delay_U59 op_hcompute_hw_output_stencil_exe_start_control_vars (
+    .clk(clk),
+    .in_0(op_hcompute_hw_output_stencil_port_controller_d_0),
+    .in_1(op_hcompute_hw_output_stencil_port_controller_d_1),
+    .in_2(op_hcompute_hw_output_stencil_port_controller_d_2),
+    .out_0(op_hcompute_hw_output_stencil_exe_start_control_vars_out_0),
+    .out_1(op_hcompute_hw_output_stencil_exe_start_control_vars_out_1),
+    .out_2(op_hcompute_hw_output_stencil_exe_start_control_vars_out_2)
+);
+affine_controller__U42 op_hcompute_hw_output_stencil_port_controller (
     .clk(clk),
     .d_0(op_hcompute_hw_output_stencil_port_controller_d_0),
     .d_1(op_hcompute_hw_output_stencil_port_controller_d_1),
@@ -2112,7 +2253,7 @@ corebit_wire op_hcompute_hw_output_stencil_write_start (
     .in(op_hcompute_hw_output_stencil_exe_start_out),
     .out(op_hcompute_hw_output_stencil_write_start_out)
 );
-array_delay_U47 op_hcompute_hw_output_stencil_write_start_control_vars (
+array_delay_U55 op_hcompute_hw_output_stencil_write_start_control_vars (
     .clk(clk),
     .in_0(op_hcompute_hw_output_stencil_port_controller_d_0),
     .in_1(op_hcompute_hw_output_stencil_port_controller_d_1),
@@ -2134,7 +2275,16 @@ corebit_reg #(
     .in(op_hcompute_mult_stencil_port_controller_valid),
     .out(op_hcompute_mult_stencil_exe_start_out)
 );
-affine_controller__U17 op_hcompute_mult_stencil_port_controller (
+array_delay_U38 op_hcompute_mult_stencil_exe_start_control_vars (
+    .clk(clk),
+    .in_0(op_hcompute_mult_stencil_port_controller_d_0),
+    .in_1(op_hcompute_mult_stencil_port_controller_d_1),
+    .in_2(op_hcompute_mult_stencil_port_controller_d_2),
+    .out_0(op_hcompute_mult_stencil_exe_start_control_vars_out_0),
+    .out_1(op_hcompute_mult_stencil_exe_start_control_vars_out_1),
+    .out_2(op_hcompute_mult_stencil_exe_start_control_vars_out_2)
+);
+affine_controller__U21 op_hcompute_mult_stencil_port_controller (
     .clk(clk),
     .d_0(op_hcompute_mult_stencil_port_controller_d_0),
     .d_1(op_hcompute_mult_stencil_port_controller_d_1),
@@ -2149,7 +2299,7 @@ corebit_wire op_hcompute_mult_stencil_write_start (
     .in(op_hcompute_mult_stencil_exe_start_out),
     .out(op_hcompute_mult_stencil_write_start_out)
 );
-array_delay_U30 op_hcompute_mult_stencil_write_start_control_vars (
+array_delay_U34 op_hcompute_mult_stencil_write_start_control_vars (
     .clk(clk),
     .in_0(op_hcompute_mult_stencil_port_controller_d_0),
     .in_1(op_hcompute_mult_stencil_port_controller_d_1),

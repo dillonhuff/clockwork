@@ -680,6 +680,9 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     if (found_compute) {
       cout << "Found compute file for " << prg.name << endl;
       auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+      for (auto var : op->index_variables_needed_by_compute) {
+        def->connect(halide_cu->sel(var), def->sel("self")->sel(var));
+      }
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
         auto buf = map_find(bundle.first, buffers);

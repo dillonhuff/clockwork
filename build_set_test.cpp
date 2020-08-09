@@ -9997,7 +9997,8 @@ prog simplified_conv_layer() {
 
 void run_verilator_tb(const std::string& name) {
 
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
+  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -13066,11 +13067,11 @@ void cgra_flow_tests() {
 
   vector<prog> test_programs;
   test_programs.push_back(camera_pipeline());
+  test_programs.push_back(pointwise());
   test_programs.push_back(cascade());
   test_programs.push_back(unet_conv_3_3());
 
   test_programs.push_back(harris());
-  test_programs.push_back(pointwise());
   test_programs.push_back(gaussian());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(halide_harris());
@@ -13111,6 +13112,7 @@ void cgra_flow_tests() {
     //assert(false);
 
     compile_for_garnet_dual_port_mem(prg);
+    assert(false);
     generate_regression_testbench(prg);
     auto cgra_sim = run_regression_tb(prg.name);
 
