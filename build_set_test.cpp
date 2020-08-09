@@ -9997,7 +9997,7 @@ prog simplified_conv_layer() {
 
 void run_verilator_tb(const std::string& name) {
 
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -12834,19 +12834,19 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
 }
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-  auto rvars = reduce_vars(prg);
-  if (rvars.size() == 0) {
-    prg.pretty_print();
-    cout << prg.name << " is a stencil pipeline" << endl;
-    auto valid = prg.validity_deps();
-    auto dom = prg.whole_iteration_domain();
-    umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
-    cout << "Clockwork schedule..." << endl;
-    for (auto m : get_maps(clksched_map)) {
-      cout << tab(1) << str(m) << endl;
-    }
-    assert(false);
-  }
+  //auto rvars = reduce_vars(prg);
+  //if (rvars.size() == 0) {
+    //prg.pretty_print();
+    //cout << prg.name << " is a stencil pipeline" << endl;
+    //auto valid = prg.validity_deps();
+    //auto dom = prg.whole_iteration_domain();
+    //umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+    //cout << "Clockwork schedule..." << endl;
+    //for (auto m : get_maps(clksched_map)) {
+      //cout << tab(1) << str(m) << endl;
+    //}
+    //assert(false);
+  //}
   sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
@@ -12992,11 +12992,11 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     //hw_sched);
   //assert(false);
 
-  //generate_coreir(options,
-    //buffers,
-    //prg,
-    //hw_sched);
-  //generate_verilator_tb(prg, hw_sched, buffers);
+  generate_coreir(options,
+    buffers,
+    prg,
+    hw_sched);
+  generate_verilator_tb(prg, hw_sched, buffers);
 
   // Insert coreir generation here
 #endif
@@ -13065,9 +13065,11 @@ void cgra_flow_tests() {
 #endif // COREIR
 
   vector<prog> test_programs;
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(cascade());
+  test_programs.push_back(unet_conv_3_3());
 
   test_programs.push_back(harris());
-  test_programs.push_back(camera_pipeline());
   test_programs.push_back(pointwise());
   test_programs.push_back(gaussian());
   test_programs.push_back(mini_conv_halide_fixed());
@@ -13081,27 +13083,25 @@ void cgra_flow_tests() {
   test_programs.push_back(down_sample());
   test_programs.push_back(resnet());
 
-  //test_programs.push_back(cascade());
   //test_programs.push_back(unsharp());
   //test_programs.push_back(conv_multi());
-  //test_programs.push_back(unet_conv_3_3());
   
-  for (auto& prg : test_programs) {
-    schedule_info sched =
-      garnet_schedule_info(prg);
-    garnet_dual_port_ram_schedule(sched, prg.root, prg);
-    cout << "Checking " << prg.name << " schedule" << endl;
-    prg.pretty_print();
+  //for (auto& prg : test_programs) {
+    //schedule_info sched =
+      //garnet_schedule_info(prg);
+    //garnet_dual_port_ram_schedule(sched, prg.root, prg);
+    //cout << "Checking " << prg.name << " schedule" << endl;
+    //prg.pretty_print();
 
-    assert(no_violated_cycle_accurate_dependencies(sched, prg));
-    auto ss = op_start_times_map(sched, prg);
-    for (auto m : get_maps(ss)) {
-      cout << tab(1) << str(m) << endl;
-    }
-    //assert(false);
-  }
+    //assert(no_violated_cycle_accurate_dependencies(sched, prg));
+    //auto ss = op_start_times_map(sched, prg);
+    //for (auto m : get_maps(ss)) {
+      //cout << tab(1) << str(m) << endl;
+    //}
+    ////assert(false);
+  //}
 
-  //assert(false);
+  ////assert(false);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
@@ -13116,13 +13116,13 @@ void cgra_flow_tests() {
 
     cout << "Output name: " << prg.name << endl;
     compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
-    //run_verilator_tb(prg.name);
-    //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
-    //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
-    //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
-    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/raw_sram/" + prg.name + "/");
-    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/raw_sram/" + prg.name + "/");
-    //assert(false);
+    run_verilator_tb(prg.name);
+    cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
+    cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/raw_sram/" + prg.name + "/");
+    assert(false);
   }
 }
 
