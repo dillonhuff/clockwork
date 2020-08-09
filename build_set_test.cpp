@@ -13112,7 +13112,6 @@ void cgra_flow_tests() {
     //assert(false);
 
     compile_for_garnet_dual_port_mem(prg);
-    assert(false);
     generate_regression_testbench(prg);
     auto cgra_sim = run_regression_tb(prg.name);
 
