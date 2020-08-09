@@ -1573,6 +1573,7 @@ simplified_addr simplify(const piecewise_address& ar);
 void merge_basic_block_ops(prog& prg);
 
 std::set<op*> get_inner_loops(prog& prg);
+std::vector<op*> get_ordered_inner_loops(prog& prg);
 
 
 isl_set* iteration_domain(op* loop, prog& prg);
@@ -1604,3 +1605,5 @@ void print_box_bounds(const std::string& name, T* pr){
 }
 
 void normalize_bounds(prog& prg);
+
+bool is_inner_loop(op* op);

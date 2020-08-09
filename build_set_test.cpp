@@ -28,6 +28,7 @@ struct schedule_info {
   map<op*, int> op_offset_within_parent;
 
   int offset_in_parent(op* c) {
+    assert(contains_key(c, op_offset_within_parent));
     return map_find(c, op_offset_within_parent);
   }
 
@@ -45,17 +46,20 @@ struct schedule_info {
 
   int total_latency(op* op) {
     if (!op->is_loop) {
+      assert(contains_key(op, instance_latencies));
       return map_find(op, instance_latencies);
     }
     return II(op)*(op->trip_count() - 1) + instance_latency(op);
   }
 
   int instance_latency(op* op) {
+    assert(contains_key(op, instance_latencies));
     return map_find(op, instance_latencies);
   }
 
   int II(op* op) {
     assert(op->is_loop);
+    assert(contains_key(op->name, loop_iis));
     return map_find(op->name, loop_iis);
   }
 
@@ -12632,6 +12636,19 @@ int op_latency(op* op, const schedule_info& hwinfo) {
   return total_latency;
 }
 
+vector<op*> inner_ops(prog& prg) {
+  vector<op*> ordered_inner =
+    get_ordered_inner_loops(prg);
+  vector<op*> ops;
+  for (auto ord : ordered_inner) {
+    for (auto c : ord->children) {
+      assert(!c->is_loop);
+      ops.push_back(c);
+    }
+  }
+  return ops;
+}
+
 void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   cout << "scheduling: " << op->name << endl;
 
@@ -12899,10 +12916,18 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
         cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
         sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
+        sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+        sched.instance_latencies[container] = 1;
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
-    assert(false);
+    int total_latency = 0;
+    for (auto op : inner_ops(prg)) {
+      sched.op_offset_within_parent[op] = total_latency;
+      sched.instance_latencies[op] = op_latency(op, sched);
+      total_latency += op_latency(op, sched);
+    }
+    return;
   }
   sequential_schedule(sched, root, prg);
 
@@ -13122,12 +13147,12 @@ void cgra_flow_tests() {
 #endif // COREIR
 
   vector<prog> test_programs;
+  test_programs.push_back(harris());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(cascade());
   test_programs.push_back(unet_conv_3_3());
 
-  test_programs.push_back(harris());
   test_programs.push_back(gaussian());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(halide_harris());
@@ -13155,10 +13180,10 @@ void cgra_flow_tests() {
     for (auto m : get_maps(ss)) {
       cout << tab(1) << str(m) << endl;
     }
-    //assert(false);
+    assert(false);
   }
 
-  //assert(false);
+  assert(false);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
