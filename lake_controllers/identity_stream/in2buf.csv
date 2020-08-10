@@ -11,7 +11,7 @@
 "data_stride_2",0,0
 "data_stride_1",8,0
 "data_stride_0",1,0
-"write","buf_agg"
+"write","buf_0_agg"
 "data_starting_addr",0,0
 "data_stride_2",0,0
 "data_stride_1",8,0

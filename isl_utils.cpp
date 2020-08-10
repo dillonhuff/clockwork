@@ -701,6 +701,25 @@ isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string o
     return isl_map_read_from_str(ctx, string("{" + op_name + vars + " -> " + sched + "}").c_str());
 }
 
+isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name, int vec_dim, int fetch_width) {
+    vector<string> var_list;
+    var_list.push_back("root");
+    int cnt = 0;
+    for (string &it : sched_vec) {
+        if (!is_number(it) ){
+            var_list.push_back(it);
+            if (cnt == vec_dim-1) {
+              //consider the root=1
+              it = to_string(fetch_width) + "*" + it;
+            }
+            cnt ++;
+        }
+    }
+    string vars = sep_list(var_list, "[", "]", ",");
+    string sched = sep_list(sched_vec, "[", "]", ",");
+    return isl_map_read_from_str(ctx, string("{" + op_name + vars + " -> " + sched + "}").c_str());
+}
+
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, std::vector<string> sched_vec, string op_name) {
     vector<string> var_list;
     var_list.push_back("root");
@@ -1992,6 +2011,25 @@ isl_map* delay_schedule_domain_dim(isl_map* m, int dom_dim, int delay) {
   return isl_map_from_basic_map(b_ret);
 }
 
+int get_peel_schedule_domain_dim(isl_map* m, int dom_dim) {
+  auto c_vec = constraints(m);
+  auto out_dim = num_out_dims(m);
+  int target_dim;
+  for (auto & c: c_vec) {
+    bool involve = isl_constraint_involves_dims(c, isl_dim_in, dom_dim, 1);
+    if (involve && isl_constraint_is_equality(c)) {
+      for (int i = 0; i < out_dim; i ++) {
+        if (isl_constraint_involves_dims(c, isl_dim_out, i, 1)) {
+          target_dim = i;
+          break;
+        }
+      }
+      break;
+    }
+  }
+  return target_dim;
+}
+
 isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay) {
   auto c_vec = constraints(m);
   auto out_dim = num_out_dims(m);
@@ -2009,7 +2047,7 @@ isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay) {
     }
   }
   for (auto & c: c_vec) {
-    bool involve = isl_constraint_involves_dims(c, isl_dim_out, target_dim + 1, 1);
+    bool involve = isl_constraint_involves_dims(c, isl_dim_out, target_dim - 1, 1);
     if(involve && isl_constraint_is_equality(c)) {
       auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
       //This is the schedule vector you need to increment
@@ -2035,6 +2073,18 @@ vector<bool> relation_map(isl_map* m) {
       }
   }
   return rel;
+}
+
+int get_involve_dim(isl_map* m, int out_dim) {
+  size_t dom_dim = num_in_dims(m);
+  auto aff = get_aff_vec(m).at(out_dim);
+  for (int i = 0; i < dom_dim; i ++) {
+    if (isl_aff_involves_dims(aff, isl_dim_in, i, 1)) {
+        return i;
+    }
+  }
+  cout << "Error: no input dim involve with this out dim" << endl;
+  assert(false);
 }
 
 //Get the map for shift reg

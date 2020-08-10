@@ -1304,7 +1304,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   //sort all ops by its name instead of ptr addres
   //to avoid uncertainty in buffer name
   vector<op*> all_op_vec(all_op.begin(), all_op.end());
-  std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->func > r->func;});
+  std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->name > r->name;});
 
   for (auto op : all_op_vec) {
 

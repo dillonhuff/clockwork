@@ -6,12 +6,12 @@
 "cycle_stride_1",16,0
 "extent_0",16,0
 "cycle_stride_0",1,0
-"write","buf_input_10_to_buf_output_3_ubuf_agg"
+"write","buf_input_10_to_buf_output_9_ubuf"
 "data_starting_addr",0,0
 "data_stride_2",0,0
 "data_stride_1",16,0
 "data_stride_0",1,0
-"write","buf_input_10_to_buf_output_9_ubuf"
+"write","buf_input_10_to_buf_output_3_ubuf_0_agg"
 "data_starting_addr",0,0
 "data_stride_2",0,0
 "data_stride_1",16,0

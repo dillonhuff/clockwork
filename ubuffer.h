@@ -193,6 +193,9 @@ class AccessPattern {
       vector<int> out_range;
       vector<int> start_addr;
 
+      //relation map help us to remove reaccess
+      vector<bool> rel_map;
+
       //This save the fetch width info,
       //SRAM address is on the unit of wider fetch width
       vector<int> vec_stride_in_addr;
@@ -280,6 +283,26 @@ class AccessPattern {
           return to_umap(its(access_map, domain));
       }
 
+      vector<int> get_non_inner_most_reaccess_dim() {
+        vector<int> acc_map, ret;
+        int cnt = 0;
+        acc_map.push_back(0);
+        for (auto rel: rel_map) {
+          if (rel)
+            cnt ++;
+          acc_map.push_back(cnt);
+        }
+        int total = acc_map.back();
+        for (int i = 1; i < acc_map.size(); i++) {
+            if (acc_map[i] - acc_map[i-1] == 0) {
+                if (acc_map[i] != total){
+                    ret.push_back(i-1);
+                }
+            }
+        }
+        return ret;
+      }
+
       isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, bool rm_const=false) {
           vector<string> var_list(var_dim-1);
           for (auto itr: name2idx) {
@@ -318,7 +341,15 @@ class AccessPattern {
                       nd_expr.push_back(std::to_string(row.front()));
               }
           }
+          auto tb_pad = get_non_inner_most_reaccess_dim();
+          cout << "tb pad dim: " << tb_pad << endl;
           vector<string> nd_expr_new ;
+          for (auto cnt: tb_pad) {
+              if (cnt == 0)
+                continue;
+              auto it = nd_expr.begin();
+              nd_expr.insert(it, get_expr(1, cnt, var_list));
+          }
           if (rm_const) {
             for (auto expr: nd_expr) {
               if (!is_number(expr)) {
@@ -338,6 +369,8 @@ class AccessPattern {
 
       void initial_access_mat(isl_map* access_map, isl_ctx* ctx) {
           //cout << "\t\tProduced: " << str(access_map) << endl;
+
+          rel_map = relation_map(access_map);
 
           auto mpa = isl_pw_multi_aff_from_map(access_map);
           addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
@@ -518,9 +551,21 @@ class AccessPattern {
           }
       }
 
+      int get_inner_most_related_dom_dim() {
+        int inner_most_address_related_dim_id;
+        for (size_t i = rel_map.size() - 1; i >= 0; i -- ) {
+          if (rel_map.at(i) != 0) {
+            inner_most_address_related_dim_id = i;
+            break;
+          }
+        }
+      }
+
       isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
           vector<int> & stride_in_target = access_matrix[dim_id];
-          vector<string> var_list(var_dim-1);
+          int inner_most = get_inner_most_related_dom_dim();
+          cout << "trans op dim: " << inner_most << endl;
+          vector<string> var_list(inner_most+1);
           vector<string> origin_var_list(var_dim-1);
           //var_list.front() = "root";
           //origin_var_list.front() = "root";
@@ -536,7 +581,8 @@ class AccessPattern {
                   origin_var_list[id] = it.first;
               }
               else {
-                  var_list[id] = it.first;
+                  if (id <= inner_most)
+                      var_list[id] = it.first;
                   origin_var_list[id] = it.first;
               }
           }
@@ -1637,13 +1683,13 @@ class UBuffer {
     isl_map* pad_dom_sched(AccessPattern , isl_map* , int);
 
     //change the input and output and return the agg and tb ubuffer stucture
-    void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
+    std::map<string, UBuffer> vectorization(int dim_id, int fetch_width);
 
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
     int add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
-    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, int dim_id, int fetch_width);
 
     void print_bank_info();
 

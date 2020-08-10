@@ -199,6 +199,7 @@ isl_stat isl_pw_aff_set_var_name( isl_set *set,  isl_aff *aff, void *user);
 isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name);
 
 isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
+isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name, int vec_dim, int fetch_width);
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
 
 unsigned get_dim(isl_set* const s);
@@ -381,7 +382,9 @@ isl_map* get_shift_map(isl_map* s);
 isl_map* delay_schedule_inner_most(isl_map* s, int delay);
 isl_map* delay_schedule_domain_dim(isl_map* s, int dom_dim, int delay);
 vector<bool> relation_map(isl_map* m);
+int get_involve_dim(isl_map* m, int out_dim);
 isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay);
+int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 
 //some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);

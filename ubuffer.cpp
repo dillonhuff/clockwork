@@ -2945,7 +2945,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //return sep_list(addr_vec_out, "", "", " + ");
   }
 
-  map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, string self_loop_bd) {
+  map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, string self_loop_bd, int dim_id, int fetch_width) {
     /*
      * Previously we have two ops, input and output.In order to do the vectorization
      * we need to create 2 other ops, input_vec and output_vec
@@ -2970,6 +2970,20 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         "\n\tacc_sched vec: " << acc_sched_vec << endl;
     assert(in_sched_vec.size() == out_sched_vec.size());
 
+    //get the innermost address dim
+    auto loop_access_map = access_map.at(self_loop_name);
+    auto rel_vec = relation_map(to_map(loop_access_map));
+    cout << str(get_aff(to_map(loop_access_map))) << rel_vec << endl;
+    int inner_most_address_related_dim_id;
+    for (size_t i = rel_vec.size() - 1; i >= 0; i -- ) {
+      if (rel_vec.at(i) != 0) {
+        inner_most_address_related_dim_id = i;
+        break;
+      }
+    }
+    int sched_peel_dim = get_peel_schedule_domain_dim(to_map(acc_sched), inner_most_address_related_dim_id);
+
+    cout << "peeldim: " << sched_peel_dim << ", inner: " << inner_most_address_related_dim_id << endl;
     //the new generated schedule vectors
     vector<string> in_vectorized_sched_vec, out_vectorized_sched_vec, in_new_sched_vec, out_new_sched_vec;
     vector<string> acc_in_vectorized_sched_vec, acc_out_vectorized_sched_vec, acc_new_sched_vec;
@@ -3010,8 +3024,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       out_vectorized_sched_vec.push_back(out_sched_vec[dim]);
       out_new_sched_vec.push_back(out_sched_vec[dim]);
       acc_new_sched_vec.push_back(acc_sched_vec[dim]);
-      acc_out_vectorized_sched_vec.push_back(acc_sched_vec[dim]);
-      acc_in_vectorized_sched_vec.push_back(acc_sched_vec[dim]);
+      if (dim <= sched_peel_dim) {
+        acc_out_vectorized_sched_vec.push_back(acc_sched_vec[dim]);
+        acc_in_vectorized_sched_vec.push_back(acc_sched_vec[dim]);
+      } else {
+        acc_out_vectorized_sched_vec.push_back("0");
+        acc_in_vectorized_sched_vec.push_back("0");
+      }
     }
 
     //cout << "\tin: " << in_new_sched_vec << "\n\tout: " << out_new_sched_vec << endl;
@@ -3026,19 +3045,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto out_vec_sched = gen_map_from_sched_vec(ctx, out_vectorized_sched_vec, out_op + "_vec");
     new_sched.insert(make_pair(out_op + "_vec", out_vec_sched));
     auto acc_sched_new = gen_map_from_sched_vec(ctx, acc_new_sched_vec, acc_op);
+
+    int vectorized_dim = get_involve_dim(to_map(loop_access_map), dim_id);
+    cout << "vectorized_dim: " << vectorized_dim << endl;
+    //auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_vec_in", vectorized_dim, fetch_width);
+    //auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, acc_op + "_vec_out", vectorized_dim ,fetch_width);
     auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_vec_in");
     auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, acc_op + "_vec_out");
 
-    auto loop_access_map = access_map.at(self_loop_name);
-    auto rel_vec = relation_map(to_map(loop_access_map));
-    cout << str(get_aff(to_map(loop_access_map))) << rel_vec << endl;
-    int inner_most_address_related_dim_id;
-    for (size_t i = rel_vec.size() - 1; i >= 0; i -- ) {
-      if (rel_vec.at(i) != 0) {
-        inner_most_address_related_dim_id = i;
-        break;
-      }
-    }
     acc_in_vec_sched = peel_schedule_domain_dim(
             acc_in_vec_sched, inner_most_address_related_dim_id, 1);
     acc_out_vec_sched = peel_schedule_domain_dim(
@@ -3273,6 +3287,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
         target_buf.port_bundles[bd_name].push_back(pt_name);
         target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), sched);
+
+        //remap the access map for self loop input
+        if(is_self_loop_in(origin_pt_name)) {
+          auto acc_pt = AccessPattern(to_map(target_buf.access_map[pt_name]), target_buf.ctx);
+          auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+          target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
+        }
       }
       else {
         string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
@@ -3294,15 +3315,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
 
-  void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuffer& sram, UBuffer& tb) {
+  std::map<string, UBuffer> UBuffer::vectorization(int dim_id, int fetch_width) {
 
-    agg_buf.name = name + "_agg";
-    agg_buf.ctx = ctx;
-    agg_buf.port_widths = port_widths;
-
-    tb.name = name + "_tb";
-    tb.ctx = ctx;
-    tb.port_widths = port_widths;
+    std::map<string, UBuffer> ret;
+    UBuffer sram;
 
     sram.name = name + "_sram";
     sram.ctx = ctx;
@@ -3349,7 +3365,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       //only consider the accumulation buffer
       assert(bd_vec.size() ==3 );
-      auto tmp = produce_vectorized_schedule(bd_vec.at(0), bd_vec.at(2), bd_vec.at(1));
+      auto tmp = produce_vectorized_schedule(bd_vec.at(0), bd_vec.at(2), bd_vec.at(1), dim_id, fetch_width);
       new_sched.insert(tmp.begin(), tmp.end());
 
       for (auto it: new_sched) {
@@ -3358,7 +3374,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
 
+    int bd_cnt = 0;
     for (auto bd_name : in_bundle) {
+      UBuffer agg_buf;
+      agg_buf.name = name + "_" + to_string(bd_cnt) + "_agg";
+      agg_buf.ctx = ctx;
+      agg_buf.port_widths = port_widths;
       cout << "Vectorize input port bundle: " << bd_name << endl;
       for (auto in_pt_name : port_bundles.at(bd_name) ) {
         cout << "\tvectorize input port: " << in_pt_name << endl;
@@ -3380,7 +3401,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         cout << "rewrite buffer to op map: " << str(access_map.at(in_pt_name)) << endl;
 
         //add in port to agg_buf
-        auto inpt_acc_map = remap_access_to_new_buffer(in_pt_name, "_agg");
+        auto inpt_acc_map = remap_access_to_new_buffer(in_pt_name, "_" +to_string(bd_cnt) + "_agg");
+        if (is_self_loop(in_pt_name)){
+            inpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, true);
+            inpt_acc_map = add_range_suffix(inpt_acc_map, "_" + to_string(bd_cnt) + "_agg");
+        }
         cout << "Access map add to agg_in: " << str(inpt_acc_map) << endl;
         agg_buf.add_in_pt(in_pt_name+"_in", domain.at(in_pt_name), inpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(in_pt_name)));
         agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
@@ -3392,9 +3417,19 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         //add in port to sram
         add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, sched, in_pt_name, bd_name, dim_id, fetch_width, false);
       }
+      bd_cnt ++;
+      ret.insert({agg_buf.name, agg_buf});
+      cout << "AGG : " << agg_buf << endl;
+      cout << "AGG Schedule: " << str(agg_buf.global_schedule()) << endl;
     }
 
+    bd_cnt = 0;
     for (auto bd_name: out_bundle) {
+      UBuffer tb;
+      tb.name = name + "_" + to_string(bd_cnt) + "_tb";
+      tb.ctx = ctx;
+      tb.port_widths = port_widths;
+
       cout << "Vectorize output port bundle: " << bd_name << endl;
       map<string, umap*> rewrite_buf2op_map;
       map<string, isl_map*> op_sched_map;
@@ -3437,24 +3472,26 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         auto acc_pattern = AccessPattern(
             to_map(access_map.at(out_pt_name)), ctx);
 
-        auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_tb");
+        auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_" + to_string(bd_cnt) + "_tb");
         if (output_cnt > 1){
             outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
         } else {
             outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, true);
         }
-        outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
+        outpt_acc_map = add_range_suffix(outpt_acc_map, "_" + to_string(bd_cnt) + "_tb");
         cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
         tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
         tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
       }
+      ret.insert({tb.name, tb});
+      cout << "TB  : " << tb << endl;
+      cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
+      bd_cnt ++;
     }
-    cout << "AGG : " << agg_buf << endl;
     cout << "SRAM: " << sram << endl;
-    cout << "TB  : " << tb << endl;
-    cout << "AGG Schedule: " << str(agg_buf.global_schedule()) << endl;
     cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
-    cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
+    ret.insert({sram.name, sram});
+    return ret;
   }
 
 bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {
