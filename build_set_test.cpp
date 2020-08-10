@@ -13270,7 +13270,7 @@ void cgra_flow_tests() {
   test_programs.push_back(unsharp());
   test_programs.push_back(conv_multi());
 
-  test_schedules(test_programs);
+  //test_schedules(test_programs);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;

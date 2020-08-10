@@ -2138,7 +2138,7 @@ prog conv_layer() {
 prog camera_pipeline_dse_1() {
   prog prg;
   prg.compute_unit_file = "camera_pipeline_compute.h";
-  prg.name = "camera_pipeline";
+  prg.name = "camera_pipeline_dse1";
 
 // Stencil<uint8_t, 64, 64> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
