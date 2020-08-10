@@ -1038,6 +1038,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+    int width = buf.port_widths;
+    auto c = def->getContext();
+    auto ns = c->getNamespace("global");
+
 
     if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_CYCLE_DELAY) {
       auto sched = buf.global_schedule();
@@ -1083,8 +1087,17 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           assert(isl_set_is_singleton(ddc));
           int dd = to_int(lexminval(ddc));
           cout << "DD           : " << dd << endl;
+
+          CoreIR::Module* srmod = delay_module(c, width, {dd});
+          auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
+          def->connect(def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)),
+              srinst->sel("wdata"));
+
+          def->connect(def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)),
+              srinst->sel("rdata"));
         } else {
           cout << tab(1) << "No overlap" << endl;
+          assert(false);
         }
       }
       //assert(false);
@@ -1092,10 +1105,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     generate_banks(options, buf, def);
-
-    int width = buf.port_widths;
-    auto c = def->getContext();
-    auto ns = c->getNamespace("global");
 
     for (auto inpt : buf.get_in_ports()) {
       auto bcm = coreir_broadcast(c, inpt, buf);
