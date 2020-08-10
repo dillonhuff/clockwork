@@ -161,6 +161,7 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
     dot(lexmax(dot(src_map, sched)), time_to_event);
 
   assert(lex_max_events != nullptr);
+
   release(time_to_event);
   release(src_map);
   release(after);
@@ -1028,15 +1029,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
 
-    //for (auto inpt : buf.get_out_ports()) {
-      ////auto out_ctrl = def->sel(controller_name(inpt))->sel("valid");
-      //auto out_ctrl = control_en(def, inpt, buf);
-      ////def->sel(controller_name(inpt))->sel("valid");
-      //def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"),
-          //out_ctrl);
-          ////out_ctrl->sel("valid"));
-    //}
-
     for (auto inpt : buf.get_in_ports()) {
       auto bcm = coreir_broadcast(c, inpt, buf);
       auto bc = def->addInstance(inpt + "_broadcast", bcm);
@@ -1049,7 +1041,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       def->connect(bc->sel("in"), def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)));
       def->connect(bc->sel("en"),
           control_en(def, inpt, buf));
-          //def->sel(controller_name(inpt))->sel("valid"));
     }
 
     for (auto outpt : buf.get_out_ports()) {
