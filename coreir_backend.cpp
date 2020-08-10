@@ -2039,6 +2039,26 @@ CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
   return m;
 }
 
+CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays) {
+  auto ns = c->getNamespace("global");
+  vector<pair<string, Type*> > fields = {{"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)},
+      //{"waddr", c->BitIn()->Arr(width)},
+      {"wen", c->BitIn()},
+      {"rdata", c->Bit()->Arr(width)}};
+      //{"raddr", c->BitIn()->Arr(width)},
+      //{"ren", c->BitIn()}};
+
+auto mod = ns->newModuleDecl("delay_" + c->getUnique(), c->Record(fields));
+auto def = mod->newModuleDef();
+
+auto d = delay(def, def->sel("self.wdata"), width);
+def->connect(d, def->sel("self.rdata"));
+mod->setDef(def);
+
+  return mod;
+}
+
 void ram_module(CoreIR::Context* c, const int width, const int depth) {
   auto ns = c->getNamespace("global");
 

@@ -73,4 +73,6 @@ void ram_module(CoreIR::Context* c, const int width, const int depth);
 
 void mini_sram_garnet_test();
 
+CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays);
+
 #endif

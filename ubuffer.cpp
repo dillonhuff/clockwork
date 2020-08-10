@@ -1040,12 +1040,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         cout << "Delays = " << comma_list(bank.read_delays) << endl;
         assert(bank.num_readers == 1);
         assert(bank.read_delays.size() == 2);
-        //auto bnk = def->addInstance(
-            //bank.name,
-            //"global.sr_module",
-            //{{"depth", COREMK(c, capacity)}}
-            //);
-        assert(false);
+        auto mod = delay_module(c, width, bank.read_delays);
+        auto bnk = def->addInstance(
+            bank.name,
+            mod);
       }
     }
   }
