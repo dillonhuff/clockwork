@@ -1057,7 +1057,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     umap* schedmap,
     CoreIR::Context* context) {
 
-  bool found_compute = true;
+  //bool found_compute = true;
+  bool found_compute = false;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
   ifstream cfile(compute_file);
   if (!cfile.good()) {
@@ -1067,7 +1068,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;
     cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    assert(false);
+    //assert(false);
   }
 
   auto ns = context->getNamespace("global");

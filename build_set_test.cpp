@@ -12897,6 +12897,60 @@ bool all_loop_nests_same_depth(prog& prg) {
   return depths.size() == 1;
 }
 
+void dsa_writers(prog& prg) {
+  std::set<string> multi_write_buffers;
+  for (auto k : get_kernels(prg)) {
+    for (auto b : get_produced_buffers(k, prg)) {
+      auto writers = find_writers(b, prg);
+      assert(writers.size() <= 2);
+      if (writers.size() > 1) {
+        multi_write_buffers.insert(b);
+      }
+    }
+  }
+
+  cout << "Multi-write buffers" << endl;
+  map<string, op*> initializers;
+  map<string, op*> updaters;
+  for (auto b : multi_write_buffers) {
+    cout << tab(1) << b << endl;
+    auto writers = find_writers(b, prg);
+    assert(writers.size() == 2);
+    vector<op*> ws;
+    for (auto w : writers) {
+      ws.push_back(w);
+    }
+    op* w0 = ws.at(0);
+    op* w1 = ws.at(1);
+
+    if (w0->read_addrs().size() == 0) {
+      initializers[b] = w0;
+      updaters[b] = w1;
+    } else {
+      initializers[b] = w1;
+      updaters[b] = w0;
+    }
+  }
+
+  cout << "Built initializer / update maps" << endl;
+
+  for (auto b : multi_write_buffers) {
+    string init_buffer = prg.un(b);
+    auto init = initializers[b];
+    assert(init != 0);
+    auto updated = updaters[b];
+    assert(updated != 0);
+    cout << "Replacing writes" << endl;
+    init->replace_writes_to(b, init_buffer);
+    cout << "Replacing reads from " << b << " in " << updated->name << endl;
+    updated->replace_reads_from(b, init_buffer);
+  }
+
+  prg.pretty_print();
+  //assert(false);
+
+}
+
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   auto rvars = reduce_vars(prg);
   bool perfect = all_perfect_loop_nests(prg);
@@ -12906,56 +12960,6 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     bool single_depth = all_loop_nests_same_depth(prg);
     int max_depth = max_loop_depth(prg);
 
-    std::set<string> multi_write_buffers;
-    for (auto k : get_kernels(prg)) {
-      for (auto b : get_produced_buffers(k, prg)) {
-        auto writers = find_writers(b, prg);
-        assert(writers.size() <= 2);
-        if (writers.size() > 1) {
-          multi_write_buffers.insert(b);
-        }
-      }
-    }
-
-    cout << "Multi-write buffers" << endl;
-    map<string, op*> initializers;
-    map<string, op*> updaters;
-    for (auto b : multi_write_buffers) {
-      cout << tab(1) << b << endl;
-      auto writers = find_writers(b, prg);
-      assert(writers.size() == 2);
-      vector<op*> ws;
-      for (auto w : writers) {
-        ws.push_back(w);
-      }
-      op* w0 = ws.at(0);
-      op* w1 = ws.at(1);
-
-      if (w0->read_addrs().size() == 0) {
-        initializers[b] = w0;
-        updaters[b] = w1;
-      } else {
-        initializers[b] = w1;
-        updaters[b] = w0;
-      }
-    }
-
-    cout << "Built initializer / update maps" << endl;
-
-    for (auto b : multi_write_buffers) {
-      string init_buffer = prg.un(b);
-      auto init = initializers[b];
-      assert(init != 0);
-      auto updated = updaters[b];
-      assert(updated != 0);
-      cout << "Replacing writes" << endl;
-      init->replace_writes_to(b, init_buffer);
-      cout << "Replacing reads from " << b << " in " << updated->name << endl;
-      updated->replace_reads_from(b, init_buffer);
-    }
-
-    prg.pretty_print();
-    //assert(false);
 
     if (!single_depth) {
       map<string, vector<int> > pad_indexes;
@@ -13066,6 +13070,10 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     }
     return;
   }
+
+  prg.pretty_print();
+  cout << prg.name << " is not a stencil" << endl;
+  assert(false);
   sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
@@ -13155,6 +13163,8 @@ schedule_info garnet_schedule_info(prog& prg) {
 }
 
 void compile_for_garnet_dual_port_mem(prog& prg) {
+  dsa_writers(prg);
+
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
@@ -13291,13 +13301,41 @@ void test_schedules(vector<prog>& test_programs) {
     for (auto m : get_maps(ss)) {
       cout << tab(1) << str(m) << endl;
     }
-    assert(false);
   }
 
   assert(false);
 }
 
+vector<prog> stencil_programs() {
+  vector<prog> test_programs;
+  test_programs.push_back(harris());
+  test_programs.push_back(camera_pipeline_dse_1());
+  test_programs.push_back(cascade());
+  test_programs.push_back(pointwise());
+  test_programs.push_back(camera_pipeline());
+
+  test_programs.push_back(gaussian());
+  test_programs.push_back(mini_conv_halide_fixed());
+  test_programs.push_back(halide_harris());
+
+  test_programs.push_back(strided_conv());
+  test_programs.push_back(down_sample());
+
+  test_programs.push_back(unsharp());
+
+  return test_programs;
+}
+
 void cgra_flow_tests() {
+  auto test_programs = stencil_programs();
+  test_schedules(test_programs);
+
+  assert(false);
+}
+
+
+
+void full_cgra_flow_tests() {
 
 #ifdef COREIR
   //mini_sram_garnet_test();
@@ -13327,7 +13365,7 @@ void cgra_flow_tests() {
   test_programs.push_back(unsharp());
   test_programs.push_back(conv_multi());
 
-  //test_schedules(test_programs);
+  test_schedules(test_programs);
 
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
