@@ -2043,11 +2043,13 @@ CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
 }
 
 CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays) {
+  assert(read_delays.size() == 1);
+  int D = read_delays.at(0);
   auto ns = c->getNamespace("global");
   vector<pair<string, Type*> > fields = {{"clk", c->Named("coreir.clkIn")},
       {"wdata", c->BitIn()->Arr(width)},
       //{"waddr", c->BitIn()->Arr(width)},
-      {"wen", c->BitIn()},
+      //{"wen", c->BitIn()},
       {"rdata", c->Bit()->Arr(width)}};
       //{"raddr", c->BitIn()->Arr(width)},
       //{"ren", c->BitIn()}};
@@ -2055,8 +2057,12 @@ CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<i
 auto mod = ns->newModuleDecl("delay_" + c->getUnique(), c->Record(fields));
 auto def = mod->newModuleDef();
 
-auto d = delay(def, def->sel("self.wdata"), width);
-def->connect(d, def->sel("self.rdata"));
+auto next = def->sel("self.wdata");
+for (int d = 0; d < D; d++) {
+  next = delay(def, next, width);
+}
+//auto d = delay(def, def->sel("self.wdata"), width);
+def->connect(next, def->sel("self.rdata"));
 mod->setDef(def);
 
   return mod;

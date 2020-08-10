@@ -1047,7 +1047,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       auto sched = buf.global_schedule();
 
       for (auto outpt : buf.get_out_ports()) {
-        cout << "# in port son " << buf.name << ": " << buf.get_in_ports().size() << endl;
+        cout << "# in ports on " << buf.name << ": " << buf.get_in_ports().size() << endl;
+        {
+          cout << "Input ports to conditions" << endl;
+          map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
+          for (auto in : ins) {
+            cout << tab(1) << in.first << " -> " << str(in.second) << endl;
+          }
+        }
         assert(buf.get_in_ports().size() == 1);
         auto ins = buf.get_in_ports();
 

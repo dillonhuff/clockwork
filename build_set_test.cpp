@@ -13342,9 +13342,8 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
   //test_programs.push_back(camera_pipeline_dse_1());
-  //test_programs.push_back(camera_pipeline());
+  test_programs.push_back(camera_pipeline());
 
-  test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(cascade());
   test_programs.push_back(pointwise());
@@ -13355,6 +13354,7 @@ vector<prog> stencil_programs() {
 
   test_programs.push_back(strided_conv());
   test_programs.push_back(down_sample());
+  test_programs.push_back(unsharp());
 
 
   // Need to fix DSA writers
@@ -13364,7 +13364,9 @@ vector<prog> stencil_programs() {
 void test_stencil_codegen(vector<prog>& test_programs) {
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
+    prg.pretty_print();
     prg.sanity_check();
+    assert(false);
 
     //auto cpu = unoptimized_result(prg);
     //assert(false);
@@ -13376,7 +13378,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     cout << "Output name: " << prg.name << endl;
     //assert(false);
     //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
-    //run_verilator_tb(prg.name);
+    run_verilator_tb(prg.name);
     //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
     //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
