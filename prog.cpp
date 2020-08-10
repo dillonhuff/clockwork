@@ -3050,7 +3050,7 @@ vector<string> reduce_vars(prog& prg) {
       }
     }
 
-    if (!used_in_write) {
+    if (!used_in_write && prg.find_loop(loop_var)->trip_count() > 1) {
       reduce_vars.push_back(loop_var);
     }
   }
