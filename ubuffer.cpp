@@ -1047,16 +1047,29 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       auto sched = buf.global_schedule();
 
       for (auto outpt : buf.get_out_ports()) {
-        cout << "# in ports on " << buf.name << ": " << buf.get_in_ports().size() << endl;
+        std::set<string> ins;
         {
-          cout << "Input ports to conditions" << endl;
-          map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
-          for (auto in : ins) {
-            cout << tab(1) << in.first << " -> " << str(in.second) << endl;
+          auto reads = range(buf.access_map.at(outpt));
+          for (auto inpt : buf.get_in_ports()) {
+            auto writes = range(buf.access_map.at(inpt));
+            auto overlap = its(writes, reads);
+            if (!empty(overlap)) {
+              ins.insert(inpt);
+            }
           }
         }
-        assert(buf.get_in_ports().size() == 1);
-        auto ins = buf.get_in_ports();
+
+        assert(ins.size() == 1);
+        //cout << "# in ports on " << buf.name << ": " << buf.get_in_ports().size() << endl;
+        //{
+          //cout << "Input ports to conditions" << endl;
+          //map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
+          //for (auto in : ins) {
+            //cout << tab(1) << in.first << " -> " << str(in.second) << endl;
+          //}
+        //}
+        //assert(buf.get_in_ports().size() == 1);
+        //auto ins = buf.get_in_ports();
 
         //map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
         //cout << "Checking inputs for " << outpt << " on " << buf.name << endl;

@@ -13366,7 +13366,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
     prg.pretty_print();
     prg.sanity_check();
-    assert(false);
+    //assert(false);
 
     //auto cpu = unoptimized_result(prg);
     //assert(false);
