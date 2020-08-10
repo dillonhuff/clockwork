@@ -56,6 +56,8 @@ vector<int> offsets;
 normalized_address_components get_components(const normalized_address& addr, prog& prg, op* op){
 	normalized_address_components all_comps;
 
+	vector<std::string> surrounding_vars_vector = surrounding_vars(op, prg);
+	cout << "vars around " << op->name << ": " << comma_list(surrounding_vars_vector) << endl;
 	int total_variables = surrounding_vars(op, prg).size();
 	// First split: creating components
 	vector<string> components = split_at(addr, ",");
@@ -77,6 +79,7 @@ normalized_address_components get_components(const normalized_address& addr, pro
 		// Calculating the sum of constants
 		int accum = 0;
 		for(auto c : consts){
+//			cout << "First stoi:"<< c << "." << endl;
 			accum += std::stoi(c);
 		}
 		all_comps.offsets.push_back(accum);
@@ -87,24 +90,24 @@ normalized_address_components get_components(const normalized_address& addr, pro
 			vector<string> parts = split_at(v,"<");
 			assert(parts.size() <= 2);
 			assert(parts.size() > 0);
-			if(parts.size() == 1){ // In this case stride is 1
-				vector<string> remaining_part = split_at(parts.at(0),">");
+			auto string_to_pars = parts.at(0);
+			if(parts.size() == 1 || string_to_pars == " " || string_to_pars == ""){ // In this case stride is 1
+				vector<string> remaining_part = split_at(parts.at(1),">");
 				variable_strides[remaining_part.at(0)].push_back(1);
 			} else{ // In this case we have to find the stride
-				int stride_value = std::stoi(parts.at(0));
+//				cout << "Second stoi:"<< string_to_pars << "." << endl;
+				int stride_value = std::stoi(string_to_pars);
 				vector<string> remaining_part = split_at(parts.at(1),">");
 				variable_strides[remaining_part.at(0)].push_back(stride_value);
 			}
 		}
 		
 		vector<int> reduced_strides;
-		cout << "REDUCED_STRIDES SIZE: "<< reduced_strides.size() << endl;
 		reduced_strides.resize(total_variables, 0);
-		cout << "total_variables: " << total_variables << endl;
-		cout << "REDUCED_STRIDES SIZE after resize: "<< reduced_strides.size() << endl;
 		for(auto pair : variable_strides){
-			int variable_index = std::stoi(pair.first);
-			cout << "variable_index: " << variable_index << endl;
+			auto pair_first = pair.first;
+//			cout << "Third stoi:"<< pair_first << "." << endl;
+			int variable_index = std::stoi(pair_first);
 			int accum_strides = 0;
 			for(auto value : pair.second){
 				accum_strides += value;
@@ -153,8 +156,11 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 			string var = level.first;
 			int level_index = level.second;
 			string new_var_name = "<" + str(level_index) + ">";
-			normalized = ReplaceString(normalized, var, new_var_name); 
+			normalized = ReplaceString(normalized, var, new_var_name);
 		}
+		auto node = buffer_addresses.extract(addr);
+		node.key() = normalized;
+		buffer_addresses.insert(std::move(node));
 		normalized_addresses.insert(normalized);
 	}
 
@@ -172,6 +178,8 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 	std::set<normalized_address_components> normalized_addresses_comps;
 	// Create a loop here to go through each addr and call get components
 	for(auto addr : normalized_addresses){
+		cout << "address: " << addr << endl;
+		assert(contains_key(addr, buffer_addresses));
 		op* buff = buffer_addresses[addr];
 		normalized_address_components component = get_components(addr, prg, buff);
 //		normalized_addresses_comps.insert(get_components(addr, prg, op));

@@ -3543,6 +3543,7 @@ void ir_node::copy_memory_operations_from(op* other) {
 
 
 vector<string> surrounding_vars(op* loop, prog& prg) {
+  assert(loop != nullptr);
   vector<string> surrounding;
   op* current = prg.root;
   while (current != loop) {

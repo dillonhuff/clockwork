@@ -350,6 +350,7 @@ struct ir_node {
   }
 
   op* container_child(op* source) {
+    assert(source != nullptr);
     for (auto c : children) {
       if (source == c) {
         return c;
