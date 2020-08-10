@@ -12935,7 +12935,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
     prg.pretty_print();
     cout << prg.name << " is a stencil pipeline" << endl;
-    assert(false);
+    //assert(false);
     auto valid = prg.validity_deps();
     auto dom = prg.whole_iteration_domain();
     umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
