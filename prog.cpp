@@ -181,10 +181,13 @@ std::set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
+    for (auto bundle : buf.get_out_bundles()) {
+      edges.insert(bundle);
+    }
+    //assert(buf.get_out_bundles().size() == 1);
 
-    auto bundle = pick(buf.get_out_bundles());
-    edges.insert(bundle);
+    //auto bundle = pick(buf.get_out_bundles());
+    //edges.insert(bundle);
   }
   return edges;
 }
