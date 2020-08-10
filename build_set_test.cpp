@@ -12875,6 +12875,15 @@ bool all_perfect_loop_nests(prog& prg) {
   return true;
 }
 
+int loop_depth(op* op) {
+  int d = op->is_loop;
+  int max_child_depth = 0;
+  for (auto c : op->children) {
+    max_child_depth = max(loop_depth(c), max_child_depth);
+  }
+  return d + max_child_depth;
+
+}
 bool all_loop_nests_same_depth(prog& prg) {
   auto ops = prg.all_ops();
 
@@ -12893,8 +12902,34 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   bool perfect = all_perfect_loop_nests(prg);
   if (rvars.size() == 0 &&
       perfect) {
+    prg.pretty_print();
     bool single_depth = all_loop_nests_same_depth(prg);
+    int max_depth = max_loop_depth(prg);
 
+    map<string, vector<int> > pad_indexes;
+    for (auto k : get_kernels(prg)) {
+      auto lp = prg.find_loop(k);
+      for (auto rep : lp->descendant_ops()) {
+        int depth_m = loop_depth(prg.find_loop(k));
+        vector<int> inds;
+        inds.push_back(0);
+        for (int p = 0; p < max_depth - depth_m; p++) {
+          inds.push_back(-1);
+        }
+        for (int d = 1; d < depth_m + 1; d++) {
+          inds.push_back(d);
+        }
+
+        pad_indexes[rep->name] = inds;
+      }
+    }
+    cout << "Pad inds..." << endl;
+    for (auto p : pad_indexes) {
+      cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+    }
+    insert_pad_loops(prg, pad_indexes);
+
+    prg.pretty_print();
     assert(single_depth);
 
     prg.pretty_print();
