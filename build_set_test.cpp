@@ -1375,7 +1375,7 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
 }
 
 
-vector<std::string> topological_sort_from_buffer(const map<string, UBuffer> &buffers) {
+vector<std::string> topological_sort_from_buffer(const map<string, UBuffer> &buffers, vector<string> remove_deps = {}) {
     //map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
     isl_ctx* ctx = pick(buffers).second.ctx;
     isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
@@ -1397,6 +1397,9 @@ vector<std::string> topological_sort_from_buffer(const map<string, UBuffer> &buf
     auto order_deps = get_rel_order(ctx, global_sched);
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     auto validity = unn(order_deps, raw_deps);
+      for (auto name : remove_deps) {
+        validity = remove_dep_domain_name(validity, name);
+      }
     return topological_sort(get_sets(domain), get_maps(validity));
 }
 
@@ -12340,8 +12343,8 @@ isl_aff* get_aff_addr(op* op, const std::string& buf_name,
 }
 
 isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
-        map<string, UBuffer> buffers, map<pair<string, string>, int> latency, int ii) {
-  vector<string> sort_op = topological_sort_from_buffer(buffers);
+        map<string, UBuffer> buffers, map<pair<string, string>, int> latency, int ii, vector<string> remove = {}) {
+  vector<string> sort_op = topological_sort_from_buffer(buffers, remove);
   cout << "Topology sort: " << sort_op << endl;
 
   int i = 0;
@@ -12369,7 +12372,7 @@ isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
     string op_name = domain_name(m);
     op2sched[op_name] = m;
     auto affs = get_aff_vec(m);
-    assert(affs.size() == 2);
+    //assert(affs.size() == 2);
     sched_seq[op_name] = safe_stoi(
             take_btw(str(affs.at(1)), "[(", ")]"));
     expr_base[op_name] = take_btw(str(affs.at(0)), "[(", ")]");
@@ -12496,6 +12499,16 @@ void lake_resnet_test() {
     //auto opt_sched = optimized_schedule_from_buffers(temp);
     cout << str(opt_sched) << endl;
     cout << codegen_c(opt_sched) << endl;
+    int app_target_II = 1;
+
+    //map<pair<string, string>, int> latency({{{"input", "input_vec"}, 1},
+    //      {{"output_2", "output_2_vec"}, -1}});
+    auto hsh = generate_hardware_schedule_heu(opt_sched, tmp, {}, app_target_II, {"op_hcompute_conv_stencil_1_vec_in"});
+    cout << str(hsh) << endl;
+    cout << codegen_c(hsh) << endl;
+    cmd("mkdir -p ./lake_controllers/resnet/");
+    auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
+    //check_lake_config(op_vec, "./lake_controllers/conv_3_3/", "./lake_gold/conv_3_3/");
     assert(false);
 
   }
