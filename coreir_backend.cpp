@@ -1063,7 +1063,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
-    assert(false);
+    //assert(false);
   }
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;

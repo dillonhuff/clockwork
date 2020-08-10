@@ -13074,7 +13074,13 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
   prg.pretty_print();
   cout << prg.name << " is not a stencil" << endl;
+  cout << tab(1) << "Perfect: " << perfect << endl;
+  cout << tab(1) << "# rvars: " << rvars.size() << endl;
+  for (auto rv : rvars) {
+    cout << tab(2) << rv << endl;
+  }
   assert(false);
+
   sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
@@ -13309,11 +13315,10 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
+  test_programs.push_back(unsharp());
   test_programs.push_back(harris());
-  test_programs.push_back(camera_pipeline_dse_1());
   test_programs.push_back(cascade());
   test_programs.push_back(pointwise());
-  test_programs.push_back(camera_pipeline());
 
   test_programs.push_back(gaussian());
   test_programs.push_back(mini_conv_halide_fixed());
@@ -13322,8 +13327,10 @@ vector<prog> stencil_programs() {
   test_programs.push_back(strided_conv());
   test_programs.push_back(down_sample());
 
-  test_programs.push_back(unsharp());
 
+  // Need to fix DSA writers
+  test_programs.push_back(camera_pipeline_dse_1());
+  test_programs.push_back(camera_pipeline());
   return test_programs;
 }
 
