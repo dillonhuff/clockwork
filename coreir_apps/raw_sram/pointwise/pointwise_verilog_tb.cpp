@@ -29,9 +29,10 @@ int main() {
   dut.input_copy_stencil_op_hcompute_hw_input_stencil_read_0 = t;
     fout << t << "," << "input_copy_stencil_op_hcompute_hw_input_stencil_read_valid" << "," << (int) dut.input_copy_stencil_op_hcompute_hw_input_stencil_read_valid << endl;
     fout << t << "," << "dut.input_copy_stencil_op_hcompute_hw_input_stencil_read_0" << "," << (int) dut.input_copy_stencil_op_hcompute_hw_input_stencil_read_0 << endl;
-  if (dut.input_copy_stencil_op_hcompute_hw_input_stencil_read_valid) {
-    cout << "send me data!" << endl;
-  }
+    if (dut.input_copy_stencil_op_hcompute_hw_input_stencil_read_valid) {
+      cout << "send me data!" << endl;
+      dut.input_copy_stencil_op_hcompute_hw_input_stencil_read_0 = (int) input_copy_stencil.read();
+    }
     fout << t << "," << "hw_output_stencil_op_hcompute_hw_output_stencil_write_en" << "," << (int) dut.hw_output_stencil_op_hcompute_hw_output_stencil_write_en << endl;
     fout << t << "," << "dut.hw_output_stencil_op_hcompute_hw_output_stencil_write_0" << "," << (int) dut.hw_output_stencil_op_hcompute_hw_output_stencil_write_0 << endl;
   hw_output_stencil_op_hcompute_hw_output_stencil_write_en_count += dut.hw_output_stencil_op_hcompute_hw_output_stencil_write_en;
@@ -44,5 +45,6 @@ int main() {
     dut.eval();
   }
     cout << hw_output_stencil_op_hcompute_hw_output_stencil_write_en_count << endl;
+  assert(input_copy_stencil.is_empty());
   return 0;
 }

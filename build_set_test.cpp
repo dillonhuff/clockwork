@@ -13103,8 +13103,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.all_rams = true;
   all_exhaustive_banked(prg, options);
 
-  //options.inner_bank_offset_mode =
-    //INNER_BANK_OFFSET_LINEAR;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
 
   schedule_info sched = garnet_schedule_info(prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
@@ -13247,12 +13247,12 @@ void cgra_flow_tests() {
 #endif // COREIR
 
   vector<prog> test_programs;
-  test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline_dse_1());
-  test_programs.push_back(harris());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(camera_pipeline());
   test_programs.push_back(cascade());
+  test_programs.push_back(harris());
+  test_programs.push_back(pointwise());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(unet_conv_3_3());
 
   test_programs.push_back(gaussian());
@@ -13285,7 +13285,7 @@ void cgra_flow_tests() {
 
     cout << "Output name: " << prg.name << endl;
     //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
-    //assert(false);
+    assert(false);
     run_verilator_tb(prg.name);
     cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
     cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");

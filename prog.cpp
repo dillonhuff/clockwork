@@ -5144,9 +5144,10 @@ void generate_verilator_tb(prog& prg,
       "dut." + out.first + "_" + out.second + "_0";
     rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
     rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) " << data_name << " << endl;" << endl;
-    rgtb << tab(1) << "if (dut." << ctrl_name << ") {" << endl;
-    rgtb << tab(2) << "cout << \"send me data!\" << endl;" << endl;
-    rgtb << tab(1) << "}" << endl;
+    rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
+    rgtb << tab(3) << "cout << \"send me data!\" << endl;" << endl;
+    rgtb << tab(3) << data_name << " = (int) " << out.first << ".read();" << endl;
+    rgtb << tab(2) << "}" << endl;
   }
 
   for (auto out : outputs(buffers, prg)) {
@@ -5174,25 +5175,10 @@ void generate_verilator_tb(prog& prg,
     rgtb << tab(2) << "cout << " << ctrl_name << "_count << endl;" << endl;
   }
 
-  //for (auto out : prg.outs) {
-    //auto cmap = prg.producer_map(out);
-    //auto read_map = inv(cmap);
-    //auto rng = range(read_map);
-    //auto range_card = card(rng);
-    //int num_pops = int_upper_bound(range_card);
-    //int unroll = map_find(out, unroll_factor);
-    //int lane_width = prg.buffer_port_width(out);
-    //int bundle_width = lane_width*unroll;
+  for (auto in : prg.ins) {
+    rgtb << tab(1) << "assert(" << in << ".is_empty());" << endl;
+  }
 
-    //rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
-    //rgtb << tab(2) << "auto actual = " << out << ".read();" << endl;
-    //vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
-    //for (auto r : results) {
-      //rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
-    //}
-    ////rgtb << tab(2) << "fout << actual << endl;" << endl;
-    //rgtb << tab(1) << "}" << endl << endl;
-  //}
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();
