@@ -12900,6 +12900,15 @@ bool all_loop_nests_same_depth(prog& prg) {
 void dsa_writers(prog& prg) {
   std::set<string> multi_write_buffers;
   map<string, std::set<string> > producer_kernels;
+  std::set<string> reduced_kernels;
+  for (auto op : prg.all_ops()) {
+    auto read = op->buffers_read();
+    auto written = op->buffers_written();
+    for (auto b : intersection(read, written)) {
+      reduced_kernels.insert(b);
+    }
+  }
+
   for (auto k : get_kernels(prg)) {
     for (auto b : get_produced_buffers(k, prg)) {
       producer_kernels[b].insert(k);
@@ -12910,7 +12919,7 @@ void dsa_writers(prog& prg) {
     for (auto b : get_produced_buffers(k, prg)) {
       auto producers = producer_kernels[b];
 
-      if (producers.size() > 1) {
+      if (elem(b, reduced_kernels) && producers.size() > 1) {
         cout << b << " has " << producers.size() << " producers" << endl;
         for (auto p : producers) {
           cout << tab(1) << p << endl;

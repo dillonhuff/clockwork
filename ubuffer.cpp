@@ -1071,11 +1071,15 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           cout << "PC times     : " << str(pc_times) << endl;
           auto dds = isl_union_map_deltas(pc_times);
           cout << "DDs          : " << str(dds) << endl;
-          auto ddc = to_set(dds);
+          if (!empty(dds)) {
+            auto ddc = to_set(dds);
 
-          assert(isl_set_is_singleton(ddc));
-          int dd = to_int(lexminval(ddc));
-          cout << "DD           : " << dd << endl;
+            assert(isl_set_is_singleton(ddc));
+            int dd = to_int(lexminval(ddc));
+            cout << "DD           : " << dd << endl;
+          } else {
+            cout << tab(1) << "No overlap" << endl;
+          }
         }
       }
       //assert(false);
