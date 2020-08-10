@@ -12899,13 +12899,30 @@ bool all_loop_nests_same_depth(prog& prg) {
 
 void dsa_writers(prog& prg) {
   std::set<string> multi_write_buffers;
+  map<string, std::set<string> > producer_kernels;
   for (auto k : get_kernels(prg)) {
     for (auto b : get_produced_buffers(k, prg)) {
-      auto writers = find_writers(b, prg);
-      assert(writers.size() <= 2);
-      if (writers.size() > 1) {
-        multi_write_buffers.insert(b);
+      producer_kernels[b].insert(k);
+    }
+  }
+
+  for (auto k : get_kernels(prg)) {
+    for (auto b : get_produced_buffers(k, prg)) {
+      auto producers = producer_kernels[b];
+
+      if (producers.size() > 1) {
+        cout << b << " has " << producers.size() << " producers" << endl;
+        for (auto p : producers) {
+          cout << tab(1) << p << endl;
+        }
+        auto writers = find_writers(b, prg);
+        prg.pretty_print();
+        assert(writers.size() <= 2);
+        if (writers.size() > 1) {
+          multi_write_buffers.insert(b);
+        }
       }
+
     }
   }
 
@@ -13315,6 +13332,8 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
+  test_programs.push_back(camera_pipeline_dse_1());
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(cascade());
@@ -13329,8 +13348,6 @@ vector<prog> stencil_programs() {
 
 
   // Need to fix DSA writers
-  //test_programs.push_back(camera_pipeline_dse_1());
-  //test_programs.push_back(camera_pipeline());
   return test_programs;
 }
 
@@ -13360,8 +13377,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
 void cgra_flow_tests() {
   auto test_programs = stencil_programs();
-  test_schedules(test_programs);
   test_stencil_codegen(test_programs);
+  //test_schedules(test_programs);
 
   assert(false);
 }
