@@ -13109,8 +13109,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.all_rams = true;
   all_exhaustive_banked(prg, options);
 
-  //options.inner_bank_offset_mode =
-    //INNER_BANK_OFFSET_LINEAR;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_CYCLE_DELAY;
 
   schedule_info sched = garnet_schedule_info(prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
@@ -13150,7 +13150,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   }
 
   auto buffers = build_buffers(prg, hw_sched);
-  generate_app_code(options, buffers, prg, hw_sched);
+  //generate_app_code(options, buffers, prg, hw_sched);
 
 #ifdef COREIR
 
@@ -13160,11 +13160,11 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     //hw_sched);
   //assert(false);
 
-  //generate_coreir(options,
-    //buffers,
-    //prg,
-    //hw_sched);
-  //generate_verilator_tb(prg, hw_sched, buffers);
+  generate_coreir(options,
+    buffers,
+    prg,
+    hw_sched);
+  generate_verilator_tb(prg, hw_sched, buffers);
 
   // Insert coreir generation here
 #endif
@@ -13286,11 +13286,11 @@ void cgra_flow_tests() {
     //assert(false);
 
     compile_for_garnet_dual_port_mem(prg);
-    //generate_regression_testbench(prg);
+    generate_regression_testbench(prg);
     //auto cgra_sim = run_regression_tb(prg.name);
 
     cout << "Output name: " << prg.name << endl;
-    assert(false);
+    //assert(false);
     //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
     run_verilator_tb(prg.name);
     assert(false);

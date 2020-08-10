@@ -1036,19 +1036,52 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           //def->sel(controller_name(writer))->sel("d"));
         }
       } else {
-        cout << "# readers of " << bank.name << " = " << bank.num_readers << endl;
-        cout << "Delays = " << comma_list(bank.read_delays) << endl;
-        assert(bank.num_readers == 1);
-        assert(bank.read_delays.size() == 2);
-        auto mod = delay_module(c, width, bank.read_delays);
-        auto bnk = def->addInstance(
-            bank.name,
-            mod);
+        assert(false);
+        //cout << "# readers of " << bank.name << " = " << bank.num_readers << endl;
+        //cout << "Delays = " << comma_list(bank.read_delays) << endl;
+        //assert(bank.num_readers == 1);
+        //assert(bank.read_delays.size() == 2);
+        //auto mod = delay_module(c, width, bank.read_delays);
+        //auto bnk = def->addInstance(
+            //bank.name,
+            //mod);
       }
     }
   }
 
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+
+    if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_CYCLE_DELAY) {
+      auto sched = buf.global_schedule();
+
+      for (auto inpt : buf.get_in_ports()) {
+        for (auto outpt : buf.get_out_ports()) {
+          auto writes = buf.access_map.at(inpt);
+          auto reads = buf.access_map.at(outpt);
+          cout << "writes: " << str(writes) << endl;
+          cout << "reads : " << str(reads) << endl;
+
+          auto time_to_write = dot(inv(sched), (writes));
+          auto time_to_read = dot(inv(sched), (reads));
+
+          cout << "Time to write: " << str(time_to_write) << endl;
+          cout << "Time to read : " << str(time_to_read) << endl;
+
+          auto pc_times = dot(time_to_write, inv(time_to_read));
+          cout << "PC times     : " << str(pc_times) << endl;
+          auto dds = isl_union_map_deltas(pc_times);
+          cout << "DDs          : " << str(dds) << endl;
+          auto ddc = to_set(dds);
+
+          assert(isl_set_is_singleton(ddc));
+          int dd = to_int(lexminval(ddc));
+          cout << "DD           : " << dd << endl;
+        }
+      }
+      //assert(false);
+      return;
+    }
+
     generate_banks(options, buf, def);
 
     int width = buf.port_widths;

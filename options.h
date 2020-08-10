@@ -22,7 +22,8 @@ enum ScheduleAlgorithm {
 enum InnerBankOffsetMode {
   INNER_BANK_OFFSET_STACK,
   INNER_BANK_OFFSET_LINEAR,
-  INNER_BANK_OFFSET_MULTILINEAR
+  INNER_BANK_OFFSET_MULTILINEAR,
+  INNER_BANK_OFFSET_CYCLE_DELAY
 };
 
 struct banking_strategy {
