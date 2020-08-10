@@ -12930,6 +12930,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     insert_pad_loops(prg, pad_indexes);
 
     prg.pretty_print();
+    single_depth = all_loop_nests_same_depth(prg);
     assert(single_depth);
 
     prg.pretty_print();
