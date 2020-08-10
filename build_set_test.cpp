@@ -12906,6 +12906,38 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     bool single_depth = all_loop_nests_same_depth(prg);
     int max_depth = max_loop_depth(prg);
 
+    std::set<string> multi_write_buffers;
+    for (auto k : get_kernels(prg)) {
+      for (auto b : get_produced_buffers(k, prg)) {
+        auto writers = find_writers(b, prg);
+        assert(writers.size() <= 2);
+        if (writers.size() > 1) {
+          multi_write_buffers.insert(b);
+        }
+      }
+    }
+
+    cout << "Multi-write buffers" << endl;
+    map<string, op*> initializers;
+    map<string, op*> updaters;
+    for (auto b : multi_write_buffers) {
+      cout << tab(1) << b << endl;
+      auto writers = find_writers(b, prg);
+      assert(writers.size() == 2);
+      op* w0 = *begin(writers);
+      op* w1 = *end(writers);
+
+      if (w0->read_addrs().size() == 0) {
+        initializers[b] = w0;
+        updaters[b] = w1;
+      } else {
+        initializers[b] = w1;
+        updaters[b] = w0;
+      }
+
+    }
+    assert(false);
+
     if (!single_depth) {
       map<string, vector<int> > pad_indexes;
       for (auto k : get_kernels(prg)) {

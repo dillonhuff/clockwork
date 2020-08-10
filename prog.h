@@ -152,6 +152,14 @@ struct ir_node {
     assert(false);
   }
 
+  vector<piecewise_address> read_addrs() const {
+    vector<piecewise_address> addrs;
+    for (auto l : consume_locs_pair) {
+      addrs.push_back(l.second);
+    }
+    return addrs;
+  }
+
   vector<piecewise_address> write_addrs() const {
     vector<piecewise_address> addrs;
     for (auto l : produce_locs) {
