@@ -12906,29 +12906,30 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     bool single_depth = all_loop_nests_same_depth(prg);
     int max_depth = max_loop_depth(prg);
 
-    map<string, vector<int> > pad_indexes;
-    for (auto k : get_kernels(prg)) {
-      auto lp = prg.find_loop(k);
-      for (auto rep : lp->descendant_ops()) {
-        int depth_m = loop_depth(prg.find_loop(k));
-        vector<int> inds;
-        inds.push_back(0);
-        for (int p = 0; p < max_depth - depth_m; p++) {
-          inds.push_back(-1);
-        }
-        for (int d = 1; d < depth_m + 1; d++) {
-          inds.push_back(d);
-        }
+    if (!single_depth) {
+      map<string, vector<int> > pad_indexes;
+      for (auto k : get_kernels(prg)) {
+        auto lp = prg.find_loop(k);
+        for (auto rep : lp->descendant_ops()) {
+          int depth_m = loop_depth(prg.find_loop(k));
+          vector<int> inds;
+          inds.push_back(0);
+          for (int p = 0; p < max_depth - depth_m; p++) {
+            inds.push_back(-1);
+          }
+          for (int d = 1; d < depth_m + 1; d++) {
+            inds.push_back(d);
+          }
 
-        pad_indexes[rep->name] = inds;
+          pad_indexes[rep->name] = inds;
+        }
       }
+      cout << "Pad inds..." << endl;
+      for (auto p : pad_indexes) {
+        cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+      }
+      insert_pad_loops(prg, pad_indexes);
     }
-    cout << "Pad inds..." << endl;
-    for (auto p : pad_indexes) {
-      cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
-    }
-    insert_pad_loops(prg, pad_indexes);
-
     prg.pretty_print();
     single_depth = all_loop_nests_same_depth(prg);
     assert(single_depth);
@@ -12943,12 +12944,17 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     for (auto m : get_maps(clksched_map)) {
       cout << tab(1) << str(m) << endl;
     }
+    cout << "Domain..." << endl;
+    for (auto d : get_sets(dom)) {
+      cout << tab(1) << str(d) << endl;
+    }
     uset* sbounds = range(its(clksched_map, dom));
     cout << "bounds..." << str(sbounds) << endl;
     auto bsets = get_sets(sbounds);
     assert(bsets.size() == 1);
 
     auto bset = pick(bsets);
+    //assert(false);
     vector<pair<int, int> > bounds;
     vector<int> lengths;
     for (int d = 0; d < num_dims(bset); d++) {
@@ -13001,11 +13007,11 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
-    int total_latency = 0;
+    int total_latency = 10000;
     for (auto op : inner_ops(prg)) {
       sched.op_offset_within_parent[op] = total_latency;
       sched.instance_latencies[op] = op_latency(op, sched);
-      total_latency += op_latency(op, sched);
+      total_latency += op_latency(op, sched) + 2;
     }
     return;
   }
@@ -13103,8 +13109,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.all_rams = true;
   all_exhaustive_banked(prg, options);
 
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_LINEAR;
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_LINEAR;
 
   schedule_info sched = garnet_schedule_info(prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
@@ -13154,11 +13160,11 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     //hw_sched);
   //assert(false);
 
-  generate_coreir(options,
-    buffers,
-    prg,
-    hw_sched);
-  generate_verilator_tb(prg, hw_sched, buffers);
+  //generate_coreir(options,
+    //buffers,
+    //prg,
+    //hw_sched);
+  //generate_verilator_tb(prg, hw_sched, buffers);
 
   // Insert coreir generation here
 #endif
@@ -13247,9 +13253,9 @@ void cgra_flow_tests() {
 #endif // COREIR
 
   vector<prog> test_programs;
+  test_programs.push_back(harris());
   test_programs.push_back(camera_pipeline_dse_1());
   test_programs.push_back(cascade());
-  test_programs.push_back(harris());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(camera_pipeline());
@@ -13284,6 +13290,7 @@ void cgra_flow_tests() {
     //auto cgra_sim = run_regression_tb(prg.name);
 
     cout << "Output name: " << prg.name << endl;
+    assert(false);
     //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
     run_verilator_tb(prg.name);
     assert(false);
