@@ -4845,6 +4845,31 @@ void merge_basic_block_ops(prog& prg) {
 
 }
 
+template<typename F>
+void bft(op* op, F test) {
+  for (auto c : op->children) {
+    test(op);
+  }
+  for (auto c : op->children) {
+    bft(c, test);
+  }
+}
+
+template<typename F>
+void bft(prog& prg, F test) {
+  bft(prg.root, test);
+}
+
+std::vector<op*> get_ordered_inner_loops(prog& prg) {
+  std::vector<op*> inner;
+  bft(prg, [&inner](op* node) {
+      if (is_inner_loop(node)) {
+      inner.push_back(node);
+      }
+      });
+  return inner;
+}
+
 std::set<op*> get_inner_loops(prog& prg) {
   std::set<op*> inner;
   for (auto lp_pair : get_variable_levels(prg)) {
@@ -5192,3 +5217,16 @@ void generate_verilator_tb(prog& prg,
     return maps;
   }
 
+bool is_inner_loop(op* op) {
+  if (!op->is_loop) {
+    return false;
+
+  }
+
+  for (auto c : op->children) {
+    if (c->is_loop) {
+      return false;
+    }
+  }
+  return true;
+}

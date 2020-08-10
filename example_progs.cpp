@@ -2142,10 +2142,10 @@ prog camera_pipeline_dse_1() {
 
 // Stencil<uint8_t, 64, 64> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
-  prg.buffer_port_widths["hw_input_stencil"] = 8;
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
 // Stencil<uint8_t, 58, 58, 3> &hw_output_stencil = arg_1;
   prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 8;
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing curve.stencil
 
@@ -2158,7 +2158,7 @@ prog camera_pipeline_dse_1() {
   auto hcompute_hw_input_copy_stencil = hw_input_copy_s0_x->add_op("op_hcompute_hw_input_copy_stencil");
   hcompute_hw_input_copy_stencil->add_function("hcompute_hw_input_copy_stencil");
   hcompute_hw_input_copy_stencil->add_load("hw_input_stencil", "hw_input_copy_s0_x", "hw_input_copy_s0_y");
-  prg.buffer_port_widths["hw_input_copy_stencil"] = 8;
+  prg.buffer_port_widths["hw_input_copy_stencil"] = 16;
   hcompute_hw_input_copy_stencil->add_store("hw_input_copy_stencil", "hw_input_copy_s0_x", "hw_input_copy_s0_y");
 
 //consuming hw_input_copy.stencil
@@ -2174,7 +2174,7 @@ prog camera_pipeline_dse_1() {
   hcompute_denoised_1_stencil->add_load("hw_input_copy_stencil", "denoised_1_s0_x", "(denoised_1_s0_y + -2)");
   hcompute_denoised_1_stencil->add_load("hw_input_copy_stencil", "(denoised_1_s0_x + -2)", "denoised_1_s0_y");
   hcompute_denoised_1_stencil->add_load("hw_input_copy_stencil", "(denoised_1_s0_x + 2)", "denoised_1_s0_y");
-  prg.buffer_port_widths["denoised_1_stencil"] = 8;
+  prg.buffer_port_widths["denoised_1_stencil"] = 16;
   hcompute_denoised_1_stencil->add_store("denoised_1_stencil", "denoised_1_s0_x", "denoised_1_s0_y");
 
 //consuming denoised$1.stencil
@@ -2193,7 +2193,7 @@ prog camera_pipeline_dse_1() {
   hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "(demosaicked_1_s0_x + 1)", "(demosaicked_1_s0_y + -1)");
   hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "demosaicked_1_s0_x", "(demosaicked_1_s0_y + -1)");
   hcompute_demosaicked_1_stencil->add_load("denoised_1_stencil", "(demosaicked_1_s0_x + -1)", "(demosaicked_1_s0_y + -1)");
-  prg.buffer_port_widths["demosaicked_1_stencil"] = 8;
+  prg.buffer_port_widths["demosaicked_1_stencil"] = 16;
   hcompute_demosaicked_1_stencil->add_store("demosaicked_1_stencil", "demosaicked_1_s0_x", "demosaicked_1_s0_y", "0");
   hcompute_demosaicked_1_stencil->compute_unit_needs_index_variable("demosaicked_1_s0_x");
   hcompute_demosaicked_1_stencil->compute_unit_needs_index_variable("demosaicked_1_s0_y");
