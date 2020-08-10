@@ -12944,6 +12944,7 @@ void dsa_writers(prog& prg) {
     init->replace_writes_to(b, init_buffer);
     cout << "Replacing reads from " << b << " in " << updated->name << endl;
     updated->replace_reads_from(b, init_buffer);
+    prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
   }
 
   prg.pretty_print();
@@ -13303,7 +13304,7 @@ void test_schedules(vector<prog>& test_programs) {
     }
   }
 
-  assert(false);
+  //assert(false);
 }
 
 vector<prog> stencil_programs() {
@@ -13326,9 +13327,34 @@ vector<prog> stencil_programs() {
   return test_programs;
 }
 
+void test_stencil_codegen(vector<prog>& test_programs) {
+  for (auto& prg : test_programs) {
+    cout << "====== Running CGRA test for " << prg.name << endl;
+    prg.sanity_check();
+
+    //auto cpu = unoptimized_result(prg);
+    //assert(false);
+
+    compile_for_garnet_dual_port_mem(prg);
+    generate_regression_testbench(prg);
+    //auto cgra_sim = run_regression_tb(prg.name);
+
+    cout << "Output name: " << prg.name << endl;
+    //assert(false);
+    //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
+    //run_verilator_tb(prg.name);
+    //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
+    //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
+    //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
+    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/raw_sram/" + prg.name + "/");
+    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/raw_sram/" + prg.name + "/");
+  }
+}
+
 void cgra_flow_tests() {
   auto test_programs = stencil_programs();
   test_schedules(test_programs);
+  test_stencil_codegen(test_programs);
 
   assert(false);
 }
