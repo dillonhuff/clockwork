@@ -13329,8 +13329,8 @@ vector<prog> stencil_programs() {
 
 
   // Need to fix DSA writers
-  test_programs.push_back(camera_pipeline_dse_1());
-  test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(camera_pipeline_dse_1());
+  //test_programs.push_back(camera_pipeline());
   return test_programs;
 }
 
