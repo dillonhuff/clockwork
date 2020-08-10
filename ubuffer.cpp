@@ -956,7 +956,15 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return bcm;
   }
 
-  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+  void generate_shift_register(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+    for (auto in : buf.get_in_ports()) {
+      cout << tab(1) << in << endl;
+
+    }
+    assert(false);
+  }
+
+  void generate_banks(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
 
     auto c = def->getContext();
@@ -964,70 +972,90 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto ns = c->getNamespace("global");
 
     for (auto bank : buf.get_banks()) {
-      int capacity = int_upper_bound(card(bank.rddom));
-      int addr_width = minihls::clog2(capacity);
-      //auto bnk = def->addInstance(bank.name, lake_rf(width, capacity));
-      ram_module(c, width, capacity);
-      //auto bnk = def->addInstance(
-          //bank.name,
-          //"global.raw_dual_port_sram_tile",
-          //{}
-          //);
-      auto bnk = def->addInstance(
-          bank.name,
-          "global.raw_dual_port_sram_tile",
-          {{"depth", COREMK(c, capacity)}}
-          );
-      //auto bnk = def->addInstance(
-          //bank.name,
-          //ram_module(c, width, capacity));
+      if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
+        int capacity = int_upper_bound(card(bank.rddom));
+        int addr_width = minihls::clog2(capacity);
+        //auto bnk = def->addInstance(bank.name, lake_rf(width, capacity));
+        ram_module(c, width, capacity);
+        //auto bnk = def->addInstance(
+        //bank.name,
+        //"global.raw_dual_port_sram_tile",
+        //{}
+        //);
+        auto bnk = def->addInstance(
+            bank.name,
+            "global.raw_dual_port_sram_tile",
+            {{"depth", COREMK(c, capacity)}}
+            );
+        //auto bnk = def->addInstance(
+        //bank.name,
+        //ram_module(c, width, capacity));
 
-      {
-        auto bank_readers = buf.get_bank_outputs(bank.name);
-        assert(bank_readers.size() == 1);
-        auto reader = pick(bank_readers);
-        auto acc_map = to_map(buf.access_map.at(reader));
-        cout << "acc map = " << str(acc_map) << endl;
-        auto reduce_map = linear_address_map(to_set(bank.rddom));
-        cout << "reduce map = " << str(reduce_map) << endl;
-        auto addr_expr = dot(acc_map, reduce_map);
-        cout << "composition = " << str(addr_expr) << endl;
-        auto addr_expr_aff = get_aff(addr_expr);
+        {
+          auto bank_readers = buf.get_bank_outputs(bank.name);
+          assert(bank_readers.size() == 1);
+          auto reader = pick(bank_readers);
+          auto acc_map = to_map(buf.access_map.at(reader));
+          cout << "acc map = " << str(acc_map) << endl;
+          auto reduce_map = linear_address_map(to_set(bank.rddom));
+          cout << "reduce map = " << str(reduce_map) << endl;
+          auto addr_expr = dot(acc_map, reduce_map);
+          cout << "composition = " << str(addr_expr) << endl;
+          auto addr_expr_aff = get_aff(addr_expr);
 
-        auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
-        auto agen = def->addInstance(read_addrgen_name(bank.name), aff_gen_mod);
-        
-        def->connect(agen->sel("out"), bnk->sel("raddr"));
-        def->connect(agen->sel("d"),
-            control_vars(def, reader, buf));
-            //def->sel(controller_name(reader))->sel("d"));
-        def->connect(bnk->sel("ren"),
-            control_en(def, reader, buf));
-            //def->sel(controller_name(reader))->sel("valid"));
-      }
+          auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+          auto agen = def->addInstance(read_addrgen_name(bank.name), aff_gen_mod);
 
-      {
-        auto bank_writers = buf.get_bank_inputs(bank.name);
-        assert(bank_writers.size() == 1);
-        auto writer = pick(bank_writers);
-        auto acc_map = to_map(buf.access_map.at(writer));
-        cout << "acc map = " << str(acc_map) << endl;
-        auto reduce_map = linear_address_map(to_set(bank.rddom));
-        cout << "reduce map = " << str(reduce_map) << endl;
-        auto addr_expr = dot(acc_map, reduce_map);
-        cout << "composition = " << str(addr_expr) << endl;
-        auto addr_expr_aff = get_aff(addr_expr);
+          def->connect(agen->sel("out"), bnk->sel("raddr"));
+          def->connect(agen->sel("d"),
+              control_vars(def, reader, buf));
+          //def->sel(controller_name(reader))->sel("d"));
+          def->connect(bnk->sel("ren"),
+              control_en(def, reader, buf));
+          //def->sel(controller_name(reader))->sel("valid"));
+        }
 
-        auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
-        auto agen = def->addInstance(write_addrgen_name(bank.name), aff_gen_mod);
-        
-        def->connect(agen->sel("out"), bnk->sel("waddr"));
-        def->connect(agen->sel("d"),
-            control_vars(def, writer, buf));
-            //def->sel(controller_name(writer))->sel("d"));
+        {
+          auto bank_writers = buf.get_bank_inputs(bank.name);
+          assert(bank_writers.size() == 1);
+          auto writer = pick(bank_writers);
+          auto acc_map = to_map(buf.access_map.at(writer));
+          cout << "acc map = " << str(acc_map) << endl;
+          auto reduce_map = linear_address_map(to_set(bank.rddom));
+          cout << "reduce map = " << str(reduce_map) << endl;
+          auto addr_expr = dot(acc_map, reduce_map);
+          cout << "composition = " << str(addr_expr) << endl;
+          auto addr_expr_aff = get_aff(addr_expr);
+
+          auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+          auto agen = def->addInstance(write_addrgen_name(bank.name), aff_gen_mod);
+
+          def->connect(agen->sel("out"), bnk->sel("waddr"));
+          def->connect(agen->sel("d"),
+              control_vars(def, writer, buf));
+          //def->sel(controller_name(writer))->sel("d"));
+        }
+      } else {
+        cout << "# readers of " << bank.name << " = " << bank.num_readers << endl;
+        cout << "Delays = " << comma_list(bank.read_delays) << endl;
+        assert(bank.num_readers == 1);
+        assert(bank.read_delays.size() == 2);
+        //auto bnk = def->addInstance(
+            //bank.name,
+            //"global.sr_module",
+            //{{"depth", COREMK(c, capacity)}}
+            //);
+        assert(false);
       }
     }
+  }
 
+  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+    generate_banks(options, buf, def);
+
+    int width = buf.port_widths;
+    auto c = def->getContext();
+    auto ns = c->getNamespace("global");
 
     for (auto inpt : buf.get_in_ports()) {
       auto bcm = coreir_broadcast(c, inpt, buf);
@@ -1053,7 +1081,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       def->connect(
           control_vars(def, outpt, buf),
-          //def->sel(controller_name(outpt))->sel("d"),
           bc->sel("d"));
       def->connect(bc->sel("out"), def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)));
     }
