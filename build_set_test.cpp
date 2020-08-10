@@ -12924,8 +12924,12 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       cout << tab(1) << b << endl;
       auto writers = find_writers(b, prg);
       assert(writers.size() == 2);
-      op* w0 = *begin(writers);
-      op* w1 = *end(writers);
+      vector<op*> ws;
+      for (auto w : writers) {
+        ws.push_back(w);
+      }
+      op* w0 = ws.at(0);
+      op* w1 = ws.at(1);
 
       if (w0->read_addrs().size() == 0) {
         initializers[b] = w0;
@@ -12934,9 +12938,24 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         initializers[b] = w1;
         updaters[b] = w0;
       }
-
     }
-    assert(false);
+
+    cout << "Built initializer / update maps" << endl;
+
+    for (auto b : multi_write_buffers) {
+      string init_buffer = prg.un(b);
+      auto init = initializers[b];
+      assert(init != 0);
+      auto updated = updaters[b];
+      assert(updated != 0);
+      cout << "Replacing writes" << endl;
+      init->replace_writes_to(b, init_buffer);
+      cout << "Replacing reads from " << b << " in " << updated->name << endl;
+      updated->replace_reads_from(b, init_buffer);
+    }
+
+    prg.pretty_print();
+    //assert(false);
 
     if (!single_depth) {
       map<string, vector<int> > pad_indexes;
