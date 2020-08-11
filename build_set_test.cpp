@@ -10013,7 +10013,7 @@ std::vector<string> verilator_results(const std::string& name) {
 void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v");
   assert(to_verilog_res == 0);
 
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
@@ -12630,7 +12630,9 @@ int op_latency(op* op, const schedule_info& hwinfo) {
 
   // Then we need to wait for the compute unit to finish
   if (op->func != "") {
-    total_latency += map_find(op->func, hwinfo.compute_unit_latencies);
+    int latency = map_find(op->func, hwinfo.compute_unit_latencies);
+    //assert(latency == 0);
+    total_latency += latency;
   }
 
   // Then we need to wait for the data that comes out of the compute
@@ -12784,6 +12786,19 @@ map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
 
   return schedule_affs;
 
+}
+
+uset* op_start_times_domain(prog& prg) {
+  auto start_times = prg.whole_iteration_domain();
+
+  uset* s = isl_union_set_read_from_str(prg.ctx, "{}");
+  for (auto a : get_sets(start_times)) {
+    a = set_name(a, "start_" + name(a));
+    s = unn(s, to_uset(a));
+    release(a);
+  }
+
+  return s;
 }
 
 umap* op_start_times_map(schedule_info& sched, prog& prg) {
@@ -13030,6 +13045,28 @@ void dsa_writers(prog& prg) {
   }
 }
 
+void adjust_schedule_forward(schedule_info& sched, prog& prg) {
+  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+  cout << "Start times..." << endl;
+  cout << str(start_times) << endl;
+  auto ranges = range(start_times);
+  auto range_set = to_set(ranges);
+  int min = to_int(lexminval(range_set));
+  cout << tab(1) << "pre adjustment min: " << str(lexmin(ranges)) << endl;
+
+  // Just to be safe we start the cycle after reset
+  min = min - 1;
+
+  if (min <= 0) {
+    for (auto k : get_kernels(prg)) {
+      auto loop = prg.find_loop(k);
+      sched.op_offset_within_parent[loop] = map_find(loop, sched.op_offset_within_parent) - min;
+    }
+  }
+
+
+}
+
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   auto rvars = reduce_vars(prg);
   bool perfect = all_perfect_loop_nests(prg);
@@ -13147,6 +13184,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       sched.instance_latencies[op] = op_latency(op, sched);
       total_latency += op_latency(op, sched) + 2;
     }
+
+    adjust_schedule_forward(sched, prg);
     return;
   }
 
@@ -13229,7 +13268,14 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
   for (auto op : prg.all_ops()) {
-    if (op->func != "") {
+    // Extremely hacky rom latency introduction
+    if (op->func == "hcompute_curved_stencil") {
+      sched.compute_unit_latencies[op->func] = 1;
+    } else if (op->func == "hcompute_curved_stencil_1") {
+      sched.compute_unit_latencies[op->func] = 1;
+    } else if (op->func == "hcompute_curved_stencil_2") {
+      sched.compute_unit_latencies[op->func] = 1;
+    } else if (op->func != "") {
       sched.compute_unit_latencies[op->func] = 0;
     }
 
@@ -13248,6 +13294,7 @@ schedule_info garnet_schedule_info(prog& prg) {
 }
 
 void compile_for_garnet_dual_port_mem(prog& prg) {
+  normalize_bounds(prg);
 
   CodegenOptions options;
   options.internal = true;
@@ -13294,6 +13341,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     cout << tab(1) << str(m) << endl;
   }
 
+  assert(no_violated_cycle_accurate_dependencies(sched, prg));
   auto buffers = build_buffers(prg, hw_sched);
   //generate_app_code(options, buffers, prg, hw_sched);
 
@@ -13338,8 +13386,21 @@ void sanity_check_iis(schedule_info& sched) {
   }
 }
 
+void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
+  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+  cout << "Start times..." << endl;
+  cout << str(start_times) << endl;
+  auto ranges = range(start_times);
+  auto range_set = to_set(ranges);
+  int min = to_int(lexminval(range_set));
+
+  cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
+  assert(min >= 0);
+}
+
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
   sanity_check_iis(sched);
+  sanity_check_negative_starts(sched, prg);
 
   auto start_times = op_start_times_map(sched, prg);
   auto end_times = op_end_times_map(sched, prg);
@@ -13395,10 +13456,10 @@ vector<prog> stencil_programs() {
 
   // Failing
   //test_programs.push_back(unsharp());
-  //test_programs.push_back(harris());
+  test_programs.push_back(harris());
   //test_programs.push_back(halide_harris());
 
-  test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(camera_pipeline());
 
   // Working
   test_programs.push_back(mini_conv_halide_fixed());

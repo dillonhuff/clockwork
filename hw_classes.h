@@ -385,6 +385,10 @@ class HWStream {
 
     deque<T> values;
 
+    int num_waiting() const {
+      return values.size();
+    }
+
     bool is_empty() const {
       return values.size() == 0;
     }
