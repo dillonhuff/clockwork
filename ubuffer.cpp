@@ -1146,6 +1146,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
                 srinst->sel("rdata"));
 
             prior_delay = total_delay;
+            prior_wire = srinst->sel("rdata");
           }
         }
       }
