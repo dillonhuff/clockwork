@@ -695,7 +695,6 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
           cout << "name = " << name << endl;
           if (is_prefix("in", name) &&
               contains(name, bundle.first)) {
-              //def->connect(halide_cu->sel(name)->sel(0), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
             
             int lanes = buf.lanes_in_bundle(bundle.second);
             for (int l = 0; l < lanes; l++) {
@@ -708,28 +707,49 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
         assert(found);
       }
 
-      for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+      auto fields = halide_cu->getModuleRef()->getType()->getFields();
+      auto out_bundles = outgoing_bundles(op, buffers, prg);
+      if (out_bundles.size() == 0) {
+        auto bundle = pick(out_bundles);
         auto buf = map_find(bundle.first, buffers);
-        bool found = false;
-        cout << "# of selects = " << halide_cu->getSelects().size() << endl;
-        cout << CoreIR::toString(halide_cu) << endl;
         for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
           string name = s;
           cout << "name = " << name << endl;
-          if (is_prefix("out", name) &&
-              contains(name, bundle.first)) {
+          if (is_prefix("out", name)) {
             int lanes = buf.lanes_in_bundle(bundle.second);
             assert(lanes == 1);
 
             def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
-            found = true;
             break;
           }
         }
-        if (!found) {
-          cout << "Error: Could not find compute unit for " << pg(bundle.first, bundle.second) << endl;
+
+      } else {
+        cout << "More than oune outgoing bundle" << endl;
+        for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+          auto buf = map_find(bundle.first, buffers);
+          bool found = false;
+          cout << "# of selects = " << halide_cu->getSelects().size() << endl;
+          cout << CoreIR::toString(halide_cu) << endl;
+          for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
+            string name = s;
+            cout << "name = " << name << endl;
+            if (is_prefix("out", name) &&
+                contains(name, bundle.first)) {
+              int lanes = buf.lanes_in_bundle(bundle.second);
+              assert(lanes == 1);
+
+              def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            cout << "Error: Could not find compute unit connection for " << pg(bundle.first, bundle.second) << " in compute unit " << halide_cu->getInstname() << endl;
+          }
+          assert(found);
         }
-        assert(found);
+
       }
     } else {
       // Generate dummy compute logic
