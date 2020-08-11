@@ -3034,11 +3034,11 @@ vector<string> reduce_vars(prog& prg) {
         assert(a.size() > 0);
         for (auto ar : a) {
           isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, ar.second);
-          cout << tab(2) << str(a) << endl;
-          cout << tab(2) << str(ma) << endl;
+          //cout << tab(2) << str(a) << endl;
+          //cout << tab(2) << str(ma) << endl;
           for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
             auto aff = isl_multi_aff_get_aff(ma, i);
-            cout << tab(3) << i << ": " << str(aff) << endl;
+            //cout << tab(3) << i << ": " << str(aff) << endl;
 
             for (int d = 0; d < num_in_dims(aff); d++) {
               isl_val* coeff = get_coeff(aff, d);
@@ -3083,11 +3083,11 @@ vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& pr
     assert(a.size() > 0);
     for (auto ar : a) {
       isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, ar.second);
-      cout << tab(2) << str(a) << endl;
-      cout << tab(2) << str(ma) << endl;
+      //cout << tab(2) << str(a) << endl;
+      //cout << tab(2) << str(ma) << endl;
       for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
         auto aff = isl_multi_aff_get_aff(ma, i);
-        cout << tab(3) << i << ": " << str(aff) << endl;
+        //cout << tab(3) << i << ": " << str(aff) << endl;
 
         for (int d = 0; d < num_in_dims(aff); d++) {
           isl_val* coeff = get_coeff(aff, d);

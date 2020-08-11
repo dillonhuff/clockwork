@@ -13437,21 +13437,16 @@ vector<prog> stencil_programs() {
 
   //test_programs.push_back(up_sample());
 
-  // Fails at 256?
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(harris());
   test_programs.push_back(rom());
-  // commonlib div?
   test_programs.push_back(unsharp());
-
-  // Working
-  test_programs.push_back(camera_pipeline());
   test_programs.push_back(cascade());
   test_programs.push_back(pointwise());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(gaussian());
   test_programs.push_back(down_sample());
   test_programs.push_back(strided_conv());
-  //test_programs.push_back(halide_harris());
 
   return test_programs;
 }
@@ -13460,14 +13455,13 @@ vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
   // Address generation broken, classified as stencil pipelin
-  //test_programs.push_back(up_sample());
+  test_programs.push_back(up_sample());
 
-  //test_programs.push_back(unet_conv_3_3());
-  //test_programs.push_back(conv_layer());
-
-  //test_programs.push_back(partially_unrolled_conv());
-  //test_programs.push_back(accumulation());
-  //test_programs.push_back(resnet());
+  test_programs.push_back(unet_conv_3_3());
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(partially_unrolled_conv());
+  test_programs.push_back(accumulation());
+  test_programs.push_back(resnet());
   test_programs.push_back(conv_multi());
 
   concat(test_programs, stencil_programs());
@@ -13503,9 +13497,32 @@ void test_stencil_codegen(vector<prog>& test_programs) {
   }
 }
 
+std::set<string> all_buffers(prog& prg) {
+  std::set<string> bufs;
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_referenced()) {
+      bufs.insert(b);
+    }
+  }
+  return bufs;
+}
+
 void cgra_flow_tests() {
-  auto test_programs = stencil_programs();
-  //auto test_programs = all_cgra_programs();
+  //auto test_programs = stencil_programs();
+  auto test_programs = all_cgra_programs();
+  cout << "====== Program classification" << endl;
+  for (auto prg : test_programs) {
+    if (!is_rate_matchable(prg)) {
+      cout << tab(1) << prg.name << " is not rate matchable" << endl;
+      for (auto b : all_buffers(prg)) {
+        if (!prg.is_boundary(b)) {
+          cout << tab(2) << b << endl;
+        }
+      }
+    }
+  }
+  assert(false);
+
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
 
