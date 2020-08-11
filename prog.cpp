@@ -5177,6 +5177,7 @@ void generate_verilator_tb(prog& prg,
   }
 
   for (auto in : prg.ins) {
+    rgtb << tab(1) << "cout << \"# of elements waiting in: " << in << " = \" << " << in << ".num_waiting() << endl;" << endl;
     rgtb << tab(1) << "assert(" << in << ".is_empty());" << endl;
   }
 
