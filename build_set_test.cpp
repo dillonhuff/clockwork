@@ -13507,6 +13507,12 @@ std::set<string> all_buffers(prog& prg) {
   return bufs;
 }
 
+bool is_reduce_buffer(const std::string& buff, prog& prg) {
+  auto writers = find_writers(buff, prg);
+
+  return writers.size() > 1;
+}
+
 void cgra_flow_tests() {
   //auto test_programs = stencil_programs();
   auto test_programs = all_cgra_programs();
@@ -13516,7 +13522,11 @@ void cgra_flow_tests() {
       cout << tab(1) << prg.name << " is not rate matchable" << endl;
       for (auto b : all_buffers(prg)) {
         if (!prg.is_boundary(b)) {
-          cout << tab(2) << b << endl;
+          if (is_reduce_buffer(b, prg)) {
+            cout << tab(2) << "REDUCE: " << b << endl;
+          } else {
+            cout << tab(2) << "PC    : " << b << endl;
+          }
         }
       }
     }
