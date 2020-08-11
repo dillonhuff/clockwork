@@ -19,3 +19,4 @@ prog up_sample();
 prog down_sample();
 prog conv_layer();
 prog camera_pipeline_dse_1();
+prog rom();
