@@ -650,8 +650,13 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 #ifdef COREIR
 
 
-//generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
+  schedule_info info;
+  generate_coreir(options, def, info);
+}
+
+//generate/realize the rewrite structure inside ubuffer node
+void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info) {
   auto context = def->getContext();
   //for (auto it : get_banks()) {
     //auto connection = it.first;
@@ -1158,6 +1163,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   //generate coreir instance for single ubuffer
   //return the coreir module with port bundle and enable/valid interface
   CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
+    schedule_info info;
+    return generate_coreir(options, context, buf, info);
+  }
+
+  CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo) {
     auto ns = context->getNamespace("global");
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")}};
