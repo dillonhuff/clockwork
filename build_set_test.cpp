@@ -13266,7 +13266,14 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
   for (auto op : prg.all_ops()) {
-    if (op->func != "") {
+    // Extremely hacky rom latency introduction
+    if (op->func == "hcompute_curved_stencil") {
+      sched.compute_unit_latencies[op->func] = 1;
+    } else if (op->func == "hcompute_curved_stencil_1") {
+      sched.compute_unit_latencies[op->func] = 1;
+    } else if (op->func == "hcompute_curved_stencil_2") {
+      sched.compute_unit_latencies[op->func] = 1;
+    } else if (op->func != "") {
       sched.compute_unit_latencies[op->func] = 0;
     }
 
