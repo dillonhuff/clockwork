@@ -5160,7 +5160,8 @@ void generate_verilator_tb(prog& prg,
     rgtb << tab(2) << "cout << (int) *(" << data_name << ") << endl;" << endl;
     //rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
     rgtb << tab(2) << "hw_uint<16> val((int) *(" << data_name << "));" << endl;
-    rgtb << tab(2) << "fout << val << endl;" << endl;
+    //rgtb << tab(2) << "fout << val << endl;" << endl;
+    rgtb << tab(2) << out.first << ".write(val);" << endl;
     rgtb << tab(1) << "}" << endl;
   }
 
