@@ -13001,7 +13001,10 @@ void dsa_writers(prog& prg) {
         string init_buffer = prg.un(b + "_clkwrk_write_duplicate");
         writer->replace_writes_to(b, init_buffer);
         prg.add_output(init_buffer);
+        prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
       }
+
+      prg.outs.erase(b);
 
       //// Now: Group writers and readers by their overlap sets?
 
