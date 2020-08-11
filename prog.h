@@ -1618,3 +1618,53 @@ void print_box_bounds(const std::string& name, T* pr){
 void normalize_bounds(prog& prg);
 
 bool is_inner_loop(op* op);
+
+struct schedule_info {
+  // Schedule constraints
+  map<string, int> buffer_load_latencies;
+  map<string, int> buffer_store_latencies;
+  map<string, int> compute_unit_latencies;
+
+  // Schedule offsets
+  map<string, int> loop_iis;
+  map<op*, int> instance_latencies;
+  map<op*, int> op_offset_within_parent;
+
+  int offset_in_parent(op* c) {
+    assert(contains_key(c, op_offset_within_parent));
+    return map_find(c, op_offset_within_parent);
+  }
+
+  int last_update_delay(op* op) {
+    assert(op->is_loop);
+    int last_delay = 0;
+    for (auto c : op->children) {
+      int delay = offset_in_parent(c) + total_latency(c);
+      if (delay > last_delay) {
+        last_delay = delay;
+      }
+    }
+    return last_delay;
+  }
+
+  int total_latency(op* op) {
+    if (!op->is_loop) {
+      assert(contains_key(op, instance_latencies));
+      return map_find(op, instance_latencies);
+    }
+    return II(op)*(op->trip_count() - 1) + instance_latency(op);
+  }
+
+  int instance_latency(op* op) {
+    assert(contains_key(op, instance_latencies));
+    return map_find(op, instance_latencies);
+  }
+
+  int II(op* op) {
+    assert(op->is_loop);
+    assert(contains_key(op->name, loop_iis));
+    return map_find(op->name, loop_iis);
+  }
+
+};
+

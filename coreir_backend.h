@@ -41,6 +41,12 @@ void generate_coreir(CodegenOptions& options,
     prog& prg,
     umap* schedmap);
 
+void generate_coreir(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    schedule_info& hwinfo);
+
   CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
       CoreIR::Wireable* w);
 
