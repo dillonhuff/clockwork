@@ -693,8 +693,9 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
         for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
           string name = s;
           cout << "name = " << name << endl;
+          string sname = split_at(bundle.first, "_clkwrk_").at(0);
           if (is_prefix("in", name) &&
-              contains(name, bundle.first)) {
+              contains(name, sname)) {
             
             int lanes = buf.lanes_in_bundle(bundle.second);
             for (int l = 0; l < lanes; l++) {
@@ -707,50 +708,35 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
         assert(found);
       }
 
-      auto fields = halide_cu->getModuleRef()->getType()->getFields();
-      auto out_bundles = outgoing_bundles(op, buffers, prg);
-      if (out_bundles.size() == 0) {
-        auto bundle = pick(out_bundles);
+      cout << "More than oune outgoing bundle" << endl;
+      for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
         auto buf = map_find(bundle.first, buffers);
+        bool found = false;
+        cout << "# of selects = " << halide_cu->getSelects().size() << endl;
+        cout << CoreIR::toString(halide_cu) << endl;
         for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
           string name = s;
-          cout << "name = " << name << endl;
-          if (is_prefix("out", name)) {
+          cout << tab(1) << "name = " << name << endl;
+          cout << tab(1) << "bundle.first = " << bundle.first << endl;
+          string sname = split_at(bundle.first, "_clkwrk_").at(0);
+          cout << tab(1) << "after split  = " << sname << endl;
+          if (is_prefix("out", name) &&
+              //contains(name, bundle.first)) {
+              contains(name, sname)) {
             int lanes = buf.lanes_in_bundle(bundle.second);
             assert(lanes == 1);
 
             def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+            found = true;
             break;
           }
         }
-
-      } else {
-        cout << "More than oune outgoing bundle" << endl;
-        for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-          auto buf = map_find(bundle.first, buffers);
-          bool found = false;
-          cout << "# of selects = " << halide_cu->getSelects().size() << endl;
-          cout << CoreIR::toString(halide_cu) << endl;
-          for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
-            string name = s;
-            cout << "name = " << name << endl;
-            if (is_prefix("out", name) &&
-                contains(name, bundle.first)) {
-              int lanes = buf.lanes_in_bundle(bundle.second);
-              assert(lanes == 1);
-
-              def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
-              found = true;
-              break;
-            }
-          }
-          if (!found) {
-            cout << "Error: Could not find compute unit connection for " << pg(bundle.first, bundle.second) << " in compute unit " << halide_cu->getInstname() << endl;
-          }
-          assert(found);
+        if (!found) {
+          cout << "Error: Could not find compute unit connection for " << pg(bundle.first, bundle.second) << " in compute unit " << halide_cu->getInstname() << endl;
         }
-
+        assert(found);
       }
+
     } else {
       // Generate dummy compute logic
       cout << "generating dummy compute" << endl;
@@ -770,13 +756,6 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
           def->sel("self." + pg(buf_name, bundle_name));
         for (int l = 0; l < nlanes; l++) {
           inputs.push_back(bsel->sel(l));
-          //int lo = l*pix_width;
-          //int hi = lo + pix_width;
-          //assert(hi - lo == pix_width);
-          //auto w =
-            //def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
-          //def->connect(w->sel("in"), bsel->sel(0));
-          //inputs.push_back(w->sel("out"));
         }
       }
       auto result = addList(def, inputs);
@@ -787,15 +766,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
 
       cout << "done with dummy compute" << endl;
     }
-    //vector<CoreIR::Wireable*> vals;
-    //for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-      //vals.push_back(def->sel("self." + pg(bundle.first, bundle.second) + "_en"));
-    //}
-    //auto valid = andList(def, vals);
 
-    //for (auto bundle : outgoing_bundles(op, buffers, prg)) {
-      //def->connect(valid, def->sel("self." + pg(bundle.first, bundle.second) + "_valid"));
-    //}
     compute_unit->setDef(def);
   }
 

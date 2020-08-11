@@ -12972,7 +12972,7 @@ void dsa_writers(prog& prg) {
   cout << "Built initializer / update maps" << endl;
 
   for (auto b : multi_write_buffers) {
-    string init_buffer = prg.un(b);
+    string init_buffer = prg.un(b + "_clkwrk_dsa");
     auto init = initializers[b];
     assert(init != 0);
     auto updated = updaters[b];
