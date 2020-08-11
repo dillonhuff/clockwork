@@ -38,8 +38,8 @@ prog resnet_hc() {
 
 //consuming input_copy.stencil
 ////producing hw_input.stencil
-  auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 30);
-  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 30);
+  auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 32);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 32);
   auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 8);
 
 //store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
@@ -76,13 +76,13 @@ prog resnet_hc() {
 //consuming hw_input.stencil
   auto conv_s1_r_y = prg.add_loop("conv_s1_r_y", 0, 3);
   auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
-  auto conv_s1_ic = conv_s1_r_x->add_loop("conv_s1_ic", 0, 4);
-  auto conv_s1_oc = conv_s1_ic->add_loop("conv_s1_oc", 0, 4);
+  auto conv_s1_oc = conv_s1_r_x->add_loop("conv_s1_oc", 0, 4);
   auto conv_s1_y = conv_s1_oc->add_loop("conv_s1_y", 0, 28);
   auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 28);
+  auto conv_s1_ic = conv_s1_x->add_loop("conv_s1_ic", 0, 4);
 
 //store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
-  auto hcompute_conv_stencil_1 = conv_s1_x->add_op("op_hcompute_conv_stencil_1");
+  auto hcompute_conv_stencil_1 = conv_s1_ic->add_op("op_hcompute_conv_stencil_1");
   hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
   for (int oc_unroll = 0; oc_unroll < 4; oc_unroll ++) {
     hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_y", "conv_s1_x", "conv_s1_oc*4+" +  to_string(oc_unroll));
@@ -12464,10 +12464,20 @@ void lake_resnet_test() {
 
   //auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
   //auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
-  auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  for (auto it: buffers_opt) {
+    if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
+        continue;
+    }
+  auto buf = it.second;
+  auto ubuf_name = it.first;
+  if (ubuf_name != "hw_kernel_stencil")
+      continue;
+  //auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  auto post_proc_buffers = buf.generate_ubuffer(opt);
   opt.conditional_merge = false;
-  auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  //auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
   //auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  auto rewrite_buffers = buf.generate_ubuffer(opt);
   for (auto it: post_proc_buffers) {
     cout << "\tpost: " << it.first << ": " << it.second << endl;
   }
@@ -12481,7 +12491,7 @@ void lake_resnet_test() {
     tmp.insert(it);
     cout << "Vectorizing " << it.first << endl;
     cout << it.second << endl;
-    buffer_vectorization(it.first, 1, 4, tmp);
+    buffer_vectorization(it.first, 3, 4, tmp);
     cout << "Done with vectorization" << endl;
     //for (auto it: tmp) {
     //    auto buf = it.second;
@@ -12494,8 +12504,9 @@ void lake_resnet_test() {
     //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
     //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
 
-    //auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true, {"op_hcompute_hw_input_stencil_vec"});
-    auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
+    auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
     //auto opt_sched = optimized_schedule_from_buffers(temp);
     cout << str(opt_sched) << endl;
     cout << codegen_c(opt_sched) << endl;
@@ -12506,10 +12517,12 @@ void lake_resnet_test() {
     auto hsh = generate_hardware_schedule_heu(opt_sched, tmp, {}, app_target_II, {"op_hcompute_conv_stencil_1_vec_in"});
     cout << str(hsh) << endl;
     cout << codegen_c(hsh) << endl;
-    cmd("mkdir -p ./lake_controllers/resnet/");
-    auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
+    cmd("mkdir -p ./lake_controllers/resnet/"+ubuf_name);
+    auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/"+ubuf_name);
     //check_lake_config(op_vec, "./lake_controllers/conv_3_3/", "./lake_gold/conv_3_3/");
     assert(false);
+
+  }
 
   }
 }
