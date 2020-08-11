@@ -13513,6 +13513,22 @@ bool is_reduce_buffer(const std::string& buff, prog& prg) {
   return writers.size() > 1;
 }
 
+int num_write_ports(const std::string& b, prog& prg) {
+  int num_reads = 0;
+  for (auto op : prg.all_ops()) {
+    num_reads += op->write_addrs(b).size();
+  }
+  return num_reads;
+}
+
+int num_read_ports(const std::string& b, prog& prg) {
+  int num_reads = 0;
+  for (auto op : prg.all_ops()) {
+    num_reads += op->read_addrs(b).size();
+  }
+  return num_reads;
+}
+
 void cgra_flow_tests() {
   //auto test_programs = stencil_programs();
   auto test_programs = all_cgra_programs();
@@ -13527,6 +13543,8 @@ void cgra_flow_tests() {
           } else {
             cout << tab(2) << "PC    : " << b << endl;
           }
+          cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
+          cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
         }
       }
     }
