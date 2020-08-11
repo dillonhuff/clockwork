@@ -3,30 +3,30 @@
 #include "conv_3x3.h"
 
 
-//store is: padded16.stencil(padded16.s0.x, padded16.s0.y) = hw_input_copy.stencil(padded16.s0.x, padded16.s0.y)
-hw_uint<16> hcompute_padded16_stencil(hw_uint<16>& hw_input_copy_stencil) {
-  int16_t _hw_input_copy_stencil_1 = (int16_t) hw_input_copy_stencil.extract<0, 15>();
+//store is: padded16_global_wrapper.stencil(padded16_global_wrapper_s0_x, padded16_global_wrapper_s0_y) = padded16.stencil(padded16_global_wrapper_s0_x, padded16_global_wrapper_s0_y)
+hw_uint<16> hcompute_padded16_global_wrapper_stencil(hw_uint<16>& padded16_stencil) {
+  int16_t _padded16_stencil_1 = (int16_t) padded16_stencil.extract<0, 15>();
 
-  return _hw_input_copy_stencil_1;
+  return _padded16_stencil_1;
 }
 
-//store is: grad_x.stencil(grad_x.s0.x, grad_x.s0.y) = max(min(((((padded16.stencil((grad_x.s0.x + 1), (grad_x.s0.y + -1)) + (padded16.stencil((grad_x.s0.x + 1), (grad_x.s0.y + 1)) + (padded16.stencil((grad_x.s0.x + 1), grad_x.s0.y)*(int16)2))) - padded16.stencil((grad_x.s0.x + -1), (grad_x.s0.y + -1))) - (padded16.stencil((grad_x.s0.x + -1), grad_x.s0.y)*(int16)2)) - padded16.stencil((grad_x.s0.x + -1), (grad_x.s0.y + 1))), (int16)255), (int16)-255)
-hw_uint<16> hcompute_grad_x_stencil(hw_uint<96>& padded16_stencil) {
-  int16_t _padded16_stencil_1 = (int16_t) padded16_stencil.extract<0, 15>();
-  int16_t _padded16_stencil_2 = (int16_t) padded16_stencil.extract<16, 31>();
-  int16_t _padded16_stencil_3 = (int16_t) padded16_stencil.extract<32, 47>();
-  int16_t _padded16_stencil_4 = (int16_t) padded16_stencil.extract<48, 63>();
-  int16_t _padded16_stencil_5 = (int16_t) padded16_stencil.extract<64, 79>();
-  int16_t _padded16_stencil_6 = (int16_t) padded16_stencil.extract<80, 95>();
+//store is: grad_x.stencil(grad_x_s0_x, grad_x_s0_y) = max(min(((((padded16_global_wrapper.stencil((grad_x_s0_x + 1), (grad_x_s0_y + -1)) + (padded16_global_wrapper.stencil((grad_x_s0_x + 1), (grad_x_s0_y + 1)) + (padded16_global_wrapper.stencil((grad_x_s0_x + 1), grad_x_s0_y)*(int16)2))) - padded16_global_wrapper.stencil((grad_x_s0_x + -1), (grad_x_s0_y + -1))) - (padded16_global_wrapper.stencil((grad_x_s0_x + -1), grad_x_s0_y)*(int16)2)) - padded16_global_wrapper.stencil((grad_x_s0_x + -1), (grad_x_s0_y + 1))), (int16)255), (int16)-255)
+hw_uint<16> hcompute_grad_x_stencil(hw_uint<96>& padded16_global_wrapper_stencil) {
+  int16_t _padded16_global_wrapper_stencil_1 = (int16_t) padded16_global_wrapper_stencil.extract<0, 15>();
+  int16_t _padded16_global_wrapper_stencil_2 = (int16_t) padded16_global_wrapper_stencil.extract<16, 31>();
+  int16_t _padded16_global_wrapper_stencil_3 = (int16_t) padded16_global_wrapper_stencil.extract<32, 47>();
+  int16_t _padded16_global_wrapper_stencil_4 = (int16_t) padded16_global_wrapper_stencil.extract<48, 63>();
+  int16_t _padded16_global_wrapper_stencil_5 = (int16_t) padded16_global_wrapper_stencil.extract<64, 79>();
+  int16_t _padded16_global_wrapper_stencil_6 = (int16_t) padded16_global_wrapper_stencil.extract<80, 95>();
 
   int16_t _261 = (int16_t)(2);
-  int16_t _262 = _padded16_stencil_3 * _261;
-  int16_t _263 = _padded16_stencil_2 + _262;
-  int16_t _264 = _padded16_stencil_1 + _263;
-  int16_t _265 = _264 - _padded16_stencil_4;
-  int16_t _266 = _padded16_stencil_5 * _261;
+  int16_t _262 = _padded16_global_wrapper_stencil_3 * _261;
+  int16_t _263 = _padded16_global_wrapper_stencil_2 + _262;
+  int16_t _264 = _padded16_global_wrapper_stencil_1 + _263;
+  int16_t _265 = _264 - _padded16_global_wrapper_stencil_4;
+  int16_t _266 = _padded16_global_wrapper_stencil_5 * _261;
   int16_t _267 = _265 - _266;
-  int16_t _268 = _267 - _padded16_stencil_6;
+  int16_t _268 = _267 - _padded16_global_wrapper_stencil_6;
   int16_t _269 = (int16_t)(255);
   int16_t _270 = min(_268, _269);
   int16_t _271 = (int16_t)(-255);
@@ -34,7 +34,7 @@ hw_uint<16> hcompute_grad_x_stencil(hw_uint<96>& padded16_stencil) {
   return _272;
 }
 
-//store is: lxx.stencil(lxx.s0.x, lxx.s0.y) = ((grad_x.stencil(lxx.s0.x, lxx.s0.y)*grad_x.stencil(lxx.s0.x, lxx.s0.y))/(int16)128)
+//store is: lxx.stencil(lxx_s0_x, lxx_s0_y) = ((grad_x.stencil(lxx_s0_x, lxx_s0_y)*grad_x.stencil(lxx_s0_x, lxx_s0_y))/(int16)128)
 hw_uint<16> hcompute_lxx_stencil(hw_uint<16>& grad_x_stencil) {
   int16_t _grad_x_stencil_1 = (int16_t) grad_x_stencil.extract<0, 15>();
 
@@ -44,13 +44,13 @@ hw_uint<16> hcompute_lxx_stencil(hw_uint<16>& grad_x_stencil) {
   return _309;
 }
 
-//store is: lgxx.stencil(lgxx.s0.x, lgxx.s0.y) = (int16)0
+//store is: lgxx.stencil(lgxx_s0_x, lgxx_s0_y) = (int16)0
 hw_uint<16> hcompute_lgxx_stencil() {
   int16_t _317 = (int16_t)(0);
   return _317;
 }
 
-//store is: lgxx.stencil(lgxx.s1.x, lgxx.s1.y) = (lxx.stencil((lgxx.s1.x + -1), (lgxx.s1.y + -1)) + (lgxx.stencil(lgxx.s1.x, lgxx.s1.y) + (lxx.stencil(lgxx.s1.x, (lgxx.s1.y + -1)) + (lxx.stencil((lgxx.s1.x + 1), (lgxx.s1.y + -1)) + (lxx.stencil((lgxx.s1.x + -1), lgxx.s1.y) + (lxx.stencil(lgxx.s1.x, lgxx.s1.y) + (lxx.stencil((lgxx.s1.x + 1), lgxx.s1.y) + (lxx.stencil((lgxx.s1.x + -1), (lgxx.s1.y + 1)) + (lxx.stencil((lgxx.s1.x + 1), (lgxx.s1.y + 1)) + lxx.stencil(lgxx.s1.x, (lgxx.s1.y + 1)))))))))))
+//store is: lgxx.stencil(lgxx_s1_x, lgxx_s1_y) = (lxx.stencil((lgxx_s1_x + -1), (lgxx_s1_y + -1)) + (lgxx.stencil(lgxx_s1_x, lgxx_s1_y) + (lxx.stencil(lgxx_s1_x, (lgxx_s1_y + -1)) + (lxx.stencil((lgxx_s1_x + 1), (lgxx_s1_y + -1)) + (lxx.stencil((lgxx_s1_x + -1), lgxx_s1_y) + (lxx.stencil(lgxx_s1_x, lgxx_s1_y) + (lxx.stencil((lgxx_s1_x + 1), lgxx_s1_y) + (lxx.stencil((lgxx_s1_x + -1), (lgxx_s1_y + 1)) + (lxx.stencil((lgxx_s1_x + 1), (lgxx_s1_y + 1)) + lxx.stencil(lgxx_s1_x, (lgxx_s1_y + 1)))))))))))
 hw_uint<16> hcompute_lgxx_stencil_1(hw_uint<16>& lgxx_stencil, hw_uint<144>& lxx_stencil) {
   int16_t _lgxx_stencil_1 = (int16_t) lgxx_stencil.extract<0, 15>();
 
@@ -76,23 +76,23 @@ hw_uint<16> hcompute_lgxx_stencil_1(hw_uint<16>& lgxx_stencil, hw_uint<144>& lxx
   return _328;
 }
 
-//store is: grad_y.stencil(grad_y.s0.x, grad_y.s0.y) = max(min(((((padded16.stencil((grad_y.s0.x + -1), (grad_y.s0.y + 1)) + (padded16.stencil((grad_y.s0.x + 1), (grad_y.s0.y + 1)) + (padded16.stencil(grad_y.s0.x, (grad_y.s0.y + 1))*(int16)2))) - padded16.stencil((grad_y.s0.x + -1), (grad_y.s0.y + -1))) - (padded16.stencil(grad_y.s0.x, (grad_y.s0.y + -1))*(int16)2)) - padded16.stencil((grad_y.s0.x + 1), (grad_y.s0.y + -1))), (int16)255), (int16)-255)
-hw_uint<16> hcompute_grad_y_stencil(hw_uint<96>& padded16_stencil) {
-  int16_t _padded16_stencil_10 = (int16_t) padded16_stencil.extract<0, 15>();
-  int16_t _padded16_stencil_11 = (int16_t) padded16_stencil.extract<16, 31>();
-  int16_t _padded16_stencil_12 = (int16_t) padded16_stencil.extract<32, 47>();
-  int16_t _padded16_stencil_7 = (int16_t) padded16_stencil.extract<48, 63>();
-  int16_t _padded16_stencil_8 = (int16_t) padded16_stencil.extract<64, 79>();
-  int16_t _padded16_stencil_9 = (int16_t) padded16_stencil.extract<80, 95>();
+//store is: grad_y.stencil(grad_y_s0_x, grad_y_s0_y) = max(min(((((padded16_global_wrapper.stencil((grad_y_s0_x + -1), (grad_y_s0_y + 1)) + (padded16_global_wrapper.stencil((grad_y_s0_x + 1), (grad_y_s0_y + 1)) + (padded16_global_wrapper.stencil(grad_y_s0_x, (grad_y_s0_y + 1))*(int16)2))) - padded16_global_wrapper.stencil((grad_y_s0_x + -1), (grad_y_s0_y + -1))) - (padded16_global_wrapper.stencil(grad_y_s0_x, (grad_y_s0_y + -1))*(int16)2)) - padded16_global_wrapper.stencil((grad_y_s0_x + 1), (grad_y_s0_y + -1))), (int16)255), (int16)-255)
+hw_uint<16> hcompute_grad_y_stencil(hw_uint<96>& padded16_global_wrapper_stencil) {
+  int16_t _padded16_global_wrapper_stencil_10 = (int16_t) padded16_global_wrapper_stencil.extract<0, 15>();
+  int16_t _padded16_global_wrapper_stencil_11 = (int16_t) padded16_global_wrapper_stencil.extract<16, 31>();
+  int16_t _padded16_global_wrapper_stencil_12 = (int16_t) padded16_global_wrapper_stencil.extract<32, 47>();
+  int16_t _padded16_global_wrapper_stencil_7 = (int16_t) padded16_global_wrapper_stencil.extract<48, 63>();
+  int16_t _padded16_global_wrapper_stencil_8 = (int16_t) padded16_global_wrapper_stencil.extract<64, 79>();
+  int16_t _padded16_global_wrapper_stencil_9 = (int16_t) padded16_global_wrapper_stencil.extract<80, 95>();
 
   int16_t _361 = (int16_t)(2);
-  int16_t _362 = _padded16_stencil_9 * _361;
-  int16_t _363 = _padded16_stencil_8 + _362;
-  int16_t _364 = _padded16_stencil_7 + _363;
-  int16_t _365 = _364 - _padded16_stencil_10;
-  int16_t _366 = _padded16_stencil_11 * _361;
+  int16_t _362 = _padded16_global_wrapper_stencil_9 * _361;
+  int16_t _363 = _padded16_global_wrapper_stencil_8 + _362;
+  int16_t _364 = _padded16_global_wrapper_stencil_7 + _363;
+  int16_t _365 = _364 - _padded16_global_wrapper_stencil_10;
+  int16_t _366 = _padded16_global_wrapper_stencil_11 * _361;
   int16_t _367 = _365 - _366;
-  int16_t _368 = _367 - _padded16_stencil_12;
+  int16_t _368 = _367 - _padded16_global_wrapper_stencil_12;
   int16_t _369 = (int16_t)(255);
   int16_t _370 = min(_368, _369);
   int16_t _371 = (int16_t)(-255);
@@ -100,7 +100,7 @@ hw_uint<16> hcompute_grad_y_stencil(hw_uint<96>& padded16_stencil) {
   return _372;
 }
 
-//store is: lxy.stencil(lxy.s0.x, lxy.s0.y) = ((grad_x.stencil(lxy.s0.x, lxy.s0.y)*grad_y.stencil(lxy.s0.x, lxy.s0.y))/(int16)128)
+//store is: lxy.stencil(lxy_s0_x, lxy_s0_y) = ((grad_x.stencil(lxy_s0_x, lxy_s0_y)*grad_y.stencil(lxy_s0_x, lxy_s0_y))/(int16)128)
 hw_uint<16> hcompute_lxy_stencil(hw_uint<16>& grad_x_stencil, hw_uint<16>& grad_y_stencil) {
   int16_t _grad_x_stencil_2 = (int16_t) grad_x_stencil.extract<0, 15>();
 
@@ -112,13 +112,13 @@ hw_uint<16> hcompute_lxy_stencil(hw_uint<16>& grad_x_stencil, hw_uint<16>& grad_
   return _409;
 }
 
-//store is: lgxy.stencil(lgxy.s0.x, lgxy.s0.y) = (int16)0
+//store is: lgxy.stencil(lgxy_s0_x, lgxy_s0_y) = (int16)0
 hw_uint<16> hcompute_lgxy_stencil() {
   int16_t _418 = (int16_t)(0);
   return _418;
 }
 
-//store is: lgxy.stencil(lgxy.s1.x, lgxy.s1.y) = (lxy.stencil((lgxy.s1.x + -1), (lgxy.s1.y + -1)) + (lgxy.stencil(lgxy.s1.x, lgxy.s1.y) + (lxy.stencil(lgxy.s1.x, (lgxy.s1.y + -1)) + (lxy.stencil((lgxy.s1.x + 1), (lgxy.s1.y + -1)) + (lxy.stencil((lgxy.s1.x + -1), lgxy.s1.y) + (lxy.stencil(lgxy.s1.x, lgxy.s1.y) + (lxy.stencil((lgxy.s1.x + 1), lgxy.s1.y) + (lxy.stencil((lgxy.s1.x + -1), (lgxy.s1.y + 1)) + (lxy.stencil((lgxy.s1.x + 1), (lgxy.s1.y + 1)) + lxy.stencil(lgxy.s1.x, (lgxy.s1.y + 1)))))))))))
+//store is: lgxy.stencil(lgxy_s1_x, lgxy_s1_y) = (lxy.stencil((lgxy_s1_x + -1), (lgxy_s1_y + -1)) + (lgxy.stencil(lgxy_s1_x, lgxy_s1_y) + (lxy.stencil(lgxy_s1_x, (lgxy_s1_y + -1)) + (lxy.stencil((lgxy_s1_x + 1), (lgxy_s1_y + -1)) + (lxy.stencil((lgxy_s1_x + -1), lgxy_s1_y) + (lxy.stencil(lgxy_s1_x, lgxy_s1_y) + (lxy.stencil((lgxy_s1_x + 1), lgxy_s1_y) + (lxy.stencil((lgxy_s1_x + -1), (lgxy_s1_y + 1)) + (lxy.stencil((lgxy_s1_x + 1), (lgxy_s1_y + 1)) + lxy.stencil(lgxy_s1_x, (lgxy_s1_y + 1)))))))))))
 hw_uint<16> hcompute_lgxy_stencil_1(hw_uint<16>& lgxy_stencil, hw_uint<144>& lxy_stencil) {
   int16_t _lgxy_stencil_1 = (int16_t) lgxy_stencil.extract<0, 15>();
 
@@ -144,7 +144,7 @@ hw_uint<16> hcompute_lgxy_stencil_1(hw_uint<16>& lgxy_stencil, hw_uint<144>& lxy
   return _429;
 }
 
-//store is: lyy.stencil(lyy.s0.x, lyy.s0.y) = ((grad_y.stencil(lyy.s0.x, lyy.s0.y)*grad_y.stencil(lyy.s0.x, lyy.s0.y))/(int16)128)
+//store is: lyy.stencil(lyy_s0_x, lyy_s0_y) = ((grad_y.stencil(lyy_s0_x, lyy_s0_y)*grad_y.stencil(lyy_s0_x, lyy_s0_y))/(int16)128)
 hw_uint<16> hcompute_lyy_stencil(hw_uint<16>& grad_y_stencil) {
   int16_t _grad_y_stencil_2 = (int16_t) grad_y_stencil.extract<0, 15>();
 
@@ -154,13 +154,13 @@ hw_uint<16> hcompute_lyy_stencil(hw_uint<16>& grad_y_stencil) {
   return _464;
 }
 
-//store is: lgyy.stencil(lgyy.s0.x, lgyy.s0.y) = (int16)0
+//store is: lgyy.stencil(lgyy_s0_x, lgyy_s0_y) = (int16)0
 hw_uint<16> hcompute_lgyy_stencil() {
   int16_t _472 = (int16_t)(0);
   return _472;
 }
 
-//store is: lgyy.stencil(lgyy.s1.x, lgyy.s1.y) = (lyy.stencil((lgyy.s1.x + -1), (lgyy.s1.y + -1)) + (lgyy.stencil(lgyy.s1.x, lgyy.s1.y) + (lyy.stencil(lgyy.s1.x, (lgyy.s1.y + -1)) + (lyy.stencil((lgyy.s1.x + 1), (lgyy.s1.y + -1)) + (lyy.stencil((lgyy.s1.x + -1), lgyy.s1.y) + (lyy.stencil(lgyy.s1.x, lgyy.s1.y) + (lyy.stencil((lgyy.s1.x + 1), lgyy.s1.y) + (lyy.stencil((lgyy.s1.x + -1), (lgyy.s1.y + 1)) + (lyy.stencil((lgyy.s1.x + 1), (lgyy.s1.y + 1)) + lyy.stencil(lgyy.s1.x, (lgyy.s1.y + 1)))))))))))
+//store is: lgyy.stencil(lgyy_s1_x, lgyy_s1_y) = (lyy.stencil((lgyy_s1_x + -1), (lgyy_s1_y + -1)) + (lgyy.stencil(lgyy_s1_x, lgyy_s1_y) + (lyy.stencil(lgyy_s1_x, (lgyy_s1_y + -1)) + (lyy.stencil((lgyy_s1_x + 1), (lgyy_s1_y + -1)) + (lyy.stencil((lgyy_s1_x + -1), lgyy_s1_y) + (lyy.stencil(lgyy_s1_x, lgyy_s1_y) + (lyy.stencil((lgyy_s1_x + 1), lgyy_s1_y) + (lyy.stencil((lgyy_s1_x + -1), (lgyy_s1_y + 1)) + (lyy.stencil((lgyy_s1_x + 1), (lgyy_s1_y + 1)) + lyy.stencil(lgyy_s1_x, (lgyy_s1_y + 1)))))))))))
 hw_uint<16> hcompute_lgyy_stencil_1(hw_uint<16>& lgyy_stencil, hw_uint<144>& lyy_stencil) {
   int16_t _lgyy_stencil_1 = (int16_t) lgyy_stencil.extract<0, 15>();
 
@@ -186,7 +186,7 @@ hw_uint<16> hcompute_lgyy_stencil_1(hw_uint<16>& lgyy_stencil, hw_uint<144>& lyy
   return _483;
 }
 
-//store is: cim.stencil(cim.s0.x, cim.s0.y) = ((((lgxx.stencil(cim.s0.x, cim.s0.y)/(int16)64)*(lgyy.stencil(cim.s0.x, cim.s0.y)/(int16)64)) - ((lgxy.stencil(cim.s0.x, cim.s0.y)/(int16)64)*(lgxy.stencil(cim.s0.x, cim.s0.y)/(int16)64))) - ((((lgxx.stencil(cim.s0.x, cim.s0.y)/(int16)64) + (lgyy.stencil(cim.s0.x, cim.s0.y)/(int16)64))*((lgxx.stencil(cim.s0.x, cim.s0.y)/(int16)64) + (lgyy.stencil(cim.s0.x, cim.s0.y)/(int16)64)))/(int16)16))
+//store is: cim.stencil(cim_s0_x, cim_s0_y) = ((((lgxx.stencil(cim_s0_x, cim_s0_y)/(int16)64)*(lgyy.stencil(cim_s0_x, cim_s0_y)/(int16)64)) - ((lgxy.stencil(cim_s0_x, cim_s0_y)/(int16)64)*(lgxy.stencil(cim_s0_x, cim_s0_y)/(int16)64))) - ((((lgxx.stencil(cim_s0_x, cim_s0_y)/(int16)64) + (lgyy.stencil(cim_s0_x, cim_s0_y)/(int16)64))*((lgxx.stencil(cim_s0_x, cim_s0_y)/(int16)64) + (lgyy.stencil(cim_s0_x, cim_s0_y)/(int16)64)))/(int16)16))
 hw_uint<16> hcompute_cim_stencil(hw_uint<16>& lgxx_stencil, hw_uint<16>& lgxy_stencil, hw_uint<16>& lgyy_stencil) {
   int16_t _lgxx_stencil_2 = (int16_t) lgxx_stencil.extract<0, 15>();
 
@@ -209,7 +209,7 @@ hw_uint<16> hcompute_cim_stencil(hw_uint<16>& lgxx_stencil, hw_uint<16>& lgxy_st
   return _527;
 }
 
-//store is: cim_output.stencil(cim_output.s0.x, cim_output.s0.y) = int16(select((((((((((cim.stencil((cim_output.s0.x + -1), (cim_output.s0.y + -1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y)) && (cim.stencil(cim_output.s0.x, (cim_output.s0.y + -1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + 1), (cim_output.s0.y + -1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + -1), cim_output.s0.y) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + 1), cim_output.s0.y) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + -1), (cim_output.s0.y + 1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil(cim_output.s0.x, (cim_output.s0.y + 1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + 1), (cim_output.s0.y + 1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && ((int16)1 <= cim.stencil(cim_output.s0.x, cim_output.s0.y))), 255, 0))
+//store is: cim_output.stencil(cim_output_s0_x, cim_output_s0_y) = int16(select((((((((((cim.stencil((cim_output_s0_x + -1), (cim_output_s0_y + -1)) < cim.stencil(cim_output_s0_x, cim_output_s0_y)) && (cim.stencil(cim_output_s0_x, (cim_output_s0_y + -1)) < cim.stencil(cim_output_s0_x, cim_output_s0_y))) && (cim.stencil((cim_output_s0_x + 1), (cim_output_s0_y + -1)) < cim.stencil(cim_output_s0_x, cim_output_s0_y))) && (cim.stencil((cim_output_s0_x + -1), cim_output_s0_y) < cim.stencil(cim_output_s0_x, cim_output_s0_y))) && (cim.stencil((cim_output_s0_x + 1), cim_output_s0_y) < cim.stencil(cim_output_s0_x, cim_output_s0_y))) && (cim.stencil((cim_output_s0_x + -1), (cim_output_s0_y + 1)) < cim.stencil(cim_output_s0_x, cim_output_s0_y))) && (cim.stencil(cim_output_s0_x, (cim_output_s0_y + 1)) < cim.stencil(cim_output_s0_x, cim_output_s0_y))) && (cim.stencil((cim_output_s0_x + 1), (cim_output_s0_y + 1)) < cim.stencil(cim_output_s0_x, cim_output_s0_y))) && ((int16)1 <= cim.stencil(cim_output_s0_x, cim_output_s0_y))), 255, 0))
 hw_uint<16> hcompute_cim_output_stencil(hw_uint<144>& cim_stencil) {
   int16_t _cim_stencil_1 = (int16_t) cim_stencil.extract<0, 15>();
   int16_t _cim_stencil_2 = (int16_t) cim_stencil.extract<16, 31>();
@@ -244,11 +244,10 @@ hw_uint<16> hcompute_cim_output_stencil(hw_uint<144>& cim_stencil) {
   return _574;
 }
 
-//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi) = uint8(cim_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi))
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = cim_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)
 hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& cim_output_stencil) {
   int16_t _cim_output_stencil_1 = (int16_t) cim_output_stencil.extract<0, 15>();
 
-  uint8_t _628 = (uint8_t)(_cim_output_stencil_1);
-  return _628;
+  return _cim_output_stencil_1;
 }
 

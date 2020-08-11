@@ -17,15 +17,24 @@
           ["in0_hw_input_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "const_p0__777":{
+          "const_p0__781":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0000"]}
           },
-          "const_p1023__775":{
+          "const_p255__779":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h03ff"]}
+            "modargs":{"value":[["BitVector",16],"16'h00ff"]}
+          },
+          "const_p4__777":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0004"]}
+          },
+          "mul_hw_input_global_wrapper_stencil_1_777_778":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
           },
           "rom_curvea0":{
             "genref":"memory.rom2",
@@ -45,25 +54,27 @@
             "modref":"corebit.const",
             "modargs":{"value":["Bool",true]}
           },
-          "smax_776_777_778":{
+          "smax_780_781_782":{
             "genref":"commonlib.smax",
             "genargs":{"width":["Int",16]}
           },
-          "smin_hw_input_global_wrapper_stencil_1_775_776":{
+          "smin_778_779_780":{
             "genref":"commonlib.smin",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["smax_776_777_778.in1","const_p0__777.out"],
-          ["smin_hw_input_global_wrapper_stencil_1_775_776.in1","const_p1023__775.out"],
-          ["smax_776_777_778.out","rom_curvea0$1.raddr"],
+          ["smax_780_781_782.in1","const_p0__781.out"],
+          ["smin_778_779_780.in1","const_p255__779.out"],
+          ["mul_hw_input_global_wrapper_stencil_1_777_778.in1","const_p4__777.out"],
+          ["self.in0_hw_input_global_wrapper_stencil.0","mul_hw_input_global_wrapper_stencil_1_777_778.in0"],
+          ["smin_778_779_780.in0","mul_hw_input_global_wrapper_stencil_1_777_778.out"],
+          ["smax_780_781_782.out","rom_curvea0$1.raddr"],
           ["self.out_hw_output_stencil","rom_curvea0$1.rdata"],
           ["rom_curvea0$1_ren.out","rom_curvea0$1.ren"],
-          ["smax_776_777_778.out","rom_curvea0.raddr"],
+          ["smax_780_781_782.out","rom_curvea0.raddr"],
           ["rom_curvea0_ren.out","rom_curvea0.ren"],
-          ["smin_hw_input_global_wrapper_stencil_1_775_776.in0","self.in0_hw_input_global_wrapper_stencil.0"],
-          ["smin_hw_input_global_wrapper_stencil_1_775_776.out","smax_776_777_778.in0"]
+          ["smin_778_779_780.out","smax_780_781_782.in0"]
         ]
       }
     }
