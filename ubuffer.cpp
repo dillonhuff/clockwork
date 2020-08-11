@@ -650,8 +650,13 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 #ifdef COREIR
 
 
-//generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
+  schedule_info info;
+  generate_coreir(options, def, info);
+}
+
+//generate/realize the rewrite structure inside ubuffer node
+void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info) {
   auto context = def->getContext();
   //for (auto it : get_banks()) {
     //auto connection = it.first;
@@ -1037,7 +1042,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
   }
 
-  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
     int width = buf.port_widths;
     auto c = def->getContext();
     auto ns = c->getNamespace("global");
@@ -1107,6 +1112,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           assert(isl_set_is_singleton(ddc));
           int dd = to_int(lexminval(ddc));
           cout << "DD           : " << dd << endl;
+          string writer_name = domain_name(pick(get_maps(writes)));
+          cout << "writer op    : " << writer_name << endl;
+          for (auto e : hwinfo.op_compute_unit_latencies) {
+            cout << tab(1) << e.first << " -> " << e.second << endl;
+          }
+          //assert(false);
+          int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+          //assert(op_latency == 0);
+
+          dd = dd - op_latency;
 
           CoreIR::Module* srmod = delay_module(c, width, {dd});
           auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
@@ -1158,6 +1173,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   //generate coreir instance for single ubuffer
   //return the coreir module with port bundle and enable/valid interface
   CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
+    schedule_info info;
+    return generate_coreir(options, context, buf, info);
+  }
+
+  CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo) {
     auto ns = context->getNamespace("global");
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")}};
@@ -1190,7 +1210,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto def = ub->newModuleDef();
 
     if (true) {
-      generate_synthesizable_functional_model(options, buf, def);
+      generate_synthesizable_functional_model(options, buf, def, hwinfo);
     } else {
       //buf.generate_coreir(options, def);
     }

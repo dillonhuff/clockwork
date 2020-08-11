@@ -16,55 +16,6 @@
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 #endif
 
-struct schedule_info {
-  // Schedule constraints
-  map<string, int> buffer_load_latencies;
-  map<string, int> buffer_store_latencies;
-  map<string, int> compute_unit_latencies;
-
-  // Schedule offsets
-  map<string, int> loop_iis;
-  map<op*, int> instance_latencies;
-  map<op*, int> op_offset_within_parent;
-
-  int offset_in_parent(op* c) {
-    assert(contains_key(c, op_offset_within_parent));
-    return map_find(c, op_offset_within_parent);
-  }
-
-  int last_update_delay(op* op) {
-    assert(op->is_loop);
-    int last_delay = 0;
-    for (auto c : op->children) {
-      int delay = offset_in_parent(c) + total_latency(c);
-      if (delay > last_delay) {
-        last_delay = delay;
-      }
-    }
-    return last_delay;
-  }
-
-  int total_latency(op* op) {
-    if (!op->is_loop) {
-      assert(contains_key(op, instance_latencies));
-      return map_find(op, instance_latencies);
-    }
-    return II(op)*(op->trip_count() - 1) + instance_latency(op);
-  }
-
-  int instance_latency(op* op) {
-    assert(contains_key(op, instance_latencies));
-    return map_find(op, instance_latencies);
-  }
-
-  int II(op* op) {
-    assert(op->is_loop);
-    assert(contains_key(op->name, loop_iis));
-    return map_find(op->name, loop_iis);
-  }
-
-};
-
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
 
 void blur_example();
@@ -13271,12 +13222,22 @@ schedule_info garnet_schedule_info(prog& prg) {
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
       sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
     } else if (op->func == "hcompute_curved_stencil_1") {
       sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
     } else if (op->func == "hcompute_curved_stencil_2") {
       sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
+    } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
+      //assert(false);
+      sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
     } else if (op->func != "") {
       sched.compute_unit_latencies[op->func] = 0;
+      sched.op_compute_unit_latencies[op->name] = 0;
+    } else {
+      sched.op_compute_unit_latencies[op->name] = 0;
     }
 
     for (auto b : op->buffers_referenced()) {
@@ -13356,7 +13317,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   generate_coreir(options,
     buffers,
     prg,
-    hw_sched);
+    hw_sched,
+    sched);
   generate_verilator_tb(prg, hw_sched, buffers);
 
   // Insert coreir generation here
@@ -13389,7 +13351,11 @@ void sanity_check_iis(schedule_info& sched) {
 void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
   auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
   cout << "Start times..." << endl;
-  cout << str(start_times) << endl;
+  //cout << str(start_times) << endl;
+  for (auto m : get_maps(start_times)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
   auto ranges = range(start_times);
   auto range_set = to_set(ranges);
   int min = to_int(lexminval(range_set));
@@ -13454,20 +13420,21 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  // Failing
-  //test_programs.push_back(unsharp());
-  test_programs.push_back(harris());
-  //test_programs.push_back(halide_harris());
-
-  //test_programs.push_back(camera_pipeline());
-
   // Working
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(down_sample());
   test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
+  test_programs.push_back(harris());
+  test_programs.push_back(halide_harris());
+
+  // commonlib div?
+  //test_programs.push_back(unsharp());
+  // Fails at 256?
+  //test_programs.push_back(rom());
   return test_programs;
 }
 
@@ -13492,6 +13459,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+    //assert(false);
     //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
     //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
