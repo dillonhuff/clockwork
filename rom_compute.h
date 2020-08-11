@@ -529,7 +529,7 @@ hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& hw_input_global_wrapper_sten
   uint16_t _768 = (uint16_t)(63);
   _curvea0[255] = _768;
 
-  int16_t _769 = (int16_t)(1023);
+  int16_t _769 = (int16_t)(256);
   int16_t _770 = min(_hw_input_global_wrapper_stencil_1, _769);
   int16_t _771 = (int16_t)(0);
   int16_t _772 = max(_770, _771);

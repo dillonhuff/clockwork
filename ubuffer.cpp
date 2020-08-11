@@ -1119,7 +1119,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
           }
           //assert(false);
           int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
-          assert(op_latency == 0);
+          //assert(op_latency == 0);
 
           dd = dd - op_latency;
 
