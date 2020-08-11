@@ -14212,6 +14212,7 @@ void application_tests() {
   //lake_identity_stream_SMT_test(64, 64, "64x64");
   lake_identity_stream_SMT_test(32, 32, "32x32");
   lake_identity_stream_SMT_test(16, 16, "16x16");
+  //assert (false);
   //lake_identity_stream_SMT_test(20, 20, "20x20");
   //double_buffer_test();
   //playground();

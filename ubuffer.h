@@ -552,13 +552,14 @@ class AccessPattern {
       }
 
       int get_inner_most_related_dom_dim() {
-        int inner_most_address_related_dim_id;
+        int inner_most_address_related_dim_id = 0;
         for (size_t i = rel_map.size() - 1; i >= 0; i -- ) {
           if (rel_map.at(i) != 0) {
             inner_most_address_related_dim_id = i;
             break;
           }
         }
+        return inner_most_address_related_dim_id;
       }
 
       isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
