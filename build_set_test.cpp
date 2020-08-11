@@ -13275,6 +13275,9 @@ schedule_info garnet_schedule_info(prog& prg) {
       sched.compute_unit_latencies[op->func] = 1;
     } else if (op->func == "hcompute_curved_stencil_2") {
       sched.compute_unit_latencies[op->func] = 1;
+    } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
+      //assert(false);
+      sched.compute_unit_latencies[op->func] = 2;
     } else if (op->func != "") {
       sched.compute_unit_latencies[op->func] = 0;
     }
@@ -13389,7 +13392,11 @@ void sanity_check_iis(schedule_info& sched) {
 void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
   auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
   cout << "Start times..." << endl;
-  cout << str(start_times) << endl;
+  //cout << str(start_times) << endl;
+  for (auto m : get_maps(start_times)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  assert(false);
   auto ranges = range(start_times);
   auto range_set = to_set(ranges);
   int min = to_int(lexminval(range_set));
@@ -13455,7 +13462,7 @@ vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
   // Failing
-  test_programs.push_back(unsharp());
+  //test_programs.push_back(unsharp());
   test_programs.push_back(rom());
   test_programs.push_back(harris());
   //test_programs.push_back(halide_harris());
