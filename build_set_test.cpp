@@ -13467,8 +13467,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
 
 void cgra_flow_tests() {
-  //auto test_programs = stencil_programs();
-  auto test_programs = all_cgra_programs();
+  auto test_programs = stencil_programs();
+  //auto test_programs = all_cgra_programs();
   cout << "====== Program classification" << endl;
   for (auto prg : test_programs) {
     if (!is_rate_matchable(prg)) {
