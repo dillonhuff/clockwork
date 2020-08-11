@@ -13276,8 +13276,25 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_CYCLE_DELAY;
   } else {
+    for (auto b : all_buffers(prg)) {
+      if (!prg.is_boundary(b)) {
+        if (is_reduce_buffer(b, prg)) {
+          cout << tab(2) << "REDUCE: " << b << endl;
+        } else {
+          cout << tab(2) << "PC    : " << b << endl;
+        }
+        int nread = num_read_ports(b, prg);
+        int nwrite = num_write_ports(b, prg);
+        cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
+        cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
+        if (nread == 1 && nwrite == 1) {
+          cout << tab(4) << "Single bank: " << b << endl;
+        }
+      }
+    }
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_LINEAR;
+    assert(false);
   }
 
   schedule_info sched = garnet_schedule_info(prg);
@@ -13454,13 +13471,13 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  test_programs.push_back(accumulation());
+
   // Address generation broken, classified as stencil pipelin
   test_programs.push_back(up_sample());
-
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_layer());
   test_programs.push_back(partially_unrolled_conv());
-  test_programs.push_back(accumulation());
   test_programs.push_back(resnet());
   test_programs.push_back(conv_multi());
 
@@ -13497,37 +13514,6 @@ void test_stencil_codegen(vector<prog>& test_programs) {
   }
 }
 
-std::set<string> all_buffers(prog& prg) {
-  std::set<string> bufs;
-  for (auto op : prg.all_ops()) {
-    for (auto b : op->buffers_referenced()) {
-      bufs.insert(b);
-    }
-  }
-  return bufs;
-}
-
-bool is_reduce_buffer(const std::string& buff, prog& prg) {
-  auto writers = find_writers(buff, prg);
-
-  return writers.size() > 1;
-}
-
-int num_write_ports(const std::string& b, prog& prg) {
-  int num_reads = 0;
-  for (auto op : prg.all_ops()) {
-    num_reads += op->write_addrs(b).size();
-  }
-  return num_reads;
-}
-
-int num_read_ports(const std::string& b, prog& prg) {
-  int num_reads = 0;
-  for (auto op : prg.all_ops()) {
-    num_reads += op->read_addrs(b).size();
-  }
-  return num_reads;
-}
 
 void cgra_flow_tests() {
   //auto test_programs = stencil_programs();
@@ -13549,7 +13535,7 @@ void cgra_flow_tests() {
       }
     }
   }
-  assert(false);
+  //assert(false);
 
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);

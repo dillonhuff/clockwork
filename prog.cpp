@@ -4405,18 +4405,6 @@ map<string, int> get_variable_levels(prog& prg){
 	return variable_map;
 }
 
-std::set<string> all_buffers(prog& prg){
-	std::set<string> buffers;
-
-	for(auto op : prg.all_ops()){
-		for(auto buff : op->buffers_referenced()){
-			buffers.insert(buff);
-		}
-	}
-
-	return buffers;
-}
-
 std::set<op*> find_writers(const string& buff, prog& prg){
 	std::set<op*> readers;
 
@@ -5313,4 +5301,36 @@ map<op*, isl_map*> prog::consumer_maps(const std::string& buf) {
     maps[op] = pmap;
   }
   return maps;
+}
+
+std::set<string> all_buffers(prog& prg) {
+  std::set<string> bufs;
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_referenced()) {
+      bufs.insert(b);
+    }
+  }
+  return bufs;
+}
+
+bool is_reduce_buffer(const std::string& buff, prog& prg) {
+  auto writers = find_writers(buff, prg);
+
+  return writers.size() > 1;
+}
+
+int num_write_ports(const std::string& b, prog& prg) {
+  int num_reads = 0;
+  for (auto op : prg.all_ops()) {
+    num_reads += op->write_addrs(b).size();
+  }
+  return num_reads;
+}
+
+int num_read_ports(const std::string& b, prog& prg) {
+  int num_reads = 0;
+  for (auto op : prg.all_ops()) {
+    num_reads += op->read_addrs(b).size();
+  }
+  return num_reads;
 }

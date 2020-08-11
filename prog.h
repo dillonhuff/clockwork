@@ -1672,3 +1672,7 @@ struct schedule_info {
 
 };
 
+std::set<string> all_buffers(prog& prg);
+bool is_reduce_buffer(const std::string& buff, prog& prg);
+int num_write_ports(const std::string& b, prog& prg);
+int num_read_ports(const std::string& b, prog& prg);
