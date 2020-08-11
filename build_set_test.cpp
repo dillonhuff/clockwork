@@ -12828,171 +12828,128 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
   }
 }
 
-bool is_perfect(op* loop, prog& prg) {
-  assert(loop->is_loop);
-  if (is_inner_loop(loop)) {
-    return true;
-  }
-
-  if (loop->children.size() > 1) {
-    return false;
-  }
-
-  return is_perfect(loop->children.at(0), prg);
-}
-
-bool all_perfect_loop_nests(prog& prg) {
-  for (auto l : prg.all_loops()) {
-    if (l->name != "root") {
-      if (!is_perfect(l, prg)) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-int loop_depth(op* op) {
-  int d = op->is_loop;
-  int max_child_depth = 0;
-  for (auto c : op->children) {
-    max_child_depth = max(loop_depth(c), max_child_depth);
-  }
-  return d + max_child_depth;
-
-}
-bool all_loop_nests_same_depth(prog& prg) {
-  auto ops = prg.all_ops();
-
-  if (ops.size() == 0) {
-    return true;
-  }
-  std::set<int> depths;
-  for (auto op : ops) {
-    depths.insert(surrounding_vars(op, prg).size());
-  }
-  return depths.size() == 1;
-}
-
 void dsa_writers(prog& prg) {
-  std::set<string> all_buffers;
-  std::set<string> multi_write_buffers;
-  map<string, std::set<string> > producer_kernels;
-  std::set<string> reduced_kernels;
-  for (auto op : prg.all_ops()) {
-    auto read = op->buffers_read();
-    auto written = op->buffers_written();
-    for (auto b : intersection(read, written)) {
-      reduced_kernels.insert(b);
-    }
-  }
-
-  for (auto k : get_kernels(prg)) {
-    for (auto b : get_produced_buffers(k, prg)) {
-      all_buffers.insert(b);
-      producer_kernels[b].insert(k);
-    }
-  }
-
-  for (auto k : get_kernels(prg)) {
-    for (auto b : get_produced_buffers(k, prg)) {
-      auto producers = producer_kernels[b];
-
-      if (elem(b, reduced_kernels) && producers.size() > 1) {
-        cout << b << " has " << producers.size() << " producers" << endl;
-        for (auto p : producers) {
-          cout << tab(1) << p << endl;
-        }
-        auto writers = find_writers(b, prg);
-        prg.pretty_print();
-        //assert(writers.size() <= 2);
-        if (writers.size() > 1) {
-          multi_write_buffers.insert(b);
-        }
+  if (is_rate_matchable(prg)) {
+    std::set<string> all_buffers;
+    std::set<string> multi_write_buffers;
+    map<string, std::set<string> > producer_kernels;
+    std::set<string> reduced_kernels;
+    for (auto op : prg.all_ops()) {
+      auto read = op->buffers_read();
+      auto written = op->buffers_written();
+      for (auto b : intersection(read, written)) {
+        reduced_kernels.insert(b);
       }
-
     }
-  }
 
-  cout << "Multi-write buffers" << endl;
-  map<string, op*> initializers;
-  map<string, op*> updaters;
-  for (auto b : multi_write_buffers) {
-    cout << tab(1) << b << endl;
-    auto writers = find_writers(b, prg);
-    //assert(writers.size() == 2);
-    vector<op*> ws;
-    for (auto w : writers) {
-      ws.push_back(w);
-    }
-    op* w0 = ws.at(0);
-    op* w1 = ws.at(1);
-
-    if (w0->read_addrs().size() == 0) {
-      initializers[b] = w0;
-      updaters[b] = w1;
-    } else {
-      initializers[b] = w1;
-      updaters[b] = w0;
-    }
-  }
-
-  cout << "Built initializer / update maps" << endl;
-
-  for (auto b : multi_write_buffers) {
-    string init_buffer = prg.un(b + "_clkwrk_dsa");
-    auto init = initializers[b];
-    assert(init != 0);
-    auto updated = updaters[b];
-    assert(updated != 0);
-    cout << "Replacing writes" << endl;
-    init->replace_writes_to(b, init_buffer);
-    cout << "Replacing reads from " << b << " in " << updated->name << endl;
-    updated->replace_reads_from(b, init_buffer);
-    prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
-  }
-
-  prg.pretty_print();
-  //assert(false);
-
-  // Split up buffers that are read at constants in one of their components
-  for (auto b : all_buffers) {
-    auto writers = find_writers(b, prg);
-    auto readers = find_readers(b, prg);
-
-    if (writers.size() > 1 && readers.size() == 0) {
-      cout << b << " has " << writers.size() << " writers and " << readers.size() << " readers" << endl;
-      assert(prg.is_output(b));
-      for (auto writer : writers) {
-        string init_buffer = prg.un(b + "_clkwrk_write_duplicate");
-        writer->replace_writes_to(b, init_buffer);
-        prg.add_output(init_buffer);
-        prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+    for (auto k : get_kernels(prg)) {
+      for (auto b : get_produced_buffers(k, prg)) {
+        all_buffers.insert(b);
+        producer_kernels[b].insert(k);
       }
+    }
 
-      prg.outs.erase(b);
+    for (auto k : get_kernels(prg)) {
+      for (auto b : get_produced_buffers(k, prg)) {
+        auto producers = producer_kernels[b];
 
-      //// Now: Group writers and readers by their overlap sets?
+        if (elem(b, reduced_kernels) && producers.size() > 1) {
+          cout << b << " has " << producers.size() << " producers" << endl;
+          for (auto p : producers) {
+            cout << tab(1) << p << endl;
+          }
+          auto writers = find_writers(b, prg);
+          prg.pretty_print();
+          //assert(writers.size() <= 2);
+          if (writers.size() > 1) {
+            multi_write_buffers.insert(b);
+          }
+        }
 
-      //auto pmaps = prg.producer_maps(b);
-      //auto cmaps = prg.consumer_maps(b);
-      //map<op*, std::set<op*> > overlap;
-      //for (auto writer : writers) {
+      }
+    }
+
+    cout << "Multi-write buffers" << endl;
+    map<string, op*> initializers;
+    map<string, op*> updaters;
+    for (auto b : multi_write_buffers) {
+      cout << tab(1) << b << endl;
+      auto writers = find_writers(b, prg);
+      //assert(writers.size() == 2);
+      vector<op*> ws;
+      for (auto w : writers) {
+        ws.push_back(w);
+      }
+      op* w0 = ws.at(0);
+      op* w1 = ws.at(1);
+
+      if (w0->read_addrs().size() == 0) {
+        initializers[b] = w0;
+        updaters[b] = w1;
+      } else {
+        initializers[b] = w1;
+        updaters[b] = w0;
+      }
+    }
+
+    cout << "Built initializer / update maps" << endl;
+
+    for (auto b : multi_write_buffers) {
+      string init_buffer = prg.un(b + "_clkwrk_dsa");
+      auto init = initializers[b];
+      assert(init != 0);
+      auto updated = updaters[b];
+      assert(updated != 0);
+      cout << "Replacing writes" << endl;
+      init->replace_writes_to(b, init_buffer);
+      cout << "Replacing reads from " << b << " in " << updated->name << endl;
+      updated->replace_reads_from(b, init_buffer);
+      prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+    }
+
+    prg.pretty_print();
+    //assert(false);
+
+    // Split up buffers that are read at constants in one of their components
+    for (auto b : all_buffers) {
+      auto writers = find_writers(b, prg);
+      auto readers = find_readers(b, prg);
+
+      if (writers.size() > 1 && readers.size() == 0) {
+        cout << b << " has " << writers.size() << " writers and " << readers.size() << " readers" << endl;
+        assert(prg.is_output(b));
+        for (auto writer : writers) {
+          string init_buffer = prg.un(b + "_clkwrk_write_duplicate");
+          writer->replace_writes_to(b, init_buffer);
+          prg.add_output(init_buffer);
+          prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+        }
+
+        prg.outs.erase(b);
+
+        //// Now: Group writers and readers by their overlap sets?
+
+        //auto pmaps = prg.producer_maps(b);
+        //auto cmaps = prg.consumer_maps(b);
+        //map<op*, std::set<op*> > overlap;
+        //for (auto writer : writers) {
         //auto written = map_find(writer, pmaps);
         //for (auto reader : readers) {
-          //auto read = map_find(reader, cmaps);
-          //if (!empty(its(range(read), range(written)))) {
-            //overlap[writer].insert(reader);
-          //}
+        //auto read = map_find(reader, cmaps);
+        //if (!empty(its(range(read), range(written)))) {
+        //overlap[writer].insert(reader);
         //}
-      //}
+        //}
+        //}
 
-      //cout << "Writer overlap..." << endl;
-      //for (auto w : overlap) {
+        //cout << "Writer overlap..." << endl;
+        //for (auto w : overlap) {
         //cout << tab(1) << w.first->name << " = " << w.second.size() << endl;
-      //}
-      //assert(false);
+        //}
+        //assert(false);
+      }
     }
+
   }
 }
 
@@ -13016,13 +12973,6 @@ void adjust_schedule_forward(schedule_info& sched, prog& prg) {
   }
 
 
-}
-
-bool is_rate_matchable(prog& prg) {
-  auto rvars = reduce_vars(prg);
-  bool perfect = all_perfect_loop_nests(prg);
-
-  return rvars.size() == 0 && perfect;
 }
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
@@ -13294,6 +13244,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     }
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_LINEAR;
+    prg.pretty_print();
     assert(false);
   }
 

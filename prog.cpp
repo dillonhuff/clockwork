@@ -5334,3 +5334,56 @@ int num_read_ports(const std::string& b, prog& prg) {
   }
   return num_reads;
 }
+
+bool is_rate_matchable(prog& prg) {
+  auto rvars = reduce_vars(prg);
+  bool perfect = all_perfect_loop_nests(prg);
+
+  return rvars.size() == 0 && perfect;
+}
+
+int loop_depth(op* op) {
+  int d = op->is_loop;
+  int max_child_depth = 0;
+  for (auto c : op->children) {
+    max_child_depth = max(loop_depth(c), max_child_depth);
+  }
+  return d + max_child_depth;
+
+}
+bool all_loop_nests_same_depth(prog& prg) {
+  auto ops = prg.all_ops();
+
+  if (ops.size() == 0) {
+    return true;
+  }
+  std::set<int> depths;
+  for (auto op : ops) {
+    depths.insert(surrounding_vars(op, prg).size());
+  }
+  return depths.size() == 1;
+}
+
+bool is_perfect(op* loop, prog& prg) {
+  assert(loop->is_loop);
+  if (is_inner_loop(loop)) {
+    return true;
+  }
+
+  if (loop->children.size() > 1) {
+    return false;
+  }
+
+  return is_perfect(loop->children.at(0), prg);
+}
+bool all_perfect_loop_nests(prog& prg) {
+  for (auto l : prg.all_loops()) {
+    if (l->name != "root") {
+      if (!is_perfect(l, prg)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
