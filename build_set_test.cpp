@@ -13043,6 +13043,28 @@ void dsa_writers(prog& prg) {
   }
 }
 
+void adjust_schedule_forward(schedule_info& sched, prog& prg) {
+  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+  cout << "Start times..." << endl;
+  cout << str(start_times) << endl;
+  auto ranges = range(start_times);
+  auto range_set = to_set(ranges);
+  int min = to_int(lexminval(range_set));
+  cout << tab(1) << "pre adjustment min: " << str(lexmin(ranges)) << endl;
+
+  // Just to be safe we start the cycle after reset
+  min = min - 1;
+
+  if (min <= 0) {
+    for (auto k : get_kernels(prg)) {
+      auto loop = prg.find_loop(k);
+      sched.op_offset_within_parent[loop] = map_find(loop, sched.op_offset_within_parent) - min;
+    }
+  }
+
+
+}
+
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   auto rvars = reduce_vars(prg);
   bool perfect = all_perfect_loop_nests(prg);
@@ -13160,6 +13182,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       sched.instance_latencies[op] = op_latency(op, sched);
       total_latency += op_latency(op, sched) + 2;
     }
+
+    adjust_schedule_forward(sched, prg);
     return;
   }
 
