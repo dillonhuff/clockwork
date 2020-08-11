@@ -1042,7 +1042,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     }
   }
 
-  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
     int width = buf.port_widths;
     auto c = def->getContext();
     auto ns = c->getNamespace("global");
@@ -1112,6 +1112,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
           assert(isl_set_is_singleton(ddc));
           int dd = to_int(lexminval(ddc));
           cout << "DD           : " << dd << endl;
+          string writer_name = domain_name(pick(get_maps(writes)));
+          cout << "writer op    : " << writer_name << endl;
+          for (auto e : hwinfo.op_compute_unit_latencies) {
+            cout << tab(1) << e.first << " -> " << e.second << endl;
+          }
+          assert(false);
+          int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+          assert(op_latency == 0);
+
+          dd = dd - op_latency;
 
           CoreIR::Module* srmod = delay_module(c, width, {dd});
           auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
@@ -1200,7 +1210,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     auto def = ub->newModuleDef();
 
     if (true) {
-      generate_synthesizable_functional_model(options, buf, def);
+      generate_synthesizable_functional_model(options, buf, def, hwinfo);
     } else {
       //buf.generate_coreir(options, def);
     }

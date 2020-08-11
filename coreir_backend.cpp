@@ -1046,7 +1046,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
-    CoreIR::Context* context) {
+    CoreIR::Context* context,
+    schedule_info& hwinfo) {
 
   bool found_compute = true;
   //bool found_compute = false;
@@ -1096,7 +1097,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
-      auto ub_mod = generate_coreir(options, context, buf.second);
+      auto ub_mod = generate_coreir(options, context, buf.second, hwinfo);
       def->addInstance(buf.second.name, ub_mod);
     }
   }
@@ -1589,7 +1590,7 @@ void generate_coreir(CodegenOptions& options,
 
   //CoreIRLoadLibrary_cwlib(context);
   //
-  auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
+  auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context, hwinfo);
 
   //garnet_map_module(prg_mod);
 

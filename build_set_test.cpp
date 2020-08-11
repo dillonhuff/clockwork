@@ -13222,15 +13222,22 @@ schedule_info garnet_schedule_info(prog& prg) {
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
       sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
     } else if (op->func == "hcompute_curved_stencil_1") {
       sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
     } else if (op->func == "hcompute_curved_stencil_2") {
       sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
     } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
       //assert(false);
-      sched.compute_unit_latencies[op->func] = 2;
+      sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
     } else if (op->func != "") {
       sched.compute_unit_latencies[op->func] = 0;
+      sched.op_compute_unit_latencies[op->name] = 0;
+    } else {
+      sched.op_compute_unit_latencies[op->name] = 0;
     }
 
     for (auto b : op->buffers_referenced()) {
@@ -13348,7 +13355,7 @@ void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
   for (auto m : get_maps(start_times)) {
     cout << tab(1) << str(m) << endl;
   }
-  assert(false);
+  //assert(false);
   auto ranges = range(start_times);
   auto range_set = to_set(ranges);
   int min = to_int(lexminval(range_set));
