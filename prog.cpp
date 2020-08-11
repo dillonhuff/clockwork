@@ -5058,7 +5058,7 @@ void generate_verilator_tb(prog& prg,
 
 
   rgtb << "int main() {" << endl;
-  rgtb << tab(1) << "ofstream fout(\"" << "cycle_accurate_regression_result_" << prg.name << ".csv\");" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << "_verilog.txt\");" << endl;
 
   vector<string> optimized_streams;
   map<string, int> unroll_factor;
@@ -5152,8 +5152,8 @@ void generate_verilator_tb(prog& prg,
     string data_name =
       //"dut." + out.first + "_" + out.second + "_0";
       "dut." + out.first + "_" + out.second;
-    rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
-    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
+    //rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
+    //rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
     rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
     rgtb << tab(3) << "cout << \"send me data!\" << endl;" << endl;
     rgtb << tab(3) << "*(" << data_name << ") = (int) " << out.first << ".read();" << endl;
@@ -5167,11 +5167,11 @@ void generate_verilator_tb(prog& prg,
     string data_name =
       //"dut." + out.first + "_" + out.second + "_0";
       "dut." + out.first + "_" + out.second;
-    rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
-    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
+    //rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
     rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
     rgtb << tab(1) << "if (dut." << ctrl_name << ") {" << endl;
     rgtb << tab(2) << "cout << (int) *(" << data_name << ") << endl;" << endl;
+    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
     rgtb << tab(1) << "}" << endl;
   }
 

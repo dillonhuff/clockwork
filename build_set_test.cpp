@@ -9999,6 +9999,17 @@ prog simplified_conv_layer() {
   return prg;
 }
 
+std::vector<string> verilator_results(const std::string& name) {
+  ifstream infile("regression_result_" + name + "_verilog.txt");
+  vector<string> lines;
+  std::string line;
+  while (std::getline(infile, line))
+  {
+    lines.push_back(line);
+  }
+  return lines;
+}
+
 void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
@@ -13342,8 +13353,8 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(camera_pipeline());
   test_programs.push_back(pointwise());
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(harris());
   test_programs.push_back(cascade());
 
@@ -13367,7 +13378,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     prg.sanity_check();
     //assert(false);
 
-    //auto cpu = unoptimized_result(prg);
+    auto cpu = unoptimized_result(prg);
     //assert(false);
 
     compile_for_garnet_dual_port_mem(prg);
@@ -13378,6 +13389,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     //assert(false);
     //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
     run_verilator_tb(prg.name);
+    auto verilator_res = verilator_results(prg.name);
+    compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
     //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
