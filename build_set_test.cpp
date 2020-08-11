@@ -13456,10 +13456,10 @@ vector<prog> stencil_programs() {
 
   // Failing
   //test_programs.push_back(unsharp());
-  //test_programs.push_back(harris());
+  test_programs.push_back(harris());
   //test_programs.push_back(halide_harris());
 
-  test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(camera_pipeline());
 
   // Working
   test_programs.push_back(mini_conv_halide_fixed());
