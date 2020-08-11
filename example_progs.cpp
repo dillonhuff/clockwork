@@ -2326,9 +2326,9 @@ prog rom() {
 // Stencil<int16_t, 64, 64> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
-// Stencil<uint8_t, 64, 64> &hw_output_stencil = arg_1;
+// Stencil<uint16_t, 64, 64> &hw_output_stencil = arg_1;
   prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 8;
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input_global_wrapper.stencil
   auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 64);
@@ -2348,7 +2348,7 @@ prog rom() {
 //consuming curvea0
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 64);
 
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = curvea0[int32(max(min(hw_input_global_wrapper.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi), (int16)1023), (int16)0))]
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = curvea0[int32(max(min((hw_input_global_wrapper.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)*(int16)4), (int16)255), (int16)0))]
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_load("hw_input_global_wrapper_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi");
