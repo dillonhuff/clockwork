@@ -48,6 +48,10 @@ void move_to_synthesis_folder(const std::string& app_name) {
 void compare(const std::string& name,
     vector<string>& optimized_res,
     vector<string>& unoptimized_res) {
+
+  if (!(unoptimized_res.size() == optimized_res.size())) {
+      cout << "Error in " << name << ": After optimization " << optimized_res.size() << " lines, but before: " << unoptimized_res.size() << " lines" << endl;
+  }
   assert(unoptimized_res.size() == optimized_res.size());
   for (size_t i = 0; i < unoptimized_res.size(); i++) {
 

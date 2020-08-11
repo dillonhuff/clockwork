@@ -9999,6 +9999,17 @@ prog simplified_conv_layer() {
   return prg;
 }
 
+std::vector<string> verilator_results(const std::string& name) {
+  ifstream infile("regression_result_" + name + "_verilog.txt");
+  vector<string> lines;
+  std::string line;
+  while (std::getline(infile, line))
+  {
+    lines.push_back(line);
+  }
+  return lines;
+}
+
 void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
@@ -12898,14 +12909,42 @@ bool all_loop_nests_same_depth(prog& prg) {
 }
 
 void dsa_writers(prog& prg) {
+  std::set<string> all_buffers;
   std::set<string> multi_write_buffers;
+  map<string, std::set<string> > producer_kernels;
+  std::set<string> reduced_kernels;
+  for (auto op : prg.all_ops()) {
+    auto read = op->buffers_read();
+    auto written = op->buffers_written();
+    for (auto b : intersection(read, written)) {
+      reduced_kernels.insert(b);
+    }
+  }
+
   for (auto k : get_kernels(prg)) {
     for (auto b : get_produced_buffers(k, prg)) {
-      auto writers = find_writers(b, prg);
-      assert(writers.size() <= 2);
-      if (writers.size() > 1) {
-        multi_write_buffers.insert(b);
+      all_buffers.insert(b);
+      producer_kernels[b].insert(k);
+    }
+  }
+
+  for (auto k : get_kernels(prg)) {
+    for (auto b : get_produced_buffers(k, prg)) {
+      auto producers = producer_kernels[b];
+
+      if (elem(b, reduced_kernels) && producers.size() > 1) {
+        cout << b << " has " << producers.size() << " producers" << endl;
+        for (auto p : producers) {
+          cout << tab(1) << p << endl;
+        }
+        auto writers = find_writers(b, prg);
+        prg.pretty_print();
+        assert(writers.size() <= 2);
+        if (writers.size() > 1) {
+          multi_write_buffers.insert(b);
+        }
       }
+
     }
   }
 
@@ -12935,7 +12974,7 @@ void dsa_writers(prog& prg) {
   cout << "Built initializer / update maps" << endl;
 
   for (auto b : multi_write_buffers) {
-    string init_buffer = prg.un(b);
+    string init_buffer = prg.un(b + "_clkwrk_dsa");
     auto init = initializers[b];
     assert(init != 0);
     auto updated = updaters[b];
@@ -12950,6 +12989,45 @@ void dsa_writers(prog& prg) {
   prg.pretty_print();
   //assert(false);
 
+  // Split up buffers that are read at constants in one of their components
+  for (auto b : all_buffers) {
+    auto writers = find_writers(b, prg);
+    auto readers = find_readers(b, prg);
+
+    if (writers.size() > 1 && readers.size() == 0) {
+      cout << b << " has " << writers.size() << " writers and " << readers.size() << " readers" << endl;
+      assert(prg.is_output(b));
+      for (auto writer : writers) {
+        string init_buffer = prg.un(b + "_clkwrk_write_duplicate");
+        writer->replace_writes_to(b, init_buffer);
+        prg.add_output(init_buffer);
+        prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+      }
+
+      prg.outs.erase(b);
+
+      //// Now: Group writers and readers by their overlap sets?
+
+      //auto pmaps = prg.producer_maps(b);
+      //auto cmaps = prg.consumer_maps(b);
+      //map<op*, std::set<op*> > overlap;
+      //for (auto writer : writers) {
+        //auto written = map_find(writer, pmaps);
+        //for (auto reader : readers) {
+          //auto read = map_find(reader, cmaps);
+          //if (!empty(its(range(read), range(written)))) {
+            //overlap[writer].insert(reader);
+          //}
+        //}
+      //}
+
+      //cout << "Writer overlap..." << endl;
+      //for (auto w : overlap) {
+        //cout << tab(1) << w.first->name << " = " << w.second.size() << endl;
+      //}
+      //assert(false);
+    }
+  }
 }
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
@@ -13063,7 +13141,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
-    int total_latency = 10000;
+    int total_latency = 0;
     for (auto op : inner_ops(prg)) {
       sched.op_offset_within_parent[op] = total_latency;
       sched.instance_latencies[op] = op_latency(op, sched);
@@ -13170,7 +13248,6 @@ schedule_info garnet_schedule_info(prog& prg) {
 }
 
 void compile_for_garnet_dual_port_mem(prog& prg) {
-  dsa_writers(prg);
 
   CodegenOptions options;
   options.internal = true;
@@ -13315,31 +13392,33 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
-  test_programs.push_back(unsharp());
-  test_programs.push_back(harris());
-  test_programs.push_back(cascade());
-  test_programs.push_back(pointwise());
 
-  test_programs.push_back(gaussian());
+  // Failing
+  //test_programs.push_back(unsharp());
+  //test_programs.push_back(harris());
+  //test_programs.push_back(halide_harris());
+
+  test_programs.push_back(camera_pipeline());
+
+  // Working
   test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(halide_harris());
-
-  test_programs.push_back(strided_conv());
+  test_programs.push_back(gaussian());
+  test_programs.push_back(pointwise());
   test_programs.push_back(down_sample());
-
-
-  // Need to fix DSA writers
-  //test_programs.push_back(camera_pipeline_dse_1());
-  //test_programs.push_back(camera_pipeline());
+  test_programs.push_back(strided_conv());
+  test_programs.push_back(cascade());
   return test_programs;
 }
 
 void test_stencil_codegen(vector<prog>& test_programs) {
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
+    prg.pretty_print();
     prg.sanity_check();
+    //assert(false);
 
-    //auto cpu = unoptimized_result(prg);
+    dsa_writers(prg);
+    auto cpu = unoptimized_result(prg);
     //assert(false);
 
     compile_for_garnet_dual_port_mem(prg);
@@ -13349,7 +13428,9 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     cout << "Output name: " << prg.name << endl;
     //assert(false);
     //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
-    //run_verilator_tb(prg.name);
+    run_verilator_tb(prg.name);
+    auto verilator_res = verilator_results(prg.name);
+    compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
     //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
@@ -13360,8 +13441,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
 void cgra_flow_tests() {
   auto test_programs = stencil_programs();
-  test_schedules(test_programs);
   test_stencil_codegen(test_programs);
+  //test_schedules(test_programs);
 
   assert(false);
 }

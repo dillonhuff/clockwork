@@ -831,16 +831,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       cout << tab(2) << "possible ports = " << possible_ports.size() << endl;
       assert(possible_ports.size() == 1 || possible_ports.size() == 2);
 
-      //for (auto inpt : possible_ports) {
-        //auto b = buf.get_bank_between(inpt, outpt);
-        //// TODO: Add real selection logic
-        //bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
-        //break;
-      //}
-
       if (possible_ports.size() == 1) {
-      //if (true) {
-        //possible_ports.size() == 1) {
         cout << tab(2) << "only one possible port: " << possible_ports.at(0);
         for (auto inpt : possible_ports) {
           auto b = buf.get_bank_between(inpt, outpt);
@@ -861,9 +852,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
             bdef->sel("self.out"),
             delaybit(bdef,
               in_set->sel("valid")),
-            //in_set->sel("valid"),
-            //bdef->sel("self")->sel(b1_name),
-            //bdef->sel("self")->sel(b0_name));
             bdef->sel("self")->sel(b0_name),
             bdef->sel("self")->sel(b1_name));
       }
@@ -1050,32 +1038,86 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+    int width = buf.port_widths;
+    auto c = def->getContext();
+    auto ns = c->getNamespace("global");
+
 
     if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_CYCLE_DELAY) {
       auto sched = buf.global_schedule();
 
-      for (auto inpt : buf.get_in_ports()) {
-        for (auto outpt : buf.get_out_ports()) {
-          auto writes = buf.access_map.at(inpt);
-          auto reads = buf.access_map.at(outpt);
-          cout << "writes: " << str(writes) << endl;
-          cout << "reads : " << str(reads) << endl;
+      for (auto outpt : buf.get_out_ports()) {
+        std::set<string> ins;
+        {
+          auto reads = range(buf.access_map.at(outpt));
+          for (auto inpt : buf.get_in_ports()) {
+            auto writes = range(buf.access_map.at(inpt));
+            auto overlap = its(writes, reads);
+            if (!empty(overlap)) {
+              ins.insert(inpt);
+            }
+          }
+        }
 
-          auto time_to_write = dot(inv(sched), (writes));
-          auto time_to_read = dot(inv(sched), (reads));
+        assert(ins.size() == 1);
+        //cout << "# in ports on " << buf.name << ": " << buf.get_in_ports().size() << endl;
+        //{
+          //cout << "Input ports to conditions" << endl;
+          //map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
+          //for (auto in : ins) {
+            //cout << tab(1) << in.first << " -> " << str(in.second) << endl;
+          //}
+        //}
+        //assert(buf.get_in_ports().size() == 1);
+        //auto ins = buf.get_in_ports();
 
-          cout << "Time to write: " << str(time_to_write) << endl;
-          cout << "Time to read : " << str(time_to_read) << endl;
+        //map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
+        //cout << "Checking inputs for " << outpt << " on " << buf.name << endl;
+        //cout << tab(1) << "Input ports: " << comma_list(buf.get_in_ports()) << endl;
+        //cout << "Ins..." << endl;
+        //for (auto in : ins) {
+          //cout << tab(1) << in.first << " -> " << str(in.second) << endl;
+        //}
+        assert(ins.size() == 1);
+        auto inpt = pick(ins);
 
-          auto pc_times = dot(time_to_write, inv(time_to_read));
-          cout << "PC times     : " << str(pc_times) << endl;
-          auto dds = isl_union_map_deltas(pc_times);
-          cout << "DDs          : " << str(dds) << endl;
+        auto writes = buf.access_map.at(inpt);
+        auto reads = buf.access_map.at(outpt);
+        cout << "writes: " << str(writes) << endl;
+        cout << "reads : " << str(reads) << endl;
+        cout << "Schedule..." << endl;
+        for (auto m : get_maps(sched)) {
+          cout << tab(1) << str(m) << endl;
+          release(m);
+        }
+
+        auto time_to_write = dot(inv(sched), (writes));
+        auto time_to_read = dot(inv(sched), (reads));
+
+        cout << "Time to write: " << str(time_to_write) << endl;
+        cout << "Time to read : " << str(time_to_read) << endl;
+
+        auto pc_times = dot(time_to_write, inv(time_to_read));
+        cout << "PC times     : " << str(pc_times) << endl;
+        auto dds = isl_union_map_deltas(pc_times);
+        cout << "DDs          : " << str(dds) << endl;
+        if (!empty(dds)) {
           auto ddc = to_set(dds);
 
           assert(isl_set_is_singleton(ddc));
           int dd = to_int(lexminval(ddc));
           cout << "DD           : " << dd << endl;
+
+          CoreIR::Module* srmod = delay_module(c, width, {dd});
+          auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
+          def->connect(def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)),
+              srinst->sel("wdata"));
+
+          def->connect(def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)),
+              srinst->sel("rdata"));
+        } else {
+          cout << tab(1) << "No overlap" << endl;
+          assert(false);
         }
       }
       //assert(false);
@@ -1083,10 +1125,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     generate_banks(options, buf, def);
-
-    int width = buf.port_widths;
-    auto c = def->getContext();
-    auto ns = c->getNamespace("global");
 
     for (auto inpt : buf.get_in_ports()) {
       auto bcm = coreir_broadcast(c, inpt, buf);
@@ -1120,8 +1158,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   //generate coreir instance for single ubuffer
   //return the coreir module with port bundle and enable/valid interface
   CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
-    //CoreIRLoadLibrary_commonlib(context);
-    //CoreIRLoadLibrary_cwlib(context);
     auto ns = context->getNamespace("global");
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")}};

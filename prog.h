@@ -1200,6 +1200,9 @@ struct prog {
 
   map<op*, isl_map*> producer_maps_no_domain();
 
+  map<op*, isl_map*> producer_maps(const std::string& buf);
+  map<op*, isl_map*> consumer_maps(const std::string& buf);
+
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();

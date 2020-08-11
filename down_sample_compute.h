@@ -38,7 +38,7 @@ hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& avg_pool_stencil) {
 
   uint16_t _411 = (uint16_t)(2);
   uint16_t _412 = _avg_pool_stencil_2 >> _411;
-  uint8_t _413 = (uint8_t)(_412);
+  uint16_t _413 = (uint16_t)(_412);
   return _413;
 }
 

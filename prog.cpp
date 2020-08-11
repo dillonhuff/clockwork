@@ -181,10 +181,13 @@ std::set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
+    for (auto bundle : buf.get_out_bundles()) {
+      edges.insert(bundle);
+    }
+    //assert(buf.get_out_bundles().size() == 1);
 
-    auto bundle = pick(buf.get_out_bundles());
-    edges.insert(bundle);
+    //auto bundle = pick(buf.get_out_bundles());
+    //edges.insert(bundle);
   }
   return edges;
 }
@@ -242,10 +245,13 @@ std::set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
-    assert(buf.get_out_bundles().size() == 1);
+    for (auto bundle : buf.get_out_bundles()) {
+      edges.insert(bundle);
+    }
+    //assert(buf.get_out_bundles().size() == 1);
 
-    auto bundle = pick(buf.get_out_bundles());
-    edges.insert(bundle);
+    //auto bundle = pick(buf.get_out_bundles());
+    //edges.insert(bundle);
   }
 
   for (auto out : prg.outs) {
@@ -5052,7 +5058,7 @@ void generate_verilator_tb(prog& prg,
 
 
   rgtb << "int main() {" << endl;
-  rgtb << tab(1) << "ofstream fout(\"" << "cycle_accurate_regression_result_" << prg.name << ".csv\");" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << "_verilog.txt\");" << endl;
 
   vector<string> optimized_streams;
   map<string, int> unroll_factor;
@@ -5117,12 +5123,14 @@ void generate_verilator_tb(prog& prg,
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
   for (auto out : inputs(buffers, prg)) {
     string data_name =
-      out.first + "_" + out.second + "_0";
-    rgtb << tab(1) << "dut." << data_name << " = 13;" << endl;
+      //out.first + "_" + out.second + "_0";
+      out.first + "_" + out.second;
+    rgtb << tab(1) << "*(dut." << data_name << ") = 0;" << endl;
   }
 
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
+      //out.first + "_" + out.second + "_en";
       out.first + "_" + out.second + "_en";
     rgtb << tab(1) << "int " << ctrl_name << "_count = 0;" << endl;
   }
@@ -5132,21 +5140,13 @@ void generate_verilator_tb(prog& prg,
   rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
 
   for (auto out : inputs(buffers, prg)) {
-    string data_name =
-      out.first + "_" + out.second + "_0";
-    rgtb << tab(1) << "dut." << data_name << " = t;" << endl;
-  }
-
-  for (auto out : inputs(buffers, prg)) {
     string ctrl_name =
       out.first + "_" + out.second + "_valid";
     string data_name =
-      "dut." + out.first + "_" + out.second + "_0";
-    rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
-    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) " << data_name << " << endl;" << endl;
+      "dut." + out.first + "_" + out.second;
     rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
     rgtb << tab(3) << "cout << \"send me data!\" << endl;" << endl;
-    rgtb << tab(3) << data_name << " = (int) " << out.first << ".read();" << endl;
+    rgtb << tab(3) << "*(" << data_name << ") = (int) " << out.first << ".read();" << endl;
     rgtb << tab(2) << "}" << endl;
   }
 
@@ -5154,12 +5154,13 @@ void generate_verilator_tb(prog& prg,
     string ctrl_name =
       out.first + "_" + out.second + "_en";
     string data_name =
-      "dut." + out.first + "_" + out.second + "_0";
-    rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
-    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) " << data_name << " << endl;" << endl;
+      "dut." + out.first + "_" + out.second;
     rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
     rgtb << tab(1) << "if (dut." << ctrl_name << ") {" << endl;
-    rgtb << tab(2) << "cout << (int) " << data_name << " << endl;" << endl;
+    rgtb << tab(2) << "cout << (int) *(" << data_name << ") << endl;" << endl;
+    //rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
+    rgtb << tab(2) << "hw_uint<16> val((int) *(" << data_name << "));" << endl;
+    rgtb << tab(2) << "fout << val << endl;" << endl;
     rgtb << tab(1) << "}" << endl;
   }
 
@@ -5227,4 +5228,68 @@ bool is_inner_loop(op* op) {
     }
   }
   return true;
+}
+
+
+map<op*, isl_map*> prog::producer_maps(const std::string& buf) {
+  map<op*, isl_map*> m;
+  auto ivars = iter_vars();
+  auto doms = domains();
+
+  auto ops = root->all_ops();
+  for (auto op : ops) {
+    auto vars = map_find(op, ivars);
+    string ivar_str = sep_list(vars, "[", "]", ", ");
+    auto dom = map_find(op, doms);
+
+    umap* pmap = rdmap(ctx, "{}");
+    for (auto p : op->produces()) {
+      isl_union_map* vmap =
+        its(rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+      if (range_name(to_map(vmap)) == buf) {
+        pmap = unn(pmap, vmap);
+      }
+    }
+    if (!empty(pmap)) {
+      m[op] = to_map(pmap);
+    }
+  }
+  return m;
+}
+
+map<op*, isl_map*> prog::consumer_maps(const std::string& buf) {
+  auto ivars = iter_vars();
+  auto doms = domains();
+
+  auto ops = root->all_ops();
+  map<op*, isl_map*> maps;
+  for (auto op : ops) {
+    auto vars = map_find(op, ivars);
+    string ivar_str = sep_list(vars, "[", "]", ", ");
+    auto dom = map_find(op, doms);
+
+    isl_map* pmap = nullptr;
+
+    // for boundary condition expressions
+    for (auto top_pair : op->consumes_pair()) {
+      if (top_pair.first == buf) {
+        string cond = "{ ";
+        for (auto sec_pair : top_pair.second) {
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+        cond = cond.substr(0, cond.length() - 2);
+        cond = cond + string(" }");
+        isl_map* vmap = its(isl_map_read_from_str(ctx, cond.c_str()), dom);
+        if (pmap == nullptr) {
+          pmap = cpy(vmap);
+        } else {
+          pmap = unn(pmap, vmap);
+        }
+
+        release(vmap);
+      }
+    }
+    maps[op] = pmap;
+  }
+  return maps;
 }
