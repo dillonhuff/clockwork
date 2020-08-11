@@ -1601,10 +1601,10 @@ void generate_coreir(CodegenOptions& options,
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cgralib(context);
+  add_delay_tile_generator(context);
+
   auto c = context;
 
-  //CoreIRLoadLibrary_cwlib(context);
-  //
   auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context, hwinfo);
 
   //garnet_map_module(prg_mod);
@@ -1985,10 +1985,46 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
   return m;
 }
 
+void add_delay_tile_generator(CoreIR::Context* c) {
+  auto cgralib = c->getNamespace("global");
+  CoreIR::Params params = {{"delay",c->Int()}};
+
+  Params reg_array_args = {{"type", CoreIRType::make(c)},
+                           {"has_en", c->Bool()},
+                           {"has_clr", c->Bool()},
+                           {"has_rst", c->Bool()},
+                           {"init", c->Int()}};
+  TypeGen* ramTG = cgralib->newTypeGen(
+    "delay_tile_TG",
+    params,
+    [](Context* c, Values args) {
+    int width = 16;
+
+  auto tp = c->Record({
+      {"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)},
+      {"rdata", c->Bit()->Arr(width)}});
+  return tp;
+    });
+  Generator* ram = cgralib->newGeneratorDecl("delay_tile", ramTG, params);
+
+
+  ram->setGeneratorDefFromFun(
+    [](Context* c, Values args, ModuleDef* def) {
+
+    int width = 16;
+    int depth = args.at("delay")->get<int>();
+    auto srinst = def->addInstance("delay_mod", reg_delay_module(c, width, {depth}));
+    auto self = def->sel("self");
+    def->connect(srinst->sel("wdata"), self->sel("wdata"));
+    def->connect(srinst->sel("rdata"), self->sel("rdata"));
+
+    });
+}
+
 void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   auto cgralib = c->getNamespace("global");
   CoreIR::Params params = {{"depth",c->Int()}};
-  //CoreIR::Params params;
 
   Params reg_array_args = {{"type", CoreIRType::make(c)},
                            {"has_en", c->Bool()},
@@ -2000,8 +2036,6 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
     params,
     [](Context* c, Values args) {
     int width = 16;
-    //int depth = args.at("depth")->get<int>();
-    //int depth = args.at("depth")->get<int>();
 
   auto tp = c->Record({
       {"clk", c->Named("coreir.clkIn")},
@@ -2059,29 +2093,69 @@ CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
   return m;
 }
 
+CoreIR::Module* reg_delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays) {
+  assert(read_delays.size() == 1);
+  int D = read_delays.at(0);
+  auto ns = c->getNamespace("global");
+  vector<pair<string, Type*> > fields = {{"clk", c->Named("coreir.clkIn")},
+    {"wdata", c->BitIn()->Arr(width)},
+    {"rdata", c->Bit()->Arr(width)}};
+
+  Module* mod = nullptr;
+
+  mod = ns->newModuleDecl("delay_" + c->getUnique(), c->Record(fields));
+  auto def = mod->newModuleDef();
+
+  auto next = def->sel("self.wdata");
+  for (int d = 0; d < D; d++) {
+    next = delay(def, next, width);
+  }
+  def->connect(next, def->sel("self.rdata"));
+  mod->setDef(def);
+
+  assert(mod != nullptr);
+  return mod;
+}
+
 CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays) {
   assert(read_delays.size() == 1);
   int D = read_delays.at(0);
   auto ns = c->getNamespace("global");
   vector<pair<string, Type*> > fields = {{"clk", c->Named("coreir.clkIn")},
-      {"wdata", c->BitIn()->Arr(width)},
-      //{"waddr", c->BitIn()->Arr(width)},
-      //{"wen", c->BitIn()},
-      {"rdata", c->Bit()->Arr(width)}};
-      //{"raddr", c->BitIn()->Arr(width)},
-      //{"ren", c->BitIn()}};
+    {"wdata", c->BitIn()->Arr(width)},
+    {"rdata", c->Bit()->Arr(width)}};
 
-auto mod = ns->newModuleDecl("delay_" + c->getUnique(), c->Record(fields));
-auto def = mod->newModuleDef();
+  Module* mod = nullptr;
+  const int TILE_USE_THRESHOLD = 10;
 
-auto next = def->sel("self.wdata");
-for (int d = 0; d < D; d++) {
-  next = delay(def, next, width);
-}
-//auto d = delay(def, def->sel("self.wdata"), width);
-def->connect(next, def->sel("self.rdata"));
-mod->setDef(def);
+  if (D <= TILE_USE_THRESHOLD) {
+    mod = ns->newModuleDecl("delay_" + c->getUnique(), c->Record(fields));
+    auto def = mod->newModuleDef();
 
+    auto next = def->sel("self.wdata");
+    for (int d = 0; d < D; d++) {
+      next = delay(def, next, width);
+    }
+    def->connect(next, def->sel("self.rdata"));
+    mod->setDef(def);
+  } else {
+    auto g = ns->getGenerator("delay_tile");
+    mod = ns->newModuleDecl("memtile_long_delay_" + c->getUnique(), c->Record(fields));
+    auto def = mod->newModuleDef();
+
+    auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
+    def->connect(t->sel("rdata"), def->sel("self.rdata"));
+    def->connect(t->sel("wdata"), def->sel("self.wdata"));
+
+    //auto next = def->sel("self.wdata");
+    //for (int d = 0; d < D; d++) {
+      //next = delay(def, next, width);
+    //}
+    //def->connect(next, def->sel("self.rdata"));
+    mod->setDef(def);
+  }
+
+  assert(mod != nullptr);
   return mod;
 }
 
