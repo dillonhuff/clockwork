@@ -12994,28 +12994,35 @@ void dsa_writers(prog& prg) {
     auto writers = find_writers(b, prg);
     auto readers = find_readers(b, prg);
 
-    if (writers.size() > 1 && readers.size() > 1) {
+    if (writers.size() > 1 && readers.size() == 0) {
       cout << b << " has " << writers.size() << " writers and " << readers.size() << " readers" << endl;
-      // Now: Group writers and readers by their overlap sets?
-
-      auto pmaps = prg.producer_maps(b);
-      auto cmaps = prg.consumer_maps(b);
-      map<op*, std::set<op*> > overlap;
+      assert(prg.is_output(b));
       for (auto writer : writers) {
-        auto written = map_find(writer, pmaps);
-        for (auto reader : readers) {
-          auto read = map_find(reader, cmaps);
-          if (!empty(its(range(read), range(written)))) {
-            overlap[writer].insert(reader);
-          }
-        }
+        string init_buffer = prg.un(b + "_clkwrk_write_duplicate");
+        writer->replace_writes_to(b, init_buffer);
+        prg.add_output(init_buffer);
       }
 
-      cout << "Writer overlap..." << endl;
-      for (auto w : overlap) {
-        cout << tab(1) << w.first->name << " = " << w.second.size() << endl;
-      }
-      assert(false);
+      //// Now: Group writers and readers by their overlap sets?
+
+      //auto pmaps = prg.producer_maps(b);
+      //auto cmaps = prg.consumer_maps(b);
+      //map<op*, std::set<op*> > overlap;
+      //for (auto writer : writers) {
+        //auto written = map_find(writer, pmaps);
+        //for (auto reader : readers) {
+          //auto read = map_find(reader, cmaps);
+          //if (!empty(its(range(read), range(written)))) {
+            //overlap[writer].insert(reader);
+          //}
+        //}
+      //}
+
+      //cout << "Writer overlap..." << endl;
+      //for (auto w : overlap) {
+        //cout << tab(1) << w.first->name << " = " << w.second.size() << endl;
+      //}
+      //assert(false);
     }
   }
 }
