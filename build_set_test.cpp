@@ -12905,7 +12905,7 @@ void dsa_writers(prog& prg) {
         }
         auto writers = find_writers(b, prg);
         prg.pretty_print();
-        assert(writers.size() <= 2);
+        //assert(writers.size() <= 2);
         if (writers.size() > 1) {
           multi_write_buffers.insert(b);
         }
@@ -12920,7 +12920,7 @@ void dsa_writers(prog& prg) {
   for (auto b : multi_write_buffers) {
     cout << tab(1) << b << endl;
     auto writers = find_writers(b, prg);
-    assert(writers.size() == 2);
+    //assert(writers.size() == 2);
     vector<op*> ws;
     for (auto w : writers) {
       ws.push_back(w);
@@ -13018,11 +13018,19 @@ void adjust_schedule_forward(schedule_info& sched, prog& prg) {
 
 }
 
-void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+bool is_rate_matchable(prog& prg) {
   auto rvars = reduce_vars(prg);
   bool perfect = all_perfect_loop_nests(prg);
-  if (rvars.size() == 0 &&
-      perfect) {
+
+  return rvars.size() == 0 && perfect;
+}
+
+void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+  if (is_rate_matchable(prg)) {
+  //auto rvars = reduce_vars(prg);
+  //bool perfect = all_perfect_loop_nests(prg);
+  //if (rvars.size() == 0 &&
+      //perfect) {
     prg.pretty_print();
     bool single_depth = all_loop_nests_same_depth(prg);
     int max_depth = max_loop_depth(prg);
@@ -13142,18 +13150,18 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
   prg.pretty_print();
   cout << prg.name << " is not a stencil" << endl;
-  cout << tab(1) << "Perfect: " << perfect << endl;
-  cout << tab(1) << "# rvars: " << rvars.size() << endl;
-  for (auto rv : rvars) {
-    cout << tab(2) << rv << endl;
-  }
-  assert(false);
+  //cout << tab(1) << "Perfect: " << perfect << endl;
+  //cout << tab(1) << "# rvars: " << rvars.size() << endl;
+  //for (auto rv : rvars) {
+    //cout << tab(2) << rv << endl;
+  //}
+  //assert(false);
 
   sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);
-  //assert(false);
+
   return;
 
   //auto rvars = reduce_vars(prg);
@@ -13264,8 +13272,13 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.all_rams = true;
   all_exhaustive_banked(prg, options);
 
-  options.inner_bank_offset_mode =
-    INNER_BANK_OFFSET_CYCLE_DELAY;
+  if (is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_CYCLE_DELAY;
+  } else {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
 
   schedule_info sched = garnet_schedule_info(prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
@@ -13425,6 +13438,7 @@ vector<prog> stencil_programs() {
   //test_programs.push_back(up_sample());
 
   // Fails at 256?
+  test_programs.push_back(harris());
   test_programs.push_back(rom());
   // commonlib div?
   test_programs.push_back(unsharp());
@@ -13437,8 +13451,26 @@ vector<prog> stencil_programs() {
   test_programs.push_back(gaussian());
   test_programs.push_back(down_sample());
   test_programs.push_back(strided_conv());
-  test_programs.push_back(harris());
-  test_programs.push_back(halide_harris());
+  //test_programs.push_back(halide_harris());
+
+  return test_programs;
+}
+
+vector<prog> all_cgra_programs() {
+
+  vector<prog> test_programs;
+  // Address generation broken, classified as stencil pipelin
+  //test_programs.push_back(up_sample());
+
+  //test_programs.push_back(unet_conv_3_3());
+  //test_programs.push_back(conv_layer());
+
+  //test_programs.push_back(partially_unrolled_conv());
+  //test_programs.push_back(accumulation());
+  //test_programs.push_back(resnet());
+  test_programs.push_back(conv_multi());
+
+  concat(test_programs, stencil_programs());
 
   return test_programs;
 }
@@ -13459,8 +13491,6 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     //auto cgra_sim = run_regression_tb(prg.name);
 
     cout << "Output name: " << prg.name << endl;
-    //assert(false);
-    //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
@@ -13475,6 +13505,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
 void cgra_flow_tests() {
   auto test_programs = stencil_programs();
+  //auto test_programs = all_cgra_programs();
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
 
