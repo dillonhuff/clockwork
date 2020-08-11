@@ -1620,6 +1620,9 @@ void normalize_bounds(prog& prg);
 bool is_inner_loop(op* op);
 
 struct schedule_info {
+  // Miscellaneous
+  bool use_dse_compute;
+
   // Schedule constraints
   map<string, int> buffer_load_latencies;
   map<string, int> buffer_store_latencies;

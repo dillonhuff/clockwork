@@ -1061,8 +1061,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     schedule_info& hwinfo) {
 
   bool found_compute = true;
-  //bool found_compute = false;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  if (hwinfo.use_dse_compute) {
+    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
+  }
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
@@ -1071,7 +1073,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;
     cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    //assert(false);
+    if (hwinfo.use_dse_compute) {
+      assert(false);
+    }
   }
 
   auto ns = context->getNamespace("global");

@@ -13218,6 +13218,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
 schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
+  sched.use_dse_compute = true;
   for (auto op : prg.all_ops()) {
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
