@@ -13455,7 +13455,8 @@ vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
   // Failing
-  //test_programs.push_back(unsharp());
+  test_programs.push_back(unsharp());
+  test_programs.push_back(rom());
   test_programs.push_back(harris());
   //test_programs.push_back(halide_harris());
 
