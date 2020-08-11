@@ -5125,13 +5125,13 @@ void generate_verilator_tb(prog& prg,
     string data_name =
       //out.first + "_" + out.second + "_0";
       out.first + "_" + out.second;
-    rgtb << tab(1) << "dut." << data_name << " = 13;" << endl;
+    rgtb << tab(1) << "*(dut." << data_name << ") = 0;" << endl;
   }
 
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
       //out.first + "_" + out.second + "_en";
-      out.first + "_" + out.second;
+      out.first + "_" + out.second + "_en";
     rgtb << tab(1) << "int " << ctrl_name << "_count = 0;" << endl;
   }
 
@@ -5139,12 +5139,12 @@ void generate_verilator_tb(prog& prg,
   rgtb << tab(1) << "dut.eval();" << endl;
   rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
 
-  for (auto out : inputs(buffers, prg)) {
-    string data_name =
-      out.first + "_" + out.second;
-      //out.first + "_" + out.second + "_0";
-    rgtb << tab(1) << "dut." << data_name << " = t;" << endl;
-  }
+  //for (auto out : inputs(buffers, prg)) {
+    //string data_name =
+      //out.first + "_" + out.second;
+      ////out.first + "_" + out.second + "_0";
+    //rgtb << tab(1) << "dut." << data_name << " = t;" << endl;
+  //}
 
   for (auto out : inputs(buffers, prg)) {
     string ctrl_name =
@@ -5153,25 +5153,25 @@ void generate_verilator_tb(prog& prg,
       //"dut." + out.first + "_" + out.second + "_0";
       "dut." + out.first + "_" + out.second;
     rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
-    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) " << data_name << " << endl;" << endl;
+    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
     rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
     rgtb << tab(3) << "cout << \"send me data!\" << endl;" << endl;
-    rgtb << tab(3) << data_name << " = (int) " << out.first << ".read();" << endl;
+    rgtb << tab(3) << "*(" << data_name << ") = (int) " << out.first << ".read();" << endl;
     rgtb << tab(2) << "}" << endl;
   }
 
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
       //out.first + "_" + out.second + "_en";
-      out.first + "_" + out.second;
+      out.first + "_" + out.second + "_en";
     string data_name =
       //"dut." + out.first + "_" + out.second + "_0";
       "dut." + out.first + "_" + out.second;
     rgtb << tab(2) << "fout << t << \",\" << \"" << ctrl_name << "\" << \",\" << (int) dut." << ctrl_name << " << endl;" << endl;
-    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) " << data_name << " << endl;" << endl;
+    rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
     rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
     rgtb << tab(1) << "if (dut." << ctrl_name << ") {" << endl;
-    rgtb << tab(2) << "cout << (int) " << data_name << " << endl;" << endl;
+    rgtb << tab(2) << "cout << (int) *(" << data_name << ") << endl;" << endl;
     rgtb << tab(1) << "}" << endl;
   }
 
@@ -5184,7 +5184,7 @@ void generate_verilator_tb(prog& prg,
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
       //out.first + "_" + out.second + "_en";
-      out.first + "_" + out.second;
+      out.first + "_" + out.second + "_en";
     rgtb << tab(2) << "cout << " << ctrl_name << "_count << endl;" << endl;
   }
 

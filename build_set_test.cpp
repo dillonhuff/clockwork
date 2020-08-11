@@ -13089,7 +13089,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
-    int total_latency = 10000;
+    int total_latency = 0;
     for (auto op : inner_ops(prg)) {
       sched.op_offset_within_parent[op] = total_latency;
       sched.instance_latencies[op] = op_latency(op, sched);
@@ -13341,12 +13341,10 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
-  //test_programs.push_back(camera_pipeline_dse_1());
-  test_programs.push_back(camera_pipeline());
 
+  test_programs.push_back(pointwise());
   test_programs.push_back(harris());
   test_programs.push_back(cascade());
-  test_programs.push_back(pointwise());
 
   test_programs.push_back(gaussian());
   test_programs.push_back(mini_conv_halide_fixed());
@@ -13355,6 +13353,7 @@ vector<prog> stencil_programs() {
   test_programs.push_back(strided_conv());
   test_programs.push_back(down_sample());
   test_programs.push_back(unsharp());
+  test_programs.push_back(camera_pipeline());
 
 
   // Need to fix DSA writers
