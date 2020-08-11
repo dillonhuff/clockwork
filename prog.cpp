@@ -5229,3 +5229,67 @@ bool is_inner_loop(op* op) {
   }
   return true;
 }
+
+
+map<op*, isl_map*> prog::producer_maps(const std::string& buf) {
+  map<op*, isl_map*> m;
+  auto ivars = iter_vars();
+  auto doms = domains();
+
+  auto ops = root->all_ops();
+  for (auto op : ops) {
+    auto vars = map_find(op, ivars);
+    string ivar_str = sep_list(vars, "[", "]", ", ");
+    auto dom = map_find(op, doms);
+
+    umap* pmap = rdmap(ctx, "{}");
+    for (auto p : op->produces()) {
+      isl_union_map* vmap =
+        its(rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+      if (range_name(to_map(vmap)) == buf) {
+        pmap = unn(pmap, vmap);
+      }
+    }
+    if (!empty(pmap)) {
+      m[op] = to_map(pmap);
+    }
+  }
+  return m;
+}
+
+map<op*, isl_map*> prog::consumer_maps(const std::string& buf) {
+  auto ivars = iter_vars();
+  auto doms = domains();
+
+  auto ops = root->all_ops();
+  map<op*, isl_map*> maps;
+  for (auto op : ops) {
+    auto vars = map_find(op, ivars);
+    string ivar_str = sep_list(vars, "[", "]", ", ");
+    auto dom = map_find(op, doms);
+
+    isl_map* pmap = nullptr;
+
+    // for boundary condition expressions
+    for (auto top_pair : op->consumes_pair()) {
+      if (top_pair.first == buf) {
+        string cond = "{ ";
+        for (auto sec_pair : top_pair.second) {
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+        cond = cond.substr(0, cond.length() - 2);
+        cond = cond + string(" }");
+        isl_map* vmap = its(isl_map_read_from_str(ctx, cond.c_str()), dom);
+        if (pmap == nullptr) {
+          pmap = cpy(vmap);
+        } else {
+          pmap = unn(pmap, vmap);
+        }
+
+        release(vmap);
+      }
+    }
+    maps[op] = pmap;
+  }
+  return maps;
+}
