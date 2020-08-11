@@ -607,10 +607,6 @@
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0008"]}
           },
-          "div_588_590_591":{
-            "genref":"commonlib.div",
-            "genargs":{"width":["Int",16]}
-          },
           "lshr_blur_unnormalized_stencil_2_582_583":{
             "genref":"coreir.lshr",
             "genargs":{"width":["Int",16]}
@@ -625,6 +621,10 @@
           },
           "sub_581_583_584":{
             "genref":"coreir.sub",
+            "genargs":{"width":["Int",16]}
+          },
+          "udiv_588_590_591":{
+            "genref":"coreir.udiv",
             "genargs":{"width":["Int",16]}
           },
           "umax_gray_stencil_26_589_590":{
@@ -647,17 +647,17 @@
           ["mul_gray_stencil_26_580_581.in1","const_p2__580.out"],
           ["mul_586_587_588.in1","const_p32__587.out"],
           ["lshr_blur_unnormalized_stencil_2_582_583.in1","const_p8__582.out"],
-          ["mul_586_587_588.out","div_588_590_591.in0"],
-          ["umax_gray_stencil_26_589_590.out","div_588_590_591.in1"],
-          ["umin_591_585_592.in0","div_588_590_591.out"],
           ["self.in0_blur_unnormalized_stencil.0","lshr_blur_unnormalized_stencil_2_582_583.in0"],
           ["sub_581_583_584.in1","lshr_blur_unnormalized_stencil_2_582_583.out"],
           ["umin_584_585_586.out","mul_586_587_588.in0"],
+          ["udiv_588_590_591.in0","mul_586_587_588.out"],
           ["self.in1_gray_stencil.0","mul_gray_stencil_26_580_581.in0"],
           ["sub_581_583_584.in0","mul_gray_stencil_26_580_581.out"],
           ["umax_gray_stencil_26_589_590.in0","self.in1_gray_stencil.0"],
           ["umin_591_585_592.out","self.out_ratio_stencil"],
-          ["umin_584_585_586.in0","sub_581_583_584.out"]
+          ["umin_584_585_586.in0","sub_581_583_584.out"],
+          ["umax_gray_stencil_26_589_590.out","udiv_588_590_591.in1"],
+          ["umin_591_585_592.in0","udiv_588_590_591.out"]
         ]
       }
     }
