@@ -13422,6 +13422,13 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
+  //test_programs.push_back(up_sample());
+
+  // Fails at 256?
+  test_programs.push_back(rom());
+  // commonlib div?
+  test_programs.push_back(unsharp());
+
   // Working
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(cascade());
@@ -13433,10 +13440,6 @@ vector<prog> stencil_programs() {
   test_programs.push_back(harris());
   test_programs.push_back(halide_harris());
 
-  // commonlib div?
-  //test_programs.push_back(unsharp());
-  // Fails at 256?
-  //test_programs.push_back(rom());
   return test_programs;
 }
 
