@@ -2161,9 +2161,9 @@ void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> w
     //string r_out = addr_out.size() > 1 ? "]]" : "";
 
     //out << sep_list(addr_in, l_in, r_in, "],[") << ", " << sep_list(addr_out, l_out, r_out, "],[") << endl;
-    out << sep_list(addr_in, "[", "]", ",") << ", "
+    out << sep_list(addr_in, "[", "]", " ") << ", "
         << valid_in << ", "
-        << sep_list(addr_out, "[", "]", ",") << ", "
+        << sep_list(addr_out, "[", "]", " ") << ", "
         << valid_out << endl;
 
     cycle ++;
