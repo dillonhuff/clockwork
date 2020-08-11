@@ -2121,12 +2121,14 @@ void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> w
   int cycle = 0;
   size_t rd_itr = 0;
   size_t wr_itr = 0;
-  out << "data_in, data_out" << endl;
+  out << "data_in, valid_in, data_out, valid_out" << endl;
   while (rd_itr < read_cycle.size() || wr_itr < write_cycle.size()) {
+    bool valid_in = false, valid_out = false;
     auto addr_in = vector<int>(input_width, 0);
     auto addr_out = vector<int>(output_width, 0);
     if (rd_itr < read_cycle.size()) {
       if (read_cycle.at(rd_itr) == cycle) {
+        valid_out = true;
         for (size_t i = 0; i < read_addr.at(rd_itr).size(); i ++)
           addr_out.at(i) = read_addr.at(rd_itr).at(i);
 
@@ -2137,6 +2139,7 @@ void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> w
     }
     if (wr_itr < write_cycle.size()) {
       if (write_cycle.at(wr_itr) == cycle) {
+        valid_in = true;
         for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
           addr_in.at(i) = write_addr.at(wr_itr).at(i);
         //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
@@ -2158,7 +2161,10 @@ void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> w
     //string r_out = addr_out.size() > 1 ? "]]" : "";
 
     //out << sep_list(addr_in, l_in, r_in, "],[") << ", " << sep_list(addr_out, l_out, r_out, "],[") << endl;
-    out << sep_list(addr_in, "[", "]", ",") << ", " << sep_list(addr_out, "[", "]", ",") << endl;
+    out << sep_list(addr_in, "[", "]", ",") << ", "
+        << valid_in << ", "
+        << sep_list(addr_out, "[", "]", ",") << ", "
+        << valid_out << endl;
 
     cycle ++;
   }
@@ -12697,8 +12703,9 @@ void lake_identity_stream_autovec_test() {
   cmd("mkdir -p ./lake_controllers/identity_stream/");
   auto op_vec = emit_lake_config(buffers_opt, hsh, "./lake_controllers/identity_stream/");
   check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
-  //cmd("mkdir -p ./lake_stream/identity_stream/");
-  //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
+  cmd("mkdir -p ./lake_stream/identity_stream/");
+  emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
+  assert(false);
 
 
 }
@@ -14203,8 +14210,8 @@ void application_tests() {
 
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");
-  //lake_identity_stream_SMT_test(32, 32, "32x32");
-  //lake_identity_stream_SMT_test(16, 16, "16x16");
+  lake_identity_stream_SMT_test(32, 32, "32x32");
+  lake_identity_stream_SMT_test(16, 16, "16x16");
   //lake_identity_stream_SMT_test(20, 20, "20x20");
   //double_buffer_test();
   //playground();
