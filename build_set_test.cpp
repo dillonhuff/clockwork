@@ -13357,9 +13357,11 @@ void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
   cout << "Start times..." << endl;
   cout << str(start_times) << endl;
   auto ranges = range(start_times);
-  cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
-  assert(false);
+  auto range_set = to_set(ranges);
+  int min = to_int(lexminval(range_set));
 
+  cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
+  assert(min >= 0);
 }
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
