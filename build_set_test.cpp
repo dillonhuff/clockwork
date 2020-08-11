@@ -12786,6 +12786,19 @@ map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
 
 }
 
+uset* op_start_times_domain(prog& prg) {
+  auto start_times = prg.whole_iteration_domain();
+
+  uset* s = isl_union_set_read_from_str(prg.ctx, "{}");
+  for (auto a : get_sets(start_times)) {
+    a = set_name(a, "start_" + name(a));
+    s = unn(s, to_uset(a));
+    release(a);
+  }
+
+  return s;
+}
+
 umap* op_start_times_map(schedule_info& sched, prog& prg) {
   auto start_times = op_start_times(sched, prg);
 
@@ -13294,6 +13307,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     cout << tab(1) << str(m) << endl;
   }
 
+  assert(no_violated_cycle_accurate_dependencies(sched, prg));
   auto buffers = build_buffers(prg, hw_sched);
   //generate_app_code(options, buffers, prg, hw_sched);
 
@@ -13338,8 +13352,19 @@ void sanity_check_iis(schedule_info& sched) {
   }
 }
 
+void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
+  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+  cout << "Start times..." << endl;
+  cout << str(start_times) << endl;
+  auto ranges = range(start_times);
+  cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
+  assert(false);
+
+}
+
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
   sanity_check_iis(sched);
+  sanity_check_negative_starts(sched, prg);
 
   auto start_times = op_start_times_map(sched, prg);
   auto end_times = op_end_times_map(sched, prg);
