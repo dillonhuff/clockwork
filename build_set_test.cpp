@@ -13285,6 +13285,7 @@ schedule_info garnet_schedule_info(prog& prg) {
 }
 
 void compile_for_garnet_dual_port_mem(prog& prg) {
+  normalize_bounds(prg);
 
   CodegenOptions options;
   options.internal = true;
