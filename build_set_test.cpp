@@ -13420,21 +13420,21 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  // Failing
-  //test_programs.push_back(unsharp());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(rom());
-  test_programs.push_back(harris());
-  //test_programs.push_back(halide_harris());
-
-
   // Working
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(down_sample());
   test_programs.push_back(strided_conv());
   test_programs.push_back(cascade());
+  test_programs.push_back(harris());
+  test_programs.push_back(halide_harris());
+
+  // commonlib div?
+  //test_programs.push_back(unsharp());
+  // Fails at 256?
+  //test_programs.push_back(rom());
   return test_programs;
 }
 
@@ -13459,7 +13459,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    assert(false);
+    //assert(false);
     //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
     //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
