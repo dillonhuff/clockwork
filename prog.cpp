@@ -5182,6 +5182,25 @@ void generate_verilator_tb(prog& prg,
     rgtb << tab(1) << "assert(" << in << ".is_empty());" << endl;
   }
 
+  for (auto out : prg.outs) {
+    auto cmap = prg.producer_map(out);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    int unroll = map_find(out, unroll_factor);
+    int lane_width = prg.buffer_port_width(out);
+    int bundle_width = lane_width*unroll;
+
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    rgtb << tab(2) << "auto actual = " << out << ".read();" << endl;
+    vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
+    for (auto r : results) {
+      rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
+    }
+    //rgtb << tab(2) << "fout << actual << endl;" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();
