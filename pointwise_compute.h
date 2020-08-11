@@ -23,7 +23,7 @@ hw_uint<16> hcompute_mult_stencil(hw_uint<16>& hw_input_stencil) {
 hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& mult_stencil) {
   uint16_t _mult_stencil_1 = (uint16_t) mult_stencil.extract<0, 15>();
 
-  uint8_t _264 = (uint8_t)(_mult_stencil_1);
+  uint16_t _264 = (uint16_t)(_mult_stencil_1);
   return _264;
 }
 

@@ -1057,8 +1057,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     umap* schedmap,
     CoreIR::Context* context) {
 
-  //bool found_compute = true;
-  bool found_compute = false;
+  bool found_compute = true;
+  //bool found_compute = false;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
   ifstream cfile(compute_file);
   if (!cfile.good()) {
