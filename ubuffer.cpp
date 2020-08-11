@@ -1051,6 +1051,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_CYCLE_DELAY) {
       auto sched = buf.global_schedule();
 
+      map<string, vector<pair<string, int> > > delay_maps;
       for (auto outpt : buf.get_out_ports()) {
         std::set<string> ins;
         {
@@ -1064,25 +1065,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
           }
         }
 
-        assert(ins.size() == 1);
-        //cout << "# in ports on " << buf.name << ": " << buf.get_in_ports().size() << endl;
-        //{
-          //cout << "Input ports to conditions" << endl;
-          //map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
-          //for (auto in : ins) {
-            //cout << tab(1) << in.first << " -> " << str(in.second) << endl;
-          //}
-        //}
-        //assert(buf.get_in_ports().size() == 1);
-        //auto ins = buf.get_in_ports();
-
-        //map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
-        //cout << "Checking inputs for " << outpt << " on " << buf.name << endl;
-        //cout << tab(1) << "Input ports: " << comma_list(buf.get_in_ports()) << endl;
-        //cout << "Ins..." << endl;
-        //for (auto in : ins) {
-          //cout << tab(1) << in.first << " -> " << str(in.second) << endl;
-        //}
         assert(ins.size() == 1);
         auto inpt = pick(ins);
 
@@ -1123,19 +1105,51 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
 
           dd = dd - op_latency;
 
-          CoreIR::Module* srmod = delay_module(c, width, {dd});
-          auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
-          def->connect(def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)),
-              srinst->sel("wdata"));
+          delay_maps[inpt].push_back({outpt, dd});
 
-          def->connect(def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)),
-              srinst->sel("rdata"));
+          //CoreIR::Module* srmod = delay_module(c, width, {dd});
+          //auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
+          //def->connect(def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)),
+              //srinst->sel("wdata"));
+
+          //def->connect(def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)),
+              //srinst->sel("rdata"));
         } else {
           cout << tab(1) << "No overlap" << endl;
           assert(false);
         }
       }
-      //assert(false);
+
+      for (auto entry : delay_maps) {
+        string inpt = entry.first;
+        vector<pair<string, int> > delays = entry.second;
+        if (delays.size() > 0) {
+          sort_lt(delays, [](const pair<string, int>& p) {
+              return p.second;
+              });
+
+          int prior_delay = 0;
+          Wireable* prior_wire = 
+            def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt));
+          for (int d = 0; d < delays.size(); d++) {
+            int total_delay = delays.at(d).second;
+            string outpt = delays.at(d).first;
+
+            int diff = total_delay - prior_delay;
+            CoreIR::Module* srmod = delay_module(c, width, {diff});
+            auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
+            def->connect(
+                prior_wire,
+                srinst->sel("wdata"));
+
+            def->connect(def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)),
+                srinst->sel("rdata"));
+
+            prior_delay = total_delay;
+          }
+        }
+      }
+
       return;
     }
 
