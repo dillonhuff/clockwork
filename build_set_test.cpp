@@ -12630,7 +12630,9 @@ int op_latency(op* op, const schedule_info& hwinfo) {
 
   // Then we need to wait for the compute unit to finish
   if (op->func != "") {
-    total_latency += map_find(op->func, hwinfo.compute_unit_latencies);
+    int latency = map_find(op->func, hwinfo.compute_unit_latencies);
+    //assert(latency == 0);
+    total_latency += latency;
   }
 
   // Then we need to wait for the data that comes out of the compute
@@ -13457,7 +13459,7 @@ vector<prog> stencil_programs() {
   //test_programs.push_back(harris());
   //test_programs.push_back(halide_harris());
 
-  test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(camera_pipeline());
 
   // Working
   test_programs.push_back(mini_conv_halide_fixed());
