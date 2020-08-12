@@ -3,25 +3,25 @@
 #include "conv_3x3.h"
 
 
-//store is: hw_input.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.c) = input_copy.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.c)
-hw_uint<16> hcompute_hw_input_stencil(hw_uint<16>& input_copy_stencil) {
-  uint16_t _input_copy_stencil_1 = (uint16_t) input_copy_stencil.extract<0, 15>();
+//store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_c) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_c)
+hw_uint<16> hcompute_hw_input_global_wrapper_stencil(hw_uint<16>& hw_input_stencil) {
+  uint16_t _hw_input_stencil_1 = (uint16_t) hw_input_stencil.extract<0, 15>();
 
-  return _input_copy_stencil_1;
+  return _hw_input_stencil_1;
 }
 
-//store is: gray.stencil(gray.s0.x, gray.s0.y) = (((hw_input.stencil(gray.s0.x, gray.s0.y, 1)*(uint16)150) + ((hw_input.stencil(gray.s0.x, gray.s0.y, 2)*(uint16)29) + (hw_input.stencil(gray.s0.x, gray.s0.y, 0)*(uint16)77)))/(uint16)256)
-hw_uint<16> hcompute_gray_stencil(hw_uint<48>& hw_input_stencil) {
-  uint16_t _hw_input_stencil_1 = (uint16_t) hw_input_stencil.extract<0, 15>();
-  uint16_t _hw_input_stencil_2 = (uint16_t) hw_input_stencil.extract<16, 31>();
-  uint16_t _hw_input_stencil_3 = (uint16_t) hw_input_stencil.extract<32, 47>();
+//store is: gray.stencil(gray_s0_x, gray_s0_y) = (((hw_input_global_wrapper.stencil(gray_s0_x, gray_s0_y, 1)*(uint16)150) + ((hw_input_global_wrapper.stencil(gray_s0_x, gray_s0_y, 2)*(uint16)29) + (hw_input_global_wrapper.stencil(gray_s0_x, gray_s0_y, 0)*(uint16)77)))/(uint16)256)
+hw_uint<16> hcompute_gray_stencil(hw_uint<48>& hw_input_global_wrapper_stencil) {
+  uint16_t _hw_input_global_wrapper_stencil_1 = (uint16_t) hw_input_global_wrapper_stencil.extract<0, 15>();
+  uint16_t _hw_input_global_wrapper_stencil_2 = (uint16_t) hw_input_global_wrapper_stencil.extract<16, 31>();
+  uint16_t _hw_input_global_wrapper_stencil_3 = (uint16_t) hw_input_global_wrapper_stencil.extract<32, 47>();
 
   uint16_t _326 = (uint16_t)(150);
-  uint16_t _327 = _hw_input_stencil_1 * _326;
+  uint16_t _327 = _hw_input_global_wrapper_stencil_1 * _326;
   uint16_t _328 = (uint16_t)(29);
-  uint16_t _329 = _hw_input_stencil_2 * _328;
+  uint16_t _329 = _hw_input_global_wrapper_stencil_2 * _328;
   uint16_t _330 = (uint16_t)(77);
-  uint16_t _331 = _hw_input_stencil_3 * _330;
+  uint16_t _331 = _hw_input_global_wrapper_stencil_3 * _330;
   uint16_t _332 = _329 + _331;
   uint16_t _333 = _327 + _332;
   uint16_t _334 = (uint16_t)(8);
@@ -29,13 +29,13 @@ hw_uint<16> hcompute_gray_stencil(hw_uint<48>& hw_input_stencil) {
   return _335;
 }
 
-//store is: blur_unnormalized.stencil(blur_unnormalized.s0.x, blur_unnormalized.s0.y) = (uint16)0
+//store is: blur_unnormalized.stencil(blur_unnormalized_s0_x, blur_unnormalized_s0_y) = (uint16)0
 hw_uint<16> hcompute_blur_unnormalized_stencil() {
   uint16_t _359 = (uint16_t)(0);
   return _359;
 }
 
-//store is: blur_unnormalized.stencil(blur_unnormalized.s1.x, blur_unnormalized.s1.y) = ((gray.stencil(blur_unnormalized.s1.x, blur_unnormalized.s1.y)*(uint16)74) + (blur_unnormalized.stencil(blur_unnormalized.s1.x, blur_unnormalized.s1.y) + ((gray.stencil((blur_unnormalized.s1.x + 1), blur_unnormalized.s1.y)*(uint16)59) + ((gray.stencil((blur_unnormalized.s1.x + 2), blur_unnormalized.s1.y)*(uint16)30) + ((gray.stencil((blur_unnormalized.s1.x + 3), blur_unnormalized.s1.y)*(uint16)10) + ((gray.stencil((blur_unnormalized.s1.x + 4), blur_unnormalized.s1.y)*(uint16)2) + ((gray.stencil(blur_unnormalized.s1.x, (blur_unnormalized.s1.y + 1))*(uint16)74) + ((gray.stencil((blur_unnormalized.s1.x + 1), (blur_unnormalized.s1.y + 1))*(uint16)59) + ((gray.stencil((blur_unnormalized.s1.x + 2), (blur_unnormalized.s1.y + 1))*(uint16)30) + ((gray.stencil((blur_unnormalized.s1.x + 3), (blur_unnormalized.s1.y + 1))*(uint16)10) + ((gray.stencil((blur_unnormalized.s1.x + 4), (blur_unnormalized.s1.y + 1))*(uint16)2) + ((gray.stencil(blur_unnormalized.s1.x, (blur_unnormalized.s1.y + 2))*(uint16)74) + ((gray.stencil((blur_unnormalized.s1.x + 1), (blur_unnormalized.s1.y + 2))*(uint16)59) + ((gray.stencil((blur_unnormalized.s1.x + 2), (blur_unnormalized.s1.y + 2))*(uint16)30) + ((gray.stencil((blur_unnormalized.s1.x + 3), (blur_unnormalized.s1.y + 2))*(uint16)10) + ((gray.stencil((blur_unnormalized.s1.x + 4), (blur_unnormalized.s1.y + 2))*(uint16)2) + ((gray.stencil(blur_unnormalized.s1.x, (blur_unnormalized.s1.y + 3))*(uint16)74) + ((gray.stencil((blur_unnormalized.s1.x + 1), (blur_unnormalized.s1.y + 3))*(uint16)59) + ((gray.stencil((blur_unnormalized.s1.x + 2), (blur_unnormalized.s1.y + 3))*(uint16)30) + ((gray.stencil((blur_unnormalized.s1.x + 3), (blur_unnormalized.s1.y + 3))*(uint16)10) + ((gray.stencil((blur_unnormalized.s1.x + 4), (blur_unnormalized.s1.y + 3))*(uint16)2) + ((gray.stencil(blur_unnormalized.s1.x, (blur_unnormalized.s1.y + 4))*(uint16)74) + ((((gray.stencil((blur_unnormalized.s1.x + 2), (blur_unnormalized.s1.y + 4))*(uint16)15) + (gray.stencil((blur_unnormalized.s1.x + 4), (blur_unnormalized.s1.y + 4)) + (gray.stencil((blur_unnormalized.s1.x + 3), (blur_unnormalized.s1.y + 4))*(uint16)5)))*(uint16)2) + (gray.stencil((blur_unnormalized.s1.x + 1), (blur_unnormalized.s1.y + 4))*(uint16)59))))))))))))))))))))))))
+//store is: blur_unnormalized.stencil(blur_unnormalized_s1_x, blur_unnormalized_s1_y) = ((gray.stencil(blur_unnormalized_s1_x, blur_unnormalized_s1_y)*(uint16)74) + (blur_unnormalized.stencil(blur_unnormalized_s1_x, blur_unnormalized_s1_y) + ((gray.stencil((blur_unnormalized_s1_x + 1), blur_unnormalized_s1_y)*(uint16)59) + ((gray.stencil((blur_unnormalized_s1_x + 2), blur_unnormalized_s1_y)*(uint16)30) + ((gray.stencil((blur_unnormalized_s1_x + 3), blur_unnormalized_s1_y)*(uint16)10) + ((gray.stencil((blur_unnormalized_s1_x + 4), blur_unnormalized_s1_y)*(uint16)2) + ((gray.stencil(blur_unnormalized_s1_x, (blur_unnormalized_s1_y + 1))*(uint16)74) + ((gray.stencil((blur_unnormalized_s1_x + 1), (blur_unnormalized_s1_y + 1))*(uint16)59) + ((gray.stencil((blur_unnormalized_s1_x + 2), (blur_unnormalized_s1_y + 1))*(uint16)30) + ((gray.stencil((blur_unnormalized_s1_x + 3), (blur_unnormalized_s1_y + 1))*(uint16)10) + ((gray.stencil((blur_unnormalized_s1_x + 4), (blur_unnormalized_s1_y + 1))*(uint16)2) + ((gray.stencil(blur_unnormalized_s1_x, (blur_unnormalized_s1_y + 2))*(uint16)74) + ((gray.stencil((blur_unnormalized_s1_x + 1), (blur_unnormalized_s1_y + 2))*(uint16)59) + ((gray.stencil((blur_unnormalized_s1_x + 2), (blur_unnormalized_s1_y + 2))*(uint16)30) + ((gray.stencil((blur_unnormalized_s1_x + 3), (blur_unnormalized_s1_y + 2))*(uint16)10) + ((gray.stencil((blur_unnormalized_s1_x + 4), (blur_unnormalized_s1_y + 2))*(uint16)2) + ((gray.stencil(blur_unnormalized_s1_x, (blur_unnormalized_s1_y + 3))*(uint16)74) + ((gray.stencil((blur_unnormalized_s1_x + 1), (blur_unnormalized_s1_y + 3))*(uint16)59) + ((gray.stencil((blur_unnormalized_s1_x + 2), (blur_unnormalized_s1_y + 3))*(uint16)30) + ((gray.stencil((blur_unnormalized_s1_x + 3), (blur_unnormalized_s1_y + 3))*(uint16)10) + ((gray.stencil((blur_unnormalized_s1_x + 4), (blur_unnormalized_s1_y + 3))*(uint16)2) + ((gray.stencil(blur_unnormalized_s1_x, (blur_unnormalized_s1_y + 4))*(uint16)74) + ((((gray.stencil((blur_unnormalized_s1_x + 2), (blur_unnormalized_s1_y + 4))*(uint16)15) + (gray.stencil((blur_unnormalized_s1_x + 4), (blur_unnormalized_s1_y + 4)) + (gray.stencil((blur_unnormalized_s1_x + 3), (blur_unnormalized_s1_y + 4))*(uint16)5)))*(uint16)2) + (gray.stencil((blur_unnormalized_s1_x + 1), (blur_unnormalized_s1_y + 4))*(uint16)59))))))))))))))))))))))))
 hw_uint<16> hcompute_blur_unnormalized_stencil_1(hw_uint<16>& blur_unnormalized_stencil, hw_uint<400>& gray_stencil) {
   uint16_t _blur_unnormalized_stencil_1 = (uint16_t) blur_unnormalized_stencil.extract<0, 15>();
 
@@ -125,7 +125,7 @@ hw_uint<16> hcompute_blur_unnormalized_stencil_1(hw_uint<16>& blur_unnormalized_
   return _418;
 }
 
-//store is: ratio.stencil(ratio.s0.x, ratio.s0.y) = min(((min(((gray.stencil(ratio.s0.x, ratio.s0.y)*(uint16)2) - (blur_unnormalized.stencil(ratio.s0.x, ratio.s0.y)/(uint16)256)), (uint16)255)*(uint16)32)/max(gray.stencil(ratio.s0.x, ratio.s0.y), (uint16)1)), (uint16)255)
+//store is: ratio.stencil(ratio_s0_x, ratio_s0_y) = min(((min(((gray.stencil(ratio_s0_x, ratio_s0_y)*(uint16)2) - (blur_unnormalized.stencil(ratio_s0_x, ratio_s0_y)/(uint16)256)), (uint16)255)*(uint16)32)/max(gray.stencil(ratio_s0_x, ratio_s0_y), (uint16)1)), (uint16)255)
 hw_uint<16> hcompute_ratio_stencil(hw_uint<16>& blur_unnormalized_stencil, hw_uint<16>& gray_stencil) {
   uint16_t _blur_unnormalized_stencil_2 = (uint16_t) blur_unnormalized_stencil.extract<0, 15>();
 
@@ -147,7 +147,7 @@ hw_uint<16> hcompute_ratio_stencil(hw_uint<16>& blur_unnormalized_stencil, hw_ui
   return _579;
 }
 
-//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi) = uint8(min(((ratio.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi)*gray.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi))/(uint16)32), (uint16)255))
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = min(((ratio.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)*gray.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi))/(uint16)32), (uint16)255)
 hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& gray_stencil, hw_uint<16>& ratio_stencil) {
   uint16_t _gray_stencil_27 = (uint16_t) gray_stencil.extract<0, 15>();
 
@@ -158,7 +158,6 @@ hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& gray_stencil, hw_uint<16>& r
   uint16_t _610 = _608 >> _609;
   uint16_t _611 = (uint16_t)(255);
   uint16_t _612 = min(_610, _611);
-  uint8_t _613 = (uint8_t)(_612);
-  return _613;
+  return _612;
 }
 

@@ -4,7 +4,18 @@
 #include "cwlib.h"
 #include "coreir_backend.h"
 
+using CoreIR::Wireable;
+using CoreIR::CoreIRType;
+using CoreIR::ArrayType;
+using CoreIR::Context;
+using CoreIR::Const;
+using CoreIR::Params;
 using CoreIR::ModuleDef;
+using CoreIR::Generator;
+using CoreIR::TypeGen;
+using CoreIR::Type;
+using CoreIR::Values;
+
 #endif
 #include "coreir_backend.h"
 
@@ -79,7 +90,18 @@ map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffe
       in_ports_to_conditions[inpt] =
         to_set(simplify(readers_that_use_this_port));
     }
+
+    release(readers_that_use_this_port);
+    release(read_ops);
+    release(overlap);
+    release(op_overlap);
+    release(write_ops);
+    release(common_write_ops);
+    release(data_written);
   }
+
+  release(reads_to_sources);
+  release(producers_for_outpt);
   return in_ports_to_conditions;
 }
 
@@ -113,9 +135,17 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
         its(dot(outmap,
               inv(inmap)), beforeAcc);
     } else {
+      auto a =
+        its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc);
       src_map =
-        unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+        unn(src_map, a);
+
+      release(a);
+      //src_map =
+        //unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
     }
+
+    release(beforeAcc);
   }
   assert(src_map != nullptr);
 
@@ -131,38 +161,43 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
     dot(lexmax(dot(src_map, sched)), time_to_event);
 
   assert(lex_max_events != nullptr);
+
+  release(time_to_event);
+  release(src_map);
+  release(after);
+
   return lex_max_events;
 }
 
-umap* last_reads(const string& inpt, UBuffer& buf) {
-  auto sched = buf.global_schedule();
-  //cout << "Port: " << inpt << endl;
-  auto writes = buf.access_map.at(inpt);
-  //cout << "Access map: " << str(writes) << endl;
-  auto writers = inv(writes);
-  //cout << "Writer map: " << str(writers) << endl;
-  uset* written_values = (range(writes));
-  isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
-  for (auto outpt : buf.get_out_ports()) {
-    reads_from_fifo =
-      unn(reads_from_fifo, (buf.access_map.at(outpt)));
-  }
-  reads_from_fifo = its_range(reads_from_fifo, written_values);
-  //cout << "Reads: " << str(reads_from_fifo) << endl;
+//umap* last_reads(const string& inpt, UBuffer& buf) {
+  //auto sched = buf.global_schedule();
+  ////cout << "Port: " << inpt << endl;
+  //auto writes = buf.access_map.at(inpt);
+  ////cout << "Access map: " << str(writes) << endl;
+  //auto writers = inv(writes);
+  ////cout << "Writer map: " << str(writers) << endl;
+  //uset* written_values = (range(writes));
+  //isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
+  //for (auto outpt : buf.get_out_ports()) {
+    //reads_from_fifo =
+      //unn(reads_from_fifo, (buf.access_map.at(outpt)));
+  //}
+  //reads_from_fifo = its_range(reads_from_fifo, written_values);
+  ////cout << "Reads: " << str(reads_from_fifo) << endl;
 
-  auto write_sched = its(sched, domain(writes));
-  //cout << "Write schedule: " << str(write_sched) << endl;
+  //auto write_sched = its(sched, domain(writes));
+  ////cout << "Write schedule: " << str(write_sched) << endl;
 
-  auto read_sched = its(sched, domain(reads_from_fifo));
-  //cout << "Read schedule: " << str(read_sched) << endl;
-  auto vals_to_reads = inv(reads_from_fifo);
+  //auto read_sched = its(sched, domain(reads_from_fifo));
+  ////cout << "Read schedule: " << str(read_sched) << endl;
+  //auto vals_to_reads = inv(reads_from_fifo);
 
-  //cout << "vals to reads: " << str(reads_from_fifo) << endl;
-  // TODO: Should be lexmax in the schedule
-  auto last_read = lexmax(vals_to_reads);
-  return last_read;
+  ////cout << "vals to reads: " << str(reads_from_fifo) << endl;
+  //// TODO: Should be lexmax in the schedule
+  //auto last_read = lexmax(vals_to_reads);
+  //return last_read;
 
-}
+//}
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
 
@@ -188,6 +223,13 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
 
   auto c = card(WritesBtwn);
+
+  release(sched);
+  release(WritesBtwn);
+  release(WritesAfterProduction);
+  release(WriteThatProducesReadData);
+  release(WritesBeforeRead);
+  release(WritesAfterWrite);
   return c;
 }
 
@@ -607,87 +649,14 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 
 #ifdef COREIR
 
-CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth) {
-  auto tp = c->Record({
-      {"clk", c->Named("coreir.clkIn")},
-      {"wdata", c->BitIn()->Arr(width)},
-      {"waddr", c->BitIn()->Arr(width)},
-      {"wen", c->BitIn()},
-      {"rdata", c->Bit()->Arr(width)},
-      {"raddr", c->BitIn()->Arr(width)},
-      {"ren", c->BitIn()}});
 
-  auto m = c->getNamespace("global")->newModuleDecl("ram_" + c->getUnique(), tp);
-  auto def = m->newModuleDef();
-  //auto bnk = def->addInstance(
-      //"bank",
-      //"coreir.mem",
-      //{{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
-      ////{{"mode", CoreIR::Const::make(c, "SRAM")}});
-  ////auto bnk = def->addInstance(
-      ////"bank",
-      ////"cgralib.Mem",
-      ////{{"width", CoreIR::Const::make(c, width)}, {"total_depth", CoreIR::Const::make(c, depth)}},
-      ////{{"mode", CoreIR::Const::make(c, "SRAM")}});
-
-  //auto constant = def->addInstance(c->getUnique(),
-      //"corebit.const",
-      //{{"value", CoreIR::Const::make(c, true)}});
-
-  ////def->connect(constant->sel("out"), bnk->sel("cg_en"));
-
-  //auto next_val = def->addInstance("addr_select", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
-  //def->connect(next_val->sel("sel"), def->sel("self.wen"));
-  //def->connect(next_val->sel("in0"), def->sel("self.waddr"));
-  //def->connect(next_val->sel("in1"), def->sel("self.raddr"));
-  //def->connect(next_val->sel("out"), bnk->sel("addr"));
-
-  ////def->connect(def->sel("self.clk"), bnk->sel("clk"));
-  //def->connect(def->sel("self.wdata"), bnk->sel("wdata"));
-  //def->connect(def->sel("self.rdata"), bnk->sel("rdata"));
-  //def->connect(def->sel("self.wen"), bnk->sel("wen"));
-  //def->connect(def->sel("self.ren"), bnk->sel("ren"));
-
-  //def->connect("self.clk", "mem.clk");
-  //def->connect("self.wdata", "mem.wdata");
-  //def->connect("self.waddr", "waddr_slice.in");
-  //def->connect("waddr_slice.out", "mem.waddr");
-  //def->connect("self.wen", "mem.wen");
-  //def->connect("mem.rdata", "readreg.in");
-  //def->connect("self.rdata", "readreg.out");
-  //def->connect("self.raddr", "raddr_slice.in");
-  //def->connect("raddr_slice.out", "mem.raddr");
-  //def->connect("self.ren", "readreg.en");
-
-  uint awidth = (uint)ceil(log2(depth));
-  CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
-    {"lo", CoreIR::Const::make(c, 0)},
-    {"hi", CoreIR::Const::make(c, awidth)}};
-  def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
-  def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
-
-  def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
-  def->addInstance(
-      "readreg",
-      "mantle.reg",
-      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
-  def->connect("self.clk", "readreg.clk");
-  def->connect("self.clk", "mem.clk");
-  def->connect("self.wdata", "mem.wdata");
-  def->connect("self.waddr", "waddr_slice.in");
-  def->connect("waddr_slice.out", "mem.waddr");
-  def->connect("self.wen", "mem.wen");
-  def->connect("mem.rdata", "readreg.in");
-  def->connect("self.rdata", "readreg.out");
-  def->connect("self.raddr", "raddr_slice.in");
-  def->connect("raddr_slice.out", "mem.raddr");
-  def->connect("self.ren", "readreg.en");
-  m->setDef(def);
-  return m;
+void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
+  schedule_info info;
+  generate_coreir(options, def, info);
 }
 
 //generate/realize the rewrite structure inside ubuffer node
-void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
+void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info) {
   auto context = def->getContext();
   //for (auto it : get_banks()) {
     //auto connection = it.first;
@@ -823,11 +792,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* c, const string& outpt, UBuffer& buf) {
     int width = buf.port_widths;
 
-    cout << "creating select for " << outpt << endl;
+    cout << "====== creating select for " << outpt << " on buffer " << buf.name << endl;
+    //cout << buf << endl;
+    //cout << "====== end of buffer" << endl;
 
     map<string, isl_set*> in_ports_to_conditions =
       input_ports_to_conditions(outpt, buf);
-    cout << "====== Conditions for ports..." << endl;
+    cout << tab(1) << "====== Conditions for ports..." << endl;
     for (auto pt : in_ports_to_conditions) {
       cout << tab(1) << pt.first << " -> " << str(pt.second) << endl;
     }
@@ -844,7 +815,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         if (elem(outpt, buf.get_bank_outputs(b.name))) {
           ub_field.push_back({b.name, c->BitIn()->Arr(width)});
           possible_source_banks.push_back(b.name);
-          cout << "adding field for source bank: " << b.name << endl;
+          cout << tab(2) << "adding field for source bank: " << b.name << endl;
         }
       }
 
@@ -862,20 +833,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
 
-      cout << "possible ports = " << possible_ports.size() << endl;
+      cout << tab(2) << "possible ports = " << possible_ports.size() << endl;
       assert(possible_ports.size() == 1 || possible_ports.size() == 2);
 
-      //for (auto inpt : possible_ports) {
-        //auto b = buf.get_bank_between(inpt, outpt);
-        //// TODO: Add real selection logic
-        //bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
-        //break;
-      //}
-
       if (possible_ports.size() == 1) {
-      //if (true) {
-        //possible_ports.size() == 1) {
-        cout << "only one possible port: " << possible_ports.at(0);
+        cout << tab(2) << "only one possible port: " << possible_ports.at(0);
         for (auto inpt : possible_ports) {
           auto b = buf.get_bank_between(inpt, outpt);
           bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
@@ -887,7 +849,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         string b0_name = buf.bank_between(pt0, outpt);
         string pt1 = possible_ports.at(1);
         string b1_name = buf.bank_between(pt1, outpt);
-        cout << "creating coreir for set: " << str(map_find(pt1, in_ports_to_conditions)) << endl;
+        cout << tab(2) << "creating coreir for set: " << str(map_find(pt1, in_ports_to_conditions)) << endl;
         CoreIR::Module* in_set_mod = coreir_for_set(c, map_find(pt1, in_ports_to_conditions));
         auto in_set = bdef->addInstance("set_select", in_set_mod);
         bdef->connect(in_set->sel("d"), bdef->sel("self.d"));
@@ -895,9 +857,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
             bdef->sel("self.out"),
             delaybit(bdef,
               in_set->sel("valid")),
-            //in_set->sel("valid"),
-            //bdef->sel("self")->sel(b1_name),
-            //bdef->sel("self")->sel(b0_name));
             bdef->sel("self")->sel(b0_name),
             bdef->sel("self")->sel(b1_name));
       }
@@ -990,7 +949,15 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return bcm;
   }
 
-  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+  void generate_shift_register(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+    for (auto in : buf.get_in_ports()) {
+      cout << tab(1) << in << endl;
+
+    }
+    assert(false);
+  }
+
+  void generate_banks(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
 
     auto c = def->getContext();
@@ -998,67 +965,181 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto ns = c->getNamespace("global");
 
     for (auto bank : buf.get_banks()) {
-      int capacity = int_upper_bound(card(bank.rddom));
-      int addr_width = minihls::clog2(capacity);
-      auto bnk = def->addInstance(
-          bank.name,
-          ram_module(c, width, capacity));
+      if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
+        int capacity = int_upper_bound(card(bank.rddom));
+        int addr_width = minihls::clog2(capacity);
+        //auto bnk = def->addInstance(bank.name, lake_rf(width, capacity));
+        ram_module(c, width, capacity);
+        //auto bnk = def->addInstance(
+        //bank.name,
+        //"global.raw_dual_port_sram_tile",
+        //{}
+        //);
+        auto bnk = def->addInstance(
+            bank.name,
+            "global.raw_dual_port_sram_tile",
+            {{"depth", COREMK(c, capacity)}}
+            );
+        //auto bnk = def->addInstance(
+        //bank.name,
+        //ram_module(c, width, capacity));
 
-      {
-        auto bank_readers = buf.get_bank_outputs(bank.name);
-        assert(bank_readers.size() == 1);
-        auto reader = pick(bank_readers);
-        auto acc_map = to_map(buf.access_map.at(reader));
-        cout << "acc map = " << str(acc_map) << endl;
-        auto reduce_map = linear_address_map(to_set(bank.rddom));
-        cout << "reduce map = " << str(reduce_map) << endl;
-        auto addr_expr = dot(acc_map, reduce_map);
-        cout << "composition = " << str(addr_expr) << endl;
-        auto addr_expr_aff = get_aff(addr_expr);
+        {
+          auto bank_readers = buf.get_bank_outputs(bank.name);
+          assert(bank_readers.size() == 1);
+          auto reader = pick(bank_readers);
+          auto acc_map = to_map(buf.access_map.at(reader));
+          cout << "acc map = " << str(acc_map) << endl;
+          auto reduce_map = linear_address_map(to_set(bank.rddom));
+          cout << "reduce map = " << str(reduce_map) << endl;
+          auto addr_expr = dot(acc_map, reduce_map);
+          cout << "composition = " << str(addr_expr) << endl;
+          auto addr_expr_aff = get_aff(addr_expr);
 
-        auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
-        auto agen = def->addInstance(read_addrgen_name(bank.name), aff_gen_mod);
-        
-        def->connect(agen->sel("out"), bnk->sel("raddr"));
-        def->connect(agen->sel("d"),
-            control_vars(def, reader, buf));
-            //def->sel(controller_name(reader))->sel("d"));
-        def->connect(bnk->sel("ren"),
-            control_en(def, reader, buf));
-            //def->sel(controller_name(reader))->sel("valid"));
-      }
+          auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+          auto agen = def->addInstance(read_addrgen_name(bank.name), aff_gen_mod);
 
-      {
-        auto bank_writers = buf.get_bank_inputs(bank.name);
-        assert(bank_writers.size() == 1);
-        auto writer = pick(bank_writers);
-        auto acc_map = to_map(buf.access_map.at(writer));
-        cout << "acc map = " << str(acc_map) << endl;
-        auto reduce_map = linear_address_map(to_set(bank.rddom));
-        cout << "reduce map = " << str(reduce_map) << endl;
-        auto addr_expr = dot(acc_map, reduce_map);
-        cout << "composition = " << str(addr_expr) << endl;
-        auto addr_expr_aff = get_aff(addr_expr);
+          def->connect(agen->sel("out"), bnk->sel("raddr"));
+          def->connect(agen->sel("d"),
+              control_vars(def, reader, buf));
+          //def->sel(controller_name(reader))->sel("d"));
+          def->connect(bnk->sel("ren"),
+              control_en(def, reader, buf));
+          //def->sel(controller_name(reader))->sel("valid"));
+        }
 
-        auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
-        auto agen = def->addInstance(write_addrgen_name(bank.name), aff_gen_mod);
-        
-        def->connect(agen->sel("out"), bnk->sel("waddr"));
-        def->connect(agen->sel("d"),
-            control_vars(def, writer, buf));
-            //def->sel(controller_name(writer))->sel("d"));
+        {
+          auto bank_writers = buf.get_bank_inputs(bank.name);
+          assert(bank_writers.size() == 1);
+          auto writer = pick(bank_writers);
+          auto acc_map = to_map(buf.access_map.at(writer));
+          cout << "acc map = " << str(acc_map) << endl;
+          auto reduce_map = linear_address_map(to_set(bank.rddom));
+          cout << "reduce map = " << str(reduce_map) << endl;
+          auto addr_expr = dot(acc_map, reduce_map);
+          cout << "composition = " << str(addr_expr) << endl;
+          auto addr_expr_aff = get_aff(addr_expr);
+
+          auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+          auto agen = def->addInstance(write_addrgen_name(bank.name), aff_gen_mod);
+
+          def->connect(agen->sel("out"), bnk->sel("waddr"));
+          def->connect(agen->sel("d"),
+              control_vars(def, writer, buf));
+          //def->sel(controller_name(writer))->sel("d"));
+        }
+      } else {
+        assert(false);
+        //cout << "# readers of " << bank.name << " = " << bank.num_readers << endl;
+        //cout << "Delays = " << comma_list(bank.read_delays) << endl;
+        //assert(bank.num_readers == 1);
+        //assert(bank.read_delays.size() == 2);
+        //auto mod = delay_module(c, width, bank.read_delays);
+        //auto bnk = def->addInstance(
+            //bank.name,
+            //mod);
       }
     }
+  }
+
+  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
+    int width = buf.port_widths;
+    auto c = def->getContext();
+    auto ns = c->getNamespace("global");
 
 
-    //for (auto inpt : buf.get_out_ports()) {
-      ////auto out_ctrl = def->sel(controller_name(inpt))->sel("valid");
-      //auto out_ctrl = control_en(def, inpt, buf);
-      ////def->sel(controller_name(inpt))->sel("valid");
-      //def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"),
-          //out_ctrl);
-          ////out_ctrl->sel("valid"));
-    //}
+    if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_CYCLE_DELAY) {
+      auto sched = buf.global_schedule();
+
+      for (auto outpt : buf.get_out_ports()) {
+        std::set<string> ins;
+        {
+          auto reads = range(buf.access_map.at(outpt));
+          for (auto inpt : buf.get_in_ports()) {
+            auto writes = range(buf.access_map.at(inpt));
+            auto overlap = its(writes, reads);
+            if (!empty(overlap)) {
+              ins.insert(inpt);
+            }
+          }
+        }
+
+        assert(ins.size() == 1);
+        //cout << "# in ports on " << buf.name << ": " << buf.get_in_ports().size() << endl;
+        //{
+          //cout << "Input ports to conditions" << endl;
+          //map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
+          //for (auto in : ins) {
+            //cout << tab(1) << in.first << " -> " << str(in.second) << endl;
+          //}
+        //}
+        //assert(buf.get_in_ports().size() == 1);
+        //auto ins = buf.get_in_ports();
+
+        //map<string, isl_set*> ins = input_ports_to_conditions(outpt, buf);
+        //cout << "Checking inputs for " << outpt << " on " << buf.name << endl;
+        //cout << tab(1) << "Input ports: " << comma_list(buf.get_in_ports()) << endl;
+        //cout << "Ins..." << endl;
+        //for (auto in : ins) {
+          //cout << tab(1) << in.first << " -> " << str(in.second) << endl;
+        //}
+        assert(ins.size() == 1);
+        auto inpt = pick(ins);
+
+        auto writes = buf.access_map.at(inpt);
+        auto reads = buf.access_map.at(outpt);
+        cout << "writes: " << str(writes) << endl;
+        cout << "reads : " << str(reads) << endl;
+        cout << "Schedule..." << endl;
+        for (auto m : get_maps(sched)) {
+          cout << tab(1) << str(m) << endl;
+          release(m);
+        }
+
+        auto time_to_write = dot(inv(sched), (writes));
+        auto time_to_read = dot(inv(sched), (reads));
+
+        cout << "Time to write: " << str(time_to_write) << endl;
+        cout << "Time to read : " << str(time_to_read) << endl;
+
+        auto pc_times = dot(time_to_write, inv(time_to_read));
+        cout << "PC times     : " << str(pc_times) << endl;
+        auto dds = isl_union_map_deltas(pc_times);
+        cout << "DDs          : " << str(dds) << endl;
+        if (!empty(dds)) {
+          auto ddc = to_set(dds);
+
+          assert(isl_set_is_singleton(ddc));
+          int dd = to_int(lexminval(ddc));
+          cout << "DD           : " << dd << endl;
+          string writer_name = domain_name(pick(get_maps(writes)));
+          cout << "writer op    : " << writer_name << endl;
+          for (auto e : hwinfo.op_compute_unit_latencies) {
+            cout << tab(1) << e.first << " -> " << e.second << endl;
+          }
+          //assert(false);
+          int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+          //assert(op_latency == 0);
+
+          dd = dd - op_latency;
+
+          CoreIR::Module* srmod = delay_module(c, width, {dd});
+          auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
+          def->connect(def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)),
+              srinst->sel("wdata"));
+
+          def->connect(def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)),
+              srinst->sel("rdata"));
+        } else {
+          cout << tab(1) << "No overlap" << endl;
+          assert(false);
+        }
+      }
+      //assert(false);
+      return;
+    }
+
+    generate_banks(options, buf, def);
 
     for (auto inpt : buf.get_in_ports()) {
       auto bcm = coreir_broadcast(c, inpt, buf);
@@ -1072,7 +1153,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       def->connect(bc->sel("in"), def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)));
       def->connect(bc->sel("en"),
           control_en(def, inpt, buf));
-          //def->sel(controller_name(inpt))->sel("valid"));
     }
 
     for (auto outpt : buf.get_out_ports()) {
@@ -1085,7 +1165,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       def->connect(
           control_vars(def, outpt, buf),
-          //def->sel(controller_name(outpt))->sel("d"),
           bc->sel("d"));
       def->connect(bc->sel("out"), def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)));
     }
@@ -1094,8 +1173,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   //generate coreir instance for single ubuffer
   //return the coreir module with port bundle and enable/valid interface
   CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
-    CoreIRLoadLibrary_commonlib(context);
-    CoreIRLoadLibrary_cwlib(context);
+    schedule_info info;
+    return generate_coreir(options, context, buf, info);
+  }
+
+  CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo) {
     auto ns = context->getNamespace("global");
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")}};
@@ -1128,9 +1210,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto def = ub->newModuleDef();
 
     if (true) {
-      generate_synthesizable_functional_model(options, buf, def);
+      generate_synthesizable_functional_model(options, buf, def, hwinfo);
     } else {
-      buf.generate_coreir(options, def);
+      //buf.generate_coreir(options, def);
     }
 
     ub->setDef(def);
@@ -1172,8 +1254,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto pieces = get_pieces(qpd);
     uset* pieces_dom = isl_union_set_read_from_str(ctx(qpd), "{}");
     for (auto p : pieces) {
-      auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
-      pieces_dom = unn(pieces_dom, to_uset(p.first));
+      auto usp = to_uset(p.first);
+      pieces_dom = unn(pieces_dom, usp);
+      release(usp);
+      //auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
+      //pieces_dom = unn(pieces_dom, to_uset(p.first));
     }
 
     bool pieces_are_complete =
@@ -1185,6 +1270,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       return ub == lb;
     }
 
+    release(qpd);
+    release(pieces_dom);
     return false;
   }
 
@@ -1336,18 +1423,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       cout << "next bcar = " << str(card(next_bank)) << endl;
       auto bank_delta = isl_map_deltas_map(cpy(next_bank));
       cout << "nb delta  = " << str(bank_delta) << endl;
-      //assert(false);
-
-      //auto next = lexmin(its(isl_map_lex_lt(get_space(writes)), writes));
-
-      //out << tab(1) << "// Next         : " << str(next) << endl;
-      //out << tab(1) << "// Next bank    : " << str(next_bank) << endl;
-      //out << tab(1) << "// Bank function: " << str(bank_function) << endl;
-      //out << tab(1) << "// Bank func aff: " << str(get_aff(bank_function)) << endl;
-      //out << tab(1) << "// Access func  : " << str(acc_map) << endl;
-      //isl_union_map* target = dot(acc_map, to_umap(bank_function));
-      //out << tab(1) << "// Bank mapping : " << str(target) << endl;
-      //out << tab(1) << "// Bank aff     : " << str(get_aff(get_maps(acc_map).at(0))) << endl;
 
       // TODO: Replace with actual bank computation
       for (auto sb : buf.get_banks()) {
@@ -1372,6 +1447,44 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     out << "}" << endl << endl;
 
+  }
+
+  void generate_duplicate_select(CodegenOptions& options, std::ostream& out, const string& implemented, const std::string& duplicated, UBuffer& buf) {
+    generate_select_decl(options, out, duplicated, buf);
+
+    string outpt = implemented;
+
+    string rep = implemented;
+    isl_space* s = get_space(buf.domain.at(rep));
+    assert(isl_space_is_set(s));
+    vector<string> dim_decls;
+    vector<string> dim_args;
+    for (int i = 0; i < num_dims(s); i++) {
+      if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+        string dn = "d" + to_string(i);
+        auto new_id = id(buf.ctx, dn);
+        assert(new_id != nullptr);
+        s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+      }
+      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+    }
+    dim_decls.push_back("int dynamic_address");
+    dim_args.push_back("dynamic_address");
+
+    vector<string> all_decls;
+    vector<string> all_args;
+
+    all_decls.push_back(buf.name + "_cache& " + buf.name);
+    concat(all_decls, dim_decls);
+
+    all_args.push_back(buf.name);
+    concat(all_args, dim_args);
+
+    string arg_string = sep_list(all_args, "", "", ", ");
+    out << "\t" << buf.port_type_string() << " " << outpt << "_res = " << outpt << "_select(" << arg_string << ");" << endl;
+    out << tab(1) << "return " << outpt << "_res;" << endl;
+    out << "}" << endl << endl;
   }
 
   void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
@@ -1535,8 +1648,25 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       generate_broadcast(options, out, inpt, buf);
     }
 
-    for (auto outpt : buf.get_out_ports()) {
-      generate_select(options, out, outpt, buf);
+    map<string, std::set<string> > unique_outs =
+      get_unique_output_ports(buf);
+
+    //if (buf.banking.partition == "exhaustive") { 
+    if (false) {
+      for (auto outptg : unique_outs) {
+        string outpt = outptg.first;
+        generate_select(options, out, outpt, buf);
+
+        for (auto pt : outptg.second) {
+          if (pt != outpt) {
+            generate_duplicate_select(options, out, outpt, pt, buf);
+          }
+        }
+      }
+    } else {
+      for (auto outpt : buf.get_out_ports()) {
+        generate_select(options, out, outpt, buf);
+      }
     }
 
     generate_bundles(options, out, buf);
@@ -1651,9 +1781,20 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           its(dot(outmap,
                 inv(inmap)), beforeAcc);
       } else {
-        src_map =
-          unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
+        auto inv_in =
+          inv(access_map.at(inpt));
+        auto dt =  
+          dot(access_map.at(outpt), inv(access_map.at(inpt)));
+        auto a = its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc);
+        src_map = unn(src_map, a);
+
+        release(a);
+        release(dt);
+        release(inv_in);
+        //src_map =
+          //unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
       }
+      release(beforeAcc);
     }
     assert(src_map != nullptr);
 
@@ -1669,87 +1810,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto lex_max_events =
       dot(lexmax(dot(src_map, sched)), time_to_event);
 
+    release(time_to_event);
+    release(src_map);
+    release(after);
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
     return lex_max_events;
 
-    //umap* writes = isl_union_map_read_from_str(ctx, "{}");
-
-    //cout << "Buffer = " << name << endl;
-    //assert(get_in_ports().size() > 0);
-    //for (auto inpt : get_in_ports()) {
-      //writes = unn(writes, access_map.at(inpt));
-
-      ////auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
-      ////if (src_map == nullptr) {
-        ////auto outmap = access_map.at(outpt);
-        ////auto inmap = access_map.at(inpt);
-        ////src_map =
-          ////its(dot(outmap,
-                ////inv(inmap)), beforeAcc);
-      ////} else {
-        ////src_map =
-          ////unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
-      ////}
-    //}
-
-    ////auto reads = access_map.at(outpt);
-    ////auto sched = global_schedule();
-    ////auto before = lex_lt(sched, sched);
-
-    ////auto raw = its(before, dot(writes, inv(reads)));
-
-    ////return lexmax(inv(raw));
-
-    ////assert(src_map != nullptr);
-
-    //////cout << "src map done: " << str(src_map) << endl;
-
-    ////src_map = its(src_map, after);
-    ////src_map = lexmax(src_map);
-
-    ////auto time_to_event = inv(sched);
-
-    ////auto lex_max_events =
-      ////dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    //////cout << "Done" << outpt << endl;
-    ////assert(lex_max_events != nullptr);
-    ////return lex_max_events;
-
-    ////umap* src_map = nullptr;
-    ////cout << "Buffer = " << name << endl;
-    ////assert(get_in_ports().size() > 0);
-    ////for (auto inpt : get_in_ports()) {
-      ////auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
-      ////if (src_map == nullptr) {
-        ////auto outmap = access_map.at(outpt);
-        ////auto inmap = access_map.at(inpt);
-        ////src_map =
-          ////its(dot(outmap,
-                ////inv(inmap)), beforeAcc);
-      ////} else {
-        ////src_map =
-          ////unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
-      ////}
-    ////}
-    ////assert(src_map != nullptr);
-
-    //////cout << "src map done: " << str(src_map) << endl;
-    ////auto sched = global_schedule();
-    ////auto after = lex_gt(sched, sched);
-
-    ////src_map = its(src_map, after);
-    ////src_map = lexmax(src_map);
-
-    ////auto time_to_event = inv(sched);
-
-    ////auto lex_max_events =
-      ////dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    //////cout << "Done" << outpt << endl;
-    ////assert(lex_max_events != nullptr);
-    ////return lex_max_events;
   }
 
   umap* UBuffer::get_lexmax_events(const std::string& inpt, const std::string& outpt) {
@@ -1758,8 +1825,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto outmap = access_map.at(outpt);
     auto inmap = access_map.at(inpt);
     inmap = coalesce(unn(inmap, outmap));
-    //cout << "before access: " << str(beforeAcc) << endl;
-    //cout << "Coalesce map: " << str(inmap) << endl;
+    
     src_map = its(dot(outmap, inv(inmap)), beforeAcc);
     assert(src_map != nullptr);
 
@@ -1777,11 +1843,22 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //cout << "time 2 event: " << str(time_to_event) << endl;
     //cout << "lexmax :" << str(lexmax(dot(src_map, sched))) << endl;
 
+    auto lmm = lexmax(dot(src_map, sched));
     auto lex_max_events =
-      dot(lexmax(dot(src_map, sched)), time_to_event);
+      dot(lmm, time_to_event);
+    //auto lex_max_events =
+      //dot(lexmax(dot(src_map, sched)), time_to_event);
 
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
+
+    release(lmm);
+    release(time_to_event);
+    release(src_map);
+    release(after);
+    release(inmap);
+    release(beforeAcc);
+    release(sched);
     return lex_max_events;
   }
 
@@ -1820,6 +1897,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
+
+    release(time_to_event);
+    release(src_map);
+    release(after);
+    release(sched);
+    release(inmap);
+    release(beforeAcc);
     return lex_max_events;
   }
 
@@ -1858,6 +1942,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
 
     auto c = card(WritesBtwn);
+    release(WritesBtwn);
+    release(WritesAfterProduction);
+    release(WritesBeforeRead);
+    release(WriteThatProducesReadData);
+    release(WritesAfterWrite);
     //cout << "got card" << endl;
     return c;
   }
@@ -2023,6 +2112,38 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
   }
 
+  map<string, std::set<string> > 
+ get_unique_output_ports(UBuffer& buf) {
+   map<string, std::set<string> > outmap;
+   for (auto pt : buf.get_out_ports()) {
+
+     bool is_duplicate = false;
+     auto m = map_find(pt, buf.access_map);
+     auto sched = map_find(pt, buf.schedule);
+     auto dom = map_find(pt, buf.domain);
+
+     for (auto existing_pair : outmap) {
+       string existing = existing_pair.first;
+       auto e_m = map_find(existing, buf.access_map);
+       auto e_sched = map_find(existing, buf.schedule);
+       auto e_dom = map_find(existing, buf.domain);
+
+       if (isl_union_map_is_equal(e_m, m) &&
+           isl_set_is_equal(e_dom, dom) &&
+           isl_union_map_is_equal(e_sched, sched)) {
+         is_duplicate = true;
+         outmap[existing].insert(pt);
+         break;
+       }
+     }
+
+     if (!is_duplicate) {
+       outmap[pt] = {pt};
+     }
+   }
+   return outmap;
+ }
+
   void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank> mergeable) {
     if (!options.conditional_merge){
       stack_bank merged;
@@ -2181,9 +2302,23 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     } else {
 
+      map<string, std::set<string> > unique_outs =
+        get_unique_output_ports(*this);
+
+      cout << "===== Unique ports" << endl;
+      for (auto ptg : unique_outs) {
+        cout << tab(1) << ptg.first << endl;
+        for (auto pt : ptg.second) {
+          cout << tab(2) << pt << endl;
+        }
+      }
 
       // Use naive banking that reaches target throughput
       for (auto outpt : get_out_ports()) {
+      //for (auto outptg : unique_outs) {
+        //string outpt = outptg.first;
+        
+        
         cout << "Generating banks for " << outpt << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
@@ -2212,12 +2347,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
     }
 
-    //if (options.inner_bank_offset_mode ==
-        //INNER_BANK_OFFSET_LINEAR) {
-      //for (auto& b : bank_list) {
-        //b.tp = INNER_BANK_OFFSET_LINEAR;
-      //}
-    //}
     cout << tab(1) << "after banking there are " << bank_list.size() << " banks" << endl;
   }
 

@@ -50,6 +50,52 @@ struct normalized_address_components {
 vector<vector<int>> components;
 vector<int> offsets;
 };
+
+void print_addr(normalized_address_components addr){
+	cout << "PRINTING ADDRESS::" << endl;
+	int components_size = addr.components.at(0).size();
+	cout << tab(1) << "components: " << endl;
+	for(int i = 0; i < components_size; i++){
+		cout << tab(2) << addr.components.at(0).at(i) << "  " << addr.components.at(1).at(i) << endl;
+	}
+	cout << tab(1) << "Offsets: " << endl;
+	cout << tab(2) << addr.offsets.at(0) << "  " << addr.offsets.at(1) << endl;
+}
+
+bool operator < (const normalized_address_components& x, const normalized_address_components& y){
+	int sum_of_strides_x = 0;
+	for(auto component : x.components){
+		for(auto stride : component){
+			sum_of_strides_x += stride;
+		}
+	}
+	
+	int sum_of_strides_y = 0;
+	for(auto component : y.components){
+		for(auto stride : component){
+			sum_of_strides_y += stride;
+		}
+	}
+	
+	int sum_of_offsets_x = 0;
+	for(auto off : x.offsets){
+		sum_of_offsets_x += off;
+	}
+
+	int sum_of_offsets_y = 0;
+	for(auto off : y.offsets){
+		sum_of_offsets_y += off;
+	}
+
+	if(sum_of_strides_x < sum_of_strides_y){
+		return true;
+	} else if(sum_of_strides_x == sum_of_strides_y){
+		if(sum_of_offsets_x < sum_of_offsets_y){
+			return true;
+		}
+	}
+	return false;
+} 
  
 //-----------------------------------------GET_COMPONENTS-------------------------------------------
 
@@ -59,6 +105,7 @@ normalized_address_components get_components(const normalized_address& addr, pro
 	vector<std::string> surrounding_vars_vector = surrounding_vars(op, prg);
 	cout << "vars around " << op->name << ": " << comma_list(surrounding_vars_vector) << endl;
 	int total_variables = surrounding_vars(op, prg).size();
+	cout << "Total variables: " << total_variables << endl;
 	// First split: creating components
 	vector<string> components = split_at(addr, ",");
 	vector<vector<int>> comp_strides;
@@ -125,14 +172,16 @@ normalized_address_components get_components(const normalized_address& addr, pro
 //-----------------------------------------GET_NORMALIZED_ADDRESSES------------------------------------------
 
 std::set<normalized_address_components> get_normalized_addresses(const string& buff, prog& prg){
-	// Create a map here from key = buff to value = addr
+
+	// Create a map here from key = buff >> value = addr
 	std::set<op*> buff_readers = find_readers(buff, prg);
 	op* buff_writer = find_writer(buff, prg);
 	std::set<address> addresses;
 	auto levels = get_variable_levels(prg);
 	std::set<normalized_address> normalized_addresses;
 	map<address, op*> buffer_addresses;
-
+	std::set<normalized_address_components> normalized_addresses_comps;
+	
 	// Add addresses from reader ops
 	for(auto reader : buff_readers){
 		for(auto addr : reader->read_addrs(buff)){
@@ -175,15 +224,17 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 		cout << addr << endl;
 	}
 
-	std::set<normalized_address_components> normalized_addresses_comps;
 	// Create a loop here to go through each addr and call get components
 	for(auto addr : normalized_addresses){
-		cout << "address: " << addr << endl;
+		cout << "normalized address: " << addr << endl;
 		assert(contains_key(addr, buffer_addresses));
 		op* buff = buffer_addresses[addr];
 		normalized_address_components component = get_components(addr, prg, buff);
-//		normalized_addresses_comps.insert(get_components(addr, prg, op));
+		cout << "Inserting..." << endl;
+		print_addr(component);
+		normalized_addresses_comps.insert(component);
 	}
+	cout << "normalized_addresses_comps size: " << normalized_addresses_comps.size() << endl;
 	return normalized_addresses_comps;
 }
 
@@ -195,16 +246,16 @@ int stride(int variable, int component, normalized_address_components addr){
 
 //-----------------------------------------VARIABLES_WITH_NONZERO_STRIDE-----------------------------------------
 
-std::set<int> variables_with_nonzero_stride(int component, normalized_address_components addr){
-	std::set<int> nonzero_variables;
-	int var = 2;
+int variable_with_nonzero_stride(int component, normalized_address_components addr){
+	int nonzero_variable = 0;
+	int var = 3; //Can we use int total_variables = surrounding_vars(op, prg).size(); to calculate this value?
 	for(int i = 0; i < var; i++){
 		if(stride(i, component, addr) > 0){
-			nonzero_variables.insert(var);
+			nonzero_variable = i;
 		}
 	}
 	
-	return nonzero_variables;
+	return nonzero_variable;
 }
 
 //------------------------------------------------IS_POINTWISE--------------------------------------------------
@@ -223,20 +274,42 @@ bool is_pointwise(const string& buff, prog& prg){
 bool is_stencil(const string& buff, prog& prg){
 	// Get the normalized addresses
 	std::set<normalized_address_components> normalized_addresses = get_normalized_addresses(buff, prg);
-
+	cout << "Number of addrs: " << normalized_addresses.size() << endl;
 	for(int component = 0; component < 2; component++){
-		std::set<int> variable_counts;
+		std::set<int> variable_counts; // Has to be a set of the stride values of the variables
 
-		// For each addr get the number of variables with nonzero stride
+		// For each component get the number of variables/addresses with nonzero stride
 		for(auto addr : normalized_addresses){
-			int num_nonzero_variables = variables_with_nonzero_stride(component, addr).size();
-			variable_counts.insert(num_nonzero_variables);
-			cout << "num_nonzero_variables = " << num_nonzero_variables << endl;
+			int variable = variable_with_nonzero_stride(component, addr);
+			cout << "Variable: " << variable << endl;
+			int stride = addr.components.at(component).at(variable);
+			cout << tab(1) << "Stride: " << stride << endl;
+			variable_counts.insert(stride);
+		/*	int num_nonzero_variables = variables_with_nonzero_stride(component, addr).size();
+			int stride = 0;
+			if(num_nonzero_variables == 1){
+				for(auto i : variables_with_nonzero_stride(component, addr)){
+					int j = std::stoi(i);
+					stride = stride(j, component, addr);
+					variable_counts.insert(stride);
+				}
+			}
+			cout << "For address " << addr.components.at(component) <<  " num_nonzero_variables = " << num_nonzero_variables << "stride: " << stride << endl; */
+		}
+
+		cout << "All strides: " << endl;
+		for(auto stride : variable_counts){
+			cout << tab(1) << stride << endl;
 		}
 
 		// If not all the addrs have the same amount of nonzero-stride vars, the buff isn't stencil
 		if(variable_counts.size() != 1){
-			cout << "NOT STENCIL!"<< endl;
+			cout << "NOT STENCIL! -> variable_count size != 1"<< endl;
+			cout << "variable_count: " << endl;
+			for(auto var : variable_counts){
+				cout << tab(1) << var << endl;
+			}
+			cout << "size =  "<< variable_counts.size() << endl;
 			return false;
 		}
 
@@ -248,13 +321,13 @@ bool is_stencil(const string& buff, prog& prg){
 			}
 			// If all the strides aren't the same value, the buff isn't stencil
 			if(strides.size() != 1){
-				cout << "NOT STENCIL!"<< endl;
+				cout << "NOT STENCIL! -> strides size = 1"<< endl;
 				return false;
 			}
 		}
 	}
 
-	cout << buff << " is STENCIL!" << endl;
+	cout << buff << " IS STENCIL!" << endl;
 	return true;
 }
 
@@ -445,7 +518,7 @@ prog simple_stencil(){
   auto write_out = prg.add_nest("m", 0, input_image_rows-2, "n", 0, input_image_cols-2);
   auto write_op = write_out->add_op("write_blurred_off_chip");
   write_op->add_load("in", "n, m");
-  write_op->add_load("in", "23n, m+1");
+  write_op->add_load("in", "n, m+1");
   write_op->add_load("in", "n, m+2");
   write_op->add_load("in", "n+1, m");
   write_op->add_load("in", "n+1, m+1");
@@ -570,8 +643,94 @@ void toy_task(){
 
 }
 
+void no_stencil_test(){
+
+  prog prg;
+  prg.compute_unit_file = "clockwork_standard_compute_units.h";
+  prg.name = "brighten_blur";
+  prg.add_input("off_chip_input");
+  prg.add_output("off_chip_output");
+  prg.buffer_port_widths["off_chip_input"] = 16;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["off_chip_output"] = 16;
+
+  int input_image_rows = 256;
+  int input_image_cols = 256;
+
+  prg.buffer_bounds["off_chip_input"] = {input_image_cols, input_image_rows};
+  prg.buffer_bounds["in"] = {input_image_cols, input_image_rows};
+  prg.buffer_bounds["off_chip_output"] = {input_image_cols - 2, input_image_rows - 2};
+
+  auto p = prg.add_nest("po", 0, input_image_rows, "pi", 0, input_image_cols);
+  auto write = p->add_op("load_image_from_off_chip");
+  write->add_load("off_chip_input", "pi, po");
+  write->add_store("in", "pi, po");
+
+  auto write_out = prg.add_nest("m", 0, input_image_rows-2, "n", 0, input_image_cols-2);
+  auto write_op = write_out->add_op("write_blurred_off_chip");
+  write_op->add_load("in", "23n, m");
+  write_op->add_load("in", "1n, m+1");
+  write_op->add_load("in", "n, m+2");
+  write_op->add_load("in", "n+1, m");
+  write_op->add_load("in", "n+1, m+1");
+  write_op->add_load("in", "n+1, m+2");
+  write_op->add_load("in", "n+2, m");
+  write_op->add_load("in", "n+2, m+1");
+  write_op->add_load("in", "n+2, m+2");
+  write_op->add_store("off_chip_output", "n, m");
+
+  assert(!is_stencil("in", prg));
+
+}
+
+void one_stencil_test(){
+
+  prog prg;
+  prg.compute_unit_file = "clockwork_standard_compute_units.h";
+  prg.name = "brighten_blur";
+  prg.add_input("off_chip_input");
+  prg.add_output("off_chip_output");
+  prg.buffer_port_widths["off_chip_input"] = 16;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["off_chip_output"] = 16;
+
+  int input_image_rows = 256;
+  int input_image_cols = 256;
+
+  prg.buffer_bounds["off_chip_input"] = {input_image_cols, input_image_rows};
+  prg.buffer_bounds["in"] = {input_image_cols, input_image_rows};
+  prg.buffer_bounds["off_chip_output"] = {input_image_cols - 2, input_image_rows - 2};
+
+  auto p = prg.add_nest("po", 0, input_image_rows, "pi", 0, input_image_cols);
+  auto write = p->add_op("load_image_from_off_chip");
+  write->add_load("off_chip_input", "pi, po");
+  write->add_store("in", "pi, po");
+
+  auto write_out = prg.add_nest("m", 0, input_image_rows-2, "n", 0, input_image_cols-2);
+  auto write_op = write_out->add_op("write_blurred_off_chip");
+  write_op->add_load("in", "n, m");
+  write_op->add_load("in", "n, m+1");
+  write_op->add_load("in", "n, m+2");
+  write_op->add_load("in", "n+1, m");
+  write_op->add_load("in", "n+1, m+1");
+  write_op->add_load("in", "n+1, m+2");
+  write_op->add_load("in", "n+2, m");
+  write_op->add_load("in", "n+2, m+1");
+  write_op->add_load("in", "n+2, m+2");
+  write_op->add_store("off_chip_output", "n, m");
+
+  assert(is_stencil("in", prg));
+
+}
+
+void prog_splitting_unit_tests(){
+	no_stencil_test();
+	one_stencil_test();
+}
+
 //-----------------------------------------VOID PROG_SPLITTING_TESTS-------------------------------------------
 void prog_splitting_tests() {
+	prog_splitting_unit_tests();
 	toy_task();
 }
 
