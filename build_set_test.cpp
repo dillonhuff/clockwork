@@ -2122,10 +2122,10 @@ void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> w
   size_t rd_itr = 0;
   size_t wr_itr = 0;
   out << "data_in, valid_in, data_out, valid_out" << endl;
+  auto addr_out = vector<int>(output_width, 0);
   while (rd_itr < read_cycle.size() || wr_itr < write_cycle.size()) {
     bool valid_in = false, valid_out = false;
     auto addr_in = vector<int>(input_width, 0);
-    auto addr_out = vector<int>(output_width, 0);
     if (rd_itr < read_cycle.size()) {
       if (read_cycle.at(rd_itr) == cycle) {
         valid_out = true;
@@ -12705,7 +12705,6 @@ void lake_identity_stream_autovec_test() {
   check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   cmd("mkdir -p ./lake_stream/identity_stream/");
   emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
-  assert(false);
 
 
 }
@@ -14221,8 +14220,8 @@ void application_tests() {
   lake_conv33_autovec_test();
   lake_dual_port_test();
   lake_cascade_autovec_test();
-  lake_resnet_test();
   assert(false);
+  lake_resnet_test();
   resnet_test();
 
   llf_test();
