@@ -2060,30 +2060,22 @@ void add_raw_quad_port_memtile_generator(CoreIR::Context* c) {
     int depth = args.at("depth")->get<int>();
     uint awidth = (uint)ceil(log2(depth));
 
+
     auto core_ram = def->addInstance("mem", "global.raw_dual_port_sram_tile", {{"depth", args.at("depth")}});
 
-  //CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
-    //{"lo", CoreIR::Const::make(c, 0)},
-    //{"hi", CoreIR::Const::make(c, awidth)}};
-  //def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
-  //def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
+    auto self = def->sel("self");
+    auto wen1 = self->sel("wen")->sel(1);
+    auto ren1 = self->sel("ren")->sel(1);
 
-  //def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
-  //def->addInstance(
-      //"readreg",
-      //"mantle.reg",
-      //{{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
-  //def->connect("self.clk", "readreg.clk");
-  //def->connect("self.clk", "mem.clk");
-  //def->connect("self.wdata", "mem.wdata");
-  //def->connect("self.waddr", "waddr_slice.in");
-  //def->connect("waddr_slice.out", "mem.waddr");
-  //def->connect("self.wen", "mem.wen");
-  //def->connect("mem.rdata", "readreg.in");
-  //def->connect("self.rdata", "readreg.out");
-  //def->connect("self.raddr", "raddr_slice.in");
-  //def->connect("raddr_slice.out", "mem.raddr");
-  //def->connect("self.ren", "readreg.en");
+    cmux(def, 16, core_ram->sel("wdata"), wen1, self->sel("wdata")->sel(0), self->sel("wdata")->sel(1));
+    cmux(def, 16, core_ram->sel("waddr"), wen1, self->sel("waddr")->sel(0), self->sel("waddr")->sel(1));
+    cmux(def, core_ram->sel("wen"), wen1, self->sel("wen")->sel(0), self->sel("wen")->sel(1));
+
+    cmux(def, core_ram->sel("ren"), ren1, self->sel("ren")->sel(0), self->sel("ren")->sel(1));
+    cmux(def, 16, core_ram->sel("raddr"), ren1, self->sel("raddr")->sel(0), self->sel("raddr")->sel(1));
+
+    def->connect(self->sel("rdata")->sel(0), core_ram->sel("rdata"));
+    def->connect(self->sel("rdata")->sel(1), core_ram->sel("rdata"));
     });
 }
 
@@ -2297,4 +2289,34 @@ void mini_sram_garnet_test() {
   assert(false);
 }
 
+CoreIR::Instance* cmux(ModuleDef* def,
+    CoreIR::Wireable* out,
+    CoreIR::Wireable* sel,
+    CoreIR::Wireable* in0,
+    CoreIR::Wireable* in1) {
+
+  auto c = def->getContext();
+  auto next_val = def->addInstance(def->getContext()->getUnique() + "_mux", "corebit.mux");
+  def->connect(out, next_val->sel("out"));
+  def->connect(in0, next_val->sel("in0"));
+  def->connect(in1, next_val->sel("in1"));
+  def->connect(sel, next_val->sel("sel"));
+  return next_val;
+}
+
+CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
+    const int width,
+    CoreIR::Wireable* out,
+    CoreIR::Wireable* sel,
+    CoreIR::Wireable* in0,
+    CoreIR::Wireable* in1) {
+
+  auto c = def->getContext();
+  auto next_val = def->addInstance(def->getContext()->getUnique() + "_mux", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(out, next_val->sel("out"));
+  def->connect(in0, next_val->sel("in0"));
+  def->connect(in1, next_val->sel("in1"));
+  def->connect(sel, next_val->sel("sel"));
+  return next_val;
+}
 #endif

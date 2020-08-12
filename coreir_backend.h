@@ -86,4 +86,17 @@ void add_delay_tile_generator(CoreIR::Context* c);
 CoreIR::Module* reg_delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays);
 
 void add_raw_quad_port_memtile_generator(CoreIR::Context* c);
+CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
+    const int width,
+    CoreIR::Wireable* out,
+    CoreIR::Wireable* sel,
+    CoreIR::Wireable* in0,
+    CoreIR::Wireable* in1);
+
+CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
+    CoreIR::Wireable* out,
+    CoreIR::Wireable* sel,
+    CoreIR::Wireable* in0,
+    CoreIR::Wireable* in1);
+
 #endif

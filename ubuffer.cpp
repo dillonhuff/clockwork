@@ -773,21 +773,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
 
   }
 
-  CoreIR::Instance* cmux(ModuleDef* def,
-      const int width,
-      CoreIR::Wireable* out,
-      CoreIR::Wireable* sel,
-      CoreIR::Wireable* in0,
-      CoreIR::Wireable* in1) {
-
-    auto c = def->getContext();
-    auto next_val = def->addInstance(def->getContext()->getUnique() + "_mux", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
-    def->connect(out, next_val->sel("out"));
-    def->connect(in0, next_val->sel("in0"));
-    def->connect(in1, next_val->sel("in1"));
-    def->connect(sel, next_val->sel("sel"));
-    return next_val;
-  }
 
   CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* c, const string& outpt, UBuffer& buf) {
     int width = buf.port_widths;
