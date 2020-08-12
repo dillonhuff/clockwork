@@ -957,6 +957,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     assert(false);
   }
 
+  CoreIR::Instance* build_addrgen(const std::string& pt, UBuffer& buf, CoreIR::ModuleDef* def) {
+    assert(false);
+  }
+
   void generate_banks(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
     auto c = def->getContext();
@@ -973,6 +977,28 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     assert(readers <= 2 && writers <= 2);
 
     auto t = def->addInstance(buf.name + "_bank", "global.raw_quad_port_memtile", {{"depth", COREMK(c, 2048)}});
+    int i = 0;
+    for (auto reader : buf.get_out_ports()) {
+      auto reader_data = def->sel("self")->sel(buf.container_bundle(reader))->sel(buf.bundle_offset(reader));
+      auto read_port = t->sel("rdata")->sel(i);
+      def->connect(reader_data, read_port);
+      i++;
+    }
+
+    i = 0;
+    for (auto reader : buf.get_in_ports()) {
+      auto reader_data = def->sel("self")->sel(buf.container_bundle(reader))->sel(buf.bundle_offset(reader));
+      auto read_port = t->sel("wdata")->sel(i);
+      def->connect(reader_data, read_port);
+      
+      auto agen = build_addrgen(reader, buf, def);
+      def->connect(agen->sel("d"),
+          control_vars(def, reader, buf));
+      def->connect(agen->sel("out"), t->sel("waddr")->sel(i));
+
+      i++;
+    }
+    return;
 
     assert(false);
 
@@ -1163,6 +1189,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     }
 
     generate_banks(options, buf, def);
+    return;
 
     for (auto inpt : buf.get_in_ports()) {
       auto bcm = coreir_broadcast(c, inpt, buf);
