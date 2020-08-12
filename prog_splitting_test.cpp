@@ -110,6 +110,16 @@ normalized_address_components get_components(const normalized_address& addr, pro
 	vector<string> components = split_at(addr, ",");
 	vector<vector<int>> comp_strides;
 	for(auto comp : components){
+		if(contains(comp, "(")){
+			vector<string> sides = split_at(comp, "(");
+			comp = sides.at(1);
+		}
+		if(contains(comp, ")")){
+			vector<string> sides = split_at(comp, ")");
+			comp = sides.at(0);
+		}
+		
+		cout << "Fixing () issue " << comp << endl;
 		// Second split: creating terms of a component
 		vector<string> terms = split_at(comp, "+");
 		vector<string> consts;
@@ -126,7 +136,6 @@ normalized_address_components get_components(const normalized_address& addr, pro
 		// Calculating the sum of constants
 		int accum = 0;
 		for(auto c : consts){
-//			cout << "First stoi:"<< c << "." << endl;
 			accum += std::stoi(c);
 		}
 		all_comps.offsets.push_back(accum);
@@ -142,7 +151,6 @@ normalized_address_components get_components(const normalized_address& addr, pro
 				vector<string> remaining_part = split_at(parts.at(1),">");
 				variable_strides[remaining_part.at(0)].push_back(1);
 			} else{ // In this case we have to find the stride
-//				cout << "Second stoi:"<< string_to_pars << "." << endl;
 				int stride_value = std::stoi(string_to_pars);
 				vector<string> remaining_part = split_at(parts.at(1),">");
 				variable_strides[remaining_part.at(0)].push_back(stride_value);
@@ -153,7 +161,6 @@ normalized_address_components get_components(const normalized_address& addr, pro
 		reduced_strides.resize(total_variables, 0);
 		for(auto pair : variable_strides){
 			auto pair_first = pair.first;
-//			cout << "Third stoi:"<< pair_first << "." << endl;
 			int variable_index = std::stoi(pair_first);
 			int accum_strides = 0;
 			for(auto value : pair.second){
@@ -175,7 +182,7 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 
 	// Create a map here from key = buff >> value = addr
 	std::set<op*> buff_readers = find_readers(buff, prg);
-	op* buff_writer = find_writer(buff, prg);
+	std::set<op*> buff_writers = find_writers(buff, prg);
 	std::set<address> addresses;
 	auto levels = get_variable_levels(prg);
 	std::set<normalized_address> normalized_addresses;
@@ -192,10 +199,12 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 	}
 
 	// Add addresses from writer op
-	for(auto addr : buff_writer->write_addrs(buff)){
-		addresses.insert(addr.at(0).second);	
-		//fill the map
-		buffer_addresses[addr.at(0).second] = buff_writer;
+	for(auto writer : buff_writers){
+		for(auto addr : writer->write_addrs(buff)){
+			addresses.insert(addr.at(0).second);	
+			//fill the map
+			buffer_addresses[addr.at(0).second] = writer;
+		}
 	}
 
 	// Change every address' variable name for its <level> (normalize it)
@@ -230,11 +239,9 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 		assert(contains_key(addr, buffer_addresses));
 		op* buff = buffer_addresses[addr];
 		normalized_address_components component = get_components(addr, prg, buff);
-		cout << "Inserting..." << endl;
-		print_addr(component);
+//		print_addr(component);
 		normalized_addresses_comps.insert(component);
 	}
-	cout << "normalized_addresses_comps size: " << normalized_addresses_comps.size() << endl;
 	return normalized_addresses_comps;
 }
 
@@ -261,6 +268,8 @@ int variable_with_nonzero_stride(int component, normalized_address_components ad
 //------------------------------------------------IS_POINTWISE--------------------------------------------------
 
 bool is_pointwise(const string& buff, prog& prg){
+	std::set<string> all_buffs = all_buffers(prg);
+	assert(elem(buff,all_buffs));
 	if(get_normalized_addresses(buff, prg).size() == 1){
 		cout << buff << " is POINTWISE!" << endl;
 		return true;
@@ -274,33 +283,23 @@ bool is_pointwise(const string& buff, prog& prg){
 bool is_stencil(const string& buff, prog& prg){
 	// Get the normalized addresses
 	std::set<normalized_address_components> normalized_addresses = get_normalized_addresses(buff, prg);
-	cout << "Number of addrs: " << normalized_addresses.size() << endl;
+	
 	for(int component = 0; component < 2; component++){
 		std::set<int> variable_counts; // Has to be a set of the stride values of the variables
 
 		// For each component get the number of variables/addresses with nonzero stride
 		for(auto addr : normalized_addresses){
 			int variable = variable_with_nonzero_stride(component, addr);
-			cout << "Variable: " << variable << endl;
+//			cout << "Variable: " << variable << endl;
 			int stride = addr.components.at(component).at(variable);
-			cout << tab(1) << "Stride: " << stride << endl;
+//			cout << tab(1) << "Stride: " << stride << endl;
 			variable_counts.insert(stride);
-		/*	int num_nonzero_variables = variables_with_nonzero_stride(component, addr).size();
-			int stride = 0;
-			if(num_nonzero_variables == 1){
-				for(auto i : variables_with_nonzero_stride(component, addr)){
-					int j = std::stoi(i);
-					stride = stride(j, component, addr);
-					variable_counts.insert(stride);
-				}
-			}
-			cout << "For address " << addr.components.at(component) <<  " num_nonzero_variables = " << num_nonzero_variables << "stride: " << stride << endl; */
 		}
 
-		cout << "All strides: " << endl;
-		for(auto stride : variable_counts){
-			cout << tab(1) << stride << endl;
-		}
+//		cout << "All strides: " << endl;
+//		for(auto stride : variable_counts){
+//			cout << tab(1) << stride << endl;
+//		}
 
 		// If not all the addrs have the same amount of nonzero-stride vars, the buff isn't stencil
 		if(variable_counts.size() != 1){
@@ -643,6 +642,49 @@ void toy_task(){
 
 }
 
+void cascade_stencil_test(){
+	prog prg = cascade();
+	assert(is_stencil("conv1_stencil", prg));
+	assert(is_stencil("hw_input_global_wrapper_stencil", prg));
+}
+
+void gaussian_stencil_test(){
+	prog prg = gaussian();
+	assert(is_stencil("blur_stencil", prg));
+	assert(is_stencil("blur_unnormalized_stencil", prg));
+	assert(is_stencil("hw_input_stencil", prg));
+}
+
+void harris_stencil_test(){
+	prog prg = harris();
+	assert(is_stencil("padded16_stencil", prg));
+	assert(is_stencil("lgxx_stencil", prg));
+	assert(is_stencil("lxx_stencil", prg));
+	assert(is_stencil("lxy_stencil", prg));
+	assert(is_stencil("cim_stencil", prg));
+}
+
+void pointwise_pointwise_test(){
+	prog prg = pointwise();
+	prg.pretty_print();
+	assert(is_pointwise("hw_input_stencil", prg));
+	assert(is_pointwise("mult_stencil", prg));
+}
+
+void brighten_blur_stencil_test(){
+	prog prg = brighten_blur();
+	assert(is_stencil("in", prg));
+	assert(is_stencil("brightened", prg));
+	assert(is_stencil("blurred", prg));
+}
+
+void camera_pipeline_stencil_test(){
+	prog prg = camera_pipeline();
+	assert(is_stencil("denoised_1_stencil", prg));
+	assert(is_stencil("demosaicked_1_stencil", prg));
+	assert(is_stencil("corrected_stencil", prg));
+}
+
 void no_stencil_test(){
 
   prog prg;
@@ -726,6 +768,12 @@ void one_stencil_test(){
 void prog_splitting_unit_tests(){
 	no_stencil_test();
 	one_stencil_test();
+	brighten_blur_stencil_test();
+	cascade_stencil_test();
+	harris_stencil_test();
+	gaussian_stencil_test();
+	camera_pipeline_stencil_test();
+	pointwise_pointwise_test(); //not working
 }
 
 //-----------------------------------------VOID PROG_SPLITTING_TESTS-------------------------------------------
