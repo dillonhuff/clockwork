@@ -13176,8 +13176,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
 schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
-  sched.use_dse_compute = false;
-  //sched.use_dse_compute = true;
+  //sched.use_dse_compute = false;
+  sched.use_dse_compute = true;
   for (auto op : prg.all_ops()) {
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
@@ -13405,12 +13405,12 @@ vector<prog> stencil_programs() {
 
   //test_programs.push_back(up_sample());
 
+  test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(harris());
   test_programs.push_back(rom());
   test_programs.push_back(unsharp());
   test_programs.push_back(cascade());
-  test_programs.push_back(pointwise());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(gaussian());
   test_programs.push_back(down_sample());
