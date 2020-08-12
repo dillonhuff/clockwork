@@ -959,10 +959,22 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
 
   void generate_banks(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
-
     auto c = def->getContext();
-
     auto ns = c->getNamespace("global");
+
+    // Caught between a few issues, one is:
+    // Q: How do we model a quad-port tile with the primitives we have in an easy way?
+    // Q: How do we assign operations to ports? Do we assume they are uniform? IOW
+    //    can any port access any memory location?
+
+    int readers = buf.get_out_ports().size();
+    int writers = buf.get_in_ports().size();
+
+    assert(readers <= 2 && writers <= 2);
+
+    auto t = def->addInstance(buf.name + "_bank", "global.raw_quad_port_memtile", {{"depth", COREMK(c, 2048)}});
+
+    assert(false);
 
     for (auto bank : buf.get_banks()) {
       if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
@@ -1026,7 +1038,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
           def->connect(agen->sel("out"), bnk->sel("waddr"));
           def->connect(agen->sel("d"),
               control_vars(def, writer, buf));
-          //def->sel(controller_name(writer))->sel("d"));
         }
       } else {
         assert(false);
@@ -1043,6 +1054,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
   }
 
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
+
+    cout << "partition: " << buf.banking.partition << endl;
+    //assert(buf.banking.partition == "none");
+
     int width = buf.port_widths;
     auto c = def->getContext();
     auto ns = c->getNamespace("global");
@@ -1107,13 +1122,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
 
           delay_maps[inpt].push_back({outpt, dd});
 
-          //CoreIR::Module* srmod = delay_module(c, width, {dd});
-          //auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
-          //def->connect(def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)),
-              //srinst->sel("wdata"));
-
-          //def->connect(def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)),
-              //srinst->sel("rdata"));
         } else {
           cout << tab(1) << "No overlap" << endl;
           assert(false);

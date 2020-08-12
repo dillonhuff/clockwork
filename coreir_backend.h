@@ -85,4 +85,5 @@ void add_delay_tile_generator(CoreIR::Context* c);
 
 CoreIR::Module* reg_delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays);
 
+void add_raw_quad_port_memtile_generator(CoreIR::Context* c);
 #endif

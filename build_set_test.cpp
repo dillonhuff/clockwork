@@ -13220,7 +13220,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  all_exhaustive_banked(prg, options);
+  all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
     options.inner_bank_offset_mode =
@@ -13245,7 +13245,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_LINEAR;
     prg.pretty_print();
-    assert(false);
+    //assert(false);
   }
 
   schedule_info sched = garnet_schedule_info(prg);
@@ -13424,7 +13424,7 @@ vector<prog> all_cgra_programs() {
   vector<prog> test_programs;
   test_programs.push_back(accumulation());
 
-  // Address generation broken, classified as stencil pipelin
+  // Address generation broken, classified as stencil pipeline
   test_programs.push_back(up_sample());
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_layer());
@@ -13446,17 +13446,14 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
     dsa_writers(prg);
     auto cpu = unoptimized_result(prg);
-    //assert(false);
 
     compile_for_garnet_dual_port_mem(prg);
     generate_regression_testbench(prg);
-    //auto cgra_sim = run_regression_tb(prg.name);
 
     cout << "Output name: " << prg.name << endl;
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    //assert(false);
     //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
     //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
@@ -13467,25 +13464,25 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
 
 void cgra_flow_tests() {
-  auto test_programs = stencil_programs();
-  //auto test_programs = all_cgra_programs();
-  cout << "====== Program classification" << endl;
-  for (auto prg : test_programs) {
-    if (!is_rate_matchable(prg)) {
-      cout << tab(1) << prg.name << " is not rate matchable" << endl;
-      for (auto b : all_buffers(prg)) {
-        if (!prg.is_boundary(b)) {
-          if (is_reduce_buffer(b, prg)) {
-            cout << tab(2) << "REDUCE: " << b << endl;
-          } else {
-            cout << tab(2) << "PC    : " << b << endl;
-          }
-          cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
-          cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
-        }
-      }
-    }
-  }
+  //auto test_programs = stencil_programs();
+  auto test_programs = all_cgra_programs();
+  //cout << "====== Program classification" << endl;
+  //for (auto prg : test_programs) {
+    //if (!is_rate_matchable(prg)) {
+      //cout << tab(1) << prg.name << " is not rate matchable" << endl;
+      //for (auto b : all_buffers(prg)) {
+        //if (!prg.is_boundary(b)) {
+          //if (is_reduce_buffer(b, prg)) {
+            //cout << tab(2) << "REDUCE: " << b << endl;
+          //} else {
+            //cout << tab(2) << "PC    : " << b << endl;
+          //}
+          //cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
+          //cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
+        //}
+      //}
+    //}
+  //}
   //assert(false);
 
   test_stencil_codegen(test_programs);
