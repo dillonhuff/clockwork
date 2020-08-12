@@ -1160,9 +1160,9 @@ def map_app(pre_map):
         instance_to_instr[name] = instr
 
     netlist = port_rename(netlist)
-    insert_valid(id_to_name, netlist, bus)
-    if has_rom(id_to_name):
-        insert_valid_delay(id_to_name, instance_to_instr, netlist, bus)
+    # insert_valid(id_to_name, netlist, bus)
+    # if has_rom(id_to_name):
+        # insert_valid_delay(id_to_name, instance_to_instr, netlist, bus)
 
     wire_reset_to_flush(netlist, id_to_name, bus)
     remove_dead_regs(netlist, bus)
