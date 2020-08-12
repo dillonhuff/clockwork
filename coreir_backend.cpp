@@ -637,7 +637,7 @@ void connect_signal(const std::string& signal, CoreIR::Module* m) {
   }
 }
 
-void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op* op, prog& prg, map<string, UBuffer>& buffers) {
+void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op* op, prog& prg, map<string, UBuffer>& buffers, schedule_info& hwinfo) {
   auto context = def->getContext();
   auto ns = context->getNamespace("global");
 
@@ -679,7 +679,14 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     auto def = compute_unit->newModuleDef();
     if (found_compute) {
       cout << "Found compute file for " << prg.name << endl;
-      auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+      Instance* halide_cu = nullptr;
+      if (hwinfo.use_dse_compute) {
+        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
+      } else {
+        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+      }
+      assert(halide_cu != nullptr);
+
       for (auto var : op->index_variables_needed_by_compute) {
         def->connect(halide_cu->sel(var), def->sel("self")->sel(var));
       }
@@ -1108,7 +1115,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
     generate_coreir_op_controller(def, op, sched_maps, hwinfo);
-    generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
+    generate_coreir_compute_unit(found_compute, def, op, prg, buffers, hwinfo);
   }
 
   for (auto& buf : buffers) {
@@ -1453,7 +1460,12 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
        Module* m = inst->getModuleRef();
        if (m->isGenerated()) {
          auto g = m->getGenerator();
-         if (g->getName() == "raw_dual_port_sram_tile") {
+         if (g->getName() == "raw_dual_port_sram_tile" ||
+             g->getName() == "raw_quad_port_memtile") {
+           continue;
+         }
+       } else {
+         if (m->getName() == "WrappedPE_wrapped") {
            continue;
          }
        }
@@ -1610,15 +1622,20 @@ void generate_coreir(CodegenOptions& options,
 
   auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context, hwinfo);
 
-  //garnet_map_module(prg_mod);
-
-  //prg_mod->print();
-  //assert(false);
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
+
+  garnet_map_module(prg_mod);
+  if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  //prg_mod->print();
+  //assert(false);
 
   deleteContext(context);
 }
