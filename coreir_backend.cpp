@@ -2056,9 +2056,12 @@ void add_raw_quad_port_memtile_generator(CoreIR::Context* c) {
   ram->setGeneratorDefFromFun(
     [](Context* c, Values args, ModuleDef* def) {
 
-    //int width = 16;
-    //int depth = args.at("depth")->get<int>();
-  //uint awidth = (uint)ceil(log2(depth));
+    int width = 16;
+    int depth = args.at("depth")->get<int>();
+    uint awidth = (uint)ceil(log2(depth));
+
+    auto core_ram = def->addInstance("mem", "global.raw_dual_port_sram_tile", {{"depth", args.at("depth")}});
+
   //CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
     //{"lo", CoreIR::Const::make(c, 0)},
     //{"hi", CoreIR::Const::make(c, awidth)}};
