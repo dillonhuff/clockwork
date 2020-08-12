@@ -990,30 +990,69 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     int readers = buf.get_out_ports().size();
     int writers = buf.get_in_ports().size();
 
-    assert(readers <= 2 && writers <= 2);
-
-    auto t = def->addInstance(buf.name + "_bank", "global.raw_quad_port_memtile", {{"depth", COREMK(c, 2048)}});
-    int i = 0;
-    for (auto reader : buf.get_out_ports()) {
+    if (readers == 1 && writers == 1) {
+      string reader = pick(buf.get_out_ports());
+      auto t = def->addInstance(buf.name + "_bank", "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}});
       auto reader_data = def->sel("self")->sel(buf.container_bundle(reader))->sel(buf.bundle_offset(reader));
-      auto read_port = t->sel("rdata")->sel(i);
+      auto read_port = t->sel("rdata");
       def->connect(reader_data, read_port);
-      i++;
-    }
 
-    i = 0;
-    for (auto reader : buf.get_in_ports()) {
-      auto reader_data = def->sel("self")->sel(buf.container_bundle(reader))->sel(buf.bundle_offset(reader));
-      auto read_port = t->sel("wdata")->sel(i);
-      def->connect(reader_data, read_port);
-      
       auto agen = build_addrgen(reader, buf, def);
       def->connect(agen->sel("d"),
           control_vars(def, reader, buf));
-      def->connect(agen->sel("out"), t->sel("waddr")->sel(i));
+      def->connect(agen->sel("out"), t->sel("raddr"));
+      def->connect(t->sel("ren"),
+        control_en(def, reader, buf));
 
-      i++;
+      {
+        string reader = pick(buf.get_in_ports());
+        auto reader_data = def->sel("self")->sel(buf.container_bundle(reader))->sel(buf.bundle_offset(reader));
+        auto read_port = t->sel("wdata");
+        def->connect(reader_data, read_port);
+
+        auto agen = build_addrgen(reader, buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, reader, buf));
+        def->connect(agen->sel("out"), t->sel("waddr"));
+        def->connect(t->sel("wen"),
+            control_en(def, reader, buf));
+      }
+
+    } else if (readers <= 2 && writers <= 2) {
+      auto t = def->addInstance(buf.name + "_bank", "global.raw_quad_port_memtile", {{"depth", COREMK(c, 2048)}});
+      int i = 0;
+      for (auto reader : buf.get_out_ports()) {
+        auto reader_data = def->sel("self")->sel(buf.container_bundle(reader))->sel(buf.bundle_offset(reader));
+        auto read_port = t->sel("rdata")->sel(i);
+        def->connect(reader_data, read_port);
+
+        auto agen = build_addrgen(reader, buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, reader, buf));
+        def->connect(agen->sel("out"), t->sel("raddr")->sel(i));
+        def->connect(t->sel("ren")->sel(i),
+            control_en(def, reader, buf));
+        i++;
+      }
+
+      i = 0;
+      for (auto reader : buf.get_in_ports()) {
+        auto reader_data = def->sel("self")->sel(buf.container_bundle(reader))->sel(buf.bundle_offset(reader));
+        auto read_port = t->sel("wdata")->sel(i);
+        def->connect(reader_data, read_port);
+
+        auto agen = build_addrgen(reader, buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, reader, buf));
+        def->connect(agen->sel("out"), t->sel("waddr")->sel(i));
+        def->connect(t->sel("wen")->sel(i),
+            control_en(def, reader, buf));
+        i++;
+      }
+    } else {
+      assert(false);
     }
+
     return;
 
     assert(false);

@@ -1604,6 +1604,7 @@ void generate_coreir(CodegenOptions& options,
   CoreIRLoadLibrary_cgralib(context);
   add_delay_tile_generator(context);
   add_raw_quad_port_memtile_generator(context);
+  ram_module(context, 16, 2048);
 
   auto c = context;
 
@@ -2123,7 +2124,10 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
   def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
   def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
 
-  def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+  def->addInstance("mem",
+      "coreir.mem",
+      {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+
   def->addInstance(
       "readreg",
       "mantle.reg",
