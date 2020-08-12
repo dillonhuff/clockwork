@@ -13890,6 +13890,68 @@ void infer_bounds_color_downsample_test() {
   regression_test(prg);
 }
 
+void infer_bounds_multiple_inputs() {
+  prog prg("infer_bounds_multi_input");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("incp", "in_oc", 2, prg);
+  cpy("in", "incp", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("in", "x + " + str(x), "y + " + str(y));
+      }
+    }
+    red->add_store("down", "x, y");
+    red->add_function("blur_5x5_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("in", "x2 + " + str(x), "y2 + " + str(y));
+      }
+    }
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_5x5_32");
+  }
+
+  {
+    auto lp = prg.add_nest("ys", 0, 1, "xs", 0, 1);
+    auto red = lp->add_op(prg.un("add"));
+    red->add_load("down1", "xs, ys");
+    red->add_load("down", "xs, ys");
+    red->add_store("summed", "xs, ys");
+    red->add_function("add");
+  }
+
+
+  cpy("out", "summed", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //assert(false);
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+
+  regression_test(prg);
+
+  //assert(false);
+
+}
+
 void infer_bounds_16_stage_5x5_conv_test() {
   prog prg("conv_16_stage_5x5_test");
   prg.add_input("in_oc");
@@ -13930,7 +13992,7 @@ void infer_bounds_16_stage_5x5_conv_test() {
 
   //assert(false);
 
-  infer_bounds_and_unroll("out", {20, 20}, 16, prg);
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
 
   prg.pretty_print();
   prg.sanity_check();
@@ -13940,8 +14002,6 @@ void infer_bounds_16_stage_5x5_conv_test() {
 
   regression_test(prg);
 
-  assert(false);
-
 }
 
 void remove_reduce_inits_test() {
@@ -13949,6 +14009,7 @@ void remove_reduce_inits_test() {
 }
 
 void application_tests() {
+  infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
   infer_bounds_multi_5x1_stage_negative_conv_test();
   infer_bounds_multi_5x5_stage_negative_conv_test();
