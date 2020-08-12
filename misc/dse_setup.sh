@@ -1,20 +1,20 @@
-# install the aha wrapper script
-pip install -e .
+## install the aha wrapper script
+#pip install -e .
 
-# pull docker image from docker hub (this takes a while!)
-docker pull stanfordaha/garnet:latest
+## pull docker image from docker hub (this takes a while!)
+#docker pull stanfordaha/garnet:latest
 
-# run the container in the background and delete it when it exits
-# (this will print out the name of the container to attach to)
-aha docker
+## run the container in the background and delete it when it exits
+## (this will print out the name of the container to attach to)
+#aha docker
 
-# you can also do the following instead, but using the wrapper shim is
-# suggested as it will do things like mount /cad automatically when 
-# detected
-# docker run -d -it --rm stanfordaha/garnet bash
+## you can also do the following instead, but using the wrapper shim is
+## suggested as it will do things like mount /cad automatically when 
+## detected
+## docker run -d -it --rm stanfordaha/garnet bash
 
-# attach to the container name printed out above
-docker attach <container-name>
+## attach to the container name printed out above
+#docker attach <container-name>
 
 # load required simulator (ncsim)
 module load incisive
