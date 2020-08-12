@@ -957,8 +957,24 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     assert(false);
   }
 
-  CoreIR::Instance* build_addrgen(const std::string& pt, UBuffer& buf, CoreIR::ModuleDef* def) {
-    assert(false);
+  CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
+    auto c = def->getContext();
+
+    isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
+    for (auto inpt : buf.get_in_ports()) {
+      rddom = unn(rddom, range(buf.access_map.at(inpt)));
+    }
+    for (auto inpt : buf.get_out_ports()) {
+      rddom = unn(rddom, range(buf.access_map.at(inpt)));
+    }
+    auto acc_map = to_map(buf.access_map.at(reader));
+    auto reduce_map = linear_address_map(to_set(rddom));
+    auto addr_expr = dot(acc_map, reduce_map);
+    auto addr_expr_aff = get_aff(addr_expr);
+
+    auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+    auto agen = def->addInstance("addrgen_" + reader + c->getUnique(), aff_gen_mod);
+    return agen;
   }
 
   void generate_banks(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
