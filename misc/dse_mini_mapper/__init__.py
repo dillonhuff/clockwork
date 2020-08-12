@@ -94,23 +94,23 @@ def __get_lut_mapping(op_str):
     return value
 
 
-__PORT_RENAME = {
-    "data.in.0": "data0",
-    "data.in.1": "data1",
-    "data.in.2": "data2",
-    "data.out": "alu_res",
-    "bit.in.0": "bit0",
-    "bit.in.1": "bit1",
-    "bit.in.2": "bit2",
-    "bit.out": "alu_res_p",
-}
+# __PORT_RENAME = {
+    # "data.in.0": "data0",
+    # "data.in.1": "data1",
+    # "data.in.2": "data2",
+    # "data.out": "alu_res",
+    # "bit.in.0": "bit0",
+    # "bit.in.1": "bit1",
+    # "bit.in.2": "bit2",
+    # "bit.out": "alu_res_p",
+# }
 
 
 def is_conn_out(raw_name):
     #port_names = ["out", "outb", "valid", "rdata", "res", "res_p", "io2f_16",
      #             "alu_res", "tofab", "data_out_0"]
     port_names = ["out", "outb", "valid", "rdata", "res", "res_p", "io2f_16",
-                  "alu_res", "tofab", "data_out"]
+                  "alu_res", "tofab", "data_out", "O"]
     if isinstance(raw_name, six.text_type):
         raw_name = raw_name.split(".")
     if len(raw_name) > 1:
@@ -172,6 +172,7 @@ def convert2netlist(connections):
         # rearrange the net so that it's src -> sink
         net.sort(key=lambda p: sort_value(p))
         # sanity check to make sure that the first one is indeed an out
+        print('checking output of net:', net[0])
         assert (is_conn_out(net[0]))
         netlists.append(net)
     # print("INFO: before conversion connections", len(connections),
@@ -501,7 +502,7 @@ def change_name_to_id(instances):
                 blk_type = "b"
             elif attrs["modref"] == u"cgralib.BitIO":
                 blk_type = "i"
-            elif attrs["modref"] == "alu_ns.PE" or attrs["modref"] == "lassen.PE":
+            elif attrs["modref"] == "alu_ns.PE" or attrs["modref"] == "lassen.PE" or attrs["modref"] == "global.WrappedPE_wrapped":
                 blk_type = "p"
             elif attrs["modref"] == "alu_ns.io16" or attrs["modref"] == "lassen.io16":
                 blk_type = "I"
@@ -572,7 +573,7 @@ def get_tile_op(instance, blk_id, changed_pe, rename_op=True):
     """rename_op (False) is used to calculate delay"""
     if "genref" not in instance:
         assert ("modref" in instance)
-        assert (instance["modref"] in {"cgralib.BitIO", "corebit.reg"})
+        assert (instance["modref"] in {"cgralib.BitIO", "corebit.reg", "global.WrappedPE_wrapped"})
         return None, None
     pe_type = instance["genref"]
     if pe_type == "coreir.reg":
@@ -847,31 +848,31 @@ def get_new_id(prefix, init_num, groups):
         num += 1
 
 
-def insert_valid(id_to_name, netlist, bus):
-    io_valid = None
-    for net_id, net in netlist.items():
-        if bus[net_id] != 1:
-            continue
-        for blk_id, port in net[1:]:
-            blk_name = id_to_name[blk_id]
-            if blk_id[0] in {"i", "I"} and "valid" in blk_name:
-                return
-    # need to insert the const 1 bit net as well
-    alu_instr, _ = __get_alu_mapping("add")
-    lut = __get_lut_mapping("lutFF")
-    kargs = {}
-    kargs["cond"] = Cond.LUT
-    kargs["lut"] = lut
-    instr = inst(alu_instr, **kargs)
-    # adding a new pe block
-    new_pe_blk = get_new_id("p", len(id_to_name), id_to_name)
-    new_net_id = get_new_id("e", len(netlist), netlist)
-    new_io_blk = get_new_id("i", len(id_to_name), id_to_name)
-    netlist[new_net_id] = [(new_pe_blk, "res_p"), (new_io_blk, "f2io_1")]
-    id_to_name[new_pe_blk] = "always_valid"
-    id_to_name[new_io_blk] = "io1_valid"
-    bus[new_net_id] = 1
-    print("inserting net", new_net_id, netlist[new_net_id])
+# def insert_valid(id_to_name, netlist, bus):
+    # io_valid = None
+    # for net_id, net in netlist.items():
+        # if bus[net_id] != 1:
+            # continue
+        # for blk_id, port in net[1:]:
+            # blk_name = id_to_name[blk_id]
+            # if blk_id[0] in {"i", "I"} and "valid" in blk_name:
+                # return
+    # # need to insert the const 1 bit net as well
+    # alu_instr, _ = __get_alu_mapping("add")
+    # lut = __get_lut_mapping("lutFF")
+    # kargs = {}
+    # kargs["cond"] = Cond.LUT
+    # kargs["lut"] = lut
+    # instr = inst(alu_instr, **kargs)
+    # # adding a new pe block
+    # new_pe_blk = get_new_id("p", len(id_to_name), id_to_name)
+    # new_net_id = get_new_id("e", len(netlist), netlist)
+    # new_io_blk = get_new_id("i", len(id_to_name), id_to_name)
+    # netlist[new_net_id] = [(new_pe_blk, "res_p"), (new_io_blk, "f2io_1")]
+    # id_to_name[new_pe_blk] = "always_valid"
+    # id_to_name[new_io_blk] = "io1_valid"
+    # bus[new_net_id] = 1
+    # print("inserting net", new_net_id, netlist[new_net_id])
 
 
 def remove_dead_regs(netlist, bus):
@@ -1037,6 +1038,7 @@ def insert_valid_delay(id_to_name, instance_to_instr, netlist, bus):
 
 def map_app(pre_map):
     with tempfile.NamedTemporaryFile() as temp_file:
+        print('minimapping....')
         src_file = pre_map
         #src_file = temp_file.name
         #subprocess.check_call(["mapper", pre_map, src_file])
@@ -1166,4 +1168,19 @@ def map_app(pre_map):
 
     wire_reset_to_flush(netlist, id_to_name, bus)
     remove_dead_regs(netlist, bus)
+    print('Minimapper output')
+    for i in id_to_name:
+        print('\t', i, '->', id_to_name[i])
+    print('Instance instructions')
+    for i in instance_to_instr:
+        print('\t', type(i), '->', instance_to_instr[i])
+
+    print('Bus')
+    for b in bus:
+        print('\t', b, '->', bus[b])
+
+    print('Netlist')
+    for n in netlist:
+        print('\t', n, '->', netlist[n])
+    assert(False)
     return id_to_name, instance_to_instr, netlist, bus
