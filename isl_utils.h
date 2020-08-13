@@ -604,3 +604,7 @@ void release(isl_map* m);
 void release(isl_union_set* s);
 void release(isl_union_map* m);
 void release(isl_union_pw_qpolynomial* m);
+isl_multi_aff* get_multi_aff(isl_union_map* m);
+isl_multi_aff* get_multi_aff(isl_map* m);
+
+

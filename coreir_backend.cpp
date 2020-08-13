@@ -1702,25 +1702,18 @@ CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
   return r->sel("out");
 }
 
-CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+CoreIR::Wireable* sum_terms(ModuleDef* def, isl_aff* aff) {
+  vector<CoreIR::Wireable*> terms;
   auto ns = context->getNamespace("global");
 
   int width = 16;
-  vector<pair<string, CoreIR::Type*> >
-    ub_field{{"out", context->Bit()->Arr(width)}};
-  cout << "aff = " << str(aff) << endl;
-  int dims = num_in_dims(aff);
-  cout << "dims = " << dims << endl;
-  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
-
-  CoreIR::RecordType* utp = context->Record(ub_field);
-  auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
-  auto def = m->newModuleDef();
-
+  auto context = def->getContext();
   auto c = context;
 
-  vector<CoreIR::Wireable*> terms;
+  int dims = num_in_dims(aff);
   for (int d = 0; d < dims; d++) {
+    auto rcoeff = get_coeff(aff, d);
+    cout << "raw coeff: " << str(rcoeff) << endl;
     int v = to_int(get_coeff(aff, d));
     cout << "coeff: " << v << endl;
     auto constant = def->addInstance(
@@ -1746,6 +1739,78 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
       {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
   terms.push_back(constant->sel("out"));
   auto out = addList(def, terms);
+  return out;
+}
+
+CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+
+  auto ns = context->getNamespace("global");
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"out", context->Bit()->Arr(width)}};
+  cout << "aff = " << str(aff) << endl;
+  int dims = num_in_dims(aff);
+  cout << "dims = " << dims << endl;
+  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+
+  auto c = context;
+  auto self = def->sel("self");
+
+  for (int d = 0; d < num_div_dims(aff); d++) {
+    auto a = isl_aff_get_div(aff, d);
+    cout << tab(2) << "=== div: " << str(a) << endl;
+    int denom = to_int(isl_aff_get_denominator_val(a));
+    assert(denom == 2);
+    cout << tab(3) << "denom = " << denom << endl;
+    int coeff = to_int(isl_aff_get_coefficient_val(aff, isl_dim_div, d));
+    if (coeff != 0) {
+      for (int k = 0; k < num_in_dims(a); k++) {
+        auto inner_coeff = get_coeff(a, k);
+        cout << tab(3) << str(inner_coeff) << endl;
+      }
+      cout << tab(3) << "coeff = " << coeff << endl;
+      auto term_aff = def->addInstance("div_aff_" + context->getUnique(), coreir_for_aff(context, a));
+      def->connect(term_aff->sel("d"), self->sel("d"));
+      // Replace with shift by 1
+      //terms.push_back(term_aff->sel("out"));
+    }
+  }
+  assert(num_div_dims(aff) == 0);
+
+  auto out = sum_terms(def, aff);
+  //for (int d = 0; d < dims; d++) {
+    //auto rcoeff = get_coeff(aff, d);
+    //cout << "raw coeff: " << str(rcoeff) << endl;
+    //int v = to_int(get_coeff(aff, d));
+    //cout << "coeff: " << v << endl;
+    //auto constant = def->addInstance(
+        //"coeff_" + str(d),
+        ////context->getUnique(),
+        //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+    //auto m = def->addInstance(
+        //"mul_d" + str(d) + "_" + context->getUnique(),
+        //"coreir.mul",
+        //{{"width", CoreIR::Const::make(c, width)}});
+    //def->connect(m->sel("in0"), constant->sel("out"));
+    //def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
+    //terms.push_back(m->sel("out"));
+  //}
+  //int v = to_int(const_coeff(aff));
+  //cout << "coeff: " << v << endl;
+  //auto constant = def->addInstance(
+      //"const_term",
+      //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+  //terms.push_back(constant->sel("out"));
+  //auto out = addList(def, terms);
   def->connect(def->sel("self.out"), out);
   m->setDef(def);
 

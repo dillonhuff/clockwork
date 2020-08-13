@@ -960,6 +960,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     auto reduce_map = linear_address_map(to_set(rddom));
     auto addr_expr = dot(acc_map, reduce_map);
     auto addr_expr_aff = get_aff(addr_expr);
+    cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
 
     auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
     auto agen = def->addInstance("addrgen_" + reader + c->getUnique(), aff_gen_mod);
