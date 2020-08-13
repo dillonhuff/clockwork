@@ -1133,6 +1133,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       auto sched = buf.global_schedule();
 
       map<string, vector<pair<string, int> > > delay_maps;
+      bool built_dm = true;
       for (auto outpt : buf.get_out_ports()) {
         std::set<string> ins;
         {
@@ -1172,7 +1173,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
         if (!empty(dds)) {
           auto ddc = to_set(dds);
 
+          if (!(isl_set_is_singleton(ddc))) {
+            built_dm = false;
+            break;
+          }
           assert(isl_set_is_singleton(ddc));
+
           int dd = to_int(lexminval(ddc));
           cout << "DD           : " << dd << endl;
           string writer_name = domain_name(pick(get_maps(writes)));
@@ -1194,38 +1200,40 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
         }
       }
 
-      for (auto entry : delay_maps) {
-        string inpt = entry.first;
-        vector<pair<string, int> > delays = entry.second;
-        if (delays.size() > 0) {
-          sort_lt(delays, [](const pair<string, int>& p) {
-              return p.second;
-              });
+      if (built_dm) {
+        for (auto entry : delay_maps) {
+          string inpt = entry.first;
+          vector<pair<string, int> > delays = entry.second;
+          if (delays.size() > 0) {
+            sort_lt(delays, [](const pair<string, int>& p) {
+                return p.second;
+                });
 
-          int prior_delay = 0;
-          Wireable* prior_wire = 
-            def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt));
-          for (int d = 0; d < delays.size(); d++) {
-            int total_delay = delays.at(d).second;
-            string outpt = delays.at(d).first;
+            int prior_delay = 0;
+            Wireable* prior_wire = 
+              def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt));
+            for (int d = 0; d < delays.size(); d++) {
+              int total_delay = delays.at(d).second;
+              string outpt = delays.at(d).first;
 
-            int diff = total_delay - prior_delay;
-            CoreIR::Module* srmod = delay_module(c, width, {diff});
-            auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
-            def->connect(
-                prior_wire,
-                srinst->sel("wdata"));
+              int diff = total_delay - prior_delay;
+              CoreIR::Module* srmod = delay_module(c, width, {diff});
+              auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
+              def->connect(
+                  prior_wire,
+                  srinst->sel("wdata"));
 
-            def->connect(def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)),
-                srinst->sel("rdata"));
+              def->connect(def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)),
+                  srinst->sel("rdata"));
 
-            prior_delay = total_delay;
-            prior_wire = srinst->sel("rdata");
+              prior_delay = total_delay;
+              prior_wire = srinst->sel("rdata");
+            }
           }
         }
-      }
 
-      return;
+        return;
+      }
     }
 
     generate_banks(options, buf, def);
