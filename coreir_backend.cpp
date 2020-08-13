@@ -1060,32 +1060,13 @@ void generate_coreir_addrgen_in_tile(CodegenOptions& options,
 
 }
 
-CoreIR::Module* generate_coreir(CodegenOptions& options,
+CoreIR::Module* 
+coreir_moduledef(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
-
-  bool found_compute = true;
-  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  if (hwinfo.use_dse_compute) {
-    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
-    //compute_file = "./dse_apps/" + prg.name + ".json";
-  }
-  ifstream cfile(compute_file);
-  if (!cfile.good()) {
-    cout << "No compute unit file: " << compute_file << endl;
-    //assert(false);
-  }
-  if (!loadFromFile(context, compute_file)) {
-    found_compute = false;
-    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    if (hwinfo.use_dse_compute) {
-      assert(false);
-    }
-  }
-
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
@@ -1110,6 +1091,38 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto ub = ns->newModuleDecl(prg.name, utp);
+
+  return ub;
+}
+
+CoreIR::Module* generate_coreir(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context,
+    schedule_info& hwinfo) {
+
+  Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
+
+  bool found_compute = true;
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  if (hwinfo.use_dse_compute) {
+    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
+    //compute_file = "./dse_apps/" + prg.name + ".json";
+  }
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+    //assert(false);
+  }
+  if (!loadFromFile(context, compute_file)) {
+    found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    if (hwinfo.use_dse_compute) {
+      assert(false);
+    }
+  }
+
   auto def = ub->newModuleDef();
 
   auto sched_maps = get_maps(schedmap);
@@ -1580,10 +1593,6 @@ void garnet_map_module(Module* top) {
   c->runPasses({"deletedeadinstances"});
 
   c->runPasses({"cullgraph"}); 
-  c->addPass(new CustomFlatten);
-  c->runPasses({"customflatten"});
-  top->print();
-  assert(false);
   c->runPasses({"removewires"});
   addIOs(c,top);
   c->runPasses({"cullgraph"}); 
@@ -1639,11 +1648,11 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
-  garnet_map_module(prg_mod);
-  if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
-    cout << "Could not save ubuffer coreir" << endl;
-    context->die();
-  }
+  //garnet_map_module(prg_mod);
+  //if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
+    //cout << "Could not save ubuffer coreir" << endl;
+    //context->die();
+  //}
 
   //prg_mod->print();
   //assert(false);
