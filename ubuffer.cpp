@@ -945,6 +945,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
   CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
     auto c = def->getContext();
 
+    cout << "Building addrgen for " << reader << endl;
     isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
     for (auto inpt : buf.get_in_ports()) {
       rddom = unn(rddom, range(buf.access_map.at(inpt)));
@@ -953,6 +954,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       rddom = unn(rddom, range(buf.access_map.at(inpt)));
     }
     auto acc_map = to_map(buf.access_map.at(reader));
+    cout << tab(1) << "=== acc_map = " << str(acc_map) << endl;
+    auto acc_aff = get_aff(acc_map);
+    cout << tab(2) << "=== acc aff = " << str(acc_aff) << endl;
     auto reduce_map = linear_address_map(to_set(rddom));
     auto addr_expr = dot(acc_map, reduce_map);
     auto addr_expr_aff = get_aff(addr_expr);
@@ -975,6 +979,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     int readers = buf.get_out_ports().size();
     int writers = buf.get_in_ports().size();
 
+    cout << "Generating banks for..." << endl;
+    cout << buf << endl;
     if (readers == 1 && writers == 1) {
       string reader = pick(buf.get_out_ports());
       auto t = def->addInstance(buf.name + "_bank", "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}});
@@ -1003,6 +1009,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
             control_en(def, reader, buf));
       }
 
+      assert(false);
     } else if (readers <= 2 && writers <= 2) {
       auto t = def->addInstance(buf.name + "_bank", "global.raw_quad_port_memtile", {{"depth", COREMK(c, 2048)}});
       int i = 0;

@@ -2779,6 +2779,10 @@ isl_val* eval(isl_aff* a, isl_point* p) {
   return val;
 }
 
+isl_aff* get_aff(isl_union_map* m) {
+  return get_aff(to_map(m));
+}
+
 isl_aff* get_aff(isl_map* m) {
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
   cout << tab(1) << str(m) << endl;
