@@ -31,6 +31,12 @@ struct banking_strategy {
   vector<int> cycle_factors;
 };
 
+struct RTLOptions {
+  bool use_external_controllers;
+
+  RTLOptions() : use_external_controllers(true) {}
+};
+
 struct CodegenOptions {
   bool internal;
   bool all_rams;
@@ -54,6 +60,8 @@ struct CodegenOptions {
 
   std::map<string, banking_strategy> banking_strategies;
   int num_pipelines;
+
+  RTLOptions rtl_options;
 
   DebugOptions debug_options;
 

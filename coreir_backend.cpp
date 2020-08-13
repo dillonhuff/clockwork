@@ -1144,10 +1144,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       assert(buf.is_input_bundle(bundle.second));
 
       if (prg.is_output(buf_name)) {
-        auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
+        if (options.rtl_options.use_external_controllers) {
+          auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
+          def->connect(def->sel(output_en),
+              write_start_wire(def, op->name));
+        }
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        def->connect(def->sel(output_en),
-            write_start_wire(def, op->name));
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
@@ -1168,13 +1170,14 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
         auto input_bus = "self." + pg(buf_name, bundle_name);
         auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
-        //def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         // TODO: This delayed input is a hack that I insert to
         // ensure that I can assume all buffer reads take 1 cycle
         def->connect(delayed_input,
             def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
-        def->connect(def->sel(output_valid),
-            read_start_wire(def, op->name));
+        if (options.rtl_options.use_external_controllers) {
+          def->connect(def->sel(output_valid),
+              read_start_wire(def, op->name));
+        }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
@@ -1570,9 +1573,17 @@ void MapperPasses::ConstDuplication::setVisitorInfo() {
 void garnet_map_module(Module* top) {
   auto c = top->getContext();
 
+  top->print();
+
   //load_cgramapping(c);
   LoadDefinition_cgralib(c);
   c->runPasses({"deletedeadinstances"});
+
+  c->runPasses({"cullgraph"}); 
+  c->addPass(new CustomFlatten);
+  c->runPasses({"customflatten"});
+  top->print();
+  assert(false);
   c->runPasses({"removewires"});
   addIOs(c,top);
   c->runPasses({"cullgraph"}); 

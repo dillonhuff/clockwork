@@ -13221,6 +13221,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
+  options.rtl_options.use_external_controllers = false;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13404,9 +13405,9 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
+  test_programs.push_back(pointwise());
   test_programs.push_back(up_sample());
 
-  test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(harris());
   test_programs.push_back(rom());
@@ -13455,6 +13456,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+    assert(false);
     //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
     //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
