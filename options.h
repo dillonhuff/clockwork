@@ -33,8 +33,9 @@ struct banking_strategy {
 
 struct RTLOptions {
   bool use_external_controllers;
+  bool pack_controllers_in_memtiles;
 
-  RTLOptions() : use_external_controllers(true) {}
+  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false) {}
 };
 
 struct CodegenOptions {
