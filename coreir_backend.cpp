@@ -1702,7 +1702,7 @@ CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
   return r->sel("out");
 }
 
-CoreIR::Wireable* sum_terms(ModuleDef* def, isl_aff* aff) {
+CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
   vector<CoreIR::Wireable*> terms;
   auto ns = context->getNamespace("global");
 
@@ -1713,9 +1713,15 @@ CoreIR::Wireable* sum_terms(ModuleDef* def, isl_aff* aff) {
   int dims = num_in_dims(aff);
   for (int d = 0; d < dims; d++) {
     auto rcoeff = get_coeff(aff, d);
+    int v;
+    if (isl_val_is_int(rcoeff)) {
+      v = to_int(rcoeff);
+    } else {
+      v = isl_val_get_num_si(rcoeff);
+    }
     cout << "raw coeff: " << str(rcoeff) << endl;
-    int v = to_int(get_coeff(aff, d));
-    cout << "coeff: " << v << endl;
+    //int v = to_int(get_coeff(aff, d));
+    //cout << "coeff: " << v << endl;
     auto constant = def->addInstance(
         "coeff_" + str(d),
         //context->getUnique(),
@@ -1730,7 +1736,13 @@ CoreIR::Wireable* sum_terms(ModuleDef* def, isl_aff* aff) {
     def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
     terms.push_back(m->sel("out"));
   }
-  int v = to_int(const_coeff(aff));
+  int v;
+  auto const_c = const_coeff(aff);
+  if (isl_val_is_int(const_c)) {
+    v = to_int(const_c);
+  } else {
+    v = isl_val_get_num_si(const_c);
+  }
   cout << "coeff: " << v << endl;
   auto constant = def->addInstance(
       "const_term",
@@ -1740,6 +1752,14 @@ CoreIR::Wireable* sum_terms(ModuleDef* def, isl_aff* aff) {
   terms.push_back(constant->sel("out"));
   auto out = addList(def, terms);
   return out;
+}
+
+CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
+  assert(false);
+}
+
+CoreIR::Wireable* shiftr(ModuleDef* def, CoreIR::Wireable* a, const int val) {
+  assert(false);
 }
 
 CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
@@ -1761,6 +1781,8 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   auto c = context;
   auto self = def->sel("self");
 
+
+  vector<Wireable*> terms;
   for (int d = 0; d < num_div_dims(aff); d++) {
     auto a = isl_aff_get_div(aff, d);
     cout << tab(2) << "=== div: " << str(a) << endl;
@@ -1768,21 +1790,26 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
     assert(denom == 2);
     cout << tab(3) << "denom = " << denom << endl;
     int coeff = to_int(isl_aff_get_coefficient_val(aff, isl_dim_div, d));
-    if (coeff != 0) {
-      for (int k = 0; k < num_in_dims(a); k++) {
-        auto inner_coeff = get_coeff(a, k);
-        cout << tab(3) << str(inner_coeff) << endl;
-      }
-      cout << tab(3) << "coeff = " << coeff << endl;
-      auto term_aff = def->addInstance("div_aff_" + context->getUnique(), coreir_for_aff(context, a));
-      def->connect(term_aff->sel("d"), self->sel("d"));
-      // Replace with shift by 1
-      //terms.push_back(term_aff->sel("out"));
-    }
+    auto res = sum_term_numerators(def, a);
+    auto val = mul(def, shiftr(def, res, 1), coeff);
+    terms.push_back(val);
+    //if (coeff != 0) {
+      //for (int k = 0; k < num_in_dims(a); k++) {
+        //auto inner_coeff = get_coeff(a, k);
+        //cout << tab(3) << str(inner_coeff) << endl;
+      //}
+      //cout << tab(3) << "coeff = " << coeff << endl;
+      //auto term_aff = def->addInstance("div_aff_" + context->getUnique(), coreir_for_aff(context, a));
+      //def->connect(term_aff->sel("d"), self->sel("d"));
+      //// Replace with shift by 1
+      ////terms.push_back(term_aff->sel("out"));
+    //}
   }
-  assert(num_div_dims(aff) == 0);
+  //assert(num_div_dims(aff) == 0);
 
-  auto out = sum_terms(def, aff);
+  auto outr = sum_term_numerators(def, aff);
+  terms.push_back(outr);
+  auto out = addList(def, terms); 
   //for (int d = 0; d < dims; d++) {
     //auto rcoeff = get_coeff(aff, d);
     //cout << "raw coeff: " << str(rcoeff) << endl;
