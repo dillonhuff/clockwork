@@ -1010,7 +1010,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
             control_en(def, reader, buf));
       }
 
-      assert(false);
+      //assert(false);
     } else if (readers <= 2 && writers <= 2) {
       auto t = def->addInstance(buf.name + "_bank", "global.raw_quad_port_memtile", {{"depth", COREMK(c, 2048)}});
       int i = 0;

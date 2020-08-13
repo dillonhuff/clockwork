@@ -1723,8 +1723,7 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
     //int v = to_int(get_coeff(aff, d));
     //cout << "coeff: " << v << endl;
     auto constant = def->addInstance(
-        "coeff_" + str(d),
-        //context->getUnique(),
+        "coeff_" + str(d) + context->getUnique(),
         "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
@@ -1745,7 +1744,7 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
   }
   cout << "coeff: " << v << endl;
   auto constant = def->addInstance(
-      "const_term",
+      "const_term" + c->getUnique(),
       "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
@@ -1755,11 +1754,27 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
 }
 
 CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
-  assert(false);
+  auto c = def->getContext();
+  int width = 16;
+  auto m = def->addInstance(
+      "mul_" + context->getUnique(),
+      "coreir.mul",
+      {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(m->sel("in0"), a);
+  def->connect(m->sel("in1"), mkConst(def, width, val));
+  return m->sel("out");
 }
 
 CoreIR::Wireable* shiftr(ModuleDef* def, CoreIR::Wireable* a, const int val) {
-  assert(false);
+  auto c = def->getContext();
+  int width = 16;
+  auto m = def->addInstance(
+      "shift_" + context->getUnique(),
+      "coreir.lshr",
+      {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(m->sel("in0"), a);
+  def->connect(m->sel("in1"), mkConst(def, width, val));
+  return m->sel("out");
 }
 
 CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
