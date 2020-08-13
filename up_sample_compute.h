@@ -21,7 +21,7 @@ hw_uint<16> hcompute_nearest_neighbor_stencil(hw_uint<16>& hw_input_stencil) {
 hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& nearest_neighbor_stencil) {
   uint16_t _nearest_neighbor_stencil_1 = (uint16_t) nearest_neighbor_stencil.extract<0, 15>();
 
-  uint8_t _386 = (uint8_t)(_nearest_neighbor_stencil_1);
+  uint16_t _386 = (uint16_t)(_nearest_neighbor_stencil_1);
   return _386;
 }
 
