@@ -3765,6 +3765,16 @@ void ir_node::copy_memory_operations_from(op* other) {
   concat(dynamic_load_addresses, other->dynamic_load_addresses);
 }
 
+vector<op*> surrounding_vars_ops(op* loop, prog& prg) {
+  assert(loop != nullptr);
+  vector<op*> surrounding;
+  op* current = prg.root;
+  while (current != loop) {
+    surrounding.push_back(current);
+    current = current->container_child(loop);
+  }
+  return surrounding;
+}
 
 vector<string> surrounding_vars(op* loop, prog& prg) {
   assert(loop != nullptr);

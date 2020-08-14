@@ -3,7 +3,7 @@
 #include "prog.h"
 #include <cassert>
 #include <iostream>
-
+#include <string>
 #define INT_MULTIPLIER_COST 1
 #define INT_ADDER_COST 1
 #define INT_CONSTANT_DIVIDER_COST 1
@@ -15,6 +15,30 @@ struct TargetTechlibInfo {
   int sram_cost_per_bit;
   int reg_cost_per_bit;
 };
+const std::string whiteSpaces( " \f\n\r\t\v" );
+
+
+void trimRight( std::string& str,
+      const std::string& trimChars = whiteSpaces )
+{
+   std::string::size_type pos = str.find_last_not_of( trimChars );
+   str.erase( pos + 1 );    
+}
+
+
+void trimLeft( std::string& str,
+      const std::string& trimChars = whiteSpaces )
+{
+   std::string::size_type pos = str.find_first_not_of( trimChars );
+   str.erase( 0, pos );
+}
+
+
+void trim( std::string& str, const std::string& trimChars = whiteSpaces )
+{
+   trimRight( str, trimChars );
+   trimLeft( str, trimChars );
+} 
 
 //-----------------------------------------ESTIMATE_KERNEL_AREAS-------------------------------------------
 
@@ -50,6 +74,8 @@ struct normalized_address_components {
 vector<vector<int>> components;
 vector<int> offsets;
 };
+
+//-----------------------------------------PRINT_ADDR-------------------------------------------
 
 void print_addr(normalized_address_components addr){
 	cout << "PRINTING ADDRESS::" << endl;
@@ -296,11 +322,6 @@ bool is_stencil(const string& buff, prog& prg){
 			variable_counts.insert(stride);
 		}
 
-//		cout << "All strides: " << endl;
-//		for(auto stride : variable_counts){
-//			cout << tab(1) << stride << endl;
-//		}
-
 		// If not all the addrs have the same amount of nonzero-stride vars, the buff isn't stencil
 		if(variable_counts.size() != 1){
 			cout << "NOT STENCIL! -> variable_count size != 1"<< endl;
@@ -328,6 +349,48 @@ bool is_stencil(const string& buff, prog& prg){
 
 	cout << buff << " IS STENCIL!" << endl;
 	return true;
+}
+
+//------------------------------------------------IS_REDUCTION--------------------------------------------------
+
+bool is_reduction(const string& buff, prog& prg){
+
+	// Create a set with all the ops that write in the given buff
+	std::set<op*> buff_writers = find_writers(buff, prg);
+	
+	//For each op, use the buff's addr to get the set of variables being used
+	std::map<op*, std::set<string>> op_variables;
+	for(auto writer : buff_writers){
+		std::set<string> variables;
+		for(auto addr : writer->write_addrs(buff)){
+			vector<string> vars = split_at(addr.at(0).second, ",");
+			for(auto v : vars){
+				trim(v);
+				variables.insert(v);
+			}
+		}
+		op_variables[writer] = variables;
+	}
+
+	// For each op, find the surrounding variables and check if the variable is 1) being used and 2) iterated than once
+	cout << "op_variables map:" << endl;
+	for(auto pair : op_variables){
+		cout << tab(3) << pair.first->name << endl;
+		for(auto var : pair.second){
+			cout << tab(4) << " " << var << endl;
+		}
+
+		vector<op*> surrounding_vars_ops_vector = surrounding_vars_ops(pair.first, prg);
+		for(auto var : surrounding_vars_ops_vector){
+			if(!elem(var->name, pair.second) && (var->end_exclusive - var->start) > 1){
+				cout << tab(6) << "Buff doesn't read " << var->name << " with " << (var->end_exclusive - var->start) << " iterations" << endl;
+				cout << "IS REDUCTION!" << endl;
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 //----------------------------------------------NUM_LOCS_WRITTEN------------------------------------------------
@@ -642,6 +705,16 @@ void toy_task(){
 
 }
 
+void reduce_test(){
+	prog prg = resnet();
+//	prog prg2 = accumulation();
+//	prog prg3 = brighten_blur();
+	prg.pretty_print();
+//	prg2.pretty_print();
+//	prg3.pretty_print();
+	assert(is_reduction("conv_stencil", prg));
+}
+
 void cascade_stencil_test(){
 	prog prg = cascade();
 	assert(is_stencil("conv1_stencil", prg));
@@ -657,6 +730,7 @@ void gaussian_stencil_test(){
 
 void harris_stencil_test(){
 	prog prg = harris();
+	prg.pretty_print();
 	assert(is_stencil("padded16_stencil", prg));
 	assert(is_stencil("lgxx_stencil", prg));
 	assert(is_stencil("lxx_stencil", prg));
@@ -673,6 +747,7 @@ void pointwise_pointwise_test(){
 
 void brighten_blur_stencil_test(){
 	prog prg = brighten_blur();
+	prg.pretty_print();
 	assert(is_stencil("in", prg));
 	assert(is_stencil("brightened", prg));
 	assert(is_stencil("blurred", prg));
@@ -766,19 +841,20 @@ void one_stencil_test(){
 }
 
 void prog_splitting_unit_tests(){
-	no_stencil_test();
+/*	no_stencil_test();
 	one_stencil_test();
 	brighten_blur_stencil_test();
 	cascade_stencil_test();
 	harris_stencil_test();
 	gaussian_stencil_test();
 	camera_pipeline_stencil_test();
-	pointwise_pointwise_test(); //not working
+	pointwise_pointwise_test();
+*/	reduce_test();
 }
 
 //-----------------------------------------VOID PROG_SPLITTING_TESTS-------------------------------------------
 void prog_splitting_tests() {
 	prog_splitting_unit_tests();
-	toy_task();
+//	toy_task();
 }
 
