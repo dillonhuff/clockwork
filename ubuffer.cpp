@@ -981,8 +981,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     int readers = buf.get_out_ports().size();
     int writers = buf.get_in_ports().size();
 
-    cout << "Generating banks for..." << endl;
-    cout << buf << endl;
+    //cout << "Generating banks for..." << endl;
+    //cout << buf << endl;
     if (readers == 1 && writers == 1) {
       string reader = pick(buf.get_out_ports());
       auto t = def->addInstance(buf.name + "_bank", "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}});

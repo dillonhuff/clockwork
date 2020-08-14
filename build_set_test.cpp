@@ -13426,16 +13426,15 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  test_programs.push_back(conv_multi());
+  test_programs.push_back(resnet());
 
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(unet_conv_3_3());
+
+  // Wired up, but incorrect values
+  test_programs.push_back(conv_multi());
   test_programs.push_back(accumulation());
 
-  // Address generation broken, classified as stencil pipeline
-  test_programs.push_back(up_sample());
-  test_programs.push_back(unet_conv_3_3());
-  test_programs.push_back(conv_layer());
-  test_programs.push_back(partially_unrolled_conv());
-  test_programs.push_back(resnet());
 
   concat(test_programs, stencil_programs());
 

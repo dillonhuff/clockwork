@@ -18709,6 +18709,7 @@ inline void hw_kernel_stencil_op_hcompute_hw_kernel_stencil_write_bundle_write(h
 	hw_kernel_stencil_op_hcompute_hw_kernel_stencil_2_write(hw_kernel_stencil_op_hcompute_hw_kernel_stencil_2_res, hw_kernel_stencil, root, hw_kernel_s0_y, hw_kernel_s0_x, hw_kernel_s0_w, hw_kernel_s0_z, dynamic_address);
 }
 
+// Total re-use buffer capacity: 23728128 bits
 
 
 // Operation logic
