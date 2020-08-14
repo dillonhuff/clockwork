@@ -1,0 +1,13 @@
+"dimensionality",3,0
+"cycle_starting_addr",34,0
+"extent_2",1,0
+"cycle_stride_2",0,0
+"extent_1",14,0
+"cycle_stride_1",16,0
+"extent_0",16,0
+"cycle_stride_0",1,0
+"read","buf1_input_10_to_buf1_conv_15_ubuf_0_tb"
+"data_starting_addr",0,0
+"data_stride_2",0,0
+"data_stride_1",16,0
+"data_stride_0",1,0
