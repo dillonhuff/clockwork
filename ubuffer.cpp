@@ -1300,14 +1300,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       if (buf.is_input_bundle(b.first)) {
         ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
-
-        //ub_field.push_back(make_pair(name + "_en", context->BitIn()));
         ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
       } else {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
-
-        //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
         ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
       }
     }

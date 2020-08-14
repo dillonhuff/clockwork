@@ -13177,8 +13177,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
 schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
-  sched.use_dse_compute = false;
-  //sched.use_dse_compute = true;
+  //sched.use_dse_compute = false;
+  sched.use_dse_compute = true;
   for (auto op : prg.all_ops()) {
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
@@ -13406,9 +13406,9 @@ vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
   test_programs.push_back(pointwise());
-  test_programs.push_back(up_sample());
-
   test_programs.push_back(camera_pipeline());
+
+  test_programs.push_back(up_sample());
   test_programs.push_back(harris());
   test_programs.push_back(rom());
   test_programs.push_back(unsharp());
@@ -13457,11 +13457,12 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     //assert(false);
-    //cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
-    //cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
-    //cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
-    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/raw_sram/" + prg.name + "/");
-    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/raw_sram/" + prg.name + "/");
+    string app_type = "dse_raw_sram";
+    cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+    cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
   }
 }
 

@@ -1477,7 +1477,8 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
        if (m->isGenerated()) {
          auto g = m->getGenerator();
          if (g->getName() == "raw_dual_port_sram_tile" ||
-             g->getName() == "raw_quad_port_memtile") {
+             g->getName() == "raw_quad_port_memtile" ||
+             g->getName() == "rom2") {
            continue;
          }
        } else {
@@ -1636,6 +1637,7 @@ void generate_coreir(CodegenOptions& options,
   CoreIRLoadLibrary_cgralib(context);
   add_delay_tile_generator(context);
   add_raw_quad_port_memtile_generator(context);
+  add_tahoe_memory_generator(context);
   ram_module(context, 16, 2048);
 
   auto c = context;
@@ -2166,6 +2168,60 @@ void add_delay_tile_generator(CoreIR::Context* c) {
     def->connect(srinst->sel("wdata"), self->sel("wdata"));
     def->connect(srinst->sel("rdata"), self->sel("rdata"));
 
+    });
+}
+
+void add_tahoe_memory_generator(CoreIR::Context* c) {
+  auto cgralib = c->getNamespace("global");
+  CoreIR::Params params = {{"depth",c->Int()}};
+
+  Params reg_array_args = {{"type", CoreIRType::make(c)},
+                           {"has_en", c->Bool()},
+                           {"has_clr", c->Bool()},
+                           {"has_rst", c->Bool()},
+                           {"init", c->Int()}};
+  TypeGen* ramTG = cgralib->newTypeGen(
+    "tahoe_TG",
+    params,
+    [](Context* c, Values args) {
+    int width = 16;
+
+  auto tp = c->Record({
+      {"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)->Arr(2)},
+      {"waddr", c->BitIn()->Arr(width)->Arr(2)},
+      {"wen", c->BitIn()->Arr(2)},
+      {"rdata", c->Bit()->Arr(width)->Arr(2)},
+      {"raddr", c->BitIn()->Arr(width)->Arr(2)},
+      {"ren", c->BitIn()->Arr(2)}});
+  return tp;
+    });
+  Generator* ram = cgralib->newGeneratorDecl("tahoe", ramTG, params);
+
+
+  ram->setGeneratorDefFromFun(
+    [](Context* c, Values args, ModuleDef* def) {
+
+    int width = 16;
+    int depth = args.at("depth")->get<int>();
+    uint awidth = (uint)ceil(log2(depth));
+
+
+    auto core_ram = def->addInstance("mem", "global.raw_dual_port_sram_tile", {{"depth", args.at("depth")}});
+
+    auto self = def->sel("self");
+    auto wen1 = self->sel("wen")->sel(1);
+    auto ren1 = self->sel("ren")->sel(1);
+
+    cmux(def, 16, core_ram->sel("wdata"), wen1, self->sel("wdata")->sel(0), self->sel("wdata")->sel(1));
+    cmux(def, 16, core_ram->sel("waddr"), wen1, self->sel("waddr")->sel(0), self->sel("waddr")->sel(1));
+    cmux(def, core_ram->sel("wen"), wen1, self->sel("wen")->sel(0), self->sel("wen")->sel(1));
+
+    cmux(def, core_ram->sel("ren"), ren1, self->sel("ren")->sel(0), self->sel("ren")->sel(1));
+    cmux(def, 16, core_ram->sel("raddr"), ren1, self->sel("raddr")->sel(0), self->sel("raddr")->sel(1));
+
+    def->connect(self->sel("rdata")->sel(0), core_ram->sel("rdata"));
+    def->connect(self->sel("rdata")->sel(1), core_ram->sel("rdata"));
     });
 }
 
