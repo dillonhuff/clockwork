@@ -572,6 +572,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
       string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
       buf.port_bundles[::name(dom) + "_read"].push_back(pt_name);
       buf.add_out_pt(pt_name, dom, acc_map, schedule.at(outpt));
+      buf.sv_map[pt_name] = sv_map.at(outpt);
       usuffix ++;
     }
     buffers[bname] = buf;
@@ -3070,6 +3071,48 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return new_sched;
   }
 
+  //new mechod that encapsulate new padding dim
+  map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, int dim_id) {
+    /*
+     * Previously we have two ops, input and output.In order to do the vectorization
+     * we need to create 2 other ops, input_vec and output_vec
+     * */
+    string in_pt_name = pick(port_bundles.at(in_bd_name));
+    string out_pt_name = pick(port_bundles.at(out_bd_name));
+    string in_op = domain_name(to_map(access_map.at(in_pt_name)));
+    string out_op = domain_name(to_map(access_map.at(out_pt_name)));
+    auto in_sched = schedule.at(in_pt_name);
+    auto out_sched = schedule.at(out_pt_name);
+    //auto in_sched_vec = collect_sched_vec(in_sched);
+    //auto out_sched_vec = collect_sched_vec(out_sched);
+    cout << "\tin_sched: " << str(in_sched) << "\t\nout_sched: " << str(out_sched) << endl;
+    //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
+
+
+    auto in_access_map = access_map.at(in_pt_name);
+    int vectorized_dim = get_involve_dim(to_map(in_access_map), dim_id) - 1;
+    cout << "vectorized_dim: " << vectorized_dim << endl;
+    auto in_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 0));
+    auto in_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 1));
+    in_vec_sched = set_domain_name(in_vec_sched, domain_name(in_vec_sched) + "_vec");
+    auto out_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 2));
+    out_vec_sched = set_domain_name(out_vec_sched, domain_name(out_vec_sched) + "_vec");
+    auto out_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 3));
+
+    map<string, isl_map*> new_sched;
+    new_sched.insert(make_pair(in_op, in_sched_new));
+    new_sched.insert(make_pair(out_op, out_sched_new));
+    new_sched.insert(make_pair(in_op + "_vec", in_vec_sched));
+    new_sched.insert(make_pair(out_op + "_vec", out_vec_sched));
+
+    cout << "\tnew in map: " << str(in_sched_new)
+    << "\n\tvec in map: " << str(in_vec_sched)
+    << "\n\tnew out map: " << str(out_sched_new)
+    << "\n\tvec out map: " << str(out_vec_sched) << endl;
+
+    return new_sched;
+  }
+
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {
     /*
      * Previously we have two ops, input and output.In order to do the vectorization
@@ -3167,7 +3210,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     std::cout << "pad rewrite: " << str(pad_trans) << endl;
 
     op_sched = delay_schedule_inner_most(op_sched, time_stamp);
+    cout << "op sched: " << str(op_sched) << endl;
     op_sched = dot(pad_trans, op_sched);
+    cout << "op sched after trans: " << str(op_sched) << endl;
     return op_sched;
   }
 
@@ -3235,6 +3280,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         cout << "\t ap vec: " << str(ap_vec.at(slice_cnt)) << endl;
         slice_cnt ++;
       }
+      cout << "sched" << str(sched) << endl;
       merge_sched = coalesce(unn(to_umap(sched), merge_sched));
     }
 
@@ -3247,6 +3293,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
         target_buf.port_bundles[bd_name].push_back(pt_name);
         target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), merge_sched);
+
+        if (pick(access_cnt_per_port) > 1) {
+
+            target_buf.access_map[pt_name] =
+                flatten_map_domain_with_dim(target_buf.access_map[pt_name], 2);
+            target_buf.schedule[pt_name] =
+                flatten_map_domain_with_dim(target_buf.schedule[pt_name], 2);
+            target_buf.retrive_domain[pt_name] = target_buf.domain.at(pt_name);
+            target_buf.domain[pt_name] = ::domain(to_map(target_buf.access_map[pt_name]));
+        }
       }
       else {
         string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
@@ -3263,6 +3319,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, true);
           cout << "out pt decouple: " << str(decouple_acc_map) << endl;
           target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
+        }
+
+        if (pick(access_cnt_per_port) > 1) {
+
+            target_buf.access_map[pt_name] =
+                flatten_map_domain_with_dim(target_buf.access_map[pt_name], 2);
+            target_buf.schedule[pt_name] =
+                flatten_map_domain_with_dim(target_buf.schedule[pt_name], 2);
+            target_buf.retrive_domain[pt_name] = target_buf.domain.at(pt_name);
+            target_buf.domain[pt_name] = ::domain(to_map(target_buf.access_map[pt_name]));
         }
       }
     }
@@ -3315,9 +3381,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
 
-  std::map<string, UBuffer> UBuffer::vectorization(int dim_id, int fetch_width) {
+pair<std::map<string, UBuffer>, vector<string> >
+    UBuffer::vectorization(int dim_id, int fetch_width) {
 
     std::map<string, UBuffer> ret;
+    std::vector<string> remove_deps;
     UBuffer sram;
 
     sram.name = name + "_sram";
@@ -3336,7 +3404,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //produce naive schedule for the rewritten buffer
     map<string, isl_map*> new_sched;
     if (in_bundle.size() == 1 && out_bundle.size() == 1) {
-      new_sched = produce_vectorized_schedule(pick(in_bundle), pick(out_bundle));
+      new_sched = produce_vectorized_schedule(pick(in_bundle), pick(out_bundle), dim_id);
     } else {
       auto bd2sched = std::map<string, umap*,
         std::function<bool(const string&, const string&)>>{
@@ -3419,6 +3487,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       bd_cnt ++;
       ret.insert({agg_buf.name, agg_buf});
+      remove_deps.push_back(domain_name(agg_buf.access_map.at(pick(agg_buf.get_out_ports()))));
       cout << "AGG : " << agg_buf << endl;
       cout << "AGG Schedule: " << str(agg_buf.global_schedule()) << endl;
     }
@@ -3491,7 +3560,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     cout << "SRAM: " << sram << endl;
     cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
     ret.insert({sram.name, sram});
-    return ret;
+    return make_pair(ret, remove_deps);
   }
 
 bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {

@@ -235,6 +235,19 @@ std::string ReplaceString(std::string subject, const std::string& search,
     return subject;
 }
 
+static inline
+std::vector<int> rolling_vec_dim(vector<int> dom_range, int ii) {
+  vector<int> rolling_dim;
+  for (size_t i = 0; i < dom_range.size(); i ++) {
+      int dim = std::accumulate(dom_range.rbegin(),
+              dom_range.rbegin() + i,
+              ii, std::multiplies<int>());
+      rolling_dim.push_back(dim);
+  }
+  std::reverse(rolling_dim.begin(), rolling_dim.end());
+  return rolling_dim;
+}
+
 template<typename T>
 std::string str(const std::vector<T>& t) {
   vector<string> strs;

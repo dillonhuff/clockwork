@@ -692,10 +692,13 @@ class UBuffer {
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
 
+    //This is use to retrive the flatten iteration domain
+    std::map<string, isl_set*> retrive_domain;
+
     std::set<string> dynamic_ports;
 
-    //Stencil valid domain for each port
-    std::map<string, isl_set*> sv_domain;
+    //Stencil valid map for each port
+    std::map<string, umap*> sv_map;
 
     std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
@@ -1165,8 +1168,9 @@ class UBuffer {
 
     //The method replace the original access map and add a valid domain
     void replace_pt(string pt, isl_map* target, isl_map* sched) {
+        sv_map[pt] = dot(to_umap(target), inv(access_map.at(pt)));
+        cout << "Add pt: " << pt << " stencil valid map: " << str(sv_map.at(pt)) << endl;
         access_map.at(pt) = to_umap(target);
-        sv_domain[pt] = domain.at(pt);
         domain.at(pt) = ::domain(target);
         schedule.at(pt) = to_umap(sched);
     }
@@ -1399,9 +1403,25 @@ class UBuffer {
       return range(m);
     }
 
+    isl_union_map* global_sv_map() {
+        umap* m = isl_union_map_read_from_str(ctx, "{  }");
+        for (auto it: sv_map) {
+            m = unn(m, it.second);
+        }
+        return m;
+    }
+
     isl_union_set* global_domain() {
       uset* s = isl_union_set_read_from_str(ctx, "{ }");
       for (auto other : domain) {
+        s = unn(s, to_uset(cpy(other.second)));
+      }
+      return s;
+    }
+
+    isl_union_set* global_retrive_domain() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      for (auto other : retrive_domain) {
         s = unn(s, to_uset(cpy(other.second)));
       }
       return s;
@@ -1684,12 +1704,14 @@ class UBuffer {
     isl_map* pad_dom_sched(AccessPattern , isl_map* , int);
 
     //change the input and output and return the agg and tb ubuffer stucture
-    std::map<string, UBuffer> vectorization(int dim_id, int fetch_width);
+    pair<std::map<string, UBuffer>, vector<string> >
+        vectorization(int dim_id, int fetch_width);
 
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
     int add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, int dim_id, int fetch_width);
 
     void print_bank_info();

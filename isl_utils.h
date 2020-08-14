@@ -201,6 +201,8 @@ isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& 
 isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
 isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name, int vec_dim, int fetch_width);
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
+isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, vector<string> var_list, string op_name);
+vector<string> get_map_in_dim_id(isl_map* m);
 
 unsigned get_dim(isl_set* const s);
 
@@ -270,6 +272,7 @@ vector<string> collect_sched_vec(isl_union_map* const um);
 
 umap* pad_one_more_dim_to_sched_map(isl_ctx* ctx, umap* const um, string pad_val);
 umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val);
+umap* pad_one_more_dim_to_sched_map_with_id(umap* const um, int dim_id, int pad_val);
 
 std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_union_set* bset);
@@ -372,10 +375,13 @@ isl_union_map* remove_dep_domain_name(umap* um, string name);
 
 isl_stat flatten_map_domain(isl_map* s, void* user);
 umap* flatten_map_domain_with_ii(isl_map* s, int ii);
+umap* flatten_map_domain_with_dim(umap* s, int dim_id);
 umap* flatten_map_domain_trans(isl_map* s, int ii);
+umap* flatten_map_domain_trans_with_dim(isl_map* s, int dim_from_inner);
 isl_stat umap_lex_lt(isl_map* s,  void* user);
 isl_bool with_domain_name(isl_map* m, void* user);
 isl_map* retrive_map_domain_dim(isl_map*, isl_set*);
+isl_map* retrive_map_domain_with_dim(isl_map*, isl_set*);
 
 isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 isl_map* get_shift_map(isl_map* s);
@@ -547,6 +553,7 @@ int num_div_dims(isl_basic_set* const s);
 int num_param_dims(isl_basic_set* const s);
 
 vector<int> parse_pt(isl_point* p);
+isl_point* form_pt(vector<int> const_vec);
 
 uset* gist(uset* base, uset* context);
 isl_map* project_all_but(isl_map* const dmap, const int d);

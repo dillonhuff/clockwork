@@ -1209,28 +1209,49 @@ void synth_lb_test() {
   isl_ctx_free(buf.ctx);
 }
 
-void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
+vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
+    return buffer_vectorization({buf_name}, dim_id, fetch_width, buffers);
+}
+vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
   /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
    * generate the new domain and access map and also add two other buffer on
    * both input and output side
    * */
-  //UBuffer agg, tb, sram;
+  vector<string> rem_deps, rem_origin_ubuf;
   for(auto it : buffers) {
-    if (it.first == vec_buf_name) {
+    if (std::find(buf_name_vec.begin(), buf_name_vec.end(), it.first) != buf_name_vec.end()) {
+      rem_origin_ubuf.push_back(it.first);
       auto target_buffer = it.second;
       cout << "buffer_vectorization Vectorizing: " << target_buffer.name << endl;
       cout << target_buffer << endl;
-      auto new_buf = target_buffer.vectorization(dim_id, fetch_width);
-      for (auto it: new_buf) {
-        buffers[it.first] = it.second;
+
+      //ret is a pair of vectorized_buffer and
+      auto ret = target_buffer.vectorization(dim_id, fetch_width);
+      for (auto itr: ret.first) {
+        buffers[itr.first] = itr.second;
       }
-      break;
+      for (auto deps: ret.second) {
+        rem_deps.push_back(deps);
+      }
     }
   }
-  buffers.erase(vec_buf_name);
+  for (auto rem: rem_origin_ubuf) {
+    buffers.erase(rem);
+  }
+  return rem_deps;
 }
 
-map<string, UBuffer> vectorization_from_buf_map(map<string, UBuffer> & buffers_opt) {
+/* Main driver function for vectorization, loop through all the ubuffer
+ * Find the one with depth large than shift register,
+ * vectorize it and return the new ubuffer,
+ * Also need to return the input_vec statement for sheduler to remove proximity
+ * and a umap to add extra raw dependency for those added shift registers
+ */
+map<string, UBuffer> vectorization_from_buf_map(
+        map<string, UBuffer> & buffers_opt,
+        vector<string> & input_vec_stmt,
+        umap* & extra_raw_deps) {
+
   vector<string> vec_cand;
   map<string, UBuffer> ubuf_pool;
 
@@ -1247,6 +1268,7 @@ map<string, UBuffer> vectorization_from_buf_map(map<string, UBuffer> & buffers_o
     for (auto it: post_proc_buffers) {
       cout << "post: " << it.first << endl;
       vec_cand.push_back(it.first);
+      extra_raw_deps = unn(extra_raw_deps, it.second.global_sv_map());
     }
     for (auto it: rewrite_buffer) {
       cout << "rewrite: " << it.first << endl;
@@ -1254,10 +1276,7 @@ map<string, UBuffer> vectorization_from_buf_map(map<string, UBuffer> & buffers_o
     }
   }
 
-  for (string vec_target: vec_cand) {
-    buffer_vectorization(vec_target, 1, 4, ubuf_pool);
-  }
-
+  input_vec_stmt = buffer_vectorization(vec_cand, 1, 4, ubuf_pool);
 
   return ubuf_pool;
 }
@@ -1303,12 +1322,25 @@ isl_union_set* global_domain_from_buffers(const map<string, UBuffer> &buffers) {
     return global_dom;
 }
 
-isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
+isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_dom = unn(buf.global_retrive_domain(), global_dom);
+    }
+    cout << "Global retrive domain: " << str(global_dom) << endl;
+    return global_dom;
+}
+
+
+isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
     isl_ctx* ctx = pick(buffers).second.ctx;
     isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
     isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
     isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
     isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
+    //auto extra = rdmap(ctx, "{ conv_2[0, i0, i1] -> conv[0, i0, i1-2] : 0<=i0<=13 and 2<=i1<=15 }");
     for (auto it : buffers) {
         string buf_name = it.first;
         auto buf = it.second;
@@ -1323,11 +1355,15 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
     auto order_deps = get_rel_order(ctx, global_sched);
     cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    raw_deps = unn(raw_deps, extra);
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
 
     //Try to remove proximity between_input vec to output_vec
     //proximity = filter_inner_sram_deps(ctx, proximity);
+    for (string remove_stmt: remove_deps){
+        proximity = remove_dep_domain_name(proximity, remove_stmt);
+    }
 
     cout << "Raw_deps: " << str(raw_deps) << endl;
     cout << "proximity: " << str(proximity) << endl;
@@ -1338,6 +1374,11 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
 
 }
 
+isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = isl_ctx_alloc();
+    auto um = isl_union_map_read_from_str(ctx, "{}");
+    optimized_schedule_from_buffers(buffers, {}, um);
+}
 
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, isl_union_map* global_sched, bool has_global_constraint) {
     isl_ctx* ctx = pick(buffers).second.ctx;
@@ -1502,6 +1543,7 @@ isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const
 
     isl_ctx* ctx = pick(buffers).second.ctx;
     auto extra = rdmap(ctx, "{ conv[0, i0, i1] -> conv_2[0, i0, i1+2] : 0<=i0<=13 and 0<=i1<=13 }");
+    extra = unn(extra, rdmap(ctx, "{ conv2[0, i0, 15] -> conv[0, i0+1, 0] : 0<=i0<=12 }"));
 
     isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
     isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
@@ -1530,9 +1572,12 @@ isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const
 
     //Try to remove proximity between_input vec to output_vec
     //FIXME: the name is hacky
-    if (second_round)
+    if (second_round) {
         //proximity = remove_dep_domain_name(proximity, "op_hcompute_hw_input_stencil_vec");
         proximity = remove_dep_domain_name(proximity, "input_vec");
+        proximity = remove_dep_domain_name(proximity, "conv_vec");
+
+    }
     //proximity = filter_inner_sram_deps(ctx, proximity);
 
     cout << "Raw_deps: " << str(raw_deps) << endl;
@@ -10251,11 +10296,19 @@ isl_val* constant(isl_aff* a) {
 void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
+    cout << str(form_pt({0,1})) << endl;
     auto acc_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> [x + y, x]: z=2}");
     auto sched = isl_map_read_from_str(ctx, "{ p[x, y, z]->[0, 0, x, 0, y, 0, z, 0]}");
+    auto sched_exp = isl_map_read_from_str(ctx, "{ p[0, x, y, z]->[x+2, y+1, 2*z+3]: 0<=x<=14 and 0<=y<=15 and 0<=z<=10}");
+    cout << str(sample(range(sched_exp))) << endl;
+    cout << int_upper_bound(get_out_range(sched_exp, 2));
+    auto pad_sched = pad_one_more_dim_to_sched_map_with_id(to_umap(sched_exp), 1, 0);
     auto delay_sched = delay_schedule_domain_dim(sched, 2 , 1);
     auto peel_sched = peel_schedule_domain_dim(sched, 1 , 1);
+    auto trans = flatten_map_domain_trans_with_dim(sched_exp, 2);
+    cout << str(trans) << endl;
     cout << "origin: " << str(sched) << "\ndelay: " << str(delay_sched) << "\npeel:" << str(peel_sched) <<  endl;
+    cout << "origin: " << str(sched_exp) << "\npad_sched: " << str(pad_sched) <<  endl;
     cout << "relation map:" << relation_map(acc_map) << endl;
 
     isl_ctx_free(ctx);
@@ -12309,6 +12362,8 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
   vector<string> generated_op;
   auto glb_access_map = global_access_map_from_buffers(buffers_opt);
   auto glb_domain = global_domain_from_buffers(buffers_opt);
+  auto glb_retrive_domain = retrive_domain_from_buffers(buffers_opt);
+  auto retrive_dom_map = get_sets_in_map(glb_retrive_domain);
   auto dom_map = get_sets_in_map(glb_domain);
   auto access_maps = get_maps(glb_access_map);
 
@@ -12318,15 +12373,23 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
     string op_name = domain_name(m);
     generated_op.push_back(op_name);
 
-    isl_set* dom = dom_map.at(op_name);
+    isl_map* write_sched = m;
+    auto dom = dom_map.at(op_name);
+    if (retrive_dom_map.count(op_name)) {
+      dom = retrive_dom_map.at(op_name);
+      //transform the iteration domain back to it's original dimension
+      write_sched = retrive_map_domain_with_dim(m, dom);
+      for (auto& it: access_maps) {
+        if (domain_name(it)== op_name) {
+          it = retrive_map_domain_with_dim(it, dom);
+        }
+      }
+    }
 
     //chances are that we have multi-aff expression
 
     ofstream out(string(dir) + op_name + ".csv");
     cout << tab(1) << str(m) << endl;
-
-    //transform the iteration domain back to it's original dimension
-    auto write_sched = retrive_map_domain_dim(m, dom);
     emit_lake_controller_config(out, dom, get_aff(write_sched));
 
     //emit address config
@@ -12348,8 +12411,120 @@ isl_aff* get_aff_addr(op* op, const std::string& buf_name,
   return isl_multi_aff_get_aff(pwaff, 0);
 }
 
-isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
+isl_union_map* generate_hardware_schedule_heu_new(isl_union_map* new_opt_sched,
         map<string, UBuffer> buffers, map<pair<string, string>, int> latency, int ii, vector<string> remove = {}) {
+  vector<string> sort_op = topological_sort_from_buffer(buffers, remove);
+  cout << "Topology sort: " << sort_op << endl;
+
+  int i = 0;
+  map<string, isl_point*> sched_seq;
+  map<string, vector<string>> expr_base;
+  map<string, int> topo_seq, delay_map;
+  map<string, isl_map*> op2sched;
+
+  int loop_dim = get_in_dim(pick(get_maps(new_opt_sched))) - 1;
+  vector<int> max_iteration(loop_dim, 0);
+
+  for (auto op: sort_op) {
+    topo_seq[op] = i;
+    delay_map[op] = 0;
+    i ++;
+  }
+
+  //sort the latency according to the sequence of buffers
+  auto cmp = [&topo_seq](const pair<string, string>& p1,
+          const pair<string, string>& p2) {
+      return topo_seq.at(p1.first) < topo_seq.at(p2.first);
+  };
+  map<pair<string, string>, int, decltype(cmp)> latency_sort(cmp);
+
+  for (auto it: latency) {
+      latency_sort.insert(it);
+  }
+
+  //process the schedule map,
+  //From the observation, if we keep the schedule dimension
+  //It will give a schedule with in dim in front and a constant sequence vector
+  //We need to flatten the expression in the beginning into 1D
+  //And add the  constant offset based on the latency and sequence
+  for (auto m: get_maps(new_opt_sched)) {
+    string op_name = domain_name(m);
+    op2sched[op_name] = m;
+    auto affs = get_aff_vec(m);
+    assert(affs.size() > get_in_dim(m));
+    vector<string> sched_expr_list;
+    vector<int> sched_seq_vec;
+    int dom_dim = get_in_dim(m) - 1;
+    for (int i = 0; i < dom_dim; i ++) {
+      sched_expr_list.push_back(take_btw(str(affs.at(i)), "[(", ")]"));
+      int card_range = int_upper_bound(get_out_range(m, i));
+      max_iteration.at(i) = std::max(card_range, max_iteration.at(i));
+    }
+    for (int i = dom_dim; i < affs.size(); i ++) {
+      sched_seq_vec.push_back(safe_stoi(take_btw(str(affs.at(i)), "[(", ")]")));
+    }
+    sched_seq[op_name] = form_pt(sched_seq_vec);
+    expr_base[op_name] = sched_expr_list;
+  }
+  cout << "max iteration: " << max_iteration <<endl;
+
+
+  for (auto it: latency_sort) {
+    string anchor = it.first.first;
+    string target = it.first.second;
+    int lat = it.second;
+
+    //if anchor is producer and targe is consumer
+    if (topo_seq.at(anchor) < topo_seq.at(target)) {
+      //assert(lat >= 0);
+      if ( lex_gt_pt(sched_seq.at(anchor), sched_seq.at(target)) )
+        lat -= 1;
+      delay_map.at(target) = delay_map.at(anchor) + lat;
+    }
+    //if anchor is consumer and target is producer
+    else {
+      //assert(lat <= 0);
+      if (lex_lt_pt(sched_seq.at(anchor), sched_seq.at(target)))
+        lat += 1;
+      delay_map.at(target) = delay_map.at(anchor) + lat;
+    }
+  }
+  cout << "Delay map: " << delay_map << endl;
+
+  vector<int> rolling_dim = rolling_vec_dim(max_iteration, ii);
+  cout << "rolling dim: " << rolling_dim << endl;
+
+  //reconstruct the 1D schedule
+  auto hw_sched = isl_union_map_empty(get_space(new_opt_sched));
+  for (auto op_name: sort_op) {
+    auto sched_map = op2sched.at(op_name);
+    auto expr_list = expr_base.at(op_name);
+    for ( size_t i = 0; i < expr_list.size(); i++ ){
+      expr_list.at(i) = "(" + expr_list.at(i)  + ")*" + to_string(rolling_dim.at(i));
+    }
+
+    //add the latency
+    expr_list.push_back(to_string(delay_map.at(op_name)));
+
+    string expr = sep_list(expr_list, "", "", "+");
+    auto ctx = ::ctx(sched_map);
+    auto var_list = get_map_in_dim_id(sched_map);
+    auto hs = gen_hw_sched_from_sched_vec(ctx, {expr}, var_list, op_name);
+    hs = its(hs, domain(sched_map));
+    hw_sched = unn(hw_sched, to_umap(hs));
+  }
+
+  //TODO: add a post check to see if there is any hardware violation
+  cout << "\tHW Schedule:" << str(hw_sched) << endl;
+
+  return hw_sched;
+}
+
+isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
+        map<string, UBuffer> buffers,
+        map<pair<string, string>, int> latency,
+        int ii,
+        vector<string> remove = {}) {
   vector<string> sort_op = topological_sort_from_buffer(buffers, remove);
   cout << "Topology sort: " << sort_op << endl;
 
@@ -12563,7 +12738,7 @@ void lake_cascade_autovec_test() {
   }
   read->add_store("buf2", "qo, qi");
 
-  auto k = prg.add_nest("ko", 0, 12, "ki", 0, 12);
+  auto k = prg.add_nest("ko", 0, 10, "ki", 0, 10);
   auto read_ = k->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
@@ -12587,10 +12762,24 @@ void lake_cascade_autovec_test() {
     b.second.port_group2bank(max_inpt, max_outpt);
   }
 
-  auto ubuf_pool = vectorization_from_buf_map(buffers_opt);
-  //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
-  auto opt_sched = optimized_schedule_from_buffers_flatten(ubuf_pool, true, {"input_vec", "conv_vec"});
-  cout << codegen_c(opt_sched) << endl;
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  cout << str(opt_sched) << endl << endl;
+  cout << codegen_c(opt_sched) << endl << endl;
+  map<pair<string, string>, int> latency({
+          {{"input", "input_vec"}, 1},
+          {{"conv", "conv_vec"}, 1},
+          {{"conv_2", "conv_2_vec"}, -1},
+          {{"output_2", "output_2_vec"}, -1}});
+  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  cout << codegen_c(hsh) << endl;
+  cmd("mkdir -p ./lake_controllers/cascade/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
+  //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
 void lake_conv33_autovec_test() {
@@ -12637,6 +12826,23 @@ void lake_conv33_autovec_test() {
   cout << "post processing buf" << endl;
   cout << buffers_opt.at("buf");
 
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  cout << str(opt_sched) << endl << endl;
+  cout << codegen_c(opt_sched) << endl << endl;
+  map<pair<string, string>, int> latency({
+          {{"input", "input_vec"}, 1},
+          {{"input_vec", "output_2_vec"}, -3},
+          {{"output_2_vec", "output_2"}, 1}});
+  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  cout << codegen_c(hsh) << endl;
+  cmd("mkdir -p ./lake_controllers/conv_3_3_new/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_new/");
+  /*
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
   opt.conditional_merge = false;
   auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
@@ -12656,9 +12862,11 @@ void lake_conv33_autovec_test() {
     buffer_vectorization(it.first, 1, 4, rewrite_buffers);
     cout << "Done with vectorization" << endl;
 
-    //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
-    auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
+    auto opt_sched = optimized_schedule_from_buffers(rewrite_buffers);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
+    cout << str(opt_sched) << endl;
     cout << codegen_c(opt_sched) << endl;
+    assert(false);
 
     int app_target_II = 1;
     auto hsh = generate_hardware_schedule_heu(opt_sched, rewrite_buffers, latency, app_target_II);
@@ -12667,7 +12875,8 @@ void lake_conv33_autovec_test() {
 
     auto op_vec = emit_lake_config(rewrite_buffers, hsh, "./lake_controllers/conv_3_3/");
     check_lake_config(op_vec, "./lake_controllers/conv_3_3/", "./lake_gold/conv_3_3/");
-  }
+  }*/
+
 }
 
 void lake_identity_stream_autovec_test() {
@@ -14209,16 +14418,16 @@ void application_tests() {
 
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");
-  lake_identity_stream_SMT_test(32, 32, "32x32");
-  lake_identity_stream_SMT_test(16, 16, "16x16");
+  //lake_identity_stream_SMT_test(32, 32, "32x32");
+  //lake_identity_stream_SMT_test(16, 16, "16x16");
   //assert (false);
   //lake_identity_stream_SMT_test(20, 20, "20x20");
   //double_buffer_test();
   //playground();
-  lake_identity_stream_autovec_test();
+  //lake_identity_stream_autovec_test();
   //union_test();
   lake_conv33_autovec_test();
-  lake_dual_port_test();
+  //lake_dual_port_test();
   lake_cascade_autovec_test();
   assert(false);
   lake_resnet_test();

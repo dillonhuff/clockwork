@@ -720,14 +720,28 @@ isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string o
     return isl_map_read_from_str(ctx, string("{" + op_name + vars + " -> " + sched + "}").c_str());
 }
 
-isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, std::vector<string> sched_vec, string op_name) {
+vector<string> get_map_in_dim_id(isl_map* m) {
     vector<string> var_list;
-    var_list.push_back("root");
-    var_list.push_back("i1");
+    for (int i = 0; i < get_in_dim(m); i ++) {
+        if (isl_map_has_dim_name(m, isl_dim_in, i)) {
+            var_list.push_back(isl_map_get_dim_name(m, isl_dim_in, i));
+        } else {
+            var_list.push_back("i"+to_string(i));
+        }
+    }
+    return var_list;
+}
+
+isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, std::vector<string> sched_vec, vector<string> var_list, string op_name) {
     string vars = sep_list(var_list, "[", "]", ",");
     string sched = sep_list(sched_vec, "[", "]", ",");
     return isl_map_read_from_str(ctx, string("{" + op_name + vars + " -> " + sched + "}").c_str());
 }
+
+isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, std::vector<string> sched_vec, string op_name) {
+    gen_hw_sched_from_sched_vec(ctx, sched_vec, {"root", "i1"}, op_name);
+}
+
 
 unsigned get_in_dim(isl_map* const m) {
     return isl_map_dim(cpy(m), isl_dim_in);
@@ -1683,6 +1697,12 @@ umap* flatten_map_domain_with_ii(isl_map* s, int ii) {
     return new_sched;
 }
 
+umap* flatten_map_domain_with_dim(umap* s, int dim_from_inner) {
+    auto trans = flatten_map_domain_trans_with_dim(to_map(s), dim_from_inner);
+    auto new_sched = dot(inv(trans), s);
+    return new_sched;
+}
+
 
 
 umap* flatten_set_trans(isl_set* s, int ii) {
@@ -1719,6 +1739,51 @@ umap* flatten_set_trans(isl_set* s, int ii) {
       trans = unn(to_umap(flatten_trans), trans);
     }
     return trans;
+}
+
+
+umap* flatten_set_trans_with_dim(isl_set* dom, int dim_from_inner) {
+    vector<int> dom_range;
+    for (size_t i = 0; i < get_dim(dom); i ++) {
+        dom_range.push_back(get_dim_max(dom, i)+1);
+    }
+    vector<int> rolling_dim;
+    for (size_t i = 0; i < dom_range.size(); i ++) {
+        int dim = std::accumulate(dom_range.rbegin(),
+                dom_range.rbegin() + i,
+                1, std::multiplies<int>());
+        rolling_dim.push_back(dim);
+    }
+    std::reverse(rolling_dim.begin(), rolling_dim.end());
+    auto ctx = isl_set_get_ctx(dom);
+    umap* trans = isl_union_map_read_from_str(ctx, "{}");
+
+    vector<string> origin_var_list, expr_list;
+    origin_var_list.push_back("0");
+    for (size_t i = 0; i < get_dim(dom)-1; i ++) {
+        auto var_name = "i" + to_string(i+1);
+        origin_var_list.push_back(string(var_name));
+    }
+    for (size_t i = get_dim(dom)-dim_from_inner; i < get_dim(dom); i ++) {
+        auto var_name = "i" + to_string(i);
+        expr_list.push_back(string(var_name) + "*" + to_string(rolling_dim.at(i)));
+    }
+    vector<string> var_list(origin_var_list.begin(), origin_var_list.end() - dim_from_inner);
+
+    var_list.push_back(sep_list(expr_list, "", "", "+"));
+    string origin_var = sep_list(origin_var_list, "[", "]", ",");
+    string var = sep_list(var_list, "[", "]", ",");
+    string dom_name = name(dom);
+    string map_str = "{" + dom_name + origin_var + "->" + dom_name + var +"}";
+    isl_map* flatten_trans = isl_map_read_from_str(ctx, map_str.c_str());
+    trans = unn(to_umap(flatten_trans), trans);
+
+    return trans;
+}
+
+umap* flatten_map_domain_trans_with_dim(isl_map* s, int dim_from_inner) {
+    auto dom = domain(s);
+    flatten_set_trans_with_dim(dom, dim_from_inner);
 }
 
 umap* flatten_map_domain_trans(isl_map* s, int ii) {
@@ -1759,6 +1824,13 @@ umap* flatten_map_domain_trans(isl_map* s, int ii) {
 
 isl_map* retrive_map_domain_dim(isl_map* flat_map, isl_set* dom) {
     auto trans = flatten_set_trans(dom, 1);
+    auto new_sched = dot(trans, to_umap(flat_map));
+    return to_map(new_sched);
+}
+
+isl_map* retrive_map_domain_with_dim(isl_map* flat_map, isl_set* dom) {
+    int dim_from_inner = get_dim(dom) - get_in_dim(flat_map) + 1;
+    auto trans = flatten_set_trans_with_dim(dom, dim_from_inner);
     auto new_sched = dot(trans, to_umap(flat_map));
     return to_map(new_sched);
 }
@@ -2398,6 +2470,59 @@ umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val) {
     return to_umap(ret_m);
 }
 
+isl_constraint* pad_dim_to_constraint(isl_constraint* c, int dim_id) {
+  auto sp = get_space(c);
+  sp = isl_space_add_dims(sp, isl_dim_out, 1);
+  isl_constraint* cons;
+  if (isl_constraint_is_equality(c)) {
+    cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+  } else {
+    cons = isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+  }
+  cons = isl_constraint_set_constant_val(cons, isl_constraint_get_constant_val(c));
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_in); i ++) {
+    cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i));
+  }
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_out); i ++) {
+    if (isl_constraint_involves_dims(c, isl_dim_out, i, 1)) {
+      int new_dim = i;
+      if (i >= dim_id)
+          new_dim += 1;
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_out, new_dim,
+           isl_constraint_get_coefficient_val(c, isl_dim_out, i));
+    }
+  }
+  //cout << "rewrite constraits: " << str(cons) << endl;
+  return cons;
+}
+
+umap* pad_one_more_dim_to_sched_map_with_id(umap* const um, int dim_id, int pad_val) {
+    auto sched_map = to_map(um);
+    auto c_vec = constraints(sched_map);
+    vector<isl_constraint*> new_c;
+
+    //pad the space for the original constraints
+    for (auto c : c_vec) {
+        auto tmp = pad_dim_to_constraint(c, dim_id);
+        new_c.push_back(tmp);
+    }
+
+    auto sp = get_space(pick(new_c));
+    auto cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+    cons = isl_constraint_set_constant_si(cons, -pad_val);
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_out, dim_id, 1);
+    new_c.push_back(cons);
+
+    auto ret = isl_basic_map_universe(sp);
+    for (auto c : new_c) {
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    return to_umap(ret_m);
+}
+
 
 isl_stat get_pw_multi_aff_piece(isl_set* dom, isl_multi_aff* domain, void* user) {
   vector<pair<isl_set*, isl_multi_aff*> >* v =
@@ -2642,6 +2767,13 @@ isl_map* project_all_but(isl_map* const dmap,
 vector<int> parse_pt(isl_point* p) {
   assert(p != nullptr);
   return parse_pt(str(p));
+}
+
+isl_point* form_pt(vector<int> const_vec) {
+  string expr = sep_list(const_vec, "{ [", "] }", ",");
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_set* s = isl_set_read_from_str(ctx, expr.c_str());
+  return sample(s);
 }
 
 vector<string> space_var_decls(isl_space* s) {
