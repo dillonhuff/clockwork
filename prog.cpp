@@ -2362,6 +2362,19 @@ void generate_xilinx_aws_ddr_config(CodegenOptions& options, map<string, UBuffer
   out.close();
 }
 
+int buffer_capacity(UBuffer& buf) {
+  int c = 0;
+  for (auto b : buf.get_banks()) {
+    if (b.tp == INNER_BANK_OFFSET_STACK) {
+      c += b.maxdelay;
+    } else {
+      assert(b.rddom != nullptr);
+      c += int_upper_bound(card(b.rddom));
+    }
+  }
+  return c * buf.port_widths;
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2389,6 +2402,18 @@ void generate_app_code(CodegenOptions& options,
       generate_hls_code(options, conv_out, b.second);
     }
   }
+
+  int capacity = 0;
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      capacity += buffer_capacity(b.second);
+    }
+  }
+
+
+  conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
+  cout << "Prog: " << prg.name << endl;
+  //assert(false);
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
