@@ -4,6 +4,7 @@
 #include "cwlib.h"
 #include "coreir_backend.h"
 
+using CoreIR::Instance;
 using CoreIR::Wireable;
 using CoreIR::CoreIRType;
 using CoreIR::ArrayType;
@@ -980,8 +981,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     int readers = buf.get_out_ports().size();
     int writers = buf.get_in_ports().size();
 
-    cout << "Generating banks for..." << endl;
-    cout << buf << endl;
+    //cout << "Generating banks for..." << endl;
+    //cout << buf << endl;
     if (readers == 1 && writers == 1) {
       string reader = pick(buf.get_out_ports());
       auto t = def->addInstance(buf.name + "_bank", "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}});
@@ -1011,7 +1012,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       }
 
       //assert(false);
-    } else if (readers <= 2 && writers <= 2) {
+    } else if (readers == 2 && writers == 2) {
       auto t = def->addInstance(buf.name + "_bank", "global.raw_quad_port_memtile", {{"depth", COREMK(c, 2048)}});
       int i = 0;
       for (auto reader : buf.get_out_ports()) {
@@ -1042,7 +1043,40 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
             control_en(def, reader, buf));
         i++;
       }
+    } else if (writers == 1) {
+      vector<Instance*> banks;
+      int r = 0;
+      for (auto reader : buf.get_out_ports()) {
+        banks.push_back(def->addInstance(buf.name + "_bank_" + c->getUnique(), "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}}));
+        auto t = banks.back();
+        auto reader_data = def->sel("self")->sel(buf.container_bundle(reader))->sel(buf.bundle_offset(reader));
+        auto read_port = t->sel("rdata");
+        def->connect(reader_data, read_port);
+
+        auto agen = build_addrgen(reader, buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, reader, buf));
+        def->connect(agen->sel("out"), t->sel("raddr"));
+        def->connect(t->sel("ren"),
+            control_en(def, reader, buf));
+        {
+          string reader = pick(buf.get_in_ports());
+          auto reader_data = def->sel("self")->sel(buf.container_bundle(reader))->sel(buf.bundle_offset(reader));
+          auto read_port = t->sel("wdata");
+          def->connect(reader_data, read_port);
+
+          auto agen = build_addrgen(reader, buf, def);
+          def->connect(agen->sel("d"),
+              control_vars(def, reader, buf));
+          def->connect(agen->sel("out"), t->sel("waddr"));
+          def->connect(t->sel("wen"),
+              control_en(def, reader, buf));
+        }
+
+        r++;
+      }
     } else {
+      cout << "Error: Unsupported # readers = " << readers << ", # writers = " << writers << endl;
       assert(false);
     }
 

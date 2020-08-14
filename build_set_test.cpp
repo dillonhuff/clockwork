@@ -13177,8 +13177,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
 schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
-  //sched.use_dse_compute = false;
-  sched.use_dse_compute = true;
+  sched.use_dse_compute = false;
+  //sched.use_dse_compute = true;
   for (auto op : prg.all_ops()) {
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
@@ -13286,6 +13286,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   for (auto m : get_maps(hw_sched)) {
     cout << tab(1) << str(m) << endl;
   }
+
+  //assert(false);
 
   assert(no_violated_cycle_accurate_dependencies(sched, prg));
   auto buffers = build_buffers(prg, hw_sched);
@@ -13424,15 +13426,15 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  test_programs.push_back(resnet());
+
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(unet_conv_3_3());
+
+  // Wired up, but incorrect values
+  test_programs.push_back(conv_multi());
   test_programs.push_back(accumulation());
 
-  // Address generation broken, classified as stencil pipeline
-  test_programs.push_back(up_sample());
-  test_programs.push_back(unet_conv_3_3());
-  test_programs.push_back(conv_layer());
-  test_programs.push_back(partially_unrolled_conv());
-  test_programs.push_back(resnet());
-  test_programs.push_back(conv_multi());
 
   concat(test_programs, stencil_programs());
 
@@ -13468,8 +13470,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
 
 void cgra_flow_tests() {
-  auto test_programs = stencil_programs();
-  //auto test_programs = all_cgra_programs();
+  //auto test_programs = stencil_programs();
+  auto test_programs = all_cgra_programs();
   //cout << "====== Program classification" << endl;
   //for (auto prg : test_programs) {
     //if (!is_rate_matchable(prg)) {
@@ -14031,7 +14033,7 @@ void resnet_auto_unroll() {
 }
 
 void application_tests() {
-  resnet_auto_unroll();
+  //resnet_auto_unroll();
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
   infer_bounds_multi_5x1_stage_negative_conv_test();

@@ -163,9 +163,6 @@ T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
 template<typename T>
 static inline
 T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
-  //cout << "bw = " << bright_weight << endl;
-  //cout << "dw = " << dark_weight << endl;
-  //assert(bright_weight + dark_weight == 2);
 
   return (bright_weight*bright + dark_weight*dark) / (bright_weight + dark_weight);
   //return (bright_weight*bright + dark_weight*dark);
@@ -457,9 +454,6 @@ hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v7 = in.extract<224, 255>();
   hw_uint<32> v8 = in.extract<256, 287>();
 
-  //cout << "v0 = " << v0.to_int() << endl;
-  //cout << "v3 = " << v3.to_int() << endl;
-  //cout << "v6 = " << v6.to_int() << endl;
 
   //assert(false);
 
@@ -668,7 +662,6 @@ hw_uint<32> blur_1x3_32(const hw_uint<32*3>& in) {
   hw_uint<32> v1 = in.extract<32, 63>();
   hw_uint<32> v2 = in.extract<64, 95>();
 
-  cout << "v0 = " << v0 << endl;
   return v0 + v1 + v2;
 }
 
