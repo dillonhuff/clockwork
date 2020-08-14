@@ -5154,7 +5154,7 @@ void generate_verilator_tb(prog& prg,
 
   rgtb << tab(1) << "dut.clk = 0;" << endl;
   rgtb << tab(1) << "dut.eval();" << endl;
-  rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
+  rgtb << tab(1) << "for (int t = 0; t < 300000; t++) {" << endl;
 
   for (auto out : inputs(buffers, prg)) {
     string ctrl_name =
