@@ -1907,8 +1907,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       rdsched = pad_one_more_dim_to_sched_map_innermost(rdsched, 1);
       wrsched = pad_one_more_dim_to_sched_map_innermost(wrsched, 0);
     }
-    cout << "rewrite rd sched:" << str(rdsched) << endl;
-    cout << "rewrite wr sched:" << str(wrsched) << endl;
+    //cout << "rewrite rd sched:" << str(rdsched) << endl;
+    //cout << "rewrite wr sched:" << str(wrsched) << endl;
     auto WritesBeforeRead =
       lex_gt(rdsched, wrsched);
     //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
@@ -3041,18 +3041,18 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     new_sched.insert(make_pair(in_op, in_sched_new));
     auto out_sched_new = gen_map_from_sched_vec(ctx, out_new_sched_vec, out_op);
     new_sched.insert(make_pair(out_op, out_sched_new));
-    auto in_vec_sched = gen_map_from_sched_vec(ctx, in_vectorized_sched_vec, in_op + "_vec");
-    new_sched.insert(make_pair(in_op + "_vec", in_vec_sched));
-    auto out_vec_sched = gen_map_from_sched_vec(ctx, out_vectorized_sched_vec, out_op + "_vec");
-    new_sched.insert(make_pair(out_op + "_vec", out_vec_sched));
+    auto in_vec_sched = gen_map_from_sched_vec(ctx, in_vectorized_sched_vec, in_op + "_agg2sram");
+    new_sched.insert(make_pair(in_op + "_agg2sram", in_vec_sched));
+    auto out_vec_sched = gen_map_from_sched_vec(ctx, out_vectorized_sched_vec, out_op + "_sram2tb");
+    new_sched.insert(make_pair(out_op + "_sram2tb", out_vec_sched));
     auto acc_sched_new = gen_map_from_sched_vec(ctx, acc_new_sched_vec, acc_op);
 
     int vectorized_dim = get_involve_dim(to_map(loop_access_map), dim_id);
     cout << "vectorized_dim: " << vectorized_dim << endl;
     //auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_vec_in", vectorized_dim, fetch_width);
     //auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, acc_op + "_vec_out", vectorized_dim ,fetch_width);
-    auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_vec_in");
-    auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, acc_op + "_vec_out");
+    auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_agg2sram");
+    auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, acc_op + "_sram2tb");
 
     acc_in_vec_sched = peel_schedule_domain_dim(
             acc_in_vec_sched, inner_most_address_related_dim_id, 1);
@@ -3060,8 +3060,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
             acc_out_vec_sched, inner_most_address_related_dim_id, -1);
 
     new_sched.insert(make_pair(acc_op, acc_sched_new));
-    new_sched.insert(make_pair(acc_op+"_vec_in", acc_in_vec_sched));
-    new_sched.insert(make_pair(acc_op+"_vec_out", acc_out_vec_sched));
+    new_sched.insert(make_pair(acc_op+"_agg2sram", acc_in_vec_sched));
+    new_sched.insert(make_pair(acc_op+"_sram2tb", acc_out_vec_sched));
 
     //cout << "\tnew in map: " << str(in_sched_new)
     //<< "\n\tvec in map: " << str(in_vec_sched)
@@ -3094,16 +3094,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     cout << "vectorized_dim: " << vectorized_dim << endl;
     auto in_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 0));
     auto in_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 1));
-    in_vec_sched = set_domain_name(in_vec_sched, domain_name(in_vec_sched) + "_vec");
+    in_vec_sched = set_domain_name(in_vec_sched, domain_name(in_vec_sched) + "_agg2sram");
     auto out_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 2));
-    out_vec_sched = set_domain_name(out_vec_sched, domain_name(out_vec_sched) + "_vec");
+    out_vec_sched = set_domain_name(out_vec_sched, domain_name(out_vec_sched) + "_sram2tb");
     auto out_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 3));
 
     map<string, isl_map*> new_sched;
     new_sched.insert(make_pair(in_op, in_sched_new));
     new_sched.insert(make_pair(out_op, out_sched_new));
-    new_sched.insert(make_pair(in_op + "_vec", in_vec_sched));
-    new_sched.insert(make_pair(out_op + "_vec", out_vec_sched));
+    new_sched.insert(make_pair(in_op + "_agg2sram", in_vec_sched));
+    new_sched.insert(make_pair(out_op + "_sram2tb", out_vec_sched));
 
     cout << "\tnew in map: " << str(in_sched_new)
     << "\n\tvec in map: " << str(in_vec_sched)
@@ -3113,6 +3113,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return new_sched;
   }
 
+  //FIXME:Delete this method in the future
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {
     /*
      * Previously we have two ops, input and output.In order to do the vectorization
@@ -3456,10 +3457,11 @@ pair<std::map<string, UBuffer>, vector<string> >
         std::cout << "before rewrite: " << acc_pattern << endl;
 
         //produce the operation transfomation
-        string suffix = "_vec";
-        if (is_self_loop(in_pt_name)) {
-          suffix += "_in";
-        }
+        //string suffix = "_vec";
+        string suffix = "_agg2sram";
+        //if (is_self_loop(in_pt_name)) {
+        //  suffix += "_in";
+        //}
         isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
         std::cout << "transform rewrite: " << str(op_trans) << endl;
         cout << "IS loop: " << is_self_loop(in_pt_name) << endl;
@@ -3511,10 +3513,10 @@ pair<std::map<string, UBuffer>, vector<string> >
         std::cout << "before rewrite: " << acc_pattern << endl;
 
         //produce the operation transfomation
-        string suffix = "_vec";
-        if (is_self_loop(out_pt_name)) {
-          suffix += "_out";
-        }
+        string suffix = "_sram2tb";
+        //if (is_self_loop(out_pt_name)) {
+        //  suffix += "_out";
+        //}
         isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
         std::cout << "transform rewrite: " << str(op_trans) << endl;
 

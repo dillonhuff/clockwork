@@ -610,7 +610,7 @@ class AccessPattern {
           auto vars = sep_list(var_list, "[", "]", "," );
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
           cout <<"OP name: " << op_name << endl;
-          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name +"_vec" + origin_vars + " -> " + op_name +"_vec" + vars + "}").c_str()));
+          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name +"_sram2tb" + origin_vars + " -> " + op_name +"_sram2tb" + vars + "}").c_str()));
           return multi_map;
       }
 
@@ -806,6 +806,7 @@ class UBuffer {
             tmp.push_back(addr_queue.front());
             addr_queue.pop();
         }
+        cout << "read data: " << tmp << endl;
         read_addr.push_back(tmp);
     }
 
@@ -850,6 +851,18 @@ class UBuffer {
         auto b = extract_access_range();
         for (size_t i = 0; i < b.dimension(); i ++) {
             ret.push_back(b.r_cardinality(i));
+        }
+        return ret;
+    }
+
+    bool is_overlap_with_port(string pt, isl_map* acc) {
+      return !empty(its(range(access_map.at(pt)), range(to_umap(acc))));
+    }
+
+    map<string, bool> get_connection_map_to_outpt(isl_map* acc) {
+        map<string, bool> ret;
+        for (string out_pt: get_out_ports()) {
+            ret.insert(make_pair(out_pt, is_overlap_with_port(out_pt, acc)));
         }
         return ret;
     }
@@ -904,6 +917,9 @@ class UBuffer {
         sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
         for (auto point:  point_vec) {
             auto b = get_linearization_vector();
+            //FIXME: hack the tb address
+            if (is_suffix(name, "tb"))
+                b.back() /= num_out_ports();
             auto a = parse_pt(point);
             int addr = std::inner_product(a.begin(), a.end(), b.rbegin(), 0);
             ret.push(addr);
@@ -1699,6 +1715,19 @@ class UBuffer {
       }
     }
 
+    int capacity(string inpt) {
+        int m;
+        for (auto outpt: get_out_ports()){
+            m = std::max(m, compute_dd_bound(outpt, inpt, true));
+        }
+        return m;
+    }
+
+    int capacity() {
+        auto pt = pick(get_in_ports());
+        return capacity(pt);
+    }
+
     umap* pad_dom_buf2op(AccessPattern , umap* , int);
 
     isl_map* pad_dom_sched(AccessPattern , isl_map* , int);
@@ -1885,6 +1914,7 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
 
+map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf);
 
 bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf);
 bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf);

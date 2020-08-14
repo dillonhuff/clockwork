@@ -2325,7 +2325,7 @@ void emit_sram_address_stream(string fname, vector<int> read_cycle, vector<int> 
   out.close();
 }
 
-map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sched) {
+map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sched, bool flatten=true) {
   map<string, umap*> op2sched;
   //get a map from op to schedule
   for (auto & buf : buffers_opt) {
@@ -2336,8 +2336,10 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
           auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
           cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
           buffer.schedule.at(pt) = pt_sched;
-          auto origin_access_map = buffer.access_map.at(pt);
-          buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          if (flatten) {
+            auto origin_access_map = buffer.access_map.at(pt);
+            buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          }
           if(op2sched.count(op_name) == 0) {
               op2sched[op_name] = pt_sched;
           }
@@ -2348,9 +2350,11 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
           auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
           cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
           buffer.schedule.at(pt) = pt_sched;
-          //flatten_access map
-          auto origin_access_map = buffer.access_map.at(pt);
-          buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          if (flatten) {
+            //flatten_access map
+            auto origin_access_map = buffer.access_map.at(pt);
+            buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          }
           if(op2sched.count(op_name) == 0) {
               op2sched[op_name] = pt_sched;
           }
@@ -2407,6 +2411,7 @@ void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched) {
       auto rd_sched = to_map(buf.schedule.at(pt));
       auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
       buf.mark_read(cycle, iter_set);
+      cout << "read at iter: " << str(iter_set) << endl;
 
       cout << "Buffer: " << buf.name << endl;
       cout << str(point) << " read = " << buf.is_rd(point) << " at cycle:" << cycle << endl;
@@ -10297,6 +10302,9 @@ void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
     cout << str(form_pt({0,1})) << endl;
+    auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[x + y, z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
+    cout << str(project_all_but(access_map, 1)) << endl;
+    cout << str(project_all_but(access_map, 0)) << endl;
     auto acc_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> [x + y, x]: z=2}");
     auto sched = isl_map_read_from_str(ctx, "{ p[x, y, z]->[0, 0, x, 0, y, 0, z, 0]}");
     auto sched_exp = isl_map_read_from_str(ctx, "{ p[0, x, y, z]->[x+2, y+1, 2*z+3]: 0<=x<=14 and 0<=y<=15 and 0<=z<=10}");
@@ -12301,8 +12309,8 @@ void emit_lake_controller_config(std::ostream& out, isl_set* write_domain, isl_a
 void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_opt, vector<isl_map*> access_maps, string op_name) {
   for (auto access_map: access_maps) {
     if (domain_name(access_map) == op_name) {
-      cout << "\taddress info: " << str(access_map) << endl;
-      cout << "\tproject result: " << str(project_all_but(access_map, 1)) << endl;
+      cout << "\taddress info: " << str(simplify(access_map)) << endl;
+      //cout << "\tproject result: " << str(project_all_but(access_map, 1)) << endl;
       //cout << "acc map = " << str(access_map) << endl;
       //TODO: not work for multiple port, should use bank.rddom
       auto reduce_map = linear_address_map_lake(range(access_map));
@@ -12313,7 +12321,40 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
       for(auto addr_expr_map: get_basic_maps(addr_expr)) {
         string buf_name = range_name(access_map);
         auto ubuf = buffers_opt.at(buf_name);
+        if (ubuf.capacity() == 0) {
+            cout << "remove 0 capacity buffer: " << buf_name << endl;
+            continue;
+        }
         bool is_rd = ubuf.is_read_op(op_name);
+
+        //Need to judge whether we need selection logic
+        //Case are we have only one input port
+        //but multiple output port for this buffer
+        //that means we need selection logic
+        if ((!is_rd) && (ubuf.num_in_ports() > 1)) {
+            //TODO: this only work for tb
+            auto pt2connect = ubuf.get_connection_map_to_outpt(access_map);
+            bool need_mux = true;
+            for (auto it: pt2connect) {
+                need_mux &= it.second;
+            }
+            if (need_mux) {
+                int out_dim = num_out_dims(access_map);
+                auto mux_reduce_map = linear_address_map_with_index(range(access_map), {out_dim - 2});
+                auto mux_addr_expr = dot(access_map, mux_reduce_map);
+                cout << str(mux_addr_expr) << endl;
+                isl_aff* addr = get_aff(mux_addr_expr);
+                out << "\"mux_write\"," << "\"" << buf_name << "\"" << endl;
+                out << "\"data_starting_addr\"," <<
+                    to_int(const_coeff(addr))  << ",0" << endl;
+                for (int d = 0; d < num_in_dims(addr); d++) {
+                  int ldim = num_in_dims(addr) - d - 1;
+                  out << "\"data_stride_" << ldim << "\"," <<
+                      to_int(get_coeff(addr, d))  << ",0" << endl;
+                }
+            }
+        }
+
         isl_aff* addr = get_aff(to_map(addr_expr_map));
         cout << "\t address generator aff expr:" << str(get_aff(to_map(addr_expr_map))) << endl;
 
@@ -12337,9 +12378,9 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
 }
 
 void emit_lake_stream(map<string, UBuffer>& buffers_opt,
-        umap* hardware_schedule, string dir) {
+        umap* hardware_schedule, string dir, bool flatten=true) {
   //assign the hardware schedule to each buffer
-  auto op2sched = get_op2sched(buffers_opt, hardware_schedule);
+  auto op2sched = get_op2sched(buffers_opt, hardware_schedule, flatten);
   for (auto & it : buffers_opt) {
     if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
       continue;
@@ -12771,10 +12812,10 @@ void lake_cascade_autovec_test() {
   cout << str(opt_sched) << endl << endl;
   cout << codegen_c(opt_sched) << endl << endl;
   map<pair<string, string>, int> latency({
-          {{"input", "input_vec"}, 1},
-          {{"conv", "conv_vec"}, 1},
-          {{"conv_2", "conv_2_vec"}, -1},
-          {{"output_2", "output_2_vec"}, -1}});
+          {{"input", "input_agg2sram"}, 1},
+          {{"conv", "conv_agg2sram"}, 1},
+          {{"conv_2", "conv_2_sram2tb"}, -1},
+          {{"output_2", "output_2_sram2tb"}, -1}});
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
@@ -12835,13 +12876,15 @@ void lake_conv33_autovec_test() {
   cout << str(opt_sched) << endl << endl;
   cout << codegen_c(opt_sched) << endl << endl;
   map<pair<string, string>, int> latency({
-          {{"input", "input_vec"}, 1},
-          {{"input_vec", "output_2_vec"}, -3},
-          {{"output_2_vec", "output_2"}, 1}});
+          {{"input", "input_agg2sram"}, 1},
+          {{"input_agg2sram", "output_2_sram2tb"}, -3},
+          {{"output_2_sram2tb", "output_2"}, 1}});
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/conv_3_3_new/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_new/");
+  cmd("mkdir -p ./lake_stream/conv_3_3_new/");
+  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_new/", false);
   /*
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
   opt.conditional_merge = false;
