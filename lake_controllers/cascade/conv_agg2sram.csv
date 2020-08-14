@@ -26,11 +26,6 @@
 "data_stride_2",0,0
 "data_stride_1",14,0
 "data_stride_0",4,0
-"mux_write","buf2_conv_12_to_buf2_output_3_ubuf_sram"
-"data_starting_addr",0,0
-"data_stride_2",0,0
-"data_stride_1",1,0
-"data_stride_0",0,0
 "write","buf2_conv_12_to_buf2_output_3_ubuf_sram"
 "data_starting_addr",0,0
 "data_stride_2",0,0

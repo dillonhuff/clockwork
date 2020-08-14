@@ -12315,16 +12315,18 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
       //TODO: not work for multiple port, should use bank.rddom
       auto reduce_map = linear_address_map_lake(range(access_map));
       //cout << "reduce map = " << str(reduce_map) << endl;
-      auto addr_expr = dot(access_map, reduce_map);
+      //auto addr_expr = dot(access_map, reduce_map);
       //cout << "composition = " << str(addr_expr) << endl;
 
-      for(auto addr_expr_map: get_basic_maps(addr_expr)) {
+      for(auto single_access_map: get_basic_maps(access_map)) {
+          cout << "single access bmap : " << str(single_access_map) << endl;
         string buf_name = range_name(access_map);
         auto ubuf = buffers_opt.at(buf_name);
         if (ubuf.capacity() == 0) {
             cout << "remove 0 capacity buffer: " << buf_name << endl;
             continue;
         }
+        auto addr_expr_map = dot(to_map(single_access_map), reduce_map);
         bool is_rd = ubuf.is_read_op(op_name);
 
         //Need to judge whether we need selection logic
@@ -12333,7 +12335,7 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
         //that means we need selection logic
         if ((!is_rd) && (ubuf.num_in_ports() > 1)) {
             //TODO: this only work for tb
-            auto pt2connect = ubuf.get_connection_map_to_outpt(access_map);
+            auto pt2connect = ubuf.get_connection_map_to_outpt(to_map(single_access_map));
             bool need_mux = true;
             for (auto it: pt2connect) {
                 need_mux &= it.second;
@@ -12355,8 +12357,8 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
             }
         }
 
-        isl_aff* addr = get_aff(to_map(addr_expr_map));
-        cout << "\t address generator aff expr:" << str(get_aff(to_map(addr_expr_map))) << endl;
+        isl_aff* addr = get_aff(addr_expr_map);
+        cout << "\t address generator aff expr:" << str(get_aff(addr_expr_map)) << endl;
 
         if (!is_rd) {
             out << "\"write\"," << "\"" << buf_name << "\"" << endl;
