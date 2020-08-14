@@ -240,7 +240,9 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 			string var = level.first;
 			int level_index = level.second;
 			string new_var_name = "<" + str(level_index) + ">";
-			normalized = ReplaceString(normalized, var, new_var_name);
+		//	if(){
+				normalized = ReplaceString(normalized, var, new_var_name); //Change this to only replace when var is the whole name of the variable
+		//	}
 		}
 		auto node = buffer_addresses.extract(addr);
 		node.key() = normalized;
@@ -384,12 +386,12 @@ bool is_reduction(const string& buff, prog& prg){
 		for(auto var : surrounding_vars_ops_vector){
 			if(!elem(var->name, pair.second) && (var->end_exclusive - var->start) > 1){
 				cout << tab(6) << "Buff doesn't read " << var->name << " with " << (var->end_exclusive - var->start) << " iterations" << endl;
-				cout << "IS REDUCTION!" << endl;
+				cout << buff << " IS REDUCTION!" << endl;
 				return true;
 			}
 		}
 	}
-
+	cout << buff << " is not reduction" << endl;
 	return false;
 }
 
@@ -449,9 +451,10 @@ int num_locs_written(const string& buff, prog& prg){
 			estimated_buffer_sizes[buff] = 0;
 		} else if(is_stencil(buff, prg)){	
 			estimated_buffer_sizes[buff] = 0; //To be implemented!
-			cout << "Access to " << buff << " is a STENCIL!" << endl;
-		} else{
-			cout << tab(3) << "NOT pointwise or stencil..." << endl;
+		} else if(is_reduction(buff, prg)){
+			estimated_buffer_sizes[buff] = 0;
+		}  else{
+			cout << tab(3) << "NOT pointwise or stencil or reduction..." << endl;
 			estimated_buffer_sizes[buff] = num_locs_written(buff, prg);
 		}
 	}
@@ -705,32 +708,45 @@ void toy_task(){
 
 }
 
-void reduce_test(){
+void accumulation_reduce_test(){
+	prog prg = accumulation();
+	assert(!is_reduction("hw_input_stencil", prg));
+//	assert(is_stencil("hw_input_stencil", prg));
+	assert(is_reduction("conv_stencil", prg));
+	assert(!is_reduction("hw_output_stencil", prg));
+//	assert(is_stencil("hw_output_stencil", prg));
+}
+
+void unet_conv_3_3_reduce_test(){
+	prog prg = unet_conv_3_3();
+	assert(is_reduction("conv_stencil", prg));
+	assert(!is_reduction("hw_output_stencil", prg));
+//	assert(is_stencil("hw_output_stencil", prg));
+//	assert(is_stencil("conv_stencil", prg));
+}
+
+void resnet_reduce_test(){
 	prog prg = resnet();
-//	prog prg2 = accumulation();
-//	prog prg3 = brighten_blur();
-	prg.pretty_print();
-//	prg2.pretty_print();
-//	prg3.pretty_print();
 	assert(is_reduction("conv_stencil", prg));
 }
 
 void cascade_stencil_test(){
 	prog prg = cascade();
 	assert(is_stencil("conv1_stencil", prg));
+	assert(!is_reduction("conv1_stencil", prg));
 	assert(is_stencil("hw_input_global_wrapper_stencil", prg));
 }
 
 void gaussian_stencil_test(){
 	prog prg = gaussian();
 	assert(is_stencil("blur_stencil", prg));
+	assert(!is_reduction("blur_stencil", prg));
 	assert(is_stencil("blur_unnormalized_stencil", prg));
 	assert(is_stencil("hw_input_stencil", prg));
 }
 
 void harris_stencil_test(){
 	prog prg = harris();
-	prg.pretty_print();
 	assert(is_stencil("padded16_stencil", prg));
 	assert(is_stencil("lgxx_stencil", prg));
 	assert(is_stencil("lxx_stencil", prg));
@@ -740,7 +756,6 @@ void harris_stencil_test(){
 
 void pointwise_pointwise_test(){
 	prog prg = pointwise();
-	prg.pretty_print();
 	assert(is_pointwise("hw_input_stencil", prg));
 	assert(is_pointwise("mult_stencil", prg));
 }
@@ -751,6 +766,7 @@ void brighten_blur_stencil_test(){
 	assert(is_stencil("in", prg));
 	assert(is_stencil("brightened", prg));
 	assert(is_stencil("blurred", prg));
+	assert(!is_reduction("in", prg));
 }
 
 void camera_pipeline_stencil_test(){
@@ -764,7 +780,7 @@ void no_stencil_test(){
 
   prog prg;
   prg.compute_unit_file = "clockwork_standard_compute_units.h";
-  prg.name = "brighten_blur";
+  prg.name = "no_stencil_test";
   prg.add_input("off_chip_input");
   prg.add_output("off_chip_output");
   prg.buffer_port_widths["off_chip_input"] = 16;
@@ -796,6 +812,7 @@ void no_stencil_test(){
   write_op->add_load("in", "n+2, m+2");
   write_op->add_store("off_chip_output", "n, m");
 
+  prg.pretty_print();
   assert(!is_stencil("in", prg));
 
 }
@@ -804,7 +821,7 @@ void one_stencil_test(){
 
   prog prg;
   prg.compute_unit_file = "clockwork_standard_compute_units.h";
-  prg.name = "brighten_blur";
+  prg.name = "one_stencil_test";
   prg.add_input("off_chip_input");
   prg.add_output("off_chip_output");
   prg.buffer_port_widths["off_chip_input"] = 16;
@@ -836,12 +853,13 @@ void one_stencil_test(){
   write_op->add_load("in", "n+2, m+2");
   write_op->add_store("off_chip_output", "n, m");
 
+  prg.pretty_print();
   assert(is_stencil("in", prg));
 
 }
 
 void prog_splitting_unit_tests(){
-/*	no_stencil_test();
+	no_stencil_test();
 	one_stencil_test();
 	brighten_blur_stencil_test();
 	cascade_stencil_test();
@@ -849,7 +867,9 @@ void prog_splitting_unit_tests(){
 	gaussian_stencil_test();
 	camera_pipeline_stencil_test();
 	pointwise_pointwise_test();
-*/	reduce_test();
+	resnet_reduce_test();
+	accumulation_reduce_test();
+	unet_conv_3_3_reduce_test();
 }
 
 //-----------------------------------------VOID PROG_SPLITTING_TESTS-------------------------------------------
