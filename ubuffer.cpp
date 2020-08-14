@@ -4,6 +4,7 @@
 #include "cwlib.h"
 #include "coreir_backend.h"
 
+using CoreIR::Instance;
 using CoreIR::Wireable;
 using CoreIR::CoreIRType;
 using CoreIR::ArrayType;
@@ -1011,7 +1012,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       }
 
       //assert(false);
-    } else if (readers <= 2 && writers <= 2) {
+    } else if (readers == 2 && writers == 2) {
       auto t = def->addInstance(buf.name + "_bank", "global.raw_quad_port_memtile", {{"depth", COREMK(c, 2048)}});
       int i = 0;
       for (auto reader : buf.get_out_ports()) {
@@ -1043,6 +1044,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
         i++;
       }
     } else {
+
+      vector<Instance*> banks;
+      for (int r = 0; r < readers; r++) {
+        banks.push_back(def->addInstance(buf.name + "_bank_" + c->getUnique(), "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}}));
+      }
+      cout << "Error: Unsupported # readers = " << readers << ", # writers = " << writers << endl;
       assert(false);
     }
 

@@ -13177,8 +13177,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
 schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
-  //sched.use_dse_compute = false;
-  sched.use_dse_compute = true;
+  sched.use_dse_compute = false;
+  //sched.use_dse_compute = true;
   for (auto op : prg.all_ops()) {
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
@@ -13424,6 +13424,8 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  test_programs.push_back(conv_multi());
+
   test_programs.push_back(accumulation());
 
   // Address generation broken, classified as stencil pipeline
@@ -13432,7 +13434,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(conv_layer());
   test_programs.push_back(partially_unrolled_conv());
   test_programs.push_back(resnet());
-  test_programs.push_back(conv_multi());
 
   concat(test_programs, stencil_programs());
 
@@ -13468,8 +13469,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
 
 void cgra_flow_tests() {
-  auto test_programs = stencil_programs();
-  //auto test_programs = all_cgra_programs();
+  //auto test_programs = stencil_programs();
+  auto test_programs = all_cgra_programs();
   //cout << "====== Program classification" << endl;
   //for (auto prg : test_programs) {
     //if (!is_rate_matchable(prg)) {
