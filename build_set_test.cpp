@@ -14012,7 +14012,26 @@ void remove_reduce_inits_test() {
   assert(false);
 }
 
+void resnet_auto_unroll() {
+  prog prg = resnet();
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //assert(false);
+
+  infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+
+  regression_test(prg);
+  assert(false);
+}
+
 void application_tests() {
+  resnet_auto_unroll();
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
   infer_bounds_multi_5x1_stage_negative_conv_test();
