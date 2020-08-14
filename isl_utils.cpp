@@ -2779,6 +2779,26 @@ isl_val* eval(isl_aff* a, isl_point* p) {
   return val;
 }
 
+isl_aff* get_aff(isl_union_map* m) {
+  return get_aff(to_map(m));
+}
+
+isl_multi_aff* get_multi_aff(isl_union_map* m) {
+  return get_multi_aff(to_map(m));
+}
+
+isl_multi_aff* get_multi_aff(isl_map* m) {
+  auto lm = isl_pw_multi_aff_from_map(cpy(m));
+  cout << tab(1) << str(m) << endl;
+  cout << tab(2) << "lexmax: " << str(lm) << endl;
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(lm);
+  assert(pieces.size() == 1);
+
+  auto saff = pieces.at(0).second;
+  return saff;
+}
+
 isl_aff* get_aff(isl_map* m) {
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
   cout << tab(1) << str(m) << endl;

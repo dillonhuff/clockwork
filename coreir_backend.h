@@ -99,4 +99,6 @@ CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
     CoreIR::Wireable* in0,
     CoreIR::Wireable* in1);
 
+void add_tahoe_memory_generator(CoreIR::Context* c);
+
 #endif

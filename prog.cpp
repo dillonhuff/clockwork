@@ -55,6 +55,10 @@ string str(const piecewise_address& addr) {
 }
 
 std::string vanilla_c_pixel_type_string(const int w) {
+  if (w == 1) {
+    return "bool";
+  }
+  
   if (w == 8) {
     return "uint8_t";
   }

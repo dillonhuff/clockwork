@@ -637,7 +637,7 @@ void connect_signal(const std::string& signal, CoreIR::Module* m) {
   }
 }
 
-void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op* op, prog& prg, map<string, UBuffer>& buffers) {
+void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op* op, prog& prg, map<string, UBuffer>& buffers, schedule_info& hwinfo) {
   auto context = def->getContext();
   auto ns = context->getNamespace("global");
 
@@ -679,7 +679,14 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     auto def = compute_unit->newModuleDef();
     if (found_compute) {
       cout << "Found compute file for " << prg.name << endl;
-      auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+      Instance* halide_cu = nullptr;
+      if (hwinfo.use_dse_compute) {
+        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
+      } else {
+        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+      }
+      assert(halide_cu != nullptr);
+
       for (auto var : op->index_variables_needed_by_compute) {
         def->connect(halide_cu->sel(var), def->sel("self")->sel(var));
       }
@@ -1053,32 +1060,13 @@ void generate_coreir_addrgen_in_tile(CodegenOptions& options,
 
 }
 
-CoreIR::Module* generate_coreir(CodegenOptions& options,
+CoreIR::Module* 
+coreir_moduledef(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
-
-  bool found_compute = true;
-  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  if (hwinfo.use_dse_compute) {
-    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
-    //compute_file = "./dse_apps/" + prg.name + ".json";
-  }
-  ifstream cfile(compute_file);
-  if (!cfile.good()) {
-    cout << "No compute unit file: " << compute_file << endl;
-    //assert(false);
-  }
-  if (!loadFromFile(context, compute_file)) {
-    found_compute = false;
-    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    if (hwinfo.use_dse_compute) {
-      assert(false);
-    }
-  }
-
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
@@ -1103,12 +1091,44 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto ub = ns->newModuleDecl(prg.name, utp);
+
+  return ub;
+}
+
+CoreIR::Module* generate_coreir(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context,
+    schedule_info& hwinfo) {
+
+  Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
+
+  bool found_compute = true;
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  if (hwinfo.use_dse_compute) {
+    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
+    //compute_file = "./dse_apps/" + prg.name + ".json";
+  }
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+    //assert(false);
+  }
+  if (!loadFromFile(context, compute_file)) {
+    found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    if (hwinfo.use_dse_compute) {
+      assert(false);
+    }
+  }
+
   auto def = ub->newModuleDef();
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
     generate_coreir_op_controller(def, op, sched_maps, hwinfo);
-    generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
+    generate_coreir_compute_unit(found_compute, def, op, prg, buffers, hwinfo);
   }
 
   for (auto& buf : buffers) {
@@ -1137,10 +1157,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       assert(buf.is_input_bundle(bundle.second));
 
       if (prg.is_output(buf_name)) {
-        auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
+        if (options.rtl_options.use_external_controllers) {
+          auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
+          def->connect(def->sel(output_en),
+              write_start_wire(def, op->name));
+        }
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        def->connect(def->sel(output_en),
-            write_start_wire(def, op->name));
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
@@ -1161,13 +1183,14 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
         auto input_bus = "self." + pg(buf_name, bundle_name);
         auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
-        //def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         // TODO: This delayed input is a hack that I insert to
         // ensure that I can assume all buffer reads take 1 cycle
         def->connect(delayed_input,
             def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
-        def->connect(def->sel(output_valid),
-            read_start_wire(def, op->name));
+        if (options.rtl_options.use_external_controllers) {
+          def->connect(def->sel(output_valid),
+              read_start_wire(def, op->name));
+        }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
@@ -1453,7 +1476,13 @@ class CustomFlatten : public CoreIR::InstanceGraphPass {
        Module* m = inst->getModuleRef();
        if (m->isGenerated()) {
          auto g = m->getGenerator();
-         if (g->getName() == "raw_dual_port_sram_tile") {
+         if (g->getName() == "raw_dual_port_sram_tile" ||
+             g->getName() == "raw_quad_port_memtile" ||
+             g->getName() == "rom2") {
+           continue;
+         }
+       } else {
+         if (m->getName() == "WrappedPE_wrapped") {
            continue;
          }
        }
@@ -1558,9 +1587,13 @@ void MapperPasses::ConstDuplication::setVisitorInfo() {
 void garnet_map_module(Module* top) {
   auto c = top->getContext();
 
+  top->print();
+
   //load_cgramapping(c);
   LoadDefinition_cgralib(c);
   c->runPasses({"deletedeadinstances"});
+
+  c->runPasses({"cullgraph"}); 
   c->runPasses({"removewires"});
   addIOs(c,top);
   c->runPasses({"cullgraph"}); 
@@ -1604,21 +1637,27 @@ void generate_coreir(CodegenOptions& options,
   CoreIRLoadLibrary_cgralib(context);
   add_delay_tile_generator(context);
   add_raw_quad_port_memtile_generator(context);
+  add_tahoe_memory_generator(context);
   ram_module(context, 16, 2048);
 
   auto c = context;
 
   auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context, hwinfo);
 
-  //garnet_map_module(prg_mod);
-
-  //prg_mod->print();
-  //assert(false);
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
+
+  //garnet_map_module(prg_mod);
+  //if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
+    //cout << "Could not save ubuffer coreir" << endl;
+    //context->die();
+  //}
+
+  //prg_mod->print();
+  //assert(false);
 
   deleteContext(context);
 }
@@ -1685,7 +1724,83 @@ CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
   return r->sel("out");
 }
 
+CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
+  vector<CoreIR::Wireable*> terms;
+  auto ns = context->getNamespace("global");
+
+  int width = 16;
+  auto context = def->getContext();
+  auto c = context;
+
+  int dims = num_in_dims(aff);
+  for (int d = 0; d < dims; d++) {
+    auto rcoeff = get_coeff(aff, d);
+    int v;
+    if (isl_val_is_int(rcoeff)) {
+      v = to_int(rcoeff);
+    } else {
+      v = isl_val_get_num_si(rcoeff);
+    }
+    cout << "raw coeff: " << str(rcoeff) << endl;
+    //int v = to_int(get_coeff(aff, d));
+    //cout << "coeff: " << v << endl;
+    auto constant = def->addInstance(
+        "coeff_" + str(d) + context->getUnique(),
+        "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+    auto m = def->addInstance(
+        "mul_d" + str(d) + "_" + context->getUnique(),
+        "coreir.mul",
+        {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(m->sel("in0"), constant->sel("out"));
+    def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
+    terms.push_back(m->sel("out"));
+  }
+  int v;
+  auto const_c = const_coeff(aff);
+  if (isl_val_is_int(const_c)) {
+    v = to_int(const_c);
+  } else {
+    v = isl_val_get_num_si(const_c);
+  }
+  cout << "coeff: " << v << endl;
+  auto constant = def->addInstance(
+      "const_term" + c->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+  terms.push_back(constant->sel("out"));
+  auto out = addList(def, terms);
+  return out;
+}
+
+CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
+  auto c = def->getContext();
+  int width = 16;
+  auto m = def->addInstance(
+      "mul_" + context->getUnique(),
+      "coreir.mul",
+      {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(m->sel("in0"), a);
+  def->connect(m->sel("in1"), mkConst(def, width, val));
+  return m->sel("out");
+}
+
+CoreIR::Wireable* shiftr(ModuleDef* def, CoreIR::Wireable* a, const int val) {
+  auto c = def->getContext();
+  int width = 16;
+  auto m = def->addInstance(
+      "shift_" + context->getUnique(),
+      "coreir.lshr",
+      {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(m->sel("in0"), a);
+  def->connect(m->sel("in1"), mkConst(def, width, val));
+  return m->sel("out");
+}
+
 CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+
   auto ns = context->getNamespace("global");
 
   int width = 16;
@@ -1701,34 +1816,65 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   auto def = m->newModuleDef();
 
   auto c = context;
+  auto self = def->sel("self");
 
-  vector<CoreIR::Wireable*> terms;
-  for (int d = 0; d < dims; d++) {
-    int v = to_int(get_coeff(aff, d));
-    cout << "coeff: " << v << endl;
-    auto constant = def->addInstance(
-        "coeff_" + str(d),
-        //context->getUnique(),
-        "coreir.const",
-      {{"width", CoreIR::Const::make(c, width)}},
-      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-    auto m = def->addInstance(
-        "mul_d" + str(d) + "_" + context->getUnique(),
-        "coreir.mul",
-        {{"width", CoreIR::Const::make(c, width)}});
-    def->connect(m->sel("in0"), constant->sel("out"));
-    def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
-    terms.push_back(m->sel("out"));
+
+  vector<Wireable*> terms;
+  for (int d = 0; d < num_div_dims(aff); d++) {
+    auto a = isl_aff_get_div(aff, d);
+    cout << tab(2) << "=== div: " << str(a) << endl;
+    int denom = to_int(isl_aff_get_denominator_val(a));
+    assert(denom == 2);
+    cout << tab(3) << "denom = " << denom << endl;
+    int coeff = to_int(isl_aff_get_coefficient_val(aff, isl_dim_div, d));
+    auto res = sum_term_numerators(def, a);
+    auto val = mul(def, shiftr(def, res, 1), coeff);
+    terms.push_back(val);
+    //if (coeff != 0) {
+      //for (int k = 0; k < num_in_dims(a); k++) {
+        //auto inner_coeff = get_coeff(a, k);
+        //cout << tab(3) << str(inner_coeff) << endl;
+      //}
+      //cout << tab(3) << "coeff = " << coeff << endl;
+      //auto term_aff = def->addInstance("div_aff_" + context->getUnique(), coreir_for_aff(context, a));
+      //def->connect(term_aff->sel("d"), self->sel("d"));
+      //// Replace with shift by 1
+      ////terms.push_back(term_aff->sel("out"));
+    //}
   }
-  int v = to_int(const_coeff(aff));
-  cout << "coeff: " << v << endl;
-  auto constant = def->addInstance(
-      "const_term",
-      "coreir.const",
-      {{"width", CoreIR::Const::make(c, width)}},
-      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-  terms.push_back(constant->sel("out"));
-  auto out = addList(def, terms);
+  //assert(num_div_dims(aff) == 0);
+
+  auto outr = sum_term_numerators(def, aff);
+  terms.push_back(outr);
+  auto out = addList(def, terms); 
+  //for (int d = 0; d < dims; d++) {
+    //auto rcoeff = get_coeff(aff, d);
+    //cout << "raw coeff: " << str(rcoeff) << endl;
+    //int v = to_int(get_coeff(aff, d));
+    //cout << "coeff: " << v << endl;
+    //auto constant = def->addInstance(
+        //"coeff_" + str(d),
+        ////context->getUnique(),
+        //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+    //auto m = def->addInstance(
+        //"mul_d" + str(d) + "_" + context->getUnique(),
+        //"coreir.mul",
+        //{{"width", CoreIR::Const::make(c, width)}});
+    //def->connect(m->sel("in0"), constant->sel("out"));
+    //def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
+    //terms.push_back(m->sel("out"));
+  //}
+  //int v = to_int(const_coeff(aff));
+  //cout << "coeff: " << v << endl;
+  //auto constant = def->addInstance(
+      //"const_term",
+      //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+  //terms.push_back(constant->sel("out"));
+  //auto out = addList(def, terms);
   def->connect(def->sel("self.out"), out);
   m->setDef(def);
 
@@ -2022,6 +2168,60 @@ void add_delay_tile_generator(CoreIR::Context* c) {
     def->connect(srinst->sel("wdata"), self->sel("wdata"));
     def->connect(srinst->sel("rdata"), self->sel("rdata"));
 
+    });
+}
+
+void add_tahoe_memory_generator(CoreIR::Context* c) {
+  auto cgralib = c->getNamespace("global");
+  CoreIR::Params params = {{"depth",c->Int()}};
+
+  Params reg_array_args = {{"type", CoreIRType::make(c)},
+                           {"has_en", c->Bool()},
+                           {"has_clr", c->Bool()},
+                           {"has_rst", c->Bool()},
+                           {"init", c->Int()}};
+  TypeGen* ramTG = cgralib->newTypeGen(
+    "tahoe_TG",
+    params,
+    [](Context* c, Values args) {
+    int width = 16;
+
+  auto tp = c->Record({
+      {"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)->Arr(2)},
+      {"waddr", c->BitIn()->Arr(width)->Arr(2)},
+      {"wen", c->BitIn()->Arr(2)},
+      {"rdata", c->Bit()->Arr(width)->Arr(2)},
+      {"raddr", c->BitIn()->Arr(width)->Arr(2)},
+      {"ren", c->BitIn()->Arr(2)}});
+  return tp;
+    });
+  Generator* ram = cgralib->newGeneratorDecl("tahoe", ramTG, params);
+
+
+  ram->setGeneratorDefFromFun(
+    [](Context* c, Values args, ModuleDef* def) {
+
+    int width = 16;
+    int depth = args.at("depth")->get<int>();
+    uint awidth = (uint)ceil(log2(depth));
+
+
+    auto core_ram = def->addInstance("mem", "global.raw_dual_port_sram_tile", {{"depth", args.at("depth")}});
+
+    auto self = def->sel("self");
+    auto wen1 = self->sel("wen")->sel(1);
+    auto ren1 = self->sel("ren")->sel(1);
+
+    cmux(def, 16, core_ram->sel("wdata"), wen1, self->sel("wdata")->sel(0), self->sel("wdata")->sel(1));
+    cmux(def, 16, core_ram->sel("waddr"), wen1, self->sel("waddr")->sel(0), self->sel("waddr")->sel(1));
+    cmux(def, core_ram->sel("wen"), wen1, self->sel("wen")->sel(0), self->sel("wen")->sel(1));
+
+    cmux(def, core_ram->sel("ren"), ren1, self->sel("ren")->sel(0), self->sel("ren")->sel(1));
+    cmux(def, 16, core_ram->sel("raddr"), ren1, self->sel("raddr")->sel(0), self->sel("raddr")->sel(1));
+
+    def->connect(self->sel("rdata")->sel(0), core_ram->sel("rdata"));
+    def->connect(self->sel("rdata")->sel(1), core_ram->sel("rdata"));
     });
 }
 
