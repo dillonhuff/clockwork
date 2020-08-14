@@ -1210,6 +1210,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   //context->runPasses({"rungenerators", "wireclocks-coreir"});
   context->runPasses({"rungenerators", "wireclocks-clk"});
 
+  assert(false);
   return ub;
   //assert(false);
 }
@@ -1650,6 +1651,7 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
+  assert(false);
   //garnet_map_module(prg_mod);
   //if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
     //cout << "Could not save ubuffer coreir" << endl;
