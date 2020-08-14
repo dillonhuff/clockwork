@@ -11,3 +11,8 @@
 "data_stride_2",0,0
 "data_stride_1",16,0
 "data_stride_0",1,0
+"write","buf1_input_10_to_buf1_conv_21_ubuf"
+"data_starting_addr",0,0
+"data_stride_2",0,0
+"data_stride_1",16,0
+"data_stride_0",1,0

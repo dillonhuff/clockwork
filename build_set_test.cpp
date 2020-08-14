@@ -12322,10 +12322,6 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
           cout << "single access bmap : " << str(single_access_map) << endl;
         string buf_name = range_name(access_map);
         auto ubuf = buffers_opt.at(buf_name);
-        if (ubuf.capacity() == 0) {
-            cout << "remove 0 capacity buffer: " << buf_name << endl;
-            continue;
-        }
         auto addr_expr_map = dot(to_map(single_access_map), reduce_map);
         bool is_rd = ubuf.is_read_op(op_name);
 
@@ -12410,7 +12406,7 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
   auto dom_map = get_sets_in_map(glb_domain);
   auto access_maps = get_maps(glb_access_map);
 
-  //produce the schedule config
+  //produce the schedule config for each op
   for (auto m : get_maps(hardware_schedule)) {
     cout << tab(1) << domain_name(m) << endl;
     string op_name = domain_name(m);
@@ -12420,6 +12416,7 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
     auto dom = dom_map.at(op_name);
     if (retrive_dom_map.count(op_name)) {
       dom = retrive_dom_map.at(op_name);
+
       //transform the iteration domain back to it's original dimension
       write_sched = retrive_map_domain_with_dim(m, dom);
       for (auto& it: access_maps) {
@@ -12429,16 +12426,49 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
       }
     }
 
-    //chances are that we have multi-aff expression
+    //find the memory tile interface op we need to generate multiple file
+    vector<isl_map*> access_map_for_op;
+    for (auto acc_map: access_maps) {
+        if (domain_name(acc_map) == op_name) {
 
-    ofstream out(string(dir) + op_name + ".csv");
-    cout << tab(1) << str(m) << endl;
-    emit_lake_controller_config(out, dom, get_aff(write_sched));
+            //remove the wire
+            string buf_name = range_name(acc_map);
+            auto ubuf = buffers_opt.at(buf_name);
+            if (ubuf.capacity() == 0) {
+                cout << "remove 0 capacity buffer: " << buf_name << endl;
+                continue;
+            }
 
-    //emit address config
-    emit_lake_addrgen_config(out, buffers_opt, access_maps, op_name);
+            access_map_for_op.push_back(acc_map);
+        }
+    }
 
-    out.close();
+    if (access_map_for_op.size() > 1) {
+
+        //generate configuration for internal sram related controller
+        ofstream out(string(dir) + op_name + ".csv");
+        cout << "\tGenerate config csv for : " << tab(1) << op_name << endl;
+        emit_lake_controller_config(out, dom, get_aff(write_sched));
+
+        //emit address config
+        emit_lake_addrgen_config(out, buffers_opt, access_maps, op_name);
+
+        out.close();
+    }
+    else {
+      assert(access_map_for_op.size() == 1);
+      int pt_cnt = 0;
+      for(auto single_access_map: get_basic_maps(pick(access_map_for_op))) {
+        cout << "single access bmap : " << str(single_access_map) << endl;
+        ofstream out(string(dir) + op_name +"_"+ to_string(pt_cnt) + ".csv");
+        cout << "\tGenerate config csv for : " << tab(1) << op_name + "_" + to_string(pt_cnt) << endl;
+        emit_lake_controller_config(out, dom, get_aff(write_sched));
+
+        //emit address config
+        emit_lake_addrgen_config(out, buffers_opt, {to_map(single_access_map)}, op_name);
+        pt_cnt ++;
+      }
+    }
   }
   return generated_op;
 }
