@@ -1043,12 +1043,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
             control_en(def, reader, buf));
         i++;
       }
-    } else {
-
+    } else if (writers == 1) {
       vector<Instance*> banks;
       for (int r = 0; r < readers; r++) {
         banks.push_back(def->addInstance(buf.name + "_bank_" + c->getUnique(), "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}}));
       }
+    } else {
       cout << "Error: Unsupported # readers = " << readers << ", # writers = " << writers << endl;
       assert(false);
     }
