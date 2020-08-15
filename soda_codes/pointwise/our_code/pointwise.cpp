@@ -221,21 +221,9 @@ void pointwise(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_
 // Condition for op_hcompute_hw_output_stencil(((-2 + i2 == 0) && (i0 >= 0) && (63 - i0 >= 0) && (i1 >= 0) && (63 - i1 >= 0)))
 
   /*
-for (int c0 = 0; c0 <= 63; c0 += 1)
-  for (int c1 = 0; c1 <= 63; c1 += 1) {
-    op_hcompute_hw_input_global_wrapper_stencil(0, c0, c1);
-    op_hcompute_mult_stencil(0, c0, c1);
-    op_hcompute_hw_output_stencil(0, c0, c1);
-  }
-
+AHHHHH
   */
-	for (int c0 = 0; c0 <= 63; c0 += 1)
-	  for (int c1 = 0; c1 <= 63; c1 += 1) {
-	    op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, 0, c0, c1);
-	    op_hcompute_mult_stencil(hw_input_global_wrapper_stencil /* buf name */, mult_stencil, 0, c0, c1);
-	    op_hcompute_hw_output_stencil(mult_stencil /* buf name */, hw_output_stencil, 0, c0, c1);
-	  }
-	
+	AHHHHH
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
 #endif //__VIVADO_SYNTH__

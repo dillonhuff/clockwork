@@ -4879,8 +4879,31 @@ void bft(op* op, F test) {
 }
 
 template<typename F>
+void dft(op* op, F test) {
+  test(op);
+  for (auto c : op->children) {
+    dft(c, test);
+  }
+}
+
+template<typename F>
 void bft(prog& prg, F test) {
   bft(prg.root, test);
+}
+
+template<typename F>
+void dft(prog& prg, F test) {
+  dft(prg.root, test);
+}
+
+std::vector<op*> get_dft_ops(prog& prg) {
+  std::vector<op*> inner;
+  dft(prg, [&inner](op* node) {
+      if (!node->is_loop) {
+      inner.push_back(node);
+      }
+      });
+  return inner;
 }
 
 std::vector<op*> get_ordered_inner_loops(prog& prg) {

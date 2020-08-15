@@ -1685,3 +1685,4 @@ bool all_loop_nests_same_depth(prog& prg);
 
 bool is_perfect(op* loop, prog& prg);
 bool all_perfect_loop_nests(prog& prg);
+std::vector<op*> get_dft_ops(prog& prg);
