@@ -1320,3 +1320,4 @@ string next_name(const std::string& prefix, ilp_builder& b) {
 umap* to_umap(uset* domain, const map<string, isl_aff*>& hs);
 
 umap* to_umap(const map<string, isl_aff*>& hs);
+umap* qschedule_to_map_final_sort(isl_ctx* ctx, map<string, vector<QExpr> >& schedules);

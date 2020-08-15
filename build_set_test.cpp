@@ -13471,18 +13471,63 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
 void generate_fpga_clockwork_code(prog& prg) {
   auto valid = prg.validity_deps();
-  auto cwsched = clockwork_schedule_umap(prg.whole_iteration_domain(), valid, cpy(valid));
+  map<string, vector<isl_aff*> > cwsched = clockwork_schedule(prg.whole_iteration_domain(), valid, cpy(valid));
   cout << "Clockwork sched..." << endl;
-  for (auto s : get_maps(cwsched)) {
-    cout << tab(1) << str(s) << endl;
-  }
   std::vector<op*> dft_ops = get_dft_ops(prg);
   cout << "DFT op order" << endl;
+  int pos = 0;
   for (auto op : dft_ops) {
     cout << tab(1) << op->name << endl;
+
+    string aff_str = 
+      "{ [i] -> [(" + str(pos) + ")]}";
+    cwsched[op->name].push_back(rdaff(prg.ctx, aff_str));
+    pos++;
+  }
+
+  map<string, vector<QExpr> > scheds;
+  for (auto s : cwsched) {
+    string name = s.first;
+    vector<isl_aff*> vals = s.second;
+
+    scheds[name] = {};
+    int i = 0;
+    for (auto v : vals) {
+      QExpr rate = qexpr("d" + str(i));
+      auto rate_coeff =
+        qexpr(int_coeff(v, 0));
+      auto delay =
+        qexpr(int_const_coeff(v));
+
+      QExpr expr =
+        rate_coeff*rate + delay;
+      scheds[name].push_back(expr);
+      i++;
+    }
+  }
+
+  // schedule is dN, ..., d1, d0
+  for (auto& s : scheds) {
+    reverse(s.second);
+  }
+
+  cout << "Final schedule..." << endl;
+  for (auto s : scheds) {
+    cout << tab(1) << s.first << endl;
+    for (auto v : s.second) {
+      cout << tab(2) << v << endl;
+    }
+    cout << endl;
+  }
+
+  auto sched = qschedule_to_map_final_sort(prg.ctx, scheds);
+  cout << "Sched..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
   }
   assert(false);
-  auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+
+  //auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
 
   cout << "Optimized schedule..." << endl;
   cout << tab(1) << ": " << str(sched) << endl << endl;
