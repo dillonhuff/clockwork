@@ -13502,19 +13502,22 @@ void test_stencil_codegen(vector<prog>& test_programs) {
   }
 }
 
-
 void generate_fpga_clockwork_code(prog& prg) {
   auto valid = prg.validity_deps();
   auto dom = prg.whole_iteration_domain();
-  map<string, vector<isl_aff*> > cwsched = clockwork_schedule(dom, valid, cpy(valid));
+  map<string, vector<isl_aff*> > cwsched =
+    clockwork_schedule(dom, valid, cpy(valid));
+
   cout << "Clockwork sched..." << endl;
   std::vector<op*> dft_ops = get_dft_ops(prg);
   cout << "DFT op order" << endl;
   int pos = 0;
   map<string, int> positions;
+  vector<string> ops;
   for (auto op : dft_ops) {
     cout << tab(1) << op->name << endl;
     positions[op->name] = pos;
+    ops.push_back(op->name);
     pos++;
   }
 
@@ -13542,11 +13545,16 @@ void generate_fpga_clockwork_code(prog& prg) {
   // schedule is dN, ..., d1, d0
   for (auto& s : scheds) {
     reverse(s.second);
-    QAV v = qconst(map_find(s.first, positions));
-    QTerm t{{v}};
-    QExpr e{{t}};
-    s.second.push_back(e);
   }
+
+  //// schedule is dN, ..., d1, d0
+  //for (auto& s : scheds) {
+    //reverse(s.second);
+    //QAV v = qconst(map_find(s.first, positions));
+    //QTerm t{{v}};
+    //QExpr e{{t}};
+    //s.second.push_back(e);
+  //}
 
   cout << "Final schedule..." << endl;
   for (auto s : scheds) {
@@ -13557,14 +13565,25 @@ void generate_fpga_clockwork_code(prog& prg) {
     cout << endl;
   }
 
-  auto sched = qschedule_to_map_final_sort(prg.ctx, scheds);
+  auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
 
-  //cout << "Optimized schedule..." << endl;
+  cout << "Optimized schedule..." << endl;
+  for (auto s : get_maps(sched)) {
+    cout << tab(1) << str(s) << endl;
+  }
+  assert(false);
+
   //cout << tab(1) << ": " << str(sched) << endl << endl;
   //cout << codegen_c(sched) << endl;
 
   auto buffers = build_buffers(prg, sched);
 
+  for (auto& s : scheds) {
+    QAV v = qconst(map_find(s.first, positions));
+    QTerm t{{v}};
+    QExpr e{{t}};
+    s.second.push_back(e);
+  }
   assert(prg.compute_unit_file != "");
   cout << "Compute unit file: "
     << prg.compute_unit_file << endl;
@@ -13572,7 +13591,6 @@ void generate_fpga_clockwork_code(prog& prg) {
   options.internal = true;
   options.use_custom_code_string = true;
   map<string, Box> compute_domains;
-  vector<string> ops;
   for (auto s : get_sets(dom)) {
     ops.push_back(name(s));
     Box bounds;

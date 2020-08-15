@@ -1570,6 +1570,35 @@ hardware_schedule_umap(uset* domain, umap* validity, umap* proximity) {
   //return padded;
 //}
 
+umap* qschedule_to_map_final_sort(isl_ctx* ctx, map<string, vector<QExpr> >& schedules, map<string, int>& order) {
+  umap* m = rdmap(ctx, "{}");
+  for (auto fn : schedules) {
+    string f = fn.first;
+    vector<string> sched_exprs;
+    vector<string> var_names;
+    int i = 0;
+    for (auto v : map_find(f, schedules)) {
+      string dv = "d" + to_string(i);
+      sched_exprs.push_back(isl_str(v));
+      cout << "Sched expr: " << sched_exprs.back() << endl;
+      var_names.push_back(dv);
+      i++;
+    }
+    sched_exprs.push_back(str(map_find(fn.first, order)));
+    //var_names.pop_back();
+    string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+
+    cout << "Map str: " << map_str << endl;
+    auto rm = rdmap(ctx, map_str);
+    cout << "map got str" << endl;
+    m = unn(m, rm);
+    isl_union_map_free(rm);
+  }
+
+  return m;
+  
+}
+
 umap* qschedule_to_map_final_sort(isl_ctx* ctx, map<string, vector<QExpr> >& schedules) {
   umap* m = rdmap(ctx, "{}");
   for (auto fn : schedules) {
