@@ -13476,12 +13476,13 @@ void generate_fpga_clockwork_code(prog& prg) {
   std::vector<op*> dft_ops = get_dft_ops(prg);
   cout << "DFT op order" << endl;
   int pos = 0;
+  map<string, int> positions;
   for (auto op : dft_ops) {
     cout << tab(1) << op->name << endl;
-
-    string aff_str = 
-      "{ [i] -> [(" + str(pos) + ")]}";
-    cwsched[op->name].push_back(rdaff(prg.ctx, aff_str));
+    positions[op->name] = pos;
+    //string aff_str = 
+      //"{ [i] -> [(" + str(pos) + ")]}";
+    //cwsched[op->name].push_back(rdaff(prg.ctx, aff_str));
     pos++;
   }
 
@@ -13509,6 +13510,10 @@ void generate_fpga_clockwork_code(prog& prg) {
   // schedule is dN, ..., d1, d0
   for (auto& s : scheds) {
     reverse(s.second);
+    QAV v = qconst(map_find(s.first, positions));
+    QTerm t{{v}};
+    QExpr e{{t}};
+    s.second.push_back(e);
   }
 
   cout << "Final schedule..." << endl;
