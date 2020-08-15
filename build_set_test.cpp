@@ -12973,6 +12973,40 @@ void adjust_schedule_forward(schedule_info& sched, prog& prg) {
     }
   }
 
+}
+
+void pad_to_single_depth(prog& prg) {
+  bool single_depth = all_loop_nests_same_depth(prg);
+  int max_depth = max_loop_depth(prg);
+
+
+  if (!single_depth) {
+    map<string, vector<int> > pad_indexes;
+    for (auto k : get_kernels(prg)) {
+      auto lp = prg.find_loop(k);
+      for (auto rep : lp->descendant_ops()) {
+        int depth_m = loop_depth(prg.find_loop(k));
+        vector<int> inds;
+        inds.push_back(0);
+        for (int p = 0; p < max_depth - depth_m; p++) {
+          inds.push_back(-1);
+        }
+        for (int d = 1; d < depth_m + 1; d++) {
+          inds.push_back(d);
+        }
+
+        pad_indexes[rep->name] = inds;
+      }
+    }
+    cout << "Pad inds..." << endl;
+    for (auto p : pad_indexes) {
+      cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+    }
+    insert_pad_loops(prg, pad_indexes);
+  }
+  prg.pretty_print();
+  single_depth = all_loop_nests_same_depth(prg);
+  assert(single_depth);
 
 }
 
@@ -13557,7 +13591,7 @@ void generate_fpga_clockwork_code(prog& prg) {
   options.code_string = cgn;
   cout << "Code string..." << endl;
   cout << cgn << endl;
-  assert(false);
+  //assert(false);
   generate_app_code(options, buffers, prg, sched);
 
   release(sched);
@@ -13567,6 +13601,9 @@ void fpga_asplos_tests() {
 
   auto test_programs = stencil_programs();
   for (auto prg : test_programs) {
+    cout << "==== FPGA clockwork code for " << prg.name << endl;
+    dsa_writers(prg);
+    pad_to_single_depth(prg);
     generate_fpga_clockwork_code(prg);
     move_to_benchmarks_folder(prg.name);
   }
