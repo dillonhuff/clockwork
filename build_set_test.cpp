@@ -13441,6 +13441,7 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
+  test_programs.push_back(cascade());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
 
@@ -13448,7 +13449,6 @@ vector<prog> stencil_programs() {
   test_programs.push_back(harris());
   test_programs.push_back(rom());
   test_programs.push_back(unsharp());
-  test_programs.push_back(cascade());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(gaussian());
   test_programs.push_back(down_sample());
@@ -13572,18 +13572,17 @@ void generate_fpga_clockwork_code(prog& prg) {
     cout << tab(1) << str(s) << endl;
   }
   //assert(false);
-
   //cout << tab(1) << ": " << str(sched) << endl << endl;
   //cout << codegen_c(sched) << endl;
 
   auto buffers = build_buffers(prg, sched);
 
-  for (auto& s : scheds) {
-    QAV v = qconst(map_find(s.first, positions));
-    QTerm t{{v}};
-    QExpr e{{t}};
-    s.second.push_back(e);
-  }
+  //for (auto& s : scheds) {
+    //QAV v = qconst(map_find(s.first, positions));
+    //QTerm t{{v}};
+    //QExpr e{{t}};
+    //s.second.push_back(e);
+  //}
   assert(prg.compute_unit_file != "");
   cout << "Compute unit file: "
     << prg.compute_unit_file << endl;
@@ -13603,13 +13602,17 @@ void generate_fpga_clockwork_code(prog& prg) {
     compute_domains[name(s)] = bounds;
   }
 
+  cout << "Boxes..." << endl;
+  for (auto b : compute_domains) {
+    cout << tab(1) << b.first << " -> " << b.second << endl;
+  }
+  assert(false);
   cout << "Generating box codegen" << endl;
   string cgn = box_codegen(options, ops, scheds, compute_domains);
   cout << "Done" << endl;
   options.code_string = cgn;
   cout << "Code string..." << endl;
   cout << cgn << endl;
-  //assert(false);
   generate_app_code(options, buffers, prg, sched);
 
   release(sched);
