@@ -13571,7 +13571,7 @@ void generate_fpga_clockwork_code(prog& prg) {
   for (auto s : get_maps(sched)) {
     cout << tab(1) << str(s) << endl;
   }
-  assert(false);
+  //assert(false);
 
   //cout << tab(1) << ": " << str(sched) << endl << endl;
   //cout << codegen_c(sched) << endl;

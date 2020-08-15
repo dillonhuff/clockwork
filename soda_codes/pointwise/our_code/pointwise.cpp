@@ -11,19 +11,47 @@ using namespace std;
 
 #include "hw_classes.h"
 
+struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3_cache {
+	// RAM Box: {[0, 63], [0, 63]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
 struct hw_input_global_wrapper_stencil_cache {
-  // # of banks: 0
+  // # of banks: 1
+  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3;
 };
 
 
 
 inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
+  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3.push(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0);
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int mult_s0_y, int mult_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3 read pattern: { op_hcompute_mult_stencil[root = 0, mult_s0_y, mult_s0_x] -> hw_input_global_wrapper_stencil[mult_s0_y, mult_s0_x] : 0 <= mult_s0_y <= 63 and 0 <= mult_s0_x <= 63 }
+  // Read schedule : { op_hcompute_mult_stencil[d0 = 0, d1, d2] -> [d2, d1, 0, 1] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+  // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [d2, d1, 0, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_3.peek(/* one reader or all rams */ 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
 
@@ -49,19 +77,47 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_read
 
 #include "hw_classes.h"
 
+struct mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_cache {
+	// RAM Box: {[0, 63], [0, 63]}
+	// Capacity: 1
+	// # of read delays: 2
+  // 0, 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
 struct mult_stencil_cache {
-  // # of banks: 0
+  // # of banks: 1
+  mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5_cache mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5;
 };
 
 
 
 inline void mult_stencil_op_hcompute_mult_stencil_2_write(hw_uint<16>& mult_stencil_op_hcompute_mult_stencil_2, mult_stencil_cache& mult_stencil, int root, int mult_s0_y, int mult_s0_x, int dynamic_address) {
+  mult_stencil.mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5.push(mult_stencil_op_hcompute_mult_stencil_2);
 }
 
 inline hw_uint<16> mult_stencil_op_hcompute_hw_output_stencil_5_select(mult_stencil_cache& mult_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // mult_stencil_op_hcompute_hw_output_stencil_5 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> mult_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 63 and 0 <= hw_output_s0_x_xi <= 63 }
+  // Read schedule : { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [d2, d1, 0, 2] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+  // Write schedule: { op_hcompute_mult_stencil[d0 = 0, d1, d2] -> [d2, d1, 0, 1] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+  auto value_mult_stencil_op_hcompute_mult_stencil_2 = mult_stencil.mult_stencil_op_hcompute_mult_stencil_2_to_mult_stencil_op_hcompute_hw_output_stencil_5.peek(/* one reader or all rams */ 0);
+  return value_mult_stencil_op_hcompute_mult_stencil_2;
   return 0;
 }
 
@@ -156,13 +212,13 @@ void pointwise(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { op_hcompute_mult_stencil[d0, d1, d2] -> [d2, d1, d0]; op_hcompute_hw_output_stencil[d0, d1, d2] -> [d2, d1, d0]; op_hcompute_hw_input_global_wrapper_stencil[d0, d1, d2] -> [d2, d1, d0] }
-//   { op_hcompute_mult_stencil[d0, d1, d2] -> [d2, d1, d0] }
-// Condition for op_hcompute_mult_stencil(true)
-//   { op_hcompute_hw_output_stencil[d0, d1, d2] -> [d2, d1, d0] }
-// Condition for op_hcompute_hw_output_stencil(true)
-//   { op_hcompute_hw_input_global_wrapper_stencil[d0, d1, d2] -> [d2, d1, d0] }
-// Condition for op_hcompute_hw_input_global_wrapper_stencil(true)
+// schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0, d1, d2] -> [d2, d1, d0, 0]; op_hcompute_mult_stencil[d0, d1, d2] -> [d2, d1, d0, 1]; op_hcompute_hw_output_stencil[d0, d1, d2] -> [d2, d1, d0, 2] }
+//   { op_hcompute_hw_input_global_wrapper_stencil[d0, d1, d2] -> [d2, d1, d0, 0] }
+// Condition for op_hcompute_hw_input_global_wrapper_stencil(((i3 == 0)))
+//   { op_hcompute_mult_stencil[d0, d1, d2] -> [d2, d1, d0, 1] }
+// Condition for op_hcompute_mult_stencil(((-1 + i3 == 0)))
+//   { op_hcompute_hw_output_stencil[d0, d1, d2] -> [d2, d1, d0, 2] }
+// Condition for op_hcompute_hw_output_stencil(((-2 + i3 == 0)))
 
   /*
   // Schedules...
