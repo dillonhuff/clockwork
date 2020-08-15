@@ -13471,7 +13471,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
 void generate_fpga_clockwork_code(prog& prg) {
   auto valid = prg.validity_deps();
-  map<string, vector<isl_aff*> > cwsched = clockwork_schedule(prg.whole_iteration_domain(), valid, cpy(valid));
+  auto dom = prg.whole_iteration_domain();
+  map<string, vector<isl_aff*> > cwsched = clockwork_schedule(dom, valid, cpy(valid));
   cout << "Clockwork sched..." << endl;
   std::vector<op*> dft_ops = get_dft_ops(prg);
   cout << "DFT op order" << endl;
@@ -13480,9 +13481,6 @@ void generate_fpga_clockwork_code(prog& prg) {
   for (auto op : dft_ops) {
     cout << tab(1) << op->name << endl;
     positions[op->name] = pos;
-    //string aff_str = 
-      //"{ [i] -> [(" + str(pos) + ")]}";
-    //cwsched[op->name].push_back(rdaff(prg.ctx, aff_str));
     pos++;
   }
 
@@ -13526,17 +13524,10 @@ void generate_fpga_clockwork_code(prog& prg) {
   }
 
   auto sched = qschedule_to_map_final_sort(prg.ctx, scheds);
-  //cout << "Sched..." << endl;
-  //for (auto m : get_maps(sched)) {
-    //cout << tab(1) << str(m) << endl;
-  //}
-  //assert(false);
 
-  //auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
-
-  cout << "Optimized schedule..." << endl;
-  cout << tab(1) << ": " << str(sched) << endl << endl;
-  cout << codegen_c(sched) << endl;
+  //cout << "Optimized schedule..." << endl;
+  //cout << tab(1) << ": " << str(sched) << endl << endl;
+  //cout << codegen_c(sched) << endl;
 
   auto buffers = build_buffers(prg, sched);
 
@@ -13548,14 +13539,21 @@ void generate_fpga_clockwork_code(prog& prg) {
   options.use_custom_code_string = true;
   map<string, Box> compute_domains;
   vector<string> ops;
-  //for (auto u : sort_updates()) {
-    //if (!is_external(u)) {
-      //ops.push_back(u);
-      //compute_domains[u] = compute_box(u);
-    //}
-  //}
+  for (auto s : get_sets(dom)) {
+    ops.push_back(name(s));
+    Box bounds;
+    for (int d = 0; d < num_dims(s); d++) {
+      auto pr = project_all_but(s, d);
+      int minv = to_int(lexminval(pr));
+      int maxv = to_int(lexmaxval(pr));
+      bounds.intervals.push_back({minv, maxv});
+    }
+    compute_domains[name(s)] = bounds;
+  }
 
+  cout << "Generating box codegen" << endl;
   string cgn = box_codegen(options, ops, scheds, compute_domains);
+  cout << "Done" << endl;
   options.code_string = cgn;
   cout << "Code string..." << endl;
   cout << cgn << endl;
