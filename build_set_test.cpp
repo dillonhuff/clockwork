@@ -13469,6 +13469,15 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 }
 
 
+void fpga_asplos_tests() {
+
+  auto test_programs = stencil_programs();
+  for (auto prg : test_programs) {
+    generate_optimized_code(prg);
+    move_to_benchmarks_folder(prg.name);
+  }
+}
+
 void cgra_flow_tests() {
   auto test_programs = stencil_programs();
   //auto test_programs = all_cgra_programs();
@@ -14491,6 +14500,11 @@ int main(int argc, char** argv) {
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+    
+    if (cmd == "fpga-asplos-flow") {
+      fpga_asplos_tests();
+      return 0;
+    }
 
     if (cmd == "cgra-flow") {
       cgra_flow_tests();
