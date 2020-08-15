@@ -1209,9 +1209,6 @@ void synth_lb_test() {
   isl_ctx_free(buf.ctx);
 }
 
-vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
-    return buffer_vectorization({buf_name}, dim_id, fetch_width, buffers);
-}
 vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
   /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
    * generate the new domain and access map and also add two other buffer on
@@ -1239,6 +1236,10 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     buffers.erase(rem);
   }
   return rem_deps;
+}
+
+vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
+    return buffer_vectorization(vector<string>({buf_name}), dim_id, fetch_width, buffers);
 }
 
 /* Main driver function for vectorization, loop through all the ubuffer
@@ -1377,7 +1378,7 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
     isl_ctx* ctx = isl_ctx_alloc();
     auto um = isl_union_map_read_from_str(ctx, "{}");
-    optimized_schedule_from_buffers(buffers, {}, um);
+    return optimized_schedule_from_buffers(buffers, {}, um);
 }
 
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, isl_union_map* global_sched, bool has_global_constraint) {
@@ -12733,7 +12734,7 @@ void lake_resnet_test() {
     }
   auto buf = it.second;
   auto ubuf_name = it.first;
-  if (ubuf_name != "hw_kernel_stencil")
+  if (ubuf_name != "hw_input_stencil")
       continue;
   //auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
   auto post_proc_buffers = buf.generate_ubuffer(opt);
@@ -12754,7 +12755,7 @@ void lake_resnet_test() {
     tmp.insert(it);
     cout << "Vectorizing " << it.first << endl;
     cout << it.second << endl;
-    buffer_vectorization(it.first, 3, 4, tmp);
+    buffer_vectorization(it.first, 2, 4, tmp);
     cout << "Done with vectorization" << endl;
     //for (auto it: tmp) {
     //    auto buf = it.second;
@@ -12769,10 +12770,11 @@ void lake_resnet_test() {
 
     //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
     //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
-    auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
-    //auto opt_sched = optimized_schedule_from_buffers(temp);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
+    auto opt_sched = optimized_schedule_from_buffers(tmp);
     cout << str(opt_sched) << endl;
     cout << codegen_c(opt_sched) << endl;
+    assert(false);
     int app_target_II = 1;
 
     //map<pair<string, string>, int> latency({{{"input", "input_vec"}, 1},
@@ -12890,8 +12892,7 @@ void lake_harris_autovec_test() {
   auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
   cout << str(opt_sched) << endl << endl;
   cout << codegen_c(opt_sched) << endl << endl;
-  assert(false);
-  map<pair<string, string>, int> latency({
+  /*map<pair<string, string>, int> latency({
           {{"input", "input_agg2sram"}, 1},
           {{"input_agg2sram", "output_2_sram2tb"}, -3},
           {{"output_2_sram2tb", "output_2"}, 1}});
@@ -12900,7 +12901,7 @@ void lake_harris_autovec_test() {
   cmd("mkdir -p ./lake_controllers/harris/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/harris/");
   cmd("mkdir -p ./lake_stream/harris/");
-  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
+  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);*/
 }
 
 void lake_conv33_autovec_test() {
@@ -14554,8 +14555,8 @@ void application_tests() {
   //lake_dual_port_test();
   lake_cascade_autovec_test();
   lake_harris_autovec_test();
-  assert(false);
   lake_resnet_test();
+  assert(false);
   resnet_test();
 
   llf_test();
