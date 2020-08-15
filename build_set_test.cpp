@@ -12434,6 +12434,7 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
             //remove the wire
             string buf_name = range_name(acc_map);
             auto ubuf = buffers_opt.at(buf_name);
+            cout << "buffer name: " << buf_name << " capacity = " << ubuf.capacity() << endl;
             if (ubuf.capacity() == 0) {
                 cout << "remove 0 capacity buffer: " << buf_name << endl;
                 continue;
@@ -12460,8 +12461,16 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
       int pt_cnt = 0;
       for(auto single_access_map: get_basic_maps(pick(access_map_for_op))) {
         cout << "single access bmap : " << str(single_access_map) << endl;
-        ofstream out(string(dir) + op_name +"_"+ to_string(pt_cnt) + ".csv");
-        cout << "\tGenerate config csv for : " << tab(1) << op_name + "_" + to_string(pt_cnt) << endl;
+        string buf_name = range_name(to_map(single_access_map));
+        auto ubuf = buffers_opt.at(buf_name);
+        string suffix = "_" + to_string(pt_cnt);
+        if (ubuf.is_read_op(op_name))
+            suffix = "_tb2out" + suffix;
+        else
+            suffix = "_in2agg" + suffix;
+
+        ofstream out(string(dir) + op_name + suffix + ".csv");
+        cout << "\tGenerate config csv for : " << tab(1) << op_name + suffix << endl;
         emit_lake_controller_config(out, dom, get_aff(write_sched));
 
         //emit address config

@@ -1716,9 +1716,11 @@ class UBuffer {
     }
 
     int capacity(string inpt) {
-        int m;
+        int m = 0;
         for (auto outpt: get_out_ports()){
-            m = std::max(m, compute_dd_bound(outpt, inpt, true));
+            int depth = compute_dd_bound(outpt, inpt, true);
+            std::cout << "Got depth: " << depth << endl;
+            m = std::max(m, depth);
         }
         return m;
     }
