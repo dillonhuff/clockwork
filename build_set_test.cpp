@@ -13546,7 +13546,20 @@ void generate_fpga_clockwork_code(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.use_custom_code_string = true;
-  options.code_string = "AHHHHH";
+  map<string, Box> compute_domains;
+  vector<string> ops;
+  for (auto u : sort_updates()) {
+    if (!is_external(u)) {
+      ops.push_back(u);
+      compute_domains[u] = compute_box(u);
+    }
+  }
+
+  string cgn = box_codegen(options, ops, scheds, compute_domains);
+  options.code_string = cgn;
+  cout << "Code string..." << endl;
+  cout << cgn << endl;
+  assert(false);
   generate_app_code(options, buffers, prg, sched);
 
   release(sched);
