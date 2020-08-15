@@ -12861,7 +12861,7 @@ void lake_cascade_autovec_test() {
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
-  //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
+  check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
 void lake_harris_autovec_test() {
@@ -12965,6 +12965,7 @@ void lake_conv33_autovec_test() {
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_new/");
   cmd("mkdir -p ./lake_stream/conv_3_3_new/");
   emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_new/", false);
+  check_lake_config(op_vec, "./lake_controllers/conv_3_3_new/", "./lake_gold/conv_3_3_new/");
   /*
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
   opt.conditional_merge = false;
