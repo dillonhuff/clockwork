@@ -13543,9 +13543,9 @@ void generate_fpga_clockwork_code(prog& prg) {
   }
 
   // schedule is dN, ..., d1, d0
-  for (auto& s : scheds) {
-    reverse(s.second);
-  }
+  //for (auto& s : scheds) {
+    //reverse(s.second);
+  //}
 
   //// schedule is dN, ..., d1, d0
   //for (auto& s : scheds) {
