@@ -13526,11 +13526,11 @@ void generate_fpga_clockwork_code(prog& prg) {
   }
 
   auto sched = qschedule_to_map_final_sort(prg.ctx, scheds);
-  cout << "Sched..." << endl;
-  for (auto m : get_maps(sched)) {
-    cout << tab(1) << str(m) << endl;
-  }
-  assert(false);
+  //cout << "Sched..." << endl;
+  //for (auto m : get_maps(sched)) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+  //assert(false);
 
   //auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
 
@@ -13548,12 +13548,12 @@ void generate_fpga_clockwork_code(prog& prg) {
   options.use_custom_code_string = true;
   map<string, Box> compute_domains;
   vector<string> ops;
-  for (auto u : sort_updates()) {
-    if (!is_external(u)) {
-      ops.push_back(u);
-      compute_domains[u] = compute_box(u);
-    }
-  }
+  //for (auto u : sort_updates()) {
+    //if (!is_external(u)) {
+      //ops.push_back(u);
+      //compute_domains[u] = compute_box(u);
+    //}
+  //}
 
   string cgn = box_codegen(options, ops, scheds, compute_domains);
   options.code_string = cgn;
