@@ -212,95 +212,29 @@ void pointwise(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0, d1, d2] -> [d0, d1, d2, 0]; op_hcompute_mult_stencil[d0, d1, d2] -> [d0, d1, d2, 1]; op_hcompute_hw_output_stencil[d0, d1, d2] -> [d0, d1, d2, 2] }
-//   { op_hcompute_hw_input_global_wrapper_stencil[d0, d1, d2] -> [d0, d1, d2, 0] }
-// Condition for op_hcompute_hw_input_global_wrapper_stencil(((i3 == 0)))
-//   { op_hcompute_mult_stencil[d0, d1, d2] -> [d0, d1, d2, 1] }
-// Condition for op_hcompute_mult_stencil(((-1 + i3 == 0)))
-//   { op_hcompute_hw_output_stencil[d0, d1, d2] -> [d0, d1, d2, 2] }
-// Condition for op_hcompute_hw_output_stencil(((-2 + i3 == 0)))
+// schedule: { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 63 and 0 <= d2 <= 63; op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63; op_hcompute_mult_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+//   { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 2] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+// Condition for op_hcompute_hw_output_stencil(((-2 + i3 == 0) && (i0 == 0) && (i1 >= 0) && (63 - i1 >= 0) && (i2 >= 0) && (63 - i2 >= 0)))
+//   { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+// Condition for op_hcompute_hw_input_global_wrapper_stencil(((i3 == 0) && (i0 == 0) && (i1 >= 0) && (63 - i1 >= 0) && (i2 >= 0) && (63 - i2 >= 0)))
+//   { op_hcompute_mult_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 1] : 0 <= d1 <= 63 and 0 <= d2 <= 63 }
+// Condition for op_hcompute_mult_stencil(((-1 + i3 == 0) && (i0 == 0) && (i1 >= 0) && (63 - i1 >= 0) && (i2 >= 0) && (63 - i2 >= 0)))
 
   /*
-  // Schedules...
-    // op_hcompute_hw_input_global_wrapper_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
-    // op_hcompute_hw_output_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
-    // op_hcompute_mult_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
-for (int c0 = 0; c0 <= 0; c0++) {
-  for (int c1 = 0; c1 <= 63; c1++) {
-    for (int c2 = 0; c2 <= 63; c2++) {
-
-#ifdef __VIVADO_SYNTH__
-#pragma HLS pipeline II=1
-#endif // __VIVADO_SYNTH__
-
-      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-        op_hcompute_hw_input_global_wrapper_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-      }
-
-      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-        op_hcompute_mult_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-      }
-
-      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-        op_hcompute_hw_output_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-      }
-
-      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-        op_hcompute_mult_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-      }
-
-      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-        op_hcompute_hw_input_global_wrapper_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-      }
-
-      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-        op_hcompute_hw_output_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-      }
-
-    }
+for (int c1 = 0; c1 <= 63; c1 += 1)
+  for (int c2 = 0; c2 <= 63; c2 += 1) {
+    op_hcompute_hw_input_global_wrapper_stencil(0, c1, c2);
+    op_hcompute_mult_stencil(0, c1, c2);
+    op_hcompute_hw_output_stencil(0, c1, c2);
   }
-}
 
   */
-	  // Schedules...
-	    // op_hcompute_hw_input_global_wrapper_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
-	    // op_hcompute_hw_output_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
-	    // op_hcompute_mult_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
-	for (int c0 = 0; c0 <= 0; c0++) {
-	  for (int c1 = 0; c1 <= 63; c1++) {
-	    for (int c2 = 0; c2 <= 63; c2++) {
-	
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS pipeline II=1
-	#endif // __VIVADO_SYNTH__
-	
-	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-	        op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-	      }
-	
-	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-	        op_hcompute_mult_stencil(hw_input_global_wrapper_stencil /* buf name */, mult_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-	      }
-	
-	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-	        op_hcompute_hw_output_stencil(mult_stencil /* buf name */, hw_output_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-	      }
-	
-	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-	        op_hcompute_mult_stencil(hw_input_global_wrapper_stencil /* buf name */, mult_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-	      }
-	
-	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-	        op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-	      }
-	
-	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
-	        op_hcompute_hw_output_stencil(mult_stencil /* buf name */, hw_output_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
-	      }
-	
-	    }
+	for (int c1 = 0; c1 <= 63; c1 += 1)
+	  for (int c2 = 0; c2 <= 63; c2 += 1) {
+	    op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, 0, c1, c2);
+	    op_hcompute_mult_stencil(hw_input_global_wrapper_stencil /* buf name */, mult_stencil, 0, c1, c2);
+	    op_hcompute_hw_output_stencil(mult_stencil /* buf name */, hw_output_stencil, 0, c1, c2);
 	  }
-	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();

@@ -13717,6 +13717,7 @@ void generate_fpga_clockwork_code(prog& prg) {
   }
 
   auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
+  sched = its(sched, dom);
 
   cout << "Optimized schedule..." << endl;
   for (auto s : get_maps(sched)) {
@@ -13734,31 +13735,31 @@ void generate_fpga_clockwork_code(prog& prg) {
     << prg.compute_unit_file << endl;
   CodegenOptions options;
   options.internal = true;
-  options.use_custom_code_string = true;
-  map<string, Box> compute_domains;
-  for (auto s : get_sets(dom)) {
-    ops.push_back(name(s));
-    Box bounds;
-    for (int d = 0; d < num_dims(s); d++) {
-      auto pr = project_all_but(s, d);
-      int minv = to_int(lexminval(pr));
-      int maxv = to_int(lexmaxval(pr));
-      bounds.intervals.push_back({minv, maxv});
-    }
-    compute_domains[name(s)] = bounds;
-  }
+  //options.use_custom_code_string = true;
+  //map<string, Box> compute_domains;
+  //for (auto s : get_sets(dom)) {
+    //ops.push_back(name(s));
+    //Box bounds;
+    //for (int d = 0; d < num_dims(s); d++) {
+      //auto pr = project_all_but(s, d);
+      //int minv = to_int(lexminval(pr));
+      //int maxv = to_int(lexmaxval(pr));
+      //bounds.intervals.push_back({minv, maxv});
+    //}
+    //compute_domains[name(s)] = bounds;
+  //}
 
-  cout << "Boxes..." << endl;
-  for (auto b : compute_domains) {
-    cout << tab(1) << b.first << " -> " << b.second << endl;
-  }
-  //assert(false);
-  cout << "Generating box codegen" << endl;
-  string cgn = cw_box_codegen(options, ops, scheds, compute_domains);
-  cout << "Done" << endl;
-  options.code_string = cgn;
-  cout << "Code string..." << endl;
-  cout << cgn << endl;
+  //cout << "Boxes..." << endl;
+  //for (auto b : compute_domains) {
+    //cout << tab(1) << b.first << " -> " << b.second << endl;
+  //}
+  ////assert(false);
+  //cout << "Generating box codegen" << endl;
+  //string cgn = cw_box_codegen(options, ops, scheds, compute_domains);
+  //cout << "Done" << endl;
+  //options.code_string = cgn;
+  //cout << "Code string..." << endl;
+  //cout << cgn << endl;
   generate_app_code(options, buffers, prg, sched);
 
   release(sched);
@@ -13771,7 +13772,15 @@ void fpga_asplos_tests() {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     dsa_writers(prg);
     pad_to_single_depth(prg);
+    std::vector<string> no_opt =
+      unoptimized_result(prg);
+
     generate_fpga_clockwork_code(prg);
+    generate_regression_testbench(prg);
+
+    std::vector<std::string> opt =
+      run_regression_tb(prg);
+    compare(prg.name + " ASPLOS FPGA flow", opt, no_opt);
     move_to_benchmarks_folder(prg.name);
   }
 }

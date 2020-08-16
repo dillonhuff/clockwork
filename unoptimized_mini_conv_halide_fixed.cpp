@@ -270,6 +270,7 @@ inline void hw_input_copy_stencil_hcompute_hw_input_copy_stencil_write_bundle_wr
 	hw_input_copy_stencil_hcompute_hw_input_copy_stencil_0_write(hw_input_copy_stencil_hcompute_hw_input_copy_stencil_0_res, hw_input_copy_stencil, root, hw_input_copy_s0_x, dynamic_address);
 }
 
+// Total re-use buffer capacity: 3008 bits
 
 
 // Operation logic
