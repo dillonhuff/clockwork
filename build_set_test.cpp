@@ -12491,8 +12491,8 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
                 auto mux_addr_expr = dot(access_map, mux_reduce_map);
                 cout << str(mux_addr_expr) << endl;
                 isl_aff* addr = get_aff(mux_addr_expr);
-                string prefix = is_rd ? "out" : "in";
-                out << "\"mux_write\"," << "\"" << buf_name << "\"" << endl;
+                string prefix = is_rd ? "mux_read" : "mux_write";
+                out << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
                 out << "\""+prefix+"_data_starting_addr\"," <<
                     to_int(const_coeff(addr))  << ",0" << endl;
                 for (int d = 0; d < num_in_dims(addr); d++) {
@@ -12506,12 +12506,8 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
         isl_aff* addr = get_aff(addr_expr_map);
         cout << "\t address generator aff expr:" << str(get_aff(addr_expr_map)) << endl;
 
-        if (!is_rd) {
-            out << "\"write\"," << "\"" << buf_name << "\"" << endl;
-        } else {
-            out << "\"read\"," << "\"" << buf_name  << "\"" << endl;
-        }
-        string prefix = is_rd ? "out" : "in";
+        string prefix = is_rd ? "read" : "write";
+        out << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
         out << "\""+prefix+"_data_starting_addr\"," <<
             to_int(const_coeff(addr)) / ubuf.hardware.port_width << ",0" << endl;
         for (int d = 0; d < num_in_dims(addr); d++) {
