@@ -2,6 +2,7 @@
 
 #ifdef COREIR
 
+#include "cwlib.h"
 #include "coreir/passes/analysis/coreirjson.h"
 
 using CoreIR::Wireable;
@@ -1760,6 +1761,7 @@ void generate_coreir(CodegenOptions& options,
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cgralib(context);
+  CoreIRLoadLibrary_cwlib(context);
   add_delay_tile_generator(context);
   add_raw_quad_port_memtile_generator(context);
   add_tahoe_memory_generator(context);

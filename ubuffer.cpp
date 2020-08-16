@@ -644,8 +644,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   generate_coreir(options, def, info);
 }
 
+void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def) {
+  schedule_info info;
+  generate_coreir(options, def, info, false);
+}
+
 //generate/realize the rewrite structure inside ubuffer node
-void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info) {
+void UBuffer::generate_coreir(CodegenOptions& options,
+        CoreIR::ModuleDef* def,
+        schedule_info& info,
+        bool with_ctrl) {
   auto context = def->getContext();
   //for (auto it : get_banks()) {
     //auto connection = it.first;
@@ -743,6 +751,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       buf = def->addInstance(ub_ins_name, "cwlib.ub", args);
 
       def->connect(buf->sel("reset"), def->sel("self.reset"));
+      def->connect(buf->sel("clk"), def->sel("self.clk"));
 
       int inpt_cnt = 0, outpt_cnt = 0;
       if (inpts.size() == 1) {
@@ -750,18 +759,24 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
         string  inpt = pick(inpts);
         if (isIn.at(inpt)){
           def->connect(buf->sel("datain_" + to_string(inpt_cnt)), pt2wire.at(inpt));
-          def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
-          //also connect ren
-          for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
-            def->connect(buf->sel("ren_" + to_string(out_i)), def->sel("self."+get_bundle(inpt)+"_en"));
+
+          //There is no control signal
+          if (with_ctrl) {
+            def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+            //also connect ren
+            for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
+              def->connect(buf->sel("ren_" + to_string(out_i)), def->sel("self."+get_bundle(inpt)+"_en"));
+            }
           }
         } else {
           def->connect(buf->sel("datain_" + to_string(inpt_cnt)), wire2out.at(inpt));
           cout << "Input port: " << inpt << endl;
-          def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
-          //also connect ren
-          for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
-            def->connect(buf->sel("ren_" + to_string(out_i)), wire2out.at(inpt + "_valid"));
+          if (with_ctrl) {
+            def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
+            //also connect ren
+            for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
+              def->connect(buf->sel("ren_" + to_string(out_i)), wire2out.at(inpt + "_valid"));
+            }
           }
         }
         for (auto outpt: outpts) {
@@ -775,8 +790,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
           //TODO: figure out valid wiring strategy
           //Wire the bank with the largest delay
           //valid_out[outpt] = buf->sel("valid_" + to_string(outpt_cnt));
-          CoreIR::map_insert(outpt_bank_valid, outpt,
+          if (with_ctrl) {
+            CoreIR::map_insert(outpt_bank_valid, outpt,
                   (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
+          }
           outpt_cnt++;
         }
       }
@@ -784,7 +801,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
         //Wiring the multi input case
         for (auto inpt: inpts) {
           def->connect(buf->sel("datain_" + to_string(inpt_cnt)), pt2wire.at(inpt));
-          def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+          if (with_ctrl) {
+            def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+          }
           inpt_cnt ++;
         }
         for (auto outpt: outpts) {
@@ -794,8 +813,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
           CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
 
           //use the first port in the chain to be the output valid
-          CoreIR::map_insert(outpt_bank_valid, outpt,
+          if (with_ctrl) {
+            CoreIR::map_insert(outpt_bank_valid, outpt,
                   (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
+          }
           //TODO: need a way to figure out the ren drive in this buffer
           outpt_cnt++;
         }
@@ -803,24 +824,30 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     }
   }
 
-  map<string, bool> bundle_valid;
-  for (auto out_bd: get_out_bundles()) {
-    bundle_valid[out_bd] = false;
+  //wiring the valid if we are using valid
+  if (with_ctrl) {
+    map<string, bool> bundle_valid;
+    for (auto out_bd: get_out_bundles()) {
+      bundle_valid[out_bd] = false;
+    }
+    for (auto itr: outpt_bank_rd) {
+      string outpt = itr.first;
+
+      //wire the valid signal
+      auto bd = container_bundle(outpt);
+      if (bundle_valid.at(bd) == false) {
+        def->connect(pick(outpt_bank_valid.at(outpt)),
+                def->sel("self." + bd + "_valid"));
+        bundle_valid.at(bd) = true;
+      }
+      cout << "connect valid: " << outpt <<  endl;
+    }
   }
 
   //Add the chaining pass
   for (auto itr: outpt_bank_rd) {
     string outpt = itr.first;
     auto connect_vec = itr.second;
-
-    //wire the valid signal
-    auto bd = container_bundle(outpt);
-    if (bundle_valid.at(bd) == false) {
-      def->connect(pick(outpt_bank_valid.at(outpt)),
-              def->sel("self." + bd + "_valid"));
-      bundle_valid.at(bd) = true;
-    }
-    cout << "connect valid: " << outpt <<  endl;
 
     if (connect_vec.size() == 1) {
       def->connect(pick(connect_vec), pt2wire.at(outpt));
@@ -1472,7 +1499,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     if (false) {
       generate_synthesizable_functional_model(options, buf, def, hwinfo);
     } else {
-      //buf.generate_coreir(options, def);
+      buf.generate_coreir_without_ctrl(options, def);
     }
 
     ub->setDef(def);

@@ -13134,12 +13134,11 @@ void lake_conv33_autovec_test() {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
-  auto sched = global_schedule_from_buffers(buffers_opt);
+  //auto sched = global_schedule_from_buffers(buffers_opt);
   //generate_coreir(opt, buffers_opt, prg, sched);
 
   schedule_info hwinfo;
   hwinfo.use_dse_compute = false;
-  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
 
   for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << endl;
@@ -13156,8 +13155,8 @@ void lake_conv33_autovec_test() {
     }
     CoreIR::deleteContext(context);
   }
-  //auto sched = global_schedule_from_buffers(buffers_opt);
-  //generate_coreir(opt, buffers_opt, prg, sched);
+  auto sched = global_schedule_from_buffers(buffers_opt);
+  generate_coreir(opt, buffers_opt, prg, sched);
 #endif
 
   cout << "post processing buf" << endl;

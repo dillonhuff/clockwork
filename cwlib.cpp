@@ -28,7 +28,8 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
             Json config = genargs.at("config")->get<Json>();
 
             RecordParams recordparams = {
-                {"reset", c->BitIn()}
+                {"reset", c->BitIn()},
+                {"clk", c->Named("coreir.clkIn")}
             };
 
             for (size_t i = 0; i < input_num; i ++) {

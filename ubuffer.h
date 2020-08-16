@@ -1806,9 +1806,14 @@ class UBuffer {
 #ifdef COREIR
     CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
-    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
-    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
+    //kernel function for generate coreir
+    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
+
+    //Wrappers for generate coreir
+    //original memory generation for memory tile with enable and valid
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
+    //ubuffer coreir generation for tahoe memory tile
+    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def);
 #endif
 
     vector<string> map2address(isl_map* m);
