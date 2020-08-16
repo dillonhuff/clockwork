@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hw_classes.h"
+#include <cstring>
 
 typedef int16_t int16;
 
@@ -162,9 +163,6 @@ T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
 template<typename T>
 static inline
 T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
-  //cout << "bw = " << bright_weight << endl;
-  //cout << "dw = " << dark_weight << endl;
-  //assert(bright_weight + dark_weight == 2);
 
   return (bright_weight*bright + dark_weight*dark) / (bright_weight + dark_weight);
   //return (bright_weight*bright + dark_weight*dark);
@@ -456,9 +454,6 @@ hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v7 = in.extract<224, 255>();
   hw_uint<32> v8 = in.extract<256, 287>();
 
-  //cout << "v0 = " << v0.to_int() << endl;
-  //cout << "v3 = " << v3.to_int() << endl;
-  //cout << "v6 = " << v6.to_int() << endl;
 
   //assert(false);
 
@@ -654,4 +649,57 @@ hw_uint<32> histogram_inc(hw_uint<64>& ignore, hw_uint<32>& val) {
   return val + 1;
 }
 
+static inline
+hw_uint<16> as_hblur(const hw_uint<16*2>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  return (v0 + v1) >> 1;
+}
 
+static inline
+hw_uint<32> blur_1x3_32(const hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+  return v0 + v1 + v2;
+}
+
+static inline
+hw_uint<32> blur_5x5_32(const hw_uint<32*5*5>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  hw_uint<32> v4 = in.extract<128, 159>();
+  return v0 + v1 + v2 + v3 + v4;
+}
+
+static inline
+hw_uint<32> blur_5x1_32(const hw_uint<32*5>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  hw_uint<32> v4 = in.extract<128, 159>();
+  return v0 + v1 + v2 + v3 + v4;
+}
+
+static inline
+hw_uint<32> blur_2x2_32(const hw_uint<32*4>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  return v0 + v1 + v2 + v3;
+}
+
+template<typename A, typename B>
+inline A reinterpret(const B &b) {
+    A a;
+    std::memcpy(&a, &b, sizeof(a));
+    return a;
+}
+inline float float_from_bits(uint32_t bits) {
+    return reinterpret<float, uint32_t>(bits);
+}

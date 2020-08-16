@@ -31,19 +31,19 @@ int main(int argc, char **argv) {
   bitmap_image output(1920, 1080);
   for (int r = 0; r < 1080; r++) {
     for (int cl = 0; cl < 1920 / 1; cl++) {
-      hw_uint<16> packed;
       auto packed_val = one_pipe10_update_0_write_channel.read();
       hw_uint<16> packed_val_lane_0;
       set_at<0, 16, 16>(packed_val_lane_0, packed_val.extract<0, 15>());
       {
+      hw_uint<16> packed;
       int c = 1*cl + 0;
       rgb_t pix;
       pix.red = packed_val_lane_0;
       pix.green = packed_val_lane_0;
       pix.blue = packed_val_lane_0;
       output.set_pixel(c, r, pix);
+      }
     }
-  }
   }
   output.save_image("./images/one_pipe10_opt_bmp_out.bmp");
 }

@@ -7,7 +7,7 @@
 
 #ifdef __VIVADO_SYNTH__
 
-#define AP_INT_MAX_W 8192
+#define AP_INT_MAX_W 32768
 #include "ap_int.h"
 
 #include "hls_stream.h"
@@ -384,6 +384,10 @@ class HWStream {
 #else
 
     deque<T> values;
+
+    int num_waiting() const {
+      return values.size();
+    }
 
     bool is_empty() const {
       return values.size() == 0;

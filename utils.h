@@ -17,6 +17,8 @@ T pop(deque<T>& d) {
   return v;
 }
 
+string isl_sanitize(const std::string& str);
+
 static inline
 string c_sanitize(const std::string& str) {
   string res = "";

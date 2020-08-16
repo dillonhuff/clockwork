@@ -610,6 +610,7 @@ isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);
 isl_map* diff(isl_map* const m0, isl_map* const m1);
 
 isl_aff* get_aff(isl_map* m);
+isl_aff* get_aff(isl_union_map* m);
 std::vector<isl_aff*> get_aff_vec(isl_map* m);
 
 
@@ -624,3 +625,13 @@ isl_basic_set* zero(isl_basic_set* fs, const int var);
 
 std::string codegen_c(isl_aff* const bset);
 isl_set* set_name(isl_set* const m, string new_name);
+
+void release(isl_set* s);
+void release(isl_map* m);
+void release(isl_union_set* s);
+void release(isl_union_map* m);
+void release(isl_union_pw_qpolynomial* m);
+isl_multi_aff* get_multi_aff(isl_union_map* m);
+isl_multi_aff* get_multi_aff(isl_map* m);
+
+

@@ -973,15 +973,15 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps) {
-  cout << "Domains..." << endl;
-  for (auto d : domains) {
-    cout << tab(1) << str(d) << endl;
-  }
-  cout << endl;
-  cout << "Deps..." << endl;
-  for (auto d : deps) {
-    cout << tab(1) << str(d) << endl;
-  }
+  //cout << "Domains..." << endl;
+  //for (auto d : domains) {
+    //cout << tab(1) << str(d) << endl;
+  //}
+  //cout << endl;
+  //cout << "Deps..." << endl;
+  //for (auto d : deps) {
+    //cout << tab(1) << str(d) << endl;
+  //}
   //ofstream sd("schedule_debug.txt", ios::app);
   //sd << "--- Scheduling dimension" << endl;
   //sd << tab(1) << "=== Domains..." << endl;
@@ -997,7 +997,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   //sd << endl;
 
 
-  cout << "Deps..." << endl;
+  //cout << "Deps..." << endl;
   assert(deps.size() > 0);
   isl_ctx* ct = ctx(deps.at(0));
 
@@ -1007,7 +1007,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   map<string, isl_val*> qfactors =
     compute_qfactors(schedule_params);
 
-  cout << "Building delay constraints" << endl;
+  //cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
   //sd << "=== Schedule params" << endl;
   //for (auto s : schedule_params) {
@@ -1033,10 +1033,10 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     }
   }
 
-  cout << "Outputs..." << endl;
+  //cout << "Outputs..." << endl;
   map<string, isl_val*> pipeline_delay;
   for (auto out : outputs) {
-    cout << tab(1) << out << endl;
+    //cout << tab(1) << out << endl;
     pipeline_delay[delay_var_name(out)] = one(ct);
   }
   //assert(outputs.size() == 1);
@@ -1158,7 +1158,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   //assert(false);
 
   delay_obj = simplify(diffs);
-  cout << "Delay constraints" << endl;
+  //cout << "Delay constraints" << endl;
   //auto opt_delay = delay_problem.lex_minimize({delay_obj});
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay});
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, delay_obj});
@@ -1174,10 +1174,10 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   for (auto f : operation_names) {
     isl_val* rate = map_find(sched_var_name(f), qfactors);
     isl_val* delay = delay_problem.value(delay_var_name(f));
-    cout << "f rate: " << str(rate) << ", delay: " << str(delay) << endl;
+    //cout << "f rate: " << str(rate) << ", delay: " << str(delay) << endl;
     string aff_str =
       "{ [i] -> [(" + str(rate) + "*i + " + str(delay) + ")]}";
-    cout << tab(1) << "aff str: " << aff_str << endl;
+    //cout << tab(1) << "aff str: " << aff_str << endl;
     schedule_functions[f] = rdaff(ct, aff_str);
     isl_set* dom = find_set(f, domains);
     auto sf = map_find(f, schedule_functions);
@@ -1487,6 +1487,26 @@ hardware_schedule(
   return hardware_schedule(domain, validity, proximity, latencies, iis, obj);
 }
 
+umap* to_umap(const map<string, isl_aff*>& hs) {
+  assert(hs.size() > 0);
+
+  auto ct = ctx(pick(hs).second);
+  umap* schedmap = rdmap(ct, "{}");
+  for (auto sp : hs) {
+    string n = sp.first;
+    isl_aff* sched = sp.second;
+
+    isl_map* sm = isl_map_from_aff(sched);
+    sm = set_domain_name(sm, n);
+
+    cout << "schedule for n: " << str(sm) << endl;
+    schedmap = unn(schedmap, to_umap(sm));
+    cout << "schedmap = " << str(schedmap) << endl;
+  }
+
+  return schedmap;
+}
+
 umap* to_umap(uset* domain, const map<string, isl_aff*>& hs) {
   auto ct = ctx(domain);
   umap* schedmap = rdmap(ct, "{}");
@@ -1549,6 +1569,35 @@ hardware_schedule_umap(uset* domain, umap* validity, umap* proximity) {
   //}
   //return padded;
 //}
+
+umap* qschedule_to_map_final_sort(isl_ctx* ctx, map<string, vector<QExpr> >& schedules, map<string, int>& order) {
+  umap* m = rdmap(ctx, "{}");
+  for (auto fn : schedules) {
+    string f = fn.first;
+    vector<string> sched_exprs;
+    vector<string> var_names;
+    int i = 0;
+    for (auto v : map_find(f, schedules)) {
+      string dv = "d" + to_string(i);
+      sched_exprs.push_back(isl_str(v));
+      cout << "Sched expr: " << sched_exprs.back() << endl;
+      var_names.push_back(dv);
+      i++;
+    }
+    sched_exprs.push_back(str(map_find(fn.first, order)));
+    //var_names.pop_back();
+    string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+
+    cout << "Map str: " << map_str << endl;
+    auto rm = rdmap(ctx, map_str);
+    cout << "map got str" << endl;
+    m = unn(m, rm);
+    isl_union_map_free(rm);
+  }
+
+  return m;
+
+}
 
 umap* qschedule_to_map_final_sort(isl_ctx* ctx, map<string, vector<QExpr> >& schedules) {
   umap* m = rdmap(ctx, "{}");

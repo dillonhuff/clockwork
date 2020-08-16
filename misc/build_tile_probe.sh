@@ -1,0 +1,1 @@
+python garnet.py --width 4 --height 4 --no-pd --input-app /aha/clockwork/coreir_apps/raw_sram/probes/one_raw_sram_tile_probe.json --interconnect-only --input-file /aha/clockwork/misc/input.pgm --output-file /aha/clockwork/misc/probe_res.txt --gold-file /aha/clockwork/misc/golden_output.pgm
