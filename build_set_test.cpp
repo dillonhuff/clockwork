@@ -13521,7 +13521,7 @@ void cw_print_body(int level,
     vars.push_back("c" + str(i));
   }
   // NOTE: This is because scheduling reverses order of component variables
-  reverse(vars);
+  //reverse(vars);
 
   for (auto f : op_order) {
     auto box = index_bounds.at(f);

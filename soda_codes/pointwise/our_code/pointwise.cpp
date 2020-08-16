@@ -233,28 +233,28 @@ for (int c0 = 0; c0 <= 0; c0++) {
 #pragma HLS pipeline II=1
 #endif // __VIVADO_SYNTH__
 
-      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-        op_hcompute_hw_input_global_wrapper_stencil((c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+        op_hcompute_hw_input_global_wrapper_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
       }
 
-      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-        op_hcompute_mult_stencil((c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+        op_hcompute_mult_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
       }
 
-      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-        op_hcompute_hw_output_stencil((c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+        op_hcompute_hw_output_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
       }
 
-      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-        op_hcompute_mult_stencil((c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+        op_hcompute_mult_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
       }
 
-      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-        op_hcompute_hw_input_global_wrapper_stencil((c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+        op_hcompute_hw_input_global_wrapper_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
       }
 
-      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-        op_hcompute_hw_output_stencil((c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+        op_hcompute_hw_output_stencil((c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
       }
 
     }
@@ -274,28 +274,28 @@ for (int c0 = 0; c0 <= 0; c0++) {
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-	        op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+	        op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-	        op_hcompute_mult_stencil(hw_input_global_wrapper_stencil /* buf name */, mult_stencil, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+	        op_hcompute_mult_stencil(hw_input_global_wrapper_stencil /* buf name */, mult_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-	        op_hcompute_hw_output_stencil(mult_stencil /* buf name */, hw_output_stencil, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+	        op_hcompute_hw_output_stencil(mult_stencil /* buf name */, hw_output_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-	        op_hcompute_mult_stencil(hw_input_global_wrapper_stencil /* buf name */, mult_stencil, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+	        op_hcompute_mult_stencil(hw_input_global_wrapper_stencil /* buf name */, mult_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-	        op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+	        op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 0) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 63) && ((c0 - 0) % 1 == 0)) {
-	        op_hcompute_hw_output_stencil(mult_stencil /* buf name */, hw_output_stencil, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
+	      if ((0 <= c0 && c0 <= 0) && ((c0 - 0) % 1 == 0) && (0 <= c1 && c1 <= 63) && ((c1 - 0) % 1 == 0) && (0 <= c2 && c2 <= 63) && ((c2 - 0) % 1 == 0)) {
+	        op_hcompute_hw_output_stencil(mult_stencil /* buf name */, hw_output_stencil, (c0 - 0) / 1, (c1 - 0) / 1, (c2 - 0) / 1);
 	      }
 	
 	    }
