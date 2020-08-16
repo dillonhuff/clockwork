@@ -222,12 +222,12 @@ void pointwise(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */hw_
 
   /*
   // Schedules...
-    // op_hcompute_hw_input_global_wrapper_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0,0]
-    // op_hcompute_hw_output_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0,2]
-    // op_hcompute_mult_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0,1]
-for (int c0 = 0; c0 <= 63; c0++) {
+    // op_hcompute_hw_input_global_wrapper_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
+    // op_hcompute_hw_output_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
+    // op_hcompute_mult_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
+for (int c0 = 0; c0 <= 0; c0++) {
   for (int c1 = 0; c1 <= 63; c1++) {
-    for (int c2 = 0; c2 <= 0; c2++) {
+    for (int c2 = 0; c2 <= 63; c2++) {
 
 #ifdef __VIVADO_SYNTH__
 #pragma HLS pipeline II=1
@@ -263,12 +263,12 @@ for (int c0 = 0; c0 <= 63; c0++) {
 
   */
 	  // Schedules...
-	    // op_hcompute_hw_input_global_wrapper_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0,0]
-	    // op_hcompute_hw_output_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0,2]
-	    // op_hcompute_mult_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0,1]
-	for (int c0 = 0; c0 <= 63; c0++) {
+	    // op_hcompute_hw_input_global_wrapper_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
+	    // op_hcompute_hw_output_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
+	    // op_hcompute_mult_stencil -> [1*d0*1*1 + 1*0,1*d1*1*1 + 1*0,1*d2*1*1 + 1*0]
+	for (int c0 = 0; c0 <= 0; c0++) {
 	  for (int c1 = 0; c1 <= 63; c1++) {
-	    for (int c2 = 0; c2 <= 0; c2++) {
+	    for (int c2 = 0; c2 <= 63; c2++) {
 	
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS pipeline II=1

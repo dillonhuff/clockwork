@@ -13502,6 +13502,157 @@ void test_stencil_codegen(vector<prog>& test_programs) {
   }
 }
 
+void cw_print_body(int level,
+    ostream& out,
+    const vector<string>& op_order,
+    const Box& whole_dom,
+    map<string, Box>& index_bounds,
+    map<string, vector<QExpr> >& scheds) {
+
+  int ndims = pick(index_bounds).second.intervals.size();
+  int next_level = level + 1;
+  out << endl;
+  out << "#ifdef __VIVADO_SYNTH__" << endl;
+  out << "#pragma HLS pipeline II=1" << endl;
+  out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+
+  vector<string> vars;
+  for (int i = 0; i < ndims; i++) {
+    vars.push_back("c" + str(i));
+  }
+  // NOTE: This is because scheduling reverses order of component variables
+  reverse(vars);
+
+  for (auto f : op_order) {
+    auto box = index_bounds.at(f);
+    vector<int> rates;
+    vector<int> delays;
+    for (auto s : scheds.at(f)) {
+      rates.push_back(s.linear_coeff_int());
+      auto ct = s.const_term();
+      ct.simplify();
+      delays.push_back(ct.to_int());
+    }
+
+    //assert(delays.size() == vars.size() + 1);
+    //assert(rates.size() == vars.size() + 1);
+
+    //delays.pop_back();
+    //reverse(delays);
+    //rates.pop_back();
+    //reverse(rates);
+
+    out << tab(next_level) << "if (" << sep_list(ifconds(vars, box, rates, delays), "", "", " && ") << ") {" << endl;
+
+    vector<string> var_exprs;
+
+    for (int i = 0; i < vars.size(); i++) {
+      var_exprs.push_back("(" + vars.at(i) + " - " + str(delays.at(i)) + ") / " + str(rates.at(i)));
+    }
+
+    out << tab(next_level + 1) << f << "(" << comma_list(var_exprs) << ");" << endl;
+    out << tab(next_level) << "}" << endl << endl;
+  }
+}
+
+void cw_print_loops(int level,
+    ostream& out,
+    const vector<string>& op_order,
+    const Box& whole_dom,
+    map<string, Box>& index_bounds,
+    map<string, vector<QExpr> >& scheds) {
+
+  int ndims = pick(index_bounds).second.intervals.size();
+
+  int min = whole_dom.intervals.at(level).min;
+  int max = whole_dom.intervals.at(level).max;
+
+  string ivar = "c" + str(level);
+  out << tab(level) << "for (int " << ivar << " = " << min << "; " << ivar << " <= " << max << "; " << ivar << "++) {" << endl;
+  int next_level = level + 1;
+  if (next_level == ndims) {
+    cw_print_body(level, out, op_order, whole_dom, index_bounds, scheds);
+  } else {
+    cw_print_loops(level + 1, out, op_order, whole_dom, index_bounds, scheds);
+  }
+  out << tab(level) << "}" << endl;
+}
+
+std::string cw_box_codegen(CodegenOptions& options,
+    const vector<string>& op_order,
+    map<string, vector<QExpr> >& scheds,
+    map<string, Box>& compute_domains) {
+
+  assert(compute_domains.size() > 0);
+
+  ostringstream ss;
+  ss << tab(1) << "// Schedules..." << endl;
+  for (auto s : scheds) {
+    vector<string> qstrings;
+    for (auto q : s.second) {
+      ostringstream qs;
+      qs << q;
+      qstrings.push_back(qs.str());
+    }
+    string schedstr = sep_list(qstrings, "[", "]", ",");
+
+    ss << tab(2) <<  "// " << s.first << " -> " << schedstr << endl;
+  }
+
+  int ndims = pick(compute_domains).second.intervals.size();
+
+  map<string, Box> index_bounds;
+  Box whole_dom(ndims);
+  for (auto f : compute_domains) {
+
+    auto dom = f.second;
+    cout << "Processing " << f.first << endl;
+
+    cout << "Scheds..." << endl;
+    for (auto f : scheds) {
+      cout << tab(1) << f.first << " -> ";
+      for (auto s : f.second) {
+        cout << s << ", ";
+      }
+      cout << endl;
+    }
+
+    assert(contains_key(f.first, scheds));
+
+    Box bounds;
+    for (int d = 0; d < ndims; d++) {
+
+
+      int domain_min = dom.intervals.at(d).min;
+      int domain_max = dom.intervals.at(d).max;
+
+      cout << "----------------" << endl;
+      cout << "Domain " << d << " min: " << domain_min << endl;
+      cout << "Domain " << d << " max: " << domain_max << endl;
+      cout << endl;
+
+      // Note: The schedule is from innermost to outermost
+      int sched_min = scheds.at(f.first).at(d).const_eval_at(domain_min);
+      int sched_max = scheds.at(f.first).at(d).const_eval_at(domain_max);
+
+      cout << "Sched min: " << sched_min << endl;
+      cout << "Sched max: " << sched_max << endl;
+
+      bounds.intervals.push_back({sched_min, sched_max});
+    }
+    index_bounds[f.first] = bounds;
+    whole_dom = unn(whole_dom, bounds);
+  }
+
+  //auto& bnds = whole_dom.intervals;
+  //reverse(bnds);
+  cout << "Whole domain: " << whole_dom << endl;
+  //assert(false);
+  cw_print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
+
+  return ss.str();
+}
+
 void generate_fpga_clockwork_code(prog& prg) {
   auto valid = prg.validity_deps();
   auto dom = prg.whole_iteration_domain();
@@ -13571,18 +13722,13 @@ void generate_fpga_clockwork_code(prog& prg) {
   for (auto s : get_maps(sched)) {
     cout << tab(1) << str(s) << endl;
   }
+
   //assert(false);
   //cout << tab(1) << ": " << str(sched) << endl << endl;
   //cout << codegen_c(sched) << endl;
 
   auto buffers = build_buffers(prg, sched);
 
-  //for (auto& s : scheds) {
-    //QAV v = qconst(map_find(s.first, positions));
-    //QTerm t{{v}};
-    //QExpr e{{t}};
-    //s.second.push_back(e);
-  //}
   assert(prg.compute_unit_file != "");
   cout << "Compute unit file: "
     << prg.compute_unit_file << endl;
@@ -13606,9 +13752,9 @@ void generate_fpga_clockwork_code(prog& prg) {
   for (auto b : compute_domains) {
     cout << tab(1) << b.first << " -> " << b.second << endl;
   }
-  assert(false);
+  //assert(false);
   cout << "Generating box codegen" << endl;
-  string cgn = box_codegen(options, ops, scheds, compute_domains);
+  string cgn = cw_box_codegen(options, ops, scheds, compute_domains);
   cout << "Done" << endl;
   options.code_string = cgn;
   cout << "Code string..." << endl;
