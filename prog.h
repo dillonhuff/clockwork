@@ -559,6 +559,9 @@ struct ir_node {
     //return val_name;
   }
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
+    return add_load(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4);
+  }
 
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3) {
     return add_load(b, d0 + ", " + d1 + ", " + d2 + ", " + d3);
@@ -598,6 +601,10 @@ struct ir_node {
       ps.push_back(p.first + "[" + p.second + "]");
     }
     return ps;
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
+    add_store(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4);
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3) {

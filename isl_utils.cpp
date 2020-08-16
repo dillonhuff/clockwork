@@ -1726,6 +1726,22 @@ umap* flatten_map_domain_with_dim(umap* s, int dim_from_inner) {
     return new_sched;
 }
 
+umap* flatten_map_domain_with_dim_from_outer(isl_map* s, int dim_from_outer) {
+    int dom_dim = get_in_dim(s);
+    auto trans = flatten_map_domain_trans_with_dim(s, dom_dim - dim_from_outer);
+    auto new_sched = dot(inv(trans), s);
+    return new_sched;
+}
+
+umap* flatten_umap_domain_with_dim_from_outer(umap* um, int dim_from_outer) {
+    umap* ret = isl_union_map_read_from_str(ctx(um), "{}");
+    for (auto m : get_maps(um)) {
+        auto flatten_m = flatten_map_domain_with_dim_from_outer(m, dim_from_outer);
+        ret = unn(ret, flatten_m);
+    }
+    return ret;
+}
+
 
 
 umap* flatten_set_trans(isl_set* s, int ii) {

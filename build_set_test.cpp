@@ -18,6 +18,109 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
 
 void blur_example();
 
+prog resnet_hc_multi_tile() {
+  prog prg;
+  prg.compute_unit_file = "resnet_compute.h";
+  prg.name = "resnet";
+
+// Stencil<uint16_t, 8, 30, 30> &input_copy_stencil = arg_0;
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+// Stencil<uint16_t, 8, 16, 3, 3> &kernel_copy_stencil = arg_1;
+  prg.add_input("kernel_copy_stencil");
+  prg.buffer_port_widths["kernel_copy_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_2;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming kernel_copy.stencil
+
+//consuming input_copy.stencil
+////producing hw_input.stencil
+  auto hw_input_s0_t = prg.add_loop("hw_input_s0_t", 0, 4);
+  auto hw_input_s0_y = hw_input_s0_t->add_loop("hw_input_s0_y", 0, 32);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 32);
+  auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 8);
+
+//store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
+  auto hcompute_hw_input_stencil = hw_input_s0_z->add_op("op_hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_t", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_t", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
+////producing hw_kernel.stencil
+  auto hw_kernel_s0_t = prg.add_loop("hw_kernel_s0_t", 0, 4);
+  auto hw_kernel_s0_y = hw_kernel_s0_t->add_loop("hw_kernel_s0_y", 0, 3);
+  auto hw_kernel_s0_x = hw_kernel_s0_y->add_loop("hw_kernel_s0_x", 0, 3);
+  auto hw_kernel_s0_w = hw_kernel_s0_x->add_loop("hw_kernel_s0_w", 0, 16);
+  auto hw_kernel_s0_z = hw_kernel_s0_w->add_loop("hw_kernel_s0_z", 0, 8);
+
+//store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
+  auto hcompute_hw_kernel_stencil = hw_kernel_s0_z->add_op("op_hcompute_hw_kernel_stencil");
+  hcompute_hw_kernel_stencil->add_function("hcompute_hw_kernel_stencil");
+  hcompute_hw_kernel_stencil->add_load("kernel_copy_stencil", "hw_kernel_s0_t", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
+  prg.buffer_port_widths["hw_kernel_stencil"] = 16;
+  hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_t", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
+////producing conv.stencil
+  auto conv_s0_t = prg.add_loop("conv_s0_t", 0, 4);
+  auto conv_s0_w = conv_s0_t->add_loop("conv_s0_w", 0, 16);
+  auto conv_s0_y = conv_s0_w->add_loop("conv_s0_y", 0, 28);
+  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 28);
+
+//store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = (uint16)0
+  auto hcompute_conv_stencil = conv_s0_x->add_op("op_hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_t", "conv_s0_y", "conv_s0_x", "conv_s0_w");
+
+//consuming hw_kernel.stencil
+
+//consuming hw_input.stencil
+  auto conv_s1_r_t = prg.add_loop("conv_s1_r_t", 0, 4);
+  auto conv_s1_r_y = conv_s1_r_t->add_loop("conv_s1_r_y", 0, 3);
+  auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
+  auto conv_s1_oc = conv_s1_r_x->add_loop("conv_s1_oc", 0, 4);
+  auto conv_s1_y = conv_s1_oc->add_loop("conv_s1_y", 0, 28);
+  auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 28);
+  auto conv_s1_ic = conv_s1_x->add_loop("conv_s1_ic", 0, 4);
+
+//store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  auto hcompute_conv_stencil_1 = conv_s1_ic->add_op("op_hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  for (int oc_unroll = 0; oc_unroll < 4; oc_unroll ++) {
+    hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_r_t", "conv_s1_y", "conv_s1_x", "conv_s1_oc*4+" +  to_string(oc_unroll));
+      for (int ic_unroll = 0; ic_unroll < 2; ic_unroll ++) {
+        if (oc_unroll == 0)
+          hcompute_conv_stencil_1->add_load(
+                   "hw_input_stencil", "conv_s1_r_t",
+                  "(conv_s1_r_y + conv_s1_y)",
+                  "(conv_s1_r_x + conv_s1_x)",
+                  to_string(ic_unroll) + "+conv_s1_ic*2");
+        hcompute_conv_stencil_1->add_load(
+                "hw_kernel_stencil", "conv_s1_r_t",
+                "(conv_s1_r_y)", "(conv_s1_r_x)",
+                to_string(oc_unroll) + "+conv_s1_oc*4",
+                to_string(ic_unroll) + "+conv_s1_ic*2");
+      }
+    hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_r_t", "conv_s1_y", "conv_s1_x", to_string(oc_unroll) + "+conv_s1_oc*4");
+  }
+
+//consuming conv.stencil
+  auto hw_output_s0_t = prg.add_loop("hw_output_s0_t", 0, 4);
+  auto hw_output_s0_w = hw_output_s0_t->add_loop("hw_output_s0_w", 0, 16);
+  auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 28);
+  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 28);
+
+//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
+  auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_t", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_w");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_t", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_w");
+
+  return prg;
+}
+
 prog resnet_hc() {
   prog prg;
   prg.compute_unit_file = "resnet_compute.h";
@@ -1334,6 +1437,51 @@ isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) 
     return global_dom;
 }
 
+
+isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_sched = unn(buf.global_schedule(), global_sched);
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        domain = unn(buf.global_domain(), domain);
+    }
+    global_c_map = flatten_umap_domain_with_dim_from_outer(global_c_map, 2);
+    global_p_map = flatten_umap_domain_with_dim_from_outer(global_p_map, 2);
+    global_sched = flatten_umap_domain_with_dim_from_outer(global_sched, 2);
+    domain = ::domain(global_sched);
+    cout << "Global Schedule: " << str(global_sched) << endl;
+    cout << "Producer Map: " << str(global_p_map) << endl;
+    cout << "Consumer Map: " << str(global_c_map) << endl;
+    auto order_deps = get_rel_order(ctx, global_sched);
+    cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    extra = flatten_umap_domain_with_dim_from_outer(extra, 2);
+    extra = inv(flatten_umap_domain_with_dim_from_outer(inv(extra), 2));
+    raw_deps = unn(raw_deps, extra);
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    //proximity = filter_inner_sram_deps(ctx, proximity);
+    for (string remove_stmt: remove_deps){
+        proximity = remove_dep_domain_name(proximity, remove_stmt);
+    }
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
 
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
     isl_ctx* ctx = pick(buffers).second.ctx;
@@ -12343,12 +12491,13 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
                 auto mux_addr_expr = dot(access_map, mux_reduce_map);
                 cout << str(mux_addr_expr) << endl;
                 isl_aff* addr = get_aff(mux_addr_expr);
+                string prefix = is_rd ? "out" : "in";
                 out << "\"mux_write\"," << "\"" << buf_name << "\"" << endl;
-                out << "\"data_starting_addr\"," <<
+                out << "\""+prefix+"_data_starting_addr\"," <<
                     to_int(const_coeff(addr))  << ",0" << endl;
                 for (int d = 0; d < num_in_dims(addr); d++) {
                   int ldim = num_in_dims(addr) - d - 1;
-                  out << "\"data_stride_" << ldim << "\"," <<
+                  out << "\""+prefix+"_data_stride_" << ldim << "\"," <<
                       to_int(get_coeff(addr, d))  << ",0" << endl;
                 }
             }
@@ -12362,11 +12511,12 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
         } else {
             out << "\"read\"," << "\"" << buf_name  << "\"" << endl;
         }
-        out << "\"data_starting_addr\"," <<
+        string prefix = is_rd ? "out" : "in";
+        out << "\""+prefix+"_data_starting_addr\"," <<
             to_int(const_coeff(addr)) / ubuf.hardware.port_width << ",0" << endl;
         for (int d = 0; d < num_in_dims(addr); d++) {
           int ldim = num_in_dims(addr) - d - 1;
-          out << "\"data_stride_" << ldim << "\"," <<
+          out << "\""+prefix+"_data_stride_" << ldim << "\"," <<
               to_int(get_coeff(addr, d)) / ubuf.hardware.port_width << ",0" << endl;
         }
         if (ubuf.hardware.port_width > 1)
@@ -12686,13 +12836,13 @@ isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
 }
 
 void lake_resnet_test() {
-  auto prg = resnet_hc();
+  auto prg = resnet_hc_multi_tile();
   prg.pretty_print();
 
   CodegenOptions options;
   options.all_rams = true;
   all_register_files(prg, options);
-  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
+  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 1, 4}};
   options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
   options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
   options.inner_bank_offset_mode =
@@ -12755,7 +12905,7 @@ void lake_resnet_test() {
     tmp.insert(it);
     cout << "Vectorizing " << it.first << endl;
     cout << it.second << endl;
-    buffer_vectorization(it.first, 2, 4, tmp);
+    buffer_vectorization(it.first, 3, 4, tmp);
     cout << "Done with vectorization" << endl;
     //for (auto it: tmp) {
     //    auto buf = it.second;
@@ -12771,7 +12921,20 @@ void lake_resnet_test() {
     //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
     //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
     //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
-    auto opt_sched = optimized_schedule_from_buffers(tmp);
+
+    isl_union_set* gb_domain = global_domain_from_buffers(tmp);
+    isl_ctx* ctx = ::ctx(gb_domain);
+    auto um = isl_union_map_read_from_str(ctx,
+            "{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0-1, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+2, i1, i2, i3]}");
+    auto dom = isl_union_set_read_from_str(ctx,
+            "{op_hcompute_hw_input_stencil[root, i, j, k, l]: root=0 and 0<=i<=3 and 0<=j<=4 and 0<=k<=4 and 0<=l<=7; op_hcompute_hw_input_stencil_agg2sram[root, i, j, k]: root=0 and 0<=i<=3 and 0<=j<=4 and 0<=k<=4 }");
+    cout << "\t global domain" << str(gb_domain) << endl;
+    cout << "\tDouble buffer dependency: " << str(um) << endl;
+    um = its(um, gb_domain);
+    cout << "\tDouble buffer dependency: " << str(um) << endl;
+    um = its_range(um, gb_domain);
+    cout << "\tDouble buffer dependency: " << str(um) << endl;
+    auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
     cout << str(opt_sched) << endl;
     cout << codegen_c(opt_sched) << endl;
     assert(false);

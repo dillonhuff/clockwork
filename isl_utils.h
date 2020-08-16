@@ -374,6 +374,7 @@ isl_union_map* flatten_umap_domain(isl_ctx* ctx, isl_union_map* const um, map<st
 isl_union_map* remove_dep_domain_name(umap* um, string name);
 
 
+umap* flatten_umap_domain_with_dim_from_outer(umap* um, int dim_from_outer);
 isl_stat flatten_map_domain(isl_map* s, void* user);
 umap* flatten_map_domain_with_ii(isl_map* s, int ii);
 umap* flatten_map_domain_with_dim(umap* s, int dim_id);
