@@ -3094,9 +3094,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     cout << "vectorized_dim: " << vectorized_dim << endl;
     auto in_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 0));
     auto in_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 1));
-    in_vec_sched = set_domain_name(in_vec_sched, domain_name(in_vec_sched) + "_agg2sram");
+    in_vec_sched = set_domain_name(in_vec_sched, domain_name(in_vec_sched) );
     auto out_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 2));
-    out_vec_sched = set_domain_name(out_vec_sched, domain_name(out_vec_sched) + "_sram2tb");
+    out_vec_sched = set_domain_name(out_vec_sched, domain_name(out_vec_sched) );
     auto out_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 3));
 
     map<string, isl_map*> new_sched;
@@ -3480,7 +3480,10 @@ pair<std::map<string, UBuffer>, vector<string> >
         agg_buf.add_in_pt(in_pt_name+"_in", domain.at(in_pt_name), inpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(in_pt_name)));
         agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
 
-        auto sched = new_sched.at(::name(new_op_domain));
+        auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
+        auto sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
+        sched = dot(inv(op_trans), sched);
+        cout << "sched: " << str(sched) << endl;
 
         //add out port to agg_buf
         add_vectorized_pt_to_ubuf(agg_buf, rewrite_buf2op, sched, in_pt_name, bd_name+"_agg_out", dim_id, fetch_width, true);
@@ -3524,7 +3527,11 @@ pair<std::map<string, UBuffer>, vector<string> >
         auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
         cout << str(inv(access_map.at(out_pt_name))) << endl << str(rewrite_buf2op) << endl;
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
-        auto op_sched = new_sched.at(::name(new_op_domain));
+
+        //potential not work for accumulation buffers
+        auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
+        auto op_sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
+        op_sched = dot(inv(op_trans), op_sched);
         cout << "op schedule: " << str(op_sched) << endl;
 
 

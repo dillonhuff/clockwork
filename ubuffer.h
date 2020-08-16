@@ -594,6 +594,41 @@ class AccessPattern {
           return multi_map;
       }
 
+      isl_set* get_dom_slice(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
+          vector<int> & stride_in_target = access_matrix[dim_id];
+          int inner_most = get_inner_most_related_dom_dim();
+          cout << "trans op dim: " << inner_most << endl;
+          vector<string> var_list(inner_most+1);
+          vector<string> origin_var_list(var_dim-1);
+          vector<string> trans_constraints;
+          //var_list.front() = "root";
+          //origin_var_list.front() = "root";
+          //TODO: handle reuse pattern
+          for (auto it: name2idx) {
+              if (it.first == "const")
+                  continue;
+              int id = it.second-1;
+              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4)) {
+                  int factor = fetch_width / stride_in_target[it.second];
+                  string trans = it.first + "%" + to_string(factor) + " = 0";
+                  trans_constraints.push_back(trans);
+                  var_list[id] = it.first;
+                  origin_var_list[id] = it.first;
+              }
+              else {
+                  if (id <= inner_most)
+                      var_list[id] = it.first;
+                  origin_var_list[id] = it.first;
+              }
+          }
+          auto vars = sep_list(var_list, "[", "]", "," );
+          auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
+          auto constraints = sep_list(trans_constraints, "", "", " and ");
+          cout <<"OP name: " << op_name << endl;
+          isl_set* slice = (rdset(ctx, string("{ " + op_name + origin_vars + " : " + constraints + "}").c_str()));
+          return slice;
+      }
+
       isl_map* pad_one_dim_to_dom(isl_ctx* ctx, int time_stamp) {
           vector<string> var_list(var_dim-1);
           vector<string> origin_var_list(var_dim-1);
@@ -632,7 +667,6 @@ class AccessPattern {
           }
           return slices;
       }
-
 
       vector<AccessPattern> vectorization(int dim_id, int fetch_width) {
           AccessPattern origin(*this);

@@ -1464,8 +1464,9 @@ isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &bu
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     extra = flatten_umap_domain_with_dim_from_outer(extra, 2);
     extra = inv(flatten_umap_domain_with_dim_from_outer(inv(extra), 2));
-    raw_deps = unn(raw_deps, extra);
+    //raw_deps = unn(extra, raw_deps);
     auto validity = unn(order_deps, raw_deps);
+    validity = unn(validity, extra);
     auto proximity = cpy(raw_deps);
 
     //Try to remove proximity between_input vec to output_vec
@@ -12903,12 +12904,12 @@ void lake_resnet_test() {
     cout << it.second << endl;
     buffer_vectorization(it.first, 3, 4, tmp);
     cout << "Done with vectorization" << endl;
-    //for (auto it: tmp) {
-    //    auto buf = it.second;
-    //    if (buf.get_out_ports().size() == 1)
-    //        temp.insert(it);
-    //    cout << it.first<< endl;
-    //}
+    for (auto it: tmp) {
+        auto buf = it.second;
+        if (buf.get_in_ports().size() == 1)
+            temp.insert(it);
+        cout << it.first<< endl;
+    }
 
     //auto opt_sched = optimized_schedule_from_buffers_feautrier(buffers_opt, false);
     //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
@@ -12920,17 +12921,17 @@ void lake_resnet_test() {
 
     isl_union_set* gb_domain = global_domain_from_buffers(tmp);
     isl_ctx* ctx = ::ctx(gb_domain);
-    auto um = isl_union_map_read_from_str(ctx,
-            "{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0-1, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+2, i1, i2, i3]}");
-    auto dom = isl_union_set_read_from_str(ctx,
-            "{op_hcompute_hw_input_stencil[root, i, j, k, l]: root=0 and 0<=i<=3 and 0<=j<=4 and 0<=k<=4 and 0<=l<=7; op_hcompute_hw_input_stencil_agg2sram[root, i, j, k]: root=0 and 0<=i<=3 and 0<=j<=4 and 0<=k<=4 }");
-    cout << "\t global domain" << str(gb_domain) << endl;
-    cout << "\tDouble buffer dependency: " << str(um) << endl;
-    um = its(um, gb_domain);
-    cout << "\tDouble buffer dependency: " << str(um) << endl;
-    um = its_range(um, gb_domain);
-    cout << "\tDouble buffer dependency: " << str(um) << endl;
-    auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
+    auto um = isl_union_map_read_from_str(ctx,"{}");
+    //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
+    ////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
+    //cout << "\t global domain" << str(gb_domain) << endl;
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //um = its(um, gb_domain);
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //um = its_range(um, gb_domain);
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
+    auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
     cout << str(opt_sched) << endl;
     cout << codegen_c(opt_sched) << endl;
     assert(false);
