@@ -1403,6 +1403,19 @@ map<string, UBuffer> vectorization_from_buf_map(
     //}
     //return ret;
 //}
+
+isl_union_map* global_schedule_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_sched = unn(buf.global_schedule(), global_sched);
+    }
+    cout << "Global schedule: " << str(global_sched) << endl;
+    return global_sched;
+}
+
+
 isl_union_map* global_access_map_from_buffers(const map<string, UBuffer> &buffers) {
     isl_ctx* ctx = pick(buffers).second.ctx;
     isl_union_map* global_acc_map = isl_union_map_read_from_str(ctx, "{}");
@@ -13096,6 +13109,12 @@ void lake_conv33_autovec_test() {
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
   int max_inpt = 2, max_outpt = 2;
+#ifdef COREIR
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  auto sched = global_schedule_from_buffers(buffers_opt);
+  generate_coreir(opt, buffers_opt, prg, sched);
 
   for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << endl;
@@ -13103,7 +13122,18 @@ void lake_conv33_autovec_test() {
         continue;
     b.second.generate_banks_and_merge(opt);
     b.second.port_group2bank(max_inpt, max_outpt);
+
+    auto def = generate_coreir(opt, context, b.second);
+
+    if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
+      cout << "Could not save ubuffer coreir!" << endl;
+      context->die();
+    }
+    CoreIR::deleteContext(context);
   }
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+  //generate_coreir(opt, buffers_opt, prg, sched);
+#endif
 
   cout << "post processing buf" << endl;
   cout << buffers_opt.at("buf");
