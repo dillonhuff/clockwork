@@ -13107,26 +13107,26 @@ void lake_conv33_autovec_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
   prg.name = "conv33_naive_compute";
-  prg.add_input("in");
-  prg.add_output("out");
+  prg.add_input("in_inst");
+  prg.add_output("out_inst");
   //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 16;
-  prg.buffer_port_widths["out"] = 16;
-  prg.buffer_port_widths["buf"] = 16;
+  prg.buffer_port_widths["in_inst"] = 16;
+  prg.buffer_port_widths["out_inst"] = 16;
+  prg.buffer_port_widths["buf_inst"] = 16;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
-  write->add_load("in", "po, pi");
-  write->add_store("buf", "po, pi");
+  write->add_load("in_inst", "po, pi");
+  write->add_store("buf_inst", "po, pi");
 
   auto q = prg.add_nest("qo", 0, 6, "qi", 0, 14);
   auto read = q->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
-        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+        read->add_load("buf_inst", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
       }
   }
-  read->add_store("out", "qo, qi");
+  read->add_store("out_inst", "qo, qi");
 
 
   //optimized schedule
@@ -13148,7 +13148,7 @@ void lake_conv33_autovec_test() {
 
   for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << endl;
-    if (b.first == "in" || b.first == "out")
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
     b.second.generate_banks_and_merge(opt);
     b.second.port_group2bank(max_inpt, max_outpt);
@@ -13166,9 +13166,6 @@ void lake_conv33_autovec_test() {
   generate_verilog_tb(prg.name);
 #endif
 
-  assert(false);
-  cout << "post processing buf" << endl;
-  cout << buffers_opt.at("buf");
 
   //return the buffers after vectorization and the proximity deps you want to remove
   vector<string> input_vec_stmts;
