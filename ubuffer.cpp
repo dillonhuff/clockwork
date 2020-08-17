@@ -3816,6 +3816,11 @@ pair<std::map<string, UBuffer>, vector<string> >
         //}
         isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
         std::cout << "transform rewrite: " << str(op_trans) << endl;
+        isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
+        std::cout << "transform stripmining: " << str(op_stripmining) << endl;
+        isl_set* sm_domain = range(its(op_stripmining, domain.at(in_pt_name)));
+        agg_buf.retrive_domain[in_pt_name] = sm_domain;
+        std::cout << "domain stripmining: " << str(sm_domain) << endl;
         cout << "IS loop: " << is_self_loop(in_pt_name) << endl;
 
         auto rewrite_buf2op = dot(inv(access_map.at(in_pt_name)), op_trans);

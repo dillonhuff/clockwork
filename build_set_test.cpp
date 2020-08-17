@@ -12548,12 +12548,22 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
 
         string prefix = is_rd ? "read" : "write";
         out << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
-        out << "\""+prefix+"_data_starting_addr\"," <<
-            to_int(const_coeff(addr)) / ubuf.hardware.port_width << ",0" << endl;
+
+        //FIXME: this is a hack for fetch width = 4 aggregator
+        int st = 0;
+        if (ubuf.hardware.port_width > 1)
+            st = to_int(const_coeff(addr)) / ubuf.hardware.port_width;
+        else
+            st = to_int(const_coeff(addr)) % 4;
+        out << "\""+prefix+"_data_starting_addr\"," << st << ",0" << endl;
         for (int d = 0; d < num_in_dims(addr); d++) {
           int ldim = num_in_dims(addr) - d - 1;
-          out << "\""+prefix+"_data_stride_" << ldim << "\"," <<
-              to_int(get_coeff(addr, d)) / ubuf.hardware.port_width << ",0" << endl;
+          int st = 0;
+          if (ubuf.hardware.port_width > 1)
+              st = to_int(get_coeff(addr, d)) / ubuf.hardware.port_width;
+          else
+              st = to_int(get_coeff(addr, d)) % 4;
+          out << "\""+prefix+"_data_stride_" << ldim << "\"," << st << ",0" << endl;
         }
         if (ubuf.hardware.port_width > 1)
             break;
@@ -12612,6 +12622,7 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
         }
       }
     }
+    cout << "\tretrive dom: " << str(glb_retrive_domain) << endl;
 
     //find the memory tile interface op we need to generate multiple file
     vector<isl_map*> access_map_for_op;

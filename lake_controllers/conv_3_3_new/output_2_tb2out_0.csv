@@ -9,5 +9,5 @@
 "read","buf_inst_input_10_to_buf_inst_output_3_ubuf_0_tb"
 "read_data_starting_addr",0,0
 "read_data_stride_2",0,0
-"read_data_stride_1",16,0
+"read_data_stride_1",0,0
 "read_data_stride_0",1,0
