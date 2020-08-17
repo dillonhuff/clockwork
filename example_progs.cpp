@@ -2034,3 +2034,7 @@ prog rom() {
 
   return prg;
 }
+
+prog mini_conv_halide_fixed() {
+  assert(false);
+}
