@@ -9,7 +9,6 @@ using namespace std;
 
 Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
   Namespace* cwlib = c->newNamespace("cwlib");
-  c->getNamespace("commonlib");
 
   Params ubparams = Params({
         {"width", c->Int()},
@@ -28,25 +27,26 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
             Json config = genargs.at("config")->get<Json>();
 
             RecordParams recordparams = {
-                {"reset", c->BitIn()},
+                {"rst_n", c->BitIn()},
+                {"clk_en", c->BitIn()},
                 {"clk", c->Named("coreir.clkIn")}
             };
 
             for (size_t i = 0; i < input_num; i ++) {
                 recordparams.push_back({"datain_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
-                recordparams.push_back({"chainin_" + std::to_string(i),
-                        c->BitIn()->Arr(width)});
-                recordparams.push_back({"wen_" + std::to_string(i),
-                        c->BitIn()});
+                //recordparams.push_back({"chainin_" + std::to_string(i),
+                //        c->BitIn()->Arr(width)});
+                //recordparams.push_back({"wen_" + std::to_string(i),
+                //        c->BitIn()});
             }
             for (size_t i = 0; i < output_num; i ++) {
                 recordparams.push_back({"dataout_" + std::to_string(i),
                         c->Bit()->Arr(width)});
-                recordparams.push_back({"valid_" + std::to_string(i),
-                        c->Bit()});
-                recordparams.push_back({"ren_" + std::to_string(i),
-                        c->BitIn()});
+                //recordparams.push_back({"valid_" + std::to_string(i),
+                //        c->Bit()});
+                //recordparams.push_back({"ren_" + std::to_string(i),
+                //        c->BitIn()});
             }
         return c->Record(recordparams);
     }

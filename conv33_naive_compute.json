@@ -43,6 +43,10 @@
           "ub_buf_input_10_to_buf_output_3":{
             "genref":"cwlib.ub",
             "genargs":{"config":["Json",null], "input_num":["Int",1], "output_num":["Int",2], "width":["Int",16]}
+          },
+          "ub_buf_input_10_to_buf_output_3_clk_en_const":{
+            "modref":"corebit.const",
+            "modargs":{"value":["Bool",true]}
           }
         },
         "connections":[
@@ -69,15 +73,15 @@
           ["ub_buf_input_10_to_buf_output_3.datain_0","self.input_write.0"],
           ["ub_buf_input_10_to_buf_output_3.dataout_0","self.output_read.2"],
           ["ub_buf_input_10_to_buf_output_3.dataout_1","self.output_read.5"],
-          ["ub_buf_input_10_to_buf_output_3.reset","self.reset"]
+          ["ub_buf_input_10_to_buf_output_3.rst_n","self.reset"],
+          ["ub_buf_input_10_to_buf_output_3_clk_en_const.out","ub_buf_input_10_to_buf_output_3.clk_en"]
         ]
       },
       "conv33_naive_compute":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["in_input_read_valid","Bit"],
+          ["reset","BitIn"],
           ["in_input_read",["Array",1,["Array",16,"BitIn"]]],
-          ["out_output_write_en","Bit"],
           ["out_output_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
@@ -103,6 +107,7 @@
           ["self.clk","buf.clk"],
           ["input.buf_input_write","buf.input_write"],
           ["output.buf_output_read","buf.output_read"],
+          ["self.reset","buf.reset"],
           ["self.clk","input.clk"],
           ["self.clk","output.clk"],
           ["self.out_output_write","output.out_output_write"]

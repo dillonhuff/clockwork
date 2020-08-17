@@ -750,8 +750,12 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       CoreIR::Instance* buf;
       buf = def->addInstance(ub_ins_name, "cwlib.ub", args);
 
-      def->connect(buf->sel("reset"), def->sel("self.reset"));
+      CoreIR::Values widthArg = {{"width", CoreIR::Const::make(context, 1)}};
+      auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+              {{"value", CoreIR::Const::make(context, true)}});
+      def->connect(buf->sel("rst_n"), def->sel("self.reset"));
       def->connect(buf->sel("clk"), def->sel("self.clk"));
+      def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
 
       int inpt_cnt = 0, outpt_cnt = 0;
       if (inpts.size() == 1) {

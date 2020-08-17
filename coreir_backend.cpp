@@ -1071,6 +1071,9 @@ coreir_moduledef(CodegenOptions& options,
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
+  if (options.rtl_options.use_prebuilt_memory) {
+    ub_field.push_back({"reset", context->BitIn()});
+  }
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
     string out_bundle = eb.second;
@@ -1082,10 +1085,14 @@ coreir_moduledef(CodegenOptions& options,
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
+      if (options.rtl_options.use_prebuilt_memory == false) {
+        ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
+      }
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
     } else {
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
+      if (options.rtl_options.use_prebuilt_memory == false) {
+        ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
+      }
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
   }
@@ -1138,7 +1145,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       auto ub_mod = generate_coreir_without_ctrl(options, context, buf.second, hwinfo);
       def->addInstance(buf.second.name, ub_mod);
       //TODO: add reset connection for garnet mapping
-      //def->connect(def->sel(buf.second.name + ".reset"), def->sel("self.reset"));
+      //cout << "connected reset for " << buf.first << buf.second.name <<  endl;
+      def->connect(def->sel(buf.first + ".reset"), def->sel("self.reset"));
     }
   }
 
@@ -1209,7 +1217,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   ub->print();
 
-  connect_signal("reset", ub);
+  //connect_signal("reset", ub);
   //context->runPasses({"wireclocks-coreir"});
   //context->runPasses({"rungenerators", "wireclocks-coreir"});
   context->runPasses({"rungenerators", "wireclocks-coreir"});

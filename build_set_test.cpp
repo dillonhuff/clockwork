@@ -11416,6 +11416,12 @@ void run_verilator_tb(const std::string& name) {
   assert(verilator_run == 0);
 }
 
+void generate_verilog_tb(const std::string& name) {
+
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --load_libs cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-coreir\"");
+  assert(to_verilog_res == 0);
+}
+
 void identity_stream_through_mem_coreir_test() {
   prog prg("identity_stream_through_mem");
   prg.buffer_port_widths["in"] = 16;
@@ -13157,8 +13163,10 @@ void lake_conv33_autovec_test() {
   }
   auto sched = global_schedule_from_buffers(buffers_opt);
   generate_coreir(opt, buffers_opt, prg, sched);
+  generate_verilog_tb(prg.name);
 #endif
 
+  assert(false);
   cout << "post processing buf" << endl;
   cout << buffers_opt.at("buf");
 
