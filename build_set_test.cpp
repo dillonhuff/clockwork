@@ -14335,7 +14335,7 @@ void resnet_auto_unroll() {
   prg.pretty_print();
   prg.sanity_check();
 
-  //assert(false);
+  assert(false);
 
   infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
 
@@ -14349,7 +14349,7 @@ void resnet_auto_unroll() {
 }
 
 void application_tests() {
-  //resnet_auto_unroll();
+  resnet_auto_unroll();
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
   infer_bounds_multi_5x1_stage_negative_conv_test();
