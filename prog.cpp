@@ -5177,6 +5177,17 @@ void generate_verilator_tb(prog& prg,
     }
     unroll_factor[in] = unroll;
   }
+  for (auto out : prg.outs) {
+    auto readers = find_writers(out, prg);
+    int unroll = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->write_addrs(out)) {
+        unroll++;
+      }
+    }
+    unroll_factor[out] = unroll;
+  }
+
 
   generate_verilator_tb_in_streams(
       rgtb,

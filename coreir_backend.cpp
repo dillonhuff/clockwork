@@ -1216,7 +1216,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   //context->runPasses({"rungenerators", "wireclocks-coreir"});
   context->runPasses({"rungenerators", "wireclocks-clk"});
 
-  assert(false);
+  //assert(false);
   return ub;
   //assert(false);
 }
