@@ -14372,8 +14372,16 @@ void generate_lake_collateral(
     isl_aff* read_addr,
     isl_set* read_dom) {
 
+  int write_sched_start = to_int(const_coeff(write_sched));
+  int read_sched_start = to_int(const_coeff(read_sched));
+
   int write_start = to_int(const_coeff(write_addr));
   int read_start = to_int(const_coeff(read_addr));
+
+  vector<string> read_strides;
+  for (int d = 0; d < num_in_dims(read_addr); d++) {
+    read_strides.push_back("16'd" + str(get_coeff(read_addr, d)));
+  }
 
   vector<string> outer_port_decls;
   //outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
@@ -14467,13 +14475,13 @@ void generate_lake_collateral(
       } else if (name == "strg_ub_sram_read_addr_gen_starting_addr") {
         default_val = str(read_start);
       } else if (name == "strg_ub_sram_read_addr_gen_strides") {
-        default_val = "{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
+        default_val = sep_list(read_strides, "{", "}", ", "); //"{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
       } else if (name == "strg_ub_sram_read_loops_dimensionality") {
-        default_val = "5";
+        default_val = str(num_dims(read_dom));
       } else if (name == "strg_ub_sram_read_loops_ranges") {
         default_val = "{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr") {
-        default_val = "0";
+        default_val = str(read_sched_start);
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_strides") {
         default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
       } else if (name == "strg_ub_sram_write_addr_gen_starting_addr") {
@@ -14481,11 +14489,11 @@ void generate_lake_collateral(
       } else if (name == "strg_ub_sram_write_addr_gen_strides") {
         default_val = "{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
       } else if (name == "strg_ub_sram_write_loops_dimensionality") {
-        default_val = "5";
+        default_val = str(num_dims(write_dom));
       } else if (name == "strg_ub_sram_write_loops_ranges") {
         default_val = "{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr") {
-        default_val = "0";
+        default_val = str(write_sched_start);
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_strides") {
         default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
         //pds.push_back("input logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr");
