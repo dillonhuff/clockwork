@@ -93,9 +93,9 @@ module LakeTop (
   output logic valid_out
 );
 
-//always @(posedge clk) begin
-  //$display("posedge: clk_en = %d", clk_en);
-//end
+always @(posedge clk) begin
+  $display("strides: %b", strg_ub_sram_write_addr_gen_strides);
+end
 
 logic cfg_seq_clk;
 logic [15:0] config_data_in_shrt;
@@ -266,6 +266,7 @@ always_ff @(posedge clk, negedge rst_n) begin
       current_addr <= 16'h0;
     end
     else if (step) begin
+      $display("stepping from %d by %d", current_addr, strides[mux_sel]);
       current_addr <= current_addr + strides[mux_sel];
     end
   end
@@ -654,6 +655,7 @@ always_ff @(posedge clk, negedge rst_n) begin
       data_array <= 4096'h0;
     end
     else if (wen) begin
+      $display("write enabled, writing %d to %d", data_in, wr_addr);
       data_array[wr_addr] <= data_in;
     end
   end
@@ -668,6 +670,7 @@ always_ff @(posedge clk, negedge rst_n) begin
       data_out <= 16'h0;
     end
     else if (ren) begin
+      $display("read enabled, reading %d to %d", data_out, rd_addr);
       data_out <= data_array[rd_addr];
     end
   end
@@ -780,7 +783,7 @@ always_ff @(posedge clk, negedge rst_n) begin
     $display("reset!, clk_en = %d", clk_en);
   end
   else if (clk_en) begin
-    $display("Not resetting and clock enabled");
+    //$display("Not resetting and clock enabled");
     if (flush) begin
       cycle_count <= 16'h0;
       $display("Flushed!");
