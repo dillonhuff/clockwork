@@ -9961,6 +9961,20 @@ std::vector<string> verilator_results(const std::string& name) {
   return lines;
 }
 
+int run_verilator_on(const std::string& top_module,
+    const std::string& tb_file,
+    const std::vector<string>& verilog_files) {
+
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe " + tb_file + " --top-module " + top_module + " -Wno-lint");
+  assert(verilator_build == 0);
+
+  int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
+  assert(verilator_d == 0);
+
+  int verilator_run = cmd("./obj_dir/V" + top_module);
+  return verilator_run;
+}
+
 void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
@@ -14348,7 +14362,93 @@ void resnet_auto_unroll() {
   assert(false);
 }
 
+void generate_lake_collateral(std::ostream& out) {
+  vector<string> outer_port_decls;
+  outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
+  outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
+  //pds.push_back("output logic [0:0] [15:0] chain_data_out");
+  //pds.push_back("input logic chain_idx_input");
+  //pds.push_back("input logic chain_idx_output");
+  //pds.push_back("input logic chain_valid_in");
+  //pds.push_back("output logic chain_valid_out");
+  //pds.push_back("input logic clk");
+  //pds.push_back("input logic [0:0] [15:0] data_in");
+  //pds.push_back("output logic [0:0] [15:0] data_out");
+  //pds.push_back("input logic enable_chain_input");
+  //pds.push_back("input logic enable_chain_output");
+  //pds.push_back("input logic flush");
+  //pds.push_back("input logic ren_in");
+  //pds.push_back("input logic rst_n");
+  //pds.push_back("output logic valid_out");
+  //pds.push_back("input logic wen_in");
+
+  vector<string> pds;
+  pds.push_back("input logic [0:0] [15:0] addr_in");
+  pds.push_back("input logic [0:0] [15:0] chain_data_in");
+  pds.push_back("output logic [0:0] [15:0] chain_data_out");
+  pds.push_back("input logic chain_idx_input");
+  pds.push_back("input logic chain_idx_output");
+  pds.push_back("input logic chain_valid_in");
+  pds.push_back("output logic chain_valid_out");
+  pds.push_back("input logic clk");
+  pds.push_back("input logic clk_en");
+  pds.push_back("input logic [7:0] config_addr_in");
+  pds.push_back("input logic [31:0] config_data_in");
+  pds.push_back("output logic [0:0] [31:0] config_data_out");
+  pds.push_back("input logic config_en");
+  pds.push_back("input logic config_read");
+  pds.push_back("input logic config_write");
+  pds.push_back("input logic [0:0] [15:0] data_in");
+  pds.push_back("output logic [0:0] [15:0] data_out");
+  pds.push_back("input logic enable_chain_input");
+  pds.push_back("input logic enable_chain_output");
+  pds.push_back("input logic flush");
+  pds.push_back("input logic [1:0] mode");
+  pds.push_back("input logic ren_in");
+  pds.push_back("input logic rst_n");
+
+  pds.push_back("input logic [15:0] strg_ub_sram_read_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_addr_gen_strides");
+  pds.push_back("input logic [3:0] strg_ub_sram_read_loops_dimensionality");
+
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_loops_ranges");
+
+  pds.push_back("input logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides");
+
+  pds.push_back("input logic [15:0] strg_ub_sram_write_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_addr_gen_strides");
+  pds.push_back("input logic [3:0] strg_ub_sram_write_loops_dimensionality");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_loops_ranges");
+  pds.push_back("input logic [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides");
+
+  pds.push_back("input logic tile_en");
+
+  pds.push_back("output logic valid_out");
+
+  pds.push_back("input logic wen_in");
+
+  out << "module lake_tile_" << "Tile" << "(" << comma_list(outer_port_decls) << ");" << endl;
+
+  out << "endmodule" << endl;
+}
+
+void raw_memtile_verilog_test() {
+
+  ofstream out("lake_verilog_test.sv");
+  generate_lake_collateral(out);
+  out.close();
+
+  run_verilator_on("lake_tile_Tile",
+        "lake_verilog_tb.cpp",
+        {"lake_verilog_test.sv"});
+  assert(false);
+}
+
 void application_tests() {
+  //raw_memtile_verilog_test();
+
   //resnet_auto_unroll();
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
