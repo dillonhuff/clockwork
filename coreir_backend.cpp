@@ -875,6 +875,9 @@ CoreIR::Module* create_prog_declaration(CodegenOptions& options,
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
+  ub_field.push_back({"rst_n", context->BitIn()});
+  ub_field.push_back({"flush", context->BitIn()});
+
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
     string out_bundle = eb.second;
@@ -2159,6 +2162,8 @@ void add_delay_tile_generator(CoreIR::Context* c) {
 
   auto tp = c->Record({
       {"clk", c->Named("coreir.clkIn")},
+      {"rst_n", c->BitIn()},
+      {"flush", c->BitIn()},
       {"wdata", c->BitIn()->Arr(width)},
       {"rdata", c->Bit()->Arr(width)}});
   return tp;
@@ -2176,6 +2181,8 @@ void add_delay_tile_generator(CoreIR::Context* c) {
     def->connect(srinst->sel("wdata"), self->sel("wdata"));
     def->connect(srinst->sel("rdata"), self->sel("rdata"));
 
+    def->connect(srinst->sel("rst_n"), self->sel("rst_n"));
+    def->connect(srinst->sel("flush"), self->sel("flush"));
     });
 }
 
@@ -2392,6 +2399,9 @@ CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<i
   vector<pair<string, Type*> > fields = {{"clk", c->Named("coreir.clkIn")},
     {"wdata", c->BitIn()->Arr(width)},
     {"rdata", c->Bit()->Arr(width)}};
+
+  fields.push_back({"rst_n", context->BitIn()});
+  fields.push_back({"flush", context->BitIn()});
 
   Module* mod = nullptr;
   const int TILE_USE_THRESHOLD = 10;
