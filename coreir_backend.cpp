@@ -834,6 +834,8 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   auto aff_c = affine_controller(c, dom, aff);
   aff_c->print();
   auto controller = def->addInstance(controller_name(op->name), aff_c);
+  def->connect(def->sel("self.rst_n"), controller->sel("rst_n"));
+  def->connect(def->sel("self.flush"), controller->sel("flush"));
 
   wirebit(def, read_start_name(op->name), controller->sel("valid"));
   auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
@@ -2155,6 +2157,8 @@ CoreIR::Module* affine_controller_lake(CoreIR::Context* context, isl_set* dom, i
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
       {"valid", c->Bit()}};
+  ub_field.push_back({"rst_n", c->BitIn()});
+  ub_field.push_back({"flush", c->BitIn()});
   int dims = num_in_dims(aff);
   ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
 

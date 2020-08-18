@@ -423,9 +423,32 @@ void generate_lake_collateral_affine_controller(const std::string& name, std::os
       //out << tab(1) << "assign " << name << " = " << default_val << ";" << endl;
     }
 
-    //decls.push_back("." + f.back() + parens(f.back()));
   }
+  decls.push_back(".clk(clk)");
+  decls.push_back(".clk_en(1)");
+  decls.push_back(".rst_n(rst_n)");
+  decls.push_back(".flush(flush)");
+  decls.push_back(".step(valid)");
+  decls.push_back(".dimensionality(" + str(num_dims(dom)) + ")");
+  decls.push_back(".ranges(" + sep_list(write_ranges, "{", "}", ", ") + ")");
+  decls.push_back(".strides(" + sep_list(strides, "{", "}", ", ") + ")");
+  decls.push_back(".starting_addr(" + str(sched_start) + ")");
+
   out << endl;
+
+  //out << tab(1) << "reg [15:0] cycle_time;" << endl;
+
+  //out << "assign valid = cycle_time == addr_out;" << endl;
+
+  //out << "always_ff @(posedge clk, negedge rst_n) begin" << endl;
+  //out << "if (~rst_n) begin" << endl;
+  //out << "cycle_time <= 16'h0;" << endl;
+  //out << "end" << endl;
+  //out << "else begin" << endl;
+  //out << "cycle_time <= cycle_time + 16'd1;" << endl;
+  //out << "end" << endl;
+  //out << "end" << endl << endl;
+
   out << tab(1) << "addr_gen_6 lake(" << comma_list(decls) << ");" << endl;
   out << endl;
 
