@@ -14378,6 +14378,11 @@ void generate_lake_collateral(
   int write_start = to_int(const_coeff(write_addr));
   int read_start = to_int(const_coeff(read_addr));
 
+  vector<string> write_strides;
+  for (int d = 0; d < num_in_dims(write_addr); d++) {
+    write_strides.push_back("16'd" + str(get_coeff(write_addr, d)));
+  }
+
   vector<string> read_strides;
   for (int d = 0; d < num_in_dims(read_addr); d++) {
     read_strides.push_back("16'd" + str(get_coeff(read_addr, d)));
@@ -14487,7 +14492,8 @@ void generate_lake_collateral(
       } else if (name == "strg_ub_sram_write_addr_gen_starting_addr") {
         default_val = str(write_start);
       } else if (name == "strg_ub_sram_write_addr_gen_strides") {
-        default_val = "{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
+        default_val = sep_list(write_strides, "{", "}", ", ");
+        // "{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
       } else if (name == "strg_ub_sram_write_loops_dimensionality") {
         default_val = str(num_dims(write_dom));
       } else if (name == "strg_ub_sram_write_loops_ranges") {
