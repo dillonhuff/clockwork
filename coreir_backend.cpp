@@ -2147,8 +2147,25 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   return m;
 }
 
+CoreIR::Module* affine_controller_lake(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", c->Named("coreir.clkIn")},
+      {"valid", c->Bit()}};
+  int dims = num_in_dims(aff);
+  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
+  generate_lake_collateral_affine_controller(m->getName(), *verilog_collateral_file, dom, aff);
+  return m;
+}
+
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
-  return affine_controller_primitive(context, dom, aff);
+  return affine_controller_lake(context, dom, aff);
 }
 
 void add_delay_tile_generator(CoreIR::Context* c) {

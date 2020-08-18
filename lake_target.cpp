@@ -313,3 +313,6 @@ void generate_lake_collateral_delay_wdata_wrapped(const std::string& name, std::
 
   out << "endmodule" << endl;
 }
+
+void generate_lake_collateral_affine_controller(const std::string& name, std::ostream& out, isl_set* dom, isl_aff* aff) {
+}

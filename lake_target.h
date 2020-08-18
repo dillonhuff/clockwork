@@ -39,3 +39,6 @@ void generate_lake_collateral(
 
 void generate_lake_collateral_delay(const std::string& name, std::ostream& out, const int depth);
 void generate_lake_collateral_delay_wdata_wrapped(const std::string& name, std::ostream& out, const int depth);
+
+
+void generate_lake_collateral_affine_controller(const std::string& name, std::ostream& out, isl_set* dom, isl_aff* aff);
