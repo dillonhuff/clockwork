@@ -426,6 +426,39 @@ int num_locs_written(const string& buff, prog& prg){
 	return num_locs_written;
 }
 
+int stencil_memory_cost(const string& buff, prog& prg){
+	int cost = 0;
+
+	//Get dimension and size of the img
+	int image_dimension = 0;
+	std::set<normalized_address_components> addrs = get_normalized_addresses(buff, prg);	
+	vector<int> image_size = prg.buffer_bounds[buff]; //cols, rows
+	image_dimension = addrs.begin()->offsets.size();
+	assert(image_dimension >= 2);
+	
+	//Get size of the grid
+	vector<int> grid_size;
+	std::set<int> grid_offsets_col;
+	std::set<int> grid_offsets_row;
+	for(auto addr : addrs){
+		if(addr.components.at(1).at(0)!= 0){
+			grid_offsets_col.insert(addr.offsets.at(0));
+		} else if(addr.components.at(2).at(0) != 0){
+			grid_offsets_row.insert(addr.offsets.at(0));
+		}
+	}
+	grid_size[0] = grid_offsets_col.size();
+	grid_size[1] = grid_offsets_row.size();
+
+	//Make the math
+	if(image_dimension == 2){
+		cost = (image_size[0]*(grid_size[1]-1)) + grid_size[0];
+	}
+
+	cout << "Stencil memory cost: " << cost << endl;
+	return cost;
+}
+
 //-----------------------------------------ESTIMATE_KERNEL_MEMORY_AREA-------------------------------------------
 
  map<string, int> estimate_kernel_memory_area(prog& prg, TargetTechlibInfo& target_info){
@@ -450,7 +483,7 @@ int num_locs_written(const string& buff, prog& prg){
 		} else if(is_pointwise(buff, prg)){
 			estimated_buffer_sizes[buff] = 0;
 		} else if(is_stencil(buff, prg)){	
-			estimated_buffer_sizes[buff] = 0; //To be implemented!
+			estimated_buffer_sizes[buff] = stencil_memory_cost(buff, prg); //To be implemented!
 		} else if(is_reduction(buff, prg)){
 			estimated_buffer_sizes[buff] = 0;
 		}  else{
