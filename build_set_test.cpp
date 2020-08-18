@@ -13214,9 +13214,12 @@ void lake_cascade_autovec_test() {
   cout << codegen_c(opt_sched) << endl << endl;
   map<pair<string, string>, int> latency({
           {{"input", "input_agg2sram"}, 1},
+          {{"conv_agg2sram", "conv_2_sram2tb"}, -3},
+          {{"conv_2_sram2tb", "conv_2"}, 2},
+          {{"conv_2", "conv"}, -1},
           {{"conv", "conv_agg2sram"}, 1},
-          {{"conv_2", "conv_2_sram2tb"}, -1},
-          {{"output_2", "output_2_sram2tb"}, -1}});
+          {{"conv_agg2sram", "output_2_sram2tb"}, -3},
+          {{"output_2_sram2tb", "output_2"}, 2}});
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
