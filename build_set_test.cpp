@@ -14458,7 +14458,6 @@ void generate_lake_collateral(
       decl.push_back("wire");
       reverse(decl);
       out << tab(1) << sep_list(decl, "", "", " ") << ";" << endl;
-      //out << tab(1) << "wire " << name << ";" << endl;
       string default_val = "0";
       if (name == "clk_en" || name == "tile_en") {
         default_val = "1";
@@ -14500,9 +14499,9 @@ void generate_lake_collateral(
       out << tab(1) << "assign " << name << " = " << default_val << ";" << endl;
     }
 
-  decls.push_back("." + f.back() + parens(f.back()));
-}
-out << endl;
+    decls.push_back("." + f.back() + parens(f.back()));
+  }
+  out << endl;
   out << tab(1) << "LakeTop lake(" << comma_list(decls) << ");" << endl;
   out << endl;
 
@@ -14527,7 +14526,6 @@ void raw_memtile_verilog_test() {
         {"./lake_components/dualwithadd/lake_top.sv", "lake_verilog_tile.sv"});
 
   isl_ctx_free(ctx);
-
 
   assert(false);
 }

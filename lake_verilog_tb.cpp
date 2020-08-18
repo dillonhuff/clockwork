@@ -48,7 +48,7 @@ int main() {
 
   for (int t = 0; t < 10; t++) {
 
-    cout << "data out: " << dut.data_out << endl;
+    cout << "================== data out: " << dut.data_out << endl;
     dut.clk = 0;
     dut.eval();
 
