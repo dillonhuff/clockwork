@@ -93,9 +93,9 @@ module LakeTop (
   output logic valid_out
 );
 
-always @(posedge clk) begin
-  $display("posedge: clk_en = %d", clk_en);
-end
+//always @(posedge clk) begin
+  //$display("posedge: clk_en = %d", clk_en);
+//end
 
 logic cfg_seq_clk;
 logic [15:0] config_data_in_shrt;
