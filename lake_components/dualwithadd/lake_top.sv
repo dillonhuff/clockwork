@@ -93,6 +93,10 @@ module LakeTop (
   output logic valid_out
 );
 
+always @(posedge clk) begin
+  $display("posedge: clk_en = %d", clk_en);
+end
+
 logic cfg_seq_clk;
 logic [15:0] config_data_in_shrt;
 logic [0:0][15:0] config_data_out_shrt;
@@ -773,10 +777,13 @@ logic [15:0] write_addr;
 always_ff @(posedge clk, negedge rst_n) begin
   if (~rst_n) begin
     cycle_count <= 16'h0;
+    $display("reset!, clk_en = %d", clk_en);
   end
   else if (clk_en) begin
+    $display("Not resetting and clock enabled");
     if (flush) begin
       cycle_count <= 16'h0;
+      $display("Flushed!");
     end
     else cycle_count <= cycle_count + 16'h1;
   end

@@ -14366,20 +14366,20 @@ void generate_lake_collateral(std::ostream& out) {
   vector<string> outer_port_decls;
   //outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
-  //pds.push_back("output logic [0:0] [15:0] chain_data_out");
+  outer_port_decls.push_back("output logic [0:0] [15:0] chain_data_out");
   //pds.push_back("input logic chain_idx_input");
   //pds.push_back("input logic chain_idx_output");
   //pds.push_back("input logic chain_valid_in");
-  //pds.push_back("output logic chain_valid_out");
-  //pds.push_back("input logic clk");
-  //pds.push_back("input logic [0:0] [15:0] data_in");
-  //pds.push_back("output logic [0:0] [15:0] data_out");
+  outer_port_decls.push_back("output logic chain_valid_out");
+  outer_port_decls.push_back("input logic clk");
+  outer_port_decls.push_back("input logic [0:0] [15:0] data_in");
+  outer_port_decls.push_back("output logic [0:0] [15:0] data_out");
   //pds.push_back("input logic enable_chain_input");
   //pds.push_back("input logic enable_chain_output");
-  //pds.push_back("input logic flush");
+  outer_port_decls.push_back("input logic flush");
   //pds.push_back("input logic ren_in");
-  //pds.push_back("input logic rst_n");
-  //pds.push_back("output logic valid_out");
+  outer_port_decls.push_back("input logic rst_n");
+  outer_port_decls.push_back("output logic valid_out");
   //pds.push_back("input logic wen_in");
 
   vector<string> external;
@@ -14444,7 +14444,11 @@ void generate_lake_collateral(std::ostream& out) {
     string name = f.back();
     if (!elem(name, external)) {
       out << tab(1) << "wire " << name << ";" << endl;
-      out << tab(1) << "assign " << name << " = 0;" << endl;
+      string default_val = "0";
+      if (name == "clk_en" || name == "tile_en") {
+        default_val = "1";
+      }
+      out << tab(1) << "assign " << name << " = " << default_val << ";" << endl;
     }
 
     decls.push_back("." + f.back() + parens(f.back()));
