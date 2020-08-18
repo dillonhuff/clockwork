@@ -14447,7 +14447,7 @@ void raw_memtile_verilog_test() {
 }
 
 void application_tests() {
-  //raw_memtile_verilog_test();
+  raw_memtile_verilog_test();
 
   //resnet_auto_unroll();
   infer_bounds_multiple_inputs();
