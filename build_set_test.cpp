@@ -13523,7 +13523,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
-    run_verilator_verilog_tb(prg.name);
+    run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     assert(false);
