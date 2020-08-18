@@ -14559,6 +14559,8 @@ void raw_memtile_verilog_as_delay_test() {
   run_verilator_on("lake_delay_tile",
         "lake_delay_verilog_tb.cpp",
         {"./lake_components/dualwithadd/lake_top.sv", "lake_delay_tile.sv"});
+
+  assert(false);
 }
 
 void application_tests() {
