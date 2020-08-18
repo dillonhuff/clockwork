@@ -1327,7 +1327,11 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
       cout << "buffer_vectorization Vectorizing: " << target_buffer.name << endl;
       cout << target_buffer << endl;
 
-      //ret is a pair of vectorized_buffer and
+      //Input must be take care
+      //need to first pad the buffer output to the multiplier of
+      target_buffer.pad_read_dom(fetch_width);
+
+      //ret is a pair of vectorized_buffer and the dependency need to be removed
       auto ret = target_buffer.vectorization(dim_id, fetch_width);
       for (auto itr: ret.first) {
         buffers[itr.first] = itr.second;
@@ -10459,6 +10463,19 @@ isl_val* constant(isl_aff* a) {
 void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
+    auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[2*x + y, 4*z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
+    for (int i = 0; i < get_in_dim(access_map); i ++) {
+        cout << "map input : " << get_dim_min(domain(access_map), i)
+            << get_dim_max(domain(access_map), i) <<endl;
+    }
+    for (int i = 0; i < get_out_dim(access_map); i ++) {
+        cout << "map output card: " << str(get_out_range(access_map, i)) << endl;
+    }
+    assert(false);
+
+  }
+  {
+    isl_ctx* ctx = isl_ctx_alloc();
     auto sched = rdmap(ctx, "{ op_hcompute_hw_input_stencil_agg2sram[0,i0, i1] -> [i0, 3 + 4i1, 2] : 0 <= i0 <= 3 and 0 <= i1 <= 2047; op_hcompute_conv_stencil_1[0, i0, i1] -> [i0, 8191 + i1, 3] : 0 <= i0 <= 3 and 0 <= i1 <= 112895; op_hcompute_hw_input_stencil[0, i0, i1] -> [i0, i1, 0] : 0<= i0 <= 3 and 0 <= i1 <= 8191; op_hcompute_conv_stencil_1_sram2tb[0, i0, i1] -> [i0, 8191 + 2i1, 1] : 0 <= i0 <= 3 and 0 <= i1 <= 56447 }");
     cout << codegen_c(sched) << endl;
     assert(false);
@@ -13166,12 +13183,12 @@ void lake_cascade_autovec_test() {
   prg.buffer_port_widths["buf1"] = 16;
   prg.buffer_port_widths["buf2"] = 16;
 
-  auto p = prg.add_nest("po", 0, 16, "pi", 0, 16);
+  auto p = prg.add_nest("po", 0, 20, "pi", 0, 20);
   auto write = p->add_op("input");
   write->add_load("in", "po, pi");
   write->add_store("buf1", "po, pi");
 
-  auto q = prg.add_nest("qo", 0, 14, "qi", 0, 14);
+  auto q = prg.add_nest("qo", 0, 16, "qi", 0, 16);
   auto read = q->add_op("conv");
   for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
@@ -13180,7 +13197,7 @@ void lake_cascade_autovec_test() {
   }
   read->add_store("buf2", "qo, qi");
 
-  auto k = prg.add_nest("ko", 0, 10, "ki", 0, 10);
+  auto k = prg.add_nest("ko", 0, 14, "ki", 0, 14);
   auto read_ = k->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
@@ -13224,6 +13241,7 @@ void lake_cascade_autovec_test() {
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
+  //assert(false);
   //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 

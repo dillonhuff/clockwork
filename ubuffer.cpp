@@ -3733,6 +3733,29 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
+void UBuffer::pad_read_dom(int fetch_width) {
+    for (auto bd: get_out_bundles()) {
+        for (auto pt: port_bundles.at(bd)) {
+            auto am = to_map(access_map.at(pt));
+            auto sched = schedule.at(pt);
+            int dom_dim = get_in_dim(am);
+            assert(get_dim_min(::domain(am), dom_dim-1) == 0);
+            auto rem = (get_dim_max(::domain(am), dom_dim-1) + 1) % 4;
+            if (rem) {
+                //need padding
+                auto pad_am = pad_to_domain_ubuf_map(am, 4 - rem);
+                auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), 4 - rem);
+                cout << "\tPadded access map: " << str(pad_am) << endl;
+                cout << "\tPadded schedule: " << str(pad_sched) << endl;
+                replace_pt(pt, pad_am, pad_sched);
+                //access_map.at(pt) = to_umap(pad_am);
+                //schedule.at(pt) = to_umap(pad_sched);
+                //domain.at(pt) = ::domain(pad_am);
+            }
+        }
+    }
+
+}
 
 pair<std::map<string, UBuffer>, vector<string> >
     UBuffer::vectorization(int dim_id, int fetch_width) {

@@ -396,6 +396,7 @@ int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 
 //some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);
+isl_map* pad_to_domain_ubuf_map(isl_map* s, int depth);
 isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
 isl_map* delay_sched_map(isl_map* s, isl_map* write_sched);
 
@@ -489,6 +490,7 @@ int bnd_int(isl_union_pw_qpolynomial_fold* bound);
 int int_lower_bound(isl_union_pw_qpolynomial* range_card);
 int int_upper_bound(isl_union_pw_qpolynomial* range_card);
 
+//TODO: rename it to get in/out card
 isl_union_pw_qpolynomial* get_out_range(isl_map* m, int dim);
 
 isl_union_pw_qpolynomial_fold* lower_bound(isl_union_pw_qpolynomial* range_card);

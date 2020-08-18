@@ -1257,7 +1257,12 @@ class UBuffer {
 
     //The method replace the original access map and add a valid domain
     void replace_pt(string pt, isl_map* target, isl_map* sched) {
-        sv_map[pt] = dot(to_umap(target), inv(access_map.at(pt)));
+        if (sv_map.count(pt) == 0) {
+          sv_map[pt] = dot(to_umap(target), inv(access_map.at(pt)));
+        } else {
+          auto original_addr2iter = dot(inv(access_map.at(pt)), sv_map.at(pt));
+          sv_map.at(pt) = dot(to_umap(target), original_addr2iter);
+        }
         cout << "Add pt: " << pt << " stencil valid map: " << str(sv_map.at(pt)) << endl;
         access_map.at(pt) = to_umap(target);
         domain.at(pt) = ::domain(target);
@@ -1806,6 +1811,9 @@ class UBuffer {
     umap* pad_dom_buf2op(AccessPattern , umap* , int);
 
     isl_map* pad_dom_sched(AccessPattern , isl_map* , int);
+
+    //pad the read domain
+    void pad_read_dom(int fetch_width);
 
     //change the input and output and return the agg and tb ubuffer stucture
     pair<std::map<string, UBuffer>, vector<string> >
