@@ -14364,7 +14364,7 @@ void resnet_auto_unroll() {
 
 void generate_lake_collateral(std::ostream& out) {
   vector<string> outer_port_decls;
-  outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
+  //outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
   //pds.push_back("output logic [0:0] [15:0] chain_data_out");
   //pds.push_back("input logic chain_idx_input");
@@ -14382,8 +14382,14 @@ void generate_lake_collateral(std::ostream& out) {
   //pds.push_back("output logic valid_out");
   //pds.push_back("input logic wen_in");
 
+  vector<string> external;
+  for (auto s : outer_port_decls) {
+    string name = split_at(s, " ").back();
+    external.push_back(name);
+  }
+
   vector<string> pds;
-  pds.push_back("input logic [0:0] [15:0] addr_in");
+  //pds.push_back("input logic [0:0] [15:0] addr_in");
   pds.push_back("input logic [0:0] [15:0] chain_data_in");
   pds.push_back("output logic [0:0] [15:0] chain_data_out");
   pds.push_back("input logic chain_idx_input");
@@ -14435,9 +14441,17 @@ void generate_lake_collateral(std::ostream& out) {
   for (auto s : pds) {
     vector<string> f = split_at(s, " ");
     assert(f.size() > 0);
+    string name = f.back();
+    if (!elem(name, external)) {
+      out << tab(1) << "wire " << name << ";" << endl;
+      out << tab(1) << "assign " << name << " = 0;" << endl;
+    }
+
     decls.push_back("." + f.back() + parens(f.back()));
   }
+  out << endl;
   out << tab(1) << "LakeTop lake(" << comma_list(decls) << ");" << endl;
+  out << endl;
 
   out << "endmodule" << endl;
 }
