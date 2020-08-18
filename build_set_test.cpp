@@ -13461,7 +13461,7 @@ vector<prog> stencil_programs() {
 
   test_programs.push_back(up_sample());
   test_programs.push_back(harris());
-  test_programs.push_back(rom());
+  //test_programs.push_back(rom());
   test_programs.push_back(unsharp());
   //test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(gaussian());
