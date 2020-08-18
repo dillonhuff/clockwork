@@ -14388,6 +14388,28 @@ void generate_lake_collateral(
     read_strides.push_back("16'd" + str(get_coeff(read_addr, d)));
   }
 
+  vector<string> write_ranges;
+  cout << "write dom: " << str(write_dom) << endl;
+  for (int d = 0; d < num_dims(write_dom); d++) {
+    auto pr = project_all_but(write_dom, d);
+    cout << "projected: " << str(pr) << endl;
+    int minp = to_int(lexminval(pr));
+    assert(minp == 0);
+    int maxp = to_int(lexmaxval(pr));
+    cout << tab(1) << "maxp = " << maxp << endl;
+    write_ranges.push_back("16'd" + str(maxp));
+  }
+
+  vector<string> read_ranges;
+  for (int d = 0; d < num_dims(read_dom); d++) {
+    auto pr = project_all_but(read_dom, d);
+    int minp = to_int(lexminval(pr));
+    assert(minp == 0);
+    int maxp = to_int(lexmaxval(pr));
+    //read_ranges.push_back("16'd" + str(maxp + 1));
+    read_ranges.push_back("16'd" + str(maxp));
+  }
+
   vector<string> outer_port_decls;
   //outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
@@ -14484,7 +14506,7 @@ void generate_lake_collateral(
       } else if (name == "strg_ub_sram_read_loops_dimensionality") {
         default_val = str(num_dims(read_dom));
       } else if (name == "strg_ub_sram_read_loops_ranges") {
-        default_val = "{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
+        default_val = sep_list(read_ranges, "{", "}", ", "); //"{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr") {
         default_val = str(read_sched_start);
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_strides") {
@@ -14497,7 +14519,8 @@ void generate_lake_collateral(
       } else if (name == "strg_ub_sram_write_loops_dimensionality") {
         default_val = str(num_dims(write_dom));
       } else if (name == "strg_ub_sram_write_loops_ranges") {
-        default_val = "{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
+        //default_val = "{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
+        default_val = sep_list(write_ranges, "{", "}", ", ");
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr") {
         default_val = str(write_sched_start);
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_strides") {
@@ -14528,6 +14551,9 @@ void generate_lake_collateral(
 void generate_lake_collateral_delay(const std::string& name, std::ostream& out, const int depth) {
   isl_ctx* ctx = isl_ctx_alloc();
   int max_depth = (1 << 16) - 1;
+  cout << "max depth = " << max_depth << endl;
+  assert(max_depth >= 0);
+
   isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
   isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(a + " + str(depth) + ")] }");
   isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());

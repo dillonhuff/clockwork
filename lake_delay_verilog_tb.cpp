@@ -49,6 +49,9 @@ int main() {
   for (int t = 0; t < 100; t++) {
     dut.data_in = t;
     cout << "@" << t << ": " << dut.data_out << endl;
+    if (t >= 17) {
+      assert(dut.data_out == t - 17);
+    }
     dut.clk = 0;
     dut.eval();
 
@@ -56,7 +59,7 @@ int main() {
     dut.eval();
   }
 
-  assert(dut.data_out == 294);
+  //assert(dut.data_out == 294);
 
   cout << "Done with setup" << endl;
 
