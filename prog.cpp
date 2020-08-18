@@ -5196,6 +5196,24 @@ void generate_verilator_tb(prog& prg,
       buffers);
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+  rgtb << "dut.rst_n = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.rst_n = 1;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.flush = 1;" << endl;
+  rgtb << "dut.clk = 1;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.flush = 0;" << endl;
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
   for (auto out : inputs(buffers, prg)) {
     string data_name =
       out.first + "_" + out.second;

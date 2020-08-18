@@ -224,8 +224,8 @@ void generate_lake_collateral_delay_wdata_wrapped(const std::string& name, std::
   outer_port_decls.push_back("input logic flush");
   outer_port_decls.push_back("input logic rst_n");
   outer_port_decls.push_back("output logic valid_out");
-  outer_port_decls.push_back("output rdata");
-  outer_port_decls.push_back("output wdata");
+  outer_port_decls.push_back("output logic [15:0] rdata");
+  outer_port_decls.push_back("output logic [15:0] wdata");
 
   vector<string> external;
   for (auto s : outer_port_decls) {

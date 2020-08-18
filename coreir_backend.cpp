@@ -867,40 +867,40 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   return controller;
 }
 
-CoreIR::Module* create_prog_declaration(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    CoreIR::Context* context) { 
-  auto ns = context->getNamespace("global");
-  vector<pair<string, CoreIR::Type*> >
-    ub_field{{"clk", context->Named("coreir.clkIn")}};
-  ub_field.push_back({"rst_n", context->BitIn()});
-  ub_field.push_back({"flush", context->BitIn()});
+//CoreIR::Module* create_prog_declaration(CodegenOptions& options,
+    //map<string, UBuffer>& buffers,
+    //prog& prg,
+    //umap* schedmap,
+    //CoreIR::Context* context) { 
+  //auto ns = context->getNamespace("global");
+  //vector<pair<string, CoreIR::Type*> >
+    //ub_field{{"clk", context->Named("coreir.clkIn")}, {"rst_n", context->BitIn()}};
+  //ub_field.push_back({"rst_n", context->BitIn()});
+  //ub_field.push_back({"flush", context->BitIn()});
 
-  for (auto eb : edge_buffers(buffers, prg)) {
-    string out_rep = eb.first;
-    string out_bundle = eb.second;
+  //for (auto eb : edge_buffers(buffers, prg)) {
+    //string out_rep = eb.first;
+    //string out_bundle = eb.second;
 
-    UBuffer out_buf = map_find(out_rep, buffers);
+    //UBuffer out_buf = map_find(out_rep, buffers);
 
-    int pixel_width = out_buf.port_widths;
-    int pix_per_burst =
-      out_buf.lanes_in_bundle(out_bundle);
+    //int pixel_width = out_buf.port_widths;
+    //int pix_per_burst =
+      //out_buf.lanes_in_bundle(out_bundle);
 
-    if (prg.is_input(out_rep)) {
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
-    } else {
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
-    }
-  }
+    //if (prg.is_input(out_rep)) {
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
+    //} else {
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+    //}
+  //}
 
-  CoreIR::RecordType* utp = context->Record(ub_field);
-  auto ub = ns->newModuleDecl(prg.name, utp);
-  return ub;
-}
+  //CoreIR::RecordType* utp = context->Record(ub_field);
+  //auto ub = ns->newModuleDecl(prg.name, utp);
+  //return ub;
+//}
 
 CoreIR::Module* generate_dual_port_addrgen_buf(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
 
@@ -1076,6 +1076,8 @@ coreir_moduledef(CodegenOptions& options,
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
+  ub_field.push_back({"rst_n", context->BitIn()});
+  ub_field.push_back({"flush", context->BitIn()});
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
     string out_bundle = eb.second;
@@ -1142,7 +1144,13 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
       auto ub_mod = generate_coreir(options, context, buf.second, hwinfo);
-      def->addInstance(buf.second.name, ub_mod);
+      auto b = def->addInstance(buf.second.name, ub_mod);
+
+      auto self = def->sel("self");
+      cout << "start wiring ubuffer global signals" << endl;
+      def->connect(self->sel("rst_n"), b->sel("rst_n"));
+      def->connect(self->sel("flush"), b->sel("flush"));
+      cout << "done wiring ubuffer global signals" << endl;
     }
   }
 

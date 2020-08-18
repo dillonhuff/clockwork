@@ -1268,6 +1268,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
               def->connect(srinst->sel("rst_n"), self->sel("rst_n"));
               def->connect(srinst->sel("flush"), self->sel("flush"));
 
+              cout << "Connected to self" << endl;
+
               def->connect(
                   prior_wire,
                   srinst->sel("wdata"));
