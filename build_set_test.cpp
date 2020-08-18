@@ -14549,17 +14549,22 @@ void generate_lake_collateral(
 }
 
 void generate_lake_collateral_delay(const std::string& name, std::ostream& out, const int depth) {
+  const int TILE_READ_LATENCY = 1;
+
+  assert(depth >= TILE_READ_LATENCY);
   isl_ctx* ctx = isl_ctx_alloc();
   int max_depth = (1 << 16) - 1;
   cout << "max depth = " << max_depth << endl;
   assert(max_depth >= 0);
 
+
   isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
-  isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(a + " + str(depth) + ")] }");
+  isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(a + " + str(depth - TILE_READ_LATENCY) + ")] }");
   isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
-  isl_aff* read_sched = rdaff(ctx, "{ rd[a] -> [(a)] }");
-  isl_aff* read_addr = rdaff(ctx, "{ rd[a] -> [(a)] }");
+  isl_aff* read_sched = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
+  isl_aff* read_addr = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
+  //isl_aff* read_addr = rdaff(ctx, ("{ rd[a] -> [(a - " + str(TILE_READ_LATENCY) + ")] }").c_str());
   isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
   generate_lake_collateral(name, out, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
