@@ -1673,22 +1673,22 @@ void generate_coreir(CodegenOptions& options,
   deleteContext(context);
 }
 
-  CoreIR::Context* context = CoreIR::newContext();
+//CoreIR::Context* context = CoreIR::newContext();
 
-  CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
-      CoreIR::Wireable* w) {
-    return delaybit(bdef, "delay_reg_" + bdef->getContext()->getUnique(), w);
-  }
+CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
+    CoreIR::Wireable* w) {
+  return delaybit(bdef, "delay_reg_" + bdef->getContext()->getUnique(), w);
+}
 
-  CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
-      const std::string& name,
-      CoreIR::Wireable* w) {
-    auto c = bdef->getContext();
-    auto r = bdef->addInstance(
-        name,
-        "corebit.reg");
-    bdef->connect(r->sel("in"), w);
-    return r->sel("out");
+CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
+    const std::string& name,
+    CoreIR::Wireable* w) {
+  auto c = bdef->getContext();
+  auto r = bdef->addInstance(
+      name,
+      "corebit.reg");
+  bdef->connect(r->sel("in"), w);
+  return r->sel("out");
   }
 
   CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
@@ -1737,11 +1737,11 @@ CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
 
 CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
   vector<CoreIR::Wireable*> terms;
-  auto ns = context->getNamespace("global");
 
   int width = 16;
   auto context = def->getContext();
   auto c = context;
+  auto ns = c->getNamespace("global");
 
   int dims = num_in_dims(aff);
   for (int d = 0; d < dims; d++) {
@@ -1790,7 +1790,7 @@ CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   auto c = def->getContext();
   int width = 16;
   auto m = def->addInstance(
-      "mul_" + context->getUnique(),
+      "mul_" + c->getUnique(),
       "coreir.mul",
       {{"width", CoreIR::Const::make(c, width)}});
   def->connect(m->sel("in0"), a);
@@ -1802,7 +1802,7 @@ CoreIR::Wireable* shiftr(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   auto c = def->getContext();
   int width = 16;
   auto m = def->addInstance(
-      "shift_" + context->getUnique(),
+      "shift_" + c->getUnique(),
       "coreir.lshr",
       {{"width", CoreIR::Const::make(c, width)}});
   def->connect(m->sel("in0"), a);
@@ -2400,8 +2400,8 @@ CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<i
     {"wdata", c->BitIn()->Arr(width)},
     {"rdata", c->Bit()->Arr(width)}};
 
-  fields.push_back({"rst_n", context->BitIn()});
-  fields.push_back({"flush", context->BitIn()});
+  fields.push_back({"rst_n", c->BitIn()});
+  fields.push_back({"flush", c->BitIn()});
 
   Module* mod = nullptr;
   const int TILE_USE_THRESHOLD = 10;

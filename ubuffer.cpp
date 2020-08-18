@@ -1169,6 +1169,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     int width = buf.port_widths;
     auto c = def->getContext();
     auto ns = c->getNamespace("global");
+    auto self = def->sel("self");
 
 
     if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_CYCLE_DELAY) {
@@ -1261,6 +1262,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
               int diff = total_delay - prior_delay;
               CoreIR::Module* srmod = delay_module(c, width, {diff});
               auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
+
+              cout << "SRMOD" << endl;
+              srmod->print();
+              def->connect(srinst->sel("rst_n"), self->sel("rst_n"));
+              def->connect(srinst->sel("flush"), self->sel("flush"));
+
               def->connect(
                   prior_wire,
                   srinst->sel("wdata"));
@@ -1322,6 +1329,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
 
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")}};
+    ub_field.push_back({"rst_n", context->BitIn()});
+    ub_field.push_back({"flush", context->BitIn()});
 
     for (auto b : buf.port_bundles) {
       int pt_width = buf.port_widths;

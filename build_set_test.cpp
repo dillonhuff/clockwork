@@ -9976,6 +9976,14 @@ int run_verilator_on(const std::string& top_module,
   return verilator_run;
 }
 
+void run_verilator_verilog_tb(const std::string& name) {
+  int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input ./coreir_compute/" + name + "_compute.json --output " + name + "_compute.v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  assert(compute_to_verilog_res == 0);
+
+  int res = run_verilator_on(name, name + "_verilog_tb.cpp", {name + ".v", name + "_verilog_collateral.sv", "./lake_components/dualwithadd/lake_top.sv", name + "_compute.v"});
+  assert(res == 0);
+}
+
 void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
@@ -13352,6 +13360,15 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     //hw_sched);
   //assert(false);
 
+  //generate_verilog(options,
+      //buffers,
+      //prg,
+      //hw_sched);
+  //cout << "Emitted verilog to " << prg.name << endl;
+  //assert(false);
+    //map<string, UBuffer>& buffers,
+    //prog& prg,
+    //umap* schedmap) {
   generate_coreir(options,
     buffers,
     prg,
@@ -13506,10 +13523,10 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
-    run_verilator_tb(prg.name);
+    run_verilator_verilog_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    //assert(false);
+    assert(false);
     //string app_type = "dse_raw_sram";
     //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
