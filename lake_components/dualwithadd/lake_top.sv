@@ -93,9 +93,9 @@ module LakeTop (
   output logic valid_out
 );
 
-always @(posedge clk) begin
-  $display("strides: %b", strg_ub_sram_write_addr_gen_strides);
-end
+//always @(posedge clk) begin
+  //$display("strides: %b", strg_ub_sram_write_addr_gen_strides);
+//end
 
 logic cfg_seq_clk;
 logic [15:0] config_data_in_shrt;
@@ -266,6 +266,7 @@ always_ff @(posedge clk, negedge rst_n) begin
       current_addr <= 16'h0;
     end
     else if (step) begin
+      $display("starting addr: %d", starting_addr);
       $display("stepping from %d by %d", current_addr, strides[mux_sel]);
       current_addr <= current_addr + strides[mux_sel];
     end
@@ -670,7 +671,7 @@ always_ff @(posedge clk, negedge rst_n) begin
       data_out <= 16'h0;
     end
     else if (ren) begin
-      $display("read enabled, reading %d to %d", data_out, rd_addr);
+      $display("read enabled, reading %d from %d", data_out, rd_addr);
       data_out <= data_array[rd_addr];
     end
   end
@@ -833,6 +834,11 @@ for_loop_6 sram_write_loops (
   .step(write),
   .mux_sel_out(sram_write_loops_mux_sel_out)
 );
+
+always @(posedge clk) begin
+  $display("sram_write_addr_gen_starting_addr = %d", sram_write_addr_gen_starting_addr);
+  $display("sram_read_addr_gen_starting_addr = %d", sram_read_addr_gen_starting_addr);
+end
 
 addr_gen_6 sram_write_addr_gen (
   .clk(clk),

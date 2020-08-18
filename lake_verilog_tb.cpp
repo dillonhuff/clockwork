@@ -46,7 +46,7 @@ int main() {
   //input logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides,
   cout << "Starting" << endl;
 
-  for (int t = 0; t < 300; t++) {
+  for (int t = 0; t < 10; t++) {
 
     cout << "data out: " << dut.data_out << endl;
     dut.clk = 0;
@@ -55,6 +55,8 @@ int main() {
     dut.clk = 1;
     dut.eval();
   }
+
+  assert(dut.data_out == 294);
 
   cout << "Done with setup" << endl;
 

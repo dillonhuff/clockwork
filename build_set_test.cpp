@@ -14369,6 +14369,9 @@ void generate_lake_collateral(
     isl_aff* read_sched,
     isl_aff* read_addr) {
 
+  int write_start = to_int(const_coeff(write_addr));
+  int read_start = to_int(const_coeff(read_addr));
+
   vector<string> outer_port_decls;
   //outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
@@ -14454,35 +14457,35 @@ void generate_lake_collateral(
       decl.pop_back();
       decl.push_back("wire");
       reverse(decl);
-      out << tab(1) << sep_list(decl, "", "", " ") << name << ";" << endl;
+      out << tab(1) << sep_list(decl, "", "", " ") << ";" << endl;
       //out << tab(1) << "wire " << name << ";" << endl;
       string default_val = "0";
       if (name == "clk_en" || name == "tile_en") {
         default_val = "1";
       } else if (name == "strg_ub_sram_read_addr_gen_starting_addr") {
-        default_val = "5";
+        default_val = str(read_start);
       } else if (name == "strg_ub_sram_read_addr_gen_strides") {
         default_val = "{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
       } else if (name == "strg_ub_sram_read_loops_dimensionality") {
         default_val = "5";
       } else if (name == "strg_ub_sram_read_loops_ranges") {
         default_val = "{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
-      } else if (name == "strg_ub_sram_read_sched_addr_gen_starting_addr") {
+      } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr") {
         default_val = "0";
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_strides") {
-        default_val = "{16'd10000, 16'd10000, 16'd1000, 16'd100, 16'd10, 16'd1}";
+        default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
       } else if (name == "strg_ub_sram_write_addr_gen_starting_addr") {
-        default_val = "0";
+        default_val = str(write_start);
       } else if (name == "strg_ub_sram_write_addr_gen_strides") {
         default_val = "{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
       } else if (name == "strg_ub_sram_write_loops_dimensionality") {
         default_val = "5";
       } else if (name == "strg_ub_sram_write_loops_ranges") {
         default_val = "{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
-      } else if (name == "strg_ub_sram_write_sched_addr_gen_starting_addr") {
+      } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr") {
         default_val = "0";
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_strides") {
-        default_val = "{16'd10000, 16'd10000, 16'd1000, 16'd100, 16'd10, 16'd1}";
+        default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
         //pds.push_back("input logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr");
         //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides");
 
