@@ -1,4 +1,4 @@
-module addr_gen_6 (
+module inner_affine_controller (
   output logic [15:0] addr_out,
   input logic clk,
   input logic clk_en,
@@ -43,6 +43,7 @@ always_ff @(posedge clk, negedge rst_n) begin
         end
     end
     else if (step) begin
+      //$display("clk step");
       for (int unsigned i = 0; i < 6; i += 1) begin
           if (update[3'(i)] & (4'(i) < dimensionality)) begin
             if (dim_counter[3'(i)] == (ranges[3'(i)] - 16'h1)) begin

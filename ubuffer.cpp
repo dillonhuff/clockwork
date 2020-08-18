@@ -1078,6 +1078,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       }
     } else {
       cout << "Error: Unsupported # readers = " << readers << ", # writers = " << writers << endl;
+      cout << tab(1) << buf.name << endl;
+      isl_map* banking = isl_map_read_from_str(buf.ctx, "{ conv_stencil[x, y, z] -> B[0]}");
+      assert(banking_scheme_is_legal(banking, buf));
       assert(false);
     }
 
@@ -3266,6 +3269,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
 
 bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {
   auto sched = buf.global_schedule();
+  cout << "Banking schedule..." << endl;
+  for (auto s : get_maps(sched)) {
+    cout << tab(1) << str(s) << endl;
+  }
   auto op_writes = buf.producer_map();
   auto op_reads = buf.consumer_map();
 
@@ -3276,8 +3283,13 @@ bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {
   auto read_times = dot(inv(op_reads), sched);
   auto simul_reads = dot(read_times, inv(read_times));
 
+  cout << "simul reads: " << str(simul_reads) << endl;
+  cout << tab(1) << "any simultaneous reads: " << empty(simul_reads) << endl;
+
   auto data_to_bank = its(to_umap(bank_func), read);
   auto same_bank = dot(data_to_bank, inv(data_to_bank));
+
+  cout << "data_to_bank: " << str(data_to_bank) << endl;
   
   auto read_id = isl_union_set_identity(cpy(read));
   auto bank_read_conflicts = diff(its(same_bank, simul_reads), read_id);

@@ -321,6 +321,7 @@ void generate_lake_collateral_affine_controller(const std::string& name, std::os
   for (int d = 0; d < num_in_dims(aff); d++) {
     strides.push_back("16'd" + str(get_coeff(aff, d)));
   }
+  reverse(strides);
 
 
   vector<string> write_ranges;
@@ -334,6 +335,7 @@ void generate_lake_collateral_affine_controller(const std::string& name, std::os
     cout << tab(1) << "maxp = " << maxp << endl;
     write_ranges.push_back("16'd" + str(maxp));
   }
+  reverse(write_ranges);
 
   vector<string> outer_port_decls;
   outer_port_decls.push_back("output logic [15:0] d [" + str(num_dims(dom) - 1) + ":0]");
@@ -449,7 +451,7 @@ void generate_lake_collateral_affine_controller(const std::string& name, std::os
   //out << "end" << endl;
   //out << "end" << endl << endl;
 
-  out << tab(1) << "addr_gen_6 lake(" << comma_list(decls) << ");" << endl;
+  out << tab(1) << "inner_affine_controller lake(" << comma_list(decls) << ");" << endl;
   out << endl;
 
   out << "endmodule" << endl;
