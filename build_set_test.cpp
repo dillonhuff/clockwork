@@ -14363,11 +14363,14 @@ void resnet_auto_unroll() {
 }
 
 void generate_lake_collateral(
+    const std::string& mod_name,
     std::ostream& out,
     isl_aff* write_sched,
     isl_aff* write_addr,
+    isl_set* write_dom,
     isl_aff* read_sched,
-    isl_aff* read_addr) {
+    isl_aff* read_addr,
+    isl_set* read_dom) {
 
   int write_start = to_int(const_coeff(write_addr));
   int read_start = to_int(const_coeff(read_addr));
@@ -14444,7 +14447,7 @@ void generate_lake_collateral(
 
   pds.push_back("input logic wen_in");
 
-  out << "module lake_tile_" << "Tile" << "(" << comma_list(outer_port_decls) << ");" << endl;
+  out << "module " << mod_name << "(" << comma_list(outer_port_decls) << ");" << endl;
 
   vector<string> decls;
   for (auto s : pds) {
@@ -14508,32 +14511,61 @@ void generate_lake_collateral(
   out << "endmodule" << endl;
 }
 
+void generate_lake_collateral_delay(const std::string& name, std::ostream& out, const int depth) {
+  isl_ctx* ctx = isl_ctx_alloc();
+  int max_depth = (1 << 16) - 1;
+  isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
+  isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(a + " + str(depth) + ")] }");
+  isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+
+  isl_aff* read_sched = rdaff(ctx, "{ rd[a] -> [(a)] }");
+  isl_aff* read_addr = rdaff(ctx, "{ rd[a] -> [(a)] }");
+  isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+
+  generate_lake_collateral(name, out, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
+
+  isl_ctx_free(ctx);
+}
+
 void raw_memtile_verilog_test() {
 
+  int max_depth = (1 << 16) - 1;
   isl_ctx* ctx = isl_ctx_alloc();
   isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
   isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(0)] }");
+  isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
   isl_aff* read_sched = rdaff(ctx, "{ rd[a] -> [(a)] }");
   isl_aff* read_addr = rdaff(ctx, "{ rd[a] -> [(0)] }");
+  isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
   ofstream out("lake_verilog_tile.sv");
-  generate_lake_collateral(out, write_sched, write_addr, read_sched, read_addr);
+  generate_lake_collateral("lake_verilog_tile", out, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
   out.close();
 
-  run_verilator_on("lake_tile_Tile",
+  run_verilator_on("lake_verilog_tile",
         "lake_verilog_tb.cpp",
         {"./lake_components/dualwithadd/lake_top.sv", "lake_verilog_tile.sv"});
 
   isl_ctx_free(ctx);
+}
 
-  assert(false);
+void raw_memtile_verilog_as_delay_test() {
+
+  ofstream out("lake_delay_tile.sv");
+  generate_lake_collateral_delay("lake_delay_tile", out, 17);
+  out.close();
+
+  run_verilator_on("lake_delay_tile",
+        "lake_delay_verilog_tb.cpp",
+        {"./lake_components/dualwithadd/lake_top.sv", "lake_delay_tile.sv"});
 }
 
 void application_tests() {
-  raw_memtile_verilog_test();
-
   //resnet_auto_unroll();
+  raw_memtile_verilog_test();
+  raw_memtile_verilog_as_delay_test();
+
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
   infer_bounds_multi_5x1_stage_negative_conv_test();

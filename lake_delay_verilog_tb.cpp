@@ -1,12 +1,12 @@
 #include "verilated.h"
-#include "Vlake_verilog_tile.h"
+#include "Vlake_delay_tile.h"
 
 #include <iostream>
 
 using namespace std;
 
 int main() {
-  Vlake_verilog_tile dut;
+  Vlake_delay_tile dut;
   dut.clk = 0;
 
   dut.rst_n = 0;
