@@ -42,8 +42,10 @@ std::ostream& operator<< (std::ostream& out, const std::map<string, T>& m) {
 }
 
 struct HWconstraints {
-    size_t port_width = 1;
-    size_t port_number = 1;
+    size_t in_port_width = 1;
+    size_t out_port_width = 1;
+    size_t in_port_number = 1;
+    size_t out_port_number = 1;
     size_t capacity = 512;
     bool raw_same_cycle = false;
     bool war_same_cycle = false;
@@ -900,12 +902,12 @@ class UBuffer {
 
     size_t get_wr_cycle() {
         auto pt_vec = get_bd_in_ports();
-        return pt_vec.size() / hardware.port_width;
+        return pt_vec.size() / hardware.in_port_width;
     }
 
     size_t get_rd_cycle() {
         auto pt_vec = get_bd_out_ports();
-        return pt_vec.size() / hardware.port_width;
+        return pt_vec.size() / hardware.out_port_width;
     }
 
     //TODO: put it into qexpr.h
@@ -1006,7 +1008,7 @@ class UBuffer {
         for (size_t delay = 1; delay < num_cycle + 1; delay ++) {
             write_cycle.push_back(cycle + delay);
             vector<int> tmp;
-            for (size_t i = 0; i < hardware.port_width; i ++) {
+            for (size_t i = 0; i < hardware.in_port_width; i ++) {
                 assert(!addr_queue.empty());
                 tmp.push_back(addr_queue.front());
                 addr_queue.pop();
@@ -1098,7 +1100,7 @@ class UBuffer {
             while (!scheduled.empty()) {
                 read_cycle.push_back(scheduled.top());
                 vector<int>  tmp;
-                for (size_t i = 0; i < hardware.port_width; i ++) {
+                for (size_t i = 0; i < hardware.in_port_width; i ++) {
                     assert(!addr_queue.empty());
                     tmp.push_back(addr_queue.front());
                     addr_queue.pop();

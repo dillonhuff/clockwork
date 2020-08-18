@@ -3744,8 +3744,8 @@ pair<std::map<string, UBuffer>, vector<string> >
     sram.name = name + "_sram";
     sram.ctx = ctx;
     sram.port_widths = port_widths;
-    sram.hardware.port_width = fetch_width;
-
+    sram.hardware.in_port_width = fetch_width;
+    sram.hardware.out_port_width = fetch_width;
     vector<string> in_bundle = get_in_bundles();
     vector<string> out_bundle = get_out_bundles();
 
@@ -3801,6 +3801,7 @@ pair<std::map<string, UBuffer>, vector<string> >
       agg_buf.name = name + "_" + to_string(bd_cnt) + "_agg";
       agg_buf.ctx = ctx;
       agg_buf.port_widths = port_widths;
+      agg_buf.hardware.out_port_width = fetch_width;
       cout << "Vectorize input port bundle: " << bd_name << endl;
       for (auto in_pt_name : port_bundles.at(bd_name) ) {
         cout << "\tvectorize input port: " << in_pt_name << endl;
@@ -3860,6 +3861,8 @@ pair<std::map<string, UBuffer>, vector<string> >
       tb.name = name + "_" + to_string(bd_cnt) + "_tb";
       tb.ctx = ctx;
       tb.port_widths = port_widths;
+      tb.hardware.in_port_width = fetch_width;
+
 
       cout << "Vectorize output port bundle: " << bd_name << endl;
       map<string, umap*> rewrite_buf2op_map;
@@ -3906,6 +3909,12 @@ pair<std::map<string, UBuffer>, vector<string> >
         cout << "\tAdd TB output port: " << out_pt_name << endl;
         auto acc_pattern = AccessPattern(
             to_map(access_map.at(out_pt_name)), ctx);
+
+        isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
+        std::cout << "transform stripmining: " << str(op_stripmining) << endl;
+        isl_set* sm_domain = range(its(op_stripmining, domain.at(out_pt_name)));
+        tb.retrive_domain[out_pt_name] = sm_domain;
+        std::cout << "domain stripmining: " << str(sm_domain) << endl;
 
         auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_" + to_string(bd_cnt) + "_tb");
         if (output_cnt > 1){

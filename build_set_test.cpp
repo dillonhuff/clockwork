@@ -12502,6 +12502,24 @@ void emit_lake_controller_config(std::ostream& out, isl_set* write_domain, isl_a
   }
 }
 
+int get_stride_from_ubuf(UBuffer& ubuf, int raw_st, bool is_rd) {
+    int st = raw_st;
+    int capacity = ubuf.capacity() + 1;
+    cout << "buffer : " << ubuf.name << " capacity = " << capacity << endl;
+    if (contains(ubuf.name, "tb")) {
+        st = st % capacity;
+    }
+    if (contains(ubuf.name, "agg" ) ){
+        st = st % 4;
+    }
+    if (is_rd && (ubuf.hardware.out_port_width > 1) ) {
+        st = st / ubuf.hardware.out_port_width;
+    } else if (!is_rd && (ubuf.hardware.in_port_width > 1) ) {
+        st = st / ubuf.hardware.in_port_width;
+    }
+    return st;
+}
+
 void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_opt, vector<isl_map*> access_maps, string op_name) {
   for (auto access_map: access_maps) {
     if (domain_name(access_map) == op_name) {
@@ -12556,23 +12574,19 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
         string prefix = is_rd ? "read" : "write";
         out << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
 
-        //FIXME: this is a hack for fetch width = 4 aggregator
-        int st = 0;
-        if (ubuf.hardware.port_width > 1)
-            st = to_int(const_coeff(addr)) / ubuf.hardware.port_width;
-        else
-            st = to_int(const_coeff(addr)) % 4;
+        //FIXME: this function is a hack for fetch width = 4 aggregator
+        int st = get_stride_from_ubuf(ubuf, to_int(const_coeff(addr)), is_rd);
+
         out << "\""+prefix+"_data_starting_addr\"," << st << ",0" << endl;
         for (int d = 0; d < num_in_dims(addr); d++) {
           int ldim = num_in_dims(addr) - d - 1;
-          int st = 0;
-          if (ubuf.hardware.port_width > 1)
-              st = to_int(get_coeff(addr, d)) / ubuf.hardware.port_width;
-          else
-              st = to_int(get_coeff(addr, d)) % 4;
+          int st = get_stride_from_ubuf(ubuf, to_int(get_coeff(addr, d)), is_rd);
+          cout << "get st: " << st << endl;
           out << "\""+prefix+"_data_stride_" << ldim << "\"," << st << ",0" << endl;
         }
-        if (ubuf.hardware.port_width > 1)
+        if (is_rd && (ubuf.hardware.out_port_width > 1) )
+            break;
+        if (!is_rd&& (ubuf.hardware.in_port_width > 1) )
             break;
       }
     }
@@ -13298,16 +13312,16 @@ void lake_conv33_autovec_test() {
     b.second.generate_banks_and_merge(opt);
     b.second.port_group2bank(max_inpt, max_outpt);
 
-    auto def = generate_coreir(opt, context, b.second);
+    //auto def = generate_coreir(opt, context, b.second);
 
-    if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
-      cout << "Could not save ubuffer coreir!" << endl;
-      context->die();
-    }
-    CoreIR::deleteContext(context);
+    //if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
+    //  cout << "Could not save ubuffer coreir!" << endl;
+    //  context->die();
+    //}
+    //CoreIR::deleteContext(context);
   }
   auto sched = global_schedule_from_buffers(buffers_opt);
-  generate_coreir(opt, buffers_opt, prg, sched);
+  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
   generate_verilog_tb(prg.name);
 #endif
 
@@ -13323,7 +13337,7 @@ void lake_conv33_autovec_test() {
   map<pair<string, string>, int> latency({
           {{"input", "input_agg2sram"}, 1},
           {{"input_agg2sram", "output_2_sram2tb"}, -3},
-          {{"output_2_sram2tb", "output_2"}, 1}});
+          {{"output_2_sram2tb", "output_2"}, 2}});
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/conv_3_3_new/");
