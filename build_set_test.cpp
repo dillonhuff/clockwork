@@ -14431,20 +14431,25 @@ void generate_lake_collateral(std::ostream& out) {
 
   out << "module lake_tile_" << "Tile" << "(" << comma_list(outer_port_decls) << ");" << endl;
 
-  out << tab(1) << "LakeTop lake();" << endl;
+  vector<string> decls;
+  for (auto s : pds) {
+    vector<string> f = split_at(s, " ");
+    assert(f.size() > 0);
+    decls.push_back("." + f.back() + parens(f.back()));
+  }
+  out << tab(1) << "LakeTop lake(" << comma_list(decls) << ");" << endl;
 
   out << "endmodule" << endl;
 }
 
 void raw_memtile_verilog_test() {
-
-  ofstream out("lake_verilog_test.sv");
+  ofstream out("lake_verilog_tile.sv");
   generate_lake_collateral(out);
   out.close();
 
   run_verilator_on("lake_tile_Tile",
         "lake_verilog_tb.cpp",
-        {"./lake_components/dualwithadd/lake_top.sv", "lake_verilog_test.sv"});
+        {"./lake_components/dualwithadd/lake_top.sv", "lake_verilog_tile.sv"});
   assert(false);
 }
 
