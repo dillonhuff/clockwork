@@ -9965,11 +9965,11 @@ int run_verilator_on(const std::string& top_module,
     const std::string& tb_file,
     const std::vector<string>& verilog_files) {
 
-  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe " + tb_file + " --top-module " + top_module + " -Wno-lint");
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
   assert(verilator_build == 0);
 
-  int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
-  assert(verilator_d == 0);
+  //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
+  //assert(verilator_d == 0);
 
   int verilator_run = cmd("./obj_dir/V" + top_module);
   return verilator_run;
@@ -14447,7 +14447,7 @@ void raw_memtile_verilog_test() {
 }
 
 void application_tests() {
-  //raw_memtile_verilog_test();
+  raw_memtile_verilog_test();
 
   //resnet_auto_unroll();
   infer_bounds_multiple_inputs();
