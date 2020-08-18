@@ -14431,6 +14431,8 @@ void generate_lake_collateral(std::ostream& out) {
 
   out << "module lake_tile_" << "Tile" << "(" << comma_list(outer_port_decls) << ");" << endl;
 
+  out << tab(1) << "LakeTop lake();" << endl;
+
   out << "endmodule" << endl;
 }
 
@@ -14442,7 +14444,7 @@ void raw_memtile_verilog_test() {
 
   run_verilator_on("lake_tile_Tile",
         "lake_verilog_tb.cpp",
-        {"lake_verilog_test.sv"});
+        {"./lake_components/dualwithadd/lake_top.sv", "lake_verilog_test.sv"});
   assert(false);
 }
 

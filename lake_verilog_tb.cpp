@@ -2,5 +2,7 @@
 #include "Vlake_tile_Tile.h"
 
 int main() {
-  assert(false);
+  Vlake_tile_Tile dut;
+
+  return 0;
 }
