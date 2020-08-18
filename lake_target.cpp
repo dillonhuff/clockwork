@@ -221,8 +221,6 @@ void generate_lake_collateral_delay_wdata_wrapped(const std::string& name, std::
   outer_port_decls.push_back("output logic [0:0] [15:0] chain_data_out");
   outer_port_decls.push_back("output logic chain_valid_out");
   outer_port_decls.push_back("input logic clk");
-  outer_port_decls.push_back("input logic [0:0] [15:0] data_in");
-  outer_port_decls.push_back("output logic [0:0] [15:0] data_out");
   outer_port_decls.push_back("input logic flush");
   outer_port_decls.push_back("input logic rst_n");
   outer_port_decls.push_back("output logic valid_out");
@@ -281,14 +279,15 @@ void generate_lake_collateral_delay_wdata_wrapped(const std::string& name, std::
   pds.push_back("output logic valid_out");
 
   pds.push_back("input logic wen_in");
+  pds.push_back("input logic wen_in");
 
   out << "module " << name << "(" << comma_list(outer_port_decls) << ");" << endl;
 
   vector<string> decls;
-  //for (auto s : pds) {
-    //vector<string> f = split_at(s, " ");
-    //assert(f.size() > 0);
-    //string name = f.back();
+  for (auto s : outer_port_decls) {
+    vector<string> f = split_at(s, " ");
+    assert(f.size() > 0);
+    string name = f.back();
     //if (!elem(name, external)) {
       //vector<string> decl = f;
       //reverse(decl);
@@ -300,8 +299,14 @@ void generate_lake_collateral_delay_wdata_wrapped(const std::string& name, std::
 
     //}
 
-    //decls.push_back("." + f.back() + parens(f.back()));
-  //}
+    if (name == "wdata") {
+      decls.push_back(".data_in" + parens(f.back()));
+    } else if (name == "rdata") {
+      decls.push_back(".data_out" + parens(f.back()));
+    } else {
+      decls.push_back("." + f.back() + parens(f.back()));
+    }
+  }
   out << endl;
   out << tab(1) << name << "_inner lake(" << comma_list(decls) << ");" << endl;
   out << endl;
