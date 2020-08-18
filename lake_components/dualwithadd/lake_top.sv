@@ -791,6 +791,18 @@ end
 
 always_ff @(posedge clk, negedge rst_n) begin
   if (~rst_n) begin
+  end
+  else if (clk_en) begin
+    if (flush) begin
+    end
+    else begin
+      $display("cycle_count = %d", cycle_count);
+    end
+  end
+end
+
+always_ff @(posedge clk, negedge rst_n) begin
+  if (~rst_n) begin
     read_d1 <= 1'h0;
   end
   else if (clk_en) begin

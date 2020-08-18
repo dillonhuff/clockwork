@@ -14362,7 +14362,13 @@ void resnet_auto_unroll() {
   assert(false);
 }
 
-void generate_lake_collateral(std::ostream& out) {
+void generate_lake_collateral(
+    std::ostream& out,
+    isl_aff* write_sched,
+    isl_aff* write_addr,
+    isl_aff* read_sched,
+    isl_aff* read_addr) {
+
   vector<string> outer_port_decls;
   //outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
@@ -14447,13 +14453,35 @@ void generate_lake_collateral(std::ostream& out) {
       string default_val = "0";
       if (name == "clk_en" || name == "tile_en") {
         default_val = "1";
+      } else if (name == "strg_ub_sram_read_addr_gen_starting_addr") {
+        default_val = "0";
+      } else if (name == "strg_ub_sram_read_addr_gen_strides") {
+        default_val = "{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
+      } else if (name == "strg_ub_sram_read_loops_dimensionality") {
+        default_val = "5";
+      } else if (name == "strg_ub_sram_read_loops_ranges") {
+        default_val = "{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
+      } else if (name == "strg_ub_sram_read_sched_addr_gen_starting_addr") {
+        default_val = "0";
+      } else if (name == "strg_ub_sram_read_sched_addr_gen_strides") {
+        default_val = "{16'd10000, 16'd10000, 16'1000, 16'd100, 16'd10, 16'd1}";
+        //pds.push_back("input logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr");
+        //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides");
+
+        //pds.push_back("input logic [15:0] strg_ub_sram_write_addr_gen_starting_addr");
+        //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_addr_gen_strides");
+        //pds.push_back("input logic [3:0] strg_ub_sram_write_loops_dimensionality");
+        //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_loops_ranges");
+        //pds.push_back("input logic [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr");
+        //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides");
+
       }
       out << tab(1) << "assign " << name << " = " << default_val << ";" << endl;
     }
 
-    decls.push_back("." + f.back() + parens(f.back()));
-  }
-  out << endl;
+  decls.push_back("." + f.back() + parens(f.back()));
+}
+out << endl;
   out << tab(1) << "LakeTop lake(" << comma_list(decls) << ");" << endl;
   out << endl;
 
@@ -14461,13 +14489,25 @@ void generate_lake_collateral(std::ostream& out) {
 }
 
 void raw_memtile_verilog_test() {
+
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
+  isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(0)] }");
+
+  isl_aff* read_sched = rdaff(ctx, "{ rd[a] -> [(a)] }");
+  isl_aff* read_addr = rdaff(ctx, "{ rd[a] -> [(0)] }");
+
   ofstream out("lake_verilog_tile.sv");
-  generate_lake_collateral(out);
+  generate_lake_collateral(out, write_sched, write_addr, read_sched, read_addr);
   out.close();
 
   run_verilator_on("lake_tile_Tile",
         "lake_verilog_tb.cpp",
         {"./lake_components/dualwithadd/lake_top.sv", "lake_verilog_tile.sv"});
+
+  isl_ctx_free(ctx);
+
+
   assert(false);
 }
 
