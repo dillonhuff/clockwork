@@ -14349,7 +14349,7 @@ void resnet_auto_unroll() {
 }
 
 void application_tests() {
-  resnet_auto_unroll();
+  //resnet_auto_unroll();
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
   infer_bounds_multi_5x1_stage_negative_conv_test();

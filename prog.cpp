@@ -5087,19 +5087,10 @@ void sanity_check_all_reads_defined(prog& prg) {
   }
 }
 
-void generate_verilator_tb(prog& prg,
+void generate_verilator_tb_in_streams(std::ostream& rgtb,
+    prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers) {
-  ofstream rgtb(prg.name + "_verilog_tb.cpp");
-  rgtb << "#include \"hw_classes.h\"" << endl;
-  rgtb << "#include <fstream>" << endl;
-  rgtb << "#include \"verilated.h\"" << endl;
-  rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
-
-
-  rgtb << "int main() {" << endl;
-  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << "_verilog.txt\");" << endl;
-
   vector<string> optimized_streams;
   map<string, int> unroll_factor;
   for (auto in : prg.ins) {
@@ -5159,11 +5150,43 @@ void generate_verilator_tb(prog& prg,
     rgtb << tab(2) << in << ".write(value);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
+}
+
+void generate_verilator_tb(prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers) {
+
+  ofstream rgtb(prg.name + "_verilog_tb.cpp");
+  rgtb << "#include \"hw_classes.h\"" << endl;
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include \"verilated.h\"" << endl;
+  rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
+
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << "_verilog.txt\");" << endl;
+
+  map<string, int> unroll_factor;
+  for (auto in : prg.ins) {
+    auto readers = find_readers(in, prg);
+    int unroll = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->read_addrs(in)) {
+        unroll++;
+      }
+    }
+    unroll_factor[in] = unroll;
+  }
+
+  generate_verilator_tb_in_streams(
+      rgtb,
+      prg,
+      hw_sched,
+      buffers);
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
   for (auto out : inputs(buffers, prg)) {
     string data_name =
-      //out.first + "_" + out.second + "_0";
       out.first + "_" + out.second;
     rgtb << tab(1) << "*(dut." << data_name << ") = 0;" << endl;
   }
