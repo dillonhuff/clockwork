@@ -20,7 +20,7 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
 
 void blur_example();
 
-prog resnet_hc_multi_tile() {
+prog resnet_hc_multitile() {
   prog prg;
   prg.compute_unit_file = "resnet_compute.h";
   prg.name = "resnet";
@@ -1472,16 +1472,17 @@ isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &bu
     global_sched = flatten_umap_domain_with_dim_from_outer(global_sched, 2);
     domain = ::domain(global_sched);
     cout << "Global Schedule: " << str(global_sched) << endl;
+    cout << "Global Domain: " << str(domain) << endl;
     cout << "Producer Map: " << str(global_p_map) << endl;
     cout << "Consumer Map: " << str(global_c_map) << endl;
     auto order_deps = get_rel_order(ctx, global_sched);
     cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
-    extra = flatten_umap_domain_with_dim_from_outer(extra, 2);
-    extra = inv(flatten_umap_domain_with_dim_from_outer(inv(extra), 2));
-    //raw_deps = unn(extra, raw_deps);
+    //extra = flatten_umap_domain_with_dim_from_outer(extra, 2);
+    //extra = inv(flatten_umap_domain_with_dim_from_outer(inv(extra), 2));
+    raw_deps = unn(extra, raw_deps);
     auto validity = unn(order_deps, raw_deps);
-    validity = unn(validity, extra);
+    //validity = unn(validity, extra);
     auto proximity = cpy(raw_deps);
 
     //Try to remove proximity between_input vec to output_vec
@@ -1703,12 +1704,12 @@ isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer
 
 }
 
-isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const map<string, UBuffer> &buffers, bool second_round) {
+isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const map<string, UBuffer> &buffers, bool second_round, vector<string> rem_deps) {
     //map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
 
     isl_ctx* ctx = pick(buffers).second.ctx;
-    auto extra = rdmap(ctx, "{ conv[0, i0, i1] -> conv_2[0, i0, i1+2] : 0<=i0<=13 and 0<=i1<=13 }");
-    extra = unn(extra, rdmap(ctx, "{ conv2[0, i0, 15] -> conv[0, i0+1, 0] : 0<=i0<=12 }"));
+    //auto extra = rdmap(ctx, "{ conv[0, i0, i1] -> conv_2[0, i0, i1+2] : 0<=i0<=13 and 0<=i1<=13 }");
+    //extra = unn(extra, rdmap(ctx, "{ conv2[0, i0, 15] -> conv[0, i0+1, 0] : 0<=i0<=12 }"));
 
     isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
     isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
@@ -1726,9 +1727,10 @@ isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const
     global_p_map = flatten_umap_domain(ctx, global_p_map);
     global_sched = flatten_umap_domain(ctx, global_sched);
     isl_union_set* domain = ::domain(global_sched);
-    extra = flatten_umap_domain(ctx, extra);
-    extra = flatten_umap_domain(ctx, inv(extra));
+    //extra = flatten_umap_domain(ctx, extra);
+    //extra = flatten_umap_domain(ctx, inv(extra));
 
+    auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
     auto order_deps = get_rel_order(ctx, global_sched);
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     raw_deps = unn(raw_deps, extra);
@@ -1738,10 +1740,9 @@ isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const
     //Try to remove proximity between_input vec to output_vec
     //FIXME: the name is hacky
     if (second_round) {
-        //proximity = remove_dep_domain_name(proximity, "op_hcompute_hw_input_stencil_vec");
-        proximity = remove_dep_domain_name(proximity, "input_vec");
-        proximity = remove_dep_domain_name(proximity, "conv_vec");
-
+        for (auto dep: rem_deps) {
+            proximity = remove_dep_domain_name(proximity, dep);
+        }
     }
     //proximity = filter_inner_sram_deps(ctx, proximity);
 
@@ -10458,6 +10459,12 @@ isl_val* constant(isl_aff* a) {
 void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
+    auto sched = rdmap(ctx, "{ op_hcompute_hw_input_stencil_agg2sram[0,i0, i1] -> [i0, 3 + 4i1, 2] : 0 <= i0 <= 3 and 0 <= i1 <= 2047; op_hcompute_conv_stencil_1[0, i0, i1] -> [i0, 8191 + i1, 3] : 0 <= i0 <= 3 and 0 <= i1 <= 112895; op_hcompute_hw_input_stencil[0, i0, i1] -> [i0, i1, 0] : 0<= i0 <= 3 and 0 <= i1 <= 8191; op_hcompute_conv_stencil_1_sram2tb[0, i0, i1] -> [i0, 8191 + 2i1, 1] : 0 <= i0 <= 3 and 0 <= i1 <= 56447 }");
+    cout << codegen_c(sched) << endl;
+    assert(false);
+  }
+  {
+    isl_ctx* ctx = isl_ctx_alloc();
     cout << str(form_pt({0,1})) << endl;
     auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[x + y, z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
     cout << str(project_all_but(access_map, 1)) << endl;
@@ -12882,14 +12889,138 @@ isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
   return hw_sched;
 }
 
-void lake_resnet_test() {
-  auto prg = resnet_hc_multi_tile();
+void lake_resnet_multitile_test() {
+  auto prg = resnet_hc_multitile();
   prg.pretty_print();
 
   CodegenOptions options;
   options.all_rams = true;
   all_register_files(prg, options);
   options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 1, 4}};
+  options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
+  options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  //generate_optimized_code(options, prg);
+
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg, sched_naive);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
+  //cout << buffers_opt.at("buf") << endl;
+  //buffers_opt.at("buf").port_group2bank(2, 2);
+  //cout << buffers_opt.at("buf") << endl;
+
+  for (auto& b : buffers_opt) {
+    cout << b.first << endl << b.second << endl;
+    if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
+        continue;
+    b.second.generate_banks_and_merge(options);
+    b.second.print_bank_info();
+
+    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.print_bank_info();
+  }
+
+  //auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  //auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
+  for (auto it: buffers_opt) {
+    if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
+        continue;
+    }
+  auto buf = it.second;
+  auto ubuf_name = it.first;
+  if (ubuf_name != "hw_input_stencil")
+      continue;
+  //auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  auto post_proc_buffers = buf.generate_ubuffer(opt);
+  opt.conditional_merge = false;
+  //auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  //auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  auto rewrite_buffers = buf.generate_ubuffer(opt);
+  for (auto it: post_proc_buffers) {
+    cout << "\tpost: " << it.first << ": " << it.second << endl;
+  }
+  for (auto it: rewrite_buffers) {
+    cout << "\trewrite_buffers: " << it.first << ": " << it.second << endl;
+  }
+
+  for (auto it : post_proc_buffers) {
+    map<string, UBuffer> tmp;
+    map<string, UBuffer> temp;
+    tmp.insert(it);
+    cout << "Vectorizing " << it.first << endl;
+    cout << it.second << endl;
+    buffer_vectorization(it.first, 3, 4, tmp);
+    cout << "Done with vectorization" << endl;
+    for (auto it: tmp) {
+        auto buf = it.second;
+        if (buf.get_in_ports().size() == 1)
+            temp.insert(it);
+        cout << it.first<< endl;
+    }
+
+    //auto opt_sched = optimized_schedule_from_buffers_feautrier(buffers_opt, false);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
+
+    isl_union_set* gb_domain = global_domain_from_buffers(tmp);
+    isl_ctx* ctx = ::ctx(gb_domain);
+    //auto um = isl_union_map_read_from_str(ctx,"{}");
+    //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
+    auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, i1, i2]->op_hcompute_conv_stencil_1[root, i1, i2'] : 0<=i1<=3}");
+
+    cout << str(um) << endl;
+    auto um2 = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i1, 0]->op_hcompute_hw_input_stencil[root, i1, 4] : 0<=i1<=3}");
+    cout << str(um2) << endl;
+    um = unn(um, um2);
+    ////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
+    //cout << "\t global domain" << str(gb_domain) << endl;
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //um = its(um, gb_domain);
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //um = its_range(um, gb_domain);
+    cout << "\tDouble buffer dependency: " << str(um) << endl;
+    auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
+    //auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_hw_input_stencil_agg2sram"});
+    cout << str(opt_sched) << endl;
+    cout << codegen_c(opt_sched) << endl;
+    assert(false);
+    int app_target_II = 1;
+
+    //map<pair<string, string>, int> latency({{{"input", "input_vec"}, 1},
+    //      {{"output_2", "output_2_vec"}, -1}});
+    auto hsh = generate_hardware_schedule_heu(opt_sched, tmp, {}, app_target_II, {"op_hcompute_conv_stencil_1_vec_in"});
+    cout << str(hsh) << endl;
+    cout << codegen_c(hsh) << endl;
+    cmd("mkdir -p ./lake_controllers/resnet/"+ubuf_name);
+    auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/"+ubuf_name);
+    //check_lake_config(op_vec, "./lake_controllers/conv_3_3/", "./lake_gold/conv_3_3/");
+    assert(false);
+
+  }
+
+  }
+}
+
+void lake_resnet_test() {
+  auto prg = resnet_hc();
+  prg.pretty_print();
+
+  CodegenOptions options;
+  options.all_rams = true;
+  all_register_files(prg, options);
+  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
   options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
   options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
   options.inner_bank_offset_mode =
@@ -12952,7 +13083,7 @@ void lake_resnet_test() {
     tmp.insert(it);
     cout << "Vectorizing " << it.first << endl;
     cout << it.second << endl;
-    buffer_vectorization(it.first, 3, 4, tmp);
+    buffer_vectorization(it.first, 2, 4, tmp);
     cout << "Done with vectorization" << endl;
     for (auto it: tmp) {
         auto buf = it.second;
@@ -12971,8 +13102,9 @@ void lake_resnet_test() {
 
     isl_union_set* gb_domain = global_domain_from_buffers(tmp);
     isl_ctx* ctx = ::ctx(gb_domain);
-    auto um = isl_union_map_read_from_str(ctx,"{}");
+    //auto um = isl_union_map_read_from_str(ctx,"{}");
     //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
+    auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
     ////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
     //cout << "\t global domain" << str(gb_domain) << endl;
     //cout << "\tDouble buffer dependency: " << str(um) << endl;
@@ -12981,7 +13113,9 @@ void lake_resnet_test() {
     //um = its_range(um, gb_domain);
     //cout << "\tDouble buffer dependency: " << str(um) << endl;
     //auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
-    auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
+    //auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
+    auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_hw_input_stencil_agg2sram"});
     cout << str(opt_sched) << endl;
     cout << codegen_c(opt_sched) << endl;
     assert(false);
@@ -13073,7 +13207,7 @@ void lake_cascade_autovec_test() {
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
-  check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
+  //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
 void lake_harris_autovec_test() {
@@ -14858,6 +14992,7 @@ void lake_tests() {
   //lake_dual_port_test();
   lake_cascade_autovec_test();
   lake_harris_autovec_test();
+  lake_resnet_multitile_test();
   lake_resnet_test();
   assert(false);
   resnet_test();
