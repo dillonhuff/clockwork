@@ -13174,7 +13174,7 @@ void lake_cascade_autovec_test() {
 
   prog prg;
   prg.compute_unit_file = "vec_access.h";
-  prg.name = "cascade_naive_compute";
+  prg.name = "cascade_lake";
   prg.add_input("in");
   prg.add_output("out");
   //prg.buffer_port_widths["T"] = 32*3;
@@ -13221,6 +13221,17 @@ void lake_cascade_autovec_test() {
     b.second.port_group2bank(max_inpt, max_outpt);
   }
 
+#ifdef COREIR
+  //CoreIR::Context* context = CoreIR::newContext();
+  //CoreIRLoadLibrary_commonlib(context);
+  //CoreIRLoadLibrary_cwlib(context);
+  //schedule_info hwinfo;
+  //hwinfo.use_dse_compute = false;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+  //generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
+  //generate_verilog_tb(prg.name);
+#endif
+
   //return the buffers after vectorization and the proximity deps you want to remove
   vector<string> input_vec_stmts;
   isl_ctx* ctx = isl_ctx_alloc();
@@ -13241,7 +13252,8 @@ void lake_cascade_autovec_test() {
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
-  //assert(false);
+  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/cascade/", false);
+  assert(false);
   //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
@@ -13316,15 +13328,8 @@ void lake_conv33_autovec_test() {
   opt.merge_threshold = 4;
   opt.rtl_options.use_prebuilt_memory = true;
   int max_inpt = 2, max_outpt = 2;
-#ifdef COREIR
-  CoreIR::Context* context = CoreIR::newContext();
-  CoreIRLoadLibrary_commonlib(context);
-  CoreIRLoadLibrary_cwlib(context);
   //auto sched = global_schedule_from_buffers(buffers_opt);
   //generate_coreir(opt, buffers_opt, prg, sched);
-
-  schedule_info hwinfo;
-  hwinfo.use_dse_compute = false;
 
   for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << endl;
@@ -13341,6 +13346,13 @@ void lake_conv33_autovec_test() {
     //}
     //CoreIR::deleteContext(context);
   }
+
+#ifdef COREIR
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  schedule_info hwinfo;
+  hwinfo.use_dse_compute = false;
   auto sched = global_schedule_from_buffers(buffers_opt);
   generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
   generate_verilog_tb(prg.name);
