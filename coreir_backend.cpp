@@ -1,4 +1,5 @@
 #include "coreir_backend.h"
+#include "lake_target.h"
 
 #ifdef COREIR
 
@@ -1107,8 +1108,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
-  verilog_collateral.close();
-  verilog_collateral_file = nullptr;
 
   bool found_compute = true;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
@@ -1217,6 +1216,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   context->runPasses({"rungenerators", "wireclocks-clk"});
 
   //assert(false);
+  verilog_collateral.close();
+  verilog_collateral_file = nullptr;
   return ub;
   //assert(false);
 }
@@ -2409,6 +2410,10 @@ CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<i
     auto g = ns->getGenerator("delay_tile");
     mod = ns->newModuleDecl("memtile_long_delay_" + c->getUnique(), c->Record(fields));
     auto def = mod->newModuleDef();
+
+    assert(verilog_collateral_file != nullptr);
+    generate_lake_collateral_delay(mod->getName(), *verilog_collateral_file, D);
+    //assert(false);
 
     auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
     def->connect(t->sel("rdata"), def->sel("self.rdata"));
