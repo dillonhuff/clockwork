@@ -2407,24 +2407,24 @@ CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<i
     def->connect(next, def->sel("self.rdata"));
     mod->setDef(def);
   } else {
-    auto g = ns->getGenerator("delay_tile");
+    //auto g = ns->getGenerator("delay_tile");
     mod = ns->newModuleDecl("memtile_long_delay_" + c->getUnique(), c->Record(fields));
-    auto def = mod->newModuleDef();
+    //auto def = mod->newModuleDef();
 
     assert(verilog_collateral_file != nullptr);
     generate_lake_collateral_delay(mod->getName(), *verilog_collateral_file, D);
     //assert(false);
 
-    auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
-    def->connect(t->sel("rdata"), def->sel("self.rdata"));
-    def->connect(t->sel("wdata"), def->sel("self.wdata"));
+    //auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
+    //def->connect(t->sel("rdata"), def->sel("self.rdata"));
+    //def->connect(t->sel("wdata"), def->sel("self.wdata"));
 
     //auto next = def->sel("self.wdata");
     //for (int d = 0; d < D; d++) {
       //next = delay(def, next, width);
     //}
     //def->connect(next, def->sel("self.rdata"));
-    mod->setDef(def);
+    //mod->setDef(def);
   }
 
   assert(mod != nullptr);
