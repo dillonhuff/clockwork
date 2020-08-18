@@ -2408,11 +2408,13 @@ CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<i
     mod->setDef(def);
   } else {
     //auto g = ns->getGenerator("delay_tile");
+
     mod = ns->newModuleDecl("memtile_long_delay_" + c->getUnique(), c->Record(fields));
+    assert(verilog_collateral_file != nullptr);
+    generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
+
     //auto def = mod->newModuleDef();
 
-    assert(verilog_collateral_file != nullptr);
-    generate_lake_collateral_delay(mod->getName(), *verilog_collateral_file, D);
     //assert(false);
 
     //auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
