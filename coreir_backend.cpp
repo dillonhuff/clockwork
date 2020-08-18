@@ -2,6 +2,8 @@
 
 #ifdef COREIR
 
+std::ostream* verilog_collateral_file;
+
 #include "coreir/passes/analysis/coreirjson.h"
 
 using CoreIR::Wireable;
@@ -1102,7 +1104,11 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
 
+  ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
+  verilog_collateral_file = &verilog_collateral;
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
+  verilog_collateral.close;
+  verilog_collateral_file = nullptr;
 
   bool found_compute = true;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
@@ -1628,6 +1634,78 @@ void generate_coreir(CodegenOptions& options,
   generate_coreir(options, buffers, prg, schedmap, info);
 }
 
+void generate_lake_collateral(std::ostream& out, UBuffer& buf) {
+  vector<string> outer_port_decls;
+  pds.push_back("input logic [0:0] [15:0] addr_in");
+  pds.push_back("input logic [0:0] [15:0] chain_data_in");
+  pds.push_back("output logic [0:0] [15:0] chain_data_out");
+  pds.push_back("input logic chain_idx_input");
+  pds.push_back("input logic chain_idx_output");
+  pds.push_back("input logic chain_valid_in");
+  pds.push_back("output logic chain_valid_out");
+  pds.push_back("input logic clk");
+  pds.push_back("input logic [0:0] [15:0] data_in");
+  pds.push_back("output logic [0:0] [15:0] data_out");
+  pds.push_back("input logic enable_chain_input");
+  pds.push_back("input logic enable_chain_output");
+  pds.push_back("input logic flush");
+  pds.push_back("input logic ren_in");
+  pds.push_back("input logic rst_n");
+  pds.push_back("output logic valid_out");
+  pds.push_back("input logic wen_in");
+
+  vector<string> pds;
+  pds.push_back("input logic [0:0] [15:0] addr_in");
+  pds.push_back("input logic [0:0] [15:0] chain_data_in");
+  pds.push_back("output logic [0:0] [15:0] chain_data_out");
+  pds.push_back("input logic chain_idx_input");
+  pds.push_back("input logic chain_idx_output");
+  pds.push_back("input logic chain_valid_in");
+  pds.push_back("output logic chain_valid_out");
+  pds.push_back("input logic clk");
+  pds.push_back("input logic clk_en");
+  pds.push_back("input logic [7:0] config_addr_in");
+  pds.push_back("input logic [31:0] config_data_in");
+  pds.push_back("output logic [0:0] [31:0] config_data_out");
+  pds.push_back("input logic config_en");
+  pds.push_back("input logic config_read");
+  pds.push_back("input logic config_write");
+  pds.push_back("input logic [0:0] [15:0] data_in");
+  pds.push_back("output logic [0:0] [15:0] data_out");
+  pds.push_back("input logic enable_chain_input");
+  pds.push_back("input logic enable_chain_output");
+  pds.push_back("input logic flush");
+  pds.push_back("input logic [1:0] mode");
+  pds.push_back("input logic ren_in");
+  pds.push_back("input logic rst_n");
+
+  pds.push_back("input logic [15:0] strg_ub_sram_read_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_addr_gen_strides");
+  pds.push_back("input logic [3:0] strg_ub_sram_read_loops_dimensionality");
+
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_loops_ranges");
+
+  pds.push_back("input logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides");
+
+  pds.push_back("input logic [15:0] strg_ub_sram_write_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_addr_gen_strides");
+  pds.push_back("input logic [3:0] strg_ub_sram_write_loops_dimensionality");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_loops_ranges");
+  pds.push_back("input logic [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides");
+
+  pds.push_back("input logic tile_en");
+
+  pds.push_back("output logic valid_out");
+
+  pds.push_back("input logic wen_in");
+
+  out << "module lake_tile_" << buf.name << "(" << comma_list(out_port_decls) << ");" << endl;
+
+  out << "endmodule" << endl;
+}
+
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1651,7 +1729,6 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
-  assert(false);
   //garnet_map_module(prg_mod);
   //if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
     //cout << "Could not save ubuffer coreir" << endl;
