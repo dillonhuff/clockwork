@@ -14446,10 +14446,37 @@ void raw_memtile_verilog_test() {
   assert(false);
 }
 
+void brighten_blur_asplos_example() {
+  prog prg("brighten_blur");
+  prg.add_input("in_oc");
+  prg.add_output("in_oc");
+
+  cpy("in", "in_oc", 2, prg);
+
+  auto br = prg.add_nest("y0", 0, 1, "x0", 0, 1)->add_op("brighten");
+  br->add_load("in", "x0, y0");
+  br->add_store("brighten", "x0, y0");
+
+  auto bl = prg.add_nest("y1", 0, 1, "x1", 0, 1)->add_op("brighten");
+  for (int x = 0; x < 2; x++) {
+    for (int y = 0; y < 2; y++) {
+      bl->add_load("brighten", "x1 + " + str(x) + ", y1 + " + str(y));
+    }
+  }
+  bl->add_store("brighten", "x1, y1");
+  cpy("out", "brighten", 2, prg);
+
+  infer_bounds("out", {63, 63}, prg);
+  prg.pretty_print();
+
+  assert(false);
+}
+
 void application_tests() {
+  brighten_blur_asplos_example();
+  resnet_auto_unroll();
   raw_memtile_verilog_test();
 
-  //resnet_auto_unroll();
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
   infer_bounds_multi_5x1_stage_negative_conv_test();
