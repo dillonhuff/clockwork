@@ -12552,6 +12552,20 @@ int get_stride_from_ubuf(UBuffer& ubuf, int raw_st, bool is_rd) {
     return st;
 }
 
+string get_ubuf_name(vector<isl_map*> access_maps, string op_name) {
+    for (auto access_map: access_maps) {
+        if (domain_name(access_map) == op_name) {
+            string buf_name = range_name(access_map);
+            cout << "bufname: " << buf_name << endl;
+            string ret = take_until_str(buf_name, "ubuf");
+            cout << ret << endl;
+            return ret + "ubuf";
+        }
+    }
+    cout << "Error: Did not found the op name in all rewritten ubuffers." << endl;
+    assert(false);
+}
+
 void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_opt, vector<isl_map*> access_maps, string op_name) {
   for (auto access_map: access_maps) {
     if (domain_name(access_map) == op_name) {
@@ -12698,8 +12712,13 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
     if (access_map_for_op.size() > 1) {
 
         //generate configuration for internal sram related controller
-        ofstream out(string(dir) + op_name + ".csv");
+        string sub_folder = get_ubuf_name(access_maps, op_name);
+        string sub_dir = dir + sub_folder;
+        cout << "sub folder name: " << sub_folder << endl;
+        cmd("mkdir -p " + sub_dir);
+        ofstream out(sub_dir +"/" + op_name + ".csv");
         cout << "\tGenerate config csv for : " << tab(1) << op_name << endl;
+
         emit_lake_controller_config(out, dom, get_aff(write_sched));
 
         //emit address config
@@ -12712,6 +12731,11 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
       int pt_cnt = 0;
       for(auto single_access_map: get_basic_maps(pick(access_map_for_op))) {
         cout << "single access bmap : " << str(single_access_map) << endl;
+
+        string sub_folder = get_ubuf_name({to_map(single_access_map)}, op_name);
+        string sub_dir = dir + sub_folder;
+        cout << "sub folder name: " << sub_folder << endl;
+
         string buf_name = range_name(to_map(single_access_map));
         auto ubuf = buffers_opt.at(buf_name);
         string suffix = "_" + to_string(pt_cnt);
@@ -12720,7 +12744,8 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
         else
             suffix = "_in2agg" + suffix;
 
-        ofstream out(string(dir) + op_name + suffix + ".csv");
+        cmd("mkdir -p " + sub_dir);
+        ofstream out(sub_dir +"/"+ op_name + suffix + ".csv");
         cout << "\tGenerate config csv for : " << tab(1) << op_name + suffix << endl;
         emit_lake_controller_config(out, dom, get_aff(write_sched));
 
@@ -15039,7 +15064,8 @@ void lake_tests() {
   //union_test();
   lake_conv33_autovec_test();
   //lake_dual_port_test();
-  //lake_cascade_autovec_test();
+  lake_cascade_autovec_test();
+  assert(false);
   lake_harris_autovec_test();
   lake_resnet_multitile_test();
   lake_resnet_test();

@@ -72,6 +72,12 @@ string take_until(const std::string& s, const std::string& delim) {
 }
 
 static inline
+string take_until_str(const std::string& s, const std::string& delim) {
+  std::size_t found = s.find(delim);
+  return s.substr(0, found);
+}
+
+static inline
 string take_btw(const std::string& s, const std::string& ldel, const std::string& rdel) {
   std::size_t found_l = s.find(ldel);
   std::size_t found_r = s.find(rdel);

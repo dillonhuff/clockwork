@@ -1,10 +1,10 @@
 // Module `ub` defined externally
 module cu_input (
-    output [15:0] buf1_input_write_0,
     input clk,
-    input [15:0] in_input_read_0
+    input [15:0] in_input_read [0:0],
+    output [15:0] buf1_input_write [0:0]
 );
-assign buf1_input_write_0 = in_input_read_0;
+assign buf1_input_write[0] = in_input_read[0];
 endmodule
 
 module coreir_reg #(
@@ -44,263 +44,247 @@ coreir_reg #(
 endmodule
 
 module cu_output (
-    input [15:0] buf2_output_read_0,
-    input [15:0] buf2_output_read_1,
-    input [15:0] buf2_output_read_2,
-    input [15:0] buf2_output_read_3,
-    input [15:0] buf2_output_read_4,
-    input [15:0] buf2_output_read_5,
-    input [15:0] buf2_output_read_6,
-    input [15:0] buf2_output_read_7,
-    input [15:0] buf2_output_read_8,
     input clk,
-    output [15:0] out_output_write_0
+    input [15:0] buf2_output_read [8:0],
+    output [15:0] out_output_write [0:0]
 );
-assign out_output_write_0 = 16'((16'((16'((16'((16'((16'((16'((16'(buf2_output_read_0 + buf2_output_read_1)) + buf2_output_read_2)) + buf2_output_read_3)) + buf2_output_read_4)) + buf2_output_read_5)) + buf2_output_read_6)) + buf2_output_read_7)) + buf2_output_read_8);
+assign out_output_write[0] = 16'((16'((16'((16'((16'((16'((16'((16'(buf2_output_read[0] + buf2_output_read[1])) + buf2_output_read[2])) + buf2_output_read[3])) + buf2_output_read[4])) + buf2_output_read[5])) + buf2_output_read[6])) + buf2_output_read[7])) + buf2_output_read[8]);
 endmodule
 
 module cu_conv (
-    input [15:0] buf1_conv_read_0,
-    input [15:0] buf1_conv_read_1,
-    input [15:0] buf1_conv_read_2,
-    input [15:0] buf1_conv_read_3,
-    input [15:0] buf1_conv_read_4,
-    input [15:0] buf1_conv_read_5,
-    input [15:0] buf1_conv_read_6,
-    input [15:0] buf1_conv_read_7,
-    input [15:0] buf1_conv_read_8,
-    output [15:0] buf2_conv_write_0,
-    input clk
+    input clk,
+    input [15:0] buf1_conv_read [8:0],
+    output [15:0] buf2_conv_write [0:0]
 );
-assign buf2_conv_write_0 = 16'((16'((16'((16'((16'((16'((16'((16'(buf1_conv_read_0 + buf1_conv_read_1)) + buf1_conv_read_2)) + buf1_conv_read_3)) + buf1_conv_read_4)) + buf1_conv_read_5)) + buf1_conv_read_6)) + buf1_conv_read_7)) + buf1_conv_read_8);
+assign buf2_conv_write[0] = 16'((16'((16'((16'((16'((16'((16'((16'(buf1_conv_read[0] + buf1_conv_read[1])) + buf1_conv_read[2])) + buf1_conv_read[3])) + buf1_conv_read[4])) + buf1_conv_read[5])) + buf1_conv_read[6])) + buf1_conv_read[7])) + buf1_conv_read[8]);
 endmodule
 
 module buf2_ub (
     input clk,
-    input [15:0] conv_write_0,
-    output [15:0] output_read_0,
-    output [15:0] output_read_1,
-    output [15:0] output_read_2,
-    output [15:0] output_read_3,
-    output [15:0] output_read_4,
-    output [15:0] output_read_5,
-    output [15:0] output_read_6,
-    output [15:0] output_read_7,
-    output [15:0] output_read_8,
-    input reset
+    input reset,
+    input [15:0] conv_write [0:0],
+    output [15:0] output_read [8:0]
 );
+wire [15:0] d_reg__U22_out;
+wire [15:0] d_reg__U23_out;
+wire [15:0] d_reg__U24_out;
+wire [15:0] d_reg__U25_out;
+wire [15:0] d_reg__U26_out;
+wire [15:0] d_reg__U27_out;
+wire [15:0] ub_buf2_conv_12_to_buf2_output_3_dataout_0;
+wire [15:0] ub_buf2_conv_12_to_buf2_output_3_dataout_1;
+wire ub_buf2_conv_12_to_buf2_output_3_clk_en_const_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U22 (
-    .in(conv_write_0),
+    .in(conv_write[0]),
     .clk(clk),
-    .out(output_read_7)
+    .out(d_reg__U22_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U23 (
-    .in(output_read_7),
+    .in(d_reg__U22_out),
     .clk(clk),
-    .out(output_read_6)
+    .out(d_reg__U23_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U24 (
-    .in(output_read_5),
+    .in(ub_buf2_conv_12_to_buf2_output_3_dataout_1),
     .clk(clk),
-    .out(output_read_4)
+    .out(d_reg__U24_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U25 (
-    .in(output_read_4),
+    .in(d_reg__U24_out),
     .clk(clk),
-    .out(output_read_3)
+    .out(d_reg__U25_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U26 (
-    .in(output_read_2),
+    .in(ub_buf2_conv_12_to_buf2_output_3_dataout_0),
     .clk(clk),
-    .out(output_read_1)
+    .out(d_reg__U26_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U27 (
-    .in(output_read_1),
+    .in(d_reg__U26_out),
     .clk(clk),
-    .out(output_read_0)
+    .out(d_reg__U27_out)
 );
 cwlib_ub__confignull__input_num1__output_num2__width16 ub_buf2_conv_12_to_buf2_output_3 (
     .rst_n(reset),
-    .clk_en(1'b1),
+    .clk_en(ub_buf2_conv_12_to_buf2_output_3_clk_en_const_out),
     .clk(clk),
-    .datain_0(conv_write_0),
-    .dataout_0(output_read_2),
-    .dataout_1(output_read_5)
+    .datain_0(conv_write[0]),
+    .dataout_0(ub_buf2_conv_12_to_buf2_output_3_dataout_0),
+    .dataout_1(ub_buf2_conv_12_to_buf2_output_3_dataout_1)
 );
-assign output_read_8 = conv_write_0;
+assign ub_buf2_conv_12_to_buf2_output_3_clk_en_const_out = 1'b1;
+assign output_read[8] = conv_write[0];
+assign output_read[7] = d_reg__U22_out;
+assign output_read[6] = d_reg__U23_out;
+assign output_read[5] = ub_buf2_conv_12_to_buf2_output_3_dataout_1;
+assign output_read[4] = d_reg__U24_out;
+assign output_read[3] = d_reg__U25_out;
+assign output_read[2] = ub_buf2_conv_12_to_buf2_output_3_dataout_0;
+assign output_read[1] = d_reg__U26_out;
+assign output_read[0] = d_reg__U27_out;
 endmodule
 
 module buf1_ub (
     input clk,
-    output [15:0] conv_read_0,
-    output [15:0] conv_read_1,
-    output [15:0] conv_read_2,
-    output [15:0] conv_read_3,
-    output [15:0] conv_read_4,
-    output [15:0] conv_read_5,
-    output [15:0] conv_read_6,
-    output [15:0] conv_read_7,
-    output [15:0] conv_read_8,
-    input [15:0] input_write_0,
-    input reset
+    input reset,
+    output [15:0] conv_read [8:0],
+    input [15:0] input_write [0:0]
 );
+wire [15:0] d_reg__U16_out;
+wire [15:0] d_reg__U17_out;
+wire [15:0] d_reg__U18_out;
+wire [15:0] d_reg__U19_out;
+wire [15:0] d_reg__U20_out;
+wire [15:0] d_reg__U21_out;
+wire [15:0] ub_buf1_input_10_to_buf1_conv_15_dataout_0;
+wire [15:0] ub_buf1_input_10_to_buf1_conv_15_dataout_1;
+wire ub_buf1_input_10_to_buf1_conv_15_clk_en_const_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U16 (
-    .in(input_write_0),
+    .in(input_write[0]),
     .clk(clk),
-    .out(conv_read_7)
+    .out(d_reg__U16_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U17 (
-    .in(conv_read_7),
+    .in(d_reg__U16_out),
     .clk(clk),
-    .out(conv_read_6)
+    .out(d_reg__U17_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U18 (
-    .in(conv_read_5),
+    .in(ub_buf1_input_10_to_buf1_conv_15_dataout_1),
     .clk(clk),
-    .out(conv_read_4)
+    .out(d_reg__U18_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U19 (
-    .in(conv_read_4),
+    .in(d_reg__U18_out),
     .clk(clk),
-    .out(conv_read_3)
+    .out(d_reg__U19_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U20 (
-    .in(conv_read_2),
+    .in(ub_buf1_input_10_to_buf1_conv_15_dataout_0),
     .clk(clk),
-    .out(conv_read_1)
+    .out(d_reg__U20_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) d_reg__U21 (
-    .in(conv_read_1),
+    .in(d_reg__U20_out),
     .clk(clk),
-    .out(conv_read_0)
+    .out(d_reg__U21_out)
 );
 cwlib_ub__confignull__input_num1__output_num2__width16 ub_buf1_input_10_to_buf1_conv_15 (
     .rst_n(reset),
-    .clk_en(1'b1),
+    .clk_en(ub_buf1_input_10_to_buf1_conv_15_clk_en_const_out),
     .clk(clk),
-    .datain_0(input_write_0),
-    .dataout_0(conv_read_2),
-    .dataout_1(conv_read_5)
+    .datain_0(input_write[0]),
+    .dataout_0(ub_buf1_input_10_to_buf1_conv_15_dataout_0),
+    .dataout_1(ub_buf1_input_10_to_buf1_conv_15_dataout_1)
 );
-assign conv_read_8 = input_write_0;
+assign ub_buf1_input_10_to_buf1_conv_15_clk_en_const_out = 1'b1;
+assign conv_read[8] = input_write[0];
+assign conv_read[7] = d_reg__U16_out;
+assign conv_read[6] = d_reg__U17_out;
+assign conv_read[5] = ub_buf1_input_10_to_buf1_conv_15_dataout_1;
+assign conv_read[4] = d_reg__U18_out;
+assign conv_read[3] = d_reg__U19_out;
+assign conv_read[2] = ub_buf1_input_10_to_buf1_conv_15_dataout_0;
+assign conv_read[1] = d_reg__U20_out;
+assign conv_read[0] = d_reg__U21_out;
 endmodule
 
 module cascade_lake (
     input clk,
-    input [15:0] in_input_read_0,
-    output [15:0] out_output_write_0,
-    input reset
+    input reset,
+    input [15:0] in_input_read [0:0],
+    output [15:0] out_output_write [0:0]
 );
 wire [15:0] _U28_out;
-wire [15:0] buf1_conv_read_0;
-wire [15:0] buf1_conv_read_1;
-wire [15:0] buf1_conv_read_2;
-wire [15:0] buf1_conv_read_3;
-wire [15:0] buf1_conv_read_4;
-wire [15:0] buf1_conv_read_5;
-wire [15:0] buf1_conv_read_6;
-wire [15:0] buf1_conv_read_7;
-wire [15:0] buf1_conv_read_8;
-wire [15:0] buf2_output_read_0;
-wire [15:0] buf2_output_read_1;
-wire [15:0] buf2_output_read_2;
-wire [15:0] buf2_output_read_3;
-wire [15:0] buf2_output_read_4;
-wire [15:0] buf2_output_read_5;
-wire [15:0] buf2_output_read_6;
-wire [15:0] buf2_output_read_7;
-wire [15:0] buf2_output_read_8;
-wire [15:0] conv_buf2_conv_write_0;
-wire [15:0] input_buf1_input_write_0;
+wire [15:0] buf1_conv_read [8:0];
+wire [15:0] buf2_output_read [8:0];
+wire [15:0] conv_buf2_conv_write [0:0];
+wire [15:0] input_buf1_input_write [0:0];
+wire [15:0] output_out_output_write [0:0];
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) _U28 (
-    .in(in_input_read_0),
+    .in(in_input_read[0]),
     .clk(clk),
     .out(_U28_out)
 );
+wire [15:0] buf1_input_write [0:0];
+assign buf1_input_write[0] = input_buf1_input_write[0];
 buf1_ub buf1 (
     .clk(clk),
-    .conv_read_0(buf1_conv_read_0),
-    .conv_read_1(buf1_conv_read_1),
-    .conv_read_2(buf1_conv_read_2),
-    .conv_read_3(buf1_conv_read_3),
-    .conv_read_4(buf1_conv_read_4),
-    .conv_read_5(buf1_conv_read_5),
-    .conv_read_6(buf1_conv_read_6),
-    .conv_read_7(buf1_conv_read_7),
-    .conv_read_8(buf1_conv_read_8),
-    .input_write_0(input_buf1_input_write_0),
-    .reset(reset)
+    .reset(reset),
+    .conv_read(buf1_conv_read),
+    .input_write(buf1_input_write)
 );
+wire [15:0] buf2_conv_write [0:0];
+assign buf2_conv_write[0] = conv_buf2_conv_write[0];
 buf2_ub buf2 (
     .clk(clk),
-    .conv_write_0(conv_buf2_conv_write_0),
-    .output_read_0(buf2_output_read_0),
-    .output_read_1(buf2_output_read_1),
-    .output_read_2(buf2_output_read_2),
-    .output_read_3(buf2_output_read_3),
-    .output_read_4(buf2_output_read_4),
-    .output_read_5(buf2_output_read_5),
-    .output_read_6(buf2_output_read_6),
-    .output_read_7(buf2_output_read_7),
-    .output_read_8(buf2_output_read_8),
-    .reset(reset)
+    .reset(reset),
+    .conv_write(buf2_conv_write),
+    .output_read(buf2_output_read)
 );
+wire [15:0] conv_buf1_conv_read [8:0];
+assign conv_buf1_conv_read[8] = buf1_conv_read[8];
+assign conv_buf1_conv_read[7] = buf1_conv_read[7];
+assign conv_buf1_conv_read[6] = buf1_conv_read[6];
+assign conv_buf1_conv_read[5] = buf1_conv_read[5];
+assign conv_buf1_conv_read[4] = buf1_conv_read[4];
+assign conv_buf1_conv_read[3] = buf1_conv_read[3];
+assign conv_buf1_conv_read[2] = buf1_conv_read[2];
+assign conv_buf1_conv_read[1] = buf1_conv_read[1];
+assign conv_buf1_conv_read[0] = buf1_conv_read[0];
 cu_conv conv (
-    .buf1_conv_read_0(buf1_conv_read_0),
-    .buf1_conv_read_1(buf1_conv_read_1),
-    .buf1_conv_read_2(buf1_conv_read_2),
-    .buf1_conv_read_3(buf1_conv_read_3),
-    .buf1_conv_read_4(buf1_conv_read_4),
-    .buf1_conv_read_5(buf1_conv_read_5),
-    .buf1_conv_read_6(buf1_conv_read_6),
-    .buf1_conv_read_7(buf1_conv_read_7),
-    .buf1_conv_read_8(buf1_conv_read_8),
-    .buf2_conv_write_0(conv_buf2_conv_write_0),
-    .clk(clk)
+    .clk(clk),
+    .buf1_conv_read(conv_buf1_conv_read),
+    .buf2_conv_write(conv_buf2_conv_write)
 );
+wire [15:0] input_in_input_read [0:0];
+assign input_in_input_read[0] = _U28_out;
 cu_input input (
-    .buf1_input_write_0(input_buf1_input_write_0),
     .clk(clk),
-    .in_input_read_0(_U28_out)
+    .in_input_read(input_in_input_read),
+    .buf1_input_write(input_buf1_input_write)
 );
+wire [15:0] output_buf2_output_read [8:0];
+assign output_buf2_output_read[8] = buf2_output_read[8];
+assign output_buf2_output_read[7] = buf2_output_read[7];
+assign output_buf2_output_read[6] = buf2_output_read[6];
+assign output_buf2_output_read[5] = buf2_output_read[5];
+assign output_buf2_output_read[4] = buf2_output_read[4];
+assign output_buf2_output_read[3] = buf2_output_read[3];
+assign output_buf2_output_read[2] = buf2_output_read[2];
+assign output_buf2_output_read[1] = buf2_output_read[1];
+assign output_buf2_output_read[0] = buf2_output_read[0];
 cu_output output (
-    .buf2_output_read_0(buf2_output_read_0),
-    .buf2_output_read_1(buf2_output_read_1),
-    .buf2_output_read_2(buf2_output_read_2),
-    .buf2_output_read_3(buf2_output_read_3),
-    .buf2_output_read_4(buf2_output_read_4),
-    .buf2_output_read_5(buf2_output_read_5),
-    .buf2_output_read_6(buf2_output_read_6),
-    .buf2_output_read_7(buf2_output_read_7),
-    .buf2_output_read_8(buf2_output_read_8),
     .clk(clk),
-    .out_output_write_0(out_output_write_0)
+    .buf2_output_read(output_buf2_output_read),
+    .out_output_write(output_out_output_write)
 );
+assign out_output_write[0] = output_out_output_write[0];
 endmodule
 
