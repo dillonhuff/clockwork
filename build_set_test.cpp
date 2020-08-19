@@ -11446,6 +11446,20 @@ void generate_verilog_tb(const std::string& name) {
   assert(to_verilog_res == 0);
 }
 
+#ifdef COREIR
+void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt) {
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  schedule_info hwinfo;
+  hwinfo.use_dse_compute = false;
+  opt.rtl_options.use_prebuilt_memory = true;
+  auto sched = global_schedule_from_buffers(buffers_opt);
+  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
+  generate_verilog_tb(prg.name);
+}
+#endif
+
 void identity_stream_through_mem_coreir_test() {
   prog prg("identity_stream_through_mem");
   prg.buffer_port_widths["in"] = 16;
@@ -13220,17 +13234,8 @@ void lake_cascade_autovec_test() {
     b.second.generate_banks_and_merge(opt);
     b.second.port_group2bank(max_inpt, max_outpt);
   }
-
 #ifdef COREIR
-  CoreIR::Context* context = CoreIR::newContext();
-  CoreIRLoadLibrary_commonlib(context);
-  CoreIRLoadLibrary_cwlib(context);
-  schedule_info hwinfo;
-  hwinfo.use_dse_compute = false;
-  opt.rtl_options.use_prebuilt_memory = true;
-  auto sched = global_schedule_from_buffers(buffers_opt);
-  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
-  generate_verilog_tb(prg.name);
+  generate_cgra_tb(buffers_opt, prg, opt);
 #endif
 
   //return the buffers after vectorization and the proximity deps you want to remove
@@ -13349,14 +13354,7 @@ void lake_conv33_autovec_test() {
   }
 
 #ifdef COREIR
-  CoreIR::Context* context = CoreIR::newContext();
-  CoreIRLoadLibrary_commonlib(context);
-  CoreIRLoadLibrary_cwlib(context);
-  schedule_info hwinfo;
-  hwinfo.use_dse_compute = false;
-  auto sched = global_schedule_from_buffers(buffers_opt);
-  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
-  generate_verilog_tb(prg.name);
+  generate_cgra_tb(buffers_opt, prg, opt);
 #endif
 
 
