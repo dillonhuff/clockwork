@@ -107,6 +107,15 @@ struct bank {
       return true;
   }
 
+  bool onlyWire() const {
+      auto delays = sort_unique(read_delays);
+      cout << "Bank has delay: " << delays << endl;
+      if (delays.size() == 1)
+        if (pick(delays) == 0)
+            return true;
+      return false;
+  }
+
   //return a vector of port string
   vector<string> get_out_ports() {
     vector<string> ret;
@@ -114,6 +123,23 @@ struct bank {
         ret.push_back(itr.first);
     }
     return ret;
+  }
+
+  vector<pair<string, int> > get_sort_delay_map() {
+    vector<pair<string, int> > delay_vec(delay_map.begin(), delay_map.end());
+    sort(delay_vec.begin(), delay_vec.end(),
+            [](const pair<string, int> &l, const pair<string, int> &r)
+            {return l.second < r.second;});
+    return delay_vec;
+  }
+
+  vector<string> get_outpt_with_ascending_addr() {
+      auto tmp = get_sort_delay_map();
+      vector<string> ret;
+      for (auto it : tmp) {
+        ret.push_back(it.first);
+      }
+      return ret;
   }
 
   vector<int> get_end_inds() const {
@@ -1839,6 +1865,7 @@ class UBuffer {
     bank compute_bank_info(uset*, isl_point*, std::set<string>, std::set<string>);
     bank compute_bank_info(CodegenOptions& options, const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
+    bank compute_bank_info(const std::string& inpt, const std::string& outpt, int depth);
 
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
 
@@ -1875,11 +1902,13 @@ class UBuffer {
     uset* create_subbank_branch(
             std::set<string> & inpt_set,
             std::set<string> & outpt_set,
+            std::map<string, int> & pt_name2delay,
             map<string, pair<isl_map*, isl_map*> > & outpt_merge,
             vector<pair<string, string> > & back_edge);
     void port_group2bank(int in_port_width, int out_port_width);
     isl_map* merge_output_pt(vector<string> merge_pt);
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
+    pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);
 
 };
 
@@ -1973,6 +2002,7 @@ int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std
 int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port);
 
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port);
+
 
 
 int compute_max_dd(UBuffer& buf, const string& inpt);

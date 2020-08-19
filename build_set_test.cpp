@@ -11442,7 +11442,8 @@ void run_verilator_tb(const std::string& name) {
 
 void generate_verilog_tb(const std::string& name) {
 
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --load_libs cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-coreir\"");
+    cmd("echo $LD_LIBRARY_PATH");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk\"");
   assert(to_verilog_res == 0);
 }
 
@@ -13259,7 +13260,6 @@ void lake_cascade_autovec_test() {
   cmd("mkdir -p ./lake_controllers/cascade/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
   emit_lake_stream(ubuf_pool, hsh, "./lake_stream/cascade/", false);
-  assert(false);
   //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
@@ -13274,12 +13274,15 @@ void lake_harris_autovec_test() {
   int max_inpt = 2, max_outpt = 2;
 
   for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << endl;
+    cout << "\tGenerate bank for buffer: " << b.first << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
     b.second.generate_banks_and_merge(opt);
     b.second.port_group2bank(max_inpt, max_outpt);
   }
+#ifdef COREIR
+  generate_cgra_tb(buffers_opt, prg, opt);
+#endif
 
   //return the buffers after vectorization and the proximity deps you want to remove
   vector<string> input_vec_stmts;
@@ -15036,7 +15039,7 @@ void lake_tests() {
   //union_test();
   lake_conv33_autovec_test();
   //lake_dual_port_test();
-  lake_cascade_autovec_test();
+  //lake_cascade_autovec_test();
   lake_harris_autovec_test();
   lake_resnet_multitile_test();
   lake_resnet_test();

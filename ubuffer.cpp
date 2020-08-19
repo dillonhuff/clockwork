@@ -662,6 +662,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   //}
 
   //map save the register
+  map<string, CoreIR::Instance*> pt2psth;
   map<string, CoreIR::Wireable*> wire2out;
   map<string, CoreIR::Wireable*> pt2wire;
   map<string, std::vector<CoreIR::Wireable*>> outpt_bank_rd, outpt_bank_valid;
@@ -683,6 +684,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto inpt_bd_wire = def->sel("self." + b);
     for (auto inpt : port_bundles.at(b)) {
       pt2wire[inpt] = inpt_bd_wire->sel(pt_cnt);
+      cout << "add input: " << inpt << " to pt2wire" << endl;
       pt_cnt ++;
     }
   }
@@ -692,23 +694,50 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto outpt_bd_wire = def->sel("self." + b);
     for (auto outpt : port_bundles.at(b)) {
       pt2wire[outpt] = outpt_bd_wire->sel(pt_cnt);
+      cout << "add output: " << outpt << " to pt2wire" << endl;
       pt_cnt ++;
     }
   }
 
-  for (auto bk : get_banks()) {
+  //sort the bank by delay first
+  auto bank_list = get_banks();
+  sort(bank_list.begin(), bank_list.end(), [](const bank l, const bank r) {
+            return l.maxdelay > r.maxdelay;
+          } );
+
+  for (auto bk : bank_list) {
     //assert(false);
     std::set<string> inpts = get_bank_inputs(bk.name);
     std::set<string> outpts = get_bank_outputs(bk.name);
     auto buf_inpts = get_in_ports();
-    //if (count(buf_inpts.begin(), buf_inpts.end(), pick(inpts)) == 0){
     cout << "Bank:" << bk.name << " has max_delay: " << bk.maxdelay << endl;
     if (bk.maxdelay == 0) {
       //this is a wire
       assert(inpts.size() == 1);
-      assert(outpts.size() == 1);
-      def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
-      wire2out[pick(outpts)] = pt2wire.at(pick(inpts));
+
+      //broadcast the input port to a series of output port
+      if (isIn.at(pick(inpts))) {
+        for (auto outpt: outpts) {
+          def->connect(pt2wire.at(pick(inpts)), pt2wire.at(outpt));
+          wire2out[outpt] = pt2wire.at(pick(inpts));
+        }
+      } else {
+        for (auto outpt: outpts) {
+          if (wire2out.count(pick(inpts))) {
+            //if (pt2psth.count(outpt)) {
+            //  auto psth = pt2psth.at(outpt);
+            //  def->connect(psth->sel("out"), wire2out.at(pick(inpts)));
+            //} else {
+              def->connect(wire2out.at(pick(inpts)), pt2wire.at(outpt));
+              wire2out[outpt] = wire2out.at(pick(inpts));
+            //}
+          } else {
+            //auto psth = CoreIR::addPassthrough(pt2wire.at(outpt), outpt + "_psth");
+            //def->connect(psth->sel("in"), pt2wire.at(outpt));
+            //pt2psth[outpt] = psth;
+          }
+        }
+      }
     } else if (bk.maxdelay <= options.merge_threshold) {
       //TODO: support dilation conv, register information is in maxdelay
       //add register, wire valid from ubuffer
@@ -826,6 +855,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         }
       }
     }
+  }
+  for (auto itr: pt2psth) {
+      CoreIR::inlineInstance(itr.second);
   }
 
   //wiring the valid if we are using valid
@@ -2207,8 +2239,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     assert(WritesAfterWrite != nullptr);
 
-    umap* rdsched = schedule.at(read_port);
-    umap* wrsched = schedule.at(write_port);
+    umap* rdsched = cpy(schedule.at(read_port));
+    umap* wrsched = cpy(schedule.at(write_port));
     bool out2out = !isIn.at(write_port);
     if (out2out) {
       rdsched = pad_one_more_dim_to_sched_map_innermost(rdsched, 1);
@@ -2268,6 +2300,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto rddom = isl_union_set_empty(
             get_space(range(access_map.at(inpt_name))));
 
+    //initial the delay map
+    map<string, int> delay_map = {};
     for (auto inpt : inpt_set) {
       for (auto outpt: outpt_set) {
         //get the rddom for the supper bank
@@ -2285,6 +2319,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         }
         read_delays.push_back(delay);
         maxdelay = std::max(maxdelay, delay);
+        //delay_map.insert({outpt, delay});
       }
     }
     //cout << "compute max delay for super bank =  " << maxdelay << endl;
@@ -2293,10 +2328,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     string pt_type_string = port_type_string();
     string name = pick(inpt_set) + "_to_" + pick(outpt_set);
-
-
-    //initial the delay map
-    map<string, int> delay_map = {};
 
     stack_bank bank{name, INNER_BANK_OFFSET_STACK, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
 
@@ -2354,6 +2385,32 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
   bank UBuffer::compute_bank_info(
+          const std::string & inpt,
+          const std::string & outpt,
+          int delay) {
+      vector<int> read_delays{0};
+      int maxdelay = delay;
+      read_delays.push_back(delay);
+      map<string, int> delay_map = {{outpt, read_delays.back()}};
+      auto rddom =
+        its(range(access_map.at(inpt)),
+            range(access_map.at(outpt)));
+      string pt_type_string = port_type_string();
+      string name = inpt + "_to_" + outpt;
+
+      stack_bank bank{name,
+        INNER_BANK_OFFSET_STACK,
+        pt_type_string,
+        read_delays,
+        1,
+        maxdelay,
+        rddom,
+        delay_map};
+
+      return bank;
+  }
+
+  bank UBuffer::compute_bank_info(
       CodegenOptions& options,
       const std::string& inpt,
       const std::string& outpt) {
@@ -2361,6 +2418,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
 
       int maxdelay = compute_dd_bound(outpt, inpt, true);
+      cout << "max delay btw " << inpt << " and " << outpt <<" is " << maxdelay << endl;
       vector<int> read_delays{0};
 
       // NOTE: Just to ensure we dont force everything to be a RAM
@@ -2788,7 +2846,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     for (size_t i = 1; i < merge_pt.size(); i ++) {
       shift_map = get_shift_map(shift_map);
       string name = merge_pt.at(i);
-      //cout << "shift map: " << str(shift_map) << ", original map: " << str(access_map.at(name)) << endl;
+      cout << "shift map: " << str(shift_map) << ", original map: " << str(access_map.at(name)) << endl;
       if (equal(range(to_umap(shift_map)), range(access_map.at(name)))) {
         //assign the largest depth
         depth  = i;
@@ -2803,6 +2861,21 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         ret_sched = set_domain_name(ret_sched, dom_name + "_" + to_string(depth));
     }
     cout << "Rewrited output port map: " << str(ret) << endl;
+    return make_pair(ret, ret_sched);
+  }
+
+  pair<isl_map*, isl_map*> UBuffer::get_shift_pt_access_with_sched(string pt_name, int depth) {
+    auto s = to_map(access_map.at(pt_name));
+    auto sched = to_map(schedule.at(pt_name));
+    auto ret = pad_to_domain_map(s, depth);
+    auto ret_sched = pad_to_domain_map(sched, depth);
+    string dom_name = domain_name(ret);
+    if (depth > 0) {
+      ret = set_domain_name(ret, dom_name + "_" + to_string(depth));
+      ret_sched = set_domain_name(ret_sched, dom_name + "_" + to_string(depth));
+    }
+    cout << "Rewrited output port map: " << str(ret) << endl;
+    cout << "Rewrited output port sched: " << str(ret_sched) << endl;
     return make_pair(ret, ret_sched);
   }
 
@@ -2835,6 +2908,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     //the buffer connection information, out-port point to in-port
     vector<pair<string, string> > back_edge;
+    map<string, int> delay_map;
     vector<string> pt_vec;
     while(!bank_pool.empty()) {
       auto bk = bank_pool.top();
@@ -2849,6 +2923,11 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
       group_in_port_width = inpt_set.size();
       group_out_port_width ++;
+      auto pt_name2delay = bk.get_sort_delay_map();
+      for (auto n2d: pt_name2delay) {
+        delay_map.insert((n2d));
+      }
+      delay_map[input] = 0;
 
       if ((group_in_port_width <= in_port_width) && (group_out_port_width <= out_port_width)) {
         //pop stack and add port width
@@ -2876,6 +2955,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           inpt_set.insert(bank_input);
         }
         pt_vec = bk.get_out_ports();
+        for (auto it : bk.get_sort_delay_map()) {
+            cout << "Bank: "<< bk.name << "'s port:'" << it.first << " has delay: " << it.second << endl;
+        }
 
         //sort the output port vec with the largest access in beginning
         sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
@@ -2884,21 +2966,48 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             return lex_gt_pt(l_start, r_start);
             });
 
-        for (size_t i = 0; i < pt_vec.size(); i ++) {
+        int min = pt_name2delay.front().second;
+        int max = pt_name2delay.back().second;
+        for (auto itr = pt_name2delay.begin(); itr < pt_name2delay.end(); itr ++) {
+
+          int depth = max - itr->second;
+          cout << itr->first << "pad depth: " << depth << endl;
           auto out_map_merge =
-            merge_output_pt_with_sched(vector<string>(pt_vec.begin() + i, pt_vec.end()));
-          outpt_merge.insert(make_pair(pt_vec.at(i), out_map_merge));
-          if (i == 0) {
-            back_edge.push_back(make_pair(pt_vec.at(i), bank_input));
+              get_shift_pt_access_with_sched(itr->first, depth);
+          outpt_merge.insert(make_pair(itr->first, out_map_merge));
+          if (itr == pt_name2delay.begin()) {
+            back_edge.push_back(make_pair(itr->first, bank_input));
           }
           else {
-            back_edge.push_back(make_pair(pt_vec.at(i), pt_vec.at(i-1)));
+            back_edge.push_back(make_pair(itr->first, (itr-1)->first));
           }
         }
+        //for (size_t i = 0; i < pt_vec.size(); i ++) {
+        //  auto out_map_merge =
+        //    merge_output_pt_with_sched(vector<string>(pt_vec.begin() + i, pt_vec.end()));
+        //  outpt_merge.insert(make_pair(pt_vec.at(i), out_map_merge));
+        //  if (i == 0) {
+        //    back_edge.push_back(make_pair(pt_vec.at(i), bank_input));
+        //  }
+        //  else {
+        //    back_edge.push_back(make_pair(pt_vec.at(i), pt_vec.at(i-1)));
+        //  }
+        //}
 
         //check if this should be a separate bank
-        if (bk.onlySR()) {
-          last_bank_rddom = create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
+        if (bk.onlyWire()) {
+          //this is the case there is only boradcast data
+          last_bank_rddom = bk.rddom;
+          cout << "This is a bank of broadcasting" << endl;
+          group_in_port_width = 0;
+          group_out_port_width = 0;
+          inpt_set.clear();
+          outpt_set.clear();
+          outpt_merge.clear();
+          delay_map.clear();
+          back_edge.clear();
+        } else if (bk.onlySR()) {
+          last_bank_rddom = create_subbank_branch(inpt_set, outpt_set, delay_map, outpt_merge, back_edge);
           cout << "Reset Counter for shift reg" << endl;
           group_in_port_width = 0;
           group_out_port_width = 0;
@@ -2912,7 +3021,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         //update the input port
         last_bank_IO.first = input;
         last_bank_IO.second = pt_vec.front();
-        last_bank_rddom = create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
+        last_bank_rddom = create_subbank_branch(inpt_set, outpt_set, delay_map, outpt_merge, back_edge);
 
         //reset the grouping counter
         cout << "Reset Counter" << endl;
@@ -2922,7 +3031,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
     //chances are that we have some leftover
     if (!inpt_set.empty()) {
-      create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
+      create_subbank_branch(inpt_set, outpt_set, delay_map, outpt_merge, back_edge);
     }
   }
 
@@ -2941,10 +3050,21 @@ void UBuffer::generate_coreir(CodegenOptions& options,
    *
    *  This functional will return the read domain of the supper bank
    * */
+  string find_origin(vector<pair<string, string> > edges, map<string, int> & delay_map, string source) {
+    for (auto edge : edges) {
+      string in = edge.second;
+      string out = edge.first;
+      int delay = delay_map.at(in) - delay_map.at(out);
+      if( (delay == 0) && (out == source))
+          return find_origin(edges, delay_map, in);
+    }
+    return source;
+  }
 
   uset* UBuffer::create_subbank_branch(
       std::set<string> & inpt_set,
       std::set<string> & outpt_set,
+      map<string, int> & delay_map,
       map<string, pair<isl_map*, isl_map*> > & outpt_merge,
       vector<pair<string, string> > & back_edge) {
     for (auto it : outpt_merge) {
@@ -2964,8 +3084,11 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
         remove_bank(read);
         CodegenOptions options;
+        int delay = delay_map.at(read) - delay_map.at(write);
+        if (delay == 0)
+            write = find_origin(back_edge, delay_map, write);
         options.inner_bank_offset_mode = INNER_BANK_OFFSET_STACK;
-        stack_bank bk = compute_bank_info(options, write, read);
+        stack_bank bk = compute_bank_info(write, read, delay);
         add_bank_between(write, read, bk);
       }
       else {
@@ -2987,6 +3110,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     outpt_set.clear();
     outpt_merge.clear();
     back_edge.clear();
+    delay_map.clear();
     return super_bk.rddom;
   }
 

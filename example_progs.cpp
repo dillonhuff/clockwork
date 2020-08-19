@@ -520,7 +520,7 @@ prog harris() {
   auto hcompute_lgxx_stencil = lgxx_s0_x->add_op("op_hcompute_lgxx_stencil");
   hcompute_lgxx_stencil->add_function("hcompute_lgxx_stencil");
   prg.buffer_port_widths["lgxx_stencil"] = 16;
-  hcompute_lgxx_stencil->add_store("lgxx_stencil", "lgxx_s0_y", "lgxx_s0_x");
+  //hcompute_lgxx_stencil->add_store("lgxx_stencil", "lgxx_s0_y", "lgxx_s0_x");
   auto lgxx_s1_y = prg.add_loop("lgxx_s1_y", -1, 59);
   auto lgxx_s1_x = lgxx_s1_y->add_loop("lgxx_s1_x", -1, 59);
 
@@ -577,7 +577,7 @@ prog harris() {
   auto hcompute_lgxy_stencil = lgxy_s0_x->add_op("op_hcompute_lgxy_stencil");
   hcompute_lgxy_stencil->add_function("hcompute_lgxy_stencil");
   prg.buffer_port_widths["lgxy_stencil"] = 16;
-  hcompute_lgxy_stencil->add_store("lgxy_stencil", "lgxy_s0_y", "lgxy_s0_x");
+  //hcompute_lgxy_stencil->add_store("lgxy_stencil", "lgxy_s0_y", "lgxy_s0_x");
   auto lgxy_s1_y = prg.add_loop("lgxy_s1_y", -1, 59);
   auto lgxy_s1_x = lgxy_s1_y->add_loop("lgxy_s1_x", -1, 59);
 
@@ -616,7 +616,7 @@ prog harris() {
   auto hcompute_lgyy_stencil = lgyy_s0_x->add_op("op_hcompute_lgyy_stencil");
   hcompute_lgyy_stencil->add_function("hcompute_lgyy_stencil");
   prg.buffer_port_widths["lgyy_stencil"] = 16;
-  hcompute_lgyy_stencil->add_store("lgyy_stencil", "lgyy_s0_y", "lgyy_s0_x");
+  //hcompute_lgyy_stencil->add_store("lgyy_stencil", "lgyy_s0_y", "lgyy_s0_x");
   auto lgyy_s1_y = prg.add_loop("lgyy_s1_y", -1, 59);
   auto lgyy_s1_x = lgyy_s1_y->add_loop("lgyy_s1_x", -1, 59);
 

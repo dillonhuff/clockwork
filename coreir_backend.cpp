@@ -1220,7 +1220,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //connect_signal("reset", ub);
   //context->runPasses({"wireclocks-coreir"});
   //context->runPasses({"rungenerators", "wireclocks-coreir"});
-  context->runPasses({"rungenerators", "wireclocks-coreir"});
+  context->runPasses({"rungenerators", "wireclocks-clk"});
 
   return ub;
   //assert(false);
