@@ -14468,7 +14468,15 @@ void brighten_blur_asplos_example() {
 
   infer_bounds("out", {63, 63}, prg);
   prg.pretty_print();
+  prg.sanity_check();
 
+  auto sched = its(prg.optimized_schedule(), prg.whole_iteration_domain());
+  auto buffers = build_buffers(prg, sched);
+
+  cout << "Buffers..." << endl;
+  for (auto b : buffers) {
+    cout << b << endl;
+  }
   assert(false);
 }
 
