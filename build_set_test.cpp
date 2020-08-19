@@ -13222,14 +13222,15 @@ void lake_cascade_autovec_test() {
   }
 
 #ifdef COREIR
-  //CoreIR::Context* context = CoreIR::newContext();
-  //CoreIRLoadLibrary_commonlib(context);
-  //CoreIRLoadLibrary_cwlib(context);
-  //schedule_info hwinfo;
-  //hwinfo.use_dse_compute = false;
-  //auto sched = global_schedule_from_buffers(buffers_opt);
-  //generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
-  //generate_verilog_tb(prg.name);
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  schedule_info hwinfo;
+  hwinfo.use_dse_compute = false;
+  opt.rtl_options.use_prebuilt_memory = true;
+  auto sched = global_schedule_from_buffers(buffers_opt);
+  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
+  generate_verilog_tb(prg.name);
 #endif
 
   //return the buffers after vectorization and the proximity deps you want to remove
