@@ -441,6 +441,7 @@ isl_union_set* simplify(uset* const m);
 isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 
 isl_map* simplify(isl_map* const m);
+isl_map* simplify_expr(isl_map* const m);
 
 umap* simplify(umap* const m);
 

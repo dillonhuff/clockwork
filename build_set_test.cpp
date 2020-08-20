@@ -10461,6 +10461,25 @@ isl_val* constant(isl_aff* a) {
 }
 
 void playground() {
+    {
+    isl_ctx* ctx = isl_ctx_alloc();
+    auto access_map = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
+    cout << str(access_map) << endl << str(simplify_expr(access_map)) << endl;
+    cout << str(get_aff(simplify_expr(access_map))) << endl;
+    assert(false);
+    }
+  {
+    isl_ctx* ctx = isl_ctx_alloc();
+    auto access_map = isl_map_read_from_str(ctx, "{ conv[root = 0, x, y, z]->data[x, y, z]: 0<=x<=4 and 0<=y<=6 and 0<=z<=1 }");
+    auto reduce_map = linear_address_map_with_index(range(access_map), {0,1,2});
+    auto reduce_map_2D = linear_address_map_with_index(range(access_map), {0,2});
+    auto flatten_access_map = dot(access_map, reduce_map);
+    auto flatten_access_map_2D = dot(access_map, reduce_map_2D);
+    cout << "Origin: " << str(access_map) << endl;
+    cout << "Rewrite: " << str(flatten_access_map) << endl;
+    cout << "Rewrite 2D: " << str(flatten_access_map_2D) << endl;
+    assert(false);
+  }
   {
     isl_ctx* ctx = isl_ctx_alloc();
     auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[2*x + y, 4*z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
@@ -12539,7 +12558,7 @@ int get_stride_from_ubuf(UBuffer& ubuf, int raw_st, bool is_rd) {
     int capacity = ubuf.capacity() + 1;
     cout << "buffer : " << ubuf.name << " capacity = " << capacity << endl;
     if (contains(ubuf.name, "tb")) {
-        st = st % capacity;
+        st = st;
     }
     if (contains(ubuf.name, "agg" ) ){
         st = st % 4;
@@ -12570,35 +12589,41 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
   for (auto access_map: access_maps) {
     if (domain_name(access_map) == op_name) {
       cout << "\taddress info: " << str(simplify(access_map)) << endl;
-      //cout << "\tproject result: " << str(project_all_but(access_map, 1)) << endl;
-      //cout << "acc map = " << str(access_map) << endl;
-      //TODO: not work for multiple port, should use bank.rddom
-      auto reduce_map = linear_address_map_lake(range(access_map));
-      //cout << "reduce map = " << str(reduce_map) << endl;
-      //auto addr_expr = dot(access_map, reduce_map);
-      //cout << "composition = " << str(addr_expr) << endl;
 
       for(auto single_access_map: get_basic_maps(access_map)) {
           cout << "single access bmap : " << str(single_access_map) << endl;
         string buf_name = range_name(access_map);
+        auto reduce_map = linear_address_map_lake(range(access_map));
         auto ubuf = buffers_opt.at(buf_name);
-        auto addr_expr_map = dot(to_map(single_access_map), reduce_map);
         bool is_rd = ubuf.is_read_op(op_name);
 
         //Need to judge whether we need selection logic
         //Case are we have only one input port
         //but multiple output port for this buffer
         //that means we need selection logic
-        if ((!is_rd) && (ubuf.num_in_ports() > 1)) {
+        if ( (ubuf.num_in_ports() > 1)) {
             //TODO: this only work for tb
             auto pt2connect = ubuf.get_connection_map_to_outpt(to_map(single_access_map));
             bool need_mux = true;
             for (auto it: pt2connect) {
                 need_mux &= it.second;
             }
+            int out_dim = num_out_dims(access_map);
+            vector<int> mux_index;
+            vector<int> addr_index;
+            for (int i = out_dim - 1; i >= 0; i --) {
+                //FIXME: this is hardcode, may not work for dnn
+                if (i == out_dim - 2) {
+                    mux_index.push_back(i);
+                } else {
+                    addr_index.push_back(i);
+                }
+            }
+            //rewrite the original addr_reduce map
+            if (contains(buf_name, "tb"))
+              reduce_map = linear_address_map_with_index(range(access_map), addr_index);
             if (need_mux) {
-                int out_dim = num_out_dims(access_map);
-                auto mux_reduce_map = linear_address_map_with_index(range(access_map), {out_dim - 2});
+                auto mux_reduce_map = linear_address_map_with_index(range(access_map), mux_index);
                 auto mux_addr_expr = dot(access_map, mux_reduce_map);
                 cout << str(mux_addr_expr) << endl;
                 isl_aff* addr = get_aff(mux_addr_expr);
@@ -12613,9 +12638,18 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
                 }
             }
         }
+        cout << "reduce map: " << str(reduce_map) << endl;
 
+
+        auto addr_expr_map = dot(to_map(single_access_map), reduce_map);
+        cout << str(addr_expr_map) << endl;
+        string pt = is_rd ? pick(ubuf.get_out_ports()) : pick(ubuf.get_in_ports());
         isl_aff* addr = get_aff(addr_expr_map);
-        cout << "\t address generator aff expr:" << str(get_aff(addr_expr_map)) << endl;
+
+        //Simplify map will work only when you its with domain
+        if (ubuf.retrive_domain.count(pt) )
+            addr = get_aff(simplify(its(addr_expr_map, ubuf.retrive_domain.at(pt))));
+        cout << "\t address generator aff expr:" << str(addr) << endl;
 
         string prefix = is_rd ? "read" : "write";
         out << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;

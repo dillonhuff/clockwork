@@ -17,7 +17,7 @@
 "write","buf1_input_10_to_buf1_conv_15_ubuf_0_tb"
 "write_data_starting_addr",0,0
 "write_data_stride_3",0,0
-"write_data_stride_2",0,0
+"write_data_stride_2",5,0
 "write_data_stride_1",1,0
 "write_data_stride_0",0,0
 "read","buf1_input_10_to_buf1_conv_15_ubuf_sram"

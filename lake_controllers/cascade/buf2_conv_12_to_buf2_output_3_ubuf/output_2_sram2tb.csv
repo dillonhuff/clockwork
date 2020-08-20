@@ -17,7 +17,7 @@
 "write","buf2_conv_12_to_buf2_output_3_ubuf_0_tb"
 "write_data_starting_addr",0,0
 "write_data_stride_3",0,0
-"write_data_stride_2",0,0
+"write_data_stride_2",4,0
 "write_data_stride_1",1,0
 "write_data_stride_0",0,0
 "read","buf2_conv_12_to_buf2_output_3_ubuf_sram"

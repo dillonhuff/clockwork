@@ -11,6 +11,6 @@
 "read","buf1_input_10_to_buf1_conv_15_ubuf_0_tb"
 "read_data_starting_addr",0,0
 "read_data_stride_3",0,0
-"read_data_stride_2",0,0
+"read_data_stride_2",20,0
 "read_data_stride_1",4,0
 "read_data_stride_0",1,0
