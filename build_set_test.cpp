@@ -13280,7 +13280,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  //options.rtl_options.use_external_controllers = false;
+  options.rtl_options.use_external_controllers = false;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13823,6 +13823,11 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  prog prg = gaussian();
+  dsa_writers(prg);
+  compile_for_garnet_dual_port_mem(prg);
+
+  assert(false);
   auto test_programs = stencil_programs();
   //auto test_programs = all_cgra_programs();
   //cout << "====== Program classification" << endl;

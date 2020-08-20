@@ -1195,7 +1195,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
 
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
 
-    cout << "partition: " << buf.banking.partition << endl;
+    cout << "Generating functional model for: " << buf.name << endl;
+    cout << tab(1) << "partition: " << buf.banking.partition << endl;
     //assert(buf.banking.partition == "none");
 
     int width = buf.port_widths;
