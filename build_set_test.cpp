@@ -12760,8 +12760,7 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
 
         out.close();
     }
-    else {
-      assert(access_map_for_op.size() == 1);
+    else if (access_map_for_op.size() == 1) {
       int pt_cnt = 0;
       for(auto single_access_map: get_basic_maps(pick(access_map_for_op))) {
         cout << "single access bmap : " << str(single_access_map) << endl;
@@ -13351,16 +13350,14 @@ void lake_harris_autovec_test() {
   auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
   cout << str(opt_sched) << endl << endl;
   cout << codegen_c(opt_sched) << endl << endl;
-  /*map<pair<string, string>, int> latency({
-          {{"input", "input_agg2sram"}, 1},
-          {{"input_agg2sram", "output_2_sram2tb"}, -3},
-          {{"output_2_sram2tb", "output_2"}, 1}});
+
+  map<pair<string, string>, int> latency({});
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/harris/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/harris/");
   cmd("mkdir -p ./lake_stream/harris/");
-  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);*/
+  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
 }
 
 void lake_conv33_autovec_test() {
@@ -15096,13 +15093,13 @@ void lake_tests() {
   //playground();
   //lake_identity_stream_autovec_test();
   //union_test();
-  lake_conv33_autovec_test();
+  //lake_conv33_autovec_test();
   //lake_dual_port_test();
-  lake_cascade_autovec_test();
+  //lake_cascade_autovec_test();
   lake_harris_autovec_test();
+  assert(false);
   lake_resnet_multitile_test();
   lake_resnet_test();
-  assert(false);
   resnet_test();
 }
 
