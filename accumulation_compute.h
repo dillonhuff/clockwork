@@ -46,7 +46,7 @@ hw_uint<16> hcompute_conv_stencil_1(hw_uint<16>& conv_stencil, hw_uint<16>& hw_i
 hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& conv_stencil) {
   uint16_t _conv_stencil_2 = (uint16_t) conv_stencil.extract<0, 15>();
 
-  uint8_t _282 = (uint8_t)(_conv_stencil_2);
+  uint16_t _282 = (uint16_t)(_conv_stencil_2);
   return _282;
 }
 

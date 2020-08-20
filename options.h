@@ -22,12 +22,20 @@ enum ScheduleAlgorithm {
 enum InnerBankOffsetMode {
   INNER_BANK_OFFSET_STACK,
   INNER_BANK_OFFSET_LINEAR,
-  INNER_BANK_OFFSET_MULTILINEAR
+  INNER_BANK_OFFSET_MULTILINEAR,
+  INNER_BANK_OFFSET_CYCLE_DELAY
 };
 
 struct banking_strategy {
   string partition;
   vector<int> cycle_factors;
+};
+
+struct RTLOptions {
+  bool use_external_controllers;
+  bool pack_controllers_in_memtiles;
+
+  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false) {}
 };
 
 struct CodegenOptions {
@@ -53,6 +61,8 @@ struct CodegenOptions {
 
   std::map<string, banking_strategy> banking_strategies;
   int num_pipelines;
+
+  RTLOptions rtl_options;
 
   DebugOptions debug_options;
 

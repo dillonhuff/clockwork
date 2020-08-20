@@ -1306,6 +1306,9 @@ isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
 }
 
 isl_map* unn(isl_map* const m0, isl_map* const m1) {
+  if (m0 == nullptr) {
+    return m1;
+  }
   return isl_map_union(cpy(m0), cpy(m1));
 }
 
@@ -1501,6 +1504,14 @@ std::string codegen_c(isl_union_map* res) {
   std::string code_string(code_str);
   free(code_str);
 
+  //for (auto m : maps) {
+    //release(m);
+  //}
+  //release(range_rep);
+  //isl_ast_node_free(code);
+  isl_ast_build_free(build);
+  //release(options);
+
   return code_string;
 }
 
@@ -1695,16 +1706,29 @@ isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card)
 }
 
 isl_set* rdset(isl_ctx* ctx, const std::string& str) {
-  return isl_set_read_from_str(ctx, str.c_str());
+  auto res = isl_set_read_from_str(ctx, str.c_str());
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_set: " << str << endl;
+    assert(false);
+  }
+  return res;
 }
 
 isl_aff* rdaff(isl_ctx* ctx, const std::string& str) {
-  return isl_aff_read_from_str(ctx, str.c_str());
+  auto res = isl_aff_read_from_str(ctx, str.c_str());
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_aff: " << str << endl;
+    assert(false);
+  }
+  return res;
 }
 
 umap* rdmap(isl_ctx* ctx, const std::string& s) {
   auto res = isl_union_map_read_from_str(ctx, s.c_str());
-  assert(res != nullptr);
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_map: " << s << endl;
+    assert(false);
+  }
   return res;
 }
 
@@ -2755,6 +2779,26 @@ isl_val* eval(isl_aff* a, isl_point* p) {
   return val;
 }
 
+isl_aff* get_aff(isl_union_map* m) {
+  return get_aff(to_map(m));
+}
+
+isl_multi_aff* get_multi_aff(isl_union_map* m) {
+  return get_multi_aff(to_map(m));
+}
+
+isl_multi_aff* get_multi_aff(isl_map* m) {
+  auto lm = isl_pw_multi_aff_from_map(cpy(m));
+  cout << tab(1) << str(m) << endl;
+  cout << tab(2) << "lexmax: " << str(lm) << endl;
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(lm);
+  assert(pieces.size() == 1);
+
+  auto saff = pieces.at(0).second;
+  return saff;
+}
+
 isl_aff* get_aff(isl_map* m) {
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
   cout << tab(1) << str(m) << endl;
@@ -2912,4 +2956,24 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
 
 isl_aff* sub(isl_aff* a, isl_aff* b) {
   return isl_aff_sub(cpy(a), cpy(b));
+}
+
+void release(isl_set* s) {
+  isl_set_free(s);
+}
+
+void release(isl_map* m) {
+  isl_map_free(m);
+}
+
+void release(isl_union_set* s) {
+  isl_union_set_free(s);
+}
+
+void release(isl_union_map* m) {
+  isl_union_map_free(m);
+}
+
+void release(isl_union_pw_qpolynomial* m) {
+  isl_union_pw_qpolynomial_free(m);
 }

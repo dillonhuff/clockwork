@@ -48,11 +48,15 @@ void move_to_synthesis_folder(const std::string& app_name) {
 void compare(const std::string& name,
     vector<string>& optimized_res,
     vector<string>& unoptimized_res) {
+
+  if (!(unoptimized_res.size() == optimized_res.size())) {
+      cout << "Error in " << name << ": After optimization " << optimized_res.size() << " lines, but before: " << unoptimized_res.size() << " lines" << endl;
+  }
   assert(unoptimized_res.size() == optimized_res.size());
   for (size_t i = 0; i < unoptimized_res.size(); i++) {
 
     if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
-      cout << "Error: After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
+      cout << "Error in " << name << ": After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
       cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
       cout << "\toptimized   = " << optimized_res.at(i) << endl;
       assert(unoptimized_res.at(i) == optimized_res.at(i));
@@ -95,8 +99,8 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
 
   system(("mv " + out_name + "*.ini " + synth_dir).c_str());
-  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
-  system(("mv " + out_name + "*.h " + synth_dir).c_str());
+  system(("cp " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("cp " + out_name + "*.h " + synth_dir).c_str());
   //system(("mv regression_tb_" + out_name + ".cpp " + synth_dir).c_str());
 
   make_exe("run_tb_" + out_name + ".sh");
@@ -149,3 +153,15 @@ bool is_number(string s) {
   //return true;
 }
 
+string isl_sanitize(const std::string& str) {
+  string res = "";
+  for (auto c : str) {
+    if (c == '-') {
+      res += "_m_";
+    } else {
+      res += c;
+    }
+  }
+  return res;
+
+}

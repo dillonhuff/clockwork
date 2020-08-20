@@ -25,10 +25,27 @@ CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom);
 
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
+void generate_coreir_addrgen_in_tile(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap);
+
+CoreIR::Module* generate_coreir(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context);
+
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap);
+
+void generate_coreir(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    schedule_info& hwinfo);
 
   CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
       CoreIR::Wireable* w);
@@ -48,4 +65,40 @@ CoreIR::Wireable* delay_array(CoreIR::ModuleDef* def,
     CoreIR::Wireable* input,
     int elem_width,
     int num_elems);
+
+void add_cgralib(CoreIR::Context* context);
+
+CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
+
+void add_raw_dual_port_sram_generator(CoreIR::Context* c);
+
+CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth);
+
+void ram_module(CoreIR::Context* c, const int width, const int depth);
+
+
+void mini_sram_garnet_test();
+
+CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays);
+
+void add_delay_tile_generator(CoreIR::Context* c);
+
+CoreIR::Module* reg_delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays);
+
+void add_raw_quad_port_memtile_generator(CoreIR::Context* c);
+CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
+    const int width,
+    CoreIR::Wireable* out,
+    CoreIR::Wireable* sel,
+    CoreIR::Wireable* in0,
+    CoreIR::Wireable* in1);
+
+CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
+    CoreIR::Wireable* out,
+    CoreIR::Wireable* sel,
+    CoreIR::Wireable* in0,
+    CoreIR::Wireable* in1);
+
+void add_tahoe_memory_generator(CoreIR::Context* c);
+
 #endif

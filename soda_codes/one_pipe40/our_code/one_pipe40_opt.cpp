@@ -588,5 +588,22 @@ void one_pipe40_opt_accel(hw_uint<64>* in_off_chip0_update_0_read_pipe0, hw_uint
 }
 
 }
+extern "C" {
+
+void one_pipe40_opt_rdai(HWStream<hw_uint<64> >& in_off_chip0_update_0_read_pipe0, HWStream<hw_uint<64> >&  one_pipe40_update_0_write_pipe0) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE axis register port = in_off_chip0_update_0_read_pipe0
+#pragma HLS INTERFACE axis register port = one_pipe40_update_0_write_pipe0
+
+#pragma HLS INTERFACE ap_ctrl_none port = return
+
+
+  // Pipeline # 0
+
+  one_pipe40_opt(in_off_chip0_update_0_read_pipe0, one_pipe40_update_0_write_pipe0);
+
+}
+
+}
 #endif //__VIVADO_SYNTH__
 
