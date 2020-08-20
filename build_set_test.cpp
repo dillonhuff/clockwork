@@ -13834,7 +13834,7 @@ void cgra_flow_tests() {
   cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
   cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
   cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  cmd("mv ./lake_components/dualwithadd/lake_top.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  cmd("cp ./lake_components/dualwithadd/lake_top.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
 
   assert(false);
 
