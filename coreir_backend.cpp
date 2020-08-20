@@ -834,8 +834,8 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   auto aff_c = affine_controller(c, dom, aff);
   aff_c->print();
   auto controller = def->addInstance(controller_name(op->name), aff_c);
-  def->connect(def->sel("self.rst_n"), controller->sel("rst_n"));
-  def->connect(def->sel("self.flush"), controller->sel("flush"));
+  //def->connect(def->sel("self.rst_n"), controller->sel("rst_n"));
+  //def->connect(def->sel("self.flush"), controller->sel("flush"));
 
   wirebit(def, read_start_name(op->name), controller->sel("valid"));
   auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
@@ -2169,7 +2169,8 @@ CoreIR::Module* affine_controller_lake(CoreIR::Context* context, isl_set* dom, i
 }
 
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
-  return affine_controller_lake(context, dom, aff);
+  //return affine_controller_lake(context, dom, aff);
+  return affine_controller_primitive(context, dom, aff);
 }
 
 void add_delay_tile_generator(CoreIR::Context* c) {

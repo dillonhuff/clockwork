@@ -1079,9 +1079,37 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     } else {
       cout << "Error: Unsupported # readers = " << readers << ", # writers = " << writers << endl;
       cout << tab(1) << buf.name << endl;
-      isl_map* banking = isl_map_read_from_str(buf.ctx, "{ conv_stencil[x, y, z] -> B[0]}");
-      assert(banking_scheme_is_legal(banking, buf));
+      int banking = 1;
+      isl_map* banking_map = nullptr;
+      for (int i = 0; i < 4; i++) {
+        string scheme_str = curlies("conv_stencil[x, y, z] -> B[x % " + str(banking) + "] }");
+        banking_map = isl_map_read_from_str(buf.ctx, scheme_str.c_str());
+        if (banking_scheme_is_legal(banking_map, buf)) {
+          break;
+        } else {
+        }
+        banking++;
+      }
+      cout << "last banking checked: " << banking << endl;
+      assert(banking_map != nullptr);
+
+      for (auto inpt : buf.get_all_ports()) {
+        cout << "Checking bank properties of " << inpt << endl;
+        isl_map* acc = to_map(buf.access_map[inpt]);
+        cout << tab(1) << str(acc) << endl;
+        auto val = dot(acc, banking_map);
+        cout << tab(2) << str(val) << endl;
+        auto out_banks = range(val);
+        cout << tab(2) << "# out banks: " << str(out_banks) << endl;
+        assert(isl_set_is_singleton(out_banks));
+
+      }
       assert(false);
+      vector<Instance*> banks;
+      int r = 0;
+      for (int b = 0; b < banking; b++) {
+        banks.push_back(def->addInstance(buf.name + "_bank_" + c->getUnique(), "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}}));
+      }
     }
 
     return;
