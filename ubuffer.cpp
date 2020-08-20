@@ -2955,13 +2955,13 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           bank_input = input;
         }
         else {
-          cout << "Substitute the output port: " << last_bank_IO.second << "to the input : " << input << endl;
+          //cout << "Substitute the output port: " << last_bank_IO.second << "to the input : " << input << endl;
           bank_input = last_bank_IO.second;
           inpt_set.insert(bank_input);
         }
         pt_vec = bk.get_out_ports();
         for (auto it : bk.get_sort_delay_map()) {
-            cout << "Bank: "<< bk.name << "'s port:'" << it.first << " has delay: " << it.second << endl;
+            //cout << "Bank: "<< bk.name << "'s port:'" << it.first << " has delay: " << it.second << endl;
         }
 
         //sort the output port vec with the largest access in beginning
