@@ -12778,6 +12778,16 @@ uset* op_start_times_domain(prog& prg) {
   return s;
 }
 
+umap* op_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_start_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs[a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
 umap* op_start_times_map(schedule_info& sched, prog& prg) {
   auto start_times = op_start_times(sched, prg);
 
@@ -14422,7 +14432,53 @@ void raw_memtile_verilog_as_delay_test() {
   assert(false);
 }
 
+void brighten_blur_asplos_example() {
+  prog prg("brighten_blur");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  auto br = prg.add_nest("y0", 0, 1, "x0", 0, 1)->add_op("br");
+  br->add_load("in", "x0, y0");
+  br->add_store("brighten", "x0, y0");
+
+  auto bl = prg.add_nest("y1", 0, 1, "x1", 0, 1)->add_op("blur");
+  for (int x = 0; x < 2; x++) {
+    for (int y = 0; y < 2; y++) {
+      bl->add_load("brighten", "x1 + " + str(x) + ", y1 + " + str(y));
+    }
+  }
+  bl->add_store("blurred", "x1, y1");
+  cpy("out", "blurred", 2, prg);
+
+  infer_bounds("out", {63, 63}, prg);
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //auto sched = its(prg.optimized_codegen(), prg.whole_iteration_domain());
+  //auto buffers = build_buffers(prg, sched);
+
+  schedule_info hwsched = garnet_schedule_info(prg);
+  garnet_dual_port_ram_schedule(hwsched, prg.root, prg);
+  auto sts = op_start_times_map(hwsched, prg);
+  for (auto m : get_maps(sts)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  sts = its(op_times_map(hwsched, prg), prg.whole_iteration_domain());
+  auto buffers = build_buffers(prg, sts);
+
+  //cout << "sts: " << str(sts) << endl;
+  cout << "Buffers..." << endl;
+  for (auto b : buffers) {
+    cout << b.second << endl;
+  }
+  assert(false);
+}
+
 void application_tests() {
+  brighten_blur_asplos_example();
+  resnet_auto_unroll();
   //resnet_auto_unroll();
   raw_memtile_verilog_test();
   raw_memtile_verilog_as_delay_test();
