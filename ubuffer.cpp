@@ -1376,12 +1376,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       assert(acc_maps.size() > 0);
       int control_dimension = num_in_dims(pick(acc_maps));
       if (buf.is_input_bundle(b.first)) {
-        ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
-        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        if (options.rtl_options.use_external_controllers) {
+          ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
+          ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        }
         ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
       } else {
-        ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
-        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        if (options.rtl_options.use_external_controllers) {
+          ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
+          ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        }
         ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
       }
     }

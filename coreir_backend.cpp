@@ -1139,7 +1139,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
-    generate_coreir_op_controller(def, op, sched_maps, hwinfo);
+    if (options.rtl_options.use_external_controllers) {
+      generate_coreir_op_controller(def, op, sched_maps, hwinfo);
+    }
     generate_coreir_compute_unit(found_compute, def, op, prg, buffers, hwinfo);
   }
 
@@ -1161,6 +1163,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   for (auto op : prg.all_ops()) {
     vector<string> surrounding = surrounding_vars(op, prg);
     for (auto var : op->index_variables_needed_by_compute) {
+      assert(!options.rtl_options.use_external_controllers);
       int level = map_find(var, levels);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
       def->connect(def->sel(op->name)->sel(var), var_wire);
@@ -1183,10 +1186,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
-            write_start_wire(def, op->name));
-        def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-            write_start_control_vars(def, op->name));
+        if (options.rtl_options.use_external_controllers) {
+          def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
+              write_start_wire(def, op->name));
+          def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
+              write_start_control_vars(def, op->name));
+        }
       }
     }
 
@@ -1211,10 +1216,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
-            read_start_wire(def, op->name));
-        def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-            read_start_control_vars(def, op->name));
+        if (options.rtl_options.use_external_controllers) {
+          def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
+              read_start_wire(def, op->name));
+          def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
+              read_start_control_vars(def, op->name));
+        }
       }
     }
   }
