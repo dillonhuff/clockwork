@@ -8,6 +8,7 @@ prog unsharp();
 prog cascade();
 prog gaussian();
 prog harris();
+prog harris_remove();
 prog pointwise();
 prog brighten_blur();
 prog halide_harris();

@@ -1164,6 +1164,18 @@ class UBuffer {
       return {};
     }
 
+    bool is_bank_SR(const std::string& name) const {
+      auto inputs = get_bank_inputs(name);
+      bool ret = true;
+      for (auto pt: inputs) {
+        ret &= !isIn.at(pt);
+      }
+      cout << "BK: " << name << "is SR: " << ret << endl;
+
+      //check if input ports are all output port in ubuf
+      return ret;
+    }
+
     string get_bank_input(const std::string& name) const {
       auto inputs = get_bank_inputs(name);
       assert(inputs.size() == 1);

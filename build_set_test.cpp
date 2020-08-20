@@ -11462,7 +11462,7 @@ void run_verilator_tb(const std::string& name) {
 void generate_verilog_tb(const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances\"");
   assert(to_verilog_res == 0);
 }
 
@@ -13323,7 +13323,7 @@ void lake_cascade_autovec_test() {
 }
 
 void lake_harris_autovec_test() {
-  prog prg = harris();
+  prog prg = harris_remove();
 
   //optimized schedule
   auto buffers_opt = build_buffers(prg);
@@ -15099,7 +15099,6 @@ void lake_tests() {
   lake_conv33_autovec_test();
   //lake_dual_port_test();
   lake_cascade_autovec_test();
-  assert(false);
   lake_harris_autovec_test();
   lake_resnet_multitile_test();
   lake_resnet_test();
