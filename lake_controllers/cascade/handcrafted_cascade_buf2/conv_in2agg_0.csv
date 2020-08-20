@@ -1,0 +1,16 @@
+"dimensionality",4,0
+"cycle_starting_addr",43,0
+"extent_3",1,0
+"cycle_stride_3",0,0
+"extent_2",16,0
+"cycle_stride_2",20,0
+"extent_1",4,0
+"cycle_stride_1",4,0
+"extent_0",4,0
+"cycle_stride_0",1,0
+"write","buf2_conv_12_to_buf2_output_3_ubuf_0_agg"
+"write_data_starting_addr",0,0
+"write_data_stride_3",0,0
+"write_data_stride_2",0,0
+"write_data_stride_1",0,0
+"write_data_stride_0",1,0
