@@ -3318,6 +3318,9 @@ void prog::sanity_check() {
   for (auto op : all_ops()) {
     for (auto b : op->buffers_read()) {
       buffer_names.insert(b);
+      if (is_output(b)) {
+        cout << "Error: Reading from output buffer: " << b << endl;
+      }
       assert(!is_output(b));
     }
 
