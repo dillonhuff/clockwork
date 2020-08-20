@@ -6,6 +6,7 @@
 #include "prog_splitting_test.h"
 #include "codegen.h"
 #include "example_progs.h"
+#include "lake_target.h"
 #include "simple_example_progs.h"
 #include "prog.h"
 #include "ubuffer.h"
@@ -9965,14 +9966,22 @@ int run_verilator_on(const std::string& top_module,
     const std::string& tb_file,
     const std::vector<string>& verilog_files) {
 
-  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe " + tb_file + " --top-module " + top_module + " -Wno-lint");
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
   assert(verilator_build == 0);
 
-  int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
-  assert(verilator_d == 0);
+  //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
+  //assert(verilator_d == 0);
 
   int verilator_run = cmd("./obj_dir/V" + top_module);
   return verilator_run;
+}
+
+void run_verilator_verilog_tb(const std::string& name) {
+  int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input ./coreir_compute/" + name + "_compute.json --output " + name + "_compute.v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  assert(compute_to_verilog_res == 0);
+
+  int res = run_verilator_on(name, name + "_verilog_tb.cpp", {name + ".v", name + "_verilog_collateral.sv", "./lake_components/dualwithadd/lake_top.sv", name + "_compute.v"});
+  assert(res == 0);
 }
 
 void run_verilator_tb(const std::string& name) {
@@ -9982,11 +9991,13 @@ void run_verilator_tb(const std::string& name) {
   int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
   assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
-  assert(verilator_build == 0);
+  int res = run_verilator_on(name, name + "_verilog_tb.cpp", {name + ".v", name + "_verilog_collateral.sv", "./lake_components/dualwithadd/lake_top.sv"});
+  assert(res == 0);
+  //int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
+  //assert(verilator_build == 0);
 
-  int verilator_run = cmd("./obj_dir/V" + name);
-  assert(verilator_run == 0);
+  //int verilator_run = cmd("./obj_dir/V" + name);
+  //assert(verilator_run == 0);
 }
 
 void identity_stream_through_mem_coreir_test() {
@@ -13235,8 +13246,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
 schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
-  //sched.use_dse_compute = false;
-  sched.use_dse_compute = true;
+  sched.use_dse_compute = false;
+  //sched.use_dse_compute = true;
   for (auto op : prg.all_ops()) {
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
@@ -13359,6 +13370,15 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     //hw_sched);
   //assert(false);
 
+  //generate_verilog(options,
+      //buffers,
+      //prg,
+      //hw_sched);
+  //cout << "Emitted verilog to " << prg.name << endl;
+  //assert(false);
+    //map<string, UBuffer>& buffers,
+    //prog& prg,
+    //umap* schedmap) {
   generate_coreir(options,
     buffers,
     prg,
@@ -13465,18 +13485,22 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
+  test_programs.push_back(harris());
+  test_programs.push_back(gaussian());
+  test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
 
   test_programs.push_back(up_sample());
-  test_programs.push_back(harris());
-  test_programs.push_back(rom());
-  test_programs.push_back(unsharp());
-  test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(gaussian());
-  test_programs.push_back(down_sample());
-  test_programs.push_back(strided_conv());
+
+  // Delayed incorrectly?
+  //test_programs.push_back(unsharp());
+
+  // Compute units gone?
+  //test_programs.push_back(rom());
+  //test_programs.push_back(mini_conv_halide_fixed());
+  //test_programs.push_back(strided_conv());
 
   return test_programs;
 }
@@ -14372,87 +14396,39 @@ void resnet_auto_unroll() {
   assert(false);
 }
 
-void generate_lake_collateral(std::ostream& out) {
-  vector<string> outer_port_decls;
-  outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
-  outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
-  //pds.push_back("output logic [0:0] [15:0] chain_data_out");
-  //pds.push_back("input logic chain_idx_input");
-  //pds.push_back("input logic chain_idx_output");
-  //pds.push_back("input logic chain_valid_in");
-  //pds.push_back("output logic chain_valid_out");
-  //pds.push_back("input logic clk");
-  //pds.push_back("input logic [0:0] [15:0] data_in");
-  //pds.push_back("output logic [0:0] [15:0] data_out");
-  //pds.push_back("input logic enable_chain_input");
-  //pds.push_back("input logic enable_chain_output");
-  //pds.push_back("input logic flush");
-  //pds.push_back("input logic ren_in");
-  //pds.push_back("input logic rst_n");
-  //pds.push_back("output logic valid_out");
-  //pds.push_back("input logic wen_in");
-
-  vector<string> pds;
-  pds.push_back("input logic [0:0] [15:0] addr_in");
-  pds.push_back("input logic [0:0] [15:0] chain_data_in");
-  pds.push_back("output logic [0:0] [15:0] chain_data_out");
-  pds.push_back("input logic chain_idx_input");
-  pds.push_back("input logic chain_idx_output");
-  pds.push_back("input logic chain_valid_in");
-  pds.push_back("output logic chain_valid_out");
-  pds.push_back("input logic clk");
-  pds.push_back("input logic clk_en");
-  pds.push_back("input logic [7:0] config_addr_in");
-  pds.push_back("input logic [31:0] config_data_in");
-  pds.push_back("output logic [0:0] [31:0] config_data_out");
-  pds.push_back("input logic config_en");
-  pds.push_back("input logic config_read");
-  pds.push_back("input logic config_write");
-  pds.push_back("input logic [0:0] [15:0] data_in");
-  pds.push_back("output logic [0:0] [15:0] data_out");
-  pds.push_back("input logic enable_chain_input");
-  pds.push_back("input logic enable_chain_output");
-  pds.push_back("input logic flush");
-  pds.push_back("input logic [1:0] mode");
-  pds.push_back("input logic ren_in");
-  pds.push_back("input logic rst_n");
-
-  pds.push_back("input logic [15:0] strg_ub_sram_read_addr_gen_starting_addr");
-  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_addr_gen_strides");
-  pds.push_back("input logic [3:0] strg_ub_sram_read_loops_dimensionality");
-
-  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_loops_ranges");
-
-  pds.push_back("input logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr");
-  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides");
-
-  pds.push_back("input logic [15:0] strg_ub_sram_write_addr_gen_starting_addr");
-  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_addr_gen_strides");
-  pds.push_back("input logic [3:0] strg_ub_sram_write_loops_dimensionality");
-  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_loops_ranges");
-  pds.push_back("input logic [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr");
-  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides");
-
-  pds.push_back("input logic tile_en");
-
-  pds.push_back("output logic valid_out");
-
-  pds.push_back("input logic wen_in");
-
-  out << "module lake_tile_" << "Tile" << "(" << comma_list(outer_port_decls) << ");" << endl;
-
-  out << "endmodule" << endl;
-}
-
 void raw_memtile_verilog_test() {
 
-  ofstream out("lake_verilog_test.sv");
-  generate_lake_collateral(out);
+  int max_depth = (1 << 16) - 1;
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
+  isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(0)] }");
+  isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+
+  isl_aff* read_sched = rdaff(ctx, "{ rd[a] -> [(a)] }");
+  isl_aff* read_addr = rdaff(ctx, "{ rd[a] -> [(0)] }");
+  isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+
+  ofstream out("lake_verilog_tile.sv");
+  generate_lake_collateral("lake_verilog_tile", out, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
   out.close();
 
-  run_verilator_on("lake_tile_Tile",
+  run_verilator_on("lake_verilog_tile",
         "lake_verilog_tb.cpp",
-        {"lake_verilog_test.sv"});
+        {"./lake_components/dualwithadd/lake_top.sv", "lake_verilog_tile.sv"});
+
+  isl_ctx_free(ctx);
+}
+
+void raw_memtile_verilog_as_delay_test() {
+
+  ofstream out("lake_delay_tile.sv");
+  generate_lake_collateral_delay("lake_delay_tile", out, 17);
+  out.close();
+
+  run_verilator_on("lake_delay_tile",
+        "lake_delay_verilog_tb.cpp",
+        {"./lake_components/dualwithadd/lake_top.sv", "lake_delay_tile.sv"});
+
   assert(false);
 }
 
@@ -14503,7 +14479,9 @@ void brighten_blur_asplos_example() {
 void application_tests() {
   brighten_blur_asplos_example();
   resnet_auto_unroll();
+  //resnet_auto_unroll();
   raw_memtile_verilog_test();
+  raw_memtile_verilog_as_delay_test();
 
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();

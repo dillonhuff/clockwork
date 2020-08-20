@@ -5180,6 +5180,17 @@ void generate_verilator_tb(prog& prg,
     }
     unroll_factor[in] = unroll;
   }
+  for (auto out : prg.outs) {
+    auto readers = find_writers(out, prg);
+    int unroll = 0;
+    for (auto reader : readers) {
+      for (auto addr : reader->write_addrs(out)) {
+        unroll++;
+      }
+    }
+    unroll_factor[out] = unroll;
+  }
+
 
   generate_verilator_tb_in_streams(
       rgtb,
@@ -5188,6 +5199,24 @@ void generate_verilator_tb(prog& prg,
       buffers);
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+  rgtb << "dut.rst_n = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.rst_n = 1;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.flush = 1;" << endl;
+  rgtb << "dut.clk = 1;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.flush = 0;" << endl;
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
   for (auto out : inputs(buffers, prg)) {
     string data_name =
       out.first + "_" + out.second;

@@ -1,4 +1,5 @@
 #include "coreir_backend.h"
+#include "lake_target.h"
 
 #ifdef COREIR
 
@@ -866,37 +867,40 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   return controller;
 }
 
-CoreIR::Module* create_prog_declaration(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    CoreIR::Context* context) { 
-  auto ns = context->getNamespace("global");
-  vector<pair<string, CoreIR::Type*> >
-    ub_field{{"clk", context->Named("coreir.clkIn")}};
-  for (auto eb : edge_buffers(buffers, prg)) {
-    string out_rep = eb.first;
-    string out_bundle = eb.second;
+//CoreIR::Module* create_prog_declaration(CodegenOptions& options,
+    //map<string, UBuffer>& buffers,
+    //prog& prg,
+    //umap* schedmap,
+    //CoreIR::Context* context) { 
+  //auto ns = context->getNamespace("global");
+  //vector<pair<string, CoreIR::Type*> >
+    //ub_field{{"clk", context->Named("coreir.clkIn")}, {"rst_n", context->BitIn()}};
+  //ub_field.push_back({"rst_n", context->BitIn()});
+  //ub_field.push_back({"flush", context->BitIn()});
 
-    UBuffer out_buf = map_find(out_rep, buffers);
+  //for (auto eb : edge_buffers(buffers, prg)) {
+    //string out_rep = eb.first;
+    //string out_bundle = eb.second;
 
-    int pixel_width = out_buf.port_widths;
-    int pix_per_burst =
-      out_buf.lanes_in_bundle(out_bundle);
+    //UBuffer out_buf = map_find(out_rep, buffers);
 
-    if (prg.is_input(out_rep)) {
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
-    } else {
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
-    }
-  }
+    //int pixel_width = out_buf.port_widths;
+    //int pix_per_burst =
+      //out_buf.lanes_in_bundle(out_bundle);
 
-  CoreIR::RecordType* utp = context->Record(ub_field);
-  auto ub = ns->newModuleDecl(prg.name, utp);
-  return ub;
-}
+    //if (prg.is_input(out_rep)) {
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
+    //} else {
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+    //}
+  //}
+
+  //CoreIR::RecordType* utp = context->Record(ub_field);
+  //auto ub = ns->newModuleDecl(prg.name, utp);
+  //return ub;
+//}
 
 CoreIR::Module* generate_dual_port_addrgen_buf(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
 
@@ -1072,6 +1076,8 @@ coreir_moduledef(CodegenOptions& options,
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
+  ub_field.push_back({"rst_n", context->BitIn()});
+  ub_field.push_back({"flush", context->BitIn()});
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
     string out_bundle = eb.second;
@@ -1107,8 +1113,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
-  verilog_collateral.close;
-  verilog_collateral_file = nullptr;
 
   bool found_compute = true;
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
@@ -1140,7 +1144,13 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
       auto ub_mod = generate_coreir(options, context, buf.second, hwinfo);
-      def->addInstance(buf.second.name, ub_mod);
+      auto b = def->addInstance(buf.second.name, ub_mod);
+
+      auto self = def->sel("self");
+      cout << "start wiring ubuffer global signals" << endl;
+      def->connect(self->sel("rst_n"), b->sel("rst_n"));
+      def->connect(self->sel("flush"), b->sel("flush"));
+      cout << "done wiring ubuffer global signals" << endl;
     }
   }
 
@@ -1216,7 +1226,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   //context->runPasses({"rungenerators", "wireclocks-coreir"});
   context->runPasses({"rungenerators", "wireclocks-clk"});
 
-  assert(false);
+  //assert(false);
+  verilog_collateral.close();
+  verilog_collateral_file = nullptr;
   return ub;
   //assert(false);
 }
@@ -1669,22 +1681,22 @@ void generate_coreir(CodegenOptions& options,
   deleteContext(context);
 }
 
-  CoreIR::Context* context = CoreIR::newContext();
+//CoreIR::Context* context = CoreIR::newContext();
 
-  CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
-      CoreIR::Wireable* w) {
-    return delaybit(bdef, "delay_reg_" + bdef->getContext()->getUnique(), w);
-  }
+CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
+    CoreIR::Wireable* w) {
+  return delaybit(bdef, "delay_reg_" + bdef->getContext()->getUnique(), w);
+}
 
-  CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
-      const std::string& name,
-      CoreIR::Wireable* w) {
-    auto c = bdef->getContext();
-    auto r = bdef->addInstance(
-        name,
-        "corebit.reg");
-    bdef->connect(r->sel("in"), w);
-    return r->sel("out");
+CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
+    const std::string& name,
+    CoreIR::Wireable* w) {
+  auto c = bdef->getContext();
+  auto r = bdef->addInstance(
+      name,
+      "corebit.reg");
+  bdef->connect(r->sel("in"), w);
+  return r->sel("out");
   }
 
   CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
@@ -1733,11 +1745,11 @@ CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
 
 CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
   vector<CoreIR::Wireable*> terms;
-  auto ns = context->getNamespace("global");
 
   int width = 16;
   auto context = def->getContext();
   auto c = context;
+  auto ns = c->getNamespace("global");
 
   int dims = num_in_dims(aff);
   for (int d = 0; d < dims; d++) {
@@ -1786,7 +1798,7 @@ CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   auto c = def->getContext();
   int width = 16;
   auto m = def->addInstance(
-      "mul_" + context->getUnique(),
+      "mul_" + c->getUnique(),
       "coreir.mul",
       {{"width", CoreIR::Const::make(c, width)}});
   def->connect(m->sel("in0"), a);
@@ -1798,7 +1810,7 @@ CoreIR::Wireable* shiftr(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   auto c = def->getContext();
   int width = 16;
   auto m = def->addInstance(
-      "shift_" + context->getUnique(),
+      "shift_" + c->getUnique(),
       "coreir.lshr",
       {{"width", CoreIR::Const::make(c, width)}});
   def->connect(m->sel("in0"), a);
@@ -2158,6 +2170,8 @@ void add_delay_tile_generator(CoreIR::Context* c) {
 
   auto tp = c->Record({
       {"clk", c->Named("coreir.clkIn")},
+      {"rst_n", c->BitIn()},
+      {"flush", c->BitIn()},
       {"wdata", c->BitIn()->Arr(width)},
       {"rdata", c->Bit()->Arr(width)}});
   return tp;
@@ -2175,6 +2189,8 @@ void add_delay_tile_generator(CoreIR::Context* c) {
     def->connect(srinst->sel("wdata"), self->sel("wdata"));
     def->connect(srinst->sel("rdata"), self->sel("rdata"));
 
+    def->connect(srinst->sel("rst_n"), self->sel("rst_n"));
+    def->connect(srinst->sel("flush"), self->sel("flush"));
     });
 }
 
@@ -2392,6 +2408,9 @@ CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<i
     {"wdata", c->BitIn()->Arr(width)},
     {"rdata", c->Bit()->Arr(width)}};
 
+  fields.push_back({"rst_n", c->BitIn()});
+  fields.push_back({"flush", c->BitIn()});
+
   Module* mod = nullptr;
   const int TILE_USE_THRESHOLD = 10;
 
@@ -2406,20 +2425,26 @@ CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<i
     def->connect(next, def->sel("self.rdata"));
     mod->setDef(def);
   } else {
-    auto g = ns->getGenerator("delay_tile");
-    mod = ns->newModuleDecl("memtile_long_delay_" + c->getUnique(), c->Record(fields));
-    auto def = mod->newModuleDef();
+    //auto g = ns->getGenerator("delay_tile");
 
-    auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
-    def->connect(t->sel("rdata"), def->sel("self.rdata"));
-    def->connect(t->sel("wdata"), def->sel("self.wdata"));
+    mod = ns->newModuleDecl("memtile_long_delay_" + c->getUnique(), c->Record(fields));
+    assert(verilog_collateral_file != nullptr);
+    generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
+
+    //auto def = mod->newModuleDef();
+
+    //assert(false);
+
+    //auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
+    //def->connect(t->sel("rdata"), def->sel("self.rdata"));
+    //def->connect(t->sel("wdata"), def->sel("self.wdata"));
 
     //auto next = def->sel("self.wdata");
     //for (int d = 0; d < D; d++) {
       //next = delay(def, next, width);
     //}
     //def->connect(next, def->sel("self.rdata"));
-    mod->setDef(def);
+    //mod->setDef(def);
   }
 
   assert(mod != nullptr);

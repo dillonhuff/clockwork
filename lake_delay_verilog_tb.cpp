@@ -1,12 +1,12 @@
 #include "verilated.h"
-#include "Vlake_verilog_tile.h"
+#include "Vlake_delay_tile.h"
 
 #include <iostream>
 
 using namespace std;
 
 int main() {
-  Vlake_verilog_tile dut;
+  Vlake_delay_tile dut;
   dut.clk = 0;
 
   dut.rst_n = 0;
@@ -46,9 +46,12 @@ int main() {
   //input logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides,
   cout << "Starting" << endl;
 
-  for (int t = 0; t < 10; t++) {
-
-    cout << "================== data out: " << dut.data_out << endl;
+  for (int t = 0; t < 100; t++) {
+    dut.data_in = t;
+    cout << "@" << t << ": " << dut.data_out << endl;
+    if (t >= 17) {
+      assert(dut.data_out == t - 17);
+    }
     dut.clk = 0;
     dut.eval();
 
@@ -56,7 +59,7 @@ int main() {
     dut.eval();
   }
 
-  assert(dut.data_out == 294);
+  //assert(dut.data_out == 294);
 
   cout << "Done with setup" << endl;
 

@@ -1,61 +1,22 @@
 module Chain (
+  input logic accessor_output,
   input logic [0:0] [15:0] chain_data_in,
-  input logic chain_idx_output,
-  input logic chain_valid_in,
   input logic clk_en,
   input logic [0:0] [15:0] curr_tile_data_out,
-  input logic curr_tile_valid_out,
-  input logic enable_chain_output,
   input logic flush,
-  output logic [0:0] [15:0] chain_data_out,
-  output logic chain_valid_out,
-  output logic [0:0] [15:0] data_out_tile,
-  output logic valid_out_tile
+  output logic [0:0] [15:0] data_out_tile
 );
 
-logic [0:0][15:0] chain_data_out_inter;
-logic chain_valid_out_inter;
 always_comb begin
-  if (enable_chain_output) begin
-    data_out_tile = chain_data_out_inter;
+  if (accessor_output) begin
+    data_out_tile[0] = curr_tile_data_out[0];
   end
-  else data_out_tile = curr_tile_data_out;
-end
-always_comb begin
-  if (enable_chain_output) begin
-    if (~(chain_idx_output == 1'h0)) begin
-      valid_out_tile = 1'h0;
-    end
-    else valid_out_tile = chain_valid_out_inter;
-  end
-  else valid_out_tile = curr_tile_valid_out;
-end
-always_comb begin
-  chain_data_out = chain_data_out_inter;
-end
-always_comb begin
-  if ((chain_idx_output == 1'h0) | (~enable_chain_output)) begin
-    chain_valid_out = 1'h0;
-  end
-  else chain_valid_out = chain_valid_out_inter;
-end
-always_comb begin
-  if (chain_valid_in == 1'h0) begin
-    chain_data_out_inter[0] = curr_tile_data_out[0];
-    chain_valid_out_inter = curr_tile_valid_out;
-  end
-  else begin
-    chain_data_out_inter[0] = chain_data_in[0];
-    chain_valid_out_inter = chain_valid_in;
-  end
+  else data_out_tile[0] = chain_data_in[0];
 end
 endmodule   // Chain
 
 module LakeTop (
   input logic [0:0] [15:0] chain_data_in,
-  input logic chain_idx_input,
-  input logic chain_idx_output,
-  input logic chain_valid_in,
   input logic clk,
   input logic clk_en,
   input logic [7:0] config_addr_in,
@@ -64,8 +25,6 @@ module LakeTop (
   input logic config_read,
   input logic config_write,
   input logic [0:0] [15:0] data_in,
-  input logic enable_chain_input,
-  input logic enable_chain_output,
   input logic flush,
   input logic [1:0] mode,
   input logic [0:0] [15:0] raddr,
@@ -86,17 +45,11 @@ module LakeTop (
   input logic tile_en,
   input logic [0:0] [15:0] waddr,
   input logic wen_in,
-  output logic [0:0] [15:0] chain_data_out,
-  output logic chain_valid_out,
   output logic [0:0] [31:0] config_data_out,
-  output logic [0:0] [15:0] data_out,
-  output logic valid_out
+  output logic [0:0] [15:0] data_out
 );
 
-//always @(posedge clk) begin
-  //$display("strides: %b", strg_ub_sram_write_addr_gen_strides);
-//end
-
+logic accessor_output;
 logic cfg_seq_clk;
 logic [15:0] config_data_in_shrt;
 logic [0:0][15:0] config_data_out_shrt;
@@ -200,6 +153,7 @@ strg_ub_thin strg_ub (
   .sram_write_loops_ranges(strg_ub_sram_write_loops_ranges),
   .sram_write_sched_gen_sched_addr_gen_starting_addr(strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr),
   .sram_write_sched_gen_sched_addr_gen_strides(strg_ub_sram_write_sched_gen_sched_addr_gen_strides),
+  .accessor_output(accessor_output),
   .cen_to_strg(ub_cen_to_mem),
   .data_out(ub_data_out),
   .data_to_strg(ub_data_to_mem),
@@ -222,18 +176,12 @@ register_file rf_0 (
 );
 
 Chain chain (
+  .accessor_output(accessor_output),
   .chain_data_in(chain_data_in),
-  .chain_idx_output(chain_idx_output),
-  .chain_valid_in(chain_valid_in),
   .clk_en(clk_en),
   .curr_tile_data_out(data_out_tile),
-  .curr_tile_valid_out(valid_out_tile),
-  .enable_chain_output(enable_chain_output),
   .flush(flush),
-  .chain_data_out(chain_data_out),
-  .chain_valid_out(chain_valid_out),
-  .data_out_tile(data_out),
-  .valid_out_tile(valid_out)
+  .data_out_tile(data_out)
 );
 
 endmodule   // LakeTop
@@ -266,8 +214,6 @@ always_ff @(posedge clk, negedge rst_n) begin
       current_addr <= 16'h0;
     end
     else if (step) begin
-      $display("starting addr: %d", starting_addr);
-      $display("stepping from %d by %d", current_addr, strides[mux_sel]);
       current_addr <= current_addr + strides[mux_sel];
     end
   end
@@ -656,7 +602,6 @@ always_ff @(posedge clk, negedge rst_n) begin
       data_array <= 4096'h0;
     end
     else if (wen) begin
-      $display("write enabled, writing %d to %d", data_in, wr_addr);
       data_array[wr_addr] <= data_in;
     end
   end
@@ -671,7 +616,6 @@ always_ff @(posedge clk, negedge rst_n) begin
       data_out <= 16'h0;
     end
     else if (ren) begin
-      $display("read enabled, reading %d from %d", data_out, rd_addr);
       data_out <= data_array[rd_addr];
     end
   end
@@ -759,6 +703,7 @@ module strg_ub_thin (
   input logic [5:0] [15:0] sram_write_loops_ranges,
   input logic [15:0] sram_write_sched_gen_sched_addr_gen_starting_addr,
   input logic [5:0] [15:0] sram_write_sched_gen_sched_addr_gen_strides,
+  output logic accessor_output,
   output logic cen_to_strg,
   output logic [0:0] [15:0] data_out,
   output logic [15:0] data_to_strg,
@@ -781,29 +726,15 @@ logic [15:0] write_addr;
 always_ff @(posedge clk, negedge rst_n) begin
   if (~rst_n) begin
     cycle_count <= 16'h0;
-    $display("reset!, clk_en = %d", clk_en);
   end
   else if (clk_en) begin
-    //$display("Not resetting and clock enabled");
     if (flush) begin
       cycle_count <= 16'h0;
-      $display("Flushed!");
     end
     else cycle_count <= cycle_count + 16'h1;
   end
 end
-
-always_ff @(posedge clk, negedge rst_n) begin
-  if (~rst_n) begin
-  end
-  else if (clk_en) begin
-    if (flush) begin
-    end
-    else begin
-      $display("cycle_count = %d", cycle_count);
-    end
-  end
-end
+assign accessor_output = read;
 
 always_ff @(posedge clk, negedge rst_n) begin
   if (~rst_n) begin
@@ -834,11 +765,6 @@ for_loop_6 sram_write_loops (
   .step(write),
   .mux_sel_out(sram_write_loops_mux_sel_out)
 );
-
-always @(posedge clk) begin
-  $display("sram_write_addr_gen_starting_addr = %d", sram_write_addr_gen_starting_addr);
-  $display("sram_read_addr_gen_starting_addr = %d", sram_read_addr_gen_starting_addr);
-end
 
 addr_gen_6 sram_write_addr_gen (
   .clk(clk),
