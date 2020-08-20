@@ -1091,10 +1091,14 @@ coreir_moduledef(CodegenOptions& options,
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
+      if (options.rtl_options.use_external_controllers) {
+        ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
+      }
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
     } else {
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
+      if (options.rtl_options.use_external_controllers) {
+        ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
+      }
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
   }

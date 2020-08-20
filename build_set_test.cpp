@@ -13826,8 +13826,18 @@ void cgra_flow_tests() {
   prog prg = gaussian();
   dsa_writers(prg);
   compile_for_garnet_dual_port_mem(prg);
+  string name = prg.name;
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  assert(to_verilog_res == 0);
+  string app_type = "dualwithaddr";
+  cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+  cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  cmd("mv ./lake_components/dualwithadd/lake_top.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
 
   assert(false);
+
   auto test_programs = stencil_programs();
   //auto test_programs = all_cgra_programs();
   //cout << "====== Program classification" << endl;
