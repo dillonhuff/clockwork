@@ -1116,11 +1116,12 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_input_global_wrapper_stencil_cache hw_input_global_wrapper_stencil;
-#pragma HLS array_partition variable=hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs cyclic factor=3 dim=3
+#pragma HLS array_partition variable=hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs cyclic factor=8 dim=3
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_kernel_global_wrapper_stencil_cache hw_kernel_global_wrapper_stencil;
 #pragma HLS array_partition variable=hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs cyclic factor=3 dim=3
+#pragma HLS array_partition variable=hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs cyclic factor=8 dim=4
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
