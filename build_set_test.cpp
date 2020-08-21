@@ -13290,7 +13290,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  //options.rtl_options.use_external_controllers = false;
+  options.rtl_options.use_external_controllers = true;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13539,7 +13539,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    assert(false);
+    //assert(false);
     //string app_type = "dse_raw_sram";
     //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");

@@ -1167,7 +1167,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   for (auto op : prg.all_ops()) {
     vector<string> surrounding = surrounding_vars(op, prg);
     for (auto var : op->index_variables_needed_by_compute) {
-      assert(!options.rtl_options.use_external_controllers);
+      assert(options.rtl_options.use_external_controllers);
       int level = map_find(var, levels);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
       def->connect(def->sel(op->name)->sel(var), var_wire);
