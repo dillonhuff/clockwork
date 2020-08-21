@@ -13307,17 +13307,18 @@ void lake_cascade_autovec_test() {
   cout << codegen_c(opt_sched) << endl << endl;
   map<pair<string, string>, int> latency({
           {{"input", "input_agg2sram"}, 1},
-          {{"conv_agg2sram", "conv_2_sram2tb"}, -3},
+          {{"input_agg2sram", "conv_2_sram2tb"}, -3},
           {{"conv_2_sram2tb", "conv_2"}, 2},
           {{"conv_2", "conv"}, -1},
-          {{"conv", "conv_agg2sram"}, 1},
-          {{"conv_agg2sram", "output_2_sram2tb"}, -3},
+          {{"conv", "conv_agg2sram"}, 0},
+          {{"conv_agg2sram", "output_2_sram2tb"}, -1},
           {{"output_2_sram2tb", "output_2"}, 2}});
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
   emit_lake_stream(ubuf_pool, hsh, "./lake_stream/cascade/", false);
+  assert(false);
   //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
@@ -15095,7 +15096,7 @@ void lake_tests() {
   //union_test();
   //lake_conv33_autovec_test();
   //lake_dual_port_test();
-  //lake_cascade_autovec_test();
+  lake_cascade_autovec_test();
   lake_harris_autovec_test();
   assert(false);
   lake_resnet_multitile_test();

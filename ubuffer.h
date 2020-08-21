@@ -912,7 +912,7 @@ class UBuffer {
     //TODO: add a bundle name
     vector<string> get_bd_in_ports() {
         auto wr_bd = get_in_bundles();
-        assert(wr_bd.size() == 1);
+        //assert(wr_bd.size() == 1);
         string bd_name = pick(wr_bd);
         vector<string> pt_vec = port_bundles.at(bd_name);
         return pt_vec;
@@ -920,7 +920,7 @@ class UBuffer {
 
     vector<string> get_bd_out_ports() {
         auto rd_bd = get_out_bundles();
-        assert(rd_bd.size() == 1);
+        //assert(rd_bd.size() == 1);
         string bd_name = pick(rd_bd);
         vector<string> pt_vec = port_bundles.at(bd_name);
         return pt_vec;
