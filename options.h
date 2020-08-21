@@ -32,6 +32,7 @@ struct banking_strategy {
 };
 
 enum TargetTile {
+  TARGET_TILE_REGISTERS,
   TARGET_TILE_DUAL_SRAM_RAW,
   TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN
 };

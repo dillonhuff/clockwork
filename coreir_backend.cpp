@@ -2412,6 +2412,8 @@ CoreIR::Module* reg_delay_module(CoreIR::Context* c, const int width, const vect
   int D = read_delays.at(0);
   auto ns = c->getNamespace("global");
   vector<pair<string, Type*> > fields = {{"clk", c->Named("coreir.clkIn")},
+    {"rst_n", c->BitIn()},
+    {"flush", c->BitIn()},
     {"wdata", c->BitIn()->Arr(width)},
     {"rdata", c->Bit()->Arr(width)}};
 
@@ -2457,7 +2459,6 @@ CoreIR::Module* delay_module(CodegenOptions& options,
     def->connect(next, def->sel("self.rdata"));
     mod->setDef(def);
   } else {
-    //auto g = ns->getGenerator("delay_tile");
 
     mod = ns->newModuleDecl("memtile_long_delay_" + c->getUnique(), c->Record(fields));
     assert(verilog_collateral_file != nullptr);
@@ -2465,7 +2466,22 @@ CoreIR::Module* delay_module(CodegenOptions& options,
     if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
       generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
     } else {
-      assert(false);
+      assert(options.rtl_options.target_tile == TARGET_TILE_REGISTERS);
+      auto def = mod->newModuleDef();
+
+      auto g = ns->getGenerator("delay_tile");
+      auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
+      def->connect(t->sel("rdata"), def->sel("self.rdata"));
+      def->connect(t->sel("wdata"), def->sel("self.wdata"));
+      def->connect(t->sel("rst_n"), def->sel("self.rst_n"));
+      def->connect(t->sel("flush"), def->sel("self.flush"));
+
+      //auto next = def->sel("self.wdata");
+      //for (int d = 0; d < D; d++) {
+        //next = delay(def, next, width);
+      //}
+      //def->connect(next, def->sel("self.rdata"));
+      mod->setDef(def);
     }
 
     //auto def = mod->newModuleDef();
@@ -2478,7 +2494,7 @@ CoreIR::Module* delay_module(CodegenOptions& options,
 
     //auto next = def->sel("self.wdata");
     //for (int d = 0; d < D; d++) {
-      //next = delay(def, next, width);
+    //next = delay(def, next, width);
     //}
     //def->connect(next, def->sel("self.rdata"));
     //mod->setDef(def);

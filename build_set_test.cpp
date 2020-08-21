@@ -13291,6 +13291,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.internal = true;
   options.all_rams = true;
   options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13485,6 +13487,7 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
+  test_programs.push_back(unsharp());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
@@ -13494,7 +13497,6 @@ vector<prog> stencil_programs() {
   test_programs.push_back(up_sample());
 
   // Delayed incorrectly?
-  //test_programs.push_back(unsharp());
 
   // Compute units gone?
   //test_programs.push_back(rom());
