@@ -5147,7 +5147,7 @@ void generate_verilator_tb_in_streams(std::ostream& rgtb,
     rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
-      inds.push_back("srand() % 256");
+      inds.push_back("rand() % 256");
       //str(unroll) + "*i + " + str(i));
       //inds.push_back(str(unroll) + "*i + " + str(i));
     }
