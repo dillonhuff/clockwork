@@ -2181,22 +2181,24 @@ CoreIR::Module* affine_controller_lake(CoreIR::Context* context, isl_set* dom, i
 
 
 CoreIR::Instance*
+addrgen(ModuleDef* def, isl_aff* acc_aff) {
+  auto c = def->getContext();
+  auto aff_gen_mod = coreir_for_aff(c, acc_aff);
+  auto agen = def->addInstance("addrgen_" + c->getUnique(), aff_gen_mod);
+  return agen;
+}
+
+CoreIR::Instance*
 addrgen(ModuleDef* def, isl_set* rddom, isl_aff* acc_aff) {
+  assert(acc_aff != nullptr);
+  assert(rddom != nullptr);
+
   auto c = def->getContext();
 
-  //cout << "Building addrgen for " << reader << endl;
-  //isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
-  //for (auto inpt : buf.get_in_ports()) {
-    //rddom = unn(rddom, range(buf.access_map.at(inpt)));
-  //}
-  //for (auto inpt : buf.get_out_ports()) {
-    //rddom = unn(rddom, range(buf.access_map.at(inpt)));
-  //}
-  //auto acc_map = to_map(buf.access_map.at(reader));
-  //cout << tab(1) << "=== acc_map = " << str(acc_map) << endl;
-  //auto acc_aff = get_aff(acc_map);
-  //cout << tab(2) << "=== acc aff = " << str(acc_aff) << endl;
+  cout << "rddom : " << str(rddom) << endl;
+  cout << "acc aff: " << str(acc_aff) << endl;
   auto reduce_map = linear_address_map((rddom));
+  cout << "reduce map: " << str(reduce_map) << endl;
   auto addr_expr = dot(to_map(acc_aff), reduce_map);
   auto addr_expr_aff = get_aff(addr_expr);
   cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
@@ -2512,16 +2514,21 @@ CoreIR::Module* delay_module(CodegenOptions& options,
 
       isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
       isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(a + " + str(depth - TILE_READ_LATENCY) + ")] }");
+      assert(write_addr != nullptr);
+      cout << "--- Write addr after construction: " << str(write_addr) << endl;
       isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
       auto write_ctrl = affine_controller(def, write_dom, write_sched);
-      auto write_addrgen = addrgen(def, write_dom, write_addr);
+      cout << "write addr before call: " << str(write_addr) << endl;
+      auto write_addrgen = addrgen(def, write_addr);
+      def->connect(write_addrgen->sel("d"), write_ctrl->sel("d"));
 
       isl_aff* read_sched = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_aff* read_addr = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
       auto read_ctrl = affine_controller(def, read_dom, read_sched);
-      auto read_addrgen = addrgen(def, read_dom, read_addr);
+      auto read_addrgen = addrgen(def, read_addr);
+      def->connect(read_addrgen->sel("d"), read_ctrl->sel("d"));
 
       int capacity = 2048;
       int addr_width = 16;
@@ -2534,8 +2541,10 @@ CoreIR::Module* delay_module(CodegenOptions& options,
 
       def->connect(bnk->sel("rdata"), def->sel("self.rdata"));
       def->connect(bnk->sel("wdata"), def->sel("self.wdata"));
+      def->connect(bnk->sel("wen"), write_ctrl->sel("valid"));
       def->connect(bnk->sel("waddr"), write_addrgen->sel("out"));
       def->connect(bnk->sel("raddr"), read_addrgen->sel("out"));
+      def->connect(bnk->sel("ren"), read_ctrl->sel("valid"));
       mod->setDef(def);
     } else {
       assert(options.rtl_options.target_tile == TARGET_TILE_REGISTERS);

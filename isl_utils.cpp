@@ -2979,6 +2979,8 @@ void release(isl_union_pw_qpolynomial* m) {
 }
 
 isl_map* linear_address_map(isl_set* s) {
+  assert(s != nullptr);
+
   string domain = name(s);
   int dim = num_dims(s);
   vector<string> var_names;
@@ -2998,5 +3000,5 @@ isl_map* linear_address_map(isl_set* s) {
 }
 
 isl_map* to_map(isl_aff* s) {
-  assert(false);
+  return isl_map_from_aff(cpy(s));
 }
