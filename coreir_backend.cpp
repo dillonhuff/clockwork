@@ -2429,6 +2429,28 @@ void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
     });
 }
 
+CoreIR::Module* lake_raw_sram_wrapper(CoreIR::Context* c, const std::string& name) {
+  auto ns = c->getNamespace("global");
+  //if (ns->hasModule("lake_raw_sram_wrapper")) {
+    //return ns->getModule("lake_raw_sram_wrapper");
+  //}
+
+  vector<pair<string, CoreIR::Type*> > rf_fields;
+  rf_fields.push_back({"clk", c->Named("coreir.clkIn")});
+  rf_fields.push_back({"rst_n", c->BitIn()});
+  rf_fields.push_back({"flush", c->BitIn()});
+  rf_fields.push_back({"ren_in", c->BitIn()});
+  rf_fields.push_back({"wen_in", c->BitIn()});
+  rf_fields.push_back({"waddr", c->BitIn()->Arr(16)});
+  rf_fields.push_back({"raddr", c->BitIn()->Arr(16)});
+  rf_fields.push_back({"rdata", c->Bit()->Arr(16)});
+  rf_fields.push_back({"wdata", c->BitIn()->Arr(16)});
+  //auto m = ns->newModuleDecl("lake_raw_sram_wrapper", c->Record(rf_fields));
+  auto m = ns->newModuleDecl(name, c->Record(rf_fields));
+
+  return m;
+}
+
 CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
   auto ns = c->getNamespace("global");
   if (ns->hasModule("register_file")) {
@@ -2534,18 +2556,24 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       ram_module(c, width, capacity);
       string inner_sram_name = "inner_sram_" + c->getUnique();
       auto bnk = def->addInstance(
-          inner_sram_name,
-          "global.raw_dual_port_sram_tile",
-          {{"depth", COREMK(c, capacity)}}
-          );
+          inner_sram_name + "_bank",
+          lake_raw_sram_wrapper(c, inner_sram_name));
+          //"global.lake_raw_sram_wrapper");
+      //auto bnk = def->addInstance(
+          //inner_sram_name,
+          //"global.raw_dual_port_sram_tile",
+          //{{"depth", COREMK(c, capacity)}}
+          //);
       generate_lake_collateral_dual_sram_raw(inner_sram_name, *verilog_collateral_file);
 
       def->connect(bnk->sel("rdata"), def->sel("self.rdata"));
       def->connect(bnk->sel("wdata"), def->sel("self.wdata"));
-      def->connect(bnk->sel("wen"), write_ctrl->sel("valid"));
+      def->connect(bnk->sel("wen_in"), write_ctrl->sel("valid"));
       def->connect(bnk->sel("waddr"), write_addrgen->sel("out"));
       def->connect(bnk->sel("raddr"), read_addrgen->sel("out"));
-      def->connect(bnk->sel("ren"), read_ctrl->sel("valid"));
+      def->connect(bnk->sel("ren_in"), read_ctrl->sel("valid"));
+      def->connect(bnk->sel("rst_n"), def->sel("self.rst_n"));
+      def->connect(bnk->sel("flush"), def->sel("self.flush"));
       mod->setDef(def);
     } else {
       assert(options.rtl_options.target_tile == TARGET_TILE_REGISTERS);

@@ -637,13 +637,13 @@ void generate_lake_collateral_delay_fabric_addrgen(const std::string& name, std:
 
 void generate_lake_collateral_dual_sram_raw(const std::string& mod_name, std::ostream& out) {
   vector<string> outer_port_decls;
-  outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
-  outer_port_decls.push_back("output logic [0:0] [15:0] chain_data_out");
-  outer_port_decls.push_back("output logic chain_valid_out");
+  //outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
+  //outer_port_decls.push_back("output logic [0:0] [15:0] chain_data_out");
+  //outer_port_decls.push_back("output logic chain_valid_out");
   outer_port_decls.push_back("input logic clk");
   outer_port_decls.push_back("input logic flush");
   outer_port_decls.push_back("input logic rst_n");
-  outer_port_decls.push_back("output logic valid_out");
+  //outer_port_decls.push_back("output logic valid_out");
   outer_port_decls.push_back("output logic [15:0] rdata");
   outer_port_decls.push_back("output logic [15:0] wdata");
   outer_port_decls.push_back("output logic [15:0] raddr");
