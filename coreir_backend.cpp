@@ -2525,7 +2525,7 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       auto def = mod->newModuleDef();
 
       int depth = D;
-      const int TILE_READ_LATENCY = 1;
+      const int TILE_READ_LATENCY = 0;
 
       assert(depth >= TILE_READ_LATENCY);
       isl_ctx* ctx = isl_ctx_alloc();
