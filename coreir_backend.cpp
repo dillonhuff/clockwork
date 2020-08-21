@@ -2515,11 +2515,13 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
       auto write_ctrl = affine_controller(def, write_dom, write_sched);
+      auto write_addrgen = addrgen(def, write_dom, write_addr);
 
       isl_aff* read_sched = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_aff* read_addr = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
       auto read_ctrl = affine_controller(def, read_dom, read_sched);
+      auto read_addrgen = addrgen(def, read_dom, read_addr);
 
       int capacity = 2048;
       int addr_width = 16;
@@ -2532,6 +2534,8 @@ CoreIR::Module* delay_module(CodegenOptions& options,
 
       def->connect(bnk->sel("rdata"), def->sel("self.rdata"));
       def->connect(bnk->sel("wdata"), def->sel("self.wdata"));
+      def->connect(bnk->sel("waddr"), write_addrgen->sel("out"));
+      def->connect(bnk->sel("raddr"), read_addrgen->sel("out"));
       mod->setDef(def);
     } else {
       assert(options.rtl_options.target_tile == TARGET_TILE_REGISTERS);
