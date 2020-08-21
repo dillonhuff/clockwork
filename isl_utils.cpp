@@ -3142,6 +3142,47 @@ umap* pad_map(umap* unpadded) {
   return final_map;
 }
 
+isl_map* pad_identity_relation_to_map(isl_map* m, int in_dim, int out_dim, int lbd, int ubd) {
+    auto ct = ctx(m);
+    auto new_map = isl_map_insert_dims(cpy(m), isl_dim_in, in_dim, 1);
+    auto tile_map = isl_map_insert_dims(new_map, isl_dim_out, out_dim, 1);
+    if (isl_map_has_tuple_id(m, isl_dim_in))
+      tile_map = isl_map_set_tuple_id(tile_map, isl_dim_in, id(ct, domain_name(m)));
+    if (isl_map_has_tuple_id(m, isl_dim_out))
+    tile_map = isl_map_set_tuple_id(tile_map, isl_dim_out, id(ct, range_name(m)));
+    auto ls = isl_local_space_from_space(cpy(get_space(tile_map)));
+    auto lt_cons = isl_constraint_alloc_inequality(ls);
+    lt_cons = isl_constraint_set_coefficient_si(lt_cons, isl_dim_in, in_dim, -1);
+    lt_cons = isl_constraint_set_constant_si(lt_cons, ubd);
+    tile_map = isl_map_add_constraint(tile_map, lt_cons);
+    ls = isl_local_space_from_space(cpy(get_space(tile_map)));
+    auto gt_cons = isl_constraint_alloc_inequality(ls);
+    gt_cons = isl_constraint_set_coefficient_si(gt_cons, isl_dim_in, in_dim, 1);
+    gt_cons = isl_constraint_set_constant_si(gt_cons, -lbd);
+    tile_map = isl_map_add_constraint(tile_map, gt_cons);
+    ls = isl_local_space_from_space(cpy(get_space(tile_map)));
+    auto rel_cons = isl_constraint_alloc_equality(ls);
+    rel_cons = isl_constraint_set_coefficient_si(gt_cons, isl_dim_in, in_dim, 1);
+    rel_cons = isl_constraint_set_coefficient_si(gt_cons, isl_dim_out, out_dim, -1);
+     tile_map = isl_map_add_constraint(tile_map, rel_cons);
+
+     return tile_map;
+}
+
+umap* pad_identity_relation_to_umap(umap* m, int in_dim, int out_dim, int lbd, int ubd) {
+    vector<isl_map*> padded_maps;
+    for (auto m: get_maps(m)) {
+        isl_map* pad_m = pad_identity_relation_to_map(m, in_dim, out_dim, lbd, ubd);
+        padded_maps.push_back(pad_m);
+    }
+    auto ct = ctx(m);
+    umap* final_map = rdmap(ct, "{}");
+    for (auto m: padded_maps) {
+        final_map = unn(final_map, to_umap(m));
+    }
+    return final_map;
+}
+
 bool lex_lt_pt(isl_point* const l, isl_point* const r) {
     vector<int> l_pt = parse_pt(l);
     vector<int> r_pt = parse_pt(r);

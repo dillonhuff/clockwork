@@ -3522,9 +3522,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     new_sched.insert(make_pair(in_op, in_sched_new));
     auto out_sched_new = gen_map_from_sched_vec(ctx, out_new_sched_vec, out_op);
     new_sched.insert(make_pair(out_op, out_sched_new));
-    auto in_vec_sched = gen_map_from_sched_vec(ctx, in_vectorized_sched_vec, in_op + "_agg2sram");
+    auto in_vec_sched = gen_map_from_sched_vec(ctx, in_vectorized_sched_vec, in_op );
     new_sched.insert(make_pair(in_op + "_agg2sram", in_vec_sched));
-    auto out_vec_sched = gen_map_from_sched_vec(ctx, out_vectorized_sched_vec, out_op + "_sram2tb");
+    auto out_vec_sched = gen_map_from_sched_vec(ctx, out_vectorized_sched_vec, out_op );
     new_sched.insert(make_pair(out_op + "_sram2tb", out_vec_sched));
     auto acc_sched_new = gen_map_from_sched_vec(ctx, acc_new_sched_vec, acc_op);
 
@@ -3532,8 +3532,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     cout << "vectorized_dim: " << vectorized_dim << endl;
     //auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_vec_in", vectorized_dim, fetch_width);
     //auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, acc_op + "_vec_out", vectorized_dim ,fetch_width);
-    auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_agg2sram");
-    auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, acc_op + "_sram2tb");
+    auto acc_in_vec_sched = gen_map_from_sched_vec(ctx, acc_in_vectorized_sched_vec, acc_op + "_agg2sram" );
+    auto acc_out_vec_sched = gen_map_from_sched_vec(ctx, acc_out_vectorized_sched_vec, acc_op + "_sram2tb" );
 
     acc_in_vec_sched = peel_schedule_domain_dim(
             acc_in_vec_sched, inner_most_address_related_dim_id, 1);
@@ -3990,10 +3990,18 @@ pair<std::map<string, UBuffer>, vector<string> >
         agg_buf.add_in_pt(in_pt_name+"_in", domain.at(in_pt_name), inpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(in_pt_name)));
         agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
 
-        auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
-        auto sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
-        sched = dot(inv(op_trans), sched);
-        cout << "sched: " << str(sched) << endl;
+        isl_map* sched;
+        if (is_self_loop(in_pt_name)) {
+            sched = new_sched.at(::name(new_op_domain));
+        } else {
+          auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
+          cout << "Slice dim: " << str(slice_dim) << endl;
+          cout << "original loop: " << str(new_sched.at(::name(new_op_domain))) << endl;
+          sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
+          sched = dot(inv(op_trans), sched);
+          cout << "sched: " << str(sched) << endl;
+
+        }
 
         //add out port to agg_buf
         add_vectorized_pt_to_ubuf(agg_buf, rewrite_buf2op, sched, in_pt_name, bd_name+"_agg_out", dim_id, fetch_width, true);
@@ -4041,10 +4049,15 @@ pair<std::map<string, UBuffer>, vector<string> >
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
 
         //potential not work for accumulation buffers
-        auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
-        auto op_sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
-        op_sched = dot(inv(op_trans), op_sched);
-        cout << "op schedule: " << str(op_sched) << endl;
+        isl_map* op_sched;
+        if (is_self_loop(out_pt_name)) {
+            op_sched = new_sched.at(::name(new_op_domain));
+        } else {
+            auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
+            op_sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
+            op_sched = dot(inv(op_trans), op_sched);
+            cout << "op schedule: " << str(op_sched) << endl;
+        }
 
 
         op_sched_map[out_pt_name] = op_sched;

@@ -21,8 +21,8 @@
         "type":["Record",[
           ["out_conv_stencil",["Array",16,"Bit"]],
           ["in0_conv_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in1_hw_input_stencil",["Array",8,["Array",16,"BitIn"]]],
-          ["in2_hw_kernel_stencil",["Array",8,["Array",16,"BitIn"]]]
+          ["in1_hw_input_stencil",["Array",2,["Array",16,"BitIn"]]],
+          ["in2_hw_kernel_stencil",["Array",2,["Array",16,"BitIn"]]]
         ]],
         "instances":{
           "add_685_699_700":{
@@ -30,26 +30,6 @@
             "genargs":{"width":["Int",16]}
           },
           "add_686_697_698":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_687_696_697":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_688_695_696":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_689_694_695":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_690_693_694":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_691_692_693":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
@@ -64,66 +44,18 @@
           "mul_hw_kernel_stencil_2_hw_input_stencil_2_686":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
-          },
-          "mul_hw_kernel_stencil_3_hw_input_stencil_3_687":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
-          },
-          "mul_hw_kernel_stencil_4_hw_input_stencil_4_688":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
-          },
-          "mul_hw_kernel_stencil_5_hw_input_stencil_5_689":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
-          },
-          "mul_hw_kernel_stencil_6_hw_input_stencil_6_690":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
-          },
-          "mul_hw_kernel_stencil_7_hw_input_stencil_7_691":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
-          },
-          "mul_hw_kernel_stencil_8_hw_input_stencil_8_692":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
           ["mul_hw_kernel_stencil_1_hw_input_stencil_1_685.out","add_685_699_700.in0"],
-          ["add_conv_stencil_1_698_699.out","add_685_699_700.in1"],
+          ["add_686_697_698.out","add_685_699_700.in1"],
           ["self.out_conv_stencil","add_685_699_700.out"],
           ["mul_hw_kernel_stencil_2_hw_input_stencil_2_686.out","add_686_697_698.in0"],
-          ["add_687_696_697.out","add_686_697_698.in1"],
-          ["add_conv_stencil_1_698_699.in1","add_686_697_698.out"],
-          ["mul_hw_kernel_stencil_3_hw_input_stencil_3_687.out","add_687_696_697.in0"],
-          ["add_688_695_696.out","add_687_696_697.in1"],
-          ["mul_hw_kernel_stencil_4_hw_input_stencil_4_688.out","add_688_695_696.in0"],
-          ["add_689_694_695.out","add_688_695_696.in1"],
-          ["mul_hw_kernel_stencil_5_hw_input_stencil_5_689.out","add_689_694_695.in0"],
-          ["add_690_693_694.out","add_689_694_695.in1"],
-          ["mul_hw_kernel_stencil_6_hw_input_stencil_6_690.out","add_690_693_694.in0"],
-          ["add_691_692_693.out","add_690_693_694.in1"],
-          ["mul_hw_kernel_stencil_7_hw_input_stencil_7_691.out","add_691_692_693.in0"],
-          ["mul_hw_kernel_stencil_8_hw_input_stencil_8_692.out","add_691_692_693.in1"],
-          ["self.in0_conv_stencil.0","add_conv_stencil_1_698_699.in0"],
+          ["self.in0_conv_stencil.0","add_686_697_698.in1"],
           ["self.in2_hw_kernel_stencil.0","mul_hw_kernel_stencil_1_hw_input_stencil_1_685.in0"],
           ["self.in1_hw_input_stencil.0","mul_hw_kernel_stencil_1_hw_input_stencil_1_685.in1"],
           ["self.in2_hw_kernel_stencil.1","mul_hw_kernel_stencil_2_hw_input_stencil_2_686.in0"],
           ["self.in1_hw_input_stencil.1","mul_hw_kernel_stencil_2_hw_input_stencil_2_686.in1"],
-          ["self.in2_hw_kernel_stencil.2","mul_hw_kernel_stencil_3_hw_input_stencil_3_687.in0"],
-          ["self.in1_hw_input_stencil.2","mul_hw_kernel_stencil_3_hw_input_stencil_3_687.in1"],
-          ["self.in2_hw_kernel_stencil.3","mul_hw_kernel_stencil_4_hw_input_stencil_4_688.in0"],
-          ["self.in1_hw_input_stencil.3","mul_hw_kernel_stencil_4_hw_input_stencil_4_688.in1"],
-          ["self.in2_hw_kernel_stencil.4","mul_hw_kernel_stencil_5_hw_input_stencil_5_689.in0"],
-          ["self.in1_hw_input_stencil.4","mul_hw_kernel_stencil_5_hw_input_stencil_5_689.in1"],
-          ["self.in2_hw_kernel_stencil.5","mul_hw_kernel_stencil_6_hw_input_stencil_6_690.in0"],
-          ["self.in1_hw_input_stencil.5","mul_hw_kernel_stencil_6_hw_input_stencil_6_690.in1"],
-          ["self.in2_hw_kernel_stencil.6","mul_hw_kernel_stencil_7_hw_input_stencil_7_691.in0"],
-          ["self.in1_hw_input_stencil.6","mul_hw_kernel_stencil_7_hw_input_stencil_7_691.in1"],
-          ["self.in2_hw_kernel_stencil.7","mul_hw_kernel_stencil_8_hw_input_stencil_8_692.in0"],
-          ["self.in1_hw_input_stencil.7","mul_hw_kernel_stencil_8_hw_input_stencil_8_692.in1"]
         ]
       },
       "hcompute_conv_stencil_2":{

@@ -598,6 +598,11 @@ uset* pad_uset(uset* domain);
 umap* pad_map(umap* unpadded);
 isl_map* pad_map(isl_map* unpadded, const int max_dim);
 
+isl_map* pad_identity_relation_to_map(isl_map* m,
+        int in_dim, int out_dim, int lbd, int ubd);
+umap* pad_identity_relation_to_umap(umap* m,
+        int in_dim, int out_dim, int ldb, int ubd);
+
 isl_val* coord(isl_point* const p, const int pos);
 
 bool lex_lt_pt(isl_point* const l, isl_point* const r);

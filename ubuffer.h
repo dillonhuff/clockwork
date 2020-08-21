@@ -662,6 +662,7 @@ class AccessPattern {
       isl_set* get_dom_slice(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
           vector<int> & stride_in_target = access_matrix[dim_id];
           int inner_most = get_inner_most_related_dom_dim();
+          cout << "stride in target: " << stride_in_target << endl;
           cout << "trans op dim: " << inner_most << endl;
           vector<string> var_list(inner_most+1);
           vector<string> origin_var_list(var_dim-1);

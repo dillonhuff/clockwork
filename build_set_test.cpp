@@ -1708,6 +1708,54 @@ isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer
 
 }
 
+isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const map<string, UBuffer> &buffers, vector<string> rem_deps, umap* extra) {
+
+    isl_ctx* ctx = pick(buffers).second.ctx;
+
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        global_sched = unn(its(buf.global_schedule(), buf.global_domain()), global_sched);
+    }
+    cout << "\tschedule: " << str(coalesce(global_sched)) << endl;
+    //get all map domain flatten
+    global_c_map = flatten_umap_domain(ctx, global_c_map);
+    global_p_map = flatten_umap_domain(ctx, global_p_map);
+    global_sched = flatten_umap_domain(ctx, global_sched);
+    isl_union_set* domain = ::domain(global_sched);
+    //extra = flatten_umap_domain(ctx, extra);
+    //extra = flatten_umap_domain(ctx, inv(extra));
+
+    //auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    //auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_conv_stencil[root=0, 12543]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    raw_deps = unn(raw_deps, extra);
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    //FIXME: the name is hacky
+    for (auto dep: rem_deps) {
+      proximity = remove_dep_domain_name(proximity, dep);
+    }
+
+    //proximity = filter_inner_sram_deps(ctx, proximity);
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
+
 isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const map<string, UBuffer> &buffers, bool second_round, vector<string> rem_deps) {
     //map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
 
@@ -1734,7 +1782,8 @@ isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const
     //extra = flatten_umap_domain(ctx, extra);
     //extra = flatten_umap_domain(ctx, inv(extra));
 
-    auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    //auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_conv_stencil[root=0, 12543]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
     auto order_deps = get_rel_order(ctx, global_sched);
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     raw_deps = unn(raw_deps, extra);
@@ -10465,18 +10514,7 @@ void playground() {
     isl_ctx* ctx = isl_ctx_alloc();
     auto access_map = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
     auto padded = pad_map(access_map, 5);
-    auto new_map = isl_map_insert_dims(access_map, isl_dim_in, 1, 1);
-    auto tile_map = isl_map_insert_dims(new_map, isl_dim_out, 0, 1);
-    auto ls = isl_local_space_from_space(cpy(get_space(tile_map)));
-      auto lt_cons = isl_constraint_alloc_inequality(ls);
-      lt_cons = isl_constraint_set_coefficient_si(lt_cons, isl_dim_in, 1, -1);
-      lt_cons = isl_constraint_set_constant_si(lt_cons, 3);
-      tile_map = isl_map_add_constraint(tile_map, lt_cons);
-    ls = isl_local_space_from_space(cpy(get_space(tile_map)));
-      auto gt_cons = isl_constraint_alloc_inequality(ls);
-      gt_cons = isl_constraint_set_coefficient_si(gt_cons, isl_dim_in, 1, 1);
-      gt_cons = isl_constraint_set_constant_si(gt_cons, 0);
-      tile_map = isl_map_add_constraint(tile_map, gt_cons);
+    auto tile_map = pad_identity_relation_to_map(access_map, 1, 0, -1, 3);
     cout << "Insert: " << str(tile_map) << endl;
     cout << "Padded: " << str(padded) << endl;
     cout << str(access_map) << endl << str(simplify_expr(access_map)) << endl;
@@ -11477,7 +11515,7 @@ void run_verilator_tb(const std::string& name) {
 void generate_verilog_tb(const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 }
 
@@ -12557,6 +12595,7 @@ void mmul_outer_prod_test() {
 
 //void emit_lake_controller_config(const std::string& filename, isl_set* write_domain, isl_aff* write_sched, isl_aff* write_addr) {
 void emit_lake_controller_config(std::ostream& out, isl_set* write_domain, isl_aff* write_sched) {
+  cout << str(write_sched) << endl;
   out << "\"dimensionality\"," << num_dims(write_domain) << ",0" << endl;
   out << "\"cycle_starting_addr\"," << to_int(const_coeff(write_sched)) << ",0" << endl;
   for (int d = 0; d < num_dims(write_domain); d++) {
@@ -12739,6 +12778,10 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
       }
     }
     cout << "\tretrive dom: " << str(glb_retrive_domain) << endl;
+    if (num_in_dims(write_sched) != num_dims(dom_map.at(op_name))) {
+        dom = dom_map.at(op_name);
+        write_sched = retrive_map_domain_with_dim(m, dom);
+    }
 
     //find the memory tile interface op we need to generate multiple file
     vector<isl_map*> access_map_for_op;
@@ -12757,6 +12800,7 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
             access_map_for_op.push_back(acc_map);
         }
     }
+
 
     if (access_map_for_op.size() > 1) {
 
@@ -12857,7 +12901,7 @@ isl_union_map* generate_hardware_schedule_heu_new(isl_union_map* new_opt_sched,
     string op_name = domain_name(m);
     op2sched[op_name] = m;
     auto affs = get_aff_vec(m);
-    assert(affs.size() > get_in_dim(m));
+    assert(affs.size() >= get_in_dim(m));
     vector<string> sched_expr_list;
     vector<int> sched_seq_vec;
     int dom_dim = get_in_dim(m) - 1;
@@ -13171,8 +13215,31 @@ void lake_resnet_test() {
 
     b.second.port_group2bank(max_inpt, max_outpt);
     b.second.print_bank_info();
+
+
+#ifdef COREIR
+    CoreIR::Context* context = CoreIR::newContext();
+    CoreIRLoadLibrary_commonlib(context);
+    CoreIRLoadLibrary_cwlib(context);
+    schedule_info hwinfo;
+    hwinfo.use_dse_compute = false;
+    auto def = generate_coreir_without_ctrl(opt, context, b.second, hwinfo);
+    if(!saveToFile(context->getNamespace("global"), "lake_"+b.first+".json", def)) {
+      cout << "Could not save ubuffer coreir!" << endl;
+      context->die();
+    }
+    CoreIR::deleteContext(context);
+#endif
+
   }
 
+#ifdef COREIR
+  //generate_cgra_tb(buffers_opt, prg, opt);
+#endif
+
+  map<string, int> dim_id_map({{"hw_input_stencil", 1},
+          {"hw_kernel_stencil", 2},
+          {"conv_stencil", 2}});
   //auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
   //auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
   for (auto it: buffers_opt) {
@@ -13206,7 +13273,7 @@ void lake_resnet_test() {
     cout << "Done with vectorization" << endl;
     for (auto it: tmp) {
         auto buf = it.second;
-        if (buf.get_in_ports().size() == 1)
+        if (buf.get_in_ports().size() == 4)
             temp.insert(it);
         cout << it.first<< endl;
     }
@@ -13234,20 +13301,21 @@ void lake_resnet_test() {
     //auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
     //auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
     //auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
-    auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_hw_input_stencil_agg2sram"});
+    auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, {"op_hcompute_hw_input_stencil_agg2sram"}, um);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_conv_stencil_agg2sram", "op_hcompute_conv_stencil_1_agg2sram"});
     cout << str(opt_sched) << endl;
     cout << codegen_c(opt_sched) << endl;
-    assert(false);
-    int app_target_II = 1;
-
-    //map<pair<string, string>, int> latency({{{"input", "input_vec"}, 1},
-    //      {{"output_2", "output_2_vec"}, -1}});
-    auto hsh = generate_hardware_schedule_heu(opt_sched, tmp, {}, app_target_II, {"op_hcompute_conv_stencil_1_vec_in"});
-    cout << str(hsh) << endl;
+    auto multi_tile_sched = pad_identity_relation_to_umap(opt_sched, 1, 0, 0, 3);
+    cout << codegen_c(multi_tile_sched) << endl;
+    cout << str(multi_tile_sched) << endl;
+    map<pair<string, string>, int> latency({
+          {{"op_hcompute_hw_input_stencil", "op_hcompute_hw_input_stencil_agg2sram"}, 1},
+          {{"op_hcompute_hw_input_stencil_agg2sram", "op_hcompute_conv_stencil_1_sram2tb"}, 0},
+          {{"op_hcompute_conv_stencil_1_sram2tb", "op_hcompute_conv_stencil_1"}, 1}});
+    auto hsh = generate_hardware_schedule_heu_new(multi_tile_sched, tmp, latency, 1);
     cout << codegen_c(hsh) << endl;
-    cmd("mkdir -p ./lake_controllers/resnet/"+ubuf_name);
-    auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/"+ubuf_name);
-    //check_lake_config(op_vec, "./lake_controllers/conv_3_3/", "./lake_gold/conv_3_3/");
+    cmd("mkdir -p ./lake_controllers/resnet/");
+    auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
     assert(false);
 
   }
@@ -13332,7 +13400,7 @@ void lake_cascade_autovec_test() {
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
-  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/cascade/", false);
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/cascade/", false);
   //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
@@ -13413,7 +13481,6 @@ void lake_gaussian_autovec_test() {
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/gaussian/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/gaussian/");
-  assert(false);
   cmd("mkdir -p ./lake_stream/gaussian/");
   //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
 }
@@ -13492,7 +13559,7 @@ void lake_conv33_autovec_test() {
   cmd("mkdir -p ./lake_controllers/conv_3_3_new/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_new/");
   cmd("mkdir -p ./lake_stream/conv_3_3_new/");
-  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_new/", false);
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_new/", false);
   check_lake_config(op_vec, "./lake_controllers/conv_3_3_new/", "./lake_gold/conv_3_3_new/");
   /*
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
@@ -15151,11 +15218,11 @@ void lake_tests() {
   //playground();
   //lake_identity_stream_autovec_test();
   //union_test();
-  lake_gaussian_autovec_test();
+  //lake_gaussian_autovec_test();
   lake_conv33_autovec_test();
   //lake_dual_port_test();
-  lake_cascade_autovec_test();
-  lake_harris_autovec_test();
+  //lake_cascade_autovec_test();
+  //lake_harris_autovec_test();
   //lake_resnet_multitile_test();
   lake_resnet_test();
   resnet_test();

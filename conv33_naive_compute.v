@@ -65,6 +65,7 @@ wire [15:0] d_reg__U8_out;
 wire [15:0] d_reg__U9_out;
 wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_dataout_0;
 wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_dataout_1;
+wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_chainin_0_const_in_out;
 wire ub_buf_inst_input_10_to_buf_inst_output_3_clk_en_const_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -113,9 +114,11 @@ cwlib_ub__confignull__input_num1__output_num2__width16 ub_buf_inst_input_10_to_b
     .clk_en(ub_buf_inst_input_10_to_buf_inst_output_3_clk_en_const_out),
     .clk(clk),
     .datain_0(input_write[0]),
+    .chainin_0(ub_buf_inst_input_10_to_buf_inst_output_3_chainin_0_const_in_out),
     .dataout_0(ub_buf_inst_input_10_to_buf_inst_output_3_dataout_0),
     .dataout_1(ub_buf_inst_input_10_to_buf_inst_output_3_dataout_1)
 );
+assign ub_buf_inst_input_10_to_buf_inst_output_3_chainin_0_const_in_out = 16'h0000;
 assign ub_buf_inst_input_10_to_buf_inst_output_3_clk_en_const_out = 1'b1;
 assign output_read[8] = input_write[0];
 assign output_read[7] = d_reg__U8_out;
