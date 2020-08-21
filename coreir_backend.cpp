@@ -2520,9 +2520,10 @@ CoreIR::Module* delay_module(CodegenOptions& options,
     assert(verilog_collateral_file != nullptr);
 
     if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
-      //generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
+      generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
       //generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D - 1);
-      generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D + 1);
+      //generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D - 2);
+      //generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D + 2);
     } else if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_RAW) {
       auto def = mod->newModuleDef();
 

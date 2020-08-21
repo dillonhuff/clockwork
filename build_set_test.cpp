@@ -13495,7 +13495,7 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(unsharp());
+  //test_programs.push_back(unsharp());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
