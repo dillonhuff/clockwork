@@ -2466,7 +2466,18 @@ CoreIR::Module* delay_module(CodegenOptions& options,
     if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
       generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
     } else if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_RAW) {
-      assert(false);
+      //generate_lake_collateral_dual_sram_raw(mod->getName(), *verilog_collateral_file, D);
+      auto def = mod->newModuleDef();
+
+      //auto g = ns->getGenerator("delay_tile");
+      //auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
+      //def->connect(t->sel("rdata"), def->sel("self.rdata"));
+      //def->connect(t->sel("wdata"), def->sel("self.wdata"));
+      //def->connect(t->sel("rst_n"), def->sel("self.rst_n"));
+      //def->connect(t->sel("flush"), def->sel("self.flush"));
+
+      mod->setDef(def);
+      //assert(false);
     } else {
       assert(options.rtl_options.target_tile == TARGET_TILE_REGISTERS);
       auto def = mod->newModuleDef();
@@ -2478,11 +2489,6 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       def->connect(t->sel("rst_n"), def->sel("self.rst_n"));
       def->connect(t->sel("flush"), def->sel("self.flush"));
 
-      //auto next = def->sel("self.wdata");
-      //for (int d = 0; d < D; d++) {
-        //next = delay(def, next, width);
-      //}
-      //def->connect(next, def->sel("self.rdata"));
       mod->setDef(def);
     }
 
