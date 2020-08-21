@@ -10464,6 +10464,21 @@ void playground() {
     {
     isl_ctx* ctx = isl_ctx_alloc();
     auto access_map = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
+    auto padded = pad_map(access_map, 5);
+    auto new_map = isl_map_insert_dims(access_map, isl_dim_in, 1, 1);
+    auto tile_map = isl_map_insert_dims(new_map, isl_dim_out, 0, 1);
+    auto ls = isl_local_space_from_space(cpy(get_space(tile_map)));
+      auto lt_cons = isl_constraint_alloc_inequality(ls);
+      lt_cons = isl_constraint_set_coefficient_si(lt_cons, isl_dim_in, 1, -1);
+      lt_cons = isl_constraint_set_constant_si(lt_cons, 3);
+      tile_map = isl_map_add_constraint(tile_map, lt_cons);
+    ls = isl_local_space_from_space(cpy(get_space(tile_map)));
+      auto gt_cons = isl_constraint_alloc_inequality(ls);
+      gt_cons = isl_constraint_set_coefficient_si(gt_cons, isl_dim_in, 1, 1);
+      gt_cons = isl_constraint_set_constant_si(gt_cons, 0);
+      tile_map = isl_map_add_constraint(tile_map, gt_cons);
+    cout << "Insert: " << str(tile_map) << endl;
+    cout << "Padded: " << str(padded) << endl;
     cout << str(access_map) << endl << str(simplify_expr(access_map)) << endl;
     cout << str(get_aff(simplify_expr(access_map))) << endl;
     assert(false);
@@ -13312,13 +13327,12 @@ void lake_cascade_autovec_test() {
           {{"conv_2", "conv"}, -1},
           {{"conv", "conv_agg2sram"}, 0},
           {{"conv_agg2sram", "output_2_sram2tb"}, -1},
-          {{"output_2_sram2tb", "output_2"}, 2}});
+          {{"output_2_sram2tb", "output_2"}, 1}});
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
   emit_lake_stream(ubuf_pool, hsh, "./lake_stream/cascade/", false);
-  assert(false);
   //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
@@ -13358,7 +13372,50 @@ void lake_harris_autovec_test() {
   cmd("mkdir -p ./lake_controllers/harris/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/harris/");
   cmd("mkdir -p ./lake_stream/harris/");
-  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
+}
+
+void lake_gaussian_autovec_test() {
+  prog prg = gaussian();
+
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+#ifdef COREIR
+  generate_cgra_tb(buffers_opt, prg, opt);
+#endif
+
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  cout << str(opt_sched) << endl << endl;
+  cout << codegen_c(opt_sched) << endl << endl;
+
+  map<pair<string, string>, int> latency({
+          {{"op_hcompute_hw_input_stencil", "op_hcompute_hw_input_stencil_agg2sram"}, 1},
+          {{"op_hcompute_hw_input_stencil_agg2sram", "op_hcompute_blur_unnormalized_stencil_1_2_sram2tb"}, -3},
+          {{"op_hcompute_blur_unnormalized_stencil_1_2_sram2tb", "op_hcompute_blur_unnormalized_stencil_1_2"}, 2}});
+  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  cout << codegen_c(hsh) << endl;
+  cmd("mkdir -p ./lake_controllers/gaussian/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/gaussian/");
+  assert(false);
+  cmd("mkdir -p ./lake_stream/gaussian/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
 }
 
 void lake_conv33_autovec_test() {
@@ -15094,12 +15151,12 @@ void lake_tests() {
   //playground();
   //lake_identity_stream_autovec_test();
   //union_test();
-  //lake_conv33_autovec_test();
+  lake_gaussian_autovec_test();
+  lake_conv33_autovec_test();
   //lake_dual_port_test();
   lake_cascade_autovec_test();
   lake_harris_autovec_test();
-  assert(false);
-  lake_resnet_multitile_test();
+  //lake_resnet_multitile_test();
   lake_resnet_test();
   resnet_test();
 }

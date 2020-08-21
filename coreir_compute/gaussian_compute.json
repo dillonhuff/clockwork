@@ -42,7 +42,6 @@
       "hcompute_blur_unnormalized_stencil_1":{
         "type":["Record",[
           ["out_blur_unnormalized_stencil",["Array",16,"Bit"]],
-          ["in0_blur_unnormalized_stencil",["Array",1,["Array",16,"BitIn"]]],
           ["in1_hw_input_stencil",["Array",9,["Array",16,"BitIn"]]]
         ]],
         "instances":{
@@ -166,11 +165,10 @@
         },
         "connections":[
           ["mul_hw_input_stencil_1_281_282.out","add_282_300_301.in0"],
-          ["add_blur_unnormalized_stencil_1_299_300.out","add_282_300_301.in1"],
+          ["add_284_298_299.out","add_282_300_301.in1"],
           ["self.out_blur_unnormalized_stencil","add_282_300_301.out"],
           ["mul_hw_input_stencil_2_283_284.out","add_284_298_299.in0"],
           ["add_285_297_298.out","add_284_298_299.in1"],
-          ["add_blur_unnormalized_stencil_1_299_300.in1","add_284_298_299.out"],
           ["mul_hw_input_stencil_3_281_285.out","add_285_297_298.in0"],
           ["add_286_296_297.out","add_285_297_298.in1"],
           ["mul_hw_input_stencil_4_283_286.out","add_286_296_297.in0"],
@@ -183,7 +181,6 @@
           ["add_291_292_293.out","add_290_293_294.in1"],
           ["mul_hw_input_stencil_8_281_291.out","add_291_292_293.in0"],
           ["mul_hw_input_stencil_9_283_292.out","add_291_292_293.in1"],
-          ["self.in0_blur_unnormalized_stencil.0","add_blur_unnormalized_stencil_1_299_300.in0"],
           ["mul_hw_input_stencil_3_281_285.in1","const24__281$1.out"],
           ["mul_hw_input_stencil_7_281_290.in1","const24__281$2.out"],
           ["mul_hw_input_stencil_8_281_291.in1","const24__281$3.out"],

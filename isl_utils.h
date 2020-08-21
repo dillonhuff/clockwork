@@ -596,6 +596,7 @@ isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max);
 isl_set* pad_set(isl_set* s, const int max_dim);
 uset* pad_uset(uset* domain);
 umap* pad_map(umap* unpadded);
+isl_map* pad_map(isl_map* unpadded, const int max_dim);
 
 isl_val* coord(isl_point* const p, const int pos);
 
