@@ -2180,8 +2180,13 @@ CoreIR::Module* affine_controller_lake(CoreIR::Context* context, isl_set* dom, i
 }
 
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
-  //return affine_controller_lake(context, dom, aff);
   return affine_controller_primitive(context, dom, aff);
+}
+
+CoreIR::Instance* affine_controller(CoreIR::ModuleDef* def, isl_set* dom, isl_aff* aff) {
+  auto c = def->getContext();
+  auto ctrl = def->addInstance("ctrl_" + c->getUnique(), affine_controller(c, dom, aff));
+  return ctrl;
 }
 
 void add_delay_tile_generator(CoreIR::Context* c) {
@@ -2469,15 +2474,27 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       //generate_lake_collateral_dual_sram_raw(mod->getName(), *verilog_collateral_file, D);
       auto def = mod->newModuleDef();
 
-      //auto g = ns->getGenerator("delay_tile");
-      //auto t = def->addInstance("delay_tile_m", g, {{"delay", COREMK(c, D)}});
-      //def->connect(t->sel("rdata"), def->sel("self.rdata"));
-      //def->connect(t->sel("wdata"), def->sel("self.wdata"));
-      //def->connect(t->sel("rst_n"), def->sel("self.rst_n"));
-      //def->connect(t->sel("flush"), def->sel("self.flush"));
+      int depth = D;
+      const int TILE_READ_LATENCY = 1;
+
+      assert(depth >= TILE_READ_LATENCY);
+      isl_ctx* ctx = isl_ctx_alloc();
+      int max_depth = (1 << 16) - 1;
+      cout << "max depth = " << max_depth << endl;
+      assert(max_depth >= 0);
+
+      isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
+      isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(a + " + str(depth - TILE_READ_LATENCY) + ")] }");
+      isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+
+      auto write_ctrl = affine_controller(def, write_dom, write_addr);
+
+      isl_aff* read_sched = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
+      isl_aff* read_addr = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
+      isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+      auto read_ctrl = affine_controller(def, read_dom, read_addr);
 
       mod->setDef(def);
-      //assert(false);
     } else {
       assert(options.rtl_options.target_tile == TARGET_TILE_REGISTERS);
       auto def = mod->newModuleDef();
