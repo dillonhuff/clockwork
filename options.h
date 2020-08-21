@@ -31,6 +31,11 @@ struct banking_strategy {
   vector<int> cycle_factors;
 };
 
+enum TileTarget {
+  TILE_TARGET_DUAL_SRAM_RAW,
+  TILE_TARGET_DUAL_SRAM_WITH_ADDRGEN
+};
+
 struct RTLOptions {
   bool use_external_controllers;
   bool pack_controllers_in_memtiles;
