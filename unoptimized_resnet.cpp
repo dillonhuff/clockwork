@@ -11,469 +11,58 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_conv_stencil_3_8_cache {
-	// RAM Box: {[0, 0], [0, 27], [0, 27]}
-	// Capacity: 784
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[784];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_conv_stencil_3_8_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*784);
-  }
-  ~conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_conv_stencil_3_8_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct conv_stencil_op_hcompute_conv_stencil_4_to_conv_stencil_op_hcompute_conv_stencil_3_8_cache {
-	// RAM Box: {[0, 0], [0, 27], [0, 27]}
-	// Capacity: 784
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[784];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  conv_stencil_op_hcompute_conv_stencil_4_to_conv_stencil_op_hcompute_conv_stencil_3_8_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*784);
-  }
-  ~conv_stencil_op_hcompute_conv_stencil_4_to_conv_stencil_op_hcompute_conv_stencil_3_8_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct conv_stencil_op_hcompute_conv_stencil_1_5_to_conv_stencil_op_hcompute_conv_stencil_4_26_cache {
-	// RAM Box: {[1, 1], [0, 27], [0, 27]}
-	// Capacity: 784
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[784];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  conv_stencil_op_hcompute_conv_stencil_1_5_to_conv_stencil_op_hcompute_conv_stencil_4_26_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*784);
-  }
-  ~conv_stencil_op_hcompute_conv_stencil_1_5_to_conv_stencil_op_hcompute_conv_stencil_4_26_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_conv_stencil_4_26_cache {
-	// RAM Box: {[1, 1], [0, 27], [0, 27]}
-	// Capacity: 784
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[784];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_conv_stencil_4_26_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*784);
-  }
-  ~conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_conv_stencil_4_26_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct conv_stencil_op_hcompute_conv_stencil_2_6_to_conv_stencil_op_hcompute_conv_stencil_5_44_cache {
-	// RAM Box: {[2, 2], [0, 27], [0, 27]}
-	// Capacity: 784
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[784];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  conv_stencil_op_hcompute_conv_stencil_2_6_to_conv_stencil_op_hcompute_conv_stencil_5_44_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*784);
-  }
-  ~conv_stencil_op_hcompute_conv_stencil_2_6_to_conv_stencil_op_hcompute_conv_stencil_5_44_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_conv_stencil_5_44_cache {
-	// RAM Box: {[2, 2], [0, 27], [0, 27]}
-	// Capacity: 784
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[784];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_conv_stencil_5_44_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*784);
-  }
-  ~conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_conv_stencil_5_44_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 784)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 784);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache {
+struct conv_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 2], [0, 27], [0, 27]}
-	// Capacity: 2352
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[2352];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*2352);
-  }
-  ~conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 2352)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 2352);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
+  hw_uint<16> RAM[3][28][28];
+  inline hw_uint<16> read(int d0, int d1, int d2) {
+    return RAM[d0][d1][d2];
   }
 
 
 
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 2352)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 2352);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache {
-	// RAM Box: {[0, 2], [0, 27], [0, 27]}
-	// Capacity: 2352
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[2352];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*2352);
-  }
-  ~conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 2352)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 2352);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 2352)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 2352);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache {
-	// RAM Box: {[0, 2], [0, 27], [0, 27]}
-	// Capacity: 2352
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[2352];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*2352);
-  }
-  ~conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 2352)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 2352);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 2352)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 2352);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
+	inline void write(const hw_uint<16> value, int d0, int d1, int d2) {
+    RAM[d0][d1][d2] = value;
   }
 
 };
 
 struct conv_stencil_cache {
-  // # of banks: 9
-  conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_conv_stencil_3_8_cache conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_conv_stencil_3_8;
-  conv_stencil_op_hcompute_conv_stencil_4_to_conv_stencil_op_hcompute_conv_stencil_3_8_cache conv_stencil_op_hcompute_conv_stencil_4_to_conv_stencil_op_hcompute_conv_stencil_3_8;
-  conv_stencil_op_hcompute_conv_stencil_1_5_to_conv_stencil_op_hcompute_conv_stencil_4_26_cache conv_stencil_op_hcompute_conv_stencil_1_5_to_conv_stencil_op_hcompute_conv_stencil_4_26;
-  conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_conv_stencil_4_26_cache conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_conv_stencil_4_26;
-  conv_stencil_op_hcompute_conv_stencil_2_6_to_conv_stencil_op_hcompute_conv_stencil_5_44_cache conv_stencil_op_hcompute_conv_stencil_2_6_to_conv_stencil_op_hcompute_conv_stencil_5_44;
-  conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_conv_stencil_5_44_cache conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_conv_stencil_5_44;
-  conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_hw_output_stencil_62;
-  conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_hw_output_stencil_62;
-  conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_hw_output_stencil_62_cache conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_hw_output_stencil_62;
+  // # of banks: 1
+  conv_stencil_all_inputs_to_all_outputs_cache conv_stencil_all_inputs_to_all_outputs;
 };
 
 
 
 inline void conv_stencil_op_hcompute_conv_stencil_1_5_write(hw_uint<16>& conv_stencil_op_hcompute_conv_stencil_1_5, conv_stencil_cache& conv_stencil, int root, int conv_s0_y, int conv_s0_x, int dynamic_address) {
-  conv_stencil.conv_stencil_op_hcompute_conv_stencil_1_5_to_conv_stencil_op_hcompute_conv_stencil_4_26.write(conv_stencil_op_hcompute_conv_stencil_1_5, (1 - 1) * 1 + (conv_s0_y - 0) * 1 + (conv_s0_x - 0) * 28);
+  conv_stencil.conv_stencil_all_inputs_to_all_outputs.write(conv_stencil_op_hcompute_conv_stencil_1_5, 1 - 0, conv_s0_y - 0, conv_s0_x - 0);
 }
 
 inline void conv_stencil_op_hcompute_conv_stencil_2_6_write(hw_uint<16>& conv_stencil_op_hcompute_conv_stencil_2_6, conv_stencil_cache& conv_stencil, int root, int conv_s0_y, int conv_s0_x, int dynamic_address) {
-  conv_stencil.conv_stencil_op_hcompute_conv_stencil_2_6_to_conv_stencil_op_hcompute_conv_stencil_5_44.write(conv_stencil_op_hcompute_conv_stencil_2_6, (2 - 2) * 1 + (conv_s0_y - 0) * 1 + (conv_s0_x - 0) * 28);
+  conv_stencil.conv_stencil_all_inputs_to_all_outputs.write(conv_stencil_op_hcompute_conv_stencil_2_6, 2 - 0, conv_s0_y - 0, conv_s0_x - 0);
 }
 
 inline void conv_stencil_op_hcompute_conv_stencil_3_7_write(hw_uint<16>& conv_stencil_op_hcompute_conv_stencil_3_7, conv_stencil_cache& conv_stencil, int root, int conv_s1_r_y, int conv_s1_r_x, int conv_s1_y, int conv_s1_x, int dynamic_address) {
-  conv_stencil.conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_conv_stencil_3_8.write(conv_stencil_op_hcompute_conv_stencil_3_7, (0 - 0) * 1 + (conv_s1_y - 0) * 1 + (conv_s1_x - 0) * 28);
-  conv_stencil.conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_hw_output_stencil_62.write(conv_stencil_op_hcompute_conv_stencil_3_7, (0 - 0) * 1 + (conv_s1_y - 0) * 3 + (conv_s1_x - 0) * 84);
+  conv_stencil.conv_stencil_all_inputs_to_all_outputs.write(conv_stencil_op_hcompute_conv_stencil_3_7, 0 - 0, conv_s1_y - 0, conv_s1_x - 0);
 }
 
 inline void conv_stencil_op_hcompute_conv_stencil_4_write(hw_uint<16>& conv_stencil_op_hcompute_conv_stencil_4, conv_stencil_cache& conv_stencil, int root, int conv_s0_y, int conv_s0_x, int dynamic_address) {
-  conv_stencil.conv_stencil_op_hcompute_conv_stencil_4_to_conv_stencil_op_hcompute_conv_stencil_3_8.write(conv_stencil_op_hcompute_conv_stencil_4, (0 - 0) * 1 + (conv_s0_y - 0) * 1 + (conv_s0_x - 0) * 28);
+  conv_stencil.conv_stencil_all_inputs_to_all_outputs.write(conv_stencil_op_hcompute_conv_stencil_4, 0 - 0, conv_s0_y - 0, conv_s0_x - 0);
 }
 
 inline void conv_stencil_op_hcompute_conv_stencil_4_25_write(hw_uint<16>& conv_stencil_op_hcompute_conv_stencil_4_25, conv_stencil_cache& conv_stencil, int root, int conv_s1_r_y, int conv_s1_r_x, int conv_s1_y, int conv_s1_x, int dynamic_address) {
-  conv_stencil.conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_conv_stencil_4_26.write(conv_stencil_op_hcompute_conv_stencil_4_25, (1 - 1) * 1 + (conv_s1_y - 0) * 1 + (conv_s1_x - 0) * 28);
-  conv_stencil.conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_hw_output_stencil_62.write(conv_stencil_op_hcompute_conv_stencil_4_25, (1 - 0) * 1 + (conv_s1_y - 0) * 3 + (conv_s1_x - 0) * 84);
+  conv_stencil.conv_stencil_all_inputs_to_all_outputs.write(conv_stencil_op_hcompute_conv_stencil_4_25, 1 - 0, conv_s1_y - 0, conv_s1_x - 0);
 }
 
 inline void conv_stencil_op_hcompute_conv_stencil_5_43_write(hw_uint<16>& conv_stencil_op_hcompute_conv_stencil_5_43, conv_stencil_cache& conv_stencil, int root, int conv_s1_r_y, int conv_s1_r_x, int conv_s1_y, int conv_s1_x, int dynamic_address) {
-  conv_stencil.conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_conv_stencil_5_44.write(conv_stencil_op_hcompute_conv_stencil_5_43, (2 - 2) * 1 + (conv_s1_y - 0) * 1 + (conv_s1_x - 0) * 28);
-  conv_stencil.conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_hw_output_stencil_62.write(conv_stencil_op_hcompute_conv_stencil_5_43, (2 - 0) * 1 + (conv_s1_y - 0) * 3 + (conv_s1_x - 0) * 84);
+  conv_stencil.conv_stencil_all_inputs_to_all_outputs.write(conv_stencil_op_hcompute_conv_stencil_5_43, 2 - 0, conv_s1_y - 0, conv_s1_x - 0);
 }
 
 inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_3_8_select(conv_stencil_cache& conv_stencil, int root, int conv_s1_r_y, int conv_s1_r_x, int conv_s1_y, int conv_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_3_8 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> conv_stencil[0, conv_s1_y, conv_s1_x] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_3_7 = conv_stencil.conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_conv_stencil_3_8.read(/*ram type address*/ (0 - 0) * 1 + (conv_s1_y - 0) * 1 + (conv_s1_x - 0) * 28);
-    return value_conv_stencil_op_hcompute_conv_stencil_3_7;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_op_hcompute_conv_stencil_4_to_conv_stencil_op_hcompute_conv_stencil_3_8.read(/*ram type address*/ (0 - 0) * 1 + (conv_s1_y - 0) * 1 + (conv_s1_x - 0) * 28);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_1_5 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(0 - 0, conv_s1_y - 0, conv_s1_x - 0);
+  return value_conv_stencil_op_hcompute_conv_stencil_1_5;
   return 0;
 }
 
@@ -481,18 +70,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_4_26_select(conv_stenci
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_4_26 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> conv_stencil[1, conv_s1_y, conv_s1_x] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_1_5 = conv_stencil.conv_stencil_op_hcompute_conv_stencil_1_5_to_conv_stencil_op_hcompute_conv_stencil_4_26.read(/*ram type address*/ (1 - 1) * 1 + (conv_s1_y - 0) * 1 + (conv_s1_x - 0) * 28);
-    return value_conv_stencil_op_hcompute_conv_stencil_1_5;
-  }
-
-  
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4_25 = conv_stencil.conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_conv_stencil_4_26.read(/*ram type address*/ (1 - 1) * 1 + (conv_s1_y - 0) * 1 + (conv_s1_x - 0) * 28);
-    return value_conv_stencil_op_hcompute_conv_stencil_4_25;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_1_5 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(1 - 0, conv_s1_y - 0, conv_s1_x - 0);
+  return value_conv_stencil_op_hcompute_conv_stencil_1_5;
   return 0;
 }
 
@@ -500,18 +79,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_5_44_select(conv_stenci
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_5_44 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> conv_stencil[2, conv_s1_y, conv_s1_x] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_2_6 = conv_stencil.conv_stencil_op_hcompute_conv_stencil_2_6_to_conv_stencil_op_hcompute_conv_stencil_5_44.read(/*ram type address*/ (2 - 2) * 1 + (conv_s1_y - 0) * 1 + (conv_s1_x - 0) * 28);
-    return value_conv_stencil_op_hcompute_conv_stencil_2_6;
-  }
-
-  
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_5_43 = conv_stencil.conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_conv_stencil_5_44.read(/*ram type address*/ (2 - 2) * 1 + (conv_s1_y - 0) * 1 + (conv_s1_x - 0) * 28);
-    return value_conv_stencil_op_hcompute_conv_stencil_5_43;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_1_5 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(2 - 0, conv_s1_y - 0, conv_s1_x - 0);
+  return value_conv_stencil_op_hcompute_conv_stencil_1_5;
   return 0;
 }
 
@@ -519,24 +88,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_hw_output_stencil_62_select(conv_ste
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_hw_output_stencil_62 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] -> conv_stencil[hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_w <= 2 and 0 <= hw_output_s0_y_yi <= 27 and 0 <= hw_output_s0_x_xi <= 27 }
-  if ((((hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_3_7 = conv_stencil.conv_stencil_op_hcompute_conv_stencil_3_7_to_conv_stencil_op_hcompute_hw_output_stencil_62.read(/*ram type address*/ (hw_output_s0_w - 0) * 1 + (hw_output_s0_y_yi - 0) * 3 + (hw_output_s0_x_xi - 0) * 84);
-    return value_conv_stencil_op_hcompute_conv_stencil_3_7;
-  }
-
-  
-  if ((((-1 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4_25 = conv_stencil.conv_stencil_op_hcompute_conv_stencil_4_25_to_conv_stencil_op_hcompute_hw_output_stencil_62.read(/*ram type address*/ (hw_output_s0_w - 0) * 1 + (hw_output_s0_y_yi - 0) * 3 + (hw_output_s0_x_xi - 0) * 84);
-    return value_conv_stencil_op_hcompute_conv_stencil_4_25;
-  }
-
-  
-  if ((((-2 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_5_43 = conv_stencil.conv_stencil_op_hcompute_conv_stencil_5_43_to_conv_stencil_op_hcompute_hw_output_stencil_62.read(/*ram type address*/ (hw_output_s0_w - 0) * 1 + (hw_output_s0_y_yi - 0) * 3 + (hw_output_s0_x_xi - 0) * 84);
-    return value_conv_stencil_op_hcompute_conv_stencil_5_43;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_1_5 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(hw_output_s0_w - 0, hw_output_s0_y_yi - 0, hw_output_s0_x_xi - 0);
+  return value_conv_stencil_op_hcompute_conv_stencil_1_5;
   return 0;
 }
 
@@ -633,1148 +186,37 @@ inline hw_uint<16> conv_stencil_op_hcompute_hw_output_stencil_read_bundle_read(c
 
 #include "hw_classes.h"
 
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_10_cache {
+struct hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_10_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
+  hw_uint<16> RAM[30][30][8];
+  inline hw_uint<16> read(int d0, int d1, int d2) {
+    return RAM[d0][d1][d2];
   }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_10_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_11_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_11_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_11_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_12_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_12_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_12_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_13_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_13_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_13_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_14_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_14_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_14_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_15_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_15_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_15_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_16_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_16_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_16_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_9_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_9_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_9_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_45_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_45_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_45_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_46_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_46_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_46_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_47_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_47_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_47_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_48_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_48_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_48_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_49_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_49_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_49_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_50_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_50_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_50_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_51_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_51_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_51_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_52_cache {
-	// RAM Box: {[0, 29], [0, 29], [0, 7]}
-	// Capacity: 7200
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[7200];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_52_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*7200);
-  }
-  ~hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_52_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
 
 
 
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 7200);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
+	inline void write(const hw_uint<16> value, int d0, int d1, int d2) {
+    RAM[d0][d1][d2] = value;
   }
 
 };
 
 struct hw_input_global_wrapper_stencil_cache {
-  // # of banks: 24
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_10_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_10;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_11_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_11;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_12_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_12;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_13_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_13;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_14_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_14;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_15_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_15;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_16_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_16;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_9_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_9;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_34;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_45_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_45;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_46_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_46;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_47_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_47;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_48_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_48;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_49_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_49;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_50_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_50;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_51_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_51;
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_52_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_52;
+  // # of banks: 1
+  hw_input_global_wrapper_stencil_all_inputs_to_all_outputs_cache hw_input_global_wrapper_stencil_all_inputs_to_all_outputs;
 };
 
 
 
 inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int hw_input_global_wrapper_s0_z, int dynamic_address) {
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_10.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_11.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_12.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_13.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_14.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_15.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_16.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_9.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_34.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_45.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_46.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_47.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_48.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_49.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_50.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_51.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_52.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, (hw_input_global_wrapper_s0_y - 0) * 1 + (hw_input_global_wrapper_s0_x - 0) * 30 + (hw_input_global_wrapper_s0_z - 0) * 900);
+  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, hw_input_global_wrapper_s0_y - 0, hw_input_global_wrapper_s0_x - 0, hw_input_global_wrapper_s0_z - 0);
 }
 
 inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_10_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv_s1_r_y, int conv_s1_r_x, int conv_s1_y, int conv_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_10 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 1] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_10.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (1 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 1 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1783,7 +225,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_11
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_11 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 2] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_11.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (2 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 2 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1792,7 +234,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_12
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_12 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 3] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_12.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (3 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 3 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1801,7 +243,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_13
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_13 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 4] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_13.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (4 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 4 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1810,7 +252,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_14
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_14 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 5] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_14.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (5 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 5 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1819,7 +261,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_15
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_15 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 7] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_15.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (7 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 7 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1828,7 +270,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_16
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_16 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 6] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_16.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (6 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 6 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1837,7 +279,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_9_
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_9 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_9.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (0 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 0 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1846,7 +288,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 1] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (1 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 1 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1855,7 +297,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 2] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (2 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 2 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1864,7 +306,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 3] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (3 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 3 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1873,7 +315,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 4] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (4 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 4 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1882,7 +324,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 5] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (5 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 5 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1891,7 +333,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 7] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (7 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 7 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1900,7 +342,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 6] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (6 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 6 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1909,7 +351,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_34
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_34 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_34.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (0 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 0 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1918,7 +360,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_45
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_45 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_45.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (0 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 0 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1927,7 +369,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_46
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_46 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 1] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_46.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (1 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 1 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1936,7 +378,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_47
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_47 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 2] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_47.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (2 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 2 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1945,7 +387,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_48
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_48 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 3] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_48.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (3 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 3 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1954,7 +396,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_49
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_49 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 4] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_49.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (4 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 4 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1963,7 +405,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_50
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_50 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 5] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_50.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (5 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 5 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1972,7 +414,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_51
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_51 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 7] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_51.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (7 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 7 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -1981,7 +423,7 @@ inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_52
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_52 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_input_global_wrapper_stencil[conv_s1_r_y + conv_s1_y, conv_s1_r_x + conv_s1_x, 6] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_52.read(/*ram type address*/ (conv_s1_r_y + conv_s1_y - 0) * 1 + (conv_s1_r_x + conv_s1_x - 0) * 30 + (6 - 0) * 900);
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y + conv_s1_y - 0, conv_s1_r_x + conv_s1_x - 0, 6 - 0);
   return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
   return 0;
 }
@@ -2116,1148 +558,37 @@ inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_
 
 #include "hw_classes.h"
 
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_17_cache {
+struct hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache {
 	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_17_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
+  hw_uint<16> RAM[3][3][3][8];
+  inline hw_uint<16> read(int d0, int d1, int d2, int d3) {
+    return RAM[d0][d1][d2][d3];
   }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_17_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_18_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_18_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_18_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_19_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_19_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_19_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_20_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_20_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_20_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_21_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_21_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_21_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_22_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_22_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_22_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_23_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_23_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_23_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_24_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_24_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_24_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_42_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_42_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_42_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_53_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_53_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_53_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_54_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_54_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_54_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_55_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_55_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_55_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_56_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_56_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_56_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_57_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_57_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_57_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_58_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_58_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_58_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_59_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_59_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_59_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
-
-
-
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
-  }
-
-};
-
-struct hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_60_cache {
-	// RAM Box: {[0, 2], [0, 2], [0, 2], [0, 7]}
-	// Capacity: 216
-#ifdef __VIVADO_SYNTH__
-  hw_uint<16> RAM[216];
-#endif //__VIVADO_SYNTH__
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16>* RAM;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_60_cache() {
-    RAM = (hw_uint<16>*) malloc(sizeof(hw_uint<16>)*216);
-  }
-  ~hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_60_cache() {
-    free(RAM);
-  }
-#endif //__VIVADO_SYNTH__
-  inline hw_uint<16> read(const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return RAM[addr];
-  }
 
 
 
-	inline void write(const hw_uint<16> value, const int addr) {
-#ifndef __VIVADO_SYNTH__
-    if (addr < 0 || !(addr < 216)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
-    }
-    assert(addr < 216);
-    assert(addr >= 0);
-#endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    RAM[addr] = value;
+	inline void write(const hw_uint<16> value, int d0, int d1, int d2, int d3) {
+    RAM[d0][d1][d2][d3] = value;
   }
 
 };
 
 struct hw_kernel_global_wrapper_stencil_cache {
-  // # of banks: 24
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_17_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_17;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_18_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_18;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_19_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_19;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_20_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_20;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_21_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_21;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_22_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_22;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_23_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_23;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_24_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_24;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_42_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_42;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_53_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_53;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_54_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_54;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_55_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_55;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_56_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_56;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_57_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_57;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_58_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_58;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_59_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_59;
-  hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_60_cache hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_60;
+  // # of banks: 1
+  hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs_cache hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs;
 };
 
 
 
 inline void hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_write(hw_uint<16>& hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, hw_kernel_global_wrapper_stencil_cache& hw_kernel_global_wrapper_stencil, int root, int hw_kernel_global_wrapper_s0_y, int hw_kernel_global_wrapper_s0_x, int hw_kernel_global_wrapper_s0_w, int hw_kernel_global_wrapper_s0_z, int dynamic_address) {
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_17.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_18.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_19.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_20.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_21.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_22.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_23.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_24.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_42.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_53.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_54.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_55.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_56.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_57.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_58.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_59.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
-  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_60.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, (hw_kernel_global_wrapper_s0_y - 0) * 1 + (hw_kernel_global_wrapper_s0_x - 0) * 3 + (hw_kernel_global_wrapper_s0_w - 0) * 9 + (hw_kernel_global_wrapper_s0_z - 0) * 27);
+  hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2, hw_kernel_global_wrapper_s0_y - 0, hw_kernel_global_wrapper_s0_x - 0, hw_kernel_global_wrapper_s0_w - 0, hw_kernel_global_wrapper_s0_z - 0);
 }
 
 inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_17_select(hw_kernel_global_wrapper_stencil_cache& hw_kernel_global_wrapper_stencil, int root, int conv_s1_r_y, int conv_s1_r_x, int conv_s1_y, int conv_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_17 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 0, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_17.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (0 - 0) * 9 + (0 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 0 - 0, 0 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3266,7 +597,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_1
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_18 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 0, 1] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_18.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (0 - 0) * 9 + (1 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 0 - 0, 1 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3275,7 +606,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_1
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_19 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 0, 2] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_19.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (0 - 0) * 9 + (2 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 0 - 0, 2 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3284,7 +615,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_20 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 0, 3] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_20.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (0 - 0) * 9 + (3 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 0 - 0, 3 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3293,7 +624,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_21 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 0, 4] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_21.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (0 - 0) * 9 + (4 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 0 - 0, 4 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3302,7 +633,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_22 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 0, 5] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_22.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (0 - 0) * 9 + (5 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 0 - 0, 5 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3311,7 +642,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_23 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 0, 7] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_23.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (0 - 0) * 9 + (7 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 0 - 0, 7 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3320,7 +651,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_24 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 0, 6] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_24.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (0 - 0) * 9 + (6 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 0 - 0, 6 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3329,7 +660,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_3
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 1, 1] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (1 - 0) * 9 + (1 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 1 - 0, 1 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3338,7 +669,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_3
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 1, 2] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (1 - 0) * 9 + (2 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 1 - 0, 2 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3347,7 +678,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_3
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 1, 3] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (1 - 0) * 9 + (3 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 1 - 0, 3 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3356,7 +687,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_3
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 1, 4] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (1 - 0) * 9 + (4 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 1 - 0, 4 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3365,7 +696,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_3
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 1, 5] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (1 - 0) * 9 + (5 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 1 - 0, 5 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3374,7 +705,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_4
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 1, 7] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (1 - 0) * 9 + (7 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 1 - 0, 7 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3383,7 +714,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_4
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 1, 6] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (1 - 0) * 9 + (6 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 1 - 0, 6 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3392,7 +723,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_4
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_42 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 1, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_42.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (1 - 0) * 9 + (0 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 1 - 0, 0 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3401,7 +732,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_5
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_53 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 2, 0] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_53.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (2 - 0) * 9 + (0 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 2 - 0, 0 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3410,7 +741,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_5
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_54 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 2, 1] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_54.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (2 - 0) * 9 + (1 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 2 - 0, 1 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3419,7 +750,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_5
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_55 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 2, 2] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_55.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (2 - 0) * 9 + (2 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 2 - 0, 2 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3428,7 +759,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_5
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_56 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 2, 3] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_56.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (2 - 0) * 9 + (3 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 2 - 0, 3 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3437,7 +768,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_5
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_57 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 2, 4] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_57.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (2 - 0) * 9 + (4 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 2 - 0, 4 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3446,7 +777,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_5
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_58 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 2, 5] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_58.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (2 - 0) * 9 + (5 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 2 - 0, 5 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3455,7 +786,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_5
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_59 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 2, 7] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_59.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (2 - 0) * 9 + (7 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 2 - 0, 7 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3464,7 +795,7 @@ inline hw_uint<16> hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_6
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_60 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> hw_kernel_global_wrapper_stencil[conv_s1_r_y, conv_s1_r_x, 2, 6] : 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 and 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 }
-  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_to_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_60.read(/*ram type address*/ (conv_s1_r_y - 0) * 1 + (conv_s1_r_x - 0) * 3 + (2 - 0) * 9 + (6 - 0) * 27);
+  auto value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2 = hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv_s1_r_y - 0, conv_s1_r_x - 0, 2 - 0, 6 - 0);
   return value_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2;
   return 0;
 }
@@ -3597,7 +928,7 @@ inline void hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrappe
 	hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_write(hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_res, hw_kernel_global_wrapper_stencil, root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z, dynamic_address);
 }
 
-// Total re-use buffer capacity: 3035904 bits
+// Total re-use buffer capacity: 156288 bits
 
 
 // Operation logic
@@ -3781,12 +1112,14 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
   global_debug_handle = &debug_file;
 #endif //__VIVADO_SYNTH__
   conv_stencil_cache conv_stencil;
+#pragma HLS array_partition variable=conv_stencil.conv_stencil_cache_all_inputs_to_all_outputs cyclic factor=3 dim=1
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_input_global_wrapper_stencil_cache hw_input_global_wrapper_stencil;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_kernel_global_wrapper_stencil_cache hw_kernel_global_wrapper_stencil;
+#pragma HLS array_partition variable=hw_kernel_global_wrapper_stencil.hw_kernel_global_wrapper_stencil_all_inputs_to_all_outputs cyclic factor=3 dim=3
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
@@ -3849,14 +1182,17 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 	  for (int c3 = 0; c3 <= 29; c3 += 1)
 	    for (int c5 = 0; c5 <= 29; c5 += 1)
 	      for (int c7 = 0; c7 <= 7; c7 += 1)
+#pragma HLS pipeline II=1
 	        op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, 0, c3, c5, c7);
 	  for (int c3 = 0; c3 <= 2; c3 += 1)
 	    for (int c5 = 0; c5 <= 2; c5 += 1)
 	      for (int c7 = 0; c7 <= 2; c7 += 1)
 	        for (int c9 = 0; c9 <= 7; c9 += 1)
+#pragma HLS pipeline II=1
 	          op_hcompute_hw_kernel_global_wrapper_stencil(hw_kernel_stencil /* buf name */, hw_kernel_global_wrapper_stencil, 0, c3, c5, c7, c9);
 	  for (int c3 = 0; c3 <= 27; c3 += 1)
 	    for (int c5 = 0; c5 <= 27; c5 += 1) {
+#pragma HLS pipeline II=1
 	      op_hcompute_conv_stencil(conv_stencil, 0, c3, c5);
 	      op_hcompute_conv_stencil_1(conv_stencil, 0, c3, c5);
 	      op_hcompute_conv_stencil_2(conv_stencil, 0, c3, c5);
@@ -3865,6 +1201,7 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 	    for (int c5 = 0; c5 <= 2; c5 += 1)
 	      for (int c7 = 0; c7 <= 27; c7 += 1)
 	        for (int c9 = 0; c9 <= 27; c9 += 1) {
+#pragma HLS pipeline II=1
 	          op_hcompute_conv_stencil_3(conv_stencil /* buf name */, hw_input_global_wrapper_stencil /* buf name */, hw_kernel_global_wrapper_stencil /* buf name */, 0, c3, c5, c7, c9);
 	          op_hcompute_conv_stencil_4(conv_stencil /* buf name */, hw_input_global_wrapper_stencil /* buf name */, hw_kernel_global_wrapper_stencil /* buf name */, 0, c3, c5, c7, c9);
 	          op_hcompute_conv_stencil_5(conv_stencil /* buf name */, hw_input_global_wrapper_stencil /* buf name */, hw_kernel_global_wrapper_stencil /* buf name */, 0, c3, c5, c7, c9);
@@ -3872,6 +1209,7 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 	  for (int c3 = 0; c3 <= 2; c3 += 1)
 	    for (int c5 = 0; c5 <= 27; c5 += 1)
 	      for (int c7 = 0; c7 <= 27; c7 += 1)
+#pragma HLS pipeline II=1
 	        op_hcompute_hw_output_stencil(conv_stencil /* buf name */, hw_output_stencil, 0, c3, c5, c7);
 	}
 	

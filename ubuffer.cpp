@@ -1658,7 +1658,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
 
     out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
-    if (buf.banking.partition == "register_file") {
+    if (buf.banking.partition == "register_file" || buf.banking.partition == "none") {
       assert(buf.bank_list.size() == 1);
       // Port is irrelevant here
       // TODO: Extract inner bank offset
@@ -2428,7 +2428,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
     banking_strategy strat = options.get_banking_strategy(name);
     banking = strat;
     if (dynamic_ports.size() > 0 ||
-        banking.partition == "register_file") {
+        banking.partition == "register_file" ||
+        banking.partition == "none") {
 
       bank bnk = compute_bank_info();
       for (auto inpt : get_in_ports()) {

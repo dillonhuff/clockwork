@@ -11763,6 +11763,7 @@ void resnet_test() {
   //assert(false);
   add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   prg.pretty_print();
+  assert(false);
   generate_unoptimized_code(prg);
   //assert(false);
 
@@ -14390,15 +14391,19 @@ void resnet_auto_unroll() {
 
   assert(false);
 
-  infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
+  generate_unoptimized_code(prg);
 
-  prg.pretty_print();
-  prg.sanity_check();
-
-  sanity_check_all_reads_defined(prg);
-
-  regression_test(prg);
   assert(false);
+
+  //infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
+
+  //prg.pretty_print();
+  //prg.sanity_check();
+
+  //sanity_check_all_reads_defined(prg);
+
+  //regression_test(prg);
+  //assert(false);
 }
 
 void raw_memtile_verilog_test() {
@@ -14482,9 +14487,9 @@ void brighten_blur_asplos_example() {
 }
 
 void application_tests() {
+  resnet_auto_unroll();
   brighten_blur_asplos_example();
   resnet_auto_unroll();
-  //resnet_auto_unroll();
   raw_memtile_verilog_test();
   raw_memtile_verilog_as_delay_test();
 
