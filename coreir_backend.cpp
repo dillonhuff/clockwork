@@ -2487,13 +2487,24 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(a + " + str(depth - TILE_READ_LATENCY) + ")] }");
       isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
-      auto write_ctrl = affine_controller(def, write_dom, write_addr);
+      auto write_ctrl = affine_controller(def, write_dom, write_sched);
 
       isl_aff* read_sched = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_aff* read_addr = rdaff(ctx, ("{ rd[a] -> [(a)] }"));
       isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
-      auto read_ctrl = affine_controller(def, read_dom, read_addr);
+      auto read_ctrl = affine_controller(def, read_dom, read_sched);
 
+      int capacity = 2048;
+      int addr_width = 16;
+      ram_module(c, width, capacity);
+      auto bnk = def->addInstance(
+          "inner_sram",
+          "global.raw_dual_port_sram_tile",
+          {{"depth", COREMK(c, capacity)}}
+          );
+
+      def->connect(bnk->sel("rdata"), def->sel("self.rdata"));
+      def->connect(bnk->sel("wdata"), def->sel("self.wdata"));
       mod->setDef(def);
     } else {
       assert(options.rtl_options.target_tile == TARGET_TILE_REGISTERS);
