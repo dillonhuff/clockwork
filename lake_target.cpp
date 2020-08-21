@@ -646,6 +646,10 @@ void generate_lake_collateral_dual_sram_raw(const std::string& mod_name, std::os
   outer_port_decls.push_back("output logic valid_out");
   outer_port_decls.push_back("output logic [15:0] rdata");
   outer_port_decls.push_back("output logic [15:0] wdata");
+  outer_port_decls.push_back("output logic [15:0] raddr");
+  outer_port_decls.push_back("output logic [15:0] waddr");
+  outer_port_decls.push_back("output logic ren_in");
+  outer_port_decls.push_back("output logic wen_in");
 
   vector<string> external;
   for (auto s : outer_port_decls) {
@@ -723,6 +727,10 @@ void generate_lake_collateral_dual_sram_raw(const std::string& mod_name, std::os
       decls.push_back(".data_in" + parens(f.back()));
     } else if (name == "rdata") {
       decls.push_back(".data_out" + parens(f.back()));
+    } else if (name == "clk_en") {
+      decls.push_back(".clk_en(1)");
+    } else if (name == "tile_en") {
+      decls.push_back(".tile_en(1)");
     } else {
       decls.push_back("." + f.back() + parens(f.back()));
     }
