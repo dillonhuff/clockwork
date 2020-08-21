@@ -9994,8 +9994,8 @@ void run_verilator_tb(const std::string& name) {
   int res = run_verilator_on(name,
       name + "_verilog_tb.cpp",
       {name + ".v", name + "_verilog_collateral.sv",
-      //"./lake_components/dualwithadd/lake_top.sv",
-      "./lake_components/ASPLOS_designs/bare_dual_port.v",
+      "./lake_components/dualwithadd/lake_top.sv",
+      //"./lake_components/ASPLOS_designs/bare_dual_port.v",
       "./lake_components/inner_affine_controller.sv"});
 
   assert(res == 0);
@@ -13299,7 +13299,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
-    TARGET_TILE_REGISTERS;
+    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+    //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13548,7 +13549,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    //assert(false);
+    assert(false);
     //string app_type = "dse_raw_sram";
     //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
     //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
@@ -13858,25 +13859,6 @@ void cgra_flow_tests() {
   //assert(false);
 
   auto test_programs = stencil_programs();
-  //auto test_programs = all_cgra_programs();
-  //cout << "====== Program classification" << endl;
-  //for (auto prg : test_programs) {
-    //if (!is_rate_matchable(prg)) {
-      //cout << tab(1) << prg.name << " is not rate matchable" << endl;
-      //for (auto b : all_buffers(prg)) {
-        //if (!prg.is_boundary(b)) {
-          //if (is_reduce_buffer(b, prg)) {
-            //cout << tab(2) << "REDUCE: " << b << endl;
-          //} else {
-            //cout << tab(2) << "PC    : " << b << endl;
-          //}
-          //cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
-          //cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
-        //}
-      //}
-    //}
-  //}
-  //assert(false);
 
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
