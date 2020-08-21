@@ -2833,7 +2833,8 @@ void generate_regression_testbench(prog& prg) {
     rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
-      inds.push_back(str(unroll) + "*i + " + str(i));
+      inds.push_back("rand() % 256");
+      //inds.push_back(str(unroll) + "*i + " + str(i));
     }
     pack_bv(2, rgtb, "value", inds, lane_width);
     rgtb << tab(2) << in << ".write(value);" << endl;
