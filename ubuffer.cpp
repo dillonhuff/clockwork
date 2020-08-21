@@ -3,6 +3,7 @@
 #ifdef COREIR
 #include "cwlib.h"
 #include "coreir_backend.h"
+#include "lake_target.h"
 
 using CoreIR::Instance;
 using CoreIR::Wireable;
@@ -1097,6 +1098,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       int bits = ceil(log2(banking));
       cout << "Created " << banking << " banks in dimension " << bank_dim << " for buffer: " << buf.name << endl;
       cout << tab(1) << "Need to check " << bits << " bits to find the bank" << endl;
+
+      ofstream outfile("resnet_banks.v");
+      generate_lake_collateral_dual_sram_cyclic_banks(
+          "test_bank",
+          outfile,
+          {banking, 1, 1},
+          buf.get_in_ports().size(),
+          buf.get_out_ports().size());
       assert(false);
     }
 
