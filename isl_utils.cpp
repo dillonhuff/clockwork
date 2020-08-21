@@ -2977,3 +2977,26 @@ void release(isl_union_map* m) {
 void release(isl_union_pw_qpolynomial* m) {
   isl_union_pw_qpolynomial_free(m);
 }
+
+isl_map* linear_address_map(isl_set* s) {
+  string domain = name(s);
+  int dim = num_dims(s);
+  vector<string> var_names;
+  vector<string> exprs;
+  isl_val* stride = one(ctx(s));
+  for (int i = 0; i < dim; i++) {
+    string var = "d" + str(i);
+    var_names.push_back(var);
+    string stridestr = str(stride);
+    exprs.push_back(stridestr + "*" + var);
+    auto interval = project_all_but(s, i);
+    isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
+    stride = mul(stride, extend);
+  }
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
+  return isl_map_read_from_str(ctx(s), map_str.c_str());
+}
+
+isl_map* to_map(isl_aff* s) {
+  assert(false);
+}
