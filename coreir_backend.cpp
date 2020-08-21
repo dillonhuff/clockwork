@@ -2500,7 +2500,6 @@ CoreIR::Module* delay_module(CodegenOptions& options,
     if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
       generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
     } else if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_RAW) {
-      //generate_lake_collateral_dual_sram_raw(mod->getName(), *verilog_collateral_file, D);
       auto def = mod->newModuleDef();
 
       int depth = D;
@@ -2533,11 +2532,13 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       int capacity = 2048;
       int addr_width = 16;
       ram_module(c, width, capacity);
+      string inner_sram_name = "inner_sram_" + c->getUnique();
       auto bnk = def->addInstance(
-          "inner_sram",
+          inner_sram_name,
           "global.raw_dual_port_sram_tile",
           {{"depth", COREMK(c, capacity)}}
           );
+      generate_lake_collateral_dual_sram_raw(inner_sram_name, *verilog_collateral_file);
 
       def->connect(bnk->sel("rdata"), def->sel("self.rdata"));
       def->connect(bnk->sel("wdata"), def->sel("self.wdata"));
