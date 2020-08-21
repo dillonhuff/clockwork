@@ -1062,6 +1062,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
       cout << tab(1) << buf.name << endl;
       int banking = 1;
       isl_map* banking_map = nullptr;
+      int bank_dim = 0;
       for (int i = 0; i < 4; i++) {
         string scheme_str = curlies("conv_stencil[x, y, z] -> B[x % " + str(banking) + "] }");
         banking_map = isl_map_read_from_str(buf.ctx, scheme_str.c_str());
@@ -1069,28 +1070,34 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
           break;
         } else {
         }
-        banking++;
+        banking *= 2;
+        //banking++;
       }
       cout << "last banking checked: " << banking << endl;
       assert(banking_map != nullptr);
 
-      for (auto inpt : buf.get_all_ports()) {
-        cout << "Checking bank properties of " << inpt << endl;
-        isl_map* acc = to_map(buf.access_map[inpt]);
-        cout << tab(1) << str(acc) << endl;
-        auto val = dot(acc, banking_map);
-        cout << tab(2) << str(val) << endl;
-        auto out_banks = range(val);
-        cout << tab(2) << "# out banks: " << str(out_banks) << endl;
-        assert(isl_set_is_singleton(out_banks));
+      //for (auto inpt : buf.get_all_ports()) {
+        //cout << "Checking bank properties of " << inpt << endl;
+        //isl_map* acc = to_map(buf.access_map[inpt]);
+        //cout << tab(1) << str(acc) << endl;
+        //auto val = dot(acc, banking_map);
+        //cout << tab(2) << str(val) << endl;
+        //auto out_banks = range(val);
+        //cout << tab(2) << "# out banks: " << str(out_banks) << endl;
+        //assert(isl_set_is_singleton(out_banks));
+      //}
+      //assert(false);
 
-      }
-      assert(false);
-      vector<Instance*> banks;
+      map<int, Instance*> banks;
       int r = 0;
       for (int b = 0; b < banking; b++) {
-        banks.push_back(def->addInstance(buf.name + "_bank_" + c->getUnique(), "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}}));
+        banks[b] = def->addInstance(buf.name + "_bank_" + c->getUnique(), "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}});
       }
+
+      int bits = ceil(log2(banking));
+      cout << "Created " << banking << " banks in dimension " << bank_dim << " for buffer: " << buf.name << endl;
+      cout << tab(1) << "Need to check " << bits << " bits to find the bank" << endl;
+      assert(false);
     }
 
     return;
