@@ -13296,10 +13296,10 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  options.rtl_options.use_external_controllers = false;
+  options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
-    TARGET_TILE_DUAL_SRAM_RAW;
-    //TARGET_TILE_REGISTERS;
+    //TARGET_TILE_DUAL_SRAM_RAW;
+    TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13494,7 +13494,7 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  //test_programs.push_back(unsharp());
+  test_programs.push_back(unsharp());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
@@ -13842,20 +13842,20 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  prog prg = gaussian();
-  dsa_writers(prg);
-  compile_for_garnet_dual_port_mem(prg);
-  string name = prg.name;
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
-  assert(to_verilog_res == 0);
-  string app_type = "dualraw";
-  cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
-  cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  cmd("cp ./lake_components/ASPLOS_designs/bare_dual_port.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //prog prg = gaussian();
+  //dsa_writers(prg);
+  //compile_for_garnet_dual_port_mem(prg);
+  //string name = prg.name;
+  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  //assert(to_verilog_res == 0);
+  //string app_type = "dualraw";
+  //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+  //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //cmd("cp ./lake_components/ASPLOS_designs/bare_dual_port.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
 
-  assert(false);
+  //assert(false);
 
   auto test_programs = stencil_programs();
   //auto test_programs = all_cgra_programs();
