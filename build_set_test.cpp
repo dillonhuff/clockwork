@@ -13292,7 +13292,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.all_rams = true;
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
-    TARGET_TILE_REGISTERS;
+    TARGET_TILE_DUAL_SRAM_RAW;
+    //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
