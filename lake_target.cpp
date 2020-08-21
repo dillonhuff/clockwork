@@ -735,6 +735,8 @@ void generate_lake_collateral_dual_sram_raw(const std::string& mod_name, std::os
       decls.push_back("." + f.back() + parens(f.back()));
     }
   }
+  decls.push_back(".clk_en(1)");
+  decls.push_back(".tile_en(1)");
   out << endl;
   out << tab(1) << "LakeTop lake(" << comma_list(decls) << ");" << endl;
   out << endl;
