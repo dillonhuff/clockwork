@@ -2431,7 +2431,8 @@ CoreIR::Module* reg_delay_module(CoreIR::Context* c, const int width, const vect
   return mod;
 }
 
-CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays) {
+CoreIR::Module* delay_module(CodegenOptions& options,
+    CoreIR::Context* c, const int width, const vector<int>& read_delays) {
   assert(read_delays.size() == 1);
   int D = read_delays.at(0);
   auto ns = c->getNamespace("global");
@@ -2460,7 +2461,12 @@ CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<i
 
     mod = ns->newModuleDecl("memtile_long_delay_" + c->getUnique(), c->Record(fields));
     assert(verilog_collateral_file != nullptr);
-    generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
+
+    if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+      generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
+    } else {
+      assert(false);
+    }
 
     //auto def = mod->newModuleDef();
 

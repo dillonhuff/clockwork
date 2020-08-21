@@ -1293,7 +1293,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
               string outpt = delays.at(d).first;
 
               int diff = total_delay - prior_delay;
-              CoreIR::Module* srmod = delay_module(c, width, {diff});
+              CoreIR::Module* srmod = delay_module(options, c, width, {diff});
               auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
 
               cout << "SRMOD" << endl;
