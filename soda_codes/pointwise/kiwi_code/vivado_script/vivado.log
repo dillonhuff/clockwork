@@ -1,0 +1,17 @@
+#-----------------------------------------------------------
+# Vivado v2018.2 (64-bit)
+# SW Build 2258646 on Thu Jun 14 20:02:38 MDT 2018
+# IP Build 2256618 on Thu Jun 14 22:10:49 MDT 2018
+# Start of session at: Tue Aug 25 00:10:57 2020
+# Process ID: 18434
+# Current directory: /nobackup/joeyliu/aha/poly/clockwork/soda_codes/pointwise/kiwi_code/vivado_script
+# Command line: vivado clockwork_pw.tcl -tclargs --origin_dir . --ip_dir ../pointwise_proj/solution1/impl/ip/ --project_name clockwork_pointwise
+# Log file: /nobackup/joeyliu/aha/poly/clockwork/soda_codes/pointwise/kiwi_code/vivado_script/vivado.log
+# Journal file: /nobackup/joeyliu/aha/poly/clockwork/soda_codes/pointwise/kiwi_code/vivado_script/vivado.jou
+#-----------------------------------------------------------
+start_gui
+xterm: Xt error: Can't open display: 
+xterm: DISPLAY is not set
+ERROR: [Common 17-1374] Display test failed. Please check DISPLAY environment variable and X server permissions for remote display.
+open_project clockwork_pw.tcl
+ERROR: [Coretcl 2-155] Invalid project file name 'clockwork_pw.tcl'. File must have a valid Vivado project extension (.xpr/.ppr).
