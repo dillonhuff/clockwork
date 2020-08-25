@@ -13300,8 +13300,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
-    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
-    //TARGET_TILE_REGISTERS;
+    // TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+    TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13496,14 +13496,14 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
+  // test_programs.push_back(camera_pipeline());
   //test_programs.push_back(unsharp());
   test_programs.push_back(gaussian());
-  test_programs.push_back(pointwise());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(harris());
-  test_programs.push_back(down_sample());
-  test_programs.push_back(cascade());
-  test_programs.push_back(up_sample());
+  // test_programs.push_back(pointwise());
+  // test_programs.push_back(harris());
+  // test_programs.push_back(down_sample());
+  // test_programs.push_back(cascade());
+  // test_programs.push_back(up_sample());
 
   // Delayed incorrectly?
 
@@ -13541,7 +13541,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     //assert(false);
 
     dsa_writers(prg);
-    auto cpu = unoptimized_result(prg);
+    // auto cpu = unoptimized_result(prg);
+    vector<string> cpu;
 
     compile_for_garnet_dual_port_mem(prg);
     generate_regression_testbench(prg);
@@ -13859,7 +13860,38 @@ void cgra_flow_tests() {
 
   //assert(false);
 
-  auto test_programs = stencil_programs();
+  //auto test_programs = stencil_programs();
+  auto test_programs = all_cgra_programs();
+
+  test_stencil_codegen(test_programs);
+  //test_schedules(test_programs);
+
+  assert(false);
+}
+
+void dse_flow_tests() {
+
+  vector<prog> test_programs;
+
+  // test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(unsharp());
+  // test_programs.push_back(gaussian());
+  // test_programs.push_back(pointwise());
+  // test_programs.push_back(harris());
+  // test_programs.push_back(down_sample());
+  // test_programs.push_back(cascade());
+  test_programs.push_back(stereo());
+
+  // Delayed incorrectly?
+
+  // Compute units gone?
+  //test_programs.push_back(rom());
+  //test_programs.push_back(mini_conv_halide_fixed());
+  //test_programs.push_back(strided_conv());
+
+
+
+  
 
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
@@ -14961,6 +14993,12 @@ int main(int argc, char** argv) {
       return 0;
     }
 
+
+    if (cmd == "dse-flow") {
+      dse_flow_tests();
+      return 0;
+    }
+
     if (cmd == "asplos-examples") {
       generate_asplos_examples();
       return 0;
@@ -15054,4 +15092,3 @@ int main(int argc, char** argv) {
 
   return 0;
 }
-

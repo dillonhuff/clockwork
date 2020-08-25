@@ -743,3 +743,6 @@ void generate_lake_collateral_dual_sram_raw(const std::string& mod_name, std::os
   out << "endmodule" << endl;
 }
 
+void generate_lake_collateral_dual_sram_cyclic_banks(const std::string& mod_name, std::ostream& out, const std::vector<int>& factors, const int in_ports, const int out_ports) {
+
+}

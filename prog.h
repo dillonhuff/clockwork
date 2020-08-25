@@ -374,6 +374,7 @@ struct ir_node {
   }
 
   op* container_child(op* source) {
+    assert(source != nullptr);
     for (auto c : children) {
       if (source == c) {
         return c;
@@ -1460,6 +1461,9 @@ std::set<string> get_produced_buffers(const std::string& kernel, prog& original)
 std::set<string> get_consumed_buffers(const std::set<std::string>& group, prog& original);
 std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
 
+
+std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
+
 void generate_verilog(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1475,6 +1479,7 @@ void all_register_files(prog& prg, CodegenOptions& options);
 int compile_compute(const std::string& name);
 
 vector<string> surrounding_vars(op* loop, prog& prg);
+vector<op*> surrounding_vars_ops(op* loop, prog& prg);
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
 
 
@@ -1491,6 +1496,9 @@ map<string, int> get_variable_levels(prog& prg);
 
 std::set<string> all_buffers(prog& prg);
 std::set<op*> find_readers(const string& buff, prog& prg);
+
+std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group);
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
 
 void release(ir_node* op);
 void release(prog& prg);
