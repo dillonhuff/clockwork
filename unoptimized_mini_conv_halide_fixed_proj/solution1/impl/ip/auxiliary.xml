@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xd:acceleratorMap xmlns:xd="http://www.xilinx.com/xidane" xd:functionName="unoptimized_mini_conv_halide_fixed" xd:componentRef="unoptimized_mini_conv_halide_fixed" xd:initiationInterval="317" xd:clockPeriod="5.000" xd:sequential="true" xd:hostMachine="64" xd:reset="control">
-  <xd:controlReg xd:name="control" xd:interfaceRef="ap_ctrl" xd:busTypeRef="acc_handshake" xd:type="acc_handshake"/>
-  <xd:arg xd:name="hw_input_stencil.values.val" xd:originalName="hw_input_stencil" xd:direction="in" xd:interfaceRef="hw_input_stencil_values_V_val_V" xd:busTypeRef="acc_fifo" xd:dataWidth="16"/>
-  <xd:arg xd:name="hw_output_stencil.values.val" xd:originalName="hw_output_stencil" xd:direction="out" xd:interfaceRef="hw_output_stencil_values_V_val_V" xd:busTypeRef="acc_fifo" xd:firstOut="4" xd:dataWidth="16"/>
-  <xd:latencyEstimates xd:best-case="316" xd:worst-case="316" xd:average-case="316"/>
-  <xd:resourceEstimates xd:LUT="132" xd:FF="64" xd:BRAM="1" xd:DSP="0"/>
-</xd:acceleratorMap>
