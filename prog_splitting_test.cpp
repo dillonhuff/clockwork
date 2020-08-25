@@ -236,13 +236,12 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 	// Change every address' variable name for its <level> (normalize it)
 	for(auto addr : addresses){
 		normalized_address normalized = addr;
+		std::vector<std::pair<string, int>> sorted_variables;
 		for(auto level : levels){
 			string var = level.first;
 			int level_index = level.second;
 			string new_var_name = "<" + str(level_index) + ">";
-		//	if(){
 				normalized = ReplaceString(normalized, var, new_var_name); //Change this to only replace when var is the whole name of the variable
-		//	}
 		}
 		auto node = buffer_addresses.extract(addr);
 		node.key() = normalized;
@@ -635,20 +634,23 @@ prog simple_stencil(){
 //--------------------------------------------------TOY_TASK----------------------------------------------------------
 void toy_task(){
 
-
 	vector<prog> example_progs;
-	example_progs.push_back(simple_stencil());
-//	example_progs.push_back(brighten_blur());
-//	example_progs.push_back(unet_conv_3_3());
-//	example_progs.push_back(resnet());
+//	example_progs.push_back(simple_stencil());
+	example_progs.push_back(brighten_blur());
+	example_progs.push_back(unet_conv_3_3());
+	example_progs.push_back(gaussian());
+	example_progs.push_back(harris());
+	example_progs.push_back(cascade());
+	example_progs.push_back(resnet());
+	example_progs.push_back(accumulation());
 
 	vector<pair<string, int>> prog_costs;
 
 	for(auto prg : example_progs){
 		//	generate_optimized_code(prg);
-		//	generate_unoptimized_code(prg);
+			generate_unoptimized_code(prg);
 		//	assert(false);
-
+/*
 		// Estimate the area required for each kernel in the application
 		TargetTechlibInfo target_info;
 		target_info.sram_cost_per_bit = 1;
@@ -697,6 +699,7 @@ void toy_task(){
 		}
 
 		estimate_kernel_memory_area(prg, target_info);
+*/
 //		assert(false);	
 /*
 		map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
@@ -742,6 +745,7 @@ void toy_task(){
 //	assert(false);
 
 }
+
 
 void accumulation_reduce_test(){
 	prog prg = accumulation();
@@ -791,6 +795,7 @@ void harris_stencil_test(){
 
 void pointwise_pointwise_test(){
 	prog prg = pointwise();
+	prg.pretty_print();
 	assert(is_pointwise("hw_input_stencil", prg));
 	assert(is_pointwise("mult_stencil", prg));
 }
@@ -911,5 +916,6 @@ void prog_splitting_unit_tests(){
 void prog_splitting_tests() {
 //	prog_splitting_unit_tests();
 	toy_task();
+//	brighten_blur_stencil_test();
 }
 
