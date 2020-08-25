@@ -1461,6 +1461,9 @@ std::set<string> get_produced_buffers(const std::string& kernel, prog& original)
 std::set<string> get_consumed_buffers(const std::set<std::string>& group, prog& original);
 std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
 
+
+std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original);
+
 void generate_verilog(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,

@@ -1,0 +1,1086 @@
+\section{\protect\PolyLib/ interface of the \protect\ai[\tt]{barvinok} library
+(obsolescent)}
+
+Although \barvinok/ currently still uses \PolyLib/ internally,
+this is likely to change in the not too distant future.
+Consider using \isl/ based alternatives for the functions in this section
+as the latter are likely to be removed in future releases.
+
+Our \barvinok/ library is built on top of \PolyLib/ 
+\shortcite{Wilde1993,Loechner1999}.
+In particular, it reuses the implementations
+of the algorithm of 
+\shortciteN{Loechner97parameterized}
+for computing parametric vertices
+and the algorithm of
+\shortciteN{Clauss1998parametric}
+for computing chamber decompositions.
+Initially, our library was meant to be a replacement
+for the algorithm of \shortciteN{Clauss1998parametric},
+also implemented in \PolyLib/, for computing quasi-polynomials.
+To ease the transition of application programs we
+tried to reuse the existing data structures as much as possible.
+
+\subsection{Existing Data Structures}
+\label{a:existing}
+
+Inside \PolyLib/ integer values are represented by the 
+\ai[\tt]{Value} data type.
+Depending on a configure option, the data type may
+either by a 32-bit integer, a 64-bit integer
+or an arbitrary precision integer using \ai[\tt]{GMP}.
+The \barvinok/ library requires that \PolyLib/ is compiled
+with support for arbitrary precision integers.
+
+The basic structure for representing (unions of) polyhedra is a
+\ai[\tt]{Polyhedron}.
+\begin{verbatim}
+typedef struct polyhedron {
+  unsigned Dimension, NbConstraints, NbRays, NbEq, NbBid;
+  Value **Constraint;
+  Value **Ray;
+  Value *p_Init;
+  int p_Init_size;
+  struct polyhedron *next;
+} Polyhedron;
+\end{verbatim}
+The attribute \ai[\tt]{Dimension} is the dimension
+of the ambient space, i.e., the number of variables.
+The attributes \ai[\tt]{Constraint}
+and \ai[\tt]{Ray} point to two-dimensional arrays
+of constraints and generators, respectively.
+The number of rows is stored in
+\ai[\tt]{NbConstraints} and
+\ai[\tt]{NbRays}, respectively.
+The number of columns in both arrays is equal
+to \verb!1+Dimension+1!.
+The first column of \ai[\tt]{Constraint} is either
+$0$ or $1$ depending on whether the constraint 
+is an equality ($0$) or an inequality ($1$).
+The number of equalities is stored in \ai[\tt]{NbEq}.
+If the constraint is $\sp a x + c \ge 0$, then
+the next columns contain the coefficients $a_i$
+and the final column contains the constant $c$.
+The first column of \ai[\tt]{Ray} is either
+$0$ or $1$ depending on whether the generator 
+is a line ($0$) or a vertex or ray ($1$).
+The number of lines is stored in \ai[\tt]{NbBid}.
+Let $d$ be the \ac{lcm} of the denominators of the coordinates
+of a vertex $\vec v$, then the next columns contain
+$d v_i$ and the final column contains $d$.
+For a ray, the final column contains $0$.
+The field \ai[\tt]{next} points to the next polyhedron in
+the union of polyhedra.
+It is \verb+0+ if this is the last (or only) polyhedron in the union.
+For more information on this structure, we refer to \shortciteN{Wilde1993}.
+
+Quasi-polynomials are represented using the 
+\ai[\tt]{evalue} and \ai[\tt]{enode} structures.
+\begin{verbatim}
+typedef enum { polynomial, periodic, evector } enode_type;
+
+typedef struct _evalue {
+  Value d;              /* denominator */
+  union {
+    Value n;            /* numerator (if denominator != 0) */
+    struct _enode *p;   /* pointer   (if denominator == 0) */
+  } x;
+} evalue;
+
+typedef struct _enode {
+  enode_type type;      /* polynomial or periodic or evector */
+  int size;             /* number of attached pointers */
+  int pos;              /* parameter position */
+  evalue arr[1];        /* array of rational/pointer */
+} enode;
+\end{verbatim}
+If the field \ai[\tt]{d} of an \ai[\tt]{evalue} is zero, then
+the \ai[\tt]{evalue} is a placeholder for a pointer to
+an \ai[\tt]{enode}, stored in \ai[\tt]{x.p}.
+Otherwise, the \ai[\tt]{evalue} is a rational number with
+numerator \ai[\tt]{x.n} and denominator \ai[\tt]{d}.
+An \ai[\tt]{enode} is either a \ai[\tt]{polynomial}
+or a \ai[\tt]{periodic}, depending on the value
+of \ai[\tt]{type}.
+The length of the array \ai[\tt]{arr} is stored in \ai[\tt]{size}.
+For a \ai[\tt]{polynomial}, \ai[\tt]{arr} contains the coefficients.
+For a \ai[\tt]{periodic}, it contains the values for the different
+residue classes modulo the parameter indicated by \ai[\tt]{pos}.
+For a polynomial, \ai[\tt]{pos} refers to the variable
+of the polynomial.
+The value of \ai[\tt]{pos} is \verb+1+ for the first parameter.
+That is, if the value of \ai[\tt]{pos} is \verb+1+ and the first
+parameter is $p$, and if the length of the array is $l$,
+then in case it is a polynomial, the
+ \ai[\tt]{enode} represents
+$$
+\verb+arr[0]+ + \verb+arr[1]+ p + \verb+arr[2]+ p^2 + \cdots +
+\verb+arr[l-1]+ p^{l-1}
+.
+$$
+If it is a periodic, then it represents
+$$
+\left[
+\verb+arr[0]+, \verb+arr[1]+,  \verb+arr[2]+, \ldots,
+\verb+arr[l-1]+
+\right]_p
+.
+$$
+Note that the elements of a \ai[\tt]{periodic} may themselves
+be other \ai[\tt]{periodic}s or even \ai[\tt]{polynomial}s.
+In our library, we only allow the elements of a  \ai[\tt]{periodic}
+to be other \ai[\tt]{periodic}s or rational numbers.
+The chambers and their corresponding quasi-polynomial are
+stored in \ai[\tt]{Enumeration} structures.
+\begin{verbatim}
+typedef struct _enumeration {
+  Polyhedron *ValidityDomain; /* constraints on the parameters */
+  evalue EP;                  /* dimension = combined space    */
+  struct _enumeration *next;  /* Ehrhart Polynomial,
+                                 corresponding to parameter
+                                 values inside the domain
+                                 ValidityDomain above          */
+} Enumeration;
+\end{verbatim}
+For more information on these structures, we refer to \shortciteN{Loechner1999}.
+
+\begin{example}
+Figure~\ref{f:Loechner} is a skillful reconstruction
+of Figure~2 from \shortciteN{Loechner1999}.
+It shows the contents of the \ai[\tt]{enode} structures
+representing the quasi-polynomial
+$
+[1,2]_p p^2 + 3 p + \frac 5 2
+$.
+
+\begin{figure}
+\begin{xy}
+\POS(0,0)*!UL{\hbox{
+\tt
+\begin{tabular}{|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{type} & polynomial \\
+\hline
+\multicolumn{2}{|c|}{size} & 3 \\
+\hline
+\multicolumn{2}{|c|}{pos} & 1 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[0]}} & d & 2 \\
+\cline{2-3}
+       & x.n & 5 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[1]}} & d & 1 \\
+\cline{2-3}
+       & x.n & 3 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[2]}} & d & 0 \\
+\cline{2-3}
+       & x.p &   \\
+\hline
+\end{tabular}
+}
+}="box1"
++DR*!DR\hbox{\strut\hskip 1.5\tabcolsep\phantom{\tt polynomial}\hskip 1.5\tabcolsep}+C="a"
+\POS(60,-15)*!UL{\hbox{
+\tt
+\begin{tabular}{|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{type} & periodic \\
+\hline
+\multicolumn{2}{|c|}{size} & 2 \\
+\hline
+\multicolumn{2}{|c|}{pos} & 1 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[0]}} & d & 1 \\
+\cline{2-3}
+       & x.n & 1 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[1]}} & d & 1 \\
+\cline{2-3}
+       & x.n & 2 \\
+\hline
+\end{tabular}
+}
+}="box2"
++UL+<0.5\tabcolsep,0pt>*!UL\hbox{\strut}+CL="b"
+\POS"a"\ar@(r,l) "b"
+\POS"box1"+UC*++!D\hbox{\tt enode}
+\POS"box2"+UC*++!D\hbox{\tt enode}
+\end{xy}
+\caption{The quasi-polynomial $[1,2]_p p^2 + 3 p + \frac 5 2$.}
+\label{f:Loechner}
+\end{figure}
+\end{example}
+
+\subsection{Options}
+\label{a:options}
+
+The \ai[\tt]{barvinok\_options} structure contains various
+options that influence the behavior of the library.
+
+\begin{verbatim}
+struct barvinok_options {
+    struct barvinok_stats   *stats;
+
+    /* PolyLib options */
+    unsigned    MaxRays;
+
+    /* NTL options */
+                /* LLL reduction parameter delta=LLL_a/LLL_b */
+    long        LLL_a;
+    long        LLL_b;
+
+    /* barvinok options */
+    #define	BV_SPECIALIZATION_BF		2
+    #define	BV_SPECIALIZATION_DF		1
+    #define	BV_SPECIALIZATION_RANDOM	0
+    #define	BV_SPECIALIZATION_TODD		3
+    int         incremental_specialization;
+
+    unsigned long           max_index;
+    int                     primal;
+    int                     lookup_table;
+    int                     count_sample_infinite;
+
+    int                     try_Delaunay_triangulation;
+
+    #define     BV_APPROX_SIGN_NONE     0
+    #define     BV_APPROX_SIGN_APPROX   1
+    #define     BV_APPROX_SIGN_LOWER    2
+    #define     BV_APPROX_SIGN_UPPER    3
+    int                     polynomial_approximation;
+    #define     BV_APPROX_NONE          0
+    #define     BV_APPROX_DROP          1
+    #define     BV_APPROX_SCALE         2
+    #define     BV_APPROX_VOLUME        3
+    #define	BV_APPROX_BERNOULLI	4
+    int                     approximation_method;
+    #define     BV_APPROX_SCALE_FAST    (1 << 0)
+    #define     BV_APPROX_SCALE_NARROW  (1 << 1)
+    #define     BV_APPROX_SCALE_NARROW2 (1 << 2)
+    #define     BV_APPROX_SCALE_CHAMBER (1 << 3)
+    int                     scale_flags;
+    #define     BV_VOL_LIFT             0
+    #define     BV_VOL_VERTEX           1
+    #define     BV_VOL_BARYCENTER       2
+    int                     volume_triangulate;
+
+    /* basis reduction options */
+    #define     BV_GBR_GLPK     1
+    #define     BV_GBR_CDD      2
+    int         gbr_lp_solver;
+
+    #define     BV_LP_POLYLIB           0
+    #define     BV_LP_GLPK              1
+    #define     BV_LP_CDD               2
+    #define     BV_LP_CDDF              3
+    int         lp_solver;
+
+    #define     BV_HULL_GBR             0
+    #define     BV_HULL_HILBERT         1
+    int         integer_hull;
+};
+
+struct barvinok_options *barvinok_options_new_with_defaults();
+\end{verbatim}
+
+The function \ai[\tt]{barvinok\_options\_new\_with\_defaults}
+can be used to create a \ai[\tt]{barvinok\_options} structure
+with default values.
+
+\begin{itemize}
+\item \PolyLib/ options
+
+\begin{itemize}
+
+\item \ai[\tt]{MaxRays}
+
+The value of \ai[\tt]{MaxRays} is passed to various \PolyLib/
+functions and defines the
+maximum size of a table used in the \ai{double description} computation
+in the \PolyLib/ function \ai[\tt]{Chernikova}.
+In earlier versions of \PolyLib/,
+this parameter had to be conservatively set
+to a high number to ensure successful operation,
+resulting in significant memory overhead.
+Our change to allow this table to grow
+dynamically is available in recent versions of \PolyLib/.
+In these versions, the value no longer indicates the maximal
+table size, but rather the size of the initial allocation.
+This value may be set to \verb+0+ or left as set
+by \ai[\tt]{barvinok\_options\_new\_with\_defaults}.
+
+\end{itemize}
+
+\item \ai[\tt]{NTL} options
+
+\begin{itemize}
+
+\item \ai[\tt]{LLL\_a}
+\item \ai[\tt]{LLL\_b}
+
+The values used for the \ai{reduction parameter}
+in the call to \ai[\tt]{NTL}'s implementation of \indac{LLL}.
+
+\end{itemize}
+
+\item \ai[\tt]{barvinok} specific options
+
+\begin{itemize}
+
+\item \ai[\tt]{incremental\_specialization}
+
+Selects the \ai{specialization} algorithm to be used.
+If set to {\tt 0} then a direct specialization is performed
+using a random vector.
+Value {\tt 1} selects a depth first incremental specialization,
+while value {\tt 2} selects a breadth first incremental specialization.
+The default is selected by the \ai[\tt]{--enable-incremental}
+\ai[\tt]{configure} option.
+For more information we refer to~\citeN[Section~4.4.3]{Verdoolaege2005PhD}.
+
+\end{itemize}
+
+\end{itemize}
+
+\subsection{Data Structures for Quasi-polynomials}
+\label{a:data}
+
+Internally, we do not represent our \ai{quasi-polynomial}s
+as step-polynomials, but instead as polynomials of
+fractional parts of degree-$1$ polynomials.
+However, we also allow our quasi-polynomials to be represented
+as polynomials with periodic numbers for coefficients,
+similarly to \shortciteN{Loechner1999}.
+By default, the current version of \barvinok/ uses
+\ai[\tt]{fractional}s, but this can be changed through
+the \ai[\tt]{--disable-fractional} configure option.
+When this option is specified, the periodic numbers
+are represented as
+an explicit enumeration using the \ai[\tt]{periodic} type.
+A quasi-polynomial based on fractional
+parts can also be converted to an actual step-polynomial
+using \ai[\tt]{evalue\_frac2floor}, but this is not fully
+supported yet.
+
+For reasons of compatibility,%
+\footnote{Also known as laziness.}
+we shoehorned our representations for piecewise quasi-polynomials
+into the existing data structures.
+To this effect, we introduced four new types,
+\ai[\tt]{fractional}, \ai[\tt]{relation},
+\ai[\tt]{partition} and \ai[\tt]{flooring}.
+\begin{verbatim}
+typedef enum { polynomial, periodic, evector, fractional,
+               relation, partition, flooring } enode_type;
+\end{verbatim}
+The field \ai[\tt]{pos} is not used in most of these
+additional types and is therefore set to \verb+-1+.
+
+The types \ai[\tt]{fractional} and \ai[\tt]{flooring}
+represent polynomial expressions in a fractional part or a floor respectively.
+The generator is stored in \verb+arr[0]+, while the
+coefficients are stored in the remaining array elements.
+That is, an \ai[\tt]{enode} of type \ai[\tt]{fractional}
+represents
+$$
+\verb+arr[1]+ + \verb+arr[2]+ \{\verb+arr[0]+\} + 
+\verb+arr[3]+ \{\verb+arr[0]+\}^2 + \cdots +
+\verb+arr[l-1]+ \{\verb+arr[0]+\}^{l-2}
+.
+$$
+An \ai[\tt]{enode} of type \ai[\tt]{flooring}
+represents
+$$
+\verb+arr[1]+ + \verb+arr[2]+ \lfloor\verb+arr[0]+\rfloor + 
+\verb+arr[3]+ \lfloor\verb+arr[0]+\rfloor^2 + \cdots +
+\verb+arr[l-1]+ \lfloor\verb+arr[0]+\rfloor^{l-2}
+.
+$$
+
+\begin{example}
+The internal representation of the quasi-polynomial
+$$\left(1+2 \left\{\frac p 2\right\}\right) p^2 + 3 p + \frac 5 2$$
+is shown in Figure~\ref{f:fractional}.
+
+\begin{figure}
+\begin{xy}
+\POS(0,0)*!UL{\hbox{
+\tt
+\begin{tabular}{|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{type} & polynomial \\
+\hline
+\multicolumn{2}{|c|}{size} & 3 \\
+\hline
+\multicolumn{2}{|c|}{pos} & 1 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[0]}} & d & 2 \\
+\cline{2-3}
+       & x.n & 5 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[1]}} & d & 1 \\
+\cline{2-3}
+       & x.n & 3 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[2]}} & d & 0 \\
+\cline{2-3}
+       & x.p &   \\
+\hline
+\end{tabular}
+}
+}="box1"
++DR*!DR\hbox{\strut\hskip 1.5\tabcolsep\phantom{\tt polynomial}\hskip 1.5\tabcolsep}+C="a"
+\POS(60,0)*!UL{\hbox{
+\tt
+\begin{tabular}{|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{type} & fractional \\
+\hline
+\multicolumn{2}{|c|}{size} & 3 \\
+\hline
+\multicolumn{2}{|c|}{pos} & -1 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[0]}} & d & 0 \\
+\cline{2-3}
+       & x.p &   \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[1]}} & d & 1 \\
+\cline{2-3}
+       & x.n & 1 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[2]}} & d & 1 \\
+\cline{2-3}
+       & x.n & 2 \\
+\hline
+\end{tabular}
+}
+}="box2"
++UL+<0.5\tabcolsep,0pt>*!UL\hbox{\strut}+CL="b"
+\POS"a"\ar@(r,l) "b"
+\POS"box2"+UR*!UR{\hbox{
+\tt
+\begin{tabular}{|c|}
+\hline
+ fractional \\
+\hline
+ 3 \\
+\hline
+ -1 \\
+\hline
+ 0 \\
+\hline
+\end{tabular}
+}
+}+CD*!U{\strut}+C="c"
+\POS(60,-50)*!UL{\hbox{
+\tt
+\begin{tabular}{|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{type} & polynomial \\
+\hline
+\multicolumn{2}{|c|}{size} & 2 \\
+\hline
+\multicolumn{2}{|c|}{pos} & 1 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[0]}} & d & 1 \\
+\cline{2-3}
+       & x.n & 0 \\
+\hline
+\smash{\lower 6.25pt\hbox{arr[1]}} & d & 2 \\
+\cline{2-3}
+       & x.n & 1 \\
+\hline
+\end{tabular}
+}
+}="box3"
++UR-<0.8\tabcolsep,0pt>*!UR\hbox{\strut}+CR="d"
+\POS"c"\ar@(r,r) "d"
+\POS"box1"+UC*++!D\hbox{\tt enode}
+\POS"box2"+UC*++!D\hbox{\tt enode}
+\POS"box3"+UC*++!D\hbox{\tt enode}
+\end{xy}
+\caption{The quasi-polynomial 
+$\left(1+2 \left\{\frac p 2\right\}\right) p^2 + 3 p + \frac 5 2$.}
+\label{f:fractional}
+\end{figure}
+
+\end{example}
+
+The \ai[\tt]{relation} type is used to represent \ai{stride}s.
+In particular, if the value of \ai[\tt]{size} is 2, then
+the value of a \ai[\tt]{relation} is (in pseudo-code):
+\begin{verbatim}
+(value(arr[0]) == 0) ? value(arr[1]) : 0
+\end{verbatim}
+If the size is 3, then the value is:
+\begin{verbatim}
+(value(arr[0]) == 0) ? value(arr[1]) : value(arr[2])
+\end{verbatim}
+The type of \verb+arr[0]+ is typically \ai[\tt]{fractional}.
+
+Finally, the \ai[\tt]{partition} type is used to
+represent piecewise quasi-polynomials.
+We prefer to encode this information inside \ai[\tt]{evalue}s
+themselves
+rather than using \ai[\tt]{Enumeration}s since we want
+to perform the same kinds of operations on both quasi-polynomials
+and piecewise quasi-polynomials.
+An \ai[\tt]{enode} of type \ai[\tt]{partition} may not be nested
+inside another \ai[\tt]{enode}.
+The size of the array is twice the number of ``chambers''.
+Pointers to chambers are stored in the even slots,
+whereas pointer to the associated quasi-polynomials
+are stored in the odd slots.
+To be able to store pointers to chambers, the
+definition of \ai[\tt]{evalue} was changed as follows.
+\begin{verbatim}
+typedef struct _evalue {
+  Value d;              /* denominator */
+  union {
+    Value n;            /* numerator (if denominator > 0) */
+    struct _enode *p;   /* pointer   (if denominator == 0) */
+    Polyhedron *D;      /* domain    (if denominator == -1) */
+  } x;
+} evalue;
+\end{verbatim}
+Note that we allow a ``chamber'' to be a union of polyhedra
+as discussed in \citeN[Section~4.5.1]{Verdoolaege2005PhD}.
+Chambers with extra variables, i.e., those of
+\citeN[Section~4.6.5]{Verdoolaege2005PhD},
+are only partially supported.
+The field \ai[\tt]{pos} is set to the actual dimension,
+i.e., the number of parameters.
+
+\subsection{Operations on Quasi-polynomials}
+\label{a:operations}
+
+In this section we discuss some of the more important
+operations on \ai[\tt]{evalue}s provided by the
+\barvinok/ library.
+Some of these operations are extensions
+of the functions from \PolyLib/ with the same name.
+
+Most of these operation are also provided by \isl/ on
+\ai[\tt]{isl\_pw\_qpolynomial}s, which are set to replace
+\ai[\tt]{evalue}s.  Use \ai[\tt]{isl\_pw\_qpolynomial\_from\_evalue} to convert
+from \ai[\tt]{evalue}s to \ai[\tt]{isl\_pw\_qpolynomial}s.
+\begin{verbatim}
+__isl_give isl_pw_qpolynomial *isl_pw_qpolynomial_from_evalue(
+        __isl_take isl_space *dim, const evalue *e);
+\end{verbatim}
+
+\begin{verbatim}
+void eadd(const evalue *e1,evalue *res);
+void emul(const evalue *e1, evalue *res);
+\end{verbatim}
+The functions \ai[\tt]{eadd} and \ai[\tt]{emul} takes
+two (pointers to) \ai[\tt]{evalue}s \verb+e1+ and \verb+res+
+and computes their sum and product respectively.
+The result is stored in \verb+res+, overwriting (and deallocating)
+the original value of \verb+res+.
+It is an error if exactly one of
+the arguments of \ai[\tt]{eadd} is of type \ai[\tt]{partition}
+(unless the other argument is \verb+0+).
+The addition and multiplication operations are described
+in \citeN[Section~4.5.1]{Verdoolaege2005PhD} 
+and~\citeN[Section~4.5.2]{Verdoolaege2005PhD}
+respectively.
+
+The function \ai[\tt]{eadd} is an extension of the function
+\ai[\tt]{new\_eadd} from \shortciteN{Seghir2002}.
+Apart from supporting the additional types from Section~\ref{a:data},
+the new version also additionally imposes an order on the nesting of
+different \ai[\tt]{enode}s.
+Without such an ordering, \ai[\tt]{evalue}s could be constructed
+representing for example
+$$
+(0 y^ 0 + ( 0 x^0 + 1 x^1 ) y^1 ) x^0 + (0 y^0 - 1 y^1) x^1
+,
+$$
+which is just a funny way of saying $0$.
+
+\begin{verbatim}
+void eor(evalue *e1, evalue *res);
+\end{verbatim}
+The function \ai[\tt]{eor} implements the \ai{union}
+operation from \citeN[Section~4.5.3]{Verdoolaege2005PhD}.  Both arguments
+are assumed to correspond to indicator functions.
+
+\begin{verbatim}
+evalue *esum(evalue *E, int nvar);
+evalue *evalue_sum(evalue *E, int nvar, unsigned MaxRays);
+\end{verbatim}
+The function \ai[\tt]{esum} has been superseded by
+\ai[\tt]{evalue\_sum}.
+The function \ai[\tt]{evalue\_sum} performs the summation
+operation from \citeN[Section~4.5.4]{Verdoolaege2005PhD}.
+The piecewise step-polynomial represented by \verb+E+ is summated
+over its first \verb+nvar+ variables.
+Note that \verb+E+ must be zero or of type \ai[\tt]{partition}.
+The function returns the result in a newly allocated 
+\ai[\tt]{evalue}.
+Note also that \verb+E+ needs to have been converted
+from \ai[\tt]{fractional}s to \ai[\tt]{flooring}s using
+the function \ai[\tt]{evalue\_frac2floor}.
+\begin{verbatim}
+void evalue_frac2floor(evalue *e);
+\end{verbatim}
+This function also ensures that the arguments of the
+\ai[\tt]{flooring}s are positive in the relevant chambers.
+It currently assumes that the argument of each
+\ai[\tt]{fractional} in the original \ai[\tt]{evalue}
+has a minimum in the corresponding chamber.
+
+\begin{verbatim}
+double compute_evalue(const evalue *e, Value *list_args);
+Value *compute_poly(Enumeration *en,Value *list_args);
+evalue *evalue_eval(const evalue *e, Value *values);
+\end{verbatim}
+The functions \ai[\tt]{compute\_evalue},
+\ai[\tt]{compute\_poly} and
+\ai[\tt]{evalue\_eval}
+evaluate a (piecewise) quasi-polynomial
+at a certain point.  The argument \verb+list_args+
+points to an array of \ai[\tt]{Value}s that is assumed
+to be long enough.
+The \verb+double+ return value of \ai[\tt]{compute\_evalue}
+is inherited from \PolyLib/.
+
+\begin{verbatim}
+void print_evalue(FILE *DST, const evalue *e, char **pname);
+\end{verbatim}
+The function \ai[\tt]{print\_evalue} dumps a human-readable
+representation to the stream pointed to by \verb+DST+.
+The argument \verb+pname+ points 
+to an array of character strings representing the parameter names.
+The array is assumed to be long enough.
+
+\begin{verbatim}
+int eequal(const evalue *e1, const evalue *e2);
+\end{verbatim}
+The function \ai[\tt]{eequal} return true (\verb+1+) if its
+two arguments are structurally identical.
+I.e., it does {\em not\/} check whether the two
+(piecewise) quasi-polynomial represent the same function.
+
+\begin{verbatim}
+void reduce_evalue (evalue *e);
+\end{verbatim}
+The function \ai[\tt]{reduce\_evalue} performs some
+simplifications on \ai[\tt]{evalue}s.
+Here, we only describe the simplifications that are directly
+related to the internal representation.
+Some other simplifications are explained in
+\citeN[Section~4.7.2]{Verdoolaege2005PhD}.
+If the highest order coefficients of a \ai[\tt]{polynomial},
+\ai[\tt]{fractional} or \ai[\tt]{flooring} are zero (possibly
+after some other simplifications), then the size of the array
+is reduced.  If only the constant term remains, i.e.,
+the size is reduced to $1$ for  \ai[\tt]{polynomial} or to $2$
+for the other types, then the whole node is replaced by
+the constant term.
+Additionally, if the argument of a \ai[\tt]{fractional}
+has been reduced to a constant, then the whole node
+is replaced by its partial evaluation.
+A \ai[\tt]{relation} is similarly reduced if its second
+branch or both its branches are zero.
+Chambers with zero associated quasi-polynomials are
+discarded from a \ai[\tt]{partition}.
+
+\subsection{Generating Functions}
+
+The representation of \rgf/s uses 
+some basic types from the \ai[\tt]{NTL} library \shortcite{NTL}
+for representing arbitrary precision integers
+(\ai[\tt]{ZZ}) 
+as well as vectors (\ai[\tt]{vec\_ZZ}) and matrices (\ai[\tt]{mat\_ZZ})
+of such integers.
+We further introduces a type \ai[\tt]{QQ} for representing a rational
+number and use vectors (\ai[\tt]{vec\_QQ}) of such numbers.
+\begin{verbatim}
+struct QQ {
+    ZZ	n;
+    ZZ	d;
+};
+
+NTL_vector_decl(QQ,vec_QQ);
+\end{verbatim}
+
+Each term in a \rgf/ is represented by a \ai[\tt]{short\_rat}
+structure.
+\begin{verbatim}
+struct short_rat {
+    struct {
+        /* rows: terms in numerator */
+        vec_QQ  coeff;
+        mat_ZZ  power;
+    } n;
+    struct {
+        /* rows: factors in denominator */
+        mat_ZZ  power;
+    } d;
+};
+\end{verbatim}
+The fields \ai[\tt]{n} and \ai[\tt]{d} represent the
+numerator and the denominator respectively.
+Note that in our implementation we combine terms
+with the same denominator.
+In the numerator, each element of \ai[\tt]{coeff} and each row of \ai[\tt]{power}
+represents a single such term.
+The vector \ai[\tt]{coeff} contains the rational coefficients
+$\alpha_i$ of each term.
+The columns of \ai[\tt]{power} correspond to the powers
+of the variables.
+In the denominator, each row of \ai[\tt]{power}
+corresponds to the power $\vec b_{ij}$ of a 
+factor in the denominator.
+
+\begin{example}
+Figure~\ref{fig:rat}
+shows the internal representation of
+$$
+\frac{\frac 3 2 \, x_0^2 x_1^3 + 2 \, x_0^5 x_1^{-7}}
+{ (1 - x_0 x_1^{-3}) (1 - x_1^2)}
+.
+$$
+
+\begin{figure}
+\begin{center}
+\begin{minipage}{0cm}
+\begin{xy}
+*\hbox{
+\tt
+\begin{tabular}{|c|c|c|}
+\hline
+n.coeff & 3 & 2 \\
+\cline{2-3}
+	& 2 & 1 \\
+\hline
+n.power & 2 & 3 \\
+\cline{2-3}
+	& 5 & -7 \\
+\hline
+d.power & 1 & -3 \\
+\cline{2-3}
+	& 0 & 2 \\
+\hline
+\end{tabular}
+}+UC*++!D\hbox{\tt short\_rat}
+\end{xy}
+\end{minipage}
+\end{center}
+\caption{Representation of
+$
+\left(\frac 3 2 \, x_0^2 x_1^3 + 2 \, x_0^5 x_1^{-7}\right)
+/ \left( (1 - x_0 x_1^{-3}) (1 - x_1^2)\right)
+$.}
+\label{fig:rat}
+\end{figure}
+
+\end{example}
+
+The whole \rgf/ is represented by a \ai[\tt]{gen\_fun}
+structure.
+\begin{verbatim}
+typedef std::set<short_rat *,
+                 short_rat_lex_smaller_denominator > short_rat_list;
+
+struct gen_fun {
+    short_rat_list term;
+    Polyhedron *context;
+
+    void add(const QQ& c, const vec_ZZ& num, const mat_ZZ& den);
+    void add(short_rat *r);
+    void add(const QQ& c, const gen_fun *gf,
+                barvinok_options *options);
+    void substitute(Matrix *CP);
+    gen_fun *Hadamard_product(const gen_fun *gf,
+                              barvinok_options *options);
+    void print(std::ostream& os,
+               unsigned int nparam, char **param_name) const;
+    operator evalue *() const;
+    ZZ coefficient(Value* params, barvinok_options *options) const;
+    void coefficient(Value* params, Value* c) const;
+
+    gen_fun(Polyhedron *C);
+    gen_fun(Value c);
+    gen_fun(const gen_fun *gf);
+    ~gen_fun();
+};
+\end{verbatim}
+A new \ai[\tt]{gen\_fun} can be constructed either as empty \rgf/ (possibly
+with a given context \verb+C+), as a copy of an existing \rgf/ \verb+gf+, or as 
+constant \rgf/ with value for the constant term specified by \verb+c+.
+\\
+The first \ai[\tt]{gen\_fun::add} method adds a new term to the \rgf/,
+described by the coefficient \verb+c+, the numerator \verb+num+ and the
+denominator \verb+den+.
+It makes all powers in the denominator lexico-positive,
+orders them in lexicographical order and inserts the new
+term in \ai[\tt]{term} according to the lexicographical
+order of the combined powers in the denominator.
+The second \ai[\tt]{gen\_fun::add} method adds \verb+c+ times \verb+gf+
+to the \rgf/.
+\\
+The method \ai[\tt]{gen\_fun::operator evalue *} performs
+the conversion from \rgf/ to \psp/ explained in 
+\citeN[Section~4.5.5]{Verdoolaege2005PhD}.
+The \ai[\tt]{Polyhedron} \ai[\tt]{context} is the superset
+of all points where the enumerator is non-zero used during this conversion,
+i.e., it is the set $Q$ from \citeN[Equation~4.31]{Verdoolaege2005PhD}.
+If  \ai[\tt]{context} is \verb+NULL+ the maximal
+allowed context is assumed, i.e., the maximal
+region with lexico-positive rays.  
+\\
+The method \ai[\tt]{gen\_fun::coefficient} computes the coefficient
+of the term with power given by \verb+params+ and stores the result
+in \verb+c+.
+This method performs essentially the same computations as
+\ai[\tt]{gen\_fun::operator evalue *}, except that it adds extra
+equality constraints based on the specified values for the power.
+\\
+The method \ai[\tt]{gen\_fun::substitute} performs the
+\ai{monomial substitution} specified by the homogeneous matrix \verb+CP+
+that maps a set of ``\ai{compressed parameter}s'' \shortcite{Meister2004PhD}
+to the original set of parameters.
+That is, if we are given a \rgf/ $G(\vec z)$ that encodes the
+explicit function $g(\vec i')$, where $\vec i'$ are the coordinates of
+the transformed space, and \verb+CP+ represents the map
+$\vec i = A \vec i' + \vec a$ back to the original space with coordinates $\vec i$,
+then this method transforms the \rgf/ to $F(\vec x)$ encoding the
+same explicit function $f(\vec i)$, i.e., 
+$$f(\vec i) = f(A \vec i' + \vec a) = g(\vec i ').$$
+This means that the coefficient of the term 
+$\vec x^{\vec i} = \vec x^{A \vec i' + \vec a}$ in $F(\vec x)$ should be equal to the
+coefficient of the term $\vec z^{\vec i'}$ in $G(\vec z)$.
+In other words, if
+$$
+G(\vec z) =
+\sum_i \epsilon_i \frac{\vec z^{\vec v_i}}{\prod_j (1-\vec z^{\vec b_{ij}})}
+$$
+then
+$$
+F(\vec x) =
+\sum_i \epsilon_i \frac{\vec x^{A \vec v_i + \vec a}}
+                       {\prod_j (1-\vec x^{A \vec b_{ij}})}
+.
+$$
+\\
+The method \ai[\tt]{gen\_fun::Hadamard\_product} computes the
+\ai{Hadamard product} of the current \rgf/ with the \rgf/ \verb+gf+,
+as explained in \citeN[Section~4.5.2]{Verdoolaege2005PhD}.
+
+\subsection{Counting Functions}
+\label{a:counting:functions}
+
+Our library provides essentially three different counting functions:
+one for non-parametric polytopes, one for parametric polytopes
+and one for parametric sets with existential variables.
+The old versions of these functions have a ``\ai[\tt]{MaxRays}''
+argument, while the new versions have a more general
+\ai[\tt]{barvinok\_options} argument.
+For more information on \ai[\tt]{barvinok\_options}, see Section~\ref{a:options}.
+
+\begin{verbatim}
+void barvinok_count(Polyhedron *P, Value* result, 
+                    unsigned NbMaxCons);
+void barvinok_count_with_options(Polyhedron *P, Value* result,
+                                 struct barvinok_options *options);
+\end{verbatim}
+The function \ai[\tt]{barvinok\_count} or
+\ai[\tt]{barvinok\_count\_with\_options} enumerates the non-parametric
+polytope \verb+P+ and returns the result in the \ai[\tt]{Value}
+pointed to by \verb+result+, which needs to have been allocated
+and initialized.
+If \verb+P+ is a union, then only the first set in the union will
+be taken into account.
+For the meaning of the argument \verb+NbMaxCons+, see
+the discussion on \ai[\tt]{MaxRays} in Section~\ref{a:options}.
+
+The function \ai[\tt]{barvinok\_enumerate} for enumerating
+parametric polytopes was meant to be
+a drop-in replacement of \PolyLib/'s \ai[\tt]{Polyhedron\_Enumerate}
+function.
+Unfortunately, the latter has been changed to
+accept an extra argument in recent versions of \PolyLib/ as shown below.
+\begin{verbatim}
+Enumeration* barvinok_enumerate(Polyhedron *P, Polyhedron* C, 
+                                unsigned MaxRays);
+extern Enumeration *Polyhedron_Enumerate(Polyhedron *P,
+	    Polyhedron *C, unsigned MAXRAYS, char **pname);
+\end{verbatim}
+The argument \verb+MaxRays+ has the same meaning as the argument
+\verb+NbMaxCons+ above.
+The argument \verb+P+ refers to the $(d+n)$-dimensional
+polyhedron defining the parametric polytope.
+The argument \verb+C+ is an $n$-dimensional polyhedron containing
+extra constraints on the parameter space.
+Its primary use is to indicate how many of the dimensions
+in \verb+P+ refer to parameters as any constraint in \verb+C+
+could equally well have been added to \verb+P+ itself.
+Note that the dimensions referring to the parameters should
+appear {\em last}.
+If either \verb+P+ or \verb+C+ is a union,
+then only the first set in the union will be taken into account.
+The result is a newly allocated \ai[\tt]{Enumeration}.
+As an alternative we also provide a function 
+(\ai[\tt]{barvinok\_enumerate\_ev} or
+\ai[\tt]{barvinok\_enumerate\_with\_options}) that returns
+an \ai[\tt]{evalue}.
+\begin{verbatim}
+evalue* barvinok_enumerate_ev(Polyhedron *P, Polyhedron* C, 
+                              unsigned MaxRays);
+evalue* barvinok_enumerate_with_options(Polyhedron *P,
+        Polyhedron* C, struct barvinok_options *options);
+\end{verbatim}
+
+For enumerating parametric sets with existentially quantified variables,
+we provide two functions:
+\ai[\tt]{barvinok\_enumerate\_e},
+and
+\ai[\tt]{barvinok\_enumerate\_isl}.
+\begin{verbatim}
+evalue* barvinok_enumerate_e(Polyhedron *P,
+          unsigned exist, unsigned nparam, unsigned MaxRays);
+evalue* barvinok_enumerate_e_with_options(Polyhedron *P, 
+          unsigned exist, unsigned nparam,
+          struct barvinok_options *options);
+evalue *barvinok_enumerate_isl(Polyhedron *P, 
+          unsigned exist, unsigned nparam,
+          struct barvinok_options *options);
+evalue *barvinok_enumerate_scarf(Polyhedron *P,
+          unsigned exist, unsigned nparam,
+          struct barvinok_options *options);
+\end{verbatim}
+The first function tries the simplification rules from
+\citeN[Section~4.6.2]{Verdoolaege2005PhD} before resorting to the method
+based on \indac{PIP} from \citeN[Section~4.6.3]{Verdoolaege2005PhD}.
+The second function immediately applies the technique from
+\citeN[Section~4.6.3]{Verdoolaege2005PhD}.
+The argument \verb+exist+ refers to the number of existential variables,
+whereas
+the argument \verb+nparam+ refers to the number of parameters.
+The order of the dimensions in \verb+P+ is:
+counted variables first, then existential variables and finally
+the parameters.
+The function \ai[\tt]{barvinok\_enumerate\_scarf} performs the same
+computation as the function \ai[\tt]{barvinok\_enumerate\_scarf\_series}
+below, but produces an explicit representation instead of a generating function.
+
+\begin{verbatim}
+gen_fun * barvinok_series(Polyhedron *P, Polyhedron* C, 
+                          unsigned MaxRays);
+gen_fun * barvinok_series_with_options(Polyhedron *P,
+    Polyhedron* C, barvinok_options *options);
+gen_fun *barvinok_enumerate_e_series(Polyhedron *P,
+                  unsigned exist, unsigned nparam,
+                  barvinok_options *options);
+gen_fun *barvinok_enumerate_scarf_series(Polyhedron *P,
+                          unsigned exist, unsigned nparam,
+                          barvinok_options *options);
+\end{verbatim}
+The function 
+\ai[\tt]{barvinok\_series} or
+\ai[\tt]{barvinok\_series\_with\_options} enumerates parametric polytopes
+in the form of a \rgf/.
+The polyhedron \verb+P+ is assumed to have only
+revlex-positive rays.
+\\
+The function \ai[\tt]{barvinok\_enumerate\_e\_series} computes a
+generating function for the number of point in the parametric set
+defined by \verb+P+ with \verb+exist+ existentially quantified
+variables using the \ai{projection theorem}, as explained
+in \autoref{s:projection}.
+The function \ai[\tt]{barvinok\_enumerate\_scarf\_series} computes a
+generating function for the number of point in the parametric set
+defined by \verb+P+ with \verb+exist+ existentially quantified
+variables, which is assumed to be 2.
+This function implements the technique of
+\shortciteN{Scarf2006Neighborhood} using the \ai{neighborhood complex}
+description of \shortciteN{Scarf1981indivisibilities:II}.
+It is currently restricted to problems with 3 or 4 constraints involving
+the existentially quantified variables.
+
+\subsection{Auxiliary Functions}
+
+In this section we briefly mention some auxiliary functions
+available in the \barvinok/ library.
+
+\begin{verbatim}
+void Polyhedron_Polarize(Polyhedron *P);
+\end{verbatim}
+The function \ai[\tt]{Polyhedron\_Polarize} 
+polarizes its argument and is explained
+in \citeN[Section~4.4.2]{Verdoolaege2005PhD}.
+
+\begin{verbatim}
+int unimodular_complete(Matrix *M, int row);
+\end{verbatim}
+The function \ai[\tt]{unimodular\_complete} extends
+the first \verb+row+ rows of
+\verb+M+ with an integral basis of the orthogonal complement
+as explained in Section~\ref{s:completion}.
+Returns non-zero
+if the resulting matrix is unimodular\index{unimodular matrix}.
+
+\begin{verbatim}
+int DomainIncludes(Polyhedron *D1, Polyhedron *D2);
+\end{verbatim}
+The function \ai[\tt]{DomainIncludes} extends
+the function \ai[\tt]{PolyhedronIncludes}
+provided by \PolyLib/ 
+to unions of polyhedra.
+It checks whether every polyhedron in the union {\tt D2}
+is included in some polyhedron of {\tt D1}.
+
+\begin{verbatim}
+Polyhedron *DomainConstraintSimplify(Polyhedron *P, 
+                                     unsigned MaxRays);
+\end{verbatim}
+The value returned by
+\ai[\tt]{DomainConstraintSimplify} is a pointer to
+a newly allocated \ai[\tt]{Polyhedron} that contains the 
+same integer points as its first argument but possibly
+has simpler constraints.
+Each constraint $ g \sp a x \ge c $
+is replaced by $ \sp a x \ge \ceil{ \frac c g } $,
+where $g$ is the \ac{gcd} of the coefficients in the original
+constraint.
+The \ai[\tt]{Polyhedron} pointed to by \verb+P+ is destroyed.
+
+\begin{verbatim}
+Polyhedron* Polyhedron_Project(Polyhedron *P, int dim);
+\end{verbatim}
+The function \ai[\tt]{Polyhedron\_Project} projects
+\verb+P+ onto its last \verb+dim+ dimensions.
+
+\begin{verbatim}
+Matrix *left_inverse(Matrix *M, Matrix **Eq);
+\end{verbatim}
+The \ai[\tt]{left\_inverse} function computes the left inverse
+of \verb+M+ as explained in Section~\ref{s:inverse}.
+
+\sindex{reduced}{basis}
+\sindex{generalized}{reduced basis}
+\begin{verbatim}
+Matrix *Polyhedron_Reduced_Basis(Polyhedron *P,
+                                 struct barvinok_options *options);
+\end{verbatim}
+\ai[\tt]{Polyhedron\_Reduced\_Basis} computes
+a \ai{generalized reduced basis} of {\tt P}, which
+is assumed to be a polytope, using the algorithm
+of~\shortciteN{Cook1993implementation}.
+See \autoref{s:feasibility} for more information.
+The basis vectors are stored in the rows of the matrix returned.
+
+\begin{verbatim}
+Vector *Polyhedron_Sample(Polyhedron *P,
+                          struct barvinok_options *options);
+\end{verbatim}
+\ai[\tt]{Polyhedron\_Sample} returns an \ai{integer point} of {\tt P}
+or {\tt NULL} if {\tt P} contains no integer points.
+The integer point is found using the algorithm
+of~\shortciteN{Cook1993implementation} and uses
+\ai[\tt]{Polyhedron\_Reduced\_Basis} to compute the reduced bases.
+See \autoref{s:feasibility} for more information.

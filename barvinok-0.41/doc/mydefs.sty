@@ -1,0 +1,218 @@
+\usepackage{amsmath,amsfonts,amssymb,makeidx}
+\usepackage{listings}
+\usepackage{glosstex}
+\usepackage{tikz}
+\usetikzlibrary{fit,chains,positioning,calc,backgrounds,decorations}
+\usetikzlibrary{decorations.pathmorphing}
+
+\lstset{language=C,basicstyle=\tt,flexiblecolumns=false,captionpos=b}
+
+\glxitemorderdefault{acr}{l}
+
+\def\indac#1{%
+\ac{#1}%
+\expandafter\ifx\csname GLX@term@@#1\endcsname\relax%
+\else%
+    \index{\csname GLX@term@@#1\endcsname\space%
+  (\csname GLX@term@#1\endcsname)}%
+\fi}
+
+\def\andindex{%
+\@ifnextchar[{\@ndindex}%
+{\@ndind@x}}
+\def\@ndindex[#1]#2{%
+{#1#2}\index{#2@{#1#2}}}
+\def\@ndind@x#1{%
+{#1\index{#1}}}
+\def\defindex#1{%
+{{\em #1}\index{#1|bold}}}
+
+\let\ai=\andindex
+
+\newcount\prefcount
+\newcount\rpage
+
+\def\pref#1{%
+\global\advance\prefcount by 1%
+\edef\foo{pref\the\prefcount}%
+\label\foo%
+\rpage=\simple@pageref\foo%
+\advance\rpage by -\simple@pageref{#1}%
+\ref{#1}%
+\ifnum\rpage=0%
+\else\ifnum\rpage=1%
+\ on the previous page%
+\else\ifnum\rpage=-1%
+%\ on the next page%
+\else%
+\ on page~\pageref{#1}%
+\fi\fi\fi%
+}
+
+\def\npref#1{%
+\global\advance\prefcount by 1%
+\edef\foo{pref\the\prefcount}%
+\label\foo%
+\rpage=\simple@pageref\foo%
+\advance\rpage by -\simple@pageref{#1}%
+\ref{#1}%
+\ifnum\rpage=0%
+\else\ifnum\rpage=1%
+\ on the previous page%
+\else\ifnum\rpage=-1%
+%\ on the next page%
+\else%
+\ op bladzijde~\pageref{#1}%
+\fi\fi\fi%
+}
+
+\def\sindex#1#2{\index{#2!#1|see{#1 #2}}}
+\def\ssindex#1#2{\index{#2!#1|see{#1#2}}}
+\def\tindex#1#2{\index{#2@{\tt #2}!{\tt #1::}|see{{\tt #1\discretionary{}{}{}::\discretionary{}{}{}#2}}}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}[theorem]{Example}
+\numberwithin{theorem}{section}
+
+\let\c@equation\c@theorem
+\let\c@figure\c@theorem
+\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+
+\def\NN{\mathbb{N}}
+\def\ZZ{\mathbb{Z}}
+\def\QQ{\mathbb{Q}}
+\def\RR{\mathbb{R}}
+\def\CC{\mathbb{C}}
+\def\lb{\left\{}
+\def\rb{\right\}}
+\def\nc{\nomenclature}
+
+\def\convhull{\mathop{\rm conv}\nolimits}
+\def\affhull{\mathop{\rm aff}\nolimits}
+\def\linhull{\mathop{\rm lin}\nolimits}
+\def\poshull{\mathop{\rm pos}\nolimits}
+\def\inthull{\mathop{\rm int.hull}\nolimits}
+\def\lexmin{\mathop{\rm lexmin}}
+\def\lexmax{\mathop{\rm lexmax}}
+\def\dcone{\mathop{\rm dcone}\nolimits}
+\def\rank{\mathop{\rm rank}\nolimits}
+\def\Ker{\mathop{\rm Ker}\nolimits}
+\def\Im{\mathop{\rm Im}\nolimits}
+\def\argmax{\mathop{\rm argmax}}
+
+\def\bold#1{{\bf #1}}
+
+\providecommand{\abs}[1]{\left|#1\right|}
+\providecommand{\norm}[1]{\left\lVert#1\right\rVert}
+\providecommand{\floor}[1]{\left\lfloor#1\right\rfloor}
+\providecommand{\ceil}[1]{\left\lceil#1\right\rceil}
+\providecommand{\fractional}[1]{\left\{#1\right\}}
+\providecommand{\cractional}[1]{\left\{\left\{#1\right\}\right\}}
+\providecommand{\Iverson}[1]{\left[#1\right]}
+\DeclareMathOperator{\cone}{cone}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\todd}{td}
+\DeclareMathOperator{\Todd}{Todd}
+\DeclareMathOperator{\width}{width}
+
+\def\sm#1{
+    \left[
+    \begin{matrix}
+    #1
+    \end{matrix}
+    \right]
+}
+
+\def\VR{{\cal V}}
+\def\sp#1#2{\langle\vec #1,\vec #2\rangle}
+\def\sps#1#2{\langle #1, #2\rangle}
+\def\T{{\scriptscriptstyle T}}
+\def\f#1#2{f(#1; \vec #2)}
+\def\ff#1#2{f(#1;  #2)}
+
+\def\indf#1{\left[#1\right]}
+
+\def\LattE/{\ai[\tt]{LattE}}
+\def\LattEmk/{\ai[\tt]{LattE macchiato}}
+\def\PolyLib/{\ai[\tt]{PolyLib}}
+\def\Omegalib/{\ai[\tt]{Omega}}
+\def\isl/{\ai[\tt]{isl}}
+\def\iscc/{\ai[\tt]{iscc}}
+\def\barvinok/{\ai[\tt]{barvinok}}
+\def\cloog/{\ai[\tt]{CLooG}}
+\def\piplib/{\ai[\tt]{piplib}}
+\def\psp/{piecewise step-poly\-no\-mi\-al}
+\def\rgf/{rational generating function}
+\def\vm#1{\underline{\vec #1}}
+
+\newcommand{\R}{\ensuremath{{\mathcal R}}}
+\newcommand{\reuse}[2]{\ensuremath{\textrm{\sf reuse}_{#1}^{#2}}}
+\newcommand{\ADS}[2]{\ensuremath{\textrm{\sf ADS}_{#1}^{#2}}}
+\newcommand{\BRD}[2]{\ensuremath{\textrm{\sf BRD}_{#1}^{#2}}}
+\let\from\leftarrow
+
+\def\vec#1{\mathchoice{\mbox{\boldmath$\displaystyle\bf#1$}}
+{\mbox{\boldmath$\textstyle\bf#1$}}
+{\mbox{\boldmath$\scriptstyle\bf#1$}}
+{\mbox{\boldmath$\scriptscriptstyle\bf#1$}}}
+
+\def\DP{\mbox{\sl DP\/}}
+\def\DD{\mbox{\sl DD\/}}
+\def\DF{\mbox{\sl DF\/}}
+
+\def\Rd{R_{\rm d}}
+\def\rd{r_{\rm d}}
+
+\@ifpackageloaded{hyperref}{%
+\def\eqdeclaration#1{, see Equation\nobreakspace(#1)}% 
+\def\pagedeclaration#1{, page\nobreakspace\hyperpage{#1}}%
+\def\addcontentsline#1#2#3{% toc extension, type, tag 
+  \begingroup
+    \let\label\@gobble
+    \let\textlatin\@firstofone
+    \ifx\@currentHref\@empty
+      \Hy@Warning{%
+        No destination for bookmark of \string\addcontentsline,%
+        \MessageBreak destination is added%
+      }%
+      \phantomsection
+    \fi
+    \expandafter\ifx\csname toclevel@#2\endcsname\relax
+      \begingroup
+        \def\Hy@tempa{#1}%
+        \ifx\Hy@tempa\Hy@bookmarkstype
+          \Hy@WarningNoLine{bookmark level for unknown #2 defaults to 0}%
+        \else
+          \Hy@Info{bookmark level for unknown #2 defaults to 0}%
+        \fi
+      \endgroup
+      \expandafter\gdef\csname toclevel@#2\endcsname{0}%
+    \fi
+    \edef\Hy@toclevel{\csname toclevel@#2\endcsname}%
+    \Hy@writebookmark{\csname the#2\endcsname}%
+      {#3}%
+      {\@currentHref}%
+      {\Hy@toclevel}%
+      {#1}%
+    \ifHy@verbose
+      \typeout{pdftex: bookmark at \the\inputlineno:
+        {\csname the#2\endcsname}
+        {#3}
+        {\@currentHref}%
+        {\Hy@toclevel}%
+        {#1}%
+      }%
+    \fi
+    \addtocontents{#1}{%
+      \protect\contentsline{#2}{#3}{\protect\hyperpage{\thepage}}{\@currentHref}%
+    }%
+  \endgroup
+}
+}{}

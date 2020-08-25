@@ -1,0 +1,196 @@
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+   6    0    2 
+   0    6    2 
+   0    0    1 
+POLYHEDRON Dimension:2
+           Constraints:4  Equations:0  Rays:4  Lines:0
+Constraints 4 4
+Inequality: [   1    0   -1  ]
+Inequality: [   0    1   -1  ]
+Inequality: [  -1    0   10  ]
+Inequality: [   0   -1   10  ]
+Rays 4 4
+Vertex: [  10    1  ]/1
+Vertex: [   1    1  ]/1
+Vertex: [   1   10  ]/1
+Vertex: [  10   10  ]/1
+
+UNIONED with
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+   6    0    2 
+   0    6    0 
+   0    0    1 
+POLYHEDRON Dimension:2
+           Constraints:4  Equations:0  Rays:4  Lines:0
+Constraints 4 4
+Inequality: [   1    0   -1  ]
+Inequality: [   0    1   -1  ]
+Inequality: [  -1    0   10  ]
+Inequality: [   0   -1   10  ]
+Rays 4 4
+Vertex: [  10    1  ]/1
+Vertex: [   1    1  ]/1
+Vertex: [   1   10  ]/1
+Vertex: [  10   10  ]/1
+
+UNIONED with
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+   6    0    0 
+   0    6    2 
+   0    0    1 
+POLYHEDRON Dimension:2
+           Constraints:4  Equations:0  Rays:4  Lines:0
+Constraints 4 4
+Inequality: [   1    0   -1  ]
+Inequality: [   0    1   -1  ]
+Inequality: [  -1    0   10  ]
+Inequality: [   0   -1   10  ]
+Rays 4 4
+Vertex: [  10    1  ]/1
+Vertex: [   1    1  ]/1
+Vertex: [   1   10  ]/1
+Vertex: [  10   10  ]/1
+
+UNIONED with
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+   6    0    0 
+   0    6    0 
+   0    0    1 
+POLYHEDRON Dimension:2
+           Constraints:4  Equations:0  Rays:4  Lines:0
+Constraints 4 4
+Inequality: [   1    0   -1  ]
+Inequality: [   0    1   -1  ]
+Inequality: [  -1    0   10  ]
+Inequality: [   0   -1   10  ]
+Rays 4 4
+Vertex: [  10    1  ]/1
+Vertex: [   1    1  ]/1
+Vertex: [   1   10  ]/1
+Vertex: [  10   10  ]/1
+
+UNIONED with
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+   6    0    4 
+   0    6    2 
+   0    0    1 
+POLYHEDRON Dimension:2
+           Constraints:4  Equations:0  Rays:4  Lines:0
+Constraints 4 4
+Inequality: [   1    0   -1  ]
+Inequality: [   0    1   -1  ]
+Inequality: [  -1    0   10  ]
+Inequality: [   0   -1   10  ]
+Rays 4 4
+Vertex: [  10    1  ]/1
+Vertex: [   1    1  ]/1
+Vertex: [   1   10  ]/1
+Vertex: [  10   10  ]/1
+
+UNIONED with
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+   6    0    4 
+   0    6    0 
+   0    0    1 
+POLYHEDRON Dimension:2
+           Constraints:4  Equations:0  Rays:4  Lines:0
+Constraints 4 4
+Inequality: [   1    0   -1  ]
+Inequality: [   0    1   -1  ]
+Inequality: [  -1    0   10  ]
+Inequality: [   0   -1   10  ]
+Rays 4 4
+Vertex: [  10    1  ]/1
+Vertex: [   1    1  ]/1
+Vertex: [   1   10  ]/1
+Vertex: [  10   10  ]/1
+
+UNIONED with
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+   6    0    2 
+   0    6    4 
+   0    0    1 
+POLYHEDRON Dimension:2
+           Constraints:4  Equations:0  Rays:4  Lines:0
+Constraints 4 4
+Inequality: [   1    0   -1  ]
+Inequality: [   0    1   -1  ]
+Inequality: [  -1    0   10  ]
+Inequality: [   0   -1   10  ]
+Rays 4 4
+Vertex: [  10    1  ]/1
+Vertex: [   1    1  ]/1
+Vertex: [   1   10  ]/1
+Vertex: [  10   10  ]/1
+
+UNIONED with
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+   6    0    0 
+   0    6    4 
+   0    0    1 
+POLYHEDRON Dimension:2
+           Constraints:4  Equations:0  Rays:4  Lines:0
+Constraints 4 4
+Inequality: [   1    0   -1  ]
+Inequality: [   0    1   -1  ]
+Inequality: [  -1    0   10  ]
+Inequality: [   0   -1   10  ]
+Rays 4 4
+Vertex: [  10    1  ]/1
+Vertex: [   1    1  ]/1
+Vertex: [   1   10  ]/1
+Vertex: [  10   10  ]/1
+
+UNIONED with
+
+ZPOLYHEDRON: Dimension 2 
+
+LATTICE: 
+3 3
+   6    0    4 
+   0    6    4 
+   0    0    1 
+POLYHEDRON Dimension:2
+           Constraints:4  Equations:0  Rays:4  Lines:0
+Constraints 4 4
+Inequality: [   1    0   -1  ]
+Inequality: [   0    1   -1  ]
+Inequality: [  -1    0   10  ]
+Inequality: [   0   -1   10  ]
+Rays 4 4
+Vertex: [  10    1  ]/1
+Vertex: [   1    1  ]/1
+Vertex: [   1   10  ]/1
+Vertex: [  10   10  ]/1

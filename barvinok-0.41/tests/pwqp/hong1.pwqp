@@ -1,0 +1,1 @@
+{ [y] -> 1 : exists (e0 = [(y)/2]: 2e0 = y and y >= 2 and y <= 10) }

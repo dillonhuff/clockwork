@@ -1,0 +1,6 @@
+Write := [n] -> { F[i, j] -> t[j] : i >= 0 and j >= 0 and j <= -1 + n - i and j <= -1 + n; T[i] -> t[i] : i >= 0 and i <= -1 + n; B[i] -> b[i] : i >= 0 and i <= -1 + n };
+Read := [n] -> { F[i, j] -> t[1 + j] : i >= 0 and j >= 0 and j <= -1 + n - i and j <= -2 + n; F[i, j] -> t[j] : i >= 0 and j >= 0 and j <= -1 + n - i and j <= -1 + n; B[i] -> t[i] : i >= 0 and i <= -1 + n; T[i] -> a[i] : i >= 0 and i <= -1 + n };
+Sched := [n] -> { T[i] -> [0, i, 0]; B[i] -> [2, i, 0]; F[i, j] -> [1, i, j] };
+Dep1 := [n] -> { T[i] -> B[i] : i >= 0 and i <= -1 + n; F[i, j] -> B[j] : i >= 0 and j >= 0 and j <= -1 + n - i and j <= -1 + n; T[i] -> F[i', i] : i >= 0 and i' >= 0 and i' <= -1 + n - i and i <= -1 + n; T[i] -> F[i', -1 + i] : i >= 1 and i <= -1 + n and i' >= 0 and i' <= n - i; F[i, j] -> F[i', j] : i >= 0 and j >= 0 and i' >= 1 + i and i' <= -1 + n - j and i' >= 0 and j <= -1 + n; F[i, j] -> F[i', -1 + j] : i >= 0 and j >= 1 and i' >= 1 + i and i' <= n - j and i' >= 0 and j <= -1 + n };
+Dep2 := any Write before Read under Sched;
+assert(Dep1 = Dep2);

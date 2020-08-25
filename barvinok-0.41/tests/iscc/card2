@@ -1,0 +1,4 @@
+P := [p0, p1, p2, p3] -> { [i0] : i0 >= 1 - p1 and i0 <= -1 - p0 and i0 <= 0 and i0 >= -2 and p2 <= 998 and p1 <= 2 and p2 >= 2 + 998p0 - 998p1 and p3 >= 1 and p2 >= 1 and p3 <= 998 and p0 >= 0 and p2 <= 999 + 998p0 - 998p1 and p2 >= 2 - 998p1 };
+C := card P;
+R := [p0, p1, p2, p3] -> {  };
+assert(C == R);

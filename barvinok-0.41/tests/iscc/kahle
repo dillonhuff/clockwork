@@ -1,0 +1,28 @@
+# Adapted from a test case submitted by Thomas Kahle <tomka@gentoo.org>
+# On older versions of barvinok, it would result in an assertion failure.
+P := [b1,b2,b3,s] -> { [a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12] :
+  a2 >= 0 and
+  a3 >= 0 and
+  a4 >= 0 and
+  a5 >= 0 and
+  a6 >= 0 and
+  a7 >= 0 and
+  a8 >= 0 and
+  a9 >= 0 and
+  a10 >= 0 and
+  a11 >= 0 and
+  a12 >= 0 and
+  s = a2 + a3 + a4 and
+  s = a5 + a6 + a7 + a8 and
+  s = a9 + a10 + a11 + a12 and
+  a5+a9 = b1 - 2 and
+  3a2+a6+a10 = b2 + 1 and
+  3a3+a7+a11 = b3 + 1 and
+  - b1 + b2 >= 0 and
+  - b2 + b3 >= 0 and
+  - b1 - b2 - 2b3 + 5s >= 0 and
+  b1 >= 0 and
+  b2 >= 0 and
+  b3 >= 0 and
+  s >= 0 };
+s := card P;

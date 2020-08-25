@@ -1,0 +1,21 @@
+--- makefile.orig	Fri Sep  3 18:27:12 2004
++++ makefile	Fri Sep  3 18:27:19 2004
+@@ -381,6 +381,7 @@
+ install:
+ 	mkdir -p $(LIBDIR)
+ 	cp ntl.a $(LIBDIR)/libntl.a
++	ranlib $(LIBDIR)/libntl.a
+ 	mkdir -p $(INCLUDEDIR)
+ 	- rm -r $(INCLUDEDIR)/NTL
+ 	mkdir $(INCLUDEDIR)/NTL
+--- ctools.c.orig	Fri Sep  3 18:28:11 2004
++++ ctools.c	Fri Sep  3 18:28:16 2004
+@@ -22,7 +22,7 @@
+  * side effect of forcing its argument into memory.
+  */
+ 
+-double _ntl_IsFinite__local;
++double _ntl_IsFinite__local = 0;
+ double *_ntl_IsFinite__ptr1 = &_ntl_IsFinite__local;
+ double *_ntl_IsFinite__ptr2 = &_ntl_IsFinite__local;
+ double *_ntl_IsFinite__ptr3 = &_ntl_IsFinite__local;

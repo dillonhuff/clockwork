@@ -1,0 +1,2 @@
+[n] -> { [x, y] -> x * y :
+	 n >= -9 + 3x and x >= 2 and y >= 4 and y <= 5 }
