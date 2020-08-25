@@ -1,9 +1,0 @@
-<AutoPilot:solution xmlns:AutoPilot="com.autoesl.autopilot.solution">
-    <name>
-        <value string="solution1"/>
-    </name>
-    <project>
-        <value string="unoptimized_harris_proj"/>
-    </project>
-</AutoPilot:solution>
-
