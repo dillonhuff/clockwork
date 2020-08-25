@@ -7,7 +7,7 @@
 
 #ifdef __VIVADO_SYNTH__
 
-#define AP_INT_MAX_W 8192
+// #define AP_INT_MAX_W 32768
 #include "ap_int.h"
 
 #include "hls_stream.h"
@@ -385,6 +385,10 @@ class HWStream {
 
     deque<T> values;
 
+    int num_waiting() const {
+      return values.size();
+    }
+
     bool is_empty() const {
       return values.size() == 0;
     }
@@ -419,7 +423,32 @@ hw_uint<T> int32(const hw_uint<T>& in) {
   return in;
 }
 
+template<int burst_width>
+void burst_read(hw_uint<burst_width>* input,
+    HWStream<hw_uint<burst_width> >& v,
+    const int num_transfers) {
 
+  hw_uint<burst_width> burst_reg;
+  for (int i = 0; i < num_transfers; i++) {
+    #pragma HLS pipeline II=1
+    burst_reg = input[i];
+    v.write(burst_reg);
+  }
+}
+
+template<int burst_width>
+void burst_write(hw_uint<burst_width>* output,
+    HWStream<hw_uint<burst_width> >& v,
+    const int num_transfers) {
+
+  hw_uint<burst_width> burst_reg;
+
+  for (int i = 0; i < num_transfers; i++) {
+    #pragma HLS pipeline II=1
+    burst_reg = v.read();
+    output[i] = burst_reg;
+  }
+}
 
 
 

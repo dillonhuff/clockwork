@@ -2,16 +2,478 @@
 
 #ifdef COREIR
 
+#include "coreir/passes/analysis/coreirjson.h"
+
+using CoreIR::Wireable;
+using CoreIR::CoreIRType;
+using CoreIR::ArrayType;
+using CoreIR::Context;
+using CoreIR::Const;
+using CoreIR::Params;
+using CoreIR::ModuleDef;
+using CoreIR::Generator;
+using CoreIR::TypeGen;
+using CoreIR::Type;
+using CoreIR::Values;
+
+using CoreIR::SelectPath;
+using CoreIR::join;
+using CoreIR::BitType;
+using CoreIR::BitInType;
+using CoreIR::isa;
+using CoreIR::dyn_cast;
+using CoreIR::ArrayType;
+using CoreIR::Type;
 using CoreIR::Params;
 using CoreIR::Wireable;
 using CoreIR::JsonType;
 using CoreIR::Namespace;
 using CoreIR::Instance;
+using CoreIR::InstanceGraphPass;
 using CoreIR::Const;
 using CoreIR::Context;
 using CoreIR::Values;
 using CoreIR::Generator;
 using CoreIR::ModuleDef;
+using CoreIR::Module;
+
+//Assumes common has been loaded
+void load_mem_ext(Context* c) {
+  //Specialized extensions
+  Generator* lbmem = c->getGenerator("memory.rowbuffer");
+  lbmem->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    uint width = args.at("width")->get<int>();
+    uint depth = args.at("depth")->get<int>();
+    ASSERT(width==16,"NYI Non 16 bit width");
+    Values rbGenargs({{"width",Const::make(c,width)},{"total_depth",Const::make(c,1024)}});
+    nlohmann::json jdata;
+    def->addInstance("cgramem","cgralib.Mem",
+      rbGenargs,
+      {{"mode",Const::make(c,"linebuffer")},{"depth",Const::make(c,depth)}, {"init", CoreIR::Const::make(c, jdata)}});
+    def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
+    def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    def->connect("self.wdata","cgramem.wdata");
+    def->connect("self.wen","cgramem.wen");
+    def->connect("self.rdata","cgramem.rdata");
+    def->connect("self.valid","cgramem.valid");
+    def->connect("c0.out","cgramem.cg_en");
+    def->connect("c1.out","cgramem.ren");
+
+  });
+
+  Generator* ubmem = c->getGenerator("lakelib.unified_buffer");
+  ubmem->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    uint width = args.at("width")->get<int>();
+    uint depth = args.at("depth")->get<int>();
+    bool rate_matched = args.at("rate_matched")->get<bool>();
+    uint stencil_width = args.at("stencil_width")->get<int>();
+    uint iter_cnt = args.at("iter_cnt")->get<int>();
+    uint dimensionality = args.at("dimensionality")->get<int>();
+    uint stride_0 = args.at("stride_0")->get<int>();
+    uint range_0 = args.at("range_0")->get<int>();
+    uint stride_1 = args.at("stride_1")->get<int>();
+    uint range_1 = args.at("range_1")->get<int>();
+    uint stride_2 = args.at("stride_2")->get<int>();
+    uint range_2 = args.at("range_2")->get<int>();
+    uint stride_3 = args.at("stride_3")->get<int>();
+    uint range_3 = args.at("range_3")->get<int>();
+    uint stride_4 = args.at("stride_4")->get<int>();
+    uint range_4 = args.at("range_4")->get<int>();
+    uint stride_5 = args.at("stride_5")->get<int>();
+    uint range_5 = args.at("range_5")->get<int>();
+    bool chain_en = args.at("chain_en")->get<bool>();
+    uint chain_idx = args.at("chain_idx")->get<int>();
+    uint starting_addr = (args.at("output_starting_addrs")->get<Json>())["output_start"][0];
+    ASSERT(width==16,"NYI Non 16 bit width");
+    Values rbGenargs({{"width",Const::make(c,width)},{"total_depth",Const::make(c,1024)}});
+    def->addInstance("cgramem","cgralib.Mem",
+      rbGenargs,
+      {{"mode",Const::make(c,"unified_buffer")},{"depth",Const::make(c,depth)},
+       {"init", CoreIR::Const::make(c, args.at("init")->get<Json>())},
+       {"rate_matched", Const::make(c, rate_matched)}, {"stencil_width", Const::make(c, stencil_width)},
+       {"iter_cnt", Const::make(c, iter_cnt)}, {"dimensionality", Const::make(c, dimensionality)},
+       {"stride_0", Const::make(c, stride_0)}, {"range_0", Const::make(c, range_0)},
+       {"stride_1", Const::make(c, stride_1)}, {"range_1", Const::make(c, range_1)},
+       {"stride_2", Const::make(c, stride_2)}, {"range_2", Const::make(c, range_2)},
+       {"stride_3", Const::make(c, stride_3)}, {"range_3", Const::make(c, range_3)},
+       {"stride_4", Const::make(c, stride_4)}, {"range_4", Const::make(c, range_4)},
+       {"stride_5", Const::make(c, stride_5)}, {"range_5", Const::make(c, range_5)},
+       {"chain_en", Const::make(c, chain_en)}, {"chain_idx", Const::make(c, chain_idx)},
+       {"starting_addr", Const::make(c, starting_addr)}});
+    def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    def->connect("self.datain0","cgramem.wdata");
+    def->connect("self.wen","cgramem.wen");
+    def->connect("self.dataout0","cgramem.rdata");
+    def->connect("self.valid","cgramem.valid");
+    def->connect("c0.out","cgramem.cg_en");
+    def->connect("self.ren","cgramem.ren");
+
+  });
+
+  Generator* ram = c->getGenerator("memory.ram2");
+  ram->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    uint width = args.at("width")->get<int>();
+    Values rbGenargs({{"width",Const::make(c,width)},{"total_depth",Const::make(c,1024)}});
+    def->addInstance("cgramem","cgralib.Mem",
+      rbGenargs,
+      {{"mode",Const::make(c,"sram")}});
+    def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
+    def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    def->connect("self.rdata","cgramem.rdata");
+    def->connect("self.ren","cgramem.ren");
+    def->connect("self.raddr","cgramem.addr");
+    def->connect("self.wdata","cgramem.wdata");
+    def->connect("self.wen","cgramem.wen");
+  });
+
+  Generator* rom = c->getGenerator("memory.rom2");
+  rom->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    uint width = args.at("width")->get<int>();
+    Values rbGenargs({{"width",Const::make(c,width)},{"total_depth",Const::make(c,1024)}});
+    def->addInstance("cgramem","cgralib.Mem",
+      rbGenargs,
+      {{"mode",Const::make(c,"sram")}, {"init", def->getModule()->getArg("init")}});
+    def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
+    def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    def->connect("self.rdata","cgramem.rdata");
+    def->connect("self.ren","cgramem.ren");
+    def->connect("self.raddr", "cgramem.addr");
+  });
+}
+
+void load_commonlib_ext(Context* c) {
+  Generator* smax = c->getGenerator("commonlib.smax");
+  smax->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    uint width = args.at("width")->get<int>();
+    ASSERT(width==16,"NYI non 16");
+    Values PEArgs({
+      {"alu_op",Const::make(c,"max")},
+      {"flag_sel",Const::make(c,"pe")},
+      {"signed",Const::make(c,true)}
+    });
+    def->addInstance("cgramax","cgralib.PE",{{"op_kind",Const::make(c,"combined")}},PEArgs);
+    def->connect("self.in0","cgramax.data.in.0");
+    def->connect("self.in1","cgramax.data.in.1");
+    def->connect("self.out","cgramax.data.out");
+
+  });
+  
+  Generator* umax = c->getGenerator("commonlib.umax");
+  umax->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    uint width = args.at("width")->get<int>();
+    ASSERT(width==16,"NYI non 16");
+    Values PEArgs({
+      {"alu_op",Const::make(c,"umax")},
+      {"flag_sel",Const::make(c,"pe")},
+      {"signed",Const::make(c,false)}
+    });
+    def->addInstance("cgramax","cgralib.PE",{{"op_kind",Const::make(c,"combined")}},PEArgs);
+    def->connect("self.in0","cgramax.data.in.0");
+    def->connect("self.in1","cgramax.data.in.1");
+    def->connect("self.out","cgramax.data.out");
+
+  });
+
+  Generator* abs = c->getGenerator("commonlib.abs");
+  abs->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    uint width = args.at("width")->get<int>();
+    ASSERT(width==16,"NYI non 16");
+    Values PEArgs({
+      {"alu_op",Const::make(c,"abs")},
+      {"signed",Const::make(c,false)}
+    });
+    def->addInstance("abs","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},PEArgs);
+    def->connect("self.in","abs.data.in.0");
+    def->connect("self.out","abs.data.out");
+
+  });
+
+}
+
+
+void load_float(Context* c) {
+  Generator* fadd = c->getGenerator("float.add");
+  fadd->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    Values PEArgs({
+      {"alu_op",Const::make(c,"fadd")},
+      {"signed",Const::make(c,false)}
+    });
+    def->addInstance("binop","cgralib.PE",{{"op_kind",Const::make(c,"alu")}}, PEArgs);
+    def->connect("self.in0","binop.data.in.0");
+    def->connect("self.in1","binop.data.in.1");
+    def->connect("self.out","binop.data.out");
+
+  });
+
+  Generator* fmul = c->getGenerator("float.mul");
+  fmul->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    Values PEArgs({
+      {"alu_op",Const::make(c,"fmul")},
+      {"signed",Const::make(c,false)}
+    });
+    def->addInstance("binop","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},PEArgs);
+    def->connect("self.in0","binop.data.in.0");
+    def->connect("self.in1","binop.data.in.1");
+    def->connect("self.out","binop.data.out");
+
+  });
+
+}
+
+void load_opsubstitution(Context* c) {
+  //coreir.neg should be  0 - in
+  c->getGenerator("coreir.neg")->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    def->addInstance("sub","coreir.sub");
+    def->addInstance("c0","coreir.const",Values(),{{"value",Const::make(c,16,0)}});
+    def->connect("self.in","sub.in1");
+    def->connect("c0.out","sub.in0");
+    def->connect("sub.out","self.out");
+  });
+
+  c->getGenerator("coreir.not")->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
+    def->addInstance("xor","coreir.xor");
+    def->addInstance("cffff","coreir.const",Values(),{{"value",Const::make(c,16,0xffff)}});
+    def->connect("self.in","xor.in1");
+    def->connect("cffff.out","xor.in0");
+    def->connect("xor.out","self.out");
+  });
+
+  //coreir operators that have 1 bit width should be swapped with their corebit counterparts
+  for (string op : {"and", "or", "xor"}) {
+
+    Module* m = c->getGenerator("coreir." + op)->getModule({{"width",Const::make(c,1)}});
+    ModuleDef* def = m->newModuleDef();
+    def->addInstance("inst", "corebit." + op);
+    def->connect("self.in0.0","inst.in0");
+    def->connect("self.in1.0","inst.in1");
+    def->connect("self.out.0","inst.out");
+    m->setDef(def);
+  }
+
+}
+
+void load_corebit2lut(Context* c) {
+#define B0 170
+#define B1 (12*17)
+#define B2 (15*16)
+ 
+  {
+    //wire
+    Module* mod = c->getModule("corebit.wire");
+    ModuleDef* def = mod->newModuleDef();
+    def->connect("self.in","self.out");
+    mod->setDef(def);
+  }
+
+  //{
+    //// bitconst -> lut
+    //Module* mod = c->getModule("corebit.const");
+    //ModuleDef* def = mod->newModuleDef();
+
+    //bool val = mod->getModArgs().at("value")->get<bool>();
+    //assert(val == 0 || val == 1);
+
+    //int lutval = 0;
+    //if (val) {
+      //lutval = ~lutval;
+    //}
+    //def->addInstance("lut","commonlib.lutN",{{"N", Const::make(c, 3)}},{{"init",Const::make(c,8,lutval)}});
+    //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    //def->connect("self.in","lut.in.0");
+    //def->connect("c0.out","lut.in.1");
+    //def->connect("c0.out","lut.in.2");
+    //def->connect("lut.out","self.out");
+    //mod->setDef(def);
+  //}
+  {
+    //unary
+    Module* mod = c->getModule("corebit.not");
+    ModuleDef* def = mod->newModuleDef();
+    //Add the Lut
+    //def->addInstance("lut","commonlib.lutN",Values(),{{"init",Const::make(c,8,~B0)}});
+    def->addInstance("lut","commonlib.lutN",{{"N", Const::make(c, 3)}},{{"init",Const::make(c,8,~B0)}});
+    def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    def->connect("self.in","lut.in.0");
+    def->connect("c0.out","lut.in.1");
+    def->connect("c0.out","lut.in.2");
+    def->connect("lut.out","self.out");
+    mod->setDef(def);
+  }
+  vector<std::pair<string,uint>> binops({{"and",B0&B1},{"or",B0|B1},{"xor",B0^B1}});
+  for (auto op : binops) {
+    CoreIR::Value* lutval = Const::make(c,8,op.second);
+    Module* mod = c->getModule("corebit."+op.first);
+    ModuleDef* def = mod->newModuleDef();
+    //Add the Lut
+    //def->addInstance("lut","commonlib.lutN",Values(),{{"init",lutval}});
+    def->addInstance("lut","commonlib.lutN",{{"N", Const::make(c, 3)}},{{"init",lutval}});
+    def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
+    def->connect("self.in0","lut.in.0");
+    def->connect("self.in1","lut.in.1");
+    def->connect("c0.out","lut.in.2");
+    def->connect("lut.out","self.out");
+    mod->setDef(def);
+  }
+  {
+    //mux
+    Module* mod = c->getModule("corebit.mux");
+    ModuleDef* def = mod->newModuleDef();
+    //Add the Lut
+    //def->addInstance("lut","commonlib.lutN",Values(),{{"init",Const::make(c,8,(B2&B1)|((~B2)&B0))}});
+    def->addInstance("lut","commonlib.lutN",{{"N", Const::make(c, 3)}},{{"init",Const::make(c,8,(B2&B1)|((~B2)&B0))}});
+    def->connect("self.in0","lut.in.0");
+    def->connect("self.in1","lut.in.1");
+    def->connect("self.sel","lut.in.2");
+    def->connect("lut.out","self.out");
+    mod->setDef(def);
+  }
+
+#undef B0
+#undef B1
+#undef B2
+}
+
+void load_cgramapping(Context* c) {
+  //commonlib.lut def
+  {
+    Module* mod = c->getGenerator("commonlib.lutN")->getModule({{"N",Const::make(c,3)}});
+    ModuleDef* def = mod->newModuleDef();
+    Values bitPEArgs({{"lut_value",mod->getArg("init")}});
+    def->addInstance(+"lut","cgralib.PE",{{"op_kind",Const::make(c,"bit")}},bitPEArgs);
+    
+    def->connect("self.in","lut.bit.in");
+    def->connect("lut.bit.out","self.out");
+    mod->setDef(def);
+  }
+  /*{
+    //TODO not specified in the PE spec
+    //unary op (width)->width
+    std::vector<std::tuple<string,string,uint>> unops = {
+      //std::make_tuple("not","inv",0),
+    };
+    for (auto op : unops) {
+      string opstr = std::get<0>(op);
+      string alu_op = std::get<1>(op);
+      uint is_signed = std::get<2>(op);
+      Module* mod = c->getGenerator("coreir."+opstr)->getModule({{"width",Const::make(c,16)}});
+      ModuleDef* def = mod->newModuleDef();
+      Values dataPEArgs({
+        {"alu_op",Const::make(c,alu_op)},
+        {"signed",Const::make(c,(bool) is_signed)}});
+      def->addInstance("binop","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},dataPEArgs);
+    
+      def->connect("self.in","binop.data.in.0");
+      def->connect("self.out","binop.data.out");
+      mod->setDef(def);
+    }
+    }*/
+  {
+    //binary op (width,width)->width
+    std::vector<std::tuple<string,string,uint>> binops({
+      std::make_tuple("add","add",0),
+      std::make_tuple("sub","sub",0),
+      std::make_tuple("mul","mult_0",0),
+      std::make_tuple("or","or",0),
+      std::make_tuple("and","and",0),
+      std::make_tuple("xor","xor",0),
+      std::make_tuple("ashr","rshft",1),
+      std::make_tuple("lshr","rshft",0),
+      std::make_tuple("shl","lshft",0),
+    });
+    for (auto op : binops) {
+      string opstr = std::get<0>(op);
+      string alu_op = std::get<1>(op);
+      uint is_signed = std::get<2>(op);
+      Module* mod = c->getGenerator("coreir."+opstr)->getModule({{"width",Const::make(c,16)}});
+      ModuleDef* def = mod->newModuleDef();
+      Values dataPEArgs({
+        {"alu_op",Const::make(c,alu_op)},
+        {"signed",Const::make(c,(bool) is_signed)}});
+      def->addInstance("binop","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},dataPEArgs);
+    
+      def->connect("self.in0","binop.data.in.0");
+      def->connect("self.in1","binop.data.in.1");
+      def->connect("self.out","binop.data.out");
+      mod->setDef(def);
+    }
+  }
+  //Mux
+  {
+    Module* mod = c->getGenerator("coreir.mux")->getModule({{"width",Const::make(c,16)}});
+    ModuleDef* def = mod->newModuleDef();
+    Values PEArgs({
+      {"alu_op",Const::make(c,"sel")},
+      {"flag_sel",Const::make(c,"pe")},
+      {"signed",Const::make(c,false)}
+    });
+    def->addInstance("mux","cgralib.PE",{{"op_kind",Const::make(c,"combined")}},PEArgs);
+    def->connect("self.in0","mux.data.in.1");
+    def->connect("self.in1","mux.data.in.0");
+    def->connect("self.sel","mux.bit.in.0");
+    def->connect("mux.data.out","self.out");
+    mod->setDef(def);
+  }
+  {
+    //comp op (width,width)->bit
+    std::vector<std::tuple<string,string,string,uint>> compops({
+      std::make_tuple("eq","eq","eq",0),
+      std::make_tuple("neq","neq","ne",0),
+      std::make_tuple("sge","ge","pe",1),
+      std::make_tuple("uge","uge","pe",0),
+      std::make_tuple("sle","le","pe",1),
+      std::make_tuple("ule","ule","pe",0),
+      std::make_tuple("sgt","gt","pe",1),
+      std::make_tuple("ugt","ugt","pe",0),
+      std::make_tuple("slt","lt","pe",1),
+      std::make_tuple("ult","ult","pe",0),
+    });
+    for (auto op : compops) {
+      string opstr = std::get<0>(op);
+      string alu_op = std::get<1>(op);
+      string flag_sel = std::get<2>(op);
+      uint is_signed = std::get<3>(op);
+      Module* mod = c->getGenerator("coreir."+opstr)->getModule({{"width",Const::make(c,16)}});
+      ModuleDef* def = mod->newModuleDef();
+      Values PEArgs({
+        {"alu_op",Const::make(c,alu_op)},
+        {"flag_sel",Const::make(c,flag_sel)},
+        {"signed",Const::make(c,(bool) is_signed)}
+      });
+      def->addInstance("compop","cgralib.PE",{{"op_kind",Const::make(c,"combined")}},PEArgs);
+    
+      def->connect("self.in0","compop.data.in.0");
+      def->connect("self.in1","compop.data.in.1");
+      def->connect("self.out","compop.bit.out");
+      mod->setDef(def);
+    }
+  }
+  
+  //term
+  {
+    Module* mod = c->getGenerator("coreir.term")->getModule({{"width",Const::make(c,16)}});
+    ModuleDef* def = mod->newModuleDef();
+    mod->setDef(def); 
+  }
+
+  //bitterm
+  {
+    Module* mod = c->getModule("corebit.term");
+    ModuleDef* def = mod->newModuleDef();
+    mod->setDef(def);
+  }
+
+
+}
+
+void LoadDefinition_cgralib(Context* c) {
+
+  //load_mem_ext(c);
+  load_commonlib_ext(c);
+  load_opsubstitution(c);
+  load_corebit2lut(c);
+  load_cgramapping(c);
+  //lad_float(c);
+}
 
 std::string exe_start_name(const std::string& n) {
   return n + "_exe_start";
@@ -179,8 +641,12 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   auto context = def->getContext();
   auto ns = context->getNamespace("global");
 
+  cout << "Generating compute unit for " << op->name << endl;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
+  for (auto var : op->index_variables_needed_by_compute) {
+    ub_field.push_back({var, context->BitIn()->Arr(16)});
+  }
   for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
     string buf_name = bundle.first;
     string bundle_name = bundle.second;
@@ -189,13 +655,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     int pix_per_burst =
       buf.lanes_in_bundle(bundle_name);
 
-    cout << "Bundle = " << bundle.second << endl;
-    cout << "Possible bundles..." << endl;
-    for (auto bndl : buf.port_bundles) {
-      cout << tab(1) << bndl.first << endl;
-    }
     assert(buf.is_output_bundle(bundle.second));
-    //ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_en", context->BitIn()));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
   }
 
@@ -203,13 +663,11 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
     string buf_name = bundle.first;
     string bundle_name = bundle.second;
     auto buf = map_find(buf_name, buffers);
-    //int bundle_width = buf.port_bundle_width(bundle_name);
     int pixel_width = buf.port_widths;
     int pix_per_burst =
       buf.lanes_in_bundle(bundle_name);
 
     assert(buf.is_input_bundle(bundle.second));
-    //ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_valid", context->Bit()));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
   }
 
@@ -220,18 +678,29 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   {
     auto def = compute_unit->newModuleDef();
     if (found_compute) {
+      cout << "Found compute file for " << prg.name << endl;
       auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+      for (auto var : op->index_variables_needed_by_compute) {
+        def->connect(halide_cu->sel(var), def->sel("self")->sel(var));
+      }
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        auto buf = map_find(bundle.first, buffers);
+
         bool found = false;
         cout << "# of selects = " << halide_cu->getSelects().size() << endl;
         cout << CoreIR::toString(halide_cu) << endl;
         for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
           string name = s;
           cout << "name = " << name << endl;
+          string sname = split_at(bundle.first, "_clkwrk_").at(0);
           if (is_prefix("in", name) &&
-              contains(name, bundle.first)) {
-            def->connect(halide_cu->sel(name)->sel(0), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+              contains(name, sname)) {
+            
+            int lanes = buf.lanes_in_bundle(bundle.second);
+            for (int l = 0; l < lanes; l++) {
+              def->connect(halide_cu->sel(name)->sel(l), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(l));
+            }
             found = true;
             break;
           }
@@ -239,25 +708,35 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
         assert(found);
       }
 
+      cout << "More than oune outgoing bundle" << endl;
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+        auto buf = map_find(bundle.first, buffers);
         bool found = false;
         cout << "# of selects = " << halide_cu->getSelects().size() << endl;
         cout << CoreIR::toString(halide_cu) << endl;
         for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
           string name = s;
-          cout << "name = " << name << endl;
+          cout << tab(1) << "name = " << name << endl;
+          cout << tab(1) << "bundle.first = " << bundle.first << endl;
+          string sname = split_at(bundle.first, "_clkwrk_").at(0);
+          cout << tab(1) << "after split  = " << sname << endl;
           if (is_prefix("out", name) &&
-              contains(name, bundle.first)) {
+              //contains(name, bundle.first)) {
+              contains(name, sname)) {
+            int lanes = buf.lanes_in_bundle(bundle.second);
+            assert(lanes == 1);
+
             def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
             found = true;
             break;
           }
         }
         if (!found) {
-          cout << "Error: Could not find compute unit for " << pg(bundle.first, bundle.second) << endl;
+          cout << "Error: Could not find compute unit connection for " << pg(bundle.first, bundle.second) << " in compute unit " << halide_cu->getInstname() << endl;
         }
         assert(found);
       }
+
     } else {
       // Generate dummy compute logic
       cout << "generating dummy compute" << endl;
@@ -266,7 +745,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
         string buf_name = bundle.first;
         string bundle_name = bundle.second;
 
-        cout << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
+        cout << tab(1) << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
 
         auto buf = map_find(buf_name, buffers);
         int pix_width = buf.port_widths;
@@ -276,13 +755,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
         CoreIR::Wireable* bsel =
           def->sel("self." + pg(buf_name, bundle_name));
         for (int l = 0; l < nlanes; l++) {
-          int lo = l*pix_width;
-          int hi = lo + pix_width;
-          assert(hi - lo == pix_width);
-          auto w =
-            def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
-          def->connect(w->sel("in"), bsel->sel(0));
-          inputs.push_back(w->sel("out"));
+          inputs.push_back(bsel->sel(l));
         }
       }
       auto result = addList(def, inputs);
@@ -293,19 +766,15 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
 
       cout << "done with dummy compute" << endl;
     }
-    //vector<CoreIR::Wireable*> vals;
-    //for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-      //vals.push_back(def->sel("self." + pg(bundle.first, bundle.second) + "_en"));
-    //}
-    //auto valid = andList(def, vals);
 
-    //for (auto bundle : outgoing_bundles(op, buffers, prg)) {
-      //def->connect(valid, def->sel("self." + pg(bundle.first, bundle.second) + "_valid"));
-    //}
     compute_unit->setDef(def);
   }
 
   def->addInstance(op->name, compute_unit);
+}
+
+Wireable* exe_start_control_vars(ModuleDef* def, const std::string& opname) {
+  return def->sel(exe_start_control_vars_name(opname))->sel("out");
 }
 
 Wireable* read_start_control_vars(ModuleDef* def, const std::string& opname) {
@@ -326,7 +795,7 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
   return def->sel(write_start_name(opname))->sel("out");
 }
 
-Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps) {
+Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
   auto c = def->getContext();
 
   isl_map* sched = nullptr;
@@ -359,7 +828,17 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   wirebit(def, read_start_name(op->name), controller->sel("valid"));
   auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
   // Assume exe is combinational
-  auto write_start = wirebit(def, write_start_name(op->name), exe_start);
+
+  int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
+  //assert(op_latency == 0);
+
+  Wireable* write_start_w = exe_start;
+  for (int d = 0; d < op_latency; d++) {
+    write_start_w = delaybit(def, op->name + c->getUnique(), write_start_w);
+  }
+
+  auto write_start = wirebit(def, write_start_name(op->name), write_start_w);
+
   //auto write_start = delaybit(def, write_start_name(op->name), exe_start);
 
   //wire(def, 16*num_dims(dom), read_start_control_vars_name(op->name), controller->sel("d"));
@@ -370,18 +849,229 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
       controller->sel("d"),
       16,
       num_dims(dom));
+  delay_array(def, exe_start_control_vars_name(op->name),
+      controller->sel("d"),
+      16,
+      num_dims(dom));
+
   return controller;
+}
+
+CoreIR::Module* create_prog_declaration(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context) { 
+  auto ns = context->getNamespace("global");
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", context->Named("coreir.clkIn")}};
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+
+    int pixel_width = out_buf.port_widths;
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+
+    if (prg.is_input(out_rep)) {
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
+    } else {
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+    }
+  }
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto ub = ns->newModuleDecl(prg.name, utp);
+  return ub;
+}
+
+CoreIR::Module* generate_dual_port_addrgen_buf(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
+
+  CoreIRLoadLibrary_commonlib(context);
+
+  auto ns = context->getNamespace("global");
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", context->Named("coreir.clkIn")}};
+
+  for (auto b : buf.port_bundles) {
+    int pt_width = buf.port_widths;
+    int bd_width = buf.lanes_in_bundle(b.first);
+    string name = b.first;
+    string pt_rep = pick(b.second);
+    auto acc_maps = get_maps(buf.access_map.at(pt_rep));
+    assert(acc_maps.size() > 0);
+    int control_dimension = num_in_dims(pick(acc_maps));
+    if (buf.is_input_bundle(b.first)) {
+      ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
+      //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+
+      //ub_field.push_back(make_pair(name + "_en", context->BitIn()));
+      ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
+    } else {
+      ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
+      //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+
+      //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
+      ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
+    }
+  }
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
+  auto def = ub->newModuleDef();
+
+  if (true) {
+    //generate_synthesizable_functional_model(options, buf, def);
+  } else {
+    //buf.generate_coreir(options, def);
+  }
+
+  ub->setDef(def);
+  return ub;
+}
+
+CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context) {
+  assert(false);
+  //bool found_compute = true;
+  //if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
+    //found_compute = false;
+  //}
+
+  //auto ub = create_prog_declaration(options, buffers, prg, schedmap, context);
+  //auto def = ub->newModuleDef();
+
+  //auto sched_maps = get_maps(schedmap);
+  //for (auto op : prg.all_ops()) {
+    //generate_coreir_op_controller(def, op, sched_maps, hwinfo);
+    //generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
+  //}
+
+  //for (auto& buf : buffers) {
+    //if (!prg.is_boundary(buf.first)) {
+      //auto ub_mod = generate_dual_port_addrgen_buf(options, context, buf.second);
+      //def->addInstance(buf.second.name, ub_mod);
+    //}
+  //}
+
+  //auto levels = get_variable_levels(prg);
+  //// Connect compute units to buffers
+  //for (auto op : prg.all_ops()) {
+    //vector<string> surrounding = surrounding_vars(op, prg);
+    //for (auto var : op->index_variables_needed_by_compute) {
+      //int level = map_find(var, levels);
+      //auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
+      //def->connect(def->sel(op->name)->sel(var), var_wire);
+    //}
+
+    //for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+      //string buf_name = bundle.first;
+      //string bundle_name = bundle.second;
+      //auto buf = map_find(buf_name, buffers);
+      //int pixel_width = buf.port_widths;
+
+      //assert(buf.is_input_bundle(bundle.second));
+
+      //if (prg.is_output(buf_name)) {
+        //auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
+        //def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        //def->connect(def->sel(output_en),
+            //write_start_wire(def, op->name));
+      //} else {
+        //def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        //def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
+            //write_start_wire(def, op->name));
+        ////def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
+            ////write_start_control_vars(def, op->name));
+      //}
+    //}
+
+    //for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+      //string buf_name = bundle.first;
+      //string bundle_name = bundle.second;
+      //auto buf = map_find(buf_name, buffers);
+
+      //assert(buf.is_output_bundle(bundle.second));
+
+      //if (prg.is_input(buf_name)) {
+        //auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
+        //auto input_bus = "self." + pg(buf_name, bundle_name);
+        //auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
+        ////def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        //// TODO: This delayed input is a hack that I insert to
+        //// ensure that I can assume all buffer reads take 1 cycle
+        //def->connect(delayed_input,
+            //def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
+        //def->connect(def->sel(output_valid),
+            //read_start_wire(def, op->name));
+      //} else {
+        //def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
+            //read_start_wire(def, op->name));
+        ////def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
+            ////read_start_control_vars(def, op->name));
+      //}
+    //}
+  //}
+
+  //ub->setDef(def);
+
+  //ub->print();
+
+  //connect_signal("reset", ub);
+  ////context->runPasses({"wireclocks-coreir"});
+  ////context->runPasses({"rungenerators", "wireclocks-coreir"});
+  //context->runPasses({"rungenerators", "wireclocks-clk"});
+
+  //return ub;
+}
+
+void generate_coreir_addrgen_in_tile(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap) {
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_cgralib(context);
+  auto c = context;
+
+  auto prg_mod = generate_coreir_addrgen_in_tile(options, buffers, prg, schedmap, context);
+
+  auto ns = context->getNamespace("global");
+  if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  deleteContext(context);
+
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
-    CoreIR::Context* context) {
+    CoreIR::Context* context,
+    schedule_info& hwinfo) {
 
   bool found_compute = true;
-  if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
+  //bool found_compute = false;
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+    //assert(false);
+  }
+  if (!loadFromFile(context, compute_file)) {
     found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    //assert(false);
   }
 
   auto ns = context->getNamespace("global");
@@ -412,19 +1102,27 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
-    generate_coreir_op_controller(def, op, sched_maps);
+    generate_coreir_op_controller(def, op, sched_maps, hwinfo);
     generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
   }
 
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
-      auto ub_mod = generate_coreir(options, context, buf.second);
+      auto ub_mod = generate_coreir(options, context, buf.second, hwinfo);
       def->addInstance(buf.second.name, ub_mod);
     }
   }
 
+  auto levels = get_variable_levels(prg);
   // Connect compute units to buffers
   for (auto op : prg.all_ops()) {
+    vector<string> surrounding = surrounding_vars(op, prg);
+    for (auto var : op->index_variables_needed_by_compute) {
+      int level = map_find(var, levels);
+      auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
+      def->connect(def->sel(op->name)->sel(var), var_wire);
+    }
+
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
@@ -480,7 +1178,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ub->print();
 
   connect_signal("reset", ub);
-  context->runPasses({"wireclocks-coreir"});
+  //context->runPasses({"wireclocks-coreir"});
+  //context->runPasses({"rungenerators", "wireclocks-coreir"});
+  context->runPasses({"rungenerators", "wireclocks-clk"});
 
   return ub;
   //assert(false);
@@ -660,18 +1360,253 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   return cgralib;
 }
 
+typedef struct {
+  vector<SelectPath> IO16;
+  vector<SelectPath> IO16in;
+  vector<SelectPath> IO1;
+  vector<SelectPath> IO1in;
+} IOpaths;
+
+void getAllIOPaths(Wireable* w, IOpaths& paths) {
+  Type* t = w->getType();
+  if (auto at = dyn_cast<ArrayType>(t)) {
+    if (at->getLen()==16 && isa<BitType>(at->getElemType())) {
+      paths.IO16.push_back(w->getSelectPath());
+    }
+    else if (at->getLen() == 16 && isa<BitInType>(at->getElemType())) {
+      paths.IO16in.push_back(w->getSelectPath());
+    }
+    else {
+      for (auto selstr : t->getSelects()) {
+        getAllIOPaths(w->sel(selstr),paths);
+      }
+    }
+  }
+  else if (isa<BitType>(t)) {
+    paths.IO1.push_back(w->getSelectPath());
+  }
+  else if (isa<BitInType>(t)) {
+    paths.IO1in.push_back(w->getSelectPath());
+  }
+  else {
+    for (auto sw : w->getSelects()) {
+      getAllIOPaths(sw.second,paths);
+    }
+  }
+  
+}
+
+void addIOs(Context* c, Module* top) {
+  ModuleDef* mdef = top->getDef();
+
+  Values aWidth({{"width",Const::make(c,16)}});
+  IOpaths iopaths;
+  getAllIOPaths(mdef->getInterface(), iopaths);
+  Instance* pt = addPassthrough(mdef->getInterface(),"_self");
+  for (auto path : iopaths.IO16) {
+    string ioname = "io16in_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"in")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO16in) {
+    string ioname = "io16_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.IO",aWidth,{{"mode",Const::make(c,"out")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+  }
+  for (auto path : iopaths.IO1) {
+    string ioname = "io1in_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"in")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"out"},path);
+  }
+  for (auto path : iopaths.IO1in) {
+    string ioname = "io1_" + join(++path.begin(),path.end(),string("_"));
+    mdef->addInstance(ioname,"cgralib.BitIO",{{"mode",Const::make(c,"out")}});
+    path[0] = "in";
+    path.insert(path.begin(),"_self");
+    mdef->connect({ioname,"in"},path);
+  }
+  mdef->disconnect(mdef->getInterface());
+  inlineInstance(pt);
+}
+
+
+class CustomFlatten : public CoreIR::InstanceGraphPass {
+ public:
+  static std::string ID;
+  CustomFlatten() : InstanceGraphPass("customflatten", "Flattens everything except the new time!") {}
+  bool runOnInstanceGraphNode(CoreIR::InstanceGraphNode& node) {
+    bool changed = false;
+    // int i = 0;
+    for (auto inst : node.getInstanceList()) {
+       //cout << "inlining " << inst->getName() << endl;
+       Module* m = inst->getModuleRef();
+       if (m->isGenerated()) {
+         auto g = m->getGenerator();
+         if (g->getName() == "raw_dual_port_sram_tile") {
+           continue;
+         }
+       }
+      changed |= inlineInstance(inst);
+    }
+    return changed;
+  }
+};
+
+namespace MapperPasses {
+class MemConst : public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    MemConst() : InstanceVisitorPass(ID,"replace mem wen const with lut") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+bool ConstReplace(Instance* cnst) {
+  //cout << "cnstreplace" << endl;
+  //cout << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+  auto conns = cnst->sel("out")->getConnectedWireables();
+  //cout << "Connections=" << conns.size() << endl;
+  if (conns.size()==0) {
+    return false;
+  }
+  ASSERT(conns.size()==1,"size: " + to_string(conns.size()));
+  for (auto conn : conns) {
+    if (auto conInst = dyn_cast<Instance>(conn->getTopParent())) {
+      cout << "  coninst= " << toString(conInst) << endl;
+      //cout << "  conn= " << toString(conn->getSelectPath()) << endl;
+      //if (conInst->getModuleRef()->getRefName() != "cgralib.Mem" || conn->getSelectPath().back()!="wen") {
+      if (conInst->getModuleRef()->getRefName() != "cgralib.Mem") {
+        return false;
+      }
+    }
+  }
+  cout << "REPLACING!" << endl;
+  ModuleDef* def = cnst->getContainer();
+  uint val = cnst->getModArgs().at("value")->get<bool>() ? 63 : 0;
+  Values bitPEArgs({{"lut_value",Const::make(c,8,val)}});
+  Instance* lut = def->addInstance(cnst->getInstname()+"_lutcnst","cgralib.PE",{{"op_kind",Const::make(c,"bit")}},bitPEArgs);
+  for (auto conn : conns) {
+    def->connect(lut->sel("bit")->sel("out"),conn);
+  }
+  def->removeInstance(cnst);
+  return true;
+}
+
+std::string MapperPasses::MemConst::ID = "memconst";
+void MapperPasses::MemConst::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasModule("corebit.const")) {
+    addVisitorFunction(c->getModule("corebit.const"),ConstReplace);
+  }
+
+}
+namespace MapperPasses {
+class ConstDuplication : public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    ConstDuplication() : InstanceVisitorPass(ID,"duplicate all constants") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+bool ConstDup(Instance* cnst) {
+  Module* modRef = cnst->getModuleRef();
+
+  auto connSet = cnst->sel("out")->getConnectedWireables();
+  if (connSet.size() < 1) {
+    return false;
+  }
+  vector<Wireable*> conns(connSet.begin(),connSet.end());
+
+  ModuleDef* def = cnst->getContainer();
+  for (uint i=1; i< conns.size(); ++i) {
+    Wireable* conn = conns[i];
+    cout << "replacing connection to : " << conn->toString() << endl;
+    Instance* newconst = def->addInstance(cnst->getInstname() + to_string(i),modRef,cnst->getModArgs());
+    def->connect(newconst->sel("out"),conn);
+    def->disconnect(cnst->sel("out"),conn);
+  }
+  return true;
+}
+
+std::string MapperPasses::ConstDuplication::ID = "constduplication";
+void MapperPasses::ConstDuplication::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasModule("corebit.const")) {
+    addVisitorFunction(c->getModule("corebit.const"),ConstDup);
+  }
+  if (c->hasGenerator("coreir.const")) {
+    addVisitorFunction(c->getGenerator("coreir.const"),ConstDup);
+  }
+
+}
+
+void garnet_map_module(Module* top) {
+  auto c = top->getContext();
+
+  //load_cgramapping(c);
+  LoadDefinition_cgralib(c);
+  c->runPasses({"deletedeadinstances"});
+  c->runPasses({"removewires"});
+  addIOs(c,top);
+  c->runPasses({"cullgraph"}); 
+  c->addPass(new CustomFlatten);
+  c->runPasses({"customflatten"});
+  c->addPass(new MapperPasses::ConstDuplication);
+  c->runPasses({"constduplication"});
+  c->addPass(new MapperPasses::MemConst);
+  c->runPasses({"memconst"});
+
+  //c->runPasses({"flatten"});
+  c->runPasses({"cullgraph"});
+  c->getPassManager()->printLog();
+  cout << "Trying to save" << endl;
+  c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+
+  auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
+  string postmap = "after_mapping_" + top->getName() + ".json";
+  ////Create file here.
+  std::ofstream file(postmap);
+  jpass->writeToStream(file,top->getRefName());
+}
+
+
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap) {
+
+  schedule_info info;
+  generate_coreir(options, buffers, prg, schedmap, info);
+}
+
+void generate_coreir(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    schedule_info& hwinfo) {
   CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cgralib(context);
   auto c = context;
 
   //CoreIRLoadLibrary_cwlib(context);
   //
-  auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
+  auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context, hwinfo);
 
+  //garnet_map_module(prg_mod);
+
+  //prg_mod->print();
+  //assert(false);
   auto ns = context->getNamespace("global");
   if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
@@ -731,30 +1666,17 @@ CoreIR::Wireable* delay_array(ModuleDef* def,
 }
 
 CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
-      const std::string name,
-      CoreIR::Wireable* w,
-      const int width) {
-    auto c = bdef->getContext();
-    auto r = bdef->addInstance(
-        name,
-        "mantle.reg",
-        {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
-    bdef->connect(r->sel("in"), w);
-    return r->sel("out");
-  }
-
-  //CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
-      //CoreIR::Wireable* w,
-      //const int width) {
-    //auto c = bdef->getContext();
-    //auto r = bdef->addInstance(
-        //"delay_reg_" + c->getUnique(),
-        //"mantle.reg",
-        //{{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
-    //bdef->connect(r->sel("in"), w);
-    //return r->sel("out");
-  //}
-
+    const std::string name,
+    CoreIR::Wireable* w,
+    const int width) {
+  auto c = bdef->getContext();
+  auto r = bdef->addInstance(
+      name,
+      "mantle.reg",
+      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
+  bdef->connect(r->sel("in"), w);
+  return r->sel("out");
+}
 
 CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   auto ns = context->getNamespace("global");
@@ -1057,6 +1979,176 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
 
   m->setDef(def);
   return m;
+}
+
+void add_raw_dual_port_sram_generator(CoreIR::Context* c) {
+  auto cgralib = c->getNamespace("global");
+  CoreIR::Params params = {{"depth",c->Int()}};
+  //CoreIR::Params params;
+
+  Params reg_array_args = {{"type", CoreIRType::make(c)},
+                           {"has_en", c->Bool()},
+                           {"has_clr", c->Bool()},
+                           {"has_rst", c->Bool()},
+                           {"init", c->Int()}};
+  TypeGen* ramTG = cgralib->newTypeGen(
+    "raw_dual_port_sram_TG",
+    params,
+    [](Context* c, Values args) {
+    int width = 16;
+    //int depth = args.at("depth")->get<int>();
+    //int depth = args.at("depth")->get<int>();
+
+  auto tp = c->Record({
+      {"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)},
+      {"waddr", c->BitIn()->Arr(width)},
+      {"wen", c->BitIn()},
+      {"rdata", c->Bit()->Arr(width)},
+      {"raddr", c->BitIn()->Arr(width)},
+      {"ren", c->BitIn()}});
+  return tp;
+    });
+  Generator* ram = cgralib->newGeneratorDecl("raw_dual_port_sram_tile", ramTG, params);
+
+
+  ram->setGeneratorDefFromFun(
+    [](Context* c, Values args, ModuleDef* def) {
+
+    int width = 16;
+    int depth = args.at("depth")->get<int>();
+  uint awidth = (uint)ceil(log2(depth));
+  CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
+    {"lo", CoreIR::Const::make(c, 0)},
+    {"hi", CoreIR::Const::make(c, awidth)}};
+  def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
+  def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
+
+  def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+  def->addInstance(
+      "readreg",
+      "mantle.reg",
+      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
+  def->connect("self.clk", "readreg.clk");
+  def->connect("self.clk", "mem.clk");
+  def->connect("self.wdata", "mem.wdata");
+  def->connect("self.waddr", "waddr_slice.in");
+  def->connect("waddr_slice.out", "mem.waddr");
+  def->connect("self.wen", "mem.wen");
+  def->connect("mem.rdata", "readreg.in");
+  def->connect("self.rdata", "readreg.out");
+  def->connect("self.raddr", "raddr_slice.in");
+  def->connect("raddr_slice.out", "mem.raddr");
+  def->connect("self.ren", "readreg.en");
+    });
+}
+
+CoreIR::Module* lake_rf(CoreIR::Context* c, const int width, const int depth) {
+  auto ns = c->getNamespace("global");
+  if (ns->hasModule("register_file")) {
+    return ns->getModule("register_file");
+  }
+
+  vector<pair<string, CoreIR::Type*> > rf_fields;
+  auto m = ns->newModuleDecl("register_file", c->Record(rf_fields));
+
+  return m;
+}
+
+CoreIR::Module* delay_module(CoreIR::Context* c, const int width, const vector<int>& read_delays) {
+  assert(read_delays.size() == 1);
+  int D = read_delays.at(0);
+  auto ns = c->getNamespace("global");
+  vector<pair<string, Type*> > fields = {{"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)},
+      //{"waddr", c->BitIn()->Arr(width)},
+      //{"wen", c->BitIn()},
+      {"rdata", c->Bit()->Arr(width)}};
+      //{"raddr", c->BitIn()->Arr(width)},
+      //{"ren", c->BitIn()}};
+
+auto mod = ns->newModuleDecl("delay_" + c->getUnique(), c->Record(fields));
+auto def = mod->newModuleDef();
+
+auto next = def->sel("self.wdata");
+for (int d = 0; d < D; d++) {
+  next = delay(def, next, width);
+}
+//auto d = delay(def, def->sel("self.wdata"), width);
+def->connect(next, def->sel("self.rdata"));
+mod->setDef(def);
+
+  return mod;
+}
+
+void ram_module(CoreIR::Context* c, const int width, const int depth) {
+  auto ns = c->getNamespace("global");
+
+  if (!ns->hasGenerator("raw_dual_port_sram_tile")) {
+    add_raw_dual_port_sram_generator(c);
+    assert(ns->hasGenerator("raw_dual_port_sram_tile"));
+  }
+}
+
+
+void mini_sram_garnet_test() {
+
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cgralib(context);
+  auto c = context;
+
+  auto ns = context->getNamespace("global");
+
+  vector<pair<string, Type*> > fields = {{"clk", c->Named("coreir.clkIn")},
+    {"in", c->BitIn()->Arr(16)},
+    {"out", c->Bit()->Arr(16)}};
+
+  auto prg_mod = ns->newModuleDecl("one_raw_sram_tile_probe", c->Record(fields));
+  auto def = prg_mod->newModuleDef();
+  prg_mod->setDef(def);
+
+  ram_module(c, 16, 256);
+
+  auto bnk = def->addInstance(
+      "test_ram",
+      "global.raw_dual_port_sram_tile",
+      {{"depth", COREMK(c, 256)}}
+      );
+
+  auto self = def->sel("self");
+
+  auto addr_zero = mkConst(def, 16, 0);
+  auto one = 
+    def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}})->sel("out");
+  //auto zero = 
+    //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
+
+  def->connect(bnk->sel("clk"), self->sel("clk"));
+  def->connect(bnk->sel("wen"), one);
+  def->connect(bnk->sel("waddr"), addr_zero);
+  def->connect(bnk->sel("raddr"), addr_zero);
+  def->connect(bnk->sel("ren"), one);
+  def->connect(bnk->sel("wdata"), self->sel("in"));
+  def->connect(bnk->sel("rdata"), self->sel("out"));
+
+  if(!saveToFile(ns, "pre_mapped_" + prg_mod->getName() + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+
+  garnet_map_module(prg_mod);
+
+  context->runPasses({"rungenerators", "wireclocks-coreir"});
+  if(!saveToFile(ns, prg_mod->getName() + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  deleteContext(context);
+
+  assert(false);
 }
 
 #endif

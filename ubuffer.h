@@ -9,6 +9,8 @@
 
 using namespace std;
 
+struct schedule_info;
+
 struct dynamic_address {
   std::string buffer;
   std::string table;
@@ -1542,6 +1544,7 @@ class UBuffer {
 #ifdef COREIR
     CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
+    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info);
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
 #endif
 
@@ -1681,6 +1684,7 @@ vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
 #ifdef COREIR
+CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf);
 #endif
 
@@ -1696,3 +1700,7 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
     umap* op_writes,
     umap* op_reads,
     umap* sched);
+
+
+map<string, std::set<string> >
+get_unique_output_ports(UBuffer& buf);

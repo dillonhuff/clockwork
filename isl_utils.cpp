@@ -1,6 +1,11 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+std::string dim_name(isl_set* const a, const int d) {
+  string str(isl_set_get_dim_name(a, isl_dim_set, d));
+  return str;
+}
+
 std::string dim_name(isl_aff* const a, const int d) {
   string str(isl_aff_get_dim_name(a, isl_dim_in, d));
   return str;
@@ -1280,6 +1285,10 @@ isl_set* unn(isl_set* const m0, isl_set* const m1) {
   return isl_set_union(cpy(m0), cpy(m1));
 }
 
+isl_map* diff(isl_map* const m0, isl_map* const m1) {
+  return isl_map_subtract(cpy(m0), cpy(m1));
+}
+
 isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1) {
   return isl_union_set_subtract(cpy(m0), cpy(m1));
 }
@@ -1297,6 +1306,9 @@ isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
 }
 
 isl_map* unn(isl_map* const m0, isl_map* const m1) {
+  if (m0 == nullptr) {
+    return m1;
+  }
   return isl_map_union(cpy(m0), cpy(m1));
 }
 
@@ -1492,6 +1504,14 @@ std::string codegen_c(isl_union_map* res) {
   std::string code_string(code_str);
   free(code_str);
 
+  //for (auto m : maps) {
+    //release(m);
+  //}
+  //release(range_rep);
+  //isl_ast_node_free(code);
+  isl_ast_build_free(build);
+  //release(options);
+
   return code_string;
 }
 
@@ -1686,16 +1706,29 @@ isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card)
 }
 
 isl_set* rdset(isl_ctx* ctx, const std::string& str) {
-  return isl_set_read_from_str(ctx, str.c_str());
+  auto res = isl_set_read_from_str(ctx, str.c_str());
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_set: " << str << endl;
+    assert(false);
+  }
+  return res;
 }
 
 isl_aff* rdaff(isl_ctx* ctx, const std::string& str) {
-  return isl_aff_read_from_str(ctx, str.c_str());
+  auto res = isl_aff_read_from_str(ctx, str.c_str());
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_aff: " << str << endl;
+    assert(false);
+  }
+  return res;
 }
 
 umap* rdmap(isl_ctx* ctx, const std::string& s) {
   auto res = isl_union_map_read_from_str(ctx, s.c_str());
-  assert(res != nullptr);
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_map: " << s << endl;
+    assert(false);
+  }
   return res;
 }
 
@@ -2805,13 +2838,13 @@ isl_basic_set* lift_divs(isl_basic_set* bm) {
   auto ineqs = isl_basic_set_inequalities_matrix(bm, isl_dim_set, isl_dim_div, isl_dim_cst, isl_dim_param);
   auto eqs = isl_basic_set_equalities_matrix(bm, isl_dim_set, isl_dim_div, isl_dim_cst, isl_dim_param);
 
-  cout << "bm = " << str(bm) << endl;
+  //cout << "bm = " << str(bm) << endl;
 
-  cout << "ineqs..." << endl;
-  cout << str(ineqs) << endl;
+  //cout << "ineqs..." << endl;
+  //cout << str(ineqs) << endl;
 
-  cout << "eqs..." << endl;
-  cout << str(eqs) << endl;
+  //cout << "eqs..." << endl;
+  //cout << str(eqs) << endl;
 
   int div_dims = num_div_dims(bm);
   //assert(div_dims == 0);
@@ -2901,3 +2934,26 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
   return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
 }
 
+isl_aff* sub(isl_aff* a, isl_aff* b) {
+  return isl_aff_sub(cpy(a), cpy(b));
+}
+
+void release(isl_set* s) {
+  isl_set_free(s);
+}
+
+void release(isl_map* m) {
+  isl_map_free(m);
+}
+
+void release(isl_union_set* s) {
+  isl_union_set_free(s);
+}
+
+void release(isl_union_map* m) {
+  isl_union_map_free(m);
+}
+
+void release(isl_union_pw_qpolynomial* m) {
+  isl_union_pw_qpolynomial_free(m);
+}

@@ -20,7 +20,7 @@ int main() {
   }
 
   vector<int> actual;
-  for (int t = 0; t < 200; t++) {
+  for (int t = 0; t < 300; t++) {
     dut.in_ld_read_0 = t + 1;
     cout << "@ " << t;
 

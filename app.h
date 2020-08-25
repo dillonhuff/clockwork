@@ -335,6 +335,12 @@ struct Update {
   string compute_unit_impl;
   Expr* def;
 
+  vector<string> index_variables_needed;
+
+  vector<string> index_variables_needed_by_compute() {
+    return index_variables_needed;
+  }
+
   void pad_reduce_dimension(const int max_reduce_dimension) {
     for (auto& win : srcs) {
       if (win.reduce_dimension() < max_reduce_dimension) {
@@ -1012,6 +1018,26 @@ hardware_schedule(uset* domain, umap* validity, umap* proximity);
 umap* 
 hardware_schedule_umap(uset* domain, umap* validity, umap* proximity);
 
+umap* 
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity,
+    map<string, int>& latencies, map<string, int>& iis, vector<pair<string, isl_val*> >& obj);
+
+struct linear_constraint {
+  vector<pair<string, int> > terms;
+  int offset;
+  bool is_equality;
+};
+
+map<string, isl_aff*>
+hardware_schedule(
+    uset* domain,
+    umap* validity,
+    umap* proximity,
+    map<string, int>& latencies,
+    map<string, int>& iis,
+    vector<pair<string, isl_val*> >& obj,
+    const vector<linear_constraint>& extra_equality_constraints);
+
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
 
 static inline
@@ -1291,3 +1317,6 @@ string next_name(const std::string& prefix, ilp_builder& b) {
   return prefix + "_" + str(b.variable_positions.size());
 }
 
+umap* to_umap(uset* domain, const map<string, isl_aff*>& hs);
+
+umap* to_umap(const map<string, isl_aff*>& hs);

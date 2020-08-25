@@ -1,9 +1,9 @@
 "dimensionality",3,0
-"cycle_starting_addr",128,0
+"cycle_starting_addr",8,0
 "extent_2",1,0
 "cycle_stride_2",0,0
 "extent_1",8,0
-"cycle_stride_1",1,0
+"cycle_stride_1",8,0
 "extent_0",1,0
 "cycle_stride_0",0,0
 "write","sram"
