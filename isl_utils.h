@@ -33,6 +33,7 @@ using std::pair;
 using std::map;
 using std::string;
 
+std::string dim_name(isl_set* const a, const int d);
 std::string dim_name(isl_aff* const a, const int d);
 
 std::string name(isl_space* const s);
@@ -545,6 +546,7 @@ isl_val* sub(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);
 isl_val* neg(isl_val* a);
 
+isl_aff* sub(isl_aff* a, isl_aff* b);
 int to_int(isl_val* a);
 
 isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v);
@@ -579,6 +581,7 @@ isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1);
 
 
 isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);
+isl_map* diff(isl_map* const m0, isl_map* const m1);
 
 isl_aff* get_aff(isl_map* m);
 
@@ -594,3 +597,9 @@ isl_basic_set* zero(isl_basic_set* fs, const int var);
 
 std::string codegen_c(isl_aff* const bset);
 isl_set* set_name(isl_set* const m, string new_name);
+
+void release(isl_set* s);
+void release(isl_map* m);
+void release(isl_union_set* s);
+void release(isl_union_map* m);
+void release(isl_union_pw_qpolynomial* m);

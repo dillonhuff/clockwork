@@ -17,6 +17,8 @@ T pop(deque<T>& d) {
   return v;
 }
 
+string isl_sanitize(const std::string& str);
+
 static inline
 string c_sanitize(const std::string& str) {
   string res = "";
@@ -77,20 +79,7 @@ string take_btw(const std::string& s, const std::string& ldel, const std::string
   return s.substr(found_l, found_r - found_l);
 }
 
-static inline
-bool is_number(string s) {
-
-  if (s[0] != '-' && !isdigit(s[0])) {
-    return false;
-  }
-
-  for (int i = 1; i < s.length(); i++)  {
-    if (isdigit(s[i]) == false) {
-      return false;
-    }
-  }
-  return true;
-}
+bool is_number(string s);
 
 static inline
 int safe_stoi(const string s) {
@@ -191,6 +180,19 @@ std::string comma_list(const std::vector<std::string>& strs) {
 
 static inline
 std::string bracket_list(const std::vector<std::string>& strs) {
+  return sep_list(strs, "[", "]", ", ");
+}
+
+
+template<typename T>
+static inline
+std::string bracket_list(const std::vector<T>& vals) {
+  vector<string> strs;
+  for (auto v : vals) {
+    ostringstream ss;
+    ss << v;
+    strs.push_back(ss.str());
+  }
   return sep_list(strs, "[", "]", ", ");
 }
 

@@ -4,6 +4,7 @@ struct I_write_0_merged_banks_9_cache {
 	// RAM Box: {[0, 63], [0, 63]}
 	// Capacity: 131
 	// # of read delays: 9
+  // 0, 1, 2, 64, 65, 66, 128, 129, 130
 	hw_uint<32>  f0;
 	hw_uint<32>  f2;
 	hw_uint<32>  f4;
@@ -115,6 +116,7 @@ struct I_write_0_merged_banks_9_cache {
 };
 
 struct I_cache {
+  // # of banks: 1
   I_write_0_merged_banks_9_cache I_write_0_merged_banks_9;
 };
 

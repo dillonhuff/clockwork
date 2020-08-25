@@ -1,8 +1,20 @@
 #pragma once
 
 #include "hw_classes.h"
+#include <cstring>
 
 typedef int16_t int16;
+
+template<typename T>
+T clamp_val(const T& a, const T& lo, const T& hi) {
+  if (a < lo) {
+    return lo;
+  }
+  if (a > hi) {
+    return hi;
+  }
+  return a;
+}
 
 static inline
 float int_to_float(const hw_uint<32>& in) {
@@ -240,6 +252,10 @@ T inc(T& src, T& a0) {
 //int inc(int& src, int& a0) {
   //return src + a0;
 //}
+
+hw_uint<16> interleave(hw_uint<16>& src, hw_uint<16>& a0, const int column_index) {
+  return (column_index % 2) == 0 ? src : a0;
+}
 
 hw_uint<16> fmadd_16(hw_uint<16>& src, hw_uint<16>& a0) {
   return src + a0;
@@ -639,4 +655,58 @@ hw_uint<32> histogram_inc(hw_uint<64>& ignore, hw_uint<32>& val) {
   return val + 1;
 }
 
+static inline
+hw_uint<16> as_hblur(const hw_uint<16*2>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  return (v0 + v1) >> 1;
+}
 
+static inline
+hw_uint<32> blur_1x3_32(const hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+  cout << "v0 = " << v0 << endl;
+  return v0 + v1 + v2;
+}
+
+static inline
+hw_uint<32> blur_5x5_32(const hw_uint<32*5*5>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  hw_uint<32> v4 = in.extract<128, 159>();
+  return v0 + v1 + v2 + v3 + v4;
+}
+
+static inline
+hw_uint<32> blur_5x1_32(const hw_uint<32*5>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  hw_uint<32> v4 = in.extract<128, 159>();
+  return v0 + v1 + v2 + v3 + v4;
+}
+
+static inline
+hw_uint<32> blur_2x2_32(const hw_uint<32*4>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  return v0 + v1 + v2 + v3;
+}
+
+template<typename A, typename B>
+inline A reinterpret(const B &b) {
+    A a;
+    std::memcpy(&a, &b, sizeof(a));
+    return a;
+}
+inline float float_from_bits(uint32_t bits) {
+    return reinterpret<float, uint32_t>(bits);
+}
