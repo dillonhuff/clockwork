@@ -7,7 +7,7 @@
 
 #ifdef __VIVADO_SYNTH__
 
-#define AP_INT_MAX_W 8192
+//#define AP_INT_MAX_W 8192
 #include "ap_int.h"
 
 #include "hls_stream.h"
