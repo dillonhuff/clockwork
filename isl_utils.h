@@ -608,3 +608,5 @@ isl_multi_aff* get_multi_aff(isl_union_map* m);
 isl_multi_aff* get_multi_aff(isl_map* m);
 
 
+isl_map* linear_address_map(isl_set* s);
+isl_map* to_map(isl_aff* s);

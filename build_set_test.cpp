@@ -9991,7 +9991,13 @@ void run_verilator_tb(const std::string& name) {
   int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
   assert(to_verilog_res == 0);
 
-  int res = run_verilator_on(name, name + "_verilog_tb.cpp", {name + ".v", name + "_verilog_collateral.sv", "./lake_components/dualwithadd/lake_top.sv"});
+  int res = run_verilator_on(name,
+      name + "_verilog_tb.cpp",
+      {name + ".v", name + "_verilog_collateral.sv",
+      "./lake_components/dualwithadd/lake_top.sv",
+      //"./lake_components/ASPLOS_designs/bare_dual_port.v",
+      "./lake_components/inner_affine_controller.sv"});
+
   assert(res == 0);
   //int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
   //assert(verilator_build == 0);
@@ -11757,6 +11763,7 @@ void resnet_test() {
   //assert(false);
   add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   prg.pretty_print();
+  assert(false);
   generate_unoptimized_code(prg);
   //assert(false);
 
@@ -13290,7 +13297,11 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  //options.rtl_options.use_external_controllers = false;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    //TARGET_TILE_DUAL_SRAM_RAW;
+    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+    //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13485,17 +13496,16 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(harris());
+  //test_programs.push_back(unsharp());
   test_programs.push_back(gaussian());
-  test_programs.push_back(down_sample());
-  test_programs.push_back(cascade());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
-
+  test_programs.push_back(harris());
+  test_programs.push_back(down_sample());
+  test_programs.push_back(cascade());
   test_programs.push_back(up_sample());
 
   // Delayed incorrectly?
-  //test_programs.push_back(unsharp());
 
   // Compute units gone?
   //test_programs.push_back(rom());
@@ -13834,26 +13844,22 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  auto test_programs = stencil_programs();
-  //auto test_programs = all_cgra_programs();
-  //cout << "====== Program classification" << endl;
-  //for (auto prg : test_programs) {
-    //if (!is_rate_matchable(prg)) {
-      //cout << tab(1) << prg.name << " is not rate matchable" << endl;
-      //for (auto b : all_buffers(prg)) {
-        //if (!prg.is_boundary(b)) {
-          //if (is_reduce_buffer(b, prg)) {
-            //cout << tab(2) << "REDUCE: " << b << endl;
-          //} else {
-            //cout << tab(2) << "PC    : " << b << endl;
-          //}
-          //cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
-          //cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
-        //}
-      //}
-    //}
-  //}
+  //prog prg = gaussian();
+  //dsa_writers(prg);
+  //compile_for_garnet_dual_port_mem(prg);
+  //string name = prg.name;
+  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  //assert(to_verilog_res == 0);
+  //string app_type = "dualraw";
+  //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+  //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //cmd("cp ./lake_components/ASPLOS_designs/bare_dual_port.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+
   //assert(false);
+
+  auto test_programs = stencil_programs();
 
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
@@ -14385,15 +14391,19 @@ void resnet_auto_unroll() {
 
   assert(false);
 
-  infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
+  generate_unoptimized_code(prg);
 
-  prg.pretty_print();
-  prg.sanity_check();
-
-  sanity_check_all_reads_defined(prg);
-
-  regression_test(prg);
   assert(false);
+
+  //infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
+
+  //prg.pretty_print();
+  //prg.sanity_check();
+
+  //sanity_check_all_reads_defined(prg);
+
+  //regression_test(prg);
+  //assert(false);
 }
 
 void raw_memtile_verilog_test() {
@@ -14477,9 +14487,9 @@ void brighten_blur_asplos_example() {
 }
 
 void application_tests() {
+  resnet_auto_unroll();
   brighten_blur_asplos_example();
   resnet_auto_unroll();
-  //resnet_auto_unroll();
   raw_memtile_verilog_test();
   raw_memtile_verilog_as_delay_test();
 

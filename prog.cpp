@@ -2636,8 +2636,8 @@ void generate_unoptimized_code(prog& prg) {
   options.all_rams = true;
   all_unbanked(prg, options);
   options.inner_bank_offset_mode =
-    //INNER_BANK_OFFSET_MULTILINEAR;
-    INNER_BANK_OFFSET_LINEAR;
+    INNER_BANK_OFFSET_MULTILINEAR;
+    //INNER_BANK_OFFSET_LINEAR;
   //assert(false);
   generate_unoptimized_code(options, prg);
 }
@@ -2793,7 +2793,6 @@ void generate_regression_testbench(prog& prg) {
     }
     unroll_factor[in] = unroll;
     rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << in << ";" << endl;
-    //rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
     optimized_streams.push_back(in);
   }
 
@@ -2809,13 +2808,13 @@ void generate_regression_testbench(prog& prg) {
     }
     unroll_factor[out] = unroll;
     rgtb << tab(1) << "HWStream<hw_uint<" << width << " > > " << out << ";" << endl;
-    //rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
     optimized_streams.push_back(out);
   }
 
   rgtb << endl << endl;
 
   rgtb << tab(1) << "// Loading input data" << endl;
+  rgtb << tab(1) << "srand(1);" << endl;
   for (auto in : prg.ins) {
     auto cmap = prg.consumer_map(in);
     auto read_map = inv(cmap);
@@ -2834,7 +2833,8 @@ void generate_regression_testbench(prog& prg) {
     rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
-      inds.push_back(str(unroll) + "*i + " + str(i));
+      inds.push_back("rand() % 256");
+      //inds.push_back(str(unroll) + "*i + " + str(i));
     }
     pack_bv(2, rgtb, "value", inds, lane_width);
     rgtb << tab(2) << in << ".write(value);" << endl;
@@ -5129,6 +5129,7 @@ void generate_verilator_tb_in_streams(std::ostream& rgtb,
   rgtb << endl << endl;
 
   rgtb << tab(1) << "// Loading input data" << endl;
+  rgtb << tab(1) << "srand(1);" << endl;
   for (auto in : prg.ins) {
     auto cmap = prg.consumer_map(in);
     auto read_map = inv(cmap);
@@ -5147,7 +5148,9 @@ void generate_verilator_tb_in_streams(std::ostream& rgtb,
     rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
-      inds.push_back(str(unroll) + "*i + " + str(i));
+      inds.push_back("rand() % 256");
+      //str(unroll) + "*i + " + str(i));
+      //inds.push_back(str(unroll) + "*i + " + str(i));
     }
     pack_bv(2, rgtb, "value", inds, lane_width);
     rgtb << tab(2) << in << ".write(value);" << endl;

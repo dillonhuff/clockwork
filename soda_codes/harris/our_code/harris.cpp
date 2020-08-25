@@ -2501,6 +2501,7 @@ for (int c1 = -3; c1 <= 60; c1 += 1)
   */
 	for (int c1 = -3; c1 <= 60; c1 += 1)
 	  for (int c2 = -3; c2 <= 60; c2 += 1) {
+#pragma HLS pipeline II=1
 	    op_hcompute_padded16_global_wrapper_stencil(padded16_stencil /* buf name */, padded16_global_wrapper_stencil, 0, c1, c2);
 	    if (c1 >= -1 && c2 >= -1) {
 	      op_hcompute_grad_x_stencil(padded16_global_wrapper_stencil /* buf name */, grad_x_stencil, 0, c1 - 1, c2 - 1);
