@@ -9643,8 +9643,8 @@ void histogram_test() {
   auto count_loop = prg.add_loop("i", 0, 20);
   auto update = count_loop->add_op("update_counts");
   update->add_function("histogram_inc");
-  update->add_dynamic_load("buckets", "image", "i");
-  update->add_dynamic_store("buckets", "image", "i");
+  update->add_dynamic_load("buckets", "image", "i"); // buckets[image[i]]
+  update->add_dynamic_store("buckets", "image", "i");// buckets[image[i]]
 
   auto st = prg.add_loop("sm", 0, 20)->
     add_op("store_results");
@@ -14421,11 +14421,11 @@ void resnet_auto_unroll() {
   prg.pretty_print();
   prg.sanity_check();
 
-  assert(false);
+  //assert(false);
 
-  generate_unoptimized_code(prg);
+  //generate_unoptimized_code(prg);
 
-  assert(false);
+  //assert(false);
 
   //infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
 
@@ -14515,7 +14515,7 @@ void brighten_blur_asplos_example() {
   for (auto b : buffers) {
     cout << b.second << endl;
   }
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {

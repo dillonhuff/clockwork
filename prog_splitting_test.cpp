@@ -243,9 +243,9 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 			string new_var_name = "<" + str(level_index) + ">";
 				normalized = ReplaceString(normalized, var, new_var_name); //Change this to only replace when var is the whole name of the variable
 		}
-		auto node = buffer_addresses.extract(addr);
-		node.key() = normalized;
-		buffer_addresses.insert(std::move(node));
+		//auto node = buffer_addresses.extract(addr);
+		//node.key() = normalized;
+		//buffer_addresses.insert(std::move(node));
 		normalized_addresses.insert(normalized);
 	}
 
