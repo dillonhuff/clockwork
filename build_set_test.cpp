@@ -1570,12 +1570,14 @@ std::set<string> buffers_referenced(op* p) {
   assert(!p->is_loop);
 
   std::set<string> bufs;
-  for (auto b : p->produce_locs) {
-    bufs.insert(b.first);
+  //for (auto b : p->produce_locs) {
+  for (auto b : p->buffers_written()) {
+    bufs.insert(b);
   }
 
-  for (auto b : p->consume_locs_pair) {
-    bufs.insert(b.first);
+  //for (auto b : p->consume_locs_pair) {
+  for (auto b : p->buffers_read()) {
+    bufs.insert(b);
   }
 
   return bufs;
@@ -11199,19 +11201,19 @@ void lake_agg_sram_tb_config_test() {
 
     //assert(found);
 
-    for (auto locs_written : op->produce_locs) {
-    //for (auto locs_written : op->write_addrs()) {
-      //assert(locs_written.size() == 1);
-      //auto loc_sec = locs_written.at(0).second;
-      out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
-      isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
-      //isl_aff* write_addr = get_aff_addr(op, locs_written.first, loc_sec, lake_agg);
-      out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
-      for (int d = 0; d < num_in_dims(write_addr); d++) {
-        int ldim = num_in_dims(write_addr) - d - 1;
-        out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
-      }
-    }
+    //for (auto locs_written : op->produce_locs) {
+    ////for (auto locs_written : op->write_addrs()) {
+      ////assert(locs_written.size() == 1);
+      ////auto loc_sec = locs_written.at(0).second;
+      //out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
+      //isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
+      ////isl_aff* write_addr = get_aff_addr(op, locs_written.first, loc_sec, lake_agg);
+      //out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
+      //for (int d = 0; d < num_in_dims(write_addr); d++) {
+        //int ldim = num_in_dims(write_addr) - d - 1;
+        //out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
+      //}
+    //}
 
     for (auto locs_read : op->consume_locs_pair) {
       out << "\"read\"," << "\"" << locs_read.first << "\"" << endl;
