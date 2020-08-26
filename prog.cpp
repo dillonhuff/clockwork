@@ -1255,9 +1255,6 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
 
   ofstream out(name + "_wrapper.cpp");
   vector<string> decls;
-  //for (auto consumed : op->consume_locs) {
-    //decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
-  //}
 
   for (auto consumed : op->consume_locs_pair) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
@@ -1267,9 +1264,6 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
     if (contains_key(consumed, buffers)) {
       decls.push_back(buffers.at(consumed).bundle_type_string(op->name) + "& " + consumed);
     }
-    //if (contains_key(consumed.first, buffers)) {
-      //decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
-    //}
   }
   out << "void " << name << sep_list(decls, "(", ")", ", ") << "{}";
   out.close();
@@ -1285,7 +1279,6 @@ isl_map* prog::read_map(op* op, const std::string& buf) {
       for (auto sec_pair : consumed.second) {
         if (sec_pair.first == "") {
           cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
-
         } else {
           cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
         }
@@ -1862,14 +1855,6 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
   std::set<string> done;
   vector<string> buf_srcs;
 
-  //for (auto p : op->consume_locs) {
-    //auto buf_name = p.first;
-    //if (!elem(buf_name, done)) {
-      //buf_srcs.push_back(buf_name);
-      //done.insert(buf_name);
-    //}
-  //}
-
   for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
@@ -1879,7 +1864,6 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
   }
 
   for (auto p : op->buffers_written()) {
-    //auto buf_name = p.first;
     auto buf_name = p;
     if (!elem(buf_name, done)) {
       buf_srcs.push_back(buf_name);
@@ -1921,7 +1905,6 @@ vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   std::set<string> done;
   vector<string> buf_srcs;
-  //for (auto p : op->consume_locs) {
   for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
@@ -1990,7 +1973,6 @@ compute_kernel generate_compute_op(
 
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-  //vector<pair<string, string> > in_buffers;
   vector<pair<string, vector< pair< string, string > > > > in_buffers;
   std::set<string> distinct;
   for (auto con : op->consume_locs_pair) {
@@ -3835,7 +3817,6 @@ void ir_node::copy_memory_operations_from(op* other) {
       consume_locs_pair.push_back(simpl);
     }
   }
-  //concat(consume_locs_pair, other->consume_locs_pair);
   concat(dynamic_load_addresses, other->dynamic_load_addresses);
 }
 
@@ -3922,11 +3903,6 @@ replace_variable(const address& addr, const std::string& var, const int v) {
 
 void ir_node::replace_variable(const std::string& var, const std::string& val) {
 
-  //for (auto& addr : produce_locs) {
-    //addr.second =
-      //::replace_variable(addr.second, var, val);
-  //}
-
   for (auto& addr : produce_locs) {
     piecewise_address pw;
     for (auto& comp : addr.second) {
@@ -3934,6 +3910,7 @@ void ir_node::replace_variable(const std::string& var, const std::string& val) {
     }
     addr.second = pw;
   }
+
   for (auto& addr : consume_locs_pair) {
     piecewise_address pw;
     for (auto& comp : addr.second) {
@@ -3944,11 +3921,6 @@ void ir_node::replace_variable(const std::string& var, const std::string& val) {
 
 }
 void ir_node::replace_variable(const std::string& var, const int val) {
-
-  //for (auto& addr : produce_locs) {
-    //addr.second =
-      //::replace_variable(addr.second, var, val);
-  //}
 
   for (auto& addr : produce_locs) {
     piecewise_address pw;
@@ -3981,7 +3953,6 @@ void unroll_reduce_loops(prog& prg) {
       return map_find(v, levels);
       });
 
-  //assert(false);
   cout << "Starting to unroll..." << endl;
   for (auto v : rvars) {
     unroll(prg, v);

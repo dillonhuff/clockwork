@@ -7231,6 +7231,8 @@ void weight_add_exposure_fusion_app(
     const std::string& out_name,
     App& lp) {
 
+  const int pyramid_levels = 4;
+
   lp.func2d("in", "id", pt(in_name));
 
   // Two synthetic exposures
@@ -7340,6 +7342,8 @@ void exposure_fusion_app(
 
   lp.func2d("in", "id", pt(in_name));
 
+  const int pyramid_levels = 4;
+
   // Two synthetic exposures
   lp.func2d("bright", "id", pt("in"));
   lp.func2d("dark", "scale_exposure", pt("in"));
@@ -7356,12 +7360,12 @@ void exposure_fusion_app(
 
 
   // Create pyramids of the weights
-  auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
-  auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
+  auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(pyramid_levels, "bright_weights_normed", lp);
 
   // Create laplacian pyramids of the synthetic exposures
-  auto dark_pyramid = laplace_pyramid(4, "dark", lp);
-  auto bright_pyramid = laplace_pyramid(4, "bright", lp);
+  auto dark_pyramid = laplace_pyramid(pyramid_levels, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(pyramid_levels, "bright", lp);
 
   // Merge weighted pyramids
   vector<string> merged_images;
@@ -7373,7 +7377,7 @@ void exposure_fusion_app(
   }
 
   // Collapse the blended pyramid into a single image
-  assert(merged_images.size() == 4);
+  assert(merged_images.size() == pyramid_levels);
   string image = merged_images.back();
   for (int i = merged_images.size() - 2; i >= 0; i--) {
     string merged_level = "final_merged_" + str(i);
@@ -7483,7 +7487,8 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 8, 16, 32};
+  //vector<int> throughputs{1, 8, 16, 32};
+  vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
@@ -7494,8 +7499,10 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     lp.realize(options, name, cols, rows, throughput);
+
     move_to_benchmarks_folder(name + "_opt");
   }
+  assert(false);
 }
 
 void exposure_fusion() {
@@ -14528,6 +14535,7 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
+  exposure_fusion_iccad_apps("ef_cc");
   histogram_2d_test();
 
   // Possibly failing
@@ -14608,7 +14616,6 @@ void application_tests() {
   //halide_camera_pipeline_test();
   register_file_test();
 
-  //exposure_fusion_iccad_apps("ef_cc");
 
   //assert(false);
 
@@ -14736,10 +14743,6 @@ void application_tests() {
   psef_multi_output_test();
 
   non_rate_matched_ds_test();
-
-  // Passed up to here
-  //mini_conv_halide_test();
-
 
   //two_input_denoise_pipeline_test();
   //synth_wire_test();
