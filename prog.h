@@ -48,7 +48,8 @@ struct ir_node {
   // Operation fields
   std::string name;
   // Locations written
-  std::vector<pair<buffer_name, address> > produce_locs;
+  //std::vector<pair<buffer_name, address> > produce_locs;
+  std::vector<pair<buffer_name, piecewise_address> > produce_locs;
   std::vector<dynamic_address> dynamic_store_addresses;
 
   // Locations read
@@ -110,9 +111,17 @@ struct ir_node {
       const std::string& buf) {
     for (auto& b : produce_locs) {
       if (b.first == buf) {
-        b.second = prefix + ", " + b.second;
+        for (auto& p : b.second) {
+          p.second = prefix + ", " + p.second;
+        }
+
       }
     }
+    //for (auto& b : produce_locs) {
+      //if (b.first == buf) {
+        //b.second = prefix + ", " + b.second;
+      //}
+    //}
   }
 
   void add_prefix_to_reads(const std::string& prefix,
@@ -655,17 +664,18 @@ struct ir_node {
   }
 
   std::vector<pair<buffer_name, piecewise_address> > produces_pair() const {
-    std::vector<pair<buffer_name, piecewise_address> > ps;
-    for (auto p : produce_locs) {
-      buffer_name b = p.first;
-      address addr = p.second;
-      //pair<buffer_name, address> pr{b, addr};
-      pair<string, address> pr{"", addr};
-      piecewise_address paddr{pr};
-      pair<buffer_name, piecewise_address> psa{b, paddr};
-      ps.push_back(psa);
-    }
-    return ps;
+    return produce_locs;
+    //std::vector<pair<buffer_name, piecewise_address> > ps;
+    //for (auto p : produce_locs) {
+      //buffer_name b = p.first;
+      //address addr = p.second;
+      ////pair<buffer_name, address> pr{b, addr};
+      //pair<string, address> pr{"", addr};
+      //piecewise_address paddr{pr};
+      //pair<buffer_name, piecewise_address> psa{b, paddr};
+      //ps.push_back(psa);
+    //}
+    //return ps;
   }
 
   vector<string> produces() const {
@@ -675,11 +685,6 @@ struct ir_node {
     }
     return ps;
 
-    //vector<string> ps;
-    //for (auto p : produce_locs) {
-      //ps.push_back(p.first + "[" + p.second + "]");
-    //}
-    //return ps;
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3) {
@@ -696,7 +701,8 @@ struct ir_node {
 
   void add_store(const std::string& b, const std::string& loc) {
     assert(!is_loop);
-    produce_locs.push_back({b, loc});
+    //produce_locs.push_back({b, loc});
+    produce_locs.push_back({b, {{"", loc}}});
   }
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {

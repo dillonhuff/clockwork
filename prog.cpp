@@ -1341,10 +1341,51 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   auto domains = prg.domains();
   for (auto op : prg.all_ops()) {
 
-    for (auto produced : op->produce_locs) {
-      string name = produced.first;
+    //for (auto produced : op->produce_locs) {
+      //string name = produced.first;
+
+      //if (!contains_key(name, buffers)) {
+        //UBuffer buf;
+        //buf.name = name;
+        //buf.ctx = prg.ctx;
+        //if (contains_key(name, prg.buffer_port_widths)) {
+          //buf.port_widths = map_find(name, prg.buffer_port_widths);
+        //}
+        //buffers[name] = buf;
+      //}
+
+      //UBuffer& buf = buffers.at(name);
+
+      //string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      //buf.port_bundles[op->name + "_write"].push_back(pt_name);
+
+      //assert(contains_key(op, domains));
+
+      //// Map from??
+      //isl_map* produced_here =
+        //its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
+
+      //cout << "\tAdding input port: " << pt_name << endl;
+      //cout << "\t\tProduced:: " << str(produced_here) << endl;
+      //buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
+
+      //if (op->dynamic_writes(name)) {
+        //buf.dynamic_ports.insert(pt_name);
+      //}
+
+      //vector<string> inpt = buf.get_in_ports();
+      //cout << "current in port name: " << endl;
+      //for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
+      //cout << endl;
+
+      //usuffix++;
+    //}
+
+    for (auto consumed : op->produce_locs) {
+      string name = consumed.first;
 
       if (!contains_key(name, buffers)) {
+        cout << "Creating ports for op: " << name << endl;
         UBuffer buf;
         buf.name = name;
         buf.ctx = prg.ctx;
@@ -1357,24 +1398,38 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       UBuffer& buf = buffers.at(name);
 
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      buf.port_bundles[op->name + "_write"].push_back(pt_name);
+      buf.port_bundles[op->name + "_read"].push_back(pt_name);
+
+      string cond = "{ ";
+      for (auto sec_pair : consumed.second) {
+        if (sec_pair.first == "") {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+        } else {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+      }
+      cond = cond.substr(0, cond.length() - 2);
+      cond = cond + string(" }");
+
+      cout << "cond = " << cond.c_str() << endl;
+      isl_map* consumed_here =
+        its(isl_map_read_from_str(buf.ctx, cond.c_str()), cpy(domains.at(op)));
+
+      assert(consumed_here != nullptr);
 
       assert(contains_key(op, domains));
 
-      // Map from??
-      isl_map* produced_here =
-        its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
+      cout << "\tAdding output port: " << pt_name << endl;
+      cout << "\t\tConsumed: " << str(consumed_here) << endl;
+      buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
-      cout << "\tAdding input port: " << pt_name << endl;
-      cout << "\t\tProduced:: " << str(produced_here) << endl;
-      buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
-
-      if (op->dynamic_writes(name)) {
+      if (op->dynamic_reads(name)) {
         buf.dynamic_ports.insert(pt_name);
       }
 
       vector<string> inpt = buf.get_in_ports();
-      cout << "current in port name: " << endl;
+      cout << "current out port name: " << endl;
       for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
       cout << endl;
 
@@ -3754,18 +3809,26 @@ op* prog::merge_ops(const std::string& loop) {
 void ir_node::copy_memory_operations_from(op* other) {
   assert(!other->is_loop);
 
+  //for (auto pl : other->produce_locs) {
+    //if (!elem(remove_whitespace(pl), produce_locs)) {
+      ////cout << pl.first << ", " << pl.second << " is not one of" << endl;
+      ////for (auto p : produce_locs) {
+        ////cout << tab(1) << p.first << ", " << p.second << endl;
+      ////}
+      //produce_locs.push_back(remove_whitespace(pl));
+    //}  else {
+    //}
+  //}
+
   for (auto pl : other->produce_locs) {
-    if (!elem(remove_whitespace(pl), produce_locs)) {
-      //cout << pl.first << ", " << pl.second << " is not one of" << endl;
-      //for (auto p : produce_locs) {
-        //cout << tab(1) << p.first << ", " << p.second << endl;
-      //}
-      produce_locs.push_back(remove_whitespace(pl));
-    }  else {
+    pair<string, piecewise_address> simpl{pl.first, remove_whitespace(pl.second)};
+    if (!elem(simpl, produce_locs)) {
+      produce_locs.push_back(simpl);
     }
   }
 
   concat(dynamic_store_addresses, other->dynamic_store_addresses);
+
   for (auto pl : other->consume_locs_pair) {
     pair<string, piecewise_address> simpl{pl.first, remove_whitespace(pl.second)};
     if (!elem(simpl, consume_locs_pair)) {
@@ -3859,11 +3922,18 @@ replace_variable(const address& addr, const std::string& var, const int v) {
 
 void ir_node::replace_variable(const std::string& var, const std::string& val) {
 
-  for (auto& addr : produce_locs) {
-    addr.second =
-      ::replace_variable(addr.second, var, val);
-  }
+  //for (auto& addr : produce_locs) {
+    //addr.second =
+      //::replace_variable(addr.second, var, val);
+  //}
 
+  for (auto& addr : produce_locs) {
+    piecewise_address pw;
+    for (auto& comp : addr.second) {
+      pw.push_back({comp.first, ::replace_variable(comp.second, var, val)});
+    }
+    addr.second = pw;
+  }
   for (auto& addr : consume_locs_pair) {
     piecewise_address pw;
     for (auto& comp : addr.second) {
@@ -3875,9 +3945,17 @@ void ir_node::replace_variable(const std::string& var, const std::string& val) {
 }
 void ir_node::replace_variable(const std::string& var, const int val) {
 
+  //for (auto& addr : produce_locs) {
+    //addr.second =
+      //::replace_variable(addr.second, var, val);
+  //}
+
   for (auto& addr : produce_locs) {
-    addr.second =
-      ::replace_variable(addr.second, var, val);
+    piecewise_address pw;
+    for (auto& comp : addr.second) {
+      pw.push_back({comp.first, ::replace_variable(comp.second, var, val)});
+    }
+    addr.second = pw;
   }
 
   for (auto& addr : consume_locs_pair) {
