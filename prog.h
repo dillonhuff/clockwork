@@ -162,17 +162,21 @@ struct ir_node {
 
   vector<piecewise_address> write_addrs() const {
     vector<piecewise_address> addrs;
-    for (auto l : produce_locs) {
-      addrs.push_back({l});
+    for (auto l : produces_pair()) {
+      addrs.push_back(l.second);
     }
+    //for (auto l : produce_locs) {
+      //addrs.push_back({l});
+    //}
     return addrs;
   }
 
   vector<piecewise_address> write_addrs(const std::string& buf) const {
     vector<piecewise_address> addrs;
-    for (auto l : produce_locs) {
+    for (auto l : produces_pair()) {
       if (l.first == buf) {
-        addrs.push_back({{"", l.second}});
+        addrs.push_back(l.second);
+        //addrs.push_back({{"", l.second}});
       }
     }
     return addrs;
@@ -208,7 +212,8 @@ struct ir_node {
 
   std::set<string> buffers_written() const {
     std::set<string> written;
-    for (auto l : produce_locs) {
+    //for (auto l : produce_locs) {
+    for (auto l : produces_pair()) {
       written.insert(l.first);
     }
     return written;
