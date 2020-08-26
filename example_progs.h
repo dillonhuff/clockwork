@@ -13,7 +13,7 @@ prog brighten_blur(); //stencil
 prog halide_harris();
 prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
-prog mini_conv_halide_fixed();
+//prog mini_conv_halide_fixed();
 prog camera_pipeline(); //stencil
 prog up_sample(); 
 prog down_sample();

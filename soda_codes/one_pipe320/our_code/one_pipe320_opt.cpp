@@ -2931,17 +2931,22 @@ inline void one_pipe32_one_pipe32_update_0_write_bundle_write(hw_uint<512>& one_
 	one_pipe32_one_pipe32_update_0_write31_write(one_pipe32_one_pipe32_update_0_write31_res, one_pipe32, d0, d1, dynamic_address);
 }
 
+// Total re-use buffer capacity: 0 bits
 
 
 // Operation logic
-inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
+inline void one_pipe32_update_0(in_off_chip0_cache& in_off_chip0, one_pipe32_cache& one_pipe32, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in_off_chip0_oc
-	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
-	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
-	// Produce: in_off_chip0
-	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
+	// Consume: in_off_chip0
+	auto in_off_chip0_0_c__0_value = in_off_chip0_one_pipe32_update_0_read_bundle_read(in_off_chip0/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_32(in_off_chip0_0_c__0_value);
+	// Produce: one_pipe32
+	one_pipe32_one_pipe32_update_0_write_bundle_write(/* arg names */compute_result, one_pipe32, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2966,18 +2971,14 @@ inline void one_pipe320_update_0(one_pipe32_cache& one_pipe32, HWStream<hw_uint<
 
 }
 
-inline void one_pipe32_update_0(in_off_chip0_cache& in_off_chip0, one_pipe32_cache& one_pipe32, int d0, int d1) {
+inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in_off_chip0
-	auto in_off_chip0_0_c__0_value = in_off_chip0_one_pipe32_update_0_read_bundle_read(in_off_chip0/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_32(in_off_chip0_0_c__0_value);
-	// Produce: one_pipe32
-	one_pipe32_one_pipe32_update_0_write_bundle_write(/* arg names */compute_result, one_pipe32, d0, d1, 0);
+	// Consume: in_off_chip0_oc
+	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
+	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
+	// Produce: in_off_chip0
+	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
