@@ -165,9 +165,6 @@ struct ir_node {
     for (auto l : produces_pair()) {
       addrs.push_back(l.second);
     }
-    //for (auto l : produce_locs) {
-      //addrs.push_back({l});
-    //}
     return addrs;
   }
 
@@ -212,7 +209,6 @@ struct ir_node {
 
   std::set<string> buffers_written() const {
     std::set<string> written;
-    //for (auto l : produce_locs) {
     for (auto l : produces_pair()) {
       written.insert(l.first);
     }
@@ -674,10 +670,16 @@ struct ir_node {
 
   vector<string> produces() const {
     vector<string> ps;
-    for (auto p : produce_locs) {
-      ps.push_back(p.first + "[" + p.second + "]");
+    for (auto p : produces_pair()) {
+      ps.push_back(p.first + str(p.second));
     }
     return ps;
+
+    //vector<string> ps;
+    //for (auto p : produce_locs) {
+      //ps.push_back(p.first + "[" + p.second + "]");
+    //}
+    //return ps;
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3) {

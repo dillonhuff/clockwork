@@ -1263,7 +1263,6 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
 
-  //for (auto consumed : op->produce_locs) {
   for (auto consumed : op->buffers_written()) {
     if (contains_key(consumed, buffers)) {
       decls.push_back(buffers.at(consumed).bundle_type_string(op->name) + "& " + consumed);
@@ -1342,7 +1341,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   auto domains = prg.domains();
   for (auto op : prg.all_ops()) {
 
-    //cout << "# of produced locations: " << op->produce_locs.size() << endl;
     for (auto produced : op->produce_locs) {
       string name = produced.first;
 
@@ -1825,7 +1823,6 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
     }
   }
 
-  //for (auto p : op->produce_locs) {
   for (auto p : op->buffers_written()) {
     //auto buf_name = p.first;
     auto buf_name = p;
@@ -1840,7 +1837,6 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   vector<string> incoming;
   std::set<string> done;
-  //for (auto p : op->produce_locs) {
   for (auto p : op->buffers_written()) {
     //auto buf_name = p.first;
     auto buf_name = p;
@@ -1888,7 +1884,6 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
     }
   }
 
-  //for (auto p : op->produce_locs) {
   for (auto p : op->buffers_written()) {
     //auto buf_name = p.first;
     auto buf_name = p;
@@ -2014,7 +2009,6 @@ compute_kernel generate_compute_op(
 
   cout << "finding out buffers" << endl;
   std::set<string> out_buffers;
-  //for (auto con : op->produce_locs) {
   for (auto con : op->buffers_written()) {
     out_buffers.insert(con);
     //out_buffers.insert(con.first);
@@ -2955,23 +2949,11 @@ std::set<std::string> get_kernels(prog& prg) {
 
 std::vector<piecewise_address> addrs_written(op* p, const std::string& buffer) {
   return p->write_addrs(buffer);
-  //vector<piecewise_address> addrs;
-  //for (auto b : p->produce_locs) {
-    //if (b.first == buffer) {
-      //addrs.push_back({{"", b.second}});
-    //}
-  //}
-  //return addrs;
 }
 
 std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer) {
   vector<piecewise_address> addrs;
   concat(addrs, addrs_written(p, buffer));
-  //for (auto b : p->produce_locs) {
-    //if (b.first == buffer) {
-      //addrs.push_back({{"", b.second}});
-    //}
-  //}
 
   for (auto b : p->consume_locs_pair) {
     if (b.first == buffer) {
@@ -3262,9 +3244,6 @@ std::set<string> buffers_written(op* p) {
   for (auto b : p->buffers_written()) {
     bufs.insert(b);
   }
-  //for (auto b : p->produce_locs) {
-    //bufs.insert(b.first);
-  //}
   return bufs;
 }
 
