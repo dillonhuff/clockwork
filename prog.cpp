@@ -1398,7 +1398,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       UBuffer& buf = buffers.at(name);
 
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      buf.port_bundles[op->name + "_read"].push_back(pt_name);
+      buf.port_bundles[op->name + "_write"].push_back(pt_name);
 
       string cond = "{ ";
       for (auto sec_pair : consumed.second) {
@@ -1422,7 +1422,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
-      buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
+      buf.add_in_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
       if (op->dynamic_reads(name)) {
         buf.dynamic_ports.insert(pt_name);
