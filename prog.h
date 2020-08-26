@@ -558,6 +558,40 @@ struct ir_node {
 
   void add_dynamic_store(const std::string& buf,
       const std::string& addr_table,
+      const vector<std::string>& table_offset) {
+    //add_load(addr_table, table_offset);
+    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
+    //add_store(buf, "0");
+  }
+
+  void add_dynamic_load(const std::string& buf,
+      const std::string& addr_table,
+      const vector<std::string>& table_offset) {
+    //add_load(addr_table, table_offset);
+    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
+    //add_load(buf, "0");
+  }
+
+  void add_dynamic_store(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset0,
+      const std::string& table_offset1) {
+    //add_load(addr_table, table_offset);
+    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
+    //add_store(buf, "0");
+  }
+
+  void add_dynamic_load(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset0,
+      const std::string& table_offset1) {
+    //add_load(addr_table, table_offset);
+    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
+    //add_load(buf, "0");
+  }
+
+  void add_dynamic_store(const std::string& buf,
+      const std::string& addr_table,
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
     dynamic_load_addresses.push_back({buf, addr_table, table_offset});

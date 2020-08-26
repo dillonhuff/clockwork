@@ -14518,7 +14518,15 @@ void brighten_blur_asplos_example() {
   //assert(false);
 }
 
+void histogram_2d_test() {
+  prog prg = histogram();
+  prg.pretty_print();
+
+  assert(false);
+}
+
 void application_tests() {
+  histogram_2d_test();
 
   // Possibly failing
   //halide_harris_test();
