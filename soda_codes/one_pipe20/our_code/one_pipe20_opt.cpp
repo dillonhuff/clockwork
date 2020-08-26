@@ -235,6 +235,24 @@ inline void one_pipe2_one_pipe2_update_0_write_bundle_write(hw_uint<32>& one_pip
 
 
 // Operation logic
+inline void one_pipe2_update_0(in_off_chip0_cache& in_off_chip0, one_pipe2_cache& one_pipe2, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip0
+	auto in_off_chip0_0_c__0_value = in_off_chip0_one_pipe2_update_0_read_bundle_read(in_off_chip0/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_2(in_off_chip0_0_c__0_value);
+	// Produce: one_pipe2
+	one_pipe2_one_pipe2_update_0_write_bundle_write(/* arg names */compute_result, one_pipe2, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_off_chip0_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
   // Dynamic address computation
 
@@ -261,24 +279,6 @@ inline void one_pipe20_update_0(one_pipe2_cache& one_pipe2, HWStream<hw_uint<32>
 	auto compute_result = id_unrolled_2(one_pipe2_0_c__0_value);
 	// Produce: one_pipe20
 	one_pipe20.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void one_pipe2_update_0(in_off_chip0_cache& in_off_chip0, one_pipe2_cache& one_pipe2, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip0
-	auto in_off_chip0_0_c__0_value = in_off_chip0_one_pipe2_update_0_read_bundle_read(in_off_chip0/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_2(in_off_chip0_0_c__0_value);
-	// Produce: one_pipe2
-	one_pipe2_one_pipe2_update_0_write_bundle_write(/* arg names */compute_result, one_pipe2, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

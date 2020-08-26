@@ -14522,7 +14522,7 @@ void application_tests() {
 
   // Possibly failing
   //halide_harris_test();
-  //conv_test();
+  conv_test();
   //conv_2d_bc_test();
 
   resnet_test();

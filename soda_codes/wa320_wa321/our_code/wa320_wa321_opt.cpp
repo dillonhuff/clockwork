@@ -41174,86 +41174,18 @@ inline void weight_sums_weight_sums_update_0_write_bundle_write(hw_uint<1024>& w
 
 
 // Operation logic
-inline void bright_update_0(in_cache& in, bright_cache& bright, int d0, int d1) {
+inline void wa32_update_0(fused_level_0_cache& fused_level_0, wa32_cache& wa32, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in
-	auto in_0_c__0_value = in_bright_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
+	// Consume: fused_level_0
+	auto fused_level_0_0_c__0_value = fused_level_0_wa32_update_0_read_bundle_read(fused_level_0/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_64(in_0_c__0_value);
-	// Produce: bright
-	bright_bright_update_0_write_bundle_write(/* arg names */compute_result, bright, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_update_0(bright_cache& bright, bright_weights_cache& bright_weights, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright
-	auto bright_0_c__0_value = bright_bright_weights_update_0_read_bundle_read(bright/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = exposure_weight_unrolled_64(bright_0_c__0_value);
-	// Produce: bright_weights
-	bright_weights_bright_weights_update_0_write_bundle_write(/* arg names */compute_result, bright_weights, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void fused_level_0_update_0(bright_cache& bright, dark_cache& dark, bright_weights_normed_cache& bright_weights_normed, dark_weights_normed_cache& dark_weights_normed, fused_level_0_cache& fused_level_0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: bright
-	auto bright_0_c__0_value = bright_fused_level_0_update_0_read_bundle_read(bright/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: dark
-	auto dark_0_c__0_value = dark_fused_level_0_update_0_read_bundle_read(dark/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: bright_weights_normed
-	auto bright_weights_normed_0_c__0_value = bright_weights_normed_fused_level_0_update_0_read_bundle_read(bright_weights_normed/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: dark_weights_normed
-	auto dark_weights_normed_0_c__0_value = dark_weights_normed_fused_level_0_update_0_read_bundle_read(dark_weights_normed/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = merge_exposures_unrolled_64(bright_0_c__0_value, dark_0_c__0_value, bright_weights_normed_0_c__0_value, dark_weights_normed_0_c__0_value);
-	// Produce: fused_level_0
-	fused_level_0_fused_level_0_update_0_write_bundle_write(/* arg names */compute_result, fused_level_0, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_off_chip0_oc
-	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
-	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
-	// Produce: in_off_chip0
-	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
+	auto compute_result = id_unrolled_64(fused_level_0_0_c__0_value);
+	// Produce: wa32
+	wa32_wa32_update_0_write_bundle_write(/* arg names */compute_result, wa32, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -41272,6 +41204,38 @@ inline void dark_weights_update_0(dark_cache& dark, dark_weights_cache& dark_wei
 	auto compute_result = exposure_weight_unrolled_64(dark_0_c__0_value);
 	// Produce: dark_weights
 	dark_weights_dark_weights_update_0_write_bundle_write(/* arg names */compute_result, dark_weights, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void wa321_update_0(wa32_cache& wa32, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */wa321, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: wa32
+	auto wa32_0_c__0_value = wa32_wa321_update_0_read_bundle_read(wa32/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_32(wa32_0_c__0_value);
+	// Produce: wa321
+	wa321.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_off_chip0_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */in_off_chip0_oc, in_off_chip0_cache& in_off_chip0, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_off_chip0_oc
+	auto in_off_chip0_oc_0_c__0_value = in_off_chip0_oc.read();
+	auto compute_result = id_unrolled_32(in_off_chip0_oc_0_c__0_value);
+	// Produce: in_off_chip0
+	in_off_chip0_in_off_chip0_update_0_write_bundle_write(/* arg names */compute_result, in_off_chip0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -41352,6 +41316,42 @@ inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
 
 }
 
+inline void bright_update_0(in_cache& in, bright_cache& bright, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in
+	auto in_0_c__0_value = in_bright_update_0_read_bundle_read(in/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_64(in_0_c__0_value);
+	// Produce: bright
+	bright_bright_update_0_write_bundle_write(/* arg names */compute_result, bright, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_update_0(bright_cache& bright, bright_weights_cache& bright_weights, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: bright
+	auto bright_0_c__0_value = bright_bright_weights_update_0_read_bundle_read(bright/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = exposure_weight_unrolled_64(bright_0_c__0_value);
+	// Produce: bright_weights
+	bright_weights_bright_weights_update_0_write_bundle_write(/* arg names */compute_result, bright_weights, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void weight_sums_update_0(dark_weights_cache& dark_weights, bright_weights_cache& bright_weights, weight_sums_cache& weight_sums, int d0, int d1) {
   // Dynamic address computation
 
@@ -41424,36 +41424,36 @@ inline void bright_weights_normed_update_0(bright_weights_cache& bright_weights,
 
 }
 
-inline void wa32_update_0(fused_level_0_cache& fused_level_0, wa32_cache& wa32, int d0, int d1) {
+inline void fused_level_0_update_0(bright_cache& bright, dark_cache& dark, bright_weights_normed_cache& bright_weights_normed, dark_weights_normed_cache& dark_weights_normed, fused_level_0_cache& fused_level_0, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: fused_level_0
-	auto fused_level_0_0_c__0_value = fused_level_0_wa32_update_0_read_bundle_read(fused_level_0/* source_delay */, d0, d1, 0);
+	// Consume: bright
+	auto bright_0_c__0_value = bright_fused_level_0_update_0_read_bundle_read(bright/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_64(fused_level_0_0_c__0_value);
-	// Produce: wa32
-	wa32_wa32_update_0_write_bundle_write(/* arg names */compute_result, wa32, d0, d1, 0);
+	// Consume: dark
+	auto dark_0_c__0_value = dark_fused_level_0_update_0_read_bundle_read(dark/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-}
-
-inline void wa321_update_0(wa32_cache& wa32, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */wa321, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: wa32
-	auto wa32_0_c__0_value = wa32_wa321_update_0_read_bundle_read(wa32/* source_delay */, d0, d1, 0);
+	// Consume: bright_weights_normed
+	auto bright_weights_normed_0_c__0_value = bright_weights_normed_fused_level_0_update_0_read_bundle_read(bright_weights_normed/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_32(wa32_0_c__0_value);
-	// Produce: wa321
-	wa321.write(compute_result);
+	// Consume: dark_weights_normed
+	auto dark_weights_normed_0_c__0_value = dark_weights_normed_fused_level_0_update_0_read_bundle_read(dark_weights_normed/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = merge_exposures_unrolled_64(bright_0_c__0_value, dark_0_c__0_value, bright_weights_normed_0_c__0_value, dark_weights_normed_0_c__0_value);
+	// Produce: fused_level_0
+	fused_level_0_fused_level_0_update_0_write_bundle_write(/* arg names */compute_result, fused_level_0, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
