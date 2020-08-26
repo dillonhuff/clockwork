@@ -653,6 +653,20 @@ struct ir_node {
    return consume_locs_pair;
   }
 
+  std::vector<pair<buffer_name, piecewise_address> > produces_pair() const {
+    std::vector<pair<buffer_name, piecewise_address> > ps;
+    for (auto p : produce_locs) {
+      buffer_name b = p.first;
+      address addr = p.second;
+      //pair<buffer_name, address> pr{b, addr};
+      pair<string, address> pr{"", addr};
+      piecewise_address paddr{pr};
+      pair<buffer_name, piecewise_address> psa{b, paddr};
+      ps.push_back(psa);
+    }
+    return ps;
+  }
+
   vector<string> produces() const {
     vector<string> ps;
     for (auto p : produce_locs) {
