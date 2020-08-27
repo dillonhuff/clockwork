@@ -4,7 +4,7 @@ import numpy as np
 
 ylabels = ['LUT', 'FF', 'BRAM', 'DSP', 'Execution Time (msec)']
 labels = ['MP', 'GP', 'SEF']
-no_opt_means = [20, 34, 30]
+no_opt_means = [[20, 34, 30], [0, 1, 2], [4, 5, 6], [3, 1, 0], [3.0, 2.4, 9.3]]
 opt_means = [25, 32, 34]
 
 x = np.arange(len(labels))  # the label locations
@@ -16,7 +16,7 @@ fig = plt.figure()
 for i in range(0, 5):
     ax = fig.add_subplot(5, 1, i + 1)
     rects1 = ax.bar(x - width/2, opt_means, width, label='Opt')
-    rects2 = ax.bar(x + width/2, no_opt_means, width, label='No-opt')
+    rects2 = ax.bar(x + width/2, no_opt_means[i], width, label='No-opt')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel(ylabels[i])
