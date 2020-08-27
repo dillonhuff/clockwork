@@ -7182,7 +7182,7 @@ App gauss_pyramid_fpga(const std::string& out_name) {
 
   auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
 
-  lp.func2d("out", "id", pt(dark_weight_pyramid.back()));
+  lp.func2d(out_name, "id", pt(dark_weight_pyramid.back()));
 
   return lp;
 }
@@ -7523,22 +7523,23 @@ void gauss_pyramid_fpga_test(const std::string& name) {
   int rows = 1080;
   int cols = 1920;
   App gp = gauss_pyramid_fpga(name);
-  gp.realize("out", cols, rows, 1);
-  //move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+  //gp.realize("out", cols, rows, 1);
+  ////move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
 
-  //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
+  ////lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
 
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
   options.unroll_factors_as_pad = true;
-  gp.realize_naive(options, "out", cols, rows);
+  gp.realize_naive(options, name, cols, rows);
+  move_to_benchmarks_folder(name + "_naive");
 
-  std::vector<std::string> naive =
-    run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
-  std::vector<std::string> optimized =
-    run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
-  assert(naive == optimized);
+  //std::vector<std::string> naive =
+    //run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
+  //std::vector<std::string> optimized =
+    //run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
+  //assert(naive == optimized);
   assert(false);
 }
 
@@ -9349,7 +9350,14 @@ void new_bankmerge_tests() {
   flatten_sched_test();
 }
 
+void naive_implementations() {
+  gauss_pyramid_fpga_test("gp_fpga");
+  assert(false);
+  max_pooling_test("mp25");
+}
+
 void iccad_tests() {
+  naive_implementations();
   //ef_cartoon_test("ef_cartoon_gauss");
   //assert(false);
 
