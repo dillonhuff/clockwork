@@ -7342,7 +7342,7 @@ void exposure_fusion_app(
 
   lp.func2d("in", "id", pt(in_name));
 
-  const int pyramid_levels = 4;
+  const int pyramid_levels = 10;
 
   // Two synthetic exposures
   lp.func2d("bright", "id", pt("in"));
@@ -10880,6 +10880,7 @@ void cyclic_banked_conv_test() {
 
   generate_optimized_code(options, prg);
 }
+
 void copy(const std::string& dst, const std::string& src, const std::vector<int>& dims, prog& prg) {
   op* lp = prg.root;
   for (int d : dims) {
@@ -14535,7 +14536,7 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
-  exposure_fusion_iccad_apps("ef_cc");
+  exposure_fusion_iccad_apps("ef_cc_10_level");
   histogram_2d_test();
 
   // Possibly failing
