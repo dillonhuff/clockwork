@@ -82,8 +82,13 @@ void print_addr(normalized_address_components addr){
 	int components_size = addr.components.at(0).size();
 	cout << tab(1) << "components: " << endl;
 	for(int i = 0; i < components_size; i++){
-		cout << tab(2) << addr.components.at(0).at(i) << "  " << addr.components.at(1).at(i) << endl;
+		cout << tab(2);
+		for(int j = 0; j < addr.components.size(); j++){
+			cout <<addr.components.at(j).at(i) << "  ";
+		}
+		cout << endl;
 	}
+
 	cout << tab(1) << "Offsets: " << endl;
 	cout << tab(2) << addr.offsets.at(0) << "  " << addr.offsets.at(1) << endl;
 }
@@ -145,7 +150,6 @@ normalized_address_components get_components(const normalized_address& addr, pro
 			comp = sides.at(0);
 		}
 		
-		cout << "Fixing () issue " << comp << endl;
 		// Second split: creating terms of a component
 		vector<string> terms = split_at(comp, "+");
 		vector<string> consts;
@@ -162,7 +166,10 @@ normalized_address_components get_components(const normalized_address& addr, pro
 		// Calculating the sum of constants
 		int accum = 0;
 		for(auto c : consts){
-			accum += std::stoi(c);
+			cout << "stoi 1: " << c << endl;
+			if(c != " " && c != "" && c != "  "){
+				accum += std::stoi(c);
+			}
 		}
 		all_comps.offsets.push_back(accum);
 
@@ -177,6 +184,7 @@ normalized_address_components get_components(const normalized_address& addr, pro
 				vector<string> remaining_part = split_at(parts.at(1),">");
 				variable_strides[remaining_part.at(0)].push_back(1);
 			} else{ // In this case we have to find the stride
+				cout << "stoi 2: " << string_to_pars << endl;
 				int stride_value = std::stoi(string_to_pars);
 				vector<string> remaining_part = split_at(parts.at(1),">");
 				variable_strides[remaining_part.at(0)].push_back(stride_value);
@@ -187,6 +195,7 @@ normalized_address_components get_components(const normalized_address& addr, pro
 		reduced_strides.resize(total_variables, 0);
 		for(auto pair : variable_strides){
 			auto pair_first = pair.first;
+			cout << "stoi 3: " << pair_first << endl;
 			int variable_index = std::stoi(pair_first);
 			int accum_strides = 0;
 			for(auto value : pair.second){
@@ -211,10 +220,21 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 	std::set<op*> buff_writers = find_writers(buff, prg);
 	std::set<address> addresses;
 	auto levels = get_variable_levels(prg);
+	vector<pair<std::string, int>> ordered_levels;
 	std::set<normalized_address> normalized_addresses;
 	map<address, op*> buffer_addresses;
 	std::set<normalized_address_components> normalized_addresses_comps;
-	
+
+	// Ordering levels
+	for(auto level : levels){
+		ordered_levels.push_back(level);
+	}
+
+	sort_gt(ordered_levels, [](const pair<string, int>& e){
+		return e.first.size();
+	});
+
+
 	// Add addresses from reader ops
 	for(auto reader : buff_readers){
 		for(auto addr : reader->read_addrs(buff)){
@@ -236,12 +256,11 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 	// Change every address' variable name for its <level> (normalize it)
 	for(auto addr : addresses){
 		normalized_address normalized = addr;
-		std::vector<std::pair<string, int>> sorted_variables;
-		for(auto level : levels){
+		for(auto level : ordered_levels){
 			string var = level.first;
 			int level_index = level.second;
 			string new_var_name = "<" + str(level_index) + ">";
-				normalized = ReplaceString(normalized, var, new_var_name); //Change this to only replace when var is the whole name of the variable
+			normalized = ReplaceString(normalized, var, new_var_name);
 		}
 		auto node = buffer_addresses.extract(addr);
 		node.key() = normalized;
@@ -266,7 +285,6 @@ std::set<normalized_address_components> get_normalized_addresses(const string& b
 		assert(contains_key(addr, buffer_addresses));
 		op* buff = buffer_addresses[addr];
 		normalized_address_components component = get_components(addr, prg, buff);
-//		print_addr(component);
 		normalized_addresses_comps.insert(component);
 	}
 	return normalized_addresses_comps;
@@ -309,14 +327,26 @@ bool is_pointwise(const string& buff, prog& prg){
 bool is_stencil(const string& buff, prog& prg){
 	// Get the normalized addresses
 	std::set<normalized_address_components> normalized_addresses = get_normalized_addresses(buff, prg);
-	for(int component = 0; component < 2; component++){
+	if(normalized_addresses.size() == 0){
+		return false;
+	}
+	std::set<int> num_levels;
+	cout << "Set of normalized addresses: " << endl;
+	for(auto addr : normalized_addresses){
+		print_addr(addr);
+		for(auto c : addr.components){
+			num_levels.insert(c.size());
+		}
+	}
+	if(num_levels.size() > 1){
+		return false;
+	}
+	for(int component = 0; component < pick(normalized_addresses).components.size(); component++){
 		std::set<int> variable_counts; // Has to be a set of the stride values of the variables
 		// For each component get the number of variables/addresses with nonzero stride
 		for(auto addr : normalized_addresses){
 			int variable = variable_with_nonzero_stride(component, addr);
-//			cout << "Variable: " << variable << endl;
 			int stride = addr.components.at(component).at(variable);
-//			cout << tab(1) << "Stride: " << stride << endl;
 			variable_counts.insert(stride);
 		}
 
@@ -431,31 +461,48 @@ int stencil_memory_cost(const string& buff, prog& prg){
 	//Get dimension and size of the img
 	int image_dimension = 0;
 	std::set<normalized_address_components> addrs = get_normalized_addresses(buff, prg);	
-	vector<int> image_size = prg.buffer_bounds[buff]; //cols, rows
+	vector<int> image_size = prg.buffer_bounds[buff]; //doesnt work for every app cause not all have the bounds declared
+	if(image_size.size() == 0 && prg.name == "gaussian"){
+		image_size.push_back(64);
+	} else if (image_size.size() == 0 && prg.name == "resnet"){
+		image_size.push_back(30);
+	} else if (image_size.size() == 0 && prg.name == "cascade"){
+		image_size.push_back(64);
+	}
 	image_dimension = addrs.begin()->offsets.size();
 	assert(image_dimension >= 2);	
 	//Get size of the grid
 	std::vector<int> grid_size;
 	std::set<int> grid_offsets_col;
 	std::set<int> grid_offsets_row;
+	std::set<int> grid_offsets_len;
+
+	cout << "Before getting the values" << endl;
 	for(auto addr : addrs){
 		for(int i = 0; i < addr.components.size(); i++){
 			if(addr.components.at(i).at(1)!= 0){
 				grid_offsets_col.insert(addr.offsets.at(i));
 			} else if(addr.components.at(i).at(2) != 0){
 				grid_offsets_row.insert(addr.offsets.at(i));
+			} else if(image_dimension > 2){
+				if(addr.components.at(i).at(3) != 0){
+					 grid_offsets_len.insert(addr.offsets.at(i));
+				}
 			}
 		}
 	}
-
+	cout << "Before calculating the cost" << endl;
 	grid_size.push_back(grid_offsets_col.size());
 	grid_size.push_back(grid_offsets_row.size());
+	grid_size.push_back(grid_offsets_len.size());
 
 	//Make the math
 	if(image_dimension == 2){
-		cost = ((image_size[0]*(grid_size[1]-1)) + grid_size[0]) * width;
+		cost = ((image_size.at(0)*(grid_size.at(1)-1)) + grid_size.at(0)) * width;
+	} else if (image_dimension == 3){
+		cost = 42; //Not implemented!
 	}
-
+	cout << "After calculating the cost"<< endl;
 	cout << "Stencil memory cost: " << cost << endl;
 	return cost;
 }
@@ -486,7 +533,7 @@ int stencil_memory_cost(const string& buff, prog& prg){
 		} else if(is_stencil(buff, prg)){	
 			estimated_buffer_sizes[buff] = stencil_memory_cost(buff, prg);
 		} else if(is_reduction(buff, prg)){
-			estimated_buffer_sizes[buff] = 0; // To be implemented
+			estimated_buffer_sizes[buff] = num_locs_written(buff, prg); // To be implemented
 		}  else{
 			cout << tab(3) << "NOT pointwise or stencil or reduction..." << endl;
 			estimated_buffer_sizes[buff] = num_locs_written(buff, prg);
@@ -494,10 +541,14 @@ int stencil_memory_cost(const string& buff, prog& prg){
 	}
 
 	
-	map<string, int> estimated_areas;
 	auto locations_written = prg.producer_maps();
-
-	return estimated_areas;
+	int total_cost = 0;
+	for(auto cost : estimated_buffer_sizes){
+		cout << tab(1) << "Cost of " << cost.first << " is " << cost.second << endl;
+		total_cost += cost.second;
+	}
+	cout << "Total cost: " << total_cost << endl;
+	return estimated_buffer_sizes;
  }
 
 //-----------------------------------------GROUP_KERNELS_FOR_COMPILATION-------------------------------------------
@@ -635,7 +686,7 @@ prog simple_stencil(){
 void toy_task(){
 
 	vector<prog> example_progs;
-//	example_progs.push_back(simple_stencil());
+	example_progs.push_back(simple_stencil());
 	example_progs.push_back(brighten_blur());
 	example_progs.push_back(unet_conv_3_3());
 	example_progs.push_back(gaussian());
@@ -648,9 +699,9 @@ void toy_task(){
 
 	for(auto prg : example_progs){
 		//	generate_optimized_code(prg);
-			generate_unoptimized_code(prg);
+		//	generate_unoptimized_code(prg);
 		//	assert(false);
-/*
+
 		// Estimate the area required for each kernel in the application
 		TargetTechlibInfo target_info;
 		target_info.sram_cost_per_bit = 1;
@@ -699,7 +750,7 @@ void toy_task(){
 		}
 
 		estimate_kernel_memory_area(prg, target_info);
-*/
+
 //		assert(false);	
 /*
 		map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
@@ -766,6 +817,7 @@ void unet_conv_3_3_reduce_test(){
 
 void resnet_reduce_test(){
 	prog prg = resnet();
+	assert(!is_stencil("conv_stencil",prg));
 	assert(is_reduction("conv_stencil", prg));
 }
 
