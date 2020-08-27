@@ -7159,6 +7159,7 @@ void max_pooling_test(const std::string& prefix) {
   options.all_rams = true;
   options.unroll_factors_as_pad = true;
   max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
+  move_to_benchmarks_folder("mp_naive");
 
 
   //std::vector<std::string> naive =
