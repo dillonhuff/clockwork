@@ -5238,7 +5238,7 @@ struct App {
 
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_MULTILINEAR;
-    all_unbanked(prg, options);
+    options.default_banking_strategy = {"none"};
     populate_program(options, prg, name, {name}, m, buffers);
 
     return;
@@ -7518,12 +7518,15 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
   assert(false);
 }
 
-void gauss_pyramid_fpga_test(const std::string& name) {
+void exposure_fusion_fpga_test(const std::string& name) {
+
+  int in_rows = 1080;
+  int in_cols = 1920;
 
   int rows = 1080;
   int cols = 1920;
-  App gp = gauss_pyramid_fpga(name);
-  //gp.realize("out", cols, rows, 1);
+  App gp = exposure_fusion_app(name);
+  //gp.realize(name, cols, rows);
   ////move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
 
   ////lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
@@ -7533,13 +7536,40 @@ void gauss_pyramid_fpga_test(const std::string& name) {
   options.all_rams = true;
   options.unroll_factors_as_pad = true;
   gp.realize_naive(options, name, cols, rows);
-  move_to_benchmarks_folder(name + "_naive");
 
-  //std::vector<std::string> naive =
-    //run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
   //std::vector<std::string> optimized =
-    //run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
-  //assert(naive == optimized);
+    //run_regression_tb("out_opt");
+  //std::vector<std::string> naive =
+    //run_regression_tb(name + "_naive");
+  //compare("exposure fusion naive", naive, optimized);
+  move_to_benchmarks_folder(name + "_naive");
+}
+
+void gauss_pyramid_fpga_test(const std::string& name) {
+
+  int in_rows = 1080;
+  int in_cols = 1920;
+
+  int rows = 1080 / pow(2, 4 - 1);
+  int cols = 1920 / pow(2, 4 - 1);
+  App gp = gauss_pyramid_fpga(name);
+  gp.realize(name, cols, rows);
+  ////move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+
+  ////lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, name, cols, rows);
+
+  //std::vector<std::string> optimized =
+    //run_regression_tb("out_opt");
+  //std::vector<std::string> naive =
+    //run_regression_tb(name + "_naive");
+  //compare("gp naive", naive, optimized);
+  move_to_benchmarks_folder(name + "_naive");
   assert(false);
 }
 
@@ -9351,9 +9381,10 @@ void new_bankmerge_tests() {
 }
 
 void naive_implementations() {
+  exposure_fusion_fpga_test("ef_fpga");
   gauss_pyramid_fpga_test("gp_fpga");
-  assert(false);
   max_pooling_test("mp25");
+  assert(false);
 }
 
 void iccad_tests() {

@@ -11,54 +11,9 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct in_in_update_0_write0_to_mp_naive_rd0_cache {
-	// RAM Box: {[0, 126], [0, 127], [0, 63]}
-  hw_uint<32>  RAM[127][128][64];
-  inline hw_uint<32>  read(int d0, int d1, int d2) {
-    return RAM[d0][d1][d2];
-  }
-
-
-
-	inline void write(const hw_uint<32>  value, int d0, int d1, int d2) {
-    RAM[d0][d1][d2] = value;
-  }
-
-};
-
-struct in_in_update_0_write0_to_mp_naive_rd1_cache {
-	// RAM Box: {[0, 126], [0, 127], [0, 63]}
-  hw_uint<32>  RAM[127][128][64];
-  inline hw_uint<32>  read(int d0, int d1, int d2) {
-    return RAM[d0][d1][d2];
-  }
-
-
-
-	inline void write(const hw_uint<32>  value, int d0, int d1, int d2) {
-    RAM[d0][d1][d2] = value;
-  }
-
-};
-
-struct in_in_update_0_write1_to_mp_naive_rd2_cache {
-	// RAM Box: {[1, 127], [0, 127], [0, 63]}
-  hw_uint<32>  RAM[127][128][64];
-  inline hw_uint<32>  read(int d0, int d1, int d2) {
-    return RAM[d0][d1][d2];
-  }
-
-
-
-	inline void write(const hw_uint<32>  value, int d0, int d1, int d2) {
-    RAM[d0][d1][d2] = value;
-  }
-
-};
-
-struct in_in_update_0_write1_to_mp_naive_rd3_cache {
-	// RAM Box: {[1, 127], [0, 127], [0, 63]}
-  hw_uint<32>  RAM[127][128][64];
+struct in_all_inputs_to_all_outputs_cache {
+	// RAM Box: {[0, 127], [0, 127], [0, 63]}
+  hw_uint<32>  RAM[128][128][64];
   inline hw_uint<32>  read(int d0, int d1, int d2) {
     return RAM[d0][d1][d2];
   }
@@ -72,30 +27,25 @@ struct in_in_update_0_write1_to_mp_naive_rd3_cache {
 };
 
 struct in_cache {
-  // # of banks: 4
-  in_in_update_0_write0_to_mp_naive_rd0_cache in_in_update_0_write0_to_mp_naive_rd0;
-  in_in_update_0_write0_to_mp_naive_rd1_cache in_in_update_0_write0_to_mp_naive_rd1;
-  in_in_update_0_write1_to_mp_naive_rd2_cache in_in_update_0_write1_to_mp_naive_rd2;
-  in_in_update_0_write1_to_mp_naive_rd3_cache in_in_update_0_write1_to_mp_naive_rd3;
+  // # of banks: 1
+  in_all_inputs_to_all_outputs_cache in_all_inputs_to_all_outputs;
 };
 
 
 
 inline void in_in_update_0_write0_write(hw_uint<32> & in_in_update_0_write0, in_cache& in, int d0, int d1, int d2, int dynamic_address) {
-  in.in_in_update_0_write0_to_mp_naive_rd0.write(in_in_update_0_write0, 2*d0 - 0, d1 - 0, d2 - 0);
-  in.in_in_update_0_write0_to_mp_naive_rd1.write(in_in_update_0_write0, 2*d0 - 0, d1 - 0, d2 - 0);
+  in.in_all_inputs_to_all_outputs.write(in_in_update_0_write0, 2*d0 - 0, d1 - 0, d2 - 0);
 }
 
 inline void in_in_update_0_write1_write(hw_uint<32> & in_in_update_0_write1, in_cache& in, int d0, int d1, int d2, int dynamic_address) {
-  in.in_in_update_0_write1_to_mp_naive_rd2.write(in_in_update_0_write1, 1 + 2*d0 - 1, d1 - 0, d2 - 0);
-  in.in_in_update_0_write1_to_mp_naive_rd3.write(in_in_update_0_write1, 1 + 2*d0 - 1, d1 - 0, d2 - 0);
+  in.in_all_inputs_to_all_outputs.write(in_in_update_0_write1, 1 + 2*d0 - 0, d1 - 0, d2 - 0);
 }
 
 inline hw_uint<32>  mp_naive_rd0_select(in_cache& in, int d0, int d1, int d2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // mp_naive_rd0 read pattern: { mp_naive_update_0[d0, d1, d2] -> in[2d0, 2d1, d2] : 0 <= d0 <= 63 and 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_to_mp_naive_rd0.read(2*d0 - 0, 2*d1 - 0, d2 - 0);
+  auto value_in_in_update_0_write0 = in.in_all_inputs_to_all_outputs.read(2*d0 - 0, 2*d1 - 0, d2 - 0);
   return value_in_in_update_0_write0;
   return 0;
 }
@@ -104,7 +54,7 @@ inline hw_uint<32>  mp_naive_rd1_select(in_cache& in, int d0, int d1, int d2, in
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // mp_naive_rd1 read pattern: { mp_naive_update_0[d0, d1, d2] -> in[2d0, 1 + 2d1, d2] : 0 <= d0 <= 63 and 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_to_mp_naive_rd1.read(2*d0 - 0, 1 + 2*d1 - 0, d2 - 0);
+  auto value_in_in_update_0_write0 = in.in_all_inputs_to_all_outputs.read(2*d0 - 0, 1 + 2*d1 - 0, d2 - 0);
   return value_in_in_update_0_write0;
   return 0;
 }
@@ -113,8 +63,8 @@ inline hw_uint<32>  mp_naive_rd2_select(in_cache& in, int d0, int d1, int d2, in
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // mp_naive_rd2 read pattern: { mp_naive_update_0[d0, d1, d2] -> in[1 + 2d0, 2d1, d2] : 0 <= d0 <= 63 and 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_to_mp_naive_rd2.read(1 + 2*d0 - 1, 2*d1 - 0, d2 - 0);
-  return value_in_in_update_0_write1;
+  auto value_in_in_update_0_write0 = in.in_all_inputs_to_all_outputs.read(1 + 2*d0 - 0, 2*d1 - 0, d2 - 0);
+  return value_in_in_update_0_write0;
   return 0;
 }
 
@@ -122,8 +72,8 @@ inline hw_uint<32>  mp_naive_rd3_select(in_cache& in, int d0, int d1, int d2, in
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // mp_naive_rd3 read pattern: { mp_naive_update_0[d0, d1, d2] -> in[1 + 2d0, 1 + 2d1, d2] : 0 <= d0 <= 63 and 0 <= d1 <= 63 and 0 <= d2 <= 63 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_to_mp_naive_rd3.read(1 + 2*d0 - 1, 1 + 2*d1 - 0, d2 - 0);
-  return value_in_in_update_0_write1;
+  auto value_in_in_update_0_write0 = in.in_all_inputs_to_all_outputs.read(1 + 2*d0 - 0, 1 + 2*d1 - 0, d2 - 0);
+  return value_in_in_update_0_write0;
   return 0;
 }
 
@@ -162,7 +112,7 @@ inline hw_uint<128> in_mp_naive_update_0_read_bundle_read(in_cache& in, int d0, 
 	return result;
 }
 
-// Total re-use buffer capacity: 67108864 bits
+// Total re-use buffer capacity: 33554432 bits
 
 
 // Operation logic
