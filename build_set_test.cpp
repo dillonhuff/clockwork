@@ -7174,6 +7174,24 @@ void max_pooling_test(const std::string& prefix) {
 
 }
 
+App gauss_pyramid_fpga(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  int pyramid_levels = 4;
+
+  auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d("out", "id", pt(dark_weight_pyramid.back()));
+
+  return lp;
+}
+
 App ef_cartoon(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -7342,7 +7360,7 @@ void exposure_fusion_app(
 
   lp.func2d("in", "id", pt(in_name));
 
-  const int pyramid_levels = 10;
+  const int pyramid_levels = 4;
 
   // Two synthetic exposures
   lp.func2d("bright", "id", pt("in"));
@@ -7502,6 +7520,30 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
 
     move_to_benchmarks_folder(name + "_opt");
   }
+  assert(false);
+}
+
+void gauss_pyramid_fpga_test(const std::string& name) {
+
+  int rows = 1080;
+  int cols = 1920;
+  App gp = gauss_pyramid_fpga(name);
+  gp.realize("out", cols, rows, 1);
+  //move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+
+  //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, "out", cols, rows);
+
+  std::vector<std::string> naive =
+    run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
+  assert(naive == optimized);
   assert(false);
 }
 
@@ -9317,22 +9359,21 @@ void iccad_tests() {
   //assert(false);
 
 
+  gauss_pyramid_fpga_test("gp_fpga");
+  assert(false);
   exposure_fusion();
   max_pooling_test("mp25");
+
 
   int index = 20;
   string istr = str(index);
 
   camera_pipeline_test("cp_noinit_" + istr);
   blur_xy_16_app_test("bxy_noinit_p2" + istr);
-
   harris16_test("hr" + istr);
   sobel_16_app_test("sbl" + istr);
-
-
   different_path_latencies_test("dp");
   harris_test();
-
   pointwise_app_test();
 }
 
@@ -14536,6 +14577,7 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
+  iccad_tests();
   exposure_fusion_iccad_apps("ef_cc_10_level");
   histogram_2d_test();
 
@@ -14545,8 +14587,6 @@ void application_tests() {
   //conv_2d_bc_test();
 
   resnet_test();
-
-  iccad_tests();
 
   coreir_tests();
   multi_output_app_test();
