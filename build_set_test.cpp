@@ -7561,7 +7561,7 @@ void gauss_pyramid_fpga_test(const std::string& name) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  options.unroll_factors_as_pad = true;
+  //options.unroll_factors_as_pad = true;
   gp.realize_naive(options, name, cols, rows);
 
   //std::vector<std::string> optimized =
