@@ -5206,18 +5206,10 @@ struct App {
     realize_naive(options, name, {d0, d1});
   }
 
-  //void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
-    //realize_naive(options, {{name, dims}});
-  //}
-
   void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
-  //void realize_naive(CodegenOptions& options,
-      //const std::vector<std::pair<string, std::vector<int> > >& bounds) {
-      //const std::string& name, const std::vector<int>& dims) {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
       set_unroll_factors(name, name, unroll_factor);
-      //set_unroll_factors(name, bounds, unroll_factor);
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
@@ -5225,8 +5217,6 @@ struct App {
     fill_data_domain(name, dims);
     set_unroll_factors(name, name, 1);
 
-    //fill_data_domain(bounds);
-    //set_unroll_factors(name, bounds, 1);
     fill_compute_domain();
 
     umap* m = nullptr;
@@ -5245,6 +5235,10 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = prg.name + "_compute_units.h";
+
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_MULTILINEAR;
+    all_unbanked(prg, options);
     populate_program(options, prg, name, {name}, m, buffers);
 
     return;
