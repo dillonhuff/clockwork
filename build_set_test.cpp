@@ -7148,30 +7148,30 @@ void max_pooling_test(const std::string& prefix) {
   int H = 64;
   int D = 64;
 
-  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
-  for (auto factor : unroll_factors) {
-    string name = prefix + "_" + str(factor);
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+  //vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  //for (auto factor : unroll_factors) {
+    //string name = prefix + "_" + str(factor);
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    //options.use_custom_code_string = true;
 
-    max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
-    move_to_benchmarks_folder(name + "_opt");
-  }
+    //max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
+    //move_to_benchmarks_folder(name + "_opt");
+  //}
 
-  //CodegenOptions options;
-  //options.internal = true;
-  //options.all_rams = true;
-  //options.unroll_factors_as_pad = true;
-  //mp.realize_naive(options, "max_pool", {H, W, D});
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
+
 
   //std::vector<std::string> naive =
     //run_regression_tb("max_pool_opt");
   //std::vector<std::string> optimized =
     //run_regression_tb("max_pool_naive");
   //assert(naive == optimized);
-
 }
 
 App gauss_pyramid_fpga(const std::string& out_name) {
@@ -9359,10 +9359,10 @@ void iccad_tests() {
   //assert(false);
 
 
-  gauss_pyramid_fpga_test("gp_fpga");
-  assert(false);
-  exposure_fusion();
   max_pooling_test("mp25");
+  assert(false);
+  gauss_pyramid_fpga_test("gp_fpga");
+  exposure_fusion();
 
 
   int index = 20;
