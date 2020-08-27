@@ -4,8 +4,8 @@ import numpy as np
 
 ylabels = ['LUT', 'FF', 'BRAM', 'DSP', 'Execution Time (msec)']
 labels = ['MP', 'GP', 'SEF']
-men_means = [20, 34, 30]
-women_means = [25, 32, 34]
+no_opt_means = [20, 34, 30]
+opt_means = [25, 32, 34]
 
 x = np.arange(len(labels))  # the label locations
 width = 0.35  # the width of the bars
@@ -15,8 +15,8 @@ fig = plt.figure()
 
 for i in range(0, 5):
     ax = fig.add_subplot(5, 1, i + 1)
-    rects1 = ax.bar(x - width/2, men_means, width, label='Opt')
-    rects2 = ax.bar(x + width/2, women_means, width, label='No-opt')
+    rects1 = ax.bar(x - width/2, opt_means, width, label='Opt')
+    rects2 = ax.bar(x + width/2, no_opt_means, width, label='No-opt')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel(ylabels[i])
