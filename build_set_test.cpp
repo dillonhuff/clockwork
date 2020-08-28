@@ -5787,6 +5787,8 @@ Window pt3(const std::string& name) {
   return Window{name, {1, 1, 1}, {{0, 0, 0}}};
 }
 
+App gauss_pyramid_fpga(const std::string& out_name);
+
 void updown_merge_test() {
   App ds;
   ds.func2d("A_off");
@@ -7137,30 +7139,63 @@ void max_pooling_test_sizes(const std::string& prefix) {
   move_naive_to_benchmarks_folder(name);
 }
 
+void gauss_pyramid_test(const std::string& prefix) {
+
+  int in_rows = 1080;
+  int in_cols = 1920;
+
+  int rows = 1080 / pow(2, 4 - 1);
+  int cols = 1920 / pow(2, 4 - 1);
+  //vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  vector<int> unroll_factors{32};
+  for (auto factor : unroll_factors) {
+    string name = prefix + "_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+
+    gauss_pyramid_fpga(name).realize(options, name, {cols, rows}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+
+  //CodegenOptions options;
+  //options.internal = true;
+  //options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  //max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
+  //move_to_benchmarks_folder("mp_naive");
+
+  //std::vector<std::string> naive =
+    //run_regression_tb("max_pool_opt");
+  //std::vector<std::string> optimized =
+    //run_regression_tb("max_pool_naive");
+  //assert(naive == optimized);
+}
 void max_pooling_test(const std::string& prefix) {
   int W = 64;
   int H = 64;
   int D = 64;
 
   //vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
-  //for (auto factor : unroll_factors) {
-    //string name = prefix + "_" + str(factor);
-    //CodegenOptions options;
-    //options.internal = true;
-    //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
+  vector<int> unroll_factors{32};
+  for (auto factor : unroll_factors) {
+    string name = prefix + "_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
 
-    //max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
-    //move_to_benchmarks_folder(name + "_opt");
-  //}
+    max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+  }
 
-  CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-  options.unroll_factors_as_pad = true;
-  max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
-  move_to_benchmarks_folder("mp_naive");
-
+  //CodegenOptions options;
+  //options.internal = true;
+  //options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  //max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
+  //move_to_benchmarks_folder("mp_naive");
 
   //std::vector<std::string> naive =
     //run_regression_tb("max_pool_opt");
@@ -7767,24 +7802,25 @@ void single_gaussian_pyramid_app_test() {
 void ef_cartoon_test(const std::string& out_name) {
   App gp = ef_cartoon(out_name);
   //int size = 200;
-  int cols = 256;
-  int rows = 256;
-  //{
-    //CodegenOptions options;
-    //options.internal = true;
-    //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
-    //gp.realize(options, out_name, {cols, rows}, "in", 1);
-  //}
+  int cols = 1920;
+  int rows = 1080;
   {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = false;
-    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
-    gp.realize_naive(options, out_name, {cols, rows});
-    //move_to_benchmarks_folder(out_name + "_opt");
+    options.use_custom_code_string = true;
+    gp.realize(options, out_name, {cols, rows}, "in", 32);
+    move_naive_to_benchmarks_folder(out_name + "_opt");
   }
+  //{
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    //options.use_custom_code_string = false;
+    //options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    //gp.realize_naive(options, out_name, {cols, rows});
+    ////move_to_benchmarks_folder(out_name + "_opt");
+  //}
 }
 
 
@@ -9388,16 +9424,17 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-  naive_implementations();
-  //ef_cartoon_test("ef_cartoon_gauss");
-  //assert(false);
-
-
-  max_pooling_test("mp25");
+  //naive_implementations();
+  
+  max_pooling_test("mpr_32");
+  gauss_pyramid_test("gp_fpga");
   assert(false);
+
+  gauss_pyramid_fpga_test("gp_fpga");
+  ef_cartoon_test("ef_cartoon");
+
   gauss_pyramid_fpga_test("gp_fpga");
   exposure_fusion();
-
 
   int index = 20;
   string istr = str(index);
