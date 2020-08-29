@@ -6800,8 +6800,8 @@ App camera_pipeline(const std::string& out_name) {
 void generate_app_benchmark(
     const std::string& name,
     App& app,
-    const std::vector<int>& unroll_factors,
-    const std::vector<int>& dimensions) {
+    const std::vector<int>& dimensions,
+    const int unroll_factor) {
 
   vector<int> mini_dimensions;
   mini_dimensions.resize(dimensions.size(), 32);
@@ -6809,8 +6809,13 @@ void generate_app_benchmark(
   CodegenOptions options;
   app.realize(options, name, mini_dimensions, 1);
   int bmp_res = run_sw_bmp_test_harness(name + "_opt");
-
-  assert(false);
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    options.unroll_factors_as_pad = true;
+    app.realize_naive(options, name, mini_dimensions);
+  }
 
   //CodegenOptions options;
   //options.internal = true;
@@ -6818,11 +6823,11 @@ void generate_app_benchmark(
   //options.unroll_factors_as_pad = true;
   //app.realize_naive(options, name, mini_dimensions);
 
-  //std::vector<std::string> naive =
-    //run_regression_tb(app_name + "_naive");
-  //std::vector<std::string> optimized =
-    //run_regression_tb(app_name + "_opt");
-  //assert(naive == optimized);
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
+  compare(name + " generate app benchmark mini sanity check", optimized, naive);
 }
 
 void camera_pipeline_all_adds_only_denoise_demosaic_test(const std::string& prefix) {
@@ -9453,7 +9458,7 @@ void naive_implementations() {
 
 void iccad_tests() {
   App gp = gauss_pyramid_fpga("gp_sm");
-  generate_app_benchmark("gp_sm", gp, {1, 1}, {64, 64});
+  generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
   assert(false);
   
   max_pooling_test("mpr_32");
