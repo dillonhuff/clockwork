@@ -6817,12 +6817,6 @@ void generate_app_benchmark(
     app.realize_naive(options, name, mini_dimensions);
   }
 
-  //CodegenOptions options;
-  //options.internal = true;
-  //options.all_rams = true;
-  //options.unroll_factors_as_pad = true;
-  //app.realize_naive(options, name, mini_dimensions);
-
   std::vector<std::string> naive =
     run_regression_tb(name + "_naive");
   std::vector<std::string> optimized =
@@ -9461,7 +9455,7 @@ void naive_implementations() {
 
 void iccad_tests() {
   App ef = ef_cartoon("ef_sm");
-  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 32);
   assert(false);
   App gp = gauss_pyramid_fpga("gp_sm");
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);

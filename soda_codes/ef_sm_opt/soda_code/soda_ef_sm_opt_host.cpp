@@ -18,12 +18,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int ef_sm_update_0_write_DATA_SIZE = num_epochs*2094649;
+  const int ef_sm_update_0_write_DATA_SIZE = num_epochs*2191392;
   const int ef_sm_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t ef_sm_update_0_write_size_bytes = ef_sm_update_0_write_BYTES_PER_PIXEL * ef_sm_update_0_write_DATA_SIZE;
 
   total_size_bytes += ef_sm_update_0_write_size_bytes;
-  const int in_update_0_read_DATA_SIZE = num_epochs*2094649;
+  const int in_update_0_read_DATA_SIZE = num_epochs*2191392;
   const int in_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_DATA_SIZE;
 
@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer in_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_read_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(2094649 / 1);
+  uint64_t transfer_size = num_epochs*(2191392 / 32);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
