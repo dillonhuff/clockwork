@@ -6797,6 +6797,26 @@ App camera_pipeline(const std::string& out_name) {
   return cp;
 }
 
+void generate_app_benchmark(App& app, const std::vector<int>& unroll_factors, const std::vector<int>& dimensions) {
+
+  vector<int> mini_dimensions;
+  mini_dimensions.resize(32);
+
+  app.realize("mp_naive", mini_dimensions, 1);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  app.realize_naive(options, "mp_naive", mini_dimensions);
+
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
+}
+
 void camera_pipeline_all_adds_only_denoise_demosaic_test(const std::string& prefix) {
   string app_name = prefix + "_mini";
   int mini_rows = 10;
