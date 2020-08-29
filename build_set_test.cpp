@@ -6828,6 +6828,9 @@ void generate_app_benchmark(
   std::vector<std::string> optimized =
     run_regression_tb(name + "_opt");
   compare(name + " generate app benchmark mini sanity check", optimized, naive);
+  
+  app.realize(options, name, dimensions, unroll_factor);
+  move_to_benchmarks_folder(name + "_opt");
 }
 
 void camera_pipeline_all_adds_only_denoise_demosaic_test(const std::string& prefix) {
@@ -9457,8 +9460,8 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-  App ef = exposure_fusion_app("ef_sm");
-  generate_app_benchmark("ef_sm", ef, {64, 64}, 1);
+  App ef = ef_cartoon("ef_sm");
+  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
   assert(false);
   App gp = gauss_pyramid_fpga("gp_sm");
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
