@@ -5558,7 +5558,7 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
+    options.use_custom_code_string = true;
     realize(options, name, d0, d1);
   }
 
@@ -6807,6 +6807,7 @@ void generate_app_benchmark(
   mini_dimensions.resize(dimensions.size(), 32);
 
   CodegenOptions options;
+  options.use_custom_code_string = true;
   app.realize(options, name, mini_dimensions, 1);
   int bmp_res = run_sw_bmp_test_harness(name + "_opt");
   {
@@ -9454,11 +9455,11 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-  App ef = ef_cartoon("ef_sm");
-  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 32);
-  assert(false);
   App gp = gauss_pyramid_fpga("gp_sm");
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
+  assert(false);
+  App ef = ef_cartoon("ef_sm");
+  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 32);
   assert(false);
   
   max_pooling_test("mpr_32");
