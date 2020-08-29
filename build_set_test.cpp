@@ -9455,11 +9455,12 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-  App gp = gauss_pyramid_fpga("gp_sm");
-  generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
-  assert(false);
   App ef = ef_cartoon("ef_sm");
   generate_app_benchmark("ef_sm", ef, {1920, 1080}, 32);
+  assert(false);
+
+  App gp = gauss_pyramid_fpga("gp_sm");
+  generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
   assert(false);
   
   max_pooling_test("mpr_32");
