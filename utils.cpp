@@ -1,5 +1,10 @@
 #include "utils.h"
 
+int run_sw_bmp_test_harness(const std::string& app_name) {
+  int res = cmd("g++ -std=c++11 " + app_name + "_sw_bmp_test_harness.cpp " + app_name + ".cpp -I . -I ./aws_collateral");
+  return res;
+}
+
 void move_to_synthesis_folder(const std::string& app_name) {
   string out_name = app_name;
   string synth_dir =
