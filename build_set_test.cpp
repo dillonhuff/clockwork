@@ -9457,6 +9457,9 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  App ef = exposure_fusion_app("ef_sm");
+  generate_app_benchmark("ef_sm", ef, {64, 64}, 1);
+  assert(false);
   App gp = gauss_pyramid_fpga("gp_sm");
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
   assert(false);
