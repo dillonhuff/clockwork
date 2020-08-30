@@ -31,11 +31,18 @@ struct banking_strategy {
   vector<int> cycle_factors;
 };
 
+enum TargetTile {
+  TARGET_TILE_REGISTERS,
+  TARGET_TILE_DUAL_SRAM_RAW,
+  TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN
+};
+
 struct RTLOptions {
   bool use_external_controllers;
   bool pack_controllers_in_memtiles;
+  TargetTile target_tile;
 
-  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false) {}
+  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
 };
 
 struct CodegenOptions {
@@ -59,7 +66,9 @@ struct CodegenOptions {
   ScheduleAlgorithm scheduling_algorithm;
   bool ignore_top_level_inter_deps;
 
+  banking_strategy default_banking_strategy;
   std::map<string, banking_strategy> banking_strategies;
+
   int num_pipelines;
 
   RTLOptions rtl_options;
@@ -75,6 +84,7 @@ struct CodegenOptions {
   use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
   scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
+  default_banking_strategy({"exhaustive"}),
   ignore_top_level_inter_deps(false),
   num_pipelines(1)
   {}

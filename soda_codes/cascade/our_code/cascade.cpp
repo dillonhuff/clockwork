@@ -931,6 +931,7 @@ for (int c1 = 0; c1 <= 63; c1 += 1)
   */
 	for (int c1 = 0; c1 <= 63; c1 += 1)
 	  for (int c2 = 0; c2 <= 63; c2 += 1) {
+#pragma HLS pipeline II=1
 	    op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, 0, c1, c2);
 	    if (c1 >= 2 && c2 >= 2) {
 	      op_hcompute_conv1_stencil(conv1_stencil_clkwrk_dsa0, 0, c1 - 2, c2 - 2);

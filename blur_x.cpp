@@ -144,6 +144,7 @@ inline hw_uint<48> I_out_blur_30_read_bundle_read(I_cache& I, int root, int d1, 
 	return result;
 }
 
+// Total re-use buffer capacity: 1024 bits
 
 
 // Operation logic

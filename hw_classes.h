@@ -7,7 +7,11 @@
 
 #ifdef __VIVADO_SYNTH__
 
-#define AP_INT_MAX_W 32768
+// WARNING: Enabling this flag (AP_INT_MAX_W)
+// can make Vivado HLS take a *very* long
+// time even for tiny designs. Avoid it
+// unless absolutely necessary.
+//#define AP_INT_MAX_W 32768
 #include "ap_int.h"
 
 #include "hls_stream.h"
