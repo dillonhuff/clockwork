@@ -172,7 +172,7 @@ hw_uint<512>  id_unrolled_32(hw_uint<512>& in_oc) {
   return whole_result;
 }
 
-  // mpr_32_32_update_0 unroll factor: 16
+  // mpr16b_32_32_update_0 unroll factor: 16
 hw_uint<256>  max_pool_2x2_unrolled_16(hw_uint<1024>& in) {
   hw_uint<256> whole_result;
 

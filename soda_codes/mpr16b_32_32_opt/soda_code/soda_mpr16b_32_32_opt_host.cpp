@@ -23,11 +23,11 @@ int main(int argc, char **argv) {
   size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_DATA_SIZE;
 
   total_size_bytes += in_update_0_read_size_bytes;
-  const int mpr_32_32_update_0_write_DATA_SIZE = num_epochs*1048576;
-  const int mpr_32_32_update_0_write_BYTES_PER_PIXEL = 16 / 8;
-  size_t mpr_32_32_update_0_write_size_bytes = mpr_32_32_update_0_write_BYTES_PER_PIXEL * mpr_32_32_update_0_write_DATA_SIZE;
+  const int mpr16b_32_32_update_0_write_DATA_SIZE = num_epochs*1048576;
+  const int mpr16b_32_32_update_0_write_BYTES_PER_PIXEL = 16 / 8;
+  size_t mpr16b_32_32_update_0_write_size_bytes = mpr16b_32_32_update_0_write_BYTES_PER_PIXEL * mpr16b_32_32_update_0_write_DATA_SIZE;
 
-  total_size_bytes += mpr_32_32_update_0_write_size_bytes;
+  total_size_bytes += mpr16b_32_32_update_0_write_size_bytes;
 
   cl_int err;
   cl::Context context;
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
   cl::CommandQueue q;
 
   std::vector<uint8_t, aligned_allocator<uint8_t> > in_update_0_read(in_update_0_read_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > mpr_32_32_update_0_write(mpr_32_32_update_0_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > mpr16b_32_32_update_0_write(mpr16b_32_32_update_0_write_size_bytes);
 
   std::ofstream input_in_update_0_read("in_update_0_read.csv");
   for (int i = 0; i < in_update_0_read_DATA_SIZE; i++) {
@@ -45,8 +45,8 @@ int main(int argc, char **argv) {
   }
 
   input_in_update_0_read.close();
-  for (int i = 0; i < mpr_32_32_update_0_write_DATA_SIZE; i++) {
-    ((uint16_t*) (mpr_32_32_update_0_write.data()))[i] = 0;
+  for (int i = 0; i < mpr16b_32_32_update_0_write_DATA_SIZE; i++) {
+    ((uint16_t*) (mpr16b_32_32_update_0_write.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "mpr_32_32_opt_kernel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "mpr16b_32_32_opt_kernel", &err));
       valid_device++;
       break;
     }
@@ -78,8 +78,8 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer mpr_32_32_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, mpr_32_32_update_0_write_size_bytes, mpr_32_32_update_0_write.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, mpr_32_32_update_0_write_ocl_buf));
+  OCL_CHECK(err, cl::Buffer mpr16b_32_32_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, mpr16b_32_32_update_0_write_size_bytes, mpr16b_32_32_update_0_write.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, mpr16b_32_32_update_0_write_ocl_buf));
 
   OCL_CHECK(err, cl::Buffer in_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_read_ocl_buf));
@@ -101,7 +101,7 @@ OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
 start = OCL_CHECK(err,
 event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
 nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({mpr_32_32_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({mpr16b_32_32_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -114,9 +114,9 @@ nsduration = end - start;
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
-  std::ofstream regression_result("mpr_32_32_update_0_write_accel_result.csv");
-  for (int i = 0; i < mpr_32_32_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (mpr_32_32_update_0_write.data()))[i] << std::endl;
+  std::ofstream regression_result("mpr16b_32_32_update_0_write_accel_result.csv");
+  for (int i = 0; i < mpr16b_32_32_update_0_write_DATA_SIZE; i++) {
+    regression_result << ((uint16_t*) (mpr16b_32_32_update_0_write.data()))[i] << std::endl;
   }
 
   return 0;

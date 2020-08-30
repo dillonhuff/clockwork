@@ -19,12 +19,12 @@ int main(int argc, char **argv) {
 
   size_t total_size_bytes = 0;
   const int in_update_0_read_pipe0_DATA_SIZE = num_epochs*1048576;
-  const int in_update_0_read_pipe0_BYTES_PER_PIXEL = 32 / 8;
+  const int in_update_0_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t in_update_0_read_pipe0_size_bytes = in_update_0_read_pipe0_BYTES_PER_PIXEL * in_update_0_read_pipe0_DATA_SIZE;
 
   total_size_bytes += in_update_0_read_pipe0_size_bytes;
   const int mpr_32_32_update_0_write_pipe0_DATA_SIZE = num_epochs*262144;
-  const int mpr_32_32_update_0_write_pipe0_BYTES_PER_PIXEL = 32 / 8;
+  const int mpr_32_32_update_0_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t mpr_32_32_update_0_write_pipe0_size_bytes = mpr_32_32_update_0_write_pipe0_BYTES_PER_PIXEL * mpr_32_32_update_0_write_pipe0_DATA_SIZE;
 
   total_size_bytes += mpr_32_32_update_0_write_pipe0_size_bytes;
@@ -106,7 +106,7 @@ nsduration = end - start;
 {
     std::ofstream regression_result("mpr_32_32_update_0_write_pipe0_accel_result.csv");
     for (int i = 0; i < mpr_32_32_update_0_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint32_t*) (mpr_32_32_update_0_write_pipe0.data()))[i] << std::endl;
+      regression_result << ((uint16_t*) (mpr_32_32_update_0_write_pipe0.data()))[i] << std::endl;
     }
 }
 

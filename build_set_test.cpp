@@ -7136,6 +7136,7 @@ void denoise3d_test() {
 
 App max_pooling(const std::string& out_name) {
   App mp;
+  mp.set_default_pixel_width(16);
   mp.func3d("in_oc");
   mp.func3d("in", "id", pt3("in_oc"));
   Window max_win{"in", {qconst(2), qconst(2), qconst(1)}, {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
@@ -9455,6 +9456,10 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
+  max_pooling_test("mpr16b_32");
+  assert(false);
+  gauss_pyramid_test("gp_fpga");
+
   App ef = ef_cartoon("ef_sm");
   generate_app_benchmark("ef_sm", ef, {1920, 1080}, 32);
   assert(false);
@@ -9463,9 +9468,6 @@ void iccad_tests() {
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
   assert(false);
   
-  max_pooling_test("mpr_32");
-  gauss_pyramid_test("gp_fpga");
-  assert(false);
 
   gauss_pyramid_fpga_test("gp_fpga");
   ef_cartoon_test("ef_cartoon");
