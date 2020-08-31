@@ -1,14 +1,14 @@
 #include <algorithm>
 #include <fstream>
 #include <vector>
-#include "mpr_32_32_opt.h"
+#include "mpr16b_32_32_opt.h"
 #include "bitmap_image.hpp"
 #include <cstdlib>
 
 int main(int argc, char **argv) {
   bitmap_image input("./images/taxi_slice_256.bmp");
   HWStream<hw_uint<512> > in_update_0_read_channel;
-  HWStream<hw_uint<256> > mpr_32_32_update_0_write_channel;
+  HWStream<hw_uint<256> > mpr16b_32_32_update_0_write_channel;
   // In lanes = 32
   for (int r = 0; r < 64; r++) {
     for (int cl = 0; cl < 128 / 32; cl++) {
@@ -463,20 +463,20 @@ int main(int argc, char **argv) {
       }
     }
   }
-  mpr_32_32_opt(in_update_0_read_channel, mpr_32_32_update_0_write_channel);
+  mpr16b_32_32_opt(in_update_0_read_channel, mpr16b_32_32_update_0_write_channel);
   bitmap_image output(64, 64);
   for (int r = 0; r < 64; r++) {
     for (int cl = 0; cl < 64 / 16; cl++) {
       int c = 16*cl + 0;
       rgb_t pix;
-      auto red = mpr_32_32_update_0_write_channel.read();
-      auto g = mpr_32_32_update_0_write_channel.read();
-      auto b = mpr_32_32_update_0_write_channel.read();
+      auto red = mpr16b_32_32_update_0_write_channel.read();
+      auto g = mpr16b_32_32_update_0_write_channel.read();
+      auto b = mpr16b_32_32_update_0_write_channel.read();
       pix.red = red;
       pix.green = g;
       pix.blue = b;
       output.set_pixel(c, r, pix);
     }
   }
-  output.save_image("./images/mpr_32_32_opt_bmp_out.bmp");
+  output.save_image("./images/mpr16b_32_32_opt_bmp_out.bmp");
 }

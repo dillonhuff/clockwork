@@ -1,5 +1,5 @@
 // AUTO GEN SODA TB
-#include "mpr_32_32_opt_kernel.h"
+#include "mpr16b_32_32_opt_kernel.h"
 #include <iostream>
 #include <fstream>
 
@@ -24,11 +24,11 @@ int main() {
   cout << "pixels / transfer: " << pixels_per_burst << endl;
 
   const uint64_t transfer_cols = ncols / pixels_per_burst;
-  ap_uint<BURST_WIDTH>* mpr_32_32 = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
+  ap_uint<BURST_WIDTH>* mpr16b_32_32 = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   ap_uint<BURST_WIDTH>* in_oc = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   fill_array_decimal<bits_per_pixel>("in_oc_input_pixel.csv", in_oc, nrows, ncols, transfer_cols);
-  mpr_32_32_opt_kernel(mpr_32_32, in_oc, num_transfers);
-  write_results_decimal<bits_per_pixel>("soda_mpr_32_32_opt_regression_result.csv", mpr_32_32, nrows, ncols, transfer_cols);
+  mpr16b_32_32_opt_kernel(mpr16b_32_32, in_oc, num_transfers);
+  write_results_decimal<bits_per_pixel>("soda_mpr16b_32_32_opt_regression_result.csv", mpr16b_32_32, nrows, ncols, transfer_cols);
   free(in_oc);
-  free(mpr_32_32);
+  free(mpr16b_32_32);
 }
