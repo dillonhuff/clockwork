@@ -13481,8 +13481,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
-    // TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
-    TARGET_TILE_REGISTERS;
+     TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+    //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13677,14 +13677,14 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  // test_programs.push_back(camera_pipeline());
+  test_programs.push_back(camera_pipeline());
   //test_programs.push_back(unsharp());
   test_programs.push_back(gaussian());
-  // test_programs.push_back(pointwise());
-  // test_programs.push_back(harris());
-  // test_programs.push_back(down_sample());
-  // test_programs.push_back(cascade());
-  // test_programs.push_back(up_sample());
+  test_programs.push_back(pointwise());
+  test_programs.push_back(harris());
+  test_programs.push_back(down_sample());
+  test_programs.push_back(cascade());
+  test_programs.push_back(up_sample());
 
   // Delayed incorrectly?
 
@@ -13722,8 +13722,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     //assert(false);
 
     dsa_writers(prg);
-    // auto cpu = unoptimized_result(prg);
-    vector<string> cpu;
+    //vector<string> cpu;
+    auto cpu = unoptimized_result(prg);
 
     compile_for_garnet_dual_port_mem(prg);
     generate_regression_testbench(prg);
@@ -13733,12 +13733,14 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     //assert(false);
-    //string app_type = "dse_raw_sram";
-    //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
-    //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    string app_type = "dualwithaddr";
+    cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+    cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_compute.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
   }
 }
 
@@ -14041,8 +14043,8 @@ void cgra_flow_tests() {
 
   //assert(false);
 
-  //auto test_programs = stencil_programs();
-  auto test_programs = all_cgra_programs();
+  auto test_programs = stencil_programs();
+  //auto test_programs = all_cgra_programs();
 
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
