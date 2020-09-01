@@ -32,10 +32,10 @@ float to_float(const hw_uint<32>& in) {
 static inline
 hw_uint<16>
 max_pool_2x2(const hw_uint<16*4>& in) {
-  hw_uint<32> v0 = in.extract<0, 15>();
-  hw_uint<32> v1 = in.extract<16, 31>();
-  hw_uint<32> v2 = in.extract<32, 47>();
-  hw_uint<32> v3 = in.extract<48, 63>();
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  hw_uint<16> v2 = in.extract<32, 47>();
+  hw_uint<16> v3 = in.extract<48, 63>();
   return max(max(v0, v1), max(v2, v3));
 }
 
