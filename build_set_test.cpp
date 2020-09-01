@@ -7209,8 +7209,8 @@ void max_pooling_test(const std::string& prefix) {
   int H = 64;
   int D = 64;
 
-  //vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
-  vector<int> unroll_factors{32};
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  //vector<int> unroll_factors{32};
   for (auto factor : unroll_factors) {
     string name = prefix + "_" + str(factor);
     CodegenOptions options;
