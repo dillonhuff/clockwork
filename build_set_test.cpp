@@ -13718,6 +13718,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
     cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
     cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_compute.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
     cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
     cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
   }
