@@ -19,14 +19,16 @@ matplotlib.style.use('seaborn-pastel')
 labels = ['MP', 'GP', 'SEF']
 men_means = [0.782, 0.78, 0.53]
 women_means = [0.01, 0.0639, 0.00157]
+gpu_ppf = [2.24, 1.61, 0.22]
 theoretical_peak = [1.14, 1.14, 1.14]
 
 x = np.arange(len(labels))  # the label locations
 width = 0.35  # the width of the bars
 
 fig, ax = plt.subplots()
-rects1 = ax.bar(x - width/2, men_means, width, label='CW', edgecolor='black')
-rects2 = ax.bar(x + width/2, women_means, width, label='CPU', edgecolor='black')
+rects1 = ax.bar(x - width, men_means, width, label='CW', edgecolor='black')
+rects2 = ax.bar(x, women_means, width, label='CPU', edgecolor='black')
+rects3 = ax.bar(x + width, gpu_ppf, width, label='GPU', edgecolor='black')
 
 THEORETICAL_PEAK = 1.14
 plt.axhline(y=THEORETICAL_PEAK, linewidth=2, color='red')
@@ -53,8 +55,9 @@ def autolabel(rects):
 
 autolabel(rects1)
 autolabel(rects2)
+autolabel(rects3)
 
-fig.tight_layout()
+# fig.tight_layout()
 # set_size(5, 3)
 
 plt.show()
