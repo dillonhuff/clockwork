@@ -10175,8 +10175,8 @@ void run_verilator_tb(const std::string& name) {
   int res = run_verilator_on(name,
       name + "_verilog_tb.cpp",
       {name + ".v", name + "_verilog_collateral.sv",
-      //"./lake_components/dualwithadd/lake_top.sv",
-      "./lake_components/ASPLOS_designs/bare_dual_port.v",
+      "./lake_components/dualwithadd/lake_top.sv",
+      //"./lake_components/ASPLOS_designs/bare_dual_port.v",
       "./lake_components/inner_affine_controller.sv"});
 
   assert(res == 0);
@@ -13481,8 +13481,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.all_rams = true;
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
-    TARGET_TILE_DUAL_SRAM_RAW;
-     //TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+    //TARGET_TILE_DUAL_SRAM_RAW;
+     TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
     //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
@@ -13735,7 +13735,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     //assert(false);
     //string app_type = "dualwithaddr";
-    string app_type = "dualwithoutaddr";
+    string app_type = "dualwithaddr";
     cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
     cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
     cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");

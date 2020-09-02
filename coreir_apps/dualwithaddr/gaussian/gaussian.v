@@ -1,5 +1,5 @@
-// Module `inner_sram__U226` defined externally
-// Module `inner_sram__U187` defined externally
+// Module `memtile_long_delay__U164` defined externally
+// Module `memtile_long_delay__U156` defined externally
 module hcompute_hw_output_stencil (
     output [15:0] out_hw_output_stencil,
     input [15:0] in0_blur_stencil [0:0]
@@ -84,82 +84,82 @@ coreir_reg #(
 );
 endmodule
 
-module delay__U231 (
+module delay__U169 (
     input clk,
     input [15:0] wdata,
     output [15:0] rdata,
     input rst_n,
     input flush
 );
-wire [15:0] _U232_in;
-wire _U232_clk;
-assign _U232_in = wdata;
-assign _U232_clk = clk;
+wire [15:0] _U170_in;
+wire _U170_clk;
+assign _U170_in = wdata;
+assign _U170_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U232 (
-    .in(_U232_in),
-    .clk(_U232_clk),
+) _U170 (
+    .in(_U170_in),
+    .clk(_U170_clk),
     .out(rdata)
 );
 endmodule
 
-module delay__U228 (
+module delay__U166 (
     input clk,
     input [15:0] wdata,
     output [15:0] rdata,
     input rst_n,
     input flush
 );
-wire [15:0] _U229_in;
-wire _U229_clk;
-assign _U229_in = wdata;
-assign _U229_clk = clk;
+wire [15:0] _U167_in;
+wire _U167_clk;
+assign _U167_in = wdata;
+assign _U167_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U229 (
-    .in(_U229_in),
-    .clk(_U229_clk),
+) _U167 (
+    .in(_U167_in),
+    .clk(_U167_clk),
     .out(rdata)
 );
 endmodule
 
-module delay__U192 (
+module delay__U161 (
     input clk,
     input [15:0] wdata,
     output [15:0] rdata,
     input rst_n,
     input flush
 );
-wire [15:0] _U193_in;
-wire _U193_clk;
-assign _U193_in = wdata;
-assign _U193_clk = clk;
+wire [15:0] _U162_in;
+wire _U162_clk;
+assign _U162_in = wdata;
+assign _U162_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U193 (
-    .in(_U193_in),
-    .clk(_U193_clk),
+) _U162 (
+    .in(_U162_in),
+    .clk(_U162_clk),
     .out(rdata)
 );
 endmodule
 
-module delay__U189 (
+module delay__U158 (
     input clk,
     input [15:0] wdata,
     output [15:0] rdata,
     input rst_n,
     input flush
 );
-wire [15:0] _U190_in;
-wire _U190_clk;
-assign _U190_in = wdata;
-assign _U190_clk = clk;
+wire [15:0] _U159_in;
+wire _U159_clk;
+assign _U159_in = wdata;
+assign _U159_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U190 (
-    .in(_U190_in),
-    .clk(_U190_clk),
+) _U159 (
+    .in(_U159_in),
+    .clk(_U159_clk),
     .out(rdata)
 );
 endmodule
@@ -282,6 +282,172 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U148_clk),
     .out(rdata)
 );
+endmodule
+
+module hw_input_stencil_ub (
+    input clk,
+    input rst_n,
+    input flush,
+    input op_hcompute_blur_unnormalized_stencil_1_read_ren,
+    input [15:0] op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars [2:0],
+    output [15:0] op_hcompute_blur_unnormalized_stencil_1_read [8:0],
+    input op_hcompute_hw_input_stencil_write_wen,
+    input [15:0] op_hcompute_hw_input_stencil_write_ctrl_vars [2:0],
+    input [15:0] op_hcompute_hw_input_stencil_write [0:0]
+);
+wire delay_sr_U149_clk;
+wire [15:0] delay_sr_U149_wdata;
+wire [15:0] delay_sr_U149_rdata;
+wire delay_sr_U149_rst_n;
+wire delay_sr_U149_flush;
+wire delay_sr_U152_clk;
+wire [15:0] delay_sr_U152_wdata;
+wire [15:0] delay_sr_U152_rdata;
+wire delay_sr_U152_rst_n;
+wire delay_sr_U152_flush;
+wire delay_sr_U155_clk;
+wire [15:0] delay_sr_U155_wdata;
+wire [15:0] delay_sr_U155_rdata;
+wire delay_sr_U155_rst_n;
+wire delay_sr_U155_flush;
+wire delay_sr_U157_clk;
+wire [15:0] delay_sr_U157_wdata;
+wire [15:0] delay_sr_U157_rdata;
+wire delay_sr_U157_rst_n;
+wire delay_sr_U157_flush;
+wire delay_sr_U160_clk;
+wire [15:0] delay_sr_U160_wdata;
+wire [15:0] delay_sr_U160_rdata;
+wire delay_sr_U160_rst_n;
+wire delay_sr_U160_flush;
+wire delay_sr_U163_clk;
+wire [15:0] delay_sr_U163_wdata;
+wire [15:0] delay_sr_U163_rdata;
+wire delay_sr_U163_rst_n;
+wire delay_sr_U163_flush;
+wire delay_sr_U165_clk;
+wire [15:0] delay_sr_U165_wdata;
+wire [15:0] delay_sr_U165_rdata;
+wire delay_sr_U165_rst_n;
+wire delay_sr_U165_flush;
+wire delay_sr_U168_clk;
+wire [15:0] delay_sr_U168_wdata;
+wire [15:0] delay_sr_U168_rdata;
+wire delay_sr_U168_rst_n;
+wire delay_sr_U168_flush;
+wire delay_sr_U171_clk;
+wire [15:0] delay_sr_U171_wdata;
+wire [15:0] delay_sr_U171_rdata;
+wire delay_sr_U171_rst_n;
+wire delay_sr_U171_flush;
+assign delay_sr_U149_clk = clk;
+assign delay_sr_U149_wdata = op_hcompute_hw_input_stencil_write[0];
+assign delay_sr_U149_rst_n = rst_n;
+assign delay_sr_U149_flush = flush;
+delay__U142 delay_sr_U149 (
+    .clk(delay_sr_U149_clk),
+    .wdata(delay_sr_U149_wdata),
+    .rdata(delay_sr_U149_rdata),
+    .rst_n(delay_sr_U149_rst_n),
+    .flush(delay_sr_U149_flush)
+);
+assign delay_sr_U152_clk = clk;
+assign delay_sr_U152_wdata = delay_sr_U149_rdata;
+assign delay_sr_U152_rst_n = rst_n;
+assign delay_sr_U152_flush = flush;
+delay__U150 delay_sr_U152 (
+    .clk(delay_sr_U152_clk),
+    .wdata(delay_sr_U152_wdata),
+    .rdata(delay_sr_U152_rdata),
+    .rst_n(delay_sr_U152_rst_n),
+    .flush(delay_sr_U152_flush)
+);
+assign delay_sr_U155_clk = clk;
+assign delay_sr_U155_wdata = delay_sr_U152_rdata;
+assign delay_sr_U155_rst_n = rst_n;
+assign delay_sr_U155_flush = flush;
+delay__U153 delay_sr_U155 (
+    .clk(delay_sr_U155_clk),
+    .wdata(delay_sr_U155_wdata),
+    .rdata(delay_sr_U155_rdata),
+    .rst_n(delay_sr_U155_rst_n),
+    .flush(delay_sr_U155_flush)
+);
+assign delay_sr_U157_clk = clk;
+assign delay_sr_U157_wdata = delay_sr_U155_rdata;
+assign delay_sr_U157_rst_n = rst_n;
+assign delay_sr_U157_flush = flush;
+memtile_long_delay__U156 delay_sr_U157 (
+    .clk(delay_sr_U157_clk),
+    .wdata(delay_sr_U157_wdata),
+    .rdata(delay_sr_U157_rdata),
+    .rst_n(delay_sr_U157_rst_n),
+    .flush(delay_sr_U157_flush)
+);
+assign delay_sr_U160_clk = clk;
+assign delay_sr_U160_wdata = delay_sr_U157_rdata;
+assign delay_sr_U160_rst_n = rst_n;
+assign delay_sr_U160_flush = flush;
+delay__U158 delay_sr_U160 (
+    .clk(delay_sr_U160_clk),
+    .wdata(delay_sr_U160_wdata),
+    .rdata(delay_sr_U160_rdata),
+    .rst_n(delay_sr_U160_rst_n),
+    .flush(delay_sr_U160_flush)
+);
+assign delay_sr_U163_clk = clk;
+assign delay_sr_U163_wdata = delay_sr_U160_rdata;
+assign delay_sr_U163_rst_n = rst_n;
+assign delay_sr_U163_flush = flush;
+delay__U161 delay_sr_U163 (
+    .clk(delay_sr_U163_clk),
+    .wdata(delay_sr_U163_wdata),
+    .rdata(delay_sr_U163_rdata),
+    .rst_n(delay_sr_U163_rst_n),
+    .flush(delay_sr_U163_flush)
+);
+assign delay_sr_U165_clk = clk;
+assign delay_sr_U165_wdata = delay_sr_U163_rdata;
+assign delay_sr_U165_rst_n = rst_n;
+assign delay_sr_U165_flush = flush;
+memtile_long_delay__U164 delay_sr_U165 (
+    .clk(delay_sr_U165_clk),
+    .wdata(delay_sr_U165_wdata),
+    .rdata(delay_sr_U165_rdata),
+    .rst_n(delay_sr_U165_rst_n),
+    .flush(delay_sr_U165_flush)
+);
+assign delay_sr_U168_clk = clk;
+assign delay_sr_U168_wdata = delay_sr_U165_rdata;
+assign delay_sr_U168_rst_n = rst_n;
+assign delay_sr_U168_flush = flush;
+delay__U166 delay_sr_U168 (
+    .clk(delay_sr_U168_clk),
+    .wdata(delay_sr_U168_wdata),
+    .rdata(delay_sr_U168_rdata),
+    .rst_n(delay_sr_U168_rst_n),
+    .flush(delay_sr_U168_flush)
+);
+assign delay_sr_U171_clk = clk;
+assign delay_sr_U171_wdata = delay_sr_U168_rdata;
+assign delay_sr_U171_rst_n = rst_n;
+assign delay_sr_U171_flush = flush;
+delay__U169 delay_sr_U171 (
+    .clk(delay_sr_U171_clk),
+    .wdata(delay_sr_U171_wdata),
+    .rdata(delay_sr_U171_rdata),
+    .rst_n(delay_sr_U171_rst_n),
+    .flush(delay_sr_U171_flush)
+);
+assign op_hcompute_blur_unnormalized_stencil_1_read[8] = delay_sr_U152_rdata;
+assign op_hcompute_blur_unnormalized_stencil_1_read[7] = delay_sr_U149_rdata;
+assign op_hcompute_blur_unnormalized_stencil_1_read[6] = delay_sr_U155_rdata;
+assign op_hcompute_blur_unnormalized_stencil_1_read[5] = delay_sr_U157_rdata;
+assign op_hcompute_blur_unnormalized_stencil_1_read[4] = delay_sr_U160_rdata;
+assign op_hcompute_blur_unnormalized_stencil_1_read[3] = delay_sr_U163_rdata;
+assign op_hcompute_blur_unnormalized_stencil_1_read[2] = delay_sr_U165_rdata;
+assign op_hcompute_blur_unnormalized_stencil_1_read[1] = delay_sr_U168_rdata;
+assign op_hcompute_blur_unnormalized_stencil_1_read[0] = delay_sr_U171_rdata;
 endmodule
 
 module delay__U137 (
@@ -1372,544 +1538,6 @@ assign d[1] = d_1_reg_out;
 assign d[0] = d_0_reg_out;
 endmodule
 
-module aff__U220 (
-    output [15:0] out,
-    input [15:0] d [0:0]
-);
-assign out = 16'((16'(16'h0001 * d[0])) + 16'h0000);
-endmodule
-
-module aff__U212 (
-    output [15:0] out,
-    input [15:0] d [0:0]
-);
-assign out = 16'((16'(16'h0001 * d[0])) + 16'h0000);
-endmodule
-
-module affine_controller__U211 (
-    input clk,
-    output valid,
-    output [15:0] d [0:0]
-);
-wire [15:0] affine_func_out;
-wire [15:0] affine_func_d [0:0];
-wire cmp_time_out;
-wire [15:0] cycle_time_in;
-wire cycle_time_clk;
-wire [15:0] cycle_time_out;
-wire [15:0] d_0_reg_in;
-wire d_0_reg_clk;
-wire [15:0] d_0_reg_out;
-wire d_0_reg_en;
-assign affine_func_d[0] = d_0_reg_out;
-aff__U212 affine_func (
-    .out(affine_func_out),
-    .d(affine_func_d)
-);
-assign cmp_time_out = (16'(affine_func_out - cycle_time_out)) == 16'h0000;
-assign cycle_time_in = 16'(cycle_time_out + 16'h0001);
-assign cycle_time_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) cycle_time (
-    .in(cycle_time_in),
-    .clk(cycle_time_clk),
-    .out(cycle_time_out)
-);
-assign d_0_reg_in = 1'b1 ? d_0_reg_out == 16'hffff ? 16'h0000 : 16'(d_0_reg_out + 16'h0001) : d_0_reg_out;
-assign d_0_reg_clk = clk;
-assign d_0_reg_en = cmp_time_out;
-mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
-    .init(16'h0000)
-) d_0_reg (
-    .in(d_0_reg_in),
-    .clk(d_0_reg_clk),
-    .out(d_0_reg_out),
-    .en(d_0_reg_en)
-);
-assign valid = cmp_time_out;
-assign d[0] = d_0_reg_out;
-endmodule
-
-module aff__U205 (
-    output [15:0] out,
-    input [15:0] d [0:0]
-);
-assign out = 16'((16'(16'h0001 * d[0])) + 16'h003d);
-endmodule
-
-module aff__U197 (
-    output [15:0] out,
-    input [15:0] d [0:0]
-);
-assign out = 16'((16'(16'h0001 * d[0])) + 16'h0000);
-endmodule
-
-module affine_controller__U196 (
-    input clk,
-    output valid,
-    output [15:0] d [0:0]
-);
-wire [15:0] affine_func_out;
-wire [15:0] affine_func_d [0:0];
-wire cmp_time_out;
-wire [15:0] cycle_time_in;
-wire cycle_time_clk;
-wire [15:0] cycle_time_out;
-wire [15:0] d_0_reg_in;
-wire d_0_reg_clk;
-wire [15:0] d_0_reg_out;
-wire d_0_reg_en;
-assign affine_func_d[0] = d_0_reg_out;
-aff__U197 affine_func (
-    .out(affine_func_out),
-    .d(affine_func_d)
-);
-assign cmp_time_out = (16'(affine_func_out - cycle_time_out)) == 16'h0000;
-assign cycle_time_in = 16'(cycle_time_out + 16'h0001);
-assign cycle_time_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) cycle_time (
-    .in(cycle_time_in),
-    .clk(cycle_time_clk),
-    .out(cycle_time_out)
-);
-assign d_0_reg_in = 1'b1 ? d_0_reg_out == 16'hffff ? 16'h0000 : 16'(d_0_reg_out + 16'h0001) : d_0_reg_out;
-assign d_0_reg_clk = clk;
-assign d_0_reg_en = cmp_time_out;
-mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
-    .init(16'h0000)
-) d_0_reg (
-    .in(d_0_reg_in),
-    .clk(d_0_reg_clk),
-    .out(d_0_reg_out),
-    .en(d_0_reg_en)
-);
-assign valid = cmp_time_out;
-assign d[0] = d_0_reg_out;
-endmodule
-
-module memtile_long_delay__U195 (
-    input clk,
-    input [15:0] wdata,
-    output [15:0] rdata,
-    input rst_n,
-    input flush
-);
-wire [15:0] addrgen__U210_out;
-wire [15:0] addrgen__U210_d [0:0];
-wire [15:0] addrgen__U225_out;
-wire [15:0] addrgen__U225_d [0:0];
-wire ctrl__U204_clk;
-wire ctrl__U204_valid;
-wire [15:0] ctrl__U204_d [0:0];
-wire ctrl__U219_clk;
-wire ctrl__U219_valid;
-wire [15:0] ctrl__U219_d [0:0];
-wire inner_sram__U226_bank_clk;
-wire inner_sram__U226_bank_rst_n;
-wire inner_sram__U226_bank_flush;
-wire inner_sram__U226_bank_ren_in;
-wire inner_sram__U226_bank_wen_in;
-wire [15:0] inner_sram__U226_bank_waddr;
-wire [15:0] inner_sram__U226_bank_raddr;
-wire [15:0] inner_sram__U226_bank_wdata;
-assign addrgen__U210_d[0] = ctrl__U204_d[0];
-aff__U205 addrgen__U210 (
-    .out(addrgen__U210_out),
-    .d(addrgen__U210_d)
-);
-assign addrgen__U225_d[0] = ctrl__U219_d[0];
-aff__U220 addrgen__U225 (
-    .out(addrgen__U225_out),
-    .d(addrgen__U225_d)
-);
-assign ctrl__U204_clk = clk;
-affine_controller__U196 ctrl__U204 (
-    .clk(ctrl__U204_clk),
-    .valid(ctrl__U204_valid),
-    .d(ctrl__U204_d)
-);
-assign ctrl__U219_clk = clk;
-affine_controller__U211 ctrl__U219 (
-    .clk(ctrl__U219_clk),
-    .valid(ctrl__U219_valid),
-    .d(ctrl__U219_d)
-);
-assign inner_sram__U226_bank_clk = clk;
-assign inner_sram__U226_bank_rst_n = rst_n;
-assign inner_sram__U226_bank_flush = flush;
-assign inner_sram__U226_bank_ren_in = ctrl__U219_valid;
-assign inner_sram__U226_bank_wen_in = ctrl__U204_valid;
-assign inner_sram__U226_bank_waddr = addrgen__U210_out;
-assign inner_sram__U226_bank_raddr = addrgen__U225_out;
-assign inner_sram__U226_bank_wdata = wdata;
-inner_sram__U226 inner_sram__U226_bank (
-    .clk(inner_sram__U226_bank_clk),
-    .rst_n(inner_sram__U226_bank_rst_n),
-    .flush(inner_sram__U226_bank_flush),
-    .ren_in(inner_sram__U226_bank_ren_in),
-    .wen_in(inner_sram__U226_bank_wen_in),
-    .waddr(inner_sram__U226_bank_waddr),
-    .raddr(inner_sram__U226_bank_raddr),
-    .rdata(rdata),
-    .wdata(inner_sram__U226_bank_wdata)
-);
-endmodule
-
-module aff__U181 (
-    output [15:0] out,
-    input [15:0] d [0:0]
-);
-assign out = 16'((16'(16'h0001 * d[0])) + 16'h0000);
-endmodule
-
-module aff__U173 (
-    output [15:0] out,
-    input [15:0] d [0:0]
-);
-assign out = 16'((16'(16'h0001 * d[0])) + 16'h0000);
-endmodule
-
-module affine_controller__U172 (
-    input clk,
-    output valid,
-    output [15:0] d [0:0]
-);
-wire [15:0] affine_func_out;
-wire [15:0] affine_func_d [0:0];
-wire cmp_time_out;
-wire [15:0] cycle_time_in;
-wire cycle_time_clk;
-wire [15:0] cycle_time_out;
-wire [15:0] d_0_reg_in;
-wire d_0_reg_clk;
-wire [15:0] d_0_reg_out;
-wire d_0_reg_en;
-assign affine_func_d[0] = d_0_reg_out;
-aff__U173 affine_func (
-    .out(affine_func_out),
-    .d(affine_func_d)
-);
-assign cmp_time_out = (16'(affine_func_out - cycle_time_out)) == 16'h0000;
-assign cycle_time_in = 16'(cycle_time_out + 16'h0001);
-assign cycle_time_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) cycle_time (
-    .in(cycle_time_in),
-    .clk(cycle_time_clk),
-    .out(cycle_time_out)
-);
-assign d_0_reg_in = 1'b1 ? d_0_reg_out == 16'hffff ? 16'h0000 : 16'(d_0_reg_out + 16'h0001) : d_0_reg_out;
-assign d_0_reg_clk = clk;
-assign d_0_reg_en = cmp_time_out;
-mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
-    .init(16'h0000)
-) d_0_reg (
-    .in(d_0_reg_in),
-    .clk(d_0_reg_clk),
-    .out(d_0_reg_out),
-    .en(d_0_reg_en)
-);
-assign valid = cmp_time_out;
-assign d[0] = d_0_reg_out;
-endmodule
-
-module aff__U166 (
-    output [15:0] out,
-    input [15:0] d [0:0]
-);
-assign out = 16'((16'(16'h0001 * d[0])) + 16'h003d);
-endmodule
-
-module aff__U158 (
-    output [15:0] out,
-    input [15:0] d [0:0]
-);
-assign out = 16'((16'(16'h0001 * d[0])) + 16'h0000);
-endmodule
-
-module affine_controller__U157 (
-    input clk,
-    output valid,
-    output [15:0] d [0:0]
-);
-wire [15:0] affine_func_out;
-wire [15:0] affine_func_d [0:0];
-wire cmp_time_out;
-wire [15:0] cycle_time_in;
-wire cycle_time_clk;
-wire [15:0] cycle_time_out;
-wire [15:0] d_0_reg_in;
-wire d_0_reg_clk;
-wire [15:0] d_0_reg_out;
-wire d_0_reg_en;
-assign affine_func_d[0] = d_0_reg_out;
-aff__U158 affine_func (
-    .out(affine_func_out),
-    .d(affine_func_d)
-);
-assign cmp_time_out = (16'(affine_func_out - cycle_time_out)) == 16'h0000;
-assign cycle_time_in = 16'(cycle_time_out + 16'h0001);
-assign cycle_time_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) cycle_time (
-    .in(cycle_time_in),
-    .clk(cycle_time_clk),
-    .out(cycle_time_out)
-);
-assign d_0_reg_in = 1'b1 ? d_0_reg_out == 16'hffff ? 16'h0000 : 16'(d_0_reg_out + 16'h0001) : d_0_reg_out;
-assign d_0_reg_clk = clk;
-assign d_0_reg_en = cmp_time_out;
-mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
-    .init(16'h0000)
-) d_0_reg (
-    .in(d_0_reg_in),
-    .clk(d_0_reg_clk),
-    .out(d_0_reg_out),
-    .en(d_0_reg_en)
-);
-assign valid = cmp_time_out;
-assign d[0] = d_0_reg_out;
-endmodule
-
-module memtile_long_delay__U156 (
-    input clk,
-    input [15:0] wdata,
-    output [15:0] rdata,
-    input rst_n,
-    input flush
-);
-wire [15:0] addrgen__U171_out;
-wire [15:0] addrgen__U171_d [0:0];
-wire [15:0] addrgen__U186_out;
-wire [15:0] addrgen__U186_d [0:0];
-wire ctrl__U165_clk;
-wire ctrl__U165_valid;
-wire [15:0] ctrl__U165_d [0:0];
-wire ctrl__U180_clk;
-wire ctrl__U180_valid;
-wire [15:0] ctrl__U180_d [0:0];
-wire inner_sram__U187_bank_clk;
-wire inner_sram__U187_bank_rst_n;
-wire inner_sram__U187_bank_flush;
-wire inner_sram__U187_bank_ren_in;
-wire inner_sram__U187_bank_wen_in;
-wire [15:0] inner_sram__U187_bank_waddr;
-wire [15:0] inner_sram__U187_bank_raddr;
-wire [15:0] inner_sram__U187_bank_wdata;
-assign addrgen__U171_d[0] = ctrl__U165_d[0];
-aff__U166 addrgen__U171 (
-    .out(addrgen__U171_out),
-    .d(addrgen__U171_d)
-);
-assign addrgen__U186_d[0] = ctrl__U180_d[0];
-aff__U181 addrgen__U186 (
-    .out(addrgen__U186_out),
-    .d(addrgen__U186_d)
-);
-assign ctrl__U165_clk = clk;
-affine_controller__U157 ctrl__U165 (
-    .clk(ctrl__U165_clk),
-    .valid(ctrl__U165_valid),
-    .d(ctrl__U165_d)
-);
-assign ctrl__U180_clk = clk;
-affine_controller__U172 ctrl__U180 (
-    .clk(ctrl__U180_clk),
-    .valid(ctrl__U180_valid),
-    .d(ctrl__U180_d)
-);
-assign inner_sram__U187_bank_clk = clk;
-assign inner_sram__U187_bank_rst_n = rst_n;
-assign inner_sram__U187_bank_flush = flush;
-assign inner_sram__U187_bank_ren_in = ctrl__U180_valid;
-assign inner_sram__U187_bank_wen_in = ctrl__U165_valid;
-assign inner_sram__U187_bank_waddr = addrgen__U171_out;
-assign inner_sram__U187_bank_raddr = addrgen__U186_out;
-assign inner_sram__U187_bank_wdata = wdata;
-inner_sram__U187 inner_sram__U187_bank (
-    .clk(inner_sram__U187_bank_clk),
-    .rst_n(inner_sram__U187_bank_rst_n),
-    .flush(inner_sram__U187_bank_flush),
-    .ren_in(inner_sram__U187_bank_ren_in),
-    .wen_in(inner_sram__U187_bank_wen_in),
-    .waddr(inner_sram__U187_bank_waddr),
-    .raddr(inner_sram__U187_bank_raddr),
-    .rdata(rdata),
-    .wdata(inner_sram__U187_bank_wdata)
-);
-endmodule
-
-module hw_input_stencil_ub (
-    input clk,
-    input rst_n,
-    input flush,
-    input op_hcompute_blur_unnormalized_stencil_1_read_ren,
-    input [15:0] op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars [2:0],
-    output [15:0] op_hcompute_blur_unnormalized_stencil_1_read [8:0],
-    input op_hcompute_hw_input_stencil_write_wen,
-    input [15:0] op_hcompute_hw_input_stencil_write_ctrl_vars [2:0],
-    input [15:0] op_hcompute_hw_input_stencil_write [0:0]
-);
-wire delay_sr_U149_clk;
-wire [15:0] delay_sr_U149_wdata;
-wire [15:0] delay_sr_U149_rdata;
-wire delay_sr_U149_rst_n;
-wire delay_sr_U149_flush;
-wire delay_sr_U152_clk;
-wire [15:0] delay_sr_U152_wdata;
-wire [15:0] delay_sr_U152_rdata;
-wire delay_sr_U152_rst_n;
-wire delay_sr_U152_flush;
-wire delay_sr_U155_clk;
-wire [15:0] delay_sr_U155_wdata;
-wire [15:0] delay_sr_U155_rdata;
-wire delay_sr_U155_rst_n;
-wire delay_sr_U155_flush;
-wire delay_sr_U188_clk;
-wire [15:0] delay_sr_U188_wdata;
-wire [15:0] delay_sr_U188_rdata;
-wire delay_sr_U188_rst_n;
-wire delay_sr_U188_flush;
-wire delay_sr_U191_clk;
-wire [15:0] delay_sr_U191_wdata;
-wire [15:0] delay_sr_U191_rdata;
-wire delay_sr_U191_rst_n;
-wire delay_sr_U191_flush;
-wire delay_sr_U194_clk;
-wire [15:0] delay_sr_U194_wdata;
-wire [15:0] delay_sr_U194_rdata;
-wire delay_sr_U194_rst_n;
-wire delay_sr_U194_flush;
-wire delay_sr_U227_clk;
-wire [15:0] delay_sr_U227_wdata;
-wire [15:0] delay_sr_U227_rdata;
-wire delay_sr_U227_rst_n;
-wire delay_sr_U227_flush;
-wire delay_sr_U230_clk;
-wire [15:0] delay_sr_U230_wdata;
-wire [15:0] delay_sr_U230_rdata;
-wire delay_sr_U230_rst_n;
-wire delay_sr_U230_flush;
-wire delay_sr_U233_clk;
-wire [15:0] delay_sr_U233_wdata;
-wire [15:0] delay_sr_U233_rdata;
-wire delay_sr_U233_rst_n;
-wire delay_sr_U233_flush;
-assign delay_sr_U149_clk = clk;
-assign delay_sr_U149_wdata = op_hcompute_hw_input_stencil_write[0];
-assign delay_sr_U149_rst_n = rst_n;
-assign delay_sr_U149_flush = flush;
-delay__U142 delay_sr_U149 (
-    .clk(delay_sr_U149_clk),
-    .wdata(delay_sr_U149_wdata),
-    .rdata(delay_sr_U149_rdata),
-    .rst_n(delay_sr_U149_rst_n),
-    .flush(delay_sr_U149_flush)
-);
-assign delay_sr_U152_clk = clk;
-assign delay_sr_U152_wdata = delay_sr_U149_rdata;
-assign delay_sr_U152_rst_n = rst_n;
-assign delay_sr_U152_flush = flush;
-delay__U150 delay_sr_U152 (
-    .clk(delay_sr_U152_clk),
-    .wdata(delay_sr_U152_wdata),
-    .rdata(delay_sr_U152_rdata),
-    .rst_n(delay_sr_U152_rst_n),
-    .flush(delay_sr_U152_flush)
-);
-assign delay_sr_U155_clk = clk;
-assign delay_sr_U155_wdata = delay_sr_U152_rdata;
-assign delay_sr_U155_rst_n = rst_n;
-assign delay_sr_U155_flush = flush;
-delay__U153 delay_sr_U155 (
-    .clk(delay_sr_U155_clk),
-    .wdata(delay_sr_U155_wdata),
-    .rdata(delay_sr_U155_rdata),
-    .rst_n(delay_sr_U155_rst_n),
-    .flush(delay_sr_U155_flush)
-);
-assign delay_sr_U188_clk = clk;
-assign delay_sr_U188_wdata = delay_sr_U155_rdata;
-assign delay_sr_U188_rst_n = rst_n;
-assign delay_sr_U188_flush = flush;
-memtile_long_delay__U156 delay_sr_U188 (
-    .clk(delay_sr_U188_clk),
-    .wdata(delay_sr_U188_wdata),
-    .rdata(delay_sr_U188_rdata),
-    .rst_n(delay_sr_U188_rst_n),
-    .flush(delay_sr_U188_flush)
-);
-assign delay_sr_U191_clk = clk;
-assign delay_sr_U191_wdata = delay_sr_U188_rdata;
-assign delay_sr_U191_rst_n = rst_n;
-assign delay_sr_U191_flush = flush;
-delay__U189 delay_sr_U191 (
-    .clk(delay_sr_U191_clk),
-    .wdata(delay_sr_U191_wdata),
-    .rdata(delay_sr_U191_rdata),
-    .rst_n(delay_sr_U191_rst_n),
-    .flush(delay_sr_U191_flush)
-);
-assign delay_sr_U194_clk = clk;
-assign delay_sr_U194_wdata = delay_sr_U191_rdata;
-assign delay_sr_U194_rst_n = rst_n;
-assign delay_sr_U194_flush = flush;
-delay__U192 delay_sr_U194 (
-    .clk(delay_sr_U194_clk),
-    .wdata(delay_sr_U194_wdata),
-    .rdata(delay_sr_U194_rdata),
-    .rst_n(delay_sr_U194_rst_n),
-    .flush(delay_sr_U194_flush)
-);
-assign delay_sr_U227_clk = clk;
-assign delay_sr_U227_wdata = delay_sr_U194_rdata;
-assign delay_sr_U227_rst_n = rst_n;
-assign delay_sr_U227_flush = flush;
-memtile_long_delay__U195 delay_sr_U227 (
-    .clk(delay_sr_U227_clk),
-    .wdata(delay_sr_U227_wdata),
-    .rdata(delay_sr_U227_rdata),
-    .rst_n(delay_sr_U227_rst_n),
-    .flush(delay_sr_U227_flush)
-);
-assign delay_sr_U230_clk = clk;
-assign delay_sr_U230_wdata = delay_sr_U227_rdata;
-assign delay_sr_U230_rst_n = rst_n;
-assign delay_sr_U230_flush = flush;
-delay__U228 delay_sr_U230 (
-    .clk(delay_sr_U230_clk),
-    .wdata(delay_sr_U230_wdata),
-    .rdata(delay_sr_U230_rdata),
-    .rst_n(delay_sr_U230_rst_n),
-    .flush(delay_sr_U230_flush)
-);
-assign delay_sr_U233_clk = clk;
-assign delay_sr_U233_wdata = delay_sr_U230_rdata;
-assign delay_sr_U233_rst_n = rst_n;
-assign delay_sr_U233_flush = flush;
-delay__U231 delay_sr_U233 (
-    .clk(delay_sr_U233_clk),
-    .wdata(delay_sr_U233_wdata),
-    .rdata(delay_sr_U233_rdata),
-    .rst_n(delay_sr_U233_rst_n),
-    .flush(delay_sr_U233_flush)
-);
-assign op_hcompute_blur_unnormalized_stencil_1_read[8] = delay_sr_U152_rdata;
-assign op_hcompute_blur_unnormalized_stencil_1_read[7] = delay_sr_U149_rdata;
-assign op_hcompute_blur_unnormalized_stencil_1_read[6] = delay_sr_U155_rdata;
-assign op_hcompute_blur_unnormalized_stencil_1_read[5] = delay_sr_U188_rdata;
-assign op_hcompute_blur_unnormalized_stencil_1_read[4] = delay_sr_U191_rdata;
-assign op_hcompute_blur_unnormalized_stencil_1_read[3] = delay_sr_U194_rdata;
-assign op_hcompute_blur_unnormalized_stencil_1_read[2] = delay_sr_U227_rdata;
-assign op_hcompute_blur_unnormalized_stencil_1_read[1] = delay_sr_U230_rdata;
-assign op_hcompute_blur_unnormalized_stencil_1_read[0] = delay_sr_U233_rdata;
-endmodule
-
 module aff__U101 (
     output [15:0] out,
     input [15:0] d [2:0]
@@ -2099,9 +1727,9 @@ module gaussian (
     output input_copy_stencil_op_hcompute_hw_input_stencil_read_valid,
     input [15:0] input_copy_stencil_op_hcompute_hw_input_stencil_read [0:0]
 );
-wire [15:0] _U234_in;
-wire _U234_clk;
-wire [15:0] _U234_out;
+wire [15:0] _U172_in;
+wire _U172_clk;
+wire [15:0] _U172_out;
 wire blur_stencil_clk;
 wire blur_stencil_rst_n;
 wire blur_stencil_flush;
@@ -2223,14 +1851,14 @@ wire op_hcompute_hw_output_stencil_write_start;
 wire op_hcompute_hw_output_stencil_write_start_control_vars_clk;
 wire [15:0] op_hcompute_hw_output_stencil_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_hw_output_stencil_write_start_control_vars_out [2:0];
-assign _U234_in = input_copy_stencil_op_hcompute_hw_input_stencil_read[0];
-assign _U234_clk = clk;
+assign _U172_in = input_copy_stencil_op_hcompute_hw_input_stencil_read[0];
+assign _U172_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U234 (
-    .in(_U234_in),
-    .clk(_U234_clk),
-    .out(_U234_out)
+) _U172 (
+    .in(_U172_in),
+    .clk(_U172_clk),
+    .out(_U172_out)
 );
 assign blur_stencil_clk = clk;
 assign blur_stencil_rst_n = rst_n;
@@ -2462,7 +2090,7 @@ array_delay_U42 op_hcompute_blur_unnormalized_stencil_write_start_control_vars (
     .out(op_hcompute_blur_unnormalized_stencil_write_start_control_vars_out)
 );
 assign op_hcompute_hw_input_stencil_clk = clk;
-assign op_hcompute_hw_input_stencil_input_copy_stencil_op_hcompute_hw_input_stencil_read[0] = _U234_out;
+assign op_hcompute_hw_input_stencil_input_copy_stencil_op_hcompute_hw_input_stencil_read[0] = _U172_out;
 cu_op_hcompute_hw_input_stencil op_hcompute_hw_input_stencil (
     .clk(op_hcompute_hw_input_stencil_clk),
     .input_copy_stencil_op_hcompute_hw_input_stencil_read(op_hcompute_hw_input_stencil_input_copy_stencil_op_hcompute_hw_input_stencil_read),
