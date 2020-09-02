@@ -5525,6 +5525,8 @@ struct App {
       for (auto& u : r.second.updates) {
         cout << "finding factor for: " << u.name() << endl;
         int u_qfactor = to_int(map_find(sched_var_name(u.name()), qfs));
+        cout << tab(1) << "u_qfactor = " << u_qfactor << endl;
+        cout << tab(1) << "ref update= " << umax << endl;
         int fres = (int) max(1.0f, floor(((float) umax) / (float) u_qfactor));
         int u_unroll_factor = fres;
         u.unroll_factor = u_unroll_factor;
@@ -5534,6 +5536,7 @@ struct App {
         }
       }
     }
+    //assert(false);
   }
 
   void realize_no_unroll(CodegenOptions& options,
@@ -7566,9 +7569,26 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
   }
 }
 
+void gauss_pyramid_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = gauss_pyramid_fpga(name);
+    int rows = 1080 / pow(2, 4 - 1);
+    int cols = 1920 / pow(2, 4 - 1);
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  //vector<int> throughputs{1, 8, 16, 32};
-  vector<int> throughputs{16};
+  vector<int> throughputs{1, 2, 4, 8, 16};
+  //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
@@ -9456,13 +9476,14 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-  max_pooling_test("mpr16b_32");
+  exposure_fusion_iccad_apps("ef_fpga");
   assert(false);
-  gauss_pyramid_test("gp_fpga");
-
   App ef = ef_cartoon("ef_sm");
-  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 32);
-  assert(false);
+  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  gauss_pyramid_iccad_apps("gp_fpga");
+  gauss_pyramid_test("gp_fpga");
+  max_pooling_test("mpr16b_32");
+
 
   App gp = gauss_pyramid_fpga("gp_sm");
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
