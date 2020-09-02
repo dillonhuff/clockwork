@@ -23,12 +23,15 @@ gpu_ppf = [2.24, 1.61, 0.22]
 theoretical_peak = [1.14, 1.14, 1.14]
 
 x = np.arange(len(labels))  # the label locations
-width = 0.35  # the width of the bars
+width = 1.0
+margin = 0.1
+bar_width = (width - margin)/3.0
+# - 0.15
 
 fig, ax = plt.subplots()
-rects1 = ax.bar(x - width, men_means, width, label='CW', edgecolor='black')
-rects2 = ax.bar(x, women_means, width, label='CPU', edgecolor='black')
-rects3 = ax.bar(x + width, gpu_ppf, width, label='GPU', edgecolor='black')
+rects1 = ax.bar(x - bar_width, men_means, bar_width, label='CW', edgecolor='black')
+rects2 = ax.bar(x, women_means, bar_width, label='CPU', edgecolor='black')
+rects3 = ax.bar(x + bar_width, gpu_ppf, bar_width, label='GPU', edgecolor='black')
 
 THEORETICAL_PEAK = 1.14
 plt.axhline(y=THEORETICAL_PEAK, linewidth=2, color='red')
