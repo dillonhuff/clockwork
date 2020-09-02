@@ -29,8 +29,8 @@ bar_width = (width - margin)/3.0
 
 fig, ax = plt.subplots()
 rects1 = ax.bar(x - bar_width, men_means, bar_width, label='CW', edgecolor='black')
-rects2 = ax.bar(x + bar_width, women_means, bar_width, label='CPU', edgecolor='black')
 rects3 = ax.bar(x, gpu_ppf, bar_width, label='GPU', edgecolor='black')
+rects2 = ax.bar(x + bar_width, women_means, bar_width, label='CPU', edgecolor='black')
 
 THEORETICAL_PEAK = 1.14
 plt.axhline(y=THEORETICAL_PEAK, linewidth=2, color='red')
