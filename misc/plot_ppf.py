@@ -13,12 +13,13 @@ def set_size(w,h, ax=None):
     figh = float(h)/(t-b)
     ax.figure.set_size_inches(figw, figh)
 
-matplotlib.style.use('seaborn-pastel')
+# matplotlib.style.use('seaborn-pastel')
 # matplotlib.style.use('tableau-colorblind10')
 
 labels = ['MP', 'GP', 'SEF']
 men_means = [0.782, 0.78, 0.53]
-women_means = [0.01, 0.0639, 0.00157]
+# women_means = [0.01, 0.0639, 0.00157]
+women_means = [0.01, 0.064, 0.0016]
 gpu_ppf = [2.24, 1.61, 0.22]
 theoretical_peak = [1.14, 1.14, 1.14]
 
@@ -50,7 +51,7 @@ def autolabel(rects):
         height = rect.get_height()
         ax.annotate('{}'.format(height),
                     xy=(rect.get_x() + rect.get_width() / 2, height),
-                    xytext=(0, 3),  # 3 points vertical offset
+                    xytext=(1, 1),  # 3 points vertical offset
                     textcoords="offset points",
                     ha='center', va='bottom')
 

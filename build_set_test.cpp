@@ -6218,8 +6218,10 @@ vector<string> gauss_pyramid(const int num_levels, const string& func, App& app)
     string next_out = func + "_gauss_ds_" + str(l);
 
     vector<vector<int > > offsets;
-    for (int r = 0; r < 3; r++) {
-      for (int c = 0; c < 3; c++) {
+    //for (int r = 0; r < 3; r++) {
+      //for (int c = 0; c < 3; c++) {
+    for (int r = -1; r < 2; r++) {
+      for (int c = -1; c < 2; c++) {
         offsets.push_back({c, r});
       }
     }
@@ -6813,6 +6815,7 @@ void generate_app_benchmark(
   options.use_custom_code_string = true;
   app.realize(options, name, mini_dimensions, 1);
   int bmp_res = run_sw_bmp_test_harness(name + "_opt");
+  assert(false);
   {
     CodegenOptions options;
     options.internal = true;
@@ -7298,8 +7301,8 @@ App ef_cartoon(const std::string& out_name) {
   string image = merged_images.back();
   for (int i = merged_images.size() - 2; i >= 0; i--) {
     string merged_level = "final_merged_" + str(i);
-    lp.func2d(merged_level, "average", {upsample(2, image), pt(merged_images.at(i))});
-    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    //lp.func2d(merged_level, "average", {upsample(2, image), pt(merged_images.at(i))});
+    lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
     image = merged_level;
   }
 
@@ -9476,10 +9479,10 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-  exposure_fusion_iccad_apps("ef_fpga");
-  assert(false);
   App ef = ef_cartoon("ef_sm");
   generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  assert(false);
+  exposure_fusion_iccad_apps("ef_fpga");
   gauss_pyramid_iccad_apps("gp_fpga");
   gauss_pyramid_test("gp_fpga");
   max_pooling_test("mpr16b_32");
