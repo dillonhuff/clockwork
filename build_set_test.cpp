@@ -1570,12 +1570,14 @@ std::set<string> buffers_referenced(op* p) {
   assert(!p->is_loop);
 
   std::set<string> bufs;
-  for (auto b : p->produce_locs) {
-    bufs.insert(b.first);
+  //for (auto b : p->produce_locs) {
+  for (auto b : p->buffers_written()) {
+    bufs.insert(b);
   }
 
-  for (auto b : p->consume_locs_pair) {
-    bufs.insert(b.first);
+  //for (auto b : p->consume_locs_pair) {
+  for (auto b : p->buffers_read()) {
+    bufs.insert(b);
   }
 
   return bufs;
@@ -5204,18 +5206,10 @@ struct App {
     realize_naive(options, name, {d0, d1});
   }
 
-  //void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
-    //realize_naive(options, {{name, dims}});
-  //}
-
   void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
-  //void realize_naive(CodegenOptions& options,
-      //const std::vector<std::pair<string, std::vector<int> > >& bounds) {
-      //const std::string& name, const std::vector<int>& dims) {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
       set_unroll_factors(name, name, unroll_factor);
-      //set_unroll_factors(name, bounds, unroll_factor);
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
@@ -5223,8 +5217,6 @@ struct App {
     fill_data_domain(name, dims);
     set_unroll_factors(name, name, 1);
 
-    //fill_data_domain(bounds);
-    //set_unroll_factors(name, bounds, 1);
     fill_compute_domain();
 
     umap* m = nullptr;
@@ -5243,6 +5235,10 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = prg.name + "_compute_units.h";
+
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_MULTILINEAR;
+    options.default_banking_strategy = {"none"};
     populate_program(options, prg, name, {name}, m, buffers);
 
     return;
@@ -5529,6 +5525,8 @@ struct App {
       for (auto& u : r.second.updates) {
         cout << "finding factor for: " << u.name() << endl;
         int u_qfactor = to_int(map_find(sched_var_name(u.name()), qfs));
+        cout << tab(1) << "u_qfactor = " << u_qfactor << endl;
+        cout << tab(1) << "ref update= " << umax << endl;
         int fres = (int) max(1.0f, floor(((float) umax) / (float) u_qfactor));
         int u_unroll_factor = fres;
         u.unroll_factor = u_unroll_factor;
@@ -5538,6 +5536,7 @@ struct App {
         }
       }
     }
+    //assert(false);
   }
 
   void realize_no_unroll(CodegenOptions& options,
@@ -5562,7 +5561,7 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
+    options.use_custom_code_string = true;
     realize(options, name, d0, d1);
   }
 
@@ -5790,6 +5789,8 @@ Window pt(const std::string& name) {
 Window pt3(const std::string& name) {
   return Window{name, {1, 1, 1}, {{0, 0, 0}}};
 }
+
+App gauss_pyramid_fpga(const std::string& out_name);
 
 void updown_merge_test() {
   App ds;
@@ -6036,23 +6037,23 @@ prog halide_cascade() {
   return prg;
 }
 
-void mini_conv_halide_test() {
+//void mini_conv_halide_test() {
 
-  prog prg = mini_conv_halide();
-  prg.pretty_print();
+  //prog prg = mini_conv_halide();
+  //prg.pretty_print();
 
-  generate_optimized_code(prg);
-  generate_regression_testbench(prg);
-  vector<string> auto_gen_res = run_regression_tb(prg);
+  //generate_optimized_code(prg);
+  //generate_regression_testbench(prg);
+  //vector<string> auto_gen_res = run_regression_tb(prg);
 
-  prog prg_fixed = mini_conv_halide_fixed();
-  prg_fixed.pretty_print();
+  //prog prg_fixed = mini_conv_halide_fixed();
+  //prg_fixed.pretty_print();
 
-  generate_optimized_code(prg_fixed);
-  generate_regression_testbench(prg_fixed);
-  vector<string> optimized_res = run_regression_tb(prg_fixed);
-  assert(optimized_res == auto_gen_res);
-}
+  //generate_optimized_code(prg_fixed);
+  //generate_regression_testbench(prg_fixed);
+  //vector<string> optimized_res = run_regression_tb(prg_fixed);
+  //assert(optimized_res == auto_gen_res);
+//}
 
 void conv_3_3_halide_test() {
   prog prg_fixed = conv_3_3_halide_fixed();
@@ -6799,6 +6800,37 @@ App camera_pipeline(const std::string& out_name) {
   return cp;
 }
 
+void generate_app_benchmark(
+    const std::string& name,
+    App& app,
+    const std::vector<int>& dimensions,
+    const int unroll_factor) {
+
+  vector<int> mini_dimensions;
+  mini_dimensions.resize(dimensions.size(), 32);
+
+  CodegenOptions options;
+  options.use_custom_code_string = true;
+  app.realize(options, name, mini_dimensions, 1);
+  int bmp_res = run_sw_bmp_test_harness(name + "_opt");
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    options.unroll_factors_as_pad = true;
+    app.realize_naive(options, name, mini_dimensions);
+  }
+
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
+  compare(name + " generate app benchmark mini sanity check", optimized, naive);
+  
+  app.realize(options, name, dimensions, unroll_factor);
+  move_to_benchmarks_folder(name + "_opt");
+}
+
 void camera_pipeline_all_adds_only_denoise_demosaic_test(const std::string& prefix) {
   string app_name = prefix + "_mini";
   int mini_rows = 10;
@@ -7107,6 +7139,7 @@ void denoise3d_test() {
 
 App max_pooling(const std::string& out_name) {
   App mp;
+  mp.set_default_pixel_width(16);
   mp.func3d("in_oc");
   mp.func3d("in", "id", pt3("in_oc"));
   Window max_win{"in", {qconst(2), qconst(2), qconst(1)}, {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
@@ -7141,12 +7174,46 @@ void max_pooling_test_sizes(const std::string& prefix) {
   move_naive_to_benchmarks_folder(name);
 }
 
+void gauss_pyramid_test(const std::string& prefix) {
+
+  int in_rows = 1080;
+  int in_cols = 1920;
+
+  int rows = 1080 / pow(2, 4 - 1);
+  int cols = 1920 / pow(2, 4 - 1);
+  //vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  vector<int> unroll_factors{32};
+  for (auto factor : unroll_factors) {
+    string name = prefix + "_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+
+    gauss_pyramid_fpga(name).realize(options, name, {cols, rows}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+
+  //CodegenOptions options;
+  //options.internal = true;
+  //options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  //max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
+  //move_to_benchmarks_folder("mp_naive");
+
+  //std::vector<std::string> naive =
+    //run_regression_tb("max_pool_opt");
+  //std::vector<std::string> optimized =
+    //run_regression_tb("max_pool_naive");
+  //assert(naive == optimized);
+}
 void max_pooling_test(const std::string& prefix) {
   int W = 64;
   int H = 64;
   int D = 64;
 
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  //vector<int> unroll_factors{32};
   for (auto factor : unroll_factors) {
     string name = prefix + "_" + str(factor);
     CodegenOptions options;
@@ -7162,14 +7229,32 @@ void max_pooling_test(const std::string& prefix) {
   //options.internal = true;
   //options.all_rams = true;
   //options.unroll_factors_as_pad = true;
-  //mp.realize_naive(options, "max_pool", {H, W, D});
+  //max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
+  //move_to_benchmarks_folder("mp_naive");
 
   //std::vector<std::string> naive =
     //run_regression_tb("max_pool_opt");
   //std::vector<std::string> optimized =
     //run_regression_tb("max_pool_naive");
   //assert(naive == optimized);
+}
 
+App gauss_pyramid_fpga(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  int pyramid_levels = 4;
+
+  auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d(out_name, "id", pt(dark_weight_pyramid.back()));
+
+  return lp;
 }
 
 App ef_cartoon(const std::string& out_name) {
@@ -7228,6 +7313,8 @@ void weight_add_exposure_fusion_app(
     const std::string& in_name,
     const std::string& out_name,
     App& lp) {
+
+  const int pyramid_levels = 4;
 
   lp.func2d("in", "id", pt(in_name));
 
@@ -7338,6 +7425,8 @@ void exposure_fusion_app(
 
   lp.func2d("in", "id", pt(in_name));
 
+  const int pyramid_levels = 4;
+
   // Two synthetic exposures
   lp.func2d("bright", "id", pt("in"));
   lp.func2d("dark", "scale_exposure", pt("in"));
@@ -7354,12 +7443,12 @@ void exposure_fusion_app(
 
 
   // Create pyramids of the weights
-  auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
-  auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
+  auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(pyramid_levels, "bright_weights_normed", lp);
 
   // Create laplacian pyramids of the synthetic exposures
-  auto dark_pyramid = laplace_pyramid(4, "dark", lp);
-  auto bright_pyramid = laplace_pyramid(4, "bright", lp);
+  auto dark_pyramid = laplace_pyramid(pyramid_levels, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(pyramid_levels, "bright", lp);
 
   // Merge weighted pyramids
   vector<string> merged_images;
@@ -7371,7 +7460,7 @@ void exposure_fusion_app(
   }
 
   // Collapse the blended pyramid into a single image
-  assert(merged_images.size() == 4);
+  assert(merged_images.size() == pyramid_levels);
   string image = merged_images.back();
   for (int i = merged_images.size() - 2; i >= 0; i--) {
     string merged_level = "final_merged_" + str(i);
@@ -7480,8 +7569,26 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
   }
 }
 
+void gauss_pyramid_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = gauss_pyramid_fpga(name);
+    int rows = 1080 / pow(2, 4 - 1);
+    int cols = 1920 / pow(2, 4 - 1);
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 8, 16, 32};
+  vector<int> throughputs{1, 2, 4, 8, 16};
+  //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
@@ -7492,8 +7599,65 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     lp.realize(options, name, cols, rows, throughput);
+
     move_to_benchmarks_folder(name + "_opt");
   }
+  assert(false);
+}
+
+void exposure_fusion_fpga_test(const std::string& name) {
+
+  int in_rows = 1080;
+  int in_cols = 1920;
+
+  int rows = 1080;
+  int cols = 1920;
+  App gp = exposure_fusion_app(name);
+  //gp.realize(name, cols, rows);
+  ////move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+
+  ////lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, name, cols, rows);
+
+  //std::vector<std::string> optimized =
+    //run_regression_tb("out_opt");
+  //std::vector<std::string> naive =
+    //run_regression_tb(name + "_naive");
+  //compare("exposure fusion naive", naive, optimized);
+  move_to_benchmarks_folder(name + "_naive");
+}
+
+void gauss_pyramid_fpga_test(const std::string& name) {
+
+  int in_rows = 1080;
+  int in_cols = 1920;
+
+  int rows = 1080 / pow(2, 4 - 1);
+  int cols = 1920 / pow(2, 4 - 1);
+  App gp = gauss_pyramid_fpga(name);
+  gp.realize(name, cols, rows);
+  ////move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+
+  ////lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, name, cols, rows);
+
+  //std::vector<std::string> optimized =
+    //run_regression_tb("out_opt");
+  //std::vector<std::string> naive =
+    //run_regression_tb(name + "_naive");
+  //compare("gp naive", naive, optimized);
+  move_to_benchmarks_folder(name + "_naive");
+  assert(false);
 }
 
 void exposure_fusion() {
@@ -7690,24 +7854,25 @@ void single_gaussian_pyramid_app_test() {
 void ef_cartoon_test(const std::string& out_name) {
   App gp = ef_cartoon(out_name);
   //int size = 200;
-  int cols = 256;
-  int rows = 256;
-  //{
-    //CodegenOptions options;
-    //options.internal = true;
-    //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
-    //gp.realize(options, out_name, {cols, rows}, "in", 1);
-  //}
+  int cols = 1920;
+  int rows = 1080;
   {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = false;
-    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
-    gp.realize_naive(options, out_name, {cols, rows});
-    //move_to_benchmarks_folder(out_name + "_opt");
+    options.use_custom_code_string = true;
+    gp.realize(options, out_name, {cols, rows}, "in", 32);
+    move_naive_to_benchmarks_folder(out_name + "_opt");
   }
+  //{
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    //options.use_custom_code_string = false;
+    //options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    //gp.realize_naive(options, out_name, {cols, rows});
+    ////move_to_benchmarks_folder(out_name + "_opt");
+  //}
 }
 
 
@@ -9303,27 +9468,43 @@ void new_bankmerge_tests() {
   flatten_sched_test();
 }
 
-void iccad_tests() {
-  //ef_cartoon_test("ef_cartoon_gauss");
-  //assert(false);
-
-
-  exposure_fusion();
+void naive_implementations() {
+  exposure_fusion_fpga_test("ef_fpga");
+  gauss_pyramid_fpga_test("gp_fpga");
   max_pooling_test("mp25");
+  assert(false);
+}
+
+void iccad_tests() {
+  exposure_fusion_iccad_apps("ef_fpga");
+  assert(false);
+  App ef = ef_cartoon("ef_sm");
+  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  gauss_pyramid_iccad_apps("gp_fpga");
+  gauss_pyramid_test("gp_fpga");
+  max_pooling_test("mpr16b_32");
+
+
+  App gp = gauss_pyramid_fpga("gp_sm");
+  generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
+  assert(false);
+  
+
+  gauss_pyramid_fpga_test("gp_fpga");
+  ef_cartoon_test("ef_cartoon");
+
+  gauss_pyramid_fpga_test("gp_fpga");
+  exposure_fusion();
 
   int index = 20;
   string istr = str(index);
 
   camera_pipeline_test("cp_noinit_" + istr);
   blur_xy_16_app_test("bxy_noinit_p2" + istr);
-
   harris16_test("hr" + istr);
   sobel_16_app_test("sbl" + istr);
-
-
   different_path_latencies_test("dp");
   harris_test();
-
   pointwise_app_test();
 }
 
@@ -9643,8 +9824,8 @@ void histogram_test() {
   auto count_loop = prg.add_loop("i", 0, 20);
   auto update = count_loop->add_op("update_counts");
   update->add_function("histogram_inc");
-  update->add_dynamic_load("buckets", "image", "i");
-  update->add_dynamic_store("buckets", "image", "i");
+  update->add_dynamic_load("buckets", "image", "i"); // buckets[image[i]]
+  update->add_dynamic_store("buckets", "image", "i");// buckets[image[i]]
 
   auto st = prg.add_loop("sm", 0, 20)->
     add_op("store_results");
@@ -10871,6 +11052,7 @@ void cyclic_banked_conv_test() {
 
   generate_optimized_code(options, prg);
 }
+
 void copy(const std::string& dst, const std::string& src, const std::vector<int>& dims, prog& prg) {
   op* lp = prg.root;
   for (int d : dims) {
@@ -11199,19 +11381,19 @@ void lake_agg_sram_tb_config_test() {
 
     //assert(found);
 
-    for (auto locs_written : op->produce_locs) {
-    //for (auto locs_written : op->write_addrs()) {
-      //assert(locs_written.size() == 1);
-      //auto loc_sec = locs_written.at(0).second;
-      out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
-      isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
-      //isl_aff* write_addr = get_aff_addr(op, locs_written.first, loc_sec, lake_agg);
-      out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
-      for (int d = 0; d < num_in_dims(write_addr); d++) {
-        int ldim = num_in_dims(write_addr) - d - 1;
-        out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
-      }
-    }
+    //for (auto locs_written : op->produce_locs) {
+    ////for (auto locs_written : op->write_addrs()) {
+      ////assert(locs_written.size() == 1);
+      ////auto loc_sec = locs_written.at(0).second;
+      //out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
+      //isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
+      ////isl_aff* write_addr = get_aff_addr(op, locs_written.first, loc_sec, lake_agg);
+      //out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
+      //for (int d = 0; d < num_in_dims(write_addr); d++) {
+        //int ldim = num_in_dims(write_addr) - d - 1;
+        //out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
+      //}
+    //}
 
     for (auto locs_read : op->consume_locs_pair) {
       out << "\"read\"," << "\"" << locs_read.first << "\"" << endl;
@@ -11763,7 +11945,7 @@ void resnet_test() {
   //assert(false);
   add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   prg.pretty_print();
-  assert(false);
+  //assert(false);
   generate_unoptimized_code(prg);
   //assert(false);
 
@@ -13300,7 +13482,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
-    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+     TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
     //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
@@ -13496,10 +13678,10 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  //test_programs.push_back(unsharp());
-  test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
+  test_programs.push_back(gaussian());
   test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
@@ -13541,6 +13723,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     //assert(false);
 
     dsa_writers(prg);
+    //vector<string> cpu;
     auto cpu = unoptimized_result(prg);
 
     compile_for_garnet_dual_port_mem(prg);
@@ -13551,12 +13734,15 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     //assert(false);
-    //string app_type = "dse_raw_sram";
-    //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
-    //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //string app_type = "dualwithaddr";
+    string app_type = "dualwithaddr";
+    cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+    cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_compute.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
   }
 }
 
@@ -13860,6 +14046,37 @@ void cgra_flow_tests() {
   //assert(false);
 
   auto test_programs = stencil_programs();
+  //auto test_programs = all_cgra_programs();
+
+  test_stencil_codegen(test_programs);
+  //test_schedules(test_programs);
+
+  assert(false);
+}
+
+void dse_flow_tests() {
+
+  vector<prog> test_programs;
+
+  // test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(unsharp());
+  // test_programs.push_back(gaussian());
+  // test_programs.push_back(pointwise());
+  // test_programs.push_back(harris());
+  // test_programs.push_back(down_sample());
+  // test_programs.push_back(cascade());
+  test_programs.push_back(stereo());
+
+  // Delayed incorrectly?
+
+  // Compute units gone?
+  //test_programs.push_back(rom());
+  //test_programs.push_back(mini_conv_halide_fixed());
+  //test_programs.push_back(strided_conv());
+
+
+
+  
 
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
@@ -13885,7 +14102,7 @@ void full_cgra_flow_tests() {
   test_programs.push_back(unet_conv_3_3());
 
   test_programs.push_back(gaussian());
-  test_programs.push_back(mini_conv_halide_fixed());
+  //test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(halide_harris());
 
   test_programs.push_back(conv_layer());
@@ -14389,11 +14606,11 @@ void resnet_auto_unroll() {
   prg.pretty_print();
   prg.sanity_check();
 
-  assert(false);
+  //assert(false);
 
-  generate_unoptimized_code(prg);
+  //generate_unoptimized_code(prg);
 
-  assert(false);
+  //assert(false);
 
   //infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
 
@@ -14483,123 +14700,27 @@ void brighten_blur_asplos_example() {
   for (auto b : buffers) {
     cout << b.second << endl;
   }
-  assert(false);
+  //assert(false);
+}
+
+void histogram_2d_test() {
+  prog prg = histogram();
+  prg.pretty_print();
+
+  //assert(false);
 }
 
 void application_tests() {
-  resnet_auto_unroll();
-  brighten_blur_asplos_example();
-  resnet_auto_unroll();
-  raw_memtile_verilog_test();
-  raw_memtile_verilog_as_delay_test();
-
-  infer_bounds_multiple_inputs();
-  infer_bounds_16_stage_5x5_conv_test();
-  infer_bounds_multi_5x1_stage_negative_conv_test();
-  infer_bounds_multi_5x5_stage_negative_conv_test();
-  infer_bounds_multi_stage_negative_conv_test();
-  //infer_bounds_color_downsample_test();
-  infer_bounds_multi_stage_negative_conv1d_test();
-  infer_bounds_three_stage_negative_conv_test();
-  
-  infer_bounds_single_stage_negative_conv_test();
-  infer_bounds_negative_conv_test();
-
-  
-  sum_diffs_test();
-  denoise3d_reconvergence_test();
-  tricky_shift_register_reconvergence_test();
-  mismatched_stencil_test();
-  gaussian_pyramid_app_test("gp64x64");
-
-  reduce_1d_test();
-  reduce_2d_test();
-  ram_addr_unit_test();
-
-
-  upsample2d_test();
-  upsample_stencil_2d_test();
-  upsample_stencil_1d_test();
-  up_unrolled_4_test();
-  reduce_rows_test();
-  reaccess_no_hierarchy_test();
-  //playground();
-
-  up_unrolled_test();
-
-  //adobe_meeting_apps();
-  sum_denoise_test();
-  //assert(false);
-
-  up_down_unrolled_test();
-
-
-  histogram_test();
-  //assert(false);
-  
-
-  //mmul_outer_prod_test();
-
-  tricky_shift_register_reconvergence_test();
-
-  mmul_outer_prod_test();
-
-  mini_conv_halide_test();
-  grayscale_conversion_test();
-  //print_test();
-  //manual_unroll_test();
-
-  compute_unit_with_index_variables_test();
-
-  //pyr_1d_conv_test();
-  halide_dnn_test();
-  //conv_1d_bc_test();
-
-  conv_1d_test();
-
-  jacobi2d_app_test();
-  downsample2d_test();
-  up_stencil_down_test();
-  downsample_and_blur_test();
-
-  updown_merge_test();
-  harris_unrolled_test();
-
-
-  identity_stream_coreir_test();
-  weight_streaming_test();
-
-  identity_stream_through_mem_coreir_test();
-  reduce_stream_coreir_test();
-  conv_test();
-  conv_2d_bc_test();
-
-  
-  us_unroll_test();
-  ds_unroll_test();
-  prg_unroll_test();
-  lchannel_test();
-  gf_test();
-
-  halide_frontend_test();
-  halide_harris_test();
-  halide_up_sample_test();
-  halide_conv_layer_3D_test();
-  conv_3_3_halide_test();
-
-  async_add_test();
-  lake_agg_sram_tb_config_test();
-  seidel2d_test();
-  add_four_channels();
-  weight_add_psef();
-
-  two_stage_psef();
-  psef_multi_output_test();
-
-  non_rate_matched_ds_test();
-  resnet_test();
-
   iccad_tests();
+  exposure_fusion_iccad_apps("ef_cc_10_level");
+  histogram_2d_test();
+
+  // Possibly failing
+  //halide_harris_test();
+  conv_test();
+  //conv_2d_bc_test();
+
+  resnet_test();
 
   coreir_tests();
   multi_output_app_test();
@@ -14670,7 +14791,6 @@ void application_tests() {
   //halide_camera_pipeline_test();
   register_file_test();
 
-  //exposure_fusion_iccad_apps("ef_cc");
 
   //assert(false);
 
@@ -14695,6 +14815,109 @@ void application_tests() {
   blur_and_downsample_test();
   denoise2d_test();
 
+  resnet_auto_unroll();
+  brighten_blur_asplos_example();
+  resnet_auto_unroll();
+  //raw_memtile_verilog_test();
+  //raw_memtile_verilog_as_delay_test();
+
+  infer_bounds_multiple_inputs();
+  infer_bounds_16_stage_5x5_conv_test();
+  infer_bounds_multi_5x1_stage_negative_conv_test();
+  infer_bounds_multi_5x5_stage_negative_conv_test();
+  infer_bounds_multi_stage_negative_conv_test();
+  //infer_bounds_color_downsample_test();
+  infer_bounds_multi_stage_negative_conv1d_test();
+  infer_bounds_three_stage_negative_conv_test();
+  
+  infer_bounds_single_stage_negative_conv_test();
+  infer_bounds_negative_conv_test();
+
+  
+  sum_diffs_test();
+  denoise3d_reconvergence_test();
+  tricky_shift_register_reconvergence_test();
+  mismatched_stencil_test();
+  gaussian_pyramid_app_test("gp64x64");
+
+  reduce_1d_test();
+  reduce_2d_test();
+  ram_addr_unit_test();
+
+
+  upsample2d_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  up_unrolled_4_test();
+  reduce_rows_test();
+  reaccess_no_hierarchy_test();
+  //playground();
+
+  up_unrolled_test();
+
+  //adobe_meeting_apps();
+  sum_denoise_test();
+  //assert(false);
+
+  up_down_unrolled_test();
+
+
+  histogram_test();
+  //assert(false);
+  
+
+  //mmul_outer_prod_test();
+
+  tricky_shift_register_reconvergence_test();
+
+  mmul_outer_prod_test();
+  grayscale_conversion_test();
+  //print_test();
+  //manual_unroll_test();
+
+  compute_unit_with_index_variables_test();
+
+  //pyr_1d_conv_test();
+  halide_dnn_test();
+  //conv_1d_bc_test();
+
+  conv_1d_test();
+
+  jacobi2d_app_test();
+  downsample2d_test();
+  up_stencil_down_test();
+  downsample_and_blur_test();
+
+  updown_merge_test();
+  harris_unrolled_test();
+
+
+  identity_stream_coreir_test();
+  weight_streaming_test();
+
+  identity_stream_through_mem_coreir_test();
+  reduce_stream_coreir_test();
+  us_unroll_test();
+  ds_unroll_test();
+  prg_unroll_test();
+  lchannel_test();
+  gf_test();
+
+  halide_frontend_test();
+  halide_up_sample_test();
+  halide_conv_layer_3D_test();
+  conv_3_3_halide_test();
+
+  async_add_test();
+  lake_agg_sram_tb_config_test();
+  seidel2d_test();
+  add_four_channels();
+  weight_add_psef();
+
+  two_stage_psef();
+  psef_multi_output_test();
+
+  non_rate_matched_ds_test();
 
   //two_input_denoise_pipeline_test();
   //synth_wire_test();
@@ -14961,6 +15184,12 @@ int main(int argc, char** argv) {
       return 0;
     }
 
+
+    if (cmd == "dse-flow") {
+      dse_flow_tests();
+      return 0;
+    }
+
     if (cmd == "asplos-examples") {
       generate_asplos_examples();
       return 0;
@@ -15054,4 +15283,3 @@ int main(int argc, char** argv) {
 
   return 0;
 }
-

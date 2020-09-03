@@ -373,3 +373,6 @@ int cmd(const std::string& cm) {
 void compare(const std::string& name,
     vector<string>& opt,
     vector<string>& naive);
+
+
+int run_sw_bmp_test_harness(const std::string& app_name);
