@@ -6809,7 +6809,7 @@ void generate_app_benchmark(
     const int unroll_factor) {
 
   vector<int> mini_dimensions;
-  mini_dimensions.resize(dimensions.size(), 32);
+  mini_dimensions.resize(dimensions.size(), 256);
 
   CodegenOptions options;
   options.use_custom_code_string = true;

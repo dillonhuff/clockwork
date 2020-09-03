@@ -21,17 +21,21 @@ men_means = [0.782, 0.78, 0.53]
 # women_means = [0.01, 0.0639, 0.00157]
 women_means = [0.01, 0.064, 0.0016]
 gpu_ppf = [2.24, 1.61, 0.22]
+k80_ppf = [1.61, 0.298, 0.0285]
 theoretical_peak = [1.14, 1.14, 1.14]
 
 x = np.arange(len(labels))  # the label locations
 width = 1.0
 margin = 0.1
-bar_width = (width - margin)/3.0
+bar_width = (width - margin)/4.0
+
+plt.axhline(y=THEORETICAL_PEAK, linewidth=2, color='red')
 
 fig, ax = plt.subplots()
-rects1 = ax.bar(x - bar_width, men_means, bar_width, label='CW', edgecolor='black')
-rects3 = ax.bar(x, gpu_ppf, bar_width, label='GPU', edgecolor='black')
-rects2 = ax.bar(x + bar_width, women_means, bar_width, label='CPU', edgecolor='black')
+rects1 = ax.bar(x - bar_width - bar_width/2.0, men_means, bar_width, label='CW', edgecolor='black')
+rects3 = ax.bar(x - 0         - bar_width/2.0, gpu_ppf, bar_width, label='V100 GPU', edgecolor='black')
+rects2 = ax.bar(x + bar_width - bar_width/2.0, women_means, bar_width, label='CPU', edgecolor='black')
+rects4 = ax.bar(x + 2*bar_width - bar_width/2.0, k80_ppf, bar_width, label='K80 GPU', edgecolor='black')
 
 THEORETICAL_PEAK = 1.14
 plt.axhline(y=THEORETICAL_PEAK, linewidth=2, color='red')

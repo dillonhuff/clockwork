@@ -164,9 +164,10 @@ template<typename T>
 static inline
 T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
 
+  //return dark;
   return (bright_weight*bright + dark_weight*dark) / (bright_weight + dark_weight);
   //return (bright_weight*bright + dark_weight*dark);
-  //return (bright + dark);
+  //return (bright + dark) / 2;
 }
 
 template<typename T>
