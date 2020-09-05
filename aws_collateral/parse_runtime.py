@@ -25,6 +25,8 @@ os.system('rm -rf our_code')
 os.system('rm -rf soda_code')
 os.system('../aws_collateral/get_logs.sh {0}'.format(app))
 directory = './'
+stage_starts = {}
+stage_ends = {}
 for filename in glob.iglob(directory + '**/*', recursive=True):
   if filename.endswith(hls_log_name):
     print('File:', filename)
@@ -43,6 +45,20 @@ for filename in glob.iglob(directory + '**/*', recursive=True):
     print('File:', filename)
     lines = open(filename, 'r').readlines()
     for l in lines:
+      target = "\[(\d+)\:(\d+)\:(\d+)\] Starting (.*)\.\."
+      x = re.match(target, l) 
+      if x:
+        t = int(x[1])*3600 + int(x[2])*60 + int(x[3])
+        # print('\tSTART line:', x[0], 'time:', t)
+        stage_starts[x[4]] = t
+
+      target = "\[(\d+)\:(\d+)\:(\d+)\] Finished .* tasks \(FPGA (.*)\)"
+      x = re.match(target, l) 
+      if x:
+        t = int(x[1])*3600 + int(x[2])*60 + int(x[3])
+        # print('\tEND line  :', x[0], 'time:', t)
+        stage_ends[x[4]] = t
+
       target = "^INFO\: \[v\+\+ 60-791\] Total elapsed time\: (\d+)h (\d+)m (\d+)s"
       x = re.match(target, l) 
       if x:
@@ -59,4 +75,41 @@ for filename in glob.iglob(directory + '**/*', recursive=True):
 assert(found_vpp)
 assert(found_hls)
 total_compile_time = vpp_seconds + hls_seconds
+
 print('Total compile time:', total_compile_time)
+
+print('Stage ends...')
+for s in stage_ends:
+  print('\t', s, '->', stage_ends[s])
+
+print('Stage starts...')
+for s in stage_starts:
+  print('\t', s, '->', stage_starts[s])
+
+print()
+print('Stage times')
+pnr_time = 0
+logic_synthesis_time = 0
+for s in stage_ends:
+  if s == "logic placement":
+    elapsed = stage_ends[s] - stage_starts[s]
+    assert(elapsed >= 0.0)
+    pnr_time += elapsed
+    print('\t', s, '->', elapsed)
+  elif s in stage_starts:
+    elapsed = stage_ends[s] - stage_starts[s]
+    assert(elapsed >= 0.0)
+    print('\t', s, '->', elapsed)
+    logic_synthesis_time += elapsed
+  elif s == "routing":
+    elapsed = stage_ends[s] - stage_starts["logic routing"]
+    assert(elapsed >= 0.0)
+    print('\t', s, '->', elapsed)
+    pnr_time += elapsed
+  else:
+    print('no start for', s)
+
+print('==== Final PnR time        :', pnr_time)
+print('==== Final logic synth time:', logic_synthesis_time)
+total_time = pnr_time + logic_synthesis_time + hls_seconds
+print('& {0} & {1} & {2} & {3}'.format(total_time, hls_seconds, logic_synthesis_time, pnr_time))
