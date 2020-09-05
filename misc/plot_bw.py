@@ -3,7 +3,8 @@ import numpy as np
 from cycler import cycler
 
 # Create cycler object. Use any styling from above you please
-monochrome = (cycler('color', ['k']) * cycler('linestyle', ['-', ':', '--', '=.']) * cycler('marker', ['^',',', '.']))
+# monochrome = (cycler('color', ['k']) * cycler('linestyle', ['-', ':', '--', '=.']) * cycler('marker', ['^',',', '.']))
+monochrome = (cycler('color', ['k']) * (cycler('linestyle', ['-', ':', '--', '=.']) + cycler('marker', ['^','o', '.', ','])))
 
 def set_size(w,h, ax=None):
     """ w, h: width, height in inches """
