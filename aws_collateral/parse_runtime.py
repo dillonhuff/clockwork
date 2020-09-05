@@ -111,5 +111,5 @@ for s in stage_ends:
 
 print('==== Final PnR time        :', pnr_time)
 print('==== Final logic synth time:', logic_synthesis_time)
-
-print('& {0} & {1} & {2} & {3}'.format(total_compile_time, hls_seconds, logic_synthesis_time, pnr_time))
+total_time = pnr_time + logic_synthesis_time + hls_seconds
+print('& {0} & {1} & {2} & {3}'.format(total_time, hls_seconds, logic_synthesis_time, pnr_time))
