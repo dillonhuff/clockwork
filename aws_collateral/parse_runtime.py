@@ -43,6 +43,18 @@ for filename in glob.iglob(directory + '**/*', recursive=True):
     print('File:', filename)
     lines = open(filename, 'r').readlines()
     for l in lines:
+      target = "\[(\d+)\:(\d+)\:(\d+)\] Starting .*"
+      x = re.match(target, l) 
+      if x:
+        t = int(x[1])*3600 + int(x[2])*60 + int(x[3])
+        print('\tSTART line:', x[0], 'time:', t)
+
+      target = "\[(\d+)\:(\d+)\:(\d+)\] Finished .* tasks \((.*)\)"
+      x = re.match(target, l) 
+      if x:
+        t = int(x[1])*3600 + int(x[2])*60 + int(x[3])
+        print('\tEND line  :', x[0], 'time:', t)
+
       target = "^INFO\: \[v\+\+ 60-791\] Total elapsed time\: (\d+)h (\d+)m (\d+)s"
       x = re.match(target, l) 
       if x:

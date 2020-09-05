@@ -13,11 +13,13 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
 
-  int num_epochs = 1;
+  int num_epochs = 256;
 
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
+  size_t total_size_bytes_written = 0;
+  size_t total_size_bytes_read = 0;
   const int gp_fpga_32_update_0_write_pipe0_DATA_SIZE = num_epochs*32400;
   const int gp_fpga_32_update_0_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t gp_fpga_32_update_0_write_pipe0_size_bytes = gp_fpga_32_update_0_write_pipe0_BYTES_PER_PIXEL * gp_fpga_32_update_0_write_pipe0_DATA_SIZE;
@@ -27,6 +29,8 @@ int main(int argc, char **argv) {
   const int in_update_0_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t in_update_0_read_pipe0_size_bytes = in_update_0_read_pipe0_BYTES_PER_PIXEL * in_update_0_read_pipe0_DATA_SIZE;
 
+  total_size_bytes_read += in_update_0_read_pipe0_size_bytes;
+  total_size_bytes_written += gp_fpga_32_update_0_write_pipe0_size_bytes;
   total_size_bytes += in_update_0_read_pipe0_size_bytes;
 
   cl_int err;
@@ -82,14 +86,18 @@ int main(int argc, char **argv) {
 unsigned long start, end, nsduration;
 cl::Event event;
 
-  std::cout << "Starting kernel" << std::endl;
+std::cout << "Starting kernel" << std::endl;
+for (int r = 0; r < 10000; r++) {
+  std::cout << "r = " << r << std::endl;
   OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
   OCL_CHECK(err, err = event.wait());
   end =
-OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
-start = OCL_CHECK(err,
-event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
-nsduration = end - start;
+    OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
+  start = OCL_CHECK(err,
+      event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
+  nsduration = end - start;
+  q.finish();
+}
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({gp_fpga_32_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
@@ -98,17 +106,32 @@ nsduration = end - start;
   double dsduration = dnsduration / ((double)1000000000);
   double dbytes = total_size_bytes;
   double bpersec = (dbytes / dsduration);
+  double bout_persec = (total_size_bytes_written / dsduration);
+  double bin_persec = (total_size_bytes_read / dsduration);
   double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+
+  double gb_out_persec = bout_persec / ((double) 1024 * 1024 * 1024);
+  double gb_in_persec = bin_persec / ((double) 1024 * 1024 * 1024);
+
   std::cout << "bytes       = " << dbytes << std::endl;
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
+  std::cout << "GBout / sec = " << gb_out_persec << std::endl;
+  std::cout << "GBin / sec  = " << gb_in_persec << std::endl;
+  for (int W = 7; W < 15; W++) {
+    double gpix_in_persec = gb_in_persec / 2;
+    double gpix_joule = gpix_in_persec / (double) W;
+    std::cout << "\t" << "GPix / J at " << W << " W: " << gpix_joule << std::endl;
+  }
   printf("Execution time = %f (sec) \n", dsduration);
-{
-    std::ofstream regression_result("gp_fpga_32_update_0_write_pipe0_accel_result.csv");
-    for (int i = 0; i < gp_fpga_32_update_0_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint16_t*) (gp_fpga_32_update_0_write_pipe0.data()))[i] << std::endl;
-    }
-}
+
+
+//{
+    //std::ofstream regression_result("gp_fpga_32_update_0_write_pipe0_accel_result.csv");
+    //for (int i = 0; i < gp_fpga_32_update_0_write_pipe0_DATA_SIZE; i++) {
+      //regression_result << ((uint16_t*) (gp_fpga_32_update_0_write_pipe0.data()))[i] << std::endl;
+    //}
+//}
 
   return 0;
 }
