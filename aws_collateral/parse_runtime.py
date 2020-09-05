@@ -45,14 +45,14 @@ for filename in glob.iglob(directory + '**/*', recursive=True):
     print('File:', filename)
     lines = open(filename, 'r').readlines()
     for l in lines:
-      target = "\[(\d+)\:(\d+)\:(\d+)\] Starting (.*)"
+      target = "\[(\d+)\:(\d+)\:(\d+)\] Starting (.*)\.\."
       x = re.match(target, l) 
       if x:
         t = int(x[1])*3600 + int(x[2])*60 + int(x[3])
         # print('\tSTART line:', x[0], 'time:', t)
         stage_starts[x[4]] = t
 
-      target = "\[(\d+)\:(\d+)\:(\d+)\] Finished .* tasks \((.*)\)"
+      target = "\[(\d+)\:(\d+)\:(\d+)\] Finished .* tasks \(FPGA (.*)\)"
       x = re.match(target, l) 
       if x:
         t = int(x[1])*3600 + int(x[2])*60 + int(x[3])
@@ -86,6 +86,8 @@ print('Stage starts...')
 for s in stage_starts:
   print('\t', s, '->', stage_starts[s])
 
+print()
+print('Stage times')
 for s in stage_ends:
   if s in stage_starts:
     elapsed = stage_ends[s] - stage_starts[s]
