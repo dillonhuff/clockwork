@@ -164,4 +164,3 @@ hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& conv_stencil) {
 
   return _conv_stencil_4;
 }
-
