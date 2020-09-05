@@ -18,16 +18,20 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
+  size_t total_size_bytes_read = 0;
+  size_t total_size_bytes_written = 0;
   const int in_update_0_read_DATA_SIZE = num_epochs*1048576;
   const int in_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_DATA_SIZE;
 
   total_size_bytes += in_update_0_read_size_bytes;
+  total_size_bytes_read += in_update_0_read_size_bytes;
   const int mpr16b_32_32_update_0_write_DATA_SIZE = num_epochs*1048576;
   const int mpr16b_32_32_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t mpr16b_32_32_update_0_write_size_bytes = mpr16b_32_32_update_0_write_BYTES_PER_PIXEL * mpr16b_32_32_update_0_write_DATA_SIZE;
 
   total_size_bytes += mpr16b_32_32_update_0_write_size_bytes;
+  total_size_bytes_written += mpr16b_32_32_update_0_write_size_bytes;
 
   cl_int err;
   cl::Context context;

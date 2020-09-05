@@ -5525,6 +5525,8 @@ struct App {
       for (auto& u : r.second.updates) {
         cout << "finding factor for: " << u.name() << endl;
         int u_qfactor = to_int(map_find(sched_var_name(u.name()), qfs));
+        cout << tab(1) << "u_qfactor = " << u_qfactor << endl;
+        cout << tab(1) << "ref update= " << umax << endl;
         int fres = (int) max(1.0f, floor(((float) umax) / (float) u_qfactor));
         int u_unroll_factor = fres;
         u.unroll_factor = u_unroll_factor;
@@ -5534,6 +5536,7 @@ struct App {
         }
       }
     }
+    //assert(false);
   }
 
   void realize_no_unroll(CodegenOptions& options,
@@ -7209,8 +7212,8 @@ void max_pooling_test(const std::string& prefix) {
   int H = 64;
   int D = 64;
 
-  //vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
-  vector<int> unroll_factors{32};
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  //vector<int> unroll_factors{32};
   for (auto factor : unroll_factors) {
     string name = prefix + "_" + str(factor);
     CodegenOptions options;
@@ -7566,9 +7569,26 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
   }
 }
 
+void gauss_pyramid_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = gauss_pyramid_fpga(name);
+    int rows = 1080 / pow(2, 4 - 1);
+    int cols = 1920 / pow(2, 4 - 1);
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  assert(false);
+}
+
 void exposure_fusion_iccad_apps(const std::string& prefix) {
-  //vector<int> throughputs{1, 8, 16, 32};
-  vector<int> throughputs{16};
+  vector<int> throughputs{1, 2, 4, 8, 16};
+  //vector<int> throughputs{16};
   for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
@@ -9456,13 +9476,14 @@ void naive_implementations() {
 }
 
 void iccad_tests() {
-  max_pooling_test("mpr16b_32");
+  exposure_fusion_iccad_apps("ef_fpga");
   assert(false);
-  gauss_pyramid_test("gp_fpga");
-
   App ef = ef_cartoon("ef_sm");
-  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 32);
-  assert(false);
+  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  gauss_pyramid_iccad_apps("gp_fpga");
+  gauss_pyramid_test("gp_fpga");
+  max_pooling_test("mpr16b_32");
+
 
   App gp = gauss_pyramid_fpga("gp_sm");
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
@@ -13461,8 +13482,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
-    // TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
-    TARGET_TILE_REGISTERS;
+     TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+    //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -13657,14 +13678,14 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  // test_programs.push_back(camera_pipeline());
-  //test_programs.push_back(unsharp());
+  test_programs.push_back(pointwise());
   test_programs.push_back(gaussian());
-  // test_programs.push_back(pointwise());
-  // test_programs.push_back(harris());
-  // test_programs.push_back(down_sample());
-  // test_programs.push_back(cascade());
-  // test_programs.push_back(up_sample());
+  test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(unsharp());
+  test_programs.push_back(harris());
+  test_programs.push_back(down_sample());
+  test_programs.push_back(cascade());
+  test_programs.push_back(up_sample());
 
   // Delayed incorrectly?
 
@@ -13702,8 +13723,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     //assert(false);
 
     dsa_writers(prg);
-    // auto cpu = unoptimized_result(prg);
-    vector<string> cpu;
+    //vector<string> cpu;
+    auto cpu = unoptimized_result(prg);
 
     compile_for_garnet_dual_port_mem(prg);
     generate_regression_testbench(prg);
@@ -13713,12 +13734,15 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     //assert(false);
-    //string app_type = "dse_raw_sram";
-    //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
-    //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //string app_type = "dualwithaddr";
+    string app_type = "dualwithaddr";
+    cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+    cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_compute.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
   }
 }
 
@@ -14021,8 +14045,8 @@ void cgra_flow_tests() {
 
   //assert(false);
 
-  //auto test_programs = stencil_programs();
-  auto test_programs = all_cgra_programs();
+  auto test_programs = stencil_programs();
+  //auto test_programs = all_cgra_programs();
 
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
