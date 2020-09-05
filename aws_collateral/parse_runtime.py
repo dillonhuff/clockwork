@@ -88,8 +88,28 @@ for s in stage_starts:
 
 print()
 print('Stage times')
+pnr_time = 0
+logic_synthesis_time = 0
 for s in stage_ends:
-  if s in stage_starts:
+  if s == "logic placement":
+    elapsed = stage_ends[s] - stage_starts[s]
+    assert(elapsed >= 0.0)
+    pnr_time += elapsed
+    print('\t', s, '->', elapsed)
+  elif s in stage_starts:
     elapsed = stage_ends[s] - stage_starts[s]
     assert(elapsed >= 0.0)
     print('\t', s, '->', elapsed)
+    logic_synthesis_time += elapsed
+  elif s == "routing":
+    elapsed = stage_ends[s] - stage_starts["logic routing"]
+    assert(elapsed >= 0.0)
+    print('\t', s, '->', elapsed)
+    pnr_time += elapsed
+  else:
+    print('no start for', s)
+
+print('==== Final PnR time        :', pnr_time)
+print('==== Final logic synth time:', logic_synthesis_time)
+
+print('& {0} & {1} & {2} & {3}'.format(total_compile_time, hls_seconds, logic_synthesis_time, pnr_time))
