@@ -75,10 +75,19 @@ for filename in glob.iglob(directory + '**/*', recursive=True):
 assert(found_vpp)
 assert(found_hls)
 total_compile_time = vpp_seconds + hls_seconds
+
 print('Total compile time:', total_compile_time)
+
 print('Stage ends...')
 for s in stage_ends:
   print('\t', s, '->', stage_ends[s])
+
 print('Stage starts...')
 for s in stage_starts:
   print('\t', s, '->', stage_starts[s])
+
+for s in stage_ends:
+  if s in stage_starts:
+    elapsed = stage_ends[s] - stage_starts[s]
+    assert(elapsed >= 0.0)
+    print('\t', s, '->', elapsed)
