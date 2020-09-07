@@ -46,5 +46,10 @@ def sum_double_entry(values):
         values[5] = str(float(m[1]) + float(m[2]))
     return values
 
+def entry_to_int(values):
+    values[5] = int(values[5])
+
 res = table_op(f, sum_double_entry)
 print(res)
+
+res = table_op(res.splitlines(), entry_to_int)
