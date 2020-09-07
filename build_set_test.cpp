@@ -1294,34 +1294,56 @@ void emit_sram_address_stream(string fname, vector<int> read_cycle, vector<int> 
   int in_width = pick(write_addr).size();
   int out_width = pick(read_addr).size();
   auto addr_out = vector<int>(out_width, 0);
+
+  auto addr_out_cache = vector<int>(out_width, 0);
+  bool use_cache = false, delay_cycle = false;
   while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
     bool wen = false, cen =false, valid = false;
     auto addr_in = vector<int>(in_width, 0);
-    if (rd_itr < read_cycle.size()) {
-      if (cen_itr < read_cycle.size())
-        if (read_cycle.at(cen_itr) == cycle + 1) {
-          cen = true;
-          cen_itr ++;
-      }
-      if (read_cycle.at(rd_itr) == cycle) {
-        valid = true;
-        addr_out = read_addr.at(rd_itr);
-
-        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
-        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
-        rd_itr ++;
-      }
-    }
     if (wr_itr < write_cycle.size()) {
       if (write_cycle.at(wr_itr) == cycle) {
         wen = true;
         cen = true;
         addr_in = write_addr.at(wr_itr);
-        addr_out = vector<int>(out_width, 0);
+        //addr_out = vector<int>(out_width, 0);
         //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
         //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
         //out << cycle << tab(1) << "wr"  << endl;
         wr_itr ++;
+      }
+    }
+    if (rd_itr < read_cycle.size()) {
+      if (cen_itr < read_cycle.size())
+        if (read_cycle.at(cen_itr) == cycle-1) {
+          cen = true;
+          cen_itr ++;
+      }
+      if (read_cycle.at(rd_itr) == cycle-2) {
+        if (wen) {
+          addr_out = read_addr.at(rd_itr);
+          valid = true;
+          addr_out_cache = read_addr.at(rd_itr);
+          use_cache = true;
+          delay_cycle = true;
+        }
+        else if(delay_cycle) {
+          addr_out = addr_out_cache;
+          addr_out_cache = read_addr.at(rd_itr);
+          delay_cycle = false;
+          cen = true;
+        } else {
+          valid = true;
+          addr_out = read_addr.at(rd_itr);
+          addr_out_cache = addr_out;
+        }
+
+        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
+        rd_itr ++;
+      } else if (use_cache) {
+        use_cache = false;
+        addr_out = addr_out_cache;
+        valid = true;
       }
     }
 
@@ -2140,7 +2162,7 @@ void conv33_large_test() {
 
     lattice_schedule_buf(prg.ctx, rewrite_buffers, opt_sched, sram);
 
-    TileConstraints tc{1,3,0};
+    TileConstraints tc{2,2,0};
     emit_address_stream2file(rewrite_buffers, it.first+"_sram", it.first+"_sram", it.first+"_SRAM_large_address", false, tc);
     emit_address_stream2file(rewrite_buffers, it.first+"_tb", it.first+"_agg", it.first+"_reg_TOP_large_address", true, tc);
     //compare_to_gold(it.first+"_SRAM_address.csv", "SRAM_address_tapeout.csv");
@@ -9797,9 +9819,9 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
-  conv33_test();
   conv33_large_test();
   assert(false);
+  conv33_test();
   conv45_test();
   vec_test();
   bankmerge_vec_test();
