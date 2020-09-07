@@ -22,19 +22,29 @@ def table_op(table_lines, func):
         if m:
             try:
                 values = m[1].split('&')
-                rm = "\s*(\d+)\s+(\d+)\s*"
-                m = re.match(rm, values[5])
-                if m:
-                    v = values
-                    values[5] = str(float(m[1]) + float(m[2]))
-                    res += ' & '.join(values) + ' \\\\' + '\n'
-                else:
-                    res += l
+                values = func(values)
+                res += ' & '.join(values) + ' \\\\' + '\n'
+                # rm = "\s*(\d+)\s+(\d+)\s*"
+                # m = re.match(rm, values[5])
+                # if m:
+                    # v = values
+                    # values[5] = str(float(m[1]) + float(m[2]))
+                    # res += ' & '.join(values) + ' \\\\' + '\n'
+                # else:
+                    # res += l
             except ValueError:
                 res += l
         else:
             res += l
     return res
 
-res = table_op(f, '')
+def sum_double_entry(values):
+    rm = "\s*(\d+)\s+(\d+)\s*"
+    m = re.match(rm, values[5])
+    if m:
+        v = values
+        values[5] = str(float(m[1]) + float(m[2]))
+    return values
+
+res = table_op(f, sum_double_entry)
 print(res)
