@@ -32,7 +32,7 @@ def table_op(table_lines, func):
                     # res += ' & '.join(values) + ' \\\\' + '\n'
                 # else:
                     # res += l
-            except ValueError:
+            except:
                 res += l
         else:
             res += l
@@ -47,9 +47,15 @@ def sum_double_entry(values):
     return values
 
 def entry_to_int(values):
-    values[5] = int(values[5])
+    print(values)
+    try:
+        values[5] = int(float(values[5]))
+    except:
+        return values
+    return values
 
 res = table_op(f, sum_double_entry)
 print(res)
 
 res = table_op(res.splitlines(), entry_to_int)
+print(res)
