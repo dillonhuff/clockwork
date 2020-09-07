@@ -111,7 +111,7 @@ plt.axhline(y=THEORETICAL_PEAK, linewidth=2, color='red')
 plt.text(2.5, THEORETICAL_PEAK, 'Clockwork Theoretical Peak', ha='right', va='bottom')
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
-ax.set_ylabel('GPix / J')
+ax.set_ylabel('Energy Efficiency (Gigapixels / Joule)')
 # ax.set_title('Scores by group and gender')
 ax.set_xticks(x)
 ax.set_xticklabels(labels)

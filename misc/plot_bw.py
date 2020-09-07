@@ -41,7 +41,7 @@ plt.axhline(32, linewidth='2', color='black', linestyle='-.', label='PCIe peak b
 # plt.plot(requested_throughputs, theoretical_peak_bw, label='expected', marker='o')
 # plt.axhline(32, linewidth='2', color='red', label='PCIe peak bandwidth')
 
-plt.ylabel('Bandwidth GB/sec')
+plt.ylabel('Bandwidth (GB/sec)')
 plt.xlabel('Requested Throughput (pix/cycle)')
 # set_size(5, 3)
 

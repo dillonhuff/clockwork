@@ -21,3 +21,8 @@ for l in f:
 
 
 print(lines)
+
+assert(len(lines) % 2 == 0)
+
+for i in range(len(lines) // 2):
+    print(lines[i], lines[i + 1])
