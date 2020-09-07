@@ -14,22 +14,27 @@ def is_float(s):
     except ValueError:
         return False
 
-for l in f:
-    rm = "(.*)\\\\\\\\"
-    m = re.match(rm, l)
-    if m:
-        try:
-            values = m[1].split('&')
-            # print(values[5])
-            rm = "\s*(\d+)\s+(\d+)\s*"
-            m = re.match(rm, values[5])
-            if m:
-                v = values
-                values[5] = str(float(m[1]) + float(m[2]))
-                values = intersperse(values, ' & ')
-                values.append(' \\')
-                print(values)
-        except ValueError:
-            continue
+def table_op(table_lines, func):
+    res = ''
+    for l in table_lines:
+        rm = "(.*)\\\\\\\\"
+        m = re.match(rm, l)
+        if m:
+            try:
+                values = m[1].split('&')
+                rm = "\s*(\d+)\s+(\d+)\s*"
+                m = re.match(rm, values[5])
+                if m:
+                    v = values
+                    values[5] = str(float(m[1]) + float(m[2]))
+                    res += ' & '.join(values) + ' \\\\' + '\n'
+                else:
+                    res += l
+            except ValueError:
+                res += l
+        else:
+            res += l
+    return res
 
-
+res = table_op(f, '')
+print(res)
