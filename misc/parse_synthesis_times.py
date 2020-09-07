@@ -47,7 +47,7 @@ def sum_double_entry(values):
     return values
 
 def entry_to_int(values):
-    print(values)
+    # print(values)
     try:
         values[5] = int(float(values[5]))
     except:
@@ -57,5 +57,9 @@ def entry_to_int(values):
 res = table_op(f, sum_double_entry)
 print(res)
 
-res = table_op(res.splitlines(), entry_to_int)
+rlines = res.splitlines()
+for i in range(len(rlines)):
+    rlines[i] += rlines[i] + '\n'
+
+res = table_op(rlines, entry_to_int)
 print(res)
