@@ -1085,6 +1085,10 @@ form_farkas_constraints(isl_basic_set* constraints,
 vector<std::string> topological_sort(const vector<isl_set*>& sets,
     const vector<isl_map*>& maps);
 
+struct ilp_builder;
+
+void mathlog_problem(ilp_builder& builder, const map<string, isl_val*>& obj);
+
 struct ilp_builder {
 
   isl_ctx* ctx;
@@ -1212,6 +1216,8 @@ struct ilp_builder {
   }
 
   isl_val* minimize(const std::map<string, isl_val*>& obj) {
+
+    mathlog_problem(*this, obj);
     isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
     for (auto coeff : obj) {
       //int index = map_find(coeff.first, variable_positions);
@@ -1293,6 +1299,16 @@ struct ilp_builder {
     //}
 
     //s = isl_basic_set_add_constraint(s, c);
+  }
+
+  std::string get_variable_name(const int ind) {
+    for (auto m : variable_positions) {
+      if (m.second == ind) {
+        return m.first;
+      }
+    }
+    std::cout << "Error: No variable for index: " << ind << std::endl;
+    assert(false);
   }
 
 };
