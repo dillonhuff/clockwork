@@ -1358,9 +1358,9 @@ hardware_schedule(
         int num_farkas_mults = num_dims(fs) - base_dims;
         cout << "dims in res   : " << base_dims << endl;
         cout << "farkas mults  : " << num_farkas_mults << endl;
-        fs = isl_basic_set_project_out(fs, isl_dim_set, base_dims, num_farkas_mults);
+        //fs = isl_basic_set_project_out(fs, isl_dim_set, base_dims, num_farkas_mults);
         cout << "projecting out: " << str(fs) << endl;
-        fs = lift_divs(fs);
+        //fs = lift_divs(fs);
         //cout << "after lifting: " << str(fs) << endl;
 
         append_basic_set(modulo_schedule, fs);

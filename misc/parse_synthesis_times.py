@@ -33,7 +33,7 @@ def table_op(table_lines, func):
                 # else:
                     # res += l
             except:
-                None
+                res += l
         else:
             res += l
     return res

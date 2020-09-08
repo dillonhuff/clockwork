@@ -2478,28 +2478,29 @@ void ram_addr_unit_test() {
 
 void cnn_test() {
   prog prg = cnn_conv_layer();
-  //auto domain = prg.whole_iteration_domain();
+  auto domain = prg.whole_iteration_domain();
 
-  //auto order_deps = prg.relative_orders();
-  //cout << "Getting validity deps..." << endl;
-  //isl_union_map *raw_deps = prg.validity_deps();
-  //cout << "Got validity deps..." << endl;
-  //cout << "Validity: " << str(raw_deps) << endl;
-  //auto validity =
-    //unn(order_deps, raw_deps);
-  //isl_union_map *proximity =
-    //cpy(raw_deps);
+  auto order_deps = prg.relative_orders();
+  cout << "Getting validity deps..." << endl;
+  isl_union_map *raw_deps = prg.validity_deps();
+  cout << "Got validity deps..." << endl;
+  cout << "Validity: " << str(raw_deps) << endl;
+  auto validity =
+    unn(order_deps, raw_deps);
+  isl_union_map *proximity =
+    cpy(raw_deps);
 
-  //auto clksched = hardware_schedule(domain, validity, proximity);
-  //auto doms = get_sets(domain);
-  //cout << "---- Domains..." << endl;
-  //for (auto d : doms) {
-    //cout << tab(1) << str(d) << endl;
-  //}
-  //cout << "---- Hardware schedule:" << endl;
-  //for (auto s : clksched) {
-    //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
-  //}
+  auto clksched = hardware_schedule(domain, validity, proximity);
+  auto doms = get_sets(domain);
+  cout << "---- Domains..." << endl;
+  for (auto d : doms) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "---- Hardware schedule:" << endl;
+  for (auto s : clksched) {
+    cout << tab(1) << s.first << " -> " << str(s.second) << endl;
+  }
+  assert(false);
   umap* opt_sched = prg.optimized_codegen();
   ////cout << "------ ISL schedule" << endl;
   ////for (auto m : get_maps(opt_sched)) {
@@ -14714,6 +14715,7 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
+  cnn_test();
   iccad_tests();
   exposure_fusion_iccad_apps("ef_cc_10_level");
   histogram_2d_test();
@@ -14755,7 +14757,6 @@ void application_tests() {
   //register_file_optimization_test();
   
   // Does not work with register files?
-  //cnn_test();
 
   neg_stencil_test();
   
