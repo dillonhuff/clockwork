@@ -42,7 +42,7 @@ class Table:
     def __repr__(self):
         st = ""
         for r in self.rows:
-            st += '(' + str(r) + ')' + ': ' + str(self.rows[r])
+            st += str(self.rows[r])
         return st
 
     def row_data(self):
