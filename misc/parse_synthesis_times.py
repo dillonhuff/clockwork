@@ -1,6 +1,32 @@
 import re
+import sys
 
-f = open('./misc/multi_rate_compile_times_table.tex').readlines()
+class Table:
+
+    def __init__(self):
+        self.rows = {}
+
+    def __repr__(self):
+        st = ""
+        for r in self.rows:
+            st += '(' + str(r) + ')' + ': ' + self.rows[r]
+        return st
+
+assert(len(sys.argv) == 2)
+table_file = sys.argv[1]
+print('Parsing table:', table_file)
+
+f = open(table_file).readlines()
+
+t = Table()
+i = 0
+for l in f:
+    t.rows[i] = l
+    i += 1
+
+print('Table...')
+print(t)
+
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
@@ -33,8 +59,9 @@ def table_op(table_lines, func):
 
 def add_comparison(values):
     rm = "\s*(\d+)\s*"
-    m = re.match(rm, values[0])
+    m = re.match(rm, values[5])
     if m:
+        print('\t\tMATCHED')
         v = values
         values[0] = "noooo"
     return values
