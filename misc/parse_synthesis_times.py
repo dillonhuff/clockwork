@@ -3,8 +3,21 @@ import sys
 
 def entries(row):
     rm = "(.*)\\\\\\\\"
-    return re.match(rm, row)
+    return re.match(rm, row.txt)
 
+
+class TableRow:
+
+    def __init__(self, r, container, txt):
+        self.r = r
+        self.container = container
+        self.txt = txt
+
+    def __repr__(self):
+        return self.txt
+
+    def row(self, offset):
+        return self.container.rows[self.r + offset]
 
 class Table:
 
@@ -14,7 +27,7 @@ class Table:
     def __repr__(self):
         st = ""
         for r in self.rows:
-            st += '(' + str(r) + ')' + ': ' + self.rows[r]
+            st += '(' + str(r) + ')' + ': ' + str(self.rows[r])
         return st
 
     def row_data(self):
@@ -32,73 +45,73 @@ f = open(table_file).readlines()
 t = Table()
 i = 0
 for l in f:
-    t.rows[i] = l
+    t.rows[i] = TableRow(i, t, l)
     i += 1
 
 print('Table...')
 print(t)
 
 for r in t.row_data():
-    print(r)
     if entries(r):
-        print('ROW:', r)
-    else:
-        print('NOT row')
+        if 'CW' in r.txt.split('&')[2]:
+            print('CW:', r)
+            prior = r.row(-1)
+            print('\tprior:', prior)
 
-def intersperse(lst, item):
-    result = [item] * (len(lst) * 2 - 1)
-    result[0::2] = lst
-    return result
+# def intersperse(lst, item):
+    # result = [item] * (len(lst) * 2 - 1)
+    # result[0::2] = lst
+    # return result
 
-def is_float(s):
-    try:
-        float(s)
-        return True
-    except ValueError:
-        return False
+# def is_float(s):
+    # try:
+        # float(s)
+        # return True
+    # except ValueError:
+        # return False
 
-def table_op(table_lines, func):
-    res = ''
-    for l in table_lines:
-        rm = "(.*)\\\\\\\\"
-        m = re.match(rm, l)
-        if m:
-            try:
-                print('L=', l)
-                values = m[1].split('&')
-                values = func(values)
-                res += ' & '.join(values) + ' \\\\' + '\n'
-            except:
-                res += l
-        else:
-            res += l
-    return res
+# def table_op(table_lines, func):
+    # res = ''
+    # for l in table_lines:
+        # rm = "(.*)\\\\\\\\"
+        # m = re.match(rm, l)
+        # if m:
+            # try:
+                # print('L=', l)
+                # values = m[1].split('&')
+                # values = func(values)
+                # res += ' & '.join(values) + ' \\\\' + '\n'
+            # except:
+                # res += l
+        # else:
+            # res += l
+    # return res
 
-def add_comparison(values):
-    rm = "\s*(\d+)\s*"
-    m = re.match(rm, values[5])
-    if m:
-        print('\t\tMATCHED')
-        v = values
-        values[0] = "noooo"
-    return values
+# def add_comparison(values):
+    # rm = "\s*(\d+)\s*"
+    # m = re.match(rm, values[5])
+    # if m:
+        # print('\t\tMATCHED')
+        # v = values
+        # values[0] = "noooo"
+    # return values
 
-def sum_double_entry(values):
-    rm = "\s*(\d+)\s+(\d+)\s*"
-    m = re.match(rm, values[5])
-    if m:
-        v = values
-        values[5] = str(float(m[1]) + float(m[2]))
-    return values
+# def sum_double_entry(values):
+    # rm = "\s*(\d+)\s+(\d+)\s*"
+    # m = re.match(rm, values[5])
+    # if m:
+        # v = values
+        # values[5] = str(float(m[1]) + float(m[2]))
+    # return values
 
-def entry_to_int(values):
-    # print(values)
-    try:
-        values[5] = int(float(values[5]))
-    except:
-        return values
-    return values
+# def entry_to_int(values):
+    # # print(values)
+    # try:
+        # values[5] = int(float(values[5]))
+    # except:
+        # return values
+    # return values
 
-res = table_op(f, add_comparison)
-print(res)
+# res = table_op(f, add_comparison)
+# print(res)
 
