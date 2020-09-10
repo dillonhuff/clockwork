@@ -6,6 +6,9 @@ def intersperse(lst, item):
     result[0::2] = lst
     return result
 
+def line_text(row_entries):
+    return ' & '.join(row_entries) + ' \\\\' + '\n'
+
 def is_float(s):
     try:
         float(s)
@@ -63,6 +66,8 @@ for l in f:
 print('Table...')
 print(t)
 
+modified = Table()
+fi = 0
 for r in t.row_data():
     if entries(r):
         if 'CW' in r.txt.split('&')[2]:
@@ -80,7 +85,7 @@ for r in t.row_data():
                 pr = prior_vals[i]
                 c  = vals[i]
 
-                pct_change_str = '-'
+                pct_change_str = ''
                 if i > 1 and is_float(pr):
                     assert(is_float(c))
 
@@ -88,15 +93,22 @@ for r in t.row_data():
                     pcw = float(c)
 
                     if psoda == 0.0:
-                        None
-                        # print('-')
+                        pct_change_str = '(-)'
                     else:
                         pct_change = ((pcw - psoda) / psoda * 100.0)
                         pct_change_str = '(' + ('%.0f' % pct_change) + ')'
 
                 new_entries.append(c + ' ' + pct_change_str)
             print('\t', new_entries)
+            modified.rows[fi] = TableRow(fi, modified, line_text(new_entries))
+        else:
+            modified.rows[fi] = TableRow(fi, modified, r.txt)
+    else:
+        modified.rows[fi] = TableRow(fi, modified, r.txt)
+    fi += 1
 
+print('Modified table...')
+print(modified)
 
 
 
