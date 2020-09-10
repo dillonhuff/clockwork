@@ -75,10 +75,12 @@ for r in t.row_data():
             prior_vals = prior_ents[1].split('&')
             assert(len(prior_vals) == len(vals))
 
+            new_entries = []
             for i in range(len(prior_vals)):
                 pr = prior_vals[i]
                 c  = vals[i]
 
+                pct_change_str = '-'
                 if i > 1 and is_float(pr):
                     assert(is_float(c))
 
@@ -86,10 +88,14 @@ for r in t.row_data():
                     pcw = float(c)
 
                     if psoda == 0.0:
-                        print('-')
+                        None
+                        # print('-')
                     else:
                         pct_change = ((pcw - psoda) / psoda * 100.0)
-                        print('(' + ('%.0f' % pct_change) + ')')
+                        pct_change_str = '(' + ('%.0f' % pct_change) + ')'
+
+                new_entries.append(c + ' ' + pct_change_str)
+            print('\t', new_entries)
 
 
 
