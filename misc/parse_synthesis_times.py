@@ -86,10 +86,10 @@ for r in t.row_data():
                     pcw = float(c)
 
                     if psoda == 0.0:
-                        print('~')
+                        print('-')
                     else:
-                        pct_change = ((psoda - pcw) / psoda * 100.0)
-                        print('-', pct_change, '%')
+                        pct_change = ((pcw - psoda) / psoda * 100.0)
+                        print('(' + ('%.0f' % pct_change) + ')')
 
 
 
