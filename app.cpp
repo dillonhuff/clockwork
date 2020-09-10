@@ -2205,6 +2205,7 @@ void append_basic_set(ilp_builder& b, isl_basic_set* s) {
 }
 
 void mathlog_problem(ilp_builder& builder, const map<string, isl_val*>& obj) {
+  cout << "Writing problem to mod file..." << endl;
   ofstream out("schedule_problem.mod");
   for (auto ps : builder.variable_positions) {
     out << "var " << ps.first << ", integer;" << endl;
@@ -2217,18 +2218,24 @@ void mathlog_problem(ilp_builder& builder, const map<string, isl_val*>& obj) {
 
 
   isl_mat* im = equalities_to_inequalities(cpy(builder.s));
+  cout << tab(1) << "# of constraints: " << isl_mat_rows(im) << endl;
+  map<int, string> index_names;
+  for (auto m : builder.variable_positions) {
+    index_names[m.second] = m.first;
+  }
+
   for (int cn = 0; cn < isl_mat_rows(im); cn++) {
     vector<string> terms;
     for (int c = 0; c < isl_mat_cols(im) - 1; c++) {
       isl_val* cv = isl_mat_get_element_val(im, cn, c);
-      string var = builder.get_variable_name(c);
+      string var = map_find(c, index_names);
       terms.push_back(str(cv) + "*" + var);
     }
 
     string cstr = sep_list(terms, "", "", " + ");
     isl_val* b = isl_mat_get_element_val(im, cn, isl_mat_cols(im) - 1);
     cstr += " + " + str(b);
-    out << "s.t. c" << cn << " : " << ">= 0;" << endl;
+    out << "s.t. c" << cn << " : " << cstr << ">= 0;" << endl;
   }
 
   out << "minimize obj: " << sep_list(obj_terms, "", "", " + ") << ";" << endl;
@@ -2238,4 +2245,5 @@ void mathlog_problem(ilp_builder& builder, const map<string, isl_val*>& obj) {
   }
   out << "end;" << endl;
   out.close();
+  cout << "Done writing out problem to mod file" << endl;
 }

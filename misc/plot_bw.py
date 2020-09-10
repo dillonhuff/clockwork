@@ -17,10 +17,7 @@ def set_size(w,h, ax=None):
     figh = float(h)/(t-b)
     ax.figure.set_size_inches(figw, figh)
 
-# plt.style.use('seaborn-pastel')
-# fig = plt.figure()
-
-fig, ax = plt.subplots(1,1)
+fig, ax = plt.subplots(1,1,figsize=(6, 4))
 ax.set_prop_cycle(monochrome)
 ax.grid()
 ax.spines['top'].set_visible(False)
@@ -34,8 +31,8 @@ theoretical_peak_bw = [1, 2, 4, 8, 16, 30.72]
 requested_throughputs = [1, 2, 4, 8, 16, 32]
 
 plt.plot(requested_throughputs, actual_bw, label='measured')
-plt.plot(requested_throughputs, theoretical_peak_bw, label='expected')
-plt.axhline(32, linewidth='2', color='black', linestyle='-.', label='PCIe peak bandwidth')
+plt.plot(requested_throughputs, theoretical_peak_bw, label='ideal')
+# plt.axhline(32, linewidth='2', color='black', linestyle='-.', label='PCIe peak bandwidth')
 
 # plt.plot(requested_throughputs, actual_bw, label='measured', marker='s')
 # plt.plot(requested_throughputs, theoretical_peak_bw, label='expected', marker='o')

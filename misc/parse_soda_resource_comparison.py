@@ -1,6 +1,6 @@
 import re
 
-f = open('./misc/multi_rate_compile_times_table.tex').readlines()
+f = open('./misc/soda_resource_comparison_table.tex').readlines()
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
@@ -21,7 +21,6 @@ def table_op(table_lines, func):
         m = re.match(rm, l)
         if m:
             try:
-                print('L=', l)
                 values = m[1].split('&')
                 values = func(values)
                 res += ' & '.join(values) + ' \\\\' + '\n'
@@ -30,14 +29,6 @@ def table_op(table_lines, func):
         else:
             res += l
     return res
-
-def add_comparison(values):
-    rm = "\s*(\d+)\s*"
-    m = re.match(rm, values[0])
-    if m:
-        v = values
-        values[0] = "noooo"
-    return values
 
 def sum_double_entry(values):
     rm = "\s*(\d+)\s+(\d+)\s*"
@@ -55,6 +46,6 @@ def entry_to_int(values):
         return values
     return values
 
-res = table_op(f, add_comparison)
+res = table_op(f, sum_double_entry)
 print(res)
 

@@ -2477,7 +2477,9 @@ void ram_addr_unit_test() {
 }
 
 void cnn_test() {
-  prog prg = cnn_conv_layer();
+  //prog prg = cnn_conv_layer();
+  //prog prg = resnet();
+  prog prg = harris();
   auto domain = prg.whole_iteration_domain();
 
   auto order_deps = prg.relative_orders();
