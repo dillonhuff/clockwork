@@ -12,6 +12,12 @@ class Table:
             st += '(' + str(r) + ')' + ': ' + self.rows[r]
         return st
 
+    def row_data(self):
+        rd = []
+        for r in self.rows:
+            rd.append(self.rows[r])
+        return rd
+
 assert(len(sys.argv) == 2)
 table_file = sys.argv[1]
 print('Parsing table:', table_file)
@@ -27,6 +33,9 @@ for l in f:
 print('Table...')
 print(t)
 
+for r in t.row_data():
+    if is_data(r):
+        print(r)
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
