@@ -1,6 +1,11 @@
 import re
 import sys
 
+def entries(row):
+    rm = "(.*)\\\\\\\\"
+    return re.match(rm, row)
+
+
 class Table:
 
     def __init__(self):
@@ -34,8 +39,11 @@ print('Table...')
 print(t)
 
 for r in t.row_data():
-    if is_data(r):
-        print(r)
+    print(r)
+    if entries(r):
+        print('ROW:', r)
+    else:
+        print('NOT row')
 
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
