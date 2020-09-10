@@ -1,6 +1,18 @@
 import re
 import sys
 
+def intersperse(lst, item):
+    result = [item] * (len(lst) * 2 - 1)
+    result[0::2] = lst
+    return result
+
+def is_float(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
 def entries(row):
     rm = "(.*)\\\\\\\\"
     return re.match(rm, row.txt)
@@ -54,21 +66,28 @@ print(t)
 for r in t.row_data():
     if entries(r):
         if 'CW' in r.txt.split('&')[2]:
+            vals = entries(r)[1].split('&')
             print('CW:', r)
             prior = r.row(-1)
             print('\tprior:', prior)
+            prior_ents = entries(prior)
+            assert(prior_ents)
+            prior_vals = prior_ents[1].split('&')
+            assert(len(prior_vals) == len(vals))
 
-# def intersperse(lst, item):
-    # result = [item] * (len(lst) * 2 - 1)
-    # result[0::2] = lst
-    # return result
+            for i in range(len(prior_vals)):
+                pr = prior_vals[i]
+                c  = vals[i]
 
-# def is_float(s):
-    # try:
-        # float(s)
-        # return True
-    # except ValueError:
-        # return False
+                if i > 1 and is_float(pr):
+                    assert(is_float(c))
+                    pf = float(pr)
+                    pc = float(c)
+                    print(pf - pc)
+
+
+
+
 
 # def table_op(table_lines, func):
     # res = ''
