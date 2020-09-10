@@ -81,9 +81,15 @@ for r in t.row_data():
 
                 if i > 1 and is_float(pr):
                     assert(is_float(c))
-                    pf = float(pr)
-                    pc = float(c)
-                    print(pf - pc)
+
+                    psoda = float(pr)
+                    pcw = float(c)
+
+                    if psoda == 0.0:
+                        print('~')
+                    else:
+                        pct_change = ((psoda - pcw) / psoda * 100.0)
+                        print('-', pct_change, '%')
 
 
 
