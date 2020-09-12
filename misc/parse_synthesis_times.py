@@ -1,5 +1,6 @@
 import re
 import sys
+import copy
 
 def average(lst):
     return sum(lst) / len(lst)
@@ -116,49 +117,24 @@ def add_pct_change(r):
     else:
         return r.txt
 
+def swap_vitis_times(r):
+    vals = entries(r)[1].split('&')
+    assert(len(vals) == 14)
+    vcpy = copy.deepcopy(vals)
+    vcpy[0:8] = vals[0:8]
+    vcpy[9] = vals[10]
+    vcpy[10] = vals[11]
+    vcpy[11] = vals[12]
+    vcpy[12] = vals[9]
+    vcpy[13] = vals[13]
+    # vcpy[9:13] = vals[10:14]
+    # vcpy[13] = vals[9]
+    return line_text(vcpy)
+
 for r in t.row_data():
     if entries(r):
-        new_row = add_pct_change(r)
+        new_row = swap_vitis_times(r)
         modified.rows[fi] = TableRow(fi, modified, new_row)
-        # if 'CW' in r.txt.split('&')[2]:
-            # vals = entries(r)[1].split('&')
-            # print('CW:', r)
-            # prior = r.row(-1)
-            # print('\tprior:', prior)
-            # prior_ents = entries(prior)
-            # assert(prior_ents)
-            # prior_vals = prior_ents[1].split('&')
-            # assert(len(prior_vals) == len(vals))
-
-            # new_entries = []
-            # for i in range(len(prior_vals)):
-                # pr = prior_vals[i]
-                # c  = vals[i]
-
-                # pct_change_str = ''
-                # if i > 1 and is_float(pr):
-                    # assert(is_float(c))
-
-                    # psoda = float(pr)
-                    # pcw = float(c)
-
-                    # if psoda == 0.0:
-                        # pct_change_str = '(-)'
-                    # else:
-                        # pct_change = ((pcw - psoda) / psoda * 100.0)
-                        # pct_change_str = '(' + ('%.0f' % pct_change) + ')'
-                        # if i == 3:
-                            # lut_reductions.append(pct_change)
-                        # if i == 5:
-                            # ff_reductions.append(pct_change)
-                        # if i == 6:
-                            # bram_reductions.append(pct_change)
-
-                # new_entries.append(c + ' ' + pct_change_str)
-            # print('\t', new_entries)
-            # modified.rows[fi] = TableRow(fi, modified, line_text(new_entries))
-        # else:
-            # modified.rows[fi] = TableRow(fi, modified, r.txt)
     else:
         modified.rows[fi] = TableRow(fi, modified, r.txt)
     fi += 1
