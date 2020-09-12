@@ -1,6 +1,9 @@
 import re
 import sys
 
+def average(lst):
+    return sum(lst) / len(lst)
+
 def intersperse(lst, item):
     result = [item] * (len(lst) * 2 - 1)
     result[0::2] = lst
@@ -19,7 +22,6 @@ def is_float(s):
 def entries(row):
     rm = "(.*)\\\\\\\\"
     return re.match(rm, row.txt)
-
 
 class TableRow:
 
@@ -66,43 +68,97 @@ for l in f:
 print('Table...')
 print(t)
 
+lut_reductions = []
+bram_reductions = []
+ff_reductions = []
+
 modified = Table()
 fi = 0
+
+def add_pct_change(r):
+    if 'CW' in r.txt.split('&')[2]:
+        vals = entries(r)[1].split('&')
+        print('CW:', r)
+        prior = r.row(-1)
+        print('\tprior:', prior)
+        prior_ents = entries(prior)
+        assert(prior_ents)
+        prior_vals = prior_ents[1].split('&')
+        assert(len(prior_vals) == len(vals))
+
+        new_entries = []
+        for i in range(len(prior_vals)):
+            pr = prior_vals[i]
+            c  = vals[i]
+
+            pct_change_str = ''
+            if i > 1 and is_float(pr):
+                assert(is_float(c))
+
+                psoda = float(pr)
+                pcw = float(c)
+
+                if psoda == 0.0:
+                    pct_change_str = '(-)'
+                else:
+                    pct_change = ((pcw - psoda) / psoda * 100.0)
+                    pct_change_str = '(' + ('%.0f' % pct_change) + ')'
+                    if i == 3:
+                        lut_reductions.append(pct_change)
+                    if i == 5:
+                        ff_reductions.append(pct_change)
+                    if i == 6:
+                        bram_reductions.append(pct_change)
+
+            new_entries.append(c + ' ' + pct_change_str)
+        print('\t', new_entries)
+        return line_text(new_entries)
+    else:
+        return r.txt
+
 for r in t.row_data():
     if entries(r):
-        if 'CW' in r.txt.split('&')[2]:
-            vals = entries(r)[1].split('&')
-            print('CW:', r)
-            prior = r.row(-1)
-            print('\tprior:', prior)
-            prior_ents = entries(prior)
-            assert(prior_ents)
-            prior_vals = prior_ents[1].split('&')
-            assert(len(prior_vals) == len(vals))
+        new_row = add_pct_change(r)
+        modified.rows[fi] = TableRow(fi, modified, new_row)
+        # if 'CW' in r.txt.split('&')[2]:
+            # vals = entries(r)[1].split('&')
+            # print('CW:', r)
+            # prior = r.row(-1)
+            # print('\tprior:', prior)
+            # prior_ents = entries(prior)
+            # assert(prior_ents)
+            # prior_vals = prior_ents[1].split('&')
+            # assert(len(prior_vals) == len(vals))
 
-            new_entries = []
-            for i in range(len(prior_vals)):
-                pr = prior_vals[i]
-                c  = vals[i]
+            # new_entries = []
+            # for i in range(len(prior_vals)):
+                # pr = prior_vals[i]
+                # c  = vals[i]
 
-                pct_change_str = ''
-                if i > 1 and is_float(pr):
-                    assert(is_float(c))
+                # pct_change_str = ''
+                # if i > 1 and is_float(pr):
+                    # assert(is_float(c))
 
-                    psoda = float(pr)
-                    pcw = float(c)
+                    # psoda = float(pr)
+                    # pcw = float(c)
 
-                    if psoda == 0.0:
-                        pct_change_str = '(-)'
-                    else:
-                        pct_change = ((pcw - psoda) / psoda * 100.0)
-                        pct_change_str = '(' + ('%.0f' % pct_change) + ')'
+                    # if psoda == 0.0:
+                        # pct_change_str = '(-)'
+                    # else:
+                        # pct_change = ((pcw - psoda) / psoda * 100.0)
+                        # pct_change_str = '(' + ('%.0f' % pct_change) + ')'
+                        # if i == 3:
+                            # lut_reductions.append(pct_change)
+                        # if i == 5:
+                            # ff_reductions.append(pct_change)
+                        # if i == 6:
+                            # bram_reductions.append(pct_change)
 
-                new_entries.append(c + ' ' + pct_change_str)
-            print('\t', new_entries)
-            modified.rows[fi] = TableRow(fi, modified, line_text(new_entries))
-        else:
-            modified.rows[fi] = TableRow(fi, modified, r.txt)
+                # new_entries.append(c + ' ' + pct_change_str)
+            # print('\t', new_entries)
+            # modified.rows[fi] = TableRow(fi, modified, line_text(new_entries))
+        # else:
+            # modified.rows[fi] = TableRow(fi, modified, r.txt)
     else:
         modified.rows[fi] = TableRow(fi, modified, r.txt)
     fi += 1
@@ -110,51 +166,12 @@ for r in t.row_data():
 print('Modified table...')
 print(modified)
 
+# print('LUT reductions:', lut_reductions)
+# print('LUT avg reduction:', average(lut_reductions))
 
+# print('FF reductions:', ff_reductions)
+# print('FF avg reduction:', average(ff_reductions))
 
-
-# def table_op(table_lines, func):
-    # res = ''
-    # for l in table_lines:
-        # rm = "(.*)\\\\\\\\"
-        # m = re.match(rm, l)
-        # if m:
-            # try:
-                # print('L=', l)
-                # values = m[1].split('&')
-                # values = func(values)
-                # res += ' & '.join(values) + ' \\\\' + '\n'
-            # except:
-                # res += l
-        # else:
-            # res += l
-    # return res
-
-# def add_comparison(values):
-    # rm = "\s*(\d+)\s*"
-    # m = re.match(rm, values[5])
-    # if m:
-        # print('\t\tMATCHED')
-        # v = values
-        # values[0] = "noooo"
-    # return values
-
-# def sum_double_entry(values):
-    # rm = "\s*(\d+)\s+(\d+)\s*"
-    # m = re.match(rm, values[5])
-    # if m:
-        # v = values
-        # values[5] = str(float(m[1]) + float(m[2]))
-    # return values
-
-# def entry_to_int(values):
-    # # print(values)
-    # try:
-        # values[5] = int(float(values[5]))
-    # except:
-        # return values
-    # return values
-
-# res = table_op(f, add_comparison)
-# print(res)
+# print('BRAM reductions:', bram_reductions)
+# print('BRAM avg reduction:', average(bram_reductions))
 
