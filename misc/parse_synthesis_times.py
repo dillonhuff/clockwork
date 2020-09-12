@@ -131,13 +131,36 @@ def swap_vitis_times(r):
     if is_float(vcpy[11]) and is_float(vcpy[12]) and is_float(vcpy[10]) and is_float(vcpy[8]):
         total = float(vcpy[11]) + float(vcpy[10]) + float(vcpy[9]) + float(vcpy[8])
         vcpy[12] = '%.0f' % (total)
-    # vcpy[9:13] = vals[10:14]
-    # vcpy[13] = vals[9]
+        vcpy[13] = '%.3f' % ((float(vcpy[8]) / total) * 100)
+    return line_text(vcpy)
+
+def fuse_synthesis_and_pnr(r):
+    vals = entries(r)[1].split('&')
+    assert(len(vals) == 14)
+    vcpy = copy.deepcopy(vals)
+
+    synth = vals[10]
+    pnr = vals[11]
+    print('synth:', synth)
+    print('pnr  :', pnr)
+
+    if is_float(synth) and is_float(pnr):
+        vcpy[10] = '%.0f' % (float(synth) + float(pnr))
+    else:
+        vcpy[10] = synth + pnr
+    vcpy[11] = vals[12]
+    vcpy[12] = vals[13]
+    vcpy = vcpy[:-1]
+
+    print('len vcpy:', len(vcpy))
+    print('len vals:', len(vals))
+    assert(len(vcpy) + 1 == len(vals))
+
     return line_text(vcpy)
 
 for r in t.row_data():
     if entries(r):
-        new_row = swap_vitis_times(r)
+        new_row = fuse_synthesis_and_pnr(r)
         modified.rows[fi] = TableRow(fi, modified, new_row)
     else:
         modified.rows[fi] = TableRow(fi, modified, r.txt)
