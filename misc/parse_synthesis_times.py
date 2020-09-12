@@ -127,6 +127,10 @@ def swap_vitis_times(r):
     vcpy[11] = vals[12]
     vcpy[12] = vals[9]
     vcpy[13] = vals[13]
+
+    if is_float(vcpy[11]) and is_float(vcpy[12]) and is_float(vcpy[10]) and is_float(vcpy[8]):
+        total = float(vcpy[11]) + float(vcpy[10]) + float(vcpy[9]) + float(vcpy[8])
+        vcpy[12] = '%.0f' % (total)
     # vcpy[9:13] = vals[10:14]
     # vcpy[13] = vals[9]
     return line_text(vcpy)
