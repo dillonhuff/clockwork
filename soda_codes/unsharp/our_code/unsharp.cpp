@@ -1253,6 +1253,7 @@ for (int c2 = 0; c2 <= 2; c2 += 1)
 	for (int c2 = 0; c2 <= 2; c2 += 1)
 	  for (int c3 = 0; c3 <= 63; c3 += 1)
 	    for (int c4 = 0; c4 <= 63; c4 += 1) {
+#pragma HLS pipeline II=1
 	      op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, 0, 0, c2, c3, c4);
 	      if (c2 == 2) {
 	        op_hcompute_gray_stencil(hw_input_global_wrapper_stencil /* buf name */, gray_stencil, 0, 0, 0, c3, c4);

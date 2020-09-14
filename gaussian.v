@@ -162,6 +162,7 @@ wire [15:0] d_reg__U4_out;
 wire [15:0] d_reg__U5_out;
 wire [15:0] ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_dataout_0;
 wire [15:0] ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_dataout_1;
+wire [15:0] ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_chainin_0_const_in_out;
 wire ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_clk_en_const_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -210,9 +211,11 @@ cwlib_ub__confignull__input_num1__output_num2__width16 ub_hw_input_stencil_op_hc
     .clk_en(ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_clk_en_const_out),
     .clk(clk),
     .datain_0(op_hcompute_hw_input_stencil_write[0]),
+    .chainin_0(ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_chainin_0_const_in_out),
     .dataout_0(ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_dataout_0),
     .dataout_1(ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_dataout_1)
 );
+assign ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_chainin_0_const_in_out = 16'h0000;
 assign ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_clk_en_const_out = 1'b1;
 assign op_hcompute_blur_unnormalized_stencil_1_read[8] = ub_hw_input_stencil_op_hcompute_hw_input_stencil_2_to_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_dataout_1;
 assign op_hcompute_blur_unnormalized_stencil_1_read[7] = op_hcompute_hw_input_stencil_write[0];
@@ -247,7 +250,9 @@ endmodule
 module gaussian (
     input clk,
     input reset,
+    output hw_output_stencil_op_hcompute_hw_output_stencil_write_en,
     output [15:0] hw_output_stencil_op_hcompute_hw_output_stencil_write [0:0],
+    output input_copy_stencil_op_hcompute_hw_input_stencil_read_valid,
     input [15:0] input_copy_stencil_op_hcompute_hw_input_stencil_read [0:0]
 );
 wire [15:0] _U6_out;
@@ -333,6 +338,8 @@ cu_op_hcompute_hw_output_stencil op_hcompute_hw_output_stencil (
     .blur_stencil_op_hcompute_hw_output_stencil_read(op_hcompute_hw_output_stencil_blur_stencil_op_hcompute_hw_output_stencil_read),
     .hw_output_stencil_op_hcompute_hw_output_stencil_write(op_hcompute_hw_output_stencil_hw_output_stencil_op_hcompute_hw_output_stencil_write)
 );
+assign hw_output_stencil_op_hcompute_hw_output_stencil_write_en = 1'b0;
 assign hw_output_stencil_op_hcompute_hw_output_stencil_write[0] = op_hcompute_hw_output_stencil_hw_output_stencil_op_hcompute_hw_output_stencil_write[0];
+assign input_copy_stencil_op_hcompute_hw_input_stencil_read_valid = 1'b0;
 endmodule
 

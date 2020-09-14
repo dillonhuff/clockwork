@@ -134,7 +134,9 @@ endmodule
 module conv33_naive_compute (
     input clk,
     input reset,
+    output in_inst_input_read_valid,
     input [15:0] in_inst_input_read [0:0],
+    output out_inst_output_write_en,
     output [15:0] out_inst_output_write [0:0]
 );
 wire [15:0] _U14_out;
@@ -178,6 +180,8 @@ cu_output output (
     .buf_inst_output_read(output_buf_inst_output_read),
     .out_inst_output_write(output_out_inst_output_write)
 );
+assign in_inst_input_read_valid = 1'b0;
+assign out_inst_output_write_en = 1'b0;
 assign out_inst_output_write[0] = output_out_inst_output_write[0];
 endmodule
 

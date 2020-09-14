@@ -31,12 +31,19 @@ struct banking_strategy {
   vector<int> cycle_factors;
 };
 
+enum TargetTile {
+  TARGET_TILE_REGISTERS,
+  TARGET_TILE_DUAL_SRAM_RAW,
+  TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN
+};
+
 struct RTLOptions {
   bool use_external_controllers;
   bool pack_controllers_in_memtiles;
   bool use_prebuilt_memory;
+  TargetTile target_tile;
 
-  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false) {}
+  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
 };
 
 struct CodegenOptions {

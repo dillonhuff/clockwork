@@ -106,7 +106,6 @@ map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffe
   return in_ports_to_conditions;
 }
 
-
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
@@ -997,35 +996,36 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       return bcm;
   }
 
-  CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
-    cout << "Buffer..." << endl;
-    cout << buf << endl;
+  //CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
+    //cout << "Buffer..." << endl;
+    //cout << buf << endl;
 
-    auto c = def->getContext();
+    //auto c = def->getContext();
 
-    auto sched = buf.schedule.at(inpt);
-    cout << "sched = " << str(sched) << endl;
-    auto sms = get_maps(sched);
-    assert(sms.size() == 1);
+    //auto sched = buf.schedule.at(inpt);
+    //cout << "sched = " << str(sched) << endl;
+    //auto sms = get_maps(sched);
+    //assert(sms.size() == 1);
 
-    auto svec = isl_pw_multi_aff_from_map(sms.at(0));
+    //auto svec = isl_pw_multi_aff_from_map(sms.at(0));
 
-    vector<pair<isl_set*, isl_multi_aff*> > pieces =
-      get_pieces(svec);
-    assert(pieces.size() == 1);
+    //vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      //get_pieces(svec);
+    //assert(pieces.size() == 1);
 
-    auto saff = pieces.at(0).second;
-    auto dom = pieces.at(0).first;
+    //auto saff = pieces.at(0).second;
+    //auto dom = pieces.at(0).first;
 
-    cout << "sched = " << str(saff) << endl;
-    cout << tab(1) << "dom = " << str(dom) << endl;
+    //cout << "sched = " << str(saff) << endl;
+    //cout << tab(1) << "dom = " << str(dom) << endl;
 
-    // TODO: Assert multi size == 1
-    auto aff = isl_multi_aff_get_aff(saff, 0);
-    auto aff_c = affine_controller(c, dom, aff);
-    aff_c->print();
-    return def->addInstance(controller_name(inpt), aff_c);
-  }
+    //// TODO: Assert multi size == 1
+    //auto aff = isl_multi_aff_get_aff(saff, 0);
+    //auto aff_c = affine_controller(c, dom, aff);
+
+    //aff_c->print();
+    //return def->addInstance(controller_name(inpt), aff_c);
+  //}
 
   CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
     //return def->sel(controller_name(reader))->sel("d");
@@ -1223,7 +1223,38 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
     } else {
       cout << "Error: Unsupported # readers = " << readers << ", # writers = " << writers << endl;
+      cout << tab(1) << buf.name << endl;
+      int banking = 1;
+      isl_map* banking_map = nullptr;
+      for (int i = 0; i < 4; i++) {
+        string scheme_str = curlies("conv_stencil[x, y, z] -> B[x % " + str(banking) + "] }");
+        banking_map = isl_map_read_from_str(buf.ctx, scheme_str.c_str());
+        if (banking_scheme_is_legal(banking_map, buf)) {
+          break;
+        } else {
+        }
+        banking++;
+      }
+      cout << "last banking checked: " << banking << endl;
+      assert(banking_map != nullptr);
+
+      for (auto inpt : buf.get_all_ports()) {
+        cout << "Checking bank properties of " << inpt << endl;
+        isl_map* acc = to_map(buf.access_map[inpt]);
+        cout << tab(1) << str(acc) << endl;
+        auto val = dot(acc, banking_map);
+        cout << tab(2) << str(val) << endl;
+        auto out_banks = range(val);
+        cout << tab(2) << "# out banks: " << str(out_banks) << endl;
+        assert(isl_set_is_singleton(out_banks));
+
+      }
       assert(false);
+      vector<Instance*> banks;
+      int r = 0;
+      for (int b = 0; b < banking; b++) {
+        banks.push_back(def->addInstance(buf.name + "_bank_" + c->getUnique(), "global.raw_dual_port_sram_tile", {{"depth", COREMK(c, 2048)}}));
+      }
     }
 
     return;
@@ -1309,12 +1340,14 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
 
-    cout << "partition: " << buf.banking.partition << endl;
+    cout << "Generating functional model for: " << buf.name << endl;
+    cout << tab(1) << "partition: " << buf.banking.partition << endl;
     //assert(buf.banking.partition == "none");
 
     int width = buf.port_widths;
     auto c = def->getContext();
     auto ns = c->getNamespace("global");
+    auto self = def->sel("self");
 
 
     if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_CYCLE_DELAY) {
@@ -1405,8 +1438,16 @@ void UBuffer::generate_coreir(CodegenOptions& options,
               string outpt = delays.at(d).first;
 
               int diff = total_delay - prior_delay;
-              CoreIR::Module* srmod = delay_module(c, width, {diff});
+              CoreIR::Module* srmod = delay_module(options, c, width, {diff});
               auto srinst = def->addInstance("delay_sr" + c->getUnique(), srmod);
+
+              cout << "SRMOD" << endl;
+              srmod->print();
+              def->connect(srinst->sel("rst_n"), self->sel("rst_n"));
+              def->connect(srinst->sel("flush"), self->sel("flush"));
+
+              cout << "Connected to self" << endl;
+
               def->connect(
                   prior_wire,
                   srinst->sel("wdata"));
@@ -1479,13 +1520,16 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       assert(acc_maps.size() > 0);
       int control_dimension = num_in_dims(pick(acc_maps));
       if (buf.is_input_bundle(b.first)) {
-        ub_field.push_back(make_pair(name + "_en", context->BitIn()));
-        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        if (options.rtl_options.use_external_controllers) {
+          ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
+          ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        }
         ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
       } else {
-        ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
-        ub_field.push_back(make_pair(name + "_valid", context->Bit()));
-        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        if (options.rtl_options.use_external_controllers) {
+          ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
+          ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        }
         ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
       }
     }
@@ -1820,7 +1864,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
-    if (buf.banking.partition == "register_file") {
+    if (buf.banking.partition == "register_file" || buf.banking.partition == "none") {
       assert(buf.bank_list.size() == 1);
       // Port is irrelevant here
       // TODO: Extract inner bank offset
@@ -2668,7 +2712,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     banking_strategy strat = options.get_banking_strategy(name);
     banking = strat;
     if (dynamic_ports.size() > 0 ||
-        banking.partition == "register_file") {
+        banking.partition == "register_file" ||
+        banking.partition == "none") {
 
       bank bnk = compute_bank_info();
       for (auto inpt : get_in_ports()) {
@@ -4105,6 +4150,10 @@ pair<std::map<string, UBuffer>, vector<string> >
 
 bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {
   auto sched = buf.global_schedule();
+  cout << "Banking schedule..." << endl;
+  for (auto s : get_maps(sched)) {
+    cout << tab(1) << str(s) << endl;
+  }
   auto op_writes = buf.producer_map();
   auto op_reads = buf.consumer_map();
 
@@ -4115,8 +4164,13 @@ bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {
   auto read_times = dot(inv(op_reads), sched);
   auto simul_reads = dot(read_times, inv(read_times));
 
+  cout << "simul reads: " << str(simul_reads) << endl;
+  cout << tab(1) << "any simultaneous reads: " << empty(simul_reads) << endl;
+
   auto data_to_bank = its(to_umap(bank_func), read);
   auto same_bank = dot(data_to_bank, inv(data_to_bank));
+
+  cout << "data_to_bank: " << str(data_to_bank) << endl;
 
   auto read_id = isl_union_set_identity(cpy(read));
   auto bank_read_conflicts = diff(its(same_bank, simul_reads), read_id);

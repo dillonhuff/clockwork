@@ -81,7 +81,9 @@
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
           ["reset","BitIn"],
+          ["in_inst_input_read_valid","Bit"],
           ["in_inst_input_read",["Array",1,["Array",16,"BitIn"]]],
+          ["out_inst_output_write_en","Bit"],
           ["out_inst_output_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{

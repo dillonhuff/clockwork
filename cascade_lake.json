@@ -156,7 +156,9 @@
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
           ["reset","BitIn"],
+          ["in_input_read_valid","Bit"],
           ["in_input_read",["Array",1,["Array",16,"BitIn"]]],
+          ["out_output_write_en","Bit"],
           ["out_output_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
@@ -206,76 +208,6 @@
           ["buf2_conv_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "add_all__U0":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U1":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U2":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U3":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U4":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U5":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U6":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "add_all__U7":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          }
-        },
-        "connections":[
-          ["self.buf1_conv_read.0","add_all__U0.in0"],
-          ["self.buf1_conv_read.1","add_all__U0.in1"],
-          ["add_all__U1.in0","add_all__U0.out"],
-          ["self.buf1_conv_read.2","add_all__U1.in1"],
-          ["add_all__U2.in0","add_all__U1.out"],
-          ["self.buf1_conv_read.3","add_all__U2.in1"],
-          ["add_all__U3.in0","add_all__U2.out"],
-          ["self.buf1_conv_read.4","add_all__U3.in1"],
-          ["add_all__U4.in0","add_all__U3.out"],
-          ["self.buf1_conv_read.5","add_all__U4.in1"],
-          ["add_all__U5.in0","add_all__U4.out"],
-          ["self.buf1_conv_read.6","add_all__U5.in1"],
-          ["add_all__U6.in0","add_all__U5.out"],
-          ["self.buf1_conv_read.7","add_all__U6.in1"],
-          ["add_all__U7.in0","add_all__U6.out"],
-          ["self.buf1_conv_read.8","add_all__U7.in1"],
-          ["self.buf2_conv_write.0","add_all__U7.out"]
-        ]
-      },
-      "cu_input":{
-        "type":["Record",[
-          ["clk",["Named","coreir.clkIn"]],
-          ["in_input_read",["Array",1,["Array",16,"BitIn"]]],
-          ["buf1_input_write",["Array",1,["Array",16,"Bit"]]]
-        ]],
-        "connections":[
-          ["self.in_input_read.0","self.buf1_input_write.0"]
-        ]
-      },
-      "cu_output":{
-        "type":["Record",[
-          ["clk",["Named","coreir.clkIn"]],
-          ["buf2_output_read",["Array",9,["Array",16,"BitIn"]]],
-          ["out_output_write",["Array",1,["Array",16,"Bit"]]]
-        ]],
-        "instances":{
           "add_all__U10":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
@@ -311,22 +243,92 @@
         },
         "connections":[
           ["add_all__U9.out","add_all__U10.in0"],
-          ["self.buf2_output_read.3","add_all__U10.in1"],
+          ["self.buf1_conv_read.3","add_all__U10.in1"],
           ["add_all__U11.in0","add_all__U10.out"],
-          ["self.buf2_output_read.4","add_all__U11.in1"],
+          ["self.buf1_conv_read.4","add_all__U11.in1"],
           ["add_all__U12.in0","add_all__U11.out"],
-          ["self.buf2_output_read.5","add_all__U12.in1"],
+          ["self.buf1_conv_read.5","add_all__U12.in1"],
           ["add_all__U13.in0","add_all__U12.out"],
-          ["self.buf2_output_read.6","add_all__U13.in1"],
+          ["self.buf1_conv_read.6","add_all__U13.in1"],
           ["add_all__U14.in0","add_all__U13.out"],
-          ["self.buf2_output_read.7","add_all__U14.in1"],
+          ["self.buf1_conv_read.7","add_all__U14.in1"],
           ["add_all__U15.in0","add_all__U14.out"],
-          ["self.buf2_output_read.8","add_all__U15.in1"],
-          ["self.out_output_write.0","add_all__U15.out"],
-          ["self.buf2_output_read.0","add_all__U8.in0"],
-          ["self.buf2_output_read.1","add_all__U8.in1"],
+          ["self.buf1_conv_read.8","add_all__U15.in1"],
+          ["self.buf2_conv_write.0","add_all__U15.out"],
+          ["self.buf1_conv_read.0","add_all__U8.in0"],
+          ["self.buf1_conv_read.1","add_all__U8.in1"],
           ["add_all__U9.in0","add_all__U8.out"],
-          ["self.buf2_output_read.2","add_all__U9.in1"]
+          ["self.buf1_conv_read.2","add_all__U9.in1"]
+        ]
+      },
+      "cu_input":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["in_input_read",["Array",1,["Array",16,"BitIn"]]],
+          ["buf1_input_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "connections":[
+          ["self.in_input_read.0","self.buf1_input_write.0"]
+        ]
+      },
+      "cu_output":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["buf2_output_read",["Array",9,["Array",16,"BitIn"]]],
+          ["out_output_write",["Array",1,["Array",16,"Bit"]]]
+        ]],
+        "instances":{
+          "add_all__U0":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U1":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U2":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U3":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U4":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U5":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U6":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_all__U7":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["self.buf2_output_read.0","add_all__U0.in0"],
+          ["self.buf2_output_read.1","add_all__U0.in1"],
+          ["add_all__U1.in0","add_all__U0.out"],
+          ["self.buf2_output_read.2","add_all__U1.in1"],
+          ["add_all__U2.in0","add_all__U1.out"],
+          ["self.buf2_output_read.3","add_all__U2.in1"],
+          ["add_all__U3.in0","add_all__U2.out"],
+          ["self.buf2_output_read.4","add_all__U3.in1"],
+          ["add_all__U4.in0","add_all__U3.out"],
+          ["self.buf2_output_read.5","add_all__U4.in1"],
+          ["add_all__U5.in0","add_all__U4.out"],
+          ["self.buf2_output_read.6","add_all__U5.in1"],
+          ["add_all__U6.in0","add_all__U5.out"],
+          ["self.buf2_output_read.7","add_all__U6.in1"],
+          ["add_all__U7.in0","add_all__U6.out"],
+          ["self.buf2_output_read.8","add_all__U7.in1"],
+          ["self.out_output_write.0","add_all__U7.out"]
         ]
       }
     },

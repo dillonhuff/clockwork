@@ -6,6 +6,7 @@
 #include "prog_splitting_test.h"
 #include "codegen.h"
 #include "example_progs.h"
+#include "lake_target.h"
 #include "simple_example_progs.h"
 #include "prog.h"
 #include "ubuffer.h"
@@ -11498,6 +11499,28 @@ std::vector<string> verilator_results(const std::string& name) {
   return lines;
 }
 
+int run_verilator_on(const std::string& top_module,
+    const std::string& tb_file,
+    const std::vector<string>& verilog_files) {
+
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
+  assert(verilator_build == 0);
+
+  //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
+  //assert(verilator_d == 0);
+
+  int verilator_run = cmd("./obj_dir/V" + top_module);
+  return verilator_run;
+}
+
+void run_verilator_verilog_tb(const std::string& name) {
+  int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input ./coreir_compute/" + name + "_compute.json --output " + name + "_compute.v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  assert(compute_to_verilog_res == 0);
+
+  int res = run_verilator_on(name, name + "_verilog_tb.cpp", {name + ".v", name + "_verilog_collateral.sv", "./lake_components/dualwithadd/lake_top.sv", name + "_compute.v"});
+  assert(res == 0);
+}
+
 void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
@@ -11505,11 +11528,19 @@ void run_verilator_tb(const std::string& name) {
   int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
   assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
-  assert(verilator_build == 0);
+  int res = run_verilator_on(name,
+      name + "_verilog_tb.cpp",
+      {name + ".v", name + "_verilog_collateral.sv",
+      "./lake_components/dualwithadd/lake_top.sv",
+      //"./lake_components/ASPLOS_designs/bare_dual_port.v",
+      "./lake_components/inner_affine_controller.sv"});
 
-  int verilator_run = cmd("./obj_dir/V" + name);
-  assert(verilator_run == 0);
+  assert(res == 0);
+  //int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/V" + name);
+  //assert(verilator_run == 0);
 }
 
 void generate_verilog_tb(const std::string& name) {
@@ -13316,7 +13347,7 @@ void lake_resnet_test() {
     cout << codegen_c(hsh) << endl;
     cmd("mkdir -p ./lake_controllers/resnet/");
     auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
-    assert(false);
+    //assert(false);
 
   }
 
@@ -13681,9 +13712,9 @@ void lake_identity_stream_SMT_test(int x, int y, string suffix) {
   int app_target_II = 1;
 
   //corresponding to the aggI/O, sramI/O, TBI/O latency
-  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
-          {{"in2buf_vec", "buf2out_vec"}, 2},
-          {{"buf2out_vec", "buf2out"}, 1}});
+  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_agg2sram"}, 1},
+          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 2},
+          {{"buf2out_sram2tb", "buf2out"}, 1}});
 
   auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
   in2buf->add_load("in", "a1, a0");
@@ -14376,6 +14407,8 @@ void coreir_tests() {
 void resnet_test() {
   auto prg = resnet_hc();
   prg.pretty_print();
+  generate_unoptimized_code(prg);
+  //assert(false);
 
   CodegenOptions options;
   options.all_rams = true;
@@ -14428,10 +14461,9 @@ void resnet_test() {
     }
     CoreIR::deleteContext(context);
   }
-  assert(false);
   generate_coreir(opt, buffers_opt, prg, sched_naive);
 #endif
-  assert(false);
+  //assert(false);
 
   //assert(false);
   //cout << "after adding rb" << endl;
@@ -15211,21 +15243,21 @@ void lake_tests() {
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");
   //lake_identity_stream_SMT_test(32, 32, "32x32");
-  //lake_identity_stream_SMT_test(16, 16, "16x16");
+  lake_identity_stream_SMT_test(16, 16, "16x16");
   //assert (false);
   //lake_identity_stream_SMT_test(20, 20, "20x20");
   //double_buffer_test();
   //playground();
   //lake_identity_stream_autovec_test();
   //union_test();
-  //lake_gaussian_autovec_test();
   lake_conv33_autovec_test();
+  lake_gaussian_autovec_test();
   //lake_dual_port_test();
-  //lake_cascade_autovec_test();
-  //lake_harris_autovec_test();
+  lake_cascade_autovec_test();
+  lake_harris_autovec_test();
   //lake_resnet_multitile_test();
-  lake_resnet_test();
-  resnet_test();
+  //lake_resnet_test();
+  //resnet_test();
 }
 
 void halide_camera_pipeline_test() {
@@ -15480,6 +15512,16 @@ uset* op_start_times_domain(prog& prg) {
   return s;
 }
 
+umap* op_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_start_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs[a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
 umap* op_start_times_map(schedule_info& sched, prog& prg) {
   auto start_times = op_start_times(sched, prg);
 
@@ -15938,8 +15980,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
 schedule_info garnet_schedule_info(prog& prg) {
   schedule_info sched;
-  //sched.use_dse_compute = false;
-  sched.use_dse_compute = true;
+  sched.use_dse_compute = false;
+  //sched.use_dse_compute = true;
   for (auto op : prg.all_ops()) {
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
@@ -15982,7 +16024,11 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  //options.rtl_options.use_external_controllers = false;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    //TARGET_TILE_DUAL_SRAM_RAW;
+    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+    //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -16062,6 +16108,15 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     //hw_sched);
   //assert(false);
 
+  //generate_verilog(options,
+      //buffers,
+      //prg,
+      //hw_sched);
+  //cout << "Emitted verilog to " << prg.name << endl;
+  //assert(false);
+    //map<string, UBuffer>& buffers,
+    //prog& prg,
+    //umap* schedmap) {
   generate_coreir(options,
     buffers,
     prg,
@@ -16168,18 +16223,21 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(cascade());
+  //test_programs.push_back(unsharp());
+  test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
-
-  test_programs.push_back(up_sample());
   test_programs.push_back(harris());
-  test_programs.push_back(rom());
-  test_programs.push_back(unsharp());
-  test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(gaussian());
   test_programs.push_back(down_sample());
-  test_programs.push_back(strided_conv());
+  test_programs.push_back(cascade());
+  test_programs.push_back(up_sample());
+
+  // Delayed incorrectly?
+
+  // Compute units gone?
+  //test_programs.push_back(rom());
+  //test_programs.push_back(mini_conv_halide_fixed());
+  //test_programs.push_back(strided_conv());
 
   return test_programs;
 }
@@ -16513,26 +16571,22 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  auto test_programs = stencil_programs();
-  //auto test_programs = all_cgra_programs();
-  //cout << "====== Program classification" << endl;
-  //for (auto prg : test_programs) {
-    //if (!is_rate_matchable(prg)) {
-      //cout << tab(1) << prg.name << " is not rate matchable" << endl;
-      //for (auto b : all_buffers(prg)) {
-        //if (!prg.is_boundary(b)) {
-          //if (is_reduce_buffer(b, prg)) {
-            //cout << tab(2) << "REDUCE: " << b << endl;
-          //} else {
-            //cout << tab(2) << "PC    : " << b << endl;
-          //}
-          //cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
-          //cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
-        //}
-      //}
-    //}
-  //}
+  //prog prg = gaussian();
+  //dsa_writers(prg);
+  //compile_for_garnet_dual_port_mem(prg);
+  //string name = prg.name;
+  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  //assert(to_verilog_res == 0);
+  //string app_type = "dualraw";
+  //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+  //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+  //cmd("cp ./lake_components/ASPLOS_designs/bare_dual_port.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+
   //assert(false);
+
+  auto test_programs = stencil_programs();
 
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
@@ -17062,22 +17116,112 @@ void resnet_auto_unroll() {
   prg.pretty_print();
   prg.sanity_check();
 
+  assert(false);
+
+  generate_unoptimized_code(prg);
+
+  assert(false);
+
+  //infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
+
+  //prg.pretty_print();
+  //prg.sanity_check();
+
+  //sanity_check_all_reads_defined(prg);
+
+  //regression_test(prg);
   //assert(false);
+}
 
-  infer_bounds_and_unroll("hw_output_stencil", {20, 20, 3}, 4, prg);
+void raw_memtile_verilog_test() {
 
+  int max_depth = (1 << 16) - 1;
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
+  isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(0)] }");
+  isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+
+  isl_aff* read_sched = rdaff(ctx, "{ rd[a] -> [(a)] }");
+  isl_aff* read_addr = rdaff(ctx, "{ rd[a] -> [(0)] }");
+  isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+
+  ofstream out("lake_verilog_tile.sv");
+  generate_lake_collateral("lake_verilog_tile", out, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
+  out.close();
+
+  run_verilator_on("lake_verilog_tile",
+        "lake_verilog_tb.cpp",
+        {"./lake_components/dualwithadd/lake_top.sv", "lake_verilog_tile.sv"});
+
+  isl_ctx_free(ctx);
+}
+
+void raw_memtile_verilog_as_delay_test() {
+
+  ofstream out("lake_delay_tile.sv");
+  generate_lake_collateral_delay("lake_delay_tile", out, 17);
+  out.close();
+
+  run_verilator_on("lake_delay_tile",
+        "lake_delay_verilog_tb.cpp",
+        {"./lake_components/dualwithadd/lake_top.sv", "lake_delay_tile.sv"});
+
+  assert(false);
+}
+
+void brighten_blur_asplos_example() {
+  prog prg("brighten_blur");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  auto br = prg.add_nest("y0", 0, 1, "x0", 0, 1)->add_op("br");
+  br->add_load("in", "x0, y0");
+  br->add_store("brighten", "x0, y0");
+
+  auto bl = prg.add_nest("y1", 0, 1, "x1", 0, 1)->add_op("blur");
+  for (int x = 0; x < 2; x++) {
+    for (int y = 0; y < 2; y++) {
+      bl->add_load("brighten", "x1 + " + str(x) + ", y1 + " + str(y));
+    }
+  }
+  bl->add_store("blurred", "x1, y1");
+  cpy("out", "blurred", 2, prg);
+
+  infer_bounds("out", {63, 63}, prg);
   prg.pretty_print();
   prg.sanity_check();
 
-  sanity_check_all_reads_defined(prg);
+  //auto sched = its(prg.optimized_codegen(), prg.whole_iteration_domain());
+  //auto buffers = build_buffers(prg, sched);
 
-  regression_test(prg);
+  schedule_info hwsched = garnet_schedule_info(prg);
+  garnet_dual_port_ram_schedule(hwsched, prg.root, prg);
+  auto sts = op_start_times_map(hwsched, prg);
+  for (auto m : get_maps(sts)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  sts = its(op_times_map(hwsched, prg), prg.whole_iteration_domain());
+  auto buffers = build_buffers(prg, sts);
+
+  //cout << "sts: " << str(sts) << endl;
+  cout << "Buffers..." << endl;
+  for (auto b : buffers) {
+    cout << b.second << endl;
+  }
   assert(false);
 }
 
 void application_tests() {
   lake_tests();
   //resnet_auto_unroll();
+  resnet_auto_unroll();
+  brighten_blur_asplos_example();
+  resnet_auto_unroll();
+  raw_memtile_verilog_test();
+  raw_memtile_verilog_as_delay_test();
+
   infer_bounds_multiple_inputs();
   infer_bounds_16_stage_5x5_conv_test();
   infer_bounds_multi_5x1_stage_negative_conv_test();

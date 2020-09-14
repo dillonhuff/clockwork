@@ -344,6 +344,7 @@ wire [15:0] d_reg__U28_out;
 wire [15:0] d_reg__U29_out;
 wire [15:0] ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_dataout_0;
 wire [15:0] ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_dataout_1;
+wire [15:0] ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_chainin_0_const_in_out;
 wire ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_clk_en_const_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -392,9 +393,11 @@ cwlib_ub__confignull__input_num1__output_num2__width16 ub_padded16_global_wrappe
     .clk_en(ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_clk_en_const_out),
     .clk(clk),
     .datain_0(op_hcompute_padded16_global_wrapper_stencil_write[0]),
+    .chainin_0(ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_chainin_0_const_in_out),
     .dataout_0(ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_dataout_0),
     .dataout_1(ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_dataout_1)
 );
+assign ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_chainin_0_const_in_out = 16'h0000;
 assign ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_49_clk_en_const_out = 1'b1;
 assign op_hcompute_grad_x_stencil_read[5] = d_reg__U27_out;
 assign op_hcompute_grad_x_stencil_read[4] = d_reg__U25_out;
@@ -424,6 +427,7 @@ wire [15:0] d_reg__U22_out;
 wire [15:0] d_reg__U23_out;
 wire [15:0] ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_dataout_0;
 wire [15:0] ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_dataout_1;
+wire [15:0] ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_chainin_0_const_in_out;
 wire ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_clk_en_const_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -472,9 +476,11 @@ cwlib_ub__confignull__input_num1__output_num2__width16 ub_lyy_stencil_op_hcomput
     .clk_en(ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_clk_en_const_out),
     .clk(clk),
     .datain_0(op_hcompute_lyy_stencil_write[0]),
+    .chainin_0(ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_chainin_0_const_in_out),
     .dataout_0(ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_dataout_0),
     .dataout_1(ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_dataout_1)
 );
+assign ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_chainin_0_const_in_out = 16'h0000;
 assign ub_lyy_stencil_op_hcompute_lyy_stencil_2_to_lyy_stencil_op_hcompute_lgyy_stencil_1_12_clk_en_const_out = 1'b1;
 assign op_hcompute_lgyy_stencil_1_read[8] = op_hcompute_lyy_stencil_write[0];
 assign op_hcompute_lgyy_stencil_1_read[7] = d_reg__U18_out;
@@ -501,6 +507,7 @@ wire [15:0] d_reg__U16_out;
 wire [15:0] d_reg__U17_out;
 wire [15:0] ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_dataout_0;
 wire [15:0] ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_dataout_1;
+wire [15:0] ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_chainin_0_const_in_out;
 wire ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_clk_en_const_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -549,9 +556,11 @@ cwlib_ub__confignull__input_num1__output_num2__width16 ub_lxy_stencil_op_hcomput
     .clk_en(ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_clk_en_const_out),
     .clk(clk),
     .datain_0(op_hcompute_lxy_stencil_write[0]),
+    .chainin_0(ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_chainin_0_const_in_out),
     .dataout_0(ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_dataout_0),
     .dataout_1(ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_dataout_1)
 );
+assign ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_chainin_0_const_in_out = 16'h0000;
 assign ub_lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_clk_en_const_out = 1'b1;
 assign op_hcompute_lgxy_stencil_1_read[8] = op_hcompute_lxy_stencil_write[0];
 assign op_hcompute_lgxy_stencil_1_read[7] = d_reg__U12_out;
@@ -578,6 +587,7 @@ wire [15:0] d_reg__U8_out;
 wire [15:0] d_reg__U9_out;
 wire [15:0] ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_dataout_0;
 wire [15:0] ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_dataout_1;
+wire [15:0] ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_chainin_0_const_in_out;
 wire ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_clk_en_const_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -626,9 +636,11 @@ cwlib_ub__confignull__input_num1__output_num2__width16 ub_lxx_stencil_op_hcomput
     .clk_en(ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_clk_en_const_out),
     .clk(clk),
     .datain_0(op_hcompute_lxx_stencil_write[0]),
+    .chainin_0(ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_chainin_0_const_in_out),
     .dataout_0(ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_dataout_0),
     .dataout_1(ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_dataout_1)
 );
+assign ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_chainin_0_const_in_out = 16'h0000;
 assign ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_32_clk_en_const_out = 1'b1;
 assign op_hcompute_lgxx_stencil_1_read[8] = op_hcompute_lxx_stencil_write[0];
 assign op_hcompute_lgxx_stencil_1_read[7] = d_reg__U6_out;
@@ -787,6 +799,7 @@ wire [15:0] d_reg__U4_out;
 wire [15:0] d_reg__U5_out;
 wire [15:0] ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_dataout_0;
 wire [15:0] ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_dataout_1;
+wire [15:0] ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_chainin_0_const_in_out;
 wire ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_clk_en_const_out;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -835,9 +848,11 @@ cwlib_ub__confignull__input_num1__output_num2__width16 ub_cim_stencil_op_hcomput
     .clk_en(ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_clk_en_const_out),
     .clk(clk),
     .datain_0(op_hcompute_cim_stencil_write[0]),
+    .chainin_0(ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_chainin_0_const_in_out),
     .dataout_0(ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_dataout_0),
     .dataout_1(ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_dataout_1)
 );
+assign ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_chainin_0_const_in_out = 16'h0000;
 assign ub_cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_clk_en_const_out = 1'b1;
 assign op_hcompute_cim_output_stencil_read[8] = op_hcompute_cim_stencil_write[0];
 assign op_hcompute_cim_output_stencil_read[7] = d_reg__U0_out;
@@ -862,7 +877,9 @@ endmodule
 module harris (
     input clk,
     input reset,
+    output hw_output_stencil_op_hcompute_hw_output_stencil_write_en,
     output [15:0] hw_output_stencil_op_hcompute_hw_output_stencil_write [0:0],
+    output padded16_stencil_op_hcompute_padded16_global_wrapper_stencil_read_valid,
     input [15:0] padded16_stencil_op_hcompute_padded16_global_wrapper_stencil_read [0:0]
 );
 wire [15:0] _U30_out;
@@ -1125,6 +1142,8 @@ padded16_global_wrapper_stencil_ub padded16_global_wrapper_stencil (
     .op_hcompute_grad_y_stencil_read(padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_read),
     .op_hcompute_padded16_global_wrapper_stencil_write(padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_write)
 );
+assign hw_output_stencil_op_hcompute_hw_output_stencil_write_en = 1'b0;
 assign hw_output_stencil_op_hcompute_hw_output_stencil_write[0] = op_hcompute_hw_output_stencil_hw_output_stencil_op_hcompute_hw_output_stencil_write[0];
+assign padded16_stencil_op_hcompute_padded16_global_wrapper_stencil_read_valid = 1'b0;
 endmodule
 

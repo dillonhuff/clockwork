@@ -550,25 +550,6 @@ std::string str(isl_multi_union_pw_aff* const mupa) {
   return r;
 }
 
-isl_map* linear_address_map(isl_set* s) {
-  string domain = name(s);
-  int dim = num_dims(s);
-  vector<string> var_names;
-  vector<string> exprs;
-  isl_val* stride = one(ctx(s));
-  for (int i = 0; i < dim; i++) {
-    string var = "d" + str(i);
-    var_names.push_back(var);
-    string stridestr = str(stride);
-    exprs.push_back(stridestr + "*" + var);
-    auto interval = project_all_but(s, i);
-    isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
-    stride = mul(stride, extend);
-  }
-  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
-  return isl_map_read_from_str(ctx(s), map_str.c_str());
-}
-
 isl_map* linear_address_map_lake(isl_set* s) {
   string domain = name(s);
   int dim = num_dims(s);
@@ -762,7 +743,7 @@ isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, std::vector<string> sched_vec
 }
 
 isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, std::vector<string> sched_vec, string op_name) {
-    gen_hw_sched_from_sched_vec(ctx, sched_vec, {"root", "i1"}, op_name);
+    return gen_hw_sched_from_sched_vec(ctx, sched_vec, {"root", "i1"}, op_name);
 }
 
 
@@ -3484,4 +3465,29 @@ void release(isl_union_map* m) {
 
 void release(isl_union_pw_qpolynomial* m) {
   isl_union_pw_qpolynomial_free(m);
+}
+
+isl_map* linear_address_map(isl_set* s) {
+  assert(s != nullptr);
+
+  string domain = name(s);
+  int dim = num_dims(s);
+  vector<string> var_names;
+  vector<string> exprs;
+  isl_val* stride = one(ctx(s));
+  for (int i = 0; i < dim; i++) {
+    string var = "d" + str(i);
+    var_names.push_back(var);
+    string stridestr = str(stride);
+    exprs.push_back(stridestr + "*" + var);
+    auto interval = project_all_but(s, i);
+    isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
+    stride = mul(stride, extend);
+  }
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
+  return isl_map_read_from_str(ctx(s), map_str.c_str());
+}
+
+isl_map* to_map(isl_aff* s) {
+  return isl_map_from_aff(cpy(s));
 }

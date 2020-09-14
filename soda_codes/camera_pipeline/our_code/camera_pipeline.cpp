@@ -1664,6 +1664,7 @@ for (int c1 = -3; c1 <= 60; c1 += 1)
   */
 	for (int c1 = -3; c1 <= 60; c1 += 1)
 	  for (int c2 = -3; c2 <= 60; c2 += 1) {
+#pragma HLS pipeline II=1
 	    op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, 0, c1, c2);
 	    if (c1 >= 1 && c2 >= 1) {
 	      op_hcompute_denoised_1_stencil(hw_input_global_wrapper_stencil /* buf name */, denoised_1_stencil, 0, c1 - 2, c2 - 2);
