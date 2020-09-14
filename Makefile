@@ -62,7 +62,7 @@ else
 endif
 
 %.o: %.cpp $(LIB_HEADER_FILES)
-	$(CXX) $(CXX_FLAGS) -g -c -o $@ $<
+	$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
 coreirlib: libcoreir-cwlib.$(LIB_EXT)
 
