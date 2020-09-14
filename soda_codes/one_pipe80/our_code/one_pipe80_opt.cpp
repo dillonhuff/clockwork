@@ -771,6 +771,7 @@ inline void one_pipe8_one_pipe8_update_0_write_bundle_write(hw_uint<128>& one_pi
 	one_pipe8_one_pipe8_update_0_write7_write(one_pipe8_one_pipe8_update_0_write7_res, one_pipe8, d0, d1, dynamic_address);
 }
 
+// Total re-use buffer capacity: 0 bits
 
 
 // Operation logic

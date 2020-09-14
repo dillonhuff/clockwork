@@ -30,12 +30,12 @@ float to_float(const hw_uint<32>& in) {
 }
 
 static inline
-hw_uint<32>
-max_pool_2x2(const hw_uint<32*4>& in) {
-  hw_uint<32> v0 = in.extract<0, 31>();
-  hw_uint<32> v1 = in.extract<32, 63>();
-  hw_uint<32> v2 = in.extract<64, 95>();
-  hw_uint<32> v3 = in.extract<96, 127>();
+hw_uint<16>
+max_pool_2x2(const hw_uint<16*4>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  hw_uint<16> v2 = in.extract<32, 47>();
+  hw_uint<16> v3 = in.extract<48, 63>();
   return max(max(v0, v1), max(v2, v3));
 }
 
@@ -164,9 +164,10 @@ template<typename T>
 static inline
 T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
 
+  //return dark;
   return (bright_weight*bright + dark_weight*dark) / (bright_weight + dark_weight);
   //return (bright_weight*bright + dark_weight*dark);
-  //return (bright + dark);
+  //return (bright + dark) / 2;
 }
 
 template<typename T>

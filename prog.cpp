@@ -1,5 +1,4 @@
 #include "prog.h"
-
 #include "codegen.h"
 #include "app.h"
 #include "rdai_collateral.h"
@@ -608,6 +607,8 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
   }
 
   out << tab(1) << "size_t total_size_bytes = 0;" << endl;
+  out << tab(1) << "size_t total_size_bytes_read = 0;" << endl;
+  out << tab(1) << "size_t total_size_bytes_written = 0;" << endl;
   for (auto eb : edge_buffers(buffers, prg)) {
     string edge_bundle = eb.second;
     string buf = eb.first;
@@ -616,6 +617,13 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
     out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
     out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;
+    if (prg.is_output(buf)) {
+      out << tab(1) << "total_size_bytes_written += " << edge_bundle << "_size_bytes;" << endl;
+    }
+
+    if (prg.is_input(buf)) {
+      out << tab(1) << "total_size_bytes_read += " << edge_bundle << "_size_bytes;" << endl;
+    }
   }
   out << endl;
 
@@ -1256,22 +1264,15 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
 
   ofstream out(name + "_wrapper.cpp");
   vector<string> decls;
-  //for (auto consumed : op->consume_locs) {
-    //decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
-  //}
 
   for (auto consumed : op->consume_locs_pair) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
 
-  //for (auto consumed : op->produce_locs) {
   for (auto consumed : op->buffers_written()) {
     if (contains_key(consumed, buffers)) {
       decls.push_back(buffers.at(consumed).bundle_type_string(op->name) + "& " + consumed);
     }
-    //if (contains_key(consumed.first, buffers)) {
-      //decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
-    //}
   }
   out << "void " << name << sep_list(decls, "(", ")", ", ") << "{}";
   out.close();
@@ -1287,7 +1288,6 @@ isl_map* prog::read_map(op* op, const std::string& buf) {
       for (auto sec_pair : consumed.second) {
         if (sec_pair.first == "") {
           cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
-
         } else {
           cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
         }
@@ -1350,11 +1350,51 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
   for (auto op : all_op_vec) {
 
-    //cout << "# of produced locations: " << op->produce_locs.size() << endl;
-    for (auto produced : op->produce_locs) {
-      string name = produced.first;
+    //for (auto produced : op->produce_locs) {
+      //string name = produced.first;
+
+      //if (!contains_key(name, buffers)) {
+        //UBuffer buf;
+        //buf.name = name;
+        //buf.ctx = prg.ctx;
+        //if (contains_key(name, prg.buffer_port_widths)) {
+          //buf.port_widths = map_find(name, prg.buffer_port_widths);
+        //}
+        //buffers[name] = buf;
+      //}
+
+      //UBuffer& buf = buffers.at(name);
+
+      //string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      //buf.port_bundles[op->name + "_write"].push_back(pt_name);
+
+      //assert(contains_key(op, domains));
+
+      //// Map from??
+      //isl_map* produced_here =
+        //its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
+
+      //cout << "\tAdding input port: " << pt_name << endl;
+      //cout << "\t\tProduced:: " << str(produced_here) << endl;
+      //buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
+
+      //if (op->dynamic_writes(name)) {
+        //buf.dynamic_ports.insert(pt_name);
+      //}
+
+      //vector<string> inpt = buf.get_in_ports();
+      //cout << "current in port name: " << endl;
+      //for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
+      //cout << endl;
+
+      //usuffix++;
+    //}
+
+    for (auto consumed : op->produce_locs) {
+      string name = consumed.first;
 
       if (!contains_key(name, buffers)) {
+        cout << "Creating ports for op: " << name << endl;
         UBuffer buf;
         buf.name = name;
         buf.ctx = prg.ctx;
@@ -1369,22 +1409,36 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
       buf.port_bundles[op->name + "_write"].push_back(pt_name);
 
+      string cond = "{ ";
+      for (auto sec_pair : consumed.second) {
+        if (sec_pair.first == "") {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+        } else {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+      }
+      cond = cond.substr(0, cond.length() - 2);
+      cond = cond + string(" }");
+
+      cout << "cond = " << cond.c_str() << endl;
+      isl_map* consumed_here =
+        its(isl_map_read_from_str(buf.ctx, cond.c_str()), cpy(domains.at(op)));
+
+      assert(consumed_here != nullptr);
+
       assert(contains_key(op, domains));
 
-      // Map from??
-      isl_map* produced_here =
-        its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
+      cout << "\tAdding output port: " << pt_name << endl;
+      cout << "\t\tConsumed: " << str(consumed_here) << endl;
+      buf.add_in_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
-      cout << "\tAdding input port: " << pt_name << endl;
-      cout << "\t\tProduced:: " << str(produced_here) << endl;
-      buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
-
-      if (op->dynamic_writes(name)) {
+      if (op->dynamic_reads(name)) {
         buf.dynamic_ports.insert(pt_name);
       }
 
       vector<string> inpt = buf.get_in_ports();
-      cout << "current in port name: " << endl;
+      cout << "current out port name: " << endl;
       for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
       cout << endl;
 
@@ -1817,14 +1871,6 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
   std::set<string> done;
   vector<string> buf_srcs;
 
-  //for (auto p : op->consume_locs) {
-    //auto buf_name = p.first;
-    //if (!elem(buf_name, done)) {
-      //buf_srcs.push_back(buf_name);
-      //done.insert(buf_name);
-    //}
-  //}
-
   for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
@@ -1833,9 +1879,7 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
     }
   }
 
-  //for (auto p : op->produce_locs) {
   for (auto p : op->buffers_written()) {
-    //auto buf_name = p.first;
     auto buf_name = p;
     if (!elem(buf_name, done)) {
       buf_srcs.push_back(buf_name);
@@ -1848,7 +1892,6 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   vector<string> incoming;
   std::set<string> done;
-  //for (auto p : op->produce_locs) {
   for (auto p : op->buffers_written()) {
     //auto buf_name = p.first;
     auto buf_name = p;
@@ -1878,7 +1921,6 @@ vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   std::set<string> done;
   vector<string> buf_srcs;
-  //for (auto p : op->consume_locs) {
   for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
@@ -1896,7 +1938,6 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
     }
   }
 
-  //for (auto p : op->produce_locs) {
   for (auto p : op->buffers_written()) {
     //auto buf_name = p.first;
     auto buf_name = p;
@@ -1948,7 +1989,6 @@ compute_kernel generate_compute_op(
 
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-  //vector<pair<string, string> > in_buffers;
   vector<pair<string, vector< pair< string, string > > > > in_buffers;
   std::set<string> distinct;
   for (auto con : op->consume_locs_pair) {
@@ -2022,7 +2062,6 @@ compute_kernel generate_compute_op(
 
   cout << "finding out buffers" << endl;
   std::set<string> out_buffers;
-  //for (auto con : op->produce_locs) {
   for (auto con : op->buffers_written()) {
     out_buffers.insert(con);
     //out_buffers.insert(con.first);
@@ -2963,23 +3002,11 @@ std::set<std::string> get_kernels(prog& prg) {
 
 std::vector<piecewise_address> addrs_written(op* p, const std::string& buffer) {
   return p->write_addrs(buffer);
-  //vector<piecewise_address> addrs;
-  //for (auto b : p->produce_locs) {
-    //if (b.first == buffer) {
-      //addrs.push_back({{"", b.second}});
-    //}
-  //}
-  //return addrs;
 }
 
 std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer) {
   vector<piecewise_address> addrs;
   concat(addrs, addrs_written(p, buffer));
-  //for (auto b : p->produce_locs) {
-    //if (b.first == buffer) {
-      //addrs.push_back({{"", b.second}});
-    //}
-  //}
 
   for (auto b : p->consume_locs_pair) {
     if (b.first == buffer) {
@@ -3270,9 +3297,6 @@ std::set<string> buffers_written(op* p) {
   for (auto b : p->buffers_written()) {
     bufs.insert(b);
   }
-  //for (auto b : p->produce_locs) {
-    //bufs.insert(b.first);
-  //}
   return bufs;
 }
 
@@ -3783,70 +3807,48 @@ op* prog::merge_ops(const std::string& loop) {
 void ir_node::copy_memory_operations_from(op* other) {
   assert(!other->is_loop);
 
+  //for (auto pl : other->produce_locs) {
+    //if (!elem(remove_whitespace(pl), produce_locs)) {
+      ////cout << pl.first << ", " << pl.second << " is not one of" << endl;
+      ////for (auto p : produce_locs) {
+        ////cout << tab(1) << p.first << ", " << p.second << endl;
+      ////}
+      //produce_locs.push_back(remove_whitespace(pl));
+    //}  else {
+    //}
+  //}
+
   for (auto pl : other->produce_locs) {
-    if (!elem(remove_whitespace(pl), produce_locs)) {
-      cout << pl.first << ", " << pl.second << " is not one of" << endl;
-      for (auto p : produce_locs) {
-        cout << tab(1) << p.first << ", " << p.second << endl;
-      }
-      produce_locs.push_back(remove_whitespace(pl));
-    }  else {
+    pair<string, piecewise_address> simpl{pl.first, remove_whitespace(pl.second)};
+    if (!elem(simpl, produce_locs)) {
+      produce_locs.push_back(simpl);
     }
   }
 
   concat(dynamic_store_addresses, other->dynamic_store_addresses);
+
   for (auto pl : other->consume_locs_pair) {
     pair<string, piecewise_address> simpl{pl.first, remove_whitespace(pl.second)};
     if (!elem(simpl, consume_locs_pair)) {
       consume_locs_pair.push_back(simpl);
     }
   }
-  //concat(consume_locs_pair, other->consume_locs_pair);
   concat(dynamic_load_addresses, other->dynamic_load_addresses);
 }
 
-prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
-	prog extracted;
-	string prg_name = "Extracted_";
-	for(auto g : group){
-	prg_name += g + "_";
-	}
-	extracted.name = prg_name;
-
-	for(auto kernel : topologically_sort_kernels(original)){
-		if(elem(kernel, group)){
-			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
-			for(auto child : original.find_loop(kernel)->children){
-				deep_copy_child(kernel_copy, child, original);
-			}
-		}
-	}
-	cout << "Programs copied" << endl;
-
-	std::set<string> all_consumed_buffers = get_consumed_buffers(group, original);
-	std::set<string> all_produced_buffers = get_produced_buffers(group, original);
-	for(auto consumed : all_consumed_buffers){
-		if(!elem(consumed, all_produced_buffers)){
-			extracted.add_input(consumed);
-			cout << "Input added: " << consumed << endl;
-			 extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
-			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
-		}
-	}
-
-	for(auto produced : all_produced_buffers){
-		if(!elem(produced, all_consumed_buffers)){
-			extracted.add_output(produced);
-			cout << "Output added: " << produced << endl;
-			extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
-			cout << "Output width: " << extracted.buffer_port_widths[produced] << endl;
-		}
-	}
-
-	return extracted;
+vector<op*> surrounding_vars_ops(op* loop, prog& prg) {
+  assert(loop != nullptr);
+  vector<op*> surrounding;
+  op* current = prg.root;
+  while (current != loop) {
+    surrounding.push_back(current);
+    current = current->container_child(loop);
+  }
+  return surrounding;
 }
 
 vector<string> surrounding_vars(op* loop, prog& prg) {
+  assert(loop != nullptr);
   vector<string> surrounding;
   op* current = prg.root;
   while (current != loop) {
@@ -3918,8 +3920,11 @@ replace_variable(const address& addr, const std::string& var, const int v) {
 void ir_node::replace_variable(const std::string& var, const std::string& val) {
 
   for (auto& addr : produce_locs) {
-    addr.second =
-      ::replace_variable(addr.second, var, val);
+    piecewise_address pw;
+    for (auto& comp : addr.second) {
+      pw.push_back({comp.first, ::replace_variable(comp.second, var, val)});
+    }
+    addr.second = pw;
   }
 
   for (auto& addr : consume_locs_pair) {
@@ -3934,8 +3939,11 @@ void ir_node::replace_variable(const std::string& var, const std::string& val) {
 void ir_node::replace_variable(const std::string& var, const int val) {
 
   for (auto& addr : produce_locs) {
-    addr.second =
-      ::replace_variable(addr.second, var, val);
+    piecewise_address pw;
+    for (auto& comp : addr.second) {
+      pw.push_back({comp.first, ::replace_variable(comp.second, var, val)});
+    }
+    addr.second = pw;
   }
 
   for (auto& addr : consume_locs_pair) {
@@ -3961,7 +3969,6 @@ void unroll_reduce_loops(prog& prg) {
       return map_find(v, levels);
       });
 
-  //assert(false);
   cout << "Starting to unroll..." << endl;
   for (auto v : rvars) {
     unroll(prg, v);
@@ -4467,6 +4474,83 @@ std::set<op*> find_readers(const string& buff, prog& prg){
 	return readers;
 }
 
+
+std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group){
+
+	std::vector<string> topologically_sorted_kernels = topologically_sort_kernels(prg);
+	std::set<std::set<string>> groups;
+	std::set<string> current_group;
+	int current_group_cost = 0;
+
+	assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
+
+	cout << "Topologically sorted kernels:" << endl;
+	for(auto kernel : topologically_sorted_kernels){
+		cout << kernel << endl;
+		if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
+			groups.insert(current_group);
+			current_group = {kernel};
+			current_group_cost = map_find(kernel, kernel_costs);
+		} else {
+			current_group.insert({kernel});
+			current_group_cost += map_find(kernel, kernel_costs);
+		}
+	}
+
+	groups.insert(current_group);
+
+	// Sanity check
+	int num_kernels_in_groups = 0;
+	for (auto g : groups) {
+		num_kernels_in_groups += g.size();
+	}
+
+	assert(num_kernels_in_groups == get_kernels(prg).size());
+
+	return groups;
+}
+
+
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
+	prog extracted;
+	string prg_name = "Extracted_";
+	for(auto g : group){
+	prg_name += g + "_";
+	}
+	extracted.name = prg_name;
+
+	for(auto kernel : topologically_sort_kernels(original)){
+		if(elem(kernel, group)){
+			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
+			for(auto child : original.find_loop(kernel)->children){
+				deep_copy_child(kernel_copy, child, original);
+			}
+		}
+	}
+	cout << "Programs copied" << endl;
+
+	std::set<string> all_consumed_buffers = get_consumed_buffers(group, original);
+	std::set<string> all_produced_buffers = get_produced_buffers(group, original);
+	for(auto consumed : all_consumed_buffers){
+		if(!elem(consumed, all_produced_buffers)){
+			extracted.add_input(consumed);
+			cout << "Input added: " << consumed << endl;
+			extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
+			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
+		}
+	}
+
+	for(auto produced : all_produced_buffers){
+		if(!elem(produced, all_consumed_buffers)){
+			extracted.add_output(produced);
+			cout << "Output added: " << produced << endl;
+			extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
+			cout << "Output width: " << extracted.buffer_port_widths[produced] << endl;
+		}
+	}
+
+	return extracted;
+}
 
 void release(ir_node* op) {
   delete op;

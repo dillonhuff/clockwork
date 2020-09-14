@@ -67,7 +67,9 @@ struct CodegenOptions {
   ScheduleAlgorithm scheduling_algorithm;
   bool ignore_top_level_inter_deps;
 
+  banking_strategy default_banking_strategy;
   std::map<string, banking_strategy> banking_strategies;
+
   int num_pipelines;
 
   RTLOptions rtl_options;
@@ -83,6 +85,7 @@ struct CodegenOptions {
   use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
   scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
+  default_banking_strategy({"exhaustive"}),
   ignore_top_level_inter_deps(false),
   num_pipelines(1)
   {}

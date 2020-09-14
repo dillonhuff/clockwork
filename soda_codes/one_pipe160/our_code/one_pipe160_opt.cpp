@@ -1491,6 +1491,7 @@ inline void one_pipe16_one_pipe16_update_0_write_bundle_write(hw_uint<256>& one_
 	one_pipe16_one_pipe16_update_0_write15_write(one_pipe16_one_pipe16_update_0_write15_res, one_pipe16, d0, d1, dynamic_address);
 }
 
+// Total re-use buffer capacity: 0 bits
 
 
 // Operation logic

@@ -48,7 +48,8 @@ struct ir_node {
   // Operation fields
   std::string name;
   // Locations written
-  std::vector<pair<buffer_name, address> > produce_locs;
+  //std::vector<pair<buffer_name, address> > produce_locs;
+  std::vector<pair<buffer_name, piecewise_address> > produce_locs;
   std::vector<dynamic_address> dynamic_store_addresses;
 
   // Locations read
@@ -110,9 +111,17 @@ struct ir_node {
       const std::string& buf) {
     for (auto& b : produce_locs) {
       if (b.first == buf) {
-        b.second = prefix + ", " + b.second;
+        for (auto& p : b.second) {
+          p.second = prefix + ", " + p.second;
+        }
+
       }
     }
+    //for (auto& b : produce_locs) {
+      //if (b.first == buf) {
+        //b.second = prefix + ", " + b.second;
+      //}
+    //}
   }
 
   void add_prefix_to_reads(const std::string& prefix,
@@ -162,17 +171,18 @@ struct ir_node {
 
   vector<piecewise_address> write_addrs() const {
     vector<piecewise_address> addrs;
-    for (auto l : produce_locs) {
-      addrs.push_back({l});
+    for (auto l : produces_pair()) {
+      addrs.push_back(l.second);
     }
     return addrs;
   }
 
   vector<piecewise_address> write_addrs(const std::string& buf) const {
     vector<piecewise_address> addrs;
-    for (auto l : produce_locs) {
+    for (auto l : produces_pair()) {
       if (l.first == buf) {
-        addrs.push_back({{"", l.second}});
+        addrs.push_back(l.second);
+        //addrs.push_back({{"", l.second}});
       }
     }
     return addrs;
@@ -208,7 +218,7 @@ struct ir_node {
 
   std::set<string> buffers_written() const {
     std::set<string> written;
-    for (auto l : produce_locs) {
+    for (auto l : produces_pair()) {
       written.insert(l.first);
     }
     return written;
@@ -374,6 +384,7 @@ struct ir_node {
   }
 
   op* container_child(op* source) {
+    assert(source != nullptr);
     for (auto c : children) {
       if (source == c) {
         return c;
@@ -557,6 +568,40 @@ struct ir_node {
 
   void add_dynamic_store(const std::string& buf,
       const std::string& addr_table,
+      const vector<std::string>& table_offset) {
+    //add_load(addr_table, table_offset);
+    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
+    //add_store(buf, "0");
+  }
+
+  void add_dynamic_load(const std::string& buf,
+      const std::string& addr_table,
+      const vector<std::string>& table_offset) {
+    //add_load(addr_table, table_offset);
+    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
+    //add_load(buf, "0");
+  }
+
+  void add_dynamic_store(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset0,
+      const std::string& table_offset1) {
+    //add_load(addr_table, table_offset);
+    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
+    //add_store(buf, "0");
+  }
+
+  void add_dynamic_load(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset0,
+      const std::string& table_offset1) {
+    //add_load(addr_table, table_offset);
+    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
+    //add_load(buf, "0");
+  }
+
+  void add_dynamic_store(const std::string& buf,
+      const std::string& addr_table,
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
     dynamic_load_addresses.push_back({buf, addr_table, table_offset});
@@ -621,12 +666,28 @@ struct ir_node {
    return consume_locs_pair;
   }
 
+  std::vector<pair<buffer_name, piecewise_address> > produces_pair() const {
+    return produce_locs;
+    //std::vector<pair<buffer_name, piecewise_address> > ps;
+    //for (auto p : produce_locs) {
+      //buffer_name b = p.first;
+      //address addr = p.second;
+      ////pair<buffer_name, address> pr{b, addr};
+      //pair<string, address> pr{"", addr};
+      //piecewise_address paddr{pr};
+      //pair<buffer_name, piecewise_address> psa{b, paddr};
+      //ps.push_back(psa);
+    //}
+    //return ps;
+  }
+
   vector<string> produces() const {
     vector<string> ps;
-    for (auto p : produce_locs) {
-      ps.push_back(p.first + "[" + p.second + "]");
+    for (auto p : produces_pair()) {
+      ps.push_back(p.first + str(p.second));
     }
     return ps;
+
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
@@ -647,7 +708,8 @@ struct ir_node {
 
   void add_store(const std::string& b, const std::string& loc) {
     assert(!is_loop);
-    produce_locs.push_back({b, loc});
+    //produce_locs.push_back({b, loc});
+    produce_locs.push_back({b, {{"", loc}}});
   }
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
@@ -1467,6 +1529,9 @@ std::set<string> get_produced_buffers(const std::string& kernel, prog& original)
 std::set<string> get_consumed_buffers(const std::set<std::string>& group, prog& original);
 std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
 
+
+std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
+
 void generate_verilog(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1482,6 +1547,7 @@ void all_register_files(prog& prg, CodegenOptions& options);
 int compile_compute(const std::string& name);
 
 vector<string> surrounding_vars(op* loop, prog& prg);
+vector<op*> surrounding_vars_ops(op* loop, prog& prg);
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
 
 
@@ -1498,6 +1564,9 @@ map<string, int> get_variable_levels(prog& prg);
 
 std::set<string> all_buffers(prog& prg);
 std::set<op*> find_readers(const string& buff, prog& prg);
+
+std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group);
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
 
 void release(ir_node* op);
 void release(prog& prg);

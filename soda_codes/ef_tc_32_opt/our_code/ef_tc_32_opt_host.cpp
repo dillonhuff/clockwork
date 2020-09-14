@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
 
-  int num_epochs = 1;
+  int num_epochs = 256;
 
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
@@ -83,32 +83,35 @@ unsigned long start, end, nsduration;
 cl::Event event;
 
   std::cout << "Starting kernel" << std::endl;
-  OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
-  OCL_CHECK(err, err = event.wait());
-  end =
-OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
-start = OCL_CHECK(err,
-event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
-nsduration = end - start;
+  for (int r = 0; r < 1000; r++) {
+    std::cout << "r = " << r << std::endl;
+    OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
+    OCL_CHECK(err, err = event.wait());
+    end =
+      OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
+    start = OCL_CHECK(err,
+        event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
+    nsduration = end - start;
+    double dnsduration = ((double)nsduration);
+    double dsduration = dnsduration / ((double)1000000000);
+    double dbytes = total_size_bytes;
+    double bpersec = (dbytes / dsduration);
+    double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+    std::cout << "bytes       = " << dbytes << std::endl;
+    std::cout << "bytes / sec = " << bpersec << std::endl;
+    std::cout << "GB / sec    = " << gbpersec << std::endl;
+    printf("Execution time = %f (sec) \n", dsduration);
+  }
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({ef_tc_32_update_0_write_pipe0_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
-  double dnsduration = ((double)nsduration);
-  double dsduration = dnsduration / ((double)1000000000);
-  double dbytes = total_size_bytes;
-  double bpersec = (dbytes / dsduration);
-  double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
-  std::cout << "bytes       = " << dbytes << std::endl;
-  std::cout << "bytes / sec = " << bpersec << std::endl;
-  std::cout << "GB / sec    = " << gbpersec << std::endl;
-  printf("Execution time = %f (sec) \n", dsduration);
-{
-    std::ofstream regression_result("ef_tc_32_update_0_write_pipe0_accel_result.csv");
-    for (int i = 0; i < ef_tc_32_update_0_write_pipe0_DATA_SIZE; i++) {
-      regression_result << ((uint16_t*) (ef_tc_32_update_0_write_pipe0.data()))[i] << std::endl;
-    }
-}
+//{
+    //std::ofstream regression_result("ef_tc_32_update_0_write_pipe0_accel_result.csv");
+    //for (int i = 0; i < ef_tc_32_update_0_write_pipe0_DATA_SIZE; i++) {
+      //regression_result << ((uint16_t*) (ef_tc_32_update_0_write_pipe0.data()))[i] << std::endl;
+    //}
+//}
 
   return 0;
 }

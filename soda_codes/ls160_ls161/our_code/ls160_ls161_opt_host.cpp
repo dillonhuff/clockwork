@@ -118,7 +118,11 @@ nsduration = end - start;
   double dbytes = total_size_bytes;
   double bpersec = (dbytes / dsduration);
   double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+<<<<<<< HEAD
+  std::cout << "byts = " << dbytes << std::endl;
+=======
   std::cout << "bytes       = " << dbytes << std::endl;
+>>>>>>> af96302a199aa4af6ca5d6af777f72b0cead8cbb
   std::cout << "bytes / sec = " << bpersec << std::endl;
   std::cout << "GB / sec    = " << gbpersec << std::endl;
   printf("Execution time = %f (sec) \n", dsduration);
