@@ -1814,7 +1814,7 @@ umap* flatten_set_trans_with_dim(isl_set* dom, int dim_from_inner) {
 
 umap* flatten_map_domain_trans_with_dim(isl_map* s, int dim_from_inner) {
     auto dom = domain(s);
-    flatten_set_trans_with_dim(dom, dim_from_inner);
+    return flatten_set_trans_with_dim(dom, dim_from_inner);
 }
 
 umap* flatten_map_domain_trans(isl_map* s, int ii) {
