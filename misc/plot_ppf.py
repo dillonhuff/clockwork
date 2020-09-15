@@ -23,9 +23,12 @@ def autolabel(rects):
     """Attach a text label above each bar in *rects*, displaying its height."""
     for rect in rects:
         height = rect.get_height()
+        horizontal_offset = 0
+        if height < 0.01:
+            horizontal_offset = 2
         ax.annotate('{}'.format(height),
                     xy=(rect.get_x() + rect.get_width() / 2, height),
-                    xytext=(0, 1),  # 3 points vertical offset
+                    xytext=(horizontal_offset, 1),  # 3 points vertical offset
                     textcoords="offset points",
                     ha='center', va='bottom',
                     zorder=20)
@@ -122,13 +125,6 @@ ax.legend()
 
 for c in rects:
     autolabel(c)
-# autolabel(rects1)
-# autolabel(rects2)
-# autolabel(rects3)
-# autolabel(rects4)
-
-# fig.tight_layout()
-# set_size(5, 3)
 
 plt.show()
 fig.savefig('clockwork_cpu_theoretical_peak_ppf.eps', format='eps')
