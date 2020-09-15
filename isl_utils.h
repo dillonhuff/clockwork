@@ -374,12 +374,12 @@ isl_union_map* flatten_umap_domain(isl_ctx* ctx, isl_union_map* const um, map<st
 isl_union_map* remove_dep_domain_name(umap* um, string name);
 
 
-umap* flatten_umap_domain_with_dim_from_outer(umap* um, int dim_from_outer);
+//umap* flatten_umap_domain_with_dim_from_outer(umap* um, int dim_from_outer);
 isl_stat flatten_map_domain(isl_map* s, void* user);
 umap* flatten_map_domain_with_ii(isl_map* s, int ii);
 umap* flatten_map_domain_with_dim(umap* s, int dim_id);
 umap* flatten_map_domain_trans(isl_map* s, int ii);
-umap* flatten_map_domain_trans_with_dim(isl_map* s, int dim_from_inner);
+//umap* flatten_map_domain_trans_with_dim(isl_map* s, int dim_from_inner);
 isl_stat umap_lex_lt(isl_map* s,  void* user);
 isl_bool with_domain_name(isl_map* m, void* user);
 isl_map* retrive_map_domain_dim(isl_map*, isl_set*);
