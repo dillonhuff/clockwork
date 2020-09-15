@@ -9478,13 +9478,13 @@ void naive_implementations() {
   exposure_fusion_fpga_test("ef_fpga");
   gauss_pyramid_fpga_test("gp_fpga");
   max_pooling_test("mp25");
-  assert(false);
+  //assert(false);
 }
 
 void iccad_tests() {
-  App ef = ef_cartoon("ef_sm");
-  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
-  assert(false);
+  //App ef = ef_cartoon("ef_sm");
+  //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  //assert(false);
   exposure_fusion_iccad_apps("ef_fpga");
   gauss_pyramid_iccad_apps("gp_fpga");
   gauss_pyramid_test("gp_fpga");
@@ -9493,7 +9493,7 @@ void iccad_tests() {
 
   App gp = gauss_pyramid_fpga("gp_sm");
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
-  assert(false);
+  //assert(false);
   
 
   gauss_pyramid_fpga_test("gp_fpga");
