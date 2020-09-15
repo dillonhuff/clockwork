@@ -1712,27 +1712,27 @@ umap* flatten_map_domain_with_ii(isl_map* s, int ii) {
     return new_sched;
 }
 
-umap* flatten_map_domain_with_dim(umap* s, int dim_from_inner) {
-    auto trans = flatten_map_domain_trans_with_dim(to_map(s), dim_from_inner);
-    auto new_sched = dot(inv(trans), s);
-    return new_sched;
-}
+//umap* flatten_map_domain_with_dim(umap* s, int dim_from_inner) {
+    //auto trans = flatten_map_domain_trans_with_dim(to_map(s), dim_from_inner);
+    //auto new_sched = dot(inv(trans), s);
+    //return new_sched;
+//}
 
-umap* flatten_map_domain_with_dim_from_outer(isl_map* s, int dim_from_outer) {
-    int dom_dim = get_in_dim(s);
-    auto trans = flatten_map_domain_trans_with_dim(s, dom_dim - dim_from_outer);
-    auto new_sched = dot(inv(trans), s);
-    return new_sched;
-}
+//umap* flatten_map_domain_with_dim_from_outer(isl_map* s, int dim_from_outer) {
+    //int dom_dim = get_in_dim(s);
+    //auto trans = flatten_map_domain_trans_with_dim(s, dom_dim - dim_from_outer);
+    //auto new_sched = dot(inv(trans), s);
+    //return new_sched;
+//}
 
-umap* flatten_umap_domain_with_dim_from_outer(umap* um, int dim_from_outer) {
-    umap* ret = isl_union_map_read_from_str(ctx(um), "{}");
-    for (auto m : get_maps(um)) {
-        auto flatten_m = flatten_map_domain_with_dim_from_outer(m, dim_from_outer);
-        ret = unn(ret, flatten_m);
-    }
-    return ret;
-}
+//umap* flatten_umap_domain_with_dim_from_outer(umap* um, int dim_from_outer) {
+    //umap* ret = isl_union_map_read_from_str(ctx(um), "{}");
+    //for (auto m : get_maps(um)) {
+        //auto flatten_m = flatten_map_domain_with_dim_from_outer(m, dim_from_outer);
+        //ret = unn(ret, flatten_m);
+    //}
+    //return ret;
+//}
 
 
 
@@ -1812,10 +1812,10 @@ umap* flatten_set_trans_with_dim(isl_set* dom, int dim_from_inner) {
     return trans;
 }
 
-umap* flatten_map_domain_trans_with_dim(isl_map* s, int dim_from_inner) {
-    auto dom = domain(s);
-    return flatten_set_trans_with_dim(dom, dim_from_inner);
-}
+//umap* flatten_map_domain_trans_with_dim(isl_map* s, int dim_from_inner) {
+    //auto dom = domain(s);
+    //flatten_set_trans_with_dim(dom, dim_from_inner);
+//}
 
 umap* flatten_map_domain_trans(isl_map* s, int ii) {
     auto dom = domain(s);
@@ -3150,13 +3150,13 @@ isl_map* pad_identity_relation_to_map(isl_map* m, int in_dim, int out_dim, int l
      return tile_map;
 }
 
-umap* pad_identity_relation_to_umap(umap* m, int in_dim, int out_dim, int lbd, int ubd) {
+umap* pad_identity_relation_to_umap(umap* mp, int in_dim, int out_dim, int lbd, int ubd) {
     vector<isl_map*> padded_maps;
-    for (auto m: get_maps(m)) {
+    for (auto m: get_maps(mp)) {
         isl_map* pad_m = pad_identity_relation_to_map(m, in_dim, out_dim, lbd, ubd);
         padded_maps.push_back(pad_m);
     }
-    auto ct = ctx(m);
+    auto ct = ctx(mp);
     umap* final_map = rdmap(ct, "{}");
     for (auto m: padded_maps) {
         final_map = unn(final_map, to_umap(m));

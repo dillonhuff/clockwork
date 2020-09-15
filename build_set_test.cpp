@@ -1458,52 +1458,52 @@ isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) 
 }
 
 
-isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
-    isl_ctx* ctx = pick(buffers).second.ctx;
-    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
-    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
-    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
-    isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
-    for (auto it : buffers) {
-        string buf_name = it.first;
-        auto buf = it.second;
-        global_sched = unn(buf.global_schedule(), global_sched);
-        global_p_map = unn(buf.producer_map(), global_p_map);
-        global_c_map = unn(buf.consumer_map(), global_c_map);
-        domain = unn(buf.global_domain(), domain);
-    }
-    global_c_map = flatten_umap_domain_with_dim_from_outer(global_c_map, 2);
-    global_p_map = flatten_umap_domain_with_dim_from_outer(global_p_map, 2);
-    global_sched = flatten_umap_domain_with_dim_from_outer(global_sched, 2);
-    domain = ::domain(global_sched);
-    cout << "Global Schedule: " << str(global_sched) << endl;
-    cout << "Global Domain: " << str(domain) << endl;
-    cout << "Producer Map: " << str(global_p_map) << endl;
-    cout << "Consumer Map: " << str(global_c_map) << endl;
-    auto order_deps = get_rel_order(ctx, global_sched);
-    cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
-    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
-    //extra = flatten_umap_domain_with_dim_from_outer(extra, 2);
-    //extra = inv(flatten_umap_domain_with_dim_from_outer(inv(extra), 2));
-    raw_deps = unn(extra, raw_deps);
-    auto validity = unn(order_deps, raw_deps);
-    //validity = unn(validity, extra);
-    auto proximity = cpy(raw_deps);
+//isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
+    //isl_ctx* ctx = pick(buffers).second.ctx;
+    //isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    //isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    //isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    //isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
+    //for (auto it : buffers) {
+        //string buf_name = it.first;
+        //auto buf = it.second;
+        //global_sched = unn(buf.global_schedule(), global_sched);
+        //global_p_map = unn(buf.producer_map(), global_p_map);
+        //global_c_map = unn(buf.consumer_map(), global_c_map);
+        //domain = unn(buf.global_domain(), domain);
+    //}
+    //global_c_map = flatten_umap_domain_with_dim_from_outer(global_c_map, 2);
+    //global_p_map = flatten_umap_domain_with_dim_from_outer(global_p_map, 2);
+    //global_sched = flatten_umap_domain_with_dim_from_outer(global_sched, 2);
+    //domain = ::domain(global_sched);
+    //cout << "Global Schedule: " << str(global_sched) << endl;
+    //cout << "Global Domain: " << str(domain) << endl;
+    //cout << "Producer Map: " << str(global_p_map) << endl;
+    //cout << "Consumer Map: " << str(global_c_map) << endl;
+    //auto order_deps = get_rel_order(ctx, global_sched);
+    //cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
+    //auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    ////extra = flatten_umap_domain_with_dim_from_outer(extra, 2);
+    ////extra = inv(flatten_umap_domain_with_dim_from_outer(inv(extra), 2));
+    //raw_deps = unn(extra, raw_deps);
+    //auto validity = unn(order_deps, raw_deps);
+    ////validity = unn(validity, extra);
+    //auto proximity = cpy(raw_deps);
 
-    //Try to remove proximity between_input vec to output_vec
-    //proximity = filter_inner_sram_deps(ctx, proximity);
-    for (string remove_stmt: remove_deps){
-        proximity = remove_dep_domain_name(proximity, remove_stmt);
-    }
+    ////Try to remove proximity between_input vec to output_vec
+    ////proximity = filter_inner_sram_deps(ctx, proximity);
+    //for (string remove_stmt: remove_deps){
+        //proximity = remove_dep_domain_name(proximity, remove_stmt);
+    //}
 
-    cout << "Raw_deps: " << str(raw_deps) << endl;
-    cout << "proximity: " << str(proximity) << endl;
-    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
-    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
-    auto sched_map = its(isl_schedule_get_map(sched), domain);
-    return sched_map;
+    //cout << "Raw_deps: " << str(raw_deps) << endl;
+    //cout << "proximity: " << str(proximity) << endl;
+    //cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    //isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    //auto sched_map = its(isl_schedule_get_map(sched), domain);
+    //return sched_map;
 
-}
+//}
 
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
     isl_ctx* ctx = pick(buffers).second.ctx;
@@ -3950,29 +3950,32 @@ void ram_addr_unit_test() {
 }
 
 void cnn_test() {
-  prog prg = cnn_conv_layer();
-  //auto domain = prg.whole_iteration_domain();
+  //prog prg = cnn_conv_layer();
+  //prog prg = resnet();
+  prog prg = harris();
+  auto domain = prg.whole_iteration_domain();
 
-  //auto order_deps = prg.relative_orders();
-  //cout << "Getting validity deps..." << endl;
-  //isl_union_map *raw_deps = prg.validity_deps();
-  //cout << "Got validity deps..." << endl;
-  //cout << "Validity: " << str(raw_deps) << endl;
-  //auto validity =
-    //unn(order_deps, raw_deps);
-  //isl_union_map *proximity =
-    //cpy(raw_deps);
+  auto order_deps = prg.relative_orders();
+  cout << "Getting validity deps..." << endl;
+  isl_union_map *raw_deps = prg.validity_deps();
+  cout << "Got validity deps..." << endl;
+  cout << "Validity: " << str(raw_deps) << endl;
+  auto validity =
+    unn(order_deps, raw_deps);
+  isl_union_map *proximity =
+    cpy(raw_deps);
 
-  //auto clksched = hardware_schedule(domain, validity, proximity);
-  //auto doms = get_sets(domain);
-  //cout << "---- Domains..." << endl;
-  //for (auto d : doms) {
-    //cout << tab(1) << str(d) << endl;
-  //}
-  //cout << "---- Hardware schedule:" << endl;
-  //for (auto s : clksched) {
-    //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
-  //}
+  auto clksched = hardware_schedule(domain, validity, proximity);
+  auto doms = get_sets(domain);
+  cout << "---- Domains..." << endl;
+  for (auto d : doms) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "---- Hardware schedule:" << endl;
+  for (auto s : clksched) {
+    cout << tab(1) << s.first << " -> " << str(s.second) << endl;
+  }
+  assert(false);
   umap* opt_sched = prg.optimized_codegen();
   ////cout << "------ ISL schedule" << endl;
   ////for (auto m : get_maps(opt_sched)) {
@@ -10679,324 +10682,324 @@ isl_val* constant(isl_aff* a) {
 }
 
 void playground() {
-    {
-    isl_ctx* ctx = isl_ctx_alloc();
-    auto access_map = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
-    auto padded = pad_map(access_map, 5);
-    auto tile_map = pad_identity_relation_to_map(access_map, 1, 0, -1, 3);
-    cout << "Insert: " << str(tile_map) << endl;
-    cout << "Padded: " << str(padded) << endl;
-    cout << str(access_map) << endl << str(simplify_expr(access_map)) << endl;
-    cout << str(get_aff(simplify_expr(access_map))) << endl;
-    assert(false);
-    }
-  {
-    isl_ctx* ctx = isl_ctx_alloc();
-    auto access_map = isl_map_read_from_str(ctx, "{ conv[root = 0, x, y, z]->data[x, y, z]: 0<=x<=4 and 0<=y<=6 and 0<=z<=1 }");
-    auto reduce_map = linear_address_map_with_index(range(access_map), {0,1,2});
-    auto reduce_map_2D = linear_address_map_with_index(range(access_map), {0,2});
-    auto flatten_access_map = dot(access_map, reduce_map);
-    auto flatten_access_map_2D = dot(access_map, reduce_map_2D);
-    cout << "Origin: " << str(access_map) << endl;
-    cout << "Rewrite: " << str(flatten_access_map) << endl;
-    cout << "Rewrite 2D: " << str(flatten_access_map_2D) << endl;
-    assert(false);
-  }
-  {
-    isl_ctx* ctx = isl_ctx_alloc();
-    auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[2*x + y, 4*z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
-    for (int i = 0; i < get_in_dim(access_map); i ++) {
-        cout << "map input : " << get_dim_min(domain(access_map), i)
-            << get_dim_max(domain(access_map), i) <<endl;
-    }
-    for (int i = 0; i < get_out_dim(access_map); i ++) {
-        cout << "map output card: " << str(get_out_range(access_map, i)) << endl;
-    }
-    assert(false);
+    //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto access_map = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
+    //auto padded = pad_map(access_map, 5);
+    //auto tile_map = pad_identity_relation_to_map(access_map, 1, 0, -1, 3);
+    //cout << "Insert: " << str(tile_map) << endl;
+    //cout << "Padded: " << str(padded) << endl;
+    //cout << str(access_map) << endl << str(simplify_expr(access_map)) << endl;
+    //cout << str(get_aff(simplify_expr(access_map))) << endl;
+    //assert(false);
+    //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto access_map = isl_map_read_from_str(ctx, "{ conv[root = 0, x, y, z]->data[x, y, z]: 0<=x<=4 and 0<=y<=6 and 0<=z<=1 }");
+    //auto reduce_map = linear_address_map_with_index(range(access_map), {0,1,2});
+    //auto reduce_map_2D = linear_address_map_with_index(range(access_map), {0,2});
+    //auto flatten_access_map = dot(access_map, reduce_map);
+    //auto flatten_access_map_2D = dot(access_map, reduce_map_2D);
+    //cout << "Origin: " << str(access_map) << endl;
+    //cout << "Rewrite: " << str(flatten_access_map) << endl;
+    //cout << "Rewrite 2D: " << str(flatten_access_map_2D) << endl;
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[2*x + y, 4*z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
+    //for (int i = 0; i < get_in_dim(access_map); i ++) {
+        //cout << "map input : " << get_dim_min(domain(access_map), i)
+            //<< get_dim_max(domain(access_map), i) <<endl;
+    //}
+    //for (int i = 0; i < get_out_dim(access_map); i ++) {
+        //cout << "map output card: " << str(get_out_range(access_map, i)) << endl;
+    //}
+    //assert(false);
 
-  }
-  {
-    isl_ctx* ctx = isl_ctx_alloc();
-    auto sched = rdmap(ctx, "{ op_hcompute_hw_input_stencil_agg2sram[0,i0, i1] -> [i0, 3 + 4i1, 2] : 0 <= i0 <= 3 and 0 <= i1 <= 2047; op_hcompute_conv_stencil_1[0, i0, i1] -> [i0, 8191 + i1, 3] : 0 <= i0 <= 3 and 0 <= i1 <= 112895; op_hcompute_hw_input_stencil[0, i0, i1] -> [i0, i1, 0] : 0<= i0 <= 3 and 0 <= i1 <= 8191; op_hcompute_conv_stencil_1_sram2tb[0, i0, i1] -> [i0, 8191 + 2i1, 1] : 0 <= i0 <= 3 and 0 <= i1 <= 56447 }");
-    cout << codegen_c(sched) << endl;
-    assert(false);
-  }
-  {
-    isl_ctx* ctx = isl_ctx_alloc();
-    cout << str(form_pt({0,1})) << endl;
-    auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[x + y, z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
-    cout << str(project_all_but(access_map, 1)) << endl;
-    cout << str(project_all_but(access_map, 0)) << endl;
-    auto acc_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> [x + y, x]: z=2}");
-    auto sched = isl_map_read_from_str(ctx, "{ p[x, y, z]->[0, 0, x, 0, y, 0, z, 0]}");
-    auto sched_exp = isl_map_read_from_str(ctx, "{ p[0, x, y, z]->[x+2, y+1, 2*z+3]: 0<=x<=14 and 0<=y<=15 and 0<=z<=10}");
-    cout << str(sample(range(sched_exp))) << endl;
-    cout << int_upper_bound(get_out_range(sched_exp, 2));
-    auto pad_sched = pad_one_more_dim_to_sched_map_with_id(to_umap(sched_exp), 1, 0);
-    auto delay_sched = delay_schedule_domain_dim(sched, 2 , 1);
-    auto peel_sched = peel_schedule_domain_dim(sched, 1 , 1);
-    auto trans = flatten_map_domain_trans_with_dim(sched_exp, 2);
-    cout << str(trans) << endl;
-    cout << "origin: " << str(sched) << "\ndelay: " << str(delay_sched) << "\npeel:" << str(peel_sched) <<  endl;
-    cout << "origin: " << str(sched_exp) << "\npad_sched: " << str(pad_sched) <<  endl;
-    cout << "relation map:" << relation_map(acc_map) << endl;
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto sched = rdmap(ctx, "{ op_hcompute_hw_input_stencil_agg2sram[0,i0, i1] -> [i0, 3 + 4i1, 2] : 0 <= i0 <= 3 and 0 <= i1 <= 2047; op_hcompute_conv_stencil_1[0, i0, i1] -> [i0, 8191 + i1, 3] : 0 <= i0 <= 3 and 0 <= i1 <= 112895; op_hcompute_hw_input_stencil[0, i0, i1] -> [i0, i1, 0] : 0<= i0 <= 3 and 0 <= i1 <= 8191; op_hcompute_conv_stencil_1_sram2tb[0, i0, i1] -> [i0, 8191 + 2i1, 1] : 0 <= i0 <= 3 and 0 <= i1 <= 56447 }");
+    //cout << codegen_c(sched) << endl;
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //cout << str(form_pt({0,1})) << endl;
+    //auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[x + y, z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
+    //cout << str(project_all_but(access_map, 1)) << endl;
+    //cout << str(project_all_but(access_map, 0)) << endl;
+    //auto acc_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> [x + y, x]: z=2}");
+    //auto sched = isl_map_read_from_str(ctx, "{ p[x, y, z]->[0, 0, x, 0, y, 0, z, 0]}");
+    //auto sched_exp = isl_map_read_from_str(ctx, "{ p[0, x, y, z]->[x+2, y+1, 2*z+3]: 0<=x<=14 and 0<=y<=15 and 0<=z<=10}");
+    //cout << str(sample(range(sched_exp))) << endl;
+    //cout << int_upper_bound(get_out_range(sched_exp, 2));
+    //auto pad_sched = pad_one_more_dim_to_sched_map_with_id(to_umap(sched_exp), 1, 0);
+    //auto delay_sched = delay_schedule_domain_dim(sched, 2 , 1);
+    //auto peel_sched = peel_schedule_domain_dim(sched, 1 , 1);
+    //auto trans = flatten_map_domain_trans_with_dim(sched_exp, 2);
+    //cout << str(trans) << endl;
+    //cout << "origin: " << str(sched) << "\ndelay: " << str(delay_sched) << "\npeel:" << str(peel_sched) <<  endl;
+    //cout << "origin: " << str(sched_exp) << "\npad_sched: " << str(pad_sched) <<  endl;
+    //cout << "relation map:" << relation_map(acc_map) << endl;
 
-    isl_ctx_free(ctx);
-    assert(false);
-  }
-  {
-    isl_ctx* ctx = isl_ctx_alloc();
-    auto dom = isl_union_set_read_from_str(ctx, "{ p[x] : 0 <= x <= 200; c[x] : 30 <= x <= 50 }");
-    auto dep = rdmap(ctx, "{ p[x] -> c[y] : 2*y - 10 <= x <= 2*y + 10 }");
-    print_hw_schedule(dom, its(dep, dom));
+    //isl_ctx_free(ctx);
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto dom = isl_union_set_read_from_str(ctx, "{ p[x] : 0 <= x <= 200; c[x] : 30 <= x <= 50 }");
+    //auto dep = rdmap(ctx, "{ p[x] -> c[y] : 2*y - 10 <= x <= 2*y + 10 }");
+    //print_hw_schedule(dom, its(dep, dom));
 
-    isl_ctx_free(ctx);
-    assert(false);
-  }
-  {
-    isl_ctx* ctx = isl_ctx_alloc();
-    auto dom = isl_map_read_from_str(ctx, "{ p[x] -> c[k] : exists y : 2y = x and x = 3*k }");
-    cout << "dom = " << str(dom) << endl;
-    for (auto m : get_basic_maps(dom)) {
-      cout << "flattened = " << str(flatten_bmap_to_bset(m)) << endl;
-    }
+    //isl_ctx_free(ctx);
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto dom = isl_map_read_from_str(ctx, "{ p[x] -> c[k] : exists y : 2y = x and x = 3*k }");
+    //cout << "dom = " << str(dom) << endl;
+    //for (auto m : get_basic_maps(dom)) {
+      //cout << "flattened = " << str(flatten_bmap_to_bset(m)) << endl;
+    //}
+    ////auto dep = rdmap(ctx, "{ p[x, y] -> c[x, y] }");
+    ////print_hw_schedule(dom, its(dep, dom));
+
+    //isl_ctx_free(ctx);
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto dom = isl_union_set_read_from_str(ctx, "{ p[x, y] : 0 <= x <= 200 and 0 <= y <= 10; c[x, y] : 30 <= x <= 50 and 0 <= y <= 10}");
     //auto dep = rdmap(ctx, "{ p[x, y] -> c[x, y] }");
     //print_hw_schedule(dom, its(dep, dom));
 
-    isl_ctx_free(ctx);
-    assert(false);
-  }
-  {
-    isl_ctx* ctx = isl_ctx_alloc();
-    auto dom = isl_union_set_read_from_str(ctx, "{ p[x, y] : 0 <= x <= 200 and 0 <= y <= 10; c[x, y] : 30 <= x <= 50 and 0 <= y <= 10}");
-    auto dep = rdmap(ctx, "{ p[x, y] -> c[x, y] }");
-    print_hw_schedule(dom, its(dep, dom));
-
-    isl_ctx_free(ctx);
-    assert(false);
-  }
-
-  {
-    isl_ctx* ctx = isl_ctx_alloc();
-    auto s = rdset(ctx, "{ [x, y] : 2y = x }");
-    cout << "pre projection: " << str(s) << endl;
-
-    auto p = isl_set_project_out(s, isl_dim_set, 1, 1);
-    cout << "post          : " << str(p) << endl;
-    for (auto bset : get_basic_sets(p)) {
-      cout << str(bset) << endl;
-      auto ineqs = isl_basic_set_inequalities_matrix(bset,
-          isl_dim_set, isl_dim_div, isl_dim_param, isl_dim_cst);
-      cout << "ineqs: " << endl;
-      cout << str(ineqs) << endl;
-      auto eqs = isl_basic_set_equalities_matrix(bset,
-          isl_dim_set, isl_dim_div, isl_dim_param, isl_dim_cst);
-      cout << "eqs: " << endl;
-      cout << str(eqs) << endl;
-    }
-    isl_ctx_free(ctx);
-    assert(false);
-  }
-
-  {
-    isl_ctx* ctx = isl_ctx_alloc();
-    auto s = rdset(ctx, "{ [x, y] : y = 5 and x >= -4 and x < 19}");
-    auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}, {"y", "II_y"}}, "d");
-    cout << "fs = " << str(fs) << endl;
-    auto extra_constraint = rdset(ctx, "{ [II_x, II_y, b, c, d, e, f, g] : II_y >= 1 and II_x >= 1 }");
-    auto sol = its(extra_constraint, to_set(fs));
-    cout << "New fs = " << str(sol) << endl;
-    auto pt = sample(sol);
-    cout << "Example solution: " << str(pt) << endl;
-    isl_ctx_free(ctx);
-  }
-
-  assert(false);
-  {
-    prog prg;
-
-
-    umap* sched = rdmap(prg.ctx, "{ B[k, 0] -> [k, 0]; B[k, 1] -> [k, 1] }");
-    umap* m = rdmap(prg.ctx, "{ B[k, 0] -> b[k]; B[k, 1] -> b[k + 1]}");
-    auto read_id = isl_union_set_identity(cpy(domain(m)));
-    auto same = diff(dot(m, inv(m)), read_id);
-    cout << "same = " << str(same) << endl;
-    auto earlier = lex_gt(sched, sched);
-    auto se = its(same, earlier);
-    cout << "se   = " << str(se) << endl;
-    for (auto m : get_maps(se)) {
-      auto pw = isl_pw_multi_aff_from_map(m);
-      cout << tab(1) << str(pw) << endl;
-    }
-    assert(false);
-  }
-
-  prog prg;
-  prg.compute_unit_file = "mobilenet_compute.h";
-  prg.name = "reduce_2d";
-  prg.add_input("in");
-  prg.add_output("out");
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_bounds["in"] = {3, 3};
-
-  prg.buffer_port_widths["out"] = 32;
-  prg.buffer_bounds["out"] = {1};
-
-  prg.buffer_port_widths["I"] = 32;
-  prg.buffer_bounds["I"] = {3, 3};
-
-  prg.buffer_port_widths["tmp"] = 32;
-  prg.buffer_bounds["tmp"] = {1};
-
-  auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
-
-  {
-    auto init = prg.add_op("set_z");
-    init->add_function("set_zero_32");
-    init->add_store("tmp", "0");
-
-    auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
-    auto accum = accum_loop->add_op("accumulate");
-    auto tmp = accum->add_load("tmp", "0");
-    auto next = accum->add_load("I", "ar, ac");
-    accum->add_function("inc", {tmp, next});
-    accum->add_store("tmp", "0");
-
-    auto write_out = prg.add_op("output");
-    write_out->add_load("tmp", "0");
-    write_out->add_store("out", "0");
-  }
-
-  cout << "Original program" << endl;
-  prg.pretty_print();
-  cout << endl;
-
-  auto domain = prg.whole_iteration_domain();
-
-  auto order_deps = prg.relative_orders();
-  cout << "Getting validity deps..." << endl;
-  isl_union_map *raw_deps = prg.validity_deps();
-  cout << "Got validity deps..." << endl;
-  cout << "Validity: " << str(raw_deps) << endl;
-  auto validity =
-    unn(order_deps, raw_deps);
-  isl_union_map *proximity =
-    cpy(raw_deps);
-
-  umap* clksched_map = clockwork_schedule_umap(domain, validity, proximity);
-  //map<string, isl_aff*> clksched = clockwork_schedule(domain, validity, proximity);
-  //cout << "---- Clockwork schedule:" << endl;
-  //for (auto s : clksched) {
-    //cout << tab(1) << s.first << " -> ";
-    //for (auto v : s.second) {
-      //cout << str(v) << ", ";
-    //}
-    //cout << endl;
+    //isl_ctx_free(ctx);
+    //assert(false);
   //}
 
-  //auto clksched_map = its(to_umap(clksched), domain);
-  cout << "sched map: " << str(clksched_map) << endl;
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto s = rdset(ctx, "{ [x, y] : 2y = x }");
+    //cout << "pre projection: " << str(s) << endl;
+
+    //auto p = isl_set_project_out(s, isl_dim_set, 1, 1);
+    //cout << "post          : " << str(p) << endl;
+    //for (auto bset : get_basic_sets(p)) {
+      //cout << str(bset) << endl;
+      //auto ineqs = isl_basic_set_inequalities_matrix(bset,
+          //isl_dim_set, isl_dim_div, isl_dim_param, isl_dim_cst);
+      //cout << "ineqs: " << endl;
+      //cout << str(ineqs) << endl;
+      //auto eqs = isl_basic_set_equalities_matrix(bset,
+          //isl_dim_set, isl_dim_div, isl_dim_param, isl_dim_cst);
+      //cout << "eqs: " << endl;
+      //cout << str(eqs) << endl;
+    //}
+    //isl_ctx_free(ctx);
+    //assert(false);
+  //}
+
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto s = rdset(ctx, "{ [x, y] : y = 5 and x >= -4 and x < 19}");
+    //auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}, {"y", "II_y"}}, "d");
+    //cout << "fs = " << str(fs) << endl;
+    //auto extra_constraint = rdset(ctx, "{ [II_x, II_y, b, c, d, e, f, g] : II_y >= 1 and II_x >= 1 }");
+    //auto sol = its(extra_constraint, to_set(fs));
+    //cout << "New fs = " << str(sol) << endl;
+    //auto pt = sample(sol);
+    //cout << "Example solution: " << str(pt) << endl;
+    //isl_ctx_free(ctx);
+  //}
+
   //assert(false);
-  //cout << "Program code without optimization..." << endl;
-  //prg.unoptimized_codegen();
+  //{
+    //prog prg;
+
+
+    //umap* sched = rdmap(prg.ctx, "{ B[k, 0] -> [k, 0]; B[k, 1] -> [k, 1] }");
+    //umap* m = rdmap(prg.ctx, "{ B[k, 0] -> b[k]; B[k, 1] -> b[k + 1]}");
+    //auto read_id = isl_union_set_identity(cpy(domain(m)));
+    //auto same = diff(dot(m, inv(m)), read_id);
+    //cout << "same = " << str(same) << endl;
+    //auto earlier = lex_gt(sched, sched);
+    //auto se = its(same, earlier);
+    //cout << "se   = " << str(se) << endl;
+    //for (auto m : get_maps(se)) {
+      //auto pw = isl_pw_multi_aff_from_map(m);
+      //cout << tab(1) << str(pw) << endl;
+    //}
+    //assert(false);
+  //}
+
+  //prog prg;
+  //prg.compute_unit_file = "mobilenet_compute.h";
+  //prg.name = "reduce_2d";
+  //prg.add_input("in");
+  //prg.add_output("out");
+  //prg.buffer_port_widths["in"] = 32;
+  //prg.buffer_bounds["in"] = {3, 3};
+
+  //prg.buffer_port_widths["out"] = 32;
+  //prg.buffer_bounds["out"] = {1};
+
+  //prg.buffer_port_widths["I"] = 32;
+  //prg.buffer_bounds["I"] = {3, 3};
+
+  //prg.buffer_port_widths["tmp"] = 32;
+  //prg.buffer_bounds["tmp"] = {1};
+
+  //auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
+
+  //{
+    //auto init = prg.add_op("set_z");
+    //init->add_function("set_zero_32");
+    //init->add_store("tmp", "0");
+
+    //auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
+    //auto accum = accum_loop->add_op("accumulate");
+    //auto tmp = accum->add_load("tmp", "0");
+    //auto next = accum->add_load("I", "ar, ac");
+    //accum->add_function("inc", {tmp, next});
+    //accum->add_store("tmp", "0");
+
+    //auto write_out = prg.add_op("output");
+    //write_out->add_load("tmp", "0");
+    //write_out->add_store("out", "0");
+  //}
+
+  //cout << "Original program" << endl;
+  //prg.pretty_print();
   //cout << endl;
 
-  //cout << "Program with optimized schedule..." << endl;
-  //umap* opt_sched = prg.optimized_codegen();
-  //cout << "Consumer maps..." << endl;
-  //cout << tab(1) << str(prg.consumer_map()) << endl;
+  //auto domain = prg.whole_iteration_domain();
 
-  //cout << "Schedules..." << endl;
-  //for (auto s : prg.schedules()) {
-    //cout << tab(1) << str(s.second) << endl;
-    //auto next_op = lexmin(lex_lt(s.second, s.second));
-    //cout << "next op: " << str(next_op) << endl;
-  //}
+  //auto order_deps = prg.relative_orders();
+  //cout << "Getting validity deps..." << endl;
+  //isl_union_map *raw_deps = prg.validity_deps();
+  //cout << "Got validity deps..." << endl;
+  //cout << "Validity: " << str(raw_deps) << endl;
+  //auto validity =
+    //unn(order_deps, raw_deps);
+  //isl_union_map *proximity =
+    //cpy(raw_deps);
 
-  //isl_ctx* ct = isl_ctx_alloc();
-
-  ////uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
-  //uset* dom =
-    //isl_union_set_read_from_str(ct, "{ P[x, k] : 0 <= x <= 10 and 0 <= k <= 10; C[x, k] : 0 <= x <= 10 and 0 <= k <= 10 }");
-  //umap* validity =
-    //rdmap(ct, "{ P[x, k] -> C[y, l] : x = 2y + 3 }");
-    ////rdmap(ct, "{ P[x, k] -> C[y, l] : k = l and x = 2y + 3 }");
-    ////rdmap(ct, "{ P[x] -> C[y] : x = 2y + 3 }");
-    ////rdmap(ct, "{ P[x] -> C[y] : x = floor(y/2) }");
-    ////rdmap(ct, "{ P[x] -> C[x] }");
-  //umap* proximity =
-    //cpy(validity);
-
-  //clockwork_schedule(dom, validity, proximity);
-  ////experimental_opt(dom, validity, proximity);
-
-
-  //isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
-  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [3 a / 2 + 2 b / 15] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) % 2] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b) / 2)] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + 3b) % 2 + a / 6] }");
-  //cout << "aff = " << str(aff) << endl;
-  //cout << "const = " << str(constant(aff)) << endl;
-  //int in_dims = num_in_dims(aff);
-  //cout << "input dimension: " << in_dims << endl;
-  //int out_dims = num_out_dims(aff);
-  //cout << "output dimension: " << out_dims << endl;
-
-  //isl_local_space* ls = isl_aff_get_local_space(aff);
-  //int div_dims = isl_local_space_dim(ls, isl_dim_div);
-  //cout << "div dimension   : " << isl_local_space_dim(ls, isl_dim_div) << endl;
-  //cout << "all dimensions  : " << isl_local_space_dim(ls, isl_dim_all) << endl;
-  //cout << "Local space: " << str(ls) << endl;
-
-  //for (int i = 0; i < in_dims; i++) {
-    //cout << i << "th coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_in, i)) << endl;
-  //}
-  ////for (int i = 0; i < out_dims; i++) {
-    ////cout << i << "th div  : " << str(isl_aff_get_div(aff, i)) << endl;
+  //umap* clksched_map = clockwork_schedule_umap(domain, validity, proximity);
+  ////map<string, isl_aff*> clksched = clockwork_schedule(domain, validity, proximity);
+  ////cout << "---- Clockwork schedule:" << endl;
+  ////for (auto s : clksched) {
+    ////cout << tab(1) << s.first << " -> ";
+    ////for (auto v : s.second) {
+      ////cout << str(v) << ", ";
+    ////}
+    ////cout << endl;
   ////}
-  //for (int i = 0; i < div_dims; i++) {
-    //cout << i << "th div      : " << str(isl_aff_get_div(aff, i)) << endl;
-    //cout << i << "th div coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_div, i)) << endl;
-  //}
 
-  //isl_basic_set* bset = isl_aff_eq_basic_set(cpy(aff), cpy(zero));
-    ////isl_basic_set_read_from_str(ct, "{ [a, b] }");
-    ////isl_basic_set_universe(get_space(aff));
+  ////auto clksched_map = its(to_umap(clksched), domain);
+  //cout << "sched map: " << str(clksched_map) << endl;
+  ////assert(false);
+  ////cout << "Program code without optimization..." << endl;
+  ////prg.unoptimized_codegen();
+  ////cout << endl;
+
+  ////cout << "Program with optimized schedule..." << endl;
+  ////umap* opt_sched = prg.optimized_codegen();
+  ////cout << "Consumer maps..." << endl;
+  ////cout << tab(1) << str(prg.consumer_map()) << endl;
+
+  ////cout << "Schedules..." << endl;
+  ////for (auto s : prg.schedules()) {
+    ////cout << tab(1) << str(s.second) << endl;
+    ////auto next_op = lexmin(lex_lt(s.second, s.second));
+    ////cout << "next op: " << str(next_op) << endl;
+  ////}
+
+  ////isl_ctx* ct = isl_ctx_alloc();
+
+  //////uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
+  ////uset* dom =
+    ////isl_union_set_read_from_str(ct, "{ P[x, k] : 0 <= x <= 10 and 0 <= k <= 10; C[x, k] : 0 <= x <= 10 and 0 <= k <= 10 }");
+  ////umap* validity =
+    ////rdmap(ct, "{ P[x, k] -> C[y, l] : x = 2y + 3 }");
+    //////rdmap(ct, "{ P[x, k] -> C[y, l] : k = l and x = 2y + 3 }");
+    //////rdmap(ct, "{ P[x] -> C[y] : x = 2y + 3 }");
+    //////rdmap(ct, "{ P[x] -> C[y] : x = floor(y/2) }");
+    //////rdmap(ct, "{ P[x] -> C[x] }");
+  ////umap* proximity =
+    ////cpy(validity);
+
+  ////clockwork_schedule(dom, validity, proximity);
+  //////experimental_opt(dom, validity, proximity);
 
 
-  //cout << "bset: " << str(bset) << endl;
-  //auto mat = isl_basic_set_equalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
-  //cout << "Eq Rows: " << isl_mat_rows(mat) << endl;
-  //cout << "Eq Cols: " << isl_mat_cols(mat) << endl;
+  ////isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
+  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [3 a / 2 + 2 b / 15] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) % 2] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b) / 2)] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + 3b) % 2 + a / 6] }");
+  ////cout << "aff = " << str(aff) << endl;
+  ////cout << "const = " << str(constant(aff)) << endl;
+  ////int in_dims = num_in_dims(aff);
+  ////cout << "input dimension: " << in_dims << endl;
+  ////int out_dims = num_out_dims(aff);
+  ////cout << "output dimension: " << out_dims << endl;
 
-  //auto ineqmat = isl_basic_set_inequalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
-  //cout << "Ineq Rows: " << isl_mat_rows(ineqmat) << endl;
-  //cout << "Ineq Cols: " << isl_mat_cols(ineqmat) << endl;
-  //for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
-    //for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
-      //cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
-    //}
-    //cout << endl;
-  //}
+  ////isl_local_space* ls = isl_aff_get_local_space(aff);
+  ////int div_dims = isl_local_space_dim(ls, isl_dim_div);
+  ////cout << "div dimension   : " << isl_local_space_dim(ls, isl_dim_div) << endl;
+  ////cout << "all dimensions  : " << isl_local_space_dim(ls, isl_dim_all) << endl;
+  ////cout << "Local space: " << str(ls) << endl;
+
+  ////for (int i = 0; i < in_dims; i++) {
+    ////cout << i << "th coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_in, i)) << endl;
+  ////}
+  //////for (int i = 0; i < out_dims; i++) {
+    //////cout << i << "th div  : " << str(isl_aff_get_div(aff, i)) << endl;
+  //////}
+  ////for (int i = 0; i < div_dims; i++) {
+    ////cout << i << "th div      : " << str(isl_aff_get_div(aff, i)) << endl;
+    ////cout << i << "th div coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_div, i)) << endl;
+  ////}
+
+  ////isl_basic_set* bset = isl_aff_eq_basic_set(cpy(aff), cpy(zero));
+    //////isl_basic_set_read_from_str(ct, "{ [a, b] }");
+    //////isl_basic_set_universe(get_space(aff));
 
 
-  //auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
-  //auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
+  ////cout << "bset: " << str(bset) << endl;
+  ////auto mat = isl_basic_set_equalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
+  ////cout << "Eq Rows: " << isl_mat_rows(mat) << endl;
+  ////cout << "Eq Cols: " << isl_mat_cols(mat) << endl;
 
-  //cout << "prev: " << str(prev) << endl;
-  //cout << "next: " << str(next) << endl;
-  //cout << "diff: " << str(isl_aff_sub(cpy(next), cpy(prev))) << endl;
+  ////auto ineqmat = isl_basic_set_inequalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
+  ////cout << "Ineq Rows: " << isl_mat_rows(ineqmat) << endl;
+  ////cout << "Ineq Cols: " << isl_mat_cols(ineqmat) << endl;
+  ////for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+    ////for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
+      ////cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
+    ////}
+    ////cout << endl;
+  ////}
 
-  //auto comps_set = isl_set_read_from_str(ct, "{ [a, b] : 0 <= a <= 10 and 0 <= b <= 11 }");
-  //auto flat_set = isl_set_flatten(cpy(comps_set));
-  //cout << "comps_set: " << str(comps_set) << endl;
-  //cout << "flat_set : " << str(flat_set) << endl;
 
-  ////isl_mat* matrix = aff->ls->div;
-  //isl_ctx_free(ct);
+  ////auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
+  ////auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
+
+  ////cout << "prev: " << str(prev) << endl;
+  ////cout << "next: " << str(next) << endl;
+  ////cout << "diff: " << str(isl_aff_sub(cpy(next), cpy(prev))) << endl;
+
+  ////auto comps_set = isl_set_read_from_str(ct, "{ [a, b] : 0 <= a <= 10 and 0 <= b <= 11 }");
+  ////auto flat_set = isl_set_flatten(cpy(comps_set));
+  ////cout << "comps_set: " << str(comps_set) << endl;
+  ////cout << "flat_set : " << str(flat_set) << endl;
+
+  //////isl_mat* matrix = aff->ls->div;
+  ////isl_ctx_free(ct);
 
 }
 
@@ -11013,13 +11016,13 @@ void naive_implementations() {
   exposure_fusion_fpga_test("ef_fpga");
   gauss_pyramid_fpga_test("gp_fpga");
   max_pooling_test("mp25");
-  assert(false);
+  //assert(false);
 }
 
 void iccad_tests() {
-  App ef = ef_cartoon("ef_sm");
-  generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
-  assert(false);
+  //App ef = ef_cartoon("ef_sm");
+  //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  //assert(false);
   exposure_fusion_iccad_apps("ef_fpga");
   gauss_pyramid_iccad_apps("gp_fpga");
   gauss_pyramid_test("gp_fpga");
@@ -11028,8 +11031,6 @@ void iccad_tests() {
 
   App gp = gauss_pyramid_fpga("gp_sm");
   generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
-  assert(false);
-
 
   gauss_pyramid_fpga_test("gp_fpga");
   ef_cartoon_test("ef_cartoon");
@@ -13368,24 +13369,24 @@ void lake_resnet_multitile_test() {
     //cout << "\tDouble buffer dependency: " << str(um) << endl;
     //um = its_range(um, gb_domain);
     cout << "\tDouble buffer dependency: " << str(um) << endl;
-    auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
+    //auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
     //auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
     //auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
     //auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_hw_input_stencil_agg2sram"});
-    cout << str(opt_sched) << endl;
-    cout << codegen_c(opt_sched) << endl;
-    assert(false);
+    //cout << str(opt_sched) << endl;
+    //cout << codegen_c(opt_sched) << endl;
+    //assert(false);
     int app_target_II = 1;
 
     //map<pair<string, string>, int> latency({{{"input", "input_vec"}, 1},
     //      {{"output_2", "output_2_vec"}, -1}});
-    auto hsh = generate_hardware_schedule_heu(opt_sched, tmp, {}, app_target_II, {"op_hcompute_conv_stencil_1_vec_in"});
-    cout << str(hsh) << endl;
-    cout << codegen_c(hsh) << endl;
-    cmd("mkdir -p ./lake_controllers/resnet/"+ubuf_name);
-    auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/"+ubuf_name);
-    //check_lake_config(op_vec, "./lake_controllers/conv_3_3/", "./lake_gold/conv_3_3/");
-    assert(false);
+    //auto hsh = generate_hardware_schedule_heu(opt_sched, tmp, {}, app_target_II, {"op_hcompute_conv_stencil_1_vec_in"});
+    //cout << str(hsh) << endl;
+    //cout << codegen_c(hsh) << endl;
+    //cmd("mkdir -p ./lake_controllers/resnet/"+ubuf_name);
+    //auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/"+ubuf_name);
+    ////check_lake_config(op_vec, "./lake_controllers/conv_3_3/", "./lake_gold/conv_3_3/");
+    //assert(false);
 
   }
 
@@ -17445,7 +17446,8 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
-  lake_tests();
+  //lake_tests();
+  cnn_test();
   iccad_tests();
   exposure_fusion_iccad_apps("ef_cc_10_level");
   histogram_2d_test();
@@ -17487,7 +17489,6 @@ void application_tests() {
   //register_file_optimization_test();
 
   // Does not work with register files?
-  //cnn_test();
 
   neg_stencil_test();
 

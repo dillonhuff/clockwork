@@ -3838,13 +3838,13 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), merge_sched);
 
         if (pick(access_cnt_per_port) > 1) {
-
-            target_buf.access_map[pt_name] =
-                flatten_map_domain_with_dim(target_buf.access_map[pt_name], 2);
-            target_buf.schedule[pt_name] =
-                flatten_map_domain_with_dim(target_buf.schedule[pt_name], 2);
-            target_buf.retrive_domain[pt_name] = target_buf.domain.at(pt_name);
-            target_buf.domain[pt_name] = ::domain(to_map(target_buf.access_map[pt_name]));
+          assert(false);
+            //target_buf.access_map[pt_name] =
+                //flatten_map_domain_with_dim(target_buf.access_map[pt_name], 2);
+            //target_buf.schedule[pt_name] =
+                //flatten_map_domain_with_dim(target_buf.schedule[pt_name], 2);
+            //target_buf.retrive_domain[pt_name] = target_buf.domain.at(pt_name);
+            //target_buf.domain[pt_name] = ::domain(to_map(target_buf.access_map[pt_name]));
         }
       }
       else {
@@ -3866,12 +3866,12 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
         if (pick(access_cnt_per_port) > 1) {
 
-            target_buf.access_map[pt_name] =
-                flatten_map_domain_with_dim(target_buf.access_map[pt_name], 2);
-            target_buf.schedule[pt_name] =
-                flatten_map_domain_with_dim(target_buf.schedule[pt_name], 2);
-            target_buf.retrive_domain[pt_name] = target_buf.domain.at(pt_name);
-            target_buf.domain[pt_name] = ::domain(to_map(target_buf.access_map[pt_name]));
+            //target_buf.access_map[pt_name] =
+                //flatten_map_domain_with_dim(target_buf.access_map[pt_name], 2);
+            //target_buf.schedule[pt_name] =
+                //flatten_map_domain_with_dim(target_buf.schedule[pt_name], 2);
+            //target_buf.retrive_domain[pt_name] = target_buf.domain.at(pt_name);
+            //target_buf.domain[pt_name] = ::domain(to_map(target_buf.access_map[pt_name]));
         }
       }
     }
