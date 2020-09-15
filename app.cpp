@@ -1358,9 +1358,9 @@ hardware_schedule(
         int num_farkas_mults = num_dims(fs) - base_dims;
         cout << "dims in res   : " << base_dims << endl;
         cout << "farkas mults  : " << num_farkas_mults << endl;
-        fs = isl_basic_set_project_out(fs, isl_dim_set, base_dims, num_farkas_mults);
+        //fs = isl_basic_set_project_out(fs, isl_dim_set, base_dims, num_farkas_mults);
         cout << "projecting out: " << str(fs) << endl;
-        fs = lift_divs(fs);
+        //fs = lift_divs(fs);
         //cout << "after lifting: " << str(fs) << endl;
 
         append_basic_set(modulo_schedule, fs);
@@ -2204,3 +2204,46 @@ void append_basic_set(ilp_builder& b, isl_basic_set* s) {
   }
 }
 
+void mathlog_problem(ilp_builder& builder, const map<string, isl_val*>& obj) {
+  cout << "Writing problem to mod file..." << endl;
+  ofstream out("schedule_problem.mod");
+  for (auto ps : builder.variable_positions) {
+    out << "var " << ps.first << ", integer;" << endl;
+  }
+
+  vector<string> obj_terms;
+  for (auto t : obj) {
+    obj_terms.push_back(str(t.second) + "*" + t.first);
+  }
+
+
+  isl_mat* im = equalities_to_inequalities(cpy(builder.s));
+  cout << tab(1) << "# of constraints: " << isl_mat_rows(im) << endl;
+  map<int, string> index_names;
+  for (auto m : builder.variable_positions) {
+    index_names[m.second] = m.first;
+  }
+
+  for (int cn = 0; cn < isl_mat_rows(im); cn++) {
+    vector<string> terms;
+    for (int c = 0; c < isl_mat_cols(im) - 1; c++) {
+      isl_val* cv = isl_mat_get_element_val(im, cn, c);
+      string var = map_find(c, index_names);
+      terms.push_back(str(cv) + "*" + var);
+    }
+
+    string cstr = sep_list(terms, "", "", " + ");
+    isl_val* b = isl_mat_get_element_val(im, cn, isl_mat_cols(im) - 1);
+    cstr += " + " + str(b);
+    out << "s.t. c" << cn << " : " << cstr << ">= 0;" << endl;
+  }
+
+  out << "minimize obj: " << sep_list(obj_terms, "", "", " + ") << ";" << endl;
+  out << "solve;";
+  for (auto ps : builder.variable_positions) {
+    out << "printf \"" << ps.first << " = %d\\n\", " << ps.first << ";" << endl;
+  }
+  out << "end;" << endl;
+  out.close();
+  cout << "Done writing out problem to mod file" << endl;
+}

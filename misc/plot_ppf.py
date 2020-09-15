@@ -23,9 +23,12 @@ def autolabel(rects):
     """Attach a text label above each bar in *rects*, displaying its height."""
     for rect in rects:
         height = rect.get_height()
+        horizontal_offset = 0
+        if height < 0.01:
+            horizontal_offset = 2
         ax.annotate('{}'.format(height),
                     xy=(rect.get_x() + rect.get_width() / 2, height),
-                    xytext=(0, 1),  # 3 points vertical offset
+                    xytext=(horizontal_offset, 1),  # 3 points vertical offset
                     textcoords="offset points",
                     ha='center', va='bottom',
                     zorder=20)
@@ -52,6 +55,7 @@ cpu_ppf = [0.01, 0.064, 0.002]
 gpu_ppf = [2.24, 1.61, 0.22]
 k80_ppf = [1.61, 0.298, 0.03]
 
+print('Improvement over V100 sef:', cw_ppf[2] / gpu_ppf[2])
 print('Improvement over k80 sef:', cw_ppf[2] / k80_ppf[2])
 print('Improvement over CPU sef:', cw_ppf[2] / cpu_ppf[2])
 
@@ -78,7 +82,7 @@ bar_width = (width - margin - inter_bar_margin*(len(categories) - 1))/4.0
 
 use_offset = len(categories) % 2 == 1
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(6, 3))
 ax.grid(axis='y')
 # bar_cycle = (cycler('hatch', ['///', '--', '...','\///', 'xxx', '\\\\']) * cycler('edgecolor', 'k')*cycler('color', 'w')*cycler('zorder', [10]))
 # bar_cycle = (cycler('hatch', ['///', '--', '...','\///', 'xxx', '\\\\']) * cycler('edgecolor', 'k')*cycler('zorder', [10]))
@@ -121,13 +125,6 @@ ax.legend()
 
 for c in rects:
     autolabel(c)
-# autolabel(rects1)
-# autolabel(rects2)
-# autolabel(rects3)
-# autolabel(rects4)
-
-# fig.tight_layout()
-# set_size(5, 3)
 
 plt.show()
 fig.savefig('clockwork_cpu_theoretical_peak_ppf.eps', format='eps')
