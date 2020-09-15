@@ -3150,13 +3150,13 @@ isl_map* pad_identity_relation_to_map(isl_map* m, int in_dim, int out_dim, int l
      return tile_map;
 }
 
-umap* pad_identity_relation_to_umap(umap* m, int in_dim, int out_dim, int lbd, int ubd) {
+umap* pad_identity_relation_to_umap(umap* mp, int in_dim, int out_dim, int lbd, int ubd) {
     vector<isl_map*> padded_maps;
-    for (auto m: get_maps(m)) {
+    for (auto m: get_maps(mp)) {
         isl_map* pad_m = pad_identity_relation_to_map(m, in_dim, out_dim, lbd, ubd);
         padded_maps.push_back(pad_m);
     }
-    auto ct = ctx(m);
+    auto ct = ctx(mp);
     umap* final_map = rdmap(ct, "{}");
     for (auto m: padded_maps) {
         final_map = unn(final_map, to_umap(m));
