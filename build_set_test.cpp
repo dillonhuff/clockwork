@@ -12993,10 +12993,14 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
       }
     }
     cout << "\tretrive dom: " << str(glb_retrive_domain) << endl;
-    if (num_in_dims(write_sched) != num_dims(dom_map.at(op_name))) {
-        dom = dom_map.at(op_name);
-        write_sched = retrive_map_domain_with_dim(m, dom);
-    }
+
+    //FIXME: The dimension retrive algorithm seems wrong for conv33, may have some special purpose for resnet
+    //if (num_in_dims(write_sched) != num_dims(dom_map.at(op_name))) {
+    //    cout << "\t retrive the domain for schedule: " << str(write_sched) << endl;
+    //    dom = dom_map.at(op_name);
+    //    write_sched = retrive_map_domain_with_dim(m, dom);
+    //    cout << "\t after retrive : " << str(write_sched) << endl;
+    //}
 
     //find the memory tile interface op we need to generate multiple file
     vector<isl_map*> access_map_for_op;
@@ -15508,6 +15512,7 @@ void lake_tests() {
 
   lake_conv33_autovec_test();
   lake_conv33_autovec_aha_test();
+  assert(false);
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");
   //lake_identity_stream_SMT_test(32, 32, "32x32");
