@@ -78,7 +78,7 @@ The file `build_set_test.cpp` is the main driver for all tests.
 Most files in this repository are automatically generated collateral
 that can be ignored.
 
-# Beware of AP\_INT\_MAX\_W
+## Beware of AP\_INT\_MAX\_W
 
 Vivado users may want to comment out `AP_INT_MAX_W` in `hw_classes.h`. It can cause very long compile times and is only needed for pipelines with very large unrolling factors.
 
