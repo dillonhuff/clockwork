@@ -1458,52 +1458,50 @@ isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) 
 }
 
 
-//isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
-    //isl_ctx* ctx = pick(buffers).second.ctx;
-    //isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
-    //isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
-    //isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
-    //isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
-    //for (auto it : buffers) {
-        //string buf_name = it.first;
-        //auto buf = it.second;
-        //global_sched = unn(buf.global_schedule(), global_sched);
-        //global_p_map = unn(buf.producer_map(), global_p_map);
-        //global_c_map = unn(buf.consumer_map(), global_c_map);
-        //domain = unn(buf.global_domain(), domain);
-    //}
-    //global_c_map = flatten_umap_domain_with_dim_from_outer(global_c_map, 2);
-    //global_p_map = flatten_umap_domain_with_dim_from_outer(global_p_map, 2);
-    //global_sched = flatten_umap_domain_with_dim_from_outer(global_sched, 2);
-    //domain = ::domain(global_sched);
-    //cout << "Global Schedule: " << str(global_sched) << endl;
-    //cout << "Global Domain: " << str(domain) << endl;
-    //cout << "Producer Map: " << str(global_p_map) << endl;
-    //cout << "Consumer Map: " << str(global_c_map) << endl;
-    //auto order_deps = get_rel_order(ctx, global_sched);
-    //cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
-    //auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
-    ////extra = flatten_umap_domain_with_dim_from_outer(extra, 2);
-    ////extra = inv(flatten_umap_domain_with_dim_from_outer(inv(extra), 2));
-    //raw_deps = unn(extra, raw_deps);
-    //auto validity = unn(order_deps, raw_deps);
-    ////validity = unn(validity, extra);
-    //auto proximity = cpy(raw_deps);
+isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+      string buf_name = it.first;
+      auto buf = it.second;
+      global_sched = unn(buf.global_schedule(), global_sched);
+      global_p_map = unn(buf.producer_map(), global_p_map);
+      global_c_map = unn(buf.consumer_map(), global_c_map);
+      domain = unn(buf.global_domain(), domain);
+    }
+    global_c_map = flatten_umap_domain_with_dim_from_outer(global_c_map, 2);
+    global_p_map = flatten_umap_domain_with_dim_from_outer(global_p_map, 2);
+    global_sched = flatten_umap_domain_with_dim_from_outer(global_sched, 2);
+    domain = ::domain(global_sched);
+    cout << "Global Schedule: " << str(global_sched) << endl;
+    cout << "Global Domain: " << str(domain) << endl;
+    cout << "Producer Map: " << str(global_p_map) << endl;
+    cout << "Consumer Map: " << str(global_c_map) << endl;
+    auto order_deps = get_rel_order(ctx, global_sched);
+    cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    extra = flatten_umap_domain_with_dim_from_outer(extra, 2);
+    extra = inv(flatten_umap_domain_with_dim_from_outer(inv(extra), 2));
+    raw_deps = unn(extra, raw_deps);
+    auto validity = unn(order_deps, raw_deps);
+    validity = unn(validity, extra);
+    auto proximity = cpy(raw_deps);
 
-    ////Try to remove proximity between_input vec to output_vec
-    ////proximity = filter_inner_sram_deps(ctx, proximity);
-    //for (string remove_stmt: remove_deps){
-        //proximity = remove_dep_domain_name(proximity, remove_stmt);
-    //}
+    for (string remove_stmt: remove_deps){
+      proximity = remove_dep_domain_name(proximity, remove_stmt);
+    }
 
-    //cout << "Raw_deps: " << str(raw_deps) << endl;
-    //cout << "proximity: " << str(proximity) << endl;
-    //cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
-    //isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
-    //auto sched_map = its(isl_schedule_get_map(sched), domain);
-    //return sched_map;
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
 
-//}
+}
 
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
     isl_ctx* ctx = pick(buffers).second.ctx;
@@ -13702,6 +13700,84 @@ void lake_gaussian_autovec_test() {
   //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
 }
 
+void lake_conv33_autovec_aha_test() {
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "conv33_naive_compute";
+  prg.add_input("in_inst");
+  prg.add_output("out_inst");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in_inst"] = 16;
+  prg.buffer_port_widths["out_inst"] = 16;
+  prg.buffer_port_widths["buf_inst"] = 16;
+
+  auto p = prg.add_nest("po", 0, 64, "pi", 0, 64);
+  auto write = p->add_op("input");
+  write->add_load("in_inst", "po, pi");
+  write->add_store("buf_inst", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 62, "qi", 0, 62);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf_inst", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  }
+  read->add_store("out_inst", "qo, qi");
+
+
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.rtl_options.use_prebuilt_memory = true;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+  //generate_coreir(opt, buffers_opt, prg, sched);
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+
+    //auto def = generate_coreir(opt, context, b.second);
+
+    //if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
+    //  cout << "Could not save ubuffer coreir!" << endl;
+    //  context->die();
+    //}
+    //CoreIR::deleteContext(context);
+  }
+
+#ifdef COREIR
+  generate_cgra_tb(buffers_opt, prg, opt);
+#endif
+
+
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  cout << str(opt_sched) << endl << endl;
+  cout << codegen_c(opt_sched) << endl << endl;
+  map<pair<string, string>, int> latency({
+          {{"input", "input_agg2sram"}, 1},
+          {{"input_agg2sram", "output_2_sram2tb"}, -3},
+          {{"output_2_sram2tb", "output_2"}, 2}});
+  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  cout << codegen_c(hsh) << endl;
+  cmd("mkdir -p ./lake_controllers/conv_3_3_aha/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_aha/");
+  cmd("mkdir -p ./lake_stream/conv_3_3_aha/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_new/", false);
+  //check_lake_config(op_vec, "./lake_controllers/conv_3_3_aha/", "./lake_gold/conv_3_3_aha/");
+}
+
 void lake_conv33_autovec_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
@@ -15430,6 +15506,8 @@ void union_test() {
 
 void lake_tests() {
 
+  lake_conv33_autovec_test();
+  lake_conv33_autovec_aha_test();
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");
   //lake_identity_stream_SMT_test(32, 32, "32x32");
@@ -15440,7 +15518,6 @@ void lake_tests() {
   //playground();
   //lake_identity_stream_autovec_test();
   //union_test();
-  lake_conv33_autovec_test();
   lake_gaussian_autovec_test();
   //lake_dual_port_test();
   lake_cascade_autovec_test();
@@ -17446,7 +17523,7 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
-  //lake_tests();
+  lake_tests();
   cnn_test();
   iccad_tests();
   exposure_fusion_iccad_apps("ef_cc_10_level");
