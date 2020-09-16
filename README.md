@@ -34,7 +34,7 @@ not just take the latest release of NTL or barvinok.
 * barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/)
    * https://repo.or.cz/w/barvinok.git/blob/HEAD:/README - instructions for installing barvinok with ntl and GMP
    * note that linux users may need to manually add -lpthread to the LIBS field (change "LIBS = -lntl -lgmp", to "LIBS = -lpthread -lntl -lgmp")
-* *optional codegen backend* **CoreIR** - [github link](https://github.com/rdaly525/coreir.git)
+* *optional codegen backend* **CoreIR** - [github link](https://github.com/rdaly525/coreir.git), install script: [./misc/install\_coreir.sh](./misc/install_coreir.sh).
 
 ## Setting Your private\_settings.sh
 
