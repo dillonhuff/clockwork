@@ -140,8 +140,8 @@ endmodule
 
 module mult_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_hw_output_stencil_read_ren,
     input [15:0] op_hcompute_hw_output_stencil_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_hw_output_stencil_read [0:0],
@@ -214,8 +214,8 @@ endmodule
 
 module hw_input_global_wrapper_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_hw_input_global_wrapper_stencil_write_wen,
     input [15:0] op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars [2:0],
     input [15:0] op_hcompute_hw_input_global_wrapper_stencil_write [0:0],
@@ -861,8 +861,8 @@ wire [15:0] _U86_in;
 wire _U86_clk;
 wire [15:0] _U86_out;
 wire hw_input_global_wrapper_stencil_clk;
-wire hw_input_global_wrapper_stencil_rst_n;
 wire hw_input_global_wrapper_stencil_flush;
+wire hw_input_global_wrapper_stencil_rst_n;
 wire hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_wen;
 wire [15:0] hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars [2:0];
 wire [15:0] hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write [0:0];
@@ -870,8 +870,8 @@ wire hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_read_ren;
 wire [15:0] hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_read_ctrl_vars [2:0];
 wire [15:0] hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_read [0:0];
 wire mult_stencil_clk;
-wire mult_stencil_rst_n;
 wire mult_stencil_flush;
+wire mult_stencil_rst_n;
 wire mult_stencil_op_hcompute_hw_output_stencil_read_ren;
 wire [15:0] mult_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars [2:0];
 wire [15:0] mult_stencil_op_hcompute_hw_output_stencil_read [0:0];
@@ -939,8 +939,8 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .out(_U86_out)
 );
 assign hw_input_global_wrapper_stencil_clk = clk;
-assign hw_input_global_wrapper_stencil_rst_n = rst_n;
 assign hw_input_global_wrapper_stencil_flush = flush;
+assign hw_input_global_wrapper_stencil_rst_n = rst_n;
 assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_wen = op_hcompute_hw_input_global_wrapper_stencil_write_start;
 assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2] = op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_out[2];
 assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] = op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_out[1];
@@ -952,8 +952,8 @@ assign hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_read_ctrl_vars[1
 assign hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_read_ctrl_vars[0] = op_hcompute_mult_stencil_port_controller_d[0];
 hw_input_global_wrapper_stencil_ub hw_input_global_wrapper_stencil (
     .clk(hw_input_global_wrapper_stencil_clk),
-    .rst_n(hw_input_global_wrapper_stencil_rst_n),
     .flush(hw_input_global_wrapper_stencil_flush),
+    .rst_n(hw_input_global_wrapper_stencil_rst_n),
     .op_hcompute_hw_input_global_wrapper_stencil_write_wen(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_wen),
     .op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars),
     .op_hcompute_hw_input_global_wrapper_stencil_write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write),
@@ -962,8 +962,8 @@ hw_input_global_wrapper_stencil_ub hw_input_global_wrapper_stencil (
     .op_hcompute_mult_stencil_read(hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_read)
 );
 assign mult_stencil_clk = clk;
-assign mult_stencil_rst_n = rst_n;
 assign mult_stencil_flush = flush;
+assign mult_stencil_rst_n = rst_n;
 assign mult_stencil_op_hcompute_hw_output_stencil_read_ren = op_hcompute_hw_output_stencil_read_start;
 assign mult_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[2] = op_hcompute_hw_output_stencil_port_controller_d[2];
 assign mult_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[1] = op_hcompute_hw_output_stencil_port_controller_d[1];
@@ -975,8 +975,8 @@ assign mult_stencil_op_hcompute_mult_stencil_write_ctrl_vars[0] = op_hcompute_mu
 assign mult_stencil_op_hcompute_mult_stencil_write[0] = op_hcompute_mult_stencil_mult_stencil_op_hcompute_mult_stencil_write[0];
 mult_stencil_ub mult_stencil (
     .clk(mult_stencil_clk),
-    .rst_n(mult_stencil_rst_n),
     .flush(mult_stencil_flush),
+    .rst_n(mult_stencil_rst_n),
     .op_hcompute_hw_output_stencil_read_ren(mult_stencil_op_hcompute_hw_output_stencil_read_ren),
     .op_hcompute_hw_output_stencil_read_ctrl_vars(mult_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars),
     .op_hcompute_hw_output_stencil_read(mult_stencil_op_hcompute_hw_output_stencil_read),
