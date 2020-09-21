@@ -15867,6 +15867,10 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
 
 void dsa_writers(prog& prg) {
   if (is_rate_matchable(prg)) {
+    prg.pretty_print();
+    cout << "Is rate matchable" << endl;
+    //assert(false);
+
     std::set<string> all_buffers;
     std::set<string> multi_write_buffers;
     map<string, std::set<string> > producer_kernels;
@@ -15930,7 +15934,8 @@ void dsa_writers(prog& prg) {
     }
 
     cout << "Built initializer / update maps" << endl;
-
+    cout << tab(1) << "# multi_write buffers = " << multi_write_buffers.size() << endl;
+    assert(false);
     for (auto b : multi_write_buffers) {
       string init_buffer = prg.un(b + "_clkwrk_dsa");
       auto init = initializers[b];
@@ -16490,8 +16495,8 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(pointwise());
   test_programs.push_back(gaussian());
+  test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
   //test_programs.push_back(unsharp());
   test_programs.push_back(harris());
@@ -16535,6 +16540,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     //assert(false);
 
     dsa_writers(prg);
+    prg.pretty_print();
+    assert(false);
     //vector<string> cpu;
     auto cpu = unoptimized_result(prg);
 
