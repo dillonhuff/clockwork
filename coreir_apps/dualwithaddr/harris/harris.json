@@ -5165,8 +5165,8 @@
       "cim_output_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_cim_output_stencil_write_wen","BitIn"],
           ["op_hcompute_cim_output_stencil_write_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_cim_output_stencil_write",["Array",1,["Array",16,"BitIn"]]],
@@ -5190,8 +5190,8 @@
       "cim_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_cim_output_stencil_read_ren","BitIn"],
           ["op_hcompute_cim_output_stencil_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_cim_output_stencil_read",["Array",9,["Array",16,"Bit"]]],
@@ -6778,8 +6778,8 @@
       "grad_x_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_grad_x_stencil_write_wen","BitIn"],
           ["op_hcompute_grad_x_stencil_write_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_grad_x_stencil_write",["Array",1,["Array",16,"BitIn"]]],
@@ -6814,8 +6814,8 @@
       "grad_y_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_grad_y_stencil_write_wen","BitIn"],
           ["op_hcompute_grad_y_stencil_write_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_grad_y_stencil_write",["Array",1,["Array",16,"BitIn"]]],
@@ -8269,8 +8269,8 @@
       "lgxx_stencil_clkwrk_dsa0_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_lgxx_stencil_1_read_ren","BitIn"],
           ["op_hcompute_lgxx_stencil_1_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_lgxx_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
@@ -8294,8 +8294,8 @@
       "lgxx_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_cim_stencil_read_ren","BitIn"],
           ["op_hcompute_cim_stencil_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_cim_stencil_read",["Array",1,["Array",16,"Bit"]]],
@@ -8319,8 +8319,8 @@
       "lgxy_stencil_clkwrk_dsa1_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_lgxy_stencil_1_read_ren","BitIn"],
           ["op_hcompute_lgxy_stencil_1_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_lgxy_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
@@ -8344,8 +8344,8 @@
       "lgxy_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_cim_stencil_read_ren","BitIn"],
           ["op_hcompute_cim_stencil_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_cim_stencil_read",["Array",1,["Array",16,"Bit"]]],
@@ -8369,8 +8369,8 @@
       "lgyy_stencil_clkwrk_dsa2_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_lgyy_stencil_1_read_ren","BitIn"],
           ["op_hcompute_lgyy_stencil_1_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_lgyy_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
@@ -8394,8 +8394,8 @@
       "lgyy_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_cim_stencil_read_ren","BitIn"],
           ["op_hcompute_cim_stencil_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_cim_stencil_read",["Array",1,["Array",16,"Bit"]]],
@@ -8419,8 +8419,8 @@
       "lxx_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_lgxx_stencil_1_read_ren","BitIn"],
           ["op_hcompute_lgxx_stencil_1_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_lgxx_stencil_1_read",["Array",9,["Array",16,"Bit"]]],
@@ -8508,8 +8508,8 @@
       "lxy_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_lgxy_stencil_1_read_ren","BitIn"],
           ["op_hcompute_lgxy_stencil_1_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_lgxy_stencil_1_read",["Array",9,["Array",16,"Bit"]]],
@@ -8597,8 +8597,8 @@
       "lyy_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_lgyy_stencil_1_read_ren","BitIn"],
           ["op_hcompute_lgyy_stencil_1_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_lgyy_stencil_1_read",["Array",9,["Array",16,"Bit"]]],
@@ -8830,8 +8830,8 @@
       "padded16_global_wrapper_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_grad_x_stencil_read_ren","BitIn"],
           ["op_hcompute_grad_x_stencil_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_grad_x_stencil_read",["Array",6,["Array",16,"Bit"]]],

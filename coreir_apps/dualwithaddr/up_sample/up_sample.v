@@ -120,8 +120,8 @@ endmodule
 
 module nearest_neighbor_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_hw_output_stencil_read_ren,
     input [15:0] op_hcompute_hw_output_stencil_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_hw_output_stencil_read [0:0],
@@ -749,8 +749,8 @@ endmodule
 
 module hw_input_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_hw_input_stencil_write_wen,
     input [15:0] op_hcompute_hw_input_stencil_write_ctrl_vars [2:0],
     input [15:0] op_hcompute_hw_input_stencil_write [0:0],
@@ -758,10 +758,10 @@ module hw_input_stencil_ub (
     input [15:0] op_hcompute_nearest_neighbor_stencil_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_nearest_neighbor_stencil_read [0:0]
 );
-wire [15:0] addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_0_U128_out;
-wire [15:0] addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_0_U128_d [2:0];
-wire [15:0] addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_3_U116_out;
-wire [15:0] addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_3_U116_d [2:0];
+wire [15:0] addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U128_out;
+wire [15:0] addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U128_d [2:0];
+wire [15:0] addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U116_out;
+wire [15:0] addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U116_d [2:0];
 wire hw_input_stencil_bank_clk;
 wire [15:0] hw_input_stencil_bank_wdata;
 wire [15:0] hw_input_stencil_bank_waddr;
@@ -769,25 +769,25 @@ wire hw_input_stencil_bank_wen;
 wire [15:0] hw_input_stencil_bank_rdata;
 wire [15:0] hw_input_stencil_bank_raddr;
 wire hw_input_stencil_bank_ren;
-assign addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_0_U128_d[2] = op_hcompute_hw_input_stencil_write_ctrl_vars[2];
-assign addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_0_U128_d[1] = op_hcompute_hw_input_stencil_write_ctrl_vars[1];
-assign addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_0_U128_d[0] = op_hcompute_hw_input_stencil_write_ctrl_vars[0];
-aff__U117 addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_0_U128 (
-    .out(addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_0_U128_out),
-    .d(addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_0_U128_d)
+assign addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U128_d[2] = op_hcompute_hw_input_stencil_write_ctrl_vars[2];
+assign addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U128_d[1] = op_hcompute_hw_input_stencil_write_ctrl_vars[1];
+assign addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U128_d[0] = op_hcompute_hw_input_stencil_write_ctrl_vars[0];
+aff__U117 addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U128 (
+    .out(addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U128_out),
+    .d(addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U128_d)
 );
-assign addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_3_U116_d[2] = op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2];
-assign addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_3_U116_d[1] = op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1];
-assign addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_3_U116_d[0] = op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0];
-aff__U75 addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_3_U116 (
-    .out(addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_3_U116_out),
-    .d(addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_3_U116_d)
+assign addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U116_d[2] = op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2];
+assign addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U116_d[1] = op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1];
+assign addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U116_d[0] = op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0];
+aff__U75 addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U116 (
+    .out(addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U116_out),
+    .d(addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U116_d)
 );
 assign hw_input_stencil_bank_clk = clk;
 assign hw_input_stencil_bank_wdata = op_hcompute_hw_input_stencil_write[0];
-assign hw_input_stencil_bank_waddr = addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_0_U128_out;
+assign hw_input_stencil_bank_waddr = addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U128_out;
 assign hw_input_stencil_bank_wen = op_hcompute_hw_input_stencil_write_wen;
-assign hw_input_stencil_bank_raddr = addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_3_U116_out;
+assign hw_input_stencil_bank_raddr = addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U116_out;
 assign hw_input_stencil_bank_ren = op_hcompute_nearest_neighbor_stencil_read_ren;
 raw_dual_port_sram_tile__depth2048 hw_input_stencil_bank (
     .clk(hw_input_stencil_bank_clk),
@@ -904,8 +904,8 @@ wire [15:0] _U135_in;
 wire _U135_clk;
 wire [15:0] _U135_out;
 wire hw_input_stencil_clk;
-wire hw_input_stencil_rst_n;
 wire hw_input_stencil_flush;
+wire hw_input_stencil_rst_n;
 wire hw_input_stencil_op_hcompute_hw_input_stencil_write_wen;
 wire [15:0] hw_input_stencil_op_hcompute_hw_input_stencil_write_ctrl_vars [2:0];
 wire [15:0] hw_input_stencil_op_hcompute_hw_input_stencil_write [0:0];
@@ -913,8 +913,8 @@ wire hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read_ren;
 wire [15:0] hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read_ctrl_vars [2:0];
 wire [15:0] hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read [0:0];
 wire nearest_neighbor_stencil_clk;
-wire nearest_neighbor_stencil_rst_n;
 wire nearest_neighbor_stencil_flush;
+wire nearest_neighbor_stencil_rst_n;
 wire nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read_ren;
 wire [15:0] nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars [2:0];
 wire [15:0] nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read [0:0];
@@ -982,8 +982,8 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .out(_U135_out)
 );
 assign hw_input_stencil_clk = clk;
-assign hw_input_stencil_rst_n = rst_n;
 assign hw_input_stencil_flush = flush;
+assign hw_input_stencil_rst_n = rst_n;
 assign hw_input_stencil_op_hcompute_hw_input_stencil_write_wen = op_hcompute_hw_input_stencil_write_start;
 assign hw_input_stencil_op_hcompute_hw_input_stencil_write_ctrl_vars[2] = op_hcompute_hw_input_stencil_write_start_control_vars_out[2];
 assign hw_input_stencil_op_hcompute_hw_input_stencil_write_ctrl_vars[1] = op_hcompute_hw_input_stencil_write_start_control_vars_out[1];
@@ -995,8 +995,8 @@ assign hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] =
 assign hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] = op_hcompute_nearest_neighbor_stencil_port_controller_d[0];
 hw_input_stencil_ub hw_input_stencil (
     .clk(hw_input_stencil_clk),
-    .rst_n(hw_input_stencil_rst_n),
     .flush(hw_input_stencil_flush),
+    .rst_n(hw_input_stencil_rst_n),
     .op_hcompute_hw_input_stencil_write_wen(hw_input_stencil_op_hcompute_hw_input_stencil_write_wen),
     .op_hcompute_hw_input_stencil_write_ctrl_vars(hw_input_stencil_op_hcompute_hw_input_stencil_write_ctrl_vars),
     .op_hcompute_hw_input_stencil_write(hw_input_stencil_op_hcompute_hw_input_stencil_write),
@@ -1005,8 +1005,8 @@ hw_input_stencil_ub hw_input_stencil (
     .op_hcompute_nearest_neighbor_stencil_read(hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read)
 );
 assign nearest_neighbor_stencil_clk = clk;
-assign nearest_neighbor_stencil_rst_n = rst_n;
 assign nearest_neighbor_stencil_flush = flush;
+assign nearest_neighbor_stencil_rst_n = rst_n;
 assign nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read_ren = op_hcompute_hw_output_stencil_read_start;
 assign nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[2] = op_hcompute_hw_output_stencil_port_controller_d[2];
 assign nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[1] = op_hcompute_hw_output_stencil_port_controller_d[1];
@@ -1018,8 +1018,8 @@ assign nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write_ctrl_
 assign nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write[0] = op_hcompute_nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write[0];
 nearest_neighbor_stencil_ub nearest_neighbor_stencil (
     .clk(nearest_neighbor_stencil_clk),
-    .rst_n(nearest_neighbor_stencil_rst_n),
     .flush(nearest_neighbor_stencil_flush),
+    .rst_n(nearest_neighbor_stencil_rst_n),
     .op_hcompute_hw_output_stencil_read_ren(nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read_ren),
     .op_hcompute_hw_output_stencil_read_ctrl_vars(nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars),
     .op_hcompute_hw_output_stencil_read(nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read),

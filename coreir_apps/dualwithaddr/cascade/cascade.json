@@ -2347,8 +2347,8 @@
       "conv1_stencil_clkwrk_dsa0_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_conv1_stencil_1_read_ren","BitIn"],
           ["op_hcompute_conv1_stencil_1_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_conv1_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
@@ -2372,8 +2372,8 @@
       "conv1_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_conv1_stencil_1_write_wen","BitIn"],
           ["op_hcompute_conv1_stencil_1_write_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_conv1_stencil_1_write",["Array",1,["Array",16,"BitIn"]]],
@@ -2461,8 +2461,8 @@
       "conv2_stencil_clkwrk_dsa1_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_conv2_stencil_1_read_ren","BitIn"],
           ["op_hcompute_conv2_stencil_1_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_conv2_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
@@ -2486,8 +2486,8 @@
       "conv2_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_conv2_stencil_1_write_wen","BitIn"],
           ["op_hcompute_conv2_stencil_1_write_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_conv2_stencil_1_write",["Array",1,["Array",16,"BitIn"]]],
@@ -3418,8 +3418,8 @@
       "hw_input_global_wrapper_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_conv1_stencil_1_read_ren","BitIn"],
           ["op_hcompute_conv1_stencil_1_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_conv1_stencil_1_read",["Array",9,["Array",16,"Bit"]]],

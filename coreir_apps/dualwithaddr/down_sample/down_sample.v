@@ -183,8 +183,8 @@ endmodule
 
 module hw_input_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_avg_pool_stencil_1_read_ren,
     input [15:0] op_hcompute_avg_pool_stencil_1_read_ctrl_vars [3:0],
     output [15:0] op_hcompute_avg_pool_stencil_1_read [3:0],
@@ -471,8 +471,8 @@ endmodule
 
 module avg_pool_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_avg_pool_stencil_1_write_wen,
     input [15:0] op_hcompute_avg_pool_stencil_1_write_ctrl_vars [3:0],
     input [15:0] op_hcompute_avg_pool_stencil_1_write [0:0],
@@ -501,8 +501,8 @@ endmodule
 
 module avg_pool_stencil_clkwrk_dsa0_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_avg_pool_stencil_1_read_ren,
     input [15:0] op_hcompute_avg_pool_stencil_1_read_ctrl_vars [3:0],
     output [15:0] op_hcompute_avg_pool_stencil_1_read [0:0],
@@ -1450,8 +1450,8 @@ wire [15:0] _U159_in;
 wire _U159_clk;
 wire [15:0] _U159_out;
 wire avg_pool_stencil_clk;
-wire avg_pool_stencil_rst_n;
 wire avg_pool_stencil_flush;
+wire avg_pool_stencil_rst_n;
 wire avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write_wen;
 wire [15:0] avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write_ctrl_vars [3:0];
 wire [15:0] avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write [0:0];
@@ -1459,8 +1459,8 @@ wire avg_pool_stencil_op_hcompute_hw_output_stencil_read_ren;
 wire [15:0] avg_pool_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars [3:0];
 wire [15:0] avg_pool_stencil_op_hcompute_hw_output_stencil_read [0:0];
 wire avg_pool_stencil_clkwrk_dsa0_clk;
-wire avg_pool_stencil_clkwrk_dsa0_rst_n;
 wire avg_pool_stencil_clkwrk_dsa0_flush;
+wire avg_pool_stencil_clkwrk_dsa0_rst_n;
 wire avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read_ren;
 wire [15:0] avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read_ctrl_vars [3:0];
 wire [15:0] avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read [0:0];
@@ -1468,8 +1468,8 @@ wire avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_write_wen;
 wire [15:0] avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_write_ctrl_vars [3:0];
 wire [15:0] avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_write [0:0];
 wire hw_input_stencil_clk;
-wire hw_input_stencil_rst_n;
 wire hw_input_stencil_flush;
+wire hw_input_stencil_rst_n;
 wire hw_input_stencil_op_hcompute_avg_pool_stencil_1_read_ren;
 wire [15:0] hw_input_stencil_op_hcompute_avg_pool_stencil_1_read_ctrl_vars [3:0];
 wire [15:0] hw_input_stencil_op_hcompute_avg_pool_stencil_1_read [3:0];
@@ -1554,8 +1554,8 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .out(_U159_out)
 );
 assign avg_pool_stencil_clk = clk;
-assign avg_pool_stencil_rst_n = rst_n;
 assign avg_pool_stencil_flush = flush;
+assign avg_pool_stencil_rst_n = rst_n;
 assign avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write_wen = op_hcompute_avg_pool_stencil_1_write_start;
 assign avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3] = op_hcompute_avg_pool_stencil_1_write_start_control_vars_out[3];
 assign avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] = op_hcompute_avg_pool_stencil_1_write_start_control_vars_out[2];
@@ -1569,8 +1569,8 @@ assign avg_pool_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[1] = op_hco
 assign avg_pool_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[0] = op_hcompute_hw_output_stencil_port_controller_d[0];
 avg_pool_stencil_ub avg_pool_stencil (
     .clk(avg_pool_stencil_clk),
-    .rst_n(avg_pool_stencil_rst_n),
     .flush(avg_pool_stencil_flush),
+    .rst_n(avg_pool_stencil_rst_n),
     .op_hcompute_avg_pool_stencil_1_write_wen(avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write_wen),
     .op_hcompute_avg_pool_stencil_1_write_ctrl_vars(avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write_ctrl_vars),
     .op_hcompute_avg_pool_stencil_1_write(avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write),
@@ -1579,8 +1579,8 @@ avg_pool_stencil_ub avg_pool_stencil (
     .op_hcompute_hw_output_stencil_read(avg_pool_stencil_op_hcompute_hw_output_stencil_read)
 );
 assign avg_pool_stencil_clkwrk_dsa0_clk = clk;
-assign avg_pool_stencil_clkwrk_dsa0_rst_n = rst_n;
 assign avg_pool_stencil_clkwrk_dsa0_flush = flush;
+assign avg_pool_stencil_clkwrk_dsa0_rst_n = rst_n;
 assign avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read_ren = op_hcompute_avg_pool_stencil_1_read_start;
 assign avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3] = op_hcompute_avg_pool_stencil_1_port_controller_d[3];
 assign avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] = op_hcompute_avg_pool_stencil_1_port_controller_d[2];
@@ -1594,8 +1594,8 @@ assign avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_write_ctrl_vars
 assign avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_write[0] = op_hcompute_avg_pool_stencil_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_write[0];
 avg_pool_stencil_clkwrk_dsa0_ub avg_pool_stencil_clkwrk_dsa0 (
     .clk(avg_pool_stencil_clkwrk_dsa0_clk),
-    .rst_n(avg_pool_stencil_clkwrk_dsa0_rst_n),
     .flush(avg_pool_stencil_clkwrk_dsa0_flush),
+    .rst_n(avg_pool_stencil_clkwrk_dsa0_rst_n),
     .op_hcompute_avg_pool_stencil_1_read_ren(avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read_ren),
     .op_hcompute_avg_pool_stencil_1_read_ctrl_vars(avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read_ctrl_vars),
     .op_hcompute_avg_pool_stencil_1_read(avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read),
@@ -1604,8 +1604,8 @@ avg_pool_stencil_clkwrk_dsa0_ub avg_pool_stencil_clkwrk_dsa0 (
     .op_hcompute_avg_pool_stencil_write(avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_write)
 );
 assign hw_input_stencil_clk = clk;
-assign hw_input_stencil_rst_n = rst_n;
 assign hw_input_stencil_flush = flush;
+assign hw_input_stencil_rst_n = rst_n;
 assign hw_input_stencil_op_hcompute_avg_pool_stencil_1_read_ren = op_hcompute_avg_pool_stencil_1_read_start;
 assign hw_input_stencil_op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3] = op_hcompute_avg_pool_stencil_1_port_controller_d[3];
 assign hw_input_stencil_op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] = op_hcompute_avg_pool_stencil_1_port_controller_d[2];
@@ -1619,8 +1619,8 @@ assign hw_input_stencil_op_hcompute_hw_input_stencil_write_ctrl_vars[0] = op_hco
 assign hw_input_stencil_op_hcompute_hw_input_stencil_write[0] = op_hcompute_hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_write[0];
 hw_input_stencil_ub hw_input_stencil (
     .clk(hw_input_stencil_clk),
-    .rst_n(hw_input_stencil_rst_n),
     .flush(hw_input_stencil_flush),
+    .rst_n(hw_input_stencil_rst_n),
     .op_hcompute_avg_pool_stencil_1_read_ren(hw_input_stencil_op_hcompute_avg_pool_stencil_1_read_ren),
     .op_hcompute_avg_pool_stencil_1_read_ctrl_vars(hw_input_stencil_op_hcompute_avg_pool_stencil_1_read_ctrl_vars),
     .op_hcompute_avg_pool_stencil_1_read(hw_input_stencil_op_hcompute_avg_pool_stencil_1_read),

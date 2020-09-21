@@ -288,8 +288,8 @@ endmodule
 
 module hw_input_global_wrapper_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_conv1_stencil_1_read_ren,
     input [15:0] op_hcompute_conv1_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_conv1_stencil_1_read [8:0],
@@ -952,8 +952,8 @@ endmodule
 
 module conv2_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_conv2_stencil_1_write_wen,
     input [15:0] op_hcompute_conv2_stencil_1_write_ctrl_vars [2:0],
     input [15:0] op_hcompute_conv2_stencil_1_write [0:0],
@@ -982,8 +982,8 @@ endmodule
 
 module conv2_stencil_clkwrk_dsa1_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_conv2_stencil_1_read_ren,
     input [15:0] op_hcompute_conv2_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_conv2_stencil_1_read [0:0],
@@ -1012,8 +1012,8 @@ endmodule
 
 module conv1_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_conv1_stencil_1_write_wen,
     input [15:0] op_hcompute_conv1_stencil_1_write_ctrl_vars [2:0],
     input [15:0] op_hcompute_conv1_stencil_1_write [0:0],
@@ -1178,8 +1178,8 @@ endmodule
 
 module conv1_stencil_clkwrk_dsa0_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_conv1_stencil_1_read_ren,
     input [15:0] op_hcompute_conv1_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_conv1_stencil_1_read [0:0],
@@ -2311,8 +2311,8 @@ wire [15:0] _U227_in;
 wire _U227_clk;
 wire [15:0] _U227_out;
 wire conv1_stencil_clk;
-wire conv1_stencil_rst_n;
 wire conv1_stencil_flush;
+wire conv1_stencil_rst_n;
 wire conv1_stencil_op_hcompute_conv1_stencil_1_write_wen;
 wire [15:0] conv1_stencil_op_hcompute_conv1_stencil_1_write_ctrl_vars [2:0];
 wire [15:0] conv1_stencil_op_hcompute_conv1_stencil_1_write [0:0];
@@ -2320,8 +2320,8 @@ wire conv1_stencil_op_hcompute_conv2_stencil_1_read_ren;
 wire [15:0] conv1_stencil_op_hcompute_conv2_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] conv1_stencil_op_hcompute_conv2_stencil_1_read [8:0];
 wire conv1_stencil_clkwrk_dsa0_clk;
-wire conv1_stencil_clkwrk_dsa0_rst_n;
 wire conv1_stencil_clkwrk_dsa0_flush;
+wire conv1_stencil_clkwrk_dsa0_rst_n;
 wire conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ren;
 wire [15:0] conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read [0:0];
@@ -2329,8 +2329,8 @@ wire conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_wen;
 wire [15:0] conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_ctrl_vars [2:0];
 wire [15:0] conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write [0:0];
 wire conv2_stencil_clk;
-wire conv2_stencil_rst_n;
 wire conv2_stencil_flush;
+wire conv2_stencil_rst_n;
 wire conv2_stencil_op_hcompute_conv2_stencil_1_write_wen;
 wire [15:0] conv2_stencil_op_hcompute_conv2_stencil_1_write_ctrl_vars [2:0];
 wire [15:0] conv2_stencil_op_hcompute_conv2_stencil_1_write [0:0];
@@ -2338,8 +2338,8 @@ wire conv2_stencil_op_hcompute_hw_output_stencil_read_ren;
 wire [15:0] conv2_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars [2:0];
 wire [15:0] conv2_stencil_op_hcompute_hw_output_stencil_read [0:0];
 wire conv2_stencil_clkwrk_dsa1_clk;
-wire conv2_stencil_clkwrk_dsa1_rst_n;
 wire conv2_stencil_clkwrk_dsa1_flush;
+wire conv2_stencil_clkwrk_dsa1_rst_n;
 wire conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ren;
 wire [15:0] conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read [0:0];
@@ -2347,8 +2347,8 @@ wire conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_wen;
 wire [15:0] conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_ctrl_vars [2:0];
 wire [15:0] conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write [0:0];
 wire hw_input_global_wrapper_stencil_clk;
-wire hw_input_global_wrapper_stencil_rst_n;
 wire hw_input_global_wrapper_stencil_flush;
+wire hw_input_global_wrapper_stencil_rst_n;
 wire hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ren;
 wire [15:0] hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read [8:0];
@@ -2467,8 +2467,8 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .out(_U227_out)
 );
 assign conv1_stencil_clk = clk;
-assign conv1_stencil_rst_n = rst_n;
 assign conv1_stencil_flush = flush;
+assign conv1_stencil_rst_n = rst_n;
 assign conv1_stencil_op_hcompute_conv1_stencil_1_write_wen = op_hcompute_conv1_stencil_1_write_start;
 assign conv1_stencil_op_hcompute_conv1_stencil_1_write_ctrl_vars[2] = op_hcompute_conv1_stencil_1_write_start_control_vars_out[2];
 assign conv1_stencil_op_hcompute_conv1_stencil_1_write_ctrl_vars[1] = op_hcompute_conv1_stencil_1_write_start_control_vars_out[1];
@@ -2480,8 +2480,8 @@ assign conv1_stencil_op_hcompute_conv2_stencil_1_read_ctrl_vars[1] = op_hcompute
 assign conv1_stencil_op_hcompute_conv2_stencil_1_read_ctrl_vars[0] = op_hcompute_conv2_stencil_1_port_controller_d[0];
 conv1_stencil_ub conv1_stencil (
     .clk(conv1_stencil_clk),
-    .rst_n(conv1_stencil_rst_n),
     .flush(conv1_stencil_flush),
+    .rst_n(conv1_stencil_rst_n),
     .op_hcompute_conv1_stencil_1_write_wen(conv1_stencil_op_hcompute_conv1_stencil_1_write_wen),
     .op_hcompute_conv1_stencil_1_write_ctrl_vars(conv1_stencil_op_hcompute_conv1_stencil_1_write_ctrl_vars),
     .op_hcompute_conv1_stencil_1_write(conv1_stencil_op_hcompute_conv1_stencil_1_write),
@@ -2490,8 +2490,8 @@ conv1_stencil_ub conv1_stencil (
     .op_hcompute_conv2_stencil_1_read(conv1_stencil_op_hcompute_conv2_stencil_1_read)
 );
 assign conv1_stencil_clkwrk_dsa0_clk = clk;
-assign conv1_stencil_clkwrk_dsa0_rst_n = rst_n;
 assign conv1_stencil_clkwrk_dsa0_flush = flush;
+assign conv1_stencil_clkwrk_dsa0_rst_n = rst_n;
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ren = op_hcompute_conv1_stencil_1_read_start;
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ctrl_vars[2] = op_hcompute_conv1_stencil_1_port_controller_d[2];
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ctrl_vars[1] = op_hcompute_conv1_stencil_1_port_controller_d[1];
@@ -2503,8 +2503,8 @@ assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_ctrl_vars[0] = 
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write[0] = op_hcompute_conv1_stencil_conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write[0];
 conv1_stencil_clkwrk_dsa0_ub conv1_stencil_clkwrk_dsa0 (
     .clk(conv1_stencil_clkwrk_dsa0_clk),
-    .rst_n(conv1_stencil_clkwrk_dsa0_rst_n),
     .flush(conv1_stencil_clkwrk_dsa0_flush),
+    .rst_n(conv1_stencil_clkwrk_dsa0_rst_n),
     .op_hcompute_conv1_stencil_1_read_ren(conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ren),
     .op_hcompute_conv1_stencil_1_read_ctrl_vars(conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ctrl_vars),
     .op_hcompute_conv1_stencil_1_read(conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read),
@@ -2513,8 +2513,8 @@ conv1_stencil_clkwrk_dsa0_ub conv1_stencil_clkwrk_dsa0 (
     .op_hcompute_conv1_stencil_write(conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write)
 );
 assign conv2_stencil_clk = clk;
-assign conv2_stencil_rst_n = rst_n;
 assign conv2_stencil_flush = flush;
+assign conv2_stencil_rst_n = rst_n;
 assign conv2_stencil_op_hcompute_conv2_stencil_1_write_wen = op_hcompute_conv2_stencil_1_write_start;
 assign conv2_stencil_op_hcompute_conv2_stencil_1_write_ctrl_vars[2] = op_hcompute_conv2_stencil_1_write_start_control_vars_out[2];
 assign conv2_stencil_op_hcompute_conv2_stencil_1_write_ctrl_vars[1] = op_hcompute_conv2_stencil_1_write_start_control_vars_out[1];
@@ -2526,8 +2526,8 @@ assign conv2_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[1] = op_hcompu
 assign conv2_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[0] = op_hcompute_hw_output_stencil_port_controller_d[0];
 conv2_stencil_ub conv2_stencil (
     .clk(conv2_stencil_clk),
-    .rst_n(conv2_stencil_rst_n),
     .flush(conv2_stencil_flush),
+    .rst_n(conv2_stencil_rst_n),
     .op_hcompute_conv2_stencil_1_write_wen(conv2_stencil_op_hcompute_conv2_stencil_1_write_wen),
     .op_hcompute_conv2_stencil_1_write_ctrl_vars(conv2_stencil_op_hcompute_conv2_stencil_1_write_ctrl_vars),
     .op_hcompute_conv2_stencil_1_write(conv2_stencil_op_hcompute_conv2_stencil_1_write),
@@ -2536,8 +2536,8 @@ conv2_stencil_ub conv2_stencil (
     .op_hcompute_hw_output_stencil_read(conv2_stencil_op_hcompute_hw_output_stencil_read)
 );
 assign conv2_stencil_clkwrk_dsa1_clk = clk;
-assign conv2_stencil_clkwrk_dsa1_rst_n = rst_n;
 assign conv2_stencil_clkwrk_dsa1_flush = flush;
+assign conv2_stencil_clkwrk_dsa1_rst_n = rst_n;
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ren = op_hcompute_conv2_stencil_1_read_start;
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ctrl_vars[2] = op_hcompute_conv2_stencil_1_port_controller_d[2];
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ctrl_vars[1] = op_hcompute_conv2_stencil_1_port_controller_d[1];
@@ -2549,8 +2549,8 @@ assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_ctrl_vars[0] = 
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write[0] = op_hcompute_conv2_stencil_conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write[0];
 conv2_stencil_clkwrk_dsa1_ub conv2_stencil_clkwrk_dsa1 (
     .clk(conv2_stencil_clkwrk_dsa1_clk),
-    .rst_n(conv2_stencil_clkwrk_dsa1_rst_n),
     .flush(conv2_stencil_clkwrk_dsa1_flush),
+    .rst_n(conv2_stencil_clkwrk_dsa1_rst_n),
     .op_hcompute_conv2_stencil_1_read_ren(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ren),
     .op_hcompute_conv2_stencil_1_read_ctrl_vars(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ctrl_vars),
     .op_hcompute_conv2_stencil_1_read(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read),
@@ -2559,8 +2559,8 @@ conv2_stencil_clkwrk_dsa1_ub conv2_stencil_clkwrk_dsa1 (
     .op_hcompute_conv2_stencil_write(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write)
 );
 assign hw_input_global_wrapper_stencil_clk = clk;
-assign hw_input_global_wrapper_stencil_rst_n = rst_n;
 assign hw_input_global_wrapper_stencil_flush = flush;
+assign hw_input_global_wrapper_stencil_rst_n = rst_n;
 assign hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ren = op_hcompute_conv1_stencil_1_read_start;
 assign hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ctrl_vars[2] = op_hcompute_conv1_stencil_1_port_controller_d[2];
 assign hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ctrl_vars[1] = op_hcompute_conv1_stencil_1_port_controller_d[1];
@@ -2572,8 +2572,8 @@ assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
 assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write[0] = op_hcompute_hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write[0];
 hw_input_global_wrapper_stencil_ub hw_input_global_wrapper_stencil (
     .clk(hw_input_global_wrapper_stencil_clk),
-    .rst_n(hw_input_global_wrapper_stencil_rst_n),
     .flush(hw_input_global_wrapper_stencil_flush),
+    .rst_n(hw_input_global_wrapper_stencil_rst_n),
     .op_hcompute_conv1_stencil_1_read_ren(hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ren),
     .op_hcompute_conv1_stencil_1_read_ctrl_vars(hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ctrl_vars),
     .op_hcompute_conv1_stencil_1_read(hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read),
