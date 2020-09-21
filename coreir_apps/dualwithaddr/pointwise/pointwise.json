@@ -1202,8 +1202,8 @@
       "hw_input_global_wrapper_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_hw_input_global_wrapper_stencil_write_wen","BitIn"],
           ["op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_hw_input_global_wrapper_stencil_write",["Array",1,["Array",16,"BitIn"]]],
@@ -1227,8 +1227,8 @@
       "mult_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_hw_output_stencil_read_ren","BitIn"],
           ["op_hcompute_hw_output_stencil_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_hw_output_stencil_read",["Array",1,["Array",16,"Bit"]]],

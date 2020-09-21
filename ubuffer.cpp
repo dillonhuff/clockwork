@@ -1383,6 +1383,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             }
           }
         }
+        for(string inpt: ins)
+            cout << "input port:" << inpt << endl;
 
         assert(ins.size() == 1);
         auto inpt = pick(ins);
@@ -1556,7 +1558,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto def = ub->newModuleDef();
 
     //TODO: use a more general switch
-    if (false) {
+    if (true) {
       generate_synthesizable_functional_model(options, buf, def, hwinfo);
     } else {
       //buf.generate_coreir(options, def);
@@ -3656,6 +3658,80 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     return new_sched;
   }
 
+  //new mechod that encapsulate new padding dim
+  map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, vector<int> iis, int fetch_width) {
+    /*
+     * Previously we have two ops, input and output.In order to do the vectorization
+     * we need to create 2 other ops, input_vec and output_vec
+     * */
+    string in_pt_name = pick(port_bundles.at(in_bd_name));
+    string out_pt_name = pick(port_bundles.at(out_bd_name));
+    string in_op = domain_name(to_map(access_map.at(in_pt_name)));
+    string out_op = domain_name(to_map(access_map.at(out_pt_name)));
+    auto in_sched = schedule.at(in_pt_name);
+    auto out_sched = schedule.at(out_pt_name);
+    //auto in_sched_vec = collect_sched_vec(in_sched);
+    //auto out_sched_vec = collect_sched_vec(out_sched);
+    cout << "\tin_sched: " << str(in_sched) << "\t\nout_sched: " << str(out_sched) << endl;
+    auto sched_aff_vec = get_aff_vec(to_map(in_sched));
+    sched_aff_vec.pop_back();
+    vector<string> expr_list;
+    for (size_t i = 0; i < sched_aff_vec.size(); i ++) {
+        auto sched_aff = sched_aff_vec.at(i);
+        string expr = take_btw(str(sched_aff), "[(", ")]");
+        cout << "expr: " << expr << ", " << is_number(expr) <<endl;
+        expr_list.push_back("(" + expr + ")*" + to_string(iis.at(i)));
+    }
+    string expr = sep_list(expr_list, "", "", "+");
+    auto var_list = get_map_in_dim_id(to_map(in_sched));
+    string op_name = domain_name(in_sched);
+    auto in_sched_new = gen_hw_sched_from_sched_vec(ctx, {expr}, var_list, op_name);
+    //hardcode this recipe
+    auto in_sched_vec = gen_hw_sched_from_sched_vec(ctx,
+            {expr + "+" + to_string(fetch_width)}, var_list, op_name + "_agg2sram");
+
+    sched_aff_vec = get_aff_vec(to_map(out_sched));
+    sched_aff_vec.pop_back();
+    for (size_t i = 0; i < sched_aff_vec.size(); i ++) {
+        auto sched_aff = sched_aff_vec.at(i);
+        string expr = take_btw(str(sched_aff), "[(", ")]");
+        cout << "expr: " << expr << ", " << is_number(expr) <<endl;
+        expr_list.push_back("(" + expr + ")*" + to_string(iis.at(i)));
+    }
+    expr = sep_list(expr_list, "", "", "+");
+    var_list = get_map_in_dim_id(to_map(out_sched));
+    op_name = domain_name(out_sched);
+    auto out_sched_new = gen_hw_sched_from_sched_vec(ctx, {expr}, var_list, op_name);
+    //hardcode this recipe
+    auto out_sched_vec = gen_hw_sched_from_sched_vec(ctx,
+            {expr + "-" + to_string(fetch_width+1)}, var_list, op_name + "_agg2sram");
+    //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
+
+
+    //auto in_access_map = access_map.at(in_pt_name);
+    //int vectorized_dim = get_involve_dim(to_map(in_access_map), dim_id) - 1;
+    //cout << "vectorized_dim: " << vectorized_dim << endl;
+    //auto in_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 0));
+    //auto in_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 1));
+    //in_vec_sched = set_domain_name(in_vec_sched, domain_name(in_vec_sched) );
+    //auto out_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 2));
+    //out_vec_sched = set_domain_name(out_vec_sched, domain_name(out_vec_sched) );
+    //auto out_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 3));
+
+    map<string, isl_map*> new_sched;
+    new_sched.insert(make_pair(in_op, in_sched_new));
+    new_sched.insert(make_pair(out_op, out_sched_new));
+    new_sched.insert(make_pair(in_op + "_agg2sram", in_sched_vec));
+    new_sched.insert(make_pair(out_op + "_sram2tb", out_sched_vec));
+
+    cout << "\tnew in map: " << str(in_sched_new)
+    << "\n\tvec in map: " << str(in_sched_vec)
+    << "\n\tnew out map: " << str(out_sched_new)
+    << "\n\tvec out map: " << str(out_sched_vec) << endl;
+
+    return new_sched;
+  }
+
   //FIXME:Delete this method in the future
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {
     /*
@@ -3948,7 +4024,7 @@ void UBuffer::pad_read_dom(int fetch_width) {
 }
 
 pair<std::map<string, UBuffer>, vector<string> >
-    UBuffer::vectorization(int dim_id, int fetch_width) {
+    UBuffer::vectorization(int dim_id, int fetch_width, vector<int> iis) {
 
     std::map<string, UBuffer> ret;
     std::vector<string> remove_deps;
@@ -3970,7 +4046,11 @@ pair<std::map<string, UBuffer>, vector<string> >
     //produce naive schedule for the rewritten buffer
     map<string, isl_map*> new_sched;
     if (in_bundle.size() == 1 && out_bundle.size() == 1) {
-      new_sched = produce_vectorized_schedule(pick(in_bundle), pick(out_bundle), dim_id);
+      if (iis.size()) {
+        new_sched = produce_vectorized_schedule(pick(in_bundle), pick(out_bundle), iis, fetch_width);
+      } else {
+        new_sched = produce_vectorized_schedule(pick(in_bundle), pick(out_bundle), dim_id);
+      }
     } else {
       auto bd2sched = std::map<string, umap*,
         std::function<bool(const string&, const string&)>>{

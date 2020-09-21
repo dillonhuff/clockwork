@@ -1856,7 +1856,7 @@ class UBuffer {
 
     //change the input and output and return the agg and tb ubuffer stucture
     pair<std::map<string, UBuffer>, vector<string> >
-        vectorization(int dim_id, int fetch_width);
+        vectorization(int dim_id, int fetch_width, vector<int> iis);
 
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
     int add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out);
@@ -1864,6 +1864,7 @@ class UBuffer {
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, int dim_id, int fetch_width);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, vector<int> iis, int fetch_width);
 
     void print_bank_info();
 
