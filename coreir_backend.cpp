@@ -716,6 +716,9 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
             break;
           }
         }
+        if (!found) {
+          cout << tab(1) << "No connection found for: " << pg(bundle) << endl;
+        }
         assert(found);
       }
 
