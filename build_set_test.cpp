@@ -15869,6 +15869,7 @@ void dsa_writers(prog& prg) {
   if (is_rate_matchable(prg)) {
     prg.pretty_print();
     cout << "Is rate matchable" << endl;
+
     //assert(false);
 
     std::set<string> all_buffers;
@@ -15890,6 +15891,19 @@ void dsa_writers(prog& prg) {
       }
     }
 
+    cout << "Producer kernels..." << endl;
+    for (auto p : producer_kernels) {
+      cout << tab(1) << p.first << " -> ";
+      for (auto k : p.second) {
+        cout << k << " ";
+      }
+      cout << endl;
+      if (p.second.size() > 1) {
+        cout << tab(2) << "MULTIPLE PRODUCERS" << endl;
+      }
+    }
+    assert(false);
+    
     for (auto k : get_kernels(prg)) {
       for (auto b : get_produced_buffers(k, prg)) {
         auto producers = producer_kernels[b];
