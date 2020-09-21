@@ -13619,44 +13619,44 @@ void lake_cascade_autovec_test() {
   //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
-void lake_harris_autovec_test() {
-  prog prg = harris_remove();
+//void lake_harris_autovec_test() {
+  //prog prg = harris_remove();
 
-  //optimized schedule
-  auto buffers_opt = build_buffers(prg);
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  int max_inpt = 2, max_outpt = 2;
+  ////optimized schedule
+  //auto buffers_opt = build_buffers(prg);
+  //CodegenOptions opt;
+  //opt.conditional_merge = true;
+  //opt.merge_threshold = 4;
+  //int max_inpt = 2, max_outpt = 2;
 
-  for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << b.second << endl;
-    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-        continue;
-    b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
-  }
-#ifdef COREIR
-  generate_cgra_tb(buffers_opt, prg, opt);
-#endif
+  //for (auto& b : buffers_opt) {
+    //cout << "\tGenerate bank for buffer: " << b.first << b.second << endl;
+    //if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        //continue;
+    //b.second.generate_banks_and_merge(opt);
+    //b.second.port_group2bank(max_inpt, max_outpt);
+  //}
+//#ifdef COREIR
+  //generate_cgra_tb(buffers_opt, prg, opt);
+//#endif
 
-  //return the buffers after vectorization and the proximity deps you want to remove
-  vector<string> input_vec_stmts;
-  isl_ctx* ctx = isl_ctx_alloc();
-  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
-  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
-  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
-  cout << str(opt_sched) << endl << endl;
-  cout << codegen_c(opt_sched) << endl << endl;
+  ////return the buffers after vectorization and the proximity deps you want to remove
+  //vector<string> input_vec_stmts;
+  //isl_ctx* ctx = isl_ctx_alloc();
+  //umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  //auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  //auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  //cout << str(opt_sched) << endl << endl;
+  //cout << codegen_c(opt_sched) << endl << endl;
 
-  map<pair<string, string>, int> latency({});
-  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
-  cout << codegen_c(hsh) << endl;
-  cmd("mkdir -p ./lake_controllers/harris/");
-  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/harris/");
-  cmd("mkdir -p ./lake_stream/harris/");
-  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
-}
+  //map<pair<string, string>, int> latency({});
+  //auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  //cout << codegen_c(hsh) << endl;
+  //cmd("mkdir -p ./lake_controllers/harris/");
+  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/harris/");
+  //cmd("mkdir -p ./lake_stream/harris/");
+  ////emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
+//}
 
 void lake_gaussian_autovec_test() {
   prog prg = gaussian();
@@ -15521,7 +15521,7 @@ void lake_tests() {
   lake_gaussian_autovec_test();
   //lake_dual_port_test();
   lake_cascade_autovec_test();
-  lake_harris_autovec_test();
+  //lake_harris_autovec_test();
   //lake_resnet_multitile_test();
   //lake_resnet_test();
   //resnet_test();
@@ -15902,7 +15902,7 @@ void dsa_writers(prog& prg) {
         cout << tab(2) << "MULTIPLE PRODUCERS" << endl;
       }
     }
-    assert(false);
+    //assert(false);
     
     for (auto k : get_kernels(prg)) {
       for (auto b : get_produced_buffers(k, prg)) {
@@ -15949,7 +15949,7 @@ void dsa_writers(prog& prg) {
 
     cout << "Built initializer / update maps" << endl;
     cout << tab(1) << "# multi_write buffers = " << multi_write_buffers.size() << endl;
-    assert(false);
+    //assert(false);
     for (auto b : multi_write_buffers) {
       string init_buffer = prg.un(b + "_clkwrk_dsa");
       auto init = initializers[b];
@@ -16555,7 +16555,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
 
     dsa_writers(prg);
     prg.pretty_print();
-    assert(false);
+    //assert(false);
     //vector<string> cpu;
     auto cpu = unoptimized_result(prg);
 
