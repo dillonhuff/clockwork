@@ -102,6 +102,15 @@ void generate_lake_collateral_wide_fetch_tile(
   pds.push_back("input logic [15:0] strg_ub_input_sched_gen_sched_addr_gen_starting_addr");
   pds.push_back("input logic [5:0] [15:0] strg_ub_input_sched_gen_sched_addr_gen_strides");
 
+  // Agg ports
+  pds.push_back("input logic [7:0] strg_ub_agg_read_addr_gen_0_starting_addr");
+  pds.push_back("input logic [3:0] [7:0] strg_ub_agg_read_addr_gen_0_strides");
+  pds.push_back("input logic [3:0] strg_ub_agg_write_addr_gen_0_starting_addr");
+  pds.push_back("input logic [3:0] [3:0] strg_ub_agg_write_addr_gen_0_strides");
+  pds.push_back("input logic [3:0] strg_ub_agg_write_sched_gen_0_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [3:0] [3:0] strg_ub_agg_write_sched_gen_0_sched_addr_gen_strides");
+
+
   //pds.push_back("input logic [15:0] strg_ub_sram_read_addr_gen_starting_addr");
   //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_addr_gen_strides");
   //pds.push_back("input logic [3:0] strg_ub_sram_read_loops_dimensionality");
