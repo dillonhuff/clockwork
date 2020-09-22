@@ -2109,7 +2109,7 @@ logic [255:0][3:0][15:0] data_array;
 always_ff @(posedge clk) begin
   if (clk_en) begin
     if (cen & wen) begin
-      $display("Writing to %d", addr);
+      $display("Writing %b to %d", data_in, addr);
       data_array[addr] <= data_in;
     end
   end

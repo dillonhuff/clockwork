@@ -105,6 +105,7 @@ void generate_lake_collateral_wide_fetch_tile(
   // Agg ports
   pds.push_back("input logic [7:0] strg_ub_agg_read_addr_gen_0_starting_addr");
   pds.push_back("input logic [3:0] [7:0] strg_ub_agg_read_addr_gen_0_strides");
+
   pds.push_back("input logic [3:0] strg_ub_agg_write_addr_gen_0_starting_addr");
   pds.push_back("input logic [3:0] [3:0] strg_ub_agg_write_addr_gen_0_strides");
   pds.push_back("input logic [3:0] strg_ub_agg_write_sched_gen_0_sched_addr_gen_starting_addr");
@@ -206,6 +207,18 @@ void generate_lake_collateral_wide_fetch_tile(
         default_val = "{16'd0, 16'd0, 16'd0, 16'd0, 16'd0, 16'd1}";
       }
 
+      if (name == "strg_ub_agg_write_addr_gen_0_starting_addr") {
+        default_val = "2";
+      }
+      //if (name == "strg_ub_agg_write_addr_gen_0_strides") {
+        //default_val = "{4'd0, 4'd0, 4'd0, 4'd0, 4'd64, 4'd8, 4'd1}";
+      //}
+      if (name == "strg_ub_agg_write_sched_gen_0_sched_addr_gen_starting_addr") {
+        default_val = "0";
+      }
+      if (name == "strg_ub_agg_write_sched_gen_0_sched_addr_gen_strides") {
+        default_val = "{4'd0, 4'd64, 4'd8, 4'd1}";
+      }
       //pds.push_back("input logic [15:0] strg_ub_input_sched_gen_sched_addr_gen_starting_addr");
       //pds.push_back("input logic [5:0] [15:0] strg_ub_input_sched_gen_sched_addr_gen_strides");
 

@@ -3122,6 +3122,7 @@ end
 always_ff @(posedge clk) begin
   if (clk_en) begin
     if (agg_write[0]) begin
+      $display("Writing to agg 0");
       agg[0][agg_write_addr[0][3:2]][agg_write_addr[0][1:0]] <= data_in[0];
     end
   end
@@ -3130,6 +3131,7 @@ end
 always_ff @(posedge clk) begin
   if (clk_en) begin
     if (agg_write[1]) begin
+      $display("Writing to agg 1");
       agg[1][agg_write_addr[1][3:2]][agg_write_addr[1][1:0]] <= data_in[1];
     end
   end
@@ -3177,6 +3179,9 @@ addr_gen_4 agg_write_addr_gen_0 (
   .strides(agg_write_addr_gen_0_strides)
 );
 
+always @(posedge clk) begin
+  $display("agg start = %d", agg_write_sched_gen_0_sched_addr_gen_starting_addr);
+  end
 sched_gen_4 agg_write_sched_gen_0 (
   .clk(clk),
   .clk_en(clk_en),
