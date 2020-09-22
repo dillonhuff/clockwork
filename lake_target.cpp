@@ -2,10 +2,14 @@
 
 #include "utils.h"
 
-struct ComponentController {
+struct component_controller {
+  std::string component_name;
+
   isl_aff* sched;
   isl_aff* addrs;
   isl_set* dom;
+
+  int addr_width;
 };
 
 void generate_lake_collateral_wide_fetch_tile(
@@ -274,9 +278,19 @@ void generate_lake_collateral_wide_fetch_tile(
   out << "endmodule" << endl;
 }
 
+vector<string> stride_strings(isl_aff* write_addr) {
+  vector<string> write_strides;
+  for (int d = 0; d < num_in_dims(write_addr); d++) {
+    write_strides.push_back("16'd" + str(get_coeff(write_addr, d)));
+  }
+  return write_strides;
+}
+
 void generate_lake_collateral(
     const std::string& mod_name,
     std::ostream& out,
+    //lake_controller& sram_writer,
+    //lake_controller& sram_reader) {
     isl_aff* write_sched,
     isl_aff* write_addr,
     isl_set* write_dom,
@@ -290,15 +304,17 @@ void generate_lake_collateral(
   int write_start = to_int(const_coeff(write_addr));
   int read_start = to_int(const_coeff(read_addr));
 
-  vector<string> write_strides;
-  for (int d = 0; d < num_in_dims(write_addr); d++) {
-    write_strides.push_back("16'd" + str(get_coeff(write_addr, d)));
-  }
+  vector<string> write_strides = stride_strings(write_addr);
+  //vector<string> write_strides;
+  //for (int d = 0; d < num_in_dims(write_addr); d++) {
+    //write_strides.push_back("16'd" + str(get_coeff(write_addr, d)));
+  //}
 
-  vector<string> read_strides;
-  for (int d = 0; d < num_in_dims(read_addr); d++) {
-    read_strides.push_back("16'd" + str(get_coeff(read_addr, d)));
-  }
+  vector<string> read_strides = stride_strings(read_addr);
+  //vector<string> read_strides;
+  //for (int d = 0; d < num_in_dims(read_addr); d++) {
+    //read_strides.push_back("16'd" + str(get_coeff(read_addr, d)));
+  //}
 
   vector<string> write_ranges;
   cout << "write dom: " << str(write_dom) << endl;
@@ -318,28 +334,19 @@ void generate_lake_collateral(
     int minp = to_int(lexminval(pr));
     assert(minp == 0);
     int maxp = to_int(lexmaxval(pr));
-    //read_ranges.push_back("16'd" + str(maxp + 1));
     read_ranges.push_back("16'd" + str(maxp));
   }
 
   vector<string> outer_port_decls;
-  //outer_port_decls.push_back("input logic [0:0] [15:0] addr_in");
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
   outer_port_decls.push_back("output logic [0:0] [15:0] chain_data_out");
-  //pds.push_back("input logic chain_idx_input");
-  //pds.push_back("input logic chain_idx_output");
-  //pds.push_back("input logic chain_valid_in");
   outer_port_decls.push_back("output logic chain_valid_out");
   outer_port_decls.push_back("input logic clk");
   outer_port_decls.push_back("input logic [0:0] [15:0] data_in");
   outer_port_decls.push_back("output logic [0:0] [15:0] data_out");
-  //pds.push_back("input logic enable_chain_input");
-  //pds.push_back("input logic enable_chain_output");
   outer_port_decls.push_back("input logic flush");
-  //pds.push_back("input logic ren_in");
   outer_port_decls.push_back("input logic rst_n");
   outer_port_decls.push_back("output logic valid_out");
-  //pds.push_back("input logic wen_in");
 
   vector<string> external;
   for (auto s : outer_port_decls) {
@@ -348,7 +355,6 @@ void generate_lake_collateral(
   }
 
   vector<string> pds;
-  //pds.push_back("input logic [0:0] [15:0] addr_in");
   pds.push_back("input logic [0:0] [15:0] chain_data_in");
   pds.push_back("output logic [0:0] [15:0] chain_data_out");
   pds.push_back("input logic chain_idx_input");
@@ -427,26 +433,14 @@ void generate_lake_collateral(
         default_val = str(write_start);
       } else if (name == "strg_ub_sram_write_addr_gen_strides") {
         default_val = sep_list(write_strides, "{", "}", ", ");
-        // "{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
       } else if (name == "strg_ub_sram_write_loops_dimensionality") {
         default_val = str(num_dims(write_dom));
       } else if (name == "strg_ub_sram_write_loops_ranges") {
-        //default_val = "{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
         default_val = sep_list(write_ranges, "{", "}", ", ");
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr") {
         default_val = str(write_sched_start);
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_strides") {
         default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
-        //pds.push_back("input logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr");
-        //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides");
-
-        //pds.push_back("input logic [15:0] strg_ub_sram_write_addr_gen_starting_addr");
-        //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_addr_gen_strides");
-        //pds.push_back("input logic [3:0] strg_ub_sram_write_loops_dimensionality");
-        //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_loops_ranges");
-        //pds.push_back("input logic [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr");
-        //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides");
-
       }
       out << tab(1) << "assign " << name << " = " << default_val << ";" << endl;
     }
