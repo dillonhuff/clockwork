@@ -2720,6 +2720,8 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       def->connect(bnk->sel("rst_n"), def->sel("self.rst_n"));
       def->connect(bnk->sel("flush"), def->sel("self.flush"));
       mod->setDef(def);
+    } else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+      assert(false);
     } else {
       assert(options.rtl_options.target_tile == TARGET_TILE_REGISTERS);
       auto def = mod->newModuleDef();
