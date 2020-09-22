@@ -2807,6 +2807,7 @@ end
 always_ff @(posedge clk) begin
   if (clk_en) begin
     if (agg_write) begin
+      $display("Writing: %b to %d, %d", data_in[0], agg_write_addr[0][3:2], agg_write_addr[0][1:0]);
       agg[0][agg_write_addr[0][3:2]][agg_write_addr[0][1:0]] <= data_in[0];
     end
   end
