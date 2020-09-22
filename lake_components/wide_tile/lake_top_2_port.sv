@@ -278,6 +278,11 @@ assign data_out_tile[0] = all_data_out[mode];
 assign valid_out_tile[0] = all_valid_out[mode];
 assign data_out_tile[1] = ub_data_out[1];
 assign valid_out_tile[1] = ub_valid_out[1];
+
+always @(posedge clk) begin
+  $display("glk = %d", gclk);
+end
+
 storage_config_seq config_seq (
   .addr_out(mem_addr_cfg),
   .clk(config_seq_clk),
@@ -3181,7 +3186,7 @@ addr_gen_4 agg_write_addr_gen_0 (
 
 always @(posedge clk) begin
   $display("agg start = %d", agg_write_sched_gen_0_sched_addr_gen_starting_addr);
-  end
+end
 sched_gen_4 agg_write_sched_gen_0 (
   .clk(clk),
   .clk_en(clk_en),

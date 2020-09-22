@@ -2748,6 +2748,10 @@ logic tb_write_addr_gen_0_step;
 logic write;
 logic [15:0] write_addr;
 
+always @(posedge clk) begin
+  $display("agg start = %d", agg_write_sched_gen_0_sched_addr_gen_starting_addr);
+end
+
 always_ff @(posedge clk, negedge rst_n) begin
   if (~rst_n) begin
     cycle_count <= 16'h0;
