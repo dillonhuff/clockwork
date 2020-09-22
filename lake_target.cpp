@@ -385,22 +385,22 @@ void generate_lake_collateral(
       }
 
       for (auto& c : controllers) {
-        string name = c.component_name;
-        if (name == "strg_ub_" + name + "_addr_gen_starting_addr") {
+        string compname = c.component_name;
+        if (name == "strg_ub_" + compname + "_addr_gen_starting_addr") {
           int read_start = to_int(const_coeff(c.addrs));
           default_val = str(read_start);
-        } else if (name == "strg_ub_" + name + "_addr_gen_strides") {
+        } else if (name == "strg_ub_" + compname + "_addr_gen_strides") {
           vector<string> read_strides = stride_strings(c.addrs);
           default_val = sep_list(read_strides, "{", "}", ", ");
-        } else if (name == "strg_ub_" + name + "_loops_dimensionality") {
+        } else if (name == "strg_ub_" + compname + "_loops_dimensionality") {
           default_val = str(num_dims(c.dom));
-        } else if (name == "strg_ub_" + name + "_loops_ranges") {
+        } else if (name == "strg_ub_" + compname + "_loops_ranges") {
           vector<string> read_ranges = range_strings(c.dom);
           default_val = sep_list(read_ranges, "{", "}", ", ");
-        } else if (name == "strg_ub_" + name + "_sched_gen_sched_addr_gen_starting_addr") {
+        } else if (name == "strg_ub_" + compname + "_sched_gen_sched_addr_gen_starting_addr") {
           int read_sched_start = to_int(const_coeff(c.sched));
           default_val = str(read_sched_start);
-        } else if (name == "strg_ub_" + name + "_sched_gen_sched_addr_gen_strides") {
+        } else if (name == "strg_ub_" + compname + "_sched_gen_sched_addr_gen_strides") {
           vector<string> read_iis = stride_strings(c.sched);
           default_val = sep_list(read_iis, "{", "}", ", ");
         }

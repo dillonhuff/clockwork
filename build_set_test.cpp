@@ -16886,7 +16886,7 @@ void cgra_flow_tests() {
   test_stencil_codegen(test_programs);
   //test_schedules(test_programs);
 
-  assert(false);
+  //assert(false);
 }
 
 void dse_flow_tests() {
