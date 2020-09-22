@@ -313,20 +313,20 @@ void generate_lake_collateral(
     isl_aff* read_addr,
     isl_set* read_dom) {
 
-  int write_sched_start = to_int(const_coeff(write_sched));
-  int read_sched_start = to_int(const_coeff(read_sched));
+  //int write_sched_start = to_int(const_coeff(write_sched));
+  //int read_sched_start = to_int(const_coeff(read_sched));
 
-  int write_start = to_int(const_coeff(write_addr));
-  int read_start = to_int(const_coeff(read_addr));
+  //int write_start = to_int(const_coeff(write_addr));
+  //int read_start = to_int(const_coeff(read_addr));
 
-  vector<string> write_iis = stride_strings(write_sched);
-  vector<string> read_iis = stride_strings(read_sched);
+  //vector<string> write_iis = stride_strings(write_sched);
+  //vector<string> read_iis = stride_strings(read_sched);
 
-  vector<string> write_strides = stride_strings(write_addr);
-  vector<string> read_strides = stride_strings(read_addr);
+  //vector<string> write_strides = stride_strings(write_addr);
+  //vector<string> read_strides = stride_strings(read_addr);
 
-  vector<string> write_ranges = range_strings(write_dom);
-  vector<string> read_ranges = range_strings(read_dom);
+  //vector<string> write_ranges = range_strings(write_dom);
+  //vector<string> read_ranges = range_strings(read_dom);
 
   vector<string> outer_port_decls;
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
@@ -422,23 +422,29 @@ void generate_lake_collateral(
         vector<string> read_ranges = range_strings(read_dom);
         default_val = sep_list(read_ranges, "{", "}", ", "); //"{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr") {
+        int read_sched_start = to_int(const_coeff(read_sched));
         default_val = str(read_sched_start);
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_strides") {
         vector<string> read_iis = stride_strings(read_sched);
         default_val = sep_list(read_iis, "{", "}", ", ");
       }
-      
+
       if (name == "strg_ub_sram_write_addr_gen_starting_addr") {
+        int write_start = to_int(const_coeff(write_addr));
         default_val = str(write_start);
       } else if (name == "strg_ub_sram_write_addr_gen_strides") {
+        vector<string> write_strides = stride_strings(write_addr);
         default_val = sep_list(write_strides, "{", "}", ", ");
       } else if (name == "strg_ub_sram_write_loops_dimensionality") {
         default_val = str(num_dims(write_dom));
       } else if (name == "strg_ub_sram_write_loops_ranges") {
+        vector<string> write_ranges = range_strings(write_dom);
         default_val = sep_list(write_ranges, "{", "}", ", ");
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr") {
+        int write_sched_start = to_int(const_coeff(write_sched));
         default_val = str(write_sched_start);
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_strides") {
+        vector<string> write_iis = stride_strings(write_sched);
         default_val = sep_list(write_iis, "{", "}", ", ");
       }
       out << tab(1) << "assign " << name << " = " << default_val << ";" << endl;
