@@ -2,6 +2,12 @@
 
 #include "utils.h"
 
+struct ComponentController {
+  isl_aff* sched;
+  isl_aff* addrs;
+  isl_set* dom;
+};
+
 void generate_lake_collateral_wide_fetch_tile(
     const std::string& mod_name,
     std::ostream& out,
@@ -89,6 +95,14 @@ void generate_lake_collateral_wide_fetch_tile(
   pds.push_back("input logic [1:0] mode");
   pds.push_back("input logic ren_in");
   pds.push_back("input logic rst_n");
+
+  // What are the different component values?
+  // - Starting addr
+  // - Strides
+  // - Sched starting addr
+  // - Sched strides
+  // - Ranges
+  // - Dimensionality
 
   // Output ports
   pds.push_back("input logic [15:0] strg_ub_output_addr_gen_starting_addr");

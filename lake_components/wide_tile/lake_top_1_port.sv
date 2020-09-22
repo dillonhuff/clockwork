@@ -2109,7 +2109,7 @@ logic [255:0][3:0][15:0] data_array;
 always_ff @(posedge clk) begin
   if (clk_en) begin
     if (cen & wen) begin
-      $display("Writing %b to %d", data_in, addr);
+      //$display("Writing %b to %d", data_in, addr);
       data_array[addr] <= data_in;
     end
   end
@@ -2118,7 +2118,7 @@ end
 always_ff @(posedge clk) begin
   if (clk_en) begin
     if (cen & (~wen)) begin
-      $display("Reading from %d", addr);
+      //$display("Reading from %d", addr);
       data_out <= data_array[addr];
     end
   end
@@ -2749,7 +2749,7 @@ logic write;
 logic [15:0] write_addr;
 
 always @(posedge clk) begin
-  $display("agg start = %d", agg_write_sched_gen_0_sched_addr_gen_starting_addr);
+  //$display("agg start = %d", agg_write_sched_gen_0_sched_addr_gen_starting_addr);
 end
 
 always_ff @(posedge clk, negedge rst_n) begin
@@ -2807,7 +2807,7 @@ end
 always_ff @(posedge clk) begin
   if (clk_en) begin
     if (agg_write) begin
-      $display("Writing: %b to %d, %d", data_in[0], agg_write_addr[0][3:2], agg_write_addr[0][1:0]);
+      $display("Writing: %b to %d, %d, agg = %b", data_in[0], agg_write_addr[0][3:2], agg_write_addr[0][1:0], agg[0]);
       agg[0][agg_write_addr[0][3:2]][agg_write_addr[0][1:0]] <= data_in[0];
     end
   end

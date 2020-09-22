@@ -11714,8 +11714,8 @@ void run_verilator_tb(const std::string& name) {
   int res = run_verilator_on(name,
       name + "_verilog_tb.cpp",
       {name + ".v", name + "_verilog_collateral.sv",
-      //"./lake_components/dualwithadd/lake_top.sv",
-      "./lake_components/wide_tile/lake_top_1_port.sv",
+      "./lake_components/dualwithadd/lake_top.sv",
+      //"./lake_components/wide_tile/lake_top_1_port.sv",
       //"./lake_components/ASPLOS_designs/bare_dual_port.v",
       "./lake_components/inner_affine_controller.sv"});
 
@@ -16314,8 +16314,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
-     //TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
-     TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
+     TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+     //TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
     //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
@@ -16511,9 +16511,9 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
+  test_programs.push_back(camera_pipeline());
   //test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
