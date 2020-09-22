@@ -2663,9 +2663,6 @@ CoreIR::Module* delay_module(CodegenOptions& options,
 
     if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
       generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
-      //generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D - 1);
-      //generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D - 2);
-      //generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D + 2);
     } else if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_RAW) {
       auto def = mod->newModuleDef();
 
@@ -2721,7 +2718,7 @@ CoreIR::Module* delay_module(CodegenOptions& options,
       def->connect(bnk->sel("flush"), def->sel("self.flush"));
       mod->setDef(def);
     } else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
-      assert(false);
+      generate_lake_collateral_delay_wdata_wrapped(mod->getName(), *verilog_collateral_file, D);
     } else {
       assert(options.rtl_options.target_tile == TARGET_TILE_REGISTERS);
       auto def = mod->newModuleDef();
