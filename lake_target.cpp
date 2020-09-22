@@ -258,6 +258,25 @@ void generate_lake_collateral_delay_wide_fetch_tile_wrapped(const std::string& n
   pds.push_back("input logic ren_in");
   pds.push_back("input logic rst_n");
 
+  // Agg ports
+  pds.push_back("input logic [15:0] strg_ub_agg_read_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_agg_read_addr_gen_strides");
+  pds.push_back("input logic [3:0] strg_ub_agg_read_loops_dimensionality");
+
+  pds.push_back("input logic [5:0] [15:0] strg_ub_agg_read_loops_ranges");
+
+  pds.push_back("input logic [15:0] strg_ub_agg_read_sched_gen_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_agg_read_sched_gen_sched_addr_gen_strides");
+
+  pds.push_back("input logic [15:0] strg_ub_agg_write_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_agg_write_addr_gen_strides");
+  pds.push_back("input logic [3:0] strg_ub_agg_write_loops_dimensionality");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_agg_write_loops_ranges");
+  pds.push_back("input logic [15:0] strg_ub_agg_write_sched_gen_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_agg_write_sched_gen_sched_addr_gen_strides");
+
+
+  // SRAM ports
   pds.push_back("input logic [15:0] strg_ub_sram_read_addr_gen_starting_addr");
   pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_addr_gen_strides");
   pds.push_back("input logic [3:0] strg_ub_sram_read_loops_dimensionality");
@@ -313,6 +332,7 @@ void generate_lake_collateral_delay_wide_fetch_tile_wrapped(const std::string& n
 
   out << "endmodule" << endl;
 }
+
 void generate_lake_collateral_delay_wdata_wrapped(const std::string& name, std::ostream& out, const int depth) {
 
   generate_lake_collateral_delay(name + "_inner", out, depth);
