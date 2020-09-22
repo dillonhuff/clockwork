@@ -411,19 +411,24 @@ void generate_lake_collateral(
       }
       
       if (name == "strg_ub_sram_read_addr_gen_starting_addr") {
+        int read_start = to_int(const_coeff(read_addr));
         default_val = str(read_start);
       } else if (name == "strg_ub_sram_read_addr_gen_strides") {
+        vector<string> read_strides = stride_strings(read_addr);
         default_val = sep_list(read_strides, "{", "}", ", "); //"{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
       } else if (name == "strg_ub_sram_read_loops_dimensionality") {
         default_val = str(num_dims(read_dom));
       } else if (name == "strg_ub_sram_read_loops_ranges") {
+        vector<string> read_ranges = range_strings(read_dom);
         default_val = sep_list(read_ranges, "{", "}", ", "); //"{16'd10, 16'd10, 16'd10, 16'd10, 16'd10, 16'd10}";
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr") {
         default_val = str(read_sched_start);
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_strides") {
+        vector<string> read_iis = stride_strings(read_sched);
         default_val = sep_list(read_iis, "{", "}", ", ");
-        //default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
-      } else if (name == "strg_ub_sram_write_addr_gen_starting_addr") {
+      }
+      
+      if (name == "strg_ub_sram_write_addr_gen_starting_addr") {
         default_val = str(write_start);
       } else if (name == "strg_ub_sram_write_addr_gen_strides") {
         default_val = sep_list(write_strides, "{", "}", ", ");
@@ -435,7 +440,6 @@ void generate_lake_collateral(
         default_val = str(write_sched_start);
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_strides") {
         default_val = sep_list(write_iis, "{", "}", ", ");
-        //default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
       }
       out << tab(1) << "assign " << name << " = " << default_val << ";" << endl;
     }
