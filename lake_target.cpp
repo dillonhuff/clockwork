@@ -320,39 +320,11 @@ void generate_lake_collateral(
   int read_start = to_int(const_coeff(read_addr));
 
   vector<string> write_strides = stride_strings(write_addr);
-  //vector<string> write_strides;
-  //for (int d = 0; d < num_in_dims(write_addr); d++) {
-    //write_strides.push_back("16'd" + str(get_coeff(write_addr, d)));
-  //}
 
   vector<string> read_strides = stride_strings(read_addr);
-  //vector<string> read_strides;
-  //for (int d = 0; d < num_in_dims(read_addr); d++) {
-    //read_strides.push_back("16'd" + str(get_coeff(read_addr, d)));
-  //}
 
   vector<string> write_ranges = range_strings(write_dom);
   vector<string> read_ranges = range_strings(read_dom);
-  //vector<string> write_ranges;
-  //cout << "write dom: " << str(write_dom) << endl;
-  //for (int d = 0; d < num_dims(write_dom); d++) {
-    //auto pr = project_all_but(write_dom, d);
-    //cout << "projected: " << str(pr) << endl;
-    //int minp = to_int(lexminval(pr));
-    //assert(minp == 0);
-    //int maxp = to_int(lexmaxval(pr));
-    //cout << tab(1) << "maxp = " << maxp << endl;
-    //write_ranges.push_back("16'd" + str(maxp));
-  //}
-
-  //vector<string> read_ranges;
-  //for (int d = 0; d < num_dims(read_dom); d++) {
-    //auto pr = project_all_but(read_dom, d);
-    //int minp = to_int(lexminval(pr));
-    //assert(minp == 0);
-    //int maxp = to_int(lexmaxval(pr));
-    //read_ranges.push_back("16'd" + str(maxp));
-  //}
 
   vector<string> outer_port_decls;
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
@@ -434,7 +406,9 @@ void generate_lake_collateral(
       string default_val = "0";
       if (name == "clk_en" || name == "tile_en") {
         default_val = "1";
-      } else if (name == "strg_ub_sram_read_addr_gen_starting_addr") {
+      }
+      
+      if (name == "strg_ub_sram_read_addr_gen_starting_addr") {
         default_val = str(read_start);
       } else if (name == "strg_ub_sram_read_addr_gen_strides") {
         default_val = sep_list(read_strides, "{", "}", ", "); //"{16'd0, 16'd0, 16'0, 16'd0, 16'd0, 16'd0}";
