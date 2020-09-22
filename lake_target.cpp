@@ -286,6 +286,21 @@ vector<string> stride_strings(isl_aff* write_addr) {
   return write_strides;
 }
 
+vector<string> range_strings(isl_set* write_dom) {
+  vector<string> write_ranges;
+  cout << "write dom: " << str(write_dom) << endl;
+  for (int d = 0; d < num_dims(write_dom); d++) {
+    auto pr = project_all_but(write_dom, d);
+    cout << "projected: " << str(pr) << endl;
+    int minp = to_int(lexminval(pr));
+    assert(minp == 0);
+    int maxp = to_int(lexmaxval(pr));
+    cout << tab(1) << "maxp = " << maxp << endl;
+    write_ranges.push_back("16'd" + str(maxp));
+  }
+  return write_ranges;
+}
+
 void generate_lake_collateral(
     const std::string& mod_name,
     std::ostream& out,
@@ -316,26 +331,28 @@ void generate_lake_collateral(
     //read_strides.push_back("16'd" + str(get_coeff(read_addr, d)));
   //}
 
-  vector<string> write_ranges;
-  cout << "write dom: " << str(write_dom) << endl;
-  for (int d = 0; d < num_dims(write_dom); d++) {
-    auto pr = project_all_but(write_dom, d);
-    cout << "projected: " << str(pr) << endl;
-    int minp = to_int(lexminval(pr));
-    assert(minp == 0);
-    int maxp = to_int(lexmaxval(pr));
-    cout << tab(1) << "maxp = " << maxp << endl;
-    write_ranges.push_back("16'd" + str(maxp));
-  }
+  vector<string> write_ranges = range_strings(write_dom);
+  vector<string> read_ranges = range_strings(read_dom);
+  //vector<string> write_ranges;
+  //cout << "write dom: " << str(write_dom) << endl;
+  //for (int d = 0; d < num_dims(write_dom); d++) {
+    //auto pr = project_all_but(write_dom, d);
+    //cout << "projected: " << str(pr) << endl;
+    //int minp = to_int(lexminval(pr));
+    //assert(minp == 0);
+    //int maxp = to_int(lexmaxval(pr));
+    //cout << tab(1) << "maxp = " << maxp << endl;
+    //write_ranges.push_back("16'd" + str(maxp));
+  //}
 
-  vector<string> read_ranges;
-  for (int d = 0; d < num_dims(read_dom); d++) {
-    auto pr = project_all_but(read_dom, d);
-    int minp = to_int(lexminval(pr));
-    assert(minp == 0);
-    int maxp = to_int(lexmaxval(pr));
-    read_ranges.push_back("16'd" + str(maxp));
-  }
+  //vector<string> read_ranges;
+  //for (int d = 0; d < num_dims(read_dom); d++) {
+    //auto pr = project_all_but(read_dom, d);
+    //int minp = to_int(lexminval(pr));
+    //assert(minp == 0);
+    //int maxp = to_int(lexmaxval(pr));
+    //read_ranges.push_back("16'd" + str(maxp));
+  //}
 
   vector<string> outer_port_decls;
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
