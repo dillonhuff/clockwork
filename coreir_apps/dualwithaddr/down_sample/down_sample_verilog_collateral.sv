@@ -38,7 +38,7 @@ module memtile_long_delay__U154_inner(input logic [0:0] [15:0] chain_data_in, ou
   wire logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr;
   assign strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr = 0;
   wire logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides;
-  assign strg_ub_sram_read_sched_gen_sched_addr_gen_strides = {16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1};
+  assign strg_ub_sram_read_sched_gen_sched_addr_gen_strides = {16'd1};
   wire logic [15:0] strg_ub_sram_write_addr_gen_starting_addr;
   assign strg_ub_sram_write_addr_gen_starting_addr = 62;
   wire logic [5:0] [15:0] strg_ub_sram_write_addr_gen_strides;
@@ -50,7 +50,7 @@ module memtile_long_delay__U154_inner(input logic [0:0] [15:0] chain_data_in, ou
   wire logic [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr;
   assign strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr = 0;
   wire logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides;
-  assign strg_ub_sram_write_sched_gen_sched_addr_gen_strides = {16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1};
+  assign strg_ub_sram_write_sched_gen_sched_addr_gen_strides = {16'd1};
   wire logic tile_en;
   assign tile_en = 1;
   wire logic wen_in;
