@@ -319,8 +319,10 @@ void generate_lake_collateral(
   int write_start = to_int(const_coeff(write_addr));
   int read_start = to_int(const_coeff(read_addr));
 
-  vector<string> write_strides = stride_strings(write_addr);
+  vector<string> write_iis = stride_strings(write_sched);
+  vector<string> read_iis = stride_strings(read_sched);
 
+  vector<string> write_strides = stride_strings(write_addr);
   vector<string> read_strides = stride_strings(read_addr);
 
   vector<string> write_ranges = range_strings(write_dom);
@@ -419,7 +421,8 @@ void generate_lake_collateral(
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr") {
         default_val = str(read_sched_start);
       } else if (name == "strg_ub_sram_read_sched_gen_sched_addr_gen_strides") {
-        default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
+        default_val = sep_list(read_iis, "{", "}", ", ");
+        //default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
       } else if (name == "strg_ub_sram_write_addr_gen_starting_addr") {
         default_val = str(write_start);
       } else if (name == "strg_ub_sram_write_addr_gen_strides") {
@@ -431,7 +434,8 @@ void generate_lake_collateral(
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr") {
         default_val = str(write_sched_start);
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_strides") {
-        default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
+        default_val = sep_list(write_iis, "{", "}", ", ");
+        //default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
       }
       out << tab(1) << "assign " << name << " = " << default_val << ";" << endl;
     }
