@@ -419,6 +419,7 @@
       "hcompute_lgxx_stencil_1":{
         "type":["Record",[
           ["out_lgxx_stencil",["Array",16,"Bit"]],
+          ["in0_lgxx_stencil",["Array",1,["Array",16,"BitIn"]]],
           ["in1_lxx_stencil",["Array",9,["Array",16,"BitIn"]]]
         ]],
         "instances":{
@@ -460,7 +461,9 @@
           }
         },
         "connections":[
-          ["add_lxx_stencil_1_336_337.in1","add_lxx_stencil_2_334_335.out"],
+          ["self.in0_lgxx_stencil.0","add_lgxx_stencil_1_335_336.in0"],
+          ["add_lxx_stencil_2_334_335.out","add_lgxx_stencil_1_335_336.in1"],
+          ["add_lxx_stencil_1_336_337.in1","add_lgxx_stencil_1_335_336.out"],
           ["self.in1_lxx_stencil.0","add_lxx_stencil_1_336_337.in0"],
           ["self.out_lgxx_stencil","add_lxx_stencil_1_336_337.out"],
           ["self.in1_lxx_stencil.1","add_lxx_stencil_2_334_335.in0"],
@@ -497,6 +500,7 @@
       "hcompute_lgxy_stencil_1":{
         "type":["Record",[
           ["out_lgxy_stencil",["Array",16,"Bit"]],
+          ["in0_lgxy_stencil",["Array",1,["Array",16,"BitIn"]]],
           ["in1_lxy_stencil",["Array",9,["Array",16,"BitIn"]]]
         ]],
         "instances":{
@@ -538,7 +542,9 @@
           }
         },
         "connections":[
-          ["add_lxy_stencil_1_437_438.in1","add_lxy_stencil_2_435_436.out"],
+          ["self.in0_lgxy_stencil.0","add_lgxy_stencil_1_436_437.in0"],
+          ["add_lxy_stencil_2_435_436.out","add_lgxy_stencil_1_436_437.in1"],
+          ["add_lxy_stencil_1_437_438.in1","add_lgxy_stencil_1_436_437.out"],
           ["self.in1_lxy_stencil.0","add_lxy_stencil_1_437_438.in0"],
           ["self.out_lgxy_stencil","add_lxy_stencil_1_437_438.out"],
           ["self.in1_lxy_stencil.1","add_lxy_stencil_2_435_436.in0"],
@@ -575,6 +581,7 @@
       "hcompute_lgyy_stencil_1":{
         "type":["Record",[
           ["out_lgyy_stencil",["Array",16,"Bit"]],
+          ["in0_lgyy_stencil",["Array",1,["Array",16,"BitIn"]]],
           ["in1_lyy_stencil",["Array",9,["Array",16,"BitIn"]]]
         ]],
         "instances":{
@@ -616,7 +623,9 @@
           }
         },
         "connections":[
-          ["add_lyy_stencil_1_491_492.in1","add_lyy_stencil_2_489_490.out"],
+          ["self.in0_lgyy_stencil.0","add_lgyy_stencil_1_490_491.in0"],
+          ["add_lyy_stencil_2_489_490.out","add_lgyy_stencil_1_490_491.in1"],
+          ["add_lyy_stencil_1_491_492.in1","add_lgyy_stencil_1_490_491.out"],
           ["self.in1_lyy_stencil.0","add_lyy_stencil_1_491_492.in0"],
           ["self.out_lgyy_stencil","add_lyy_stencil_1_491_492.out"],
           ["self.in1_lyy_stencil.1","add_lyy_stencil_2_489_490.in0"],

@@ -1525,7 +1525,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")},
-          {"reset", context->BitIn()}};
+          {"flush", context->BitIn()},
+          {"rst_n", context->BitIn()}};
 
     for (auto b : buf.port_bundles) {
       int pt_width = buf.port_widths;
@@ -1555,7 +1556,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto def = ub->newModuleDef();
 
     //TODO: use a more general switch
-    if (false) {
+    if (true) {
       generate_synthesizable_functional_model(options, buf, def, hwinfo);
     } else {
       //buf.generate_coreir(options, def);

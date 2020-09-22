@@ -1757,8 +1757,8 @@
       "avg_pool_stencil_clkwrk_dsa0_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_avg_pool_stencil_1_read_ren","BitIn"],
           ["op_hcompute_avg_pool_stencil_1_read_ctrl_vars",["Array",4,["Array",16,"BitIn"]]],
           ["op_hcompute_avg_pool_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
@@ -1782,8 +1782,8 @@
       "avg_pool_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_avg_pool_stencil_1_write_wen","BitIn"],
           ["op_hcompute_avg_pool_stencil_1_write_ctrl_vars",["Array",4,["Array",16,"BitIn"]]],
           ["op_hcompute_avg_pool_stencil_1_write",["Array",1,["Array",16,"BitIn"]]],
@@ -2321,8 +2321,8 @@
       "hw_input_stencil_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
-          ["rst_n","BitIn"],
           ["flush","BitIn"],
+          ["rst_n","BitIn"],
           ["op_hcompute_avg_pool_stencil_1_read_ren","BitIn"],
           ["op_hcompute_avg_pool_stencil_1_read_ctrl_vars",["Array",4,["Array",16,"BitIn"]]],
           ["op_hcompute_avg_pool_stencil_1_read",["Array",4,["Array",16,"Bit"]]],

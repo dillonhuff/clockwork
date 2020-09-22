@@ -286,8 +286,8 @@ endmodule
 
 module hw_input_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_blur_unnormalized_stencil_1_read_ren,
     input [15:0] op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_blur_unnormalized_stencil_1_read [8:0],
@@ -720,8 +720,8 @@ endmodule
 
 module blur_unnormalized_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_blur_stencil_read_ren,
     input [15:0] op_hcompute_blur_stencil_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_blur_stencil_read [0:0],
@@ -750,8 +750,8 @@ endmodule
 
 module blur_unnormalized_stencil_clkwrk_dsa0_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_blur_unnormalized_stencil_1_read_ren,
     input [15:0] op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_blur_unnormalized_stencil_1_read [0:0],
@@ -780,8 +780,8 @@ endmodule
 
 module blur_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_blur_stencil_write_wen,
     input [15:0] op_hcompute_blur_stencil_write_ctrl_vars [2:0],
     input [15:0] op_hcompute_blur_stencil_write [0:0],
@@ -1731,8 +1731,8 @@ wire [15:0] _U172_in;
 wire _U172_clk;
 wire [15:0] _U172_out;
 wire blur_stencil_clk;
-wire blur_stencil_rst_n;
 wire blur_stencil_flush;
+wire blur_stencil_rst_n;
 wire blur_stencil_op_hcompute_blur_stencil_write_wen;
 wire [15:0] blur_stencil_op_hcompute_blur_stencil_write_ctrl_vars [2:0];
 wire [15:0] blur_stencil_op_hcompute_blur_stencil_write [0:0];
@@ -1740,8 +1740,8 @@ wire blur_stencil_op_hcompute_hw_output_stencil_read_ren;
 wire [15:0] blur_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars [2:0];
 wire [15:0] blur_stencil_op_hcompute_hw_output_stencil_read [0:0];
 wire blur_unnormalized_stencil_clk;
-wire blur_unnormalized_stencil_rst_n;
 wire blur_unnormalized_stencil_flush;
+wire blur_unnormalized_stencil_rst_n;
 wire blur_unnormalized_stencil_op_hcompute_blur_stencil_read_ren;
 wire [15:0] blur_unnormalized_stencil_op_hcompute_blur_stencil_read_ctrl_vars [2:0];
 wire [15:0] blur_unnormalized_stencil_op_hcompute_blur_stencil_read [0:0];
@@ -1749,8 +1749,8 @@ wire blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_write_wen
 wire [15:0] blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars [2:0];
 wire [15:0] blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_write [0:0];
 wire blur_unnormalized_stencil_clkwrk_dsa0_clk;
-wire blur_unnormalized_stencil_clkwrk_dsa0_rst_n;
 wire blur_unnormalized_stencil_clkwrk_dsa0_flush;
+wire blur_unnormalized_stencil_clkwrk_dsa0_rst_n;
 wire blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read_ren;
 wire [15:0] blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read [0:0];
@@ -1758,8 +1758,8 @@ wire blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil
 wire [15:0] blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_write_ctrl_vars [2:0];
 wire [15:0] blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_write [0:0];
 wire hw_input_stencil_clk;
-wire hw_input_stencil_rst_n;
 wire hw_input_stencil_flush;
+wire hw_input_stencil_rst_n;
 wire hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_read_ren;
 wire [15:0] hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_read [8:0];
@@ -1861,8 +1861,8 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .out(_U172_out)
 );
 assign blur_stencil_clk = clk;
-assign blur_stencil_rst_n = rst_n;
 assign blur_stencil_flush = flush;
+assign blur_stencil_rst_n = rst_n;
 assign blur_stencil_op_hcompute_blur_stencil_write_wen = op_hcompute_blur_stencil_write_start;
 assign blur_stencil_op_hcompute_blur_stencil_write_ctrl_vars[2] = op_hcompute_blur_stencil_write_start_control_vars_out[2];
 assign blur_stencil_op_hcompute_blur_stencil_write_ctrl_vars[1] = op_hcompute_blur_stencil_write_start_control_vars_out[1];
@@ -1874,8 +1874,8 @@ assign blur_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[1] = op_hcomput
 assign blur_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[0] = op_hcompute_hw_output_stencil_port_controller_d[0];
 blur_stencil_ub blur_stencil (
     .clk(blur_stencil_clk),
-    .rst_n(blur_stencil_rst_n),
     .flush(blur_stencil_flush),
+    .rst_n(blur_stencil_rst_n),
     .op_hcompute_blur_stencil_write_wen(blur_stencil_op_hcompute_blur_stencil_write_wen),
     .op_hcompute_blur_stencil_write_ctrl_vars(blur_stencil_op_hcompute_blur_stencil_write_ctrl_vars),
     .op_hcompute_blur_stencil_write(blur_stencil_op_hcompute_blur_stencil_write),
@@ -1884,8 +1884,8 @@ blur_stencil_ub blur_stencil (
     .op_hcompute_hw_output_stencil_read(blur_stencil_op_hcompute_hw_output_stencil_read)
 );
 assign blur_unnormalized_stencil_clk = clk;
-assign blur_unnormalized_stencil_rst_n = rst_n;
 assign blur_unnormalized_stencil_flush = flush;
+assign blur_unnormalized_stencil_rst_n = rst_n;
 assign blur_unnormalized_stencil_op_hcompute_blur_stencil_read_ren = op_hcompute_blur_stencil_read_start;
 assign blur_unnormalized_stencil_op_hcompute_blur_stencil_read_ctrl_vars[2] = op_hcompute_blur_stencil_port_controller_d[2];
 assign blur_unnormalized_stencil_op_hcompute_blur_stencil_read_ctrl_vars[1] = op_hcompute_blur_stencil_port_controller_d[1];
@@ -1897,8 +1897,8 @@ assign blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_write_c
 assign blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_write[0] = op_hcompute_blur_unnormalized_stencil_1_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_write[0];
 blur_unnormalized_stencil_ub blur_unnormalized_stencil (
     .clk(blur_unnormalized_stencil_clk),
-    .rst_n(blur_unnormalized_stencil_rst_n),
     .flush(blur_unnormalized_stencil_flush),
+    .rst_n(blur_unnormalized_stencil_rst_n),
     .op_hcompute_blur_stencil_read_ren(blur_unnormalized_stencil_op_hcompute_blur_stencil_read_ren),
     .op_hcompute_blur_stencil_read_ctrl_vars(blur_unnormalized_stencil_op_hcompute_blur_stencil_read_ctrl_vars),
     .op_hcompute_blur_stencil_read(blur_unnormalized_stencil_op_hcompute_blur_stencil_read),
@@ -1907,8 +1907,8 @@ blur_unnormalized_stencil_ub blur_unnormalized_stencil (
     .op_hcompute_blur_unnormalized_stencil_1_write(blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_write)
 );
 assign blur_unnormalized_stencil_clkwrk_dsa0_clk = clk;
-assign blur_unnormalized_stencil_clkwrk_dsa0_rst_n = rst_n;
 assign blur_unnormalized_stencil_clkwrk_dsa0_flush = flush;
+assign blur_unnormalized_stencil_clkwrk_dsa0_rst_n = rst_n;
 assign blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read_ren = op_hcompute_blur_unnormalized_stencil_1_read_start;
 assign blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars[2] = op_hcompute_blur_unnormalized_stencil_1_port_controller_d[2];
 assign blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars[1] = op_hcompute_blur_unnormalized_stencil_1_port_controller_d[1];
@@ -1920,8 +1920,8 @@ assign blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stenc
 assign blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_write[0] = op_hcompute_blur_unnormalized_stencil_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_write[0];
 blur_unnormalized_stencil_clkwrk_dsa0_ub blur_unnormalized_stencil_clkwrk_dsa0 (
     .clk(blur_unnormalized_stencil_clkwrk_dsa0_clk),
-    .rst_n(blur_unnormalized_stencil_clkwrk_dsa0_rst_n),
     .flush(blur_unnormalized_stencil_clkwrk_dsa0_flush),
+    .rst_n(blur_unnormalized_stencil_clkwrk_dsa0_rst_n),
     .op_hcompute_blur_unnormalized_stencil_1_read_ren(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read_ren),
     .op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars),
     .op_hcompute_blur_unnormalized_stencil_1_read(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read),
@@ -1930,8 +1930,8 @@ blur_unnormalized_stencil_clkwrk_dsa0_ub blur_unnormalized_stencil_clkwrk_dsa0 (
     .op_hcompute_blur_unnormalized_stencil_write(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_write)
 );
 assign hw_input_stencil_clk = clk;
-assign hw_input_stencil_rst_n = rst_n;
 assign hw_input_stencil_flush = flush;
+assign hw_input_stencil_rst_n = rst_n;
 assign hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_read_ren = op_hcompute_blur_unnormalized_stencil_1_read_start;
 assign hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars[2] = op_hcompute_blur_unnormalized_stencil_1_port_controller_d[2];
 assign hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars[1] = op_hcompute_blur_unnormalized_stencil_1_port_controller_d[1];
@@ -1943,8 +1943,8 @@ assign hw_input_stencil_op_hcompute_hw_input_stencil_write_ctrl_vars[0] = op_hco
 assign hw_input_stencil_op_hcompute_hw_input_stencil_write[0] = op_hcompute_hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_write[0];
 hw_input_stencil_ub hw_input_stencil (
     .clk(hw_input_stencil_clk),
-    .rst_n(hw_input_stencil_rst_n),
     .flush(hw_input_stencil_flush),
+    .rst_n(hw_input_stencil_rst_n),
     .op_hcompute_blur_unnormalized_stencil_1_read_ren(hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_read_ren),
     .op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars(hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_read_ctrl_vars),
     .op_hcompute_blur_unnormalized_stencil_1_read(hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_read),

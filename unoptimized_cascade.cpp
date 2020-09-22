@@ -33,140 +33,140 @@ struct conv1_stencil_cache {
 
 
 
-inline void conv1_stencil_op_hcompute_conv1_stencil_1_3_write(hw_uint<16>& conv1_stencil_op_hcompute_conv1_stencil_1_3, conv1_stencil_cache& conv1_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
-  conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.write(conv1_stencil_op_hcompute_conv1_stencil_1_3, conv1_s1_y - 0, conv1_s1_x - 0);
+inline void conv1_stencil_op_hcompute_conv1_stencil_1_16_write(hw_uint<16>& conv1_stencil_op_hcompute_conv1_stencil_1_16, conv1_stencil_cache& conv1_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+  conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.write(conv1_stencil_op_hcompute_conv1_stencil_1_16, conv1_s1_y - 0, conv1_s1_x - 0);
 }
 
-inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_16_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_10_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_op_hcompute_conv2_stencil_1_16 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[2 + conv2_s1_y, 1 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_3 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(2 + conv2_s1_y - 0, 1 + conv2_s1_x - 0);
-  return value_conv1_stencil_op_hcompute_conv1_stencil_1_3;
+  // conv1_stencil_op_hcompute_conv2_stencil_1_10 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[1 + conv2_s1_y, 1 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_16 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(1 + conv2_s1_y - 0, 1 + conv2_s1_x - 0);
+  return value_conv1_stencil_op_hcompute_conv1_stencil_1_16;
   return 0;
 }
 
-inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_17_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_11_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_op_hcompute_conv2_stencil_1_17 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[conv2_s1_y, conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_3 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(conv2_s1_y - 0, conv2_s1_x - 0);
-  return value_conv1_stencil_op_hcompute_conv1_stencil_1_3;
+  // conv1_stencil_op_hcompute_conv2_stencil_1_11 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[1 + conv2_s1_y, 2 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_16 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(1 + conv2_s1_y - 0, 2 + conv2_s1_x - 0);
+  return value_conv1_stencil_op_hcompute_conv1_stencil_1_16;
   return 0;
 }
 
-inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_18_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_12_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_op_hcompute_conv2_stencil_1_18 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[conv2_s1_y, 1 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_3 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(conv2_s1_y - 0, 1 + conv2_s1_x - 0);
-  return value_conv1_stencil_op_hcompute_conv1_stencil_1_3;
+  // conv1_stencil_op_hcompute_conv2_stencil_1_12 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[2 + conv2_s1_y, conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_16 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(2 + conv2_s1_y - 0, conv2_s1_x - 0);
+  return value_conv1_stencil_op_hcompute_conv1_stencil_1_16;
   return 0;
 }
 
-inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_19_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_13_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_op_hcompute_conv2_stencil_1_19 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[conv2_s1_y, 2 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_3 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(conv2_s1_y - 0, 2 + conv2_s1_x - 0);
-  return value_conv1_stencil_op_hcompute_conv1_stencil_1_3;
+  // conv1_stencil_op_hcompute_conv2_stencil_1_13 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[2 + conv2_s1_y, 2 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_16 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(2 + conv2_s1_y - 0, 2 + conv2_s1_x - 0);
+  return value_conv1_stencil_op_hcompute_conv1_stencil_1_16;
   return 0;
 }
 
-inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_20_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_5_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_op_hcompute_conv2_stencil_1_20 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[1 + conv2_s1_y, conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_3 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(1 + conv2_s1_y - 0, conv2_s1_x - 0);
-  return value_conv1_stencil_op_hcompute_conv1_stencil_1_3;
+  // conv1_stencil_op_hcompute_conv2_stencil_1_5 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[2 + conv2_s1_y, 1 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_16 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(2 + conv2_s1_y - 0, 1 + conv2_s1_x - 0);
+  return value_conv1_stencil_op_hcompute_conv1_stencil_1_16;
   return 0;
 }
 
-inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_21_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_6_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_op_hcompute_conv2_stencil_1_21 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[1 + conv2_s1_y, 1 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_3 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(1 + conv2_s1_y - 0, 1 + conv2_s1_x - 0);
-  return value_conv1_stencil_op_hcompute_conv1_stencil_1_3;
+  // conv1_stencil_op_hcompute_conv2_stencil_1_6 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[conv2_s1_y, conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_16 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(conv2_s1_y - 0, conv2_s1_x - 0);
+  return value_conv1_stencil_op_hcompute_conv1_stencil_1_16;
   return 0;
 }
 
-inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_22_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_7_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_op_hcompute_conv2_stencil_1_22 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[1 + conv2_s1_y, 2 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_3 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(1 + conv2_s1_y - 0, 2 + conv2_s1_x - 0);
-  return value_conv1_stencil_op_hcompute_conv1_stencil_1_3;
+  // conv1_stencil_op_hcompute_conv2_stencil_1_7 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[conv2_s1_y, 1 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_16 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(conv2_s1_y - 0, 1 + conv2_s1_x - 0);
+  return value_conv1_stencil_op_hcompute_conv1_stencil_1_16;
   return 0;
 }
 
-inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_23_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_8_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_op_hcompute_conv2_stencil_1_23 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[2 + conv2_s1_y, conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_3 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(2 + conv2_s1_y - 0, conv2_s1_x - 0);
-  return value_conv1_stencil_op_hcompute_conv1_stencil_1_3;
+  // conv1_stencil_op_hcompute_conv2_stencil_1_8 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[conv2_s1_y, 2 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_16 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(conv2_s1_y - 0, 2 + conv2_s1_x - 0);
+  return value_conv1_stencil_op_hcompute_conv1_stencil_1_16;
   return 0;
 }
 
-inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_24_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_9_select(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_op_hcompute_conv2_stencil_1_24 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[2 + conv2_s1_y, 2 + conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_3 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(2 + conv2_s1_y - 0, 2 + conv2_s1_x - 0);
-  return value_conv1_stencil_op_hcompute_conv1_stencil_1_3;
+  // conv1_stencil_op_hcompute_conv2_stencil_1_9 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv1_stencil[1 + conv2_s1_y, conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv1_stencil_op_hcompute_conv1_stencil_1_16 = conv1_stencil.conv1_stencil_all_inputs_to_all_outputs.read(1 + conv2_s1_y - 0, conv2_s1_x - 0);
+  return value_conv1_stencil_op_hcompute_conv1_stencil_1_16;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_conv1_stencil_1_write
-//	conv1_stencil_op_hcompute_conv1_stencil_1_3
+//	conv1_stencil_op_hcompute_conv1_stencil_1_16
 inline void conv1_stencil_op_hcompute_conv1_stencil_1_write_bundle_write(hw_uint<16>& op_hcompute_conv1_stencil_1_write, conv1_stencil_cache& conv1_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
-	hw_uint<16> conv1_stencil_op_hcompute_conv1_stencil_1_3_res = op_hcompute_conv1_stencil_1_write.extract<0, 15>();
-	conv1_stencil_op_hcompute_conv1_stencil_1_3_write(conv1_stencil_op_hcompute_conv1_stencil_1_3_res, conv1_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	hw_uint<16> conv1_stencil_op_hcompute_conv1_stencil_1_16_res = op_hcompute_conv1_stencil_1_write.extract<0, 15>();
+	conv1_stencil_op_hcompute_conv1_stencil_1_16_write(conv1_stencil_op_hcompute_conv1_stencil_1_16_res, conv1_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
 }
 
 // op_hcompute_conv2_stencil_1_read
-//	conv1_stencil_op_hcompute_conv2_stencil_1_16
-//	conv1_stencil_op_hcompute_conv2_stencil_1_17
-//	conv1_stencil_op_hcompute_conv2_stencil_1_18
-//	conv1_stencil_op_hcompute_conv2_stencil_1_19
-//	conv1_stencil_op_hcompute_conv2_stencil_1_20
-//	conv1_stencil_op_hcompute_conv2_stencil_1_21
-//	conv1_stencil_op_hcompute_conv2_stencil_1_22
-//	conv1_stencil_op_hcompute_conv2_stencil_1_23
-//	conv1_stencil_op_hcompute_conv2_stencil_1_24
+//	conv1_stencil_op_hcompute_conv2_stencil_1_5
+//	conv1_stencil_op_hcompute_conv2_stencil_1_6
+//	conv1_stencil_op_hcompute_conv2_stencil_1_7
+//	conv1_stencil_op_hcompute_conv2_stencil_1_8
+//	conv1_stencil_op_hcompute_conv2_stencil_1_9
+//	conv1_stencil_op_hcompute_conv2_stencil_1_10
+//	conv1_stencil_op_hcompute_conv2_stencil_1_11
+//	conv1_stencil_op_hcompute_conv2_stencil_1_12
+//	conv1_stencil_op_hcompute_conv2_stencil_1_13
 inline hw_uint<144> conv1_stencil_op_hcompute_conv2_stencil_1_read_bundle_read(conv1_stencil_cache& conv1_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
   // # of ports in bundle: 9
-    // conv1_stencil_op_hcompute_conv2_stencil_1_16
-    // conv1_stencil_op_hcompute_conv2_stencil_1_17
-    // conv1_stencil_op_hcompute_conv2_stencil_1_18
-    // conv1_stencil_op_hcompute_conv2_stencil_1_19
-    // conv1_stencil_op_hcompute_conv2_stencil_1_20
-    // conv1_stencil_op_hcompute_conv2_stencil_1_21
-    // conv1_stencil_op_hcompute_conv2_stencil_1_22
-    // conv1_stencil_op_hcompute_conv2_stencil_1_23
-    // conv1_stencil_op_hcompute_conv2_stencil_1_24
+    // conv1_stencil_op_hcompute_conv2_stencil_1_5
+    // conv1_stencil_op_hcompute_conv2_stencil_1_6
+    // conv1_stencil_op_hcompute_conv2_stencil_1_7
+    // conv1_stencil_op_hcompute_conv2_stencil_1_8
+    // conv1_stencil_op_hcompute_conv2_stencil_1_9
+    // conv1_stencil_op_hcompute_conv2_stencil_1_10
+    // conv1_stencil_op_hcompute_conv2_stencil_1_11
+    // conv1_stencil_op_hcompute_conv2_stencil_1_12
+    // conv1_stencil_op_hcompute_conv2_stencil_1_13
 
 	hw_uint<144> result;
-	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_16_res = conv1_stencil_op_hcompute_conv2_stencil_1_16_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<0, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_16_res);
-	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_17_res = conv1_stencil_op_hcompute_conv2_stencil_1_17_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<16, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_17_res);
-	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_18_res = conv1_stencil_op_hcompute_conv2_stencil_1_18_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<32, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_18_res);
-	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_19_res = conv1_stencil_op_hcompute_conv2_stencil_1_19_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<48, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_19_res);
-	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_20_res = conv1_stencil_op_hcompute_conv2_stencil_1_20_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<64, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_20_res);
-	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_21_res = conv1_stencil_op_hcompute_conv2_stencil_1_21_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<80, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_21_res);
-	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_22_res = conv1_stencil_op_hcompute_conv2_stencil_1_22_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<96, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_22_res);
-	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_23_res = conv1_stencil_op_hcompute_conv2_stencil_1_23_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<112, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_23_res);
-	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_24_res = conv1_stencil_op_hcompute_conv2_stencil_1_24_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<128, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_24_res);
+	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_5_res = conv1_stencil_op_hcompute_conv2_stencil_1_5_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<0, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_5_res);
+	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_6_res = conv1_stencil_op_hcompute_conv2_stencil_1_6_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<16, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_6_res);
+	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_7_res = conv1_stencil_op_hcompute_conv2_stencil_1_7_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<32, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_7_res);
+	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_8_res = conv1_stencil_op_hcompute_conv2_stencil_1_8_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<48, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_8_res);
+	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_9_res = conv1_stencil_op_hcompute_conv2_stencil_1_9_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<64, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_9_res);
+	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_10_res = conv1_stencil_op_hcompute_conv2_stencil_1_10_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<80, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_10_res);
+	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_11_res = conv1_stencil_op_hcompute_conv2_stencil_1_11_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<96, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_11_res);
+	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_12_res = conv1_stencil_op_hcompute_conv2_stencil_1_12_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<112, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_12_res);
+	hw_uint<16> conv1_stencil_op_hcompute_conv2_stencil_1_13_res = conv1_stencil_op_hcompute_conv2_stencil_1_13_select(conv1_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<128, 144>(result, conv1_stencil_op_hcompute_conv2_stencil_1_13_res);
 	return result;
 }
 
@@ -194,37 +194,37 @@ struct conv1_stencil_clkwrk_dsa0_cache {
 
 
 
-inline void conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_2_write(hw_uint<16>& conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_2, conv1_stencil_clkwrk_dsa0_cache& conv1_stencil_clkwrk_dsa0, int root, int conv1_s0_y, int conv1_s0_x, int dynamic_address) {
-  conv1_stencil_clkwrk_dsa0.conv1_stencil_clkwrk_dsa0_all_inputs_to_all_outputs.write(conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_2, conv1_s0_y - 0, conv1_s0_x - 0);
+inline void conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27_write(hw_uint<16>& conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27, conv1_stencil_clkwrk_dsa0_cache& conv1_stencil_clkwrk_dsa0, int root, int conv1_s0_y, int conv1_s0_x, int dynamic_address) {
+  conv1_stencil_clkwrk_dsa0.conv1_stencil_clkwrk_dsa0_all_inputs_to_all_outputs.write(conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27, conv1_s0_y - 0, conv1_s0_x - 0);
 }
 
-inline hw_uint<16> conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_4_select(conv1_stencil_clkwrk_dsa0_cache& conv1_stencil_clkwrk_dsa0, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_17_select(conv1_stencil_clkwrk_dsa0_cache& conv1_stencil_clkwrk_dsa0, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_4 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> conv1_stencil_clkwrk_dsa0[conv1_s1_y, conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_2 = conv1_stencil_clkwrk_dsa0.conv1_stencil_clkwrk_dsa0_all_inputs_to_all_outputs.read(conv1_s1_y - 0, conv1_s1_x - 0);
-  return value_conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_2;
+  // conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_17 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> conv1_stencil_clkwrk_dsa0[conv1_s1_y, conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27 = conv1_stencil_clkwrk_dsa0.conv1_stencil_clkwrk_dsa0_all_inputs_to_all_outputs.read(conv1_s1_y - 0, conv1_s1_x - 0);
+  return value_conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_conv1_stencil_1_read
-//	conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_4
+//	conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_17
 inline hw_uint<16> conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_bundle_read(conv1_stencil_clkwrk_dsa0_cache& conv1_stencil_clkwrk_dsa0, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
   // # of ports in bundle: 1
-    // conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_4
+    // conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_17
 
 	hw_uint<16> result;
-	hw_uint<16> conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_4_res = conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_4_select(conv1_stencil_clkwrk_dsa0, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<0, 16>(result, conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_4_res);
+	hw_uint<16> conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_17_res = conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_17_select(conv1_stencil_clkwrk_dsa0, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<0, 16>(result, conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_17_res);
 	return result;
 }
 
 // op_hcompute_conv1_stencil_write
-//	conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_2
+//	conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27
 inline void conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_bundle_write(hw_uint<16>& op_hcompute_conv1_stencil_write, conv1_stencil_clkwrk_dsa0_cache& conv1_stencil_clkwrk_dsa0, int root, int conv1_s0_y, int conv1_s0_x, int dynamic_address) {
-	hw_uint<16> conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_2_res = op_hcompute_conv1_stencil_write.extract<0, 15>();
-	conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_2_write(conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_2_res, conv1_stencil_clkwrk_dsa0, root, conv1_s0_y, conv1_s0_x, dynamic_address);
+	hw_uint<16> conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27_res = op_hcompute_conv1_stencil_write.extract<0, 15>();
+	conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27_write(conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27_res, conv1_stencil_clkwrk_dsa0, root, conv1_s0_y, conv1_s0_x, dynamic_address);
 }
 
 #include "hw_classes.h"
@@ -251,36 +251,36 @@ struct conv2_stencil_cache {
 
 
 
-inline void conv2_stencil_op_hcompute_conv2_stencil_1_15_write(hw_uint<16>& conv2_stencil_op_hcompute_conv2_stencil_1_15, conv2_stencil_cache& conv2_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
-  conv2_stencil.conv2_stencil_all_inputs_to_all_outputs.write(conv2_stencil_op_hcompute_conv2_stencil_1_15, conv2_s1_y - 0, conv2_s1_x - 0);
+inline void conv2_stencil_op_hcompute_conv2_stencil_1_4_write(hw_uint<16>& conv2_stencil_op_hcompute_conv2_stencil_1_4, conv2_stencil_cache& conv2_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+  conv2_stencil.conv2_stencil_all_inputs_to_all_outputs.write(conv2_stencil_op_hcompute_conv2_stencil_1_4, conv2_s1_y - 0, conv2_s1_x - 0);
 }
 
-inline hw_uint<16> conv2_stencil_op_hcompute_hw_output_stencil_27_select(conv2_stencil_cache& conv2_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
+inline hw_uint<16> conv2_stencil_op_hcompute_hw_output_stencil_1_select(conv2_stencil_cache& conv2_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv2_stencil_op_hcompute_hw_output_stencil_27 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> conv2_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 59 and 0 <= hw_output_s0_x_xi <= 59 }
-  auto value_conv2_stencil_op_hcompute_conv2_stencil_1_15 = conv2_stencil.conv2_stencil_all_inputs_to_all_outputs.read(hw_output_s0_y_yi - 0, hw_output_s0_x_xi - 0);
-  return value_conv2_stencil_op_hcompute_conv2_stencil_1_15;
+  // conv2_stencil_op_hcompute_hw_output_stencil_1 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> conv2_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 59 and 0 <= hw_output_s0_x_xi <= 59 }
+  auto value_conv2_stencil_op_hcompute_conv2_stencil_1_4 = conv2_stencil.conv2_stencil_all_inputs_to_all_outputs.read(hw_output_s0_y_yi - 0, hw_output_s0_x_xi - 0);
+  return value_conv2_stencil_op_hcompute_conv2_stencil_1_4;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_conv2_stencil_1_write
-//	conv2_stencil_op_hcompute_conv2_stencil_1_15
+//	conv2_stencil_op_hcompute_conv2_stencil_1_4
 inline void conv2_stencil_op_hcompute_conv2_stencil_1_write_bundle_write(hw_uint<16>& op_hcompute_conv2_stencil_1_write, conv2_stencil_cache& conv2_stencil, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
-	hw_uint<16> conv2_stencil_op_hcompute_conv2_stencil_1_15_res = op_hcompute_conv2_stencil_1_write.extract<0, 15>();
-	conv2_stencil_op_hcompute_conv2_stencil_1_15_write(conv2_stencil_op_hcompute_conv2_stencil_1_15_res, conv2_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	hw_uint<16> conv2_stencil_op_hcompute_conv2_stencil_1_4_res = op_hcompute_conv2_stencil_1_write.extract<0, 15>();
+	conv2_stencil_op_hcompute_conv2_stencil_1_4_write(conv2_stencil_op_hcompute_conv2_stencil_1_4_res, conv2_stencil, root, conv2_s1_y, conv2_s1_x, dynamic_address);
 }
 
 // op_hcompute_hw_output_stencil_read
-//	conv2_stencil_op_hcompute_hw_output_stencil_27
+//	conv2_stencil_op_hcompute_hw_output_stencil_1
 inline hw_uint<16> conv2_stencil_op_hcompute_hw_output_stencil_read_bundle_read(conv2_stencil_cache& conv2_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
   // # of ports in bundle: 1
-    // conv2_stencil_op_hcompute_hw_output_stencil_27
+    // conv2_stencil_op_hcompute_hw_output_stencil_1
 
 	hw_uint<16> result;
-	hw_uint<16> conv2_stencil_op_hcompute_hw_output_stencil_27_res = conv2_stencil_op_hcompute_hw_output_stencil_27_select(conv2_stencil, root, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
-	set_at<0, 16>(result, conv2_stencil_op_hcompute_hw_output_stencil_27_res);
+	hw_uint<16> conv2_stencil_op_hcompute_hw_output_stencil_1_res = conv2_stencil_op_hcompute_hw_output_stencil_1_select(conv2_stencil, root, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
+	set_at<0, 16>(result, conv2_stencil_op_hcompute_hw_output_stencil_1_res);
 	return result;
 }
 
@@ -308,37 +308,37 @@ struct conv2_stencil_clkwrk_dsa1_cache {
 
 
 
-inline void conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_14_write(hw_uint<16>& conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_14, conv2_stencil_clkwrk_dsa1_cache& conv2_stencil_clkwrk_dsa1, int root, int conv2_s0_y, int conv2_s0_x, int dynamic_address) {
-  conv2_stencil_clkwrk_dsa1.conv2_stencil_clkwrk_dsa1_all_inputs_to_all_outputs.write(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_14, conv2_s0_y - 0, conv2_s0_x - 0);
+inline void conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15_write(hw_uint<16>& conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15, conv2_stencil_clkwrk_dsa1_cache& conv2_stencil_clkwrk_dsa1, int root, int conv2_s0_y, int conv2_s0_x, int dynamic_address) {
+  conv2_stencil_clkwrk_dsa1.conv2_stencil_clkwrk_dsa1_all_inputs_to_all_outputs.write(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15, conv2_s0_y - 0, conv2_s0_x - 0);
 }
 
-inline hw_uint<16> conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_25_select(conv2_stencil_clkwrk_dsa1_cache& conv2_stencil_clkwrk_dsa1, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
+inline hw_uint<16> conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_14_select(conv2_stencil_clkwrk_dsa1_cache& conv2_stencil_clkwrk_dsa1, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_25 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv2_stencil_clkwrk_dsa1[conv2_s1_y, conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
-  auto value_conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_14 = conv2_stencil_clkwrk_dsa1.conv2_stencil_clkwrk_dsa1_all_inputs_to_all_outputs.read(conv2_s1_y - 0, conv2_s1_x - 0);
-  return value_conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_14;
+  // conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_14 read pattern: { op_hcompute_conv2_stencil_1[root = 0, conv2_s1_y, conv2_s1_x] -> conv2_stencil_clkwrk_dsa1[conv2_s1_y, conv2_s1_x] : 0 <= conv2_s1_y <= 59 and 0 <= conv2_s1_x <= 59 }
+  auto value_conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15 = conv2_stencil_clkwrk_dsa1.conv2_stencil_clkwrk_dsa1_all_inputs_to_all_outputs.read(conv2_s1_y - 0, conv2_s1_x - 0);
+  return value_conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_conv2_stencil_1_read
-//	conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_25
+//	conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_14
 inline hw_uint<16> conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_bundle_read(conv2_stencil_clkwrk_dsa1_cache& conv2_stencil_clkwrk_dsa1, int root, int conv2_s1_y, int conv2_s1_x, int dynamic_address) {
   // # of ports in bundle: 1
-    // conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_25
+    // conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_14
 
 	hw_uint<16> result;
-	hw_uint<16> conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_25_res = conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_25_select(conv2_stencil_clkwrk_dsa1, root, conv2_s1_y, conv2_s1_x, dynamic_address);
-	set_at<0, 16>(result, conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_25_res);
+	hw_uint<16> conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_14_res = conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_14_select(conv2_stencil_clkwrk_dsa1, root, conv2_s1_y, conv2_s1_x, dynamic_address);
+	set_at<0, 16>(result, conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_14_res);
 	return result;
 }
 
 // op_hcompute_conv2_stencil_write
-//	conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_14
+//	conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15
 inline void conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_bundle_write(hw_uint<16>& op_hcompute_conv2_stencil_write, conv2_stencil_clkwrk_dsa1_cache& conv2_stencil_clkwrk_dsa1, int root, int conv2_s0_y, int conv2_s0_x, int dynamic_address) {
-	hw_uint<16> conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_14_res = op_hcompute_conv2_stencil_write.extract<0, 15>();
-	conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_14_write(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_14_res, conv2_stencil_clkwrk_dsa1, root, conv2_s0_y, conv2_s0_x, dynamic_address);
+	hw_uint<16> conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15_res = op_hcompute_conv2_stencil_write.extract<0, 15>();
+	conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15_write(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15_res, conv2_stencil_clkwrk_dsa1, root, conv2_s0_y, conv2_s0_x, dynamic_address);
 }
 
 #include "hw_classes.h"
@@ -365,141 +365,141 @@ struct hw_input_global_wrapper_stencil_cache {
 
 
 
-inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, hw_input_global_wrapper_s0_y - 0, hw_input_global_wrapper_s0_x - 0);
+inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
+  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2, hw_input_global_wrapper_s0_y - 0, hw_input_global_wrapper_s0_x - 0);
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_10_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_18_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_10 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[2 + conv1_s1_y, 1 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(2 + conv1_s1_y - 0, 1 + conv1_s1_x - 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_18 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[conv1_s1_y, conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv1_s1_y - 0, conv1_s1_x - 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_11_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_19_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_11 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[conv1_s1_y, 2 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv1_s1_y - 0, 2 + conv1_s1_x - 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_19 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[1 + conv1_s1_y, conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(1 + conv1_s1_y - 0, conv1_s1_x - 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_12_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_20_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_12 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[2 + conv1_s1_y, 2 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(2 + conv1_s1_y - 0, 2 + conv1_s1_x - 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_20 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[2 + conv1_s1_y, conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(2 + conv1_s1_y - 0, conv1_s1_x - 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_13_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_21_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_13 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[1 + conv1_s1_y, 2 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(1 + conv1_s1_y - 0, 2 + conv1_s1_x - 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_21 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[conv1_s1_y, 1 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv1_s1_y - 0, 1 + conv1_s1_x - 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_5_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_22_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_5 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[conv1_s1_y, conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv1_s1_y - 0, conv1_s1_x - 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_22 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[1 + conv1_s1_y, 1 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(1 + conv1_s1_y - 0, 1 + conv1_s1_x - 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_6_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_23_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_6 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[1 + conv1_s1_y, conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(1 + conv1_s1_y - 0, conv1_s1_x - 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_23 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[2 + conv1_s1_y, 1 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(2 + conv1_s1_y - 0, 1 + conv1_s1_x - 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_7_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_24_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_7 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[2 + conv1_s1_y, conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(2 + conv1_s1_y - 0, conv1_s1_x - 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_24 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[conv1_s1_y, 2 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv1_s1_y - 0, 2 + conv1_s1_x - 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_8_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_25_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_8 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[conv1_s1_y, 1 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(conv1_s1_y - 0, 1 + conv1_s1_x - 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_25 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[2 + conv1_s1_y, 2 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(2 + conv1_s1_y - 0, 2 + conv1_s1_x - 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_9_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_26_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_9 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[1 + conv1_s1_y, 1 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(1 + conv1_s1_y - 0, 1 + conv1_s1_x - 0);
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_26 read pattern: { op_hcompute_conv1_stencil_1[root = 0, conv1_s1_y, conv1_s1_x] -> hw_input_global_wrapper_stencil[1 + conv1_s1_y, 2 + conv1_s1_x] : 0 <= conv1_s1_y <= 61 and 0 <= conv1_s1_x <= 61 }
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_all_inputs_to_all_outputs.read(1 + conv1_s1_y - 0, 2 + conv1_s1_x - 0);
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_conv1_stencil_1_read
-//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_5
-//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_6
-//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_7
-//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_8
-//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_9
-//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_10
-//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_11
-//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_12
-//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_13
+//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_18
+//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_19
+//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_20
+//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_21
+//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_22
+//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_23
+//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_24
+//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_25
+//	hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_26
 inline hw_uint<144> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_bundle_read(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int conv1_s1_y, int conv1_s1_x, int dynamic_address) {
   // # of ports in bundle: 9
-    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_5
-    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_6
-    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_7
-    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_8
-    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_9
-    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_10
-    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_11
-    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_12
-    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_13
+    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_18
+    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_19
+    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_20
+    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_21
+    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_22
+    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_23
+    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_24
+    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_25
+    // hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_26
 
 	hw_uint<144> result;
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_5_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_5_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<0, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_5_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_6_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_6_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<16, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_6_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_7_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_7_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<32, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_7_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_8_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_8_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<48, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_8_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_9_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_9_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<64, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_9_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_10_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_10_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<80, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_10_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_11_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_11_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<96, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_11_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_12_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_12_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<112, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_12_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_13_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_13_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
-	set_at<128, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_13_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_18_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_18_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<0, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_18_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_19_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_19_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<16, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_19_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_20_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_20_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<32, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_20_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_21_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_21_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<48, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_21_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_22_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_22_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<64, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_22_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_23_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_23_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<80, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_23_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_24_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_24_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<96, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_24_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_25_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_25_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<112, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_25_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_26_res = hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_26_select(hw_input_global_wrapper_stencil, root, conv1_s1_y, conv1_s1_x, dynamic_address);
+	set_at<128, 144>(result, hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_26_res);
 	return result;
 }
 
 // op_hcompute_hw_input_global_wrapper_stencil_write
-//	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0
+//	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2
 inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_bundle_write(hw_uint<16>& op_hcompute_hw_input_global_wrapper_stencil_write, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_res = op_hcompute_hw_input_global_wrapper_stencil_write.extract<0, 15>();
-	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_res, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, dynamic_address);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_res = op_hcompute_hw_input_global_wrapper_stencil_write.extract<0, 15>();
+	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2_res, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, dynamic_address);
 }
 
 // Total re-use buffer capacity: 303744 bits

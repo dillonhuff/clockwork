@@ -16,8 +16,8 @@
 // Module `memtile_long_delay__U393` defined externally
 module lgxy_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_cim_stencil_read_ren,
     input [15:0] op_hcompute_cim_stencil_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_cim_stencil_read [0:0],
@@ -46,8 +46,8 @@ endmodule
 
 module lgxx_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_cim_stencil_read_ren,
     input [15:0] op_hcompute_cim_stencil_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_cim_stencil_read [0:0],
@@ -380,8 +380,8 @@ endmodule
 
 module padded16_global_wrapper_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_grad_x_stencil_read_ren,
     input [15:0] op_hcompute_grad_x_stencil_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_grad_x_stencil_read [5:0],
@@ -812,8 +812,8 @@ endmodule
 
 module lyy_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_lgyy_stencil_1_read_ren,
     input [15:0] op_hcompute_lgyy_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_lgyy_stencil_1_read [8:0],
@@ -1190,8 +1190,8 @@ endmodule
 
 module lxy_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_lgxy_stencil_1_read_ren,
     input [15:0] op_hcompute_lgxy_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_lgxy_stencil_1_read [8:0],
@@ -1568,8 +1568,8 @@ endmodule
 
 module lxx_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_lgxx_stencil_1_read_ren,
     input [15:0] op_hcompute_lgxx_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_lgxx_stencil_1_read [8:0],
@@ -1778,8 +1778,8 @@ endmodule
 
 module lgyy_stencil_clkwrk_dsa2_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_lgyy_stencil_1_read_ren,
     input [15:0] op_hcompute_lgyy_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_lgyy_stencil_1_read [0:0],
@@ -1864,8 +1864,8 @@ endmodule
 
 module lgyy_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_cim_stencil_read_ren,
     input [15:0] op_hcompute_cim_stencil_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_cim_stencil_read [0:0],
@@ -1938,8 +1938,8 @@ endmodule
 
 module lgxy_stencil_clkwrk_dsa1_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_lgxy_stencil_1_read_ren,
     input [15:0] op_hcompute_lgxy_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_lgxy_stencil_1_read [0:0],
@@ -2012,8 +2012,8 @@ endmodule
 
 module lgxx_stencil_clkwrk_dsa0_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_lgxx_stencil_1_read_ren,
     input [15:0] op_hcompute_lgxx_stencil_1_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_lgxx_stencil_1_read [0:0],
@@ -2098,8 +2098,8 @@ endmodule
 
 module grad_y_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_grad_y_stencil_write_wen,
     input [15:0] op_hcompute_grad_y_stencil_write_ctrl_vars [2:0],
     input [15:0] op_hcompute_grad_y_stencil_write [0:0],
@@ -2204,8 +2204,8 @@ endmodule
 
 module grad_x_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_grad_x_stencil_write_wen,
     input [15:0] op_hcompute_grad_x_stencil_write_ctrl_vars [2:0],
     input [15:0] op_hcompute_grad_x_stencil_write [0:0],
@@ -2927,8 +2927,8 @@ endmodule
 
 module cim_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_cim_output_stencil_read_ren,
     input [15:0] op_hcompute_cim_output_stencil_read_ctrl_vars [2:0],
     output [15:0] op_hcompute_cim_output_stencil_read [8:0],
@@ -3093,8 +3093,8 @@ endmodule
 
 module cim_output_stencil_ub (
     input clk,
-    input rst_n,
     input flush,
+    input rst_n,
     input op_hcompute_cim_output_stencil_write_wen,
     input [15:0] op_hcompute_cim_output_stencil_write_ctrl_vars [2:0],
     input [15:0] op_hcompute_cim_output_stencil_write [0:0],
@@ -5864,8 +5864,8 @@ wire [15:0] _U580_in;
 wire _U580_clk;
 wire [15:0] _U580_out;
 wire cim_output_stencil_clk;
-wire cim_output_stencil_rst_n;
 wire cim_output_stencil_flush;
+wire cim_output_stencil_rst_n;
 wire cim_output_stencil_op_hcompute_cim_output_stencil_write_wen;
 wire [15:0] cim_output_stencil_op_hcompute_cim_output_stencil_write_ctrl_vars [2:0];
 wire [15:0] cim_output_stencil_op_hcompute_cim_output_stencil_write [0:0];
@@ -5873,8 +5873,8 @@ wire cim_output_stencil_op_hcompute_hw_output_stencil_read_ren;
 wire [15:0] cim_output_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars [2:0];
 wire [15:0] cim_output_stencil_op_hcompute_hw_output_stencil_read [0:0];
 wire cim_stencil_clk;
-wire cim_stencil_rst_n;
 wire cim_stencil_flush;
+wire cim_stencil_rst_n;
 wire cim_stencil_op_hcompute_cim_output_stencil_read_ren;
 wire [15:0] cim_stencil_op_hcompute_cim_output_stencil_read_ctrl_vars [2:0];
 wire [15:0] cim_stencil_op_hcompute_cim_output_stencil_read [8:0];
@@ -5882,8 +5882,8 @@ wire cim_stencil_op_hcompute_cim_stencil_write_wen;
 wire [15:0] cim_stencil_op_hcompute_cim_stencil_write_ctrl_vars [2:0];
 wire [15:0] cim_stencil_op_hcompute_cim_stencil_write [0:0];
 wire grad_x_stencil_clk;
-wire grad_x_stencil_rst_n;
 wire grad_x_stencil_flush;
+wire grad_x_stencil_rst_n;
 wire grad_x_stencil_op_hcompute_grad_x_stencil_write_wen;
 wire [15:0] grad_x_stencil_op_hcompute_grad_x_stencil_write_ctrl_vars [2:0];
 wire [15:0] grad_x_stencil_op_hcompute_grad_x_stencil_write [0:0];
@@ -5894,8 +5894,8 @@ wire grad_x_stencil_op_hcompute_lxy_stencil_read_ren;
 wire [15:0] grad_x_stencil_op_hcompute_lxy_stencil_read_ctrl_vars [2:0];
 wire [15:0] grad_x_stencil_op_hcompute_lxy_stencil_read [0:0];
 wire grad_y_stencil_clk;
-wire grad_y_stencil_rst_n;
 wire grad_y_stencil_flush;
+wire grad_y_stencil_rst_n;
 wire grad_y_stencil_op_hcompute_grad_y_stencil_write_wen;
 wire [15:0] grad_y_stencil_op_hcompute_grad_y_stencil_write_ctrl_vars [2:0];
 wire [15:0] grad_y_stencil_op_hcompute_grad_y_stencil_write [0:0];
@@ -5906,8 +5906,8 @@ wire grad_y_stencil_op_hcompute_lyy_stencil_read_ren;
 wire [15:0] grad_y_stencil_op_hcompute_lyy_stencil_read_ctrl_vars [2:0];
 wire [15:0] grad_y_stencil_op_hcompute_lyy_stencil_read [0:0];
 wire lgxx_stencil_clk;
-wire lgxx_stencil_rst_n;
 wire lgxx_stencil_flush;
+wire lgxx_stencil_rst_n;
 wire lgxx_stencil_op_hcompute_cim_stencil_read_ren;
 wire [15:0] lgxx_stencil_op_hcompute_cim_stencil_read_ctrl_vars [2:0];
 wire [15:0] lgxx_stencil_op_hcompute_cim_stencil_read [0:0];
@@ -5915,8 +5915,8 @@ wire lgxx_stencil_op_hcompute_lgxx_stencil_1_write_wen;
 wire [15:0] lgxx_stencil_op_hcompute_lgxx_stencil_1_write_ctrl_vars [2:0];
 wire [15:0] lgxx_stencil_op_hcompute_lgxx_stencil_1_write [0:0];
 wire lgxx_stencil_clkwrk_dsa0_clk;
-wire lgxx_stencil_clkwrk_dsa0_rst_n;
 wire lgxx_stencil_clkwrk_dsa0_flush;
+wire lgxx_stencil_clkwrk_dsa0_rst_n;
 wire lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read_ren;
 wire [15:0] lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read [0:0];
@@ -5924,8 +5924,8 @@ wire lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write_wen;
 wire [15:0] lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write_ctrl_vars [2:0];
 wire [15:0] lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write [0:0];
 wire lgxy_stencil_clk;
-wire lgxy_stencil_rst_n;
 wire lgxy_stencil_flush;
+wire lgxy_stencil_rst_n;
 wire lgxy_stencil_op_hcompute_cim_stencil_read_ren;
 wire [15:0] lgxy_stencil_op_hcompute_cim_stencil_read_ctrl_vars [2:0];
 wire [15:0] lgxy_stencil_op_hcompute_cim_stencil_read [0:0];
@@ -5933,8 +5933,8 @@ wire lgxy_stencil_op_hcompute_lgxy_stencil_1_write_wen;
 wire [15:0] lgxy_stencil_op_hcompute_lgxy_stencil_1_write_ctrl_vars [2:0];
 wire [15:0] lgxy_stencil_op_hcompute_lgxy_stencil_1_write [0:0];
 wire lgxy_stencil_clkwrk_dsa1_clk;
-wire lgxy_stencil_clkwrk_dsa1_rst_n;
 wire lgxy_stencil_clkwrk_dsa1_flush;
+wire lgxy_stencil_clkwrk_dsa1_rst_n;
 wire lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_ren;
 wire [15:0] lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read [0:0];
@@ -5942,8 +5942,8 @@ wire lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_wen;
 wire [15:0] lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_ctrl_vars [2:0];
 wire [15:0] lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write [0:0];
 wire lgyy_stencil_clk;
-wire lgyy_stencil_rst_n;
 wire lgyy_stencil_flush;
+wire lgyy_stencil_rst_n;
 wire lgyy_stencil_op_hcompute_cim_stencil_read_ren;
 wire [15:0] lgyy_stencil_op_hcompute_cim_stencil_read_ctrl_vars [2:0];
 wire [15:0] lgyy_stencil_op_hcompute_cim_stencil_read [0:0];
@@ -5951,8 +5951,8 @@ wire lgyy_stencil_op_hcompute_lgyy_stencil_1_write_wen;
 wire [15:0] lgyy_stencil_op_hcompute_lgyy_stencil_1_write_ctrl_vars [2:0];
 wire [15:0] lgyy_stencil_op_hcompute_lgyy_stencil_1_write [0:0];
 wire lgyy_stencil_clkwrk_dsa2_clk;
-wire lgyy_stencil_clkwrk_dsa2_rst_n;
 wire lgyy_stencil_clkwrk_dsa2_flush;
+wire lgyy_stencil_clkwrk_dsa2_rst_n;
 wire lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_ren;
 wire [15:0] lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read [0:0];
@@ -5960,8 +5960,8 @@ wire lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_wen;
 wire [15:0] lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_ctrl_vars [2:0];
 wire [15:0] lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write [0:0];
 wire lxx_stencil_clk;
-wire lxx_stencil_rst_n;
 wire lxx_stencil_flush;
+wire lxx_stencil_rst_n;
 wire lxx_stencil_op_hcompute_lgxx_stencil_1_read_ren;
 wire [15:0] lxx_stencil_op_hcompute_lgxx_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] lxx_stencil_op_hcompute_lgxx_stencil_1_read [8:0];
@@ -5969,8 +5969,8 @@ wire lxx_stencil_op_hcompute_lxx_stencil_write_wen;
 wire [15:0] lxx_stencil_op_hcompute_lxx_stencil_write_ctrl_vars [2:0];
 wire [15:0] lxx_stencil_op_hcompute_lxx_stencil_write [0:0];
 wire lxy_stencil_clk;
-wire lxy_stencil_rst_n;
 wire lxy_stencil_flush;
+wire lxy_stencil_rst_n;
 wire lxy_stencil_op_hcompute_lgxy_stencil_1_read_ren;
 wire [15:0] lxy_stencil_op_hcompute_lgxy_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] lxy_stencil_op_hcompute_lgxy_stencil_1_read [8:0];
@@ -5978,8 +5978,8 @@ wire lxy_stencil_op_hcompute_lxy_stencil_write_wen;
 wire [15:0] lxy_stencil_op_hcompute_lxy_stencil_write_ctrl_vars [2:0];
 wire [15:0] lxy_stencil_op_hcompute_lxy_stencil_write [0:0];
 wire lyy_stencil_clk;
-wire lyy_stencil_rst_n;
 wire lyy_stencil_flush;
+wire lyy_stencil_rst_n;
 wire lyy_stencil_op_hcompute_lgyy_stencil_1_read_ren;
 wire [15:0] lyy_stencil_op_hcompute_lgyy_stencil_1_read_ctrl_vars [2:0];
 wire [15:0] lyy_stencil_op_hcompute_lgyy_stencil_1_read [8:0];
@@ -6245,8 +6245,8 @@ wire op_hcompute_padded16_global_wrapper_stencil_write_start_control_vars_clk;
 wire [15:0] op_hcompute_padded16_global_wrapper_stencil_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_padded16_global_wrapper_stencil_write_start_control_vars_out [2:0];
 wire padded16_global_wrapper_stencil_clk;
-wire padded16_global_wrapper_stencil_rst_n;
 wire padded16_global_wrapper_stencil_flush;
+wire padded16_global_wrapper_stencil_rst_n;
 wire padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_ren;
 wire [15:0] padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_ctrl_vars [2:0];
 wire [15:0] padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read [5:0];
@@ -6266,8 +6266,8 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .out(_U580_out)
 );
 assign cim_output_stencil_clk = clk;
-assign cim_output_stencil_rst_n = rst_n;
 assign cim_output_stencil_flush = flush;
+assign cim_output_stencil_rst_n = rst_n;
 assign cim_output_stencil_op_hcompute_cim_output_stencil_write_wen = op_hcompute_cim_output_stencil_write_start;
 assign cim_output_stencil_op_hcompute_cim_output_stencil_write_ctrl_vars[2] = op_hcompute_cim_output_stencil_write_start_control_vars_out[2];
 assign cim_output_stencil_op_hcompute_cim_output_stencil_write_ctrl_vars[1] = op_hcompute_cim_output_stencil_write_start_control_vars_out[1];
@@ -6279,8 +6279,8 @@ assign cim_output_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[1] = op_h
 assign cim_output_stencil_op_hcompute_hw_output_stencil_read_ctrl_vars[0] = op_hcompute_hw_output_stencil_port_controller_d[0];
 cim_output_stencil_ub cim_output_stencil (
     .clk(cim_output_stencil_clk),
-    .rst_n(cim_output_stencil_rst_n),
     .flush(cim_output_stencil_flush),
+    .rst_n(cim_output_stencil_rst_n),
     .op_hcompute_cim_output_stencil_write_wen(cim_output_stencil_op_hcompute_cim_output_stencil_write_wen),
     .op_hcompute_cim_output_stencil_write_ctrl_vars(cim_output_stencil_op_hcompute_cim_output_stencil_write_ctrl_vars),
     .op_hcompute_cim_output_stencil_write(cim_output_stencil_op_hcompute_cim_output_stencil_write),
@@ -6289,8 +6289,8 @@ cim_output_stencil_ub cim_output_stencil (
     .op_hcompute_hw_output_stencil_read(cim_output_stencil_op_hcompute_hw_output_stencil_read)
 );
 assign cim_stencil_clk = clk;
-assign cim_stencil_rst_n = rst_n;
 assign cim_stencil_flush = flush;
+assign cim_stencil_rst_n = rst_n;
 assign cim_stencil_op_hcompute_cim_output_stencil_read_ren = op_hcompute_cim_output_stencil_read_start;
 assign cim_stencil_op_hcompute_cim_output_stencil_read_ctrl_vars[2] = op_hcompute_cim_output_stencil_port_controller_d[2];
 assign cim_stencil_op_hcompute_cim_output_stencil_read_ctrl_vars[1] = op_hcompute_cim_output_stencil_port_controller_d[1];
@@ -6302,8 +6302,8 @@ assign cim_stencil_op_hcompute_cim_stencil_write_ctrl_vars[0] = op_hcompute_cim_
 assign cim_stencil_op_hcompute_cim_stencil_write[0] = op_hcompute_cim_stencil_cim_stencil_op_hcompute_cim_stencil_write[0];
 cim_stencil_ub cim_stencil (
     .clk(cim_stencil_clk),
-    .rst_n(cim_stencil_rst_n),
     .flush(cim_stencil_flush),
+    .rst_n(cim_stencil_rst_n),
     .op_hcompute_cim_output_stencil_read_ren(cim_stencil_op_hcompute_cim_output_stencil_read_ren),
     .op_hcompute_cim_output_stencil_read_ctrl_vars(cim_stencil_op_hcompute_cim_output_stencil_read_ctrl_vars),
     .op_hcompute_cim_output_stencil_read(cim_stencil_op_hcompute_cim_output_stencil_read),
@@ -6312,8 +6312,8 @@ cim_stencil_ub cim_stencil (
     .op_hcompute_cim_stencil_write(cim_stencil_op_hcompute_cim_stencil_write)
 );
 assign grad_x_stencil_clk = clk;
-assign grad_x_stencil_rst_n = rst_n;
 assign grad_x_stencil_flush = flush;
+assign grad_x_stencil_rst_n = rst_n;
 assign grad_x_stencil_op_hcompute_grad_x_stencil_write_wen = op_hcompute_grad_x_stencil_write_start;
 assign grad_x_stencil_op_hcompute_grad_x_stencil_write_ctrl_vars[2] = op_hcompute_grad_x_stencil_write_start_control_vars_out[2];
 assign grad_x_stencil_op_hcompute_grad_x_stencil_write_ctrl_vars[1] = op_hcompute_grad_x_stencil_write_start_control_vars_out[1];
@@ -6329,8 +6329,8 @@ assign grad_x_stencil_op_hcompute_lxy_stencil_read_ctrl_vars[1] = op_hcompute_lx
 assign grad_x_stencil_op_hcompute_lxy_stencil_read_ctrl_vars[0] = op_hcompute_lxy_stencil_port_controller_d[0];
 grad_x_stencil_ub grad_x_stencil (
     .clk(grad_x_stencil_clk),
-    .rst_n(grad_x_stencil_rst_n),
     .flush(grad_x_stencil_flush),
+    .rst_n(grad_x_stencil_rst_n),
     .op_hcompute_grad_x_stencil_write_wen(grad_x_stencil_op_hcompute_grad_x_stencil_write_wen),
     .op_hcompute_grad_x_stencil_write_ctrl_vars(grad_x_stencil_op_hcompute_grad_x_stencil_write_ctrl_vars),
     .op_hcompute_grad_x_stencil_write(grad_x_stencil_op_hcompute_grad_x_stencil_write),
@@ -6342,8 +6342,8 @@ grad_x_stencil_ub grad_x_stencil (
     .op_hcompute_lxy_stencil_read(grad_x_stencil_op_hcompute_lxy_stencil_read)
 );
 assign grad_y_stencil_clk = clk;
-assign grad_y_stencil_rst_n = rst_n;
 assign grad_y_stencil_flush = flush;
+assign grad_y_stencil_rst_n = rst_n;
 assign grad_y_stencil_op_hcompute_grad_y_stencil_write_wen = op_hcompute_grad_y_stencil_write_start;
 assign grad_y_stencil_op_hcompute_grad_y_stencil_write_ctrl_vars[2] = op_hcompute_grad_y_stencil_write_start_control_vars_out[2];
 assign grad_y_stencil_op_hcompute_grad_y_stencil_write_ctrl_vars[1] = op_hcompute_grad_y_stencil_write_start_control_vars_out[1];
@@ -6359,8 +6359,8 @@ assign grad_y_stencil_op_hcompute_lyy_stencil_read_ctrl_vars[1] = op_hcompute_ly
 assign grad_y_stencil_op_hcompute_lyy_stencil_read_ctrl_vars[0] = op_hcompute_lyy_stencil_port_controller_d[0];
 grad_y_stencil_ub grad_y_stencil (
     .clk(grad_y_stencil_clk),
-    .rst_n(grad_y_stencil_rst_n),
     .flush(grad_y_stencil_flush),
+    .rst_n(grad_y_stencil_rst_n),
     .op_hcompute_grad_y_stencil_write_wen(grad_y_stencil_op_hcompute_grad_y_stencil_write_wen),
     .op_hcompute_grad_y_stencil_write_ctrl_vars(grad_y_stencil_op_hcompute_grad_y_stencil_write_ctrl_vars),
     .op_hcompute_grad_y_stencil_write(grad_y_stencil_op_hcompute_grad_y_stencil_write),
@@ -6372,8 +6372,8 @@ grad_y_stencil_ub grad_y_stencil (
     .op_hcompute_lyy_stencil_read(grad_y_stencil_op_hcompute_lyy_stencil_read)
 );
 assign lgxx_stencil_clk = clk;
-assign lgxx_stencil_rst_n = rst_n;
 assign lgxx_stencil_flush = flush;
+assign lgxx_stencil_rst_n = rst_n;
 assign lgxx_stencil_op_hcompute_cim_stencil_read_ren = op_hcompute_cim_stencil_read_start;
 assign lgxx_stencil_op_hcompute_cim_stencil_read_ctrl_vars[2] = op_hcompute_cim_stencil_port_controller_d[2];
 assign lgxx_stencil_op_hcompute_cim_stencil_read_ctrl_vars[1] = op_hcompute_cim_stencil_port_controller_d[1];
@@ -6385,8 +6385,8 @@ assign lgxx_stencil_op_hcompute_lgxx_stencil_1_write_ctrl_vars[0] = op_hcompute_
 assign lgxx_stencil_op_hcompute_lgxx_stencil_1_write[0] = op_hcompute_lgxx_stencil_1_lgxx_stencil_op_hcompute_lgxx_stencil_1_write[0];
 lgxx_stencil_ub lgxx_stencil (
     .clk(lgxx_stencil_clk),
-    .rst_n(lgxx_stencil_rst_n),
     .flush(lgxx_stencil_flush),
+    .rst_n(lgxx_stencil_rst_n),
     .op_hcompute_cim_stencil_read_ren(lgxx_stencil_op_hcompute_cim_stencil_read_ren),
     .op_hcompute_cim_stencil_read_ctrl_vars(lgxx_stencil_op_hcompute_cim_stencil_read_ctrl_vars),
     .op_hcompute_cim_stencil_read(lgxx_stencil_op_hcompute_cim_stencil_read),
@@ -6395,8 +6395,8 @@ lgxx_stencil_ub lgxx_stencil (
     .op_hcompute_lgxx_stencil_1_write(lgxx_stencil_op_hcompute_lgxx_stencil_1_write)
 );
 assign lgxx_stencil_clkwrk_dsa0_clk = clk;
-assign lgxx_stencil_clkwrk_dsa0_rst_n = rst_n;
 assign lgxx_stencil_clkwrk_dsa0_flush = flush;
+assign lgxx_stencil_clkwrk_dsa0_rst_n = rst_n;
 assign lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read_ren = op_hcompute_lgxx_stencil_1_read_start;
 assign lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read_ctrl_vars[2] = op_hcompute_lgxx_stencil_1_port_controller_d[2];
 assign lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read_ctrl_vars[1] = op_hcompute_lgxx_stencil_1_port_controller_d[1];
@@ -6408,8 +6408,8 @@ assign lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write_ctrl_vars[0] = op
 assign lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write[0] = op_hcompute_lgxx_stencil_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write[0];
 lgxx_stencil_clkwrk_dsa0_ub lgxx_stencil_clkwrk_dsa0 (
     .clk(lgxx_stencil_clkwrk_dsa0_clk),
-    .rst_n(lgxx_stencil_clkwrk_dsa0_rst_n),
     .flush(lgxx_stencil_clkwrk_dsa0_flush),
+    .rst_n(lgxx_stencil_clkwrk_dsa0_rst_n),
     .op_hcompute_lgxx_stencil_1_read_ren(lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read_ren),
     .op_hcompute_lgxx_stencil_1_read_ctrl_vars(lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read_ctrl_vars),
     .op_hcompute_lgxx_stencil_1_read(lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read),
@@ -6418,8 +6418,8 @@ lgxx_stencil_clkwrk_dsa0_ub lgxx_stencil_clkwrk_dsa0 (
     .op_hcompute_lgxx_stencil_write(lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write)
 );
 assign lgxy_stencil_clk = clk;
-assign lgxy_stencil_rst_n = rst_n;
 assign lgxy_stencil_flush = flush;
+assign lgxy_stencil_rst_n = rst_n;
 assign lgxy_stencil_op_hcompute_cim_stencil_read_ren = op_hcompute_cim_stencil_read_start;
 assign lgxy_stencil_op_hcompute_cim_stencil_read_ctrl_vars[2] = op_hcompute_cim_stencil_port_controller_d[2];
 assign lgxy_stencil_op_hcompute_cim_stencil_read_ctrl_vars[1] = op_hcompute_cim_stencil_port_controller_d[1];
@@ -6431,8 +6431,8 @@ assign lgxy_stencil_op_hcompute_lgxy_stencil_1_write_ctrl_vars[0] = op_hcompute_
 assign lgxy_stencil_op_hcompute_lgxy_stencil_1_write[0] = op_hcompute_lgxy_stencil_1_lgxy_stencil_op_hcompute_lgxy_stencil_1_write[0];
 lgxy_stencil_ub lgxy_stencil (
     .clk(lgxy_stencil_clk),
-    .rst_n(lgxy_stencil_rst_n),
     .flush(lgxy_stencil_flush),
+    .rst_n(lgxy_stencil_rst_n),
     .op_hcompute_cim_stencil_read_ren(lgxy_stencil_op_hcompute_cim_stencil_read_ren),
     .op_hcompute_cim_stencil_read_ctrl_vars(lgxy_stencil_op_hcompute_cim_stencil_read_ctrl_vars),
     .op_hcompute_cim_stencil_read(lgxy_stencil_op_hcompute_cim_stencil_read),
@@ -6441,8 +6441,8 @@ lgxy_stencil_ub lgxy_stencil (
     .op_hcompute_lgxy_stencil_1_write(lgxy_stencil_op_hcompute_lgxy_stencil_1_write)
 );
 assign lgxy_stencil_clkwrk_dsa1_clk = clk;
-assign lgxy_stencil_clkwrk_dsa1_rst_n = rst_n;
 assign lgxy_stencil_clkwrk_dsa1_flush = flush;
+assign lgxy_stencil_clkwrk_dsa1_rst_n = rst_n;
 assign lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_ren = op_hcompute_lgxy_stencil_1_read_start;
 assign lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_ctrl_vars[2] = op_hcompute_lgxy_stencil_1_port_controller_d[2];
 assign lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_ctrl_vars[1] = op_hcompute_lgxy_stencil_1_port_controller_d[1];
@@ -6454,8 +6454,8 @@ assign lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_ctrl_vars[0] = op
 assign lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write[0] = op_hcompute_lgxy_stencil_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write[0];
 lgxy_stencil_clkwrk_dsa1_ub lgxy_stencil_clkwrk_dsa1 (
     .clk(lgxy_stencil_clkwrk_dsa1_clk),
-    .rst_n(lgxy_stencil_clkwrk_dsa1_rst_n),
     .flush(lgxy_stencil_clkwrk_dsa1_flush),
+    .rst_n(lgxy_stencil_clkwrk_dsa1_rst_n),
     .op_hcompute_lgxy_stencil_1_read_ren(lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_ren),
     .op_hcompute_lgxy_stencil_1_read_ctrl_vars(lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_ctrl_vars),
     .op_hcompute_lgxy_stencil_1_read(lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read),
@@ -6464,8 +6464,8 @@ lgxy_stencil_clkwrk_dsa1_ub lgxy_stencil_clkwrk_dsa1 (
     .op_hcompute_lgxy_stencil_write(lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write)
 );
 assign lgyy_stencil_clk = clk;
-assign lgyy_stencil_rst_n = rst_n;
 assign lgyy_stencil_flush = flush;
+assign lgyy_stencil_rst_n = rst_n;
 assign lgyy_stencil_op_hcompute_cim_stencil_read_ren = op_hcompute_cim_stencil_read_start;
 assign lgyy_stencil_op_hcompute_cim_stencil_read_ctrl_vars[2] = op_hcompute_cim_stencil_port_controller_d[2];
 assign lgyy_stencil_op_hcompute_cim_stencil_read_ctrl_vars[1] = op_hcompute_cim_stencil_port_controller_d[1];
@@ -6477,8 +6477,8 @@ assign lgyy_stencil_op_hcompute_lgyy_stencil_1_write_ctrl_vars[0] = op_hcompute_
 assign lgyy_stencil_op_hcompute_lgyy_stencil_1_write[0] = op_hcompute_lgyy_stencil_1_lgyy_stencil_op_hcompute_lgyy_stencil_1_write[0];
 lgyy_stencil_ub lgyy_stencil (
     .clk(lgyy_stencil_clk),
-    .rst_n(lgyy_stencil_rst_n),
     .flush(lgyy_stencil_flush),
+    .rst_n(lgyy_stencil_rst_n),
     .op_hcompute_cim_stencil_read_ren(lgyy_stencil_op_hcompute_cim_stencil_read_ren),
     .op_hcompute_cim_stencil_read_ctrl_vars(lgyy_stencil_op_hcompute_cim_stencil_read_ctrl_vars),
     .op_hcompute_cim_stencil_read(lgyy_stencil_op_hcompute_cim_stencil_read),
@@ -6487,8 +6487,8 @@ lgyy_stencil_ub lgyy_stencil (
     .op_hcompute_lgyy_stencil_1_write(lgyy_stencil_op_hcompute_lgyy_stencil_1_write)
 );
 assign lgyy_stencil_clkwrk_dsa2_clk = clk;
-assign lgyy_stencil_clkwrk_dsa2_rst_n = rst_n;
 assign lgyy_stencil_clkwrk_dsa2_flush = flush;
+assign lgyy_stencil_clkwrk_dsa2_rst_n = rst_n;
 assign lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_ren = op_hcompute_lgyy_stencil_1_read_start;
 assign lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_ctrl_vars[2] = op_hcompute_lgyy_stencil_1_port_controller_d[2];
 assign lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_ctrl_vars[1] = op_hcompute_lgyy_stencil_1_port_controller_d[1];
@@ -6500,8 +6500,8 @@ assign lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_ctrl_vars[0] = op
 assign lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write[0] = op_hcompute_lgyy_stencil_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write[0];
 lgyy_stencil_clkwrk_dsa2_ub lgyy_stencil_clkwrk_dsa2 (
     .clk(lgyy_stencil_clkwrk_dsa2_clk),
-    .rst_n(lgyy_stencil_clkwrk_dsa2_rst_n),
     .flush(lgyy_stencil_clkwrk_dsa2_flush),
+    .rst_n(lgyy_stencil_clkwrk_dsa2_rst_n),
     .op_hcompute_lgyy_stencil_1_read_ren(lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_ren),
     .op_hcompute_lgyy_stencil_1_read_ctrl_vars(lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_ctrl_vars),
     .op_hcompute_lgyy_stencil_1_read(lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read),
@@ -6510,8 +6510,8 @@ lgyy_stencil_clkwrk_dsa2_ub lgyy_stencil_clkwrk_dsa2 (
     .op_hcompute_lgyy_stencil_write(lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write)
 );
 assign lxx_stencil_clk = clk;
-assign lxx_stencil_rst_n = rst_n;
 assign lxx_stencil_flush = flush;
+assign lxx_stencil_rst_n = rst_n;
 assign lxx_stencil_op_hcompute_lgxx_stencil_1_read_ren = op_hcompute_lgxx_stencil_1_read_start;
 assign lxx_stencil_op_hcompute_lgxx_stencil_1_read_ctrl_vars[2] = op_hcompute_lgxx_stencil_1_port_controller_d[2];
 assign lxx_stencil_op_hcompute_lgxx_stencil_1_read_ctrl_vars[1] = op_hcompute_lgxx_stencil_1_port_controller_d[1];
@@ -6523,8 +6523,8 @@ assign lxx_stencil_op_hcompute_lxx_stencil_write_ctrl_vars[0] = op_hcompute_lxx_
 assign lxx_stencil_op_hcompute_lxx_stencil_write[0] = op_hcompute_lxx_stencil_lxx_stencil_op_hcompute_lxx_stencil_write[0];
 lxx_stencil_ub lxx_stencil (
     .clk(lxx_stencil_clk),
-    .rst_n(lxx_stencil_rst_n),
     .flush(lxx_stencil_flush),
+    .rst_n(lxx_stencil_rst_n),
     .op_hcompute_lgxx_stencil_1_read_ren(lxx_stencil_op_hcompute_lgxx_stencil_1_read_ren),
     .op_hcompute_lgxx_stencil_1_read_ctrl_vars(lxx_stencil_op_hcompute_lgxx_stencil_1_read_ctrl_vars),
     .op_hcompute_lgxx_stencil_1_read(lxx_stencil_op_hcompute_lgxx_stencil_1_read),
@@ -6533,8 +6533,8 @@ lxx_stencil_ub lxx_stencil (
     .op_hcompute_lxx_stencil_write(lxx_stencil_op_hcompute_lxx_stencil_write)
 );
 assign lxy_stencil_clk = clk;
-assign lxy_stencil_rst_n = rst_n;
 assign lxy_stencil_flush = flush;
+assign lxy_stencil_rst_n = rst_n;
 assign lxy_stencil_op_hcompute_lgxy_stencil_1_read_ren = op_hcompute_lgxy_stencil_1_read_start;
 assign lxy_stencil_op_hcompute_lgxy_stencil_1_read_ctrl_vars[2] = op_hcompute_lgxy_stencil_1_port_controller_d[2];
 assign lxy_stencil_op_hcompute_lgxy_stencil_1_read_ctrl_vars[1] = op_hcompute_lgxy_stencil_1_port_controller_d[1];
@@ -6546,8 +6546,8 @@ assign lxy_stencil_op_hcompute_lxy_stencil_write_ctrl_vars[0] = op_hcompute_lxy_
 assign lxy_stencil_op_hcompute_lxy_stencil_write[0] = op_hcompute_lxy_stencil_lxy_stencil_op_hcompute_lxy_stencil_write[0];
 lxy_stencil_ub lxy_stencil (
     .clk(lxy_stencil_clk),
-    .rst_n(lxy_stencil_rst_n),
     .flush(lxy_stencil_flush),
+    .rst_n(lxy_stencil_rst_n),
     .op_hcompute_lgxy_stencil_1_read_ren(lxy_stencil_op_hcompute_lgxy_stencil_1_read_ren),
     .op_hcompute_lgxy_stencil_1_read_ctrl_vars(lxy_stencil_op_hcompute_lgxy_stencil_1_read_ctrl_vars),
     .op_hcompute_lgxy_stencil_1_read(lxy_stencil_op_hcompute_lgxy_stencil_1_read),
@@ -6556,8 +6556,8 @@ lxy_stencil_ub lxy_stencil (
     .op_hcompute_lxy_stencil_write(lxy_stencil_op_hcompute_lxy_stencil_write)
 );
 assign lyy_stencil_clk = clk;
-assign lyy_stencil_rst_n = rst_n;
 assign lyy_stencil_flush = flush;
+assign lyy_stencil_rst_n = rst_n;
 assign lyy_stencil_op_hcompute_lgyy_stencil_1_read_ren = op_hcompute_lgyy_stencil_1_read_start;
 assign lyy_stencil_op_hcompute_lgyy_stencil_1_read_ctrl_vars[2] = op_hcompute_lgyy_stencil_1_port_controller_d[2];
 assign lyy_stencil_op_hcompute_lgyy_stencil_1_read_ctrl_vars[1] = op_hcompute_lgyy_stencil_1_port_controller_d[1];
@@ -6569,8 +6569,8 @@ assign lyy_stencil_op_hcompute_lyy_stencil_write_ctrl_vars[0] = op_hcompute_lyy_
 assign lyy_stencil_op_hcompute_lyy_stencil_write[0] = op_hcompute_lyy_stencil_lyy_stencil_op_hcompute_lyy_stencil_write[0];
 lyy_stencil_ub lyy_stencil (
     .clk(lyy_stencil_clk),
-    .rst_n(lyy_stencil_rst_n),
     .flush(lyy_stencil_flush),
+    .rst_n(lyy_stencil_rst_n),
     .op_hcompute_lgyy_stencil_1_read_ren(lyy_stencil_op_hcompute_lgyy_stencil_1_read_ren),
     .op_hcompute_lgyy_stencil_1_read_ctrl_vars(lyy_stencil_op_hcompute_lgyy_stencil_1_read_ctrl_vars),
     .op_hcompute_lgyy_stencil_1_read(lyy_stencil_op_hcompute_lgyy_stencil_1_read),
@@ -7272,8 +7272,8 @@ array_delay_U17 op_hcompute_padded16_global_wrapper_stencil_write_start_control_
     .out(op_hcompute_padded16_global_wrapper_stencil_write_start_control_vars_out)
 );
 assign padded16_global_wrapper_stencil_clk = clk;
-assign padded16_global_wrapper_stencil_rst_n = rst_n;
 assign padded16_global_wrapper_stencil_flush = flush;
+assign padded16_global_wrapper_stencil_rst_n = rst_n;
 assign padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_ren = op_hcompute_grad_x_stencil_read_start;
 assign padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_ctrl_vars[2] = op_hcompute_grad_x_stencil_port_controller_d[2];
 assign padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_ctrl_vars[1] = op_hcompute_grad_x_stencil_port_controller_d[1];
@@ -7289,8 +7289,8 @@ assign padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stenc
 assign padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_write[0] = op_hcompute_padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_write[0];
 padded16_global_wrapper_stencil_ub padded16_global_wrapper_stencil (
     .clk(padded16_global_wrapper_stencil_clk),
-    .rst_n(padded16_global_wrapper_stencil_rst_n),
     .flush(padded16_global_wrapper_stencil_flush),
+    .rst_n(padded16_global_wrapper_stencil_rst_n),
     .op_hcompute_grad_x_stencil_read_ren(padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_ren),
     .op_hcompute_grad_x_stencil_read_ctrl_vars(padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_ctrl_vars),
     .op_hcompute_grad_x_stencil_read(padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read),

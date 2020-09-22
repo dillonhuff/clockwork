@@ -11714,7 +11714,8 @@ void run_verilator_tb(const std::string& name) {
   int res = run_verilator_on(name,
       name + "_verilog_tb.cpp",
       {name + ".v", name + "_verilog_collateral.sv",
-      "./lake_components/dualwithadd/lake_top.sv",
+      //"./lake_components/dualwithadd/lake_top.sv",
+      "./lake_components/wide_tile/lake_top_1_port.sv",
       //"./lake_components/ASPLOS_designs/bare_dual_port.v",
       "./lake_components/inner_affine_controller.sv"});
 
@@ -13619,44 +13620,44 @@ void lake_cascade_autovec_test() {
   //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
 
-void lake_harris_autovec_test() {
-  prog prg = harris_remove();
+//void lake_harris_autovec_test() {
+  //prog prg = harris_remove();
 
-  //optimized schedule
-  auto buffers_opt = build_buffers(prg);
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  int max_inpt = 2, max_outpt = 2;
+  ////optimized schedule
+  //auto buffers_opt = build_buffers(prg);
+  //CodegenOptions opt;
+  //opt.conditional_merge = true;
+  //opt.merge_threshold = 4;
+  //int max_inpt = 2, max_outpt = 2;
 
-  for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << b.second << endl;
-    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-        continue;
-    b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
-  }
-#ifdef COREIR
-  generate_cgra_tb(buffers_opt, prg, opt);
-#endif
+  //for (auto& b : buffers_opt) {
+    //cout << "\tGenerate bank for buffer: " << b.first << b.second << endl;
+    //if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        //continue;
+    //b.second.generate_banks_and_merge(opt);
+    //b.second.port_group2bank(max_inpt, max_outpt);
+  //}
+//#ifdef COREIR
+  //generate_cgra_tb(buffers_opt, prg, opt);
+//#endif
 
-  //return the buffers after vectorization and the proximity deps you want to remove
-  vector<string> input_vec_stmts;
-  isl_ctx* ctx = isl_ctx_alloc();
-  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
-  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
-  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
-  cout << str(opt_sched) << endl << endl;
-  cout << codegen_c(opt_sched) << endl << endl;
+  ////return the buffers after vectorization and the proximity deps you want to remove
+  //vector<string> input_vec_stmts;
+  //isl_ctx* ctx = isl_ctx_alloc();
+  //umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  //auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  //auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  //cout << str(opt_sched) << endl << endl;
+  //cout << codegen_c(opt_sched) << endl << endl;
 
-  map<pair<string, string>, int> latency({});
-  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
-  cout << codegen_c(hsh) << endl;
-  cmd("mkdir -p ./lake_controllers/harris/");
-  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/harris/");
-  cmd("mkdir -p ./lake_stream/harris/");
-  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
-}
+  //map<pair<string, string>, int> latency({});
+  //auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  //cout << codegen_c(hsh) << endl;
+  //cmd("mkdir -p ./lake_controllers/harris/");
+  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/harris/");
+  //cmd("mkdir -p ./lake_stream/harris/");
+  ////emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
+//}
 
 void lake_gaussian_autovec_test() {
   prog prg = gaussian();
@@ -15521,7 +15522,7 @@ void lake_tests() {
   lake_gaussian_autovec_test();
   //lake_dual_port_test();
   lake_cascade_autovec_test();
-  lake_harris_autovec_test();
+  //lake_harris_autovec_test();
   //lake_resnet_multitile_test();
   //lake_resnet_test();
   //resnet_test();
@@ -15867,6 +15868,11 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
 
 void dsa_writers(prog& prg) {
   if (is_rate_matchable(prg)) {
+    prg.pretty_print();
+    cout << "Is rate matchable" << endl;
+
+    //assert(false);
+
     std::set<string> all_buffers;
     std::set<string> multi_write_buffers;
     map<string, std::set<string> > producer_kernels;
@@ -15886,6 +15892,19 @@ void dsa_writers(prog& prg) {
       }
     }
 
+    cout << "Producer kernels..." << endl;
+    for (auto p : producer_kernels) {
+      cout << tab(1) << p.first << " -> ";
+      for (auto k : p.second) {
+        cout << k << " ";
+      }
+      cout << endl;
+      if (p.second.size() > 1) {
+        cout << tab(2) << "MULTIPLE PRODUCERS" << endl;
+      }
+    }
+    //assert(false);
+    
     for (auto k : get_kernels(prg)) {
       for (auto b : get_produced_buffers(k, prg)) {
         auto producers = producer_kernels[b];
@@ -15930,7 +15949,8 @@ void dsa_writers(prog& prg) {
     }
 
     cout << "Built initializer / update maps" << endl;
-
+    cout << tab(1) << "# multi_write buffers = " << multi_write_buffers.size() << endl;
+    //assert(false);
     for (auto b : multi_write_buffers) {
       string init_buffer = prg.un(b + "_clkwrk_dsa");
       auto init = initializers[b];
@@ -16294,7 +16314,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
-     TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+     //TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+     TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
     //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
@@ -16490,9 +16511,9 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(pointwise());
-  test_programs.push_back(gaussian());
   test_programs.push_back(camera_pipeline());
+  test_programs.push_back(gaussian());
+  test_programs.push_back(pointwise());
   //test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
@@ -16535,6 +16556,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     //assert(false);
 
     dsa_writers(prg);
+    prg.pretty_print();
+    //assert(false);
     //vector<string> cpu;
     auto cpu = unoptimized_result(prg);
 
