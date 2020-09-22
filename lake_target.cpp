@@ -210,9 +210,9 @@ void generate_lake_collateral_wide_fetch_tile(
       if (name == "strg_ub_agg_write_addr_gen_0_starting_addr") {
         default_val = "2";
       }
-      //if (name == "strg_ub_agg_write_addr_gen_0_strides") {
-        //default_val = "{4'd0, 4'd0, 4'd0, 4'd0, 4'd64, 4'd8, 4'd1}";
-      //}
+      if (name == "strg_ub_agg_write_addr_gen_0_strides") {
+        default_val = "{4'd0, 4'd0, 4'd0, 4'd0, 4'd64, 4'd8, 4'd1}";
+      }
       if (name == "strg_ub_agg_write_sched_gen_0_sched_addr_gen_starting_addr") {
         default_val = "0";
       }
