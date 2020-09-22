@@ -111,21 +111,27 @@ void generate_lake_collateral_wide_fetch_tile(
   pds.push_back("input logic [3:0] [3:0] strg_ub_agg_write_sched_gen_0_sched_addr_gen_strides");
 
 
-  //pds.push_back("input logic [15:0] strg_ub_sram_read_addr_gen_starting_addr");
-  //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_addr_gen_strides");
-  //pds.push_back("input logic [3:0] strg_ub_sram_read_loops_dimensionality");
+  pds.push_back("input logic [3:0] strg_ub_loops_buf2out_autovec_read_dimensionality");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_loops_buf2out_autovec_read_ranges");
+  pds.push_back("input logic [1:0] strg_ub_loops_buf2out_autovec_write_0_dimensionality");
+  pds.push_back("input logic [1:0] [5:0] strg_ub_loops_buf2out_autovec_write_0_ranges");
+  pds.push_back("input logic [1:0] strg_ub_loops_buf2out_read_0_dimensionality");
+  pds.push_back("input logic [1:0] [15:0] strg_ub_loops_buf2out_read_0_ranges");
 
-  //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_loops_ranges");
 
-  //pds.push_back("input logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr");
-  //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides");
+  pds.push_back("input logic [2:0] strg_ub_loops_in2buf_0_dimensionality");
+  pds.push_back("input logic [3:0] [3:0] strg_ub_loops_in2buf_0_ranges");
+  pds.push_back("input logic [2:0] strg_ub_loops_in2buf_autovec_read_0_dimensionality");
+  pds.push_back("input logic [3:0] [7:0] strg_ub_loops_in2buf_autovec_read_0_ranges");
+  pds.push_back("input logic [3:0] strg_ub_loops_in2buf_autovec_write_dimensionality");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_loops_in2buf_autovec_write_ranges");
 
-  //pds.push_back("input logic [15:0] strg_ub_sram_write_addr_gen_starting_addr");
-  //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_addr_gen_strides");
-  //pds.push_back("input logic [3:0] strg_ub_sram_write_loops_dimensionality");
-  //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_loops_ranges");
-  //pds.push_back("input logic [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr");
-  //pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides");
+  pds.push_back("input logic [5:0] strg_ub_tb_read_addr_gen_0_starting_addr");
+  pds.push_back("input logic [1:0] [5:0] strg_ub_tb_read_addr_gen_0_strides");
+  pds.push_back("input logic [15:0] strg_ub_tb_read_sched_gen_0_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [1:0] [15:0] strg_ub_tb_read_sched_gen_0_sched_addr_gen_strides");
+  pds.push_back("input logic [5:0] strg_ub_tb_write_addr_gen_0_starting_addr");
+  pds.push_back("input logic [1:0] [5:0] strg_ub_tb_write_addr_gen_0_strides");
 
   pds.push_back("input logic tile_en");
   pds.push_back("output logic valid_out");
