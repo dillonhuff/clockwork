@@ -180,18 +180,32 @@ void generate_lake_collateral_wide_fetch_tile(
         default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
       }
 
+      if (name == "strg_ub_input_sched_gen_sched_addr_gen_starting_addr") {
+        default_val = "8";
+      }
+      if (name == "strg_ub_input_sched_gen_sched_addr_gen_strides") {
+        default_val = "{16'd1, 16'd1, 16'd1000, 16'd100, 16'd10, 16'd4}";
+      }
+      if (name == "strg_ub_input_addr_gen_starting_addr") {
+        default_val = "12";
+      }
+      if (name == "strg_ub_input_addr_gen_strides") {
+        default_val = "{16'd0, 16'd0, 16'd0, 16'd0, 16'd0, 16'd1}";
+      }
+
       if (name == "strg_ub_output_sched_gen_sched_addr_gen_starting_addr") {
-        default_val = "0";
+        default_val = "9";
       }
       if (name == "strg_ub_output_sched_gen_sched_addr_gen_strides") {
-        default_val = "{16'd1, 16'd1, 16'd1000, 16'd100, 16'd10, 16'd1}";
+        default_val = "{16'd1, 16'd1, 16'd1000, 16'd100, 16'd10, 16'd4}";
       }
       if (name == "strg_ub_output_addr_gen_starting_addr") {
         default_val = "12";
       }
       if (name == "strg_ub_output_addr_gen_strides") {
-        default_val = "{16'd0, 16'd0, 16'd0, 16'd0, 16'd0, 16'd0}";
+        default_val = "{16'd0, 16'd0, 16'd0, 16'd0, 16'd0, 16'd1}";
       }
+
       //pds.push_back("input logic [15:0] strg_ub_input_sched_gen_sched_addr_gen_starting_addr");
       //pds.push_back("input logic [5:0] [15:0] strg_ub_input_sched_gen_sched_addr_gen_strides");
 
