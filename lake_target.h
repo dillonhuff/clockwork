@@ -39,13 +39,7 @@ struct lake_target {
 void generate_lake_collateral(
     const std::string& mod_name,
     std::ostream& out,
-    const std::vector<component_controller>& controllers,
-    isl_aff* write_sched,
-    isl_aff* write_addr,
-    isl_set* write_dom,
-    isl_aff* read_sched,
-    isl_aff* read_addr,
-    isl_set* read_dom);
+    const std::vector<component_controller>& controllers);
 
 
 void generate_lake_collateral_delay_fabric_addrgen(const std::string& name, std::ostream& out, const int depth);

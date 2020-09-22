@@ -294,13 +294,13 @@ vector<string> range_strings(isl_set* write_dom) {
 void generate_lake_collateral(
     const std::string& mod_name,
     std::ostream& out,
-    const std::vector<component_controller>& controllers,
-    isl_aff* write_sched,
-    isl_aff* write_addr,
-    isl_set* write_dom,
-    isl_aff* read_sched,
-    isl_aff* read_addr,
-    isl_set* read_dom) {
+    const std::vector<component_controller>& controllers) {
+    //isl_aff* write_sched,
+    //isl_aff* write_addr,
+    //isl_set* write_dom,
+    //isl_aff* read_sched,
+    //isl_aff* read_addr,
+    //isl_set* read_dom) {
 
   vector<string> outer_port_decls;
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
@@ -501,7 +501,8 @@ void generate_lake_collateral_delay(const std::string& name, std::ostream& out, 
 
   component_controller write_ctrl{"sram_write", write_sched, write_addr, write_dom, 16};
   component_controller read_ctrl{"sram_read", read_sched, read_addr, read_dom, 16};
-  generate_lake_collateral(name, out, {write_ctrl, read_ctrl}, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
+  //generate_lake_collateral(name, out, {write_ctrl, read_ctrl}, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
+  generate_lake_collateral(name, out, {write_ctrl, read_ctrl});
 
   isl_ctx_free(ctx);
 }

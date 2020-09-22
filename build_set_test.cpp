@@ -17473,7 +17473,8 @@ void raw_memtile_verilog_test() {
   ofstream out("lake_verilog_tile.sv");
   component_controller write_ctrl{"sram_write", write_sched, write_addr, write_dom, 16};
   component_controller read_ctrl{"sram_read", read_sched, read_addr, read_dom, 16};
-  generate_lake_collateral("lake_verilog_tile", out, {write_ctrl, read_ctrl}, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
+  //generate_lake_collateral("lake_verilog_tile", out, {write_ctrl, read_ctrl}, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
+  generate_lake_collateral("lake_verilog_tile", out, {write_ctrl, read_ctrl});
   out.close();
 
   run_verilator_on("lake_verilog_tile",
