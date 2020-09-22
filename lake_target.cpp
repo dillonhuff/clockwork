@@ -212,6 +212,107 @@ void generate_lake_collateral_delay(const std::string& name, std::ostream& out, 
   isl_ctx_free(ctx);
 }
 
+void generate_lake_collateral_delay_wide_fetch_tile_wrapped(const std::string& name, std::ostream& out, const int depth) {
+
+  generate_lake_collateral_delay(name + "_inner", out, depth);
+
+  vector<string> outer_port_decls;
+  outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
+  outer_port_decls.push_back("output logic [0:0] [15:0] chain_data_out");
+  outer_port_decls.push_back("output logic chain_valid_out");
+  outer_port_decls.push_back("input logic clk");
+  outer_port_decls.push_back("input logic flush");
+  outer_port_decls.push_back("input logic rst_n");
+  outer_port_decls.push_back("output logic valid_out");
+  outer_port_decls.push_back("output logic [15:0] rdata");
+  outer_port_decls.push_back("output logic [15:0] wdata");
+
+  vector<string> external;
+  for (auto s : outer_port_decls) {
+    string name = split_at(s, " ").back();
+    external.push_back(name);
+  }
+
+  vector<string> pds;
+  //pds.push_back("input logic [0:0] [15:0] addr_in");
+  pds.push_back("input logic [0:0] [15:0] chain_data_in");
+  pds.push_back("output logic [0:0] [15:0] chain_data_out");
+  pds.push_back("input logic chain_idx_input");
+  pds.push_back("input logic chain_idx_output");
+  pds.push_back("input logic chain_valid_in");
+  pds.push_back("output logic chain_valid_out");
+  pds.push_back("input logic clk");
+  pds.push_back("input logic clk_en");
+  pds.push_back("input logic [7:0] config_addr_in");
+  pds.push_back("input logic [31:0] config_data_in");
+  pds.push_back("output logic [0:0] [31:0] config_data_out");
+  pds.push_back("input logic config_en");
+  pds.push_back("input logic config_read");
+  pds.push_back("input logic config_write");
+  pds.push_back("input logic [0:0] [15:0] data_in");
+  pds.push_back("output logic [0:0] [15:0] data_out");
+  pds.push_back("input logic enable_chain_input");
+  pds.push_back("input logic enable_chain_output");
+  pds.push_back("input logic flush");
+  pds.push_back("input logic [1:0] mode");
+  pds.push_back("input logic ren_in");
+  pds.push_back("input logic rst_n");
+
+  pds.push_back("input logic [15:0] strg_ub_sram_read_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_addr_gen_strides");
+  pds.push_back("input logic [3:0] strg_ub_sram_read_loops_dimensionality");
+
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_loops_ranges");
+
+  pds.push_back("input logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides");
+
+  pds.push_back("input logic [15:0] strg_ub_sram_write_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_addr_gen_strides");
+  pds.push_back("input logic [3:0] strg_ub_sram_write_loops_dimensionality");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_loops_ranges");
+  pds.push_back("input logic [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr");
+  pds.push_back("input logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides");
+
+  pds.push_back("input logic tile_en");
+
+  pds.push_back("output logic valid_out");
+
+  pds.push_back("input logic wen_in");
+  pds.push_back("input logic wen_in");
+
+  out << "module " << name << "(" << comma_list(outer_port_decls) << ");" << endl;
+
+  vector<string> decls;
+  for (auto s : outer_port_decls) {
+    vector<string> f = split_at(s, " ");
+    assert(f.size() > 0);
+    string name = f.back();
+    //if (!elem(name, external)) {
+      //vector<string> decl = f;
+      //reverse(decl);
+      //decl.pop_back();
+      //decl.push_back("wire");
+      //reverse(decl);
+      //out << tab(1) << sep_list(decl, "", "", " ") << ";" << endl;
+      //string default_val = "0";
+
+    //}
+
+    if (name == "wdata") {
+      decls.push_back(".data_in" + parens(f.back()));
+    } else if (name == "rdata") {
+      decls.push_back(".data_out" + parens(f.back()));
+    } else {
+      decls.push_back("." + f.back() + parens(f.back()));
+    }
+  }
+  out << endl;
+  out << tab(1) << name << "_inner lake(" << comma_list(decls) << ");" << endl;
+  out << endl;
+
+  out << "endmodule" << endl;
+}
 void generate_lake_collateral_delay_wdata_wrapped(const std::string& name, std::ostream& out, const int depth) {
 
   generate_lake_collateral_delay(name + "_inner", out, depth);
