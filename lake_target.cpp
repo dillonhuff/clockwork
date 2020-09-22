@@ -179,6 +179,24 @@ void generate_lake_collateral_wide_fetch_tile(
       } else if (name == "strg_ub_sram_write_sched_gen_sched_addr_gen_strides") {
         default_val = "{16'd1, 16'd1, 16'd1, 16'd100, 16'd10, 16'd1}";
       }
+
+      if (name == "strg_ub_output_sched_gen_sched_addr_gen_starting_addr") {
+        default_val = "0";
+      }
+      if (name == "strg_ub_output_sched_gen_sched_addr_gen_strides") {
+        default_val = "{16'd1, 16'd1, 16'd1000, 16'd100, 16'd10, 16'd1}";
+      }
+
+      //pds.push_back("input logic [15:0] strg_ub_input_sched_gen_sched_addr_gen_starting_addr");
+      //pds.push_back("input logic [5:0] [15:0] strg_ub_input_sched_gen_sched_addr_gen_strides");
+
+      //pds.push_back("input logic [3:0] strg_ub_agg_write_sched_gen_0_sched_addr_gen_starting_addr");
+      //pds.push_back("input logic [3:0] [3:0] strg_ub_agg_write_sched_gen_0_sched_addr_gen_strides");
+
+
+      //pds.push_back("input logic [15:0] strg_ub_tb_read_sched_gen_0_sched_addr_gen_starting_addr");
+      //pds.push_back("input logic [1:0] [15:0] strg_ub_tb_read_sched_gen_0_sched_addr_gen_strides");
+
       out << tab(1) << "assign " << name << " = " << default_val << ";" << endl;
     }
 
