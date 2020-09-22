@@ -17471,7 +17471,9 @@ void raw_memtile_verilog_test() {
   isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
   ofstream out("lake_verilog_tile.sv");
-  generate_lake_collateral("lake_verilog_tile", out, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
+  component_controller write_ctrl{"sram_write", write_sched, write_addr, write_dom, 16};
+  component_controller read_ctrl{"sram_read", read_sched, read_addr, read_dom, 16};
+  generate_lake_collateral("lake_verilog_tile", out, {write_ctrl, read_ctrl}, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
   out.close();
 
   run_verilator_on("lake_verilog_tile",

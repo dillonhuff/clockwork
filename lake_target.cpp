@@ -2,16 +2,6 @@
 
 #include "utils.h"
 
-struct component_controller {
-  std::string component_name;
-
-  isl_aff* sched;
-  isl_aff* addrs;
-  isl_set* dom;
-
-  int addr_width;
-};
-
 void generate_lake_collateral_wide_fetch_tile(
     const std::string& mod_name,
     std::ostream& out,
@@ -304,29 +294,13 @@ vector<string> range_strings(isl_set* write_dom) {
 void generate_lake_collateral(
     const std::string& mod_name,
     std::ostream& out,
-    //lake_controller& sram_writer,
-    //lake_controller& sram_reader) {
+    const std::vector<component_controller>& controllers,
     isl_aff* write_sched,
     isl_aff* write_addr,
     isl_set* write_dom,
     isl_aff* read_sched,
     isl_aff* read_addr,
     isl_set* read_dom) {
-
-  //int write_sched_start = to_int(const_coeff(write_sched));
-  //int read_sched_start = to_int(const_coeff(read_sched));
-
-  //int write_start = to_int(const_coeff(write_addr));
-  //int read_start = to_int(const_coeff(read_addr));
-
-  //vector<string> write_iis = stride_strings(write_sched);
-  //vector<string> read_iis = stride_strings(read_sched);
-
-  //vector<string> write_strides = stride_strings(write_addr);
-  //vector<string> read_strides = stride_strings(read_addr);
-
-  //vector<string> write_ranges = range_strings(write_dom);
-  //vector<string> read_ranges = range_strings(read_dom);
 
   vector<string> outer_port_decls;
   outer_port_decls.push_back("input logic [0:0] [15:0] chain_data_in");
@@ -502,7 +476,9 @@ void generate_lake_collateral_delay(const std::string& name, std::ostream& out, 
   //isl_aff* read_addr = rdaff(ctx, ("{ rd[a] -> [(a - " + str(TILE_READ_LATENCY) + ")] }").c_str());
   isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
 
-  generate_lake_collateral(name, out, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
+  component_controller write_ctrl{"sram_write", write_sched, write_addr, write_dom, 16};
+  component_controller read_ctrl{"sram_read", read_sched, read_addr, read_dom, 16};
+  generate_lake_collateral(name, out, {write_ctrl, read_ctrl}, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
 
   isl_ctx_free(ctx);
 }

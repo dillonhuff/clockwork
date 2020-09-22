@@ -2,6 +2,16 @@
 
 #include "isl_utils.h"
 
+struct component_controller {
+  std::string component_name;
+
+  isl_aff* sched;
+  isl_aff* addrs;
+  isl_set* dom;
+
+  int addr_width;
+};
+
 struct lake_accessor {
   std::string instance_name;
   int num_levels;
@@ -29,6 +39,7 @@ struct lake_target {
 void generate_lake_collateral(
     const std::string& mod_name,
     std::ostream& out,
+    const std::vector<component_controller>& controllers,
     isl_aff* write_sched,
     isl_aff* write_addr,
     isl_set* write_dom,
