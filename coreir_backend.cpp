@@ -174,7 +174,7 @@ void generate_platonic_ubuffer(CodegenOptions& options,
       port_decls.push_back( "output logic [" + str(pt_width - 1) + ":0] " + name + " [" + str(bd_width - 1) + ":0] ");
     }
   }
-  out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "", "", ",\n\t") << ");" << endl;
+  out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
   out << endl;
 
   bank bnk = buf.compute_bank_info();
@@ -185,7 +185,10 @@ void generate_platonic_ubuffer(CodegenOptions& options,
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
     string addr = generate_linearized_verilog_addr(in, bnk, buf);
-    out << tab(2) << "RAM[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+    string bundle_wen = buf.container_bundle(in) + "_wen";
+    out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
+    out << tab(3) << "RAM[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+    out << tab(2) << "end" << endl;
   }
   for (auto outpt : buf.get_out_ports()) {
     string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
