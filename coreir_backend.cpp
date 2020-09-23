@@ -1414,6 +1414,10 @@ isl_aff* constant_aff(isl_aff* src, const int val) {
   return aff_on_domain(ls, v);
 }
 
+isl_aff* add(isl_aff* start_time_aff, const int compute_latency) {
+  return add(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1480,12 +1484,11 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       int l = map_find(b, hwinfo.buffer_load_latencies);
       auto cst_aff = constant_aff(start_time_aff, l);
       cout << "cst_aff = " << str(cst_aff) << endl;
+
       isl_aff* offset = sub(start_time_aff, cst_aff);
 
-      auto aff_c =
-        affine_controller(c, domain, offset);
-      auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(), aff_c);
-
+      auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
+        affine_controller(c, domain, offset));
       auto end_controller = def->addInstance(
           controller_name(op->name) + c->getUnique(),
           affine_controller(c, domain, start_time_aff));
@@ -1499,15 +1502,28 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
       cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
     }
+
+
+    string rd_start = op->name + "_ISSUE_exe";
+    string rd_end = op->name + "_RCV_exe";
+
+    isl_aff* offset = add(start_time_aff, compute_latency);
+
+    auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
+        affine_controller(c, domain, start_time_aff));
+    auto end_controller = def->addInstance(
+        controller_name(op->name) + c->getUnique(),
+        affine_controller(c, domain, offset));
+
+    micro_op_enables[rd_start] = nullptr;
+    micro_op_enables[rd_end] = nullptr;
+
     if (op->func != "") {
-      string rd_start = op->name + "_ISSUE_exe";
-      string rd_end = op->name + "_RCV_exe";
-
-      micro_op_enables[rd_start] = nullptr;
-      micro_op_enables[rd_end] = nullptr;
-
       cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
       cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
+    } else {
+      cout << tab(2) << op->name << " (Issue) Exe   " << "NONE" << " at " << 0 << endl;
+      cout << tab(2) << op->name << " (Rcv)   Exe   " << "NONE" << " at " << compute_latency << endl;
     }
 
     for (auto b : op->buffers_written()) {
