@@ -41,7 +41,15 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 
+std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
+  assert(num_div_dims(aff) == 0);
+  string res_str = str(const_coeff(aff));
+  return parens(res_str);
+}
+
 string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
+  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+
   vector<int> lengths;
   vector<int> mins;
   for (int i = 0; i < buf.logical_dimension(); i++) {
@@ -64,7 +72,7 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
     isl_multi_aff* ma = piece.second;
     for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
       isl_aff* aff = isl_multi_aff_get_aff(ma, d);
-      addr_vec.push_back(codegen_c(aff));
+      addr_vec.push_back(codegen_verilog(ctrl_vars, aff));
     }
 
     vector<string> addr_vec_out;
@@ -91,7 +99,6 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
   }
 
   return base;
-
 }
 
 void generate_verilog_for_bank_storage(CodegenOptions& options,
@@ -132,6 +139,7 @@ void generate_verilog_for_bank_storage(CodegenOptions& options,
     assert(false);
   }
 }
+
 void generate_platonic_ubuffer(CodegenOptions& options,
     UBuffer& buf) {
   ostream& out = *verilog_collateral_file;
@@ -176,21 +184,7 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
     out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " <= " << "RAM[" << addr << "]" << ";" << endl;
   }
-  //for (auto b : buf.port_bundles) {
-    //int pt_width = buf.port_widths;
-    //int bd_width = buf.lanes_in_bundle(b.first);
-    //string name = b.first;
-    //string pt_rep = pick(b.second);
-    //auto acc_maps = get_maps(buf.access_map.at(pt_rep));
-    //assert(acc_maps.size() > 0);
-    //int control_dimension = num_in_dims(pick(acc_maps));
-    //if (buf.is_input_bundle(b.first)) {
-      //for (auto buf.)
-      //out << tab(2) << "// RAM[addr] <= " << name << ";" << endl;
-    //} else {
-      //out << tab(2) << "// " << name << " <= RAM[addr];" << endl;
-    //}
-  //}
+
   out << tab(1) << "end" << endl;
 
   out << endl;
