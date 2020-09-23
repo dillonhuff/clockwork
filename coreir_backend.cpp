@@ -96,18 +96,14 @@ void generate_platonic_ubuffer(CodegenOptions& options,
       if (options.rtl_options.use_external_controllers) {
         port_decls.push_back("input " + name + "_wen");
         port_decls.push_back( "input [15:0] " + name + "_ctrl_vars [" + str(control_dimension - 1) + ":0] ");
-        //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
       }
-      port_decls.push_back( "input [" + str(pt_width - 1) + ":0] " + name + " [" + str(bd_width - 1) + ":0] ");
-      //ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
+      port_decls.push_back( "input logic [" + str(pt_width - 1) + ":0] " + name + " [" + str(bd_width - 1) + ":0] ");
     } else {
       if (options.rtl_options.use_external_controllers) {
         port_decls.push_back("input " + name + "_ren");
         port_decls.push_back( "input [15:0] " + name + "_ctrl_vars [" + str(control_dimension - 1) + ":0] ");
-        //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
       }
-      port_decls.push_back( "output [" + str(pt_width - 1) + ":0] " + name + " [" + str(bd_width - 1) + ":0] ");
-      //ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
+      port_decls.push_back( "output logic [" + str(pt_width - 1) + ":0] " + name + " [" + str(bd_width - 1) + ":0] ");
     }
   }
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "", "", ",\n\t") << ");" << endl;
@@ -120,10 +116,12 @@ void generate_platonic_ubuffer(CodegenOptions& options,
   out << endl;
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
-    out << tab(2) << "// RAM[addr] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+    string addr = "0";
+    out << tab(2) << "RAM[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
   }
   for (auto outpt : buf.get_out_ports()) {
-    out << tab(2) << "// " << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << "RAM[addr]" << ";" << endl;
+    string addr = "0";
+    out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " <= " << "RAM[" << addr << "]" << ";" << endl;
   }
   //for (auto b : buf.port_bundles) {
     //int pt_width = buf.port_widths;
