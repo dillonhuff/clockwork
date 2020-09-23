@@ -1432,16 +1432,17 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
     for (auto b : op->buffers_read()) {
       int l = map_find(b, hwinfo.buffer_load_latencies);
-      cout << tab(2) << "Issue Read  " << b << " at " << -1*l << endl;
-      cout << tab(2) << "Rcv   Read  " << b << " at " << 0 << endl;
+      cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
+      cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
     }
     if (op->func != "") {
-      cout << tab(2) << "Exe   " << op->func << endl;
+      cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
+      cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
     }
     for (auto b : op->buffers_written()) {
       int l = map_find(b, hwinfo.buffer_store_latencies);
-      cout << tab(2) << "Issue Write " << b << " at " << compute_latency << endl;
-      cout << tab(2) << "Cmt   Write " << b << " at " << compute_latency + l << endl;
+      cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
+      cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
     }
   }
   assert(false);
