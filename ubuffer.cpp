@@ -1116,6 +1116,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
   void generate_banks(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+
+    generate_platonic_ubuffer(options, buf);
+
     return;
 
     int width = buf.port_widths;

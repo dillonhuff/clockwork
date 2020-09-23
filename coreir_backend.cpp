@@ -41,6 +41,13 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 
+void generate_platonic_ubuffer(CodegenOptions& options,
+    UBuffer& buf) {
+  ostream& out = *verilog_collateral_file;
+  out << "module " << buf.name << "_ub" << "();" << endl;
+  out << "endmodule" << endl << endl;
+}
+
 //Assumes common has been loaded
 void load_mem_ext(Context* c) {
   //Specialized extensions
