@@ -116,11 +116,11 @@ void generate_platonic_ubuffer(CodegenOptions& options,
   out << endl;
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
-    string addr = "0";
+    string addr = string("0") + "// " + buf.generate_linearize_ram_addr(in, bnk);
     out << tab(2) << "RAM[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
   }
   for (auto outpt : buf.get_out_ports()) {
-    string addr = "0";
+    string addr = string("0") + "// " + buf.generate_linearize_ram_addr(outpt, bnk);
     out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " <= " << "RAM[" << addr << "]" << ";" << endl;
   }
   //for (auto b : buf.port_bundles) {
