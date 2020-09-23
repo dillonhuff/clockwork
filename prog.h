@@ -1762,3 +1762,19 @@ bool all_loop_nests_same_depth(prog& prg);
 bool is_perfect(op* loop, prog& prg);
 bool all_perfect_loop_nests(prog& prg);
 std::vector<op*> get_dft_ops(prog& prg);
+
+
+void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg);
+
+map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg);
+
+map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg);
+
+uset* op_start_times_domain(prog& prg);
+
+umap* op_times_map(schedule_info& sched, prog& prg);
+umap* op_start_times_map(schedule_info& sched, prog& prg);
+
+umap* op_end_times_map(schedule_info& sched, prog& prg);
+
+

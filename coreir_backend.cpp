@@ -1122,7 +1122,6 @@ CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     CoreIR::Context* context) {
-  assert(false);
   //bool found_compute = true;
   //if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
     //found_compute = false;
@@ -1413,6 +1412,30 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
 
+  cout << "Buffer load latencies..." << endl;
+  for (auto bl : hwinfo.buffer_load_latencies) {
+    cout << tab(1) << bl.first << " -> " << bl.second << endl;
+  }
+
+  cout << "Buffer store latencies..." << endl;
+  for (auto bl : hwinfo.buffer_store_latencies) {
+    cout << tab(1) << bl.first << " -> " << bl.second << endl;
+  }
+
+  cout << "Micro-op breakdown" << endl;
+  for (auto op : prg.all_ops()) {
+    cout << tab(1) << "--- " << op->name << endl;
+    for (auto b : op->buffers_read()) {
+      cout << tab(2) << "Read  " << b << endl;
+    }
+    if (op->func != "") {
+      cout << tab(2) << "Exe   " << op->func << endl;
+    }
+    for (auto b : op->buffers_written()) {
+      cout << tab(2) << "Write " << b << endl;
+    }
+  }
+  assert(false);
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);

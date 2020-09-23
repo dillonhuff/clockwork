@@ -15682,137 +15682,6 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   //hwinfo.loop_latencies[op->name] = latency;
 }
 
-void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
-  if (!parent->is_loop) {
-    return;
-  }
-
-  QExpr parent_sched = map_find(parent, schedule_exprs);
-  for (auto c : parent->children) {
-    if (c->is_loop) {
-      QTerm root_sched_t{{qconst(map_find(c->name, sched.loop_iis)), qvar(c->name)}};
-      QExpr root_sched{{root_sched_t}};
-
-      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
-      QTerm delayt{{delayv}};
-      QExpr delay{{delayt}};
-
-      root_sched = parent_sched + root_sched + delay;
-      schedule_exprs[c] = root_sched;
-    } else {
-      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
-      QTerm delayt{{delayv}};
-      QExpr delay{{delayt}};
-
-      auto root_sched = parent_sched + delay;
-      schedule_exprs[c] = root_sched;
-    }
-    build_schedule_exprs(c, schedule_exprs, sched, prg);
-  }
-}
-
-map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg) {
-  op* root = prg.root;
-  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
-  QExpr root_sched{{root_sched_t}};
-
-  map<op*, QExpr> schedule_exprs{{root, root_sched}};
-  map<op*, isl_aff*> schedule_affs;
-  build_schedule_exprs(root, schedule_exprs, sched, prg);
-
-  cout << "==== Schedules..." << endl;
-  for (auto opl : schedule_exprs) {
-    auto op = opl.first;
-    cout << tab(1) << op->name << " -> " << opl.second << endl;
-    ostringstream ss;
-    ss << opl.second;
-    if (!op->is_loop) {
-      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
-          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
-      schedule_affs[op] = aff;
-    }
-  }
-
-  return schedule_affs;
-}
-
-map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
-  op* root = prg.root;
-  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
-  QExpr root_sched{{root_sched_t}};
-
-  map<op*, QExpr> schedule_exprs{{root, root_sched}};
-  map<op*, isl_aff*> schedule_affs;
-  build_schedule_exprs(root, schedule_exprs, sched, prg);
-
-  cout << "==== Schedules..." << endl;
-  for (auto opl : schedule_exprs) {
-    auto op = opl.first;
-    QExpr expr = opl.second;
-    QAV val = qconst(sched.total_latency(op)); //map_find(op, sched.total_op_latencies));
-    QTerm offsett{{val}};
-    QExpr offset{{offsett}};
-    expr = expr + offset;
-    cout << tab(1) << op->name << " -> " << expr << endl;
-    ostringstream ss;
-    ss << expr;
-    if (!op->is_loop) {
-      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
-          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
-      schedule_affs[op] = aff;
-    }
-  }
-
-  return schedule_affs;
-
-}
-
-uset* op_start_times_domain(prog& prg) {
-  auto start_times = prg.whole_iteration_domain();
-
-  uset* s = isl_union_set_read_from_str(prg.ctx, "{}");
-  for (auto a : get_sets(start_times)) {
-    a = set_name(a, "start_" + name(a));
-    s = unn(s, to_uset(a));
-    release(a);
-  }
-
-  return s;
-}
-
-umap* op_times_map(schedule_info& sched, prog& prg) {
-  auto start_times = op_start_times(sched, prg);
-
-  map<string, isl_aff*> hs;
-  for (auto a : start_times) {
-    hs[a.first->name] = a.second;
-  }
-
-  return to_umap(hs);
-}
-umap* op_start_times_map(schedule_info& sched, prog& prg) {
-  auto start_times = op_start_times(sched, prg);
-
-  map<string, isl_aff*> hs;
-  for (auto a : start_times) {
-    hs["start_" + a.first->name] = a.second;
-  }
-
-  return to_umap(hs);
-}
-
-umap* op_end_times_map(schedule_info& sched, prog& prg) {
-  auto start_times = op_end_times(sched, prg);
-
-  map<string, isl_aff*> hs;
-  for (auto a : start_times) {
-    hs["end_" + a.first->name] = a.second;
-  }
-
-  return to_umap(hs);
-}
-
-
 int max_loop_depth(prog& prg) {
   int maxl = -1;
   for (auto op : prg.all_ops()) {
@@ -16511,10 +16380,10 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(gaussian());
-  test_programs.push_back(pointwise());
-  test_programs.push_back(camera_pipeline());
   test_programs.push_back(unsharp());
+  test_programs.push_back(pointwise());
+  test_programs.push_back(gaussian());
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
