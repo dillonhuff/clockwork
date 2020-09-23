@@ -15626,9 +15626,9 @@ void dual_port_lake_test();
 void lake_tests() {
   //dual_port_lake_test();
   //lake_agg_sram_tb_config_test();
+  lake_conv33_autovec_test();
   lake_conv33_recipe_test();
   assert(false);
-  lake_conv33_autovec_test();
   lake_conv33_autovec_aha_test();
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");

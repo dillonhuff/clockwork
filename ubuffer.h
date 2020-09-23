@@ -691,7 +691,7 @@ class AccessPattern {
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
           auto constraints = sep_list(trans_constraints, "", "", " and ");
           cout <<"OP name: " << op_name << endl;
-          isl_set* slice = (rdset(ctx, string("{ " + op_name + origin_vars + " : " + constraints + "}").c_str()));
+          isl_set* slice = (rdset(ctx, string("{ " + op_name +origin_vars + " : " + constraints + "}").c_str()));
           return slice;
       }
 
@@ -1859,7 +1859,7 @@ class UBuffer {
         vectorization(int dim_id, int fetch_width, vector<int> iis);
 
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
-    int add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out);
+    int add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
@@ -1961,7 +1961,7 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
     out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
     out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
-    out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
+    //out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
     out << "\t\t\tacc range: " << str(range(buf.access_map.at(inpt))) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;

@@ -3658,7 +3658,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     return new_sched;
   }
 
-  //new mechod that encapsulate new padding dim
+  //new mechod using the recipe
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, vector<int> iis, int fetch_width) {
     /*
      * Previously we have two ops, input and output.In order to do the vectorization
@@ -3673,38 +3673,16 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     //auto in_sched_vec = collect_sched_vec(in_sched);
     //auto out_sched_vec = collect_sched_vec(out_sched);
     cout << "\tin_sched: " << str(in_sched) << "\t\nout_sched: " << str(out_sched) << endl;
-    auto sched_aff_vec = get_aff_vec(to_map(in_sched));
-    sched_aff_vec.pop_back();
-    vector<string> expr_list;
-    for (size_t i = 0; i < sched_aff_vec.size(); i ++) {
-        auto sched_aff = sched_aff_vec.at(i);
-        string expr = take_btw(str(sched_aff), "[(", ")]");
-        cout << "expr: " << expr << ", " << is_number(expr) <<endl;
-        expr_list.push_back("(" + expr + ")*" + to_string(iis.at(i)));
-    }
-    string expr = sep_list(expr_list, "", "", "+");
-    auto var_list = get_map_in_dim_id(to_map(in_sched));
-    string op_name = domain_name(in_sched);
-    auto in_sched_new = gen_hw_sched_from_sched_vec(ctx, {expr}, var_list, op_name);
+    auto in_sched_new = linear_schedule(to_map(in_sched), iis, 0, true);
     //hardcode this recipe
-    auto in_sched_vec = gen_hw_sched_from_sched_vec(ctx,
-            {expr + "+" + to_string(fetch_width)}, var_list, op_name + "_agg2sram");
+    auto in_sched_vec = linear_schedule(to_map(in_sched), iis, fetch_width, true);
+    //auto in_sched_vec = gen_hw_sched_from_sched_vec(ctx,
+    //        {expr + "+" + to_string(fetch_width)}, var_list, op_name);
+    //in_sched_vec = pad_one_more_dim_to_sched_map_innermost(in_sched_vec, 0);
 
-    sched_aff_vec = get_aff_vec(to_map(out_sched));
-    sched_aff_vec.pop_back();
-    for (size_t i = 0; i < sched_aff_vec.size(); i ++) {
-        auto sched_aff = sched_aff_vec.at(i);
-        string expr = take_btw(str(sched_aff), "[(", ")]");
-        cout << "expr: " << expr << ", " << is_number(expr) <<endl;
-        expr_list.push_back("(" + expr + ")*" + to_string(iis.at(i)));
-    }
-    expr = sep_list(expr_list, "", "", "+");
-    var_list = get_map_in_dim_id(to_map(out_sched));
-    op_name = domain_name(out_sched);
-    auto out_sched_new = gen_hw_sched_from_sched_vec(ctx, {expr}, var_list, op_name);
-    //hardcode this recipe
-    auto out_sched_vec = gen_hw_sched_from_sched_vec(ctx,
-            {expr + "-" + to_string(fetch_width+1)}, var_list, op_name + "_agg2sram");
+    auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, true);
+    auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -(fetch_width+1), true);
+    out_sched_vec = pad_one_more_dim_to_sched_map_innermost(out_sched_vec, 0);
     //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
 
 
@@ -3837,7 +3815,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
 
-  int UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out) {
+  int UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe) {
 
     //first round check how many port we need to have, do we need to coalesce scheduel
     vector<int> access_cnt_per_port(fetch_width, 0);
@@ -3904,6 +3882,13 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       merge_sched = coalesce(unn(to_umap(sched), merge_sched));
     }
 
+    cout << "schedule after coalesce: " << str(merge_sched) << endl;
+    //if use recipe we need to linearize the 2D schedule
+    if (use_recipe) {
+        merge_sched = to_umap(linear_schedule(to_map(merge_sched), {1, fetch_width / pick(access_cnt_per_port)}, 0, false));
+    }
+    cout << "schedule after coalesce: " << str(merge_sched) << endl;
+
     string origin_pt_name = pick(rewrite_buf2op_map).first;
     for (int new_pt_cnt= 0; new_pt_cnt < fetch_width; new_pt_cnt++) {
       auto rewrite_access_map = ap_vec.at(new_pt_cnt);
@@ -3912,13 +3897,16 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       if (is_out) {
         string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
         target_buf.port_bundles[bd_name].push_back(pt_name);
-        target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), merge_sched);
+        target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), its(merge_sched, dom));
 
-        if (pick(access_cnt_per_port) > 1) {
+        //if (pick(access_cnt_per_port) > 1 && (!use_recipe)) {
+        if (pick(access_cnt_per_port) > 1 ) {
             target_buf.access_map[pt_name] =
                 flatten_map_domain_with_dim(target_buf.access_map[pt_name], 2);
             target_buf.schedule[pt_name] =
                 flatten_map_domain_with_dim(target_buf.schedule[pt_name], 2);
+            cout << "schedule after flatten: " << str((target_buf.schedule[pt_name])) << endl;
+            cout << "schedule after flatten simplify: " << str(simplify(target_buf.schedule[pt_name])) << endl;
             target_buf.retrive_domain[pt_name] = target_buf.domain.at(pt_name);
             target_buf.domain[pt_name] = ::domain(to_map(target_buf.access_map[pt_name]));
         }
@@ -3926,7 +3914,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       else {
         string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
         target_buf.port_bundles[bd_name].push_back(pt_name);
-        target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), merge_sched);
+        target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), its(merge_sched, dom));
 
         //LOOK at the name to judge if we need to remap the buffer
         size_t found = target_buf.name.find("tb");
@@ -3940,12 +3928,14 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
         }
 
-        if (pick(access_cnt_per_port) > 1) {
+        if ((pick(access_cnt_per_port) > 1)) { //&& (!use_recipe)) {
 
             target_buf.access_map[pt_name] =
                 flatten_map_domain_with_dim(target_buf.access_map[pt_name], 2);
             target_buf.schedule[pt_name] =
                 flatten_map_domain_with_dim(target_buf.schedule[pt_name], 2);
+            cout << "schedule after flatten: " << str((target_buf.schedule[pt_name])) << endl;
+            cout << "schedule after flatten simplify: " << str(simplify(target_buf.schedule[pt_name])) << endl;
             target_buf.retrive_domain[pt_name] = target_buf.domain.at(pt_name);
             target_buf.domain[pt_name] = ::domain(to_map(target_buf.access_map[pt_name]));
         }
@@ -3971,7 +3961,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       if (is_out) {
         string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
         target_buf.port_bundles[bd_name].push_back(pt_name);
-        target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), sched);
+        target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), simplify_expr(its(sched, dom)));
 
         //remap the access map for self loop input
         if(is_self_loop_in(origin_pt_name)) {
@@ -3983,7 +3973,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       else {
         string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
         target_buf.port_bundles[bd_name].push_back(pt_name);
-        target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), sched);
+        target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), simplify_expr(its(sched, dom)));
 
         //LOOK at the name to judge if we need to remap the buffer
         size_t found = target_buf.name.find("tb");
@@ -4206,8 +4196,8 @@ pair<std::map<string, UBuffer>, vector<string> >
 
       }
 
-      add_vectorized_pt_to_ubuf(tb, rewrite_buf2op_map, op_sched_map, bd_name+"_tb_in", dim_id, fetch_width, false);
-      auto output_cnt = add_vectorized_pt_to_ubuf(sram, rewrite_buf2op_map, op_sched_map ,bd_name, dim_id, fetch_width, true);
+      add_vectorized_pt_to_ubuf(tb, rewrite_buf2op_map, op_sched_map, bd_name+"_tb_in", dim_id, fetch_width, false, iis.size());
+      auto output_cnt = add_vectorized_pt_to_ubuf(sram, rewrite_buf2op_map, op_sched_map ,bd_name, dim_id, fetch_width, true, iis.size());
 
       //Add another pass to build the access pattern on the tb output,
       //whether decouple the address
