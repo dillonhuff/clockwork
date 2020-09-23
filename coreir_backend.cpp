@@ -1412,48 +1412,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
 
-  cout << "Buffer load latencies..." << endl;
-  for (auto bl : hwinfo.buffer_load_latencies) {
-    cout << tab(1) << bl.first << " -> " << bl.second << endl;
-  }
-
-  cout << "Buffer store latencies..." << endl;
-  for (auto bl : hwinfo.buffer_store_latencies) {
-    cout << tab(1) << bl.first << " -> " << bl.second << endl;
-  }
-
-  auto start_times = op_start_times(hwinfo, prg);
-  auto end_times = op_end_times(hwinfo, prg);
-  auto domains = op_start_times_domains(prg);
-  for (auto d : domains) {
-    cout << d.first << " -> " << str(d.second) << endl;
-  }
-
-  cout << "Micro-op breakdown" << endl;
-  for (auto op : prg.all_ops()) {
-    auto domain = map_find("start_" + op->name, domains);
-
-    int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
-    cout << tab(1) << "--- " << op->name << endl;
-    cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
-    cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
-    cout << tab(2) << "Dom  : " << str(domain) << endl;
-    for (auto b : op->buffers_read()) {
-      int l = map_find(b, hwinfo.buffer_load_latencies);
-      cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
-      cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
-    }
-    if (op->func != "") {
-      cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
-      cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
-    }
-    for (auto b : op->buffers_written()) {
-      int l = map_find(b, hwinfo.buffer_store_latencies);
-      cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
-      cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
-    }
-  }
-  assert(false);
 
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
@@ -1479,6 +1437,56 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   }
 
   auto def = ub->newModuleDef();
+
+  auto c = context;
+
+  cout << "Buffer load latencies..." << endl;
+  for (auto bl : hwinfo.buffer_load_latencies) {
+    cout << tab(1) << bl.first << " -> " << bl.second << endl;
+  }
+
+  cout << "Buffer store latencies..." << endl;
+  for (auto bl : hwinfo.buffer_store_latencies) {
+    cout << tab(1) << bl.first << " -> " << bl.second << endl;
+  }
+
+  auto start_times = op_start_times(hwinfo, prg);
+  auto end_times = op_end_times(hwinfo, prg);
+  auto domains = op_start_times_domains(prg);
+  for (auto d : domains) {
+    cout << d.first << " -> " << str(d.second) << endl;
+  }
+
+  cout << "Micro-op breakdown" << endl;
+  for (auto op : prg.all_ops()) {
+    auto start_time_aff = map_find(op, start_times);
+    auto domain = map_find("start_" + op->name, domains);
+    int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
+    cout << tab(1) << "--- " << op->name << endl;
+    cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
+    cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
+    cout << tab(2) << "Dom  : " << str(domain) << endl;
+    for (auto b : op->buffers_read()) {
+      int l = map_find(b, hwinfo.buffer_load_latencies);
+      auto aff_c =
+        affine_controller(c, domain, start_time_aff);
+      aff_c->print();
+      auto controller = def->addInstance(controller_name(op->name) + c->getUnique(), aff_c);
+
+      cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
+      cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
+    }
+    if (op->func != "") {
+      cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
+      cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
+    }
+    for (auto b : op->buffers_written()) {
+      int l = map_find(b, hwinfo.buffer_store_latencies);
+      cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
+      cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
+    }
+  }
+  assert(false);
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
