@@ -1405,6 +1405,15 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //assert(false);
 
 }
+
+isl_aff* constant_aff(isl_aff* src, const int val) {
+  auto ls = isl_aff_get_domain_local_space(src);
+  cout << "ls = " << str(ls) << endl;
+  auto v = isl_val_int_from_si(ctx(src), val);
+  cout << "v = " << str(v) << endl;
+  return aff_on_domain(ls, v);
+}
+
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1457,36 +1466,40 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     cout << d.first << " -> " << str(d.second) << endl;
   }
 
-  cout << "Micro-op breakdown" << endl;
-  for (auto op : prg.all_ops()) {
-    auto start_time_aff = map_find(op, start_times);
-    auto domain = map_find("start_" + op->name, domains);
-    int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
-    cout << tab(1) << "--- " << op->name << endl;
-    cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
-    cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
-    cout << tab(2) << "Dom  : " << str(domain) << endl;
-    for (auto b : op->buffers_read()) {
-      int l = map_find(b, hwinfo.buffer_load_latencies);
-      auto aff_c =
-        affine_controller(c, domain, start_time_aff);
-      aff_c->print();
-      auto controller = def->addInstance(controller_name(op->name) + c->getUnique(), aff_c);
+  //cout << "Micro-op breakdown" << endl;
+  //for (auto op : prg.all_ops()) {
+    //auto start_time_aff = map_find(op, start_times);
+    //auto domain = map_find("start_" + op->name, domains);
+    //int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
+    //cout << tab(1) << "--- " << op->name << endl;
+    //cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
+    //cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
+    //cout << tab(2) << "Dom  : " << str(domain) << endl;
+    //for (auto b : op->buffers_read()) {
+      //int l = map_find(b, hwinfo.buffer_load_latencies);
+      //auto cst_aff = constant_aff(start_time_aff, l);
+      //cout << "cst_aff = " << str(cst_aff) << endl;
+      //isl_aff* offset = sub(start_time_aff, cst_aff);
+      //auto aff_c =
+        //affine_controller(c, domain, offset);
 
-      cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
-      cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
-    }
-    if (op->func != "") {
-      cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
-      cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
-    }
-    for (auto b : op->buffers_written()) {
-      int l = map_find(b, hwinfo.buffer_store_latencies);
-      cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
-      cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
-    }
-  }
-  assert(false);
+      //aff_c->print();
+      //auto controller = def->addInstance(controller_name(op->name) + c->getUnique(), aff_c);
+
+      //cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
+      //cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
+    //}
+    //if (op->func != "") {
+      //cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
+      //cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
+    //}
+    //for (auto b : op->buffers_written()) {
+      //int l = map_find(b, hwinfo.buffer_store_latencies);
+      //cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
+      //cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
+    //}
+  //}
+  //assert(false);
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
