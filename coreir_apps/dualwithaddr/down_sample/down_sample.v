@@ -1,4 +1,3 @@
-// Module `memtile_long_delay__U154` defined externally
 module hcompute_hw_input_stencil (
     output [15:0] out_hw_input_stencil,
     input [15:0] in0_input_copy_stencil [0:0]
@@ -58,6 +57,818 @@ coreir_reg #(
     .clk(reg0_clk),
     .in(reg0_in),
     .out(out)
+);
+endmodule
+
+module delay__U160 (
+    input clk,
+    input rst_n,
+    input flush,
+    input [15:0] wdata,
+    output [15:0] rdata
+);
+wire [15:0] _U161_in;
+wire _U161_clk;
+wire [15:0] _U161_out;
+wire [15:0] _U162_in;
+wire _U162_clk;
+wire [15:0] _U162_out;
+wire [15:0] _U163_in;
+wire _U163_clk;
+wire [15:0] _U163_out;
+wire [15:0] _U164_in;
+wire _U164_clk;
+wire [15:0] _U164_out;
+wire [15:0] _U165_in;
+wire _U165_clk;
+wire [15:0] _U165_out;
+wire [15:0] _U166_in;
+wire _U166_clk;
+wire [15:0] _U166_out;
+wire [15:0] _U167_in;
+wire _U167_clk;
+wire [15:0] _U167_out;
+wire [15:0] _U168_in;
+wire _U168_clk;
+wire [15:0] _U168_out;
+wire [15:0] _U169_in;
+wire _U169_clk;
+wire [15:0] _U169_out;
+wire [15:0] _U170_in;
+wire _U170_clk;
+wire [15:0] _U170_out;
+wire [15:0] _U171_in;
+wire _U171_clk;
+wire [15:0] _U171_out;
+wire [15:0] _U172_in;
+wire _U172_clk;
+wire [15:0] _U172_out;
+wire [15:0] _U173_in;
+wire _U173_clk;
+wire [15:0] _U173_out;
+wire [15:0] _U174_in;
+wire _U174_clk;
+wire [15:0] _U174_out;
+wire [15:0] _U175_in;
+wire _U175_clk;
+wire [15:0] _U175_out;
+wire [15:0] _U176_in;
+wire _U176_clk;
+wire [15:0] _U176_out;
+wire [15:0] _U177_in;
+wire _U177_clk;
+wire [15:0] _U177_out;
+wire [15:0] _U178_in;
+wire _U178_clk;
+wire [15:0] _U178_out;
+wire [15:0] _U179_in;
+wire _U179_clk;
+wire [15:0] _U179_out;
+wire [15:0] _U180_in;
+wire _U180_clk;
+wire [15:0] _U180_out;
+wire [15:0] _U181_in;
+wire _U181_clk;
+wire [15:0] _U181_out;
+wire [15:0] _U182_in;
+wire _U182_clk;
+wire [15:0] _U182_out;
+wire [15:0] _U183_in;
+wire _U183_clk;
+wire [15:0] _U183_out;
+wire [15:0] _U184_in;
+wire _U184_clk;
+wire [15:0] _U184_out;
+wire [15:0] _U185_in;
+wire _U185_clk;
+wire [15:0] _U185_out;
+wire [15:0] _U186_in;
+wire _U186_clk;
+wire [15:0] _U186_out;
+wire [15:0] _U187_in;
+wire _U187_clk;
+wire [15:0] _U187_out;
+wire [15:0] _U188_in;
+wire _U188_clk;
+wire [15:0] _U188_out;
+wire [15:0] _U189_in;
+wire _U189_clk;
+wire [15:0] _U189_out;
+wire [15:0] _U190_in;
+wire _U190_clk;
+wire [15:0] _U190_out;
+wire [15:0] _U191_in;
+wire _U191_clk;
+wire [15:0] _U191_out;
+wire [15:0] _U192_in;
+wire _U192_clk;
+wire [15:0] _U192_out;
+wire [15:0] _U193_in;
+wire _U193_clk;
+wire [15:0] _U193_out;
+wire [15:0] _U194_in;
+wire _U194_clk;
+wire [15:0] _U194_out;
+wire [15:0] _U195_in;
+wire _U195_clk;
+wire [15:0] _U195_out;
+wire [15:0] _U196_in;
+wire _U196_clk;
+wire [15:0] _U196_out;
+wire [15:0] _U197_in;
+wire _U197_clk;
+wire [15:0] _U197_out;
+wire [15:0] _U198_in;
+wire _U198_clk;
+wire [15:0] _U198_out;
+wire [15:0] _U199_in;
+wire _U199_clk;
+wire [15:0] _U199_out;
+wire [15:0] _U200_in;
+wire _U200_clk;
+wire [15:0] _U200_out;
+wire [15:0] _U201_in;
+wire _U201_clk;
+wire [15:0] _U201_out;
+wire [15:0] _U202_in;
+wire _U202_clk;
+wire [15:0] _U202_out;
+wire [15:0] _U203_in;
+wire _U203_clk;
+wire [15:0] _U203_out;
+wire [15:0] _U204_in;
+wire _U204_clk;
+wire [15:0] _U204_out;
+wire [15:0] _U205_in;
+wire _U205_clk;
+wire [15:0] _U205_out;
+wire [15:0] _U206_in;
+wire _U206_clk;
+wire [15:0] _U206_out;
+wire [15:0] _U207_in;
+wire _U207_clk;
+wire [15:0] _U207_out;
+wire [15:0] _U208_in;
+wire _U208_clk;
+wire [15:0] _U208_out;
+wire [15:0] _U209_in;
+wire _U209_clk;
+wire [15:0] _U209_out;
+wire [15:0] _U210_in;
+wire _U210_clk;
+wire [15:0] _U210_out;
+wire [15:0] _U211_in;
+wire _U211_clk;
+wire [15:0] _U211_out;
+wire [15:0] _U212_in;
+wire _U212_clk;
+wire [15:0] _U212_out;
+wire [15:0] _U213_in;
+wire _U213_clk;
+wire [15:0] _U213_out;
+wire [15:0] _U214_in;
+wire _U214_clk;
+wire [15:0] _U214_out;
+wire [15:0] _U215_in;
+wire _U215_clk;
+wire [15:0] _U215_out;
+wire [15:0] _U216_in;
+wire _U216_clk;
+wire [15:0] _U216_out;
+wire [15:0] _U217_in;
+wire _U217_clk;
+wire [15:0] _U217_out;
+wire [15:0] _U218_in;
+wire _U218_clk;
+wire [15:0] _U218_out;
+wire [15:0] _U219_in;
+wire _U219_clk;
+wire [15:0] _U219_out;
+wire [15:0] _U220_in;
+wire _U220_clk;
+wire [15:0] _U220_out;
+wire [15:0] _U221_in;
+wire _U221_clk;
+wire [15:0] _U221_out;
+wire [15:0] _U222_in;
+wire _U222_clk;
+wire [15:0] _U222_out;
+wire [15:0] _U223_in;
+wire _U223_clk;
+assign _U161_in = wdata;
+assign _U161_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U161 (
+    .in(_U161_in),
+    .clk(_U161_clk),
+    .out(_U161_out)
+);
+assign _U162_in = _U161_out;
+assign _U162_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U162 (
+    .in(_U162_in),
+    .clk(_U162_clk),
+    .out(_U162_out)
+);
+assign _U163_in = _U162_out;
+assign _U163_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U163 (
+    .in(_U163_in),
+    .clk(_U163_clk),
+    .out(_U163_out)
+);
+assign _U164_in = _U163_out;
+assign _U164_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U164 (
+    .in(_U164_in),
+    .clk(_U164_clk),
+    .out(_U164_out)
+);
+assign _U165_in = _U164_out;
+assign _U165_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U165 (
+    .in(_U165_in),
+    .clk(_U165_clk),
+    .out(_U165_out)
+);
+assign _U166_in = _U165_out;
+assign _U166_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U166 (
+    .in(_U166_in),
+    .clk(_U166_clk),
+    .out(_U166_out)
+);
+assign _U167_in = _U166_out;
+assign _U167_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U167 (
+    .in(_U167_in),
+    .clk(_U167_clk),
+    .out(_U167_out)
+);
+assign _U168_in = _U167_out;
+assign _U168_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U168 (
+    .in(_U168_in),
+    .clk(_U168_clk),
+    .out(_U168_out)
+);
+assign _U169_in = _U168_out;
+assign _U169_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U169 (
+    .in(_U169_in),
+    .clk(_U169_clk),
+    .out(_U169_out)
+);
+assign _U170_in = _U169_out;
+assign _U170_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U170 (
+    .in(_U170_in),
+    .clk(_U170_clk),
+    .out(_U170_out)
+);
+assign _U171_in = _U170_out;
+assign _U171_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U171 (
+    .in(_U171_in),
+    .clk(_U171_clk),
+    .out(_U171_out)
+);
+assign _U172_in = _U171_out;
+assign _U172_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U172 (
+    .in(_U172_in),
+    .clk(_U172_clk),
+    .out(_U172_out)
+);
+assign _U173_in = _U172_out;
+assign _U173_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U173 (
+    .in(_U173_in),
+    .clk(_U173_clk),
+    .out(_U173_out)
+);
+assign _U174_in = _U173_out;
+assign _U174_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U174 (
+    .in(_U174_in),
+    .clk(_U174_clk),
+    .out(_U174_out)
+);
+assign _U175_in = _U174_out;
+assign _U175_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U175 (
+    .in(_U175_in),
+    .clk(_U175_clk),
+    .out(_U175_out)
+);
+assign _U176_in = _U175_out;
+assign _U176_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U176 (
+    .in(_U176_in),
+    .clk(_U176_clk),
+    .out(_U176_out)
+);
+assign _U177_in = _U176_out;
+assign _U177_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U177 (
+    .in(_U177_in),
+    .clk(_U177_clk),
+    .out(_U177_out)
+);
+assign _U178_in = _U177_out;
+assign _U178_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U178 (
+    .in(_U178_in),
+    .clk(_U178_clk),
+    .out(_U178_out)
+);
+assign _U179_in = _U178_out;
+assign _U179_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U179 (
+    .in(_U179_in),
+    .clk(_U179_clk),
+    .out(_U179_out)
+);
+assign _U180_in = _U179_out;
+assign _U180_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U180 (
+    .in(_U180_in),
+    .clk(_U180_clk),
+    .out(_U180_out)
+);
+assign _U181_in = _U180_out;
+assign _U181_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U181 (
+    .in(_U181_in),
+    .clk(_U181_clk),
+    .out(_U181_out)
+);
+assign _U182_in = _U181_out;
+assign _U182_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U182 (
+    .in(_U182_in),
+    .clk(_U182_clk),
+    .out(_U182_out)
+);
+assign _U183_in = _U182_out;
+assign _U183_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U183 (
+    .in(_U183_in),
+    .clk(_U183_clk),
+    .out(_U183_out)
+);
+assign _U184_in = _U183_out;
+assign _U184_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U184 (
+    .in(_U184_in),
+    .clk(_U184_clk),
+    .out(_U184_out)
+);
+assign _U185_in = _U184_out;
+assign _U185_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U185 (
+    .in(_U185_in),
+    .clk(_U185_clk),
+    .out(_U185_out)
+);
+assign _U186_in = _U185_out;
+assign _U186_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U186 (
+    .in(_U186_in),
+    .clk(_U186_clk),
+    .out(_U186_out)
+);
+assign _U187_in = _U186_out;
+assign _U187_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U187 (
+    .in(_U187_in),
+    .clk(_U187_clk),
+    .out(_U187_out)
+);
+assign _U188_in = _U187_out;
+assign _U188_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U188 (
+    .in(_U188_in),
+    .clk(_U188_clk),
+    .out(_U188_out)
+);
+assign _U189_in = _U188_out;
+assign _U189_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U189 (
+    .in(_U189_in),
+    .clk(_U189_clk),
+    .out(_U189_out)
+);
+assign _U190_in = _U189_out;
+assign _U190_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U190 (
+    .in(_U190_in),
+    .clk(_U190_clk),
+    .out(_U190_out)
+);
+assign _U191_in = _U190_out;
+assign _U191_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U191 (
+    .in(_U191_in),
+    .clk(_U191_clk),
+    .out(_U191_out)
+);
+assign _U192_in = _U191_out;
+assign _U192_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U192 (
+    .in(_U192_in),
+    .clk(_U192_clk),
+    .out(_U192_out)
+);
+assign _U193_in = _U192_out;
+assign _U193_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U193 (
+    .in(_U193_in),
+    .clk(_U193_clk),
+    .out(_U193_out)
+);
+assign _U194_in = _U193_out;
+assign _U194_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U194 (
+    .in(_U194_in),
+    .clk(_U194_clk),
+    .out(_U194_out)
+);
+assign _U195_in = _U194_out;
+assign _U195_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U195 (
+    .in(_U195_in),
+    .clk(_U195_clk),
+    .out(_U195_out)
+);
+assign _U196_in = _U195_out;
+assign _U196_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U196 (
+    .in(_U196_in),
+    .clk(_U196_clk),
+    .out(_U196_out)
+);
+assign _U197_in = _U196_out;
+assign _U197_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U197 (
+    .in(_U197_in),
+    .clk(_U197_clk),
+    .out(_U197_out)
+);
+assign _U198_in = _U197_out;
+assign _U198_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U198 (
+    .in(_U198_in),
+    .clk(_U198_clk),
+    .out(_U198_out)
+);
+assign _U199_in = _U198_out;
+assign _U199_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U199 (
+    .in(_U199_in),
+    .clk(_U199_clk),
+    .out(_U199_out)
+);
+assign _U200_in = _U199_out;
+assign _U200_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U200 (
+    .in(_U200_in),
+    .clk(_U200_clk),
+    .out(_U200_out)
+);
+assign _U201_in = _U200_out;
+assign _U201_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U201 (
+    .in(_U201_in),
+    .clk(_U201_clk),
+    .out(_U201_out)
+);
+assign _U202_in = _U201_out;
+assign _U202_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U202 (
+    .in(_U202_in),
+    .clk(_U202_clk),
+    .out(_U202_out)
+);
+assign _U203_in = _U202_out;
+assign _U203_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U203 (
+    .in(_U203_in),
+    .clk(_U203_clk),
+    .out(_U203_out)
+);
+assign _U204_in = _U203_out;
+assign _U204_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U204 (
+    .in(_U204_in),
+    .clk(_U204_clk),
+    .out(_U204_out)
+);
+assign _U205_in = _U204_out;
+assign _U205_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U205 (
+    .in(_U205_in),
+    .clk(_U205_clk),
+    .out(_U205_out)
+);
+assign _U206_in = _U205_out;
+assign _U206_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U206 (
+    .in(_U206_in),
+    .clk(_U206_clk),
+    .out(_U206_out)
+);
+assign _U207_in = _U206_out;
+assign _U207_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U207 (
+    .in(_U207_in),
+    .clk(_U207_clk),
+    .out(_U207_out)
+);
+assign _U208_in = _U207_out;
+assign _U208_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U208 (
+    .in(_U208_in),
+    .clk(_U208_clk),
+    .out(_U208_out)
+);
+assign _U209_in = _U208_out;
+assign _U209_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U209 (
+    .in(_U209_in),
+    .clk(_U209_clk),
+    .out(_U209_out)
+);
+assign _U210_in = _U209_out;
+assign _U210_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U210 (
+    .in(_U210_in),
+    .clk(_U210_clk),
+    .out(_U210_out)
+);
+assign _U211_in = _U210_out;
+assign _U211_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U211 (
+    .in(_U211_in),
+    .clk(_U211_clk),
+    .out(_U211_out)
+);
+assign _U212_in = _U211_out;
+assign _U212_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U212 (
+    .in(_U212_in),
+    .clk(_U212_clk),
+    .out(_U212_out)
+);
+assign _U213_in = _U212_out;
+assign _U213_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U213 (
+    .in(_U213_in),
+    .clk(_U213_clk),
+    .out(_U213_out)
+);
+assign _U214_in = _U213_out;
+assign _U214_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U214 (
+    .in(_U214_in),
+    .clk(_U214_clk),
+    .out(_U214_out)
+);
+assign _U215_in = _U214_out;
+assign _U215_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U215 (
+    .in(_U215_in),
+    .clk(_U215_clk),
+    .out(_U215_out)
+);
+assign _U216_in = _U215_out;
+assign _U216_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U216 (
+    .in(_U216_in),
+    .clk(_U216_clk),
+    .out(_U216_out)
+);
+assign _U217_in = _U216_out;
+assign _U217_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U217 (
+    .in(_U217_in),
+    .clk(_U217_clk),
+    .out(_U217_out)
+);
+assign _U218_in = _U217_out;
+assign _U218_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U218 (
+    .in(_U218_in),
+    .clk(_U218_clk),
+    .out(_U218_out)
+);
+assign _U219_in = _U218_out;
+assign _U219_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U219 (
+    .in(_U219_in),
+    .clk(_U219_clk),
+    .out(_U219_out)
+);
+assign _U220_in = _U219_out;
+assign _U220_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U220 (
+    .in(_U220_in),
+    .clk(_U220_clk),
+    .out(_U220_out)
+);
+assign _U221_in = _U220_out;
+assign _U221_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U221 (
+    .in(_U221_in),
+    .clk(_U221_clk),
+    .out(_U221_out)
+);
+assign _U222_in = _U221_out;
+assign _U222_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U222 (
+    .in(_U222_in),
+    .clk(_U222_clk),
+    .out(_U222_out)
+);
+assign _U223_in = _U222_out;
+assign _U223_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U223 (
+    .in(_U223_in),
+    .clk(_U223_clk),
+    .out(rdata)
+);
+endmodule
+
+module delay_tile__delay63 (
+    input clk,
+    input rst_n,
+    input flush,
+    input [15:0] wdata,
+    output [15:0] rdata
+);
+wire delay_mod_clk;
+wire delay_mod_rst_n;
+wire delay_mod_flush;
+wire [15:0] delay_mod_wdata;
+assign delay_mod_clk = clk;
+assign delay_mod_rst_n = rst_n;
+assign delay_mod_flush = flush;
+assign delay_mod_wdata = wdata;
+delay__U160 delay_mod (
+    .clk(delay_mod_clk),
+    .rst_n(delay_mod_rst_n),
+    .flush(delay_mod_flush),
+    .wdata(delay_mod_wdata),
+    .rdata(rdata)
+);
+endmodule
+
+module memtile_long_delay__U154 (
+    input clk,
+    input [15:0] wdata,
+    output [15:0] rdata,
+    input rst_n,
+    input flush
+);
+wire delay_tile_m_clk;
+wire delay_tile_m_rst_n;
+wire delay_tile_m_flush;
+wire [15:0] delay_tile_m_wdata;
+assign delay_tile_m_clk = clk;
+assign delay_tile_m_rst_n = rst_n;
+assign delay_tile_m_flush = flush;
+assign delay_tile_m_wdata = wdata;
+delay_tile__delay63 delay_tile_m (
+    .clk(delay_tile_m_clk),
+    .rst_n(delay_tile_m_rst_n),
+    .flush(delay_tile_m_flush),
+    .wdata(delay_tile_m_wdata),
+    .rdata(rdata)
 );
 endmodule
 
