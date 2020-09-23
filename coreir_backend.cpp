@@ -1422,9 +1422,13 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     cout << tab(1) << bl.first << " -> " << bl.second << endl;
   }
 
+  auto start_times = op_start_times(hwinfo, prg);
+  auto end_times = op_end_times(hwinfo, prg);
   cout << "Micro-op breakdown" << endl;
   for (auto op : prg.all_ops()) {
     cout << tab(1) << "--- " << op->name << endl;
+    cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
+    cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
     for (auto b : op->buffers_read()) {
       cout << tab(2) << "Read  " << b << endl;
     }
