@@ -1515,8 +1515,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         controller_name(op->name) + c->getUnique(),
         affine_controller(c, domain, offset));
 
-    micro_op_enables[rd_start] = nullptr;
-    micro_op_enables[rd_end] = nullptr;
+    micro_op_enables[rd_start] = start_controller;
+    micro_op_enables[rd_end] = end_controller;
 
     if (op->func != "") {
       cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
@@ -1527,13 +1527,21 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     }
 
     for (auto b : op->buffers_written()) {
+      int l = map_find(b, hwinfo.buffer_store_latencies);
+      auto start_write_aff = add(start_time_aff, compute_latency);
+      auto end_write_aff = add(start_time_aff, l + compute_latency);
+
       string rd_start = op->name + "_ISSUE_Write_" + b;
       string rd_end = op->name + "_RCV_Write_" + b;
 
-      micro_op_enables[rd_start] = nullptr;
-      micro_op_enables[rd_end] = nullptr;
+      auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
+          affine_controller(c, domain, start_write_aff));
+      auto end_controller = def->addInstance(
+          controller_name(op->name) + c->getUnique(),
+          affine_controller(c, domain, end_write_aff));
+      micro_op_enables[rd_start] = start_controller;
+      micro_op_enables[rd_end] = end_controller;
 
-      int l = map_find(b, hwinfo.buffer_store_latencies);
       cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
       cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
     }
