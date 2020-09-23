@@ -45,33 +45,30 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     UBuffer& buf) {
   ostream& out = *verilog_collateral_file;
   vector<string> port_decls{"input clk", "input flush", "input rst_n"};
-    //vector<pair<string, CoreIR::Type*> > 
-      //ub_field{{"clk", context->Named("coreir.clkIn")},
-          //{"flush", context->BitIn()},
-          //{"rst_n", context->BitIn()}};
 
-    //for (auto b : buf.port_bundles) {
-      //int pt_width = buf.port_widths;
-      //int bd_width = buf.lanes_in_bundle(b.first);
-      //string name = b.first;
-      //string pt_rep = pick(b.second);
-      //auto acc_maps = get_maps(buf.access_map.at(pt_rep));
-      //assert(acc_maps.size() > 0);
-      //int control_dimension = num_in_dims(pick(acc_maps));
-      //if (buf.is_input_bundle(b.first)) {
-        //if (options.rtl_options.use_external_controllers) {
-          //ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
-          //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
-        //}
-        //ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
-      //} else {
-        //if (options.rtl_options.use_external_controllers) {
-          //ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
-          //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
-        //}
-        //ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
-      //}
-    //}
+  for (auto b : buf.port_bundles) {
+    int pt_width = buf.port_widths;
+    int bd_width = buf.lanes_in_bundle(b.first);
+    string name = b.first;
+    string pt_rep = pick(b.second);
+    auto acc_maps = get_maps(buf.access_map.at(pt_rep));
+    assert(acc_maps.size() > 0);
+    int control_dimension = num_in_dims(pick(acc_maps));
+    if (buf.is_input_bundle(b.first)) {
+      if (options.rtl_options.use_external_controllers) {
+        port_decls.push_back("input " + name + "_wen");
+        //port_decls.push_back( "input [15:0] " + name + "_ctrl_vars [" + str(control_dimension - 1) + ":0] " + name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+      }
+      //ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
+    } else {
+      if (options.rtl_options.use_external_controllers) {
+        port_decls.push_back("input " + name + "_ren");
+        //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+      }
+      //ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
+    }
+  }
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "", "", ",\n\t") << ");" << endl;
   out << "endmodule" << endl << endl;
 }
