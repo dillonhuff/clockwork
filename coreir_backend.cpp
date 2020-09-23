@@ -1424,12 +1424,20 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   auto start_times = op_start_times(hwinfo, prg);
   auto end_times = op_end_times(hwinfo, prg);
+  auto domains = op_start_times_domains(prg);
+  for (auto d : domains) {
+    cout << d.first << " -> " << str(d.second) << endl;
+  }
+
   cout << "Micro-op breakdown" << endl;
   for (auto op : prg.all_ops()) {
+    auto domain = map_find("start_" + op->name, domains);
+
     int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
     cout << tab(1) << "--- " << op->name << endl;
     cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
     cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
+    cout << tab(2) << "Dom  : " << str(domain) << endl;
     for (auto b : op->buffers_read()) {
       int l = map_find(b, hwinfo.buffer_load_latencies);
       cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
