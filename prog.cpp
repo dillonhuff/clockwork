@@ -5671,7 +5671,19 @@ map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
   }
 
   return schedule_affs;
+}
 
+map<string, isl_set*> op_start_times_domains(prog& prg) {
+  auto start_times = prg.whole_iteration_domain();
+
+  map<string, isl_set*> sets;
+  for (auto a : get_sets(start_times)) {
+    a = set_name(a, "start_" + name(a));
+
+    sets[name(a)] = a;
+  }
+
+  return sets;
 }
 
 uset* op_start_times_domain(prog& prg) {

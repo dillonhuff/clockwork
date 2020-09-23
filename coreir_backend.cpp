@@ -1446,6 +1446,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     }
   }
   assert(false);
+
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
