@@ -1486,11 +1486,15 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         affine_controller(c, domain, offset);
       auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(), aff_c);
 
+      auto end_controller = def->addInstance(
+          controller_name(op->name) + c->getUnique(),
+          affine_controller(c, domain, start_time_aff));
+
       string rd_start = op->name + "_ISSUE_Read_" + b;
       string rd_end = op->name + "_RCV_Read_" + b;
 
-      micro_op_enables[rd_start] = nullptr;
-      micro_op_enables[rd_end] = nullptr;
+      micro_op_enables[rd_start] = start_controller;
+      micro_op_enables[rd_end] = end_controller;
 
       cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
       cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
