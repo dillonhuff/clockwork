@@ -43,7 +43,14 @@ using CoreIR::Module;
 
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   assert(num_div_dims(aff) == 0);
-  string res_str = str(const_coeff(aff));
+  vector<string> terms;
+  terms.push_back(str(const_coeff(aff)));
+  for (int i = 0; i < num_in_dims(aff); i++) {
+    string cf = str(get_coeff(aff, i));
+    string rn = ctrl_vars + brackets(str(i));
+    terms.push_back(cf + "*" + rn);
+  }
+  string res_str = sep_list(terms, "(", ")", " + ");
   return parens(res_str);
 }
 
