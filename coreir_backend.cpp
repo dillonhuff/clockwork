@@ -41,6 +41,44 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 
+void generate_verilog_for_bank_storage(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank) {
+
+  auto name = bank.name;
+  auto pt_type_string = bank.pt_type_string;
+  auto read_delays = bank.read_delays;
+  auto num_readers = bank.num_readers;
+  auto maxdelay = bank.maxdelay;
+  auto layout = bank.extract_layout();
+
+  //out << "struct " << name << "_cache" <<  " {" << endl;
+  out << "\t// RAM Box: " << layout << endl;
+
+  //C array with read and write method
+  if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
+    auto partitions =
+      bank.get_partitions();
+    int partition_size = partitions.size();
+    //add a ram capacity compute pass is different from stack bank
+    int capacity = 1;
+    auto dsets = get_sets(bank.rddom);
+    int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
+    for (int i = 0; i < dims; i++) {
+      auto s = project_all_but(to_set(bank.rddom), i);
+      auto min = to_int(lexminval(s));
+      auto max = to_int(lexmaxval(s));
+      int length = max - min + 1;
+      capacity *= length;
+    }
+
+    out << "\t// Capacity: " << capacity << endl;
+    out << tab(1) << "logic [15:0] " << " RAM [" << capacity - 1 << ":0];" << endl;
+
+  } else {
+    assert(false);
+  }
+}
 void generate_platonic_ubuffer(CodegenOptions& options,
     UBuffer& buf) {
   ostream& out = *verilog_collateral_file;
@@ -73,6 +111,38 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     }
   }
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "", "", ",\n\t") << ");" << endl;
+  out << endl;
+
+  bank bnk = buf.compute_bank_info();
+  out << tab(1) << "// Storage" << endl;
+  generate_verilog_for_bank_storage(options, out, bnk);
+
+  out << endl;
+  out << tab(1) << "always @(posedge clk) begin" << endl;
+  for (auto in : buf.get_in_ports()) {
+    out << tab(2) << "// RAM[addr] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+  }
+  for (auto outpt : buf.get_out_ports()) {
+    out << tab(2) << "// " << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << "RAM[addr]" << ";" << endl;
+  }
+  //for (auto b : buf.port_bundles) {
+    //int pt_width = buf.port_widths;
+    //int bd_width = buf.lanes_in_bundle(b.first);
+    //string name = b.first;
+    //string pt_rep = pick(b.second);
+    //auto acc_maps = get_maps(buf.access_map.at(pt_rep));
+    //assert(acc_maps.size() > 0);
+    //int control_dimension = num_in_dims(pick(acc_maps));
+    //if (buf.is_input_bundle(b.first)) {
+      //for (auto buf.)
+      //out << tab(2) << "// RAM[addr] <= " << name << ";" << endl;
+    //} else {
+      //out << tab(2) << "// " << name << " <= RAM[addr];" << endl;
+    //}
+  //}
+  out << tab(1) << "end" << endl;
+
+  out << endl;
   out << "endmodule" << endl << endl;
 }
 
