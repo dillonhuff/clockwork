@@ -57,13 +57,14 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     if (buf.is_input_bundle(b.first)) {
       if (options.rtl_options.use_external_controllers) {
         port_decls.push_back("input " + name + "_wen");
-        //port_decls.push_back( "input [15:0] " + name + "_ctrl_vars [" + str(control_dimension - 1) + ":0] " + name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        port_decls.push_back( "input [15:0] " + name + "_ctrl_vars [" + str(control_dimension - 1) + ":0] ");
         //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
       }
       //ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       if (options.rtl_options.use_external_controllers) {
         port_decls.push_back("input " + name + "_ren");
+        port_decls.push_back( "input [15:0] " + name + "_ctrl_vars [" + str(control_dimension - 1) + ":0] ");
         //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
       }
       //ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
