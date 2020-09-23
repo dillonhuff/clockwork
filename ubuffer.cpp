@@ -1361,8 +1361,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
 
-    generate_platonic_ubuffer(options, buf);
-    return;
+    //generate_platonic_ubuffer(options, buf);
+    //return;
 
     cout << "Generating functional model for: " << buf.name << endl;
     cout << tab(1) << "partition: " << buf.banking.partition << endl;

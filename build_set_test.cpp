@@ -16514,7 +16514,7 @@ vector<prog> stencil_programs() {
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
-  //test_programs.push_back(unsharp());
+  test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
