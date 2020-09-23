@@ -1466,40 +1466,64 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     cout << d.first << " -> " << str(d.second) << endl;
   }
 
-  //cout << "Micro-op breakdown" << endl;
-  //for (auto op : prg.all_ops()) {
-    //auto start_time_aff = map_find(op, start_times);
-    //auto domain = map_find("start_" + op->name, domains);
-    //int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
-    //cout << tab(1) << "--- " << op->name << endl;
-    //cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
-    //cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
-    //cout << tab(2) << "Dom  : " << str(domain) << endl;
-    //for (auto b : op->buffers_read()) {
-      //int l = map_find(b, hwinfo.buffer_load_latencies);
-      //auto cst_aff = constant_aff(start_time_aff, l);
-      //cout << "cst_aff = " << str(cst_aff) << endl;
-      //isl_aff* offset = sub(start_time_aff, cst_aff);
-      //auto aff_c =
-        //affine_controller(c, domain, offset);
+  map<string, Wireable*> micro_op_enables;
+  cout << "Micro-op breakdown" << endl;
+  for (auto op : prg.all_ops()) {
+    auto start_time_aff = map_find(op, start_times);
+    auto domain = map_find("start_" + op->name, domains);
+    int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
+    cout << tab(1) << "--- " << op->name << endl;
+    cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
+    cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
+    cout << tab(2) << "Dom  : " << str(domain) << endl;
+    for (auto b : op->buffers_read()) {
+      int l = map_find(b, hwinfo.buffer_load_latencies);
+      auto cst_aff = constant_aff(start_time_aff, l);
+      cout << "cst_aff = " << str(cst_aff) << endl;
+      isl_aff* offset = sub(start_time_aff, cst_aff);
 
-      //aff_c->print();
-      //auto controller = def->addInstance(controller_name(op->name) + c->getUnique(), aff_c);
+      auto aff_c =
+        affine_controller(c, domain, offset);
+      auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(), aff_c);
 
-      //cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
-      //cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
-    //}
-    //if (op->func != "") {
-      //cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
-      //cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
-    //}
-    //for (auto b : op->buffers_written()) {
-      //int l = map_find(b, hwinfo.buffer_store_latencies);
-      //cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
-      //cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
-    //}
-  //}
-  //assert(false);
+      string rd_start = op->name + "_ISSUE_Read_" + b;
+      string rd_end = op->name + "_RCV_Read_" + b;
+
+      micro_op_enables[rd_start] = nullptr;
+      micro_op_enables[rd_end] = nullptr;
+
+      cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
+      cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
+    }
+    if (op->func != "") {
+      string rd_start = op->name + "_ISSUE_exe";
+      string rd_end = op->name + "_RCV_exe";
+
+      micro_op_enables[rd_start] = nullptr;
+      micro_op_enables[rd_end] = nullptr;
+
+      cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
+      cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
+    }
+
+    for (auto b : op->buffers_written()) {
+      string rd_start = op->name + "_ISSUE_Write_" + b;
+      string rd_end = op->name + "_RCV_Write_" + b;
+
+      micro_op_enables[rd_start] = nullptr;
+      micro_op_enables[rd_end] = nullptr;
+
+      int l = map_find(b, hwinfo.buffer_store_latencies);
+      cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
+      cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
+    }
+  }
+
+  cout << "Ops..." << endl;
+  for (auto op : micro_op_enables) {
+    cout << tab(1) << op.first << endl;
+  }
+  assert(false);
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
