@@ -1426,17 +1426,22 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   auto end_times = op_end_times(hwinfo, prg);
   cout << "Micro-op breakdown" << endl;
   for (auto op : prg.all_ops()) {
+    int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
     cout << tab(1) << "--- " << op->name << endl;
     cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
     cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
     for (auto b : op->buffers_read()) {
-      cout << tab(2) << "Read  " << b << endl;
+      int l = map_find(b, hwinfo.buffer_load_latencies);
+      cout << tab(2) << "Issue Read  " << b << " at " << -1*l << endl;
+      cout << tab(2) << "Rcv   Read  " << b << " at " << 0 << endl;
     }
     if (op->func != "") {
       cout << tab(2) << "Exe   " << op->func << endl;
     }
     for (auto b : op->buffers_written()) {
-      cout << tab(2) << "Write " << b << endl;
+      int l = map_find(b, hwinfo.buffer_store_latencies);
+      cout << tab(2) << "Issue Write " << b << " at " << compute_latency << endl;
+      cout << tab(2) << "Cmt   Write " << b << " at " << compute_latency + l << endl;
     }
   }
   assert(false);
