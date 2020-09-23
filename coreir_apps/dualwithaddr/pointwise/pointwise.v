@@ -1,3 +1,5 @@
+// Module `mult_stencil_ub` defined externally
+// Module `hw_input_global_wrapper_stencil_ub` defined externally
 module hcompute_hw_output_stencil (
     output [15:0] out_hw_output_stencil,
     input [15:0] in0_mult_stencil [0:0]
@@ -80,166 +82,6 @@ coreir_reg #(
     .in(reg0_in),
     .out(out)
 );
-endmodule
-
-module delay__U80 (
-    input clk,
-    input [15:0] wdata,
-    output [15:0] rdata,
-    input rst_n,
-    input flush
-);
-wire [15:0] _U81_in;
-wire _U81_clk;
-wire [15:0] _U81_out;
-wire [15:0] _U82_in;
-wire _U82_clk;
-wire [15:0] _U82_out;
-wire [15:0] _U83_in;
-wire _U83_clk;
-wire [15:0] _U83_out;
-wire [15:0] _U84_in;
-wire _U84_clk;
-assign _U81_in = wdata;
-assign _U81_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U81 (
-    .in(_U81_in),
-    .clk(_U81_clk),
-    .out(_U81_out)
-);
-assign _U82_in = _U81_out;
-assign _U82_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U82 (
-    .in(_U82_in),
-    .clk(_U82_clk),
-    .out(_U82_out)
-);
-assign _U83_in = _U82_out;
-assign _U83_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U83 (
-    .in(_U83_in),
-    .clk(_U83_clk),
-    .out(_U83_out)
-);
-assign _U84_in = _U83_out;
-assign _U84_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U84 (
-    .in(_U84_in),
-    .clk(_U84_clk),
-    .out(rdata)
-);
-endmodule
-
-module mult_stencil_ub (
-    input clk,
-    input flush,
-    input rst_n,
-    input op_hcompute_hw_output_stencil_read_ren,
-    input [15:0] op_hcompute_hw_output_stencil_read_ctrl_vars [2:0],
-    output [15:0] op_hcompute_hw_output_stencil_read [0:0],
-    input op_hcompute_mult_stencil_write_wen,
-    input [15:0] op_hcompute_mult_stencil_write_ctrl_vars [2:0],
-    input [15:0] op_hcompute_mult_stencil_write [0:0]
-);
-wire delay_sr_U85_clk;
-wire [15:0] delay_sr_U85_wdata;
-wire [15:0] delay_sr_U85_rdata;
-wire delay_sr_U85_rst_n;
-wire delay_sr_U85_flush;
-assign delay_sr_U85_clk = clk;
-assign delay_sr_U85_wdata = op_hcompute_mult_stencil_write[0];
-assign delay_sr_U85_rst_n = rst_n;
-assign delay_sr_U85_flush = flush;
-delay__U80 delay_sr_U85 (
-    .clk(delay_sr_U85_clk),
-    .wdata(delay_sr_U85_wdata),
-    .rdata(delay_sr_U85_rdata),
-    .rst_n(delay_sr_U85_rst_n),
-    .flush(delay_sr_U85_flush)
-);
-assign op_hcompute_hw_output_stencil_read[0] = delay_sr_U85_rdata;
-endmodule
-
-module delay__U75 (
-    input clk,
-    input [15:0] wdata,
-    output [15:0] rdata,
-    input rst_n,
-    input flush
-);
-wire [15:0] _U76_in;
-wire _U76_clk;
-wire [15:0] _U76_out;
-wire [15:0] _U77_in;
-wire _U77_clk;
-wire [15:0] _U77_out;
-wire [15:0] _U78_in;
-wire _U78_clk;
-assign _U76_in = wdata;
-assign _U76_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U76 (
-    .in(_U76_in),
-    .clk(_U76_clk),
-    .out(_U76_out)
-);
-assign _U77_in = _U76_out;
-assign _U77_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U77 (
-    .in(_U77_in),
-    .clk(_U77_clk),
-    .out(_U77_out)
-);
-assign _U78_in = _U77_out;
-assign _U78_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U78 (
-    .in(_U78_in),
-    .clk(_U78_clk),
-    .out(rdata)
-);
-endmodule
-
-module hw_input_global_wrapper_stencil_ub (
-    input clk,
-    input flush,
-    input rst_n,
-    input op_hcompute_hw_input_global_wrapper_stencil_write_wen,
-    input [15:0] op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars [2:0],
-    input [15:0] op_hcompute_hw_input_global_wrapper_stencil_write [0:0],
-    input op_hcompute_mult_stencil_read_ren,
-    input [15:0] op_hcompute_mult_stencil_read_ctrl_vars [2:0],
-    output [15:0] op_hcompute_mult_stencil_read [0:0]
-);
-wire delay_sr_U79_clk;
-wire [15:0] delay_sr_U79_wdata;
-wire [15:0] delay_sr_U79_rdata;
-wire delay_sr_U79_rst_n;
-wire delay_sr_U79_flush;
-assign delay_sr_U79_clk = clk;
-assign delay_sr_U79_wdata = op_hcompute_hw_input_global_wrapper_stencil_write[0];
-assign delay_sr_U79_rst_n = rst_n;
-assign delay_sr_U79_flush = flush;
-delay__U75 delay_sr_U79 (
-    .clk(delay_sr_U79_clk),
-    .wdata(delay_sr_U79_wdata),
-    .rdata(delay_sr_U79_rdata),
-    .rst_n(delay_sr_U79_rst_n),
-    .flush(delay_sr_U79_flush)
-);
-assign op_hcompute_mult_stencil_read[0] = delay_sr_U79_rdata;
 endmodule
 
 module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
@@ -857,9 +699,9 @@ module pointwise (
     output hw_output_stencil_op_hcompute_hw_output_stencil_write_en,
     output [15:0] hw_output_stencil_op_hcompute_hw_output_stencil_write [0:0]
 );
-wire [15:0] _U86_in;
-wire _U86_clk;
-wire [15:0] _U86_out;
+wire [15:0] _U75_in;
+wire _U75_clk;
+wire [15:0] _U75_out;
 wire hw_input_global_wrapper_stencil_clk;
 wire hw_input_global_wrapper_stencil_flush;
 wire hw_input_global_wrapper_stencil_rst_n;
@@ -929,14 +771,14 @@ wire op_hcompute_mult_stencil_write_start;
 wire op_hcompute_mult_stencil_write_start_control_vars_clk;
 wire [15:0] op_hcompute_mult_stencil_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_mult_stencil_write_start_control_vars_out [2:0];
-assign _U86_in = hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0];
-assign _U86_clk = clk;
+assign _U75_in = hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0];
+assign _U75_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U86 (
-    .in(_U86_in),
-    .clk(_U86_clk),
-    .out(_U86_out)
+) _U75 (
+    .in(_U75_in),
+    .clk(_U75_clk),
+    .out(_U75_out)
 );
 assign hw_input_global_wrapper_stencil_clk = clk;
 assign hw_input_global_wrapper_stencil_flush = flush;
@@ -985,7 +827,7 @@ mult_stencil_ub mult_stencil (
     .op_hcompute_mult_stencil_write(mult_stencil_op_hcompute_mult_stencil_write)
 );
 assign op_hcompute_hw_input_global_wrapper_stencil_clk = clk;
-assign op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0] = _U86_out;
+assign op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0] = _U75_out;
 cu_op_hcompute_hw_input_global_wrapper_stencil op_hcompute_hw_input_global_wrapper_stencil (
     .clk(op_hcompute_hw_input_global_wrapper_stencil_clk),
     .hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read(op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read),
