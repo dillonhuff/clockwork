@@ -41,6 +41,59 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 
+string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  isl_map* m = to_map(buf.access_map.at(pt));
+  auto svec = isl_pw_multi_aff_from_map(m);
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(svec);
+  vector<string> domains;
+  vector<string> offsets;
+  for (auto piece : pieces) {
+    vector<string> addr_vec;
+    isl_multi_aff* ma = piece.second;
+    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+      addr_vec.push_back(codegen_c(aff));
+    }
+
+    vector<string> addr_vec_out;
+    for (int i = 0; i < buf.logical_dimension(); i++) {
+      int length = 1;
+      for (int d = 0; d < i; d++) {
+        length *= lengths.at(d);
+      }
+      string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
+      addr_vec_out.push_back(item);
+    }
+
+    string addr = sep_list(addr_vec_out, "", "", " + ");
+    offsets.push_back(addr);
+    domains.push_back(codegen_c(piece.first));
+  }
+
+  assert(offsets.size() > 0);
+  assert(domains.size() == offsets.size());
+
+  string base = offsets.at(0);
+  for (int d = 1; d < offsets.size(); d++) {
+    base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
+  }
+
+  return base;
+
+}
+
 void generate_verilog_for_bank_storage(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
@@ -116,11 +169,11 @@ void generate_platonic_ubuffer(CodegenOptions& options,
   out << endl;
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
-    string addr = string("0") + "// " + buf.generate_linearize_ram_addr(in, bnk);
+    string addr = generate_linearized_verilog_addr(in, bnk, buf);
     out << tab(2) << "RAM[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
   }
   for (auto outpt : buf.get_out_ports()) {
-    string addr = string("0") + "// " + buf.generate_linearize_ram_addr(outpt, bnk);
+    string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
     out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " <= " << "RAM[" << addr << "]" << ";" << endl;
   }
   //for (auto b : buf.port_bundles) {
