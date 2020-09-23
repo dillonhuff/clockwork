@@ -16533,11 +16533,10 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  test_programs.push_back(resnet());
-
   test_programs.push_back(conv_layer());
   test_programs.push_back(unet_conv_3_3());
-
+  test_programs.push_back(resnet());
+  
   // Wired up, but incorrect values
   test_programs.push_back(conv_multi());
   test_programs.push_back(accumulation());
@@ -16880,7 +16879,9 @@ void cgra_flow_tests() {
 
   //assert(false);
 
-  auto test_programs = stencil_programs();
+  auto test_programs =
+    all_cgra_programs();
+    //stencil_programs();
   //auto test_programs = all_cgra_programs();
 
   test_stencil_codegen(test_programs);

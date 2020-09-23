@@ -1116,6 +1116,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
   void generate_banks(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+    return;
+
     int width = buf.port_widths;
     auto c = def->getContext();
     auto ns = c->getNamespace("global");
