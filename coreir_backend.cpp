@@ -1418,40 +1418,11 @@ isl_aff* add(isl_aff* start_time_aff, const int compute_latency) {
   return add(start_time_aff, constant_aff(start_time_aff, compute_latency));
 }
 
-CoreIR::Module* generate_coreir(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
+void generate_micro_op_controllers(CodegenOptions& options,
+    ModuleDef* def,
     prog& prg,
-    umap* schedmap,
-    CoreIR::Context* context,
     schedule_info& hwinfo) {
-
-
-  ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
-  verilog_collateral_file = &verilog_collateral;
-  Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
-
-  bool found_compute = true;
-  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  if (hwinfo.use_dse_compute) {
-    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
-    //compute_file = "./dse_apps/" + prg.name + ".json";
-  }
-  ifstream cfile(compute_file);
-  if (!cfile.good()) {
-    cout << "No compute unit file: " << compute_file << endl;
-    //assert(false);
-  }
-  if (!loadFromFile(context, compute_file)) {
-    found_compute = false;
-    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    if (hwinfo.use_dse_compute) {
-      assert(false);
-    }
-  }
-
-  auto def = ub->newModuleDef();
-
-  auto c = context;
+  auto c = def->getContext();
 
   cout << "Buffer load latencies..." << endl;
   for (auto bl : hwinfo.buffer_load_latencies) {
@@ -1550,8 +1521,47 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   cout << "Ops..." << endl;
   for (auto op : micro_op_enables) {
     cout << tab(1) << op.first << endl;
+    assert(op.second != nullptr);
   }
-  assert(false);
+  //assert(false);
+}
+
+CoreIR::Module* generate_coreir(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context,
+    schedule_info& hwinfo) {
+
+
+  ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
+  verilog_collateral_file = &verilog_collateral;
+  Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
+
+  bool found_compute = true;
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  if (hwinfo.use_dse_compute) {
+    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
+    //compute_file = "./dse_apps/" + prg.name + ".json";
+  }
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+    //assert(false);
+  }
+  if (!loadFromFile(context, compute_file)) {
+    found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    if (hwinfo.use_dse_compute) {
+      assert(false);
+    }
+  }
+
+  auto def = ub->newModuleDef();
+  generate_micro_op_controllers(options, def, prg, hwinfo);
+
+  //auto c = context;
+
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
