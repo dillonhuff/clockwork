@@ -1795,7 +1795,8 @@ class UBuffer {
                 continue;
             cout << str(sched) << endl << iis << endl;
             assert(out_dim == iis.size() + 1);
-            schedule.at(pt) = to_umap(linear_schedule(to_map(sched), iis, 0, true));
+            auto dom = domain.at(pt);
+            schedule.at(pt) = its(to_umap(linear_schedule(to_map(sched), iis, 0, true)), dom);
         }
     }
 

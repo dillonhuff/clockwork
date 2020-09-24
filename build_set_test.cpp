@@ -13904,6 +13904,8 @@ void lake_conv33_recipe_test() {
   auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, iis, extra_raw_deps);
   isl_union_map* hsh = global_schedule_from_buffers(ubuf_pool);
   cout << "hardware schedule: " << str(hsh) << endl;
+  cmd("mkdir -p ./lake_stream/conv_3_3_recipe/");
+  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_recipe/", false);
   cmd("mkdir -p ./lake_controllers/conv_3_3_recipe/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_recipe/");
 }
