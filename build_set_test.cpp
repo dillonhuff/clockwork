@@ -2424,10 +2424,47 @@ void flatten_sched_test() {
   cout << str(new_opt_sched) << endl;
 }
 
-void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
+struct lakeStream {
+    vector<string> data_in;
+    vector<string> data_out;
+    vector<bool> valid_in, valid_out;
+
+    void append_data(const vector<int> & in, const vector<int> & out, bool v_in, bool v_out) {
+        data_in.push_back(sep_list(in, "[", "]", " "));
+        data_out.push_back(sep_list(out, "[", "]", " "));
+        valid_in.push_back(v_in);
+        valid_out.push_back(v_out);
+    }
+
+    void emit_csv(string fname) {
+      ofstream out(fname+"_SMT.csv");
+      cout << "fname: " << fname << endl;
+      size_t stream_length = data_in.size();
+      out << "data_in, valid_in, data_out, valid_out" << endl;
+      for (size_t i = 0; i < stream_length; i ++) {
+        out << data_in.at(i) << ", "
+        << valid_in.at(i) << ", "
+        << data_out.at(i) << ", "
+        << valid_out.at(i) << endl;
+      }
+    }
+
+    lakeStream(){}
+
+    lakeStream(lakeStream aggStream, lakeStream tbStream) {
+      data_in = aggStream.data_in;
+      valid_in = aggStream.valid_in;
+      data_out = tbStream.data_out;
+      valid_out = tbStream.valid_out;
+    }
+};
+
+lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
   ofstream out(fname+"_SMT.csv");
   cout << "fname: " << fname << endl;
+
+  lakeStream ret;
 
   //TODO: put this into a tile constraint file
   int input_width = pick(write_addr).size();
@@ -2480,10 +2517,12 @@ void emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> w
         << valid_in << ", "
         << sep_list(addr_out, "[", "]", " ") << ", "
         << valid_out << endl;
+    ret.append_data(addr_in, addr_out, valid_in, valid_out);
 
     cycle ++;
   }
   out.close();
+  return ret;
 }
 
 void emit_top_address_stream(string fname, TileConstraints lake_mem_tile, vector<int> read_cycle, vector<int> write_cycle,
@@ -2819,6 +2858,7 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
 }
 
 void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir) {
+  map<string, pair<lakeStream, lakeStream> > top_stream;
   for (auto it: buffers_opt) {
     string buf_name = it.first;
     UBuffer buf = it.second;
@@ -2829,7 +2869,19 @@ void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir)
     vector<int> sram_write = buf.write_cycle;
     auto read_addr = buf.read_addr;
     auto write_addr = buf.write_addr;
-    emit_top_address_stream(dir + "/" + buf_name , sram_read, sram_write, read_addr, write_addr);
+    lakeStream stream_data = emit_top_address_stream(dir + "/" + buf_name , sram_read, sram_write, read_addr, write_addr);
+    if (contains(buf_name, "agg")) {
+        string tile_name = take_until_str(buf_name, "_agg");
+        top_stream[tile_name].first = stream_data;
+    } else if (contains(buf_name, "tb")) {
+        string tile_name = take_until_str(buf_name, "_tb");
+        top_stream[tile_name].second = stream_data;
+    }
+  }
+  for (auto it: top_stream) {
+    auto agg_tb_pair = it.second;
+    lakeStream top(agg_tb_pair.first, agg_tb_pair.second);
+    top.emit_csv(dir + "/" + it.first + "_top");
   }
 }
 
