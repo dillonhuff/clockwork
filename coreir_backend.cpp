@@ -1019,12 +1019,6 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
 
   auto write_start = wirebit(def, write_start_name(op->name), write_start_w);
 
-  //auto write_start = delaybit(def, write_start_name(op->name), exe_start);
-
-  //wire(def, 16*num_dims(dom), read_start_control_vars_name(op->name), controller->sel("d"));
-  //auto exe_start_ctrl = delay(def, exe_start_control_vars_name(op->name),
-      //controller->sel("d"),
-      //16*num_dims(dom));
   delay_array(def, write_start_control_vars_name(op->name),
       controller->sel("d"),
       16,
@@ -1544,12 +1538,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
   if (hwinfo.use_dse_compute) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
-    //compute_file = "./dse_apps/" + prg.name + ".json";
   }
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
-    //assert(false);
   }
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;
@@ -1562,9 +1554,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   auto def = ub->newModuleDef();
   generate_micro_op_controllers(options, def, prg, hwinfo);
 
-  //auto c = context;
-
-
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
     if (options.rtl_options.use_external_controllers) {
@@ -1576,16 +1565,11 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
       auto ub_mod = generate_coreir(options, context, buf.second, hwinfo);
-      //def->addInstance(buf.second.name, ub_mod);
-      //TODO: add reset connection for garnet mapping
-      //def->connect(def->sel(buf.second.name + ".reset"), def->sel("self.reset"));
       auto b = def->addInstance(buf.second.name, ub_mod);
 
       auto self = def->sel("self");
-      cout << "start wiring ubuffer global signals" << endl;
       def->connect(self->sel("rst_n"), b->sel("rst_n"));
       def->connect(self->sel("flush"), b->sel("flush"));
-      cout << "done wiring ubuffer global signals" << endl;
     }
   }
 
@@ -1636,11 +1620,16 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       if (prg.is_input(buf_name)) {
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
         auto input_bus = "self." + pg(buf_name, bundle_name);
-        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
+
         // TODO: This delayed input is a hack that I insert to
         // ensure that I can assume all buffer reads take 1 cycle
+        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
         def->connect(delayed_input,
             def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
+
+        //def->connect(def->sel(input_bus),
+            //def->sel(op->name + "." + pg(buf_name, bundle_name)));
+
         if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(output_valid),
               read_start_wire(def, op->name));
@@ -1662,15 +1651,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ub->print();
 
   connect_signal("reset", ub);
-  //context->runPasses({"wireclocks-coreir"});
-  //context->runPasses({"rungenerators", "wireclocks-coreir"});
   context->runPasses({"rungenerators", "wireclocks-clk"});
 
-  //assert(false);
   verilog_collateral.close();
   verilog_collateral_file = nullptr;
+
   return ub;
-  //assert(false);
 }
 
 void add_cgralib(CoreIR::Context* context) {
