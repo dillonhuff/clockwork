@@ -3493,3 +3493,13 @@ isl_map* linear_address_map(isl_set* s) {
 isl_map* to_map(isl_aff* s) {
   return isl_map_from_aff(cpy(s));
 }
+
+bool no_divs(isl_aff* a) {
+  for (int d = 0; d < num_div_dims(a); d++) {
+    auto v = isl_aff_get_coefficient_val(a, isl_dim_div, d);
+    if (!is_zero(v)) {
+      return false;
+    }
+  }
+  return true;
+}

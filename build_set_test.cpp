@@ -16380,13 +16380,13 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
+  test_programs.push_back(up_sample());
   test_programs.push_back(unsharp());
   test_programs.push_back(pointwise());
   test_programs.push_back(gaussian());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
-  test_programs.push_back(up_sample());
   test_programs.push_back(camera_pipeline());
 
   // Compute units gone?

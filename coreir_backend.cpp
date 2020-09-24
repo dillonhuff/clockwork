@@ -41,7 +41,36 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 
+static int DATAPATH_WIDTH;
+static int CONTROLPATH_WIDTH;
+
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
+  for (int d = 0; d < num_div_dims(aff); d++) {
+    auto a = isl_aff_get_div(aff, d);
+    cout << tab(2) << "=== div: " << str(a) << endl;
+    cout << tab(3) << "---- div dim: " << num_div_dims(a) << endl;
+    int denom = to_int(isl_aff_get_denominator_val(a));
+    assert(denom == 2);
+    cout << tab(3) << "denom = " << denom << endl;
+    for (int k = 0; k < num_div_dims(a); k++) {
+      cout << tab(4) << str(isl_aff_get_coefficient_val(a, isl_dim_div, k)) << endl;
+    }
+    //int coeff = to_int(isl_aff_get_coefficient_val(aff, isl_dim_div, d));
+    //auto res = sum_term_numerators(def, a);
+    //auto val = mul(def, shiftr(def, res, 1), coeff);
+    //terms.push_back(val);
+    //if (coeff != 0) {
+      //for (int k = 0; k < num_in_dims(a); k++) {
+        //auto inner_coeff = get_coeff(a, k);
+        //cout << tab(3) << str(inner_coeff) << endl;
+      //}
+      //cout << tab(3) << "coeff = " << coeff << endl;
+      //auto term_aff = def->addInstance("div_aff_" + context->getUnique(), coreir_for_aff(context, a));
+      //def->connect(term_aff->sel("d"), self->sel("d"));
+      //// Replace with shift by 1
+      ////terms.push_back(term_aff->sel("out"));
+    //}
+  }
   assert(num_div_dims(aff) == 0);
   vector<string> terms;
   terms.push_back(str(const_coeff(aff)));
@@ -212,7 +241,7 @@ void load_mem_ext(Context* c) {
   lbmem->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
     uint depth = args.at("depth")->get<int>();
-    ASSERT(width==16,"NYI Non 16 bit width");
+    ASSERT(width==DATAPATH_WIDTH,"NYI Non 16 bit width");
     Values rbGenargs({{"width",Const::make(c,width)},{"total_depth",Const::make(c,1024)}});
     nlohmann::json jdata;
     def->addInstance("cgramem","cgralib.Mem",
@@ -252,7 +281,7 @@ void load_mem_ext(Context* c) {
     bool chain_en = args.at("chain_en")->get<bool>();
     uint chain_idx = args.at("chain_idx")->get<int>();
     uint starting_addr = (args.at("output_starting_addrs")->get<Json>())["output_start"][0];
-    ASSERT(width==16,"NYI Non 16 bit width");
+    ASSERT(width==DATAPATH_WIDTH,"NYI Non 16 bit width");
     Values rbGenargs({{"width",Const::make(c,width)},{"total_depth",Const::make(c,1024)}});
     def->addInstance("cgramem","cgralib.Mem",
       rbGenargs,
@@ -313,7 +342,7 @@ void load_commonlib_ext(Context* c) {
   Generator* smax = c->getGenerator("commonlib.smax");
   smax->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
-    ASSERT(width==16,"NYI non 16");
+    ASSERT(width==DATAPATH_WIDTH,"NYI non 16");
     Values PEArgs({
       {"alu_op",Const::make(c,"max")},
       {"flag_sel",Const::make(c,"pe")},
@@ -329,7 +358,7 @@ void load_commonlib_ext(Context* c) {
   Generator* umax = c->getGenerator("commonlib.umax");
   umax->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
-    ASSERT(width==16,"NYI non 16");
+    ASSERT(width==DATAPATH_WIDTH,"NYI non 16");
     Values PEArgs({
       {"alu_op",Const::make(c,"umax")},
       {"flag_sel",Const::make(c,"pe")},
@@ -345,7 +374,7 @@ void load_commonlib_ext(Context* c) {
   Generator* abs = c->getGenerator("commonlib.abs");
   abs->setGeneratorDefFromFun([](Context* c, Values args, ModuleDef* def) {
     uint width = args.at("width")->get<int>();
-    ASSERT(width==16,"NYI non 16");
+    ASSERT(width==DATAPATH_WIDTH,"NYI non 16");
     Values PEArgs({
       {"alu_op",Const::make(c,"abs")},
       {"signed",Const::make(c,false)}
