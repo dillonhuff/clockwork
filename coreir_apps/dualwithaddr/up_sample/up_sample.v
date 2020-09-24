@@ -1,3 +1,5 @@
+// Module `nearest_neighbor_stencil_ub` defined externally
+// Module `hw_input_stencil_ub` defined externally
 module cu_op_hcompute_nearest_neighbor_stencil (
     input clk,
     input [15:0] hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read [0:0],
@@ -62,92 +64,6 @@ coreir_reg #(
 );
 endmodule
 
-module delay__U453 (
-    input clk,
-    input [15:0] wdata,
-    output [15:0] rdata,
-    input rst_n,
-    input flush
-);
-wire [15:0] _U454_in;
-wire _U454_clk;
-wire [15:0] _U454_out;
-wire [15:0] _U455_in;
-wire _U455_clk;
-wire [15:0] _U455_out;
-wire [15:0] _U456_in;
-wire _U456_clk;
-wire [15:0] _U456_out;
-wire [15:0] _U457_in;
-wire _U457_clk;
-assign _U454_in = wdata;
-assign _U454_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U454 (
-    .in(_U454_in),
-    .clk(_U454_clk),
-    .out(_U454_out)
-);
-assign _U455_in = _U454_out;
-assign _U455_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U455 (
-    .in(_U455_in),
-    .clk(_U455_clk),
-    .out(_U455_out)
-);
-assign _U456_in = _U455_out;
-assign _U456_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U456 (
-    .in(_U456_in),
-    .clk(_U456_clk),
-    .out(_U456_out)
-);
-assign _U457_in = _U456_out;
-assign _U457_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U457 (
-    .in(_U457_in),
-    .clk(_U457_clk),
-    .out(rdata)
-);
-endmodule
-
-module nearest_neighbor_stencil_ub (
-    input clk,
-    input flush,
-    input rst_n,
-    input op_hcompute_hw_output_stencil_read_ren,
-    input [15:0] op_hcompute_hw_output_stencil_read_ctrl_vars [2:0],
-    output [15:0] op_hcompute_hw_output_stencil_read [0:0],
-    input op_hcompute_nearest_neighbor_stencil_write_wen,
-    input [15:0] op_hcompute_nearest_neighbor_stencil_write_ctrl_vars [2:0],
-    input [15:0] op_hcompute_nearest_neighbor_stencil_write [0:0]
-);
-wire delay_sr_U458_clk;
-wire [15:0] delay_sr_U458_wdata;
-wire [15:0] delay_sr_U458_rdata;
-wire delay_sr_U458_rst_n;
-wire delay_sr_U458_flush;
-assign delay_sr_U458_clk = clk;
-assign delay_sr_U458_wdata = op_hcompute_nearest_neighbor_stencil_write[0];
-assign delay_sr_U458_rst_n = rst_n;
-assign delay_sr_U458_flush = flush;
-delay__U453 delay_sr_U458 (
-    .clk(delay_sr_U458_clk),
-    .wdata(delay_sr_U458_wdata),
-    .rdata(delay_sr_U458_rdata),
-    .rst_n(delay_sr_U458_rst_n),
-    .flush(delay_sr_U458_flush)
-);
-assign op_hcompute_hw_output_stencil_read[0] = delay_sr_U458_rdata;
-endmodule
-
 module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
     parameter init = 16'h0000
 ) (
@@ -168,97 +84,6 @@ coreir_reg #(
     .clk(reg0_clk),
     .in(reg0_in),
     .out(out)
-);
-endmodule
-
-module coreir_mem #(
-    parameter has_init = 1'b0,
-    parameter sync_read = 1'b0,
-    parameter depth = 1,
-    parameter width = 1
-) (
-    input clk,
-    input [width-1:0] wdata,
-    input [$clog2(depth)-1:0] waddr,
-    input wen,
-    output [width-1:0] rdata,
-    input [$clog2(depth)-1:0] raddr
-);
-  reg [width-1:0] data [depth-1:0];
-  parameter [width*depth-1:0] init = 0;
-  generate if (has_init) begin
-    genvar j;
-    for (j = 0; j < depth; j = j + 1) begin
-      initial begin
-        data[j] = init[(j+1)*width-1:j*width];
-      end
-    end
-  end
-  endgenerate
-  always @(posedge clk) begin
-    if (wen) begin
-      data[waddr] <= wdata;
-    end
-  end
-  generate if (sync_read) begin
-  reg [width-1:0] rdata_reg;
-  always @(posedge clk) begin
-    rdata_reg <= data[raddr];
-  end
-  assign rdata = rdata_reg;
-  end else begin
-  assign rdata = data[raddr];
-  end
-  endgenerate
-
-endmodule
-
-module raw_dual_port_sram_tile__depth2048 (
-    input clk,
-    input [15:0] wdata,
-    input [15:0] waddr,
-    input wen,
-    output [15:0] rdata,
-    input [15:0] raddr,
-    input ren
-);
-wire mem_clk;
-wire [15:0] mem_wdata;
-wire [10:0] mem_waddr;
-wire mem_wen;
-wire [15:0] mem_rdata;
-wire [10:0] mem_raddr;
-wire [15:0] readreg_in;
-wire readreg_clk;
-wire readreg_en;
-assign mem_clk = clk;
-assign mem_wdata = wdata;
-assign mem_waddr = waddr[11 - 1:0];
-assign mem_wen = wen;
-assign mem_raddr = raddr[11 - 1:0];
-coreir_mem #(
-    .depth(2048),
-    .has_init(1'b0),
-    .sync_read(1'b0),
-    .width(16)
-) mem (
-    .clk(mem_clk),
-    .wdata(mem_wdata),
-    .waddr(mem_waddr),
-    .wen(mem_wen),
-    .rdata(mem_rdata),
-    .raddr(mem_raddr)
-);
-assign readreg_in = mem_rdata;
-assign readreg_clk = clk;
-assign readreg_en = ren;
-mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
-    .init(16'h0000)
-) readreg (
-    .in(readreg_in),
-    .clk(readreg_clk),
-    .out(rdata),
-    .en(readreg_en)
 );
 endmodule
 
@@ -821,74 +646,6 @@ assign valid = cmp_time_out;
 assign d[2] = d_2_reg_out;
 assign d[1] = d_1_reg_out;
 assign d[0] = d_0_reg_out;
-endmodule
-
-module aff__U441 (
-    output [15:0] out,
-    input [15:0] d [2:0]
-);
-assign out = 16'((16'((16'((16'(16'h0000 * d[0])) + (16'(16'h0040 * d[1])))) + (16'(16'h0001 * d[2])))) + 16'h0000);
-endmodule
-
-module aff__U399 (
-    output [15:0] out,
-    input [15:0] d [2:0]
-);
-assign out = 16'((16'((16'(((16'((16'((16'((16'(16'h0000 * d[0])) + (16'(16'h0001 * d[1])))) + (16'(16'h0000 * d[2])))) + 16'h0001)) >> 16'h0001) * 16'hffc0)) + (16'(((16'((16'((16'((16'(16'h0000 * d[0])) + (16'(16'h0000 * d[1])))) + (16'(16'h0001 * d[2])))) + 16'h0001)) >> 16'h0001) * 16'hffff)))) + (16'((16'((16'((16'(16'h0000 * d[0])) + (16'(16'h0040 * d[1])))) + (16'(16'h0001 * d[2])))) + 16'h0000)));
-endmodule
-
-module hw_input_stencil_ub (
-    input clk,
-    input flush,
-    input rst_n,
-    input op_hcompute_hw_input_stencil_write_wen,
-    input [15:0] op_hcompute_hw_input_stencil_write_ctrl_vars [2:0],
-    input [15:0] op_hcompute_hw_input_stencil_write [0:0],
-    input op_hcompute_nearest_neighbor_stencil_read_ren,
-    input [15:0] op_hcompute_nearest_neighbor_stencil_read_ctrl_vars [2:0],
-    output [15:0] op_hcompute_nearest_neighbor_stencil_read [0:0]
-);
-wire [15:0] addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U452_out;
-wire [15:0] addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U452_d [2:0];
-wire [15:0] addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U440_out;
-wire [15:0] addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U440_d [2:0];
-wire hw_input_stencil_bank_clk;
-wire [15:0] hw_input_stencil_bank_wdata;
-wire [15:0] hw_input_stencil_bank_waddr;
-wire hw_input_stencil_bank_wen;
-wire [15:0] hw_input_stencil_bank_rdata;
-wire [15:0] hw_input_stencil_bank_raddr;
-wire hw_input_stencil_bank_ren;
-assign addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U452_d[2] = op_hcompute_hw_input_stencil_write_ctrl_vars[2];
-assign addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U452_d[1] = op_hcompute_hw_input_stencil_write_ctrl_vars[1];
-assign addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U452_d[0] = op_hcompute_hw_input_stencil_write_ctrl_vars[0];
-aff__U441 addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U452 (
-    .out(addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U452_out),
-    .d(addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U452_d)
-);
-assign addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U440_d[2] = op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2];
-assign addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U440_d[1] = op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1];
-assign addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U440_d[0] = op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0];
-aff__U399 addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U440 (
-    .out(addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U440_out),
-    .d(addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U440_d)
-);
-assign hw_input_stencil_bank_clk = clk;
-assign hw_input_stencil_bank_wdata = op_hcompute_hw_input_stencil_write[0];
-assign hw_input_stencil_bank_waddr = addrgen_hw_input_stencil_op_hcompute_hw_input_stencil_4_U452_out;
-assign hw_input_stencil_bank_wen = op_hcompute_hw_input_stencil_write_wen;
-assign hw_input_stencil_bank_raddr = addrgen_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_U440_out;
-assign hw_input_stencil_bank_ren = op_hcompute_nearest_neighbor_stencil_read_ren;
-raw_dual_port_sram_tile__depth2048 hw_input_stencil_bank (
-    .clk(hw_input_stencil_bank_clk),
-    .wdata(hw_input_stencil_bank_wdata),
-    .waddr(hw_input_stencil_bank_waddr),
-    .wen(hw_input_stencil_bank_wen),
-    .rdata(hw_input_stencil_bank_rdata),
-    .raddr(hw_input_stencil_bank_raddr),
-    .ren(hw_input_stencil_bank_ren)
-);
-assign op_hcompute_nearest_neighbor_stencil_read[0] = hw_input_stencil_bank_rdata;
 endmodule
 
 module aff__U375 (
@@ -2520,9 +2277,9 @@ module up_sample (
     output input_copy_stencil_op_hcompute_hw_input_stencil_read_valid,
     input [15:0] input_copy_stencil_op_hcompute_hw_input_stencil_read [0:0]
 );
-wire [15:0] _U459_in;
-wire _U459_clk;
-wire [15:0] _U459_out;
+wire [15:0] _U399_in;
+wire _U399_clk;
+wire [15:0] _U399_out;
 wire hw_input_stencil_clk;
 wire hw_input_stencil_flush;
 wire hw_input_stencil_rst_n;
@@ -2646,14 +2403,14 @@ wire op_hcompute_nearest_neighbor_stencil_write_start;
 wire op_hcompute_nearest_neighbor_stencil_write_start_control_vars_clk;
 wire [15:0] op_hcompute_nearest_neighbor_stencil_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_nearest_neighbor_stencil_write_start_control_vars_out [2:0];
-assign _U459_in = input_copy_stencil_op_hcompute_hw_input_stencil_read[0];
-assign _U459_clk = clk;
+assign _U399_in = input_copy_stencil_op_hcompute_hw_input_stencil_read[0];
+assign _U399_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U459 (
-    .in(_U459_in),
-    .clk(_U459_clk),
-    .out(_U459_out)
+) _U399 (
+    .in(_U399_in),
+    .clk(_U399_clk),
+    .out(_U399_out)
 );
 assign hw_input_stencil_clk = clk;
 assign hw_input_stencil_flush = flush;
@@ -2702,7 +2459,7 @@ nearest_neighbor_stencil_ub nearest_neighbor_stencil (
     .op_hcompute_nearest_neighbor_stencil_write(nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write)
 );
 assign op_hcompute_hw_input_stencil_clk = clk;
-assign op_hcompute_hw_input_stencil_input_copy_stencil_op_hcompute_hw_input_stencil_read[0] = _U459_out;
+assign op_hcompute_hw_input_stencil_input_copy_stencil_op_hcompute_hw_input_stencil_read[0] = _U399_out;
 cu_op_hcompute_hw_input_stencil op_hcompute_hw_input_stencil (
     .clk(op_hcompute_hw_input_stencil_clk),
     .input_copy_stencil_op_hcompute_hw_input_stencil_read(op_hcompute_hw_input_stencil_input_copy_stencil_op_hcompute_hw_input_stencil_read),
