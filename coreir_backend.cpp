@@ -44,31 +44,31 @@ using CoreIR::Module;
 static int DATAPATH_WIDTH;
 static int CONTROLPATH_WIDTH;
 
-std::string codegen_verilog_no_div(const std::string& ctrl_vars, isl_aff* const aff) {
-  assert(no_divs(aff));
+//std::string codegen_verilog_no_div(const std::string& ctrl_vars, isl_aff* const aff) {
+  //assert(no_divs(aff));
 
-  //for (int d = 0; d < num_div_dims(aff); d++) {
-    //auto a = isl_aff_get_div(aff, d);
-    //cout << tab(2) << "=== div: " << str(a) << endl;
-    //cout << tab(3) << "---- div dim: " << num_div_dims(a) << endl;
-    //int denom = to_int(isl_aff_get_denominator_val(a));
-    //assert(denom == 2);
-    //cout << tab(3) << "denom = " << denom << endl;
-    //for (int k = 0; k < num_div_dims(a); k++) {
-      //cout << tab(4) << str(isl_aff_get_coefficient_val(a, isl_dim_div, k)) << endl;
-    //}
+  ////for (int d = 0; d < num_div_dims(aff); d++) {
+    ////auto a = isl_aff_get_div(aff, d);
+    ////cout << tab(2) << "=== div: " << str(a) << endl;
+    ////cout << tab(3) << "---- div dim: " << num_div_dims(a) << endl;
+    ////int denom = to_int(isl_aff_get_denominator_val(a));
+    ////assert(denom == 2);
+    ////cout << tab(3) << "denom = " << denom << endl;
+    ////for (int k = 0; k < num_div_dims(a); k++) {
+      ////cout << tab(4) << str(isl_aff_get_coefficient_val(a, isl_dim_div, k)) << endl;
+    ////}
+  ////}
+  //assert(num_div_dims(aff) == 0);
+  //vector<string> terms;
+  //terms.push_back(str(const_coeff(aff)));
+  //for (int i = 0; i < num_in_dims(aff); i++) {
+    //string cf = str(get_coeff(aff, i));
+    //string rn = ctrl_vars + brackets(str(i));
+    //terms.push_back(cf + "*" + rn);
   //}
-  assert(num_div_dims(aff) == 0);
-  vector<string> terms;
-  terms.push_back(str(const_coeff(aff)));
-  for (int i = 0; i < num_in_dims(aff); i++) {
-    string cf = str(get_coeff(aff, i));
-    string rn = ctrl_vars + brackets(str(i));
-    terms.push_back(cf + "*" + rn);
-  }
-  string res_str = sep_list(terms, "(", ")", " + ");
-  return parens(res_str);
-}
+  //string res_str = sep_list(terms, "(", ")", " + ");
+  //return parens(res_str);
+//}
 
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   vector<string> terms;
@@ -86,8 +86,8 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
       auto denom = isl_aff_get_denominator_val(a);
       auto denom_str = str(denom);
       auto astr = codegen_verilog(ctrl_vars, isl_aff_scale_val(a, denom));
-      //terms.push_back("$rtoi($floor(" + astr + " / " + denom + "))");
-      terms.push_back("(" + astr + " >> 1)");
+      terms.push_back("$rtoi($floor(" + astr + " / " + denom_str + "))");
+      //terms.push_back("(" + astr + " >> 1)");
     }
   }
   string res_str = sep_list(terms, "(", ")", " + ");
