@@ -6014,83 +6014,6 @@
           ["self.mult_stencil_op_hcompute_mult_stencil_write.0","inner_compute.out_mult_stencil"]
         ]
       },
-      "delay__U399":{
-        "type":["Record",[
-          ["clk",["Named","coreir.clkIn"]],
-          ["wdata",["Array",16,"BitIn"]],
-          ["rdata",["Array",16,"Bit"]],
-          ["rst_n","BitIn"],
-          ["flush","BitIn"]
-        ]],
-        "instances":{
-          "_U400":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "_U401":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "_U402":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          }
-        },
-        "connections":[
-          ["self.clk","_U400.clk"],
-          ["self.wdata","_U400.in"],
-          ["_U401.in","_U400.out"],
-          ["self.clk","_U401.clk"],
-          ["_U402.in","_U401.out"],
-          ["self.clk","_U402.clk"],
-          ["self.rdata","_U402.out"]
-        ]
-      },
-      "delay__U404":{
-        "type":["Record",[
-          ["clk",["Named","coreir.clkIn"]],
-          ["wdata",["Array",16,"BitIn"]],
-          ["rdata",["Array",16,"Bit"]],
-          ["rst_n","BitIn"],
-          ["flush","BitIn"]
-        ]],
-        "instances":{
-          "_U405":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "_U406":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "_U407":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "_U408":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          }
-        },
-        "connections":[
-          ["self.clk","_U405.clk"],
-          ["self.wdata","_U405.in"],
-          ["_U406.in","_U405.out"],
-          ["self.clk","_U406.clk"],
-          ["_U407.in","_U406.out"],
-          ["self.clk","_U407.clk"],
-          ["_U408.in","_U407.out"],
-          ["self.clk","_U408.clk"],
-          ["self.rdata","_U408.out"]
-        ]
-      },
       "hcompute_hw_input_global_wrapper_stencil":{
         "type":["Record",[
           ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
@@ -6142,19 +6065,7 @@
           ["op_hcompute_mult_stencil_read_ren","BitIn"],
           ["op_hcompute_mult_stencil_read_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_mult_stencil_read",["Array",1,["Array",16,"Bit"]]]
-        ]],
-        "instances":{
-          "delay_sr_U403":{
-            "modref":"global.delay__U399"
-          }
-        },
-        "connections":[
-          ["self.clk","delay_sr_U403.clk"],
-          ["self.flush","delay_sr_U403.flush"],
-          ["self.op_hcompute_mult_stencil_read.0","delay_sr_U403.rdata"],
-          ["self.rst_n","delay_sr_U403.rst_n"],
-          ["self.op_hcompute_hw_input_global_wrapper_stencil_write.0","delay_sr_U403.wdata"]
-        ]
+        ]]
       },
       "mult_stencil_ub":{
         "type":["Record",[
@@ -6167,19 +6078,7 @@
           ["op_hcompute_mult_stencil_write_wen","BitIn"],
           ["op_hcompute_mult_stencil_write_ctrl_vars",["Array",3,["Array",16,"BitIn"]]],
           ["op_hcompute_mult_stencil_write",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "instances":{
-          "delay_sr_U409":{
-            "modref":"global.delay__U404"
-          }
-        },
-        "connections":[
-          ["self.clk","delay_sr_U409.clk"],
-          ["self.flush","delay_sr_U409.flush"],
-          ["self.op_hcompute_hw_output_stencil_read.0","delay_sr_U409.rdata"],
-          ["self.rst_n","delay_sr_U409.rst_n"],
-          ["self.op_hcompute_mult_stencil_write.0","delay_sr_U409.wdata"]
-        ]
+        ]]
       },
       "pointwise":{
         "type":["Record",[
@@ -6192,7 +6091,7 @@
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "_U410":{
+          "_U399":{
             "genref":"mantle.reg",
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
@@ -6325,9 +6224,9 @@
           }
         },
         "connections":[
-          ["self.clk","_U410.clk"],
-          ["self.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U410.in"],
-          ["op_hcompute_hw_input_global_wrapper_stencil.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U410.out"],
+          ["self.clk","_U399.clk"],
+          ["self.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U399.in"],
+          ["op_hcompute_hw_input_global_wrapper_stencil.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U399.out"],
           ["self.clk","hw_input_global_wrapper_stencil.clk"],
           ["self.flush","hw_input_global_wrapper_stencil.flush"],
           ["op_hcompute_hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write","hw_input_global_wrapper_stencil.op_hcompute_hw_input_global_wrapper_stencil_write"],

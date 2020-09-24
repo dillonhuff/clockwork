@@ -1,3 +1,5 @@
+// Module `mult_stencil_ub` defined externally
+// Module `hw_input_global_wrapper_stencil_ub` defined externally
 module hcompute_hw_output_stencil (
     output [15:0] out_hw_output_stencil,
     input [15:0] in0_mult_stencil [0:0]
@@ -80,166 +82,6 @@ coreir_reg #(
     .in(reg0_in),
     .out(out)
 );
-endmodule
-
-module delay__U404 (
-    input clk,
-    input [15:0] wdata,
-    output [15:0] rdata,
-    input rst_n,
-    input flush
-);
-wire [15:0] _U405_in;
-wire _U405_clk;
-wire [15:0] _U405_out;
-wire [15:0] _U406_in;
-wire _U406_clk;
-wire [15:0] _U406_out;
-wire [15:0] _U407_in;
-wire _U407_clk;
-wire [15:0] _U407_out;
-wire [15:0] _U408_in;
-wire _U408_clk;
-assign _U405_in = wdata;
-assign _U405_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U405 (
-    .in(_U405_in),
-    .clk(_U405_clk),
-    .out(_U405_out)
-);
-assign _U406_in = _U405_out;
-assign _U406_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U406 (
-    .in(_U406_in),
-    .clk(_U406_clk),
-    .out(_U406_out)
-);
-assign _U407_in = _U406_out;
-assign _U407_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U407 (
-    .in(_U407_in),
-    .clk(_U407_clk),
-    .out(_U407_out)
-);
-assign _U408_in = _U407_out;
-assign _U408_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U408 (
-    .in(_U408_in),
-    .clk(_U408_clk),
-    .out(rdata)
-);
-endmodule
-
-module mult_stencil_ub (
-    input clk,
-    input flush,
-    input rst_n,
-    input op_hcompute_hw_output_stencil_read_ren,
-    input [15:0] op_hcompute_hw_output_stencil_read_ctrl_vars [2:0],
-    output [15:0] op_hcompute_hw_output_stencil_read [0:0],
-    input op_hcompute_mult_stencil_write_wen,
-    input [15:0] op_hcompute_mult_stencil_write_ctrl_vars [2:0],
-    input [15:0] op_hcompute_mult_stencil_write [0:0]
-);
-wire delay_sr_U409_clk;
-wire [15:0] delay_sr_U409_wdata;
-wire [15:0] delay_sr_U409_rdata;
-wire delay_sr_U409_rst_n;
-wire delay_sr_U409_flush;
-assign delay_sr_U409_clk = clk;
-assign delay_sr_U409_wdata = op_hcompute_mult_stencil_write[0];
-assign delay_sr_U409_rst_n = rst_n;
-assign delay_sr_U409_flush = flush;
-delay__U404 delay_sr_U409 (
-    .clk(delay_sr_U409_clk),
-    .wdata(delay_sr_U409_wdata),
-    .rdata(delay_sr_U409_rdata),
-    .rst_n(delay_sr_U409_rst_n),
-    .flush(delay_sr_U409_flush)
-);
-assign op_hcompute_hw_output_stencil_read[0] = delay_sr_U409_rdata;
-endmodule
-
-module delay__U399 (
-    input clk,
-    input [15:0] wdata,
-    output [15:0] rdata,
-    input rst_n,
-    input flush
-);
-wire [15:0] _U400_in;
-wire _U400_clk;
-wire [15:0] _U400_out;
-wire [15:0] _U401_in;
-wire _U401_clk;
-wire [15:0] _U401_out;
-wire [15:0] _U402_in;
-wire _U402_clk;
-assign _U400_in = wdata;
-assign _U400_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U400 (
-    .in(_U400_in),
-    .clk(_U400_clk),
-    .out(_U400_out)
-);
-assign _U401_in = _U400_out;
-assign _U401_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U401 (
-    .in(_U401_in),
-    .clk(_U401_clk),
-    .out(_U401_out)
-);
-assign _U402_in = _U401_out;
-assign _U402_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U402 (
-    .in(_U402_in),
-    .clk(_U402_clk),
-    .out(rdata)
-);
-endmodule
-
-module hw_input_global_wrapper_stencil_ub (
-    input clk,
-    input flush,
-    input rst_n,
-    input op_hcompute_hw_input_global_wrapper_stencil_write_wen,
-    input [15:0] op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars [2:0],
-    input [15:0] op_hcompute_hw_input_global_wrapper_stencil_write [0:0],
-    input op_hcompute_mult_stencil_read_ren,
-    input [15:0] op_hcompute_mult_stencil_read_ctrl_vars [2:0],
-    output [15:0] op_hcompute_mult_stencil_read [0:0]
-);
-wire delay_sr_U403_clk;
-wire [15:0] delay_sr_U403_wdata;
-wire [15:0] delay_sr_U403_rdata;
-wire delay_sr_U403_rst_n;
-wire delay_sr_U403_flush;
-assign delay_sr_U403_clk = clk;
-assign delay_sr_U403_wdata = op_hcompute_hw_input_global_wrapper_stencil_write[0];
-assign delay_sr_U403_rst_n = rst_n;
-assign delay_sr_U403_flush = flush;
-delay__U399 delay_sr_U403 (
-    .clk(delay_sr_U403_clk),
-    .wdata(delay_sr_U403_wdata),
-    .rdata(delay_sr_U403_rdata),
-    .rst_n(delay_sr_U403_rst_n),
-    .flush(delay_sr_U403_flush)
-);
-assign op_hcompute_mult_stencil_read[0] = delay_sr_U403_rdata;
 endmodule
 
 module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 #(
@@ -2477,9 +2319,9 @@ module pointwise (
     output hw_output_stencil_op_hcompute_hw_output_stencil_write_en,
     output [15:0] hw_output_stencil_op_hcompute_hw_output_stencil_write [0:0]
 );
-wire [15:0] _U410_in;
-wire _U410_clk;
-wire [15:0] _U410_out;
+wire [15:0] _U399_in;
+wire _U399_clk;
+wire [15:0] _U399_out;
 wire hw_input_global_wrapper_stencil_clk;
 wire hw_input_global_wrapper_stencil_flush;
 wire hw_input_global_wrapper_stencil_rst_n;
@@ -2603,14 +2445,14 @@ wire op_hcompute_mult_stencil_write_start;
 wire op_hcompute_mult_stencil_write_start_control_vars_clk;
 wire [15:0] op_hcompute_mult_stencil_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_mult_stencil_write_start_control_vars_out [2:0];
-assign _U410_in = hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0];
-assign _U410_clk = clk;
+assign _U399_in = hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0];
+assign _U399_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U410 (
-    .in(_U410_in),
-    .clk(_U410_clk),
-    .out(_U410_out)
+) _U399 (
+    .in(_U399_in),
+    .clk(_U399_clk),
+    .out(_U399_out)
 );
 assign hw_input_global_wrapper_stencil_clk = clk;
 assign hw_input_global_wrapper_stencil_flush = flush;
@@ -2659,7 +2501,7 @@ mult_stencil_ub mult_stencil (
     .op_hcompute_mult_stencil_write(mult_stencil_op_hcompute_mult_stencil_write)
 );
 assign op_hcompute_hw_input_global_wrapper_stencil_clk = clk;
-assign op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0] = _U410_out;
+assign op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0] = _U399_out;
 cu_op_hcompute_hw_input_global_wrapper_stencil op_hcompute_hw_input_global_wrapper_stencil (
     .clk(op_hcompute_hw_input_global_wrapper_stencil_clk),
     .hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read(op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read),

@@ -1122,6 +1122,8 @@ CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     CoreIR::Context* context) {
+  return nullptr;
+
   //bool found_compute = true;
   //if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
     //found_compute = false;
