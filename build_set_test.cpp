@@ -1430,6 +1430,16 @@ map<string, UBuffer> vectorization_from_buf_map(
   }
 
   input_vec_stmt = buffer_vectorization(iis, vec_cand, 1, 4, ubuf_pool);
+  cout << "\nPrint all the buffers\n" << endl;
+
+  //linearize schedule for all the non-vectorized buffers
+  for (auto & it: ubuf_pool) {
+    auto & buf = it.second;
+    if (!buf.has_hw_schedule()) {
+      buf.linear_buf_schedule(iis);
+    }
+    cout << it.second << endl;
+  }
 
   return ubuf_pool;
 }
@@ -13892,6 +13902,10 @@ void lake_conv33_recipe_test() {
   isl_ctx* ctx = isl_ctx_alloc();
   umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
   auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, iis, extra_raw_deps);
+  isl_union_map* hsh = global_schedule_from_buffers(ubuf_pool);
+  cout << "hardware schedule: " << str(hsh) << endl;
+  cmd("mkdir -p ./lake_controllers/conv_3_3_recipe/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_recipe/");
 }
 
 void lake_conv33_autovec_test() {
@@ -13965,6 +13979,7 @@ void lake_conv33_autovec_test() {
           {{"output_2_sram2tb", "output_2"}, 2}});
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
+  cout << "hardware schedule: " << str(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/conv_3_3_new/");
   auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_new/");
   cmd("mkdir -p ./lake_stream/conv_3_3_new/");

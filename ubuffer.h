@@ -1778,6 +1778,27 @@ class UBuffer {
       assert(false);
     }
 
+    bool has_hw_schedule() const {
+      for (auto pt: get_all_ports()) {
+        auto sched = schedule.at(pt);
+        if (num_out_dims(to_map(sched)) > 1)
+            return false;
+      }
+      return true;
+    }
+
+    void linear_buf_schedule(vector<int> iis) {
+        for (auto pt: get_all_ports()) {
+            auto sched = schedule.at(pt);
+            int out_dim = num_out_dims(to_map(sched));
+            if (out_dim == 1)
+                continue;
+            cout << str(sched) << endl << iis << endl;
+            assert(out_dim == iis.size() + 1);
+            schedule.at(pt) = to_umap(linear_schedule(to_map(sched), iis, 0, true));
+        }
+    }
+
     //ppint the same access pattern to a different buffer domain
     isl_map* remap_access_to_new_buffer(string pt_name, string suffix) {
         auto origin_map = access_map.at(pt_name);
