@@ -1037,6 +1037,37 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
   return def->sel(write_start_name(opname))->sel("out");
 }
 
+void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller, isl_set* dom) {
+
+  int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
+
+  Wireable* op_start_wire = controller->sel("valid");
+  Wireable* op_start_loop_vars = controller->sel("d");
+
+  auto c = def->getContext();
+  wirebit(def, read_start_name(op->name), op_start_wire);
+  auto exe_start = delaybit(def, exe_start_name(op->name), op_start_wire);
+  
+  Wireable* write_start_w = exe_start;
+  for (int d = 0; d < op_latency; d++) {
+    write_start_w = delaybit(def, op->name + c->getUnique(), write_start_w);
+  }
+
+  auto write_start = wirebit(def, write_start_name(op->name), write_start_w);
+
+  delay_array(def, write_start_control_vars_name(op->name),
+      op_start_loop_vars,
+      //controller->sel("d"),
+      16,
+      num_dims(dom));
+  delay_array(def, exe_start_control_vars_name(op->name),
+      op_start_loop_vars,
+      //controller->sel("d"),
+      16,
+      num_dims(dom));
+
+}
+
 Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
   auto c = def->getContext();
 
@@ -1066,32 +1097,8 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   auto aff_c = affine_controller(c, dom, aff);
   aff_c->print();
   auto controller = def->addInstance(controller_name(op->name), aff_c);
-  //def->connect(def->sel("self.rst_n"), controller->sel("rst_n"));
-  //def->connect(def->sel("self.flush"), controller->sel("flush"));
 
-  wirebit(def, read_start_name(op->name), controller->sel("valid"));
-  auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
-  // Assume exe is combinational
-
-  int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
-  //assert(op_latency == 0);
-
-  Wireable* write_start_w = exe_start;
-  for (int d = 0; d < op_latency; d++) {
-    write_start_w = delaybit(def, op->name + c->getUnique(), write_start_w);
-  }
-
-  auto write_start = wirebit(def, write_start_name(op->name), write_start_w);
-
-  delay_array(def, write_start_control_vars_name(op->name),
-      controller->sel("d"),
-      16,
-      num_dims(dom));
-  delay_array(def, exe_start_control_vars_name(op->name),
-      controller->sel("d"),
-      16,
-      num_dims(dom));
-
+  connect_op_control_wires(def, op, hwinfo, controller, dom);
   return controller;
 }
 
