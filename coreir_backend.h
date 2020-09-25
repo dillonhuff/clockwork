@@ -109,4 +109,9 @@ void add_tahoe_memory_generator(CoreIR::Context* c);
 
 void generate_platonic_ubuffer(CodegenOptions& options,
     UBuffer& buf);
+
+CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
+    CoreIR::Wireable* w,
+    const int cycles);
+
 #endif

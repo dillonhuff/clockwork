@@ -1040,9 +1040,21 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
 void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller, isl_set* dom) {
 
   int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
+  int read_latency =
+    op->buffers_read().size() == 0 ? 0 :
+    map_find(pick(op->buffers_read()), hwinfo.buffer_load_latencies);
 
   Wireable* op_start_wire = controller->sel("valid");
   Wireable* op_start_loop_vars = controller->sel("d");
+
+  Wireable* read_start_wire = op_start_wire;
+  Wireable* read_start_loop_vars = op_start_loop_vars;
+
+  Wireable* exe_start_wire = delay_by(def, read_start_wire, read_latency);
+  Wireable* exe_start_loop_vars = delay_by(def, read_start_loop_vars, read_latency);
+
+  Wireable* write_start_wire = delay_by(def, write_start_wire, read_latency + op_latency);
+  Wireable* write_start_loop_vars = delay_by(def, write_start_loop_vars, read_latency + op_latency);
 
   auto c = def->getContext();
   wirebit(def, read_start_name(op->name), op_start_wire);
