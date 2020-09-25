@@ -1057,15 +1057,12 @@ void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Ins
 
   delay_array(def, write_start_control_vars_name(op->name),
       op_start_loop_vars,
-      //controller->sel("d"),
       16,
       num_dims(dom));
   delay_array(def, exe_start_control_vars_name(op->name),
       op_start_loop_vars,
-      //controller->sel("d"),
       16,
       num_dims(dom));
-
 }
 
 Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
@@ -2200,6 +2197,21 @@ CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
       "corebit.reg");
   bdef->connect(r->sel("in"), w);
   return r->sel("out");
+  }
+
+  CoreIR::Wireable* delay_one(CoreIR::ModuleDef* bdef,
+      CoreIR::Wireable* w) {
+    assert(false);
+  }
+
+  CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
+      CoreIR::Wireable* w,
+      const int cycles) {
+    Wireable* delayed = w;
+    for (int i = 0; i < cycles; i++) {
+      delayed = delay_one(bdef, delayed);
+    }
+    return w;
   }
 
   CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
