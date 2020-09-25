@@ -2428,6 +2428,8 @@ struct lakeStream {
     vector<string> data_in;
     vector<string> data_out;
     vector<bool> valid_in, valid_out;
+    int in_width;
+    int out_width;
 
     void append_data(const vector<int> & in, const vector<int> & out, bool v_in, bool v_out) {
         data_in.push_back(sep_list(in, "[", "]", " "));
@@ -2439,9 +2441,10 @@ struct lakeStream {
     void emit_csv(string fname) {
       ofstream out(fname+"_SMT.csv");
       cout << "fname: " << fname << endl;
-      size_t stream_length = data_in.size();
+      size_t stream_length = data_out.size();
       out << "data_in, valid_in, data_out, valid_out" << endl;
       for (size_t i = 0; i < stream_length; i ++) {
+        cout << "Cycle No." << i << endl;
         out << data_in.at(i) << ", "
         << valid_in.at(i) << ", "
         << data_out.at(i) << ", "
@@ -2456,6 +2459,14 @@ struct lakeStream {
       valid_in = aggStream.valid_in;
       data_out = tbStream.data_out;
       valid_out = tbStream.valid_out;
+      in_width = aggStream.in_width;
+      out_width = tbStream.out_width;
+      int size_diff = data_out.size() - data_in.size();
+      for (int i = 0; i < size_diff; i ++) {
+        vector<int> tmp = vector<int>(0, in_width);
+        data_in.push_back(sep_list(tmp, "[", "]", ""));
+        valid_in.push_back("0");
+      }
     }
 };
 
@@ -2469,6 +2480,8 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
   //TODO: put this into a tile constraint file
   int input_width = pick(write_addr).size();
   int output_width = pick(read_addr).size();
+  ret.in_width = input_width;
+  ret.out_width = output_width;
 
   int cycle = 0;
   size_t rd_itr = 0;
