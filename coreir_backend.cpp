@@ -1050,11 +1050,13 @@ void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Ins
   Wireable* read_start_wire = op_start_wire;
   Wireable* read_start_loop_vars = op_start_loop_vars;
 
+  cout << "Delaying exe" << endl;
   Wireable* exe_start_wire = delay_by(def, read_start_wire, read_latency);
   Wireable* exe_start_loop_vars = delay_by(def, read_start_loop_vars, read_latency);
 
-  Wireable* write_start_wire = delay_by(def, write_start_wire, read_latency + op_latency);
-  Wireable* write_start_loop_vars = delay_by(def, write_start_loop_vars, read_latency + op_latency);
+  cout << "Delaying writes" << endl;
+  Wireable* write_start_wire = delay_by(def, exe_start_wire, read_latency + op_latency);
+  Wireable* write_start_loop_vars = delay_by(def, exe_start_loop_vars, read_latency + op_latency);
 
   auto c = def->getContext();
   wirebit(def, read_start_name(op->name), op_start_wire);
@@ -2213,17 +2215,49 @@ CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
 
   CoreIR::Wireable* delay_one(CoreIR::ModuleDef* bdef,
       CoreIR::Wireable* w) {
+    assert(w != nullptr);
+
+    auto tp = w->getType();
+    if (isBit(tp)) {
+      return delaybit(bdef, w);
+    } else if (isa<ArrayType>(tp)) {
+      cout << "Casting to array..." << endl;
+
+      auto atp = static_cast<ArrayType*>(tp);
+      auto elem_type = atp->getElemType();
+
+      assert(isa<ArrayType>(elem_type));
+
+      cout << "Getting array..." << endl;
+
+      auto elem_arr =
+        static_cast<ArrayType*>(elem_type);
+      int elem_width = elem_arr->getLen();
+      int len = atp->getLen();
+      cout << "Width = " << elem_width << endl;
+      cout << "Len   = " << len << endl;
+      return delay_array(bdef, w, elem_width, len);
+    } else {
+      cout << "Unsupported type: " << tp->toString() << endl;
+      assert(false);
+    }
     assert(false);
   }
 
   CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
       CoreIR::Wireable* w,
       const int cycles) {
+    assert(w != nullptr);
+
     Wireable* delayed = w;
     for (int i = 0; i < cycles; i++) {
+      cout << "delaying " << i << ", " << delayed->toString() << endl;
       delayed = delay_one(bdef, delayed);
+      assert(delayed != nullptr);
+      cout << "done with delay" << endl;
     }
-    return w;
+    cout << "Returning delayed..." << endl;
+    return delayed;
   }
 
   CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
@@ -2233,10 +2267,22 @@ CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
   }
 
 CoreIR::Wireable* delay_array(ModuleDef* def,
+    CoreIR::Wireable* input,
+    int elem_width,
+    int num_elems) {
+  cout << "Delaying array " << endl;
+  return delay_array(def, "arr_" + def->getContext()->getUnique(), input, elem_width, num_elems);
+}
+
+CoreIR::Wireable* delay_array(ModuleDef* def,
     const std::string& name,
     CoreIR::Wireable* input,
     int elem_width,
     int num_elems) {
+
+  assert(input != nullptr);
+
+  cout << "Starting delay with: " << input->toString() << endl;
   auto context = def->getContext();
   auto c = context;
   auto ns = context->getNamespace("global");
@@ -2254,7 +2300,11 @@ CoreIR::Wireable* delay_array(ModuleDef* def,
   }
   auto delay = def->addInstance(name, ub);
   def->connect(delay->sel("in"), input);
-  return delay->sel("out");
+
+  cout << "Done delaying" << endl;
+  auto out = delay->sel("out");
+  cout << "out = " << out->toString() << endl;
+  return out;
 }
 
 CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,

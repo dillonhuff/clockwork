@@ -114,4 +114,9 @@ CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
     CoreIR::Wireable* w,
     const int cycles);
 
+CoreIR::Wireable* delay_array(CoreIR::ModuleDef* def,
+    CoreIR::Wireable* input,
+    int elem_width,
+    int num_elems);
+
 #endif
