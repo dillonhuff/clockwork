@@ -18,6 +18,7 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
 #endif
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 
 void blur_example();
 
@@ -16249,7 +16250,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
   auto hw_sched = its(to_umap(prg.whole_iteration_domain(), schedule_affs), prg.whole_iteration_domain());
   cout << endl << endl;
-  cout << "Hw schedule..." << str(hw_sched) << endl;
+  //cout << "Hw schedule..." << str(hw_sched) << endl;
+  cout << "Hw schedule..." << endl;
   for (auto m : get_maps(hw_sched)) {
     cout << tab(1) << str(m) << endl;
   }
@@ -16257,6 +16259,8 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   //assert(false);
 
   assert(no_violated_cycle_accurate_dependencies(sched, prg));
+  assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
+
   auto buffers = build_buffers(prg, hw_sched);
   //generate_app_code(options, buffers, prg, hw_sched);
 
@@ -16325,6 +16329,26 @@ void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
 
   cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
   assert(min >= 0);
+}
+
+bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg) {
+  int max_val = pow(2, bitwidth);
+
+  auto start_times =
+    its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+  cout << endl << endl;
+  cout << "start times: " << str(start_times) << endl;
+  for (auto s : get_sets(range(start_times))) {
+    int max_dim = to_int(lexmaxval(s));
+    cout << tab(1) << "max for s: " << max_dim << endl;
+    if (!(max_dim < max_val)) {
+      cout << tab(1) << "Error: Schedule max time of " << max_dim << " is larger than the largest controller supported value: " << max_val << endl;
+    }
+    assert(max_dim < max_val);
+
+    release(s);
+  }
+  return true;
 }
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
@@ -16747,8 +16771,8 @@ void cgra_flow_tests() {
   //assert(false);
 
   auto test_programs =
-    //all_cgra_programs();
-    stencil_programs();
+    all_cgra_programs();
+    //stencil_programs();
   //auto test_programs = all_cgra_programs();
 
   test_stencil_codegen(test_programs);
