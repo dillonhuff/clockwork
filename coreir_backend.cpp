@@ -1037,7 +1037,7 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
   return def->sel(write_start_name(opname))->sel("out");
 }
 
-void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller, isl_set* dom) {
+void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
 
   int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
   int read_latency =
@@ -1110,7 +1110,7 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   aff_c->print();
   auto controller = def->addInstance(controller_name(op->name), aff_c);
 
-  connect_op_control_wires(def, op, hwinfo, controller, dom);
+  connect_op_control_wires(def, op, hwinfo, controller);
   return controller;
 }
 
