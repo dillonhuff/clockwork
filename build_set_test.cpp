@@ -16098,7 +16098,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);
-  adjust_outer_delays(sched, prg);
+  //adjust_outer_delays(sched, prg);
 
   adjust_schedule_forward(sched, prg);
   return;
@@ -16464,13 +16464,14 @@ vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
 
+  // Passes
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
-  test_programs.push_back(unet_conv_3_3());
-  test_programs.push_back(resnet());
+  //test_programs.push_back(unet_conv_3_3());
+  //test_programs.push_back(resnet());
  
   // Uses a ROM
-  test_programs.push_back(accumulation());
+  //test_programs.push_back(accumulation());
 
   concat(test_programs, stencil_programs());
 
@@ -16810,8 +16811,8 @@ void cgra_flow_tests() {
   //assert(false);
 
   auto test_programs =
-    //all_cgra_programs();
-    stencil_programs();
+    all_cgra_programs();
+    //stencil_programs();
   //auto test_programs = all_cgra_programs();
 
   test_stencil_codegen(test_programs);

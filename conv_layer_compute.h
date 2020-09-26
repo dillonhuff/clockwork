@@ -348,7 +348,7 @@ hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& pw_conv_reduction_stencil) {
 
   int16_t _815 = (int16_t)(0);
   int16_t _816 = max(_pw_conv_reduction_stencil_4, _815);
-  uint8_t _817 = (uint8_t)(_816);
+  uint16_t _817 = (uint16_t)(_816);
   return _817;
 }
 
