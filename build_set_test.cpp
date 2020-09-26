@@ -16302,6 +16302,9 @@ vector<prog> stencil_programs() {
   test_programs.push_back(cascade());
   test_programs.push_back(camera_pipeline());
 
+  // Bounds are too long
+  //test_programs.push_back(stereo());
+  
   // Compute units gone?
   //test_programs.push_back(rom());
   //test_programs.push_back(mini_conv_halide_fixed());
@@ -16321,8 +16324,10 @@ vector<prog> all_cgra_programs() {
  
   // Too large to fit in 16 bit controller
   //test_programs.push_back(mobilenet());
+  //
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
+  //
   // Compute units are out of date?
   // test_programs.push_back(resnet());
 
@@ -16664,8 +16669,8 @@ void cgra_flow_tests() {
   //assert(false);
 
   auto test_programs =
-    all_cgra_programs();
-    //stencil_programs();
+    //all_cgra_programs();
+    stencil_programs();
   //auto test_programs = all_cgra_programs();
 
   test_stencil_codegen(test_programs);
