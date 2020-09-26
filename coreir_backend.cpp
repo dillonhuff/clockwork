@@ -1047,51 +1047,37 @@ void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Ins
   Wireable* op_start_wire = controller->sel("valid");
   Wireable* op_start_loop_vars = controller->sel("d");
 
-  Wireable* read_start_wire = op_start_wire;
-  Wireable* read_start_loop_vars = op_start_loop_vars;
+  Wireable* read_start_wire =
+    delay_by(def, read_start_name(op->name), op_start_wire, 0);
+  Wireable* read_start_loop_vars =
+    delay_by(def, read_start_control_vars_name(op->name), op_start_loop_vars, 0);
 
   cout << "Delaying exe" << endl;
-  Wireable* exe_start_wire = delay_by(def, read_start_wire, read_latency);
-  Wireable* exe_start_loop_vars = delay_by(def, read_start_loop_vars, read_latency);
+  Wireable* exe_start_wire =
+    delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
+  Wireable* exe_start_loop_vars =
+    delay_by(def, exe_start_control_vars_name(op->name), op_start_loop_vars, read_latency);
 
   cout << "Delaying writes" << endl;
-  Wireable* write_start_wire = delay_by(def, exe_start_wire, read_latency + op_latency);
-  Wireable* write_start_loop_vars = delay_by(def, exe_start_loop_vars, read_latency + op_latency);
+  Wireable* write_start_wire =
+    delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
+  Wireable* write_start_loop_vars =
+    delay_by(def, write_start_control_vars_name(op->name), op_start_loop_vars, read_latency + op_latency);
 
-  auto c = def->getContext();
-  wirebit(def, read_start_name(op->name), op_start_wire);
-  auto exe_start = delaybit(def, exe_start_name(op->name), op_start_wire);
+  //auto c = def->getContext();
+  //wirebit(def, read_start_name(op->name), op_start_wire);
+  //auto exe_start = delaybit(def, exe_start_name(op->name), op_start_wire);
   
-  //auto write_start = wirebit(def, write_start_name(op->name), delay_by(def, exe_start_wire, op_latency));
+  //auto write_start = delay_by(def, write_start_name(op->name), exe_start, op_latency);
 
-  //Wireable* write_start_w =
-    //delay_by(def, exe_start, op_latency);
-  
-  //Wireable* write_start_w = exe_start;
-  //for (int d = 0; d < op_latency; d++) {
-    //write_start_w = delaybit(def, op->name + c->getUnique(), write_start_w);
-  //}
-
-  //auto write_start = wirebit(def, write_start_name(op->name), write_start_w);
-  auto write_start = delay_by(def, write_start_name(op->name), exe_start, op_latency);
-
-  delay_by(def,
-      write_start_control_vars_name(op->name),
-      op_start_loop_vars,
-      1);
-  delay_by(def,
-      exe_start_control_vars_name(op->name),
-      op_start_loop_vars,
-      1);
-
-  //delay_array(def, write_start_control_vars_name(op->name),
+  //delay_by(def,
+      //write_start_control_vars_name(op->name),
       //op_start_loop_vars,
-      //16,
-      //num_dims(dom));
-  //delay_array(def, exe_start_control_vars_name(op->name),
+      //1);
+  //delay_by(def,
+      //exe_start_control_vars_name(op->name),
       //op_start_loop_vars,
-      //16,
-      //num_dims(dom));
+      //1);
 }
 
 Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
@@ -1720,12 +1706,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
         // TODO: This delayed input is a hack that I insert to
         // ensure that I can assume all buffer reads take 1 cycle
-        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
-        def->connect(delayed_input,
-            def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
+        //auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
+        //def->connect(delayed_input,
+            //def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
 
-        //def->connect(def->sel(input_bus),
-            //def->sel(op->name + "." + pg(buf_name, bundle_name)));
+        def->connect(def->sel(input_bus),
+            def->sel(op->name + "." + pg(buf_name, bundle_name)));
 
         if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(output_valid),
