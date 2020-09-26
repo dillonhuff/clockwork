@@ -16747,8 +16747,8 @@ void cgra_flow_tests() {
   //assert(false);
 
   auto test_programs =
-    all_cgra_programs();
-    //stencil_programs();
+    //all_cgra_programs();
+    stencil_programs();
   //auto test_programs = all_cgra_programs();
 
   test_stencil_codegen(test_programs);
