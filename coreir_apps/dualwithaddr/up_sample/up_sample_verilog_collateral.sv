@@ -25,6 +25,7 @@ module hw_input_stencil_ub(
 
 endmodule
 
+  // DD from nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0 to nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3 = 1
 module nearest_neighbor_stencil_ub(
 	input clk,
 	input flush,

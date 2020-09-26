@@ -1359,6 +1359,50 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
+maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
+    umap* sched) {
+
+  auto writes = buf.access_map.at(inpt);
+  auto reads = buf.access_map.at(outpt);
+  cout << "writes: " << str(writes) << endl;
+  cout << "reads : " << str(reads) << endl;
+  cout << "Schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+
+  auto time_to_write = dot(inv(sched), (writes));
+  auto time_to_read = dot(inv(sched), (reads));
+
+  cout << "Time to write: " << str(time_to_write) << endl;
+  cout << "Time to read : " << str(time_to_read) << endl;
+
+  auto pc_times = dot(time_to_write, inv(time_to_read));
+  cout << "PC times     : " << str(pc_times) << endl;
+  auto dds = isl_union_map_deltas(pc_times);
+  cout << "DDs          : " << str(dds) << endl;
+  if (!empty(dds)) {
+    auto ddc = to_set(dds);
+
+    if (!(isl_set_is_singleton(ddc))) {
+      return {};
+    }
+    assert(isl_set_is_singleton(ddc));
+
+    int dd = to_int(lexminval(ddc));
+    cout << "DD           : " << dd << endl;
+    string writer_name = domain_name(pick(get_maps(writes)));
+    cout << "writer op    : " << writer_name << endl;
+    dd = dd;
+
+    return {dd};
+  } else {
+    return {};
+  }
+  return {};
+}
+
 bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
   bool built_dm = true;
   for (auto outpt : buf.get_out_ports()) {

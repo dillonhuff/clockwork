@@ -1,3 +1,4 @@
+  // DD from blur_stencil_op_hcompute_blur_stencil_16 to blur_stencil_op_hcompute_hw_output_stencil_1 = 1
 module blur_stencil_ub(
 	input clk,
 	input flush,
@@ -25,6 +26,7 @@ module blur_stencil_ub(
 
 endmodule
 
+  // DD from blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4 to blur_unnormalized_stencil_op_hcompute_blur_stencil_17 = 1
 module blur_unnormalized_stencil_ub(
 	input clk,
 	input flush,
@@ -52,6 +54,7 @@ module blur_unnormalized_stencil_ub(
 
 endmodule
 
+  // DD from blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15 to blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_5 = 1
 module blur_unnormalized_stencil_clkwrk_dsa0_ub(
 	input clk,
 	input flush,
@@ -79,6 +82,15 @@ module blur_unnormalized_stencil_clkwrk_dsa0_ub(
 
 endmodule
 
+  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_10 = 67
+  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11 = 66
+  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_12 = 4
+  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_13 = 2
+  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_14 = 3
+  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_6 = 132
+  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_7 = 131
+  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_8 = 130
+  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_9 = 68
 module hw_input_stencil_ub(
 	input clk,
 	input flush,

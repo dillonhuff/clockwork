@@ -2062,3 +2062,6 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
 
 map<string, std::set<string> >
 get_unique_output_ports(UBuffer& buf);
+
+maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
+    umap* sched);

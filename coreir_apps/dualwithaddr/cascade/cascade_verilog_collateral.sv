@@ -1,3 +1,12 @@
+  // DD from conv1_stencil_op_hcompute_conv1_stencil_1_16 to conv1_stencil_op_hcompute_conv2_stencil_1_10 = 67
+  // DD from conv1_stencil_op_hcompute_conv1_stencil_1_16 to conv1_stencil_op_hcompute_conv2_stencil_1_11 = 66
+  // DD from conv1_stencil_op_hcompute_conv1_stencil_1_16 to conv1_stencil_op_hcompute_conv2_stencil_1_12 = 4
+  // DD from conv1_stencil_op_hcompute_conv1_stencil_1_16 to conv1_stencil_op_hcompute_conv2_stencil_1_13 = 2
+  // DD from conv1_stencil_op_hcompute_conv1_stencil_1_16 to conv1_stencil_op_hcompute_conv2_stencil_1_5 = 3
+  // DD from conv1_stencil_op_hcompute_conv1_stencil_1_16 to conv1_stencil_op_hcompute_conv2_stencil_1_6 = 132
+  // DD from conv1_stencil_op_hcompute_conv1_stencil_1_16 to conv1_stencil_op_hcompute_conv2_stencil_1_7 = 131
+  // DD from conv1_stencil_op_hcompute_conv1_stencil_1_16 to conv1_stencil_op_hcompute_conv2_stencil_1_8 = 130
+  // DD from conv1_stencil_op_hcompute_conv1_stencil_1_16 to conv1_stencil_op_hcompute_conv2_stencil_1_9 = 68
 module conv1_stencil_ub(
 	input clk,
 	input flush,
@@ -33,6 +42,7 @@ module conv1_stencil_ub(
 
 endmodule
 
+  // DD from conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_27 to conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_17 = 1
 module conv1_stencil_clkwrk_dsa0_ub(
 	input clk,
 	input flush,
@@ -60,6 +70,7 @@ module conv1_stencil_clkwrk_dsa0_ub(
 
 endmodule
 
+  // DD from conv2_stencil_op_hcompute_conv2_stencil_1_4 to conv2_stencil_op_hcompute_hw_output_stencil_1 = 1
 module conv2_stencil_ub(
 	input clk,
 	input flush,
@@ -87,6 +98,7 @@ module conv2_stencil_ub(
 
 endmodule
 
+  // DD from conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_15 to conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_14 = 1
 module conv2_stencil_clkwrk_dsa1_ub(
 	input clk,
 	input flush,
@@ -114,6 +126,15 @@ module conv2_stencil_clkwrk_dsa1_ub(
 
 endmodule
 
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 to hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_18 = 132
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 to hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_19 = 68
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 to hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_20 = 4
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 to hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_21 = 131
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 to hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_22 = 67
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 to hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_23 = 3
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 to hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_24 = 130
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 to hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_25 = 2
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_2 to hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_26 = 66
 module hw_input_global_wrapper_stencil_ub(
 	input clk,
 	input flush,

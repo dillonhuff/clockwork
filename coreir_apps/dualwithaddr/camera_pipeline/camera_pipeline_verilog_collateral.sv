@@ -1,3 +1,6 @@
+  // DD from corrected_stencil_op_hcompute_corrected_stencil_1_48 to corrected_stencil_op_hcompute_curved_stencil_1_41 = 4
+  // DD from corrected_stencil_op_hcompute_corrected_stencil_2_44 to corrected_stencil_op_hcompute_curved_stencil_2_39 = 5
+  // DD from corrected_stencil_op_hcompute_corrected_stencil_52 to corrected_stencil_op_hcompute_curved_stencil_43 = 3
 module corrected_stencil_ub(
 	input clk,
 	input flush,
@@ -45,6 +48,9 @@ module corrected_stencil_ub(
 
 endmodule
 
+  // DD from curved_stencil_op_hcompute_curved_stencil_1_40 to curved_stencil_op_hcompute_hw_output_stencil_1_3 = 4
+  // DD from curved_stencil_op_hcompute_curved_stencil_2_38 to curved_stencil_op_hcompute_hw_output_stencil_2_1 = 2
+  // DD from curved_stencil_op_hcompute_curved_stencil_42 to curved_stencil_op_hcompute_hw_output_stencil_5 = 6
 module curved_stencil_ub(
 	input clk,
 	input flush,
@@ -92,6 +98,15 @@ module curved_stencil_ub(
 
 endmodule
 
+  // DD from demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23 to demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49 = 3
+  // DD from demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29 to demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50 = 4
+  // DD from demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14 to demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51 = 2
+  // DD from demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14 to demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45 = 3
+  // DD from demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23 to demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46 = 4
+  // DD from demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29 to demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47 = 5
+  // DD from demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29 to demosaicked_1_stencil_op_hcompute_corrected_stencil_53 = 3
+  // DD from demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14 to demosaicked_1_stencil_op_hcompute_corrected_stencil_54 = 1
+  // DD from demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23 to demosaicked_1_stencil_op_hcompute_corrected_stencil_55 = 2
 module demosaicked_1_stencil_ub(
 	input clk,
 	input flush,
@@ -145,6 +160,27 @@ module demosaicked_1_stencil_ub(
 
 endmodule
 
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24 = 68
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25 = 3
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26 = 66
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27 = 131
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28 = 67
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15 = 68
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16 = 4
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17 = 3
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18 = 67
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19 = 132
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20 = 5
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21 = 69
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22 = 133
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30 = 66
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31 = 65
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32 = 1
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33 = 67
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34 = 2
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35 = 129
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36 = 130
+  // DD from denoised_1_stencil_op_hcompute_denoised_1_stencil_8 to denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37 = 131
 module denoised_1_stencil_ub(
 	input clk,
 	input flush,
@@ -198,6 +234,11 @@ module denoised_1_stencil_ub(
 
 endmodule
 
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 to hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10 = 3
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 to hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11 = 259
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 to hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12 = 133
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 to hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13 = 129
+  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 to hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9 = 131
 module hw_input_global_wrapper_stencil_ub(
 	input clk,
 	input flush,
