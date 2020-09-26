@@ -172,6 +172,10 @@ void generate_platonic_ubuffer(
       auto dd =
         dependence_distance_singleton(buf, inpt, outpt, sc);
       if (dd.has_value()) {
+        string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
+        cout << "Writer name: " << writer_name << endl;
+        assert(false);
+        //auto writer_latency
         int dd_raw = dd.get_value();
         // TODO: Fix this hack by adding real latency adjustment
         dd_raw = dd_raw - 1;
@@ -187,28 +191,32 @@ void generate_platonic_ubuffer(
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [15:0] in", "output logic [15:0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
-    out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
+    if (delay == 0) {
+      out << tab(1) << "assign out = in;" << endl;
+    } else {
+      out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
-    out << tab(1) << "reg [15:0] read_addr;" << endl;
-    out << tab(1) << "reg [15:0] write_addr;" << endl;
+      out << tab(1) << "reg [15:0] read_addr;" << endl;
+      out << tab(1) << "reg [15:0] write_addr;" << endl;
 
-    out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-    out << tab(2) << "if (~rst_n) begin" << endl;
-    out << tab(3) << "read_addr <= 0;" << endl;
-    out << tab(3) << "write_addr <= " << delay << ";" << endl;
-    out << tab(2) << "end else begin" << endl;
-    out << tab(3) << "storage[write_addr] <= in;" << endl;
-    out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
-    out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
+      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+      out << tab(2) << "if (~rst_n) begin" << endl;
+      out << tab(3) << "read_addr <= 0;" << endl;
+      out << tab(3) << "write_addr <= " << delay << ";" << endl;
+      out << tab(2) << "end else begin" << endl;
+      out << tab(3) << "storage[write_addr] <= in;" << endl;
+      out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
+      out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
 
-    //out << tab(3) << "$display(\"write_addr = %d\", write_addr);" << endl;
+      //out << tab(3) << "$display(\"write_addr = %d\", write_addr);" << endl;
 
-    out << tab(2) << "end" << endl << endl;
-    out << tab(1) << "end" << endl << endl;
+      out << tab(2) << "end" << endl << endl;
+      out << tab(1) << "end" << endl << endl;
 
-    out << tab(1) << "always @(*) begin" << endl;
-    out << tab(2) << "out = storage[read_addr];" << endl;
-    out << tab(1) << "end" << endl << endl;
+      out << tab(1) << "always @(*) begin" << endl;
+      out << tab(2) << "out = storage[read_addr];" << endl;
+      out << tab(1) << "end" << endl << endl;
+    }
 
     out << "endmodule" << endl << endl;
   }
