@@ -40,7 +40,7 @@ dut.eval();
   int hw_output_stencil_op_hcompute_hw_output_stencil_write_en_count = 0;
   dut.clk = 0;
   dut.eval();
-  for (int t = 0; t < 30000; t++) {
+  for (int t = 0; t < (int) pow(2, 16); t++) {
     cout << "t = " << t << endl;
     if (dut.padded16_stencil_op_hcompute_padded16_global_wrapper_stencil_read_valid) {
       cout << "send me data!" << endl;

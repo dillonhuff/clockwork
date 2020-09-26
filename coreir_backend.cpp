@@ -254,13 +254,13 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     out << tab(3) << "RAM[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
     out << tab(2) << "end" << endl;
   }
-  //out << tab(1) << "end" << endl;
+  out << tab(1) << "end" << endl;
 
 
-  //out << tab(1) << "always @(*) begin" << endl;
+  out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
     string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
-    out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " <= " << "RAM[" << addr << "]" << ";" << endl;
+    out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << "RAM[" << addr << "]" << ";" << endl;
   }
 
   out << tab(1) << "end" << endl;
