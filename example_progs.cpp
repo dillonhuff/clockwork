@@ -1520,6 +1520,7 @@ prog unet_conv_3_3() {
   prog prg;
   prg.compute_unit_file = "unet_conv_3_3_compute.h";
   prg.name = "unet_conv_3_3";
+  cout << "Name: " << prg.name << endl;
 
 // Stencil<uint16_t, 2, 16, 16> &input_copy_stencil = arg_0;
   prg.add_input("input_copy_stencil");
