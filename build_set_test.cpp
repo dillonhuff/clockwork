@@ -16073,6 +16073,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);
 
+  adjust_schedule_forward(sched, prg);
   return;
 
   //auto rvars = reduce_vars(prg);
@@ -16247,6 +16248,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   }
 
   auto hw_sched = its(to_umap(prg.whole_iteration_domain(), schedule_affs), prg.whole_iteration_domain());
+  cout << endl << endl;
   cout << "Hw schedule..." << str(hw_sched) << endl;
   for (auto m : get_maps(hw_sched)) {
     cout << tab(1) << str(m) << endl;
@@ -16745,8 +16747,8 @@ void cgra_flow_tests() {
   //assert(false);
 
   auto test_programs =
-    //all_cgra_programs();
-    stencil_programs();
+    all_cgra_programs();
+    //stencil_programs();
   //auto test_programs = all_cgra_programs();
 
   test_stencil_codegen(test_programs);
