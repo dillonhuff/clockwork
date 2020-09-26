@@ -250,7 +250,8 @@ void generate_platonic_ubuffer(
     string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
     for (auto pt : shift_registered_outputs) {
       string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-      if (pt.second.first == in) {
+      //if (pt.second.first == in) {
+      if (false) {
         out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
       }
     }
@@ -270,7 +271,8 @@ void generate_platonic_ubuffer(
 
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
-    if (!contains_key(outpt, shift_registered_outputs)) {
+    //if (!contains_key(outpt, shift_registered_outputs)) {
+    if (true) {
       string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
       out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << "RAM[" << addr << "]" << ";" << endl;
     }
