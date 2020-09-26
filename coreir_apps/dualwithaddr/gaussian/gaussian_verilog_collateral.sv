@@ -11,7 +11,6 @@ module blur_stencil_blur_stencil_op_hcompute_hw_output_stencil_1_to_blur_stencil
       storage[write_addr] <= in;
       read_addr <= read_addr == 0 ? 0 : read_addr + 1;
       write_addr <= write_addr == 0 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -64,7 +63,6 @@ module blur_unnormalized_stencil_blur_unnormalized_stencil_op_hcompute_blur_sten
       storage[write_addr] <= in;
       read_addr <= read_addr == 0 ? 0 : read_addr + 1;
       write_addr <= write_addr == 0 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -117,7 +115,6 @@ module blur_unnormalized_stencil_clkwrk_dsa0_blur_unnormalized_stencil_clkwrk_ds
       storage[write_addr] <= in;
       read_addr <= read_addr == 0 ? 0 : read_addr + 1;
       write_addr <= write_addr == 0 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -170,7 +167,6 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1
       storage[write_addr] <= in;
       read_addr <= read_addr == 66 ? 0 : read_addr + 1;
       write_addr <= write_addr == 66 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -194,7 +190,6 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1
       storage[write_addr] <= in;
       read_addr <= read_addr == 65 ? 0 : read_addr + 1;
       write_addr <= write_addr == 65 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -218,7 +213,6 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1
       storage[write_addr] <= in;
       read_addr <= read_addr == 3 ? 0 : read_addr + 1;
       write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -242,7 +236,6 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1
       storage[write_addr] <= in;
       read_addr <= read_addr == 1 ? 0 : read_addr + 1;
       write_addr <= write_addr == 1 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -266,7 +259,6 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1
       storage[write_addr] <= in;
       read_addr <= read_addr == 2 ? 0 : read_addr + 1;
       write_addr <= write_addr == 2 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -290,7 +282,6 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1
       storage[write_addr] <= in;
       read_addr <= read_addr == 131 ? 0 : read_addr + 1;
       write_addr <= write_addr == 131 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -314,7 +305,6 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1
       storage[write_addr] <= in;
       read_addr <= read_addr == 130 ? 0 : read_addr + 1;
       write_addr <= write_addr == 130 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -338,7 +328,6 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1
       storage[write_addr] <= in;
       read_addr <= read_addr == 129 ? 0 : read_addr + 1;
       write_addr <= write_addr == 129 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -362,7 +351,6 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1
       storage[write_addr] <= in;
       read_addr <= read_addr == 67 ? 0 : read_addr + 1;
       write_addr <= write_addr == 67 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end

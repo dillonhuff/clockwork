@@ -173,6 +173,7 @@ void generate_platonic_ubuffer(
         dependence_distance_singleton(buf, inpt, outpt, sc);
       if (dd.has_value()) {
         int dd_raw = dd.get_value();
+        // TODO: Fix this hack by adding real latency adjustment
         dd_raw = dd_raw - 1;
         shift_registered_outputs[outpt] = {inpt, dd_raw};
       }
@@ -200,7 +201,7 @@ void generate_platonic_ubuffer(
     out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
     out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
 
-    out << tab(3) << "$display(\"write_addr = %d\", write_addr);" << endl;
+    //out << tab(3) << "$display(\"write_addr = %d\", write_addr);" << endl;
 
     out << tab(2) << "end" << endl << endl;
     out << tab(1) << "end" << endl << endl;

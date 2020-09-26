@@ -39,7 +39,6 @@ module nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_s
       storage[write_addr] <= in;
       read_addr <= read_addr == 0 ? 0 : read_addr + 1;
       write_addr <= write_addr == 0 ? 0 : write_addr + 1;
-      $display("write_addr = %d", write_addr);
     end
 
   end
