@@ -1,5 +1,22 @@
 module cim_output_stencil_cim_output_stencil_op_hcompute_hw_output_stencil_46_to_cim_output_stencil_op_hcompute_cim_output_stencil_65_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_output_stencil_ub(
@@ -30,39 +47,192 @@ module cim_output_stencil_ub(
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_66_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [130:0];
+  logic [15:0] storage [131:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 131;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_67_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [65:0];
+  logic [15:0] storage [66:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 66;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_68_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [129:0];
+  logic [15:0] storage [130:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 130;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_69_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [128:0];
+  logic [15:0] storage [129:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 129;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_70_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [66:0];
+  logic [15:0] storage [67:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 67;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_71_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [64:0];
+  logic [15:0] storage [65:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 65;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_72_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [2:0];
+  logic [15:0] storage [3:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 3;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_73_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [1:0];
+  logic [15:0] storage [2:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 2;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_74_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module cim_stencil_ub(
@@ -101,11 +271,45 @@ module cim_stencil_ub(
 endmodule
 
 module grad_x_stencil_grad_x_stencil_op_hcompute_lxx_stencil_8_to_grad_x_stencil_op_hcompute_grad_x_stencil_54_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stencil_5_to_grad_x_stencil_op_hcompute_grad_x_stencil_54_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [4:0];
+  logic [15:0] storage [5:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 5;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module grad_x_stencil_ub(
@@ -140,11 +344,45 @@ module grad_x_stencil_ub(
 endmodule
 
 module grad_y_stencil_grad_y_stencil_op_hcompute_lxy_stencil_6_to_grad_y_stencil_op_hcompute_grad_y_stencil_47_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stencil_3_to_grad_y_stencil_op_hcompute_grad_y_stencil_47_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [4:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 4;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module grad_y_stencil_ub(
@@ -179,7 +417,24 @@ module grad_y_stencil_ub(
 endmodule
 
 module lgxx_stencil_lgxx_stencil_op_hcompute_cim_stencil_62_to_lgxx_stencil_op_hcompute_lgxx_stencil_1_33_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [7:0];
+  logic [15:0] storage [8:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 8;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lgxx_stencil_ub(
@@ -210,7 +465,24 @@ module lgxx_stencil_ub(
 endmodule
 
 module lgxx_stencil_clkwrk_dsa0_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_34_to_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_44_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lgxx_stencil_clkwrk_dsa0_ub(
@@ -241,7 +513,24 @@ module lgxx_stencil_clkwrk_dsa0_ub(
 endmodule
 
 module lgxy_stencil_lgxy_stencil_op_hcompute_cim_stencil_63_to_lgxy_stencil_op_hcompute_lgxy_stencil_1_21_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [4:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 4;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lgxy_stencil_ub(
@@ -272,7 +561,24 @@ module lgxy_stencil_ub(
 endmodule
 
 module lgxy_stencil_clkwrk_dsa1_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_22_to_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_32_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lgxy_stencil_clkwrk_dsa1_ub(
@@ -303,7 +609,24 @@ module lgxy_stencil_clkwrk_dsa1_ub(
 endmodule
 
 module lgyy_stencil_lgyy_stencil_op_hcompute_cim_stencil_64_to_lgyy_stencil_op_hcompute_lgyy_stencil_1_9_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lgyy_stencil_ub(
@@ -334,7 +657,24 @@ module lgyy_stencil_ub(
 endmodule
 
 module lgyy_stencil_clkwrk_dsa2_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_10_to_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_20_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lgyy_stencil_clkwrk_dsa2_ub(
@@ -365,39 +705,192 @@ module lgyy_stencil_clkwrk_dsa2_ub(
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_35_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [131:0];
+  logic [15:0] storage [132:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 132;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_36_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [130:0];
+  logic [15:0] storage [131:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 131;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_37_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [129:0];
+  logic [15:0] storage [130:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 130;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_38_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [67:0];
+  logic [15:0] storage [68:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 68;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_39_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [66:0];
+  logic [15:0] storage [67:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 67;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_40_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [65:0];
+  logic [15:0] storage [66:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 66;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_41_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [4:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 4;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_42_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [1:0];
+  logic [15:0] storage [2:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 2;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [2:0];
+  logic [15:0] storage [3:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 3;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxx_stencil_ub(
@@ -436,39 +929,192 @@ module lxx_stencil_ub(
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_23_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [131:0];
+  logic [15:0] storage [132:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 132;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_24_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [130:0];
+  logic [15:0] storage [131:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 131;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_25_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [129:0];
+  logic [15:0] storage [130:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 130;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_26_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [67:0];
+  logic [15:0] storage [68:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 68;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_27_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [66:0];
+  logic [15:0] storage [67:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 67;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_28_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [65:0];
+  logic [15:0] storage [66:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 66;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_29_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [4:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 4;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_30_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [1:0];
+  logic [15:0] storage [2:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 2;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [2:0];
+  logic [15:0] storage [3:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 3;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lxy_stencil_ub(
@@ -507,39 +1153,192 @@ module lxy_stencil_ub(
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [131:0];
+  logic [15:0] storage [132:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 132;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_12_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [130:0];
+  logic [15:0] storage [131:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 131;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_13_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [129:0];
+  logic [15:0] storage [130:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 130;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_14_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [67:0];
+  logic [15:0] storage [68:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 68;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_15_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [66:0];
+  logic [15:0] storage [67:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 67;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_16_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [65:0];
+  logic [15:0] storage [66:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 66;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_17_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [4:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 4;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_18_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [1:0];
+  logic [15:0] storage [2:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 2;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [2:0];
+  logic [15:0] storage [3:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 3;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module lyy_stencil_ub(
@@ -578,51 +1377,255 @@ module lyy_stencil_ub(
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [128:0];
+  logic [15:0] storage [129:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 129;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_56_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_57_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [64:0];
+  logic [15:0] storage [65:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 65;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_58_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [130:0];
+  logic [15:0] storage [131:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 131;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_59_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [66:0];
+  logic [15:0] storage [67:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 67;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_60_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [2:0];
+  logic [15:0] storage [3:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 3;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_48_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [134:0];
+  logic [15:0] storage [135:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 135;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_49_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [133:0];
+  logic [15:0] storage [134:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 134;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_50_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [132:0];
+  logic [15:0] storage [133:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 133;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_51_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [6:0];
+  logic [15:0] storage [7:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 7;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_52_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [4:0];
+  logic [15:0] storage [5:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 5;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_53_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [5:0];
+  logic [15:0] storage [6:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 6;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module padded16_global_wrapper_stencil_ub(

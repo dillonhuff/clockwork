@@ -206,9 +206,25 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input [15:0] in", "output [15:0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
-    out << tab(1) << "logic [15:0] storage [" << delay - 1 << ":0];" << endl;
-    out << "endmodule" << endl << endl;
+    out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
+    out << tab(1) << "reg [15:0] read_addr;" << endl;
+    out << tab(1) << "reg [15:0] write_addr;" << endl;
+
+    out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+    out << tab(2) << "if (~rst_n) begin" << endl;
+    out << tab(3) << "read_addr <= 0;" << endl;
+    out << tab(3) << "write_addr <= " << delay << ";" << endl;
+    out << tab(2) << "end else begin" << endl;
+    out << tab(3) << "storage[write_addr] <= in;" << endl;
+    out << tab(2) << "end" << endl << endl;
+    out << tab(1) << "end" << endl << endl;
+
+    out << tab(1) << "always @(*) begin" << endl;
+    out << tab(2) << "out = storage[read_addr];" << endl;
+    out << tab(1) << "end" << endl << endl;
+
+    out << "endmodule" << endl << endl;
   }
 
 

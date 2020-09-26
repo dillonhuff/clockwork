@@ -1,5 +1,22 @@
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1_to_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module hw_input_global_wrapper_stencil_ub(
@@ -30,7 +47,24 @@ module hw_input_global_wrapper_stencil_ub(
 endmodule
 
 module mult_stencil_mult_stencil_op_hcompute_hw_output_stencil_3_to_mult_stencil_op_hcompute_mult_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
-  logic [15:0] storage [0:0];
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
 endmodule
 
 module mult_stencil_ub(
