@@ -203,7 +203,7 @@ void generate_platonic_ubuffer(CodegenOptions& options,
 
   for (auto sr : shift_registered_outputs) {
     int delay = sr.second.second;
-    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input [15:0] in", "output [15:0] out"};
+    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [15:0] in", "output logic [15:0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
     out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
@@ -262,6 +262,15 @@ void generate_platonic_ubuffer(CodegenOptions& options,
   generate_verilog_for_bank_storage(options, out, bnk);
 
   out << endl;
+  for (auto in : buf.get_in_ports()) {
+    for (auto pt : shift_registered_outputs) {
+      if (pt.second.first == in) {
+        out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush));";
+      }
+    }
+  }
+  out << endl;
+
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
     string addr = generate_linearized_verilog_addr(in, bnk, buf);
