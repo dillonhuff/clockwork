@@ -1635,7 +1635,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   }
 
   auto def = ub->newModuleDef();
-  generate_micro_op_controllers(options, def, prg, hwinfo);
+  //generate_micro_op_controllers(options, def, prg, hwinfo);
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
