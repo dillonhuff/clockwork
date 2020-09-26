@@ -1,5 +1,7 @@
-module avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_to_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_sr();
+module avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_to_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [0:0];
 endmodule
+
 module avg_pool_stencil_ub(
 	input clk,
 	input flush,
@@ -27,8 +29,10 @@ module avg_pool_stencil_ub(
 
 endmodule
 
-module avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_sr();
+module avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [0:0];
 endmodule
+
 module avg_pool_stencil_clkwrk_dsa0_ub(
 	input clk,
 	input flush,
@@ -56,14 +60,22 @@ module avg_pool_stencil_clkwrk_dsa0_ub(
 
 endmodule
 
-module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [66:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [65:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [1:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [2:0];
 endmodule
+
 module hw_input_stencil_ub(
 	input clk,
 	input flush,

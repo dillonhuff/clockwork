@@ -25,8 +25,10 @@ module hw_input_stencil_ub(
 
 endmodule
 
-module nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_to_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_sr();
+module nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_to_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [0:0];
 endmodule
+
 module nearest_neighbor_stencil_ub(
 	input clk,
 	input flush,

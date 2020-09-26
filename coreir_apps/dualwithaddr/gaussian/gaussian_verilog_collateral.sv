@@ -1,5 +1,7 @@
-module blur_stencil_blur_stencil_op_hcompute_hw_output_stencil_1_to_blur_stencil_op_hcompute_blur_stencil_16_sr();
+module blur_stencil_blur_stencil_op_hcompute_hw_output_stencil_1_to_blur_stencil_op_hcompute_blur_stencil_16_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [0:0];
 endmodule
+
 module blur_stencil_ub(
 	input clk,
 	input flush,
@@ -27,8 +29,10 @@ module blur_stencil_ub(
 
 endmodule
 
-module blur_unnormalized_stencil_blur_unnormalized_stencil_op_hcompute_blur_stencil_17_to_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4_sr();
+module blur_unnormalized_stencil_blur_unnormalized_stencil_op_hcompute_blur_stencil_17_to_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [0:0];
 endmodule
+
 module blur_unnormalized_stencil_ub(
 	input clk,
 	input flush,
@@ -56,8 +60,10 @@ module blur_unnormalized_stencil_ub(
 
 endmodule
 
-module blur_unnormalized_stencil_clkwrk_dsa0_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_5_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15_sr();
+module blur_unnormalized_stencil_clkwrk_dsa0_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_5_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [0:0];
 endmodule
+
 module blur_unnormalized_stencil_clkwrk_dsa0_ub(
 	input clk,
 	input flush,
@@ -85,24 +91,42 @@ module blur_unnormalized_stencil_clkwrk_dsa0_ub(
 
 endmodule
 
-module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_10_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_10_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [66:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_11_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [65:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_12_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_12_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [3:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_13_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_13_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [1:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_14_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_14_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [2:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_6_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_6_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [131:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_7_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_7_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [130:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_8_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_8_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [129:0];
 endmodule
-module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_9_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_9_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input [15:0] in, output [15:0] out);
+  logic [15:0] storage [67:0];
 endmodule
+
 module hw_input_stencil_ub(
 	input clk,
 	input flush,
