@@ -120,7 +120,7 @@ CoreIR::Wireable* delay_array(CoreIR::ModuleDef* def,
     int num_elems);
 
 CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
-    const std:string& out_name,
+    const std::string& out_name,
     CoreIR::Wireable* w,
     const int cycles);
 #endif

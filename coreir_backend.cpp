@@ -2250,7 +2250,7 @@ CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
   }
 
   CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
-      const std:string& out_name,
+      const std::string& out_name,
       CoreIR::Wireable* w,
       const int cycles) {
     auto delayed = delay_by(bdef, w, cycles);
