@@ -15711,6 +15711,30 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   }
 }
 
+void adjust_outer_delays(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+
+    int old_delay = map_find(lp, sched.op_offset_within_parent);
+    int try_delay = 1;
+    bool found_smaller_delay = false;
+    while (try_delay < old_delay) {
+      sched.op_offset_within_parent[lp] = try_delay;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_delay = true;
+        break;
+      }
+      try_delay *= 2;
+    }
+
+    if (!found_smaller_delay) {
+      sched.op_offset_within_parent[lp] = old_delay;
+    }
+  }
+}
+
 void adjust_inner_iis(schedule_info& sched, prog& prg) {
   cout << "Adjusting iis of " << prg.name << endl;
   for (auto lp : get_inner_loops(prg)) {
@@ -16073,6 +16097,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);
+  adjust_outer_delays(sched, prg);
 
   adjust_schedule_forward(sched, prg);
   return;
