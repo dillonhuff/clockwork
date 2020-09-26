@@ -174,11 +174,11 @@ void generate_platonic_ubuffer(
       if (dd.has_value()) {
         string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
         cout << "Writer name: " << writer_name << endl;
-        assert(false);
+        //assert(false);
         //auto writer_latency
         int dd_raw = dd.get_value();
         // TODO: Fix this hack by adding real latency adjustment
-        dd_raw = dd_raw - 1;
+        //dd_raw = dd_raw - 1;
         shift_registered_outputs[outpt] = {inpt, dd_raw};
       }
     }
