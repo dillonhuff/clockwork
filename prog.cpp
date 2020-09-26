@@ -5325,7 +5325,8 @@ void generate_verilator_tb(prog& prg,
 
   rgtb << tab(1) << "dut.clk = 0;" << endl;
   rgtb << tab(1) << "dut.eval();" << endl;
-  rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
+  rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
+  //rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
   //rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
 
   rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;

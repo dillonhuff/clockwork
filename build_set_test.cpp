@@ -15726,7 +15726,8 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
         found_smaller_delay = true;
         break;
       }
-      try_delay *= 2;
+      try_delay = min(try_delay * 2, try_delay + 1000);
+      //try_delay *= 2;
     }
 
     if (!found_smaller_delay) {
@@ -16190,7 +16191,8 @@ schedule_info garnet_schedule_info(prog& prg) {
 
     for (auto b : op->buffers_referenced()) {
       if (!prg.is_boundary(b)) {
-        sched.buffer_load_latencies[b] = 1;
+        //sched.buffer_load_latencies[b] = 1;
+        sched.buffer_load_latencies[b] = 0;
         sched.buffer_store_latencies[b] = 1;
       } else {
         sched.buffer_load_latencies[b] = 0;
@@ -16363,6 +16365,15 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
     its(op_start_times_map(sched, prg), op_start_times_domain(prg));
   cout << endl << endl;
   cout << "start times: " << str(start_times) << endl;
+  cout << endl << endl;
+  for (auto s : get_maps(start_times)) {
+    cout << str(s) << endl;
+    auto d = range(s);
+    cout << tab(1) << "Min: " << str(lexminval(d)) << endl;
+    cout << tab(1) << "Max: " << str(lexmaxval(d)) << endl;
+  }
+
+  cout << endl << endl;
   for (auto s : get_sets(range(start_times))) {
     int max_dim = to_int(lexmaxval(s));
     cout << tab(1) << "max for s: " << max_dim << endl;
