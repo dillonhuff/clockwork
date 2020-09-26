@@ -16051,7 +16051,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     for (auto op : inner_ops(prg)) {
       sched.op_offset_within_parent[op] = total_latency;
       sched.instance_latencies[op] = op_latency(op, sched);
-      total_latency += op_latency(op, sched) + 2;
+      //total_latency += op_latency(op, sched) + 2;
+      total_latency += op_latency(op, sched);
     }
 
     adjust_schedule_forward(sched, prg);

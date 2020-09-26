@@ -105,7 +105,7 @@
           "const_term_U116":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0086"]}
+            "modargs":{"value":[["BitVector",16],"16'h0084"]}
           },
           "mul_d0__U111":{
             "genref":"coreir.mul",
@@ -172,7 +172,7 @@
           "const_term_U134":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0086"]}
+            "modargs":{"value":[["BitVector",16],"16'h0084"]}
           },
           "mul_d0__U129":{
             "genref":"coreir.mul",
@@ -239,7 +239,7 @@
           "const_term_U152":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0086"]}
+            "modargs":{"value":[["BitVector",16],"16'h0084"]}
           },
           "mul_d0__U147":{
             "genref":"coreir.mul",
@@ -306,7 +306,7 @@
           "const_term_U170":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0087"]}
+            "modargs":{"value":[["BitVector",16],"16'h0085"]}
           },
           "mul_d0__U165":{
             "genref":"coreir.mul",
@@ -373,7 +373,7 @@
           "const_term_U188":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0088"]}
+            "modargs":{"value":[["BitVector",16],"16'h0084"]}
           },
           "mul_d0__U183":{
             "genref":"coreir.mul",
@@ -507,7 +507,7 @@
           "const_term_U206":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0089"]}
+            "modargs":{"value":[["BitVector",16],"16'h0085"]}
           },
           "mul_d0__U201":{
             "genref":"coreir.mul",
@@ -574,7 +574,7 @@
           "const_term_U224":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0088"]}
+            "modargs":{"value":[["BitVector",16],"16'h0084"]}
           },
           "mul_d0__U219":{
             "genref":"coreir.mul",
@@ -641,7 +641,7 @@
           "const_term_U242":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0089"]}
+            "modargs":{"value":[["BitVector",16],"16'h0085"]}
           },
           "mul_d0__U237":{
             "genref":"coreir.mul",
@@ -708,7 +708,7 @@
           "const_term_U260":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0089"]}
+            "modargs":{"value":[["BitVector",16],"16'h0085"]}
           },
           "mul_d0__U255":{
             "genref":"coreir.mul",
@@ -775,7 +775,7 @@
           "const_term_U278":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0089"]}
+            "modargs":{"value":[["BitVector",16],"16'h0085"]}
           },
           "mul_d0__U273":{
             "genref":"coreir.mul",
@@ -842,7 +842,7 @@
           "const_term_U296":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0089"]}
+            "modargs":{"value":[["BitVector",16],"16'h0085"]}
           },
           "mul_d0__U291":{
             "genref":"coreir.mul",
@@ -909,7 +909,7 @@
           "const_term_U314":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h008a"]}
+            "modargs":{"value":[["BitVector",16],"16'h0086"]}
           },
           "mul_d0__U309":{
             "genref":"coreir.mul",
@@ -976,7 +976,7 @@
           "const_term_U332":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h010f"]}
+            "modargs":{"value":[["BitVector",16],"16'h0109"]}
           },
           "mul_d0__U327":{
             "genref":"coreir.mul",
@@ -1043,7 +1043,7 @@
           "const_term_U350":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h010f"]}
+            "modargs":{"value":[["BitVector",16],"16'h0109"]}
           },
           "mul_d0__U345":{
             "genref":"coreir.mul",
@@ -1110,7 +1110,7 @@
           "const_term_U368":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h010f"]}
+            "modargs":{"value":[["BitVector",16],"16'h0109"]}
           },
           "mul_d0__U363":{
             "genref":"coreir.mul",
@@ -1244,7 +1244,7 @@
           "const_term_U386":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0110"]}
+            "modargs":{"value":[["BitVector",16],"16'h010a"]}
           },
           "mul_d0__U381":{
             "genref":"coreir.mul",
@@ -1311,7 +1311,7 @@
           "const_term_U404":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0111"]}
+            "modargs":{"value":[["BitVector",16],"16'h0109"]}
           },
           "mul_d0__U399":{
             "genref":"coreir.mul",
@@ -1378,7 +1378,7 @@
           "const_term_U422":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0112"]}
+            "modargs":{"value":[["BitVector",16],"16'h010a"]}
           },
           "mul_d0__U417":{
             "genref":"coreir.mul",
@@ -1445,7 +1445,7 @@
           "const_term_U440":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0111"]}
+            "modargs":{"value":[["BitVector",16],"16'h0109"]}
           },
           "mul_d0__U435":{
             "genref":"coreir.mul",
@@ -1512,7 +1512,7 @@
           "const_term_U458":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0112"]}
+            "modargs":{"value":[["BitVector",16],"16'h010a"]}
           },
           "mul_d0__U453":{
             "genref":"coreir.mul",
@@ -1579,7 +1579,7 @@
           "const_term_U476":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0112"]}
+            "modargs":{"value":[["BitVector",16],"16'h010a"]}
           },
           "mul_d0__U471":{
             "genref":"coreir.mul",
@@ -1646,7 +1646,7 @@
           "const_term_U494":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0112"]}
+            "modargs":{"value":[["BitVector",16],"16'h010a"]}
           },
           "mul_d0__U489":{
             "genref":"coreir.mul",
@@ -1713,7 +1713,7 @@
           "const_term_U512":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0112"]}
+            "modargs":{"value":[["BitVector",16],"16'h010a"]}
           },
           "mul_d0__U507":{
             "genref":"coreir.mul",
@@ -1780,7 +1780,7 @@
           "const_term_U530":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0113"]}
+            "modargs":{"value":[["BitVector",16],"16'h010b"]}
           },
           "mul_d0__U525":{
             "genref":"coreir.mul",
@@ -1847,7 +1847,7 @@
           "const_term_U548":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0115"]}
+            "modargs":{"value":[["BitVector",16],"16'h010b"]}
           },
           "mul_d0__U543":{
             "genref":"coreir.mul",
@@ -1981,7 +1981,7 @@
           "const_term_U566":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0116"]}
+            "modargs":{"value":[["BitVector",16],"16'h010c"]}
           },
           "mul_d0__U561":{
             "genref":"coreir.mul",
@@ -2048,7 +2048,7 @@
           "const_term_U584":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0116"]}
+            "modargs":{"value":[["BitVector",16],"16'h010c"]}
           },
           "mul_d0__U579":{
             "genref":"coreir.mul",
@@ -2115,7 +2115,7 @@
           "const_term_U602":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0116"]}
+            "modargs":{"value":[["BitVector",16],"16'h010c"]}
           },
           "mul_d0__U597":{
             "genref":"coreir.mul",
@@ -2182,7 +2182,7 @@
           "const_term_U620":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0116"]}
+            "modargs":{"value":[["BitVector",16],"16'h010c"]}
           },
           "mul_d0__U615":{
             "genref":"coreir.mul",
@@ -2249,7 +2249,7 @@
           "const_term_U638":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0116"]}
+            "modargs":{"value":[["BitVector",16],"16'h010c"]}
           },
           "mul_d0__U633":{
             "genref":"coreir.mul",
@@ -2383,7 +2383,7 @@
           "const_term_U679":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0086"]}
+            "modargs":{"value":[["BitVector",16],"16'h0084"]}
           },
           "mul_d0__U674":{
             "genref":"coreir.mul",
@@ -2450,7 +2450,7 @@
           "const_term_U702":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0089"]}
+            "modargs":{"value":[["BitVector",16],"16'h0085"]}
           },
           "mul_d0__U697":{
             "genref":"coreir.mul",
@@ -2584,7 +2584,7 @@
           "const_term_U737":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h010f"]}
+            "modargs":{"value":[["BitVector",16],"16'h0109"]}
           },
           "mul_d0__U732":{
             "genref":"coreir.mul",
@@ -2651,7 +2651,7 @@
           "const_term_U760":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0112"]}
+            "modargs":{"value":[["BitVector",16],"16'h010a"]}
           },
           "mul_d0__U755":{
             "genref":"coreir.mul",
@@ -2718,7 +2718,7 @@
           "const_term_U795":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0116"]}
+            "modargs":{"value":[["BitVector",16],"16'h010c"]}
           },
           "mul_d0__U790":{
             "genref":"coreir.mul",
