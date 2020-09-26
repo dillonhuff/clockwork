@@ -1062,6 +1062,8 @@ void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Ins
   wirebit(def, read_start_name(op->name), op_start_wire);
   auto exe_start = delaybit(def, exe_start_name(op->name), op_start_wire);
   
+  //auto write_start = wirebit(def, write_start_name(op->name), delay_by(def, exe_start_wire, op_latency));
+
   Wireable* write_start_w = exe_start;
   for (int d = 0; d < op_latency; d++) {
     write_start_w = delaybit(def, op->name + c->getUnique(), write_start_w);
