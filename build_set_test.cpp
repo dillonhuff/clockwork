@@ -16463,12 +16463,15 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  test_programs.push_back(accumulation());
+
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(resnet());
-  
+ 
+  // Uses a ROM
+  test_programs.push_back(accumulation());
+
   concat(test_programs, stencil_programs());
 
   return test_programs;
