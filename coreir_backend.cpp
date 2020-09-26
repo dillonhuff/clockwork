@@ -1075,14 +1075,23 @@ void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Ins
   //auto write_start = wirebit(def, write_start_name(op->name), write_start_w);
   auto write_start = delay_by(def, write_start_name(op->name), exe_start, op_latency);
 
-  delay_array(def, write_start_control_vars_name(op->name),
+  delay_by(def,
+      write_start_control_vars_name(op->name),
       op_start_loop_vars,
-      16,
-      num_dims(dom));
-  delay_array(def, exe_start_control_vars_name(op->name),
+      1);
+  delay_by(def,
+      exe_start_control_vars_name(op->name),
       op_start_loop_vars,
-      16,
-      num_dims(dom));
+      1);
+
+  //delay_array(def, write_start_control_vars_name(op->name),
+      //op_start_loop_vars,
+      //16,
+      //num_dims(dom));
+  //delay_array(def, exe_start_control_vars_name(op->name),
+      //op_start_loop_vars,
+      //16,
+      //num_dims(dom));
 }
 
 Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
