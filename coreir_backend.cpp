@@ -2250,6 +2250,16 @@ CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
   }
 
   CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
+      const std:string& out_name,
+      CoreIR::Wireable* w,
+      const int cycles) {
+    auto delayed = delay_by(bdef, w, cycles);
+    auto pt = bdef->addInstance(out_name, "coreir.passthrough", {{"type", COREMK(bdef->getContext(), w->getType())}});
+    bdef->connect(pt->sel("self.in"), delayed);
+    return pt->sel("out");
+  }
+
+  CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
       CoreIR::Wireable* w,
       const int cycles) {
     assert(w != nullptr);
