@@ -1475,7 +1475,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
 
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
 
-    generate_platonic_ubuffer(options, buf);
+    generate_platonic_ubuffer(options, buf, hwinfo);
     return;
 
     cout << "Generating functional model for: " << buf.name << endl;

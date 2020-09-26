@@ -27,18 +27,19 @@ module hw_input_stencil_ub(
 endmodule
 
 module nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_to_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [1:0];
+  logic [15:0] storage [0:0];
 
   reg [15:0] read_addr;
   reg [15:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 1;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
+      $display("write_addr = %d", write_addr);
     end
 
   end
@@ -65,14 +66,15 @@ module nearest_neighbor_stencil_ub(
 	// Capacity: 16384
   logic [15:0]  RAM [16383:0];
 
-    nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_to_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_sr nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_nearest_neighbor_stencil_write[0]));
+    nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_to_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_sr nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_nearest_neighbor_stencil_write[0]), .out(op_hcompute_hw_output_stencil_read[0]));
+
+
   always @(posedge clk) begin
     if (op_hcompute_nearest_neighbor_stencil_write_wen) begin
       RAM[(((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) - 0) * 128 + (((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) - 0) * 16384] <= op_hcompute_nearest_neighbor_stencil_write[0];
     end
   end
   always @(*) begin
-    op_hcompute_hw_output_stencil_read[0] = RAM[(((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 1*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 1*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0) * 128 + (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0) * 16384];
   end
 
 endmodule

@@ -16293,10 +16293,10 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(up_sample());
-  test_programs.push_back(unsharp());
   test_programs.push_back(pointwise());
   test_programs.push_back(gaussian());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
@@ -16316,6 +16316,7 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, stencil_programs());
 
   // Passes
   test_programs.push_back(unet_conv_3_3());
@@ -16331,7 +16332,6 @@ vector<prog> all_cgra_programs() {
   // Compute units are out of date?
   // test_programs.push_back(resnet());
 
-  concat(test_programs, stencil_programs());
 
   return test_programs;
 }

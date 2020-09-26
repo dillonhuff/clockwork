@@ -67,30 +67,6 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   return parens(res_str);
 }
 
-//std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
-  //for (int d = 0; d < num_div_dims(aff); d++) {
-    //auto a = isl_aff_get_div(aff, d);
-    //cout << tab(2) << "=== div: " << str(a) << endl;
-    //cout << tab(3) << "---- div dim: " << num_div_dims(a) << endl;
-    //int denom = to_int(isl_aff_get_denominator_val(a));
-    //assert(denom == 2);
-    //cout << tab(3) << "denom = " << denom << endl;
-    //for (int k = 0; k < num_div_dims(a); k++) {
-      //cout << tab(4) << str(isl_aff_get_coefficient_val(a, isl_dim_div, k)) << endl;
-    //}
-  //}
-  //assert(num_div_dims(aff) == 0);
-  //vector<string> terms;
-  //terms.push_back(str(const_coeff(aff)));
-  //for (int i = 0; i < num_in_dims(aff); i++) {
-    //string cf = str(get_coeff(aff, i));
-    //string rn = ctrl_vars + brackets(str(i));
-    //terms.push_back(cf + "*" + rn);
-  //}
-  //string res_str = sep_list(terms, "(", ")", " + ");
-  //return parens(res_str);
-//}
-
 string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
   string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
 
@@ -184,8 +160,10 @@ void generate_verilog_for_bank_storage(CodegenOptions& options,
   }
 }
 
-void generate_platonic_ubuffer(CodegenOptions& options,
-    UBuffer& buf) {
+void generate_platonic_ubuffer(
+    CodegenOptions& options,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
 
   map<string, pair<string, int> > shift_registered_outputs;
   auto sc = buf.global_schedule();
@@ -194,7 +172,9 @@ void generate_platonic_ubuffer(CodegenOptions& options,
       auto dd =
         dependence_distance_singleton(buf, inpt, outpt, sc);
       if (dd.has_value()) {
-        shift_registered_outputs[outpt] = {inpt, dd.get_value()};
+        int dd_raw = dd.get_value();
+        dd_raw = dd_raw - 1;
+        shift_registered_outputs[outpt] = {inpt, dd_raw};
       }
     }
   }
@@ -219,6 +199,9 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     out << tab(3) << "storage[write_addr] <= in;" << endl;
     out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
     out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
+
+    out << tab(3) << "$display(\"write_addr = %d\", write_addr);" << endl;
+
     out << tab(2) << "end" << endl << endl;
     out << tab(1) << "end" << endl << endl;
 
@@ -286,8 +269,10 @@ void generate_platonic_ubuffer(CodegenOptions& options,
 
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
-    string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
-    out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << "RAM[" << addr << "]" << ";" << endl;
+    if (!contains_key(outpt, shift_registered_outputs)) {
+      string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
+      out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << "RAM[" << addr << "]" << ";" << endl;
+    }
   }
 
   out << tab(1) << "end" << endl;
