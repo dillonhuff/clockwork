@@ -1,4 +1,5 @@
-  // DD from avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4 to avg_pool_stencil_op_hcompute_hw_output_stencil_1 = 1
+module avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_to_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_sr();
+endmodule
 module avg_pool_stencil_ub(
 	input clk,
 	input flush,
@@ -26,7 +27,8 @@ module avg_pool_stencil_ub(
 
 endmodule
 
-  // DD from avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10 to avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5 = 1
+module avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_sr();
+endmodule
 module avg_pool_stencil_clkwrk_dsa0_ub(
 	input clk,
 	input flush,
@@ -54,10 +56,14 @@ module avg_pool_stencil_clkwrk_dsa0_ub(
 
 endmodule
 
-  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_avg_pool_stencil_1_6 = 67
-  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_avg_pool_stencil_1_7 = 66
-  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_avg_pool_stencil_1_8 = 2
-  // DD from hw_input_stencil_op_hcompute_hw_input_stencil_2 to hw_input_stencil_op_hcompute_avg_pool_stencil_1_9 = 3
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+endmodule
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+endmodule
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+endmodule
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr();
+endmodule
 module hw_input_stencil_ub(
 	input clk,
 	input flush,

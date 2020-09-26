@@ -214,17 +214,26 @@ void generate_verilog_for_bank_storage(CodegenOptions& options,
 void generate_platonic_ubuffer(CodegenOptions& options,
     UBuffer& buf) {
 
-  ostream& out = *verilog_collateral_file;
+  map<string, pair<string, int> > shift_registered_outputs;
   auto sc = buf.global_schedule();
   for (auto outpt : buf.get_out_ports()) {
     for (auto inpt : buf.get_in_ports()) {
       auto dd =
         dependence_distance_singleton(buf, inpt, outpt, sc);
       if (dd.has_value()) {
-        out << tab(1) << "// DD from " << inpt << " to " << outpt << " = " << dd.get_value() << endl;
+        shift_registered_outputs[outpt] = {inpt, dd.get_value()};
       }
     }
   }
+
+  ostream& out = *verilog_collateral_file;
+
+  for (auto sr : shift_registered_outputs) {
+    out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr();" << endl;
+    out << "endmodule" << endl;
+  }
+
+
   vector<string> port_decls{"input clk", "input flush", "input rst_n"};
 
   for (auto b : buf.port_bundles) {

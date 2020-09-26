@@ -1,4 +1,5 @@
-  // DD from hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4 to hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1 = 1
+module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1_to_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_sr();
+endmodule
 module hw_input_global_wrapper_stencil_ub(
 	input clk,
 	input flush,
@@ -26,7 +27,8 @@ module hw_input_global_wrapper_stencil_ub(
 
 endmodule
 
-  // DD from mult_stencil_op_hcompute_mult_stencil_0 to mult_stencil_op_hcompute_hw_output_stencil_3 = 1
+module mult_stencil_mult_stencil_op_hcompute_hw_output_stencil_3_to_mult_stencil_op_hcompute_mult_stencil_0_sr();
+endmodule
 module mult_stencil_ub(
 	input clk,
 	input flush,
