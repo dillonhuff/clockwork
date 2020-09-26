@@ -1064,15 +1064,16 @@ void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Ins
   
   //auto write_start = wirebit(def, write_start_name(op->name), delay_by(def, exe_start_wire, op_latency));
 
-  Wireable* write_start_w =
-    delay_by(def, exe_start, op_latency);
+  //Wireable* write_start_w =
+    //delay_by(def, exe_start, op_latency);
   
   //Wireable* write_start_w = exe_start;
   //for (int d = 0; d < op_latency; d++) {
     //write_start_w = delaybit(def, op->name + c->getUnique(), write_start_w);
   //}
 
-  auto write_start = wirebit(def, write_start_name(op->name), write_start_w);
+  //auto write_start = wirebit(def, write_start_name(op->name), write_start_w);
+  auto write_start = delay_by(def, write_start_name(op->name), exe_start, op_latency);
 
   delay_array(def, write_start_control_vars_name(op->name),
       op_start_loop_vars,
@@ -2253,9 +2254,22 @@ CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
       const std::string& out_name,
       CoreIR::Wireable* w,
       const int cycles) {
+    auto context = bdef->getContext();
+    auto ns = context->getNamespace("global");
+
+    vector<pair<string, CoreIR::Type*> >
+      ub_field{{"in", w->getType()->getFlipped()},
+        {"out", w->getType()}};
+    CoreIR::RecordType* utp = context->Record(ub_field);
+    auto ub = ns->newModuleDecl(out_name + "_pt_" + context->getUnique(), utp);
+    auto df = ub->newModuleDef();
+    df->connect(df->sel("self.in"), df->sel("self.out"));
+    ub->setDef(df);
+
+    auto pt = bdef->addInstance(out_name, ub);
+
     auto delayed = delay_by(bdef, w, cycles);
-    auto pt = bdef->addInstance(out_name, "coreir.passthrough", {{"type", COREMK(bdef->getContext(), w->getType())}});
-    bdef->connect(pt->sel("self.in"), delayed);
+    bdef->connect(pt->sel("in"), delayed);
     return pt->sel("out");
   }
 

@@ -3,6 +3,48 @@
 // Module `conv2_stencil_clkwrk_dsa1_ub` defined externally
 // Module `conv1_stencil_ub` defined externally
 // Module `conv1_stencil_clkwrk_dsa0_ub` defined externally
+module op_hcompute_hw_output_stencil_write_start_pt__U831 (
+    input in,
+    output out
+);
+assign out = in;
+endmodule
+
+module op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U665 (
+    input in,
+    output out
+);
+assign out = in;
+endmodule
+
+module op_hcompute_conv2_stencil_write_start_pt__U755 (
+    input in,
+    output out
+);
+assign out = in;
+endmodule
+
+module op_hcompute_conv2_stencil_1_write_start_pt__U793 (
+    input in,
+    output out
+);
+assign out = in;
+endmodule
+
+module op_hcompute_conv1_stencil_write_start_pt__U691 (
+    input in,
+    output out
+);
+assign out = in;
+endmodule
+
+module op_hcompute_conv1_stencil_1_write_start_pt__U729 (
+    input in,
+    output out
+);
+assign out = in;
+endmodule
+
 module hcompute_hw_output_stencil (
     output [15:0] out_hw_output_stencil,
     input [15:0] in0_conv2_stencil [0:0]
@@ -229,39 +271,67 @@ end
 assign out = outReg;
 endmodule
 
-module array_delay_U830 (
+module array_delay_U836 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U831_in;
-wire _U831_clk;
-wire [15:0] _U831_out;
-wire [15:0] _U832_in;
-wire _U832_clk;
-wire [15:0] _U832_out;
+wire [15:0] _U837_in;
+wire _U837_clk;
+wire [15:0] _U837_out;
+wire [15:0] _U838_in;
+wire _U838_clk;
+wire [15:0] _U838_out;
+wire [15:0] _U839_in;
+wire _U839_clk;
+wire [15:0] _U839_out;
+assign _U837_in = in[0];
+assign _U837_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U837 (
+    .in(_U837_in),
+    .clk(_U837_clk),
+    .out(_U837_out)
+);
+assign _U838_in = in[1];
+assign _U838_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U838 (
+    .in(_U838_in),
+    .clk(_U838_clk),
+    .out(_U838_out)
+);
+assign _U839_in = in[2];
+assign _U839_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U839 (
+    .in(_U839_in),
+    .clk(_U839_clk),
+    .out(_U839_out)
+);
+assign out[2] = _U839_out;
+assign out[1] = _U838_out;
+assign out[0] = _U837_out;
+endmodule
+
+module array_delay_U832 (
+    input clk,
+    input [15:0] in [2:0],
+    output [15:0] out [2:0]
+);
 wire [15:0] _U833_in;
 wire _U833_clk;
 wire [15:0] _U833_out;
-assign _U831_in = in[0];
-assign _U831_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U831 (
-    .in(_U831_in),
-    .clk(_U831_clk),
-    .out(_U831_out)
-);
-assign _U832_in = in[1];
-assign _U832_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U832 (
-    .in(_U832_in),
-    .clk(_U832_clk),
-    .out(_U832_out)
-);
-assign _U833_in = in[2];
+wire [15:0] _U834_in;
+wire _U834_clk;
+wire [15:0] _U834_out;
+wire [15:0] _U835_in;
+wire _U835_clk;
+wire [15:0] _U835_out;
+assign _U833_in = in[0];
 assign _U833_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -270,35 +340,44 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U833_clk),
     .out(_U833_out)
 );
-assign out[2] = _U833_out;
-assign out[1] = _U832_out;
-assign out[0] = _U831_out;
+assign _U834_in = in[1];
+assign _U834_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U834 (
+    .in(_U834_in),
+    .clk(_U834_clk),
+    .out(_U834_out)
+);
+assign _U835_in = in[2];
+assign _U835_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U835 (
+    .in(_U835_in),
+    .clk(_U835_clk),
+    .out(_U835_out)
+);
+assign out[2] = _U835_out;
+assign out[1] = _U834_out;
+assign out[0] = _U833_out;
 endmodule
 
-module array_delay_U826 (
+module array_delay_U827 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U827_in;
-wire _U827_clk;
-wire [15:0] _U827_out;
 wire [15:0] _U828_in;
 wire _U828_clk;
 wire [15:0] _U828_out;
 wire [15:0] _U829_in;
 wire _U829_clk;
 wire [15:0] _U829_out;
-assign _U827_in = in[0];
-assign _U827_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U827 (
-    .in(_U827_in),
-    .clk(_U827_clk),
-    .out(_U827_out)
-);
-assign _U828_in = in[1];
+wire [15:0] _U830_in;
+wire _U830_clk;
+wire [15:0] _U830_out;
+assign _U828_in = in[0];
 assign _U828_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -307,7 +386,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U828_clk),
     .out(_U828_out)
 );
-assign _U829_in = in[2];
+assign _U829_in = in[1];
 assign _U829_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -316,26 +395,44 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U829_clk),
     .out(_U829_out)
 );
-assign out[2] = _U829_out;
-assign out[1] = _U828_out;
-assign out[0] = _U827_out;
+assign _U830_in = in[2];
+assign _U830_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U830 (
+    .in(_U830_in),
+    .clk(_U830_clk),
+    .out(_U830_out)
+);
+assign out[2] = _U830_out;
+assign out[1] = _U829_out;
+assign out[0] = _U828_out;
 endmodule
 
-module array_delay_U822 (
+module array_delay_U821 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
+wire [15:0] _U822_in;
+wire _U822_clk;
+wire [15:0] _U822_out;
 wire [15:0] _U823_in;
 wire _U823_clk;
 wire [15:0] _U823_out;
 wire [15:0] _U824_in;
 wire _U824_clk;
 wire [15:0] _U824_out;
-wire [15:0] _U825_in;
-wire _U825_clk;
-wire [15:0] _U825_out;
-assign _U823_in = in[0];
+assign _U822_in = in[0];
+assign _U822_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U822 (
+    .in(_U822_in),
+    .clk(_U822_clk),
+    .out(_U822_out)
+);
+assign _U823_in = in[1];
 assign _U823_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -344,7 +441,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U823_clk),
     .out(_U823_out)
 );
-assign _U824_in = in[1];
+assign _U824_in = in[2];
 assign _U824_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -353,90 +450,72 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U824_clk),
     .out(_U824_out)
 );
-assign _U825_in = in[2];
-assign _U825_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U825 (
-    .in(_U825_in),
-    .clk(_U825_clk),
-    .out(_U825_out)
-);
-assign out[2] = _U825_out;
-assign out[1] = _U824_out;
-assign out[0] = _U823_out;
+assign out[2] = _U824_out;
+assign out[1] = _U823_out;
+assign out[0] = _U822_out;
 endmodule
 
-module array_delay_U816 (
+module array_delay_U798 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U817_in;
-wire _U817_clk;
-wire [15:0] _U817_out;
-wire [15:0] _U818_in;
-wire _U818_clk;
-wire [15:0] _U818_out;
-wire [15:0] _U819_in;
-wire _U819_clk;
-wire [15:0] _U819_out;
-assign _U817_in = in[0];
-assign _U817_clk = clk;
+wire [15:0] _U799_in;
+wire _U799_clk;
+wire [15:0] _U799_out;
+wire [15:0] _U800_in;
+wire _U800_clk;
+wire [15:0] _U800_out;
+wire [15:0] _U801_in;
+wire _U801_clk;
+wire [15:0] _U801_out;
+assign _U799_in = in[0];
+assign _U799_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U817 (
-    .in(_U817_in),
-    .clk(_U817_clk),
-    .out(_U817_out)
+) _U799 (
+    .in(_U799_in),
+    .clk(_U799_clk),
+    .out(_U799_out)
 );
-assign _U818_in = in[1];
-assign _U818_clk = clk;
+assign _U800_in = in[1];
+assign _U800_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U818 (
-    .in(_U818_in),
-    .clk(_U818_clk),
-    .out(_U818_out)
+) _U800 (
+    .in(_U800_in),
+    .clk(_U800_clk),
+    .out(_U800_out)
 );
-assign _U819_in = in[2];
-assign _U819_clk = clk;
+assign _U801_in = in[2];
+assign _U801_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U819 (
-    .in(_U819_in),
-    .clk(_U819_clk),
-    .out(_U819_out)
+) _U801 (
+    .in(_U801_in),
+    .clk(_U801_clk),
+    .out(_U801_out)
 );
-assign out[2] = _U819_out;
-assign out[1] = _U818_out;
-assign out[0] = _U817_out;
+assign out[2] = _U801_out;
+assign out[1] = _U800_out;
+assign out[0] = _U799_out;
 endmodule
 
-module array_delay_U793 (
+module array_delay_U794 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U794_in;
-wire _U794_clk;
-wire [15:0] _U794_out;
 wire [15:0] _U795_in;
 wire _U795_clk;
 wire [15:0] _U795_out;
 wire [15:0] _U796_in;
 wire _U796_clk;
 wire [15:0] _U796_out;
-assign _U794_in = in[0];
-assign _U794_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U794 (
-    .in(_U794_in),
-    .clk(_U794_clk),
-    .out(_U794_out)
-);
-assign _U795_in = in[1];
+wire [15:0] _U797_in;
+wire _U797_clk;
+wire [15:0] _U797_out;
+assign _U795_in = in[0];
 assign _U795_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -445,7 +524,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U795_clk),
     .out(_U795_out)
 );
-assign _U796_in = in[2];
+assign _U796_in = in[1];
 assign _U796_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -454,9 +533,18 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U796_clk),
     .out(_U796_out)
 );
-assign out[2] = _U796_out;
-assign out[1] = _U795_out;
-assign out[0] = _U794_out;
+assign _U797_in = in[2];
+assign _U797_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U797 (
+    .in(_U797_in),
+    .clk(_U797_clk),
+    .out(_U797_out)
+);
+assign out[2] = _U797_out;
+assign out[1] = _U796_out;
+assign out[0] = _U795_out;
 endmodule
 
 module array_delay_U789 (
@@ -505,21 +593,39 @@ assign out[1] = _U791_out;
 assign out[0] = _U790_out;
 endmodule
 
-module array_delay_U785 (
+module array_delay_U783 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
+wire [15:0] _U784_in;
+wire _U784_clk;
+wire [15:0] _U784_out;
+wire [15:0] _U785_in;
+wire _U785_clk;
+wire [15:0] _U785_out;
 wire [15:0] _U786_in;
 wire _U786_clk;
 wire [15:0] _U786_out;
-wire [15:0] _U787_in;
-wire _U787_clk;
-wire [15:0] _U787_out;
-wire [15:0] _U788_in;
-wire _U788_clk;
-wire [15:0] _U788_out;
-assign _U786_in = in[0];
+assign _U784_in = in[0];
+assign _U784_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U784 (
+    .in(_U784_in),
+    .clk(_U784_clk),
+    .out(_U784_out)
+);
+assign _U785_in = in[1];
+assign _U785_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U785 (
+    .in(_U785_in),
+    .clk(_U785_clk),
+    .out(_U785_out)
+);
+assign _U786_in = in[2];
 assign _U786_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -528,73 +634,55 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U786_clk),
     .out(_U786_out)
 );
-assign _U787_in = in[1];
-assign _U787_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U787 (
-    .in(_U787_in),
-    .clk(_U787_clk),
-    .out(_U787_out)
-);
-assign _U788_in = in[2];
-assign _U788_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U788 (
-    .in(_U788_in),
-    .clk(_U788_clk),
-    .out(_U788_out)
-);
-assign out[2] = _U788_out;
-assign out[1] = _U787_out;
-assign out[0] = _U786_out;
+assign out[2] = _U786_out;
+assign out[1] = _U785_out;
+assign out[0] = _U784_out;
 endmodule
 
-module array_delay_U779 (
+module array_delay_U760 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U780_in;
-wire _U780_clk;
-wire [15:0] _U780_out;
-wire [15:0] _U781_in;
-wire _U781_clk;
-wire [15:0] _U781_out;
-wire [15:0] _U782_in;
-wire _U782_clk;
-wire [15:0] _U782_out;
-assign _U780_in = in[0];
-assign _U780_clk = clk;
+wire [15:0] _U761_in;
+wire _U761_clk;
+wire [15:0] _U761_out;
+wire [15:0] _U762_in;
+wire _U762_clk;
+wire [15:0] _U762_out;
+wire [15:0] _U763_in;
+wire _U763_clk;
+wire [15:0] _U763_out;
+assign _U761_in = in[0];
+assign _U761_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U780 (
-    .in(_U780_in),
-    .clk(_U780_clk),
-    .out(_U780_out)
+) _U761 (
+    .in(_U761_in),
+    .clk(_U761_clk),
+    .out(_U761_out)
 );
-assign _U781_in = in[1];
-assign _U781_clk = clk;
+assign _U762_in = in[1];
+assign _U762_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U781 (
-    .in(_U781_in),
-    .clk(_U781_clk),
-    .out(_U781_out)
+) _U762 (
+    .in(_U762_in),
+    .clk(_U762_clk),
+    .out(_U762_out)
 );
-assign _U782_in = in[2];
-assign _U782_clk = clk;
+assign _U763_in = in[2];
+assign _U763_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U782 (
-    .in(_U782_in),
-    .clk(_U782_clk),
-    .out(_U782_out)
+) _U763 (
+    .in(_U763_in),
+    .clk(_U763_clk),
+    .out(_U763_out)
 );
-assign out[2] = _U782_out;
-assign out[1] = _U781_out;
-assign out[0] = _U780_out;
+assign out[2] = _U763_out;
+assign out[1] = _U762_out;
+assign out[0] = _U761_out;
 endmodule
 
 module array_delay_U756 (
@@ -643,67 +731,76 @@ assign out[1] = _U758_out;
 assign out[0] = _U757_out;
 endmodule
 
-module array_delay_U752 (
+module array_delay_U734 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U753_in;
-wire _U753_clk;
-wire [15:0] _U753_out;
-wire [15:0] _U754_in;
-wire _U754_clk;
-wire [15:0] _U754_out;
-wire [15:0] _U755_in;
-wire _U755_clk;
-wire [15:0] _U755_out;
-assign _U753_in = in[0];
-assign _U753_clk = clk;
+wire [15:0] _U735_in;
+wire _U735_clk;
+wire [15:0] _U735_out;
+wire [15:0] _U736_in;
+wire _U736_clk;
+wire [15:0] _U736_out;
+wire [15:0] _U737_in;
+wire _U737_clk;
+wire [15:0] _U737_out;
+assign _U735_in = in[0];
+assign _U735_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U753 (
-    .in(_U753_in),
-    .clk(_U753_clk),
-    .out(_U753_out)
+) _U735 (
+    .in(_U735_in),
+    .clk(_U735_clk),
+    .out(_U735_out)
 );
-assign _U754_in = in[1];
-assign _U754_clk = clk;
+assign _U736_in = in[1];
+assign _U736_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U754 (
-    .in(_U754_in),
-    .clk(_U754_clk),
-    .out(_U754_out)
+) _U736 (
+    .in(_U736_in),
+    .clk(_U736_clk),
+    .out(_U736_out)
 );
-assign _U755_in = in[2];
-assign _U755_clk = clk;
+assign _U737_in = in[2];
+assign _U737_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U755 (
-    .in(_U755_in),
-    .clk(_U755_clk),
-    .out(_U755_out)
+) _U737 (
+    .in(_U737_in),
+    .clk(_U737_clk),
+    .out(_U737_out)
 );
-assign out[2] = _U755_out;
-assign out[1] = _U754_out;
-assign out[0] = _U753_out;
+assign out[2] = _U737_out;
+assign out[1] = _U736_out;
+assign out[0] = _U735_out;
 endmodule
 
-module array_delay_U731 (
+module array_delay_U730 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
+wire [15:0] _U731_in;
+wire _U731_clk;
+wire [15:0] _U731_out;
 wire [15:0] _U732_in;
 wire _U732_clk;
 wire [15:0] _U732_out;
 wire [15:0] _U733_in;
 wire _U733_clk;
 wire [15:0] _U733_out;
-wire [15:0] _U734_in;
-wire _U734_clk;
-wire [15:0] _U734_out;
-assign _U732_in = in[0];
+assign _U731_in = in[0];
+assign _U731_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U731 (
+    .in(_U731_in),
+    .clk(_U731_clk),
+    .out(_U731_out)
+);
+assign _U732_in = in[1];
 assign _U732_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -712,7 +809,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U732_clk),
     .out(_U732_out)
 );
-assign _U733_in = in[1];
+assign _U733_in = in[2];
 assign _U733_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -721,99 +818,26 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U733_clk),
     .out(_U733_out)
 );
-assign _U734_in = in[2];
-assign _U734_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U734 (
-    .in(_U734_in),
-    .clk(_U734_clk),
-    .out(_U734_out)
-);
-assign out[2] = _U734_out;
-assign out[1] = _U733_out;
-assign out[0] = _U732_out;
+assign out[2] = _U733_out;
+assign out[1] = _U732_out;
+assign out[0] = _U731_out;
 endmodule
 
-module array_delay_U727 (
+module array_delay_U725 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U728_in;
-wire _U728_clk;
-wire [15:0] _U728_out;
-wire [15:0] _U729_in;
-wire _U729_clk;
-wire [15:0] _U729_out;
-wire [15:0] _U730_in;
-wire _U730_clk;
-wire [15:0] _U730_out;
-assign _U728_in = in[0];
-assign _U728_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U728 (
-    .in(_U728_in),
-    .clk(_U728_clk),
-    .out(_U728_out)
-);
-assign _U729_in = in[1];
-assign _U729_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U729 (
-    .in(_U729_in),
-    .clk(_U729_clk),
-    .out(_U729_out)
-);
-assign _U730_in = in[2];
-assign _U730_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U730 (
-    .in(_U730_in),
-    .clk(_U730_clk),
-    .out(_U730_out)
-);
-assign out[2] = _U730_out;
-assign out[1] = _U729_out;
-assign out[0] = _U728_out;
-endmodule
-
-module array_delay_U723 (
-    input clk,
-    input [15:0] in [2:0],
-    output [15:0] out [2:0]
-);
-wire [15:0] _U724_in;
-wire _U724_clk;
-wire [15:0] _U724_out;
-wire [15:0] _U725_in;
-wire _U725_clk;
-wire [15:0] _U725_out;
 wire [15:0] _U726_in;
 wire _U726_clk;
 wire [15:0] _U726_out;
-assign _U724_in = in[0];
-assign _U724_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U724 (
-    .in(_U724_in),
-    .clk(_U724_clk),
-    .out(_U724_out)
-);
-assign _U725_in = in[1];
-assign _U725_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U725 (
-    .in(_U725_in),
-    .clk(_U725_clk),
-    .out(_U725_out)
-);
-assign _U726_in = in[2];
+wire [15:0] _U727_in;
+wire _U727_clk;
+wire [15:0] _U727_out;
+wire [15:0] _U728_in;
+wire _U728_clk;
+wire [15:0] _U728_out;
+assign _U726_in = in[0];
 assign _U726_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -822,44 +846,44 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U726_clk),
     .out(_U726_out)
 );
-assign out[2] = _U726_out;
-assign out[1] = _U725_out;
-assign out[0] = _U724_out;
+assign _U727_in = in[1];
+assign _U727_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U727 (
+    .in(_U727_in),
+    .clk(_U727_clk),
+    .out(_U727_out)
+);
+assign _U728_in = in[2];
+assign _U728_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U728 (
+    .in(_U728_in),
+    .clk(_U728_clk),
+    .out(_U728_out)
+);
+assign out[2] = _U728_out;
+assign out[1] = _U727_out;
+assign out[0] = _U726_out;
 endmodule
 
-module array_delay_U717 (
+module array_delay_U719 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U718_in;
-wire _U718_clk;
-wire [15:0] _U718_out;
-wire [15:0] _U719_in;
-wire _U719_clk;
-wire [15:0] _U719_out;
 wire [15:0] _U720_in;
 wire _U720_clk;
 wire [15:0] _U720_out;
-assign _U718_in = in[0];
-assign _U718_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U718 (
-    .in(_U718_in),
-    .clk(_U718_clk),
-    .out(_U718_out)
-);
-assign _U719_in = in[1];
-assign _U719_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U719 (
-    .in(_U719_in),
-    .clk(_U719_clk),
-    .out(_U719_out)
-);
-assign _U720_in = in[2];
+wire [15:0] _U721_in;
+wire _U721_clk;
+wire [15:0] _U721_out;
+wire [15:0] _U722_in;
+wire _U722_clk;
+wire [15:0] _U722_out;
+assign _U720_in = in[0];
 assign _U720_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -868,44 +892,44 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U720_clk),
     .out(_U720_out)
 );
-assign out[2] = _U720_out;
-assign out[1] = _U719_out;
-assign out[0] = _U718_out;
+assign _U721_in = in[1];
+assign _U721_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U721 (
+    .in(_U721_in),
+    .clk(_U721_clk),
+    .out(_U721_out)
+);
+assign _U722_in = in[2];
+assign _U722_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U722 (
+    .in(_U722_in),
+    .clk(_U722_clk),
+    .out(_U722_out)
+);
+assign out[2] = _U722_out;
+assign out[1] = _U721_out;
+assign out[0] = _U720_out;
 endmodule
 
-module array_delay_U694 (
+module array_delay_U696 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U695_in;
-wire _U695_clk;
-wire [15:0] _U695_out;
-wire [15:0] _U696_in;
-wire _U696_clk;
-wire [15:0] _U696_out;
 wire [15:0] _U697_in;
 wire _U697_clk;
 wire [15:0] _U697_out;
-assign _U695_in = in[0];
-assign _U695_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U695 (
-    .in(_U695_in),
-    .clk(_U695_clk),
-    .out(_U695_out)
-);
-assign _U696_in = in[1];
-assign _U696_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U696 (
-    .in(_U696_in),
-    .clk(_U696_clk),
-    .out(_U696_out)
-);
-assign _U697_in = in[2];
+wire [15:0] _U698_in;
+wire _U698_clk;
+wire [15:0] _U698_out;
+wire [15:0] _U699_in;
+wire _U699_clk;
+wire [15:0] _U699_out;
+assign _U697_in = in[0];
 assign _U697_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -914,44 +938,44 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U697_clk),
     .out(_U697_out)
 );
-assign out[2] = _U697_out;
-assign out[1] = _U696_out;
-assign out[0] = _U695_out;
+assign _U698_in = in[1];
+assign _U698_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U698 (
+    .in(_U698_in),
+    .clk(_U698_clk),
+    .out(_U698_out)
+);
+assign _U699_in = in[2];
+assign _U699_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U699 (
+    .in(_U699_in),
+    .clk(_U699_clk),
+    .out(_U699_out)
+);
+assign out[2] = _U699_out;
+assign out[1] = _U698_out;
+assign out[0] = _U697_out;
 endmodule
 
-module array_delay_U690 (
+module array_delay_U692 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U691_in;
-wire _U691_clk;
-wire [15:0] _U691_out;
-wire [15:0] _U692_in;
-wire _U692_clk;
-wire [15:0] _U692_out;
 wire [15:0] _U693_in;
 wire _U693_clk;
 wire [15:0] _U693_out;
-assign _U691_in = in[0];
-assign _U691_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U691 (
-    .in(_U691_in),
-    .clk(_U691_clk),
-    .out(_U691_out)
-);
-assign _U692_in = in[1];
-assign _U692_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U692 (
-    .in(_U692_in),
-    .clk(_U692_clk),
-    .out(_U692_out)
-);
-assign _U693_in = in[2];
+wire [15:0] _U694_in;
+wire _U694_clk;
+wire [15:0] _U694_out;
+wire [15:0] _U695_in;
+wire _U695_clk;
+wire [15:0] _U695_out;
+assign _U693_in = in[0];
 assign _U693_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -960,35 +984,44 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U693_clk),
     .out(_U693_out)
 );
-assign out[2] = _U693_out;
-assign out[1] = _U692_out;
-assign out[0] = _U691_out;
+assign _U694_in = in[1];
+assign _U694_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U694 (
+    .in(_U694_in),
+    .clk(_U694_clk),
+    .out(_U694_out)
+);
+assign _U695_in = in[2];
+assign _U695_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U695 (
+    .in(_U695_in),
+    .clk(_U695_clk),
+    .out(_U695_out)
+);
+assign out[2] = _U695_out;
+assign out[1] = _U694_out;
+assign out[0] = _U693_out;
 endmodule
 
-module array_delay_U669 (
+module array_delay_U670 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U670_in;
-wire _U670_clk;
-wire [15:0] _U670_out;
 wire [15:0] _U671_in;
 wire _U671_clk;
 wire [15:0] _U671_out;
 wire [15:0] _U672_in;
 wire _U672_clk;
 wire [15:0] _U672_out;
-assign _U670_in = in[0];
-assign _U670_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U670 (
-    .in(_U670_in),
-    .clk(_U670_clk),
-    .out(_U670_out)
-);
-assign _U671_in = in[1];
+wire [15:0] _U673_in;
+wire _U673_clk;
+wire [15:0] _U673_out;
+assign _U671_in = in[0];
 assign _U671_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -997,7 +1030,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U671_clk),
     .out(_U671_out)
 );
-assign _U672_in = in[2];
+assign _U672_in = in[1];
 assign _U672_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -1006,35 +1039,35 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U672_clk),
     .out(_U672_out)
 );
-assign out[2] = _U672_out;
-assign out[1] = _U671_out;
-assign out[0] = _U670_out;
+assign _U673_in = in[2];
+assign _U673_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U673 (
+    .in(_U673_in),
+    .clk(_U673_clk),
+    .out(_U673_out)
+);
+assign out[2] = _U673_out;
+assign out[1] = _U672_out;
+assign out[0] = _U671_out;
 endmodule
 
-module array_delay_U665 (
+module array_delay_U666 (
     input clk,
     input [15:0] in [2:0],
     output [15:0] out [2:0]
 );
-wire [15:0] _U666_in;
-wire _U666_clk;
-wire [15:0] _U666_out;
 wire [15:0] _U667_in;
 wire _U667_clk;
 wire [15:0] _U667_out;
 wire [15:0] _U668_in;
 wire _U668_clk;
 wire [15:0] _U668_out;
-assign _U666_in = in[0];
-assign _U666_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U666 (
-    .in(_U666_in),
-    .clk(_U666_clk),
-    .out(_U666_out)
-);
-assign _U667_in = in[1];
+wire [15:0] _U669_in;
+wire _U669_clk;
+wire [15:0] _U669_out;
+assign _U667_in = in[0];
 assign _U667_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -1043,7 +1076,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U667_clk),
     .out(_U667_out)
 );
-assign _U668_in = in[2];
+assign _U668_in = in[1];
 assign _U668_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -1052,9 +1085,18 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U668_clk),
     .out(_U668_out)
 );
-assign out[2] = _U668_out;
-assign out[1] = _U667_out;
-assign out[0] = _U666_out;
+assign _U669_in = in[2];
+assign _U669_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U669 (
+    .in(_U669_in),
+    .clk(_U669_clk),
+    .out(_U669_out)
+);
+assign out[2] = _U669_out;
+assign out[1] = _U668_out;
+assign out[0] = _U667_out;
 endmodule
 
 module aff__U91 (
@@ -1147,14 +1189,14 @@ assign d[1] = d_1_reg_out;
 assign d[0] = d_0_reg_out;
 endmodule
 
-module aff__U798 (
+module aff__U803 (
     output [15:0] out,
     input [15:0] d [2:0]
 );
 assign out = 16'((16'((16'((16'(16'h0000 * d[0])) + (16'(16'h0040 * d[1])))) + (16'(16'h0001 * d[2])))) + 16'h0116);
 endmodule
 
-module affine_controller__U797 (
+module affine_controller__U802 (
     input clk,
     output valid,
     output [15:0] d [2:0]
@@ -1182,7 +1224,7 @@ wire d_2_reg_en;
 assign affine_func_d[2] = d_2_reg_out;
 assign affine_func_d[1] = d_1_reg_out;
 assign affine_func_d[0] = d_0_reg_out;
-aff__U798 affine_func (
+aff__U803 affine_func (
     .out(affine_func_out),
     .d(affine_func_d)
 );
@@ -1237,14 +1279,14 @@ assign d[1] = d_1_reg_out;
 assign d[0] = d_0_reg_out;
 endmodule
 
-module aff__U761 (
+module aff__U765 (
     output [15:0] out,
     input [15:0] d [2:0]
 );
 assign out = 16'((16'((16'((16'(16'h0000 * d[0])) + (16'(16'h0040 * d[1])))) + (16'(16'h0001 * d[2])))) + 16'h0112);
 endmodule
 
-module affine_controller__U760 (
+module affine_controller__U764 (
     input clk,
     output valid,
     output [15:0] d [2:0]
@@ -1272,7 +1314,7 @@ wire d_2_reg_en;
 assign affine_func_d[2] = d_2_reg_out;
 assign affine_func_d[1] = d_1_reg_out;
 assign affine_func_d[0] = d_0_reg_out;
-aff__U761 affine_func (
+aff__U765 affine_func (
     .out(affine_func_out),
     .d(affine_func_d)
 );
@@ -1327,14 +1369,14 @@ assign d[1] = d_1_reg_out;
 assign d[0] = d_0_reg_out;
 endmodule
 
-module aff__U736 (
+module aff__U739 (
     output [15:0] out,
     input [15:0] d [2:0]
 );
 assign out = 16'((16'((16'((16'(16'h0000 * d[0])) + (16'(16'h0040 * d[1])))) + (16'(16'h0001 * d[2])))) + 16'h010f);
 endmodule
 
-module affine_controller__U735 (
+module affine_controller__U738 (
     input clk,
     output valid,
     output [15:0] d [2:0]
@@ -1362,7 +1404,7 @@ wire d_2_reg_en;
 assign affine_func_d[2] = d_2_reg_out;
 assign affine_func_d[1] = d_1_reg_out;
 assign affine_func_d[0] = d_0_reg_out;
-aff__U736 affine_func (
+aff__U739 affine_func (
     .out(affine_func_out),
     .d(affine_func_d)
 );
@@ -1507,14 +1549,14 @@ assign d[1] = d_1_reg_out;
 assign d[0] = d_0_reg_out;
 endmodule
 
-module aff__U699 (
+module aff__U701 (
     output [15:0] out,
     input [15:0] d [2:0]
 );
 assign out = 16'((16'((16'((16'(16'h0000 * d[0])) + (16'(16'h0040 * d[1])))) + (16'(16'h0001 * d[2])))) + 16'h0089);
 endmodule
 
-module affine_controller__U698 (
+module affine_controller__U700 (
     input clk,
     output valid,
     output [15:0] d [2:0]
@@ -1542,7 +1584,7 @@ wire d_2_reg_en;
 assign affine_func_d[2] = d_2_reg_out;
 assign affine_func_d[1] = d_1_reg_out;
 assign affine_func_d[0] = d_0_reg_out;
-aff__U699 affine_func (
+aff__U701 affine_func (
     .out(affine_func_out),
     .d(affine_func_d)
 );
@@ -1597,14 +1639,14 @@ assign d[1] = d_1_reg_out;
 assign d[0] = d_0_reg_out;
 endmodule
 
-module aff__U674 (
+module aff__U675 (
     output [15:0] out,
     input [15:0] d [2:0]
 );
 assign out = 16'((16'((16'((16'(16'h0000 * d[0])) + (16'(16'h0040 * d[1])))) + (16'(16'h0001 * d[2])))) + 16'h0086);
 endmodule
 
-module affine_controller__U673 (
+module affine_controller__U674 (
     input clk,
     output valid,
     output [15:0] d [2:0]
@@ -1632,7 +1674,7 @@ wire d_2_reg_en;
 assign affine_func_d[2] = d_2_reg_out;
 assign affine_func_d[1] = d_1_reg_out;
 assign affine_func_d[0] = d_0_reg_out;
-aff__U674 affine_func (
+aff__U675 affine_func (
     .out(affine_func_out),
     .d(affine_func_d)
 );
@@ -4846,27 +4888,27 @@ module cascade (
     output hw_output_stencil_op_hcompute_hw_output_stencil_write_en,
     output [15:0] hw_output_stencil_op_hcompute_hw_output_stencil_write [0:0]
 );
-wire [15:0] _U834_in;
-wire _U834_clk;
-wire [15:0] _U834_out;
-wire arr__U716_clk;
-wire [15:0] arr__U716_in [2:0];
-wire [15:0] arr__U716_out [2:0];
-wire arr__U722_clk;
-wire [15:0] arr__U722_in [2:0];
-wire [15:0] arr__U722_out [2:0];
-wire arr__U778_clk;
-wire [15:0] arr__U778_in [2:0];
-wire [15:0] arr__U778_out [2:0];
-wire arr__U784_clk;
-wire [15:0] arr__U784_in [2:0];
-wire [15:0] arr__U784_out [2:0];
-wire arr__U815_clk;
-wire [15:0] arr__U815_in [2:0];
-wire [15:0] arr__U815_out [2:0];
-wire arr__U821_clk;
-wire [15:0] arr__U821_in [2:0];
-wire [15:0] arr__U821_out [2:0];
+wire [15:0] _U840_in;
+wire _U840_clk;
+wire [15:0] _U840_out;
+wire arr__U718_clk;
+wire [15:0] arr__U718_in [2:0];
+wire [15:0] arr__U718_out [2:0];
+wire arr__U724_clk;
+wire [15:0] arr__U724_in [2:0];
+wire [15:0] arr__U724_out [2:0];
+wire arr__U782_clk;
+wire [15:0] arr__U782_in [2:0];
+wire [15:0] arr__U782_out [2:0];
+wire arr__U788_clk;
+wire [15:0] arr__U788_in [2:0];
+wire [15:0] arr__U788_out [2:0];
+wire arr__U820_clk;
+wire [15:0] arr__U820_in [2:0];
+wire [15:0] arr__U820_out [2:0];
+wire arr__U826_clk;
+wire [15:0] arr__U826_in [2:0];
+wire [15:0] arr__U826_out [2:0];
 wire conv1_stencil_clk;
 wire conv1_stencil_flush;
 wire conv1_stencil_rst_n;
@@ -4903,24 +4945,24 @@ wire [15:0] conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read [0:0];
 wire conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_wen;
 wire [15:0] conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_ctrl_vars [2:0];
 wire [15:0] conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write [0:0];
-wire delay_reg__U715_clk;
-wire delay_reg__U715_in;
-wire delay_reg__U715_out;
-wire delay_reg__U721_clk;
-wire delay_reg__U721_in;
-wire delay_reg__U721_out;
-wire delay_reg__U777_clk;
-wire delay_reg__U777_in;
-wire delay_reg__U777_out;
-wire delay_reg__U783_clk;
-wire delay_reg__U783_in;
-wire delay_reg__U783_out;
-wire delay_reg__U814_clk;
-wire delay_reg__U814_in;
-wire delay_reg__U814_out;
-wire delay_reg__U820_clk;
-wire delay_reg__U820_in;
-wire delay_reg__U820_out;
+wire delay_reg__U717_clk;
+wire delay_reg__U717_in;
+wire delay_reg__U717_out;
+wire delay_reg__U723_clk;
+wire delay_reg__U723_in;
+wire delay_reg__U723_out;
+wire delay_reg__U781_clk;
+wire delay_reg__U781_in;
+wire delay_reg__U781_out;
+wire delay_reg__U787_clk;
+wire delay_reg__U787_in;
+wire delay_reg__U787_out;
+wire delay_reg__U819_clk;
+wire delay_reg__U819_in;
+wire delay_reg__U819_out;
+wire delay_reg__U825_clk;
+wire delay_reg__U825_in;
+wire delay_reg__U825_out;
 wire hw_input_global_wrapper_stencil_clk;
 wire hw_input_global_wrapper_stencil_flush;
 wire hw_input_global_wrapper_stencil_rst_n;
@@ -4970,7 +5012,8 @@ wire op_hcompute_conv1_stencil_1_port_controller_U323_clk;
 wire op_hcompute_conv1_stencil_1_port_controller_U323_valid;
 wire [15:0] op_hcompute_conv1_stencil_1_port_controller_U323_d [2:0];
 wire op_hcompute_conv1_stencil_1_read_start;
-wire op_hcompute_conv1_stencil_1_write_start;
+wire op_hcompute_conv1_stencil_1_write_start_in;
+wire op_hcompute_conv1_stencil_1_write_start_out;
 wire op_hcompute_conv1_stencil_1_write_start_control_vars_clk;
 wire [15:0] op_hcompute_conv1_stencil_1_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_conv1_stencil_1_write_start_control_vars_out [2:0];
@@ -4996,7 +5039,8 @@ wire op_hcompute_conv1_stencil_port_controller_U179_clk;
 wire op_hcompute_conv1_stencil_port_controller_U179_valid;
 wire [15:0] op_hcompute_conv1_stencil_port_controller_U179_d [2:0];
 wire op_hcompute_conv1_stencil_read_start;
-wire op_hcompute_conv1_stencil_write_start;
+wire op_hcompute_conv1_stencil_write_start_in;
+wire op_hcompute_conv1_stencil_write_start_out;
 wire op_hcompute_conv1_stencil_write_start_control_vars_clk;
 wire [15:0] op_hcompute_conv1_stencil_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_conv1_stencil_write_start_control_vars_out [2:0];
@@ -5040,7 +5084,8 @@ wire op_hcompute_conv2_stencil_1_port_controller_U539_clk;
 wire op_hcompute_conv2_stencil_1_port_controller_U539_valid;
 wire [15:0] op_hcompute_conv2_stencil_1_port_controller_U539_d [2:0];
 wire op_hcompute_conv2_stencil_1_read_start;
-wire op_hcompute_conv2_stencil_1_write_start;
+wire op_hcompute_conv2_stencil_1_write_start_in;
+wire op_hcompute_conv2_stencil_1_write_start_out;
 wire op_hcompute_conv2_stencil_1_write_start_control_vars_clk;
 wire [15:0] op_hcompute_conv2_stencil_1_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_conv2_stencil_1_write_start_control_vars_out [2:0];
@@ -5066,7 +5111,8 @@ wire op_hcompute_conv2_stencil_port_controller_U395_clk;
 wire op_hcompute_conv2_stencil_port_controller_U395_valid;
 wire [15:0] op_hcompute_conv2_stencil_port_controller_U395_d [2:0];
 wire op_hcompute_conv2_stencil_read_start;
-wire op_hcompute_conv2_stencil_write_start;
+wire op_hcompute_conv2_stencil_write_start_in;
+wire op_hcompute_conv2_stencil_write_start_out;
 wire op_hcompute_conv2_stencil_write_start_control_vars_clk;
 wire [15:0] op_hcompute_conv2_stencil_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_conv2_stencil_write_start_control_vars_out [2:0];
@@ -5101,7 +5147,8 @@ wire op_hcompute_hw_input_global_wrapper_stencil_port_controller_U89_clk;
 wire op_hcompute_hw_input_global_wrapper_stencil_port_controller_U89_valid;
 wire [15:0] op_hcompute_hw_input_global_wrapper_stencil_port_controller_U89_d [2:0];
 wire op_hcompute_hw_input_global_wrapper_stencil_read_start;
-wire op_hcompute_hw_input_global_wrapper_stencil_write_start;
+wire op_hcompute_hw_input_global_wrapper_stencil_write_start_in;
+wire op_hcompute_hw_input_global_wrapper_stencil_write_start_out;
 wire op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_clk;
 wire [15:0] op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_out [2:0];
@@ -5136,77 +5183,77 @@ wire op_hcompute_hw_output_stencil_port_controller_U647_clk;
 wire op_hcompute_hw_output_stencil_port_controller_U647_valid;
 wire [15:0] op_hcompute_hw_output_stencil_port_controller_U647_d [2:0];
 wire op_hcompute_hw_output_stencil_read_start;
-wire op_hcompute_hw_output_stencil_write_start;
+wire op_hcompute_hw_output_stencil_write_start_in;
 wire op_hcompute_hw_output_stencil_write_start_control_vars_clk;
 wire [15:0] op_hcompute_hw_output_stencil_write_start_control_vars_in [2:0];
 wire [15:0] op_hcompute_hw_output_stencil_write_start_control_vars_out [2:0];
-assign _U834_in = hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0];
-assign _U834_clk = clk;
+assign _U840_in = hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0];
+assign _U840_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U834 (
-    .in(_U834_in),
-    .clk(_U834_clk),
-    .out(_U834_out)
+) _U840 (
+    .in(_U840_in),
+    .clk(_U840_clk),
+    .out(_U840_out)
 );
-assign arr__U716_clk = clk;
-assign arr__U716_in[2] = op_hcompute_conv1_stencil_1_port_controller_d[2];
-assign arr__U716_in[1] = op_hcompute_conv1_stencil_1_port_controller_d[1];
-assign arr__U716_in[0] = op_hcompute_conv1_stencil_1_port_controller_d[0];
-array_delay_U717 arr__U716 (
-    .clk(arr__U716_clk),
-    .in(arr__U716_in),
-    .out(arr__U716_out)
+assign arr__U718_clk = clk;
+assign arr__U718_in[2] = op_hcompute_conv1_stencil_1_port_controller_d[2];
+assign arr__U718_in[1] = op_hcompute_conv1_stencil_1_port_controller_d[1];
+assign arr__U718_in[0] = op_hcompute_conv1_stencil_1_port_controller_d[0];
+array_delay_U719 arr__U718 (
+    .clk(arr__U718_clk),
+    .in(arr__U718_in),
+    .out(arr__U718_out)
 );
-assign arr__U722_clk = clk;
-assign arr__U722_in[2] = arr__U716_out[2];
-assign arr__U722_in[1] = arr__U716_out[1];
-assign arr__U722_in[0] = arr__U716_out[0];
-array_delay_U723 arr__U722 (
-    .clk(arr__U722_clk),
-    .in(arr__U722_in),
-    .out(arr__U722_out)
+assign arr__U724_clk = clk;
+assign arr__U724_in[2] = arr__U718_out[2];
+assign arr__U724_in[1] = arr__U718_out[1];
+assign arr__U724_in[0] = arr__U718_out[0];
+array_delay_U725 arr__U724 (
+    .clk(arr__U724_clk),
+    .in(arr__U724_in),
+    .out(arr__U724_out)
 );
-assign arr__U778_clk = clk;
-assign arr__U778_in[2] = op_hcompute_conv2_stencil_1_port_controller_d[2];
-assign arr__U778_in[1] = op_hcompute_conv2_stencil_1_port_controller_d[1];
-assign arr__U778_in[0] = op_hcompute_conv2_stencil_1_port_controller_d[0];
-array_delay_U779 arr__U778 (
-    .clk(arr__U778_clk),
-    .in(arr__U778_in),
-    .out(arr__U778_out)
+assign arr__U782_clk = clk;
+assign arr__U782_in[2] = op_hcompute_conv2_stencil_1_port_controller_d[2];
+assign arr__U782_in[1] = op_hcompute_conv2_stencil_1_port_controller_d[1];
+assign arr__U782_in[0] = op_hcompute_conv2_stencil_1_port_controller_d[0];
+array_delay_U783 arr__U782 (
+    .clk(arr__U782_clk),
+    .in(arr__U782_in),
+    .out(arr__U782_out)
 );
-assign arr__U784_clk = clk;
-assign arr__U784_in[2] = arr__U778_out[2];
-assign arr__U784_in[1] = arr__U778_out[1];
-assign arr__U784_in[0] = arr__U778_out[0];
-array_delay_U785 arr__U784 (
-    .clk(arr__U784_clk),
-    .in(arr__U784_in),
-    .out(arr__U784_out)
+assign arr__U788_clk = clk;
+assign arr__U788_in[2] = arr__U782_out[2];
+assign arr__U788_in[1] = arr__U782_out[1];
+assign arr__U788_in[0] = arr__U782_out[0];
+array_delay_U789 arr__U788 (
+    .clk(arr__U788_clk),
+    .in(arr__U788_in),
+    .out(arr__U788_out)
 );
-assign arr__U815_clk = clk;
-assign arr__U815_in[2] = op_hcompute_hw_output_stencil_port_controller_d[2];
-assign arr__U815_in[1] = op_hcompute_hw_output_stencil_port_controller_d[1];
-assign arr__U815_in[0] = op_hcompute_hw_output_stencil_port_controller_d[0];
-array_delay_U816 arr__U815 (
-    .clk(arr__U815_clk),
-    .in(arr__U815_in),
-    .out(arr__U815_out)
+assign arr__U820_clk = clk;
+assign arr__U820_in[2] = op_hcompute_hw_output_stencil_port_controller_d[2];
+assign arr__U820_in[1] = op_hcompute_hw_output_stencil_port_controller_d[1];
+assign arr__U820_in[0] = op_hcompute_hw_output_stencil_port_controller_d[0];
+array_delay_U821 arr__U820 (
+    .clk(arr__U820_clk),
+    .in(arr__U820_in),
+    .out(arr__U820_out)
 );
-assign arr__U821_clk = clk;
-assign arr__U821_in[2] = arr__U815_out[2];
-assign arr__U821_in[1] = arr__U815_out[1];
-assign arr__U821_in[0] = arr__U815_out[0];
-array_delay_U822 arr__U821 (
-    .clk(arr__U821_clk),
-    .in(arr__U821_in),
-    .out(arr__U821_out)
+assign arr__U826_clk = clk;
+assign arr__U826_in[2] = arr__U820_out[2];
+assign arr__U826_in[1] = arr__U820_out[1];
+assign arr__U826_in[0] = arr__U820_out[0];
+array_delay_U827 arr__U826 (
+    .clk(arr__U826_clk),
+    .in(arr__U826_in),
+    .out(arr__U826_out)
 );
 assign conv1_stencil_clk = clk;
 assign conv1_stencil_flush = flush;
 assign conv1_stencil_rst_n = rst_n;
-assign conv1_stencil_op_hcompute_conv1_stencil_1_write_wen = op_hcompute_conv1_stencil_1_write_start;
+assign conv1_stencil_op_hcompute_conv1_stencil_1_write_wen = op_hcompute_conv1_stencil_1_write_start_out;
 assign conv1_stencil_op_hcompute_conv1_stencil_1_write_ctrl_vars[2] = op_hcompute_conv1_stencil_1_write_start_control_vars_out[2];
 assign conv1_stencil_op_hcompute_conv1_stencil_1_write_ctrl_vars[1] = op_hcompute_conv1_stencil_1_write_start_control_vars_out[1];
 assign conv1_stencil_op_hcompute_conv1_stencil_1_write_ctrl_vars[0] = op_hcompute_conv1_stencil_1_write_start_control_vars_out[0];
@@ -5233,7 +5280,7 @@ assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ren = op_hcomp
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ctrl_vars[2] = op_hcompute_conv1_stencil_1_port_controller_d[2];
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ctrl_vars[1] = op_hcompute_conv1_stencil_1_port_controller_d[1];
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_1_read_ctrl_vars[0] = op_hcompute_conv1_stencil_1_port_controller_d[0];
-assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_wen = op_hcompute_conv1_stencil_write_start;
+assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_wen = op_hcompute_conv1_stencil_write_start_out;
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_ctrl_vars[2] = op_hcompute_conv1_stencil_write_start_control_vars_out[2];
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_ctrl_vars[1] = op_hcompute_conv1_stencil_write_start_control_vars_out[1];
 assign conv1_stencil_clkwrk_dsa0_op_hcompute_conv1_stencil_write_ctrl_vars[0] = op_hcompute_conv1_stencil_write_start_control_vars_out[0];
@@ -5252,7 +5299,7 @@ conv1_stencil_clkwrk_dsa0_ub conv1_stencil_clkwrk_dsa0 (
 assign conv2_stencil_clk = clk;
 assign conv2_stencil_flush = flush;
 assign conv2_stencil_rst_n = rst_n;
-assign conv2_stencil_op_hcompute_conv2_stencil_1_write_wen = op_hcompute_conv2_stencil_1_write_start;
+assign conv2_stencil_op_hcompute_conv2_stencil_1_write_wen = op_hcompute_conv2_stencil_1_write_start_out;
 assign conv2_stencil_op_hcompute_conv2_stencil_1_write_ctrl_vars[2] = op_hcompute_conv2_stencil_1_write_start_control_vars_out[2];
 assign conv2_stencil_op_hcompute_conv2_stencil_1_write_ctrl_vars[1] = op_hcompute_conv2_stencil_1_write_start_control_vars_out[1];
 assign conv2_stencil_op_hcompute_conv2_stencil_1_write_ctrl_vars[0] = op_hcompute_conv2_stencil_1_write_start_control_vars_out[0];
@@ -5279,7 +5326,7 @@ assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ren = op_hcomp
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ctrl_vars[2] = op_hcompute_conv2_stencil_1_port_controller_d[2];
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ctrl_vars[1] = op_hcompute_conv2_stencil_1_port_controller_d[1];
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_1_read_ctrl_vars[0] = op_hcompute_conv2_stencil_1_port_controller_d[0];
-assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_wen = op_hcompute_conv2_stencil_write_start;
+assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_wen = op_hcompute_conv2_stencil_write_start_out;
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_ctrl_vars[2] = op_hcompute_conv2_stencil_write_start_control_vars_out[2];
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_ctrl_vars[1] = op_hcompute_conv2_stencil_write_start_control_vars_out[1];
 assign conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_ctrl_vars[0] = op_hcompute_conv2_stencil_write_start_control_vars_out[0];
@@ -5295,65 +5342,65 @@ conv2_stencil_clkwrk_dsa1_ub conv2_stencil_clkwrk_dsa1 (
     .op_hcompute_conv2_stencil_write_ctrl_vars(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write_ctrl_vars),
     .op_hcompute_conv2_stencil_write(conv2_stencil_clkwrk_dsa1_op_hcompute_conv2_stencil_write)
 );
-assign delay_reg__U715_clk = clk;
-assign delay_reg__U715_in = op_hcompute_conv1_stencil_1_port_controller_valid;
+assign delay_reg__U717_clk = clk;
+assign delay_reg__U717_in = op_hcompute_conv1_stencil_1_port_controller_valid;
 corebit_reg #(
     .clk_posedge(1'b1),
     .init(1'b0)
-) delay_reg__U715 (
-    .clk(delay_reg__U715_clk),
-    .in(delay_reg__U715_in),
-    .out(delay_reg__U715_out)
+) delay_reg__U717 (
+    .clk(delay_reg__U717_clk),
+    .in(delay_reg__U717_in),
+    .out(delay_reg__U717_out)
 );
-assign delay_reg__U721_clk = clk;
-assign delay_reg__U721_in = delay_reg__U715_out;
+assign delay_reg__U723_clk = clk;
+assign delay_reg__U723_in = delay_reg__U717_out;
 corebit_reg #(
     .clk_posedge(1'b1),
     .init(1'b0)
-) delay_reg__U721 (
-    .clk(delay_reg__U721_clk),
-    .in(delay_reg__U721_in),
-    .out(delay_reg__U721_out)
+) delay_reg__U723 (
+    .clk(delay_reg__U723_clk),
+    .in(delay_reg__U723_in),
+    .out(delay_reg__U723_out)
 );
-assign delay_reg__U777_clk = clk;
-assign delay_reg__U777_in = op_hcompute_conv2_stencil_1_port_controller_valid;
+assign delay_reg__U781_clk = clk;
+assign delay_reg__U781_in = op_hcompute_conv2_stencil_1_port_controller_valid;
 corebit_reg #(
     .clk_posedge(1'b1),
     .init(1'b0)
-) delay_reg__U777 (
-    .clk(delay_reg__U777_clk),
-    .in(delay_reg__U777_in),
-    .out(delay_reg__U777_out)
+) delay_reg__U781 (
+    .clk(delay_reg__U781_clk),
+    .in(delay_reg__U781_in),
+    .out(delay_reg__U781_out)
 );
-assign delay_reg__U783_clk = clk;
-assign delay_reg__U783_in = delay_reg__U777_out;
+assign delay_reg__U787_clk = clk;
+assign delay_reg__U787_in = delay_reg__U781_out;
 corebit_reg #(
     .clk_posedge(1'b1),
     .init(1'b0)
-) delay_reg__U783 (
-    .clk(delay_reg__U783_clk),
-    .in(delay_reg__U783_in),
-    .out(delay_reg__U783_out)
+) delay_reg__U787 (
+    .clk(delay_reg__U787_clk),
+    .in(delay_reg__U787_in),
+    .out(delay_reg__U787_out)
 );
-assign delay_reg__U814_clk = clk;
-assign delay_reg__U814_in = op_hcompute_hw_output_stencil_port_controller_valid;
+assign delay_reg__U819_clk = clk;
+assign delay_reg__U819_in = op_hcompute_hw_output_stencil_port_controller_valid;
 corebit_reg #(
     .clk_posedge(1'b1),
     .init(1'b0)
-) delay_reg__U814 (
-    .clk(delay_reg__U814_clk),
-    .in(delay_reg__U814_in),
-    .out(delay_reg__U814_out)
+) delay_reg__U819 (
+    .clk(delay_reg__U819_clk),
+    .in(delay_reg__U819_in),
+    .out(delay_reg__U819_out)
 );
-assign delay_reg__U820_clk = clk;
-assign delay_reg__U820_in = delay_reg__U814_out;
+assign delay_reg__U825_clk = clk;
+assign delay_reg__U825_in = delay_reg__U819_out;
 corebit_reg #(
     .clk_posedge(1'b1),
     .init(1'b0)
-) delay_reg__U820 (
-    .clk(delay_reg__U820_clk),
-    .in(delay_reg__U820_in),
-    .out(delay_reg__U820_out)
+) delay_reg__U825 (
+    .clk(delay_reg__U825_clk),
+    .in(delay_reg__U825_in),
+    .out(delay_reg__U825_out)
 );
 assign hw_input_global_wrapper_stencil_clk = clk;
 assign hw_input_global_wrapper_stencil_flush = flush;
@@ -5362,7 +5409,7 @@ assign hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ren = op
 assign hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ctrl_vars[2] = op_hcompute_conv1_stencil_1_port_controller_d[2];
 assign hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ctrl_vars[1] = op_hcompute_conv1_stencil_1_port_controller_d[1];
 assign hw_input_global_wrapper_stencil_op_hcompute_conv1_stencil_1_read_ctrl_vars[0] = op_hcompute_conv1_stencil_1_port_controller_d[0];
-assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_wen = op_hcompute_hw_input_global_wrapper_stencil_write_start;
+assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_wen = op_hcompute_hw_input_global_wrapper_stencil_write_start_out;
 assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2] = op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_out[2];
 assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] = op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_out[1];
 assign hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] = op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_out[0];
@@ -5414,13 +5461,13 @@ assign op_hcompute_conv1_stencil_1_exe_start_control_vars_clk = clk;
 assign op_hcompute_conv1_stencil_1_exe_start_control_vars_in[2] = op_hcompute_conv1_stencil_1_port_controller_d[2];
 assign op_hcompute_conv1_stencil_1_exe_start_control_vars_in[1] = op_hcompute_conv1_stencil_1_port_controller_d[1];
 assign op_hcompute_conv1_stencil_1_exe_start_control_vars_in[0] = op_hcompute_conv1_stencil_1_port_controller_d[0];
-array_delay_U731 op_hcompute_conv1_stencil_1_exe_start_control_vars (
+array_delay_U734 op_hcompute_conv1_stencil_1_exe_start_control_vars (
     .clk(op_hcompute_conv1_stencil_1_exe_start_control_vars_clk),
     .in(op_hcompute_conv1_stencil_1_exe_start_control_vars_in),
     .out(op_hcompute_conv1_stencil_1_exe_start_control_vars_out)
 );
 assign op_hcompute_conv1_stencil_1_port_controller_clk = clk;
-affine_controller__U698 op_hcompute_conv1_stencil_1_port_controller (
+affine_controller__U700 op_hcompute_conv1_stencil_1_port_controller (
     .clk(op_hcompute_conv1_stencil_1_port_controller_clk),
     .valid(op_hcompute_conv1_stencil_1_port_controller_valid),
     .d(op_hcompute_conv1_stencil_1_port_controller_d)
@@ -5474,12 +5521,16 @@ affine_controller__U306 op_hcompute_conv1_stencil_1_port_controller_U323 (
     .d(op_hcompute_conv1_stencil_1_port_controller_U323_d)
 );
 assign op_hcompute_conv1_stencil_1_read_start = op_hcompute_conv1_stencil_1_port_controller_valid;
-assign op_hcompute_conv1_stencil_1_write_start = op_hcompute_conv1_stencil_1_exe_start_out;
+assign op_hcompute_conv1_stencil_1_write_start_in = op_hcompute_conv1_stencil_1_exe_start_out;
+op_hcompute_conv1_stencil_1_write_start_pt__U729 op_hcompute_conv1_stencil_1_write_start (
+    .in(op_hcompute_conv1_stencil_1_write_start_in),
+    .out(op_hcompute_conv1_stencil_1_write_start_out)
+);
 assign op_hcompute_conv1_stencil_1_write_start_control_vars_clk = clk;
 assign op_hcompute_conv1_stencil_1_write_start_control_vars_in[2] = op_hcompute_conv1_stencil_1_port_controller_d[2];
 assign op_hcompute_conv1_stencil_1_write_start_control_vars_in[1] = op_hcompute_conv1_stencil_1_port_controller_d[1];
 assign op_hcompute_conv1_stencil_1_write_start_control_vars_in[0] = op_hcompute_conv1_stencil_1_port_controller_d[0];
-array_delay_U727 op_hcompute_conv1_stencil_1_write_start_control_vars (
+array_delay_U730 op_hcompute_conv1_stencil_1_write_start_control_vars (
     .clk(op_hcompute_conv1_stencil_1_write_start_control_vars_clk),
     .in(op_hcompute_conv1_stencil_1_write_start_control_vars_in),
     .out(op_hcompute_conv1_stencil_1_write_start_control_vars_out)
@@ -5498,13 +5549,13 @@ assign op_hcompute_conv1_stencil_exe_start_control_vars_clk = clk;
 assign op_hcompute_conv1_stencil_exe_start_control_vars_in[2] = op_hcompute_conv1_stencil_port_controller_d[2];
 assign op_hcompute_conv1_stencil_exe_start_control_vars_in[1] = op_hcompute_conv1_stencil_port_controller_d[1];
 assign op_hcompute_conv1_stencil_exe_start_control_vars_in[0] = op_hcompute_conv1_stencil_port_controller_d[0];
-array_delay_U694 op_hcompute_conv1_stencil_exe_start_control_vars (
+array_delay_U696 op_hcompute_conv1_stencil_exe_start_control_vars (
     .clk(op_hcompute_conv1_stencil_exe_start_control_vars_clk),
     .in(op_hcompute_conv1_stencil_exe_start_control_vars_in),
     .out(op_hcompute_conv1_stencil_exe_start_control_vars_out)
 );
 assign op_hcompute_conv1_stencil_port_controller_clk = clk;
-affine_controller__U673 op_hcompute_conv1_stencil_port_controller (
+affine_controller__U674 op_hcompute_conv1_stencil_port_controller (
     .clk(op_hcompute_conv1_stencil_port_controller_clk),
     .valid(op_hcompute_conv1_stencil_port_controller_valid),
     .d(op_hcompute_conv1_stencil_port_controller_d)
@@ -5534,12 +5585,16 @@ affine_controller__U162 op_hcompute_conv1_stencil_port_controller_U179 (
     .d(op_hcompute_conv1_stencil_port_controller_U179_d)
 );
 assign op_hcompute_conv1_stencil_read_start = op_hcompute_conv1_stencil_port_controller_valid;
-assign op_hcompute_conv1_stencil_write_start = op_hcompute_conv1_stencil_exe_start_out;
+assign op_hcompute_conv1_stencil_write_start_in = op_hcompute_conv1_stencil_exe_start_out;
+op_hcompute_conv1_stencil_write_start_pt__U691 op_hcompute_conv1_stencil_write_start (
+    .in(op_hcompute_conv1_stencil_write_start_in),
+    .out(op_hcompute_conv1_stencil_write_start_out)
+);
 assign op_hcompute_conv1_stencil_write_start_control_vars_clk = clk;
 assign op_hcompute_conv1_stencil_write_start_control_vars_in[2] = op_hcompute_conv1_stencil_port_controller_d[2];
 assign op_hcompute_conv1_stencil_write_start_control_vars_in[1] = op_hcompute_conv1_stencil_port_controller_d[1];
 assign op_hcompute_conv1_stencil_write_start_control_vars_in[0] = op_hcompute_conv1_stencil_port_controller_d[0];
-array_delay_U690 op_hcompute_conv1_stencil_write_start_control_vars (
+array_delay_U692 op_hcompute_conv1_stencil_write_start_control_vars (
     .clk(op_hcompute_conv1_stencil_write_start_control_vars_clk),
     .in(op_hcompute_conv1_stencil_write_start_control_vars_in),
     .out(op_hcompute_conv1_stencil_write_start_control_vars_out)
@@ -5580,13 +5635,13 @@ assign op_hcompute_conv2_stencil_1_exe_start_control_vars_clk = clk;
 assign op_hcompute_conv2_stencil_1_exe_start_control_vars_in[2] = op_hcompute_conv2_stencil_1_port_controller_d[2];
 assign op_hcompute_conv2_stencil_1_exe_start_control_vars_in[1] = op_hcompute_conv2_stencil_1_port_controller_d[1];
 assign op_hcompute_conv2_stencil_1_exe_start_control_vars_in[0] = op_hcompute_conv2_stencil_1_port_controller_d[0];
-array_delay_U793 op_hcompute_conv2_stencil_1_exe_start_control_vars (
+array_delay_U798 op_hcompute_conv2_stencil_1_exe_start_control_vars (
     .clk(op_hcompute_conv2_stencil_1_exe_start_control_vars_clk),
     .in(op_hcompute_conv2_stencil_1_exe_start_control_vars_in),
     .out(op_hcompute_conv2_stencil_1_exe_start_control_vars_out)
 );
 assign op_hcompute_conv2_stencil_1_port_controller_clk = clk;
-affine_controller__U760 op_hcompute_conv2_stencil_1_port_controller (
+affine_controller__U764 op_hcompute_conv2_stencil_1_port_controller (
     .clk(op_hcompute_conv2_stencil_1_port_controller_clk),
     .valid(op_hcompute_conv2_stencil_1_port_controller_valid),
     .d(op_hcompute_conv2_stencil_1_port_controller_d)
@@ -5640,12 +5695,16 @@ affine_controller__U522 op_hcompute_conv2_stencil_1_port_controller_U539 (
     .d(op_hcompute_conv2_stencil_1_port_controller_U539_d)
 );
 assign op_hcompute_conv2_stencil_1_read_start = op_hcompute_conv2_stencil_1_port_controller_valid;
-assign op_hcompute_conv2_stencil_1_write_start = op_hcompute_conv2_stencil_1_exe_start_out;
+assign op_hcompute_conv2_stencil_1_write_start_in = op_hcompute_conv2_stencil_1_exe_start_out;
+op_hcompute_conv2_stencil_1_write_start_pt__U793 op_hcompute_conv2_stencil_1_write_start (
+    .in(op_hcompute_conv2_stencil_1_write_start_in),
+    .out(op_hcompute_conv2_stencil_1_write_start_out)
+);
 assign op_hcompute_conv2_stencil_1_write_start_control_vars_clk = clk;
 assign op_hcompute_conv2_stencil_1_write_start_control_vars_in[2] = op_hcompute_conv2_stencil_1_port_controller_d[2];
 assign op_hcompute_conv2_stencil_1_write_start_control_vars_in[1] = op_hcompute_conv2_stencil_1_port_controller_d[1];
 assign op_hcompute_conv2_stencil_1_write_start_control_vars_in[0] = op_hcompute_conv2_stencil_1_port_controller_d[0];
-array_delay_U789 op_hcompute_conv2_stencil_1_write_start_control_vars (
+array_delay_U794 op_hcompute_conv2_stencil_1_write_start_control_vars (
     .clk(op_hcompute_conv2_stencil_1_write_start_control_vars_clk),
     .in(op_hcompute_conv2_stencil_1_write_start_control_vars_in),
     .out(op_hcompute_conv2_stencil_1_write_start_control_vars_out)
@@ -5664,13 +5723,13 @@ assign op_hcompute_conv2_stencil_exe_start_control_vars_clk = clk;
 assign op_hcompute_conv2_stencil_exe_start_control_vars_in[2] = op_hcompute_conv2_stencil_port_controller_d[2];
 assign op_hcompute_conv2_stencil_exe_start_control_vars_in[1] = op_hcompute_conv2_stencil_port_controller_d[1];
 assign op_hcompute_conv2_stencil_exe_start_control_vars_in[0] = op_hcompute_conv2_stencil_port_controller_d[0];
-array_delay_U756 op_hcompute_conv2_stencil_exe_start_control_vars (
+array_delay_U760 op_hcompute_conv2_stencil_exe_start_control_vars (
     .clk(op_hcompute_conv2_stencil_exe_start_control_vars_clk),
     .in(op_hcompute_conv2_stencil_exe_start_control_vars_in),
     .out(op_hcompute_conv2_stencil_exe_start_control_vars_out)
 );
 assign op_hcompute_conv2_stencil_port_controller_clk = clk;
-affine_controller__U735 op_hcompute_conv2_stencil_port_controller (
+affine_controller__U738 op_hcompute_conv2_stencil_port_controller (
     .clk(op_hcompute_conv2_stencil_port_controller_clk),
     .valid(op_hcompute_conv2_stencil_port_controller_valid),
     .d(op_hcompute_conv2_stencil_port_controller_d)
@@ -5700,18 +5759,22 @@ affine_controller__U378 op_hcompute_conv2_stencil_port_controller_U395 (
     .d(op_hcompute_conv2_stencil_port_controller_U395_d)
 );
 assign op_hcompute_conv2_stencil_read_start = op_hcompute_conv2_stencil_port_controller_valid;
-assign op_hcompute_conv2_stencil_write_start = op_hcompute_conv2_stencil_exe_start_out;
+assign op_hcompute_conv2_stencil_write_start_in = op_hcompute_conv2_stencil_exe_start_out;
+op_hcompute_conv2_stencil_write_start_pt__U755 op_hcompute_conv2_stencil_write_start (
+    .in(op_hcompute_conv2_stencil_write_start_in),
+    .out(op_hcompute_conv2_stencil_write_start_out)
+);
 assign op_hcompute_conv2_stencil_write_start_control_vars_clk = clk;
 assign op_hcompute_conv2_stencil_write_start_control_vars_in[2] = op_hcompute_conv2_stencil_port_controller_d[2];
 assign op_hcompute_conv2_stencil_write_start_control_vars_in[1] = op_hcompute_conv2_stencil_port_controller_d[1];
 assign op_hcompute_conv2_stencil_write_start_control_vars_in[0] = op_hcompute_conv2_stencil_port_controller_d[0];
-array_delay_U752 op_hcompute_conv2_stencil_write_start_control_vars (
+array_delay_U756 op_hcompute_conv2_stencil_write_start_control_vars (
     .clk(op_hcompute_conv2_stencil_write_start_control_vars_clk),
     .in(op_hcompute_conv2_stencil_write_start_control_vars_in),
     .out(op_hcompute_conv2_stencil_write_start_control_vars_out)
 );
 assign op_hcompute_hw_input_global_wrapper_stencil_clk = clk;
-assign op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0] = _U834_out;
+assign op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read[0] = _U840_out;
 cu_op_hcompute_hw_input_global_wrapper_stencil op_hcompute_hw_input_global_wrapper_stencil (
     .clk(op_hcompute_hw_input_global_wrapper_stencil_clk),
     .hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read(op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read),
@@ -5731,7 +5794,7 @@ assign op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_clk = 
 assign op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in[2] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[2];
 assign op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in[1] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[1];
 assign op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in[0] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[0];
-array_delay_U669 op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars (
+array_delay_U670 op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars (
     .clk(op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_clk),
     .in(op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in),
     .out(op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_out)
@@ -5779,12 +5842,16 @@ affine_controller__U72 op_hcompute_hw_input_global_wrapper_stencil_port_controll
     .d(op_hcompute_hw_input_global_wrapper_stencil_port_controller_U89_d)
 );
 assign op_hcompute_hw_input_global_wrapper_stencil_read_start = op_hcompute_hw_input_global_wrapper_stencil_port_controller_valid;
-assign op_hcompute_hw_input_global_wrapper_stencil_write_start = op_hcompute_hw_input_global_wrapper_stencil_exe_start_out;
+assign op_hcompute_hw_input_global_wrapper_stencil_write_start_in = op_hcompute_hw_input_global_wrapper_stencil_exe_start_out;
+op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U665 op_hcompute_hw_input_global_wrapper_stencil_write_start (
+    .in(op_hcompute_hw_input_global_wrapper_stencil_write_start_in),
+    .out(op_hcompute_hw_input_global_wrapper_stencil_write_start_out)
+);
 assign op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_clk = clk;
 assign op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in[2] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[2];
 assign op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in[1] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[1];
 assign op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in[0] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[0];
-array_delay_U665 op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars (
+array_delay_U666 op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars (
     .clk(op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_clk),
     .in(op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in),
     .out(op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_out)
@@ -5810,13 +5877,13 @@ assign op_hcompute_hw_output_stencil_exe_start_control_vars_clk = clk;
 assign op_hcompute_hw_output_stencil_exe_start_control_vars_in[2] = op_hcompute_hw_output_stencil_port_controller_d[2];
 assign op_hcompute_hw_output_stencil_exe_start_control_vars_in[1] = op_hcompute_hw_output_stencil_port_controller_d[1];
 assign op_hcompute_hw_output_stencil_exe_start_control_vars_in[0] = op_hcompute_hw_output_stencil_port_controller_d[0];
-array_delay_U830 op_hcompute_hw_output_stencil_exe_start_control_vars (
+array_delay_U836 op_hcompute_hw_output_stencil_exe_start_control_vars (
     .clk(op_hcompute_hw_output_stencil_exe_start_control_vars_clk),
     .in(op_hcompute_hw_output_stencil_exe_start_control_vars_in),
     .out(op_hcompute_hw_output_stencil_exe_start_control_vars_out)
 );
 assign op_hcompute_hw_output_stencil_port_controller_clk = clk;
-affine_controller__U797 op_hcompute_hw_output_stencil_port_controller (
+affine_controller__U802 op_hcompute_hw_output_stencil_port_controller (
     .clk(op_hcompute_hw_output_stencil_port_controller_clk),
     .valid(op_hcompute_hw_output_stencil_port_controller_valid),
     .d(op_hcompute_hw_output_stencil_port_controller_d)
@@ -5858,18 +5925,21 @@ affine_controller__U630 op_hcompute_hw_output_stencil_port_controller_U647 (
     .d(op_hcompute_hw_output_stencil_port_controller_U647_d)
 );
 assign op_hcompute_hw_output_stencil_read_start = op_hcompute_hw_output_stencil_port_controller_valid;
-assign op_hcompute_hw_output_stencil_write_start = op_hcompute_hw_output_stencil_exe_start_out;
+assign op_hcompute_hw_output_stencil_write_start_in = op_hcompute_hw_output_stencil_exe_start_out;
+op_hcompute_hw_output_stencil_write_start_pt__U831 op_hcompute_hw_output_stencil_write_start (
+    .in(op_hcompute_hw_output_stencil_write_start_in),
+    .out(hw_output_stencil_op_hcompute_hw_output_stencil_write_en)
+);
 assign op_hcompute_hw_output_stencil_write_start_control_vars_clk = clk;
 assign op_hcompute_hw_output_stencil_write_start_control_vars_in[2] = op_hcompute_hw_output_stencil_port_controller_d[2];
 assign op_hcompute_hw_output_stencil_write_start_control_vars_in[1] = op_hcompute_hw_output_stencil_port_controller_d[1];
 assign op_hcompute_hw_output_stencil_write_start_control_vars_in[0] = op_hcompute_hw_output_stencil_port_controller_d[0];
-array_delay_U826 op_hcompute_hw_output_stencil_write_start_control_vars (
+array_delay_U832 op_hcompute_hw_output_stencil_write_start_control_vars (
     .clk(op_hcompute_hw_output_stencil_write_start_control_vars_clk),
     .in(op_hcompute_hw_output_stencil_write_start_control_vars_in),
     .out(op_hcompute_hw_output_stencil_write_start_control_vars_out)
 );
 assign hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_valid = op_hcompute_hw_input_global_wrapper_stencil_read_start;
-assign hw_output_stencil_op_hcompute_hw_output_stencil_write_en = op_hcompute_hw_output_stencil_write_start;
 assign hw_output_stencil_op_hcompute_hw_output_stencil_write[0] = op_hcompute_hw_output_stencil_hw_output_stencil_op_hcompute_hw_output_stencil_write[0];
 endmodule
 
