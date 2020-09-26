@@ -263,9 +263,11 @@ void generate_platonic_ubuffer(CodegenOptions& options,
 
   out << endl;
   for (auto in : buf.get_in_ports()) {
+    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
     for (auto pt : shift_registered_outputs) {
+      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
       if (pt.second.first == in) {
-        out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush));";
+        out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
       }
     }
   }
