@@ -9,6 +9,8 @@ module cim_output_stencil_cim_output_stencil_op_hcompute_hw_output_stencil_46_to
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -57,6 +59,8 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_66_to_cim_stencil_
       write_addr <= 131;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 131 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 131 ? 0 : write_addr + 1;
     end
 
   end
@@ -78,6 +82,8 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_67_to_cim_stencil_
       write_addr <= 66;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 66 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 66 ? 0 : write_addr + 1;
     end
 
   end
@@ -99,6 +105,8 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_68_to_cim_stencil_
       write_addr <= 130;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 130 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 130 ? 0 : write_addr + 1;
     end
 
   end
@@ -120,6 +128,8 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_69_to_cim_stencil_
       write_addr <= 129;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 129 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 129 ? 0 : write_addr + 1;
     end
 
   end
@@ -141,6 +151,8 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_70_to_cim_stencil_
       write_addr <= 67;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 67 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 67 ? 0 : write_addr + 1;
     end
 
   end
@@ -162,6 +174,8 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_71_to_cim_stencil_
       write_addr <= 65;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 65 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 65 ? 0 : write_addr + 1;
     end
 
   end
@@ -183,6 +197,8 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_72_to_cim_stencil_
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -204,6 +220,8 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_73_to_cim_stencil_
       write_addr <= 2;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
     end
 
   end
@@ -225,6 +243,8 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_74_to_cim_stencil_
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -281,6 +301,8 @@ module grad_x_stencil_grad_x_stencil_op_hcompute_lxx_stencil_8_to_grad_x_stencil
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -302,6 +324,8 @@ module grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stencil_5_to_grad_x_stencil
       write_addr <= 5;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 5 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 5 ? 0 : write_addr + 1;
     end
 
   end
@@ -354,6 +378,8 @@ module grad_y_stencil_grad_y_stencil_op_hcompute_lxy_stencil_6_to_grad_y_stencil
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -375,6 +401,8 @@ module grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stencil_3_to_grad_y_stencil
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -427,6 +455,8 @@ module lgxx_stencil_lgxx_stencil_op_hcompute_cim_stencil_62_to_lgxx_stencil_op_h
       write_addr <= 8;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 8 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 8 ? 0 : write_addr + 1;
     end
 
   end
@@ -475,6 +505,8 @@ module lgxx_stencil_clkwrk_dsa0_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stenci
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -523,6 +555,8 @@ module lgxy_stencil_lgxy_stencil_op_hcompute_cim_stencil_63_to_lgxy_stencil_op_h
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -571,6 +605,8 @@ module lgxy_stencil_clkwrk_dsa1_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stenci
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -619,6 +655,8 @@ module lgyy_stencil_lgyy_stencil_op_hcompute_cim_stencil_64_to_lgyy_stencil_op_h
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -667,6 +705,8 @@ module lgyy_stencil_clkwrk_dsa2_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stenci
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -715,6 +755,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_35_to_lxx_stencil_op_h
       write_addr <= 132;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 132 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 132 ? 0 : write_addr + 1;
     end
 
   end
@@ -736,6 +778,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_36_to_lxx_stencil_op_h
       write_addr <= 131;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 131 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 131 ? 0 : write_addr + 1;
     end
 
   end
@@ -757,6 +801,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_37_to_lxx_stencil_op_h
       write_addr <= 130;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 130 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 130 ? 0 : write_addr + 1;
     end
 
   end
@@ -778,6 +824,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_38_to_lxx_stencil_op_h
       write_addr <= 68;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 68 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 68 ? 0 : write_addr + 1;
     end
 
   end
@@ -799,6 +847,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_39_to_lxx_stencil_op_h
       write_addr <= 67;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 67 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 67 ? 0 : write_addr + 1;
     end
 
   end
@@ -820,6 +870,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_40_to_lxx_stencil_op_h
       write_addr <= 66;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 66 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 66 ? 0 : write_addr + 1;
     end
 
   end
@@ -841,6 +893,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_41_to_lxx_stencil_op_h
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -862,6 +916,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_42_to_lxx_stencil_op_h
       write_addr <= 2;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
     end
 
   end
@@ -883,6 +939,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_to_lxx_stencil_op_h
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -939,6 +997,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_23_to_lxy_stencil_op_h
       write_addr <= 132;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 132 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 132 ? 0 : write_addr + 1;
     end
 
   end
@@ -960,6 +1020,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_24_to_lxy_stencil_op_h
       write_addr <= 131;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 131 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 131 ? 0 : write_addr + 1;
     end
 
   end
@@ -981,6 +1043,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_25_to_lxy_stencil_op_h
       write_addr <= 130;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 130 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 130 ? 0 : write_addr + 1;
     end
 
   end
@@ -1002,6 +1066,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_26_to_lxy_stencil_op_h
       write_addr <= 68;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 68 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 68 ? 0 : write_addr + 1;
     end
 
   end
@@ -1023,6 +1089,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_27_to_lxy_stencil_op_h
       write_addr <= 67;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 67 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 67 ? 0 : write_addr + 1;
     end
 
   end
@@ -1044,6 +1112,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_28_to_lxy_stencil_op_h
       write_addr <= 66;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 66 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 66 ? 0 : write_addr + 1;
     end
 
   end
@@ -1065,6 +1135,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_29_to_lxy_stencil_op_h
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -1086,6 +1158,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_30_to_lxy_stencil_op_h
       write_addr <= 2;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
     end
 
   end
@@ -1107,6 +1181,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_to_lxy_stencil_op_h
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -1163,6 +1239,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_h
       write_addr <= 132;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 132 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 132 ? 0 : write_addr + 1;
     end
 
   end
@@ -1184,6 +1262,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_12_to_lyy_stencil_op_h
       write_addr <= 131;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 131 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 131 ? 0 : write_addr + 1;
     end
 
   end
@@ -1205,6 +1285,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_13_to_lyy_stencil_op_h
       write_addr <= 130;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 130 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 130 ? 0 : write_addr + 1;
     end
 
   end
@@ -1226,6 +1308,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_14_to_lyy_stencil_op_h
       write_addr <= 68;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 68 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 68 ? 0 : write_addr + 1;
     end
 
   end
@@ -1247,6 +1331,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_15_to_lyy_stencil_op_h
       write_addr <= 67;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 67 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 67 ? 0 : write_addr + 1;
     end
 
   end
@@ -1268,6 +1354,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_16_to_lyy_stencil_op_h
       write_addr <= 66;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 66 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 66 ? 0 : write_addr + 1;
     end
 
   end
@@ -1289,6 +1377,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_17_to_lyy_stencil_op_h
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -1310,6 +1400,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_18_to_lyy_stencil_op_h
       write_addr <= 2;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
     end
 
   end
@@ -1331,6 +1423,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_to_lyy_stencil_op_h
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -1387,6 +1481,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 129;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 129 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 129 ? 0 : write_addr + 1;
     end
 
   end
@@ -1408,6 +1504,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -1429,6 +1527,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 65;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 65 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 65 ? 0 : write_addr + 1;
     end
 
   end
@@ -1450,6 +1550,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 131;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 131 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 131 ? 0 : write_addr + 1;
     end
 
   end
@@ -1471,6 +1573,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 67;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 67 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 67 ? 0 : write_addr + 1;
     end
 
   end
@@ -1492,6 +1596,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -1513,6 +1619,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 135;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 135 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 135 ? 0 : write_addr + 1;
     end
 
   end
@@ -1534,6 +1642,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 134;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 134 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 134 ? 0 : write_addr + 1;
     end
 
   end
@@ -1555,6 +1665,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 133;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 133 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 133 ? 0 : write_addr + 1;
     end
 
   end
@@ -1576,6 +1688,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 7;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 7 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 7 ? 0 : write_addr + 1;
     end
 
   end
@@ -1597,6 +1711,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 5;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 5 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 5 ? 0 : write_addr + 1;
     end
 
   end
@@ -1618,6 +1734,8 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
       write_addr <= 6;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 6 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 6 ? 0 : write_addr + 1;
     end
 
   end

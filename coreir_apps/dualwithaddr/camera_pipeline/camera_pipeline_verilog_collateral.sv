@@ -9,6 +9,8 @@ module corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_to_co
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -30,6 +32,8 @@ module corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_to_co
       write_addr <= 5;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 5 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 5 ? 0 : write_addr + 1;
     end
 
   end
@@ -51,6 +55,8 @@ module corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_to_corr
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -119,6 +125,8 @@ module curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_to_curved
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -140,6 +148,8 @@ module curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_to_curved
       write_addr <= 2;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
     end
 
   end
@@ -161,6 +171,8 @@ module curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_to_curved_s
       write_addr <= 6;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 6 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 6 ? 0 : write_addr + 1;
     end
 
   end
@@ -229,6 +241,8 @@ module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -250,6 +264,8 @@ module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -271,6 +287,8 @@ module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil
       write_addr <= 2;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
     end
 
   end
@@ -292,6 +310,8 @@ module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -313,6 +333,8 @@ module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -334,6 +356,8 @@ module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil
       write_addr <= 5;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 5 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 5 ? 0 : write_addr + 1;
     end
 
   end
@@ -355,6 +379,8 @@ module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -376,6 +402,8 @@ module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -397,6 +425,8 @@ module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil
       write_addr <= 2;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
     end
 
   end
@@ -471,6 +501,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1
       write_addr <= 68;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 68 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 68 ? 0 : write_addr + 1;
     end
 
   end
@@ -492,6 +524,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -513,6 +547,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1
       write_addr <= 66;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 66 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 66 ? 0 : write_addr + 1;
     end
 
   end
@@ -534,6 +570,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1
       write_addr <= 131;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 131 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 131 ? 0 : write_addr + 1;
     end
 
   end
@@ -555,6 +593,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1
       write_addr <= 67;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 67 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 67 ? 0 : write_addr + 1;
     end
 
   end
@@ -576,6 +616,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2
       write_addr <= 68;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 68 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 68 ? 0 : write_addr + 1;
     end
 
   end
@@ -597,6 +639,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2
       write_addr <= 4;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 4 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 4 ? 0 : write_addr + 1;
     end
 
   end
@@ -618,6 +662,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -639,6 +685,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2
       write_addr <= 67;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 67 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 67 ? 0 : write_addr + 1;
     end
 
   end
@@ -660,6 +708,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2
       write_addr <= 132;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 132 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 132 ? 0 : write_addr + 1;
     end
 
   end
@@ -681,6 +731,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2
       write_addr <= 5;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 5 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 5 ? 0 : write_addr + 1;
     end
 
   end
@@ -702,6 +754,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2
       write_addr <= 69;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 69 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 69 ? 0 : write_addr + 1;
     end
 
   end
@@ -723,6 +777,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2
       write_addr <= 133;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 133 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 133 ? 0 : write_addr + 1;
     end
 
   end
@@ -744,6 +800,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_3
       write_addr <= 66;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 66 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 66 ? 0 : write_addr + 1;
     end
 
   end
@@ -765,6 +823,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_3
       write_addr <= 65;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 65 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 65 ? 0 : write_addr + 1;
     end
 
   end
@@ -786,6 +846,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_3
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -807,6 +869,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_3
       write_addr <= 67;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 67 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 67 ? 0 : write_addr + 1;
     end
 
   end
@@ -828,6 +892,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_3
       write_addr <= 2;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
     end
 
   end
@@ -849,6 +915,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_3
       write_addr <= 129;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 129 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 129 ? 0 : write_addr + 1;
     end
 
   end
@@ -870,6 +938,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_3
       write_addr <= 130;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 130 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 130 ? 0 : write_addr + 1;
     end
 
   end
@@ -891,6 +961,8 @@ module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_3
       write_addr <= 131;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 131 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 131 ? 0 : write_addr + 1;
     end
 
   end
@@ -965,6 +1037,8 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end
@@ -986,6 +1060,8 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
       write_addr <= 259;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 259 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 259 ? 0 : write_addr + 1;
     end
 
   end
@@ -1007,6 +1083,8 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
       write_addr <= 133;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 133 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 133 ? 0 : write_addr + 1;
     end
 
   end
@@ -1028,6 +1106,8 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
       write_addr <= 129;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 129 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 129 ? 0 : write_addr + 1;
     end
 
   end
@@ -1049,6 +1129,8 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
       write_addr <= 131;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 131 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 131 ? 0 : write_addr + 1;
     end
 
   end

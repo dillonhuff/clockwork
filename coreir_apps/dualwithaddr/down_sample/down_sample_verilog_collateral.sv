@@ -9,6 +9,8 @@ module avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_to_avg_
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -57,6 +59,8 @@ module avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -105,6 +109,8 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_to_hw_
       write_addr <= 67;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 67 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 67 ? 0 : write_addr + 1;
     end
 
   end
@@ -126,6 +132,8 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_to_hw_
       write_addr <= 66;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 66 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 66 ? 0 : write_addr + 1;
     end
 
   end
@@ -147,6 +155,8 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_to_hw_
       write_addr <= 2;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
     end
 
   end
@@ -168,6 +178,8 @@ module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_to_hw_
       write_addr <= 3;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
     end
 
   end

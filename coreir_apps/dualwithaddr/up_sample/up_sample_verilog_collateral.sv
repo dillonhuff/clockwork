@@ -36,6 +36,8 @@ module nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_s
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end

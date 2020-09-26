@@ -9,6 +9,8 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -57,6 +59,8 @@ module mult_stencil_mult_stencil_op_hcompute_hw_output_stencil_3_to_mult_stencil
       write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end

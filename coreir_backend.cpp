@@ -217,6 +217,8 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     out << tab(3) << "write_addr <= " << delay << ";" << endl;
     out << tab(2) << "end else begin" << endl;
     out << tab(3) << "storage[write_addr] <= in;" << endl;
+    out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
+    out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
     out << tab(2) << "end" << endl << endl;
     out << tab(1) << "end" << endl << endl;
 
