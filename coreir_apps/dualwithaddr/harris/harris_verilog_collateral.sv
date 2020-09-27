@@ -34,10 +34,10 @@ module cim_output_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3364];
+    logic [15:0] bank_1 [3364];
+    logic [15:0] bank_2 [3364];
+    logic [15:0] bank_3 [3364];
 	// RAM Box: {[0, 57], [0, 57]}
 	// Capacity: 3364
   logic [15:0]  RAM [3363:0];
@@ -47,7 +47,7 @@ module cim_output_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_cim_output_stencil_write_wen) begin
-      RAM[(((0 + 0*op_hcompute_cim_output_stencil_write_ctrl_vars[0] + 1*op_hcompute_cim_output_stencil_write_ctrl_vars[1] + 0*op_hcompute_cim_output_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_cim_output_stencil_write_ctrl_vars[0] + 0*op_hcompute_cim_output_stencil_write_ctrl_vars[1] + 1*op_hcompute_cim_output_stencil_write_ctrl_vars[2])) - 0) * 58] <= op_hcompute_cim_output_stencil_write[0];
+      bank_0[(((0 + 0*op_hcompute_cim_output_stencil_write_ctrl_vars[0] + 1*op_hcompute_cim_output_stencil_write_ctrl_vars[1] + 0*op_hcompute_cim_output_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_cim_output_stencil_write_ctrl_vars[0] + 0*op_hcompute_cim_output_stencil_write_ctrl_vars[1] + 1*op_hcompute_cim_output_stencil_write_ctrl_vars[2])) - 0) * 58] <= op_hcompute_cim_output_stencil_write[0];
     end
   end
   always @(*) begin
@@ -275,10 +275,10 @@ module cim_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3600];
+    logic [15:0] bank_1 [3600];
+    logic [15:0] bank_2 [3600];
+    logic [15:0] bank_3 [3600];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -304,7 +304,7 @@ module cim_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_cim_stencil_write_wen) begin
-      RAM[(((-1 + 0*op_hcompute_cim_stencil_write_ctrl_vars[0] + 1*op_hcompute_cim_stencil_write_ctrl_vars[1] + 0*op_hcompute_cim_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_cim_stencil_write_ctrl_vars[0] + 0*op_hcompute_cim_stencil_write_ctrl_vars[1] + 1*op_hcompute_cim_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_cim_stencil_write[0];
+      bank_0[(((-1 + 0*op_hcompute_cim_stencil_write_ctrl_vars[0] + 1*op_hcompute_cim_stencil_write_ctrl_vars[1] + 0*op_hcompute_cim_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_cim_stencil_write_ctrl_vars[0] + 0*op_hcompute_cim_stencil_write_ctrl_vars[1] + 1*op_hcompute_cim_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_cim_stencil_write[0];
     end
   end
   always @(*) begin
@@ -374,10 +374,10 @@ module grad_x_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3844];
+    logic [15:0] bank_1 [3844];
+    logic [15:0] bank_2 [3844];
+    logic [15:0] bank_3 [3844];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -389,7 +389,7 @@ module grad_x_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_grad_x_stencil_write_wen) begin
-      RAM[(((-2 + 0*op_hcompute_grad_x_stencil_write_ctrl_vars[0] + 1*op_hcompute_grad_x_stencil_write_ctrl_vars[1] + 0*op_hcompute_grad_x_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_grad_x_stencil_write_ctrl_vars[0] + 0*op_hcompute_grad_x_stencil_write_ctrl_vars[1] + 1*op_hcompute_grad_x_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_grad_x_stencil_write[0];
+      bank_0[(((-2 + 0*op_hcompute_grad_x_stencil_write_ctrl_vars[0] + 1*op_hcompute_grad_x_stencil_write_ctrl_vars[1] + 0*op_hcompute_grad_x_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_grad_x_stencil_write_ctrl_vars[0] + 0*op_hcompute_grad_x_stencil_write_ctrl_vars[1] + 1*op_hcompute_grad_x_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_grad_x_stencil_write[0];
     end
   end
   always @(*) begin
@@ -459,10 +459,10 @@ module grad_y_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3844];
+    logic [15:0] bank_1 [3844];
+    logic [15:0] bank_2 [3844];
+    logic [15:0] bank_3 [3844];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -474,7 +474,7 @@ module grad_y_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_grad_y_stencil_write_wen) begin
-      RAM[(((-2 + 0*op_hcompute_grad_y_stencil_write_ctrl_vars[0] + 1*op_hcompute_grad_y_stencil_write_ctrl_vars[1] + 0*op_hcompute_grad_y_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_grad_y_stencil_write_ctrl_vars[0] + 0*op_hcompute_grad_y_stencil_write_ctrl_vars[1] + 1*op_hcompute_grad_y_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_grad_y_stencil_write[0];
+      bank_0[(((-2 + 0*op_hcompute_grad_y_stencil_write_ctrl_vars[0] + 1*op_hcompute_grad_y_stencil_write_ctrl_vars[1] + 0*op_hcompute_grad_y_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_grad_y_stencil_write_ctrl_vars[0] + 0*op_hcompute_grad_y_stencil_write_ctrl_vars[1] + 1*op_hcompute_grad_y_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_grad_y_stencil_write[0];
     end
   end
   always @(*) begin
@@ -518,10 +518,10 @@ module lgxx_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3600];
+    logic [15:0] bank_1 [3600];
+    logic [15:0] bank_2 [3600];
+    logic [15:0] bank_3 [3600];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -531,7 +531,7 @@ module lgxx_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_lgxx_stencil_1_write_wen) begin
-      RAM[(((-1 + 0*op_hcompute_lgxx_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_lgxx_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_lgxx_stencil_1_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgxx_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_lgxx_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_lgxx_stencil_1_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgxx_stencil_1_write[0];
+      bank_0[(((-1 + 0*op_hcompute_lgxx_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_lgxx_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_lgxx_stencil_1_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgxx_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_lgxx_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_lgxx_stencil_1_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgxx_stencil_1_write[0];
     end
   end
   always @(*) begin
@@ -575,10 +575,10 @@ module lgxx_stencil_clkwrk_dsa0_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3600];
+    logic [15:0] bank_1 [3600];
+    logic [15:0] bank_2 [3600];
+    logic [15:0] bank_3 [3600];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -588,7 +588,7 @@ module lgxx_stencil_clkwrk_dsa0_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_lgxx_stencil_write_wen) begin
-      RAM[(((-1 + 0*op_hcompute_lgxx_stencil_write_ctrl_vars[0] + 1*op_hcompute_lgxx_stencil_write_ctrl_vars[1] + 0*op_hcompute_lgxx_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgxx_stencil_write_ctrl_vars[0] + 0*op_hcompute_lgxx_stencil_write_ctrl_vars[1] + 1*op_hcompute_lgxx_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgxx_stencil_write[0];
+      bank_0[(((-1 + 0*op_hcompute_lgxx_stencil_write_ctrl_vars[0] + 1*op_hcompute_lgxx_stencil_write_ctrl_vars[1] + 0*op_hcompute_lgxx_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgxx_stencil_write_ctrl_vars[0] + 0*op_hcompute_lgxx_stencil_write_ctrl_vars[1] + 1*op_hcompute_lgxx_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgxx_stencil_write[0];
     end
   end
   always @(*) begin
@@ -632,10 +632,10 @@ module lgxy_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3600];
+    logic [15:0] bank_1 [3600];
+    logic [15:0] bank_2 [3600];
+    logic [15:0] bank_3 [3600];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -645,7 +645,7 @@ module lgxy_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_lgxy_stencil_1_write_wen) begin
-      RAM[(((-1 + 0*op_hcompute_lgxy_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_lgxy_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_lgxy_stencil_1_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgxy_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_lgxy_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_lgxy_stencil_1_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgxy_stencil_1_write[0];
+      bank_0[(((-1 + 0*op_hcompute_lgxy_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_lgxy_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_lgxy_stencil_1_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgxy_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_lgxy_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_lgxy_stencil_1_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgxy_stencil_1_write[0];
     end
   end
   always @(*) begin
@@ -689,10 +689,10 @@ module lgxy_stencil_clkwrk_dsa1_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3600];
+    logic [15:0] bank_1 [3600];
+    logic [15:0] bank_2 [3600];
+    logic [15:0] bank_3 [3600];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -702,7 +702,7 @@ module lgxy_stencil_clkwrk_dsa1_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_lgxy_stencil_write_wen) begin
-      RAM[(((-1 + 0*op_hcompute_lgxy_stencil_write_ctrl_vars[0] + 1*op_hcompute_lgxy_stencil_write_ctrl_vars[1] + 0*op_hcompute_lgxy_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgxy_stencil_write_ctrl_vars[0] + 0*op_hcompute_lgxy_stencil_write_ctrl_vars[1] + 1*op_hcompute_lgxy_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgxy_stencil_write[0];
+      bank_0[(((-1 + 0*op_hcompute_lgxy_stencil_write_ctrl_vars[0] + 1*op_hcompute_lgxy_stencil_write_ctrl_vars[1] + 0*op_hcompute_lgxy_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgxy_stencil_write_ctrl_vars[0] + 0*op_hcompute_lgxy_stencil_write_ctrl_vars[1] + 1*op_hcompute_lgxy_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgxy_stencil_write[0];
     end
   end
   always @(*) begin
@@ -746,10 +746,10 @@ module lgyy_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3600];
+    logic [15:0] bank_1 [3600];
+    logic [15:0] bank_2 [3600];
+    logic [15:0] bank_3 [3600];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -759,7 +759,7 @@ module lgyy_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_lgyy_stencil_1_write_wen) begin
-      RAM[(((-1 + 0*op_hcompute_lgyy_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_lgyy_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_lgyy_stencil_1_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgyy_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_lgyy_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_lgyy_stencil_1_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgyy_stencil_1_write[0];
+      bank_0[(((-1 + 0*op_hcompute_lgyy_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_lgyy_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_lgyy_stencil_1_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgyy_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_lgyy_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_lgyy_stencil_1_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgyy_stencil_1_write[0];
     end
   end
   always @(*) begin
@@ -803,10 +803,10 @@ module lgyy_stencil_clkwrk_dsa2_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3600];
+    logic [15:0] bank_1 [3600];
+    logic [15:0] bank_2 [3600];
+    logic [15:0] bank_3 [3600];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -816,7 +816,7 @@ module lgyy_stencil_clkwrk_dsa2_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_lgyy_stencil_write_wen) begin
-      RAM[(((-1 + 0*op_hcompute_lgyy_stencil_write_ctrl_vars[0] + 1*op_hcompute_lgyy_stencil_write_ctrl_vars[1] + 0*op_hcompute_lgyy_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgyy_stencil_write_ctrl_vars[0] + 0*op_hcompute_lgyy_stencil_write_ctrl_vars[1] + 1*op_hcompute_lgyy_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgyy_stencil_write[0];
+      bank_0[(((-1 + 0*op_hcompute_lgyy_stencil_write_ctrl_vars[0] + 1*op_hcompute_lgyy_stencil_write_ctrl_vars[1] + 0*op_hcompute_lgyy_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_lgyy_stencil_write_ctrl_vars[0] + 0*op_hcompute_lgyy_stencil_write_ctrl_vars[1] + 1*op_hcompute_lgyy_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_lgyy_stencil_write[0];
     end
   end
   always @(*) begin
@@ -1044,10 +1044,10 @@ module lxx_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3844];
+    logic [15:0] bank_1 [3844];
+    logic [15:0] bank_2 [3844];
+    logic [15:0] bank_3 [3844];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -1073,7 +1073,7 @@ module lxx_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_lxx_stencil_write_wen) begin
-      RAM[(((-2 + 0*op_hcompute_lxx_stencil_write_ctrl_vars[0] + 1*op_hcompute_lxx_stencil_write_ctrl_vars[1] + 0*op_hcompute_lxx_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_lxx_stencil_write_ctrl_vars[0] + 0*op_hcompute_lxx_stencil_write_ctrl_vars[1] + 1*op_hcompute_lxx_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_lxx_stencil_write[0];
+      bank_0[(((-2 + 0*op_hcompute_lxx_stencil_write_ctrl_vars[0] + 1*op_hcompute_lxx_stencil_write_ctrl_vars[1] + 0*op_hcompute_lxx_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_lxx_stencil_write_ctrl_vars[0] + 0*op_hcompute_lxx_stencil_write_ctrl_vars[1] + 1*op_hcompute_lxx_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_lxx_stencil_write[0];
     end
   end
   always @(*) begin
@@ -1301,10 +1301,10 @@ module lxy_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3844];
+    logic [15:0] bank_1 [3844];
+    logic [15:0] bank_2 [3844];
+    logic [15:0] bank_3 [3844];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -1330,7 +1330,7 @@ module lxy_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_lxy_stencil_write_wen) begin
-      RAM[(((-2 + 0*op_hcompute_lxy_stencil_write_ctrl_vars[0] + 1*op_hcompute_lxy_stencil_write_ctrl_vars[1] + 0*op_hcompute_lxy_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_lxy_stencil_write_ctrl_vars[0] + 0*op_hcompute_lxy_stencil_write_ctrl_vars[1] + 1*op_hcompute_lxy_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_lxy_stencil_write[0];
+      bank_0[(((-2 + 0*op_hcompute_lxy_stencil_write_ctrl_vars[0] + 1*op_hcompute_lxy_stencil_write_ctrl_vars[1] + 0*op_hcompute_lxy_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_lxy_stencil_write_ctrl_vars[0] + 0*op_hcompute_lxy_stencil_write_ctrl_vars[1] + 1*op_hcompute_lxy_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_lxy_stencil_write[0];
     end
   end
   always @(*) begin
@@ -1558,10 +1558,10 @@ module lyy_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3844];
+    logic [15:0] bank_1 [3844];
+    logic [15:0] bank_2 [3844];
+    logic [15:0] bank_3 [3844];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -1587,7 +1587,7 @@ module lyy_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_lyy_stencil_write_wen) begin
-      RAM[(((-2 + 0*op_hcompute_lyy_stencil_write_ctrl_vars[0] + 1*op_hcompute_lyy_stencil_write_ctrl_vars[1] + 0*op_hcompute_lyy_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_lyy_stencil_write_ctrl_vars[0] + 0*op_hcompute_lyy_stencil_write_ctrl_vars[1] + 1*op_hcompute_lyy_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_lyy_stencil_write[0];
+      bank_0[(((-2 + 0*op_hcompute_lyy_stencil_write_ctrl_vars[0] + 1*op_hcompute_lyy_stencil_write_ctrl_vars[1] + 0*op_hcompute_lyy_stencil_write_ctrl_vars[2])) - -2) * 1 + (((-2 + 0*op_hcompute_lyy_stencil_write_ctrl_vars[0] + 0*op_hcompute_lyy_stencil_write_ctrl_vars[1] + 1*op_hcompute_lyy_stencil_write_ctrl_vars[2])) - -2) * 62] <= op_hcompute_lyy_stencil_write[0];
     end
   end
   always @(*) begin
@@ -1887,10 +1887,10 @@ module padded16_global_wrapper_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [4096];
+    logic [15:0] bank_1 [4096];
+    logic [15:0] bank_2 [4096];
+    logic [15:0] bank_3 [4096];
 	// RAM Box: {[-3, 60], [-3, 60]}
 	// Capacity: 4096
   logic [15:0]  RAM [4095:0];
@@ -1922,7 +1922,7 @@ module padded16_global_wrapper_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_padded16_global_wrapper_stencil_write_wen) begin
-      RAM[(((-3 + 0*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 1 + (((-3 + 0*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 64] <= op_hcompute_padded16_global_wrapper_stencil_write[0];
+      bank_0[(((-3 + 0*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 1 + (((-3 + 0*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 64] <= op_hcompute_padded16_global_wrapper_stencil_write[0];
     end
   end
   always @(*) begin

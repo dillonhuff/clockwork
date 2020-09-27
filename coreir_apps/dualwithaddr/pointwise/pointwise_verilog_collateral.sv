@@ -34,10 +34,10 @@ module hw_input_global_wrapper_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [4096];
+    logic [15:0] bank_1 [4096];
+    logic [15:0] bank_2 [4096];
+    logic [15:0] bank_3 [4096];
 	// RAM Box: {[0, 63], [0, 63]}
 	// Capacity: 4096
   logic [15:0]  RAM [4095:0];
@@ -47,7 +47,7 @@ module hw_input_global_wrapper_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_hw_input_global_wrapper_stencil_write_wen) begin
-      RAM[(((0 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - 0) * 64] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+      bank_0[(((0 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - 0) * 64] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
     end
   end
   always @(*) begin
@@ -91,10 +91,10 @@ module mult_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [4096];
+    logic [15:0] bank_1 [4096];
+    logic [15:0] bank_2 [4096];
+    logic [15:0] bank_3 [4096];
 	// RAM Box: {[0, 63], [0, 63]}
 	// Capacity: 4096
   logic [15:0]  RAM [4095:0];
@@ -104,7 +104,7 @@ module mult_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_mult_stencil_write_wen) begin
-      RAM[(((0 + 0*op_hcompute_mult_stencil_write_ctrl_vars[0] + 1*op_hcompute_mult_stencil_write_ctrl_vars[1] + 0*op_hcompute_mult_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_mult_stencil_write_ctrl_vars[0] + 0*op_hcompute_mult_stencil_write_ctrl_vars[1] + 1*op_hcompute_mult_stencil_write_ctrl_vars[2])) - 0) * 64] <= op_hcompute_mult_stencil_write[0];
+      bank_0[(((0 + 0*op_hcompute_mult_stencil_write_ctrl_vars[0] + 1*op_hcompute_mult_stencil_write_ctrl_vars[1] + 0*op_hcompute_mult_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_mult_stencil_write_ctrl_vars[0] + 0*op_hcompute_mult_stencil_write_ctrl_vars[1] + 1*op_hcompute_mult_stencil_write_ctrl_vars[2])) - 0) * 64] <= op_hcompute_mult_stencil_write[0];
     end
   end
   always @(*) begin

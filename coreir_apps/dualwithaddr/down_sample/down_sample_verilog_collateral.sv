@@ -34,14 +34,14 @@ module avg_pool_stencil_ub(
 
   // Storage
   // # of banks: 8
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
-    logic [15:0] bank_4 [1];
-    logic [15:0] bank_5 [1];
-    logic [15:0] bank_6 [1];
-    logic [15:0] bank_7 [1];
+    logic [15:0] bank_0 [4096];
+    logic [15:0] bank_1 [4096];
+    logic [15:0] bank_2 [4096];
+    logic [15:0] bank_3 [4096];
+    logic [15:0] bank_4 [4096];
+    logic [15:0] bank_5 [4096];
+    logic [15:0] bank_6 [4096];
+    logic [15:0] bank_7 [4096];
 	// RAM Box: {[0, 31], [0, 31], [0, 3]}
 	// Capacity: 4096
   logic [15:0]  RAM [4095:0];
@@ -51,7 +51,7 @@ module avg_pool_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_avg_pool_stencil_1_write_wen) begin
-      RAM[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
+      bank_0[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
     end
   end
   always @(*) begin
@@ -95,14 +95,14 @@ module avg_pool_stencil_clkwrk_dsa0_ub(
 
   // Storage
   // # of banks: 8
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
-    logic [15:0] bank_4 [1];
-    logic [15:0] bank_5 [1];
-    logic [15:0] bank_6 [1];
-    logic [15:0] bank_7 [1];
+    logic [15:0] bank_0 [4096];
+    logic [15:0] bank_1 [4096];
+    logic [15:0] bank_2 [4096];
+    logic [15:0] bank_3 [4096];
+    logic [15:0] bank_4 [4096];
+    logic [15:0] bank_5 [4096];
+    logic [15:0] bank_6 [4096];
+    logic [15:0] bank_7 [4096];
 	// RAM Box: {[0, 31], [0, 31], [0, 3]}
 	// Capacity: 4096
   logic [15:0]  RAM [4095:0];
@@ -112,7 +112,7 @@ module avg_pool_stencil_clkwrk_dsa0_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_avg_pool_stencil_write_wen) begin
-      RAM[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
+      bank_0[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
     end
   end
   always @(*) begin
@@ -225,14 +225,14 @@ module hw_input_stencil_ub(
 
   // Storage
   // # of banks: 8
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
-    logic [15:0] bank_4 [1];
-    logic [15:0] bank_5 [1];
-    logic [15:0] bank_6 [1];
-    logic [15:0] bank_7 [1];
+    logic [15:0] bank_0 [16384];
+    logic [15:0] bank_1 [16384];
+    logic [15:0] bank_2 [16384];
+    logic [15:0] bank_3 [16384];
+    logic [15:0] bank_4 [16384];
+    logic [15:0] bank_5 [16384];
+    logic [15:0] bank_6 [16384];
+    logic [15:0] bank_7 [16384];
 	// RAM Box: {[0, 63], [0, 63], [0, 3]}
 	// Capacity: 16384
   logic [15:0]  RAM [16383:0];
@@ -248,7 +248,7 @@ module hw_input_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_hw_input_stencil_write_wen) begin
-      RAM[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
+      bank_0[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
     end
   end
   always @(*) begin

@@ -92,14 +92,14 @@ module corrected_stencil_ub(
 
   // Storage
   // # of banks: 8
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
-    logic [15:0] bank_4 [1];
-    logic [15:0] bank_5 [1];
-    logic [15:0] bank_6 [1];
-    logic [15:0] bank_7 [1];
+    logic [15:0] bank_0 [10092];
+    logic [15:0] bank_1 [10092];
+    logic [15:0] bank_2 [10092];
+    logic [15:0] bank_3 [10092];
+    logic [15:0] bank_4 [10092];
+    logic [15:0] bank_5 [10092];
+    logic [15:0] bank_6 [10092];
+    logic [15:0] bank_7 [10092];
 	// RAM Box: {[0, 2], [0, 57], [0, 57]}
 	// Capacity: 10092
   logic [15:0]  RAM [10091:0];
@@ -113,13 +113,13 @@ module corrected_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_corrected_stencil_1_write_wen) begin
-      RAM[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
+      bank_0[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
     end
     if (op_hcompute_corrected_stencil_2_write_wen) begin
-      RAM[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
+      bank_0[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
     end
     if (op_hcompute_corrected_stencil_write_wen) begin
-      RAM[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
+      bank_0[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
     end
   end
   always @(*) begin
@@ -221,14 +221,14 @@ module curved_stencil_ub(
 
   // Storage
   // # of banks: 8
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
-    logic [15:0] bank_4 [1];
-    logic [15:0] bank_5 [1];
-    logic [15:0] bank_6 [1];
-    logic [15:0] bank_7 [1];
+    logic [15:0] bank_0 [10092];
+    logic [15:0] bank_1 [10092];
+    logic [15:0] bank_2 [10092];
+    logic [15:0] bank_3 [10092];
+    logic [15:0] bank_4 [10092];
+    logic [15:0] bank_5 [10092];
+    logic [15:0] bank_6 [10092];
+    logic [15:0] bank_7 [10092];
 	// RAM Box: {[0, 2], [0, 57], [0, 57]}
 	// Capacity: 10092
   logic [15:0]  RAM [10091:0];
@@ -242,13 +242,13 @@ module curved_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_curved_stencil_1_write_wen) begin
-      RAM[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
+      bank_0[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
     end
     if (op_hcompute_curved_stencil_2_write_wen) begin
-      RAM[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
+      bank_0[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
     end
     if (op_hcompute_curved_stencil_write_wen) begin
-      RAM[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
+      bank_0[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
     end
   end
   always @(*) begin
@@ -488,14 +488,14 @@ module demosaicked_1_stencil_ub(
 
   // Storage
   // # of banks: 8
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
-    logic [15:0] bank_4 [1];
-    logic [15:0] bank_5 [1];
-    logic [15:0] bank_6 [1];
-    logic [15:0] bank_7 [1];
+    logic [15:0] bank_0 [10092];
+    logic [15:0] bank_1 [10092];
+    logic [15:0] bank_2 [10092];
+    logic [15:0] bank_3 [10092];
+    logic [15:0] bank_4 [10092];
+    logic [15:0] bank_5 [10092];
+    logic [15:0] bank_6 [10092];
+    logic [15:0] bank_7 [10092];
 	// RAM Box: {[0, 2], [0, 57], [0, 57]}
 	// Capacity: 10092
   logic [15:0]  RAM [10091:0];
@@ -521,13 +521,13 @@ module demosaicked_1_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_demosaicked_1_stencil_1_write_wen) begin
-      RAM[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
+      bank_0[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
     end
     if (op_hcompute_demosaicked_1_stencil_write_wen) begin
-      RAM[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
+      bank_0[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
     end
     if (op_hcompute_demosaicked_1_stencil_2_write_wen) begin
-      RAM[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
+      bank_0[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
     end
   end
   always @(*) begin
@@ -1037,10 +1037,10 @@ module denoised_1_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [3600];
+    logic [15:0] bank_1 [3600];
+    logic [15:0] bank_2 [3600];
+    logic [15:0] bank_3 [3600];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -1090,7 +1090,7 @@ module denoised_1_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_denoised_1_stencil_write_wen) begin
-      RAM[(((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_denoised_1_stencil_write[0];
+      bank_0[(((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_denoised_1_stencil_write[0];
     end
   end
   always @(*) begin
@@ -1226,10 +1226,10 @@ module hw_input_global_wrapper_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [1];
-    logic [15:0] bank_1 [1];
-    logic [15:0] bank_2 [1];
-    logic [15:0] bank_3 [1];
+    logic [15:0] bank_0 [4096];
+    logic [15:0] bank_1 [4096];
+    logic [15:0] bank_2 [4096];
+    logic [15:0] bank_3 [4096];
 	// RAM Box: {[-3, 60], [-3, 60]}
 	// Capacity: 4096
   logic [15:0]  RAM [4095:0];
@@ -1247,7 +1247,7 @@ module hw_input_global_wrapper_stencil_ub(
 
   always @(posedge clk) begin
     if (op_hcompute_hw_input_global_wrapper_stencil_write_wen) begin
-      RAM[(((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 1 + (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 64] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+      bank_0[(((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 1 + (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 64] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
     end
   end
   always @(*) begin

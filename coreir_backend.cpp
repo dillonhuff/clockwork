@@ -215,6 +215,15 @@ void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank
   out << tab(1) << "// # of banks: " << num_banks << endl;
 
   int capacity = 1;
+  auto dsets = get_sets(bnk.rddom);
+  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bnk.rddom))) : 0;
+  for (int i = 0; i < dims; i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto min = to_int(lexminval(s));
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    capacity *= length;
+  }
 
   for (int i = 0; i < num_banks; i++) {
     out << tab(2) << "logic [15:0] " << "bank_" << i << " [" << capacity << "];" << endl;
@@ -362,12 +371,14 @@ void generate_platonic_ubuffer(
   }
   out << endl;
 
+  //string source_ram = "RAM"
+  string source_ram = "bank_0";
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
     string addr = generate_linearized_verilog_addr(in, bnk, buf);
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
-    out << tab(3) << "RAM[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+    out << tab(3) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
     out << tab(2) << "end" << endl;
   }
   out << tab(1) << "end" << endl;
@@ -378,7 +389,7 @@ void generate_platonic_ubuffer(
     if (!contains_key(outpt, shift_registered_outputs)) {
     //if (true) {
       string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
-      out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << "RAM[" << addr << "]" << ";" << endl;
+      out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
     }
   }
 
