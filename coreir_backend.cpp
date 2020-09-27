@@ -434,6 +434,22 @@ void generate_platonic_ubuffer(
   //generate_verilog_for_bank_storage(options, out, bnk);
 
   out << endl;
+
+  for (auto in : buf.get_out_ports()) {
+    auto comps_raw =
+      generate_verilog_addr_components(in, bnk, buf);
+
+    vector<string> comps;
+    int i = 0;
+    for (auto c : comps_raw) {
+      out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
+      out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
+      comps.push_back(buf.name + "_" + in + "_" + str(i));
+      i++;
+    }
+    out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
+  }
+
   for (auto in : buf.get_in_ports()) {
     auto comps_raw =
       generate_verilog_addr_components(in, bnk, buf);
@@ -502,7 +518,8 @@ void generate_platonic_ubuffer(
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
         out << tab(3) << "if (" << buf.name << "_" << outpt << "_bank_selector.out == " << b << ") begin" << endl;
-        out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << ";" << endl;
+        //out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << ";" << endl;
+        out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
         out << tab(3) << "end" << endl;
       }
 
