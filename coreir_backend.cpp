@@ -207,6 +207,21 @@ void generate_verilog_for_bank_storage(CodegenOptions& options,
   }
 }
 
+void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_factors, UBuffer& buf) {
+  out << endl;
+  vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [16*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [15:0] out"};
+  out << "module " << buf.name << "_bank_selector(" << comma_list(port_decls) << ");" << endl;
+
+  int i = 0;
+  for (auto p : bank_factors) {
+    string var = "d" + brackets(str(i));
+    out << tab(1) << "logic [15:0] bank_index_" << i << ";" << endl;
+    out << tab(1) << "assign " << "bank_index_" << i << " = " << "$floor(" << var << " / " << p << ");" << endl;
+    i++;
+  }
+  out << "endmodule" << endl << endl;
+}
+
 void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank& bnk) {
   int num_banks = 1;
   for (auto val : bank_factors) {
@@ -225,8 +240,10 @@ void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank
     capacity *= length;
   }
 
+  vector<int> current_index;
+
   for (int i = 0; i < num_banks; i++) {
-    out << tab(2) << "logic [15:0] " << "bank_" << i << " [" << capacity << "];" << endl;
+    out << tab(1) << "logic [15:0] " << "bank_" << i << " [" << capacity << "];" << endl;
   }
 }
 
@@ -287,6 +304,8 @@ void generate_platonic_ubuffer(
   }
 
   ostream& out = *verilog_collateral_file;
+
+  print_cyclic_banks_selector(out, bank_factors, buf);
 
   for (auto sr : shift_registered_outputs) {
     int delay = sr.second.second;
@@ -356,7 +375,7 @@ void generate_platonic_ubuffer(
   bank bnk = buf.compute_bank_info();
   out << tab(1) << "// Storage" << endl;
   print_cyclic_banks(out, bank_factors, bnk);
-  generate_verilog_for_bank_storage(options, out, bnk);
+  //generate_verilog_for_bank_storage(options, out, bnk);
 
   out << endl;
   for (auto in : buf.get_in_ports()) {

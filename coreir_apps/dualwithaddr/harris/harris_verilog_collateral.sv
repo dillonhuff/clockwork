@@ -1,3 +1,11 @@
+
+module cim_output_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
+endmodule
+
 module cim_output_stencil_cim_output_stencil_op_hcompute_hw_output_stencil_46_to_cim_output_stencil_op_hcompute_cim_output_stencil_65_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] storage [0:0];
 
@@ -34,13 +42,10 @@ module cim_output_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3364];
-    logic [15:0] bank_1 [3364];
-    logic [15:0] bank_2 [3364];
-    logic [15:0] bank_3 [3364];
-	// RAM Box: {[0, 57], [0, 57]}
-	// Capacity: 3364
-  logic [15:0]  RAM [3363:0];
+  logic [15:0] bank_0 [3364];
+  logic [15:0] bank_1 [3364];
+  logic [15:0] bank_2 [3364];
+  logic [15:0] bank_3 [3364];
 
     cim_output_stencil_cim_output_stencil_op_hcompute_hw_output_stencil_46_to_cim_output_stencil_op_hcompute_cim_output_stencil_65_sr cim_output_stencil_op_hcompute_hw_output_stencil_46_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_cim_output_stencil_write[0]), .out(op_hcompute_hw_output_stencil_read[0]));
 
@@ -53,6 +58,14 @@ module cim_output_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module cim_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_66_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -275,13 +288,10 @@ module cim_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3600];
-    logic [15:0] bank_1 [3600];
-    logic [15:0] bank_2 [3600];
-    logic [15:0] bank_3 [3600];
-	// RAM Box: {[-1, 58], [-1, 58]}
-	// Capacity: 3600
-  logic [15:0]  RAM [3599:0];
+  logic [15:0] bank_0 [3600];
+  logic [15:0] bank_1 [3600];
+  logic [15:0] bank_2 [3600];
+  logic [15:0] bank_3 [3600];
 
     cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_66_to_cim_stencil_op_hcompute_cim_stencil_61_sr cim_stencil_op_hcompute_cim_output_stencil_66_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_cim_stencil_write[0]), .out(op_hcompute_cim_output_stencil_read[0]));
 
@@ -310,6 +320,14 @@ module cim_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module grad_x_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module grad_x_stencil_grad_x_stencil_op_hcompute_lxx_stencil_8_to_grad_x_stencil_op_hcompute_grad_x_stencil_54_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -374,13 +392,10 @@ module grad_x_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3844];
-    logic [15:0] bank_1 [3844];
-    logic [15:0] bank_2 [3844];
-    logic [15:0] bank_3 [3844];
-	// RAM Box: {[-2, 59], [-2, 59]}
-	// Capacity: 3844
-  logic [15:0]  RAM [3843:0];
+  logic [15:0] bank_0 [3844];
+  logic [15:0] bank_1 [3844];
+  logic [15:0] bank_2 [3844];
+  logic [15:0] bank_3 [3844];
 
     grad_x_stencil_grad_x_stencil_op_hcompute_lxx_stencil_8_to_grad_x_stencil_op_hcompute_grad_x_stencil_54_sr grad_x_stencil_op_hcompute_lxx_stencil_8_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_grad_x_stencil_write[0]), .out(op_hcompute_lxx_stencil_read[0]));
 
@@ -395,6 +410,14 @@ module grad_x_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module grad_y_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module grad_y_stencil_grad_y_stencil_op_hcompute_lxy_stencil_6_to_grad_y_stencil_op_hcompute_grad_y_stencil_47_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -459,13 +482,10 @@ module grad_y_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3844];
-    logic [15:0] bank_1 [3844];
-    logic [15:0] bank_2 [3844];
-    logic [15:0] bank_3 [3844];
-	// RAM Box: {[-2, 59], [-2, 59]}
-	// Capacity: 3844
-  logic [15:0]  RAM [3843:0];
+  logic [15:0] bank_0 [3844];
+  logic [15:0] bank_1 [3844];
+  logic [15:0] bank_2 [3844];
+  logic [15:0] bank_3 [3844];
 
     grad_y_stencil_grad_y_stencil_op_hcompute_lxy_stencil_6_to_grad_y_stencil_op_hcompute_grad_y_stencil_47_sr grad_y_stencil_op_hcompute_lxy_stencil_6_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_grad_y_stencil_write[0]), .out(op_hcompute_lxy_stencil_read[0]));
 
@@ -480,6 +500,14 @@ module grad_y_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module lgxx_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module lgxx_stencil_lgxx_stencil_op_hcompute_cim_stencil_62_to_lgxx_stencil_op_hcompute_lgxx_stencil_1_33_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -518,13 +546,10 @@ module lgxx_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3600];
-    logic [15:0] bank_1 [3600];
-    logic [15:0] bank_2 [3600];
-    logic [15:0] bank_3 [3600];
-	// RAM Box: {[-1, 58], [-1, 58]}
-	// Capacity: 3600
-  logic [15:0]  RAM [3599:0];
+  logic [15:0] bank_0 [3600];
+  logic [15:0] bank_1 [3600];
+  logic [15:0] bank_2 [3600];
+  logic [15:0] bank_3 [3600];
 
     lgxx_stencil_lgxx_stencil_op_hcompute_cim_stencil_62_to_lgxx_stencil_op_hcompute_lgxx_stencil_1_33_sr lgxx_stencil_op_hcompute_cim_stencil_62_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_lgxx_stencil_1_write[0]), .out(op_hcompute_cim_stencil_read[0]));
 
@@ -537,6 +562,14 @@ module lgxx_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module lgxx_stencil_clkwrk_dsa0_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module lgxx_stencil_clkwrk_dsa0_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_34_to_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_44_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -575,13 +608,10 @@ module lgxx_stencil_clkwrk_dsa0_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3600];
-    logic [15:0] bank_1 [3600];
-    logic [15:0] bank_2 [3600];
-    logic [15:0] bank_3 [3600];
-	// RAM Box: {[-1, 58], [-1, 58]}
-	// Capacity: 3600
-  logic [15:0]  RAM [3599:0];
+  logic [15:0] bank_0 [3600];
+  logic [15:0] bank_1 [3600];
+  logic [15:0] bank_2 [3600];
+  logic [15:0] bank_3 [3600];
 
     lgxx_stencil_clkwrk_dsa0_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_34_to_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_44_sr lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_34_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_lgxx_stencil_write[0]), .out(op_hcompute_lgxx_stencil_1_read[0]));
 
@@ -594,6 +624,14 @@ module lgxx_stencil_clkwrk_dsa0_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module lgxy_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module lgxy_stencil_lgxy_stencil_op_hcompute_cim_stencil_63_to_lgxy_stencil_op_hcompute_lgxy_stencil_1_21_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -632,13 +670,10 @@ module lgxy_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3600];
-    logic [15:0] bank_1 [3600];
-    logic [15:0] bank_2 [3600];
-    logic [15:0] bank_3 [3600];
-	// RAM Box: {[-1, 58], [-1, 58]}
-	// Capacity: 3600
-  logic [15:0]  RAM [3599:0];
+  logic [15:0] bank_0 [3600];
+  logic [15:0] bank_1 [3600];
+  logic [15:0] bank_2 [3600];
+  logic [15:0] bank_3 [3600];
 
     lgxy_stencil_lgxy_stencil_op_hcompute_cim_stencil_63_to_lgxy_stencil_op_hcompute_lgxy_stencil_1_21_sr lgxy_stencil_op_hcompute_cim_stencil_63_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_lgxy_stencil_1_write[0]), .out(op_hcompute_cim_stencil_read[0]));
 
@@ -651,6 +686,14 @@ module lgxy_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module lgxy_stencil_clkwrk_dsa1_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module lgxy_stencil_clkwrk_dsa1_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_22_to_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_32_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -689,13 +732,10 @@ module lgxy_stencil_clkwrk_dsa1_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3600];
-    logic [15:0] bank_1 [3600];
-    logic [15:0] bank_2 [3600];
-    logic [15:0] bank_3 [3600];
-	// RAM Box: {[-1, 58], [-1, 58]}
-	// Capacity: 3600
-  logic [15:0]  RAM [3599:0];
+  logic [15:0] bank_0 [3600];
+  logic [15:0] bank_1 [3600];
+  logic [15:0] bank_2 [3600];
+  logic [15:0] bank_3 [3600];
 
     lgxy_stencil_clkwrk_dsa1_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_22_to_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_32_sr lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_22_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_lgxy_stencil_write[0]), .out(op_hcompute_lgxy_stencil_1_read[0]));
 
@@ -708,6 +748,14 @@ module lgxy_stencil_clkwrk_dsa1_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module lgyy_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module lgyy_stencil_lgyy_stencil_op_hcompute_cim_stencil_64_to_lgyy_stencil_op_hcompute_lgyy_stencil_1_9_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -746,13 +794,10 @@ module lgyy_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3600];
-    logic [15:0] bank_1 [3600];
-    logic [15:0] bank_2 [3600];
-    logic [15:0] bank_3 [3600];
-	// RAM Box: {[-1, 58], [-1, 58]}
-	// Capacity: 3600
-  logic [15:0]  RAM [3599:0];
+  logic [15:0] bank_0 [3600];
+  logic [15:0] bank_1 [3600];
+  logic [15:0] bank_2 [3600];
+  logic [15:0] bank_3 [3600];
 
     lgyy_stencil_lgyy_stencil_op_hcompute_cim_stencil_64_to_lgyy_stencil_op_hcompute_lgyy_stencil_1_9_sr lgyy_stencil_op_hcompute_cim_stencil_64_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_lgyy_stencil_1_write[0]), .out(op_hcompute_cim_stencil_read[0]));
 
@@ -765,6 +810,14 @@ module lgyy_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module lgyy_stencil_clkwrk_dsa2_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module lgyy_stencil_clkwrk_dsa2_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_10_to_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_20_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -803,13 +856,10 @@ module lgyy_stencil_clkwrk_dsa2_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3600];
-    logic [15:0] bank_1 [3600];
-    logic [15:0] bank_2 [3600];
-    logic [15:0] bank_3 [3600];
-	// RAM Box: {[-1, 58], [-1, 58]}
-	// Capacity: 3600
-  logic [15:0]  RAM [3599:0];
+  logic [15:0] bank_0 [3600];
+  logic [15:0] bank_1 [3600];
+  logic [15:0] bank_2 [3600];
+  logic [15:0] bank_3 [3600];
 
     lgyy_stencil_clkwrk_dsa2_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_10_to_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_20_sr lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_10_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_lgyy_stencil_write[0]), .out(op_hcompute_lgyy_stencil_1_read[0]));
 
@@ -822,6 +872,14 @@ module lgyy_stencil_clkwrk_dsa2_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module lxx_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_35_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -1044,13 +1102,10 @@ module lxx_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3844];
-    logic [15:0] bank_1 [3844];
-    logic [15:0] bank_2 [3844];
-    logic [15:0] bank_3 [3844];
-	// RAM Box: {[-2, 59], [-2, 59]}
-	// Capacity: 3844
-  logic [15:0]  RAM [3843:0];
+  logic [15:0] bank_0 [3844];
+  logic [15:0] bank_1 [3844];
+  logic [15:0] bank_2 [3844];
+  logic [15:0] bank_3 [3844];
 
     lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_35_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr lxx_stencil_op_hcompute_lgxx_stencil_1_35_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_lxx_stencil_write[0]), .out(op_hcompute_lgxx_stencil_1_read[0]));
 
@@ -1079,6 +1134,14 @@ module lxx_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module lxy_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_23_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -1301,13 +1364,10 @@ module lxy_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3844];
-    logic [15:0] bank_1 [3844];
-    logic [15:0] bank_2 [3844];
-    logic [15:0] bank_3 [3844];
-	// RAM Box: {[-2, 59], [-2, 59]}
-	// Capacity: 3844
-  logic [15:0]  RAM [3843:0];
+  logic [15:0] bank_0 [3844];
+  logic [15:0] bank_1 [3844];
+  logic [15:0] bank_2 [3844];
+  logic [15:0] bank_3 [3844];
 
     lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_23_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr lxy_stencil_op_hcompute_lgxy_stencil_1_23_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_lxy_stencil_write[0]), .out(op_hcompute_lgxy_stencil_1_read[0]));
 
@@ -1336,6 +1396,14 @@ module lxy_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module lyy_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -1558,13 +1626,10 @@ module lyy_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [3844];
-    logic [15:0] bank_1 [3844];
-    logic [15:0] bank_2 [3844];
-    logic [15:0] bank_3 [3844];
-	// RAM Box: {[-2, 59], [-2, 59]}
-	// Capacity: 3844
-  logic [15:0]  RAM [3843:0];
+  logic [15:0] bank_0 [3844];
+  logic [15:0] bank_1 [3844];
+  logic [15:0] bank_2 [3844];
+  logic [15:0] bank_3 [3844];
 
     lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr lyy_stencil_op_hcompute_lgyy_stencil_1_11_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_lyy_stencil_write[0]), .out(op_hcompute_lgyy_stencil_1_read[0]));
 
@@ -1593,6 +1658,14 @@ module lyy_stencil_ub(
   always @(*) begin
   end
 
+endmodule
+
+
+module padded16_global_wrapper_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = $floor(d[0] / 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = $floor(d[1] / 2);
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -1887,13 +1960,10 @@ module padded16_global_wrapper_stencil_ub(
 
   // Storage
   // # of banks: 4
-    logic [15:0] bank_0 [4096];
-    logic [15:0] bank_1 [4096];
-    logic [15:0] bank_2 [4096];
-    logic [15:0] bank_3 [4096];
-	// RAM Box: {[-3, 60], [-3, 60]}
-	// Capacity: 4096
-  logic [15:0]  RAM [4095:0];
+  logic [15:0] bank_0 [4096];
+  logic [15:0] bank_1 [4096];
+  logic [15:0] bank_2 [4096];
+  logic [15:0] bank_3 [4096];
 
     padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_padded16_global_wrapper_stencil_write[0]), .out(op_hcompute_grad_x_stencil_read[0]));
 
