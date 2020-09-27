@@ -207,11 +207,25 @@ void generate_verilog_for_bank_storage(CodegenOptions& options,
   }
 }
 
+void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors) {
+  for (auto val : bank_factors) {
+    for (int i = 0; i < val; i++) {
+      out << tab(2) << "bank " << val*i << endl;
+    }
+  }
+}
+
 void generate_platonic_ubuffer(
     CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo) {
+
+  prg.pretty_print();
+  //assert(false);
+
+  vector<int> bank_factors{2, 2};
+
 
   map<string, pair<string, int> > shift_registered_outputs;
   auto sc = buf.global_schedule();
@@ -260,6 +274,7 @@ void generate_platonic_ubuffer(
     int delay = sr.second.second;
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [15:0] in", "output logic [15:0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
+
 
     //if (delay == 0) {
       //out << tab(1) << "assign out = in;" << endl;
@@ -318,6 +333,8 @@ void generate_platonic_ubuffer(
   }
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
   out << endl;
+
+  print_cyclic_banks(out, bank_factors);
 
   bank bnk = buf.compute_bank_info();
   out << tab(1) << "// Storage" << endl;
