@@ -114,6 +114,63 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   return parens(res_str);
 }
 
+vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk, UBuffer& buf) {
+  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  isl_map* m = to_map(buf.access_map.at(pt));
+  auto svec = isl_pw_multi_aff_from_map(m);
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(svec);
+  assert(pieces.size() == 1);
+
+  vector<string> domains;
+  vector<string> offsets;
+  vector<string> addr_vec_out;
+  for (auto piece : pieces) {
+    vector<string> addr_vec;
+    isl_multi_aff* ma = piece.second;
+    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+      addr_vec.push_back(codegen_verilog(ctrl_vars, aff));
+    }
+
+    for (int i = 0; i < buf.logical_dimension(); i++) {
+      int length = 1;
+      for (int d = 0; d < i; d++) {
+        length *= lengths.at(d);
+      }
+      string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
+      addr_vec_out.push_back(item);
+    }
+
+    string addr = sep_list(addr_vec_out, "", "", " + ");
+    offsets.push_back(addr);
+    domains.push_back(codegen_c(piece.first));
+  }
+
+  return addr_vec_out;
+
+  //assert(offsets.size() > 0);
+  //assert(domains.size() == offsets.size());
+
+  //string base = offsets.at(0);
+  //for (int d = 1; d < offsets.size(); d++) {
+    //base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
+  //}
+
+  //return base;
+}
 string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
   string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
 
@@ -208,6 +265,9 @@ void generate_verilog_for_bank_storage(CodegenOptions& options,
 }
 
 void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_factors, UBuffer& buf) {
+
+  assert(bank_factors.size() == buf.logical_dimension());
+
   out << endl;
   vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [16*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [15:0] out"};
   out << "module " << buf.name << "_bank_selector(" << comma_list(port_decls) << ");" << endl;
@@ -406,6 +466,11 @@ void generate_platonic_ubuffer(
   string source_ram = "bank_0";
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
+
+    auto comps =
+      generate_verilog_addr_components(in, bnk, buf);
+
+    out << tab(2) << "//" << sep_list(comps, "{", "}", ",") << endl;
     string addr = generate_linearized_verilog_addr(in, bnk, buf);
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;

@@ -53,6 +53,7 @@ module blur_stencil_ub(
 
 
   always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_blur_stencil_write_ctrl_vars[0] + 0*op_hcompute_blur_stencil_write_ctrl_vars[1] + 1*op_hcompute_blur_stencil_write_ctrl_vars[2])) - 0) * 1,(((0 + 0*op_hcompute_blur_stencil_write_ctrl_vars[0] + 1*op_hcompute_blur_stencil_write_ctrl_vars[1] + 0*op_hcompute_blur_stencil_write_ctrl_vars[2])) - 0) * 62}
     if (op_hcompute_blur_stencil_write_wen) begin
       bank_0[(((0 + 0*op_hcompute_blur_stencil_write_ctrl_vars[0] + 0*op_hcompute_blur_stencil_write_ctrl_vars[1] + 1*op_hcompute_blur_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_blur_stencil_write_ctrl_vars[0] + 1*op_hcompute_blur_stencil_write_ctrl_vars[1] + 0*op_hcompute_blur_stencil_write_ctrl_vars[2])) - 0) * 62] <= op_hcompute_blur_stencil_write[0];
     end
@@ -117,6 +118,7 @@ module blur_unnormalized_stencil_ub(
 
 
   always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[2])) - 0) * 1,(((0 + 0*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[2])) - 0) * 62}
     if (op_hcompute_blur_unnormalized_stencil_1_write_wen) begin
       bank_0[(((0 + 0*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_blur_unnormalized_stencil_1_write_ctrl_vars[2])) - 0) * 62] <= op_hcompute_blur_unnormalized_stencil_1_write[0];
     end
@@ -181,6 +183,7 @@ module blur_unnormalized_stencil_clkwrk_dsa0_ub(
 
 
   always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[0] + 0*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[1] + 1*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[2])) - 0) * 1,(((0 + 0*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[0] + 1*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[1] + 0*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[2])) - 0) * 62}
     if (op_hcompute_blur_unnormalized_stencil_write_wen) begin
       bank_0[(((0 + 0*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[0] + 0*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[1] + 1*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[0] + 1*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[1] + 0*op_hcompute_blur_unnormalized_stencil_write_ctrl_vars[2])) - 0) * 62] <= op_hcompute_blur_unnormalized_stencil_write[0];
     end
@@ -445,6 +448,7 @@ module hw_input_stencil_ub(
 
 
   always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) - 0) * 1,(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) - 0) * 64}
     if (op_hcompute_hw_input_stencil_write_wen) begin
       bank_0[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) - 0) * 64] <= op_hcompute_hw_input_stencil_write[0];
     end

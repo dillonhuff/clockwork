@@ -258,6 +258,48 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
+vector<string> generate_multilinear_address_components(const std::string& pt, bank& bnk, UBuffer& buf) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  isl_map* m = to_map(buf.access_map.at(pt));
+  auto svec = isl_pw_multi_aff_from_map(m);
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(svec);
+  assert(pieces.size() == 1);
+
+  vector<string> domains;
+  vector<string> offsets;
+  vector<string> addr_vec_out;
+  for (auto piece : pieces) {
+    vector<string> addr_vec;
+    isl_multi_aff* ma = piece.second;
+    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+      addr_vec.push_back(codegen_c(aff));
+    }
+
+    for (int i = 0; i < buf.logical_dimension(); i++) {
+      string item = addr_vec.at(i) + " - " + str(mins.at(i));
+      addr_vec_out.push_back(item);
+    }
+
+    string addr = sep_list(addr_vec_out, "", "", ", ");
+    offsets.push_back(addr);
+    domains.push_back(codegen_c(piece.first));
+  }
+
+  return addr_vec_out;
+}
+
 string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
   vector<int> lengths;
   vector<int> mins;
@@ -286,12 +328,6 @@ string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& 
 
     vector<string> addr_vec_out;
     for (int i = 0; i < buf.logical_dimension(); i++) {
-      //int length = 1;
-      //for (int d = 0; d < i; d++) {
-        //length *= lengths.at(d);
-      //}
-      //string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
-      //string item = "[" + addr_vec.at(i) + " - " + str(mins.at(i)) + "]";
       string item = addr_vec.at(i) + " - " + str(mins.at(i));
       addr_vec_out.push_back(item);
     }
@@ -305,15 +341,15 @@ string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& 
   assert(offsets.size() == 1);
   return offsets.at(0);
 
-  assert(offsets.size() > 0);
-  assert(domains.size() == offsets.size());
+  //assert(offsets.size() > 0);
+  //assert(domains.size() == offsets.size());
 
-  string base = offsets.at(0);
-  for (int d = 1; d < offsets.size(); d++) {
-    base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
-  }
+  //string base = offsets.at(0);
+  //for (int d = 1; d < offsets.size(); d++) {
+    //base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
+  //}
 
-  return base;
+  //return base;
 }
 
 void generate_multilinear_bank(CodegenOptions& options,
@@ -3590,25 +3626,6 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     }
 
     return base;
-
-    ////assert(pieces.size() == 1);
-    //isl_multi_aff* ma = pieces.at(0).second;
-    //for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
-      //isl_aff* aff = isl_multi_aff_get_aff(ma, d);
-      //addr_vec.push_back(codegen_c(aff));
-    //}
-
-    //vector<string> addr_vec_out;
-    //for (int i = 0; i < logical_dimension(); i++) {
-      //int length = 1;
-      //for (int d = 0; d < i; d++) {
-        //length *= lengths.at(d);
-      //}
-      //string item = "(" + addr_vec.at(i) + ") * " + to_string(length);
-      //addr_vec_out.push_back(item);
-    //}
-
-    //return sep_list(addr_vec_out, "", "", " + ");
   }
 
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, string self_loop_bd, int dim_id, int fetch_width) {

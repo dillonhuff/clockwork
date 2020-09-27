@@ -59,6 +59,7 @@ module avg_pool_stencil_ub(
 
 
   always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1,(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32,(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024}
     if (op_hcompute_avg_pool_stencil_1_write_wen) begin
       bank_0[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
     end
@@ -129,6 +130,7 @@ module avg_pool_stencil_clkwrk_dsa0_ub(
 
 
   always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1,(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32,(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024}
     if (op_hcompute_avg_pool_stencil_write_wen) begin
       bank_0[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
     end
@@ -274,6 +276,7 @@ module hw_input_stencil_ub(
 
 
   always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1,(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64,(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096}
     if (op_hcompute_hw_input_stencil_write_wen) begin
       bank_0[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
     end
