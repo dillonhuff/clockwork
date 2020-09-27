@@ -474,7 +474,17 @@ void generate_platonic_ubuffer(
     string addr = generate_linearized_verilog_addr(in, bnk, buf);
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
-    out << tab(3) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+
+    int num_banks = 1;
+    for (auto val : bank_factors) {
+      num_banks *= val;
+    }
+    for (int b = 0; b < num_banks; b++) {
+      out << tab(3) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << b << ") begin" << endl;
+      out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+      out << tab(3) << "end" << endl;
+    }
+    //out << tab(3) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
     out << tab(2) << "end" << endl;
   }
   out << tab(1) << "end" << endl;
