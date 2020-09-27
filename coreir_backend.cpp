@@ -215,31 +215,40 @@ void generate_platonic_ubuffer(
 
   map<string, pair<string, int> > shift_registered_outputs;
   auto sc = buf.global_schedule();
-  for (auto outpt : buf.get_out_ports()) {
-    for (auto inpt : buf.get_in_ports()) {
-      string reader_name = domain_name(pick(get_maps(buf.access_map.at(outpt))));
-      op* read_op = prg.find_op(reader_name);
+  bool any_reduce_ops_on_buffer = false;
+  for (auto op : prg.all_ops()) {
+    if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
+      any_reduce_ops_on_buffer = true;
+      break;
+    }
+  }
 
-      auto read = read_op->buffers_read();
-      auto written = read_op->buffers_written();
+  if (!any_reduce_ops_on_buffer) {
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto inpt : buf.get_in_ports()) {
+        string reader_name = domain_name(pick(get_maps(buf.access_map.at(outpt))));
+        op* read_op = prg.find_op(reader_name);
 
-      // Dont shift register anything reduce from
-      // in to out
-      if (intersection(read, written).size() == 0) {
+        auto read = read_op->buffers_read();
+        auto written = read_op->buffers_written();
 
-        auto dd =
-          dependence_distance_singleton(buf, inpt, outpt, sc);
-        if (dd.has_value()) {
-          string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
-          cout << "Writer name: " << writer_name << endl;
+        string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
+        cout << "Writer name: " << writer_name << endl;
+        op* write_op = prg.find_op(writer_name);
 
-          int dd_raw = dd.get_value();
-          op* write_op = prg.find_op(writer_name);
-          if (write_op->func != "") {
-            dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+        // Dont shift register rolled-reduces
+        if (intersection(read, written).size() == 0 &&
+            intersection(write_op->buffers_read(), write_op->buffers_written()).size() == 0) {
+          auto dd =
+            dependence_distance_singleton(buf, inpt, outpt, sc);
+          if (dd.has_value()) {
+            int dd_raw = dd.get_value();
+            if (write_op->func != "") {
+              dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+            }
+            dd_raw = dd_raw - 1;
+            shift_registered_outputs[outpt] = {inpt, dd_raw};
           }
-          dd_raw = dd_raw - 1;
-          shift_registered_outputs[outpt] = {inpt, dd_raw};
         }
       }
     }
