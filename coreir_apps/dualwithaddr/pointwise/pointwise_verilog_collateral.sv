@@ -1,9 +1,11 @@
 
 module hw_input_global_wrapper_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_mult_stencil_1_to_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -63,9 +65,11 @@ endmodule
 
 module mult_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module mult_stencil_mult_stencil_op_hcompute_hw_output_stencil_3_to_mult_stencil_op_hcompute_mult_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);

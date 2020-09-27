@@ -1,9 +1,11 @@
 
 module blur_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module blur_stencil_blur_stencil_op_hcompute_hw_output_stencil_1_to_blur_stencil_op_hcompute_blur_stencil_16_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -63,9 +65,11 @@ endmodule
 
 module blur_unnormalized_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module blur_unnormalized_stencil_blur_unnormalized_stencil_op_hcompute_blur_stencil_17_to_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -125,9 +129,11 @@ endmodule
 
 module blur_unnormalized_stencil_clkwrk_dsa0_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module blur_unnormalized_stencil_clkwrk_dsa0_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_5_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_15_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -187,9 +193,11 @@ endmodule
 
 module hw_input_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module hw_input_stencil_hw_input_stencil_op_hcompute_blur_unnormalized_stencil_1_10_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);

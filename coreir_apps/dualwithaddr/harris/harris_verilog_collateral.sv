@@ -1,9 +1,11 @@
 
 module cim_output_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module cim_output_stencil_cim_output_stencil_op_hcompute_hw_output_stencil_46_to_cim_output_stencil_op_hcompute_cim_output_stencil_65_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -63,9 +65,11 @@ endmodule
 
 module cim_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_66_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -325,9 +329,11 @@ endmodule
 
 module grad_x_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module grad_x_stencil_grad_x_stencil_op_hcompute_lxx_stencil_8_to_grad_x_stencil_op_hcompute_grad_x_stencil_54_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -415,9 +421,11 @@ endmodule
 
 module grad_y_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module grad_y_stencil_grad_y_stencil_op_hcompute_lxy_stencil_6_to_grad_y_stencil_op_hcompute_grad_y_stencil_47_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -505,9 +513,11 @@ endmodule
 
 module lgxx_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module lgxx_stencil_lgxx_stencil_op_hcompute_cim_stencil_62_to_lgxx_stencil_op_hcompute_lgxx_stencil_1_33_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -567,9 +577,11 @@ endmodule
 
 module lgxx_stencil_clkwrk_dsa0_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module lgxx_stencil_clkwrk_dsa0_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_34_to_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_44_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -629,9 +641,11 @@ endmodule
 
 module lgxy_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module lgxy_stencil_lgxy_stencil_op_hcompute_cim_stencil_63_to_lgxy_stencil_op_hcompute_lgxy_stencil_1_21_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -691,9 +705,11 @@ endmodule
 
 module lgxy_stencil_clkwrk_dsa1_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module lgxy_stencil_clkwrk_dsa1_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_22_to_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_32_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -753,9 +769,11 @@ endmodule
 
 module lgyy_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module lgyy_stencil_lgyy_stencil_op_hcompute_cim_stencil_64_to_lgyy_stencil_op_hcompute_lgyy_stencil_1_9_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -815,9 +833,11 @@ endmodule
 
 module lgyy_stencil_clkwrk_dsa2_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module lgyy_stencil_clkwrk_dsa2_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_10_to_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_20_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -877,9 +897,11 @@ endmodule
 
 module lxx_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_35_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -1139,9 +1161,11 @@ endmodule
 
 module lxy_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_23_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -1401,9 +1425,11 @@ endmodule
 
 module lyy_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -1663,9 +1689,11 @@ endmodule
 
 module padded16_global_wrapper_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);

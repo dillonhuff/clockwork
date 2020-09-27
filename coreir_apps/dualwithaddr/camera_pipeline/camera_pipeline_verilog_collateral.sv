@@ -1,11 +1,13 @@
 
 module corrected_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*3 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
   logic [15:0] bank_index_2;
-  assign bank_index_2 = $floor(d[2] / 2);
+  assign bank_index_2 = (d[2] % 2);
+  assign out = bank_index_0*1+bank_index_1*2+bank_index_2*4;
+
 endmodule
 
 module corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_to_corrected_stencil_op_hcompute_corrected_stencil_1_48_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -137,11 +139,13 @@ endmodule
 
 module curved_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*3 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
   logic [15:0] bank_index_2;
-  assign bank_index_2 = $floor(d[2] / 2);
+  assign bank_index_2 = (d[2] % 2);
+  assign out = bank_index_0*1+bank_index_1*2+bank_index_2*4;
+
 endmodule
 
 module curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_to_curved_stencil_op_hcompute_curved_stencil_1_40_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -273,11 +277,13 @@ endmodule
 
 module demosaicked_1_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*3 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
   logic [15:0] bank_index_2;
-  assign bank_index_2 = $floor(d[2] / 2);
+  assign bank_index_2 = (d[2] % 2);
+  assign out = bank_index_0*1+bank_index_1*2+bank_index_2*4;
+
 endmodule
 
 module demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_to_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -559,9 +565,11 @@ endmodule
 
 module denoised_1_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_to_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
@@ -1127,9 +1135,11 @@ endmodule
 
 module hw_input_global_wrapper_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*2 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
-  assign bank_index_0 = $floor(d[0] / 2);
+  assign bank_index_0 = (d[0] % 2);
   logic [15:0] bank_index_1;
-  assign bank_index_1 = $floor(d[1] / 2);
+  assign bank_index_1 = (d[1] % 2);
+  assign out = bank_index_0*1+bank_index_1*2;
+
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_to_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);

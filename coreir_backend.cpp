@@ -212,13 +212,25 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [16*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [15:0] out"};
   out << "module " << buf.name << "_bank_selector(" << comma_list(port_decls) << ");" << endl;
 
+  vector<string> bank_strides;
+  int stride = 1;
+  for (auto p : bank_factors) {
+    bank_strides.push_back(str(stride));
+    stride *= p;
+  }
   int i = 0;
+  vector<string> terms;
   for (auto p : bank_factors) {
     string var = "d" + brackets(str(i));
     out << tab(1) << "logic [15:0] bank_index_" << i << ";" << endl;
-    out << tab(1) << "assign " << "bank_index_" << i << " = " << "$floor(" << var << " / " << p << ");" << endl;
+    //out << tab(1) << "assign " << "bank_index_" << i << " = " << "$floor(" << var << " / " << p << ");" << endl;
+    out << tab(1) << "assign " << "bank_index_" << i << " = " << "(" << var << " % " << p << ");" << endl;
+    terms.push_back("bank_index_" + str(i) + "*" + bank_strides.at(i));
     i++;
   }
+
+  out << tab(1) << "assign out = " << sep_list(terms, "", "", "+") << ";" << endl << endl;
+
   out << "endmodule" << endl << endl;
 }
 
