@@ -117,16 +117,16 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
 vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk, UBuffer& buf) {
   string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
 
-  vector<int> lengths;
   vector<int> mins;
   for (int i = 0; i < buf.logical_dimension(); i++) {
     auto s = project_all_but(to_set(bnk.rddom), i);
     auto min = to_int(lexminval(s));
     mins.push_back(min);
-    auto max = to_int(lexmaxval(s));
-    int length = max - min + 1;
-    lengths.push_back(length);
+    //auto max = to_int(lexmaxval(s));
+    //int length = max - min + 1;
+    //lengths.push_back(length);
   }
+
 
   isl_map* m = to_map(buf.access_map.at(pt));
   auto svec = isl_pw_multi_aff_from_map(m);
@@ -135,7 +135,6 @@ vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk
   assert(pieces.size() == 1);
 
   vector<string> domains;
-  vector<string> offsets;
   vector<string> addr_vec_out;
   for (auto piece : pieces) {
     vector<string> addr_vec;
@@ -146,31 +145,16 @@ vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk
     }
 
     for (int i = 0; i < buf.logical_dimension(); i++) {
-      int length = 1;
-      for (int d = 0; d < i; d++) {
-        length *= lengths.at(d);
-      }
-      string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
+      string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ")";
       addr_vec_out.push_back(item);
     }
 
     string addr = sep_list(addr_vec_out, "", "", " + ");
-    offsets.push_back(addr);
-    domains.push_back(codegen_c(piece.first));
   }
 
   return addr_vec_out;
-
-  //assert(offsets.size() > 0);
-  //assert(domains.size() == offsets.size());
-
-  //string base = offsets.at(0);
-  //for (int d = 1; d < offsets.size(); d++) {
-    //base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
-  //}
-
-  //return base;
 }
+
 string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
   string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
 
