@@ -435,6 +435,22 @@ void generate_platonic_ubuffer(
 
   out << endl;
   for (auto in : buf.get_in_ports()) {
+    auto comps_raw =
+      generate_verilog_addr_components(in, bnk, buf);
+
+    vector<string> comps;
+    int i = 0;
+    for (auto c : comps_raw) {
+      out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
+      out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
+      comps.push_back(buf.name + "_" + in + "_" + str(i));
+      i++;
+    }
+    out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
+  }
+
+  out << endl;
+  for (auto in : buf.get_in_ports()) {
     string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
     for (auto pt : shift_registered_outputs) {
       string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));

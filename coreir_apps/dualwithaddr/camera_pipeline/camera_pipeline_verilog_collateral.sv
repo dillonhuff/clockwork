@@ -113,6 +113,28 @@ module corrected_stencil_ub(
   logic [15:0] bank_6 [10092];
   logic [15:0] bank_7 [10092];
 
+  logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_0;
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_0 = (((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0);
+  logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_1;
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_1 = (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0);
+  logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_2;
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_2 = (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0);
+corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_0,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_1,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_2}));
+  logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_0;
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_0 = (((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0);
+  logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_1;
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_1 = (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0);
+  logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_2;
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_2 = (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0);
+corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_0,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_1,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_2}));
+  logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_0;
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_0 = (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0);
+  logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_1;
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_1 = (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0);
+  logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_2;
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_2 = (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0);
+corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_0,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_1,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_2}));
+
     corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_to_corrected_stencil_op_hcompute_corrected_stencil_1_48_sr corrected_stencil_op_hcompute_curved_stencil_1_41_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_corrected_stencil_1_write[0]), .out(op_hcompute_curved_stencil_1_read[0]));
 
     corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_to_corrected_stencil_op_hcompute_corrected_stencil_2_44_sr corrected_stencil_op_hcompute_curved_stencil_2_39_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_corrected_stencil_2_write[0]), .out(op_hcompute_curved_stencil_2_read[0]));
@@ -253,6 +275,28 @@ module curved_stencil_ub(
   logic [15:0] bank_5 [10092];
   logic [15:0] bank_6 [10092];
   logic [15:0] bank_7 [10092];
+
+  logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_0;
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_0 = (((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0);
+  logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_1;
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_1 = (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0);
+  logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_2;
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_2 = (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0);
+curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_0,curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_1,curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_2}));
+  logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_0;
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_0 = (((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0);
+  logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_1;
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_1 = (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0);
+  logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_2;
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_2 = (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0);
+curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_0,curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_1,curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_2}));
+  logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_0;
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_0 = (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0);
+  logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_1;
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_1 = (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0);
+  logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_2;
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_2 = (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0);
+curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_0,curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_1,curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_2}));
 
     curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_to_curved_stencil_op_hcompute_curved_stencil_1_40_sr curved_stencil_op_hcompute_hw_output_stencil_1_3_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_curved_stencil_1_write[0]), .out(op_hcompute_hw_output_stencil_1_read[0]));
 
@@ -532,6 +576,28 @@ module demosaicked_1_stencil_ub(
   logic [15:0] bank_5 [10092];
   logic [15:0] bank_6 [10092];
   logic [15:0] bank_7 [10092];
+
+  logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_0;
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_0 = (((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0);
+  logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_1;
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0);
+  logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_2;
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_2 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_2}));
+  logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_0;
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0);
+  logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_1;
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0);
+  logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_2;
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_2 = (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_2}));
+  logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_0;
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_0 = (((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0);
+  logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_1;
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0);
+  logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_2;
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_2 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_2}));
 
     demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_to_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_sr demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_demosaicked_1_stencil_1_write[0]), .out(op_hcompute_corrected_stencil_1_read[0]));
 
@@ -1088,6 +1154,12 @@ module denoised_1_stencil_ub(
   logic [15:0] bank_2 [3600];
   logic [15:0] bank_3 [3600];
 
+  logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_0;
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_0 = (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1);
+  logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_1;
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_1 = (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_1}));
+
     denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_to_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_sr denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_denoised_1_stencil_write[0]), .out(op_hcompute_demosaicked_1_stencil_1_read[0]));
 
     denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_to_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_sr denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_denoised_1_stencil_write[0]), .out(op_hcompute_demosaicked_1_stencil_1_read[1]));
@@ -1284,6 +1356,12 @@ module hw_input_global_wrapper_stencil_ub(
   logic [15:0] bank_1 [4096];
   logic [15:0] bank_2 [4096];
   logic [15:0] bank_3 [4096];
+
+  logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_0;
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_0 = (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3);
+  logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_1;
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_1 = (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3);
+hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_0,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_1}));
 
     hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_to_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_sr hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_hw_input_global_wrapper_stencil_write[0]), .out(op_hcompute_denoised_1_stencil_read[1]));
 
