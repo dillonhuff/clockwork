@@ -44,6 +44,53 @@ using CoreIR::Module;
 static int DATAPATH_WIDTH;
 static int CONTROLPATH_WIDTH;
 
+CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  auto ns = context->getNamespace("global");
+
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", context->Named("coreir.clkIn")},
+      {"flush", context->BitIn()},
+      {"rst_n", context->BitIn()}};
+
+  for (auto b : buf.port_bundles) {
+    int pt_width = buf.port_widths;
+    int bd_width = buf.lanes_in_bundle(b.first);
+    string name = b.first;
+    string pt_rep = pick(b.second);
+    auto acc_maps = get_maps(buf.access_map.at(pt_rep));
+    assert(acc_maps.size() > 0);
+    int control_dimension = num_in_dims(pick(acc_maps));
+    if (buf.is_input_bundle(b.first)) {
+      if (options.rtl_options.use_external_controllers) {
+        ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
+        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+      }
+      ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
+    } else {
+      if (options.rtl_options.use_external_controllers) {
+        ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
+        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+      }
+      ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
+    }
+  }
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
+  auto def = ub->newModuleDef();
+
+  generate_platonic_ubuffer(options, buf, hwinfo);
+  ////TODO: use a more general switch
+  //if (true) {
+    //generate_synthesizable_functional_model(options, buf, def, hwinfo);
+  //} else {
+    ////buf.generate_coreir(options, def);
+  //}
+
+  ub->setDef(def);
+  return ub;
+}
+
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   vector<string> terms;
   terms.push_back(str(const_coeff(aff)));
@@ -178,7 +225,7 @@ void generate_platonic_ubuffer(
         //auto writer_latency
         int dd_raw = dd.get_value();
         // TODO: Fix this hack by adding real latency adjustment
-        //dd_raw = dd_raw - 1;
+        dd_raw = dd_raw - 1;
         shift_registered_outputs[outpt] = {inpt, dd_raw};
       }
     }
@@ -191,9 +238,9 @@ void generate_platonic_ubuffer(
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [15:0] in", "output logic [15:0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
-    if (delay == 0) {
-      out << tab(1) << "assign out = in;" << endl;
-    } else {
+    //if (delay == 0) {
+      //out << tab(1) << "assign out = in;" << endl;
+    //} else {
       out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
       out << tab(1) << "reg [15:0] read_addr;" << endl;
@@ -216,7 +263,7 @@ void generate_platonic_ubuffer(
       out << tab(1) << "always @(*) begin" << endl;
       out << tab(2) << "out = storage[read_addr];" << endl;
       out << tab(1) << "end" << endl << endl;
-    }
+    //}
 
     out << "endmodule" << endl << endl;
   }
@@ -1422,7 +1469,6 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
-      //auto ub_mod = generate_coreir(options, context, buf.second, hwinfo);
       auto ub_mod = generate_coreir_without_ctrl(options, context, buf.second, hwinfo);
       def->addInstance(buf.second.name, ub_mod);
       //TODO: add reset connection for garnet mapping
@@ -1670,7 +1716,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
-      auto ub_mod = generate_coreir(options, context, buf.second, hwinfo);
+      auto ub_mod = generate_coreir(options, context, prg, buf.second, hwinfo);
       auto b = def->addInstance(buf.second.name, ub_mod);
 
       auto self = def->sel("self");
