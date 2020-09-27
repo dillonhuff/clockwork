@@ -16316,12 +16316,13 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  concat(test_programs, stencil_programs());
 
   // Passes
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
+
+  concat(test_programs, stencil_programs());
  
   // Too large to fit in 16 bit controller
   //test_programs.push_back(mobilenet());

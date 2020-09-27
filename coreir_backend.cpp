@@ -217,21 +217,30 @@ void generate_platonic_ubuffer(
   auto sc = buf.global_schedule();
   for (auto outpt : buf.get_out_ports()) {
     for (auto inpt : buf.get_in_ports()) {
-      auto dd =
-        dependence_distance_singleton(buf, inpt, outpt, sc);
-      if (dd.has_value()) {
-        string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
-        cout << "Writer name: " << writer_name << endl;
+      string reader_name = domain_name(pick(get_maps(buf.access_map.at(outpt))));
+      op* read_op = prg.find_op(reader_name);
 
-        //assert(false);
-        //auto writer_latency
-        int dd_raw = dd.get_value();
-        op* write_op = prg.find_op(writer_name);
-        if (write_op->func != "") {
-          dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+      auto read = read_op->buffers_read();
+      auto written = read_op->buffers_written();
+
+      // Dont shift register anything reduce from
+      // in to out
+      if (intersection(read, written).size() == 0) {
+
+        auto dd =
+          dependence_distance_singleton(buf, inpt, outpt, sc);
+        if (dd.has_value()) {
+          string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
+          cout << "Writer name: " << writer_name << endl;
+
+          int dd_raw = dd.get_value();
+          op* write_op = prg.find_op(writer_name);
+          if (write_op->func != "") {
+            dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+          }
+          dd_raw = dd_raw - 1;
+          shift_registered_outputs[outpt] = {inpt, dd_raw};
         }
-        dd_raw = dd_raw - 1;
-        shift_registered_outputs[outpt] = {inpt, dd_raw};
       }
     }
   }
