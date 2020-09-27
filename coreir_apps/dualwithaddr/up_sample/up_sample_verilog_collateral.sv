@@ -10,6 +10,15 @@ module hw_input_stencil_ub(
 	output logic [15:0] op_hcompute_nearest_neighbor_stencil_read [0:0] );
 
   // Storage
+  // # of banks: 8
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
+    logic [15:0] bank_4 [1];
+    logic [15:0] bank_5 [1];
+    logic [15:0] bank_6 [1];
+    logic [15:0] bank_7 [1];
 	// RAM Box: {[0, 63], [0, 63], [0, 0]}
 	// Capacity: 4096
   logic [15:0]  RAM [4095:0];
@@ -61,6 +70,15 @@ module nearest_neighbor_stencil_ub(
 	input logic [15:0] op_hcompute_nearest_neighbor_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 8
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
+    logic [15:0] bank_4 [1];
+    logic [15:0] bank_5 [1];
+    logic [15:0] bank_6 [1];
+    logic [15:0] bank_7 [1];
 	// RAM Box: {[0, 127], [0, 127], [0, 0]}
 	// Capacity: 16384
   logic [15:0]  RAM [16383:0];

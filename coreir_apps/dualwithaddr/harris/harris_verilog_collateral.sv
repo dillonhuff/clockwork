@@ -33,6 +33,11 @@ module cim_output_stencil_ub(
 	output logic [15:0] op_hcompute_hw_output_stencil_read [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[0, 57], [0, 57]}
 	// Capacity: 3364
   logic [15:0]  RAM [3363:0];
@@ -269,6 +274,11 @@ module cim_stencil_ub(
 	input logic [15:0] op_hcompute_cim_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -363,6 +373,11 @@ module grad_x_stencil_ub(
 	output logic [15:0] op_hcompute_lxy_stencil_read [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -443,6 +458,11 @@ module grad_y_stencil_ub(
 	output logic [15:0] op_hcompute_lyy_stencil_read [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -497,6 +517,11 @@ module lgxx_stencil_ub(
 	input logic [15:0] op_hcompute_lgxx_stencil_1_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -549,6 +574,11 @@ module lgxx_stencil_clkwrk_dsa0_ub(
 	input logic [15:0] op_hcompute_lgxx_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -601,6 +631,11 @@ module lgxy_stencil_ub(
 	input logic [15:0] op_hcompute_lgxy_stencil_1_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -653,6 +688,11 @@ module lgxy_stencil_clkwrk_dsa1_ub(
 	input logic [15:0] op_hcompute_lgxy_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -705,6 +745,11 @@ module lgyy_stencil_ub(
 	input logic [15:0] op_hcompute_lgyy_stencil_1_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -757,6 +802,11 @@ module lgyy_stencil_clkwrk_dsa2_ub(
 	input logic [15:0] op_hcompute_lgyy_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 3600
   logic [15:0]  RAM [3599:0];
@@ -993,6 +1043,11 @@ module lxx_stencil_ub(
 	input logic [15:0] op_hcompute_lxx_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -1245,6 +1300,11 @@ module lxy_stencil_ub(
 	input logic [15:0] op_hcompute_lxy_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -1497,6 +1557,11 @@ module lyy_stencil_ub(
 	input logic [15:0] op_hcompute_lyy_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-2, 59], [-2, 59]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -1821,6 +1886,11 @@ module padded16_global_wrapper_stencil_ub(
 	input logic [15:0] op_hcompute_padded16_global_wrapper_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[-3, 60], [-3, 60]}
 	// Capacity: 4096
   logic [15:0]  RAM [4095:0];

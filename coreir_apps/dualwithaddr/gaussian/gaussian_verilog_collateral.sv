@@ -33,6 +33,11 @@ module blur_stencil_ub(
 	output logic [15:0] op_hcompute_hw_output_stencil_read [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[0, 61], [0, 61]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -85,6 +90,11 @@ module blur_unnormalized_stencil_ub(
 	input logic [15:0] op_hcompute_blur_unnormalized_stencil_1_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[0, 61], [0, 61]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -137,6 +147,11 @@ module blur_unnormalized_stencil_clkwrk_dsa0_ub(
 	input logic [15:0] op_hcompute_blur_unnormalized_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[0, 61], [0, 61]}
 	// Capacity: 3844
   logic [15:0]  RAM [3843:0];
@@ -373,6 +388,11 @@ module hw_input_stencil_ub(
 	input logic [15:0] op_hcompute_hw_input_stencil_write [0:0] );
 
   // Storage
+  // # of banks: 4
+    logic [15:0] bank_0 [1];
+    logic [15:0] bank_1 [1];
+    logic [15:0] bank_2 [1];
+    logic [15:0] bank_3 [1];
 	// RAM Box: {[0, 63], [0, 63]}
 	// Capacity: 4096
   logic [15:0]  RAM [4095:0];
