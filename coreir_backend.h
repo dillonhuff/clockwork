@@ -108,6 +108,7 @@ CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
 void add_tahoe_memory_generator(CoreIR::Context* c);
 
 void generate_platonic_ubuffer(CodegenOptions& options,
+    prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);
 

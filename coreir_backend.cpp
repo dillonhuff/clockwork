@@ -79,7 +79,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
   auto def = ub->newModuleDef();
 
-  generate_platonic_ubuffer(options, buf, hwinfo);
+  generate_platonic_ubuffer(options, prg, buf, hwinfo);
   ////TODO: use a more general switch
   //if (true) {
     //generate_synthesizable_functional_model(options, buf, def, hwinfo);
@@ -209,6 +209,7 @@ void generate_verilog_for_bank_storage(CodegenOptions& options,
 
 void generate_platonic_ubuffer(
     CodegenOptions& options,
+    prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo) {
 
@@ -221,10 +222,14 @@ void generate_platonic_ubuffer(
       if (dd.has_value()) {
         string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
         cout << "Writer name: " << writer_name << endl;
+
         //assert(false);
         //auto writer_latency
         int dd_raw = dd.get_value();
-        // TODO: Fix this hack by adding real latency adjustment
+        op* write_op = prg.find_op(writer_name);
+        if (write_op->func != "") {
+          dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+        }
         dd_raw = dd_raw - 1;
         shift_registered_outputs[outpt] = {inpt, dd_raw};
       }
