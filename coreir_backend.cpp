@@ -41,6 +41,38 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 
+template<typename T>
+T prod_after(const std::vector<T>& strides, const int i) {
+  T r = 1;
+  for (int s = i; s < (int) strides.size(); s++) {
+    r *= strides.at(s);
+  }
+  return r;
+}
+
+template<typename T>
+T prod_before(const std::vector<T>& strides, const int i) {
+  T r = 1;
+  for (int s = 0; s < min(i, (int) strides.size()); s++) {
+    r *= strides.at(s);
+  }
+  return r;
+}
+
+template<typename T>
+T card(const std::vector<T>& strides) {
+  return prod_after(strides, 0);
+}
+
+template<typename T>
+vector<T> strides(const std::vector<T>& lengths) {
+  vector<T> strs;
+  for (int i = 0; i < (int) lengths.size(); i++) {
+    strs.push_back(prod_after(lengths, i));
+  }
+  return strs;
+}
+
 static int DATAPATH_WIDTH = 16;
 static int CONTROLPATH_WIDTH = 16;
 
@@ -301,10 +333,10 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
 }
 
 void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank& bnk) {
-  int num_banks = 1;
-  for (auto val : bank_factors) {
-    num_banks *= val;
-  }
+  int num_banks = card(bank_factors);
+  //for (auto val : bank_factors) {
+    //num_banks *= val;
+  //}
   out << tab(1) << "// # of banks: " << num_banks << endl;
 
   int capacity = 1;
