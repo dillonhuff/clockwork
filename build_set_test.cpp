@@ -16294,12 +16294,12 @@ vector<prog> stencil_programs() {
   vector<prog> test_programs;
 
   // rom_compute.h missing?
-  //test_programs.push_back(rom());
+  test_programs.push_back(rom());
+  // strided_conv.h missing?
+  test_programs.push_back(strided_conv());
 
   test_programs.push_back(mini_conv_halide_fixed());
 
-  // strided_conv.h missing?
-  // test_programs.push_back(strided_conv());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
@@ -16321,6 +16321,7 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, stencil_programs());
 
  
   // Too large to fit in 16 bit controller
@@ -16335,7 +16336,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
 
-  concat(test_programs, stencil_programs());
 
   return test_programs;
 }
