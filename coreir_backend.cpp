@@ -41,8 +41,8 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 
-static int DATAPATH_WIDTH;
-static int CONTROLPATH_WIDTH;
+static int DATAPATH_WIDTH = 16;
+static int CONTROLPATH_WIDTH = 16;
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   auto ns = context->getNamespace("global");
@@ -63,13 +63,13 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     if (buf.is_input_bundle(b.first)) {
       if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
-        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
       }
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
-        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
       }
       ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
     }
@@ -842,28 +842,6 @@ void load_cgramapping(Context* c) {
     def->connect("lut.bit.out","self.out");
     mod->setDef(def);
   }
-  /*{
-    //TODO not specified in the PE spec
-    //unary op (width)->width
-    std::vector<std::tuple<string,string,uint>> unops = {
-      //std::make_tuple("not","inv",0),
-    };
-    for (auto op : unops) {
-      string opstr = std::get<0>(op);
-      string alu_op = std::get<1>(op);
-      uint is_signed = std::get<2>(op);
-      Module* mod = c->getGenerator("coreir."+opstr)->getModule({{"width",Const::make(c,16)}});
-      ModuleDef* def = mod->newModuleDef();
-      Values dataPEArgs({
-        {"alu_op",Const::make(c,alu_op)},
-        {"signed",Const::make(c,(bool) is_signed)}});
-      def->addInstance("binop","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},dataPEArgs);
-
-      def->connect("self.in","binop.data.in.0");
-      def->connect("self.out","binop.data.out");
-      mod->setDef(def);
-    }
-    }*/
   {
     //binary op (width,width)->width
     std::vector<std::tuple<string,string,uint>> binops({
@@ -1432,15 +1410,12 @@ CoreIR::Module* generate_dual_port_addrgen_buf(CodegenOptions& options, CoreIR::
     int control_dimension = num_in_dims(pick(acc_maps));
     if (buf.is_input_bundle(b.first)) {
       ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
-      //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
 
       //ub_field.push_back(make_pair(name + "_en", context->BitIn()));
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
-      //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
 
-      //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
       ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
     }
   }
@@ -1466,97 +1441,6 @@ CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
     CoreIR::Context* context) {
   return nullptr;
 
-  //bool found_compute = true;
-  //if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
-    //found_compute = false;
-  //}
-
-  //auto ub = create_prog_declaration(options, buffers, prg, schedmap, context);
-  //auto def = ub->newModuleDef();
-
-  //auto sched_maps = get_maps(schedmap);
-  //for (auto op : prg.all_ops()) {
-    //generate_coreir_op_controller(def, op, sched_maps, hwinfo);
-    //generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
-  //}
-
-  //for (auto& buf : buffers) {
-    //if (!prg.is_boundary(buf.first)) {
-      //auto ub_mod = generate_dual_port_addrgen_buf(options, context, buf.second);
-      //def->addInstance(buf.second.name, ub_mod);
-    //}
-  //}
-
-  //auto levels = get_variable_levels(prg);
-  //// Connect compute units to buffers
-  //for (auto op : prg.all_ops()) {
-    //vector<string> surrounding = surrounding_vars(op, prg);
-    //for (auto var : op->index_variables_needed_by_compute) {
-      //int level = map_find(var, levels);
-      //auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
-      //def->connect(def->sel(op->name)->sel(var), var_wire);
-    //}
-
-    //for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-      //string buf_name = bundle.first;
-      //string bundle_name = bundle.second;
-      //auto buf = map_find(buf_name, buffers);
-      //int pixel_width = buf.port_widths;
-
-      //assert(buf.is_input_bundle(bundle.second));
-
-      //if (prg.is_output(buf_name)) {
-        //auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
-        //def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(def->sel(output_en),
-            //write_start_wire(def, op->name));
-      //} else {
-        //def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
-            //write_start_wire(def, op->name));
-        ////def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-            ////write_start_control_vars(def, op->name));
-      //}
-    //}
-
-    //for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-      //string buf_name = bundle.first;
-      //string bundle_name = bundle.second;
-      //auto buf = map_find(buf_name, buffers);
-
-      //assert(buf.is_output_bundle(bundle.second));
-
-      //if (prg.is_input(buf_name)) {
-        //auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
-        //auto input_bus = "self." + pg(buf_name, bundle_name);
-        //auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
-        ////def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        //// TODO: This delayed input is a hack that I insert to
-        //// ensure that I can assume all buffer reads take 1 cycle
-        //def->connect(delayed_input,
-            //def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
-        //def->connect(def->sel(output_valid),
-            //read_start_wire(def, op->name));
-      //} else {
-        //def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
-            //read_start_wire(def, op->name));
-        ////def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-            ////read_start_control_vars(def, op->name));
-      //}
-    //}
-  //}
-
-  //ub->setDef(def);
-
-  //ub->print();
-
-  //connect_signal("reset", ub);
-  ////context->runPasses({"wireclocks-coreir"});
-  ////context->runPasses({"rungenerators", "wireclocks-coreir"});
-  //context->runPasses({"rungenerators", "wireclocks-clk"});
-
-  //return ub;
 }
 
 void generate_coreir_addrgen_in_tile(CodegenOptions& options,
@@ -1716,21 +1600,13 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       if (prg.is_input(buf_name)) {
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
         auto input_bus = "self." + pg(buf_name, bundle_name);
-        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
+        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), DATAPATH_WIDTH);
         // TODO: This delayed input is a hack that I insert to
         // ensure that I can assume all buffer reads take 1 cycle
         def->connect(delayed_input,
             def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
-        //if (options.rtl_options.use_external_controllers) {
-        //  def->connect(def->sel(output_valid),
-        //      read_start_wire(def, op->name));
-        //}
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
-        //    read_start_wire(def, op->name));
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-        //    read_start_control_vars(def, op->name));
       }
     }
   }
@@ -1967,12 +1843,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       if (prg.is_input(buf_name)) {
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
         auto input_bus = "self." + pg(buf_name, bundle_name);
-
-        // TODO: This delayed input is a hack that I insert to
-        // ensure that I can assume all buffer reads take 1 cycle
-        //auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
-        //def->connect(delayed_input,
-            //def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
 
         def->connect(def->sel(input_bus),
             def->sel(op->name + "." + pg(buf_name, bundle_name)));
@@ -2431,7 +2301,7 @@ void generate_coreir(CodegenOptions& options,
   add_delay_tile_generator(context);
   add_raw_quad_port_memtile_generator(context);
   add_tahoe_memory_generator(context);
-  ram_module(context, 16, 2048);
+  ram_module(context, DATAPATH_WIDTH, 2048);
 
   auto c = context;
 
@@ -2611,7 +2481,7 @@ CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
 CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
   vector<CoreIR::Wireable*> terms;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   auto context = def->getContext();
   auto c = context;
   auto ns = c->getNamespace("global");

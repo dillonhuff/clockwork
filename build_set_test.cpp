@@ -16321,7 +16321,6 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  concat(test_programs, stencil_programs());
 
  
   // Too large to fit in 16 bit controller
@@ -16337,6 +16336,7 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(conv_layer());
 
 
+  concat(test_programs, stencil_programs());
   return test_programs;
 }
 
@@ -16361,7 +16361,6 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     //assert(false);
-    //string app_type = "dualwithaddr";
     string app_type = "dualwithaddr";
     cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
     cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
