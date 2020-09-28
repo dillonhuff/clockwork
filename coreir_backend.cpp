@@ -233,8 +233,16 @@ vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk
 }
 
 string generate_linearized_verilog_inner_bank_offset(const std::string& pt, vector<int>& banking, bank& bnk, UBuffer& buf) {
-  auto comps = generate_verilog_address_components(pt, bank, buf);
+  auto comps = generate_verilog_addr_components(pt, bnk, buf);
+  assert(comps.size() == banking.size());
+  auto strs = strides(banking);
 
+  vector<string> terms;
+  for (int i = 0; i < comps.size(); i++) {
+    string comp = "$floor(" + comps.at(i) + " / " + str(banking.at(i)) + ")";
+    string stride = str(strs.at(i));
+    terms.push_back(comp + "*" + stride);
+  }
   return sep_list(terms, "(", ")", " + ");
 }
 
