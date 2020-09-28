@@ -545,10 +545,10 @@ void generate_platonic_ubuffer(
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
-    int num_banks = 1;
-    for (auto val : bank_factors) {
-      num_banks *= val;
-    }
+    int num_banks = card(bank_factors);
+    //for (auto val : bank_factors) {
+      //num_banks *= val;
+    //}
     for (int b = 0; b < num_banks; b++) {
       string source_ram = "bank_" + str(b);
       out << tab(3) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << b << ") begin" << endl;
@@ -566,10 +566,10 @@ void generate_platonic_ubuffer(
   for (auto outpt : buf.get_out_ports()) {
     if (!contains_key(outpt, shift_registered_outputs)) {
       string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
-      int num_banks = 1;
-      for (auto val : bank_factors) {
-        num_banks *= val;
-      }
+      int num_banks = card(bank_factors);
+      //for (auto val : bank_factors) {
+        //num_banks *= val;
+      //}
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
         out << tab(3) << "if (" << buf.name << "_" << outpt << "_bank_selector.out == " << b << ") begin" << endl;
