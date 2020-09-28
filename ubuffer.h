@@ -1876,6 +1876,7 @@ class UBuffer {
     //pad the read domain
     void pad_read_dom(int fetch_width);
 
+
     //change the input and output and return the agg and tb ubuffer stucture
     pair<std::map<string, UBuffer>, vector<string> >
         vectorization(int dim_id, int fetch_width, vector<int> iis);
@@ -1946,10 +1947,24 @@ class UBuffer {
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
     pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);
 
+    void generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
+
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
+vector<string> buffer_vectorization(vector<int> iis,
+        vector<string> buf_name_vec,
+        int dim_id, int fetch_width,
+        map<string, UBuffer> & buffers);
+
+//Vectorization API function on top of ubuffer class method
+vector<string> buffer_vectorization(vector<int> iis,
+        string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
+
+vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
+
+vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
 
 static inline
 std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
@@ -2040,6 +2055,10 @@ int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::stri
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port);
 
 
+isl_union_map* global_schedule_from_buffers(const map<string, UBuffer> &buffers);
+isl_union_map* global_access_map_from_buffers(const map<string, UBuffer> &buffers);
+isl_union_set* global_domain_from_buffers(const map<string, UBuffer> &buffers);
+isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers);
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 

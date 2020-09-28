@@ -1315,49 +1315,6 @@ void synth_lb_test() {
   isl_ctx_free(buf.ctx);
 }
 
-vector<string> buffer_vectorization(vector<int> iis,
-        vector<string> buf_name_vec,
-        int dim_id, int fetch_width,
-        map<string, UBuffer> & buffers) {
-  /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
-   * generate the new domain and access map and also add two other buffer on
-   * both input and output side
-   * */
-  vector<string> rem_deps, rem_origin_ubuf;
-  for(auto it : buffers) {
-    if (std::find(buf_name_vec.begin(), buf_name_vec.end(), it.first) != buf_name_vec.end()) {
-      rem_origin_ubuf.push_back(it.first);
-      auto target_buffer = it.second;
-      cout << "buffer_vectorization Vectorizing: " << target_buffer.name << endl;
-      cout << target_buffer << endl;
-
-      //Input must be take care
-      //need to first pad the buffer output to the multiplier of
-      target_buffer.pad_read_dom(fetch_width);
-
-      //ret is a pair of vectorized_buffer and the dependency need to be removed
-      auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
-      for (auto itr: ret.first) {
-        buffers[itr.first] = itr.second;
-      }
-      for (auto deps: ret.second) {
-        rem_deps.push_back(deps);
-      }
-    }
-  }
-  for (auto rem: rem_origin_ubuf) {
-    buffers.erase(rem);
-  }
-  return rem_deps;
-}
-
-vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
-    return buffer_vectorization({}, vector<string>({buf_name}), dim_id, fetch_width, buffers);
-}
-
-vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
-    return buffer_vectorization({}, buf_name_vec, dim_id, fetch_width, buffers);
-}
 
 /* Main driver function for vectorization, loop through all the ubuffer
  * Find the one with depth large than shift register,
@@ -1463,51 +1420,6 @@ map<string, UBuffer> vectorization_from_buf_map(
     //return ret;
 //}
 
-isl_union_map* global_schedule_from_buffers(const map<string, UBuffer> &buffers) {
-    isl_ctx* ctx = pick(buffers).second.ctx;
-    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
-    for (auto it : buffers) {
-        auto buf = it.second;
-        global_sched = unn(buf.global_schedule(), global_sched);
-    }
-    cout << "Global schedule: " << str(global_sched) << endl;
-    return global_sched;
-}
-
-
-isl_union_map* global_access_map_from_buffers(const map<string, UBuffer> &buffers) {
-    isl_ctx* ctx = pick(buffers).second.ctx;
-    isl_union_map* global_acc_map = isl_union_map_read_from_str(ctx, "{}");
-    for (auto it : buffers) {
-        auto buf = it.second;
-        global_acc_map = unn(buf.producer_map(), global_acc_map);
-        global_acc_map = unn(buf.consumer_map(), global_acc_map);
-    }
-    cout << "Global access map: " << str(global_acc_map) << endl;
-    return global_acc_map;
-}
-
-isl_union_set* global_domain_from_buffers(const map<string, UBuffer> &buffers) {
-    isl_ctx* ctx = pick(buffers).second.ctx;
-    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
-    for (auto it : buffers) {
-        auto buf = it.second;
-        global_dom = unn(buf.global_domain(), global_dom);
-    }
-    cout << "Global domain: " << str(global_dom) << endl;
-    return global_dom;
-}
-
-isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) {
-    isl_ctx* ctx = pick(buffers).second.ctx;
-    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
-    for (auto it : buffers) {
-        auto buf = it.second;
-        global_dom = unn(buf.global_retrive_domain(), global_dom);
-    }
-    cout << "Global retrive domain: " << str(global_dom) << endl;
-    return global_dom;
-}
 
 
 isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
@@ -13906,7 +13818,7 @@ vector<int> garnet_fuse_ii_level(prog& prg);
 void lake_conv33_recipe_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
-  prg.name = "conv33_naive_compute";
+  prg.name = "conv33_recipe_compute";
   prg.add_input("in_inst");
   prg.add_output("out_inst");
   //prg.buffer_port_widths["T"] = 32*3;
@@ -13937,9 +13849,10 @@ void lake_conv33_recipe_test() {
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
   opt.rtl_options.use_prebuilt_memory = true;
+  opt.inline_vectorization = true;
+  opt.iis = iis;
   int max_inpt = 2, max_outpt = 2;
   //auto sched = global_schedule_from_buffers(buffers_opt);
-  //generate_coreir(opt, buffers_opt, prg, sched);
 
   for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
@@ -13957,9 +13870,9 @@ void lake_conv33_recipe_test() {
     //CoreIR::deleteContext(context);
   }
 
-//#ifdef COREIR
-//  generate_cgra_tb(buffers_opt, prg, opt);
-//#endif
+#ifdef COREIR
+  generate_cgra_tb(buffers_opt, prg, opt);
+#endif
 
 
   //return the buffers after vectorization and the proximity deps you want to remove

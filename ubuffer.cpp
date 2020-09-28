@@ -654,6 +654,96 @@ void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Modu
   generate_coreir(options, def, info, false);
 }
 
+void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer) {
+    auto hardware_schedule = global_schedule_from_buffers(rewrite_buffer);
+    auto glb_access_map = global_access_map_from_buffers(rewrite_buffer);
+
+    /*build a map from OP schedule name to input access map, to output access map
+    for each op name generate accessor config and also address generator
+    */
+    map<string, isl_map*>  op2sched;
+    map<string, vector<umap*>> op2write_map, op2read_map;
+    for (auto m : get_maps(hardware_schedule)) {
+        string op_name = domain_name(m);
+        op2sched[op_name] = m;
+        for ( auto it: rewrite_buffer) {
+            auto buf = it.second;
+            auto out_acc_map = buf.producer_map();
+            if (domain_name(out_acc_map) == op_name) {
+                map_insert(op2write_map, op_name, out_acc_map);
+            }
+            auto in_acc_map = buf.consumer_map();
+            if (domain_name(in_acc_map) == op_name) {
+                map_insert(op2read_map, op_name, in_acc_map);
+            }
+        }
+    }
+    for (auto it : op2sched) {
+        cout <<"\t opname: " << it.first << str(it.second) << endl;
+    }
+    cout << "read map:" << endl;
+    for (auto it : op2read_map) {
+        cout <<"\t opname: " << it.first <<  endl;
+        for (auto tmp: it.second) {
+            cout << str(tmp) << endl;
+        }
+    }
+    cout << "write map:" << endl;
+    for (auto it : op2write_map) {
+        cout <<"\t opname: " << it.first << endl;
+        for (auto tmp: it.second) {
+            cout << str(tmp) << endl;
+        }
+    }
+
+}
+
+isl_union_map* global_schedule_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_sched = unn(buf.global_schedule(), global_sched);
+    }
+    cout << "Global schedule: " << str(global_sched) << endl;
+    return global_sched;
+}
+
+
+isl_union_map* global_access_map_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_acc_map = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_acc_map = unn(buf.producer_map(), global_acc_map);
+        global_acc_map = unn(buf.consumer_map(), global_acc_map);
+    }
+    cout << "Global access map: " << str(global_acc_map) << endl;
+    return global_acc_map;
+}
+
+isl_union_set* global_domain_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_dom = unn(buf.global_domain(), global_dom);
+    }
+    cout << "Global domain: " << str(global_dom) << endl;
+    return global_dom;
+}
+
+isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_dom = unn(buf.global_retrive_domain(), global_dom);
+    }
+    cout << "Global retrive domain: " << str(global_dom) << endl;
+    return global_dom;
+}
+
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
         CoreIR::ModuleDef* def,
@@ -709,6 +799,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   sort(bank_list.begin(), bank_list.end(), [](const bank l, const bank r) {
             return l.maxdelay > r.maxdelay;
           } );
+
+  //generate all the ubuffer for internal vectorization
+  auto rewrite_buffer = generate_ubuffer(options);
 
   for (auto bk : bank_list) {
     //assert(false);
@@ -773,6 +866,11 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
     } else {
       string ub_ins_name = "ub_"+bk.name;
+      if (options.inline_vectorization) {
+        buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+        generate_ubuf_args(options, rewrite_buffer);
+        assert(false);
+      }
       CoreIR::Values args = {
         {"width", CoreIR::Const::make(context, port_widths)},
         {"input_num", CoreIR::Const::make(context, banks_to_inputs.at(bk.name).size())},
@@ -3490,6 +3588,55 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     //return sep_list(addr_vec_out, "", "", " + ");
   }
+
+vector<string> buffer_vectorization(vector<int> iis,
+        vector<string> buf_name_vec,
+        int dim_id, int fetch_width,
+        map<string, UBuffer> & buffers) {
+  /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
+   * generate the new domain and access map and also add two other buffer on
+   * both input and output side
+   * */
+  vector<string> rem_deps, rem_origin_ubuf;
+  for(auto it : buffers) {
+    if (std::find(buf_name_vec.begin(), buf_name_vec.end(), it.first) != buf_name_vec.end()) {
+      rem_origin_ubuf.push_back(it.first);
+      auto target_buffer = it.second;
+      cout << "buffer_vectorization Vectorizing: " << target_buffer.name << endl;
+      cout << target_buffer << endl;
+
+      //Input must be take care
+      //need to first pad the buffer output to the multiplier of
+      target_buffer.pad_read_dom(fetch_width);
+
+      //ret is a pair of vectorized_buffer and the dependency need to be removed
+      auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
+      for (auto itr: ret.first) {
+        buffers[itr.first] = itr.second;
+      }
+      for (auto deps: ret.second) {
+        rem_deps.push_back(deps);
+      }
+    }
+  }
+  for (auto rem: rem_origin_ubuf) {
+    buffers.erase(rem);
+  }
+  return rem_deps;
+}
+
+vector<string> buffer_vectorization(vector<int> iis,
+        string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
+    return buffer_vectorization(iis, vector<string>({buf_name}), dim_id, fetch_width, buffers);
+}
+
+vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
+    return buffer_vectorization({}, vector<string>({buf_name}), dim_id, fetch_width, buffers);
+}
+
+vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
+    return buffer_vectorization({}, buf_name_vec, dim_id, fetch_width, buffers);
+}
 
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, string self_loop_bd, int dim_id, int fetch_width) {
     /*

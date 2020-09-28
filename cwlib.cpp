@@ -1,6 +1,7 @@
 #ifdef COREIR
 #include "cwlib.h"
 #include "coreir/libs/commonlib.h"
+#include "isl_utils.h"
 
 COREIR_GEN_C_API_DEFINITION_FOR_LIBRARY(cwlib);
 
@@ -63,13 +64,13 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
         {"width", c->Int()},
         {"num_input", c->Int()},
         {"num_output", c->Int()},
-          
+
         {"has_valid", c->Bool()},
         {"has_stencil_valid", c->Bool()},
         {"has_flush", c->Bool()},
         {"has_reset", c->Bool()}
     });
-  
+
   cwlib->newTypeGen(
           "cwlib_mem_type",
           cwlibmemparams,
@@ -116,7 +117,7 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
             if (has_reset) {
               recordparams.push_back({"reset", c->BitIn()});
             }
-            
+
         return c->Record(recordparams);
     }
 
@@ -155,6 +156,24 @@ struct MemConnSch {
   string mux_write;
   string write;
 };
+
+MemConnSch emit_lake_controller_config(isl_set* write_domain, isl_aff* write_sched) {
+  cout << str(write_sched) << endl;
+  int dimensionality = num_dims(write_domain);
+  //out << "\"dimensionality\"," << num_dims(write_domain) << ",0" << endl;
+  vector<int> start_addr = {to_int(const_coeff(write_sched))};
+  //out << "\"cycle_starting_addr\"," << to_int(const_coeff(write_sched)) << ",0" << endl;
+  vector<int> extent, cycle_stride;
+  for (int d = 0; d < num_dims(write_domain); d++) {
+    auto ds = project_all_but(write_domain, d);
+    int extent_d = to_int(lexmaxval(ds)) - to_int(lexminval(ds)) + 1;
+    int ldim = num_dims(write_domain) - d - 1;
+    extent.push_back(extent_d);
+    cycle_stride.push_back(to_int(get_coeff(write_sched, d)));
+    //out << "\"extent_" << ldim << "\"," << extent_d << ",0" << endl;
+    //out << "\"cycle_stride_" << ldim << "\"," << to_int(get_coeff(write_sched, d)) << ",0" << endl;
+  }
+}
 
 MemConnSch create_stencil_valid(int dimensionality, vector<int> cycle_starting_addr,
                                 vector<int> extent, vector<int> cycle_stride) {
