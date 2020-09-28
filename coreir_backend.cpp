@@ -253,7 +253,7 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   assert(bank_factors.size() == buf.logical_dimension());
 
   out << endl;
-  vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [16*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [15:0] out"};
+  vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
   out << "module " << buf.name << "_bank_selector(" << comma_list(port_decls) << ");" << endl;
 
   vector<string> bank_strides;
@@ -266,7 +266,7 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   vector<string> terms;
   for (auto p : bank_factors) {
     string var = "d" + brackets(str(i));
-    out << tab(1) << "logic [15:0] bank_index_" << i << ";" << endl;
+    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] bank_index_" << i << ";" << endl;
     //out << tab(1) << "assign " << "bank_index_" << i << " = " << "$floor(" << var << " / " << p << ");" << endl;
     out << tab(1) << "assign " << "bank_index_" << i << " = " << "(" << var << " % " << p << ");" << endl;
     terms.push_back("bank_index_" + str(i) + "*" + bank_strides.at(i));
@@ -299,7 +299,7 @@ void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank
   vector<int> current_index;
 
   for (int i = 0; i < num_banks; i++) {
-    out << tab(1) << "logic [15:0] " << "bank_" << i << " [" << capacity << "];" << endl;
+    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "bank_" << i << " [" << capacity << "];" << endl;
   }
 }
 
@@ -365,7 +365,7 @@ void generate_platonic_ubuffer(
 
   for (auto sr : shift_registered_outputs) {
     int delay = sr.second.second;
-    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [15:0] in", "output logic [15:0] out"};
+    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
 
