@@ -73,6 +73,29 @@ vector<T> strides(const std::vector<T>& lengths) {
   return strs;
 }
 
+template<typename T>
+T position(const std::vector<T>& indexes, const std::vector<T>& lengths) {
+  auto strs = strides(lengths);
+  T r = 0;
+  for (int i = 0; i < (int) strs.size(); i++) {
+    r += lengths.at(i)*strs.at(i);
+  }
+  return r;
+}
+
+template<typename T>
+vector<T> indexes(const T& position, const std::vector<T>& lengths) {
+  vector<T> inds;
+  auto strs = strides(lengths);
+  T current = position;
+  for (int i = 0; i < (int) strs.size(); i++) {
+    T coeff = floor(current / strs.at(i));
+    inds.push_back(coeff);
+    current = current - coeff*strs.at(i);
+  }
+  return inds;
+}
+
 static int DATAPATH_WIDTH = 16;
 static int CONTROLPATH_WIDTH = 16;
 
@@ -207,6 +230,12 @@ vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk
   }
 
   return addr_vec_out;
+}
+
+string generate_linearized_verilog_inner_bank_offset(const std::string& pt, vector<int>& banking, bank& bnk, UBuffer& buf) {
+  auto comps = generate_verilog_address_components(pt, bank, buf);
+
+  return sep_list(terms, "(", ")", " + ");
 }
 
 string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
