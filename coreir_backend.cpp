@@ -44,6 +44,28 @@ using CoreIR::Module;
 static int DATAPATH_WIDTH = 16;
 static int CONTROLPATH_WIDTH = 16;
 
+int wire_width(CoreIR::Wireable* w) {
+  auto tp = w->getType();
+  if (isBit(tp)) {
+    return 1;
+  } else if (isa<ArrayType>(tp)) {
+    cout << "Casting to array..." << endl;
+
+    auto atp = static_cast<ArrayType*>(tp);
+    //auto elem_type = atp->getElemType();
+
+    //assert(isa<ArrayType>(elem_type));
+
+    //cout << "Getting array..." << endl;
+
+    //auto elem_arr =
+    //static_cast<ArrayType*>(elem_type);
+    //int elem_width = elem_arr->getLen();
+    int len = atp->getLen();
+    return len;
+  }
+  assert(false);
+}
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   auto ns = context->getNamespace("global");
 
@@ -2531,7 +2553,7 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
 
 CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   auto c = def->getContext();
-  int width = 16;
+  int width = wire_width(a);
   auto m = def->addInstance(
       "mul_" + c->getUnique(),
       "coreir.mul",
@@ -2543,7 +2565,7 @@ CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
 
 CoreIR::Wireable* shiftr(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   auto c = def->getContext();
-  int width = 16;
+  int width = wire_width(a);
   auto m = def->addInstance(
       "shift_" + c->getUnique(),
       "coreir.lshr",
@@ -2886,7 +2908,7 @@ CoreIR::Module* affine_controller_lake(CoreIR::Context* context, isl_set* dom, i
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
       {"valid", c->Bit()}};
