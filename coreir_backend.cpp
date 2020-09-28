@@ -2557,7 +2557,7 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
 
   auto ns = context->getNamespace("global");
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"out", context->Bit()->Arr(width)}};
   cout << "aff = " << str(aff) << endl;
@@ -2638,7 +2638,7 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
 CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* aff) {
   auto ns = context->getNamespace("global");
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"out", context->Bit()->Arr(width)}};
   cout << "aff = " << str(aff) << endl;
@@ -2696,7 +2696,7 @@ CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* do
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   int dims = num_dims(dom);
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"d", c->BitIn()->Arr(16)->Arr(dims)},
@@ -2740,7 +2740,7 @@ CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom) {
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   int dims = num_dims(dom);
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"d", c->BitIn()->Arr(16)->Arr(dims)},
@@ -2772,7 +2772,7 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
       {"valid", c->Bit()}};
