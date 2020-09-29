@@ -50,9 +50,13 @@ struct RTLOptions {
 struct LakeCollateral {
     std::unordered_map<string, int> word_width;
     std::unordered_map<string, int> bank_num;
+    std::unordered_map<string, int> in_port_width;
+    std::unordered_map<string, int> out_port_width;
 
     LakeCollateral():
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
+        in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
+        out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
         bank_num({{"agg", 2}, {"sram", 1}, {"tb", 2}}) {}
 };
 

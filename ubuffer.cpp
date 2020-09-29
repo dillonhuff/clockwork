@@ -673,24 +673,84 @@ void emit_lake_controller_config(isl_set* write_domain, isl_aff* write_sched) {
   //return MemConnSch({dimensionality, {}, "", "", ""});
 }
 
-void emit_lake_addrgen_config(CodegenOptions options, string op_name, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
+void emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_read,
+        UBuffer buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
     for (auto map: get_maps(tmp)) {
-        auto reduce_map = linear_address_map_lake(range(map));
+        cout << "access map: " << str(map) << endl;
+
+        //TODO: remove this in the future
         if (retrive_dom_map.count(op_name))
             map = retrive_map_domain_with_dim(map, retrive_dom_map.at(op_name));
-        //only get one map, this is define by the lake people
+
+        string buf_name = range_name(map);
+        string micro_buf_name = split_at(buf_name, "_").back();
+        auto bmap_vec = get_basic_maps(map);
+        int port_width = bmap_vec.size();
+
+        //get pt number, take the lake information
+        int bk_num;
+        if (is_read) {
+            bk_num = port_width / options.mem_tile.out_port_width.at(micro_buf_name);
+        } else {
+            bk_num = port_width / options.mem_tile.in_port_width.at(micro_buf_name);
+        }
+
+        //check if violate bank number
+        assert(bk_num <= options.mem_tile.bank_num.at(micro_buf_name));
+
+        //get the reduce map for this subbuffer structure
+        isl_set* range_per_bank = isl_set_empty(get_space(range(map)));
+        for(int i = 0; i < port_width / bk_num; i ++) {
+            range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
+        }
+        auto reduce_map = linear_address_map_lake(range_per_bank);
+        for (int i = 0; i < bk_num; i ++)
         {
-            auto bmap_vec = get_basic_maps(map);
-            int port_width = bmap_vec.size();
-            auto bmap = pick(get_basic_maps(map));
-            string buf_name = range_name(map);
-            int ww = options.mem_tile.word_width.at(split_at(buf_name, "_").back());
+            //pick the corresponding basic map
+            auto bmap = bmap_vec.at(i);
+            bool need_mux = false;
+            if (is_read) {
+                need_mux = (bk_num < (buf.num_in_ports() / options.mem_tile.in_port_width.at(micro_buf_name)));
+            } else {
+                need_mux = (bk_num < (buf.num_out_ports() / options.mem_tile.out_port_width.at(micro_buf_name)));
+            }
+
+            if (need_mux) {
+                vector<int> mux_index;
+                vector<int> addr_index;
+                for (int i = num_out_dims(map)-1; i >= 0; i--)
+                    //FIXME: this is hardcoded
+                    if (i == num_out_dims(map) - 2) {
+                        mux_index.push_back(i);
+                    } else {
+                        addr_index.push_back(i);
+                    }
+                //rewrite the address gen
+                reduce_map = linear_address_map_with_index(range(map), addr_index);
+
+                auto mux_reduce_map = linear_address_map_with_index(range(map), mux_index);
+                auto mux_addr_expr = dot(to_map(bmap), mux_reduce_map);
+                isl_aff* addr = get_aff(mux_addr_expr);
+                int ww = options.mem_tile.word_width.at(micro_buf_name);
+                string prefix = is_read ? "mux_read" : "mux_write";
+                cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
+                cout << "\""+prefix+"_data_starting_addr\"," <<
+                    to_int(const_coeff(addr))/ww  << ",0" << endl;
+                for (int d = 0; d < num_in_dims(addr); d++) {
+                  int ldim = num_in_dims(addr) - d - 1;
+                  cout << "\""+prefix+"_data_stride_" << ldim << "\"," <<
+                      to_int(get_coeff(addr, d))/ww  << ",0" << endl;
+                }
+            }
+
+            int ww = options.mem_tile.word_width.at(micro_buf_name);
             auto addr_expr_map = dot(to_map(bmap), reduce_map);
             auto addr = get_aff(addr_expr_map);
             cout << str(addr) << endl;
-            cout << "read_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
+            string prefix = is_read ? "read" : "write";
+            cout << prefix + "_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
             for (int d = 0; d < num_in_dims(addr); d++) {
-                cout << "read_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
+                cout << prefix + "_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
             }
         }
     }
@@ -707,6 +767,7 @@ void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
 
     map<string, isl_map*>  op2sched;
     map<string, vector<umap*>> op2write_map, op2read_map;
+    map<string, string> op2write_buf, op2read_buf;
     auto retrive_dom_map = get_sets_in_map(retrive_domain_from_buffers(rewrite_buffer));
     for (auto m : get_maps(hardware_schedule)) {
         string op_name = domain_name(m);
@@ -717,10 +778,12 @@ void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
             auto buf = it.second;
             auto out_acc_map = buf.producer_map();
             if (domain_name(out_acc_map) == op_name) {
+                op2write_buf[op_name] = it.first;
                 map_insert(op2write_map, op_name, out_acc_map);
             }
             auto in_acc_map = buf.consumer_map();
             if (domain_name(in_acc_map) == op_name) {
+                op2read_buf[op_name] = it.first;
                 map_insert(op2read_map, op_name, in_acc_map);
             }
         }
@@ -730,10 +793,11 @@ void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     }
     cout << "read map:" << endl;
     for (auto it : op2read_map) {
-        cout <<"\t opname: " << it.first <<  endl;
         string op_name = it.first;
+        string buf_name = op2read_buf.at(op_name);
+        cout <<"\t opname: " << it.first <<  endl;
         for (auto tmp: it.second) {
-            emit_lake_addrgen_config(options, op_name, tmp, retrive_dom_map);
+            emit_lake_addrgen_config(options, op_name, true, rewrite_buffer.at(buf_name), tmp, retrive_dom_map);
         }
     }
     cout << "write map:" << endl;
@@ -741,30 +805,9 @@ void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     for (auto it : op2write_map) {
         cout <<"\t opname: " << it.first << endl;
         string op_name = it.first;
+        string buf_name = op2write_buf.at(op_name);
         for (auto tmp: it.second) {
-            emit_lake_addrgen_config(options, op_name, tmp, retrive_dom_map);
-            //for (auto map: get_maps(tmp)) {
-            //    auto reduce_map = linear_address_map_lake(range(map));
-            //    string op_name = it.first;
-            //    if (retrive_dom_map.count(op_name))
-            //        map = retrive_map_domain_with_dim(map, retrive_dom_map.at(op_name));
-            //    //only get one map, this is define by the lake people
-            //    {
-            //        auto bmap = pick(get_basic_maps(map));
-            //        string buf_name = range_name(map);
-            //        int ww = word_width.at(split_at(buf_name, "_").back());
-            //        auto addr_expr_map = dot(to_map(bmap), reduce_map);
-            //        auto addr = get_aff(addr_expr_map);
-            //        cout << str(addr) << endl;
-            //        cout << "write_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
-            //        for (int d = 0; d < num_in_dims(addr); d++) {
-            //            cout << "write_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
-            //        }
-            //        //for(auto aff: get_aff_vec(simplify(to_map(bmap))))
-            //        //    cout << str(aff) << endl;
-
-            //    }
-            //}
+            emit_lake_addrgen_config(options, op_name, false, rewrite_buffer.at(buf_name) , tmp, retrive_dom_map);
         }
     }
 
