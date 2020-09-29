@@ -404,6 +404,51 @@ void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank
   }
 }
 
+UBuffer latency_adjusted_buffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+  UBuffer cpy = buf;
+  for (auto pt : buf.get_in_ports()) {
+    int write_start = 1;
+    //write_start_offset(op, hwinfo);
+    isl_aff* adjusted =
+      add(get_aff(buf.schedule.at(pt)), write_start);
+    cpy.schedule[pt] =
+      to_umap(to_map(adjusted));
+  }
+  for (auto pt : buf.get_out_ports()) {
+    int read_start = 0;
+    isl_aff* adjusted =
+      add(get_aff(buf.schedule.at(pt)), read_start);
+    cpy.schedule[pt] =
+      to_umap(to_map(adjusted));
+  }
+  cout << "---- Original" << endl;
+  cout << buf << endl;
+  cout << "---- Latency adjusted" << endl;
+  cout << cpy << endl;
+
+  // Now: How do we search for good bankings?
+  //  1. The basic object is the map from times to locations written for each port
+  cout << "Timing maps..." << endl;
+  for (auto pt : cpy.get_all_ports()) {
+    auto timing_map = dot(inv(cpy.schedule[pt]), cpy.access_map[pt]);
+    cout << pt << ": " << str(timing_map) << endl;
+  }
+  return cpy;
+}
+
+vector<int> cyclic_banking(prog& prg, UBuffer& buf, schedule_info& info) {
+  vector<int> bank_factors;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    bank_factors.push_back(2);
+  }
+
+  return bank_factors;
+}
+
 void generate_platonic_ubuffer(
     CodegenOptions& options,
     prog& prg,
@@ -411,56 +456,8 @@ void generate_platonic_ubuffer(
     schedule_info& hwinfo) {
 
   prg.pretty_print();
-  if (buf.get_out_ports().size() > 2) {
-    UBuffer cpy = buf;
-    for (auto pt : buf.get_in_ports()) {
-      int write_start = 1;
-      //write_start_offset(op, hwinfo);
-      isl_aff* adjusted =
-        add(get_aff(buf.schedule.at(pt)), write_start);
-      cpy.schedule[pt] =
-        to_umap(to_map(adjusted));
-    }
-    for (auto pt : buf.get_out_ports()) {
-      int read_start = 0;
-      isl_aff* adjusted =
-        add(get_aff(buf.schedule.at(pt)), read_start);
-      cpy.schedule[pt] =
-        to_umap(to_map(adjusted));
-    }
-    cout << "---- Original" << endl;
-    cout << buf << endl;
-    cout << "---- Latency adjusted" << endl;
-    cout << cpy << endl;
 
-    // Now: How do we search for good bankings?
-    //  1. The basic object is the map from times to locations written for each port
-    cout << "Timing maps..." << endl;
-    for (auto pt : cpy.get_all_ports()) {
-      auto timing_map = dot(inv(cpy.schedule[pt]), cpy.access_map[pt]);
-      cout << pt << ": " << str(timing_map) << endl;
-    }
-
-    // Interesting question:
-    // How much does the user value memory size / bandwidth minimization vs throughput?
-    // For example if there is an "obviously" good banking such as resnet
-    // with the first dimension embarrasingly banked, but then there is one
-    // drain operation that needs all banks of this embarrasing banking should
-    // the scheduler just back off and isolate that stage, or should
-    // it schedule the drain aggressively even if it requires
-    // more memory? Really that is not the systems job to decide, but
-    // we need a way for the user to express that kind of decision.
-    //
-    // Another idea: some notion of read / write pressure and how it is
-    // coupled with stride matching across stages?
-    assert(false);
-  }
-
-  vector<int> bank_factors;
-  for (int i = 0; i < buf.logical_dimension(); i++) {
-    bank_factors.push_back(2);
-  }
-
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
 
   map<string, pair<string, int> > shift_registered_outputs;
   auto sc = buf.global_schedule();
