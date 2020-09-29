@@ -3503,3 +3503,15 @@ bool no_divs(isl_aff* a) {
   }
   return true;
 }
+isl_aff* constant_aff(isl_aff* src, const int val) {
+  auto ls = isl_aff_get_domain_local_space(src);
+  cout << "ls = " << str(ls) << endl;
+  auto v = isl_val_int_from_si(ctx(src), val);
+  cout << "v = " << str(v) << endl;
+  return aff_on_domain(ls, v);
+}
+
+isl_aff* add(isl_aff* start_time_aff, const int compute_latency) {
+  return add(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+

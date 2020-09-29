@@ -4396,3 +4396,59 @@ bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf) {
 
   return inner_bank_offset_is_legal(slot_func, op_writes, op_reads, sched);
 }
+
+std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
+  out << "--- " << buf.name << endl;
+  out << "\t---- " << buf.get_in_ports().size() << " in ports" << endl;
+
+  //add a copy for compute_max_dd function
+  UBuffer tmp = buf;
+  for (auto inpt : buf.get_in_ports()) {
+    out << "\t\t" << inpt << endl;
+    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    //out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
+    //out << "\t\t\tacc range: " << str(range(buf.access_map.at(inpt))) << endl;
+    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+    out << endl;
+  }
+
+  out << "\t---- " << buf.get_out_ports().size() << " out ports:" << endl;
+  for (auto inpt : buf.get_out_ports()) {
+    out << "\t\t" << inpt << endl;
+    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+    //out << "\t\t\tlexmax events: " << str(buf.get_lexmax_events(inpt)) << endl;
+
+    out << endl;
+  }
+
+
+  out << "\t---- Input Bundles" << endl;
+  for (auto in_bundle : buf.get_in_bundles()) {
+    out << "\t\t" << in_bundle << endl;
+    auto ports = buf.port_bundles.at(in_bundle);
+    out << "\t\t---- Ports..." << endl;
+    for (auto p : ports) {
+      out << "\t\t\t" << p << endl;
+    }
+
+  }
+  out << "\t---- Output Bundles" << endl;
+  for (auto out_bundle : buf.get_out_bundles()) {
+    out << "\t\t" << out_bundle << endl;
+    auto ports = buf.port_bundles.at(out_bundle);
+    out << "\t\t---- Ports..." << endl;
+    for (auto p : ports) {
+      out << "\t\t\t" << p << endl;
+    }
+
+  }
+  return out;
+}
+

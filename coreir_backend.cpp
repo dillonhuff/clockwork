@@ -411,7 +411,10 @@ void generate_platonic_ubuffer(
     schedule_info& hwinfo) {
 
   prg.pretty_print();
-  //assert(false);
+  if (buf.get_out_ports().size() > 2) {
+    cout << buf << endl;
+    assert(false);
+  }
 
   vector<int> bank_factors;
   for (int i = 0; i < buf.logical_dimension(); i++) {
@@ -1728,18 +1731,6 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   return ub;
   //assert(false);
 
-}
-
-isl_aff* constant_aff(isl_aff* src, const int val) {
-  auto ls = isl_aff_get_domain_local_space(src);
-  cout << "ls = " << str(ls) << endl;
-  auto v = isl_val_int_from_si(ctx(src), val);
-  cout << "v = " << str(v) << endl;
-  return aff_on_domain(ls, v);
-}
-
-isl_aff* add(isl_aff* start_time_aff, const int compute_latency) {
-  return add(start_time_aff, constant_aff(start_time_aff, compute_latency));
 }
 
 void generate_micro_op_controllers(CodegenOptions& options,
