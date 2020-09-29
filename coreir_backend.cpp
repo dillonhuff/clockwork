@@ -432,6 +432,27 @@ void generate_platonic_ubuffer(
     cout << buf << endl;
     cout << "---- Latency adjusted" << endl;
     cout << cpy << endl;
+
+    // Now: How do we search for good bankings?
+    //  1. The basic object is the map from times to locations written for each port
+    cout << "Timing maps..." << endl;
+    for (auto pt : cpy.get_all_ports()) {
+      auto timing_map = dot(inv(cpy.schedule[pt]), cpy.access_map[pt]);
+      cout << pt << ": " << str(timing_map) << endl;
+    }
+
+    // Interesting question:
+    // How much does the user value memory size / bandwidth minimization vs throughput?
+    // For example if there is an "obviously" good banking such as resnet
+    // with the first dimension embarrasingly banked, but then there is one
+    // drain operation that needs all banks of this embarrasing banking should
+    // the scheduler just back off and isolate that stage, or should
+    // it schedule the drain aggressively even if it requires
+    // more memory? Really that is not the systems job to decide, but
+    // we need a way for the user to express that kind of decision.
+    //
+    // Another idea: some notion of read / write pressure and how it is
+    // coupled with stride matching across stages?
     assert(false);
   }
 
