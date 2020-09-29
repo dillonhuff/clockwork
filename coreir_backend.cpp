@@ -68,7 +68,7 @@ template<typename T>
 vector<T> strides(const std::vector<T>& lengths) {
   vector<T> strs;
   for (int i = 0; i < (int) lengths.size(); i++) {
-    strs.push_back(prod_after(lengths, i));
+    strs.push_back(prod_after(lengths, i + 1));
   }
   return strs;
 }
@@ -235,13 +235,23 @@ vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk
 string generate_linearized_verilog_inner_bank_offset(const std::string& pt, vector<int>& banking, bank& bnk, UBuffer& buf) {
   auto comps = generate_verilog_addr_components(pt, bnk, buf);
   assert(comps.size() == banking.size());
-  auto strs = strides(banking);
+  vector<int> lengths;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto max = to_int(lexmaxval(s));
+    auto min = to_int(lexminval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+  auto strs = strides(lengths);
 
   vector<string> terms;
   for (int i = 0; i < comps.size(); i++) {
-    string comp = "$floor(" + comps.at(i) + " / " + str(banking.at(i)) + ")";
+    //string comp = "$floor(" + comps.at(i) + " / " + str(banking.at(i)) + ")";
+    string comp = "(" + comps.at(i) + " / " + str(banking.at(i)) + ")";
+    //string comp = comps.at(i);
     string stride = str(strs.at(i));
-    terms.push_back(comp + "*" + stride);
+    terms.push_back(parens(comp + "*" + stride));
   }
   return sep_list(terms, "(", ")", " + ");
 }
@@ -574,10 +584,12 @@ void generate_platonic_ubuffer(
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
 
-    auto comps =
-      generate_verilog_addr_components(in, bnk, buf);
+    //string addr =
+      //generate_linearized_verilog_inner_bank_offset(in, bank_factors, bnk, buf);
+    //auto comps =
+      //generate_verilog_addr_components(in, bnk, buf);
 
-    out << tab(2) << "//" << sep_list(comps, "{", "}", ",") << endl;
+    //out << tab(2) << "//" << sep_list(comps, "{", "}", ",") << endl;
     string addr = generate_linearized_verilog_addr(in, bnk, buf);
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
@@ -602,6 +614,8 @@ void generate_platonic_ubuffer(
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
     if (!contains_key(outpt, shift_registered_outputs)) {
+      //string addr =
+        //generate_linearized_verilog_inner_bank_offset(outpt, bank_factors, bnk, buf);
       string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
       int num_banks = card(bank_factors);
       //for (auto val : bank_factors) {

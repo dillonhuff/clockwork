@@ -4387,7 +4387,6 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
   auto violated = coalesce(diff(its(overlapping_ranges, stored_to_same_slot), in_id));
   cout << "violated    = " << str(violated) << endl;
   return empty(violated);
-
 }
 
 bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf) {

@@ -64,7 +64,6 @@ hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw
 
 
   always @(posedge clk) begin
-    //{(((0 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_hw_input_global_wrapper_stencil_write_wen) begin
       if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_bank_selector.out == 0) begin
         bank_0[(((0 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - 0) * 64] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
@@ -151,7 +150,6 @@ mult_stencil_bank_selector mult_stencil_mult_stencil_op_hcompute_mult_stencil_0_
 
 
   always @(posedge clk) begin
-    //{(((0 + 0*op_hcompute_mult_stencil_write_ctrl_vars[0] + 1*op_hcompute_mult_stencil_write_ctrl_vars[1] + 0*op_hcompute_mult_stencil_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_mult_stencil_write_ctrl_vars[0] + 0*op_hcompute_mult_stencil_write_ctrl_vars[1] + 1*op_hcompute_mult_stencil_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_mult_stencil_write_wen) begin
       if (mult_stencil_mult_stencil_op_hcompute_mult_stencil_0_bank_selector.out == 0) begin
         bank_0[(((0 + 0*op_hcompute_mult_stencil_write_ctrl_vars[0] + 1*op_hcompute_mult_stencil_write_ctrl_vars[1] + 0*op_hcompute_mult_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_mult_stencil_write_ctrl_vars[0] + 0*op_hcompute_mult_stencil_write_ctrl_vars[1] + 1*op_hcompute_mult_stencil_write_ctrl_vars[2])) - 0) * 64] <= op_hcompute_mult_stencil_write[0];
