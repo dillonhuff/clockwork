@@ -5240,7 +5240,6 @@ void generate_verilator_tb_in_streams(std::ostream& rgtb,
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
       inds.push_back("rand() % 256");
-      //str(unroll) + "*i + " + str(i));
       //inds.push_back(str(unroll) + "*i + " + str(i));
     }
     pack_bv(2, rgtb, "value", inds, lane_width);
@@ -5325,7 +5324,8 @@ void generate_verilator_tb(prog& prg,
 
   rgtb << tab(1) << "dut.clk = 0;" << endl;
   rgtb << tab(1) << "dut.eval();" << endl;
-  rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
+  rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
+  //rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
   //rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
 
   rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
@@ -5588,4 +5588,147 @@ bool all_perfect_loop_nests(prog& prg) {
   }
   return true;
 }
+
+void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
+  if (!parent->is_loop) {
+    return;
+  }
+
+  QExpr parent_sched = map_find(parent, schedule_exprs);
+  for (auto c : parent->children) {
+    if (c->is_loop) {
+      QTerm root_sched_t{{qconst(map_find(c->name, sched.loop_iis)), qvar(c->name)}};
+      QExpr root_sched{{root_sched_t}};
+
+      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QTerm delayt{{delayv}};
+      QExpr delay{{delayt}};
+
+      root_sched = parent_sched + root_sched + delay;
+      schedule_exprs[c] = root_sched;
+    } else {
+      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QTerm delayt{{delayv}};
+      QExpr delay{{delayt}};
+
+      auto root_sched = parent_sched + delay;
+      schedule_exprs[c] = root_sched;
+    }
+    build_schedule_exprs(c, schedule_exprs, sched, prg);
+  }
+}
+
+map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg) {
+  op* root = prg.root;
+  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
+  QExpr root_sched{{root_sched_t}};
+
+  map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  map<op*, isl_aff*> schedule_affs;
+  build_schedule_exprs(root, schedule_exprs, sched, prg);
+
+  cout << "==== Schedules..." << endl;
+  for (auto opl : schedule_exprs) {
+    auto op = opl.first;
+    cout << tab(1) << op->name << " -> " << opl.second << endl;
+    ostringstream ss;
+    ss << opl.second;
+    if (!op->is_loop) {
+      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
+          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
+      schedule_affs[op] = aff;
+    }
+  }
+
+  return schedule_affs;
+}
+
+map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
+  op* root = prg.root;
+  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
+  QExpr root_sched{{root_sched_t}};
+
+  map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  map<op*, isl_aff*> schedule_affs;
+  build_schedule_exprs(root, schedule_exprs, sched, prg);
+
+  cout << "==== Schedules..." << endl;
+  for (auto opl : schedule_exprs) {
+    auto op = opl.first;
+    QExpr expr = opl.second;
+    QAV val = qconst(sched.total_latency(op)); //map_find(op, sched.total_op_latencies));
+    QTerm offsett{{val}};
+    QExpr offset{{offsett}};
+    expr = expr + offset;
+    cout << tab(1) << op->name << " -> " << expr << endl;
+    ostringstream ss;
+    ss << expr;
+    if (!op->is_loop) {
+      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
+          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
+      schedule_affs[op] = aff;
+    }
+  }
+
+  return schedule_affs;
+}
+
+map<string, isl_set*> op_start_times_domains(prog& prg) {
+  auto start_times = prg.whole_iteration_domain();
+
+  map<string, isl_set*> sets;
+  for (auto a : get_sets(start_times)) {
+    a = set_name(a, "start_" + name(a));
+
+    sets[name(a)] = a;
+  }
+
+  return sets;
+}
+
+uset* op_start_times_domain(prog& prg) {
+  auto start_times = prg.whole_iteration_domain();
+
+  uset* s = isl_union_set_read_from_str(prg.ctx, "{}");
+  for (auto a : get_sets(start_times)) {
+    a = set_name(a, "start_" + name(a));
+    s = unn(s, to_uset(a));
+    release(a);
+  }
+
+  return s;
+}
+
+umap* op_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_start_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs[a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
+umap* op_start_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_start_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs["start_" + a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
+
+umap* op_end_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_end_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs["end_" + a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
+
 

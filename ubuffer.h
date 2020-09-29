@@ -2041,7 +2041,11 @@ vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
 #ifdef COREIR
 CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
+
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
+
+CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
+
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf);
 #endif
 
@@ -2062,3 +2066,8 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
 
 map<string, std::set<string> >
 get_unique_output_ports(UBuffer& buf);
+
+vector<string> generate_multilinear_address_components(const std::string& pt, bank& bnk, UBuffer& buf);
+
+maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
+    umap* sched);

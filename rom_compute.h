@@ -1,6 +1,6 @@
 #pragma once
 #include "hw_classes.h"
-#include "conv_3x3.h"
+#include "clockwork_standard_compute_units.h"
 
 
 //store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
@@ -10,7 +10,7 @@ hw_uint<16> hcompute_hw_input_global_wrapper_stencil(hw_uint<16>& hw_input_stenc
   return _hw_input_stencil_1;
 }
 
-//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = curvea0[int32(max(min((hw_input_global_wrapper.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)*(int16)4), (int16)255), (int16)0))]
+//store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = curvea0[int32(max(min(hw_input_global_wrapper.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi), (int16)1023), (int16)0))]
 hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& hw_input_global_wrapper_stencil) {
   int16_t _hw_input_global_wrapper_stencil_1 = (int16_t) hw_input_global_wrapper_stencil.extract<0, 15>();
 
@@ -529,14 +529,12 @@ hw_uint<16> hcompute_hw_output_stencil(hw_uint<16>& hw_input_global_wrapper_sten
   uint16_t _768 = (uint16_t)(63);
   _curvea0[255] = _768;
 
-  int16_t _769 = (int16_t)(4);
-  int16_t _770 = _hw_input_global_wrapper_stencil_1 * _769;
-  int16_t _771 = (int16_t)(255);
-  int16_t _772 = min(_770, _771);
-  int16_t _773 = (int16_t)(0);
-  int16_t _774 = max(_772, _773);
-  int32_t _775 = (int32_t)(_774);
-  uint16_t _776 = ((const uint16_t *)_curvea0)[_775];
-  return _776;
+  int16_t _769 = (int16_t)(1023);
+  int16_t _770 = min(_hw_input_global_wrapper_stencil_1, _769);
+  int16_t _771 = (int16_t)(0);
+  int16_t _772 = max(_770, _771);
+  int32_t _773 = (int32_t)(_772);
+  uint16_t _774 = ((const uint16_t *)_curvea0)[_773];
+  return _774;
 }
 

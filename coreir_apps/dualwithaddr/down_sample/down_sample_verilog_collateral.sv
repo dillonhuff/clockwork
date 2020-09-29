@@ -1,66 +1,423 @@
-module memtile_long_delay__U154_inner(input logic [0:0] [15:0] chain_data_in, output logic [0:0] [15:0] chain_data_out, output logic chain_valid_out, input logic clk, input logic [0:0] [15:0] data_in, output logic [0:0] [15:0] data_out, input logic flush, input logic rst_n, output logic valid_out);
-  wire logic chain_idx_input;
-  assign chain_idx_input = 0;
-  wire logic chain_idx_output;
-  assign chain_idx_output = 0;
-  wire logic chain_valid_in;
-  assign chain_valid_in = 0;
-  wire logic clk_en;
-  assign clk_en = 1;
-  wire logic [7:0] config_addr_in;
-  assign config_addr_in = 0;
-  wire logic [31:0] config_data_in;
-  assign config_data_in = 0;
-  wire logic [0:0] [31:0] config_data_out;
-  assign config_data_out = 0;
-  wire logic config_en;
-  assign config_en = 0;
-  wire logic config_read;
-  assign config_read = 0;
-  wire logic config_write;
-  assign config_write = 0;
-  wire logic enable_chain_input;
-  assign enable_chain_input = 0;
-  wire logic enable_chain_output;
-  assign enable_chain_output = 0;
-  wire logic [1:0] mode;
-  assign mode = 0;
-  wire logic ren_in;
-  assign ren_in = 0;
-  wire logic [15:0] strg_ub_sram_read_addr_gen_starting_addr;
-  assign strg_ub_sram_read_addr_gen_starting_addr = 0;
-  wire logic [5:0] [15:0] strg_ub_sram_read_addr_gen_strides;
-  assign strg_ub_sram_read_addr_gen_strides = {16'd1};
-  wire logic [3:0] strg_ub_sram_read_loops_dimensionality;
-  assign strg_ub_sram_read_loops_dimensionality = 1;
-  wire logic [5:0] [15:0] strg_ub_sram_read_loops_ranges;
-  assign strg_ub_sram_read_loops_ranges = {16'd65535};
-  wire logic [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr;
-  assign strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr = 0;
-  wire logic [5:0] [15:0] strg_ub_sram_read_sched_gen_sched_addr_gen_strides;
-  assign strg_ub_sram_read_sched_gen_sched_addr_gen_strides = {16'd1};
-  wire logic [15:0] strg_ub_sram_write_addr_gen_starting_addr;
-  assign strg_ub_sram_write_addr_gen_starting_addr = 62;
-  wire logic [5:0] [15:0] strg_ub_sram_write_addr_gen_strides;
-  assign strg_ub_sram_write_addr_gen_strides = {16'd1};
-  wire logic [3:0] strg_ub_sram_write_loops_dimensionality;
-  assign strg_ub_sram_write_loops_dimensionality = 1;
-  wire logic [5:0] [15:0] strg_ub_sram_write_loops_ranges;
-  assign strg_ub_sram_write_loops_ranges = {16'd65535};
-  wire logic [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr;
-  assign strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr = 0;
-  wire logic [5:0] [15:0] strg_ub_sram_write_sched_gen_sched_addr_gen_strides;
-  assign strg_ub_sram_write_sched_gen_sched_addr_gen_strides = {16'd1};
-  wire logic tile_en;
-  assign tile_en = 1;
-  wire logic wen_in;
-  assign wen_in = 0;
 
-  LakeTop lake(.chain_data_in(chain_data_in), .chain_data_out(chain_data_out), .chain_idx_input(chain_idx_input), .chain_idx_output(chain_idx_output), .chain_valid_in(chain_valid_in), .chain_valid_out(chain_valid_out), .clk(clk), .clk_en(clk_en), .config_addr_in(config_addr_in), .config_data_in(config_data_in), .config_data_out(config_data_out), .config_en(config_en), .config_read(config_read), .config_write(config_write), .data_in(data_in), .data_out(data_out), .enable_chain_input(enable_chain_input), .enable_chain_output(enable_chain_output), .flush(flush), .mode(mode), .ren_in(ren_in), .rst_n(rst_n), .strg_ub_sram_read_addr_gen_starting_addr(strg_ub_sram_read_addr_gen_starting_addr), .strg_ub_sram_read_addr_gen_strides(strg_ub_sram_read_addr_gen_strides), .strg_ub_sram_read_loops_dimensionality(strg_ub_sram_read_loops_dimensionality), .strg_ub_sram_read_loops_ranges(strg_ub_sram_read_loops_ranges), .strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr(strg_ub_sram_read_sched_gen_sched_addr_gen_starting_addr), .strg_ub_sram_read_sched_gen_sched_addr_gen_strides(strg_ub_sram_read_sched_gen_sched_addr_gen_strides), .strg_ub_sram_write_addr_gen_starting_addr(strg_ub_sram_write_addr_gen_starting_addr), .strg_ub_sram_write_addr_gen_strides(strg_ub_sram_write_addr_gen_strides), .strg_ub_sram_write_loops_dimensionality(strg_ub_sram_write_loops_dimensionality), .strg_ub_sram_write_loops_ranges(strg_ub_sram_write_loops_ranges), .strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr(strg_ub_sram_write_sched_gen_sched_addr_gen_starting_addr), .strg_ub_sram_write_sched_gen_sched_addr_gen_strides(strg_ub_sram_write_sched_gen_sched_addr_gen_strides), .tile_en(tile_en), .valid_out(valid_out), .wen_in(wen_in));
+module avg_pool_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*3 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = (d[0] % 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = (d[1] % 2);
+  logic [15:0] bank_index_2;
+  assign bank_index_2 = (d[2] % 2);
+  assign out = bank_index_0*1+bank_index_1*2+bank_index_2*4;
 
 endmodule
-module memtile_long_delay__U154(input logic [0:0] [15:0] chain_data_in, output logic [0:0] [15:0] chain_data_out, output logic chain_valid_out, input logic clk, input logic flush, input logic rst_n, output logic valid_out, output logic [15:0] rdata, output logic [15:0] wdata);
 
-  memtile_long_delay__U154_inner lake(.chain_data_in(chain_data_in), .chain_data_out(chain_data_out), .chain_valid_out(chain_valid_out), .clk(clk), .flush(flush), .rst_n(rst_n), .valid_out(valid_out), .data_out(rdata), .data_in(wdata));
+module avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_to_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] storage [0:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 0;
+    end else begin
+      storage[write_addr] <= in;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
 
 endmodule
+
+module avg_pool_stencil_ub(
+	input clk,
+	input flush,
+	input rst_n,
+	input op_hcompute_avg_pool_stencil_1_write_wen,
+	input [15:0] op_hcompute_avg_pool_stencil_1_write_ctrl_vars [3:0] ,
+	input logic [15:0] op_hcompute_avg_pool_stencil_1_write [0:0] ,
+	input op_hcompute_hw_output_stencil_read_ren,
+	input [15:0] op_hcompute_hw_output_stencil_read_ctrl_vars [3:0] ,
+	output logic [15:0] op_hcompute_hw_output_stencil_read [0:0] );
+
+  // Storage
+  // # of banks: 8
+  logic [15:0] bank_0 [4096];
+  logic [15:0] bank_1 [4096];
+  logic [15:0] bank_2 [4096];
+  logic [15:0] bank_3 [4096];
+  logic [15:0] bank_4 [4096];
+  logic [15:0] bank_5 [4096];
+  logic [15:0] bank_6 [4096];
+  logic [15:0] bank_7 [4096];
+
+  logic [15:0] avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_0;
+  assign avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_0 = (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[2] + 1*op_hcompute_hw_output_stencil_read_ctrl_vars[3])) - 0);
+  logic [15:0] avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_1;
+  assign avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_1 = (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 1*op_hcompute_hw_output_stencil_read_ctrl_vars[2] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[3])) - 0);
+  logic [15:0] avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_2;
+  assign avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_2 = (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 1*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[2] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[3])) - 0);
+avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_bank_selector(.d({avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_0,avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_1,avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_2}));
+  logic [15:0] avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_0;
+  assign avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_0 = (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0);
+  logic [15:0] avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_1;
+  assign avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_1 = (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0);
+  logic [15:0] avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_2;
+  assign avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_2 = (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0);
+avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector(.d({avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_0,avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_1,avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_2}));
+
+    avg_pool_stencil_avg_pool_stencil_op_hcompute_hw_output_stencil_1_to_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_sr avg_pool_stencil_op_hcompute_hw_output_stencil_1_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_avg_pool_stencil_1_write[0]), .out(op_hcompute_hw_output_stencil_read[0]));
+
+
+  always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0),(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0),(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0)}
+    if (op_hcompute_avg_pool_stencil_1_write_wen) begin
+      if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 0) begin
+        bank_0[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
+      end
+      if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 1) begin
+        bank_1[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
+      end
+      if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 2) begin
+        bank_2[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
+      end
+      if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 3) begin
+        bank_3[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
+      end
+      if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 4) begin
+        bank_4[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
+      end
+      if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 5) begin
+        bank_5[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
+      end
+      if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 6) begin
+        bank_6[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
+      end
+      if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 7) begin
+        bank_7[(((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_1_write[0];
+      end
+    end
+  end
+  always @(*) begin
+  end
+
+endmodule
+
+
+module avg_pool_stencil_clkwrk_dsa0_bank_selector(input clk, input flush, input rst_n, input logic [16*3 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = (d[0] % 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = (d[1] % 2);
+  logic [15:0] bank_index_2;
+  assign bank_index_2 = (d[2] % 2);
+  assign out = bank_index_0*1+bank_index_1*2+bank_index_2*4;
+
+endmodule
+
+module avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] storage [0:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 0;
+    end else begin
+      storage[write_addr] <= in;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
+endmodule
+
+module avg_pool_stencil_clkwrk_dsa0_ub(
+	input clk,
+	input flush,
+	input rst_n,
+	input op_hcompute_avg_pool_stencil_1_read_ren,
+	input [15:0] op_hcompute_avg_pool_stencil_1_read_ctrl_vars [3:0] ,
+	output logic [15:0] op_hcompute_avg_pool_stencil_1_read [0:0] ,
+	input op_hcompute_avg_pool_stencil_write_wen,
+	input [15:0] op_hcompute_avg_pool_stencil_write_ctrl_vars [3:0] ,
+	input logic [15:0] op_hcompute_avg_pool_stencil_write [0:0] );
+
+  // Storage
+  // # of banks: 8
+  logic [15:0] bank_0 [4096];
+  logic [15:0] bank_1 [4096];
+  logic [15:0] bank_2 [4096];
+  logic [15:0] bank_3 [4096];
+  logic [15:0] bank_4 [4096];
+  logic [15:0] bank_5 [4096];
+  logic [15:0] bank_6 [4096];
+  logic [15:0] bank_7 [4096];
+
+  logic [15:0] avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_0;
+  assign avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_0 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_1;
+  assign avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_1 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_2;
+  assign avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_2 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_bank_selector(.d({avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_0,avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_1,avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_2}));
+  logic [15:0] avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_0;
+  assign avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_0 = (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0);
+  logic [15:0] avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_1;
+  assign avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_1 = (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0);
+  logic [15:0] avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_2;
+  assign avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_2 = (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0);
+avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector(.d({avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_0,avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_1,avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_2}));
+
+    avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_sr avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_avg_pool_stencil_write[0]), .out(op_hcompute_avg_pool_stencil_1_read[0]));
+
+
+  always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0),(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0),(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0)}
+    if (op_hcompute_avg_pool_stencil_write_wen) begin
+      if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 0) begin
+        bank_0[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
+      end
+      if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 1) begin
+        bank_1[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
+      end
+      if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 2) begin
+        bank_2[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
+      end
+      if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 3) begin
+        bank_3[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
+      end
+      if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 4) begin
+        bank_4[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
+      end
+      if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 5) begin
+        bank_5[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
+      end
+      if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 6) begin
+        bank_6[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
+      end
+      if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 7) begin
+        bank_7[(((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 32 + (((0 + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) - 0) * 1024] <= op_hcompute_avg_pool_stencil_write[0];
+      end
+    end
+  end
+  always @(*) begin
+  end
+
+endmodule
+
+
+module hw_input_stencil_bank_selector(input clk, input flush, input rst_n, input logic [16*3 - 1 :0] d, output logic [15:0] out);
+  logic [15:0] bank_index_0;
+  assign bank_index_0 = (d[0] % 2);
+  logic [15:0] bank_index_1;
+  assign bank_index_1 = (d[1] % 2);
+  logic [15:0] bank_index_2;
+  assign bank_index_2 = (d[2] % 2);
+  assign out = bank_index_0*1+bank_index_1*2+bank_index_2*4;
+
+endmodule
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] storage [66:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 66;
+    end else begin
+      storage[write_addr] <= in;
+      read_addr <= read_addr == 66 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 66 ? 0 : write_addr + 1;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
+endmodule
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] storage [65:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 65;
+    end else begin
+      storage[write_addr] <= in;
+      read_addr <= read_addr == 65 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 65 ? 0 : write_addr + 1;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
+endmodule
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] storage [1:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 1;
+    end else begin
+      storage[write_addr] <= in;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
+endmodule
+
+module hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] storage [2:0];
+
+  reg [15:0] read_addr;
+  reg [15:0] write_addr;
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      read_addr <= 0;
+      write_addr <= 2;
+    end else begin
+      storage[write_addr] <= in;
+      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
+    end
+
+  end
+
+  always @(*) begin
+    out = storage[read_addr];
+  end
+
+endmodule
+
+module hw_input_stencil_ub(
+	input clk,
+	input flush,
+	input rst_n,
+	input op_hcompute_avg_pool_stencil_1_read_ren,
+	input [15:0] op_hcompute_avg_pool_stencil_1_read_ctrl_vars [3:0] ,
+	output logic [15:0] op_hcompute_avg_pool_stencil_1_read [3:0] ,
+	input op_hcompute_hw_input_stencil_write_wen,
+	input [15:0] op_hcompute_hw_input_stencil_write_ctrl_vars [3:0] ,
+	input logic [15:0] op_hcompute_hw_input_stencil_write [0:0] );
+
+  // Storage
+  // # of banks: 8
+  logic [15:0] bank_0 [16384];
+  logic [15:0] bank_1 [16384];
+  logic [15:0] bank_2 [16384];
+  logic [15:0] bank_3 [16384];
+  logic [15:0] bank_4 [16384];
+  logic [15:0] bank_5 [16384];
+  logic [15:0] bank_6 [16384];
+  logic [15:0] bank_7 [16384];
+
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_0;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_0 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 2*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_1;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_1 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 2*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_2;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_2 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_bank_selector(.d({hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_0,hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_1,hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_2}));
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_0;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_0 = (((1 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 2*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_1;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_1 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 2*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_2;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_2 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_bank_selector(.d({hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_0,hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_1,hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_2}));
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_0;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_0 = (((1 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 2*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_1;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_1 = (((1 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 2*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_2;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_2 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_bank_selector(.d({hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_0,hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_1,hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_2}));
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_0;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_0 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 2*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_1;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_1 = (((1 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 2*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_2;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_2 = (((0 + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[2] + 0*op_hcompute_avg_pool_stencil_1_read_ctrl_vars[3])) - 0);
+hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_bank_selector(.d({hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_0,hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_1,hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_2}));
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_0;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_0 = (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_1;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_1 = (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0);
+  logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_2;
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_2 = (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0);
+hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector(.d({hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_0,hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_1,hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_2}));
+
+    hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_hw_input_stencil_write[0]), .out(op_hcompute_avg_pool_stencil_1_read[0]));
+
+    hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_hw_input_stencil_write[0]), .out(op_hcompute_avg_pool_stencil_1_read[1]));
+
+    hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_hw_input_stencil_write[0]), .out(op_hcompute_avg_pool_stencil_1_read[2]));
+
+    hw_input_stencil_hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_to_hw_input_stencil_op_hcompute_hw_input_stencil_2_sr hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_hw_input_stencil_write[0]), .out(op_hcompute_avg_pool_stencil_1_read[3]));
+
+
+  always @(posedge clk) begin
+    //{(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0),(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0),(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0)}
+    if (op_hcompute_hw_input_stencil_write_wen) begin
+      if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 0) begin
+        bank_0[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
+      end
+      if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 1) begin
+        bank_1[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
+      end
+      if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 2) begin
+        bank_2[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
+      end
+      if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 3) begin
+        bank_3[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
+      end
+      if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 4) begin
+        bank_4[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
+      end
+      if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 5) begin
+        bank_5[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
+      end
+      if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 6) begin
+        bank_6[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
+      end
+      if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 7) begin
+        bank_7[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 1 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 64 + (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) - 0) * 4096] <= op_hcompute_hw_input_stencil_write[0];
+      end
+    end
+  end
+  always @(*) begin
+  end
+
+endmodule
+
