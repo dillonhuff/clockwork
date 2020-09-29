@@ -465,7 +465,45 @@ isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vecto
 
 int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   isl_map* bank_func = cyclic_function(buf.ctx, buf.name, bank_factors);
-  cout << "Bank func: " << str(bank_func) << endl;
+
+  bank bnk = buf.compute_bank_info();
+  vector<int> lengths;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto max = to_int(lexmaxval(s));
+    auto min = to_int(lexminval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+  auto strs = strides(lengths);
+
+  cout << "Strides..." << endl;
+  for (auto s : strs) {
+    cout << tab(1) << s << endl;
+  }
+
+  cout << endl;
+  cout << "Terms" << endl;
+  vector<string> terms;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    string var = "d" + str(i);
+    string fold = "floor(" + var + " / "  + str(bank_factors.at(i)) + ")" + "*" + str(strs.at(i));
+    cout << tab(1) << fold << endl;
+    terms.push_back(fold);
+  }
+  vector<string> dvs;
+  for (int i = 0; i < (int) bank_factors.size(); i++) {
+    dvs.push_back("d" + str(i));
+  }
+
+  string aff_str = curlies("Bank" + sep_list(dvs, "[", "]", ", ") + " -> " + brackets(parens(sep_list(terms, "", "", " + "))));
+  cout << "aff_str = " << aff_str << endl;
+  cout << "Bank func        : " << str(bank_func) << endl;
+  isl_map* aff = isl_map_read_from_str(buf.ctx, aff_str.c_str());
+  cout << "Inner bank offset: " << str(aff) << endl;
+
+  auto app = dot(bank_func, aff);
+  cout << endl << "Application: " << str(app) << endl;
   assert(false);
   return 100000;
 }
