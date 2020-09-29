@@ -1349,47 +1349,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->name > r->name;});
 
   for (auto op : all_op_vec) {
-
-    //for (auto produced : op->produce_locs) {
-      //string name = produced.first;
-
-      //if (!contains_key(name, buffers)) {
-        //UBuffer buf;
-        //buf.name = name;
-        //buf.ctx = prg.ctx;
-        //if (contains_key(name, prg.buffer_port_widths)) {
-          //buf.port_widths = map_find(name, prg.buffer_port_widths);
-        //}
-        //buffers[name] = buf;
-      //}
-
-      //UBuffer& buf = buffers.at(name);
-
-      //string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      //buf.port_bundles[op->name + "_write"].push_back(pt_name);
-
-      //assert(contains_key(op, domains));
-
-      //// Map from??
-      //isl_map* produced_here =
-        //its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
-
-      //cout << "\tAdding input port: " << pt_name << endl;
-      //cout << "\t\tProduced:: " << str(produced_here) << endl;
-      //buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
-
-      //if (op->dynamic_writes(name)) {
-        //buf.dynamic_ports.insert(pt_name);
-      //}
-
-      //vector<string> inpt = buf.get_in_ports();
-      //cout << "current in port name: " << endl;
-      //for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
-      //cout << endl;
-
-      //usuffix++;
-    //}
-
     for (auto consumed : op->produce_locs) {
       string name = consumed.first;
 

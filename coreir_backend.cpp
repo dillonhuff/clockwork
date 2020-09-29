@@ -412,7 +412,26 @@ void generate_platonic_ubuffer(
 
   prg.pretty_print();
   if (buf.get_out_ports().size() > 2) {
+    UBuffer cpy = buf;
+    for (auto pt : buf.get_in_ports()) {
+      int write_start = 1;
+      //write_start_offset(op, hwinfo);
+      isl_aff* adjusted =
+        add(get_aff(buf.schedule.at(pt)), write_start);
+      cpy.schedule[pt] =
+        to_umap(to_map(adjusted));
+    }
+    for (auto pt : buf.get_out_ports()) {
+      int read_start = 0;
+      isl_aff* adjusted =
+        add(get_aff(buf.schedule.at(pt)), read_start);
+      cpy.schedule[pt] =
+        to_umap(to_map(adjusted));
+    }
+    cout << "---- Original" << endl;
     cout << buf << endl;
+    cout << "---- Latency adjusted" << endl;
+    cout << cpy << endl;
     assert(false);
   }
 

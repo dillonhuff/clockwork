@@ -792,7 +792,7 @@ class UBuffer {
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
 
-    //This is use to retrive the flatten iteration domain
+    //This is used to retrive the flattened iteration domain
     std::map<string, isl_set*> retrive_domain;
 
     std::set<string> dynamic_ports;
