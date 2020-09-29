@@ -449,8 +449,25 @@ vector<int> cyclic_banking(prog& prg, UBuffer& buf, schedule_info& info) {
   return bank_factors;
 }
 
+isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors) {
+  vector<string> dvs;
+  vector<string> bank_exprs;
+  for (int i = 0; i < (int) bank_factors.size(); i++) {
+    dvs.push_back("d" + str(i));
+    bank_exprs.push_back("d" + str(i) + " % " + str(bank_factors.at(i)));
+  }
+
+  string folded_output = "Bank" + brackets(sep_list(bank_exprs, "", "", ", "));
+
+  string bank_str = curlies(name + brackets(sep_list(dvs, "", "", ", ")) + " -> " + folded_output);
+  return isl_map_read_from_str(ctx, bank_str.c_str());
+}
+
 int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-  return 1;
+  isl_map* bank_func = cyclic_function(buf.ctx, buf.name, bank_factors);
+  cout << "Bank func: " << str(bank_func) << endl;
+  assert(false);
+  return 100000;
 }
 
 void generate_platonic_ubuffer(
@@ -635,7 +652,8 @@ void generate_platonic_ubuffer(
       //generate_verilog_addr_components(in, bnk, buf);
 
     //out << tab(2) << "//" << sep_list(comps, "{", "}", ",") << endl;
-    string addr = generate_linearized_verilog_addr(in, bnk, buf);
+    //string addr = generate_linearized_verilog_addr(in, bnk, buf);
+    string addr = parens(generate_linearized_verilog_addr(in, bnk, buf) + " % " + str(folding_factor));
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
@@ -661,7 +679,8 @@ void generate_platonic_ubuffer(
     if (!contains_key(outpt, shift_registered_outputs)) {
       //string addr =
         //generate_linearized_verilog_inner_bank_offset(outpt, bank_factors, bnk, buf);
-      string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
+      //string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
+      string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
       //for (auto val : bank_factors) {
         //num_banks *= val;
