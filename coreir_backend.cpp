@@ -449,6 +449,10 @@ vector<int> cyclic_banking(prog& prg, UBuffer& buf, schedule_info& info) {
   return bank_factors;
 }
 
+int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  return 1;
+}
+
 void generate_platonic_ubuffer(
     CodegenOptions& options,
     prog& prg,
@@ -458,6 +462,7 @@ void generate_platonic_ubuffer(
   prg.pretty_print();
 
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  int folding_factor = bank_folding_factor(bank_factors, prg, buf, hwinfo);
 
   map<string, pair<string, int> > shift_registered_outputs;
   auto sc = buf.global_schedule();
