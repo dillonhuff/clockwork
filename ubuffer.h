@@ -1958,6 +1958,8 @@ vector<string> buffer_vectorization(vector<int> iis,
         int dim_id, int fetch_width,
         map<string, UBuffer> & buffers);
 
+void emit_lake_controller_config(isl_set*, isl_aff*);
+
 //Vectorization API function on top of ubuffer class method
 vector<string> buffer_vectorization(vector<int> iis,
         string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers);

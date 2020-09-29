@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <set>
 
 using namespace std;
@@ -46,6 +47,15 @@ struct RTLOptions {
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), use_prebuilt_memory(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
 };
 
+struct LakeCollateral {
+    std::unordered_map<string, int> word_width;
+    std::unordered_map<string, int> bank_num;
+
+    LakeCollateral():
+        word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
+        bank_num({{"agg", 2}, {"sram", 1}, {"tb", 2}}) {}
+};
+
 struct CodegenOptions {
   bool internal;
   bool all_rams;
@@ -79,6 +89,7 @@ struct CodegenOptions {
   RTLOptions rtl_options;
 
   DebugOptions debug_options;
+  LakeCollateral mem_tile;
 
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
   use_custom_code_string(false), code_string(""), simplify_address_expressions(false),

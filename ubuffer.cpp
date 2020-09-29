@@ -654,6 +654,49 @@ void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Modu
   generate_coreir(options, def, info, false);
 }
 
+void emit_lake_controller_config(isl_set* write_domain, isl_aff* write_sched) {
+  cout << str(write_sched) << endl;
+  int dimensionality = num_dims(write_domain);
+  cout << "\"dimensionality\"," << num_dims(write_domain) << ",0" << endl;
+  vector<int> start_addr = {to_int(const_coeff(write_sched))};
+  cout << "\"cycle_starting_addr\"," << to_int(const_coeff(write_sched)) << ",0" << endl;
+  vector<int> extent, cycle_stride;
+  for (int d = 0; d < num_dims(write_domain); d++) {
+    auto ds = project_all_but(write_domain, d);
+    int extent_d = to_int(lexmaxval(ds)) - to_int(lexminval(ds)) + 1;
+    int ldim = num_dims(write_domain) - d - 1;
+    extent.push_back(extent_d);
+    cycle_stride.push_back(to_int(get_coeff(write_sched, d)));
+    cout << "\"extent_" << ldim << "\"," << extent_d << ",0" << endl;
+    cout << "\"cycle_stride_" << ldim << "\"," << to_int(get_coeff(write_sched, d)) << ",0" << endl;
+  }
+  //return MemConnSch({dimensionality, {}, "", "", ""});
+}
+
+void emit_lake_addrgen_config(CodegenOptions options, string op_name, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
+    for (auto map: get_maps(tmp)) {
+        auto reduce_map = linear_address_map_lake(range(map));
+        if (retrive_dom_map.count(op_name))
+            map = retrive_map_domain_with_dim(map, retrive_dom_map.at(op_name));
+        //only get one map, this is define by the lake people
+        {
+            auto bmap_vec = get_basic_maps(map);
+            int port_width = bmap_vec.size();
+            auto bmap = pick(get_basic_maps(map));
+            string buf_name = range_name(map);
+            int ww = options.mem_tile.word_width.at(split_at(buf_name, "_").back());
+            auto addr_expr_map = dot(to_map(bmap), reduce_map);
+            auto addr = get_aff(addr_expr_map);
+            cout << str(addr) << endl;
+            cout << "read_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
+            for (int d = 0; d < num_in_dims(addr); d++) {
+                cout << "read_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
+            }
+        }
+    }
+}
+
+
 void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer) {
     auto hardware_schedule = global_schedule_from_buffers(rewrite_buffer);
     auto glb_access_map = global_access_map_from_buffers(rewrite_buffer);
@@ -661,10 +704,14 @@ void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     /*build a map from OP schedule name to input access map, to output access map
     for each op name generate accessor config and also address generator
     */
+
     map<string, isl_map*>  op2sched;
     map<string, vector<umap*>> op2write_map, op2read_map;
+    auto retrive_dom_map = get_sets_in_map(retrive_domain_from_buffers(rewrite_buffer));
     for (auto m : get_maps(hardware_schedule)) {
         string op_name = domain_name(m);
+        if (retrive_dom_map.count(op_name))
+            m = retrive_map_domain_with_dim(m, retrive_dom_map.at(op_name));
         op2sched[op_name] = m;
         for ( auto it: rewrite_buffer) {
             auto buf = it.second;
@@ -684,18 +731,51 @@ void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     cout << "read map:" << endl;
     for (auto it : op2read_map) {
         cout <<"\t opname: " << it.first <<  endl;
+        string op_name = it.first;
         for (auto tmp: it.second) {
-            cout << str(tmp) << endl;
+            emit_lake_addrgen_config(options, op_name, tmp, retrive_dom_map);
         }
     }
     cout << "write map:" << endl;
+    map<string, vector<isl_map*> > write_map;
     for (auto it : op2write_map) {
         cout <<"\t opname: " << it.first << endl;
+        string op_name = it.first;
         for (auto tmp: it.second) {
-            cout << str(tmp) << endl;
+            emit_lake_addrgen_config(options, op_name, tmp, retrive_dom_map);
+            //for (auto map: get_maps(tmp)) {
+            //    auto reduce_map = linear_address_map_lake(range(map));
+            //    string op_name = it.first;
+            //    if (retrive_dom_map.count(op_name))
+            //        map = retrive_map_domain_with_dim(map, retrive_dom_map.at(op_name));
+            //    //only get one map, this is define by the lake people
+            //    {
+            //        auto bmap = pick(get_basic_maps(map));
+            //        string buf_name = range_name(map);
+            //        int ww = word_width.at(split_at(buf_name, "_").back());
+            //        auto addr_expr_map = dot(to_map(bmap), reduce_map);
+            //        auto addr = get_aff(addr_expr_map);
+            //        cout << str(addr) << endl;
+            //        cout << "write_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
+            //        for (int d = 0; d < num_in_dims(addr); d++) {
+            //            cout << "write_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
+            //        }
+            //        //for(auto aff: get_aff_vec(simplify(to_map(bmap))))
+            //        //    cout << str(aff) << endl;
+
+            //    }
+            //}
         }
     }
 
+    for (auto it : op2sched) {
+        auto sched = get_aff(it.second);
+        emit_lake_controller_config(::domain(it.second), sched);
+        //if (write_map.count(it.first))
+            //emit_lake_write_addrgen_config(options, write_map.at(it.first));
+        //if (op2read_map.count(it.first))
+            //emit_lake_read_addrgen_config()
+    }
 }
 
 isl_union_map* global_schedule_from_buffers(const map<string, UBuffer> &buffers) {

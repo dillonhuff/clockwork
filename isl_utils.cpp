@@ -1869,14 +1869,14 @@ umap* flatten_map_domain_trans(isl_map* s, int ii) {
 
 isl_map* retrive_map_domain_dim(isl_map* flat_map, isl_set* dom) {
     auto trans = flatten_set_trans(dom, 1);
-    auto new_sched = dot(trans, to_umap(flat_map));
+    auto new_sched = its(dot(trans, to_umap(flat_map)), dom);
     return to_map(new_sched);
 }
 
 isl_map* retrive_map_domain_with_dim(isl_map* flat_map, isl_set* dom) {
     int dim_from_inner = get_dim(dom) - get_in_dim(flat_map) + 1;
     auto trans = flatten_set_trans_with_dim(dom, dim_from_inner);
-    auto new_sched = dot(trans, to_umap(flat_map));
+    auto new_sched = its(dot(trans, to_umap(flat_map)), dom);
     return to_map(new_sched);
 }
 
