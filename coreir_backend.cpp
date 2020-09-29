@@ -41,9 +41,86 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 
-static int DATAPATH_WIDTH;
-static int CONTROLPATH_WIDTH;
+template<typename T>
+T prod_after(const std::vector<T>& strides, const int i) {
+  T r = 1;
+  for (int s = i; s < (int) strides.size(); s++) {
+    r *= strides.at(s);
+  }
+  return r;
+}
 
+template<typename T>
+T prod_before(const std::vector<T>& strides, const int i) {
+  T r = 1;
+  for (int s = 0; s < min(i, (int) strides.size()); s++) {
+    r *= strides.at(s);
+  }
+  return r;
+}
+
+template<typename T>
+T card(const std::vector<T>& strides) {
+  return prod_after(strides, 0);
+}
+
+template<typename T>
+vector<T> strides(const std::vector<T>& lengths) {
+  vector<T> strs;
+  for (int i = 0; i < (int) lengths.size(); i++) {
+    strs.push_back(prod_after(lengths, i));
+  }
+  return strs;
+}
+
+template<typename T>
+T position(const std::vector<T>& indexes, const std::vector<T>& lengths) {
+  auto strs = strides(lengths);
+  T r = 0;
+  for (int i = 0; i < (int) strs.size(); i++) {
+    r += lengths.at(i)*strs.at(i);
+  }
+  return r;
+}
+
+template<typename T>
+vector<T> indexes(const T& position, const std::vector<T>& lengths) {
+  vector<T> inds;
+  auto strs = strides(lengths);
+  T current = position;
+  for (int i = 0; i < (int) strs.size(); i++) {
+    T coeff = floor(current / strs.at(i));
+    inds.push_back(coeff);
+    current = current - coeff*strs.at(i);
+  }
+  return inds;
+}
+
+static int DATAPATH_WIDTH = 16;
+static int CONTROLPATH_WIDTH = 16;
+
+int wire_width(CoreIR::Wireable* w) {
+  auto tp = w->getType();
+  if (isBit(tp)) {
+    return 1;
+  } else if (isa<ArrayType>(tp)) {
+    cout << "Casting to array..." << endl;
+
+    auto atp = static_cast<ArrayType*>(tp);
+    //auto elem_type = atp->getElemType();
+
+    //assert(isa<ArrayType>(elem_type));
+
+    //cout << "Getting array..." << endl;
+
+    //auto elem_arr =
+    //static_cast<ArrayType*>(elem_type);
+    //int elem_width = elem_arr->getLen();
+    int len = atp->getLen();
+    return len;
+  }
+  assert(false);
+}
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   auto ns = context->getNamespace("global");
 
@@ -63,13 +140,13 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     if (buf.is_input_bundle(b.first)) {
       if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
-        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
       }
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
-        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
+        ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
       }
       ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
     }
@@ -153,6 +230,20 @@ vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk
   }
 
   return addr_vec_out;
+}
+
+string generate_linearized_verilog_inner_bank_offset(const std::string& pt, vector<int>& banking, bank& bnk, UBuffer& buf) {
+  auto comps = generate_verilog_addr_components(pt, bnk, buf);
+  assert(comps.size() == banking.size());
+  auto strs = strides(banking);
+
+  vector<string> terms;
+  for (int i = 0; i < comps.size(); i++) {
+    string comp = "$floor(" + comps.at(i) + " / " + str(banking.at(i)) + ")";
+    string stride = str(strs.at(i));
+    terms.push_back(comp + "*" + stride);
+  }
+  return sep_list(terms, "(", ")", " + ");
 }
 
 string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
@@ -253,7 +344,7 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   assert(bank_factors.size() == buf.logical_dimension());
 
   out << endl;
-  vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [16*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [15:0] out"};
+  vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
   out << "module " << buf.name << "_bank_selector(" << comma_list(port_decls) << ");" << endl;
 
   vector<string> bank_strides;
@@ -266,7 +357,7 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   vector<string> terms;
   for (auto p : bank_factors) {
     string var = "d" + brackets(str(i));
-    out << tab(1) << "logic [15:0] bank_index_" << i << ";" << endl;
+    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] bank_index_" << i << ";" << endl;
     //out << tab(1) << "assign " << "bank_index_" << i << " = " << "$floor(" << var << " / " << p << ");" << endl;
     out << tab(1) << "assign " << "bank_index_" << i << " = " << "(" << var << " % " << p << ");" << endl;
     terms.push_back("bank_index_" + str(i) + "*" + bank_strides.at(i));
@@ -279,10 +370,10 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
 }
 
 void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank& bnk) {
-  int num_banks = 1;
-  for (auto val : bank_factors) {
-    num_banks *= val;
-  }
+  int num_banks = card(bank_factors);
+  //for (auto val : bank_factors) {
+    //num_banks *= val;
+  //}
   out << tab(1) << "// # of banks: " << num_banks << endl;
 
   int capacity = 1;
@@ -299,7 +390,7 @@ void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank
   vector<int> current_index;
 
   for (int i = 0; i < num_banks; i++) {
-    out << tab(1) << "logic [15:0] " << "bank_" << i << " [" << capacity << "];" << endl;
+    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "bank_" << i << " [" << capacity << "];" << endl;
   }
 }
 
@@ -365,7 +456,7 @@ void generate_platonic_ubuffer(
 
   for (auto sr : shift_registered_outputs) {
     int delay = sr.second.second;
-    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [15:0] in", "output logic [15:0] out"};
+    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
 
@@ -491,10 +582,10 @@ void generate_platonic_ubuffer(
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
-    int num_banks = 1;
-    for (auto val : bank_factors) {
-      num_banks *= val;
-    }
+    int num_banks = card(bank_factors);
+    //for (auto val : bank_factors) {
+      //num_banks *= val;
+    //}
     for (int b = 0; b < num_banks; b++) {
       string source_ram = "bank_" + str(b);
       out << tab(3) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << b << ") begin" << endl;
@@ -512,10 +603,10 @@ void generate_platonic_ubuffer(
   for (auto outpt : buf.get_out_ports()) {
     if (!contains_key(outpt, shift_registered_outputs)) {
       string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
-      int num_banks = 1;
-      for (auto val : bank_factors) {
-        num_banks *= val;
-      }
+      int num_banks = card(bank_factors);
+      //for (auto val : bank_factors) {
+        //num_banks *= val;
+      //}
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
         out << tab(3) << "if (" << buf.name << "_" << outpt << "_bank_selector.out == " << b << ") begin" << endl;
@@ -842,28 +933,6 @@ void load_cgramapping(Context* c) {
     def->connect("lut.bit.out","self.out");
     mod->setDef(def);
   }
-  /*{
-    //TODO not specified in the PE spec
-    //unary op (width)->width
-    std::vector<std::tuple<string,string,uint>> unops = {
-      //std::make_tuple("not","inv",0),
-    };
-    for (auto op : unops) {
-      string opstr = std::get<0>(op);
-      string alu_op = std::get<1>(op);
-      uint is_signed = std::get<2>(op);
-      Module* mod = c->getGenerator("coreir."+opstr)->getModule({{"width",Const::make(c,16)}});
-      ModuleDef* def = mod->newModuleDef();
-      Values dataPEArgs({
-        {"alu_op",Const::make(c,alu_op)},
-        {"signed",Const::make(c,(bool) is_signed)}});
-      def->addInstance("binop","cgralib.PE",{{"op_kind",Const::make(c,"alu")}},dataPEArgs);
-
-      def->connect("self.in","binop.data.in.0");
-      def->connect("self.out","binop.data.out");
-      mod->setDef(def);
-    }
-    }*/
   {
     //binary op (width,width)->width
     std::vector<std::tuple<string,string,uint>> binops({
@@ -1432,15 +1501,12 @@ CoreIR::Module* generate_dual_port_addrgen_buf(CodegenOptions& options, CoreIR::
     int control_dimension = num_in_dims(pick(acc_maps));
     if (buf.is_input_bundle(b.first)) {
       ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
-      //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
 
       //ub_field.push_back(make_pair(name + "_en", context->BitIn()));
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
-      //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
 
-      //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
       ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
     }
   }
@@ -1466,97 +1532,6 @@ CoreIR::Module* generate_coreir_addrgen_in_tile(CodegenOptions& options,
     CoreIR::Context* context) {
   return nullptr;
 
-  //bool found_compute = true;
-  //if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
-    //found_compute = false;
-  //}
-
-  //auto ub = create_prog_declaration(options, buffers, prg, schedmap, context);
-  //auto def = ub->newModuleDef();
-
-  //auto sched_maps = get_maps(schedmap);
-  //for (auto op : prg.all_ops()) {
-    //generate_coreir_op_controller(def, op, sched_maps, hwinfo);
-    //generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
-  //}
-
-  //for (auto& buf : buffers) {
-    //if (!prg.is_boundary(buf.first)) {
-      //auto ub_mod = generate_dual_port_addrgen_buf(options, context, buf.second);
-      //def->addInstance(buf.second.name, ub_mod);
-    //}
-  //}
-
-  //auto levels = get_variable_levels(prg);
-  //// Connect compute units to buffers
-  //for (auto op : prg.all_ops()) {
-    //vector<string> surrounding = surrounding_vars(op, prg);
-    //for (auto var : op->index_variables_needed_by_compute) {
-      //int level = map_find(var, levels);
-      //auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
-      //def->connect(def->sel(op->name)->sel(var), var_wire);
-    //}
-
-    //for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-      //string buf_name = bundle.first;
-      //string bundle_name = bundle.second;
-      //auto buf = map_find(buf_name, buffers);
-      //int pixel_width = buf.port_widths;
-
-      //assert(buf.is_input_bundle(bundle.second));
-
-      //if (prg.is_output(buf_name)) {
-        //auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
-        //def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(def->sel(output_en),
-            //write_start_wire(def, op->name));
-      //} else {
-        //def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
-            //write_start_wire(def, op->name));
-        ////def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-            ////write_start_control_vars(def, op->name));
-      //}
-    //}
-
-    //for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-      //string buf_name = bundle.first;
-      //string bundle_name = bundle.second;
-      //auto buf = map_find(buf_name, buffers);
-
-      //assert(buf.is_output_bundle(bundle.second));
-
-      //if (prg.is_input(buf_name)) {
-        //auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
-        //auto input_bus = "self." + pg(buf_name, bundle_name);
-        //auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
-        ////def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        //// TODO: This delayed input is a hack that I insert to
-        //// ensure that I can assume all buffer reads take 1 cycle
-        //def->connect(delayed_input,
-            //def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
-        //def->connect(def->sel(output_valid),
-            //read_start_wire(def, op->name));
-      //} else {
-        //def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
-            //read_start_wire(def, op->name));
-        ////def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-            ////read_start_control_vars(def, op->name));
-      //}
-    //}
-  //}
-
-  //ub->setDef(def);
-
-  //ub->print();
-
-  //connect_signal("reset", ub);
-  ////context->runPasses({"wireclocks-coreir"});
-  ////context->runPasses({"rungenerators", "wireclocks-coreir"});
-  //context->runPasses({"rungenerators", "wireclocks-clk"});
-
-  //return ub;
 }
 
 void generate_coreir_addrgen_in_tile(CodegenOptions& options,
@@ -1716,21 +1691,13 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       if (prg.is_input(buf_name)) {
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
         auto input_bus = "self." + pg(buf_name, bundle_name);
-        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
+        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), DATAPATH_WIDTH);
         // TODO: This delayed input is a hack that I insert to
         // ensure that I can assume all buffer reads take 1 cycle
         def->connect(delayed_input,
             def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
-        //if (options.rtl_options.use_external_controllers) {
-        //  def->connect(def->sel(output_valid),
-        //      read_start_wire(def, op->name));
-        //}
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
-        //    read_start_wire(def, op->name));
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-        //    read_start_control_vars(def, op->name));
       }
     }
   }
@@ -1967,12 +1934,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       if (prg.is_input(buf_name)) {
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
         auto input_bus = "self." + pg(buf_name, bundle_name);
-
-        // TODO: This delayed input is a hack that I insert to
-        // ensure that I can assume all buffer reads take 1 cycle
-        //auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
-        //def->connect(delayed_input,
-            //def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
 
         def->connect(def->sel(input_bus),
             def->sel(op->name + "." + pg(buf_name, bundle_name)));
@@ -2431,7 +2392,7 @@ void generate_coreir(CodegenOptions& options,
   add_delay_tile_generator(context);
   add_raw_quad_port_memtile_generator(context);
   add_tahoe_memory_generator(context);
-  ram_module(context, 16, 2048);
+  ram_module(context, DATAPATH_WIDTH, 2048);
 
   auto c = context;
 
@@ -2611,7 +2572,7 @@ CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
 CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
   vector<CoreIR::Wireable*> terms;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   auto context = def->getContext();
   auto c = context;
   auto ns = c->getNamespace("global");
@@ -2661,7 +2622,7 @@ CoreIR::Wireable* sum_term_numerators(ModuleDef* def, isl_aff* aff) {
 
 CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   auto c = def->getContext();
-  int width = 16;
+  int width = wire_width(a);
   auto m = def->addInstance(
       "mul_" + c->getUnique(),
       "coreir.mul",
@@ -2673,7 +2634,7 @@ CoreIR::Wireable* mul(ModuleDef* def, CoreIR::Wireable* a, const int val) {
 
 CoreIR::Wireable* shiftr(ModuleDef* def, CoreIR::Wireable* a, const int val) {
   auto c = def->getContext();
-  int width = 16;
+  int width = wire_width(a);
   auto m = def->addInstance(
       "shift_" + c->getUnique(),
       "coreir.lshr",
@@ -2687,7 +2648,7 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
 
   auto ns = context->getNamespace("global");
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"out", context->Bit()->Arr(width)}};
   cout << "aff = " << str(aff) << endl;
@@ -2768,7 +2729,7 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
 CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* aff) {
   auto ns = context->getNamespace("global");
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"out", context->Bit()->Arr(width)}};
   cout << "aff = " << str(aff) << endl;
@@ -2826,7 +2787,7 @@ CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* do
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   int dims = num_dims(dom);
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"d", c->BitIn()->Arr(16)->Arr(dims)},
@@ -2870,7 +2831,7 @@ CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom) {
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   int dims = num_dims(dom);
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"d", c->BitIn()->Arr(16)->Arr(dims)},
@@ -2902,7 +2863,7 @@ CoreIR::Module* affine_controller_primitive(CoreIR::Context* context, isl_set* d
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
       {"valid", c->Bit()}};
@@ -3016,7 +2977,7 @@ CoreIR::Module* affine_controller_lake(CoreIR::Context* context, isl_set* dom, i
   auto ns = context->getNamespace("global");
   auto c = context;
 
-  int width = 16;
+  int width = CONTROLPATH_WIDTH;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
       {"valid", c->Bit()}};
