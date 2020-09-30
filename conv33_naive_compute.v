@@ -1,4 +1,4 @@
-// Module `ub` defined externally
+// Module `Mem` defined externally
 module cu_input (
     input clk,
     input [15:0] in_inst_input_read [0:0],
@@ -82,11 +82,10 @@ wire [15:0] d_reg__U9_out;
 wire ub_buf_inst_input_10_to_buf_inst_output_3_rst_n;
 wire ub_buf_inst_input_10_to_buf_inst_output_3_clk_en;
 wire ub_buf_inst_input_10_to_buf_inst_output_3_clk;
-wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_datain_0;
-wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_chainin_0;
-wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_dataout_0;
-wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_dataout_1;
-assign d_reg__U10_in = ub_buf_inst_input_10_to_buf_inst_output_3_dataout_1;
+wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_data_in_0;
+wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_data_out_0;
+wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_data_out_1;
+assign d_reg__U10_in = ub_buf_inst_input_10_to_buf_inst_output_3_data_out_1;
 assign d_reg__U10_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -104,7 +103,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(d_reg__U11_clk),
     .out(d_reg__U11_out)
 );
-assign d_reg__U12_in = ub_buf_inst_input_10_to_buf_inst_output_3_dataout_0;
+assign d_reg__U12_in = ub_buf_inst_input_10_to_buf_inst_output_3_data_out_0;
 assign d_reg__U12_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -143,24 +142,24 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
 assign ub_buf_inst_input_10_to_buf_inst_output_3_rst_n = reset;
 assign ub_buf_inst_input_10_to_buf_inst_output_3_clk_en = 1'b1;
 assign ub_buf_inst_input_10_to_buf_inst_output_3_clk = clk;
-assign ub_buf_inst_input_10_to_buf_inst_output_3_datain_0 = input_write[0];
-assign ub_buf_inst_input_10_to_buf_inst_output_3_chainin_0 = 16'h0000;
-cwlib_ub__confignull__input_num1__output_num2__width16 ub_buf_inst_input_10_to_buf_inst_output_3 (
+assign ub_buf_inst_input_10_to_buf_inst_output_3_data_in_0 = input_write[0];
+cwlib_Mem__confignull__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_input1__num_output2__width16 #(
+    .mode("lake")
+) ub_buf_inst_input_10_to_buf_inst_output_3 (
     .rst_n(ub_buf_inst_input_10_to_buf_inst_output_3_rst_n),
     .clk_en(ub_buf_inst_input_10_to_buf_inst_output_3_clk_en),
     .clk(ub_buf_inst_input_10_to_buf_inst_output_3_clk),
-    .datain_0(ub_buf_inst_input_10_to_buf_inst_output_3_datain_0),
-    .chainin_0(ub_buf_inst_input_10_to_buf_inst_output_3_chainin_0),
-    .dataout_0(ub_buf_inst_input_10_to_buf_inst_output_3_dataout_0),
-    .dataout_1(ub_buf_inst_input_10_to_buf_inst_output_3_dataout_1)
+    .data_in_0(ub_buf_inst_input_10_to_buf_inst_output_3_data_in_0),
+    .data_out_0(ub_buf_inst_input_10_to_buf_inst_output_3_data_out_0),
+    .data_out_1(ub_buf_inst_input_10_to_buf_inst_output_3_data_out_1)
 );
 assign output_read[8] = input_write[0];
 assign output_read[7] = d_reg__U8_out;
 assign output_read[6] = d_reg__U9_out;
-assign output_read[5] = ub_buf_inst_input_10_to_buf_inst_output_3_dataout_1;
+assign output_read[5] = ub_buf_inst_input_10_to_buf_inst_output_3_data_out_1;
 assign output_read[4] = d_reg__U10_out;
 assign output_read[3] = d_reg__U11_out;
-assign output_read[2] = ub_buf_inst_input_10_to_buf_inst_output_3_dataout_0;
+assign output_read[2] = ub_buf_inst_input_10_to_buf_inst_output_3_data_out_0;
 assign output_read[1] = d_reg__U12_out;
 assign output_read[0] = d_reg__U13_out;
 endmodule

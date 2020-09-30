@@ -34,15 +34,15 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
             };
 
             for (size_t i = 0; i < input_num; i ++) {
-                recordparams.push_back({"datain_" + std::to_string(i),
+                recordparams.push_back({"data_in_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
-                recordparams.push_back({"chainin_" + std::to_string(i),
+                recordparams.push_back({"chain_in_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
                 //recordparams.push_back({"wen_" + std::to_string(i),
                 //        c->BitIn()});
             }
             for (size_t i = 0; i < output_num; i ++) {
-                recordparams.push_back({"dataout_" + std::to_string(i),
+                recordparams.push_back({"data_out_" + std::to_string(i),
                         c->Bit()->Arr(width)});
                 //recordparams.push_back({"valid_" + std::to_string(i),
                 //        c->Bit()});
@@ -64,7 +64,7 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
         {"width", c->Int()},
         {"num_input", c->Int()},
         {"num_output", c->Int()},
-
+        {"config", c->Json()},
         {"has_valid", c->Bool()},
         {"has_stencil_valid", c->Bool()},
         {"has_flush", c->Bool()},
@@ -78,6 +78,7 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
             uint width = genargs.at("width")->get<int>();
             uint num_input = genargs.at("num_input")->get<int>();
             uint num_output = genargs.at("num_output")->get<int>();
+            Json config = genargs.at("config")->get<Json>();
 
             RecordParams recordparams = {
                 {"rst_n", c->BitIn()},
@@ -137,7 +138,7 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
     Values d; //defaults
     p["mode"] = c->String();
 
-    p["config"] = CoreIR::JsonType::make(c);
+    //p["config"] = CoreIR::JsonType::make(c);
 
     //p["depth"] = c->Int();
     //d["depth"] = Const::make(c,1024);

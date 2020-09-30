@@ -1100,16 +1100,19 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
         config_file = generate_ubuf_args(options, rewrite_buffer);
       }
-      CoreIR::Values args = {
+      CoreIR::Values genargs = {
         {"width", CoreIR::Const::make(context, port_widths)},
-        {"input_num", CoreIR::Const::make(context, banks_to_inputs.at(bk.name).size())},
-        {"output_num", CoreIR::Const::make(context, banks_to_outputs.at(bk.name).size())},
+        {"num_input", CoreIR::Const::make(context, banks_to_inputs.at(bk.name).size())},
+        {"num_output", CoreIR::Const::make(context, banks_to_outputs.at(bk.name).size())},
         {"config", CoreIR::Const::make(context, config_file)}
+      };
+      CoreIR::Values modargs = {
+        {"mode", CoreIR::Const::make(context, "lake")}
       };
       cout << "Add ub node with input_num = " << banks_to_inputs.at(bk.name).size()
           << ", output_num = " << banks_to_outputs.at(bk.name).size() << endl;
       CoreIR::Instance* buf;
-      buf = def->addInstance(ub_ins_name, "cwlib.ub", args);
+      buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
 
       CoreIR::Values widthArg = {{"width", CoreIR::Const::make(context, 1)}};
       auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
@@ -1123,7 +1126,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         //line buffer case
         string  inpt = pick(inpts);
         if (isIn.at(inpt)){
-          def->connect(buf->sel("datain_" + to_string(inpt_cnt)), pt2wire.at(inpt));
+          def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), pt2wire.at(inpt));
 
           //There is no control signal
           if (with_ctrl) {
@@ -1134,7 +1137,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             }
           }
         } else {
-          def->connect(buf->sel("datain_" + to_string(inpt_cnt)), wire2out.at(inpt));
+          def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), wire2out.at(inpt));
           cout << "Input port: " << inpt << endl;
           if (with_ctrl) {
             def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
@@ -1147,10 +1150,10 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         for (auto outpt: outpts) {
           //need a second pass push all wire into a list
           //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
-          CoreIR::Wireable* tmp = buf->sel("dataout_"+to_string(outpt_cnt));
+          CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
           CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
 
-          wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
+          wire2out[outpt] = buf->sel("data_out_" + to_string(outpt_cnt));
           //wire2out[outpt + "_valid"] = buf->sel("valid_" + to_string(outpt_cnt));
           //TODO: figure out valid wiring strategy
           //Wire the bank with the largest delay
@@ -1165,7 +1168,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       else {
         //Wiring the multi input case
         for (auto inpt: inpts) {
-          def->connect(buf->sel("datain_" + to_string(inpt_cnt)), pt2wire.at(inpt));
+          def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), pt2wire.at(inpt));
           if (with_ctrl) {
             def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
           }
@@ -1174,7 +1177,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         for (auto outpt: outpts) {
           //need a second pass push all wire into a list
           //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
-          CoreIR::Wireable* tmp = buf->sel("dataout_"+to_string(outpt_cnt));
+          CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
           CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
 
           //use the first port in the chain to be the output valid
@@ -1231,7 +1234,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         else {
           auto last_bank = connect_vec[it-1]->getTopParent();
           string portID = split_at(wire->toString(), "_").back();
-          def->connect(wire, last_bank->sel("chainin_" + portID));
+          def->connect(wire, last_bank->sel("chain_in_" + portID));
         }
       }
     }
