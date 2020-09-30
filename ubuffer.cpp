@@ -20,6 +20,7 @@ using CoreIR::Values;
 
 #endif
 #include "coreir_backend.h"
+typedef std::unordered_map<std::string, std::vector<int>> ConfigMap;
 
 isl_map* bank_map(isl_ctx* ctx, const std::string& src_name, banking_strategy& banking) {
   vector<string> dvs;
@@ -654,8 +655,8 @@ void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Modu
   generate_coreir(options, def, info, false);
 }
 
-void emit_lake_controller_config(isl_set* write_domain, isl_aff* write_sched) {
-  cout << str(write_sched) << endl;
+ConfigMap emit_lake_controller_config(isl_set* write_domain, isl_aff* write_sched) {
+  //cout << str(write_sched) << endl;
   int dimensionality = num_dims(write_domain);
   cout << "\"dimensionality\"," << num_dims(write_domain) << ",0" << endl;
   vector<int> start_addr = {to_int(const_coeff(write_sched))};
@@ -670,11 +671,36 @@ void emit_lake_controller_config(isl_set* write_domain, isl_aff* write_sched) {
     cout << "\"extent_" << ldim << "\"," << extent_d << ",0" << endl;
     cout << "\"cycle_stride_" << ldim << "\"," << to_int(get_coeff(write_sched, d)) << ",0" << endl;
   }
+  std::reverse(extent.begin(), extent.end());
+  std::reverse(cycle_stride.begin(), cycle_stride.end());
+  return {{"extent", extent}, {"cycle_starting_addr", start_addr}, {"cycle_stride", cycle_stride}};
+
   //return MemConnSch({dimensionality, {}, "", "", ""});
 }
 
-void emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_read,
+ConfigMap generate_config_from_aff_expr(isl_aff* addr, bool is_read, bool is_mux, int word_width, int capacity, int port_width) {
+    ConfigMap vals;
+
+    string prefix = is_mux ? "mux_" : "";
+    prefix += is_read ? "read_" : "write_";
+    //cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
+    cout << "\""+prefix+"data_starting_addr\"," <<
+        to_int(const_coeff(addr))/port_width  << ",0" << endl;
+    vals[prefix + "data_starting_addr"] = {to_int(const_coeff(addr))/port_width};
+    for (int d = 0; d < num_in_dims(addr); d++) {
+      int ldim = num_in_dims(addr) - d - 1;
+      cout << "\""+prefix+"data_stride_" << ldim << "\"," <<
+          to_int(get_coeff(addr, d))/word_width % capacity << ",0" << endl;
+      map_insert(vals, prefix+"data_stride", to_int(get_coeff(addr, d))/word_width % capacity);
+    }
+    std::reverse(vals.at(prefix+"data_stride").begin(), vals.at(prefix+"data_stride").end());
+    return vals;
+}
+
+vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_read,
         UBuffer buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
+
+    vector<ConfigMap> ret;
     for (auto map: get_maps(tmp)) {
         cout << "access map: " << str(map) << endl;
 
@@ -694,6 +720,7 @@ void emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_re
         } else {
             bk_num = port_width / options.mem_tile.in_port_width.at(micro_buf_name);
         }
+        cout << "Bank number: " << bk_num << endl;
 
         //check if violate bank number
         assert(bk_num <= options.mem_tile.bank_num.at(micro_buf_name));
@@ -704,10 +731,12 @@ void emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_re
             range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
         }
         auto reduce_map = linear_address_map_lake(range_per_bank);
+
         for (int i = 0; i < bk_num; i ++)
         {
             //pick the corresponding basic map
             auto bmap = bmap_vec.at(i);
+            ConfigMap vals;
             bool need_mux = false;
             if (is_read) {
                 need_mux = (bk_num < (buf.num_in_ports() / options.mem_tile.in_port_width.at(micro_buf_name)));
@@ -718,13 +747,15 @@ void emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_re
             if (need_mux) {
                 vector<int> mux_index;
                 vector<int> addr_index;
-                for (int i = num_out_dims(map)-1; i >= 0; i--)
+                for (int i = num_out_dims(map)-1; i >= 0; i--) {
                     //FIXME: this is hardcoded
                     if (i == num_out_dims(map) - 2) {
                         mux_index.push_back(i);
                     } else {
                         addr_index.push_back(i);
                     }
+                }
+
                 //rewrite the address gen
                 reduce_map = linear_address_map_with_index(range(map), addr_index);
 
@@ -732,32 +763,57 @@ void emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_re
                 auto mux_addr_expr = dot(to_map(bmap), mux_reduce_map);
                 isl_aff* addr = get_aff(mux_addr_expr);
                 int ww = options.mem_tile.word_width.at(micro_buf_name);
-                string prefix = is_read ? "mux_read" : "mux_write";
-                cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
-                cout << "\""+prefix+"_data_starting_addr\"," <<
-                    to_int(const_coeff(addr))/ww  << ",0" << endl;
-                for (int d = 0; d < num_in_dims(addr); d++) {
-                  int ldim = num_in_dims(addr) - d - 1;
-                  cout << "\""+prefix+"_data_stride_" << ldim << "\"," <<
-                      to_int(get_coeff(addr, d))/ww  << ",0" << endl;
-                }
+                int capacity = options.mem_tile.capacity.at(micro_buf_name);
+                vals.merge(generate_config_from_aff_expr(addr, is_read, true, ww, capacity, port_width));
+                //string prefix = is_read ? "mux_read" : "mux_write";
+                //cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
+                //cout << "\""+prefix+"_data_starting_addr\"," <<
+                //    to_int(const_coeff(addr))/ww  << ",0" << endl;
+                //for (int d = 0; d < num_in_dims(addr); d++) {
+                //  int ldim = num_in_dims(addr) - d - 1;
+                //  cout << "\""+prefix+"_data_stride_" << ldim << "\"," <<
+                //      to_int(get_coeff(addr, d))/ww  << ",0" << endl;
+                //}
             }
 
+            //TODO: use word width to fix kavya's request
             int ww = options.mem_tile.word_width.at(micro_buf_name);
+            int capacity = options.mem_tile.capacity.at(micro_buf_name);
+            //int ww = is_read ?options.mem_tile.out_port_width.at(micro_buf_name)
+            //    : options.mem_tile.in_port_width.at(micro_buf_name);
             auto addr_expr_map = dot(to_map(bmap), reduce_map);
             auto addr = get_aff(addr_expr_map);
             cout << str(addr) << endl;
-            string prefix = is_read ? "read" : "write";
-            cout << prefix + "_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
-            for (int d = 0; d < num_in_dims(addr); d++) {
-                cout << prefix + "_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
-            }
+            vals.merge(generate_config_from_aff_expr(addr, is_read, false, ww, capacity, port_width));
+            //string prefix = is_read ? "read" : "write";
+            //cout << prefix + "_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
+            //for (int d = 0; d < num_in_dims(addr); d++) {
+            //    cout << prefix + "_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
+            //}
+            ret.push_back(vals);
         }
     }
+    return ret;
 }
 
+Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
+  Json jdata;
+  for (auto& map_pair : mem_conxs) {
+    auto name = map_pair.first;
+    auto data = map_pair.second;
+    jdata[name]["dimensionality"] = data.dimensionality;
+    if (data.read != "") { jdata[name]["read"] = data.read; }
+    if (data.mux_write != "") { jdata[name]["mux_write"] = data.mux_write; }
+    if (data.write != "") { jdata[name]["write"] = data.write; }
 
-void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer) {
+    for (auto& data_vec : data.vals) {
+      jdata[name][data_vec.first] = data_vec.second;
+    }
+  }
+  return jdata;
+}
+
+Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer) {
     auto hardware_schedule = global_schedule_from_buffers(rewrite_buffer);
     auto glb_access_map = global_access_map_from_buffers(rewrite_buffer);
 
@@ -788,37 +844,88 @@ void UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
             }
         }
     }
+    //cout << "read map:" << endl;
+    //for (auto it : op2read_map) {
+    //    string op_name = it.first;
+    //    string buf_name = op2read_buf.at(op_name);
+    //    cout <<"\t opname: " << it.first <<  endl;
+    //    for (auto tmp: it.second) {
+    //        emit_lake_addrgen_config(options, op_name, true, rewrite_buffer.at(buf_name), tmp, retrive_dom_map);
+    //    }
+    //}
+    //cout << "write map:" << endl;
+    //map<string, vector<isl_map*> > write_map;
+    //for (auto it : op2write_map) {
+    //    cout <<"\t opname: " << it.first << endl;
+    //    string op_name = it.first;
+    //    string buf_name = op2write_buf.at(op_name);
+    //    for (auto tmp: it.second) {
+    //        emit_lake_addrgen_config(options, op_name, false, rewrite_buffer.at(buf_name) , tmp, retrive_dom_map);
+    //    }
+    //}
+    unordered_map<string, MemConnSch> data;
     for (auto it : op2sched) {
-        cout <<"\t opname: " << it.first << str(it.second) << endl;
-    }
-    cout << "read map:" << endl;
-    for (auto it : op2read_map) {
-        string op_name = it.first;
-        string buf_name = op2read_buf.at(op_name);
-        cout <<"\t opname: " << it.first <<  endl;
-        for (auto tmp: it.second) {
-            emit_lake_addrgen_config(options, op_name, true, rewrite_buffer.at(buf_name), tmp, retrive_dom_map);
-        }
-    }
-    cout << "write map:" << endl;
-    map<string, vector<isl_map*> > write_map;
-    for (auto it : op2write_map) {
-        cout <<"\t opname: " << it.first << endl;
-        string op_name = it.first;
-        string buf_name = op2write_buf.at(op_name);
-        for (auto tmp: it.second) {
-            emit_lake_addrgen_config(options, op_name, false, rewrite_buffer.at(buf_name) , tmp, retrive_dom_map);
-        }
-    }
-
-    for (auto it : op2sched) {
+        cout <<"\n\n\tEmit config for opname: " << it.first << str(it.second) << endl;
         auto sched = get_aff(it.second);
-        emit_lake_controller_config(::domain(it.second), sched);
-        //if (write_map.count(it.first))
-            //emit_lake_write_addrgen_config(options, write_map.at(it.first));
-        //if (op2read_map.count(it.first))
-            //emit_lake_read_addrgen_config()
+        string op_name = it.first;
+        string key = split_at(op_name, "_").back();
+        MemConnSch tmp;
+        tmp.dimensionality = num_in_dims(sched);
+        tmp.vals.merge(emit_lake_controller_config(::domain(it.second), sched));
+
+        vector<ConfigMap> read_addr_config, write_addr_config;
+
+        if (op2read_map.count(op_name)) {
+            auto read_map = op2read_map.at(it.first);
+            string producer_buf_name = op2read_buf.at(it.first);
+            //tmp.read = producer_buf_name;
+            for (auto tmp: read_map) {
+                concat( read_addr_config,
+                        emit_lake_addrgen_config(options, op_name, true,
+                            rewrite_buffer.at(producer_buf_name), tmp, retrive_dom_map));
+            }
+        }
+
+        if (op2write_map.count(op_name)) {
+            auto write_map = op2write_map.at(it.first);
+            string consumer_buf_name = op2write_buf.at(it.first);
+            //tmp.write = consumer_buf_name;
+            for (auto tmp: write_map) {
+                concat( write_addr_config,
+                        emit_lake_addrgen_config(options, op_name, false,
+                            rewrite_buffer.at(consumer_buf_name), tmp, retrive_dom_map));
+            }
+        }
+        int cnt = 0;
+        if (read_addr_config.size() == 0) {
+            for (auto write_config: write_addr_config) {
+                string config_key = "in2agg_" + to_string(cnt);
+                auto cpy = tmp;
+                cpy.vals.merge(write_config);
+                data[config_key] = cpy;
+                cnt ++;
+            }
+        } else if(write_addr_config.size() == 0) {
+            for (auto read_config: read_addr_config) {
+                string config_key = "tb2out_" + to_string(cnt);
+                auto cpy = tmp;
+                cpy.vals.merge(read_config);
+                data[config_key] = cpy;
+                cnt ++;
+            }
+        } else {
+            for (auto read_config: read_addr_config) {
+                for (auto write_config: write_addr_config) {
+                    string config_key = key;
+                    auto cpy = tmp;
+                    cpy.vals.merge(read_config);
+                    cpy.vals.merge(write_config);
+                    data[config_key] = cpy;
+                }
+            }
+        }
     }
+    return create_lake_config(data);
 }
 
 isl_union_map* global_schedule_from_buffers(const map<string, UBuffer> &buffers) {
@@ -991,8 +1098,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       string ub_ins_name = "ub_"+bk.name;
       if (options.inline_vectorization) {
         buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
-        generate_ubuf_args(options, rewrite_buffer);
-        assert(false);
+        config_file = generate_ubuf_args(options, rewrite_buffer);
       }
       CoreIR::Values args = {
         {"width", CoreIR::Const::make(context, port_widths)},

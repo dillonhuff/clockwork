@@ -13826,12 +13826,12 @@ void lake_conv33_recipe_test() {
   prg.buffer_port_widths["out_inst"] = 16;
   prg.buffer_port_widths["buf_inst"] = 16;
 
-  auto p = prg.add_nest("po", 0, 16, "pi", 0, 16);
+  auto p = prg.add_nest("po", 0, 64, "pi", 0, 64);
   auto write = p->add_op("input");
   write->add_load("in_inst", "po, pi");
   write->add_store("buf_inst", "po, pi");
 
-  auto q = prg.add_nest("qo", 0, 14, "qi", 0, 14);
+  auto q = prg.add_nest("qo", 0, 62, "qi", 0, 62);
   auto read = q->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
@@ -13882,10 +13882,10 @@ void lake_conv33_recipe_test() {
   auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, iis, extra_raw_deps);
   isl_union_map* hsh = global_schedule_from_buffers(ubuf_pool);
   cout << "hardware schedule: " << str(hsh) << endl;
-  cmd("mkdir -p ./lake_stream/conv_3_3_recipe/");
-  emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_recipe/", false);
-  cmd("mkdir -p ./lake_controllers/conv_3_3_recipe/");
-  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_recipe/");
+  //cmd("mkdir -p ./lake_stream/conv_3_3_recipe/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_recipe/", false);
+  //cmd("mkdir -p ./lake_controllers/conv_3_3_recipe/");
+  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_recipe/");
 }
 
 void lake_conv33_autovec_test() {

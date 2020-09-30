@@ -782,6 +782,14 @@ class AccessPattern {
       }
 };
 
+struct MemConnSch {
+  int dimensionality;
+  unordered_map<string, vector<int>> vals;
+  string read;
+  string mux_write;
+  string write;
+};
+
 class UBuffer {
 
   public:
@@ -1947,7 +1955,7 @@ class UBuffer {
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
     pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);
 
-    void generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
+    Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
 
 };
 
@@ -1957,8 +1965,6 @@ vector<string> buffer_vectorization(vector<int> iis,
         vector<string> buf_name_vec,
         int dim_id, int fetch_width,
         map<string, UBuffer> & buffers);
-
-void emit_lake_controller_config(isl_set*, isl_aff*);
 
 //Vectorization API function on top of ubuffer class method
 vector<string> buffer_vectorization(vector<int> iis,

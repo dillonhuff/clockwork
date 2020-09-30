@@ -149,15 +149,8 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
   return cwlib;
 }
 
-struct MemConnSch {
-  int dimensionality;
-  unordered_map<string, vector<int>> vals;
-  string read;
-  string mux_write;
-  string write;
-};
 
-
+/*
 MemConnSch create_stencil_valid(int dimensionality, vector<int> cycle_starting_addr,
                                 vector<int> extent, vector<int> cycle_stride) {
   unordered_map<string, vector<int>> vals;
@@ -223,24 +216,7 @@ MemConnSch create_tb2out(int dimensionality, vector<int> cycle_starting_addr,
   vals["read_data_stride"] = read_data_stride;
   return MemConnSch({dimensionality, vals, read, "", ""});
 }
-
-
-Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
-  Json jdata;
-  for (auto& map_pair : mem_conxs) {
-    auto name = map_pair.first;
-    auto data = map_pair.second;
-    jdata[name]["dimensionality"] = data.dimensionality;
-    if (data.read != "") { jdata[name]["read"] = data.read; }
-    if (data.mux_write != "") { jdata[name]["mux_write"] = data.mux_write; }
-    if (data.write != "") { jdata[name]["write"] = data.write; }
-
-    for (auto& data_vec : data.vals) {
-      jdata[name][data_vec.first] = data_vec.second;
-    }
-  }
-  return jdata;
-}
+*/
 
 
 COREIR_GEN_EXTERNAL_API_FOR_LIBRARY(cwlib)
