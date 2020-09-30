@@ -1157,6 +1157,33 @@ class UBuffer {
       return num_out_dims(maps.at(0));
     }
 
+    bool is_bank_input(const string& name) const{
+      for (auto bk: bank_list) {
+        if (elem(name, banks_to_inputs.at(bk.name))) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    isl_union_map* get_outpt_sched() const {
+      auto ret = isl_union_map_read_from_str(ctx, "{}");
+      for (auto pt: get_out_ports()) {
+        if (!is_bank_input(pt)) {
+            ret = unn(ret, schedule.at(pt));
+        }
+      }
+      return ret;
+    }
+
+    isl_union_map* global_outpt_sched() const {
+      auto ret = isl_union_map_read_from_str(ctx, "{}");
+      for (auto pt: get_out_ports()) {
+        ret = unn(ret, schedule.at(pt));
+      }
+      return ret;
+    }
+
     bank get_bank(const std::string& name) const {
       for (auto bank : bank_list) {
         if (bank.name == name) {

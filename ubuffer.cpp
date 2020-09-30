@@ -813,6 +813,13 @@ Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
   return jdata;
 }
 
+void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string domain_name) {
+    jdata[domain_name]["dimensionality"] = dimensionality;
+    for (auto it: data) {
+        jdata[domain_name][it.first] = it.second;
+    }
+}
+
 Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer) {
     auto hardware_schedule = global_schedule_from_buffers(rewrite_buffer);
     auto glb_access_map = global_access_map_from_buffers(rewrite_buffer);
@@ -1096,14 +1103,32 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
     } else {
       string ub_ins_name = "ub_"+bk.name;
+      bool has_stencil_valid = false;
       if (options.inline_vectorization) {
         buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
         config_file = generate_ubuf_args(options, rewrite_buffer);
+
+        //generate stencil valid
+        cout << "ubuffer global schedule: " << str(global_schedule()) << endl;
+        cout << "ubuffer output schedule: " << str(get_outpt_sched()) << endl;
+        if (!equal(global_outpt_sched(), get_outpt_sched())) {
+          auto outpt_sched = get_outpt_sched();
+          assert(isl_union_map_is_single_valued(outpt_sched));
+
+          auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, true);
+          cout << "Stencil Valid signal 1D: " << str(outpt_sched_1D) << endl;
+          auto sched = get_aff(outpt_sched_1D);
+          auto stencil_valid = emit_lake_controller_config(::domain(outpt_sched_1D), sched);
+          add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
+          has_stencil_valid = true;
+        }
       }
+
       CoreIR::Values genargs = {
         {"width", CoreIR::Const::make(context, port_widths)},
         {"num_input", CoreIR::Const::make(context, banks_to_inputs.at(bk.name).size())},
         {"num_output", CoreIR::Const::make(context, banks_to_outputs.at(bk.name).size())},
+        {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
         {"config", CoreIR::Const::make(context, config_file)}
       };
       CoreIR::Values modargs = {

@@ -186,6 +186,10 @@ bool equal(uset* const l, uset* const r) {
   return isl_union_set_is_equal(l, r);
 }
 
+bool equal(umap* const l, umap* const r) {
+  return isl_union_map_is_equal(l, r);
+}
+
 bool empty(isl_basic_set* const s) {
   return isl_basic_set_is_empty(s);
 }
@@ -3525,7 +3529,7 @@ isl_map* linear_schedule(isl_map* in_sched, vector<int> iis, int offset, bool ig
   string op_name = domain_name(in_sched);
   expr = expr + "+" + to_string(offset);
   auto in_sched_new = gen_hw_sched_from_sched_vec(ctx(in_sched), {expr}, var_list, op_name);
-  return in_sched_new;
+  return its(in_sched_new, domain(in_sched));
 }
 
 
