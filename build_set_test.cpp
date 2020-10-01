@@ -16054,9 +16054,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   return sched;
 }
 
-void compile_for_garnet_dual_port_mem(prog& prg) {
-  normalize_bounds(prg);
-
+CodegenOptions garnet_codegen_options(prog& prg) {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
@@ -16093,6 +16091,14 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     prg.pretty_print();
     //assert(false);
   }
+
+  return options;
+}
+
+void compile_for_garnet_dual_port_mem(prog& prg) {
+  normalize_bounds(prg);
+
+  auto options = garnet_codegen_options(prg);
 
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
