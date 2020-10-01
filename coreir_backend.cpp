@@ -508,6 +508,50 @@ int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf
   return 100000;
 }
 
+void print_shift_registers(
+    std::ostream& out,
+    map<string, pair<string, int> >& shift_registered_outputs,
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+  for (auto sr : shift_registered_outputs) {
+    int delay = sr.second.second;
+    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
+    out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
+
+
+    //if (delay == 0) {
+      //out << tab(1) << "assign out = in;" << endl;
+    //} else {
+      out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
+
+      out << tab(1) << "reg [15:0] read_addr;" << endl;
+      out << tab(1) << "reg [15:0] write_addr;" << endl;
+
+      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+      out << tab(2) << "if (~rst_n) begin" << endl;
+      out << tab(3) << "read_addr <= 0;" << endl;
+      out << tab(3) << "write_addr <= " << delay << ";" << endl;
+      out << tab(2) << "end else begin" << endl;
+      out << tab(3) << "storage[write_addr] <= in;" << endl;
+      out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
+      out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
+
+      //out << tab(3) << "$display(\"write_addr = %d\", write_addr);" << endl;
+
+      out << tab(2) << "end" << endl << endl;
+      out << tab(1) << "end" << endl << endl;
+
+      out << tab(1) << "always @(*) begin" << endl;
+      out << tab(2) << "out = storage[read_addr];" << endl;
+      out << tab(1) << "end" << endl << endl;
+    //}
+
+    out << "endmodule" << endl << endl;
+  }
+}
+
 void generate_platonic_ubuffer(
     CodegenOptions& options,
     prog& prg,
@@ -563,43 +607,7 @@ void generate_platonic_ubuffer(
   ostream& out = *verilog_collateral_file;
 
   print_cyclic_banks_selector(out, bank_factors, buf);
-
-  for (auto sr : shift_registered_outputs) {
-    int delay = sr.second.second;
-    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
-    out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
-
-
-    //if (delay == 0) {
-      //out << tab(1) << "assign out = in;" << endl;
-    //} else {
-      out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
-
-      out << tab(1) << "reg [15:0] read_addr;" << endl;
-      out << tab(1) << "reg [15:0] write_addr;" << endl;
-
-      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-      out << tab(2) << "if (~rst_n) begin" << endl;
-      out << tab(3) << "read_addr <= 0;" << endl;
-      out << tab(3) << "write_addr <= " << delay << ";" << endl;
-      out << tab(2) << "end else begin" << endl;
-      out << tab(3) << "storage[write_addr] <= in;" << endl;
-      out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
-      out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
-
-      //out << tab(3) << "$display(\"write_addr = %d\", write_addr);" << endl;
-
-      out << tab(2) << "end" << endl << endl;
-      out << tab(1) << "end" << endl << endl;
-
-      out << tab(1) << "always @(*) begin" << endl;
-      out << tab(2) << "out = storage[read_addr];" << endl;
-      out << tab(1) << "end" << endl << endl;
-    //}
-
-    out << "endmodule" << endl << endl;
-  }
-
+  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
 
   vector<string> port_decls{"input clk", "input flush", "input rst_n"};
 
