@@ -16013,7 +16013,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   //}
 }
 
-schedule_info garnet_schedule_info(prog& prg) {
+schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   schedule_info sched;
   sched.use_dse_compute = false;
   //sched.use_dse_compute = true;
@@ -16094,7 +16094,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     //assert(false);
   }
 
-  schedule_info sched = garnet_schedule_info(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
   op* root = prg.root;
@@ -16274,8 +16274,9 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
 void test_schedules(vector<prog>& test_programs) {
 
   for (auto& prg : test_programs) {
+    CodegenOptions options;
     schedule_info sched =
-      garnet_schedule_info(prg);
+      garnet_schedule_info(options, prg);
     garnet_dual_port_ram_schedule(sched, prg.root, prg);
     cout << "Checking " << prg.name << " schedule" << endl;
     prg.pretty_print();
@@ -17318,7 +17319,8 @@ void brighten_blur_asplos_example() {
   //auto sched = its(prg.optimized_codegen(), prg.whole_iteration_domain());
   //auto buffers = build_buffers(prg, sched);
 
-  schedule_info hwsched = garnet_schedule_info(prg);
+  CodegenOptions options;
+  schedule_info hwsched = garnet_schedule_info(options, prg);
   garnet_dual_port_ram_schedule(hwsched, prg.root, prg);
   auto sts = op_start_times_map(hwsched, prg);
   for (auto m : get_maps(sts)) {

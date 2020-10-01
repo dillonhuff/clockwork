@@ -504,7 +504,7 @@ int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf
 
   auto app = dot(bank_func, aff);
   cout << endl << "Application: " << str(app) << endl;
-  assert(false);
+  //assert(false);
   return 100000;
 }
 
