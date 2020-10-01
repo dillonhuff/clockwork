@@ -1842,7 +1842,16 @@ void generate_coreir(CodegenOptions& options,
   }
 
   auto ns = context->getNamespace("global");
-  if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
+  if(!saveToFile(ns, options.dir + prg.name + ".json", prg_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  context->runPasses({"rungenerators", "flatten", "removewires"});
+  garnet_map_module(prg_mod);
+
+  ns = context->getNamespace("global");
+  if(!saveToFile(ns,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }

@@ -81,6 +81,7 @@ struct CodegenOptions {
 
   //Use for garnet
   bool pass_through_valid;
+  string dir;
 
   bool use_epochs;
   int num_input_epochs;
@@ -104,7 +105,7 @@ struct CodegenOptions {
   use_custom_code_string(false), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
   inline_vectorization(false), iis({}),
-  pass_through_valid(false),
+  pass_through_valid(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),
   push_garbage_outputs(false),
