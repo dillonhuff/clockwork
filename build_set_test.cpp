@@ -16013,6 +16013,21 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   //}
 }
 
+int buffer_store_latency(CodegenOptions& options) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS) {
+    return 1;
+  }
+
+  assert(false);
+}
+
+int buffer_load_latency(CodegenOptions& options) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS) {
+    return 0;
+  }
+
+  assert(false);
+}
 schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   schedule_info sched;
   sched.use_dse_compute = false;
@@ -16041,9 +16056,8 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
 
     for (auto b : op->buffers_referenced()) {
       if (!prg.is_boundary(b)) {
-        //sched.buffer_load_latencies[b] = 1;
-        sched.buffer_load_latencies[b] = 0;
-        sched.buffer_store_latencies[b] = 1;
+        sched.buffer_load_latencies[b] = buffer_load_latency(options);
+        sched.buffer_store_latencies[b] = buffer_store_latency(options);
       } else {
         sched.buffer_load_latencies[b] = 0;
         sched.buffer_store_latencies[b] = 0;
