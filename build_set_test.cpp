@@ -13850,6 +13850,7 @@ void lake_conv33_recipe_test() {
   opt.merge_threshold = 4;
   opt.rtl_options.use_prebuilt_memory = true;
   opt.inline_vectorization = true;
+  opt.pass_through_valid= true;
   opt.iis = iis;
   int max_inpt = 2, max_outpt = 2;
   //auto sched = global_schedule_from_buffers(buffers_opt);

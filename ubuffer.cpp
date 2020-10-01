@@ -1108,6 +1108,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
         config_file = generate_ubuf_args(options, rewrite_buffer);
 
+      }
+
+      if (options.pass_through_valid) {
         //generate stencil valid
         cout << "ubuffer global schedule: " << str(global_schedule()) << endl;
         cout << "ubuffer output schedule: " << str(get_outpt_sched()) << endl;
@@ -1145,6 +1148,11 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       def->connect(buf->sel("rst_n"), def->sel("self.reset"));
       def->connect(buf->sel("clk"), def->sel("self.clk"));
       def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+
+      //Wire stencil valid
+      if (has_stencil_valid) {
+        def->connect(buf->sel("stencil_valid"), def->sel("self."+get_bundle(pick(outpts)) + "_extra_ctrl"));
+      }
 
       int inpt_cnt = 0, outpt_cnt = 0;
       if (inpts.size() == 1) {
@@ -1905,6 +1913,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
         }
         ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
+        if (options.pass_through_valid) {
+            ub_field.push_back(make_pair(name + "_extra_ctrl", context->Bit()));
+        }
       }
     }
 
@@ -1947,6 +1958,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
         //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
         ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
+        if (options.pass_through_valid) {
+            ub_field.push_back(make_pair(name + "_extra_ctrl", context->Bit()));
+        }
       }
     }
 

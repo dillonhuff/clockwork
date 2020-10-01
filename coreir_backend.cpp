@@ -641,13 +641,21 @@ void connect_signal(const std::string& signal, CoreIR::Module* m) {
   }
 }
 
-void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op* op, prog& prg, map<string, UBuffer>& buffers, schedule_info& hwinfo) {
+void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
+        CoreIR::ModuleDef* def, op* op, prog& prg, map<string, UBuffer>& buffers, schedule_info& hwinfo) {
   auto context = def->getContext();
   auto ns = context->getNamespace("global");
 
   cout << "Generating compute unit for " << op->name << endl;
+
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
+
+  // add pass through valid
+  if (options.pass_through_valid) {
+      ub_field.push_back({"valid_pass_in", context->BitIn()});
+      ub_field.push_back({"valid_pass_out", context->Bit()});
+  }
   for (auto var : op->index_variables_needed_by_compute) {
     ub_field.push_back({var, context->BitIn()->Arr(16)});
   }
@@ -681,6 +689,10 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
 
   {
     auto def = compute_unit->newModuleDef();
+    if (options.pass_through_valid) {
+      //TODO: check the computation kernel delay
+      def->connect(def->sel("self.valid_pass_in"), def->sel("self.valid_pass_out"));
+    }
     if (found_compute) {
       cout << "Found compute file for " << prg.name << endl;
       Instance* halide_cu = nullptr;
@@ -1149,7 +1161,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
     //generate_coreir_op_controller(def, op, sched_maps, hwinfo);
-    generate_coreir_compute_unit(found_compute, def, op, prg, buffers, hwinfo);
+    generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
 
   for (auto& buf : buffers) {
@@ -1173,6 +1185,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       def->connect(def->sel(op->name)->sel(var), var_wire);
     }
 
+    bool need_pass_valid = false;
+
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
@@ -1188,6 +1202,10 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
               write_start_wire(def, op->name));
         }*/
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        if (options.pass_through_valid) {
+            def->connect("self." + pg(buf_name, bundle_name) + "_en", op->name + ".valid_pass_out");
+            need_pass_valid = true;
+        }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         /*def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
@@ -1218,6 +1236,13 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
         //}
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+
+        //wire the stencil valid from last buffer to the next one
+        if (need_pass_valid) {
+          if (options.pass_through_valid) {
+            def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
+          }
+        }
         //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
         //    read_start_wire(def, op->name));
         //def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
@@ -1276,7 +1301,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     if (options.rtl_options.use_external_controllers) {
       generate_coreir_op_controller(def, op, sched_maps, hwinfo);
     }
-    generate_coreir_compute_unit(found_compute, def, op, prg, buffers, hwinfo);
+    generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
 
   for (auto& buf : buffers) {
