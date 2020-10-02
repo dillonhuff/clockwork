@@ -16076,8 +16076,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
 
 CodegenOptions garnet_codegen_options(prog& prg) {
   CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
+  //options.all_rams = true;
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
