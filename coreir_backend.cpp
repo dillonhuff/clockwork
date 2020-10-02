@@ -257,12 +257,15 @@ string generate_linearized_verilog_inner_bank_offset(const std::string& pt, vect
 }
 
 string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
+  isl_set* dom = to_set(bnk.rddom);
+
   string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
 
   vector<int> lengths;
   vector<int> mins;
   for (int i = 0; i < buf.logical_dimension(); i++) {
-    auto s = project_all_but(to_set(bnk.rddom), i);
+    //auto s = project_all_but(to_set(bnk.rddom), i);
+    auto s = project_all_but(dom, i);
     auto min = to_int(lexminval(s));
     mins.push_back(min);
     auto max = to_int(lexmaxval(s));
@@ -680,7 +683,6 @@ void generate_platonic_ubuffer(
   }
   out << endl;
 
-  //string source_ram = "bank_0";
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
     string addr = parens(generate_linearized_verilog_addr(in, bnk, buf) + " % " + str(folding_factor));
