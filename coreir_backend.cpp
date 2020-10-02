@@ -264,7 +264,6 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
   vector<int> lengths;
   vector<int> mins;
   for (int i = 0; i < buf.logical_dimension(); i++) {
-    //auto s = project_all_but(to_set(bnk.rddom), i);
     auto s = project_all_but(dom, i);
     auto min = to_int(lexminval(s));
     mins.push_back(min);
@@ -277,6 +276,8 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
   auto svec = isl_pw_multi_aff_from_map(m);
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(svec);
+  assert(pieces.size() == 1);
+
   vector<string> domains;
   vector<string> offsets;
   for (auto piece : pieces) {
