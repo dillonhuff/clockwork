@@ -521,35 +521,29 @@ void print_shift_registers(
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
 
-    //if (delay == 0) {
-      //out << tab(1) << "assign out = in;" << endl;
-    //} else {
-      out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
+    out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
-      out << tab(1) << "reg [15:0] read_addr;" << endl;
-      out << tab(1) << "reg [15:0] write_addr;" << endl;
+    out << tab(1) << "reg [15:0] read_addr;" << endl;
+    out << tab(1) << "reg [15:0] write_addr;" << endl;
 
-      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-      out << tab(2) << "if (~rst_n) begin" << endl;
-      out << tab(3) << "read_addr <= 0;" << endl;
-      out << tab(3) << "write_addr <= " << delay << ";" << endl;
-      out << tab(2) << "end else begin" << endl;
-      out << tab(3) << "storage[write_addr] <= in;" << endl;
-      out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
-      out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
+    out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+    out << tab(2) << "if (~rst_n) begin" << endl;
+    out << tab(3) << "read_addr <= 0;" << endl;
+    out << tab(3) << "write_addr <= " << delay << ";" << endl;
+    out << tab(2) << "end else begin" << endl;
+    out << tab(3) << "storage[write_addr] <= in;" << endl;
+    out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
+    out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
 
-      //out << tab(3) << "$display(\"write_addr = %d\", write_addr);" << endl;
+    out << tab(2) << "end" << endl << endl;
+    out << tab(1) << "end" << endl << endl;
 
-      out << tab(2) << "end" << endl << endl;
-      out << tab(1) << "end" << endl << endl;
-
-      out << tab(1) << "always @(*) begin" << endl;
-      out << tab(2) << "out = storage[read_addr];" << endl;
-      out << tab(1) << "end" << endl << endl;
-    //}
+    out << tab(1) << "always @(*) begin" << endl;
+    out << tab(2) << "out = storage[read_addr];" << endl;
+    out << tab(1) << "end" << endl << endl;
 
     out << "endmodule" << endl << endl;
-  }
+}
 }
 
 void generate_platonic_ubuffer(
@@ -640,7 +634,6 @@ void generate_platonic_ubuffer(
   bank bnk = buf.compute_bank_info();
   out << tab(1) << "// Storage" << endl;
   print_cyclic_banks(out, bank_factors, bnk);
-  //generate_verilog_for_bank_storage(options, out, bnk);
 
   out << endl;
 
@@ -687,34 +680,20 @@ void generate_platonic_ubuffer(
   }
   out << endl;
 
-  //string source_ram = "RAM"
-  string source_ram = "bank_0";
+  //string source_ram = "bank_0";
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
-
-    //string addr =
-      //generate_linearized_verilog_inner_bank_offset(in, bank_factors, bnk, buf);
-    //auto comps =
-      //generate_verilog_addr_components(in, bnk, buf);
-
-    //out << tab(2) << "//" << sep_list(comps, "{", "}", ",") << endl;
-    //string addr = generate_linearized_verilog_addr(in, bnk, buf);
     string addr = parens(generate_linearized_verilog_addr(in, bnk, buf) + " % " + str(folding_factor));
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
     int num_banks = card(bank_factors);
-    //for (auto val : bank_factors) {
-      //num_banks *= val;
-    //}
     for (int b = 0; b < num_banks; b++) {
       string source_ram = "bank_" + str(b);
       out << tab(3) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << b << ") begin" << endl;
-      //out << tab(4) << "$display(\"" << buf.name << "_" << in << "_bank_selector.out == " << b << " = " + str(b) + "\");" << endl;
       out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
       out << tab(3) << "end" << endl;
     }
-    //out << tab(3) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
     out << tab(2) << "end" << endl;
   }
   out << tab(1) << "end" << endl;
@@ -723,23 +702,14 @@ void generate_platonic_ubuffer(
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
     if (!contains_key(outpt, shift_registered_outputs)) {
-      //string addr =
-        //generate_linearized_verilog_inner_bank_offset(outpt, bank_factors, bnk, buf);
-      //string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
       string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
-      //for (auto val : bank_factors) {
-        //num_banks *= val;
-      //}
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
         out << tab(3) << "if (" << buf.name << "_" << outpt << "_bank_selector.out == " << b << ") begin" << endl;
-        //out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << ";" << endl;
         out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
         out << tab(3) << "end" << endl;
       }
-
-      //out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
     }
   }
 
