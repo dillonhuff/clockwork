@@ -3037,6 +3037,10 @@ uset* pad_uset(uset* domain) {
   return padded_domain;
 }
 
+isl_aff* div(isl_aff* a, isl_aff* b) {
+  return isl_aff_div(cpy(a), cpy(b));
+}
+
 isl_aff* add(isl_aff* a, isl_aff* b) {
   return isl_aff_add(cpy(a), cpy(b));
 }
@@ -3519,8 +3523,13 @@ isl_aff* add(isl_aff* start_time_aff, const int compute_latency) {
   return add(start_time_aff, constant_aff(start_time_aff, compute_latency));
 }
 
+
 isl_aff* mul(isl_aff* start_time_aff, const int compute_latency) {
   return isl_aff_scale_val(start_time_aff,
       isl_val_int_from_si(ctx(start_time_aff),
         compute_latency));
+}
+
+isl_aff* div(isl_aff* start_time_aff, const int compute_latency) {
+  return div(start_time_aff, constant_aff(start_time_aff, compute_latency));
 }

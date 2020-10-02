@@ -184,6 +184,9 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
       auto denom = isl_aff_get_denominator_val(a);
       auto denom_str = str(denom);
       auto astr = codegen_verilog(ctrl_vars, isl_aff_scale_val(a, denom));
+
+      assert(isl_val_is_int(v));
+
       terms.push_back(parens(str(v) + "*" + "$rtoi($floor(" + astr + " / " + denom_str + "))"));
     }
   }
@@ -256,10 +259,7 @@ string generate_linearized_verilog_inner_bank_offset(const std::string& pt, vect
   return sep_list(terms, "(", ")", " + ");
 }
 
-isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
-  //cout << "ma  = " << str(ma) << endl;
-  //cout << "dom = " << str(dom) << endl;
-
+isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom) {
   vector<int> lengths;
   vector<int> mins;
   for (int i = 0; i < num_dims(dom); i++) {
@@ -278,7 +278,40 @@ isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
       isl_multi_aff_get_aff(ma, 0),
       0);
 
-  bool has_divs = false;
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << "aff: " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(div(sub(aff, mins.at(d)), bank_factors.at(d)), length);
+    flat = add(flat, flt);
+    cout << "flat: " << str(flat) << endl;
+  }
+
+  return flat;
+}
+
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
   for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
     isl_aff* aff = isl_multi_aff_get_aff(ma, d);
     cout << tab(1) << "aff: " << str(aff) << endl;
@@ -289,18 +322,26 @@ isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
     isl_aff* flt = mul(sub(aff, mins.at(d)), length);
     flat = add(flat, flt);
     cout << "flat: " << str(flat) << endl;
-    if (num_div_dims(aff) > 0) {
-      has_divs = true;
-    }
-  }
-  if (has_divs) {
-    cout << "Flat: " << str(flat) << endl;
-    string ctrl_vars = "d";
-    cout << tab(1) << codegen_verilog(ctrl_vars, flat) << endl;
-    //assert(false);
   }
 
   return flat;
+}
+
+
+string generate_linearized_verilog_addr(
+    const std::vector<int>& bank_factors,
+    const std::string& pt,
+    bank& bnk,
+    UBuffer& buf) {
+
+  isl_set* dom = to_set(bnk.rddom);
+
+  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+
+  isl_map* m = to_map(buf.access_map.at(pt));
+  isl_aff* flattened = flatten(bank_factors, get_multi_aff(m), dom);
+
+  return codegen_verilog(ctrl_vars, flattened);
 }
 
 string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
@@ -308,30 +349,8 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
 
   string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
 
-  //vector<int> lengths;
-  //vector<int> mins;
-  //for (int i = 0; i < buf.logical_dimension(); i++) {
-    //auto s = project_all_but(dom, i);
-    //auto min = to_int(lexminval(s));
-    //mins.push_back(min);
-    //auto max = to_int(lexmaxval(s));
-    //int length = max - min + 1;
-    //lengths.push_back(length);
-  //}
-
   isl_map* m = to_map(buf.access_map.at(pt));
-  //auto svec = isl_pw_multi_aff_from_map(m);
-  //vector<pair<isl_set*, isl_multi_aff*> > pieces =
-    //get_pieces(svec);
-  //assert(pieces.size() == 1);
-
-  //auto piece = pick(pieces);
-
-  //vector<string> addr_vec;
-  //isl_multi_aff* ma = piece.second;
-  //cout << "ma = " << str(ma) << endl;
   isl_aff* flattened = flatten(get_multi_aff(m), dom);
-  cout << "flattened: " << str(flattened) << endl;
 
   return codegen_verilog(ctrl_vars, flattened);
 }
@@ -709,6 +728,7 @@ void generate_platonic_ubuffer(
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
     string addr = parens(generate_linearized_verilog_addr(in, bnk, buf) + " % " + str(folding_factor));
+    //string addr = parens(generate_linearized_verilog_addr(bank_factors, in, bnk, buf) + " % " + str(folding_factor));
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
@@ -728,6 +748,7 @@ void generate_platonic_ubuffer(
   for (auto outpt : buf.get_out_ports()) {
     if (!contains_key(outpt, shift_registered_outputs)) {
       string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf) + " % " + str(folding_factor));
+      //string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
