@@ -16076,7 +16076,6 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
 
 CodegenOptions garnet_codegen_options(prog& prg) {
   CodegenOptions options;
-  //options.all_rams = true;
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
@@ -16089,25 +16088,25 @@ CodegenOptions garnet_codegen_options(prog& prg) {
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_CYCLE_DELAY;
   } else {
-    for (auto b : all_buffers(prg)) {
-      if (!prg.is_boundary(b)) {
-        if (is_reduce_buffer(b, prg)) {
-          cout << tab(2) << "REDUCE: " << b << endl;
-        } else {
-          cout << tab(2) << "PC    : " << b << endl;
-        }
-        int nread = num_read_ports(b, prg);
-        int nwrite = num_write_ports(b, prg);
-        cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
-        cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
-        if (nread == 1 && nwrite == 1) {
-          cout << tab(4) << "Single bank: " << b << endl;
-        }
-      }
-    }
+    //for (auto b : all_buffers(prg)) {
+      //if (!prg.is_boundary(b)) {
+        //if (is_reduce_buffer(b, prg)) {
+          //cout << tab(2) << "REDUCE: " << b << endl;
+        //} else {
+          //cout << tab(2) << "PC    : " << b << endl;
+        //}
+        //int nread = num_read_ports(b, prg);
+        //int nwrite = num_write_ports(b, prg);
+        //cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
+        //cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
+        //if (nread == 1 && nwrite == 1) {
+          //cout << tab(4) << "Single bank: " << b << endl;
+        //}
+      //}
+    //}
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_LINEAR;
-    prg.pretty_print();
+    //prg.pretty_print();
     //assert(false);
   }
 
