@@ -16116,11 +16116,11 @@ CodegenOptions garnet_codegen_options(prog& prg) {
 }
 
 void compile_for_garnet_dual_port_mem(prog& prg) {
+  auto options = garnet_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+
   normalize_bounds(prg);
 
-  auto options = garnet_codegen_options(prg);
-
-  schedule_info sched = garnet_schedule_info(options, prg);
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
   op* root = prg.root;
@@ -16368,12 +16368,9 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
     prg.pretty_print();
     prg.sanity_check();
-    //assert(false);
 
     dsa_writers(prg);
     prg.pretty_print();
-    //assert(false);
-    //vector<string> cpu;
     auto cpu = unoptimized_result(prg);
 
     compile_for_garnet_dual_port_mem(prg);
@@ -16383,7 +16380,6 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    //assert(false);
     string app_type = "dualwithaddr";
     cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
     cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
@@ -16679,30 +16675,15 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  //prog prg = gaussian();
-  //dsa_writers(prg);
-  //compile_for_garnet_dual_port_mem(prg);
-  //string name = prg.name;
-  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
-  //assert(to_verilog_res == 0);
-  //string app_type = "dualraw";
-  //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
-  //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  //cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  //cmd("cp ./lake_components/ASPLOS_designs/bare_dual_port.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-
-  //assert(false);
-
   auto test_programs =
     all_cgra_programs();
-    //stencil_programs();
-  //auto test_programs = all_cgra_programs();
 
   test_stencil_codegen(test_programs);
-  //test_schedules(test_programs);
 
-  //assert(false);
+  //auto dual_with_addrgen_programs =
+    //stencil_programs();
+
+  //test_stencil_codegen(dual_with_addrgen_programs);
 }
 
 void dse_flow_tests() {
