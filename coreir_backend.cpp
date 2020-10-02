@@ -278,9 +278,11 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
     get_pieces(svec);
   assert(pieces.size() == 1);
 
-  vector<string> domains;
-  vector<string> offsets;
-  for (auto piece : pieces) {
+  auto piece = pick(pieces);
+
+  //vector<string> domains;
+  //vector<string> offsets;
+  //for (auto piece : pieces) {
     vector<string> addr_vec;
     isl_multi_aff* ma = piece.second;
     for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
@@ -299,19 +301,20 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
     }
 
     string addr = sep_list(addr_vec_out, "", "", " + ");
-    offsets.push_back(addr);
-    domains.push_back(codegen_c(piece.first));
-  }
+    return addr;
+    //offsets.push_back(addr);
+    //domains.push_back(codegen_c(piece.first));
+  //}
 
-  assert(offsets.size() > 0);
-  assert(domains.size() == offsets.size());
+  //assert(offsets.size() > 0);
+  //assert(domains.size() == offsets.size());
 
-  string base = offsets.at(0);
-  for (int d = 1; d < offsets.size(); d++) {
-    base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
-  }
+  //string base = offsets.at(0);
+  //for (int d = 1; d < offsets.size(); d++) {
+    //base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
+  //}
 
-  return base;
+  //return base;
 }
 
 void generate_verilog_for_bank_storage(CodegenOptions& options,
