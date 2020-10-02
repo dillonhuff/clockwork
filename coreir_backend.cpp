@@ -308,29 +308,29 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
 
   string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
 
-  vector<int> lengths;
-  vector<int> mins;
-  for (int i = 0; i < buf.logical_dimension(); i++) {
-    auto s = project_all_but(dom, i);
-    auto min = to_int(lexminval(s));
-    mins.push_back(min);
-    auto max = to_int(lexmaxval(s));
-    int length = max - min + 1;
-    lengths.push_back(length);
-  }
+  //vector<int> lengths;
+  //vector<int> mins;
+  //for (int i = 0; i < buf.logical_dimension(); i++) {
+    //auto s = project_all_but(dom, i);
+    //auto min = to_int(lexminval(s));
+    //mins.push_back(min);
+    //auto max = to_int(lexmaxval(s));
+    //int length = max - min + 1;
+    //lengths.push_back(length);
+  //}
 
   isl_map* m = to_map(buf.access_map.at(pt));
-  auto svec = isl_pw_multi_aff_from_map(m);
-  vector<pair<isl_set*, isl_multi_aff*> > pieces =
-    get_pieces(svec);
-  assert(pieces.size() == 1);
+  //auto svec = isl_pw_multi_aff_from_map(m);
+  //vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    //get_pieces(svec);
+  //assert(pieces.size() == 1);
 
-  auto piece = pick(pieces);
+  //auto piece = pick(pieces);
 
-  vector<string> addr_vec;
-  isl_multi_aff* ma = piece.second;
-  cout << "ma = " << str(ma) << endl;
-  isl_aff* flattened = flatten(ma, dom);
+  //vector<string> addr_vec;
+  //isl_multi_aff* ma = piece.second;
+  //cout << "ma = " << str(ma) << endl;
+  isl_aff* flattened = flatten(get_multi_aff(m), dom);
   cout << "flattened: " << str(flattened) << endl;
 
   return codegen_verilog(ctrl_vars, flattened);
