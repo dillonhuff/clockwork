@@ -290,13 +290,14 @@ isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_se
     for (int i = 0; i < d; i++) {
       length *= lengths.at(i);
     }
-    //isl_aff* flt = mul(isl_aff_floor(div(sub(aff, mins.at(d)), bank_factors.at(d))), length);
-    isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    isl_aff* flt = mul(isl_aff_floor(div(sub(aff, mins.at(d)), bank_factors.at(d))), length);
+    //isl_aff* flt = mul(sub(aff, mins.at(d)), length);
     flat = add(flat, flt);
     cout << "flat: " << str(flat) << endl;
   }
 
-  return isl_aff_floor(div(flat, 2));
+  return flat;
+  //return isl_aff_floor(div(flat, 2));
 }
 
 isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
@@ -735,8 +736,8 @@ void generate_platonic_ubuffer(
 
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
-    //string addr = parens(generate_linearized_verilog_addr(in, bnk, buf));
-    string addr = parens(generate_linearized_verilog_addr(bank_factors, in, bnk, buf) + " % " + str(folding_factor));
+    string addr = parens(generate_linearized_verilog_addr(in, bnk, buf));
+    //string addr = parens(generate_linearized_verilog_addr(bank_factors, in, bnk, buf) + " % " + str(folding_factor));
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
@@ -761,8 +762,8 @@ void generate_platonic_ubuffer(
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
     if (!contains_key(outpt, shift_registered_outputs)) {
-      //string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf));
-      string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
+      string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf));
+      //string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);

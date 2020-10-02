@@ -83,7 +83,7 @@ avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_avg
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 7) begin $finish(-1); end
-        bank_0[(((512*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_1_write[0];
+        bank_0[(((1024*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_1_write[0];
       end
       if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 1) begin
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 0) begin $finish(-1); end
@@ -93,7 +93,7 @@ avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_avg
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 7) begin $finish(-1); end
-        bank_1[(((512*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_1_write[0];
+        bank_1[(((1024*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_1_write[0];
       end
       if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 2) begin
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 0) begin $finish(-1); end
@@ -103,7 +103,7 @@ avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_avg
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 7) begin $finish(-1); end
-        bank_2[(((512*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_1_write[0];
+        bank_2[(((1024*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_1_write[0];
       end
       if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 3) begin
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 0) begin $finish(-1); end
@@ -113,7 +113,7 @@ avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_avg
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 7) begin $finish(-1); end
-        bank_3[(((512*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_1_write[0];
+        bank_3[(((1024*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_1_write[0];
       end
       if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 4) begin
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 0) begin $finish(-1); end
@@ -123,7 +123,7 @@ avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_avg
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 7) begin $finish(-1); end
-        bank_4[(((512*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_1_write[0];
+        bank_4[(((1024*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_1_write[0];
       end
       if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 5) begin
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 0) begin $finish(-1); end
@@ -133,7 +133,7 @@ avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_avg
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 4) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 7) begin $finish(-1); end
-        bank_5[(((512*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_1_write[0];
+        bank_5[(((1024*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_1_write[0];
       end
       if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 6) begin
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 0) begin $finish(-1); end
@@ -143,7 +143,7 @@ avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_avg
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 4) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 7) begin $finish(-1); end
-        bank_6[(((512*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_1_write[0];
+        bank_6[(((1024*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_1_write[0];
       end
       if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 7) begin
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 0) begin $finish(-1); end
@@ -153,7 +153,7 @@ avg_pool_stencil_bank_selector avg_pool_stencil_avg_pool_stencil_op_hcompute_avg
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 4) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_bank_selector.out == 6) begin $finish(-1); end
-        bank_7[(((512*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_1_write[0];
+        bank_7[(((1024*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_1_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_1_write[0];
       end
     end
   end
@@ -247,7 +247,7 @@ avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 7) begin $finish(-1); end
-        bank_0[(((512*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_write[0];
+        bank_0[(((1024*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_write[0];
       end
       if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 1) begin
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 0) begin $finish(-1); end
@@ -257,7 +257,7 @@ avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 7) begin $finish(-1); end
-        bank_1[(((512*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_write[0];
+        bank_1[(((1024*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_write[0];
       end
       if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 2) begin
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 0) begin $finish(-1); end
@@ -267,7 +267,7 @@ avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 7) begin $finish(-1); end
-        bank_2[(((512*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_write[0];
+        bank_2[(((1024*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_write[0];
       end
       if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 3) begin
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 0) begin $finish(-1); end
@@ -277,7 +277,7 @@ avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 7) begin $finish(-1); end
-        bank_3[(((512*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_write[0];
+        bank_3[(((1024*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_write[0];
       end
       if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 4) begin
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 0) begin $finish(-1); end
@@ -287,7 +287,7 @@ avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 7) begin $finish(-1); end
-        bank_4[(((512*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_write[0];
+        bank_4[(((1024*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_write[0];
       end
       if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 5) begin
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 0) begin $finish(-1); end
@@ -297,7 +297,7 @@ avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 4) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 6) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 7) begin $finish(-1); end
-        bank_5[(((512*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_write[0];
+        bank_5[(((1024*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_write[0];
       end
       if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 6) begin
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 0) begin $finish(-1); end
@@ -307,7 +307,7 @@ avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 4) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 7) begin $finish(-1); end
-        bank_6[(((512*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_write[0];
+        bank_6[(((1024*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_write[0];
       end
       if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 7) begin
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 0) begin $finish(-1); end
@@ -317,7 +317,7 @@ avg_pool_stencil_clkwrk_dsa0_bank_selector avg_pool_stencil_clkwrk_dsa0_avg_pool
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 4) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 5) begin $finish(-1); end
         if (avg_pool_stencil_clkwrk_dsa0_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_bank_selector.out == 6) begin $finish(-1); end
-        bank_7[(((512*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 16*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_avg_pool_stencil_write[0];
+        bank_7[(((1024*op_hcompute_avg_pool_stencil_write_ctrl_vars[1] + 32*op_hcompute_avg_pool_stencil_write_ctrl_vars[2] + 1*op_hcompute_avg_pool_stencil_write_ctrl_vars[3])))] <= op_hcompute_avg_pool_stencil_write[0];
       end
     end
   end
@@ -507,7 +507,7 @@ hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 5) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 6) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 7) begin $finish(-1); end
-        bank_0[(((2048*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 32*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_0[(((4096*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 1) begin
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 0) begin $finish(-1); end
@@ -517,7 +517,7 @@ hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 5) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 6) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 7) begin $finish(-1); end
-        bank_1[(((2048*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 32*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_1[(((4096*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 2) begin
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 0) begin $finish(-1); end
@@ -527,7 +527,7 @@ hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 5) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 6) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 7) begin $finish(-1); end
-        bank_2[(((2048*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 32*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_2[(((4096*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 3) begin
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 0) begin $finish(-1); end
@@ -537,7 +537,7 @@ hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 5) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 6) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 7) begin $finish(-1); end
-        bank_3[(((2048*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 32*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_3[(((4096*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 4) begin
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 0) begin $finish(-1); end
@@ -547,7 +547,7 @@ hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 5) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 6) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 7) begin $finish(-1); end
-        bank_4[(((2048*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 32*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_4[(((4096*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 5) begin
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 0) begin $finish(-1); end
@@ -557,7 +557,7 @@ hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 4) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 6) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 7) begin $finish(-1); end
-        bank_5[(((2048*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 32*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_5[(((4096*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 6) begin
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 0) begin $finish(-1); end
@@ -567,7 +567,7 @@ hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 4) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 5) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 7) begin $finish(-1); end
-        bank_6[(((2048*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 32*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_6[(((4096*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 7) begin
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 0) begin $finish(-1); end
@@ -577,7 +577,7 @@ hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 4) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 5) begin $finish(-1); end
         if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_2_bank_selector.out == 6) begin $finish(-1); end
-        bank_7[(((2048*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 32*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + (1*$rtoi($floor(((1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])) / 2))))) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_7[(((4096*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[2] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[3])))] <= op_hcompute_hw_input_stencil_write[0];
       end
     end
   end
