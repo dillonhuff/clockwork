@@ -2017,3 +2017,6 @@ vector<string> generate_multilinear_address_components(const std::string& pt, ba
 
 maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
     umap* sched);
+
+void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo);
+

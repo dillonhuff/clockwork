@@ -121,6 +121,7 @@ int wire_width(CoreIR::Wireable* w) {
   }
   assert(false);
 }
+
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   auto ns = context->getNamespace("global");
 
