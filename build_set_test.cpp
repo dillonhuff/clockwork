@@ -16014,7 +16014,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 }
 
 int buffer_store_latency(CodegenOptions& options) {
-  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
+      options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
     return 1;
   }
 
@@ -16025,7 +16026,8 @@ int buffer_store_latency(CodegenOptions& options) {
 }
 
 int buffer_load_latency(CodegenOptions& options) {
-  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
+      options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
     return 0;
   }
 
@@ -16034,6 +16036,7 @@ int buffer_load_latency(CodegenOptions& options) {
   }
   assert(false);
 }
+
 schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   schedule_info sched;
   sched.use_dse_compute = false;
@@ -16081,33 +16084,16 @@ CodegenOptions garnet_codegen_options(prog& prg) {
     //TARGET_TILE_DUAL_SRAM_RAW;
      //TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
      //TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
-    TARGET_TILE_REGISTERS;
+     //TARGET_TILE_REGISTERS;
+    TARGET_TILE_PLATONIC;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_CYCLE_DELAY;
   } else {
-    //for (auto b : all_buffers(prg)) {
-      //if (!prg.is_boundary(b)) {
-        //if (is_reduce_buffer(b, prg)) {
-          //cout << tab(2) << "REDUCE: " << b << endl;
-        //} else {
-          //cout << tab(2) << "PC    : " << b << endl;
-        //}
-        //int nread = num_read_ports(b, prg);
-        //int nwrite = num_write_ports(b, prg);
-        //cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
-        //cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
-        //if (nread == 1 && nwrite == 1) {
-          //cout << tab(4) << "Single bank: " << b << endl;
-        //}
-      //}
-    //}
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_LINEAR;
-    //prg.pretty_print();
-    //assert(false);
   }
 
   return options;
@@ -16364,7 +16350,8 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    string app_type = "dualwithaddr";
+    //string app_type = "dualwithaddr";
+    string app_type = "platonic_buffer";
     cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
     cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
     cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
