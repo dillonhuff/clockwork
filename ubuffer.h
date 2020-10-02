@@ -1993,6 +1993,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf);
+void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo);
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
@@ -2018,5 +2019,4 @@ vector<string> generate_multilinear_address_components(const std::string& pt, ba
 maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
     umap* sched);
 
-void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo);
 
