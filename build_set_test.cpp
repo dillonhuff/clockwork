@@ -16018,6 +16018,9 @@ int buffer_store_latency(CodegenOptions& options) {
     return 1;
   }
 
+  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+    return 1;
+  }
   assert(false);
 }
 
@@ -16026,6 +16029,9 @@ int buffer_load_latency(CodegenOptions& options) {
     return 0;
   }
 
+  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+    return 1;
+  }
   assert(false);
 }
 schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
@@ -16075,9 +16081,9 @@ CodegenOptions garnet_codegen_options(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     //TARGET_TILE_DUAL_SRAM_RAW;
-     //TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+     TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
      //TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
-    TARGET_TILE_REGISTERS;
+    //TARGET_TILE_REGISTERS;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
