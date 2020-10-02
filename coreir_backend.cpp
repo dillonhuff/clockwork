@@ -170,11 +170,15 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   vector<string> terms;
-  terms.push_back(str(const_coeff(aff)));
+  if (!is_zero(const_coeff(aff))) {
+    terms.push_back(str(const_coeff(aff)));
+  }
   for (int i = 0; i < num_in_dims(aff); i++) {
-    string cf = str(get_coeff(aff, i));
-    string rn = ctrl_vars + brackets(str(i));
-    terms.push_back(cf + "*" + rn);
+    if (!is_zero(get_coeff(aff, i))) {
+      string cf = str(get_coeff(aff, i));
+      string rn = ctrl_vars + brackets(str(i));
+      terms.push_back(cf + "*" + rn);
+    }
   }
 
   for (int d = 0; d < num_div_dims(aff); d++) {
@@ -189,6 +193,9 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
 
       terms.push_back(parens(str(v) + "*" + "$rtoi($floor(" + astr + " / " + denom_str + "))"));
     }
+  }
+  if (terms.size() == 0) {
+    return "0";
   }
   string res_str = sep_list(terms, "(", ")", " + ");
   return parens(res_str);
@@ -285,7 +292,7 @@ isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_se
     for (int i = 0; i < d; i++) {
       length *= lengths.at(i);
     }
-    isl_aff* flt = mul(div(sub(aff, mins.at(d)), bank_factors.at(d)), length);
+    isl_aff* flt = mul(isl_aff_floor(div(sub(aff, mins.at(d)), bank_factors.at(d))), length);
     flat = add(flat, flt);
     cout << "flat: " << str(flat) << endl;
   }
@@ -727,7 +734,7 @@ void generate_platonic_ubuffer(
 
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
-    string addr = parens(generate_linearized_verilog_addr(in, bnk, buf) + " % " + str(folding_factor));
+    string addr = parens(generate_linearized_verilog_addr(in, bnk, buf));
     //string addr = parens(generate_linearized_verilog_addr(bank_factors, in, bnk, buf) + " % " + str(folding_factor));
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
@@ -747,7 +754,7 @@ void generate_platonic_ubuffer(
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
     if (!contains_key(outpt, shift_registered_outputs)) {
-      string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf) + " % " + str(folding_factor));
+      string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf));
       //string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
       for (int b = 0; b < num_banks; b++) {

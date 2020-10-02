@@ -33,73 +33,73 @@ module hw_input_stencil_ub(
   logic [15:0] bank_7 [4096];
 
   logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_0;
-  assign hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_0 = (((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) - 0);
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_0 = ((((1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) - 0);
   logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_1;
-  assign hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_1 = (((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) - 0);
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_1 = ((((1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1])) / 2))))) - 0);
   logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_2;
-  assign hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_2 = (((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) - 0);
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_2 = (0 - 0);
 hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_bank_selector(.d({hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_0,hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_1,hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_2}));
   logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_0;
-  assign hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_0 = (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) - 0);
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_0 = (((1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) - 0);
   logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_1;
-  assign hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_1 = (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) - 0);
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_1 = (((1*op_hcompute_hw_input_stencil_write_ctrl_vars[1])) - 0);
   logic [15:0] hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_2;
-  assign hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_2 = (((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) - 0);
+  assign hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_2 = (0 - 0);
 hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector(.d({hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_0,hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_1,hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_2}));
 
 
   always @(posedge clk) begin
     if (op_hcompute_hw_input_stencil_write_wen) begin
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 0) begin
-        bank_0[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_0[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 1) begin
-        bank_1[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_1[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 2) begin
-        bank_2[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_2[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 3) begin
-        bank_3[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_3[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 4) begin
-        bank_4[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_4[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 5) begin
-        bank_5[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_5[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 6) begin
-        bank_6[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_6[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 7) begin
-        bank_7[(((0 + 0*op_hcompute_hw_input_stencil_write_ctrl_vars[0] + 64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_hw_input_stencil_write[0];
+        bank_7[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
     end
   end
   always @(*) begin
       if (hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_bank_selector.out == 0) begin
-    op_hcompute_nearest_neighbor_stencil_read[0] = bank_0[(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (64*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))) + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) % 100000)];
+    op_hcompute_nearest_neighbor_stencil_read[0] = bank_0[((((64*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1])) / 2))) + (1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))))];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_bank_selector.out == 1) begin
-    op_hcompute_nearest_neighbor_stencil_read[0] = bank_1[(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (64*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))) + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) % 100000)];
+    op_hcompute_nearest_neighbor_stencil_read[0] = bank_1[((((64*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1])) / 2))) + (1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))))];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_bank_selector.out == 2) begin
-    op_hcompute_nearest_neighbor_stencil_read[0] = bank_2[(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (64*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))) + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) % 100000)];
+    op_hcompute_nearest_neighbor_stencil_read[0] = bank_2[((((64*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1])) / 2))) + (1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))))];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_bank_selector.out == 3) begin
-    op_hcompute_nearest_neighbor_stencil_read[0] = bank_3[(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (64*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))) + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) % 100000)];
+    op_hcompute_nearest_neighbor_stencil_read[0] = bank_3[((((64*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1])) / 2))) + (1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))))];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_bank_selector.out == 4) begin
-    op_hcompute_nearest_neighbor_stencil_read[0] = bank_4[(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (64*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))) + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) % 100000)];
+    op_hcompute_nearest_neighbor_stencil_read[0] = bank_4[((((64*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1])) / 2))) + (1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))))];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_bank_selector.out == 5) begin
-    op_hcompute_nearest_neighbor_stencil_read[0] = bank_5[(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (64*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))) + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) % 100000)];
+    op_hcompute_nearest_neighbor_stencil_read[0] = bank_5[((((64*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1])) / 2))) + (1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))))];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_bank_selector.out == 6) begin
-    op_hcompute_nearest_neighbor_stencil_read[0] = bank_6[(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (64*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))) + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) % 100000)];
+    op_hcompute_nearest_neighbor_stencil_read[0] = bank_6[((((64*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1])) / 2))) + (1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))))];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_nearest_neighbor_stencil_1_bank_selector.out == 7) begin
-    op_hcompute_nearest_neighbor_stencil_read[0] = bank_7[(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2] + (64*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))) + (1*$rtoi($floor(((0 + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))) % 100000)];
+    op_hcompute_nearest_neighbor_stencil_read[0] = bank_7[((((64*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[1])) / 2))) + (1*$rtoi($floor(((1*op_hcompute_nearest_neighbor_stencil_read_ctrl_vars[2])) / 2))))))];
       end
   end
 
@@ -163,18 +163,18 @@ module nearest_neighbor_stencil_ub(
   logic [15:0] bank_7 [16384];
 
   logic [15:0] nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_0;
-  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_0 = (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 1*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0);
+  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_0 = (((1*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0);
   logic [15:0] nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_1;
-  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_1 = (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 1*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0);
+  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_1 = (((1*op_hcompute_hw_output_stencil_read_ctrl_vars[1])) - 0);
   logic [15:0] nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_2;
-  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_2 = (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0);
+  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_2 = (0 - 0);
 nearest_neighbor_stencil_bank_selector nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_bank_selector(.d({nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_0,nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_1,nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_2}));
   logic [15:0] nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_0;
-  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_0 = (((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) - 0);
+  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_0 = (((1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) - 0);
   logic [15:0] nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_1;
-  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_1 = (((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) - 0);
+  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_1 = (((1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1])) - 0);
   logic [15:0] nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_2;
-  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_2 = (((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) - 0);
+  assign nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_2 = (0 - 0);
 nearest_neighbor_stencil_bank_selector nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector(.d({nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_0,nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_1,nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_2}));
 
     nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_to_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_sr nearest_neighbor_stencil_op_hcompute_hw_output_stencil_3_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_nearest_neighbor_stencil_write[0]), .out(op_hcompute_hw_output_stencil_read[0]));
@@ -183,28 +183,28 @@ nearest_neighbor_stencil_bank_selector nearest_neighbor_stencil_nearest_neighbor
   always @(posedge clk) begin
     if (op_hcompute_nearest_neighbor_stencil_write_wen) begin
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 0) begin
-        bank_0[(((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_nearest_neighbor_stencil_write[0];
+        bank_0[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 1) begin
-        bank_1[(((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_nearest_neighbor_stencil_write[0];
+        bank_1[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 2) begin
-        bank_2[(((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_nearest_neighbor_stencil_write[0];
+        bank_2[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 3) begin
-        bank_3[(((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_nearest_neighbor_stencil_write[0];
+        bank_3[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 4) begin
-        bank_4[(((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_nearest_neighbor_stencil_write[0];
+        bank_4[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 5) begin
-        bank_5[(((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_nearest_neighbor_stencil_write[0];
+        bank_5[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 6) begin
-        bank_6[(((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_nearest_neighbor_stencil_write[0];
+        bank_6[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 7) begin
-        bank_7[(((0 + 0*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[0] + 128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])) % 100000)] <= op_hcompute_nearest_neighbor_stencil_write[0];
+        bank_7[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
     end
   end
