@@ -650,4 +650,6 @@ bool no_divs(isl_aff* a);
 isl_aff* constant_aff(isl_aff* src, const int val);
 
 isl_aff* add(isl_aff* start_time_aff, const int compute_latency);
+isl_aff* sub(isl_aff* start_time_aff, const int compute_latency);
+isl_aff* mul(isl_aff* start_time_aff, const int compute_latency);
 

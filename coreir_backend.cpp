@@ -256,6 +256,58 @@ string generate_linearized_verilog_inner_bank_offset(const std::string& pt, vect
   return sep_list(terms, "(", ")", " + ");
 }
 
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
+  cout << "ma  = " << str(ma) << endl;
+  cout << "dom = " << str(dom) << endl;
+
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << d << ": " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    flat = add(flat, flt);
+    cout << tab(2) << "flat: " << str(flat) << endl;
+    //string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
+    //addr_vec.push_back(aff);
+  }
+
+  //vector<string> addr_vec_out;
+  //for (int i = 0; i < buf.logical_dimension(); i++) {
+    //int length = 1;
+    //for (int d = 0; d < i; d++) {
+      //length *= lengths.at(d);
+    //}
+    //string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
+    //addr_vec_out.push_back(item);
+  //}
+
+  //string addr = sep_list(addr_vec_out, "", "", " + ");
+  //cout << "addr: " << addr << endl;
+
+  assert(false);
+}
+
 string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
   isl_set* dom = to_set(bnk.rddom);
 
@@ -280,41 +332,30 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
 
   auto piece = pick(pieces);
 
-  //vector<string> domains;
-  //vector<string> offsets;
-  //for (auto piece : pieces) {
-    vector<string> addr_vec;
-    isl_multi_aff* ma = piece.second;
-    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
-      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
-      addr_vec.push_back(codegen_verilog(ctrl_vars, aff));
+  vector<string> addr_vec;
+  isl_multi_aff* ma = piece.second;
+  cout << "ma = " << str(ma) << endl;
+  isl_aff* flattened = flatten(ma, dom);
+  cout << "flattened: " << str(flattened) << endl;
+  assert(false);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    addr_vec.push_back(codegen_verilog(ctrl_vars, aff));
+  }
+
+  vector<string> addr_vec_out;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    int length = 1;
+    for (int d = 0; d < i; d++) {
+      length *= lengths.at(d);
     }
+    string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
+    addr_vec_out.push_back(item);
+  }
 
-    vector<string> addr_vec_out;
-    for (int i = 0; i < buf.logical_dimension(); i++) {
-      int length = 1;
-      for (int d = 0; d < i; d++) {
-        length *= lengths.at(d);
-      }
-      string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
-      addr_vec_out.push_back(item);
-    }
-
-    string addr = sep_list(addr_vec_out, "", "", " + ");
-    return addr;
-    //offsets.push_back(addr);
-    //domains.push_back(codegen_c(piece.first));
-  //}
-
-  //assert(offsets.size() > 0);
-  //assert(domains.size() == offsets.size());
-
-  //string base = offsets.at(0);
-  //for (int d = 1; d < offsets.size(); d++) {
-    //base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
-  //}
-
-  //return base;
+  string addr = sep_list(addr_vec_out, "", "", " + ");
+  return addr;
 }
 
 void generate_verilog_for_bank_storage(CodegenOptions& options,

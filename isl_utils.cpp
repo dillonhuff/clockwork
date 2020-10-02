@@ -3511,7 +3511,16 @@ isl_aff* constant_aff(isl_aff* src, const int val) {
   return aff_on_domain(ls, v);
 }
 
+isl_aff* sub(isl_aff* start_time_aff, const int compute_latency) {
+  return sub(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
 isl_aff* add(isl_aff* start_time_aff, const int compute_latency) {
   return add(start_time_aff, constant_aff(start_time_aff, compute_latency));
 }
 
+isl_aff* mul(isl_aff* start_time_aff, const int compute_latency) {
+  return isl_aff_scale_val(start_time_aff,
+      isl_val_int_from_si(ctx(start_time_aff),
+        compute_latency));
+}
