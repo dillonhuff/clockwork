@@ -16353,7 +16353,17 @@ vector<prog> all_cgra_programs() {
   return test_programs;
 }
 
-void test_stencil_codegen(vector<prog>& test_programs) {
+void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name) {
+  cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg_name);
+  cmd("mv " + prg_name + ".json ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + ".v ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_compute.v ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv cycle_accurate_regression_result_" + prg_name + ".csv ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg_name + "/");
+}
+
+void test_platonic_codegen(vector<prog>& test_programs) {
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
     prg.pretty_print();
@@ -16372,13 +16382,14 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
     //string app_type = "dualwithaddr";
     string app_type = "platonic_buffer";
-    cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
-    cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv " + prg.name + "_compute.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    cpy_app_to_folder(app_type, prg.name);
+    //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+    //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv " + prg.name + "_compute.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
   }
 }
 
@@ -16669,12 +16680,11 @@ void cgra_flow_tests() {
   auto test_programs =
     all_cgra_programs();
 
-  test_stencil_codegen(test_programs);
+  test_platonic_codegen(test_programs);
 
   //auto dual_with_addrgen_programs =
     //stencil_programs();
 
-  //test_stencil_codegen(dual_with_addrgen_programs);
 }
 
 void dse_flow_tests() {
@@ -16701,7 +16711,7 @@ void dse_flow_tests() {
 
 
 
-  test_stencil_codegen(test_programs);
+  test_platonic_codegen(test_programs);
   //test_schedules(test_programs);
 
   assert(false);
