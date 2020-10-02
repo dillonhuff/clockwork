@@ -16077,14 +16077,28 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   return sched;
 }
 
+CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+  all_unbanked(prg, options);
+
+  if (is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_CYCLE_DELAY;
+  } else {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
+
+  return options;
+}
+
 CodegenOptions garnet_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
-    //TARGET_TILE_DUAL_SRAM_RAW;
-     //TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
-     //TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
-     //TARGET_TILE_REGISTERS;
     TARGET_TILE_PLATONIC;
   all_unbanked(prg, options);
 
@@ -16159,8 +16173,14 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 #endif
 }
 
-void compile_for_garnet_dual_port_mem(prog& prg) {
+void compile_for_garnet_platonic_mem(prog& prg) {
   auto options = garnet_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  return compile_cycle_accurate_hw(options, sched, prg);
+}
+
+void compile_for_garnet_dual_port_mem(prog& prg) {
+  auto options = garnet_codegen_dual_port_with_addrgen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
   return compile_cycle_accurate_hw(options, sched, prg);
 }
@@ -16343,7 +16363,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     prg.pretty_print();
     auto cpu = unoptimized_result(prg);
 
-    compile_for_garnet_dual_port_mem(prg);
+    compile_for_garnet_platonic_mem(prg);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
