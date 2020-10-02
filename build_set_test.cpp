@@ -16313,18 +16313,13 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
-
-  // rom_compute.h missing?
+  test_programs.push_back(up_sample());
   test_programs.push_back(rom());
-  // strided_conv.h missing?
   test_programs.push_back(strided_conv());
-
   test_programs.push_back(mini_conv_halide_fixed());
-
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(gaussian());
-  test_programs.push_back(up_sample());
   test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
@@ -16350,7 +16345,7 @@ vector<prog> all_cgra_programs() {
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
-  // Passes
+  concat(test_programs, stencil_programs());
   test_programs.push_back(resnet());
   test_programs.push_back(mobilenet_small());
   test_programs.push_back(unet_conv_3_3());
@@ -16358,7 +16353,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(conv_layer());
 
 
-  concat(test_programs, stencil_programs());
   return test_programs;
 }
 
