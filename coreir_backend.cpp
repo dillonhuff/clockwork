@@ -743,6 +743,12 @@ void generate_platonic_ubuffer(
     for (int b = 0; b < num_banks; b++) {
       string source_ram = "bank_" + str(b);
       out << tab(3) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << b << ") begin" << endl;
+      for (int other_bank = 0; other_bank < num_banks; other_bank++) {
+        if (other_bank != b) {
+          out << tab(4) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << other_bank << ") begin $finish(-1); end" << endl;
+        }
+
+      }
       out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
       out << tab(3) << "end" << endl;
     }

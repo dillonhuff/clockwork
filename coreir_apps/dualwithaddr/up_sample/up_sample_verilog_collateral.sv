@@ -51,27 +51,83 @@ hw_input_stencil_bank_selector hw_input_stencil_hw_input_stencil_op_hcompute_hw_
   always @(posedge clk) begin
     if (op_hcompute_hw_input_stencil_write_wen) begin
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 0) begin
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 2) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 3) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 4) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 5) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 6) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 7) begin $finish(-1); end
         bank_0[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 1) begin
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 2) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 3) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 4) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 5) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 6) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 7) begin $finish(-1); end
         bank_1[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 2) begin
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 3) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 4) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 5) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 6) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 7) begin $finish(-1); end
         bank_2[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 3) begin
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 2) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 4) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 5) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 6) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 7) begin $finish(-1); end
         bank_3[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 4) begin
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 2) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 3) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 5) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 6) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 7) begin $finish(-1); end
         bank_4[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 5) begin
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 2) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 3) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 4) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 6) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 7) begin $finish(-1); end
         bank_5[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 6) begin
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 2) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 3) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 4) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 5) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 7) begin $finish(-1); end
         bank_6[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
       if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 7) begin
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 2) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 3) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 4) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 5) begin $finish(-1); end
+        if (hw_input_stencil_hw_input_stencil_op_hcompute_hw_input_stencil_4_bank_selector.out == 6) begin $finish(-1); end
         bank_7[(((64*op_hcompute_hw_input_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_stencil_write[0];
       end
     end
@@ -183,27 +239,83 @@ nearest_neighbor_stencil_bank_selector nearest_neighbor_stencil_nearest_neighbor
   always @(posedge clk) begin
     if (op_hcompute_nearest_neighbor_stencil_write_wen) begin
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 0) begin
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 1) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 2) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 3) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 4) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 5) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 6) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 7) begin $finish(-1); end
         bank_0[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 1) begin
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 0) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 2) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 3) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 4) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 5) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 6) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 7) begin $finish(-1); end
         bank_1[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 2) begin
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 0) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 1) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 3) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 4) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 5) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 6) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 7) begin $finish(-1); end
         bank_2[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 3) begin
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 0) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 1) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 2) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 4) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 5) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 6) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 7) begin $finish(-1); end
         bank_3[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 4) begin
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 0) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 1) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 2) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 3) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 5) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 6) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 7) begin $finish(-1); end
         bank_4[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 5) begin
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 0) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 1) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 2) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 3) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 4) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 6) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 7) begin $finish(-1); end
         bank_5[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 6) begin
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 0) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 1) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 2) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 3) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 4) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 5) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 7) begin $finish(-1); end
         bank_6[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
       if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 7) begin
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 0) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 1) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 2) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 3) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 4) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 5) begin $finish(-1); end
+        if (nearest_neighbor_stencil_nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_0_bank_selector.out == 6) begin $finish(-1); end
         bank_7[(((128*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[1] + 1*op_hcompute_nearest_neighbor_stencil_write_ctrl_vars[2])))] <= op_hcompute_nearest_neighbor_stencil_write[0];
       end
     end
