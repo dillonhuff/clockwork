@@ -16115,10 +16115,7 @@ CodegenOptions garnet_codegen_options(prog& prg) {
   return options;
 }
 
-void compile_for_garnet_dual_port_mem(CodegenOptions& options, schedule_info& sched, prog& prg) {
-  //auto options = garnet_codegen_options(prg);
-  //schedule_info sched = garnet_schedule_info(options, prg);
-
+void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
   normalize_bounds(prg);
 
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
@@ -16165,25 +16162,9 @@ void compile_for_garnet_dual_port_mem(CodegenOptions& options, schedule_info& sc
   assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
 
   auto buffers = build_buffers(prg, hw_sched);
-  //generate_app_code(options, buffers, prg, hw_sched);
 
 #ifdef COREIR
 
-  //generate_coreir_addrgen_in_tile(options,
-    //buffers,
-    //prg,
-    //hw_sched);
-  //assert(false);
-
-  //generate_verilog(options,
-      //buffers,
-      //prg,
-      //hw_sched);
-  //cout << "Emitted verilog to " << prg.name << endl;
-  //assert(false);
-    //map<string, UBuffer>& buffers,
-    //prog& prg,
-    //umap* schedmap) {
   generate_coreir(options,
     buffers,
     prg,
@@ -16191,14 +16172,13 @@ void compile_for_garnet_dual_port_mem(CodegenOptions& options, schedule_info& sc
     sched);
   generate_verilator_tb(prg, hw_sched, buffers);
 
-  // Insert coreir generation here
 #endif
 }
 
 void compile_for_garnet_dual_port_mem(prog& prg) {
   auto options = garnet_codegen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
-  return compile_for_garnet_dual_port_mem(options, sched, prg);
+  return compile_cycle_accurate_hw(options, sched, prg);
 }
 
 umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
