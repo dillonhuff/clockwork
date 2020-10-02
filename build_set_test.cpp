@@ -16115,9 +16115,9 @@ CodegenOptions garnet_codegen_options(prog& prg) {
   return options;
 }
 
-void compile_for_garnet_dual_port_mem(prog& prg) {
-  auto options = garnet_codegen_options(prg);
-  schedule_info sched = garnet_schedule_info(options, prg);
+void compile_for_garnet_dual_port_mem(CodegenOptions& options, schedule_info& sched, prog& prg) {
+  //auto options = garnet_codegen_options(prg);
+  //schedule_info sched = garnet_schedule_info(options, prg);
 
   normalize_bounds(prg);
 
@@ -16193,6 +16193,12 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
   // Insert coreir generation here
 #endif
+}
+
+void compile_for_garnet_dual_port_mem(prog& prg) {
+  auto options = garnet_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  return compile_for_garnet_dual_port_mem(options, sched, prg);
 }
 
 umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
