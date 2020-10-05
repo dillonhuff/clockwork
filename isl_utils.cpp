@@ -3037,6 +3037,10 @@ uset* pad_uset(uset* domain) {
   return padded_domain;
 }
 
+isl_aff* div(isl_aff* a, isl_aff* b) {
+  return isl_aff_div(cpy(a), cpy(b));
+}
+
 isl_aff* add(isl_aff* a, isl_aff* b) {
   return isl_aff_add(cpy(a), cpy(b));
 }
@@ -3502,4 +3506,30 @@ bool no_divs(isl_aff* a) {
     }
   }
   return true;
+}
+isl_aff* constant_aff(isl_aff* src, const int val) {
+  auto ls = isl_aff_get_domain_local_space(src);
+  cout << "ls = " << str(ls) << endl;
+  auto v = isl_val_int_from_si(ctx(src), val);
+  cout << "v = " << str(v) << endl;
+  return aff_on_domain(ls, v);
+}
+
+isl_aff* sub(isl_aff* start_time_aff, const int compute_latency) {
+  return sub(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
+isl_aff* add(isl_aff* start_time_aff, const int compute_latency) {
+  return add(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
+
+isl_aff* mul(isl_aff* start_time_aff, const int compute_latency) {
+  return isl_aff_scale_val(start_time_aff,
+      isl_val_int_from_si(ctx(start_time_aff),
+        compute_latency));
+}
+
+isl_aff* div(isl_aff* start_time_aff, const int compute_latency) {
+  return div(start_time_aff, constant_aff(start_time_aff, compute_latency));
 }

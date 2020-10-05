@@ -108,5 +108,21 @@ CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
 void add_tahoe_memory_generator(CoreIR::Context* c);
 
 void generate_platonic_ubuffer(CodegenOptions& options,
-    UBuffer& buf);
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
+    CoreIR::Wireable* w,
+    const int cycles);
+
+CoreIR::Wireable* delay_array(CoreIR::ModuleDef* def,
+    CoreIR::Wireable* input,
+    int elem_width,
+    int num_elems);
+
+CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
+    const std::string& out_name,
+    CoreIR::Wireable* w,
+    const int cycles);
 #endif

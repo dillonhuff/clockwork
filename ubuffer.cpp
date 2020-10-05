@@ -258,6 +258,48 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
+vector<string> generate_multilinear_address_components(const std::string& pt, bank& bnk, UBuffer& buf) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  isl_map* m = to_map(buf.access_map.at(pt));
+  auto svec = isl_pw_multi_aff_from_map(m);
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(svec);
+  assert(pieces.size() == 1);
+
+  vector<string> domains;
+  vector<string> offsets;
+  vector<string> addr_vec_out;
+  for (auto piece : pieces) {
+    vector<string> addr_vec;
+    isl_multi_aff* ma = piece.second;
+    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+      addr_vec.push_back(codegen_c(aff));
+    }
+
+    for (int i = 0; i < buf.logical_dimension(); i++) {
+      string item = addr_vec.at(i) + " - " + str(mins.at(i));
+      addr_vec_out.push_back(item);
+    }
+
+    string addr = sep_list(addr_vec_out, "", "", ", ");
+    offsets.push_back(addr);
+    domains.push_back(codegen_c(piece.first));
+  }
+
+  return addr_vec_out;
+}
+
 string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
   vector<int> lengths;
   vector<int> mins;
@@ -286,12 +328,6 @@ string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& 
 
     vector<string> addr_vec_out;
     for (int i = 0; i < buf.logical_dimension(); i++) {
-      //int length = 1;
-      //for (int d = 0; d < i; d++) {
-        //length *= lengths.at(d);
-      //}
-      //string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
-      //string item = "[" + addr_vec.at(i) + " - " + str(mins.at(i)) + "]";
       string item = addr_vec.at(i) + " - " + str(mins.at(i));
       addr_vec_out.push_back(item);
     }
@@ -305,15 +341,15 @@ string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& 
   assert(offsets.size() == 1);
   return offsets.at(0);
 
-  assert(offsets.size() > 0);
-  assert(domains.size() == offsets.size());
+  //assert(offsets.size() > 0);
+  //assert(domains.size() == offsets.size());
 
-  string base = offsets.at(0);
-  for (int d = 1; d < offsets.size(); d++) {
-    base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
-  }
+  //string base = offsets.at(0);
+  //for (int d = 1; d < offsets.size(); d++) {
+    //base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
+  //}
 
-  return base;
+  //return base;
 }
 
 void generate_multilinear_bank(CodegenOptions& options,
@@ -1359,10 +1395,124 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
+maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
+    umap* sched) {
+
+  auto writes = buf.access_map.at(inpt);
+  auto reads = buf.access_map.at(outpt);
+  cout << "writes: " << str(writes) << endl;
+  cout << "reads : " << str(reads) << endl;
+  cout << "Schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+
+  auto time_to_write = dot(inv(sched), (writes));
+  auto time_to_read = dot(inv(sched), (reads));
+
+  cout << "Time to write: " << str(time_to_write) << endl;
+  cout << "Time to read : " << str(time_to_read) << endl;
+
+  auto pc_times = dot(time_to_write, inv(time_to_read));
+  cout << "PC times     : " << str(pc_times) << endl;
+  auto dds = isl_union_map_deltas(pc_times);
+  cout << "DDs          : " << str(dds) << endl;
+  if (!empty(dds)) {
+    auto ddc = to_set(dds);
+
+    if (!(isl_set_is_singleton(ddc))) {
+      return {};
+    }
+    assert(isl_set_is_singleton(ddc));
+
+    int dd = to_int(lexminval(ddc));
+    cout << "DD           : " << dd << endl;
+    string writer_name = domain_name(pick(get_maps(writes)));
+    cout << "writer op    : " << writer_name << endl;
+    dd = dd;
+
+    return {dd};
+  } else {
+    return {};
+  }
+  return {};
+}
+
+bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
+  bool built_dm = true;
+  for (auto outpt : buf.get_out_ports()) {
+    std::set<string> ins;
+    {
+      auto reads = range(buf.access_map.at(outpt));
+      for (auto inpt : buf.get_in_ports()) {
+        auto writes = range(buf.access_map.at(inpt));
+        auto overlap = its(writes, reads);
+        if (!empty(overlap)) {
+          ins.insert(inpt);
+        }
+      }
+    }
+
+    assert(ins.size() == 1);
+    auto inpt = pick(ins);
+
+    auto writes = buf.access_map.at(inpt);
+    auto reads = buf.access_map.at(outpt);
+    cout << "writes: " << str(writes) << endl;
+    cout << "reads : " << str(reads) << endl;
+    cout << "Schedule..." << endl;
+    for (auto m : get_maps(sched)) {
+      cout << tab(1) << str(m) << endl;
+      release(m);
+    }
+
+    auto time_to_write = dot(inv(sched), (writes));
+    auto time_to_read = dot(inv(sched), (reads));
+
+    cout << "Time to write: " << str(time_to_write) << endl;
+    cout << "Time to read : " << str(time_to_read) << endl;
+
+    auto pc_times = dot(time_to_write, inv(time_to_read));
+    cout << "PC times     : " << str(pc_times) << endl;
+    auto dds = isl_union_map_deltas(pc_times);
+    cout << "DDs          : " << str(dds) << endl;
+    if (!empty(dds)) {
+      auto ddc = to_set(dds);
+
+      if (!(isl_set_is_singleton(ddc))) {
+        built_dm = false;
+        break;
+      }
+      assert(isl_set_is_singleton(ddc));
+
+      int dd = to_int(lexminval(ddc));
+      cout << "DD           : " << dd << endl;
+      string writer_name = domain_name(pick(get_maps(writes)));
+      cout << "writer op    : " << writer_name << endl;
+      for (auto e : hwinfo.op_compute_unit_latencies) {
+        cout << tab(1) << e.first << " -> " << e.second << endl;
+      }
+      //assert(false);
+      int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //assert(op_latency == 0);
+
+      dd = dd - op_latency;
+
+      delay_maps[inpt].push_back({outpt, dd});
+
+    } else {
+      cout << tab(1) << "No overlap" << endl;
+      assert(false);
+    }
+  }
+  return built_dm;
+}
+
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
 
-    generate_platonic_ubuffer(options, buf);
-    return;
+    //generate_platonic_ubuffer(options, buf, hwinfo);
+    //return;
 
     cout << "Generating functional model for: " << buf.name << endl;
     cout << tab(1) << "partition: " << buf.banking.partition << endl;
@@ -3476,25 +3626,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
 
     return base;
-
-    ////assert(pieces.size() == 1);
-    //isl_multi_aff* ma = pieces.at(0).second;
-    //for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
-      //isl_aff* aff = isl_multi_aff_get_aff(ma, d);
-      //addr_vec.push_back(codegen_c(aff));
-    //}
-
-    //vector<string> addr_vec_out;
-    //for (int i = 0; i < logical_dimension(); i++) {
-      //int length = 1;
-      //for (int d = 0; d < i; d++) {
-        //length *= lengths.at(d);
-      //}
-      //string item = "(" + addr_vec.at(i) + ") * " + to_string(length);
-      //addr_vec_out.push_back(item);
-    //}
-
-    //return sep_list(addr_vec_out, "", "", " + ");
   }
 
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, string self_loop_bd, int dim_id, int fetch_width) {
@@ -4256,7 +4387,6 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
   auto violated = coalesce(diff(its(overlapping_ranges, stored_to_same_slot), in_id));
   cout << "violated    = " << str(violated) << endl;
   return empty(violated);
-
 }
 
 bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf) {
@@ -4266,3 +4396,59 @@ bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf) {
 
   return inner_bank_offset_is_legal(slot_func, op_writes, op_reads, sched);
 }
+
+std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
+  out << "--- " << buf.name << endl;
+  out << "\t---- " << buf.get_in_ports().size() << " in ports" << endl;
+
+  //add a copy for compute_max_dd function
+  UBuffer tmp = buf;
+  for (auto inpt : buf.get_in_ports()) {
+    out << "\t\t" << inpt << endl;
+    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    //out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
+    //out << "\t\t\tacc range: " << str(range(buf.access_map.at(inpt))) << endl;
+    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+    out << endl;
+  }
+
+  out << "\t---- " << buf.get_out_ports().size() << " out ports:" << endl;
+  for (auto inpt : buf.get_out_ports()) {
+    out << "\t\t" << inpt << endl;
+    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+    //out << "\t\t\tlexmax events: " << str(buf.get_lexmax_events(inpt)) << endl;
+
+    out << endl;
+  }
+
+
+  out << "\t---- Input Bundles" << endl;
+  for (auto in_bundle : buf.get_in_bundles()) {
+    out << "\t\t" << in_bundle << endl;
+    auto ports = buf.port_bundles.at(in_bundle);
+    out << "\t\t---- Ports..." << endl;
+    for (auto p : ports) {
+      out << "\t\t\t" << p << endl;
+    }
+
+  }
+  out << "\t---- Output Bundles" << endl;
+  for (auto out_bundle : buf.get_out_bundles()) {
+    out << "\t\t" << out_bundle << endl;
+    auto ports = buf.port_bundles.at(out_bundle);
+    out << "\t\t---- Ports..." << endl;
+    for (auto p : ports) {
+      out << "\t\t\t" << p << endl;
+    }
+
+  }
+  return out;
+}
+

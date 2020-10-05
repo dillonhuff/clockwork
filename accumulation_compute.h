@@ -22,7 +22,7 @@ hw_uint<16> hcompute_conv_stencil_1(hw_uint<16>& conv_stencil, hw_uint<16>& hw_i
 
   uint16_t _hw_input_stencil_1 = (uint16_t) hw_input_stencil.extract<0, 15>();
 
-  int32_t kernel_stencil[9];  // produce kernel.stencil
+  uint16_t kernel_stencil[9];  // produce kernel.stencil
   kernel_stencil[0] = 0;
   kernel_stencil[1] = 1;
   kernel_stencil[2] = 2;
@@ -33,9 +33,9 @@ hw_uint<16> hcompute_conv_stencil_1(hw_uint<16>& conv_stencil, hw_uint<16>& hw_i
   kernel_stencil[7] = 7;
   kernel_stencil[8] = 8;
 
-  int32_t _260 = _conv_s1_r_y * 3;
-  int32_t _261 = _conv_s1_r_x + _260;
-    int32_t _262 = kernel_stencil[_261];
+  uint16_t _260 = _conv_s1_r_y * 3;
+  uint16_t _261 = _conv_s1_r_x + _260;
+    uint16_t _262 = kernel_stencil[_261];
   uint16_t _263 = (uint16_t)(_262);
   uint16_t _264 = _hw_input_stencil_1 * _263;
   uint16_t _265 = _conv_stencil_1 + _264;
