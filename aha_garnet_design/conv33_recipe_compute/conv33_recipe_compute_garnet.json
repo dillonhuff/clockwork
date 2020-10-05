@@ -175,9 +175,9 @@
             "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'h0000"]}
           },
           "ub_buf_inst_input_10_to_buf_inst_output_3":{
-            "genref":"cwlib.Mem",
-            "genargs":{"config":["Json",{"agg2sram":{"cycle_starting_addr":[4],"cycle_stride":[4,64,0],"dimensionality":3,"extent":[16,64,1],"read_data_starting_addr":[0],"read_data_stride":[0,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,16,0]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,64,1],"write_data_starting_addr":[0],"write_data_stride":[1,0,0,0]},"sram2tb":{"cycle_starting_addr":[123],"cycle_stride":[2,4,64,0],"dimensionality":4,"extent":[2,16,62,1],"mux_write_data_starting_addr":[0],"mux_write_data_stride":[1,0,0,0],"read_data_starting_addr":[0],"read_data_stride":[16,1,16,0],"write_data_starting_addr":[0],"write_data_stride":[0,4,0,0]},"stencil_valid":{"cycle_starting_addr":[130],"cycle_stride":[1,64,0],"dimensionality":3,"extent":[62,62,1]},"tb2out_0":{"cycle_starting_addr":[128],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,62,1],"read_data_starting_addr":[0],"read_data_stride":[1,4,0,0]},"tb2out_1":{"cycle_starting_addr":[128],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,62,1],"read_data_starting_addr":[32],"read_data_stride":[1,4,0,0]}}], "has_flush":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "num_input":["Int",1], "num_output":["Int",2], "width":["Int",16]},
-            "modargs":{"mode":["String","lake"]}
+            "genref":"cgralib.Mem",
+            "genargs":{"has_flush":["Bool",true], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "num_input":["Int",1], "num_output":["Int",2], "width":["Int",16]},
+            "modargs":{"config":["Json",{"agg2sram":{"cycle_starting_addr":[4],"cycle_stride":[4,64,0],"dimensionality":3,"extent":[16,64,1],"read_data_starting_addr":[0],"read_data_stride":[0,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,16,0]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,64,1],"write_data_starting_addr":[0],"write_data_stride":[1,0,0,0]},"sram2tb":{"cycle_starting_addr":[123],"cycle_stride":[2,4,64,0],"dimensionality":4,"extent":[2,16,62,1],"mux_write_data_starting_addr":[0],"mux_write_data_stride":[1,0,0,0],"read_data_starting_addr":[0],"read_data_stride":[16,1,16,0],"write_data_starting_addr":[0],"write_data_stride":[0,1,0,0]},"stencil_valid":{"cycle_starting_addr":[130],"cycle_stride":[1,64,0],"dimensionality":3,"extent":[62,62,1]},"tb2out_0":{"cycle_starting_addr":[128],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,62,1],"read_data_starting_addr":[0],"read_data_stride":[1,4,0,0]},"tb2out_1":{"cycle_starting_addr":[128],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,62,1],"read_data_starting_addr":[64],"read_data_stride":[1,4,0,0]}}], "mode":["String","lake"]}
           },
           "ub_buf_inst_input_10_to_buf_inst_output_3_clk_en_const":{
             "modref":"corebit.const",
@@ -209,7 +209,7 @@
           ["ub_buf_inst_input_10_to_buf_inst_output_3.data_out_0","self.output_read.2"],
           ["ub_buf_inst_input_10_to_buf_inst_output_3.data_out_1","self.output_read.5"],
           ["ub_buf_inst_input_10_to_buf_inst_output_3.stencil_valid","self.output_read_extra_ctrl"],
-          ["ub_buf_inst_input_10_to_buf_inst_output_3.rst_n","self.reset"],
+          ["ub_buf_inst_input_10_to_buf_inst_output_3.flush","self.reset"],
           ["ub_buf_inst_input_10_to_buf_inst_output_3_clk_en_const.out","ub_buf_inst_input_10_to_buf_inst_output_3.clk_en"]
         ]
       },
@@ -217,17 +217,12 @@
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
           ["reset","BitIn"],
-          ["in_inst_input_read_valid","Bit"],
+          ["in_inst_input_read_en","Bit"],
           ["in_inst_input_read",["Array",1,["Array",16,"BitIn"]]],
-          ["out_inst_output_write_en","Bit"],
+          ["out_inst_output_write_valid","Bit"],
           ["out_inst_output_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "_U14$reg0":{
-            "genref":"coreir.reg",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'h0000"]}
-          },
           "buf_inst$d_reg__U10$reg0":{
             "genref":"coreir.reg",
             "genargs":{"width":["Int",16]},
@@ -259,9 +254,9 @@
             "modargs":{"clk_posedge":["Bool",true], "init":[["BitVector",16],"16'h0000"]}
           },
           "buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3":{
-            "genref":"cwlib.Mem",
-            "genargs":{"config":["Json",{"agg2sram":{"cycle_starting_addr":[4],"cycle_stride":[4,64,0],"dimensionality":3,"extent":[16,64,1],"read_data_starting_addr":[0],"read_data_stride":[0,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,16,0]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,64,1],"write_data_starting_addr":[0],"write_data_stride":[1,0,0,0]},"sram2tb":{"cycle_starting_addr":[123],"cycle_stride":[2,4,64,0],"dimensionality":4,"extent":[2,16,62,1],"mux_write_data_starting_addr":[0],"mux_write_data_stride":[1,0,0,0],"read_data_starting_addr":[0],"read_data_stride":[16,1,16,0],"write_data_starting_addr":[0],"write_data_stride":[0,4,0,0]},"stencil_valid":{"cycle_starting_addr":[130],"cycle_stride":[1,64,0],"dimensionality":3,"extent":[62,62,1]},"tb2out_0":{"cycle_starting_addr":[128],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,62,1],"read_data_starting_addr":[0],"read_data_stride":[1,4,0,0]},"tb2out_1":{"cycle_starting_addr":[128],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,62,1],"read_data_starting_addr":[32],"read_data_stride":[1,4,0,0]}}], "has_flush":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "num_input":["Int",1], "num_output":["Int",2], "width":["Int",16]},
-            "modargs":{"mode":["String","lake"]}
+            "genref":"cgralib.Mem",
+            "genargs":{"has_flush":["Bool",true], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "num_input":["Int",1], "num_output":["Int",2], "width":["Int",16]},
+            "modargs":{"config":["Json",{"agg2sram":{"cycle_starting_addr":[4],"cycle_stride":[4,64,0],"dimensionality":3,"extent":[16,64,1],"read_data_starting_addr":[0],"read_data_stride":[0,0,0],"write_data_starting_addr":[0],"write_data_stride":[1,16,0]},"in2agg_0":{"cycle_starting_addr":[0],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,64,1],"write_data_starting_addr":[0],"write_data_stride":[1,0,0,0]},"sram2tb":{"cycle_starting_addr":[123],"cycle_stride":[2,4,64,0],"dimensionality":4,"extent":[2,16,62,1],"mux_write_data_starting_addr":[0],"mux_write_data_stride":[1,0,0,0],"read_data_starting_addr":[0],"read_data_stride":[16,1,16,0],"write_data_starting_addr":[0],"write_data_stride":[0,1,0,0]},"stencil_valid":{"cycle_starting_addr":[130],"cycle_stride":[1,64,0],"dimensionality":3,"extent":[62,62,1]},"tb2out_0":{"cycle_starting_addr":[128],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,62,1],"read_data_starting_addr":[0],"read_data_stride":[1,4,0,0]},"tb2out_1":{"cycle_starting_addr":[128],"cycle_stride":[1,4,64,0],"dimensionality":4,"extent":[4,16,62,1],"read_data_starting_addr":[64],"read_data_stride":[1,4,0,0]}}], "mode":["String","lake"]}
           },
           "buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3_clk_en_const":{
             "modref":"corebit.const",
@@ -277,7 +272,7 @@
             "genargs":{"width":["Int",16]},
             "modargs":{"mode":["String","in"]}
           },
-          "io1_out_inst_output_write_en":{
+          "io1_out_inst_output_write_valid":{
             "modref":"cgralib.BitIO",
             "modargs":{"mode":["String","out"]}
           },
@@ -327,10 +322,6 @@
           }
         },
         "connections":[
-          ["io16in_in_inst_input_read_0.out","_U14$reg0.in"],
-          ["buf_inst$d_reg__U8$reg0.in","_U14$reg0.out"],
-          ["buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.data_in_0","_U14$reg0.out"],
-          ["output$add_all__U7$binop.data.in.1","_U14$reg0.out"],
           ["buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.data_out_1","buf_inst$d_reg__U10$reg0.in"],
           ["buf_inst$d_reg__U11$reg0.in","buf_inst$d_reg__U10$reg0.out"],
           ["output$add_all__U3$binop.data.in.1","buf_inst$d_reg__U10$reg0.out"],
@@ -339,15 +330,18 @@
           ["buf_inst$d_reg__U13$reg0.in","buf_inst$d_reg__U12$reg0.out"],
           ["output$add_all__U0$binop.data.in.1","buf_inst$d_reg__U12$reg0.out"],
           ["output$add_all__U0$binop.data.in.0","buf_inst$d_reg__U13$reg0.out"],
+          ["io16in_in_inst_input_read_0.out","buf_inst$d_reg__U8$reg0.in"],
           ["buf_inst$d_reg__U9$reg0.in","buf_inst$d_reg__U8$reg0.out"],
           ["output$add_all__U6$binop.data.in.1","buf_inst$d_reg__U8$reg0.out"],
           ["output$add_all__U5$binop.data.in.1","buf_inst$d_reg__U9$reg0.out"],
           ["buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3_clk_en_const.out","buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.clk_en"],
+          ["io16in_in_inst_input_read_0.out","buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.data_in_0"],
           ["output$add_all__U1$binop.data.in.1","buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.data_out_0"],
           ["output$add_all__U4$binop.data.in.1","buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.data_out_1"],
-          ["io1in_reset.out","buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.rst_n"],
-          ["io1_out_inst_output_write_en.in","buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.stencil_valid"],
+          ["io1in_reset.out","buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.flush"],
+          ["io1_out_inst_output_write_valid.in","buf_inst$ub_buf_inst_input_10_to_buf_inst_output_3.stencil_valid"],
           ["output$add_all__U7$binop.data.out","io16_out_inst_output_write_0.in"],
+          ["output$add_all__U7$binop.data.in.1","io16in_in_inst_input_read_0.out"],
           ["output$add_all__U1$binop.data.in.0","output$add_all__U0$binop.data.out"],
           ["output$add_all__U2$binop.data.in.0","output$add_all__U1$binop.data.out"],
           ["output$add_all__U3$binop.data.in.0","output$add_all__U2$binop.data.out"],

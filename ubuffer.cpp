@@ -690,8 +690,8 @@ ConfigMap generate_config_from_aff_expr(isl_aff* addr, bool is_read, bool is_mux
     for (int d = 0; d < num_in_dims(addr); d++) {
       int ldim = num_in_dims(addr) - d - 1;
       cout << "\""+prefix+"data_stride_" << ldim << "\"," <<
-          to_int(get_coeff(addr, d))/word_width % capacity << ",0" << endl;
-      map_insert(vals, prefix+"data_stride", to_int(get_coeff(addr, d))/word_width % capacity);
+          to_int(get_coeff(addr, d))% capacity /port_width << ",0" << endl;
+      map_insert(vals, prefix+"data_stride", to_int(get_coeff(addr, d))% capacity/port_width) ;
     }
     std::reverse(vals.at(prefix+"data_stride").begin(), vals.at(prefix+"data_stride").end());
     return vals;
@@ -764,7 +764,9 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
                 isl_aff* addr = get_aff(mux_addr_expr);
                 int ww = options.mem_tile.word_width.at(micro_buf_name);
                 int capacity = options.mem_tile.capacity.at(micro_buf_name);
-                vals.merge(generate_config_from_aff_expr(addr, is_read, true, ww, capacity, port_width));
+
+                //mux always has port width = 1
+                vals.merge(generate_config_from_aff_expr(addr, is_read, true, ww, capacity, 1));
                 //string prefix = is_read ? "mux_read" : "mux_write";
                 //cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
                 //cout << "\""+prefix+"_data_starting_addr\"," <<
@@ -778,13 +780,15 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
 
             //TODO: use word width to fix kavya's request
             int ww = options.mem_tile.word_width.at(micro_buf_name);
+            int pw = is_read ? options.mem_tile.out_port_width.at(micro_buf_name) :
+                options.mem_tile.in_port_width.at(micro_buf_name);
             int capacity = options.mem_tile.capacity.at(micro_buf_name);
             //int ww = is_read ?options.mem_tile.out_port_width.at(micro_buf_name)
             //    : options.mem_tile.in_port_width.at(micro_buf_name);
             auto addr_expr_map = dot(to_map(bmap), reduce_map);
             auto addr = get_aff(addr_expr_map);
             cout << str(addr) << endl;
-            vals.merge(generate_config_from_aff_expr(addr, is_read, false, ww, capacity, port_width));
+            vals.merge(generate_config_from_aff_expr(addr, is_read, false, ww, capacity, pw));
             //string prefix = is_read ? "read" : "write";
             //cout << prefix + "_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
             //for (int d = 0; d < num_in_dims(addr); d++) {
@@ -1127,25 +1131,33 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         }
       }
 
+      CoreIR::Instance* buf;
       CoreIR::Values genargs = {
         {"width", CoreIR::Const::make(context, port_widths)},
         {"num_input", CoreIR::Const::make(context, banks_to_inputs.at(bk.name).size())},
         {"num_output", CoreIR::Const::make(context, banks_to_outputs.at(bk.name).size())},
         {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
-        {"config", CoreIR::Const::make(context, config_file)}
+        {"has_flush",  CoreIR::Const::make(context, true)}
       };
       CoreIR::Values modargs = {
         {"mode", CoreIR::Const::make(context, "lake")}
       };
       cout << "Add ub node with input_num = " << banks_to_inputs.at(bk.name).size()
           << ", output_num = " << banks_to_outputs.at(bk.name).size() << endl;
-      CoreIR::Instance* buf;
-      buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
+      if (options.pass_through_valid) {
+        modargs["config"] = CoreIR::Const::make(context, config_file);
+        buf = def->addInstance(ub_ins_name, "cgralib.Mem", genargs, modargs);
+      } else {
+        genargs["config"] = CoreIR::Const::make(context, config_file);
+        buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
+      }
 
       CoreIR::Values widthArg = {{"width", CoreIR::Const::make(context, 1)}};
       auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
               {{"value", CoreIR::Const::make(context, true)}});
-      def->connect(buf->sel("rst_n"), def->sel("self.reset"));
+      //def->connect(buf->sel("rst_n"), def->sel("self.reset"));
+      //TODO: why garnet wire reset to flush of memory
+      def->connect(buf->sel("flush"), def->sel("self.reset"));
       def->connect(buf->sel("clk"), def->sel("self.clk"));
       def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
 

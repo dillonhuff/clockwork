@@ -85,6 +85,7 @@ wire ub_buf_inst_input_10_to_buf_inst_output_3_clk;
 wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_data_in_0;
 wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_data_out_0;
 wire [15:0] ub_buf_inst_input_10_to_buf_inst_output_3_data_out_1;
+wire ub_buf_inst_input_10_to_buf_inst_output_3_flush;
 assign d_reg__U10_in = ub_buf_inst_input_10_to_buf_inst_output_3_data_out_1;
 assign d_reg__U10_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
@@ -139,11 +140,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(d_reg__U9_clk),
     .out(d_reg__U9_out)
 );
-assign ub_buf_inst_input_10_to_buf_inst_output_3_rst_n = reset;
+assign ub_buf_inst_input_10_to_buf_inst_output_3_rst_n = 1'b0;
 assign ub_buf_inst_input_10_to_buf_inst_output_3_clk_en = 1'b1;
 assign ub_buf_inst_input_10_to_buf_inst_output_3_clk = clk;
 assign ub_buf_inst_input_10_to_buf_inst_output_3_data_in_0 = input_write[0];
-cwlib_Mem__confignull__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_input1__num_output2__width16 #(
+assign ub_buf_inst_input_10_to_buf_inst_output_3_flush = reset;
+cwlib_Mem__confignull__has_flushTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_input1__num_output2__width16 #(
     .mode("lake")
 ) ub_buf_inst_input_10_to_buf_inst_output_3 (
     .rst_n(ub_buf_inst_input_10_to_buf_inst_output_3_rst_n),
@@ -151,7 +153,8 @@ cwlib_Mem__confignull__has_flushFalse__has_resetFalse__has_stencil_validFalse__h
     .clk(ub_buf_inst_input_10_to_buf_inst_output_3_clk),
     .data_in_0(ub_buf_inst_input_10_to_buf_inst_output_3_data_in_0),
     .data_out_0(ub_buf_inst_input_10_to_buf_inst_output_3_data_out_0),
-    .data_out_1(ub_buf_inst_input_10_to_buf_inst_output_3_data_out_1)
+    .data_out_1(ub_buf_inst_input_10_to_buf_inst_output_3_data_out_1),
+    .flush(ub_buf_inst_input_10_to_buf_inst_output_3_flush)
 );
 assign output_read[8] = input_write[0];
 assign output_read[7] = d_reg__U8_out;
@@ -167,14 +170,11 @@ endmodule
 module conv33_naive_compute (
     input clk,
     input reset,
-    output in_inst_input_read_valid,
+    output in_inst_input_read_en,
     input [15:0] in_inst_input_read [0:0],
-    output out_inst_output_write_en,
+    output out_inst_output_write_valid,
     output [15:0] out_inst_output_write [0:0]
 );
-wire [15:0] _U14_in;
-wire _U14_clk;
-wire [15:0] _U14_out;
 wire buf_inst_clk;
 wire buf_inst_reset;
 wire [15:0] buf_inst_input_write [0:0];
@@ -185,15 +185,6 @@ wire [15:0] input_buf_inst_input_write [0:0];
 wire output_clk;
 wire [15:0] output_buf_inst_output_read [8:0];
 wire [15:0] output_out_inst_output_write [0:0];
-assign _U14_in = in_inst_input_read[0];
-assign _U14_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U14 (
-    .in(_U14_in),
-    .clk(_U14_clk),
-    .out(_U14_out)
-);
 assign buf_inst_clk = clk;
 assign buf_inst_reset = reset;
 assign buf_inst_input_write[0] = input_buf_inst_input_write[0];
@@ -204,7 +195,7 @@ buf_inst_ub buf_inst (
     .output_read(buf_inst_output_read)
 );
 assign input_clk = clk;
-assign input_in_inst_input_read[0] = _U14_out;
+assign input_in_inst_input_read[0] = in_inst_input_read[0];
 cu_input input (
     .clk(input_clk),
     .in_inst_input_read(input_in_inst_input_read),
@@ -225,8 +216,8 @@ cu_output output (
     .buf_inst_output_read(output_buf_inst_output_read),
     .out_inst_output_write(output_out_inst_output_write)
 );
-assign in_inst_input_read_valid = 1'b0;
-assign out_inst_output_write_en = 1'b0;
+assign in_inst_input_read_en = 1'b0;
+assign out_inst_output_write_valid = 1'b0;
 assign out_inst_output_write[0] = output_out_inst_output_write[0];
 endmodule
 
