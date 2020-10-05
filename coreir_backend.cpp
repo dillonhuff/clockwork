@@ -185,14 +185,24 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   for (int d = 0; d < num_div_dims(aff); d++) {
     auto v = isl_aff_get_coefficient_val(aff, isl_dim_div, d);
     if (!is_zero(v)) {
-      auto a = isl_aff_get_div(aff, d);
-      auto denom = isl_aff_get_denominator_val(a);
+
+      isl_aff * a = isl_aff_get_div(aff, d);
+      isl_val * denom = isl_aff_get_denominator_val(a);
+      int denom_int = to_int( denom);
       auto denom_str = str(denom);
       auto astr = codegen_verilog(ctrl_vars, isl_aff_scale_val(a, denom));
 
       assert(isl_val_is_int(v));
 
+      if(ceil(log2(denom_int)) == log2(denom_int))
+      {
+      terms.push_back(parens(str(v) + "*" + "(" + astr + " >> " + str(log2(denom_int)) + ")"));
+
+
+      } else{
       terms.push_back(parens(str(v) + "*" + "$rtoi($floor(" + astr + " / " + denom_str + "))"));
+
+      }
     }
   }
   if (terms.size() == 0) {
