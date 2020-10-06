@@ -11774,6 +11774,25 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
   generate_verilog_tb(prg.name);
 }
+
+void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt) {
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  schedule_info hwinfo;
+
+  //coreIR codegen options
+  hwinfo.use_dse_compute = false;
+  opt.rtl_options.use_prebuilt_memory = true;
+  opt.inline_vectorization = true;
+  opt.pass_through_valid= true;
+  opt.dir = "aha_garnet_design/"+prg.name+"/";
+
+  //TODO: add lake memory tile configuration here
+
+  auto sched = global_schedule_from_buffers(buffers_opt);
+  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
+}
 #endif
 
 void identity_stream_through_mem_coreir_test() {
@@ -13818,27 +13837,29 @@ vector<int> garnet_fuse_ii_level(prog& prg);
 void lake_conv33_recipe_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
-  prg.name = "conv33_recipe_compute";
-  prg.add_input("in_inst");
-  prg.add_output("out_inst");
+  prg.name = "conv_3_3";
+  prg.add_input("hw_input_stencil");
+  prg.add_output("conv_stencil");
   //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in_inst"] = 16;
-  prg.buffer_port_widths["out_inst"] = 16;
-  prg.buffer_port_widths["buf_inst"] = 16;
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
 
   auto p = prg.add_nest("po", 0, 64, "pi", 0, 64);
   auto write = p->add_op("input");
-  write->add_load("in_inst", "po, pi");
-  write->add_store("buf_inst", "po, pi");
+  write->add_function("hcompute_hw_input_global_wrapper_stencil");
+  write->add_load("hw_input_stencil", "po, pi");
+  write->add_store("hw_input_global_wrapper_stencil", "po, pi");
 
   auto q = prg.add_nest("qo", 0, 62, "qi", 0, 62);
   auto read = q->add_op("output");
+  read->add_function("hcompute_conv_stencil_1");
   for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
-        read->add_load("buf_inst", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+        read->add_load("hw_input_global_wrapper_stencil", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
       }
   }
-  read->add_store("out_inst", "qo, qi");
+  read->add_store("conv_stencil", "qo, qi");
 
 
   //optimized schedule
@@ -13849,10 +13870,6 @@ void lake_conv33_recipe_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  opt.rtl_options.use_prebuilt_memory = true;
-  opt.inline_vectorization = true;
-  opt.pass_through_valid= true;
-  opt.dir = "aha_garnet_design/"+prg.name+"/";
   opt.iis = iis;
   int max_inpt = 2, max_outpt = 2;
   //auto sched = global_schedule_from_buffers(buffers_opt);
@@ -13874,7 +13891,7 @@ void lake_conv33_recipe_test() {
   }
 
 #ifdef COREIR
-  generate_cgra_tb(buffers_opt, prg, opt);
+  generate_garnet_tb(buffers_opt, prg, opt);
 #endif
 
 
