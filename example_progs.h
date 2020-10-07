@@ -1,7 +1,7 @@
 #pragma once
 #include "prog.h"
 
-prog conv_multi(); //?
+prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
 prog accumulation(); //reduce
 prog unsharp();
@@ -12,6 +12,7 @@ prog harris_remove(); //manually edit
 prog pointwise(); //point
 prog brighten_blur(); //stencil
 prog halide_harris();
+prog conv_3_3(); //stencil
 prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 //prog mini_conv_halide_fixed();

@@ -1486,6 +1486,8 @@ prog duplicate_interface(prog& p);
 
 vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
 vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
+vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
+vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
 
 
 std::vector<string> unoptimized_result(prog& prg);

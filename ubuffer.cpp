@@ -587,7 +587,7 @@ void generate_vivado_tcl(UBuffer& buf) {
 map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
   print_bank_info();
   map<string, UBuffer> buffers;
-  for (auto b : get_banks()) {
+  for (auto b : get_banks_and_sort()) {
     cout << "Bank: " << b.name << " has max delay: " << b.maxdelay << endl;
     if (get_bank_outputs(b.name).size() == 0 ||
         get_bank_inputs(b.name).size() == 0) {
@@ -613,6 +613,15 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
     buf.port_widths = port_widths;
     auto inpts = get_bank_inputs(b.name);
     auto outpts = get_bank_outputs(b.name);
+
+    //add a sort of output make sure we have positive stride when coalesce
+    vector<string> pt_vec(outpts.begin(), outpts.end());
+    sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+              auto l_start = lexminpt(range(access_map.at(l)));
+              auto r_start = lexminpt(range(access_map.at(r)));
+              return lex_lt_pt(l_start, r_start);
+              });
+
     int usuffix = 0;
     for (auto inpt: inpts) {
       auto acc_map = to_map(access_map.at(inpt));
@@ -624,7 +633,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
       usuffix ++;
     }
 
-    for (auto outpt: outpts) {
+    for (auto outpt: pt_vec) {
       auto acc_map = to_map(access_map.at(outpt));
       acc_map = set_range_name(acc_map, bname);
       auto dom = domain.at(outpt);
@@ -1036,14 +1045,15 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
   //sort the bank by delay first
-  auto bank_list = get_banks();
-  sort(bank_list.begin(), bank_list.end(), [](const bank l, const bank r) {
-            return l.maxdelay > r.maxdelay;
-          } );
+  auto bank_list = get_banks_and_sort();
+  //sort(bank_list.begin(), bank_list.end(), [](const bank l, const bank r) {
+  //          return l.maxdelay > r.maxdelay;
+  //        } );
 
   //generate all the ubuffer for internal vectorization
   auto rewrite_buffer = generate_ubuffer(options);
 
+  bool has_stencil_valid = false;
   for (auto bk : bank_list) {
     //assert(false);
     std::set<string> inpts = get_bank_inputs(bk.name);
@@ -1106,8 +1116,10 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         }
       }
     } else {
+      //generate a memory for this ubuffer
+      contain_memory_tile = true;
+
       string ub_ins_name = "ub_"+bk.name;
-      bool has_stencil_valid = false;
       if (options.inline_vectorization) {
         buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
         config_file = generate_ubuf_args(options, rewrite_buffer);
@@ -1162,8 +1174,10 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
 
       //Wire stencil valid
-      if (has_stencil_valid) {
-        def->connect(buf->sel("stencil_valid"), def->sel("self."+get_bundle(pick(outpts)) + "_extra_ctrl"));
+      if (options.pass_through_valid) {
+        if (has_stencil_valid) {
+          def->connect(buf->sel("stencil_valid"), def->sel("self."+get_bundle(pick(outpts)) + "_extra_ctrl"));
+        }
       }
 
       int inpt_cnt = 0, outpt_cnt = 0;
@@ -1236,6 +1250,20 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
     }
   }
+
+  //wire the control var if not using stencil_Valid
+  for (auto bk : bank_list) {
+    //assert(false);
+    std::set<string> inpts = get_bank_inputs(bk.name);
+    std::set<string> outpts = get_bank_outputs(bk.name);
+    if (options.pass_through_valid) {
+        if (!has_stencil_valid){
+          def->connect(def->sel("self." + get_bundle(pick(inpts)) + "_extra_ctrl"),
+                  def->sel("self." + get_bundle(pick(outpts)) + "_extra_ctrl"));
+        }
+    }
+  }
+
   for (auto itr: pt2psth) {
       CoreIR::inlineInstance(itr.second);
   }
@@ -1925,9 +1953,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
         }
         ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
-        if (options.pass_through_valid) {
-            ub_field.push_back(make_pair(name + "_extra_ctrl", context->Bit()));
-        }
+        //if (options.pass_through_valid) {
+        //    ub_field.push_back(make_pair(name + "_extra_ctrl", context->Bit()));
+        //}
       }
     }
 
@@ -1965,6 +1993,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         //ub_field.push_back(make_pair(name + "_en", context->BitIn()));
         //ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
         ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
+        if (options.pass_through_valid) {
+            ub_field.push_back(make_pair(name + "_extra_ctrl", context->BitIn()));
+        }
       } else {
         //ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
         //ub_field.push_back(make_pair(name + "_valid", context->Bit()));

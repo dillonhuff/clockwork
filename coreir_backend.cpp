@@ -1176,6 +1176,9 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     }
   }
 
+  //this is the flag to wire stencil valid signal
+  bool need_pass_valid = false;
+
   auto levels = get_variable_levels(prg);
   // Connect compute units to buffers
   for (auto op : prg.all_ops()) {
@@ -1186,7 +1189,6 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       def->connect(def->sel(op->name)->sel(var), var_wire);
     }
 
-    bool need_pass_valid = false;
 
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
@@ -1213,6 +1215,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
             write_start_wire(def, op->name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
             write_start_control_vars(def, op->name));*/
+        if (options.pass_through_valid) {
+          if (need_pass_valid) {
+            def->connect(buf_name + "." + bundle_name + "_extra_ctrl", op->name + ".valid_pass_out");
+          }
+        }
       }
     }
 
@@ -1239,9 +1246,16 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
 
         //wire the stencil valid from last buffer to the next one
-        if (need_pass_valid) {
-          if (options.pass_through_valid) {
-            def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
+        if (options.pass_through_valid) {
+          //we disable wiring if we found first memory tile
+          if (need_pass_valid) {
+            //skip the self loop I/O
+            if (! elem(buf_name, outgoing_buffers(buffers, op, prg))){
+               def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
+            }
+          }
+          if (buffers.at(buf_name).contain_memory_tile) {
+            need_pass_valid = false;
           }
         }
         //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),

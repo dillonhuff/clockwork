@@ -807,6 +807,7 @@ class UBuffer {
 
     //Stencil valid map for each port
     std::map<string, umap*> sv_map;
+    bool contain_memory_tile = false;
 
     std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
@@ -1253,6 +1254,7 @@ class UBuffer {
       //return ret;
     }
 
+
     bool has_bank(const std::string& name) {
       for (auto& bnk : bank_list) {
         if (bnk.name == name) {
@@ -1354,6 +1356,13 @@ class UBuffer {
         //}
       //}
       //return bnk;
+    }
+    vector<stack_bank> get_banks_and_sort() {
+      auto bank_list = get_banks();
+      sort(bank_list.begin(), bank_list.end(), [](const bank l, const bank r) {
+                return l.maxdelay > r.maxdelay;
+              } );
+      return bank_list;
     }
 
     void add_bank_between(const std::string& inpt, const std::string& outpt, const stack_bank& bank) {

@@ -13837,7 +13837,7 @@ vector<int> garnet_fuse_ii_level(prog& prg);
 void lake_conv33_recipe_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
-  prg.name = "conv_3_3";
+  prg.name = "conv_3_3_recipe";
   prg.add_input("hw_input_stencil");
   prg.add_output("conv_stencil");
   //prg.buffer_port_widths["T"] = 32*3;
@@ -13893,6 +13893,53 @@ void lake_conv33_recipe_test() {
 #ifdef COREIR
   generate_garnet_tb(buffers_opt, prg, opt);
 #endif
+
+
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, iis, extra_raw_deps);
+  isl_union_map* hsh = global_schedule_from_buffers(ubuf_pool);
+  cout << "hardware schedule: " << str(hsh) << endl;
+  //cmd("mkdir -p ./lake_stream/conv_3_3_recipe/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_recipe/", false);
+  //cmd("mkdir -p ./lake_controllers/conv_3_3_recipe/");
+  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_recipe/");
+}
+
+void dsa_writers(prog& prg);
+void lake_conv33_halide_test() {
+  prog prg = conv_3_3();
+  dsa_writers(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  auto iis = garnet_fuse_ii_level(prg);
+  CodegenOptions options;
+  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.iis = iis;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+#ifdef COREIR
+  generate_garnet_tb(buffers_opt, prg, opt);
+#endif
+  assert(false);
 
 
   //return the buffers after vectorization and the proximity deps you want to remove
@@ -15643,7 +15690,7 @@ void lake_tests() {
   //lake_agg_sram_tb_config_test();
   lake_conv33_autovec_test();
   lake_conv33_recipe_test();
-  assert(false);
+  lake_conv33_halide_test();
   lake_conv33_autovec_aha_test();
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");
@@ -16015,6 +16062,7 @@ void dsa_writers(prog& prg) {
       auto written = op->buffers_written();
       for (auto b : intersection(read, written)) {
         reduced_kernels.insert(b);
+        cout << "reduced kernel : " << b << endl;
       }
     }
 
@@ -16022,6 +16070,7 @@ void dsa_writers(prog& prg) {
       for (auto b : get_produced_buffers(k, prg)) {
         all_buffers.insert(b);
         producer_kernels[b].insert(k);
+        cout << "insert kernel: " << k << " to producer buffer: " << b << endl;
       }
     }
 
