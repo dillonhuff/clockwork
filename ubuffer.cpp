@@ -4452,7 +4452,7 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   return out;
 }
 
-map<int, std::set<int> > embarassing_partition(const vector<string>& ports, UBuffer& buf) {
+map<int, std::set<int> > find_embarassing_partitions(const vector<string>& ports, UBuffer& buf) {
   map<int, std::set<int> > constant_offset_lists;
   for (auto pt : ports) {
     cout << tab(2) << pt << endl;
