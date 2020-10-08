@@ -4452,6 +4452,8 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   return out;
 }
 
+typedef std::map<int, std::set<int> > embarassing_partition;
+
 map<int, std::set<int> > find_embarassing_partitions(const vector<string>& ports, UBuffer& buf) {
   map<int, std::set<int> > constant_offset_lists;
   for (auto pt : ports) {
@@ -4523,6 +4525,10 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
   assert(grouped == buf.get_all_ports().size());
 
   cout << "# of large groups: " << large_groups.size() << endl;
+  //std::map<vector<string>, embarassing_partition> viable_partitions;
+  std::map<embarassing_partition, std::set<vector<string> > > viable_partitions;
+
+  int num_pt_groups = 0;
   for (auto g : large_groups) {
     vector<string> inpts;
     vector<string> outpts;
@@ -4534,20 +4540,39 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
         assert(buf.is_out_pt(pt));
         outpts.push_back(pt);
       }
-
     }
 
     cout << tab(1) << "Input ports..." << endl;
     for (auto pt : inpts) {
       cout << tab(2) << pt << endl;
     }
+    if (inpts.size() > 0) {
+      num_pt_groups++;
+    }
     auto partitions = find_embarassing_partitions(inpts, buf);
+    //viable_partitions[inpts] = partitions;
+    viable_partitions[partitions].insert(inpts);
+
     cout << endl;
     cout << tab(1) << "Output ports..." << endl;
     for (auto pt : outpts) {
       isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
       cout << tab(2) << str(access) << endl;
     }
+
+    if (outpts.size() > 0) {
+      num_pt_groups++;
+    }
+    auto out_partitions = find_embarassing_partitions(outpts, buf);
+    //viable_partitions[outpts] = out_partitions;
+    viable_partitions[out_partitions].insert(outpts);
   }
-  //assert(false);
+
+  cout << "Viable partitions by port group:" << endl;
+  for (auto part : viable_partitions) {
+    if (part.second.size() == num_pt_groups) {
+      cout << "FOUND VIABLE PARTITION" << endl;
+    }
+  }
+  assert(false);
 }
