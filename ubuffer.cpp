@@ -4490,6 +4490,7 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
     grouped += grp.size();
     for (auto g : grp) {
       cout << tab(1) << g << endl;
+      cout << tab(2) << str(buf.access_map.at(g)) << endl;
     }
   }
 
