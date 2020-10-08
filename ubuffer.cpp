@@ -4482,16 +4482,16 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
   vector<vector<string> > overlapping;
   for (auto pt : buf.get_all_ports()) {
     auto pt_write_times = range(buf.schedule.at(pt));
-    cout << "write times: " << str(pt_write_times) << endl;
+    //cout << "write times: " << str(pt_write_times) << endl;
     //cout << str(buf.schedule.at(pt)) << endl;
     bool overlaps_existing = false;
     for (auto& group : overlapping) {
       for (auto other_pt : group) {
         auto other_pt_write_times = range(buf.schedule.at(other_pt));
-        cout << tab(1) << "other write times: " << str(other_pt_write_times) << endl;
+        //cout << tab(1) << "other write times: " << str(other_pt_write_times) << endl;
 
         if (!empty(its(pt_write_times, other_pt_write_times))) {
-          cout << "Overlapping!" << endl;
+          //cout << "Overlapping!" << endl;
           //assert(false);
           overlaps_existing = true;
           break;
@@ -4511,12 +4511,12 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
   int grouped = 0;
   vector<vector<string> > large_groups;
   for (auto& grp : overlapping) {
-    cout << "Group: " << grp.size() << endl;
+    //cout << "Group: " << grp.size() << endl;
     grouped += grp.size();
-    for (auto g : grp) {
-      cout << tab(1) << g << endl;
-      cout << tab(2) << str(buf.access_map.at(g)) << endl;
-    }
+    //for (auto g : grp) {
+      //cout << tab(1) << g << endl;
+      //cout << tab(2) << str(buf.access_map.at(g)) << endl;
+    //}
     if (grp.size() > 1) {
       large_groups.push_back(grp);
     }
@@ -4579,6 +4579,54 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
       for (auto off : partition.second) {
         cout << tab(2) << off << endl;
       }
+      return;
     }
   }
+
+  cout << "No viable embarassing partioning strategy for " << buf.name << endl;
+  map<string, pair<string, int> > srs;
+  auto sched = buf.global_schedule();
+  for (auto g : large_groups) {
+    for (auto pt : g) {
+      for (auto other_pt : g) {
+        if (pt != other_pt) {
+
+          auto pt_dom = set_name(cpy(buf.domain.at(pt)), "a");
+          auto other_dom = set_name(cpy(buf.domain.at(other_pt)), "a");
+
+          cout << endl;
+          cout << "pt       = " << pt << endl;
+          cout << "other_pt = " << other_pt << endl;
+          cout << endl;
+
+          cout << "pt sched   : " << str(buf.schedule.at(pt)) << endl;
+          cout << "other sched: " << str(buf.schedule.at(other_pt)) << endl;
+          cout << endl;
+
+          cout << "pt sched   : " << str(buf.access_map.at(pt)) << endl;
+          cout << "other sched: " << str(buf.access_map.at(other_pt)) << endl;
+          auto pt_accesses = range(buf.access_map.at(pt));
+          auto other_pt_accesses = range(buf.access_map.at(other_pt));
+
+          isl_aff* pt_sched = set_name(get_aff(buf.schedule.at(pt)), "a");
+          isl_aff* other_pt_sched = set_name(get_aff(buf.schedule.at(other_pt)), "a");
+          isl_aff* diff = sub(other_pt_sched, pt_sched);
+          if (isl_aff_is_cst(diff) &&
+              (to_int(const_coeff(diff)) >= 0) &&
+              subset(pt_dom, other_dom) &&
+              subset(pt_accesses, other_pt_accesses)) {
+            srs[pt] = {other_pt, 1};
+          }
+        }
+      }
+    }
+  }
+
+  cout << endl;
+  cout << buf.name << " has " << srs.size() << " output -> Output shift registers..." << endl;
+  for (auto b : srs) {
+    cout << tab(1) << b.first << " -> " << b.second.first << " : " << b.second.second << endl;
+  }
+  cout << "Error: No viable banking strategy for " << buf.name << endl;
+  assert(false);
 }

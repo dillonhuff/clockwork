@@ -332,6 +332,10 @@ isl_map* set_range_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
 }
 
+isl_aff* set_name(isl_aff* const m, string new_name) {
+    return isl_aff_set_tuple_id(m, isl_dim_out, id(ctx(m), new_name));
+}
+
 isl_set* set_name(isl_set* const m, string new_name) {
     return isl_set_set_tuple_name(m, new_name.c_str());
 }
