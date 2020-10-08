@@ -4550,8 +4550,9 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
       num_pt_groups++;
     }
     auto partitions = find_embarassing_partitions(inpts, buf);
-    //viable_partitions[inpts] = partitions;
-    viable_partitions[partitions].insert(inpts);
+    if (partitions.size() > 0) {
+      viable_partitions[partitions].insert(inpts);
+    }
 
     cout << endl;
     cout << tab(1) << "Output ports..." << endl;
@@ -4564,15 +4565,20 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
       num_pt_groups++;
     }
     auto out_partitions = find_embarassing_partitions(outpts, buf);
-    //viable_partitions[outpts] = out_partitions;
-    viable_partitions[out_partitions].insert(outpts);
+    if (out_partitions.size() > 0) {
+      viable_partitions[out_partitions].insert(outpts);
+    }
   }
 
   cout << "Viable partitions by port group:" << endl;
   for (auto part : viable_partitions) {
-    if (part.second.size() == num_pt_groups) {
-      cout << "FOUND VIABLE PARTITION" << endl;
+    if (num_pt_groups > 0 && part.second.size() == num_pt_groups) {
+      cout << "FOUND VIABLE PARTITION for " << buf.name << endl;
+      auto partition = pick(part.first);
+      cout << tab(1) << "Component: " << partition.first << endl;
+      for (auto off : partition.second) {
+        cout << tab(2) << off << endl;
+      }
     }
   }
-  assert(false);
 }
