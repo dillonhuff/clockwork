@@ -4452,7 +4452,7 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   return out;
 }
 
-maybe<int> embarassing_partition(const vector<string>& ports, UBuffer& buf) {
+map<int, std::set<int> > embarassing_partition(const vector<string>& ports, UBuffer& buf) {
   map<int, std::set<int> > constant_offset_lists;
   for (auto pt : ports) {
     cout << tab(2) << pt << endl;
@@ -4465,13 +4465,14 @@ maybe<int> embarassing_partition(const vector<string>& ports, UBuffer& buf) {
     }
   }
 
+  map<int, std::set<int> > embarassing_partitions;
   for (auto cs : constant_offset_lists) {
     if (cs.second.size() == ports.size()) {
       cout << tab(1) << "Embarassing partition in " << cs.first << " of size: " << cs.second.size() << endl;
-      return cs.first;
+      embarassing_partitions[cs.first] = cs.second;
     }
   }
-  return {};
+  return embarassing_partitions;
 }
 
 void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
@@ -4540,7 +4541,7 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
     for (auto pt : inpts) {
       cout << tab(2) << pt << endl;
     }
-    cout << tab(3) << "Embarassing partition: " << embarassing_partition(inpts, buf) << endl;
+    auto partitions = find_embarassing_partitions(inpts, buf) << endl;
     cout << endl;
     cout << tab(1) << "Output ports..." << endl;
     for (auto pt : outpts) {
