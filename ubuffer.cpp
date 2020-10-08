@@ -4477,7 +4477,7 @@ map<int, std::set<int> > find_embarassing_partitions(const vector<string>& ports
   return embarassing_partitions;
 }
 
-void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
+vector<vector<string> > overlapping_ports(UBuffer& buf) {
 
   vector<vector<string> > overlapping;
   for (auto pt : buf.get_all_ports()) {
@@ -4508,24 +4508,11 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
     }
   }
 
-  int grouped = 0;
-  vector<vector<string> > large_groups;
-  for (auto& grp : overlapping) {
-    //cout << "Group: " << grp.size() << endl;
-    grouped += grp.size();
-    //for (auto g : grp) {
-      //cout << tab(1) << g << endl;
-      //cout << tab(2) << str(buf.access_map.at(g)) << endl;
-    //}
-    if (grp.size() > 1) {
-      large_groups.push_back(grp);
-    }
-  }
+  return overlapping;
+}
 
-  assert(grouped == buf.get_all_ports().size());
-
+maybe<pair<int, std::set<int> > > pick_embarassing_partition(const vector<vector<string> >& large_groups, UBuffer& buf) {
   cout << "# of large groups: " << large_groups.size() << endl;
-  //std::map<vector<string>, embarassing_partition> viable_partitions;
   std::map<embarassing_partition, std::set<vector<string> > > viable_partitions;
 
   int num_pt_groups = 0;
@@ -4579,9 +4566,27 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
       for (auto off : partition.second) {
         cout << tab(2) << off << endl;
       }
-      return;
+      return {partition};
     }
   }
+
+  return {};
+}
+
+void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
+  vector<vector<string> > overlapping = overlapping_ports(buf);
+
+  int grouped = 0;
+  vector<vector<string> > large_groups;
+  for (auto& grp : overlapping) {
+    grouped += grp.size();
+    if (grp.size() > 1) {
+      large_groups.push_back(grp);
+    }
+  }
+
+  assert(grouped == buf.get_all_ports().size());
+
 
   cout << "No viable embarassing partioning strategy for " << buf.name << endl;
   map<string, pair<string, int> > srs;
@@ -4594,17 +4599,6 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
           auto pt_dom = set_name(cpy(buf.domain.at(pt)), "a");
           auto other_dom = set_name(cpy(buf.domain.at(other_pt)), "a");
 
-          cout << endl;
-          cout << "pt       = " << pt << endl;
-          cout << "other_pt = " << other_pt << endl;
-          cout << endl;
-
-          cout << "pt sched   : " << str(buf.schedule.at(pt)) << endl;
-          cout << "other sched: " << str(buf.schedule.at(other_pt)) << endl;
-          cout << endl;
-
-          cout << "pt sched   : " << str(buf.access_map.at(pt)) << endl;
-          cout << "other sched: " << str(buf.access_map.at(other_pt)) << endl;
           auto pt_accesses = range(buf.access_map.at(pt));
           auto other_pt_accesses = range(buf.access_map.at(other_pt));
 
@@ -4626,6 +4620,33 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
   cout << buf.name << " has " << srs.size() << " output -> Output shift registers..." << endl;
   for (auto b : srs) {
     cout << tab(1) << b.first << " -> " << b.second.first << " : " << b.second.second << endl;
+  }
+  vector<vector<string> > filtered_groups;
+  for (auto g : large_groups) {
+    vector<string> gs;
+    for (auto pt : g) {
+      if (!contains_key(pt, srs)) {
+        gs.push_back(pt);
+      }
+    }
+    if (gs.size() > 0) {
+      filtered_groups.push_back(gs);
+    }
+  }
+  cout << "Filtered groups" << endl;
+  for (auto& grp : filtered_groups) {
+    cout << "Group: " << grp.size() << endl;
+    for (auto g : grp) {
+      cout << tab(1) << g << endl;
+      cout << tab(2) << str(buf.access_map.at(g)) << endl;
+    }
+  }
+
+  maybe<pair<int, std::set<int> > > partition =
+    pick_embarassing_partition(filtered_groups, buf);
+
+  if (partition.has_value()) {
+    return;
   }
   cout << "Error: No viable banking strategy for " << buf.name << endl;
   assert(false);
