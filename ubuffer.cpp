@@ -4452,3 +4452,48 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   return out;
 }
 
+void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
+
+  vector<vector<string> > overlapping;
+  for (auto pt : buf.get_all_ports()) {
+    auto pt_write_times = range(buf.schedule.at(pt));
+    cout << "write times: " << str(pt_write_times) << endl;
+    //cout << str(buf.schedule.at(pt)) << endl;
+    bool overlaps_existing = false;
+    for (auto& group : overlapping) {
+      for (auto other_pt : group) {
+        auto other_pt_write_times = range(buf.schedule.at(other_pt));
+        cout << tab(1) << "other write times: " << str(other_pt_write_times) << endl;
+
+        if (!empty(its(pt_write_times, other_pt_write_times))) {
+          cout << "Overlapping!" << endl;
+          //assert(false);
+          overlaps_existing = true;
+          break;
+        }
+      }
+      if (overlaps_existing) {
+        group.push_back(pt);
+        break;
+      }
+    }
+
+    if (!overlaps_existing) {
+      overlapping.push_back({pt});
+    }
+  }
+
+  int grouped = 0;
+  //assert(overlapping.size() == buf.get_all_ports().size());
+  for (auto& grp : overlapping) {
+    cout << "Group: " << grp.size() << endl;
+    grouped += grp.size();
+    for (auto g : grp) {
+      cout << tab(1) << g << endl;
+    }
+  }
+
+  assert(grouped == buf.get_all_ports().size());
+
+  assert(false);
+}

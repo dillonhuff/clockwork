@@ -2020,3 +2020,4 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
     umap* sched);
 
 
+void overlapping_operations(UBuffer& buf, schedule_info& hwinfo);

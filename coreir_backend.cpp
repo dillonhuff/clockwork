@@ -614,6 +614,7 @@ void generate_platonic_ubuffer(
     schedule_info& hwinfo) {
 
   prg.pretty_print();
+  overlapping_operations(buf, hwinfo);
 
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   int folding_factor = bank_folding_factor(bank_factors, prg, buf, hwinfo);
