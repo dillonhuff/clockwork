@@ -4453,10 +4453,23 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
 }
 
 maybe<int> embarassing_partition(const vector<string>& ports, UBuffer& buf) {
+  map<int, std::set<int> > constant_offset_lists;
   for (auto pt : ports) {
     cout << tab(2) << pt << endl;
     isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
+    map<int, isl_val*> constant_offsets = constant_components(access);
     cout << tab(2) << str(access) << endl;
+    for (auto ent : constant_offsets) {
+      cout << tab(3) << "Constant offset in component " << ent.first << ": " << str(ent.second) << endl;
+      constant_offset_lists[ent.first].insert(to_int(ent.second));
+    }
+  }
+
+  for (auto cs : constant_offset_lists) {
+    if (cs.second.size() == ports.size()) {
+      cout << tab(1) << "Embarassing partition in " << cs.first << " of size: " << cs.second.size() << endl;
+      return cs.first;
+    }
   }
   return {};
 }

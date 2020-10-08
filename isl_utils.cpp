@@ -3290,6 +3290,15 @@ isl_aff* get_aff(isl_map* m) {
   return aff;
 }
 
+std::vector<isl_aff*> get_affs(isl_multi_aff* saff) {
+  vector<isl_aff*> ret;
+  for (int i = 0; i < get_size(saff); i ++) {
+    auto aff = isl_multi_aff_get_aff(saff, i);
+    ret.push_back(aff);
+  }
+  return ret;
+}
+
 std::vector<isl_aff*> get_aff_vec(isl_map* m) {
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
   //cout << tab(1) << str(m) << endl;
@@ -3532,4 +3541,16 @@ isl_aff* mul(isl_aff* start_time_aff, const int compute_latency) {
 
 isl_aff* div(isl_aff* start_time_aff, const int compute_latency) {
   return div(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
+std::map<int, isl_val*> constant_components(isl_multi_aff* access) {
+  map<int, isl_val*> ret;
+  int d = 0;
+  for (auto aff : get_affs(access)) {
+    if (isl_aff_is_cst(aff)) {
+      ret[d] = const_coeff(aff);
+    }
+    d++;
+  }
+  return ret;
 }
