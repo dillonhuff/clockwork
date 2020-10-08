@@ -4649,5 +4649,5 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
     return;
   }
   cout << "Error: No viable banking strategy for " << buf.name << endl;
-  assert(false);
+  //assert(false);
 }
