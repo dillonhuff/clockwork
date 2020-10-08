@@ -1206,7 +1206,16 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             }
           }
         }
-        for (auto outpt: outpts) {
+        for (auto it: bk.delay_map) {
+            cout << "Bank delay map: "  <<it.first << ", " << it.second << endl;
+        }
+    vector<string> pt_vec(outpts.begin(), outpts.end());
+    sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+              auto l_start = lexminpt(range(access_map.at(l)));
+              auto r_start = lexminpt(range(access_map.at(r)));
+              return lex_lt_pt(l_start, r_start);
+              });
+        for (auto outpt: pt_vec) {
           //need a second pass push all wire into a list
           //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
           CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
