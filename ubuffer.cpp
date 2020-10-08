@@ -4484,7 +4484,7 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
   }
 
   int grouped = 0;
-  //assert(overlapping.size() == buf.get_all_ports().size());
+  vector<vector<string> > large_groups;
   for (auto& grp : overlapping) {
     cout << "Group: " << grp.size() << endl;
     grouped += grp.size();
@@ -4492,9 +4492,39 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
       cout << tab(1) << g << endl;
       cout << tab(2) << str(buf.access_map.at(g)) << endl;
     }
+    if (grp.size() > 1) {
+      large_groups.push_back(grp);
+    }
   }
 
   assert(grouped == buf.get_all_ports().size());
 
+  cout << "# of large groups: " << large_groups.size() << endl;
+  for (auto g : large_groups) {
+    vector<string> inpts;
+    vector<string> outpts;
+    cout << "Group with " << g.size() << " ports" << endl;
+    for (auto pt : g) {
+      if (buf.is_in_pt(pt)) {
+        inpts.push_back(pt);
+      } else {
+        assert(buf.is_out_pt(pt));
+        outpts.push_back(pt);
+      }
+
+    }
+
+    cout << tab(1) << "Input ports..." << endl;
+    for (auto pt : inpts) {
+      isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
+      cout << tab(2) << str(access) << endl;
+    }
+    cout << endl;
+    cout << tab(1) << "Output ports..." << endl;
+    for (auto pt : outpts) {
+      isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
+      cout << tab(2) << str(access) << endl;
+    }
+  }
   assert(false);
 }
