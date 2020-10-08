@@ -4452,6 +4452,15 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   return out;
 }
 
+maybe<int> embarassing_partition(const vector<string>& ports, UBuffer& buf) {
+  for (auto pt : ports) {
+    cout << tab(2) << pt << endl;
+    isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
+    cout << tab(2) << str(access) << endl;
+  }
+  return {};
+}
+
 void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
 
   vector<vector<string> > overlapping;
@@ -4516,9 +4525,9 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
 
     cout << tab(1) << "Input ports..." << endl;
     for (auto pt : inpts) {
-      isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
-      cout << tab(2) << str(access) << endl;
+      cout << tab(2) << pt << endl;
     }
+    cout << tab(3) << "Embarassing partition: " << embarassing_partition(inpts, buf) << endl;
     cout << endl;
     cout << tab(1) << "Output ports..." << endl;
     for (auto pt : outpts) {
