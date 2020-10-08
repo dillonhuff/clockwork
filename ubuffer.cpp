@@ -4541,7 +4541,7 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
     for (auto pt : inpts) {
       cout << tab(2) << pt << endl;
     }
-    auto partitions = find_embarassing_partitions(inpts, buf) << endl;
+    auto partitions = find_embarassing_partitions(inpts, buf);
     cout << endl;
     cout << tab(1) << "Output ports..." << endl;
     for (auto pt : outpts) {
@@ -4549,5 +4549,5 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
       cout << tab(2) << str(access) << endl;
     }
   }
-  assert(false);
+  //assert(false);
 }
