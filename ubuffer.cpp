@@ -4452,9 +4452,31 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   return out;
 }
 
+// An emabarassing partition should be
+// a map from components to sets of integers such that
+// every port in the port group has a read expression that
+// is different from 
 typedef std::map<int, std::set<int> > embarassing_partition;
+typedef std::map<int, int> fixed_subaddress;
+
+map<string, fixed_subaddress> find_fixed_subaddresses(const vector<string>& ports, UBuffer& buf) {
+  map<string, fixed_subaddress> addrs;
+  for (auto pt : ports) {
+    isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
+    map<int, isl_val*> constant_offsets = constant_components(access);
+    for (auto ent : constant_offsets) {
+      addrs[pt][ent.first] = to_int(ent.second);
+    }
+  }
+  return addrs;
+}
 
 map<int, std::set<int> > find_embarassing_partitions(const vector<string>& ports, UBuffer& buf) {
+  auto fixed_addrs = find_fixed_subaddresses(ports, buf);
+  if (fixed_addrs.size() != ports.size()) {
+    return {};
+  }
+
   map<int, std::set<int> > constant_offset_lists;
   for (auto pt : ports) {
     cout << tab(2) << pt << endl;
