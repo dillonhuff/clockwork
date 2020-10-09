@@ -4594,13 +4594,13 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
   std::set<int> dims;
   for (auto g : filtered_io_groups) {
     auto parts = find_fixed_subaddresses(g, buf);
+    cout << "Error: No viable banking strategy for " << buf.name << endl;
+    cout << tab(1) << "Cannot partition group: " << endl;
+    for (auto pt : g) {
+      cout << tab(2) << pt << endl;
+      cout << tab(3) << str(buf.access_map.at(pt)) << endl;
+    }
     if (parts.size() < g.size()) {
-      cout << "Error: No viable banking strategy for " << buf.name << endl;
-      cout << tab(1) << "Cannot partition group: " << endl;
-      for (auto pt : g) {
-        cout << tab(2) << pt << endl;
-        cout << tab(3) << str(buf.access_map.at(pt)) << endl;
-      }
       return {};
     }
     for (auto ent : parts) {
@@ -4610,5 +4610,9 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
     }
   }
 
+  cout << "FOUND EMBARASSING PARTITION OF " << buf.name << " in dimensions..." << endl;
+  for (auto d : dims) {
+    cout << tab(1) << d << endl;
+  }
   return dims;
 }
