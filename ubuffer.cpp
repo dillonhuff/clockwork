@@ -4452,12 +4452,6 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   return out;
 }
 
-// An emabarassing partition should be
-// a map from components to sets of integers such that
-// every port in the port group has a read expression that
-// is different from 
-typedef std::map<int, std::set<int> > embarassing_partition;
-
 // map from address components to the value of the address
 // at that component
 typedef std::map<int, int> fixed_subaddress;
@@ -4472,37 +4466,6 @@ map<string, fixed_subaddress> find_fixed_subaddresses(const vector<string>& port
     }
   }
   return addrs;
-}
-
-//map<int, std::set<int> > find_embarassing_partitions(const vector<string>& ports, UBuffer& buf) {
-map<string, fixed_subaddress> find_embarassing_partitions(const vector<string>& ports, UBuffer& buf) {
-  auto fixed_addrs = find_fixed_subaddresses(ports, buf);
-  if (fixed_addrs.size() != ports.size()) {
-    return {};
-  }
-
-  return fixed_addrs;
-
-  //map<int, std::set<int> > constant_offset_lists;
-  //for (auto pt : ports) {
-    //cout << tab(2) << pt << endl;
-    //isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
-    //map<int, isl_val*> constant_offsets = constant_components(access);
-    //cout << tab(2) << str(access) << endl;
-    //for (auto ent : constant_offsets) {
-      //cout << tab(3) << "Constant offset in component " << ent.first << ": " << str(ent.second) << endl;
-      //constant_offset_lists[ent.first].insert(to_int(ent.second));
-    //}
-  //}
-
-  //map<int, std::set<int> > embarassing_partitions;
-  //for (auto cs : constant_offset_lists) {
-    //if (cs.second.size() == ports.size()) {
-      //cout << tab(1) << "Embarassing partition in " << cs.first << " of size: " << cs.second.size() << endl;
-      //embarassing_partitions[cs.first] = cs.second;
-    //}
-  //}
-  //return embarassing_partitions;
 }
 
 vector<vector<string> > overlapping_ports(UBuffer& buf) {
@@ -4539,70 +4502,7 @@ vector<vector<string> > overlapping_ports(UBuffer& buf) {
   return overlapping;
 }
 
-//maybe<pair<int, std::set<int> > > pick_embarassing_partition(const vector<vector<string> >& large_groups, UBuffer& buf) {
-  //cout << "# of large groups: " << large_groups.size() << endl;
-  //std::map<embarassing_partition, std::set<vector<string> > > viable_partitions;
-
-  //int num_pt_groups = 0;
-  //for (auto g : large_groups) {
-    //vector<string> inpts;
-    //vector<string> outpts;
-    //cout << "Group with " << g.size() << " ports" << endl;
-    //for (auto pt : g) {
-      //if (buf.is_in_pt(pt)) {
-        //inpts.push_back(pt);
-      //} else {
-        //assert(buf.is_out_pt(pt));
-        //outpts.push_back(pt);
-      //}
-    //}
-
-    //cout << tab(1) << "Input ports..." << endl;
-    //for (auto pt : inpts) {
-      //cout << tab(2) << pt << endl;
-    //}
-    //if (inpts.size() > 0) {
-      //num_pt_groups++;
-    //}
-    //auto fsa = find_fixed_subaddresses(inpts, buf);
-    ////auto partitions = find_embarassing_partitions(inpts, buf);
-    ////if (partitions.size() > 0) {
-      ////viable_partitions[partitions].insert(inpts);
-    ////}
-
-    ////cout << endl;
-    ////cout << tab(1) << "Output ports..." << endl;
-    ////for (auto pt : outpts) {
-      ////isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
-      ////cout << tab(2) << str(access) << endl;
-    ////}
-
-    ////if (outpts.size() > 0) {
-      ////num_pt_groups++;
-    ////}
-    ////auto out_partitions = find_embarassing_partitions(outpts, buf);
-    ////if (out_partitions.size() > 0) {
-      ////viable_partitions[out_partitions].insert(outpts);
-    ////}
-  //}
-
-  ////cout << "Viable partitions by port group:" << endl;
-  ////for (auto part : viable_partitions) {
-    ////if (num_pt_groups > 0 && part.second.size() == num_pt_groups) {
-      ////cout << "FOUND VIABLE PARTITION for " << buf.name << endl;
-      ////auto partition = pick(part.first);
-      ////cout << tab(1) << "Component: " << partition.first << endl;
-      ////for (auto off : partition.second) {
-        ////cout << tab(2) << off << endl;
-      ////}
-      ////return {partition};
-    ////}
-  ////}
-
-  //return {};
-//}
-
-void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
+maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo) {
   vector<vector<string> > overlapping = overlapping_ports(buf);
 
   int grouped = 0;
@@ -4691,6 +4591,7 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
     }
   }
 
+  std::set<std::set<int> > partition_dimensions;
   for (auto g : filtered_io_groups) {
     auto parts = find_fixed_subaddresses(g, buf);
     if (parts.size() < g.size()) {
@@ -4700,14 +4601,16 @@ void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
         cout << tab(2) << pt << endl;
         cout << tab(3) << str(buf.access_map.at(pt)) << endl;
       }
-      assert(false);
+      return {};
+    }
+    for (auto ent : parts) {
+      std::set<int> dims;
+      for (auto d : ent.second) {
+        dims.insert(d.first);
+      }
+      partition_dimensions.insert(dims);
     }
   }
 
-  //maybe<pair<int, std::set<int> > > partition =
-    //pick_embarassing_partition(filtered_groups, buf);
-
-  //if (partition.has_value()) {
-    //return;
-  //}
+  return pick(partition_dimensions);
 }
