@@ -3930,7 +3930,8 @@ vector<string> buffer_vectorization(vector<int> iis,
 
       //Input must be take care
       //need to first pad the buffer output to the multiplier of
-      target_buffer.pad_read_dom(fetch_width);
+      target_buffer.pad_read_dom(dim_id, fetch_width);
+      target_buffer.pad_write_dom(dim_id, fetch_width);
 
       //ret is a pair of vectorized_buffer and the dependency need to be removed
       auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
@@ -4459,18 +4460,42 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     }
   }
 
-void UBuffer::pad_read_dom(int fetch_width) {
+void UBuffer::pad_write_dom(int dim_id, int fetch_width) {
+    //pad the domain for both input port and output port
+    for (auto bd: get_in_bundles()) {
+        for (auto pt: port_bundles.at(bd)) {
+            auto am = to_map(access_map.at(pt));
+            auto sched = schedule.at(pt);
+            //int dom_dim = get_in_dim(am);
+            assert(get_dim_min(::domain(am), dim_id+1) == 0);
+            auto rem = (get_dim_max(::domain(am), dim_id+1) + 1) % fetch_width;
+            if (rem) {
+                //need padding
+                auto pad_am = pad_to_domain_ubuf_map(am, fetch_width - rem);
+                auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), fetch_width - rem);
+                cout << "\tPadded access map: " << str(pad_am) << endl;
+                cout << "\tPadded schedule: " << str(pad_sched) << endl;
+                replace_pt(pt, pad_am, pad_sched);
+                //access_map.at(pt) = to_umap(pad_am);
+                //schedule.at(pt) = to_umap(pad_sched);
+                //domain.at(pt) = ::domain(pad_am);
+            }
+        }
+    }
+}
+
+void UBuffer::pad_read_dom(int dim_id, int fetch_width) {
     for (auto bd: get_out_bundles()) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
-            int dom_dim = get_in_dim(am);
-            assert(get_dim_min(::domain(am), dom_dim-1) == 0);
-            auto rem = (get_dim_max(::domain(am), dom_dim-1) + 1) % 4;
+            //int dom_dim = get_in_dim(am);
+            assert(get_dim_min(::domain(am), dim_id+1) == 0);
+            auto rem = (get_dim_max(::domain(am), dim_id+1) + 1) % fetch_width;
             if (rem) {
                 //need padding
-                auto pad_am = pad_to_domain_ubuf_map(am, 4 - rem);
-                auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), 4 - rem);
+                auto pad_am = pad_to_domain_ubuf_map(am, fetch_width - rem);
+                auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), fetch_width - rem);
                 cout << "\tPadded access map: " << str(pad_am) << endl;
                 cout << "\tPadded schedule: " << str(pad_sched) << endl;
                 replace_pt(pt, pad_am, pad_sched);

@@ -1918,7 +1918,8 @@ class UBuffer {
     isl_map* pad_dom_sched(AccessPattern , isl_map* , int);
 
     //pad the read domain
-    void pad_read_dom(int fetch_width);
+    void pad_read_dom(int dim_id, int fetch_width);
+    void pad_write_dom(int dim_id, int fetch_width);
 
 
     //change the input and output and return the agg and tb ubuffer stucture

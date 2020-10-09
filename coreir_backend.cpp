@@ -1176,12 +1176,18 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     }
   }
 
+  auto levels = get_variable_levels(prg);
+  // Connect compute units to buffers
+
+  //dft get the ops from input to output
+  auto ops_dft= get_dft_ops(prg);
+  std::reverse(ops_dft.begin(), ops_dft.end());
+
   //this is the flag to wire stencil valid signal
   bool need_pass_valid = false;
 
-  auto levels = get_variable_levels(prg);
-  // Connect compute units to buffers
-  for (auto op : prg.all_ops()) {
+  for (auto op : ops_dft) {
+    cout << "Visit op: " << op->name << endl;
     vector<string> surrounding = surrounding_vars(op, prg);
     for (auto var : op->index_variables_needed_by_compute) {
       int level = map_find(var, levels);
@@ -1254,6 +1260,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
                def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
             }
           }
+          //Stop at the ubuffer with memory tile inside
           if (buffers.at(buf_name).contain_memory_tile) {
             need_pass_valid = false;
           }
