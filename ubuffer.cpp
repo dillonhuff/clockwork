@@ -4591,6 +4591,10 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
     }
   }
 
+  if (filtered_io_groups.size() == 0) {
+    return {};
+  }
+
   std::set<int> dims;
   for (auto g : filtered_io_groups) {
     auto parts = find_fixed_subaddresses(g, buf);
