@@ -569,9 +569,10 @@ int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf
   return 100000;
 }
 
+template <typename T>
 void print_shift_registers(
     std::ostream& out,
-    map<string, pair<string, int> >& shift_registered_outputs,
+    const T& shift_registered_outputs,
     CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
@@ -606,22 +607,19 @@ void print_shift_registers(
     out << "endmodule" << endl << endl;
 }
 }
-map<string, pair<string, int> > determine_output_shift_reg_map(
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
         prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo)
 {
   auto sc = buf.global_schedule();
   bool any_reduce_ops_on_buffer = false;
-  map<string, pair<string, int> > shift_registered_outputs;
+  vector<pair<string, pair<string, int> >> shift_registered_outputs;
   for (auto op : prg.all_ops()) {
     //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0 ) {
       if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
         cout << buf.name << endl;
-        if(buf.name == "hw_input_global_wrapper_stencil")
-  {
-        assert(false);
-        }
+
           any_reduce_ops_on_buffer = true;
         break;
     }
@@ -643,43 +641,45 @@ map<string, pair<string, int> > determine_output_shift_reg_map(
 
               auto outpt_read_data = range(reads);
               auto outpt_src_read_data = range(reads_src);
+              if(num_in_dims(to_map(reads)) != num_in_dims(to_map(reads_src)))
+              {
+                continue;
+              }
+
               if(!subset(outpt_read_data,outpt_src_read_data))
               {
-                   continue;
+                  continue;
               }
-//              cout << "Schedule..." << endl;
-//              for (auto m : get_maps(sc)) {
-//                cout << tab(1) << str(m) << endl;
-//                release(m);
-//              }
 
               cout << str(buf.schedule.at(outpt)) << endl;
               cout << str(buf.schedule.at(outpt_src)) << endl;
               isl_aff * outpt_sched = get_aff(buf.schedule.at(outpt));
-              isl_aff * output_src_sched = get_aff(buf.schedule.at(outpt_src));
-              outpt_sched
-              cout << sub(outpt_sched,output_src_sched) << endl;
+              isl_aff * outpt_src_sched = get_aff(buf.schedule.at(outpt_src));
+              outpt_sched = set_name(outpt_sched,"bump");
+              outpt_src_sched = set_name(outpt_src_sched,"bump");
+              isl_aff * diff = sub(outpt_sched,outpt_src_sched);
+              isl_aff * reads_aff = get_aff(reads);
+              isl_aff * reads_src_aff = get_aff(reads_src);
+              reads_aff = set_name(reads_aff,"bump");
+              reads_src_aff = set_name(reads_src_aff,"bump");
+              isl_aff * diff_loc = sub(reads_aff, reads_src_aff);
+
+              cout << str(diff) << endl;
+
+              if(!isl_aff_is_cst(diff) || to_int(const_coeff(diff)) < 0)
+              {
+                  continue;
+              }
+
+              if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) != 0)
+              {
+                  continue;
+              }
 
               auto time_to_read_src = dot(inv(sc), (reads_src));
               auto time_to_read = dot(inv(sc), (reads));
 
-              //cout << "Time to read src: " << str(time_to_read_src) << endl;
-              //cout << "Time to read : " << str(time_to_read) << endl;
-
-              assert(false);
-
-//          if (dd.has_value()) {
-//
-//            int dd_raw = dd.get_value();
-//                      cout << dd_raw << endl;
-//
-//            if (write_op->func != "") {
-//              dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
-//            }
-//            dd_raw = dd_raw - 1;
-//            cout << outpt_src << " " << dd_raw << endl;
-//            shift_registered_outputs[outpt] = {outpt_src, dd_raw};
-//          }
+             shift_registered_outputs.push_back({outpt,{outpt_src, to_int(const_coeff(diff))-1}});
         }
 
     }
@@ -756,13 +756,13 @@ void generate_platonic_ubuffer(
           for (auto ent : shift_registered_outputs_to_outputs) {
               cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
           }
-          assert(false);
   }
 
   ostream& out = *verilog_collateral_file;
 
   print_cyclic_banks_selector(out, bank_factors, buf);
   print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
+  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
 
   vector<string> port_decls{"input clk", "input flush", "input rst_n"};
 
@@ -831,16 +831,34 @@ void generate_platonic_ubuffer(
   }
 
   out << endl;
+  unordered_set<string> done_outpt;
+
   for (auto in : buf.get_in_ports()) {
     string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
     for (auto pt : shift_registered_outputs) {
       string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
       if (pt.second.first == in) {
-      //if (false) {
+          done_outpt.insert(pt.first);
         out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
       }
     }
   }
+  for (auto pt : shift_registered_outputs_to_outputs) {
+
+        if(done_outpt.find(pt.first)!=done_outpt.end())
+        {
+            continue;
+        } else{
+            done_outpt.insert(pt.first);
+        }
+
+        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+
+    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
+      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+
+  }
+
   out << endl;
 
   out << tab(1) << "always @(posedge clk) begin" << endl;
@@ -870,7 +888,7 @@ void generate_platonic_ubuffer(
 
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
-    if (!contains_key(outpt, shift_registered_outputs)) {
+    if (done_outpt.find(outpt) == done_outpt.end()) {
       string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf));
       //string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
