@@ -1,3 +1,3 @@
-make -j || { echo 'Make failed'; exit 1; }
+make -j4 || { echo 'Make failed'; exit 1; }
 
 

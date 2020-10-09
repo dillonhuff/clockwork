@@ -608,21 +608,93 @@ void print_shift_registers(
     out << "endmodule" << endl << endl;
 }
 }
-
-void generate_platonic_ubuffer(
-    CodegenOptions& options,
-    prog& prg,
+map<string, pair<string, int> > determine_output_shift_reg_map(
+        prog& prg,
     UBuffer& buf,
-    schedule_info& hwinfo) {
-
-  prg.pretty_print();
-
-  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
-  int folding_factor = bank_folding_factor(bank_factors, prg, buf, hwinfo);
-
-  map<string, pair<string, int> > shift_registered_outputs;
+    schedule_info& hwinfo)
+{
   auto sc = buf.global_schedule();
   bool any_reduce_ops_on_buffer = false;
+  map<string, pair<string, int> > shift_registered_outputs;
+  for (auto op : prg.all_ops()) {
+    //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0 ) {
+      if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
+        cout << buf.name << endl;
+        if(buf.name == "hw_input_global_wrapper_stencil")
+  {
+        assert(false);
+        }
+          any_reduce_ops_on_buffer = true;
+        break;
+    }
+  }
+
+  if (!any_reduce_ops_on_buffer) {
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto outpt_src : buf.get_out_ports()) {
+
+          if(outpt == outpt_src) {
+              continue;
+          }
+
+            auto reads = buf.access_map.at(outpt);
+              auto reads_src = buf.access_map.at(outpt_src);
+              cout << "reads: " << str(reads) << endl;
+              cout << "reads_src: " << str(reads_src) << endl;
+
+              auto outpt_read_data = range(reads);
+              auto outpt_src_read_data = range(reads_src);
+              if(!subset(outpt_read_data,outpt_src_read_data))
+              {
+                   continue;
+              }
+//              cout << "Schedule..." << endl;
+//              for (auto m : get_maps(sc)) {
+//                cout << tab(1) << str(m) << endl;
+//                release(m);
+//              }
+
+              cout << str(buf.schedule.at(outpt)) << endl;
+              cout << str(buf.schedule.at(outpt_src)) << endl;
+              isl_aff * outpt_sched = get_aff(buf.schedule.at(outpt));
+              isl_aff * output_src_sched = get_aff(buf.schedule.at(outpt_src));
+              outpt_sched
+              cout << sub(outpt_sched,output_src_sched) << endl;
+
+              auto time_to_read_src = dot(inv(sc), (reads_src));
+              auto time_to_read = dot(inv(sc), (reads));
+
+              //cout << "Time to read src: " << str(time_to_read_src) << endl;
+              //cout << "Time to read : " << str(time_to_read) << endl;
+
+              assert(false);
+
+//          if (dd.has_value()) {
+//
+//            int dd_raw = dd.get_value();
+//                      cout << dd_raw << endl;
+//
+//            if (write_op->func != "") {
+//              dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+//            }
+//            dd_raw = dd_raw - 1;
+//            cout << outpt_src << " " << dd_raw << endl;
+//            shift_registered_outputs[outpt] = {outpt_src, dd_raw};
+//          }
+        }
+
+    }
+  }
+  return shift_registered_outputs;
+}
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
+  auto sc = buf.global_schedule();
+  bool any_reduce_ops_on_buffer = false;
+  map<string, pair<string, int> > shift_registered_outputs;
   for (auto op : prg.all_ops()) {
     if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
       any_reduce_ops_on_buffer = true;
@@ -648,6 +720,7 @@ void generate_platonic_ubuffer(
             intersection(write_op->buffers_read(), write_op->buffers_written()).size() == 0) {
           auto dd =
             dependence_distance_singleton(buf, inpt, outpt, sc);
+          //assert(false);
           if (dd.has_value()) {
             int dd_raw = dd.get_value();
             if (write_op->func != "") {
@@ -659,6 +732,32 @@ void generate_platonic_ubuffer(
         }
       }
     }
+  }
+  return shift_registered_outputs;
+}
+void generate_platonic_ubuffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+
+  prg.pretty_print();
+
+
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  //int folding_factor = bank_folding_factor(bank_factors, prg, buf, hwinfo);
+
+  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
+  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+
+  if(buf.name == "hw_input_global_wrapper_stencil")
+  {
+          cout << buf;
+          cout << "Output to output srs..." << endl;
+          for (auto ent : shift_registered_outputs_to_outputs) {
+              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
+          }
+          assert(false);
   }
 
   ostream& out = *verilog_collateral_file;

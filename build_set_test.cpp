@@ -16254,6 +16254,7 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
 }
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
+  prg.pretty_print();
   sanity_check_iis(sched);
   sanity_check_negative_starts(sched, prg);
 
@@ -16284,6 +16285,7 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
   release(start_times);
   release(end_times);
   release(all_times);
+  //assert(false);
   return safe;
 }
 
@@ -16309,18 +16311,21 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
+  test_programs.push_back(gaussian());
+  test_programs.push_back(pointwise());
   test_programs.push_back(up_sample());
   // Fails with dual port tile?
   //test_programs.push_back(rom());
   test_programs.push_back(strided_conv());
   test_programs.push_back(mini_conv_halide_fixed());
-  test_programs.push_back(pointwise());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(gaussian());
+
+
+
   test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
+  test_programs.push_back(camera_pipeline());
 
   // Bounds are too long. Software simulation
   // takes forever
@@ -16343,11 +16348,15 @@ vector<prog> all_cgra_programs() {
   //test_programs.push_back(accumulation());
 
   test_programs.push_back(resnet());
+  concat(test_programs, stencil_programs());
+
+
+
   test_programs.push_back(mobilenet_small());
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
-  concat(test_programs, stencil_programs());
+
 
 
   return test_programs;
