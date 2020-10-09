@@ -571,19 +571,28 @@ int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf
 
 void print_shift_registers(
     std::ostream& out,
-    map<string,vector<pair<string,map>>> shift_registered_outputs,
+    map<string,vector<pair<string,int>>> shift_registered_outputs,
     CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo) {
   for (auto sr : shift_registered_outputs) {
 
-    int num_outs = sr.second.size()
+    int num_outs = sr.second.size();
+    int max_delay = 0;
+    for (auto stuff : sr.second)
+    {
+        if (stuff.second > max_delay)
+        {
+            max_delay = stuff.second;
+        }
+    }
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out[" + to_string(num_outs) + "]"};
     out << "module " << buf.name << "_" << sr.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
+    out << tab(1) << "integer i;" << endl;
 
-    out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
+    out << tab(1) << "logic [15:0] storage [" << max_delay << ":0];" << endl << endl;
 
     out << tab(1) << "reg [15:0] read_addr [0:" + to_string(num_outs) + "];" << endl;
     out << tab(1) << "reg [15:0] write_addr [0:" + to_string(num_outs) + "];" << endl;
@@ -592,15 +601,14 @@ void print_shift_registers(
     out << tab(2) << "if (~rst_n) begin" << endl;
     for(int i = 0; i < num_outs; i ++)
     {
-        out << tab(3) << "read_addr[ " + to_str(i) +  "] <= 0;" << endl;
-        out << tab(3) << "write_addr[" + to_str(i) +"] <= " << sr.second[i].second << ";" << endl;
+        out << tab(3) << "read_addr[ " + to_string(i) +  "] <= 0;" << endl;
+        out << tab(3) << "write_addr[" + to_string(i) +"] <= " << sr.second[i].second << ";" << endl;
     }
 
     out << tab(2) << "end else begin" << endl;
-    out << tab(3) << "integer i;"
-    out << tab(3) << "for(i = 0; i < " + to_string(num_outs) + "; i += 1) begin"
+    out << tab(3) << "for(i = 0; i < " + to_string(num_outs) + "; i += 1) begin"  << endl;
     out << tab(4) << "storage[write_addr[i]] <= in;" << endl;
-    out << tab(3) << "end"
+    out << tab(3) << "end"  << endl;
     for(int i = 0; i < num_outs; i ++)
     {
         out << tab(3) << "read_addr[" << i << "] <= read_addr[" << i <<"] == " << sr.second[i].second << " ? 0 : read_addr["<< i << "] + 1;" << endl;
@@ -611,9 +619,10 @@ void print_shift_registers(
     out << tab(1) << "end" << endl << endl;
 
     out << tab(1) << "always @(*) begin" << endl;
-    out << tab(2) << "for(i = 0; i < " + to_string(num_outs) + "; i += 1) begin"
+    out << tab(2) << "for(i = 0; i < " + to_string(num_outs) + "; i += 1) begin"  << endl;
     out << tab(3) << "out[i] = storage[read_addr[i]];" << endl;
     out << tab(2);
+    out << tab(2) << "end" << endl << endl;
     out << tab(1) << "end" << endl << endl;
 
     out << "endmodule" << endl << endl;
@@ -626,7 +635,7 @@ map<string, vector<pair<string, int>> >  determine_output_shift_reg_map(
 {
   auto sc = buf.global_schedule();
   bool any_reduce_ops_on_buffer = false;
-  vector<pair<string, pair<string, int> >> shift_registered_outputs;
+  map<string,vector<pair<string,int>>> shift_registered_outputs;
   for (auto op : prg.all_ops()) {
     //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0 ) {
       if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
@@ -711,7 +720,7 @@ map<string, vector<pair<string, int>> > determine_shift_reg_map(
 {
   auto sc = buf.global_schedule();
   bool any_reduce_ops_on_buffer = false;
-  map<string, pair<string, int> > shift_registered_outputs;
+  map<string,vector<pair<string,int>>> shift_registered_outputs;
   for (auto op : prg.all_ops()) {
     if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
       any_reduce_ops_on_buffer = true;
@@ -792,14 +801,14 @@ void generate_platonic_ubuffer(
       shift_registered_outputs[src] = reduced_tar;
       if(reduced_tar.size() == 0)
       {
-        to_erase.append(src);
+        to_erase.push_back(src);
       }
   }
   for(auto src: to_erase)
   {
     shift_registered_outputs.erase(src);
   }
-  to_erase.clear()
+  to_erase.clear();
   for(auto sr : shift_registered_outputs_to_outputs)
   {
       string src = sr.first;
@@ -815,7 +824,7 @@ void generate_platonic_ubuffer(
       shift_registered_outputs_to_outputs[src] = reduced_tar;
       if(reduced_tar.size() == 0)
       {
-        to_erase.append(src);
+        to_erase.push_back(src);
       }
   }
   for(auto src: to_erase)
@@ -899,26 +908,27 @@ void generate_platonic_ubuffer(
 
   for (auto pt: shift_registered_outputs)
   {
-    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
-
-  }
-
-  for (auto in : buf.get_in_ports()) {
-    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
-    for (auto pt : shift_registered_outputs) {
-      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-      if (pt.second.first == in) {
-        out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-      }
+    string src = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+    string dst = "'{";
+    for(int i = 0; i < pt.second.size(); i ++)
+    {
+        dst += buf.container_bundle(pt.second[i].first) + brackets(str(buf.bundle_offset(pt.second[i].first))) + (i == pt.second.size() - 1 ? "": ",");
     }
+   dst += "}";
+    out << tab(2) << buf.name << "_" << pt.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+
   }
-  for (auto pt : shift_registered_outputs_to_outputs) {
 
-
-        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-
-    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
-      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+  for (auto pt: shift_registered_outputs_to_outputs)
+  {
+    string src = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+    string dst = "'{";
+    for(int i = 0; i < pt.second.size(); i ++)
+    {
+        dst += buf.container_bundle(pt.second[i].first) + brackets(str(buf.bundle_offset(pt.second[i].first))) + (i == pt.second.size() - 1 ? "": ",");
+    }
+    dst += "}";
+    out << tab(2) << buf.name << "_" << pt.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
 
   }
 
