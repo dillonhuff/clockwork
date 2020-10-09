@@ -4591,7 +4591,7 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
     }
   }
 
-  std::set<std::set<int> > partition_dimensions;
+  std::set<int> dims;
   for (auto g : filtered_io_groups) {
     auto parts = find_fixed_subaddresses(g, buf);
     if (parts.size() < g.size()) {
@@ -4604,13 +4604,11 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
       return {};
     }
     for (auto ent : parts) {
-      std::set<int> dims;
       for (auto d : ent.second) {
         dims.insert(d.first);
       }
-      partition_dimensions.insert(dims);
     }
   }
 
-  return pick(partition_dimensions);
+  return dims;
 }
