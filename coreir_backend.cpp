@@ -158,6 +158,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto def = ub->newModuleDef();
 
   if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
+    overlapping_operations(buf, hwinfo);
     generate_platonic_ubuffer(options, prg, buf, hwinfo);
   } else {
     generate_synthesizable_functional_model(options, buf, def, hwinfo);
