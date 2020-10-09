@@ -635,6 +635,7 @@ isl_basic_set* zero(isl_basic_set* fs, const int var);
 
 std::string codegen_c(isl_aff* const bset);
 isl_set* set_name(isl_set* const m, string new_name);
+isl_aff* set_name(isl_aff* const m, string new_name);
 
 void release(isl_set* s);
 void release(isl_map* m);
@@ -655,3 +656,5 @@ isl_aff* sub(isl_aff* start_time_aff, const int compute_latency);
 isl_aff* mul(isl_aff* start_time_aff, const int compute_latency);
 isl_aff* div(isl_aff* start_time_aff, const int compute_latency);
 
+std::vector<isl_aff*> get_affs(isl_multi_aff* saff);
+std::map<int, isl_val*> constant_components(isl_multi_aff* access);

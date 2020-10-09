@@ -332,6 +332,10 @@ isl_map* set_range_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
 }
 
+isl_aff* set_name(isl_aff* const m, string new_name) {
+    return isl_aff_set_tuple_id(m, isl_dim_out, id(ctx(m), new_name));
+}
+
 isl_set* set_name(isl_set* const m, string new_name) {
     return isl_set_set_tuple_name(m, new_name.c_str());
 }
@@ -3267,8 +3271,8 @@ isl_multi_aff* get_multi_aff(isl_union_map* m) {
 
 isl_multi_aff* get_multi_aff(isl_map* m) {
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
-  cout << tab(1) << str(m) << endl;
-  cout << tab(2) << "lexmax: " << str(lm) << endl;
+  //cout << tab(1) << str(m) << endl;
+  //cout << tab(2) << "lexmax: " << str(lm) << endl;
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(lm);
   assert(pieces.size() == 1);
@@ -3288,6 +3292,15 @@ isl_aff* get_aff(isl_map* m) {
   auto saff = pieces.at(0).second;
   auto aff = isl_multi_aff_get_aff(saff, 0);
   return aff;
+}
+
+std::vector<isl_aff*> get_affs(isl_multi_aff* saff) {
+  vector<isl_aff*> ret;
+  for (int i = 0; i < get_size(saff); i ++) {
+    auto aff = isl_multi_aff_get_aff(saff, i);
+    ret.push_back(aff);
+  }
+  return ret;
 }
 
 std::vector<isl_aff*> get_aff_vec(isl_map* m) {
@@ -3532,4 +3545,16 @@ isl_aff* mul(isl_aff* start_time_aff, const int compute_latency) {
 
 isl_aff* div(isl_aff* start_time_aff, const int compute_latency) {
   return div(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
+std::map<int, isl_val*> constant_components(isl_multi_aff* access) {
+  map<int, isl_val*> ret;
+  int d = 0;
+  for (auto aff : get_affs(access)) {
+    if (isl_aff_is_cst(aff)) {
+      ret[d] = const_coeff(aff);
+    }
+    d++;
+  }
+  return ret;
 }

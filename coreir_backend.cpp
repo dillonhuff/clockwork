@@ -157,13 +157,11 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
   auto def = ub->newModuleDef();
 
-  generate_platonic_ubuffer(options, prg, buf, hwinfo);
-  ////TODO: use a more general switch
-  //if (true) {
-    //generate_synthesizable_functional_model(options, buf, def, hwinfo);
-  //} else {
-    ////buf.generate_coreir(options, def);
-  //}
+  if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
+    generate_platonic_ubuffer(options, prg, buf, hwinfo);
+  } else {
+    generate_synthesizable_functional_model(options, buf, def, hwinfo);
+  }
 
   ub->setDef(def);
   return ub;
@@ -632,6 +630,7 @@ map<string, pair<string, int> > determine_output_shift_reg_map(
   if (!any_reduce_ops_on_buffer) {
     for (auto outpt : buf.get_out_ports()) {
       for (auto outpt_src : buf.get_out_ports()) {
+
 
           if(outpt == outpt_src) {
               continue;

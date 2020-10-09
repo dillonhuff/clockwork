@@ -1606,7 +1606,6 @@ class UBuffer {
     }
 
     bool is_in_pt(const std::string& name) const {
-      cout << "Checking if " << name << " is an input..." << endl;
       assert(contains_key(name, isIn));
       return isIn.at(name);
     }
@@ -2020,3 +2019,4 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
     umap* sched);
 
 
+void overlapping_operations(UBuffer& buf, schedule_info& hwinfo);
