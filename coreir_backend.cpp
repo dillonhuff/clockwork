@@ -587,15 +587,15 @@ void print_shift_registers(
             max_delay = stuff.second;
         }
     }
-    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out[" + to_string(num_outs) + "]"};
+    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out[0:" + to_string(num_outs -1) + "]"};
     out << "module " << buf.name << "_" << sr.first << "_sr(" << comma_list(port_decls) << ");" << endl;
-
     out << tab(1) << "integer i;" << endl;
+
 
     out << tab(1) << "logic [15:0] storage [" << max_delay << ":0];" << endl << endl;
 
-    out << tab(1) << "reg [15:0] read_addr [0:" + to_string(num_outs) + "];" << endl;
-    out << tab(1) << "reg [15:0] write_addr [0:" + to_string(num_outs) + "];" << endl;
+    out << tab(1) << "reg [15:0] read_addr [0:" + to_string(num_outs - 1) + "];" << endl;
+    out << tab(1) << "reg [15:0] write_addr [0:" + to_string(num_outs - 1) + "];" << endl;
 
     out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
     out << tab(2) << "if (~rst_n) begin" << endl;
@@ -961,6 +961,7 @@ void generate_platonic_ubuffer(
 
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
+    if (done_outpt.find(outpt) == done_outpt.end()) {
       string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf));
       //string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
@@ -970,7 +971,7 @@ void generate_platonic_ubuffer(
         out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
         out << tab(3) << "end" << endl;
       }
-
+    }
   }
 
   out << tab(1) << "end" << endl;
