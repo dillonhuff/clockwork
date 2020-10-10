@@ -648,6 +648,7 @@ isl_multi_aff* get_multi_aff(isl_map* m);
 
 isl_map* linear_address_map(isl_set* s);
 isl_map* to_map(isl_aff* s);
+isl_map* to_map(isl_multi_aff* s);
 bool no_divs(isl_aff* a);
 isl_aff* constant_aff(isl_aff* src, const int val);
 
@@ -658,3 +659,4 @@ isl_aff* div(isl_aff* start_time_aff, const int compute_latency);
 
 std::vector<isl_aff*> get_affs(isl_multi_aff* saff);
 std::map<int, isl_val*> constant_components(isl_multi_aff* access);
+isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str);

@@ -4506,37 +4506,14 @@ vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int
   vector<vector<string> > overlapping = overlapping_ports(buf);
 
   int grouped = 0;
-  vector<vector<string> > large_groups;
   for (auto& grp : overlapping) {
     grouped += grp.size();
-    if (grp.size() > 1) {
-      large_groups.push_back(grp);
-    }
   }
 
   assert(grouped == buf.get_all_ports().size());
 
-  vector<vector<string> > filtered_groups;
-  for (auto g : large_groups) {
-    vector<string> gs;
-    for (auto pt : g) {
-      gs.push_back(pt);
-    }
-    if (gs.size() > 0) {
-      filtered_groups.push_back(gs);
-    }
-  }
-  cout << "Filtered groups" << endl;
-  for (auto& grp : filtered_groups) {
-    cout << "Group: " << grp.size() << endl;
-    for (auto g : grp) {
-      cout << tab(1) << g << endl;
-      cout << tab(2) << str(buf.access_map.at(g)) << endl;
-    }
-  }
-
   vector<vector<string> > filtered_io_groups;
-  for (auto& g : filtered_groups) {
+  for (auto& g : overlapping) {
     vector<string> ins;
     vector<string> outs;
     for (auto pt : g) {
@@ -4547,108 +4524,33 @@ vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int
         outs.push_back(pt);
       }
     }
-    if (ins.size() > 0) {
+    if (ins.size() > ports_per_direction) {
       filtered_io_groups.push_back(ins);
     }
-    if (outs.size() > 0) {
+    if (outs.size() > ports_per_direction) {
       filtered_io_groups.push_back(outs);
     }
   }
+
   return filtered_io_groups;
 }
 
+isl_multi_aff* embarassing_partition_function(UBuffer& buf, const std::set<int>& dims) {
+  vector<string> vars;
+  vector<string> outs;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    vars.push_back("d" + str(i));
+    if (elem(i, dims)) {
+      outs.push_back("(d" + str(i) + ")");
+    }
+  }
+  string bs = curlies(buf.name + sep_list(vars, "[", "]", ", ") + " -> " + "Bank" + sep_list(outs, "[", "]", ", "));
+  return rdmultiaff(buf.ctx, bs);
+}
+
 maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo) {
-  vector<vector<string> > overlapping = overlapping_ports(buf);
-
-  int grouped = 0;
-  vector<vector<string> > large_groups;
-  for (auto& grp : overlapping) {
-    grouped += grp.size();
-    if (grp.size() > 1) {
-      large_groups.push_back(grp);
-    }
-  }
-
-  assert(grouped == buf.get_all_ports().size());
-
-
-  cout << "No viable embarassing partioning strategy for " << buf.name << endl;
-  map<string, pair<string, int> > srs;
-  auto sched = buf.global_schedule();
-  for (auto g : large_groups) {
-    for (auto pt : g) {
-      for (auto other_pt : g) {
-        if (pt != other_pt) {
-
-          auto pt_dom = set_name(cpy(buf.domain.at(pt)), "a");
-          auto other_dom = set_name(cpy(buf.domain.at(other_pt)), "a");
-
-          auto pt_accesses = range(buf.access_map.at(pt));
-          auto other_pt_accesses = range(buf.access_map.at(other_pt));
-
-          isl_aff* pt_sched = set_name(get_aff(buf.schedule.at(pt)), "a");
-          isl_aff* other_pt_sched = set_name(get_aff(buf.schedule.at(other_pt)), "a");
-          isl_aff* diff = sub(other_pt_sched, pt_sched);
-          if (isl_aff_is_cst(diff) &&
-              (to_int(const_coeff(diff)) >= 0) &&
-              subset(pt_dom, other_dom) &&
-              subset(pt_accesses, other_pt_accesses)) {
-            srs[pt] = {other_pt, 1};
-          }
-        }
-      }
-    }
-  }
-
-  cout << endl;
-  cout << buf.name << " has " << srs.size() << " output -> Output shift registers..." << endl;
-  for (auto b : srs) {
-    cout << tab(1) << b.first << " -> " << b.second.first << " : " << b.second.second << endl;
-  }
-  vector<vector<string> > filtered_groups;
-  for (auto g : large_groups) {
-    vector<string> gs;
-    for (auto pt : g) {
-      if (!contains_key(pt, srs)) {
-        gs.push_back(pt);
-      }
-    }
-    if (gs.size() > 0) {
-      filtered_groups.push_back(gs);
-    }
-  }
-  cout << "Filtered groups" << endl;
-  for (auto& grp : filtered_groups) {
-    cout << "Group: " << grp.size() << endl;
-    for (auto g : grp) {
-      cout << tab(1) << g << endl;
-      cout << tab(2) << str(buf.access_map.at(g)) << endl;
-    }
-  }
-
-  vector<vector<string> > filtered_io_groups;
-  for (auto& g : filtered_groups) {
-    vector<string> ins;
-    vector<string> outs;
-    for (auto pt : g) {
-      if (buf.is_in_pt(pt)) {
-        ins.push_back(pt);
-      } else {
-        assert(buf.is_out_pt(pt));
-        outs.push_back(pt);
-      }
-    }
-    if (ins.size() > 0) {
-      filtered_io_groups.push_back(ins);
-    }
-    if (outs.size() > 0) {
-      filtered_io_groups.push_back(outs);
-    }
-  }
-
-  if (filtered_io_groups.size() == 0) {
-    return {};
-  }
+  vector<vector<string> > filtered_io_groups =
+    overlapping_large_io_port_groups(buf, 1);
 
   std::set<int> dims;
   for (auto g : filtered_io_groups) {
@@ -4674,5 +4576,10 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
     cout << tab(1) << d << endl;
   }
 
+  isl_multi_aff* bank_func = embarassing_partition_function(buf, dims);
+  cout << tab(1) << "bank func: " << str(bank_func) << endl;
+  bool legal = banking_scheme_is_legal(to_map(bank_func), buf);
+  cout << tab(2) << "Legal: " << legal << endl;
+  //assert(false);
   return dims;
 }
