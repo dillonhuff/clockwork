@@ -418,6 +418,8 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   out << endl;
   //vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
   vector<string> port_decls{"input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
+  //vector<string> port_decls{"input logic [" + str(CONTROLPATH_WIDTH) + ":0] d [" + str(bank_factors.size() - 1) + ":0]",
+    //"output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
   out << "module " << buf.name << "_bank_selector(" << comma_list(port_decls) << ");" << endl;
 
   vector<string> bank_strides;
@@ -429,7 +431,8 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   int i = 0;
   vector<string> terms;
   for (auto p : bank_factors) {
-    string var = "d" + brackets(str(i));
+    //string var = "d" + brackets(str(i));
+    string var = "d[" + str((i + 1)*CONTROLPATH_WIDTH - 1) + ":" + str(i*CONTROLPATH_WIDTH) + "]";
     out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] bank_index_" << i << ";" << endl;
     //out << tab(1) << "assign " << "bank_index_" << i << " = " << "$floor(" << var << " / " << p << ");" << endl;
     out << tab(1) << "assign " << "bank_index_" << i << " = " << "(" << var << " % " << p << ");" << endl;
