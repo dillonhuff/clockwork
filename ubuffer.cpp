@@ -4578,8 +4578,8 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
 
   isl_multi_aff* bank_func = embarassing_partition_function(buf, dims);
   cout << tab(1) << "bank func: " << str(bank_func) << endl;
-  bool legal = banking_scheme_is_legal(to_map(bank_func), buf);
-  cout << tab(2) << "Legal: " << legal << endl;
+  //bool legal = banking_scheme_is_legal(to_map(bank_func), buf);
+  //cout << tab(2) << "Legal: " << legal << endl;
   //assert(false);
   return dims;
 }
