@@ -587,11 +587,15 @@ void print_shift_registers(
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
+    int addrwidth = ceil(log2(delay + 1));
 
     out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
-    out << tab(1) << "reg [15:0] read_addr;" << endl;
-    out << tab(1) << "reg [15:0] write_addr;" << endl;
+    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
+    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
+
+    //out << tab(1) << "reg [15:0] read_addr;" << endl;
+    //out << tab(1) << "reg [15:0] write_addr;" << endl;
 
     out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
     out << tab(2) << "if (~rst_n) begin" << endl;
