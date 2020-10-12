@@ -17820,6 +17820,29 @@ void blur_example() {
 }
 
 void dhuff_playground() {
+  prog prg("time_sharing_pyramid_1d");
+
+  prg.add_input("in");
+  prg.add_output("out");
+
+  cpy("b0", "in", 1, prg);
+
+  {
+    auto ld = prg.add_loop("x0", 0, 1)->add_op("ldin0");
+    ld->add_load("b0", "2*x0 + 0");
+    ld->add_load("b0", "2*x0 + 1");
+    ld->add_store("b1", "x0");
+  }
+  {
+    auto ld = prg.add_loop("x1", 0, 1)->add_op("ldin1");
+    ld->add_load("b1", "2*x1 + 0");
+    ld->add_load("b1", "2*x1 + 1");
+    ld->add_store("b2", "x1");
+  }
+
+
+  infer_bounds("b2", {16}, prg);
+  prg.pretty_print();
 }
 
 int main(int argc, char** argv) {
