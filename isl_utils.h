@@ -401,8 +401,8 @@ int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 //some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);
 isl_map* pad_to_domain_ubuf_map(isl_map* s, int depth);
-isl_map* shift_domain_map(isl_map* s);
-isl_map* shift_range_map(isl_map* s);
+isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
+isl_map* shift_range_map(isl_map* s, vector<int> shift_depth);
 isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
 isl_map* delay_sched_map(isl_map* s, isl_map* write_sched);
 

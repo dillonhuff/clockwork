@@ -13976,6 +13976,7 @@ void lake_cascade_halide_test() {
 void lake_harris_halide_test() {
   prog prg = harris();
   dsa_writers(prg);
+  normalize_bounds(prg);
   prg.sanity_check();
   prg.pretty_print();
 
@@ -13992,6 +13993,11 @@ void lake_harris_halide_test() {
   int max_inpt = 2, max_outpt = 2;
   //auto sched = global_schedule_from_buffers(buffers_opt);
 
+  for (auto& b : buffers_opt) {
+    cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
+    b.second.normalize_access_range();
+    cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
+  }
   for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)

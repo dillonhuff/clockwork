@@ -2306,14 +2306,15 @@ isl_map* pad_to_domain_map(isl_map* m, int depth) {
 }
 
 //method to transform the domain to positive integer
-isl_map* shift_domain_map(isl_map* m) {
+isl_map* shift_domain_map(isl_map* m, vector<int> shift_depth) {
 
   auto c_vec = constraints(m);
+  assert(shift_depth.size() == get_in_dim(m));
   for (int dim = 0; dim < get_in_dim(m); dim ++) {
-  auto depth = -get_dim_min(::domain(m), dim);
+  auto depth = shift_depth.at(dim);
 
   //no need to pad for the dimension with positive bound
-  if (depth <= 0)
+  if (depth == 0)
     continue;
 
   for (auto & c: c_vec) {
@@ -2345,14 +2346,15 @@ isl_map* shift_domain_map(isl_map* m) {
 }
 
 //method to transform the range to positive integer
-isl_map* shift_range_map(isl_map* m) {
+isl_map* shift_range_map(isl_map* m, vector<int> shift_depth) {
 
   auto c_vec = constraints(m);
+  assert(get_out_dim(m) == shift_depth.size());
   for (int dim = 0; dim < get_out_dim(m); dim ++) {
-  auto depth = -get_dim_min(::range(m), dim);
+  auto depth = shift_depth.at(dim);
 
   //no need to pad for the dimension with positive bound
-  if (depth <= 0)
+  if (depth == 0)
     continue;
 
   for (auto & c: c_vec) {

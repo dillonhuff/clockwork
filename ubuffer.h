@@ -1628,6 +1628,19 @@ class UBuffer {
       return s;
     }
 
+    void normalize_access_range() {
+      auto rng = to_set(global_range());
+      vector<int> start_locs(num_dims());
+      for (int dim = 0; dim < num_dims(); dim ++) {
+        start_locs.at(dim) = -get_dim_min(rng, dim);
+      }
+      for (auto & it: access_map) {
+        auto acc_map = it.second;
+        it.second = to_umap(shift_range_map(to_map(acc_map), start_locs));
+      }
+    }
+
+
     isl_union_map* global_schedule() const {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto other : schedule) {

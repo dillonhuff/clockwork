@@ -778,6 +778,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
                 auto mux_reduce_map = linear_address_map_with_index(range(map), mux_index);
                 auto mux_addr_expr = dot(to_map(bmap), mux_reduce_map);
                 isl_aff* addr = get_aff(mux_addr_expr);
+                cout << "mux addr aff: " << str(addr) << endl;
                 int ww = options.mem_tile.word_width.at(micro_buf_name);
                 int capacity = options.mem_tile.capacity.at(micro_buf_name);
 
@@ -4474,18 +4475,8 @@ void UBuffer::pad_write_dom(int dim_id, int fetch_width) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
-
-            //TODO: move this to controller codegen
-            ////int dom_dim = get_in_dim(am);
-            //for (int i = 0; i < get_in_dim(am); i ++) {
-            //  cout << get_dim_min(::domain(am), i) << endl;
-            //}
-            //cout << "\t input access map: " << str(am) << endl;
-            //cout << "\t shifted domain input access map: " << str(shift_domain_map(am)) << endl;
-            am = shift_domain_map(am);
-            //cout << "\t shifted range input access map: " << str(shift_range_map(am)) << endl;
-            am = shift_range_map(am);
-            //assert(get_dim_min(::domain(am), dim_id+1) == 0);
+            cout << "\t original range input access map: " << str((am)) << endl;
+            assert(get_dim_min(::domain(am), dim_id+1) == 0);
             auto rem = (get_dim_max(::domain(am), dim_id+1) + 1) % fetch_width;
             if (rem) {
                 //need padding
@@ -4494,12 +4485,6 @@ void UBuffer::pad_write_dom(int dim_id, int fetch_width) {
                 cout << "\tPadded access map: " << str(pad_am) << endl;
                 cout << "\tPadded schedule: " << str(pad_sched) << endl;
                 replace_pt(pt, pad_am, pad_sched);
-                //access_map.at(pt) = to_umap(pad_am);
-                //schedule.at(pt) = to_umap(pad_sched);
-                //domain.at(pt) = ::domain(pad_am);
-            }
-            else {
-                replace_pt(pt, am, shift_domain_map(to_map(sched)));
             }
         }
     }
@@ -4510,17 +4495,8 @@ void UBuffer::pad_read_dom(int dim_id, int fetch_width) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
-            //int dom_dim = get_in_dim(am);
-            //TODO: move this to controller codegen
-            //for (int i = 0; i < get_in_dim(am); i ++) {
-            //  cout << get_dim_min(::domain(am), i) << endl;
-            //}
-            //cout << "\t output access map: " << str(am) << endl;
-            //cout << "\t shifted domain output access map: " << str(shift_domain_map(am)) << endl;
-            am = shift_domain_map(am);
-            //cout << "\t shifted range output access map: " << str(shift_range_map(am)) << endl;
-            am = shift_range_map(am);
-            //assert(get_dim_min(::domain(am), dim_id+1) == 0);
+            cout << "\t original range output access map: " << str((am)) << endl;
+            assert(get_dim_min(::domain(am), dim_id+1) == 0);
             auto rem = (get_dim_max(::domain(am), dim_id+1) + 1) % fetch_width;
             if (rem) {
                 //need padding
@@ -4529,12 +4505,6 @@ void UBuffer::pad_read_dom(int dim_id, int fetch_width) {
                 cout << "\tPadded access map: " << str(pad_am) << endl;
                 cout << "\tPadded schedule: " << str(pad_sched) << endl;
                 replace_pt(pt, pad_am, pad_sched);
-                //access_map.at(pt) = to_umap(pad_am);
-                //schedule.at(pt) = to_umap(pad_sched);
-                //domain.at(pt) = ::domain(pad_am);
-            }
-            else {
-                replace_pt(pt, am, shift_domain_map(to_map(sched)));
             }
         }
     }
