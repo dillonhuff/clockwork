@@ -68,7 +68,7 @@ template<typename T>
 vector<T> strides(const std::vector<T>& lengths) {
   vector<T> strs;
   for (int i = 0; i < (int) lengths.size(); i++) {
-    strs.push_back(prod_after(lengths, i));
+    strs.push_back(prod_after(lengths, i + 1));
   }
   return strs;
 }
@@ -121,6 +121,7 @@ int wire_width(CoreIR::Wireable* w) {
   }
   assert(false);
 }
+
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   auto ns = context->getNamespace("global");
 
@@ -156,13 +157,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
   auto def = ub->newModuleDef();
 
-  generate_platonic_ubuffer(options, prg, buf, hwinfo);
-  ////TODO: use a more general switch
-  //if (true) {
-    //generate_synthesizable_functional_model(options, buf, def, hwinfo);
-  //} else {
-    ////buf.generate_coreir(options, def);
-  //}
+  if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
+    embarassing_partition(buf, hwinfo);
+    generate_platonic_ubuffer(options, prg, buf, hwinfo);
+  } else {
+    generate_synthesizable_functional_model(options, buf, def, hwinfo);
+  }
 
   ub->setDef(def);
   return ub;
@@ -170,22 +170,42 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   vector<string> terms;
-  terms.push_back(str(const_coeff(aff)));
+  if (!is_zero(const_coeff(aff))) {
+    terms.push_back(str(const_coeff(aff)));
+  }
   for (int i = 0; i < num_in_dims(aff); i++) {
-    string cf = str(get_coeff(aff, i));
-    string rn = ctrl_vars + brackets(str(i));
-    terms.push_back(cf + "*" + rn);
+    if (!is_zero(get_coeff(aff, i))) {
+      string cf = str(get_coeff(aff, i));
+      string rn = ctrl_vars + brackets(str(i));
+      terms.push_back(cf + "*" + rn);
+    }
   }
 
   for (int d = 0; d < num_div_dims(aff); d++) {
     auto v = isl_aff_get_coefficient_val(aff, isl_dim_div, d);
     if (!is_zero(v)) {
-      auto a = isl_aff_get_div(aff, d);
-      auto denom = isl_aff_get_denominator_val(a);
+
+      isl_aff * a = isl_aff_get_div(aff, d);
+      isl_val * denom = isl_aff_get_denominator_val(a);
+      int denom_int = to_int( denom);
       auto denom_str = str(denom);
       auto astr = codegen_verilog(ctrl_vars, isl_aff_scale_val(a, denom));
-      terms.push_back("$rtoi($floor(" + astr + " / " + denom_str + "))");
+
+      assert(isl_val_is_int(v));
+
+      if(ceil(log2(denom_int)) == log2(denom_int))
+      {
+      terms.push_back(parens(str(v) + "*" + "(" + astr + " >> " + str(log2(denom_int)) + ")"));
+
+
+      } else{
+      terms.push_back(parens(str(v) + "*" + "$rtoi($floor(" + astr + " / " + denom_str + "))"));
+
+      }
     }
+  }
+  if (terms.size() == 0) {
+    return "0";
   }
   string res_str = sep_list(terms, "(", ")", " + ");
   return parens(res_str);
@@ -235,24 +255,30 @@ vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk
 string generate_linearized_verilog_inner_bank_offset(const std::string& pt, vector<int>& banking, bank& bnk, UBuffer& buf) {
   auto comps = generate_verilog_addr_components(pt, bnk, buf);
   assert(comps.size() == banking.size());
-  auto strs = strides(banking);
+  vector<int> lengths;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto max = to_int(lexmaxval(s));
+    auto min = to_int(lexminval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+  auto strs = strides(lengths);
 
   vector<string> terms;
   for (int i = 0; i < comps.size(); i++) {
-    string comp = "$floor(" + comps.at(i) + " / " + str(banking.at(i)) + ")";
+    string comp = "(" + comps.at(i) + " / " + str(banking.at(i)) + ")";
     string stride = str(strs.at(i));
-    terms.push_back(comp + "*" + stride);
+    terms.push_back(parens(comp + "*" + stride));
   }
   return sep_list(terms, "(", ")", " + ");
 }
 
-string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
-  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
-
+isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom) {
   vector<int> lengths;
   vector<int> mins;
-  for (int i = 0; i < buf.logical_dimension(); i++) {
-    auto s = project_all_but(to_set(bnk.rddom), i);
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
     auto min = to_int(lexminval(s));
     mins.push_back(min);
     auto max = to_int(lexmaxval(s));
@@ -260,44 +286,90 @@ string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffe
     lengths.push_back(length);
   }
 
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << "aff: " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(isl_aff_floor(div(sub(aff, mins.at(d)), bank_factors.at(d))), length);
+    //isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    flat = add(flat, flt);
+    cout << "flat: " << str(flat) << endl;
+  }
+
+  return flat;
+  //return isl_aff_floor(div(flat, 2));
+}
+
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << "aff: " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    flat = add(flat, flt);
+    cout << "flat: " << str(flat) << endl;
+  }
+
+  return flat;
+}
+
+
+string generate_linearized_verilog_addr(
+    const std::vector<int>& bank_factors,
+    const std::string& pt,
+    bank& bnk,
+    UBuffer& buf) {
+
+  isl_set* dom = to_set(bnk.rddom);
+
+  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+
   isl_map* m = to_map(buf.access_map.at(pt));
-  auto svec = isl_pw_multi_aff_from_map(m);
-  vector<pair<isl_set*, isl_multi_aff*> > pieces =
-    get_pieces(svec);
-  vector<string> domains;
-  vector<string> offsets;
-  for (auto piece : pieces) {
-    vector<string> addr_vec;
-    isl_multi_aff* ma = piece.second;
-    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
-      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
-      addr_vec.push_back(codegen_verilog(ctrl_vars, aff));
-    }
+  isl_aff* flattened = flatten(bank_factors, get_multi_aff(m), dom);
 
-    vector<string> addr_vec_out;
-    for (int i = 0; i < buf.logical_dimension(); i++) {
-      int length = 1;
-      for (int d = 0; d < i; d++) {
-        length *= lengths.at(d);
-      }
-      string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
-      addr_vec_out.push_back(item);
-    }
+  return codegen_verilog(ctrl_vars, flattened);
+}
 
-    string addr = sep_list(addr_vec_out, "", "", " + ");
-    offsets.push_back(addr);
-    domains.push_back(codegen_c(piece.first));
-  }
+string generate_linearized_verilog_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
+  isl_set* dom = to_set(bnk.rddom);
 
-  assert(offsets.size() > 0);
-  assert(domains.size() == offsets.size());
+  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
 
-  string base = offsets.at(0);
-  for (int d = 1; d < offsets.size(); d++) {
-    base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
-  }
+  isl_map* m = to_map(buf.access_map.at(pt));
+  isl_aff* flattened = flatten(get_multi_aff(m), dom);
 
-  return base;
+  return codegen_verilog(ctrl_vars, flattened);
 }
 
 void generate_verilog_for_bank_storage(CodegenOptions& options,
@@ -344,7 +416,10 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   assert(bank_factors.size() == buf.logical_dimension());
 
   out << endl;
-  vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
+  //vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
+  vector<string> port_decls{"input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
+  //vector<string> port_decls{"input logic [" + str(CONTROLPATH_WIDTH) + ":0] d [" + str(bank_factors.size() - 1) + ":0]",
+    //"output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
   out << "module " << buf.name << "_bank_selector(" << comma_list(port_decls) << ");" << endl;
 
   vector<string> bank_strides;
@@ -356,7 +431,8 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   int i = 0;
   vector<string> terms;
   for (auto p : bank_factors) {
-    string var = "d" + brackets(str(i));
+    //string var = "d" + brackets(str(i));
+    string var = "d[" + str((i + 1)*CONTROLPATH_WIDTH - 1) + ":" + str(i*CONTROLPATH_WIDTH) + "]";
     out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] bank_index_" << i << ";" << endl;
     //out << tab(1) << "assign " << "bank_index_" << i << " = " << "$floor(" << var << " / " << p << ");" << endl;
     out << tab(1) << "assign " << "bank_index_" << i << " = " << "(" << var << " % " << p << ");" << endl;
@@ -394,24 +470,239 @@ void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank
   }
 }
 
-void generate_platonic_ubuffer(
+UBuffer latency_adjusted_buffer(
     CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo) {
+  UBuffer cpy = buf;
+  for (auto pt : buf.get_in_ports()) {
+    int write_start = 1;
+    //write_start_offset(op, hwinfo);
+    isl_aff* adjusted =
+      add(get_aff(buf.schedule.at(pt)), write_start);
+    cpy.schedule[pt] =
+      to_umap(to_map(adjusted));
+  }
+  for (auto pt : buf.get_out_ports()) {
+    int read_start = 0;
+    isl_aff* adjusted =
+      add(get_aff(buf.schedule.at(pt)), read_start);
+    cpy.schedule[pt] =
+      to_umap(to_map(adjusted));
+  }
+  cout << "---- Original" << endl;
+  cout << buf << endl;
+  cout << "---- Latency adjusted" << endl;
+  cout << cpy << endl;
 
-  prg.pretty_print();
-  //assert(false);
+  // Now: How do we search for good bankings?
+  //  1. The basic object is the map from times to locations written for each port
+  cout << "Timing maps..." << endl;
+  for (auto pt : cpy.get_all_ports()) {
+    auto timing_map = dot(inv(cpy.schedule[pt]), cpy.access_map[pt]);
+    cout << pt << ": " << str(timing_map) << endl;
+  }
+  return cpy;
+}
 
+vector<int> cyclic_banking(prog& prg, UBuffer& buf, schedule_info& info) {
   vector<int> bank_factors;
   for (int i = 0; i < buf.logical_dimension(); i++) {
     bank_factors.push_back(2);
   }
 
+  return bank_factors;
+}
 
-  map<string, pair<string, int> > shift_registered_outputs;
+isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors) {
+  vector<string> dvs;
+  vector<string> bank_exprs;
+  for (int i = 0; i < (int) bank_factors.size(); i++) {
+    dvs.push_back("d" + str(i));
+    bank_exprs.push_back("d" + str(i) + " % " + str(bank_factors.at(i)));
+  }
+
+  string folded_output = "Bank" + brackets(sep_list(bank_exprs, "", "", ", "));
+
+  string bank_str = curlies(name + brackets(sep_list(dvs, "", "", ", ")) + " -> " + folded_output);
+  return isl_map_read_from_str(ctx, bank_str.c_str());
+}
+
+int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  isl_map* bank_func = cyclic_function(buf.ctx, buf.name, bank_factors);
+
+  bank bnk = buf.compute_bank_info();
+  vector<int> lengths;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto max = to_int(lexmaxval(s));
+    auto min = to_int(lexminval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+  auto strs = strides(lengths);
+
+  cout << "Strides..." << endl;
+  for (auto s : strs) {
+    cout << tab(1) << s << endl;
+  }
+
+  cout << endl;
+  cout << "Terms" << endl;
+  vector<string> terms;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    string var = "d" + str(i);
+    string fold = "floor(" + var + " / "  + str(bank_factors.at(i)) + ")" + "*" + str(strs.at(i));
+    cout << tab(1) << fold << endl;
+    terms.push_back(fold);
+  }
+  vector<string> dvs;
+  for (int i = 0; i < (int) bank_factors.size(); i++) {
+    dvs.push_back("d" + str(i));
+  }
+
+  string aff_str = curlies("Bank" + sep_list(dvs, "[", "]", ", ") + " -> " + brackets(parens(sep_list(terms, "", "", " + "))));
+  cout << "aff_str = " << aff_str << endl;
+  cout << "Bank func        : " << str(bank_func) << endl;
+  isl_map* aff = isl_map_read_from_str(buf.ctx, aff_str.c_str());
+  cout << "Inner bank offset: " << str(aff) << endl;
+
+  auto app = dot(bank_func, aff);
+  cout << endl << "Application: " << str(app) << endl;
+  //assert(false);
+  return 100000;
+}
+
+template <typename T>
+void print_shift_registers(
+    std::ostream& out,
+    const T& shift_registered_outputs,
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+  for (auto sr : shift_registered_outputs) {
+    int delay = sr.second.second;
+    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
+    out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
+
+    int addrwidth = ceil(log2(delay + 1));
+
+    out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
+
+    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
+    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
+
+    //out << tab(1) << "reg [15:0] read_addr;" << endl;
+    //out << tab(1) << "reg [15:0] write_addr;" << endl;
+
+    out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+    out << tab(2) << "if (~rst_n) begin" << endl;
+    out << tab(3) << "read_addr <= 0;" << endl;
+    out << tab(3) << "write_addr <= " << delay << ";" << endl;
+    out << tab(2) << "end else begin" << endl;
+    out << tab(3) << "storage[write_addr] <= in;" << endl;
+    out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
+    out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
+
+    out << tab(2) << "end" << endl << endl;
+    out << tab(1) << "end" << endl << endl;
+
+    out << tab(1) << "always @(*) begin" << endl;
+    out << tab(2) << "out = storage[read_addr];" << endl;
+    out << tab(1) << "end" << endl << endl;
+
+    out << "endmodule" << endl << endl;
+}
+}
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
   auto sc = buf.global_schedule();
   bool any_reduce_ops_on_buffer = false;
+  vector<pair<string, pair<string, int> >> shift_registered_outputs;
+  for (auto op : prg.all_ops()) {
+    //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0 ) {
+      if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
+        cout << buf.name << endl;
+
+          any_reduce_ops_on_buffer = true;
+        break;
+    }
+  }
+
+  if (!any_reduce_ops_on_buffer) {
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto outpt_src : buf.get_out_ports()) {
+
+
+          if(outpt == outpt_src) {
+              continue;
+          }
+
+            auto reads = buf.access_map.at(outpt);
+              auto reads_src = buf.access_map.at(outpt_src);
+              cout << "reads: " << str(reads) << endl;
+              cout << "reads_src: " << str(reads_src) << endl;
+
+              auto outpt_read_data = range(reads);
+              auto outpt_src_read_data = range(reads_src);
+              if(num_in_dims(to_map(reads)) != num_in_dims(to_map(reads_src)))
+              {
+                continue;
+              }
+
+              if(!subset(outpt_read_data,outpt_src_read_data))
+              {
+                  continue;
+              }
+
+              cout << str(buf.schedule.at(outpt)) << endl;
+              cout << str(buf.schedule.at(outpt_src)) << endl;
+              isl_aff * outpt_sched = get_aff(buf.schedule.at(outpt));
+              isl_aff * outpt_src_sched = get_aff(buf.schedule.at(outpt_src));
+              outpt_sched = set_name(outpt_sched,"bump");
+              outpt_src_sched = set_name(outpt_src_sched,"bump");
+              isl_aff * diff = sub(outpt_sched,outpt_src_sched);
+              isl_aff * reads_aff = get_aff(reads);
+              isl_aff * reads_src_aff = get_aff(reads_src);
+              reads_aff = set_name(reads_aff,"bump");
+              reads_src_aff = set_name(reads_src_aff,"bump");
+              isl_aff * diff_loc = sub(reads_aff, reads_src_aff);
+
+              cout << str(diff) << endl;
+
+              if(!isl_aff_is_cst(diff) || to_int(const_coeff(diff)) < 0)
+              {
+                  continue;
+              }
+
+              if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) != 0)
+              {
+                  continue;
+              }
+
+              auto time_to_read_src = dot(inv(sc), (reads_src));
+              auto time_to_read = dot(inv(sc), (reads));
+
+             shift_registered_outputs.push_back({outpt,{outpt_src, to_int(const_coeff(diff))-1}});
+        }
+
+    }
+  }
+  return shift_registered_outputs;
+}
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
+  auto sc = buf.global_schedule();
+  bool any_reduce_ops_on_buffer = false;
+  map<string, pair<string, int> > shift_registered_outputs;
   for (auto op : prg.all_ops()) {
     if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
       any_reduce_ops_on_buffer = true;
@@ -437,6 +728,7 @@ void generate_platonic_ubuffer(
             intersection(write_op->buffers_read(), write_op->buffers_written()).size() == 0) {
           auto dd =
             dependence_distance_singleton(buf, inpt, outpt, sc);
+          //assert(false);
           if (dd.has_value()) {
             int dd_raw = dd.get_value();
             if (write_op->func != "") {
@@ -449,47 +741,37 @@ void generate_platonic_ubuffer(
       }
     }
   }
+  return shift_registered_outputs;
+}
+void generate_platonic_ubuffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+
+  prg.pretty_print();
+
+
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  //int folding_factor = bank_folding_factor(bank_factors, prg, buf, hwinfo);
+
+  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
+  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+
+  if(buf.name == "hw_input_global_wrapper_stencil")
+  {
+          cout << buf;
+          cout << "Output to output srs..." << endl;
+          for (auto ent : shift_registered_outputs_to_outputs) {
+              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
+          }
+  }
 
   ostream& out = *verilog_collateral_file;
 
   print_cyclic_banks_selector(out, bank_factors, buf);
-
-  for (auto sr : shift_registered_outputs) {
-    int delay = sr.second.second;
-    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
-    out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
-
-
-    //if (delay == 0) {
-      //out << tab(1) << "assign out = in;" << endl;
-    //} else {
-      out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
-
-      out << tab(1) << "reg [15:0] read_addr;" << endl;
-      out << tab(1) << "reg [15:0] write_addr;" << endl;
-
-      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-      out << tab(2) << "if (~rst_n) begin" << endl;
-      out << tab(3) << "read_addr <= 0;" << endl;
-      out << tab(3) << "write_addr <= " << delay << ";" << endl;
-      out << tab(2) << "end else begin" << endl;
-      out << tab(3) << "storage[write_addr] <= in;" << endl;
-      out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
-      out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
-
-      //out << tab(3) << "$display(\"write_addr = %d\", write_addr);" << endl;
-
-      out << tab(2) << "end" << endl << endl;
-      out << tab(1) << "end" << endl << endl;
-
-      out << tab(1) << "always @(*) begin" << endl;
-      out << tab(2) << "out = storage[read_addr];" << endl;
-      out << tab(1) << "end" << endl << endl;
-    //}
-
-    out << "endmodule" << endl << endl;
-  }
-
+  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
+  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
 
   vector<string> port_decls{"input clk", "input flush", "input rst_n"};
 
@@ -522,7 +804,6 @@ void generate_platonic_ubuffer(
   bank bnk = buf.compute_bank_info();
   out << tab(1) << "// Storage" << endl;
   print_cyclic_banks(out, bank_factors, bnk);
-  //generate_verilog_for_bank_storage(options, out, bnk);
 
   out << endl;
 
@@ -538,6 +819,7 @@ void generate_platonic_ubuffer(
       comps.push_back(buf.name + "_" + in + "_" + str(i));
       i++;
     }
+    reverse(comps);
     out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
   }
 
@@ -553,47 +835,61 @@ void generate_platonic_ubuffer(
       comps.push_back(buf.name + "_" + in + "_" + str(i));
       i++;
     }
+    reverse(comps);
     out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
   }
 
   out << endl;
+  unordered_set<string> done_outpt;
+
   for (auto in : buf.get_in_ports()) {
     string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
     for (auto pt : shift_registered_outputs) {
       string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
       if (pt.second.first == in) {
-      //if (false) {
+          done_outpt.insert(pt.first);
         out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
       }
     }
   }
+  for (auto pt : shift_registered_outputs_to_outputs) {
+
+        if(done_outpt.find(pt.first)!=done_outpt.end())
+        {
+            continue;
+        } else{
+            done_outpt.insert(pt.first);
+        }
+
+        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+
+    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
+      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+
+  }
+
   out << endl;
 
-  //string source_ram = "RAM"
-  string source_ram = "bank_0";
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
-
-    auto comps =
-      generate_verilog_addr_components(in, bnk, buf);
-
-    out << tab(2) << "//" << sep_list(comps, "{", "}", ",") << endl;
-    string addr = generate_linearized_verilog_addr(in, bnk, buf);
+    string addr = parens(generate_linearized_verilog_addr(in, bnk, buf));
+    //string addr = parens(generate_linearized_verilog_addr(bank_factors, in, bnk, buf) + " % " + str(folding_factor));
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
     int num_banks = card(bank_factors);
-    //for (auto val : bank_factors) {
-      //num_banks *= val;
-    //}
     for (int b = 0; b < num_banks; b++) {
       string source_ram = "bank_" + str(b);
       out << tab(3) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << b << ") begin" << endl;
-      //out << tab(4) << "$display(\"" << buf.name << "_" << in << "_bank_selector.out == " << b << " = " + str(b) + "\");" << endl;
+      for (int other_bank = 0; other_bank < num_banks; other_bank++) {
+        if (other_bank != b) {
+          out << tab(4) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << other_bank << ") begin $finish(-1); end" << endl;
+        }
+
+      }
       out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
       out << tab(3) << "end" << endl;
     }
-    //out << tab(3) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
     out << tab(2) << "end" << endl;
   }
   out << tab(1) << "end" << endl;
@@ -601,21 +897,16 @@ void generate_platonic_ubuffer(
 
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
-    if (!contains_key(outpt, shift_registered_outputs)) {
-      string addr = generate_linearized_verilog_addr(outpt, bnk, buf);
+    if (done_outpt.find(outpt) == done_outpt.end()) {
+      string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf));
+      //string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
-      //for (auto val : bank_factors) {
-        //num_banks *= val;
-      //}
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
         out << tab(3) << "if (" << buf.name << "_" << outpt << "_bank_selector.out == " << b << ") begin" << endl;
-        //out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << ";" << endl;
         out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
         out << tab(3) << "end" << endl;
       }
-
-      //out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
     }
   }
 
@@ -1714,18 +2005,6 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   return ub;
   //assert(false);
 
-}
-
-isl_aff* constant_aff(isl_aff* src, const int val) {
-  auto ls = isl_aff_get_domain_local_space(src);
-  cout << "ls = " << str(ls) << endl;
-  auto v = isl_val_int_from_si(ctx(src), val);
-  cout << "v = " << str(v) << endl;
-  return aff_on_domain(ls, v);
-}
-
-isl_aff* add(isl_aff* start_time_aff, const int compute_latency) {
-  return add(start_time_aff, constant_aff(start_time_aff, compute_latency));
 }
 
 void generate_micro_op_controllers(CodegenOptions& options,

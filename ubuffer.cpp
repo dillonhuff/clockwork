@@ -4387,7 +4387,6 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
   auto violated = coalesce(diff(its(overlapping_ranges, stored_to_same_slot), in_id));
   cout << "violated    = " << str(violated) << endl;
   return empty(violated);
-
 }
 
 bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf) {
@@ -4396,4 +4395,191 @@ bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf) {
   auto op_reads = buf.consumer_map();
 
   return inner_bank_offset_is_legal(slot_func, op_writes, op_reads, sched);
+}
+
+std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
+  out << "--- " << buf.name << endl;
+  out << "\t---- " << buf.get_in_ports().size() << " in ports" << endl;
+
+  //add a copy for compute_max_dd function
+  UBuffer tmp = buf;
+  for (auto inpt : buf.get_in_ports()) {
+    out << "\t\t" << inpt << endl;
+    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    //out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
+    //out << "\t\t\tacc range: " << str(range(buf.access_map.at(inpt))) << endl;
+    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+    out << endl;
+  }
+
+  out << "\t---- " << buf.get_out_ports().size() << " out ports:" << endl;
+  for (auto inpt : buf.get_out_ports()) {
+    out << "\t\t" << inpt << endl;
+    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+    //out << "\t\t\tlexmax events: " << str(buf.get_lexmax_events(inpt)) << endl;
+
+    out << endl;
+  }
+
+
+  out << "\t---- Input Bundles" << endl;
+  for (auto in_bundle : buf.get_in_bundles()) {
+    out << "\t\t" << in_bundle << endl;
+    auto ports = buf.port_bundles.at(in_bundle);
+    out << "\t\t---- Ports..." << endl;
+    for (auto p : ports) {
+      out << "\t\t\t" << p << endl;
+    }
+
+  }
+  out << "\t---- Output Bundles" << endl;
+  for (auto out_bundle : buf.get_out_bundles()) {
+    out << "\t\t" << out_bundle << endl;
+    auto ports = buf.port_bundles.at(out_bundle);
+    out << "\t\t---- Ports..." << endl;
+    for (auto p : ports) {
+      out << "\t\t\t" << p << endl;
+    }
+
+  }
+  return out;
+}
+
+// map from address components to the value of the address
+// at that component
+typedef std::map<int, int> fixed_subaddress;
+
+map<string, fixed_subaddress> find_fixed_subaddresses(const vector<string>& ports, UBuffer& buf) {
+  map<string, fixed_subaddress> addrs;
+  for (auto pt : ports) {
+    isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
+    map<int, isl_val*> constant_offsets = constant_components(access);
+    for (auto ent : constant_offsets) {
+      addrs[pt][ent.first] = to_int(ent.second);
+    }
+  }
+  return addrs;
+}
+
+vector<vector<string> > overlapping_ports(UBuffer& buf) {
+
+  vector<vector<string> > overlapping;
+  for (auto pt : buf.get_all_ports()) {
+    auto pt_write_times = range(buf.schedule.at(pt));
+    //cout << "write times: " << str(pt_write_times) << endl;
+    //cout << str(buf.schedule.at(pt)) << endl;
+    bool overlaps_existing = false;
+    for (auto& group : overlapping) {
+      for (auto other_pt : group) {
+        auto other_pt_write_times = range(buf.schedule.at(other_pt));
+        //cout << tab(1) << "other write times: " << str(other_pt_write_times) << endl;
+
+        if (!empty(its(pt_write_times, other_pt_write_times))) {
+          //cout << "Overlapping!" << endl;
+          //assert(false);
+          overlaps_existing = true;
+          break;
+        }
+      }
+      if (overlaps_existing) {
+        group.push_back(pt);
+        break;
+      }
+    }
+
+    if (!overlaps_existing) {
+      overlapping.push_back({pt});
+    }
+  }
+
+  return overlapping;
+}
+
+vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction) {
+  vector<vector<string> > overlapping = overlapping_ports(buf);
+
+  int grouped = 0;
+  for (auto& grp : overlapping) {
+    grouped += grp.size();
+  }
+
+  assert(grouped == buf.get_all_ports().size());
+
+  vector<vector<string> > filtered_io_groups;
+  for (auto& g : overlapping) {
+    vector<string> ins;
+    vector<string> outs;
+    for (auto pt : g) {
+      if (buf.is_in_pt(pt)) {
+        ins.push_back(pt);
+      } else {
+        assert(buf.is_out_pt(pt));
+        outs.push_back(pt);
+      }
+    }
+    if (ins.size() > ports_per_direction) {
+      filtered_io_groups.push_back(ins);
+    }
+    if (outs.size() > ports_per_direction) {
+      filtered_io_groups.push_back(outs);
+    }
+  }
+
+  return filtered_io_groups;
+}
+
+isl_multi_aff* embarassing_partition_function(UBuffer& buf, const std::set<int>& dims) {
+  vector<string> vars;
+  vector<string> outs;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    vars.push_back("d" + str(i));
+    if (elem(i, dims)) {
+      outs.push_back("(d" + str(i) + ")");
+    }
+  }
+  string bs = curlies(buf.name + sep_list(vars, "[", "]", ", ") + " -> " + "Bank" + sep_list(outs, "[", "]", ", "));
+  return rdmultiaff(buf.ctx, bs);
+}
+
+maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo) {
+  vector<vector<string> > filtered_io_groups =
+    overlapping_large_io_port_groups(buf, 1);
+
+  std::set<int> dims;
+  for (auto g : filtered_io_groups) {
+    auto parts = find_fixed_subaddresses(g, buf);
+    cout << "Error: No viable banking strategy for " << buf.name << endl;
+    cout << tab(1) << "Cannot partition group: " << endl;
+    for (auto pt : g) {
+      cout << tab(2) << pt << endl;
+      cout << tab(3) << str(buf.access_map.at(pt)) << endl;
+    }
+    if (parts.size() < g.size()) {
+      return {};
+    }
+    for (auto ent : parts) {
+      for (auto d : ent.second) {
+        dims.insert(d.first);
+      }
+    }
+  }
+
+  cout << "FOUND EMBARASSING PARTITION OF " << buf.name << " in dimensions..." << endl;
+  for (auto d : dims) {
+    cout << tab(1) << d << endl;
+  }
+
+  isl_multi_aff* bank_func = embarassing_partition_function(buf, dims);
+  cout << tab(1) << "bank func: " << str(bank_func) << endl;
+  //bool legal = banking_scheme_is_legal(to_map(bank_func), buf);
+  //cout << tab(2) << "Legal: " << legal << endl;
+  //assert(false);
+  return dims;
 }

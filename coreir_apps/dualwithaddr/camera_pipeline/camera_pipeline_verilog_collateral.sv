@@ -114,47 +114,47 @@ module corrected_stencil_ub(
   logic [15:0] bank_7 [10092];
 
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_0;
-  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_0 = (((1 + 0*op_hcompute_curved_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_read_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_0 = (((1)) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_1;
-  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_1 = (((0 + 0*op_hcompute_curved_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_read_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_1 = (((1*op_hcompute_curved_stencil_1_read_ctrl_vars[1])) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_2;
-  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_2 = (((0 + 0*op_hcompute_curved_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_read_ctrl_vars[2])) - 0);
-corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_0,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_1,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_2}));
+  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_2 = (((1*op_hcompute_curved_stencil_1_read_ctrl_vars[2])) - 0);
+corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_2,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_1,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_0}));
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_0;
-  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_0 = (((2 + 0*op_hcompute_curved_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_read_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_0 = (((2)) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_1;
-  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_1 = (((0 + 0*op_hcompute_curved_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_read_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_1 = (((1*op_hcompute_curved_stencil_2_read_ctrl_vars[1])) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_2;
-  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_2 = (((0 + 0*op_hcompute_curved_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_read_ctrl_vars[2])) - 0);
-corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_0,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_1,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_2}));
+  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_2 = (((1*op_hcompute_curved_stencil_2_read_ctrl_vars[2])) - 0);
+corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_2,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_1,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_2_39_0}));
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_0;
-  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_0 = (((0 + 0*op_hcompute_curved_stencil_read_ctrl_vars[0] + 0*op_hcompute_curved_stencil_read_ctrl_vars[1] + 0*op_hcompute_curved_stencil_read_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_0 = (0 - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_1;
-  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_1 = (((0 + 0*op_hcompute_curved_stencil_read_ctrl_vars[0] + 1*op_hcompute_curved_stencil_read_ctrl_vars[1] + 0*op_hcompute_curved_stencil_read_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_1 = (((1*op_hcompute_curved_stencil_read_ctrl_vars[1])) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_2;
-  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_2 = (((0 + 0*op_hcompute_curved_stencil_read_ctrl_vars[0] + 0*op_hcompute_curved_stencil_read_ctrl_vars[1] + 1*op_hcompute_curved_stencil_read_ctrl_vars[2])) - 0);
-corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_0,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_1,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_2}));
+  assign corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_2 = (((1*op_hcompute_curved_stencil_read_ctrl_vars[2])) - 0);
+corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_2,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_1,corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_43_0}));
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_0;
-  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_0 = (((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_0 = (((1)) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_1;
-  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_1 = (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_1 = (((1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1])) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_2;
-  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_2 = (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0);
-corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_0,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_1,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_2}));
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_2 = (((1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0);
+corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_2,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_1,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_0}));
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_0;
-  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_0 = (((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_0 = (((2)) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_1;
-  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_1 = (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_1 = (((1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1])) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_2;
-  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_2 = (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0);
-corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_0,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_1,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_2}));
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_2 = (((1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0);
+corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_2,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_1,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_0}));
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_0;
-  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_0 = (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_0 = (0 - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_1;
-  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_1 = (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0);
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_1 = (((1*op_hcompute_corrected_stencil_write_ctrl_vars[1])) - 0);
   logic [15:0] corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_2;
-  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_2 = (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0);
-corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_0,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_1,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_2}));
+  assign corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_2 = (((1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0);
+corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector(.d({corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_2,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_1,corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_0}));
 
     corrected_stencil_corrected_stencil_op_hcompute_curved_stencil_1_41_to_corrected_stencil_op_hcompute_corrected_stencil_1_48_sr corrected_stencil_op_hcompute_curved_stencil_1_41_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_corrected_stencil_1_write[0]), .out(op_hcompute_curved_stencil_1_read[0]));
 
@@ -164,85 +164,250 @@ corrected_stencil_bank_selector corrected_stencil_corrected_stencil_op_hcompute_
 
 
   always @(posedge clk) begin
-    //{(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_corrected_stencil_1_write_wen) begin
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 0) begin
-        bank_0[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 7) begin $finish(-1); end
+        bank_0[(((1 + 3*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_1_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 1) begin
-        bank_1[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 7) begin $finish(-1); end
+        bank_1[(((1 + 3*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_1_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 2) begin
-        bank_2[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 7) begin $finish(-1); end
+        bank_2[(((1 + 3*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_1_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 3) begin
-        bank_3[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 7) begin $finish(-1); end
+        bank_3[(((1 + 3*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_1_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 4) begin
-        bank_4[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 7) begin $finish(-1); end
+        bank_4[(((1 + 3*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_1_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 5) begin
-        bank_5[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 7) begin $finish(-1); end
+        bank_5[(((1 + 3*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_1_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 6) begin
-        bank_6[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 7) begin $finish(-1); end
+        bank_6[(((1 + 3*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_1_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 7) begin
-        bank_7[(((1 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_1_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_1_48_bank_selector.out == 6) begin $finish(-1); end
+        bank_7[(((1 + 3*op_hcompute_corrected_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_1_write[0];
       end
     end
-    //{(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_corrected_stencil_2_write_wen) begin
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 0) begin
-        bank_0[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 7) begin $finish(-1); end
+        bank_0[(((2 + 3*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_2_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 1) begin
-        bank_1[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 7) begin $finish(-1); end
+        bank_1[(((2 + 3*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_2_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 2) begin
-        bank_2[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 7) begin $finish(-1); end
+        bank_2[(((2 + 3*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_2_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 3) begin
-        bank_3[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 7) begin $finish(-1); end
+        bank_3[(((2 + 3*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_2_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 4) begin
-        bank_4[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 7) begin $finish(-1); end
+        bank_4[(((2 + 3*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_2_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 5) begin
-        bank_5[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 7) begin $finish(-1); end
+        bank_5[(((2 + 3*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_2_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 6) begin
-        bank_6[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 7) begin $finish(-1); end
+        bank_6[(((2 + 3*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_2_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 7) begin
-        bank_7[(((2 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_2_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_2_44_bank_selector.out == 6) begin $finish(-1); end
+        bank_7[(((2 + 3*op_hcompute_corrected_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_2_write[0];
       end
     end
-    //{(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_corrected_stencil_write_wen) begin
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 0) begin
-        bank_0[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 7) begin $finish(-1); end
+        bank_0[(((3*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 1) begin
-        bank_1[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 7) begin $finish(-1); end
+        bank_1[(((3*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 2) begin
-        bank_2[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 7) begin $finish(-1); end
+        bank_2[(((3*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 3) begin
-        bank_3[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 7) begin $finish(-1); end
+        bank_3[(((3*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 4) begin
-        bank_4[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 7) begin $finish(-1); end
+        bank_4[(((3*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 5) begin
-        bank_5[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 6) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 7) begin $finish(-1); end
+        bank_5[(((3*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 6) begin
-        bank_6[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 7) begin $finish(-1); end
+        bank_6[(((3*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_write[0];
       end
       if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 7) begin
-        bank_7[(((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_corrected_stencil_write_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_corrected_stencil_write[0];
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 0) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 1) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 2) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 3) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 4) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 5) begin $finish(-1); end
+        if (corrected_stencil_corrected_stencil_op_hcompute_corrected_stencil_52_bank_selector.out == 6) begin $finish(-1); end
+        bank_7[(((3*op_hcompute_corrected_stencil_write_ctrl_vars[1] + 174*op_hcompute_corrected_stencil_write_ctrl_vars[2])))] <= op_hcompute_corrected_stencil_write[0];
       end
     end
   end
@@ -367,47 +532,47 @@ module curved_stencil_ub(
   logic [15:0] bank_7 [10092];
 
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_0;
-  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_0 = (((1 + 0*op_hcompute_hw_output_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_1_read_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_0 = (((1)) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_1;
-  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_1 = (((0 + 0*op_hcompute_hw_output_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_hw_output_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_1_read_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_1 = (((1*op_hcompute_hw_output_stencil_1_read_ctrl_vars[1])) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_2;
-  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_2 = (((0 + 0*op_hcompute_hw_output_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_hw_output_stencil_1_read_ctrl_vars[2])) - 0);
-curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_0,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_1,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_2}));
+  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_2 = (((1*op_hcompute_hw_output_stencil_1_read_ctrl_vars[2])) - 0);
+curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_2,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_1,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_0}));
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_0;
-  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_0 = (((2 + 0*op_hcompute_hw_output_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_2_read_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_0 = (((2)) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_1;
-  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_1 = (((0 + 0*op_hcompute_hw_output_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_hw_output_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_2_read_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_1 = (((1*op_hcompute_hw_output_stencil_2_read_ctrl_vars[1])) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_2;
-  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_2 = (((0 + 0*op_hcompute_hw_output_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_hw_output_stencil_2_read_ctrl_vars[2])) - 0);
-curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_0,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_1,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_2}));
+  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_2 = (((1*op_hcompute_hw_output_stencil_2_read_ctrl_vars[2])) - 0);
+curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_2,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_1,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_2_1_0}));
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_0;
-  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_0 = (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_0 = (0 - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_1;
-  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_1 = (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 1*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_1 = (((1*op_hcompute_hw_output_stencil_read_ctrl_vars[1])) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_2;
-  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_2 = (((0 + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[0] + 0*op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 1*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0);
-curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_0,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_1,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_2}));
+  assign curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_2 = (((1*op_hcompute_hw_output_stencil_read_ctrl_vars[2])) - 0);
+curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_2,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_1,curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_5_0}));
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_0;
-  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_0 = (((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_0 = (((1)) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_1;
-  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_1 = (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_1 = (((1*op_hcompute_curved_stencil_1_write_ctrl_vars[1])) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_2;
-  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_2 = (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0);
-curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_0,curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_1,curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_2}));
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_2 = (((1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0);
+curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_2,curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_1,curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_0}));
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_0;
-  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_0 = (((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_0 = (((2)) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_1;
-  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_1 = (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_1 = (((1*op_hcompute_curved_stencil_2_write_ctrl_vars[1])) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_2;
-  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_2 = (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0);
-curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_0,curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_1,curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_2}));
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_2 = (((1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0);
+curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_2,curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_1,curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_0}));
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_0;
-  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_0 = (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_0 = (0 - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_1;
-  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_1 = (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0);
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_1 = (((1*op_hcompute_curved_stencil_write_ctrl_vars[1])) - 0);
   logic [15:0] curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_2;
-  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_2 = (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0);
-curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_0,curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_1,curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_2}));
+  assign curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_2 = (((1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0);
+curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector(.d({curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_2,curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_1,curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_0}));
 
     curved_stencil_curved_stencil_op_hcompute_hw_output_stencil_1_3_to_curved_stencil_op_hcompute_curved_stencil_1_40_sr curved_stencil_op_hcompute_hw_output_stencil_1_3_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_curved_stencil_1_write[0]), .out(op_hcompute_hw_output_stencil_1_read[0]));
 
@@ -417,85 +582,250 @@ curved_stencil_bank_selector curved_stencil_curved_stencil_op_hcompute_curved_st
 
 
   always @(posedge clk) begin
-    //{(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_curved_stencil_1_write_wen) begin
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 0) begin
-        bank_0[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 7) begin $finish(-1); end
+        bank_0[(((1 + 3*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_1_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 1) begin
-        bank_1[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 7) begin $finish(-1); end
+        bank_1[(((1 + 3*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_1_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 2) begin
-        bank_2[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 7) begin $finish(-1); end
+        bank_2[(((1 + 3*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_1_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 3) begin
-        bank_3[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 7) begin $finish(-1); end
+        bank_3[(((1 + 3*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_1_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 4) begin
-        bank_4[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 7) begin $finish(-1); end
+        bank_4[(((1 + 3*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_1_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 5) begin
-        bank_5[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 7) begin $finish(-1); end
+        bank_5[(((1 + 3*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_1_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 6) begin
-        bank_6[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 7) begin $finish(-1); end
+        bank_6[(((1 + 3*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_1_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 7) begin
-        bank_7[(((1 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_1_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_1_40_bank_selector.out == 6) begin $finish(-1); end
+        bank_7[(((1 + 3*op_hcompute_curved_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_1_write[0];
       end
     end
-    //{(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_curved_stencil_2_write_wen) begin
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 0) begin
-        bank_0[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 7) begin $finish(-1); end
+        bank_0[(((2 + 3*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_2_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 1) begin
-        bank_1[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 7) begin $finish(-1); end
+        bank_1[(((2 + 3*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_2_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 2) begin
-        bank_2[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 7) begin $finish(-1); end
+        bank_2[(((2 + 3*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_2_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 3) begin
-        bank_3[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 7) begin $finish(-1); end
+        bank_3[(((2 + 3*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_2_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 4) begin
-        bank_4[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 7) begin $finish(-1); end
+        bank_4[(((2 + 3*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_2_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 5) begin
-        bank_5[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 7) begin $finish(-1); end
+        bank_5[(((2 + 3*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_2_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 6) begin
-        bank_6[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 7) begin $finish(-1); end
+        bank_6[(((2 + 3*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_2_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 7) begin
-        bank_7[(((2 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_2_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_2_38_bank_selector.out == 6) begin $finish(-1); end
+        bank_7[(((2 + 3*op_hcompute_curved_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_2_write[0];
       end
     end
-    //{(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_curved_stencil_write_wen) begin
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 0) begin
-        bank_0[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 7) begin $finish(-1); end
+        bank_0[(((3*op_hcompute_curved_stencil_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 1) begin
-        bank_1[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 7) begin $finish(-1); end
+        bank_1[(((3*op_hcompute_curved_stencil_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 2) begin
-        bank_2[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 7) begin $finish(-1); end
+        bank_2[(((3*op_hcompute_curved_stencil_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 3) begin
-        bank_3[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 7) begin $finish(-1); end
+        bank_3[(((3*op_hcompute_curved_stencil_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 4) begin
-        bank_4[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 7) begin $finish(-1); end
+        bank_4[(((3*op_hcompute_curved_stencil_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 5) begin
-        bank_5[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 6) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 7) begin $finish(-1); end
+        bank_5[(((3*op_hcompute_curved_stencil_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 6) begin
-        bank_6[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 7) begin $finish(-1); end
+        bank_6[(((3*op_hcompute_curved_stencil_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_write[0];
       end
       if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 7) begin
-        bank_7[(((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 1*op_hcompute_curved_stencil_write_ctrl_vars[1] + 0*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_curved_stencil_write_ctrl_vars[0] + 0*op_hcompute_curved_stencil_write_ctrl_vars[1] + 1*op_hcompute_curved_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_curved_stencil_write[0];
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 0) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 1) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 2) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 3) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 4) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 5) begin $finish(-1); end
+        if (curved_stencil_curved_stencil_op_hcompute_curved_stencil_42_bank_selector.out == 6) begin $finish(-1); end
+        bank_7[(((3*op_hcompute_curved_stencil_write_ctrl_vars[1] + 174*op_hcompute_curved_stencil_write_ctrl_vars[2])))] <= op_hcompute_curved_stencil_write[0];
       end
     end
   end
@@ -758,89 +1088,89 @@ module demosaicked_1_stencil_ub(
   logic [15:0] bank_7 [10092];
 
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_0 = (((1 + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_0 = (((1)) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_1 = (((0 + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_1 = (((1*op_hcompute_corrected_stencil_1_read_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_2 = (((0 + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_2 = (((1*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_0 = (((0 + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_0 = (0 - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_1 = (((0 + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_1 = (((1*op_hcompute_corrected_stencil_1_read_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_2 = (((0 + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_2 = (((1*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_0 = (((2 + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_0 = (((2)) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_1 = (((0 + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_1 = (((1*op_hcompute_corrected_stencil_1_read_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_2 = (((0 + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_2 = (((1*op_hcompute_corrected_stencil_1_read_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_0 = (((2 + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_0 = (((2)) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_1 = (((0 + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_1 = (((1*op_hcompute_corrected_stencil_2_read_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_2 = (((0 + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_2 = (((1*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_0 = (((1 + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_0 = (((1)) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_1 = (((0 + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_1 = (((1*op_hcompute_corrected_stencil_2_read_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_2 = (((0 + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_2 = (((1*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_0 = (((0 + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_0 = (0 - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_1 = (((0 + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_1 = (((1*op_hcompute_corrected_stencil_2_read_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_2 = (((0 + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_2 = (((1*op_hcompute_corrected_stencil_2_read_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_0 = (((0 + 0*op_hcompute_corrected_stencil_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_0 = (0 - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_1 = (((0 + 0*op_hcompute_corrected_stencil_read_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_1 = (((1*op_hcompute_corrected_stencil_read_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_2 = (((0 + 0*op_hcompute_corrected_stencil_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_2 = (((1*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_53_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_0 = (((2 + 0*op_hcompute_corrected_stencil_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_0 = (((2)) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_1 = (((0 + 0*op_hcompute_corrected_stencil_read_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_1 = (((1*op_hcompute_corrected_stencil_read_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_2 = (((0 + 0*op_hcompute_corrected_stencil_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_2 = (((1*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_54_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_0 = (((1 + 0*op_hcompute_corrected_stencil_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_0 = (((1)) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_1 = (((0 + 0*op_hcompute_corrected_stencil_read_ctrl_vars[0] + 1*op_hcompute_corrected_stencil_read_ctrl_vars[1] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_1 = (((1*op_hcompute_corrected_stencil_read_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_2 = (((0 + 0*op_hcompute_corrected_stencil_read_ctrl_vars[0] + 0*op_hcompute_corrected_stencil_read_ctrl_vars[1] + 1*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_2 = (((1*op_hcompute_corrected_stencil_read_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_55_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_0 = (((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_0 = (((1)) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_1 = (((1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_2 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_2 = (((1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_0 = (0 - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_1 = (((1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_2 = (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_2 = (((1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_0}));
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_0;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_0 = (((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_0 = (((2)) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_1;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0);
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_1 = (((1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1])) - 0);
   logic [15:0] demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_2;
-  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_2 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0);
-demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_0,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_2}));
+  assign demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_2 = (((1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0);
+demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector(.d({demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_2,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_1,demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_0}));
 
     demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_to_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_sr demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_demosaicked_1_stencil_1_write[0]), .out(op_hcompute_corrected_stencil_1_read[0]));
 
@@ -862,85 +1192,250 @@ demosaicked_1_stencil_bank_selector demosaicked_1_stencil_demosaicked_1_stencil_
 
 
   always @(posedge clk) begin
-    //{(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_demosaicked_1_stencil_1_write_wen) begin
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 0) begin
-        bank_0[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 7) begin $finish(-1); end
+        bank_0[(((1 + 3*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_1_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 1) begin
-        bank_1[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 7) begin $finish(-1); end
+        bank_1[(((1 + 3*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_1_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 2) begin
-        bank_2[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 7) begin $finish(-1); end
+        bank_2[(((1 + 3*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_1_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 3) begin
-        bank_3[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 7) begin $finish(-1); end
+        bank_3[(((1 + 3*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_1_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 4) begin
-        bank_4[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 7) begin $finish(-1); end
+        bank_4[(((1 + 3*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_1_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 5) begin
-        bank_5[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 7) begin $finish(-1); end
+        bank_5[(((1 + 3*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_1_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 6) begin
-        bank_6[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 7) begin $finish(-1); end
+        bank_6[(((1 + 3*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_1_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 7) begin
-        bank_7[(((1 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_1_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_bank_selector.out == 6) begin $finish(-1); end
+        bank_7[(((1 + 3*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_1_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_1_write[0];
       end
     end
-    //{(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_demosaicked_1_stencil_write_wen) begin
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 0) begin
-        bank_0[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 7) begin $finish(-1); end
+        bank_0[(((3*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 1) begin
-        bank_1[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 7) begin $finish(-1); end
+        bank_1[(((3*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 2) begin
-        bank_2[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 7) begin $finish(-1); end
+        bank_2[(((3*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 3) begin
-        bank_3[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 7) begin $finish(-1); end
+        bank_3[(((3*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 4) begin
-        bank_4[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 7) begin $finish(-1); end
+        bank_4[(((3*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 5) begin
-        bank_5[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 7) begin $finish(-1); end
+        bank_5[(((3*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 6) begin
-        bank_6[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 7) begin $finish(-1); end
+        bank_6[(((3*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 7) begin
-        bank_7[(((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_bank_selector.out == 6) begin $finish(-1); end
+        bank_7[(((3*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_write[0];
       end
     end
-    //{(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0),(((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0)}
     if (op_hcompute_demosaicked_1_stencil_2_write_wen) begin
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 0) begin
-        bank_0[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 7) begin $finish(-1); end
+        bank_0[(((2 + 3*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_2_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 1) begin
-        bank_1[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 7) begin $finish(-1); end
+        bank_1[(((2 + 3*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_2_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 2) begin
-        bank_2[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 7) begin $finish(-1); end
+        bank_2[(((2 + 3*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_2_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 3) begin
-        bank_3[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 7) begin $finish(-1); end
+        bank_3[(((2 + 3*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_2_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 4) begin
-        bank_4[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 7) begin $finish(-1); end
+        bank_4[(((2 + 3*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_2_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 5) begin
-        bank_5[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 6) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 7) begin $finish(-1); end
+        bank_5[(((2 + 3*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_2_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 6) begin
-        bank_6[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 7) begin $finish(-1); end
+        bank_6[(((2 + 3*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_2_write[0];
       end
       if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 7) begin
-        bank_7[(((2 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 1 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 3 + (((0 + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])) - 0) * 174] <= op_hcompute_demosaicked_1_stencil_2_write[0];
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 0) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 1) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 2) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 3) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 4) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 5) begin $finish(-1); end
+        if (demosaicked_1_stencil_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_bank_selector.out == 6) begin $finish(-1); end
+        bank_7[(((2 + 3*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[1] + 174*op_hcompute_demosaicked_1_stencil_2_write_ctrl_vars[2])))] <= op_hcompute_demosaicked_1_stencil_2_write[0];
       end
     end
   end
@@ -1467,115 +1962,115 @@ module denoised_1_stencil_ub(
   logic [15:0] bank_3 [3600];
 
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_0 = (((1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_1 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_1 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_0 = (((1 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_0 = (((1 + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_1 = (((1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_0 = (((1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_1 = (((1 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_1 = (((1 + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_0 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_0 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_1 = (((1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_0 = (((1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_1 = (((1*op_hcompute_demosaicked_1_stencil_1_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_0 = (((1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_1 = (((1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_0 = (((1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_0 = (((1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_1 = (((1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_0 = (((1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_0 = (((1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_1 = (((1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_1 = (((1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_0 = (((1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_1 = (((1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_1 = (((1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_0 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_0 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_1 = (((1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_0 = (((1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_0 = (((1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_1 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_1 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_0 = (((1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_1 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_1 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_0 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_0 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_1 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_1 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_2_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_0 = (((1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_1 = (((1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_0 = (((1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_1 = (((1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_1 = (((1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_0 = (((1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_0 = (((1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_1 = (((1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_1 = (((1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_0 = (((0 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_0 = (((1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_1 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_1 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_0 = (((1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_0 = (((1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_1 = (((1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_0 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_0 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_1 = (((1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_1 = (((1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_0 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_0 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_1 = (((0 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_1 = (((1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_0 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_0 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_1 = (((-1 + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_1 = (((-1 + 1*op_hcompute_demosaicked_1_stencil_read_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_0}));
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_0;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_0 = (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1);
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_0 = (((-1 + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1])) - -1);
   logic [15:0] denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_1;
-  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_1 = (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1);
-denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_0,denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_1}));
+  assign denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_1 = (((-1 + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1);
+denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector(.d({denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_1,denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_0}));
 
     denoised_1_stencil_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_to_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_sr denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_denoised_1_stencil_write[0]), .out(op_hcompute_demosaicked_1_stencil_1_read[0]));
 
@@ -1621,19 +2116,30 @@ denoised_1_stencil_bank_selector denoised_1_stencil_denoised_1_stencil_op_hcompu
 
 
   always @(posedge clk) begin
-    //{(((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1),(((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1)}
     if (op_hcompute_denoised_1_stencil_write_wen) begin
       if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 0) begin
-        bank_0[(((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_denoised_1_stencil_write[0];
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 1) begin $finish(-1); end
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 2) begin $finish(-1); end
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 3) begin $finish(-1); end
+        bank_0[(((1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 60*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_denoised_1_stencil_write[0];
       end
       if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 1) begin
-        bank_1[(((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_denoised_1_stencil_write[0];
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 0) begin $finish(-1); end
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 2) begin $finish(-1); end
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 3) begin $finish(-1); end
+        bank_1[(((1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 60*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_denoised_1_stencil_write[0];
       end
       if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 2) begin
-        bank_2[(((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_denoised_1_stencil_write[0];
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 0) begin $finish(-1); end
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 1) begin $finish(-1); end
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 3) begin $finish(-1); end
+        bank_2[(((1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 60*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_denoised_1_stencil_write[0];
       end
       if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 3) begin
-        bank_3[(((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 1 + (((-1 + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])) - -1) * 60] <= op_hcompute_denoised_1_stencil_write[0];
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 0) begin $finish(-1); end
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 1) begin $finish(-1); end
+        if (denoised_1_stencil_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_bank_selector.out == 2) begin $finish(-1); end
+        bank_3[(((1*op_hcompute_denoised_1_stencil_write_ctrl_vars[1] + 60*op_hcompute_denoised_1_stencil_write_ctrl_vars[2])))] <= op_hcompute_denoised_1_stencil_write[0];
       end
     end
   end
@@ -1786,35 +2292,35 @@ module hw_input_global_wrapper_stencil_ub(
   logic [15:0] bank_3 [4096];
 
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_0;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_0 = (((1 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_0 = (((1 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1])) - -3);
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_1;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_1 = (((-1 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
-hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_0,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_1}));
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_1 = (((-1 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_1,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_0}));
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_0;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_0 = (((-3 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_0 = (((-3 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1])) - -3);
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_1;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_1 = (((-1 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
-hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_0,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_1}));
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_1 = (((-1 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_1,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_0}));
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_0;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_0 = (((-1 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_0 = (((-1 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1])) - -3);
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_1;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_1 = (((-3 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
-hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_0,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_1}));
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_1 = (((-3 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_1,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_0}));
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_0;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_0 = (((-1 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_0 = (((-1 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1])) - -3);
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_1;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_1 = (((1 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
-hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_0,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_1}));
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_1 = (((1 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_1,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_0}));
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_0;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_0 = (((-1 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_0 = (((-1 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[1])) - -3);
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_1;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_1 = (((-1 + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[0] + 0*op_hcompute_denoised_1_stencil_read_ctrl_vars[1] + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
-hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_0,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_1}));
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_1 = (((-1 + 1*op_hcompute_denoised_1_stencil_read_ctrl_vars[2])) - -3);
+hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_1,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_0}));
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_0;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_0 = (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3);
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_0 = (((-3 + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1])) - -3);
   logic [15:0] hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_1;
-  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_1 = (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3);
-hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_0,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_1}));
+  assign hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_1 = (((-3 + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3);
+hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector(.d({hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_1,hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_0}));
 
     hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_to_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_sr hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(op_hcompute_hw_input_global_wrapper_stencil_write[0]), .out(op_hcompute_denoised_1_stencil_read[1]));
 
@@ -1828,19 +2334,30 @@ hw_input_global_wrapper_stencil_bank_selector hw_input_global_wrapper_stencil_hw
 
 
   always @(posedge clk) begin
-    //{(((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3),(((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3)}
     if (op_hcompute_hw_input_global_wrapper_stencil_write_wen) begin
       if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 0) begin
-        bank_0[(((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 1 + (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 64] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 2) begin $finish(-1); end
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 3) begin $finish(-1); end
+        bank_0[(((1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
       end
       if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 1) begin
-        bank_1[(((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 1 + (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 64] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 2) begin $finish(-1); end
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 3) begin $finish(-1); end
+        bank_1[(((1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
       end
       if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 2) begin
-        bank_2[(((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 1 + (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 64] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 3) begin $finish(-1); end
+        bank_2[(((1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
       end
       if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 3) begin
-        bank_3[(((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 1 + (((-3 + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[0] + 0*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])) - -3) * 64] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 0) begin $finish(-1); end
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 1) begin $finish(-1); end
+        if (hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_bank_selector.out == 2) begin $finish(-1); end
+        bank_3[(((1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 64*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[2])))] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
       end
     end
   end

@@ -11537,7 +11537,8 @@ int run_verilator_on(const std::string& top_module,
     const std::string& tb_file,
     const std::vector<string>& verilog_files) {
 
-  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
+  //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME");
   assert(verilator_build == 0);
 
   //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
@@ -16013,7 +16014,31 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   //}
 }
 
-schedule_info garnet_schedule_info(prog& prg) {
+int buffer_store_latency(CodegenOptions& options) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
+      options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
+    return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+    return 1;
+  }
+  assert(false);
+}
+
+int buffer_load_latency(CodegenOptions& options) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
+      options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
+    return 0;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+    return 1;
+  }
+  assert(false);
+}
+
+schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   schedule_info sched;
   sched.use_dse_compute = false;
   //sched.use_dse_compute = true;
@@ -16041,9 +16066,8 @@ schedule_info garnet_schedule_info(prog& prg) {
 
     for (auto b : op->buffers_referenced()) {
       if (!prg.is_boundary(b)) {
-        //sched.buffer_load_latencies[b] = 1;
-        sched.buffer_load_latencies[b] = 0;
-        sched.buffer_store_latencies[b] = 1;
+        sched.buffer_load_latencies[b] = buffer_load_latency(options);
+        sched.buffer_store_latencies[b] = buffer_store_latency(options);
       } else {
         sched.buffer_load_latencies[b] = 0;
         sched.buffer_store_latencies[b] = 0;
@@ -16054,47 +16078,45 @@ schedule_info garnet_schedule_info(prog& prg) {
   return sched;
 }
 
-void compile_for_garnet_dual_port_mem(prog& prg) {
-  normalize_bounds(prg);
-
+CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg) {
   CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
-    //TARGET_TILE_DUAL_SRAM_RAW;
-     //TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
-     //TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
-    TARGET_TILE_REGISTERS;
+    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_CYCLE_DELAY;
   } else {
-    for (auto b : all_buffers(prg)) {
-      if (!prg.is_boundary(b)) {
-        if (is_reduce_buffer(b, prg)) {
-          cout << tab(2) << "REDUCE: " << b << endl;
-        } else {
-          cout << tab(2) << "PC    : " << b << endl;
-        }
-        int nread = num_read_ports(b, prg);
-        int nwrite = num_write_ports(b, prg);
-        cout << tab(3) << "# read ports : " << num_read_ports(b, prg) << endl;
-        cout << tab(3) << "# write ports: " << num_write_ports(b, prg) << endl;
-        if (nread == 1 && nwrite == 1) {
-          cout << tab(4) << "Single bank: " << b << endl;
-        }
-      }
-    }
     options.inner_bank_offset_mode =
       INNER_BANK_OFFSET_LINEAR;
-    prg.pretty_print();
-    //assert(false);
   }
 
-  schedule_info sched = garnet_schedule_info(prg);
+  return options;
+}
+
+CodegenOptions garnet_codegen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_PLATONIC;
+  all_unbanked(prg, options);
+
+  if (is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_CYCLE_DELAY;
+  } else {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
+
+  return options;
+}
+
+void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
+  normalize_bounds(prg);
+
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
   op* root = prg.root;
@@ -16139,25 +16161,9 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
 
   auto buffers = build_buffers(prg, hw_sched);
-  //generate_app_code(options, buffers, prg, hw_sched);
 
 #ifdef COREIR
 
-  //generate_coreir_addrgen_in_tile(options,
-    //buffers,
-    //prg,
-    //hw_sched);
-  //assert(false);
-
-  //generate_verilog(options,
-      //buffers,
-      //prg,
-      //hw_sched);
-  //cout << "Emitted verilog to " << prg.name << endl;
-  //assert(false);
-    //map<string, UBuffer>& buffers,
-    //prog& prg,
-    //umap* schedmap) {
   generate_coreir(options,
     buffers,
     prg,
@@ -16165,8 +16171,19 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
     sched);
   generate_verilator_tb(prg, hw_sched, buffers);
 
-  // Insert coreir generation here
 #endif
+}
+
+void compile_for_garnet_platonic_mem(prog& prg) {
+  auto options = garnet_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  return compile_cycle_accurate_hw(options, sched, prg);
+}
+
+void compile_for_garnet_dual_port_mem(prog& prg) {
+  auto options = garnet_codegen_dual_port_with_addrgen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  return compile_cycle_accurate_hw(options, sched, prg);
 }
 
 umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
@@ -16238,6 +16255,7 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
 }
 
 bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
+  prg.pretty_print();
   sanity_check_iis(sched);
   sanity_check_negative_starts(sched, prg);
 
@@ -16268,14 +16286,16 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
   release(start_times);
   release(end_times);
   release(all_times);
+  //assert(false);
   return safe;
 }
 
 void test_schedules(vector<prog>& test_programs) {
 
   for (auto& prg : test_programs) {
+    CodegenOptions options;
     schedule_info sched =
-      garnet_schedule_info(prg);
+      garnet_schedule_info(options, prg);
     garnet_dual_port_ram_schedule(sched, prg.root, prg);
     cout << "Checking " << prg.name << " schedule" << endl;
     prg.pretty_print();
@@ -16292,22 +16312,21 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
-
-  // rom_compute.h missing?
-  test_programs.push_back(rom());
-  // strided_conv.h missing?
+  test_programs.push_back(gaussian());
+  test_programs.push_back(pointwise());
+  test_programs.push_back(up_sample());
+  // Fails with dual port tile?
+  //test_programs.push_back(rom());
   test_programs.push_back(strided_conv());
-
   test_programs.push_back(mini_conv_halide_fixed());
 
-  test_programs.push_back(pointwise());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(gaussian());
-  test_programs.push_back(up_sample());
+
+
   test_programs.push_back(unsharp());
   test_programs.push_back(harris());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
+  test_programs.push_back(camera_pipeline());
 
   // Bounds are too long. Software simulation
   // takes forever
@@ -16329,46 +16348,59 @@ vector<prog> all_cgra_programs() {
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
-  // Passes
   test_programs.push_back(resnet());
+  test_programs.push_back(mobilenet_small());
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
 
 
   concat(test_programs, stencil_programs());
+
+
+
+
+
   return test_programs;
 }
 
-void test_stencil_codegen(vector<prog>& test_programs) {
+void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name) {
+  cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg_name);
+  cmd("mv " + prg_name + ".json ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + ".v ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_compute.v ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv cycle_accurate_regression_result_" + prg_name + ".csv ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg_name + "/");
+}
+
+void test_platonic_codegen(vector<prog>& test_programs) {
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
     prg.pretty_print();
     prg.sanity_check();
-    assert(false);
 
     dsa_writers(prg);
     prg.pretty_print();
-    //assert(false);
-    //vector<string> cpu;
     auto cpu = unoptimized_result(prg);
 
-    compile_for_garnet_dual_port_mem(prg);
+    compile_for_garnet_platonic_mem(prg);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    //assert(false);
-    string app_type = "dualwithaddr";
-    cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
-    cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv " + prg.name + "_compute.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //string app_type = "dualwithaddr";
+    string app_type = "platonic_buffer";
+    cpy_app_to_folder(app_type, prg.name);
+    //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
+    //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv " + prg.name + "_compute.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
+    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
   }
 }
 
@@ -16656,30 +16688,14 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  //prog prg = gaussian();
-  //dsa_writers(prg);
-  //compile_for_garnet_dual_port_mem(prg);
-  //string name = prg.name;
-  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
-  //assert(to_verilog_res == 0);
-  //string app_type = "dualraw";
-  //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
-  //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  //cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-  //cmd("cp ./lake_components/ASPLOS_designs/bare_dual_port.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-
-  //assert(false);
-
   auto test_programs =
     all_cgra_programs();
+
+  test_platonic_codegen(test_programs);
+
+  //auto dual_with_addrgen_programs =
     //stencil_programs();
-  //auto test_programs = all_cgra_programs();
 
-  test_stencil_codegen(test_programs);
-  //test_schedules(test_programs);
-
-  //assert(false);
 }
 
 void dse_flow_tests() {
@@ -16706,7 +16722,7 @@ void dse_flow_tests() {
 
 
 
-  test_stencil_codegen(test_programs);
+  test_platonic_codegen(test_programs);
   //test_schedules(test_programs);
 
   assert(false);
@@ -17317,7 +17333,8 @@ void brighten_blur_asplos_example() {
   //auto sched = its(prg.optimized_codegen(), prg.whole_iteration_domain());
   //auto buffers = build_buffers(prg, sched);
 
-  schedule_info hwsched = garnet_schedule_info(prg);
+  CodegenOptions options;
+  schedule_info hwsched = garnet_schedule_info(options, prg);
   garnet_dual_port_ram_schedule(hwsched, prg.root, prg);
   auto sts = op_start_times_map(hwsched, prg);
   for (auto m : get_maps(sts)) {
