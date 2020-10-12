@@ -17825,7 +17825,11 @@ void dhuff_playground() {
   prg.add_input("in");
   prg.add_output("out");
 
-  cpy("b0", "in", 1, prg);
+  {
+    auto ld = prg.add_loop("i0", 0, 1)->add_op("cpy");
+    ld->add_load("in", "i0");
+    ld->add_store("b0", "i0");
+  }
 
   {
     auto ld = prg.add_loop("x0", 0, 1)->add_op("ldin0");
@@ -17833,6 +17837,7 @@ void dhuff_playground() {
     ld->add_load("b0", "2*x0 + 1");
     ld->add_store("b1", "x0");
   }
+
   {
     auto ld = prg.add_loop("x1", 0, 1)->add_op("ldin1");
     ld->add_load("b1", "2*x1 + 0");
@@ -17840,8 +17845,9 @@ void dhuff_playground() {
     ld->add_store("b2", "x1");
   }
 
-
   infer_bounds("b2", {16}, prg);
+  strip_mine(2, "x0", prg);
+  strip_mine(4, "i0", prg);
   prg.pretty_print();
 }
 

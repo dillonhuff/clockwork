@@ -4613,6 +4613,10 @@ void normalize_bounds(prog& prg) {
   }
 }
 
+void strip_mine(const int factor, const std::string& loop, prog& prg) {
+  strip_mine(factor, prg.find_loop(loop), prg);
+}
+
 void strip_mine(const int factor, op* loop, prog& prg) {
   assert(loop->is_loop);
   assert(loop->trip_count() % factor == 0);

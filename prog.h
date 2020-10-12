@@ -1603,6 +1603,7 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
 void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg);
 
 void strip_mine(const int factor, op* loop, prog& prg);
+void strip_mine(const int factor, const std::string& loop, prog& prg);
 
 
 typedef std::string simplified_addr;
