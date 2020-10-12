@@ -17819,11 +17819,19 @@ void blur_example() {
   assert(res == 0);
 }
 
+void dhuff_playground() {
+}
+
 int main(int argc, char** argv) {
 
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+
+    if (cmd == "dhuff-playground") {
+      dhuff_playground();
+      return 0;
+    }
 
     if (cmd == "fpga-asplos-flow") {
       fpga_asplos_tests();
