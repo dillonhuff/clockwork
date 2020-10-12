@@ -2305,6 +2305,79 @@ isl_map* pad_to_domain_map(isl_map* m, int depth) {
   return isl_map_from_basic_map(b_ret);
 }
 
+//method to transform the domain to positive integer
+isl_map* shift_domain_map(isl_map* m) {
+
+  auto c_vec = constraints(m);
+  for (int dim = 0; dim < get_in_dim(m); dim ++) {
+  auto depth = -get_dim_min(::domain(m), dim);
+
+  //no need to pad for the dimension with positive bound
+  if (depth <= 0)
+    continue;
+
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_in, dim, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_equality(c)) {
+          c = isl_constraint_set_constant_si(c, val + depth);
+      } else {
+        if (isl_constraint_is_upper_bound(c, isl_dim_in, dim))
+          c = isl_constraint_set_constant_si(c , val+depth);
+        else
+          c = isl_constraint_set_constant_si(c , val-depth);
+      }
+    }
+  }
+
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
+//method to transform the range to positive integer
+isl_map* shift_range_map(isl_map* m) {
+
+  auto c_vec = constraints(m);
+  for (int dim = 0; dim < get_out_dim(m); dim ++) {
+  auto depth = -get_dim_min(::range(m), dim);
+
+  //no need to pad for the dimension with positive bound
+  if (depth <= 0)
+    continue;
+
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_out, dim, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_equality(c)) {
+          c = isl_constraint_set_constant_si(c, val - depth);
+      }
+    }
+
+  }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
 isl_map* assign_domain_to_map(isl_map* m, isl_set* new_domain) {
     string origin_dom_name = domain_name(m);
     string new_dom_name = name(new_domain);

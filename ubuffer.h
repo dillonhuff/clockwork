@@ -1167,6 +1167,42 @@ class UBuffer {
       return false;
     }
 
+    vector<stack_bank> receiver_banks(const std::string& inpt) {
+      vector<stack_bank> bnks;
+      for (auto b : bank_list) {
+        if (elem(inpt, map_find(b.name, banks_to_inputs))) {
+          bnks.push_back(b);
+        }
+      }
+      //vector<stack_bank> bnks;
+      //vector<string> done;
+      //for (auto bs : stack_banks) {
+        //if (bs.first.first == inpt) {
+          //if (!elem(bs.second.name, done)) {
+            //bnks.push_back(bs.second);
+            //done.push_back(bs.second.name);
+          //}
+
+        //}
+      //}
+      return bnks;
+    }
+
+    isl_union_map* get_stencil_valid_sched(string bk_name) {
+      auto outpts = get_bank_outputs(bk_name);
+      //only consider the shift register condition now
+      string outpt = pick(outpts);
+      if (!is_bank_input(outpt)) {
+        return schedule.at(outpt);
+      } else {
+        auto ret = isl_union_map_read_from_str(ctx, "{}");
+        for (auto bk: receiver_banks(outpt)) {
+          ret = unn(ret, get_stencil_valid_sched(bk.name));
+        }
+        return ret;
+      }
+    }
+
     isl_union_map* get_outpt_sched() const {
       auto ret = isl_union_map_read_from_str(ctx, "{}");
       for (auto pt: get_out_ports()) {
@@ -1436,26 +1472,6 @@ class UBuffer {
       return get_bank(bk_name);
     }
 
-    vector<stack_bank> receiver_banks(const std::string& inpt) {
-      vector<stack_bank> bnks;
-      for (auto b : bank_list) {
-        if (elem(inpt, map_find(b.name, banks_to_inputs))) {
-          bnks.push_back(b);
-        }
-      }
-      //vector<stack_bank> bnks;
-      //vector<string> done;
-      //for (auto bs : stack_banks) {
-        //if (bs.first.first == inpt) {
-          //if (!elem(bs.second.name, done)) {
-            //bnks.push_back(bs.second);
-            //done.push_back(bs.second.name);
-          //}
-
-        //}
-      //}
-      return bnks;
-    }
 
     UBuffer() : port_widths(32) {}
 

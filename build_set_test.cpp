@@ -15742,8 +15742,8 @@ void lake_tests() {
   lake_conv33_recipe_test();
   lake_conv33_halide_test();
   lake_cascade_halide_test();
-  assert(false);
   lake_harris_halide_test();
+  assert(false);
   lake_conv33_autovec_aha_test();
   //lake_identity_stream_SMT_test(128, 128, "128x128");
   //lake_identity_stream_SMT_test(64, 64, "64x64");

@@ -713,7 +713,8 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     for (auto map: get_maps(tmp)) {
         cout << "access map: " << str(map) << endl;
 
-        //TODO: remove this in the future
+        //TODO: remove this in the future, this is a trick that make isl work
+        //if we did not rely on isl, we do not need this trick
         if (retrive_dom_map.count(op_name))
             map = retrive_map_domain_with_dim(map, retrive_dom_map.at(op_name));
 
@@ -729,7 +730,13 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         } else {
             bk_num = port_width / options.mem_tile.in_port_width.at(micro_buf_name);
         }
+        cout << "basic map vector size: " << port_width << endl;
+        for (auto bmap: bmap_vec) {
+            cout << str(bmap) << endl;
+        }
         cout << "Bank number: " << bk_num << endl;
+        cout << "mem tile component:" << micro_buf_name
+            <<", Bank constraint: : " << options.mem_tile.bank_num.at(micro_buf_name)<< endl;
 
         //check if violate bank number
         assert(bk_num <= options.mem_tile.bank_num.at(micro_buf_name));
@@ -1131,7 +1138,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         cout << "ubuffer global schedule: " << str(global_schedule()) << endl;
         cout << "ubuffer output schedule: " << str(get_outpt_sched()) << endl;
         if (!equal(global_outpt_sched(), get_outpt_sched())) {
-          auto outpt_sched = get_outpt_sched();
+          auto outpt_sched = get_stencil_valid_sched(bk.name);
+          cout << "original outpt schedule: " << str(get_outpt_sched()) << endl;
           assert(isl_union_map_is_single_valued(outpt_sched));
 
           auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, true);
@@ -4466,8 +4474,18 @@ void UBuffer::pad_write_dom(int dim_id, int fetch_width) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
-            //int dom_dim = get_in_dim(am);
-            assert(get_dim_min(::domain(am), dim_id+1) == 0);
+
+            //TODO: move this to controller codegen
+            ////int dom_dim = get_in_dim(am);
+            //for (int i = 0; i < get_in_dim(am); i ++) {
+            //  cout << get_dim_min(::domain(am), i) << endl;
+            //}
+            //cout << "\t input access map: " << str(am) << endl;
+            //cout << "\t shifted domain input access map: " << str(shift_domain_map(am)) << endl;
+            am = shift_domain_map(am);
+            //cout << "\t shifted range input access map: " << str(shift_range_map(am)) << endl;
+            am = shift_range_map(am);
+            //assert(get_dim_min(::domain(am), dim_id+1) == 0);
             auto rem = (get_dim_max(::domain(am), dim_id+1) + 1) % fetch_width;
             if (rem) {
                 //need padding
@@ -4480,6 +4498,9 @@ void UBuffer::pad_write_dom(int dim_id, int fetch_width) {
                 //schedule.at(pt) = to_umap(pad_sched);
                 //domain.at(pt) = ::domain(pad_am);
             }
+            else {
+                replace_pt(pt, am, shift_domain_map(to_map(sched)));
+            }
         }
     }
 }
@@ -4490,7 +4511,16 @@ void UBuffer::pad_read_dom(int dim_id, int fetch_width) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
             //int dom_dim = get_in_dim(am);
-            assert(get_dim_min(::domain(am), dim_id+1) == 0);
+            //TODO: move this to controller codegen
+            //for (int i = 0; i < get_in_dim(am); i ++) {
+            //  cout << get_dim_min(::domain(am), i) << endl;
+            //}
+            //cout << "\t output access map: " << str(am) << endl;
+            //cout << "\t shifted domain output access map: " << str(shift_domain_map(am)) << endl;
+            am = shift_domain_map(am);
+            //cout << "\t shifted range output access map: " << str(shift_range_map(am)) << endl;
+            am = shift_range_map(am);
+            //assert(get_dim_min(::domain(am), dim_id+1) == 0);
             auto rem = (get_dim_max(::domain(am), dim_id+1) + 1) % fetch_width;
             if (rem) {
                 //need padding
@@ -4502,6 +4532,9 @@ void UBuffer::pad_read_dom(int dim_id, int fetch_width) {
                 //access_map.at(pt) = to_umap(pad_am);
                 //schedule.at(pt) = to_umap(pad_sched);
                 //domain.at(pt) = ::domain(pad_am);
+            }
+            else {
+                replace_pt(pt, am, shift_domain_map(to_map(sched)));
             }
         }
     }
