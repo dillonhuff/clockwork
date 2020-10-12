@@ -8911,7 +8911,7 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
 
     move_to_benchmarks_folder(name + "_opt");
   }
-  assert(false);
+  //assert(false);
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
@@ -8930,7 +8930,7 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
 
     move_to_benchmarks_folder(name + "_opt");
   }
-  assert(false);
+  //assert(false);
 }
 
 void exposure_fusion_fpga_test(const std::string& name) {
@@ -8985,7 +8985,7 @@ void gauss_pyramid_fpga_test(const std::string& name) {
     //run_regression_tb(name + "_naive");
   //compare("gp naive", naive, optimized);
   move_to_benchmarks_folder(name + "_naive");
-  assert(false);
+  //assert(false);
 }
 
 void exposure_fusion() {
@@ -16345,7 +16345,7 @@ void test_stencil_codegen(vector<prog>& test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
     prg.pretty_print();
     prg.sanity_check();
-    //assert(false);
+    assert(false);
 
     dsa_writers(prg);
     prg.pretty_print();
@@ -17342,8 +17342,8 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
-  lake_tests();
-  cnn_test();
+  //lake_tests();
+  //cnn_test();
   iccad_tests();
   exposure_fusion_iccad_apps("ef_cc_10_level");
   histogram_2d_test();
