@@ -16116,6 +16116,7 @@ CodegenOptions garnet_codegen_options(prog& prg) {
 
 void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
   normalize_bounds(prg);
+  normalize_address_offsets(prg);
 
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
@@ -16312,6 +16313,7 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
+  test_programs.push_back(harris());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(up_sample());
@@ -16323,7 +16325,6 @@ vector<prog> stencil_programs() {
 
 
   test_programs.push_back(unsharp());
-  test_programs.push_back(harris());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
   test_programs.push_back(camera_pipeline());
@@ -16340,6 +16341,7 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, stencil_programs());
 
  
   // Too large to fit in 16 bit controller
@@ -16355,7 +16357,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(conv_layer());
 
 
-  concat(test_programs, stencil_programs());
 
 
 

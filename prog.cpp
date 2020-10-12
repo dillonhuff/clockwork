@@ -5694,4 +5694,57 @@ umap* op_end_times_map(schedule_info& sched, prog& prg) {
   return to_umap(hs);
 }
 
+void normalize_address_offsets(prog& prg) {
+  prg.pretty_print();
+  for (auto b : all_buffers(prg)) {
+    cout << "Buffer: " << b << endl;
+    map<op*, isl_map*> prods = prg.producer_maps(b);
+    cout << tab(1) << "Producers..." << endl;
+    vector<int> min_offset;
+    if (prods.size() > 0) {
+      int ndims = num_dims((range(pick(prods).second)));
+      for (int d = 0; d < ndims; d++) {
+        min_offset.push_back(9999999); // TODO: Replace with int max value
+      }
 
+      for (auto opm : prods) {
+        op* op = opm.first;
+        auto writes = range(opm.second);
+        for (int d = 0; d < num_dims(writes); d++) {
+          auto mincoeff = to_int(lexminval(project_all_but(writes, d)));
+          if (mincoeff < min_offset.at(d)) {
+            min_offset[d] = mincoeff;
+          }
+        }
+      }
+    }
+
+    map<op*, isl_map*> cons = prg.consumer_maps(b);
+    if (prods.size() == 0) {
+      // Probably if there are no producers and consumers then
+      // we can ignore the buffer for normalization, since
+      // there are no accesses to it
+      assert(cons.size() > 0);
+      int ndims = num_dims((range(pick(cons).second)));
+      for (int d = 0; d < ndims; d++) {
+        min_offset.push_back(9999999); // TODO: Replace with int max value
+      }
+    }
+
+    cout << "Got consumers" << endl;
+    for (auto opm : cons) {
+      op* op = opm.first;
+      if (opm.second != nullptr) {
+        auto writes = range(opm.second);
+        cout << "Writes: " << str(writes) << endl;
+        for (int d = 0; d < num_dims(writes); d++) {
+          auto mincoeff = to_int(lexminval(project_all_but(writes, d)));
+          if (mincoeff < min_offset.at(d)) {
+            min_offset[d] = mincoeff;
+          }
+        }
+      }
+    }
+    cout << tab(2) << "Min offset (counting only writers): " << sep_list(min_offset, "", "", ", ") << endl;
+  }
+}
