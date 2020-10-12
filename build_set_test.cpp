@@ -17819,6 +17819,19 @@ void blur_example() {
   assert(res == 0);
 }
 
+class resource_instance {
+  public:
+
+    std::string type;
+    int number;
+};
+
+class fusion_group {
+  public:
+
+    std::map<op*, string> fuse_levels;
+};
+
 void dhuff_playground() {
   prog prg("time_sharing_pyramid_1d");
 
@@ -17849,6 +17862,14 @@ void dhuff_playground() {
   strip_mine(2, "x0", prg);
   strip_mine(4, "i0", prg);
   prg.pretty_print();
+
+  map<op*, resource_instance> resource_assignment;
+  resource_assignment[prg.find_op("cpy")] =
+  {"cpy_r", 0};
+  resource_assignment[prg.find_op("ldin0")] =
+  {"gp_unit", 0};
+  resource_assignment[prg.find_op("ldin1")] =
+  {"gp_unit", 0};
 }
 
 int main(int argc, char** argv) {
