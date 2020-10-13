@@ -15814,10 +15814,6 @@ void pad_to_single_depth(prog& prg) {
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   if (is_rate_matchable(prg)) {
-  //auto rvars = reduce_vars(prg);
-  //bool perfect = all_perfect_loop_nests(prg);
-  //if (rvars.size() == 0 &&
-      //perfect) {
     prg.pretty_print();
     bool single_depth = all_loop_nests_same_depth(prg);
     int max_depth = max_loop_depth(prg);
@@ -17820,13 +17816,6 @@ void blur_example() {
   assert(res == 0);
 }
 
-class resource_instance {
-  public:
-
-    std::string type;
-    int number;
-};
-
 class fusion_group {
   public:
 
@@ -17864,12 +17853,15 @@ void dhuff_playground() {
   strip_mine(4, "i0", prg);
   prg.pretty_print();
 
+  auto options = garnet_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+
   map<op*, resource_instance> resource_assignment;
-  resource_assignment[prg.find_op("cpy")] =
+  sched.resource_assignment[prg.find_op("cpy")] =
   {"cpy_r", 0};
-  resource_assignment[prg.find_op("ldin0")] =
+  sched.resource_assignment[prg.find_op("ldin0")] =
   {"gp_unit", 0};
-  resource_assignment[prg.find_op("ldin1")] =
+  sched.resource_assignment[prg.find_op("ldin1")] =
   {"gp_unit", 0};
 
   // I need to define the *order* in which

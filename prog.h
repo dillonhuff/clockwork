@@ -1696,6 +1696,13 @@ void normalize_bounds(prog& prg);
 
 bool is_inner_loop(op* op);
 
+class resource_instance {
+  public:
+
+    std::string type;
+    int number;
+};
+
 struct schedule_info {
   // Miscellaneous
   bool use_dse_compute;
@@ -1705,6 +1712,13 @@ struct schedule_info {
   map<string, int> buffer_store_latencies;
   map<string, int> compute_unit_latencies;
   map<string, int> op_compute_unit_latencies;
+
+  // Resource constraints
+  map<string, int> resource_quantities;
+  map<op*, string> resource_requirements;
+
+  // Resource use info
+  map<op*, resource_instance> resource_assignment;
 
   // Schedule offsets
   map<string, int> loop_iis;
