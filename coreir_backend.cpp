@@ -751,7 +751,6 @@ void generate_platonic_ubuffer(
 
   prg.pretty_print();
 
-
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   //int folding_factor = bank_folding_factor(bank_factors, prg, buf, hwinfo);
 
@@ -768,6 +767,7 @@ void generate_platonic_ubuffer(
   }
 
   ostream& out = *verilog_collateral_file;
+
 
   print_cyclic_banks_selector(out, bank_factors, buf);
   print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
@@ -807,23 +807,7 @@ void generate_platonic_ubuffer(
 
   out << endl;
 
-  for (auto in : buf.get_out_ports()) {
-    auto comps_raw =
-      generate_verilog_addr_components(in, bnk, buf);
-
-    vector<string> comps;
-    int i = 0;
-    for (auto c : comps_raw) {
-      out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
-      out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
-      comps.push_back(buf.name + "_" + in + "_" + str(i));
-      i++;
-    }
-    reverse(comps);
-    out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
-  }
-
-  for (auto in : buf.get_in_ports()) {
+  for (auto in : buf.get_all_ports()) {
     auto comps_raw =
       generate_verilog_addr_components(in, bnk, buf);
 
@@ -840,18 +824,11 @@ void generate_platonic_ubuffer(
   }
 
   out << endl;
-  unordered_set<string> done_outpt;
 
-  for (auto in : buf.get_in_ports()) {
-    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
-    for (auto pt : shift_registered_outputs) {
-      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-      if (pt.second.first == in) {
-          done_outpt.insert(pt.first);
-        out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-      }
-    }
-  }
+  vector<pair<string,pair<string,int>>> sorted_shift_registered_outputs_to_outputs = shift_registered_outputs_to_outputs;
+  sort_lt(sorted_shift_registered_outputs_to_outputs,[](const pair<string,pair<string,int>> &x) {return x.second.second;});
+
+  unordered_set<string> done_outpt;
   for (auto pt : shift_registered_outputs_to_outputs) {
 
         if(done_outpt.find(pt.first)!=done_outpt.end())
@@ -867,6 +844,23 @@ void generate_platonic_ubuffer(
       out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
 
   }
+  for (auto in : buf.get_in_ports()) {
+    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
+    for (auto pt : shift_registered_outputs) {
+      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+      if (pt.second.first == in) {
+          if(done_outpt.find(pt.first)!=done_outpt.end())
+        {
+                        continue;
+      } else
+          {
+              done_outpt.insert(pt.first);
+        out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+          }
+        }
+    }
+  }
+
 
   out << endl;
 
