@@ -4613,11 +4613,11 @@ void normalize_bounds(prog& prg) {
   }
 }
 
-void strip_mine(const int factor, const std::string& loop, prog& prg) {
-  strip_mine(factor, prg.find_loop(loop), prg);
+op* strip_mine(const int factor, const std::string& loop, prog& prg) {
+  return strip_mine(factor, prg.find_loop(loop), prg);
 }
 
-void strip_mine(const int factor, op* loop, prog& prg) {
+op* strip_mine(const int factor, op* loop, prog& prg) {
   assert(loop->is_loop);
   assert(loop->trip_count() % factor == 0);
 
@@ -4651,6 +4651,7 @@ void strip_mine(const int factor, op* loop, prog& prg) {
   cout << "outer tc = " << loop->trip_count() << endl;
   cout << "orig     = " << original_trip_count << endl;
   assert(inner->trip_count() * loop->trip_count() == original_trip_count);
+  return inner;
 }
 
 map<string, int> compute_unroll_factors(const std::string& buf, const int unroll_factor, prog& prg) {

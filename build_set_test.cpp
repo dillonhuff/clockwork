@@ -17849,14 +17849,13 @@ void dhuff_playground() {
   }
 
   infer_bounds("b2", {16}, prg);
-  strip_mine(2, "x0", prg);
-  strip_mine(4, "i0", prg);
+  auto xi = strip_mine(2, "x0", prg);
+  auto ii = strip_mine(4, "i0", prg);
   prg.pretty_print();
 
   auto options = garnet_codegen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
 
-  map<op*, resource_instance> resource_assignment;
   sched.resource_assignment[prg.find_op("cpy")] =
   {"cpy_r", 0};
   sched.resource_assignment[prg.find_op("ldin0")] =
@@ -17864,24 +17863,10 @@ void dhuff_playground() {
   sched.resource_assignment[prg.find_op("ldin1")] =
   {"gp_unit", 0};
 
-  // I need to define the *order* in which
-  // operations access a given resource, so
-  // I need a data structure to express a given
-  // order of access. What are the components of
-  // the ordering?
-  //  - Intuitively I want to say that it is a
-  //    list of ops where for each operation we have:
-  //      1. The level at which it accesses the resource
-  //         exclusively
-  //      2. The position of the op in the interleaved part of the resource ordering
-  //    Whats in the back of my mind here is that the statement that we are going
-  //    to have a level at which operations are exclusive implies that the loop
-  //    nests are going to be fused at all levels above that level. If that is
-  //    the case then I think that the fusion decisions are going to be baked in
-  //    to the schedule constraints before we actually call the ILP solver. So
-  //    what decisions is the ILP solver really making other than the layout of the
-  //    pipeline (which can already be done by HLS)? Maybe in the case of the DNNs it is making some decisions
-  //    about how coarse grained-pipelining is done?
+  cout << "Inner x" << endl;
+  xi->pretty_print();
+  cout << "Inner i" << endl;
+  ii->pretty_print();
 }
 
 int main(int argc, char** argv) {
