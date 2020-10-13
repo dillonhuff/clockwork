@@ -336,6 +336,10 @@ isl_map* set_range_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
 }
 
+isl_aff* set_name(isl_aff* const m, string new_name) {
+    return isl_aff_set_tuple_id(m, isl_dim_out, id(ctx(m), new_name));
+}
+
 isl_set* set_name(isl_set* const m, string new_name) {
     return isl_set_set_tuple_name(m, new_name.c_str());
 }
@@ -1963,6 +1967,14 @@ isl_set* rdset(isl_ctx* ctx, const std::string& str) {
   return res;
 }
 
+isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str) {
+  auto res = isl_multi_aff_read_from_str(ctx, str.c_str());
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_aff: " << str << endl;
+    assert(false);
+  }
+  return res;
+}
 isl_aff* rdaff(isl_ctx* ctx, const std::string& str) {
   auto res = isl_aff_read_from_str(ctx, str.c_str());
   if (res == nullptr) {
@@ -3156,6 +3168,10 @@ uset* pad_uset(uset* domain) {
   return padded_domain;
 }
 
+isl_aff* div(isl_aff* a, isl_aff* b) {
+  return isl_aff_div(cpy(a), cpy(b));
+}
+
 isl_aff* add(isl_aff* a, isl_aff* b) {
   return isl_aff_add(cpy(a), cpy(b));
 }
@@ -3382,8 +3398,8 @@ isl_multi_aff* get_multi_aff(isl_union_map* m) {
 
 isl_multi_aff* get_multi_aff(isl_map* m) {
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
-  cout << tab(1) << str(m) << endl;
-  cout << tab(2) << "lexmax: " << str(lm) << endl;
+  //cout << tab(1) << str(m) << endl;
+  //cout << tab(2) << "lexmax: " << str(lm) << endl;
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(lm);
   assert(pieces.size() == 1);
@@ -3403,6 +3419,15 @@ isl_aff* get_aff(isl_map* m) {
   auto saff = pieces.at(0).second;
   auto aff = isl_multi_aff_get_aff(saff, 0);
   return aff;
+}
+
+std::vector<isl_aff*> get_affs(isl_multi_aff* saff) {
+  vector<isl_aff*> ret;
+  for (int i = 0; i < get_size(saff); i ++) {
+    auto aff = isl_multi_aff_get_aff(saff, i);
+    ret.push_back(aff);
+  }
+  return ret;
 }
 
 std::vector<isl_aff*> get_aff_vec(isl_map* m) {
@@ -3629,6 +3654,58 @@ isl_map* linear_address_map(isl_set* s) {
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
+isl_map* to_map(isl_multi_aff* s) {
+  return isl_map_from_multi_aff(cpy(s));
+}
+
 isl_map* to_map(isl_aff* s) {
   return isl_map_from_aff(cpy(s));
+}
+
+bool no_divs(isl_aff* a) {
+  for (int d = 0; d < num_div_dims(a); d++) {
+    auto v = isl_aff_get_coefficient_val(a, isl_dim_div, d);
+    if (!is_zero(v)) {
+      return false;
+    }
+  }
+  return true;
+}
+isl_aff* constant_aff(isl_aff* src, const int val) {
+  auto ls = isl_aff_get_domain_local_space(src);
+  cout << "ls = " << str(ls) << endl;
+  auto v = isl_val_int_from_si(ctx(src), val);
+  cout << "v = " << str(v) << endl;
+  return aff_on_domain(ls, v);
+}
+
+isl_aff* sub(isl_aff* start_time_aff, const int compute_latency) {
+  return sub(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
+isl_aff* add(isl_aff* start_time_aff, const int compute_latency) {
+  return add(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
+
+isl_aff* mul(isl_aff* start_time_aff, const int compute_latency) {
+  return isl_aff_scale_val(start_time_aff,
+      isl_val_int_from_si(ctx(start_time_aff),
+        compute_latency));
+}
+
+isl_aff* div(isl_aff* start_time_aff, const int compute_latency) {
+  return div(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
+std::map<int, isl_val*> constant_components(isl_multi_aff* access) {
+  map<int, isl_val*> ret;
+  int d = 0;
+  for (auto aff : get_affs(access)) {
+    if (isl_aff_is_cst(aff)) {
+      ret[d] = const_coeff(aff);
+    }
+    d++;
+  }
+  return ret;
 }

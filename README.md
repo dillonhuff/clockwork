@@ -34,7 +34,7 @@ not just take the latest release of NTL or barvinok.
 * barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/)
    * https://repo.or.cz/w/barvinok.git/blob/HEAD:/README - instructions for installing barvinok with ntl and GMP
    * note that linux users may need to manually add -lpthread to the LIBS field (change "LIBS = -lntl -lgmp", to "LIBS = -lpthread -lntl -lgmp")
-* *optional codegen backend* **CoreIR** - [github link](https://github.com/rdaly525/coreir.git)
+* *optional codegen backend* **CoreIR** - [github link](https://github.com/rdaly525/coreir.git), install script: [./misc/install\_coreir.sh](./misc/install_coreir.sh).
 
 ## Setting Your private\_settings.sh
 
@@ -77,4 +77,8 @@ A simple example of how to generate and compile clockwork programs can be found 
 The file `build_set_test.cpp` is the main driver for all tests.
 Most files in this repository are automatically generated collateral
 that can be ignored.
+
+## Beware of AP\_INT\_MAX\_W
+
+Vivado users may want to comment out `AP_INT_MAX_W` in `hw_classes.h`. It can cause very long compile times and is only needed for pipelines with very large unrolling factors.
 

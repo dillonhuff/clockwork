@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<64> > ef_fpga_4_update_0_write_channel;
   // In lanes = 4
   for (int r = 0; r < 1087; r++) {
-    for (int cl = 0; cl < 1932 / 4; cl++) {
+    for (int cl = 0; cl < 1940 / 4; cl++) {
       hw_uint<64> packed;
       {
       int c = 4*cl + 0;

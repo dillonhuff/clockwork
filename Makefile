@@ -8,7 +8,7 @@ endif
 
 TARGET = clockwork
 
-CXX_FLAGS = -std=c++17 -I $(BARVINOK_PATH) -I $(OPT_PATH)
+CXX_FLAGS = -std=c++17 -g -O0 -I $(BARVINOK_PATH) -I $(OPT_PATH)
 
 #ifneq ($(COREIR),1)
 #CXX_FLAGS = -std=c++11 -I $(BARVINOK_PATH) -I $(OPT_PATH)

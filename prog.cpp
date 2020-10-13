@@ -1349,47 +1349,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->name > r->name;});
 
   for (auto op : all_op_vec) {
-
-    //for (auto produced : op->produce_locs) {
-      //string name = produced.first;
-
-      //if (!contains_key(name, buffers)) {
-        //UBuffer buf;
-        //buf.name = name;
-        //buf.ctx = prg.ctx;
-        //if (contains_key(name, prg.buffer_port_widths)) {
-          //buf.port_widths = map_find(name, prg.buffer_port_widths);
-        //}
-        //buffers[name] = buf;
-      //}
-
-      //UBuffer& buf = buffers.at(name);
-
-      //string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      //buf.port_bundles[op->name + "_write"].push_back(pt_name);
-
-      //assert(contains_key(op, domains));
-
-      //// Map from??
-      //isl_map* produced_here =
-        //its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
-
-      //cout << "\tAdding input port: " << pt_name << endl;
-      //cout << "\t\tProduced:: " << str(produced_here) << endl;
-      //buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
-
-      //if (op->dynamic_writes(name)) {
-        //buf.dynamic_ports.insert(pt_name);
-      //}
-
-      //vector<string> inpt = buf.get_in_ports();
-      //cout << "current in port name: " << endl;
-      //for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
-      //cout << endl;
-
-      //usuffix++;
-    //}
-
     for (auto consumed : op->produce_locs) {
       string name = consumed.first;
 
@@ -4433,6 +4392,24 @@ isl_schedule* prog::optimized_schedule() {
   return sched;
 }
 
+void get_op_levels(op* node, map<string,int>& variable_map, int current_level){
+	if(!node->is_loop){
+    variable_map[node->name] = current_level;
+	} else {
+		variable_map[node->name] = current_level;
+		current_level++;
+		for(auto child : node->children){
+			get_op_levels(child, variable_map, current_level);
+		}
+	}
+}
+
+map<string, int> get_op_levels(prog& prg){
+	map<string, int> variable_map;
+	get_op_levels(prg.root, variable_map, 0);
+	return variable_map;
+}
+
 void get_variable_levels(op* node, map<string,int>& variable_map, int current_level){
 	if(!node->is_loop){
 		return;
@@ -4654,7 +4631,11 @@ void normalize_bounds(prog& prg) {
   }
 }
 
-void strip_mine(const int factor, op* loop, prog& prg) {
+op* strip_mine(const int factor, const std::string& loop, prog& prg) {
+  return strip_mine(factor, prg.find_loop(loop), prg);
+}
+
+op* strip_mine(const int factor, op* loop, prog& prg) {
   assert(loop->is_loop);
   assert(loop->trip_count() % factor == 0);
 
@@ -4688,6 +4669,7 @@ void strip_mine(const int factor, op* loop, prog& prg) {
   cout << "outer tc = " << loop->trip_count() << endl;
   cout << "orig     = " << original_trip_count << endl;
   assert(inner->trip_count() * loop->trip_count() == original_trip_count);
+  return inner;
 }
 
 map<string, int> compute_unroll_factors(const std::string& buf, const int unroll_factor, prog& prg) {
@@ -4990,6 +4972,14 @@ void dft(prog& prg, F test) {
   dft(prg.root, test);
 }
 
+std::vector<op*> get_dft_nodes(prog& prg) {
+  std::vector<op*> inner;
+  dft(prg, [&inner](op* node) {
+      inner.push_back(node);
+      });
+  return inner;
+}
+
 std::vector<op*> get_dft_ops(prog& prg) {
   std::vector<op*> inner;
   dft(prg, [&inner](op* node) {
@@ -5240,7 +5230,6 @@ void generate_verilator_tb_in_streams(std::ostream& rgtb,
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
       inds.push_back("rand() % 256");
-      //str(unroll) + "*i + " + str(i));
       //inds.push_back(str(unroll) + "*i + " + str(i));
     }
     pack_bv(2, rgtb, "value", inds, lane_width);
@@ -5285,7 +5274,6 @@ void generate_verilator_tb(prog& prg,
     unroll_factor[out] = unroll;
   }
 
-
   generate_verilator_tb_in_streams(
       rgtb,
       prg,
@@ -5326,9 +5314,11 @@ void generate_verilator_tb(prog& prg,
 
   rgtb << tab(1) << "dut.clk = 0;" << endl;
   rgtb << tab(1) << "dut.eval();" << endl;
-  rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
+  rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
+  //rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
+  //rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
 
-    rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
+  rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
   for (auto out : inputs(buffers, prg)) {
     string ctrl_name =
       out.first + "_" + out.second + "_valid";
@@ -5589,3 +5579,234 @@ bool all_perfect_loop_nests(prog& prg) {
   return true;
 }
 
+void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
+  if (!parent->is_loop) {
+    return;
+  }
+
+  QExpr parent_sched = map_find(parent, schedule_exprs);
+  for (auto c : parent->children) {
+    if (c->is_loop) {
+      QTerm root_sched_t{{qconst(map_find(c->name, sched.loop_iis)), qvar(c->name)}};
+      QExpr root_sched{{root_sched_t}};
+
+      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QTerm delayt{{delayv}};
+      QExpr delay{{delayt}};
+
+      root_sched = parent_sched + root_sched + delay;
+      schedule_exprs[c] = root_sched;
+    } else {
+      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QTerm delayt{{delayv}};
+      QExpr delay{{delayt}};
+
+      auto root_sched = parent_sched + delay;
+      schedule_exprs[c] = root_sched;
+    }
+    build_schedule_exprs(c, schedule_exprs, sched, prg);
+  }
+}
+
+map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg) {
+  op* root = prg.root;
+  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
+  QExpr root_sched{{root_sched_t}};
+
+  map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  map<op*, isl_aff*> schedule_affs;
+  build_schedule_exprs(root, schedule_exprs, sched, prg);
+
+  cout << "==== Schedules..." << endl;
+  for (auto opl : schedule_exprs) {
+    auto op = opl.first;
+    cout << tab(1) << op->name << " -> " << opl.second << endl;
+    ostringstream ss;
+    ss << opl.second;
+    if (!op->is_loop) {
+      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
+          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
+      schedule_affs[op] = aff;
+    }
+  }
+
+  return schedule_affs;
+}
+
+map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
+  op* root = prg.root;
+  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
+  QExpr root_sched{{root_sched_t}};
+
+  map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  map<op*, isl_aff*> schedule_affs;
+  build_schedule_exprs(root, schedule_exprs, sched, prg);
+
+  cout << "==== Schedules..." << endl;
+  for (auto opl : schedule_exprs) {
+    auto op = opl.first;
+    QExpr expr = opl.second;
+    QAV val = qconst(sched.total_latency(op)); //map_find(op, sched.total_op_latencies));
+    QTerm offsett{{val}};
+    QExpr offset{{offsett}};
+    expr = expr + offset;
+    cout << tab(1) << op->name << " -> " << expr << endl;
+    ostringstream ss;
+    ss << expr;
+    if (!op->is_loop) {
+      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
+          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
+      schedule_affs[op] = aff;
+    }
+  }
+
+  return schedule_affs;
+}
+
+map<string, isl_set*> op_start_times_domains(prog& prg) {
+  auto start_times = prg.whole_iteration_domain();
+
+  map<string, isl_set*> sets;
+  for (auto a : get_sets(start_times)) {
+    a = set_name(a, "start_" + name(a));
+
+    sets[name(a)] = a;
+  }
+
+  return sets;
+}
+
+uset* op_start_times_domain(prog& prg) {
+  auto start_times = prg.whole_iteration_domain();
+
+  uset* s = isl_union_set_read_from_str(prg.ctx, "{}");
+  for (auto a : get_sets(start_times)) {
+    a = set_name(a, "start_" + name(a));
+    s = unn(s, to_uset(a));
+    release(a);
+  }
+
+  return s;
+}
+
+umap* op_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_start_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs[a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
+umap* op_start_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_start_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs["start_" + a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
+
+umap* op_end_times_map(schedule_info& sched, prog& prg) {
+  auto start_times = op_end_times(sched, prg);
+
+  map<string, isl_aff*> hs;
+  for (auto a : start_times) {
+    hs["end_" + a.first->name] = a.second;
+  }
+
+  return to_umap(hs);
+}
+
+void normalize_address_offsets(prog& prg) {
+  prg.pretty_print();
+  for (auto b : all_buffers(prg)) {
+    cout << "Buffer: " << b << endl;
+    map<op*, isl_map*> prods = prg.producer_maps(b);
+    cout << tab(1) << "Producers..." << endl;
+    vector<int> min_offset;
+    if (prods.size() > 0) {
+      int ndims = num_dims((range(pick(prods).second)));
+      for (int d = 0; d < ndims; d++) {
+        min_offset.push_back(9999999); // TODO: Replace with int max value
+      }
+
+      for (auto opm : prods) {
+        op* op = opm.first;
+        auto writes = range(opm.second);
+        for (int d = 0; d < num_dims(writes); d++) {
+          auto mincoeff = to_int(lexminval(project_all_but(writes, d)));
+          if (mincoeff < min_offset.at(d)) {
+            min_offset[d] = mincoeff;
+          }
+        }
+      }
+    }
+
+    map<op*, isl_map*> cons = prg.consumer_maps(b);
+    if (prods.size() == 0) {
+      // Probably if there are no producers and consumers then
+      // we can ignore the buffer for normalization, since
+      // there are no accesses to it
+      assert(cons.size() > 0);
+      int ndims = num_dims((range(pick(cons).second)));
+      for (int d = 0; d < ndims; d++) {
+        min_offset.push_back(9999999); // TODO: Replace with int max value
+      }
+    }
+
+    cout << "Got consumers" << endl;
+    for (auto opm : cons) {
+      op* op = opm.first;
+      if (opm.second != nullptr) {
+        auto writes = range(opm.second);
+        cout << "Writes: " << str(writes) << endl;
+        for (int d = 0; d < num_dims(writes); d++) {
+          auto mincoeff = to_int(lexminval(project_all_but(writes, d)));
+          if (mincoeff < min_offset.at(d)) {
+            min_offset[d] = mincoeff;
+          }
+        }
+      }
+    }
+    cout << tab(2) << "Min offset (counting only writers): " << sep_list(min_offset, "", "", ", ") << endl;
+  }
+}
+
+vector<op*> ops_at_level(const int level, prog& prg) {
+  vector<op*> at_level;
+  vector<op*> ops = get_dft_nodes(prg);
+  map<string, int> op_levels = get_op_levels(prg);
+  for (auto op : ops) {
+    cout << tab(1) << op->name << " is at " << map_find(op->name, op_levels) << endl;
+    if (map_find(op->name, op_levels) == level) {
+      at_level.push_back(op);
+    }
+  }
+  return at_level;
+}
+
+umap* read_at(const std::string& level, prog& prg) {
+  auto ops = prg.find_loop(level)->descendant_ops();
+  std::set<string> buffers;
+  for (auto op : ops) {
+    for (auto b : op->buffers_read()) {
+      buffers.insert(b);
+    }
+  }
+  umap* rd = nullptr;
+  for (auto b : buffers) {
+    auto rdmap = read_at(level, b, prg);
+
+    if (rd == nullptr) {
+      rd = rdmap;
+    } else {
+      rd = unn(rd, rdmap);
+      release(rdmap);
+    }
+  }
+  return rd;
+}

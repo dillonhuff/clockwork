@@ -808,6 +808,16 @@ namespace dbhc {
     }
   };
 
+  template<typename T>
+  std::ostream& operator<<(std::ostream& out, const maybe<T>& m) {
+    if (m.has_value()) {
+      out << m.get_value();
+      return out;
+    }
+    out << "<NONE>";
+    return out;
+  }
+
 }
 
 #endif

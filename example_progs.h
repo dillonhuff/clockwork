@@ -26,3 +26,4 @@ prog bilateral();
 prog stereo();
 prog histogram();
 prog mobilenet();
+prog mobilenet_small();

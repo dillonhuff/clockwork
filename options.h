@@ -35,7 +35,9 @@ struct banking_strategy {
 enum TargetTile {
   TARGET_TILE_REGISTERS,
   TARGET_TILE_DUAL_SRAM_RAW,
-  TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN
+  TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN,
+  TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN,
+  TARGET_TILE_PLATONIC
 };
 
 struct RTLOptions {
@@ -44,7 +46,8 @@ struct RTLOptions {
   bool use_prebuilt_memory;
   TargetTile target_tile;
 
-  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), use_prebuilt_memory(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
+  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false) {}
+  //RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), use_prebuilt_memory(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
 };
 
 struct LakeCollateral {

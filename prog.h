@@ -1604,7 +1604,8 @@ void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bou
 
 void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg);
 
-void strip_mine(const int factor, op* loop, prog& prg);
+op* strip_mine(const int factor, op* loop, prog& prg);
+op* strip_mine(const int factor, const std::string& loop, prog& prg);
 
 
 typedef std::string simplified_addr;
@@ -1669,6 +1670,7 @@ isl_set* iteration_domain(op* loop, prog& prg);
 
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg);
 umap* read_at(const std::string& level, const std::string& buffer, prog& prg);
+umap* read_at(const std::string& level, prog& prg);
 umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg);
 isl_map* get_initial_data(const std::string& level, const std::string& buffer, prog& prg);
 
@@ -1697,6 +1699,13 @@ void normalize_bounds(prog& prg);
 
 bool is_inner_loop(op* op);
 
+class resource_instance {
+  public:
+
+    std::string type;
+    int number;
+};
+
 struct schedule_info {
   // Miscellaneous
   bool use_dse_compute;
@@ -1706,6 +1715,13 @@ struct schedule_info {
   map<string, int> buffer_store_latencies;
   map<string, int> compute_unit_latencies;
   map<string, int> op_compute_unit_latencies;
+
+  // Resource constraints
+  map<string, int> resource_quantities;
+  map<op*, string> resource_requirements;
+
+  // Resource use info
+  map<op*, resource_instance> resource_assignment;
 
   // Schedule offsets
   map<string, int> loop_iis;
@@ -1764,3 +1780,23 @@ bool all_loop_nests_same_depth(prog& prg);
 bool is_perfect(op* loop, prog& prg);
 bool all_perfect_loop_nests(prog& prg);
 std::vector<op*> get_dft_ops(prog& prg);
+
+
+void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg);
+
+map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg);
+
+map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg);
+
+uset* op_start_times_domain(prog& prg);
+
+umap* op_times_map(schedule_info& sched, prog& prg);
+umap* op_start_times_map(schedule_info& sched, prog& prg);
+
+umap* op_end_times_map(schedule_info& sched, prog& prg);
+
+
+map<string, isl_set*> op_start_times_domains(prog& prg);
+void normalize_address_offsets(prog& prg);
+
+vector<op*> ops_at_level(const int level, prog& prg);
