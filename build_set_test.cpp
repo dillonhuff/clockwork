@@ -16347,12 +16347,14 @@ vector<prog> all_cgra_programs() {
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
+
   test_programs.push_back(mobilenet_small());
   test_programs.push_back(resnet());
 
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
+
 
 
   concat(test_programs, stencil_programs());

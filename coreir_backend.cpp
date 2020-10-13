@@ -569,73 +569,52 @@ int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf
   return 100000;
 }
 
+template <typename T>
 void print_shift_registers(
     std::ostream& out,
-    map<string,vector<pair<string,int>>> shift_registered_outputs,
+    const T& shift_registered_outputs,
     CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo) {
   for (auto sr : shift_registered_outputs) {
-
-    int num_outs = sr.second.size();
-    int max_delay = 0;
-    for (auto stuff : sr.second)
-    {
-        if (stuff.second > max_delay)
-        {
-            max_delay = stuff.second;
-        }
-    }
-    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out[0:" + to_string(num_outs -1) + "]"};
-    out << "module " << buf.name << "_" << sr.first << "_sr(" << comma_list(port_decls) << ");" << endl;
-    out << tab(1) << "integer i;" << endl;
+    int delay = sr.second.second;
+    vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
+    out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
 
-    out << tab(1) << "logic [15:0] storage [" << max_delay << ":0];" << endl << endl;
+    out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
-    out << tab(1) << "reg [15:0] read_addr [0:" + to_string(num_outs - 1) + "];" << endl;
-    out << tab(1) << "reg [15:0] write_addr [0:" + to_string(num_outs - 1) + "];" << endl;
+    out << tab(1) << "reg [15:0] read_addr;" << endl;
+    out << tab(1) << "reg [15:0] write_addr;" << endl;
 
     out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
     out << tab(2) << "if (~rst_n) begin" << endl;
-    for(int i = 0; i < num_outs; i ++)
-    {
-        out << tab(3) << "read_addr[ " + to_string(i) +  "] <= 0;" << endl;
-        out << tab(3) << "write_addr[" + to_string(i) +"] <= " << sr.second[i].second << ";" << endl;
-    }
-
+    out << tab(3) << "read_addr <= 0;" << endl;
+    out << tab(3) << "write_addr <= " << delay << ";" << endl;
     out << tab(2) << "end else begin" << endl;
-    out << tab(3) << "for(i = 0; i < " + to_string(num_outs) + "; i += 1) begin"  << endl;
-    out << tab(4) << "storage[write_addr[i]] <= in;" << endl;
-    out << tab(3) << "end"  << endl;
-    for(int i = 0; i < num_outs; i ++)
-    {
-        out << tab(3) << "read_addr[" << i << "] <= read_addr[" << i <<"] == " << sr.second[i].second << " ? 0 : read_addr["<< i << "] + 1;" << endl;
-        out << tab(3) << "write_addr[" << i << "] <= write_addr["<< i <<"] == " << sr.second[i].second << " ? 0 : write_addr[" << i <<"] + 1;" << endl;
-    }
+    out << tab(3) << "storage[write_addr] <= in;" << endl;
+    out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
+    out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
 
     out << tab(2) << "end" << endl << endl;
     out << tab(1) << "end" << endl << endl;
 
     out << tab(1) << "always @(*) begin" << endl;
-    out << tab(2) << "for(i = 0; i < " + to_string(num_outs) + "; i += 1) begin"  << endl;
-    out << tab(3) << "out[i] = storage[read_addr[i]];" << endl;
-    out << tab(2);
-    out << tab(2) << "end" << endl << endl;
+    out << tab(2) << "out = storage[read_addr];" << endl;
     out << tab(1) << "end" << endl << endl;
 
     out << "endmodule" << endl << endl;
 }
 }
-map<string, vector<pair<string, int>> >  determine_output_shift_reg_map(
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
         prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo)
 {
   auto sc = buf.global_schedule();
   bool any_reduce_ops_on_buffer = false;
-  map<string,vector<pair<string,int>>> shift_registered_outputs;
+  vector<pair<string, pair<string, int> >> shift_registered_outputs;
   for (auto op : prg.all_ops()) {
     //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0 ) {
       if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
@@ -700,27 +679,21 @@ map<string, vector<pair<string, int>> >  determine_output_shift_reg_map(
               auto time_to_read_src = dot(inv(sc), (reads_src));
               auto time_to_read = dot(inv(sc), (reads));
 
-              int dd_raw = to_int(const_coeff(diff))-1;
-            if(shift_registered_outputs.find(outpt_src) == shift_registered_outputs.end())
-            {
-                shift_registered_outputs[outpt_src] = {{outpt,dd_raw}};
-            } else{
-                shift_registered_outputs[outpt_src].push_back({outpt, dd_raw});
-            }
-      }
+             shift_registered_outputs.push_back({outpt,{outpt_src, to_int(const_coeff(diff))-1}});
+        }
 
     }
   }
   return shift_registered_outputs;
 }
-map<string, vector<pair<string, int>> > determine_shift_reg_map(
+map<string, pair<string, int> > determine_shift_reg_map(
         prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo)
 {
   auto sc = buf.global_schedule();
   bool any_reduce_ops_on_buffer = false;
-  map<string,vector<pair<string,int>>> shift_registered_outputs;
+  map<string, pair<string, int> > shift_registered_outputs;
   for (auto op : prg.all_ops()) {
     if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
       any_reduce_ops_on_buffer = true;
@@ -753,13 +726,7 @@ map<string, vector<pair<string, int>> > determine_shift_reg_map(
               dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
             }
             dd_raw = dd_raw - 1;
-            if(shift_registered_outputs.find(inpt) == shift_registered_outputs.end())
-            {
-                shift_registered_outputs[inpt] = {{outpt,dd_raw}};
-            } else{
-                shift_registered_outputs[inpt].push_back({outpt, dd_raw});
-            }
-
+            shift_registered_outputs[outpt] = {inpt, dd_raw};
           }
         }
       }
@@ -774,65 +741,24 @@ void generate_platonic_ubuffer(
     schedule_info& hwinfo) {
 
   prg.pretty_print();
-  //assert(false);
 
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   //int folding_factor = bank_folding_factor(bank_factors, prg, buf, hwinfo);
 
   auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
   auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
-  unordered_set<string> done_outpt;
 
-  // we are going to remove redundancies in the input to output shift register map. Any output port should only
-  // have one input shift registering to it.
-  vector<string> to_erase;
-  for(auto sr : shift_registered_outputs)
+  if(buf.name == "hw_input_global_wrapper_stencil")
   {
-      string src = sr.first;
-      vector<pair<string,int>> reduced_tar;
-      for(auto tar: sr.second)
-      {
-          if(done_outpt.find(tar.first) == done_outpt.end() )
-          {
-              done_outpt.insert(tar.first);
-              reduced_tar.push_back(tar);
+          cout << buf;
+          cout << "Output to output srs..." << endl;
+          for (auto ent : shift_registered_outputs_to_outputs) {
+              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
           }
-      }
-      shift_registered_outputs[src] = reduced_tar;
-      if(reduced_tar.size() == 0)
-      {
-        to_erase.push_back(src);
-      }
-  }
-  for(auto src: to_erase)
-  {
-    shift_registered_outputs.erase(src);
-  }
-  to_erase.clear();
-  for(auto sr : shift_registered_outputs_to_outputs)
-  {
-      string src = sr.first;
-      vector<pair<string,int>> reduced_tar;
-      for(auto tar: sr.second)
-      {
-          if(done_outpt.find(tar.first) == done_outpt.end() )
-          {
-              done_outpt.insert(tar.first);
-              reduced_tar.push_back(tar);
-          }
-      }
-      shift_registered_outputs_to_outputs[src] = reduced_tar;
-      if(reduced_tar.size() == 0)
-      {
-        to_erase.push_back(src);
-      }
-  }
-  for(auto src: to_erase)
-  {
-    shift_registered_outputs_to_outputs.erase(src);
   }
 
   ostream& out = *verilog_collateral_file;
+
 
   print_cyclic_banks_selector(out, bank_factors, buf);
   print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
@@ -906,31 +832,42 @@ void generate_platonic_ubuffer(
 
   out << endl;
 
-  for (auto pt: shift_registered_outputs)
-  {
-    string src = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-    string dst = "'{";
-    for(int i = 0; i < pt.second.size(); i ++)
-    {
-        dst += buf.container_bundle(pt.second[i].first) + brackets(str(buf.bundle_offset(pt.second[i].first))) + (i == pt.second.size() - 1 ? "": ",");
-    }
-   dst += "}";
-    out << tab(2) << buf.name << "_" << pt.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+  vector<pair<string,pair<string,int>>> sorted_shift_registered_outputs_to_outputs = shift_registered_outputs_to_outputs;
+  sort_lt(sorted_shift_registered_outputs_to_outputs,[](const pair<string,pair<string,int>> &x) {return x.second.second;});
+
+  unordered_set<string> done_outpt;
+  for (auto pt : shift_registered_outputs_to_outputs) {
+
+        if(done_outpt.find(pt.first)!=done_outpt.end())
+        {
+            continue;
+        } else{
+            done_outpt.insert(pt.first);
+        }
+
+        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+
+    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
+      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
 
   }
-
-  for (auto pt: shift_registered_outputs_to_outputs)
-  {
-    string src = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-    string dst = "'{";
-    for(int i = 0; i < pt.second.size(); i ++)
-    {
-        dst += buf.container_bundle(pt.second[i].first) + brackets(str(buf.bundle_offset(pt.second[i].first))) + (i == pt.second.size() - 1 ? "": ",");
+  for (auto in : buf.get_in_ports()) {
+    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
+    for (auto pt : shift_registered_outputs) {
+      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+      if (pt.second.first == in) {
+          if(done_outpt.find(pt.first)!=done_outpt.end())
+        {
+                        continue;
+      } else
+          {
+              done_outpt.insert(pt.first);
+        out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+          }
+        }
     }
-    dst += "}";
-    out << tab(2) << buf.name << "_" << pt.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-
   }
+
 
   out << endl;
 
