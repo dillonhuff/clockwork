@@ -17809,6 +17809,23 @@ class fusion_group {
     std::map<op*, string> fuse_levels;
 };
 
+void print_partial_schedule(schedule_info& sched, prog& prg) {
+  cout << "IIs" << endl;
+  for (auto e : sched.loop_iis) {
+    cout << tab(1) << e.first << ": " << e.second << endl;
+  }
+  cout << endl;
+  cout << "Offsets in parent" << endl;
+  for (auto e : sched.op_offset_within_parent) {
+    cout << tab(1) << e.first->name << ": " << e.second << endl;
+  }
+  cout << endl;
+  cout << "Instance latencies" << endl;
+  for (auto e : sched.instance_latencies) {
+    cout << tab(1) << e.first->name << ": " << e.second << endl;
+  }
+}
+
 void dhuff_playground() {
   prog prg("time_sharing_pyramid_1d");
 
@@ -17855,9 +17872,18 @@ void dhuff_playground() {
   cout << "Inner i" << endl;
   ii->pretty_print();
 
+  cout << "Before scheduling inner loops..." << endl;
+  print_partial_schedule(sched, prg);
+
   sequential_schedule(sched, xi, prg);
   sequential_schedule(sched, ii, prg);
+  sequential_schedule(sched, prg.find_op("ldin1"), prg);
 
+  cout << "After scheduling inner loops..." << endl;
+  print_partial_schedule(sched, prg);
+
+  cout << endl;
+  cout << "Getting ops" << endl;
   vector<op*> outer = ops_at_level(1, prg);
   cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
   for (auto out : outer) {
