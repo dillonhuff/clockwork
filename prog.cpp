@@ -5788,3 +5788,25 @@ vector<op*> ops_at_level(const int level, prog& prg) {
   }
   return at_level;
 }
+
+umap* read_at(const std::string& level, prog& prg) {
+  auto ops = prg.find_loop(level)->descendant_ops();
+  std::set<string> buffers;
+  for (auto op : ops) {
+    for (auto b : op->buffers_read()) {
+      buffers.insert(b);
+    }
+  }
+  umap* rd = nullptr;
+  for (auto b : buffers) {
+    auto rdmap = read_at(level, b, prg);
+
+    if (rd == nullptr) {
+      rd = rdmap;
+    } else {
+      rd = unn(rd, rdmap);
+      release(rdmap);
+    }
+  }
+  return rd;
+}

@@ -17863,6 +17863,8 @@ void dhuff_playground() {
   for (auto out : outer) {
     cout << "Outer loop..." << endl;
     out->pretty_print();
+    auto read_vals = read_at(out->name, prg);
+    cout << tab(1) << "Reads: " << str(read_vals) << endl;
   }
 }
 
