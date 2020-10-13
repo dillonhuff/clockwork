@@ -5810,3 +5810,19 @@ umap* read_at(const std::string& level, prog& prg) {
   }
   return rd;
 }
+bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
+  bool has_latency = contains_key(op, sched.instance_latencies);
+  bool has_offset = contains_key(op, sched.op_offset_within_parent);
+  bool has_ii = contains_key(op->name, sched.loop_iis);
+
+  if (op == prg.root) {
+    return has_latency && has_ii;
+  }
+
+  if (op->is_loop) {
+    return has_latency && has_ii && has_offset;
+  }
+
+  return has_latency && has_offset;
+}
+
