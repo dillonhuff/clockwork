@@ -15511,27 +15511,14 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
     int old_latency = latency;
     hwinfo.op_offset_within_parent[other] = latency;
     latency += hwinfo.total_latency(other);
-    //if (other->is_loop) {
-      //int inner_ii = map_find(other->name, hwinfo.loop_iis);
-      //latency += inner_ii*prg.trip_count(other->name);
-    //} else {
-      //latency += map_find(other, hwinfo.total_op_latencies);
-    //}
     if (old_latency == latency) {
       latency += 1;
     }
   }
 
-  //auto inner = get_inner_loops(prg);
-  //if (elem(op, inner)) {
-    //hwinfo.loop_iis[op->name] = 2; //max(latency, 1);
-  //} else {
-    //hwinfo.loop_iis[op->name] = max(latency, 1);
-  //}
   hwinfo.loop_iis[op->name] = max(latency, 1);
 
   hwinfo.instance_latencies[op] = latency;
-  //hwinfo.loop_latencies[op->name] = latency;
 }
 
 int max_loop_depth(prog& prg) {
@@ -17867,6 +17854,9 @@ void dhuff_playground() {
   xi->pretty_print();
   cout << "Inner i" << endl;
   ii->pretty_print();
+
+  sequential_schedule(sched, xi, prg);
+  sequential_schedule(sched, ii, prg);
 }
 
 int main(int argc, char** argv) {
