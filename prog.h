@@ -1795,3 +1795,5 @@ umap* op_end_times_map(schedule_info& sched, prog& prg);
 
 map<string, isl_set*> op_start_times_domains(prog& prg);
 void normalize_address_offsets(prog& prg);
+
+vector<op*> ops_at_level(const int level, prog& prg);

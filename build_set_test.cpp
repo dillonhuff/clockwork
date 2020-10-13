@@ -17857,6 +17857,13 @@ void dhuff_playground() {
 
   sequential_schedule(sched, xi, prg);
   sequential_schedule(sched, ii, prg);
+
+  vector<op*> outer = ops_at_level(1, prg);
+  cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
+  for (auto out : outer) {
+    cout << "Outer loop..." << endl;
+    out->pretty_print();
+  }
 }
 
 int main(int argc, char** argv) {

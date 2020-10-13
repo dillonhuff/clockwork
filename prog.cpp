@@ -4392,6 +4392,24 @@ isl_schedule* prog::optimized_schedule() {
   return sched;
 }
 
+void get_op_levels(op* node, map<string,int>& variable_map, int current_level){
+	if(!node->is_loop){
+    variable_map[node->name] = current_level;
+	} else {
+		variable_map[node->name] = current_level;
+		current_level++;
+		for(auto child : node->children){
+			get_op_levels(child, variable_map, current_level);
+		}
+	}
+}
+
+map<string, int> get_op_levels(prog& prg){
+	map<string, int> variable_map;
+	get_op_levels(prg.root, variable_map, 0);
+	return variable_map;
+}
+
 void get_variable_levels(op* node, map<string,int>& variable_map, int current_level){
 	if(!node->is_loop){
 		return;
@@ -4952,6 +4970,14 @@ void bft(prog& prg, F test) {
 template<typename F>
 void dft(prog& prg, F test) {
   dft(prg.root, test);
+}
+
+std::vector<op*> get_dft_nodes(prog& prg) {
+  std::vector<op*> inner;
+  dft(prg, [&inner](op* node) {
+      inner.push_back(node);
+      });
+  return inner;
 }
 
 std::vector<op*> get_dft_ops(prog& prg) {
@@ -5748,4 +5774,17 @@ void normalize_address_offsets(prog& prg) {
     }
     cout << tab(2) << "Min offset (counting only writers): " << sep_list(min_offset, "", "", ", ") << endl;
   }
+}
+
+vector<op*> ops_at_level(const int level, prog& prg) {
+  vector<op*> at_level;
+  vector<op*> ops = get_dft_nodes(prg);
+  map<string, int> op_levels = get_op_levels(prg);
+  for (auto op : ops) {
+    cout << tab(1) << op->name << " is at " << map_find(op->name, op_levels) << endl;
+    if (map_find(op->name, op_levels) == level) {
+      at_level.push_back(op);
+    }
+  }
+  return at_level;
 }
