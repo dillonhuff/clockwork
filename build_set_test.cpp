@@ -17826,6 +17826,19 @@ void print_partial_schedule(schedule_info& sched, prog& prg) {
   }
 }
 
+void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg) {
+  int delay = 0;
+  for (auto outer_loop : outer) {
+    for (auto c : outer_loop->children) {
+      delay += sched.instance_latency(c);
+    }
+    sched.op_offset_within_parent[outer_loop] = delay;
+  }
+  for (auto outer_loop : outer) {
+    sched.loop_iis[outer_loop->name] = delay;
+  }
+}
+
 void dhuff_playground() {
   prog prg("time_sharing_pyramid_1d");
 
@@ -17885,6 +17898,13 @@ void dhuff_playground() {
   cout << endl;
   cout << "Getting ops" << endl;
   vector<op*> outer = ops_at_level(1, prg);
+  fuse_sequentially(outer, sched, prg);
+
+  cout << endl;
+  cout << "After fusing outer loops..." << endl;
+  print_partial_schedule(sched, prg);
+  assert(false);
+
   cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
   for (auto out : outer) {
     cout << "Outer loop..." << endl;
