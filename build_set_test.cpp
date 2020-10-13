@@ -16116,7 +16116,7 @@ CodegenOptions garnet_codegen_options(prog& prg) {
 
 void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
   normalize_bounds(prg);
-  normalize_address_offsets(prg);
+  //normalize_address_offsets(prg);
 
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
@@ -16350,17 +16350,13 @@ vector<prog> all_cgra_programs() {
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
-  test_programs.push_back(resnet());
+
   test_programs.push_back(mobilenet_small());
+  test_programs.push_back(resnet());
+
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
-
-
-
-
-
-
 
   return test_programs;
 }
