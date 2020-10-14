@@ -823,7 +823,7 @@ struct ir_node {
   std::set<op*> all_nodes() {
     std::set<op*> ops{this};
     for (auto c : children) {
-      for (auto op : c->all_ops()) {
+      for (auto op : c->all_nodes()) {
         ops.insert(op);
       }
     }

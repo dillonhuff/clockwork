@@ -17805,9 +17805,9 @@ class fusion_group {
     std::map<op*, string> fuse_levels;
 };
 
-vector<op*> fully_scheduled_ops(schedule_info& sched, prog& prg)  {
+vector<op*> fully_scheduled_nodes(schedule_info& sched, prog& prg)  {
   vector<op*> ops;
-  for (auto op : prg.all_ops()) {
+  for (auto op : prg.all_nodes()) {
     if (is_op_scheduled(op, sched, prg)) {
       ops.push_back(op);
     }
@@ -17816,7 +17816,7 @@ vector<op*> fully_scheduled_ops(schedule_info& sched, prog& prg)  {
 }
 
 void print_partial_schedule(schedule_info& sched, prog& prg) {
-  auto scheduled = fully_scheduled_ops(sched, prg);
+  auto scheduled = fully_scheduled_nodes(sched, prg);
   cout << "Fully scheduled ops..." << endl;
   for (auto op : scheduled) {
     cout << tab(1) << op->name << endl;
@@ -17842,9 +17842,11 @@ void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg
   int delay = 0;
   for (auto outer_loop : outer) {
     for (auto c : outer_loop->children) {
+      sched.op_offset_within_parent[c] = delay;
       delay += sched.instance_latency(c);
     }
-    sched.op_offset_within_parent[outer_loop] = delay;
+    sched.op_offset_within_parent[outer_loop] = 0;
+    sched.instance_latencies[outer_loop] = 100;
   }
   for (auto outer_loop : outer) {
     sched.loop_iis[outer_loop->name] = delay;
@@ -17940,6 +17942,7 @@ void dhuff_playground() {
   for (auto s : unscheduled_nodes(sched, prg)) {
     cout << tab(1) << s->name << endl;
   }
+  assert(unscheduled_nodes(sched, prg).size() + fully_scheduled_nodes(sched, prg).size() == prg.all_nodes().size());
   assert(all_ops_scheduled(sched, prg));
   assert(false);
 
