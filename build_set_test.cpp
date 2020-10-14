@@ -17967,15 +17967,18 @@ void dhuff_playground() {
   assert(unscheduled_nodes(sched, prg).size() + fully_scheduled_nodes(sched, prg).size() == prg.all_nodes().size());
   assert(all_ops_scheduled(sched, prg));
 
-  assert(false);
+  auto sched_exprs = 
+    its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  cout << "Times: " << str(sched_exprs) << endl;
+  //assert(false);
 
-  cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
-  for (auto out : outer) {
-    cout << "Outer loop..." << endl;
-    out->pretty_print();
-    auto read_vals = read_at(out->name, prg);
-    cout << tab(1) << "Reads: " << str(read_vals) << endl;
-  }
+  //cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
+  //for (auto out : outer) {
+    //cout << "Outer loop..." << endl;
+    //out->pretty_print();
+    //auto read_vals = read_at(out->name, prg);
+    //cout << tab(1) << "Reads: " << str(read_vals) << endl;
+  //}
 }
 
 int main(int argc, char** argv) {
