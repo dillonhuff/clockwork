@@ -481,6 +481,7 @@ vector<int> print_cyclic_banks(std::ostream& out, const vector<int>& bank_factor
     auto min = to_int(lexminval(s));
     auto max = to_int(lexmaxval(s));
     int length = max - min + 1;
+    length = ((length - 1) / bank_factors[i]) + 1;
     capacity *= length;
     capacities.push_back(length);
   }
