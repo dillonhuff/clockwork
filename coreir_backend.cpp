@@ -534,7 +534,7 @@ UBuffer latency_adjusted_buffer(
 vector<int> cyclic_banking(prog& prg, UBuffer& buf, schedule_info& info) {
   vector<int> bank_factors;
   for (int i = 0; i < buf.logical_dimension(); i++) {
-    bank_factors.push_back(4);
+    bank_factors.push_back(2);
   }
 
   return bank_factors;
