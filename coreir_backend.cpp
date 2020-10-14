@@ -534,7 +534,7 @@ UBuffer latency_adjusted_buffer(
 vector<int> cyclic_banking(prog& prg, UBuffer& buf, schedule_info& info) {
   vector<int> bank_factors;
   for (int i = 0; i < buf.logical_dimension(); i++) {
-    bank_factors.push_back(4);
+    bank_factors.push_back(2);
   }
 
   return bank_factors;
@@ -900,21 +900,15 @@ void generate_platonic_ubuffer(
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
     int num_banks = card(bank_factors);
-    for (int b = 0; b < num_banks; b++) {
-      string source_ram = "bank_" + str(b);
-      out << tab(3) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << b << ") begin" << endl;
-      out << tab(3) << "if (" << buf.name << "_" << in << "_bank_selector.out !== " << b << ") begin $finish(-1); end" << endl;
 
-//            for (int other_bank = 0; other_bank < num_banks; other_bank++) {
-//        if (other_bank != b) {
-//          out << tab(4) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << other_bank << ") begin $finish(-1); end" << endl;
-//        }
-//
-//      }
-      out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
-      out << tab(3) << "end" << endl;
-    }
-    out << tab(2) << "end" << endl;
+    out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
+      for (int b = 0; b < num_banks; b++) {
+          string source_ram = "bank_" + str(b);
+        out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+      }
+      out << tab(4) << "default: $finish(-1);" << endl;
+      out << tab(3) << "endcase" << endl;
+      out << tab(2) << "end" << endl;
   }
   out << tab(1) << "end" << endl;
 
@@ -925,12 +919,15 @@ void generate_platonic_ubuffer(
       string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(outpt,bnk,buf),capacities, bank_factors);
       //string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
+
+      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
       for (int b = 0; b < num_banks; b++) {
-        string source_ram = "bank_" + str(b);
-        out << tab(3) << "if (" << buf.name << "_" << outpt << "_bank_selector.out == " << b << ") begin" << endl;
-        out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
-        out << tab(3) << "end" << endl;
+          string source_ram = "bank_" + str(b);
+        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
       }
+      out << tab(4) << "default: $finish(-1);" << endl;
+      out << tab(3) << "endcase" << endl;
+
     }
   }
 
