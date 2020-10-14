@@ -820,6 +820,16 @@ struct ir_node {
     return find_root()->all_ops();
   }
 
+  std::set<op*> all_nodes() {
+    std::set<op*> ops{this};
+    for (auto c : children) {
+      for (auto op : c->all_ops()) {
+        ops.insert(op);
+      }
+    }
+    return ops;
+  }
+
   std::set<op*> all_ops() {
     std::set<op*> ops{this};
     if (is_loop) {
@@ -862,6 +872,10 @@ struct prog {
 
   void set_bounds(const std::string& loop, const int start, const int end_exclusive);
   void extend_bounds(const std::string& loop, const int start, const int end_exclusive);
+
+  std::set<op*> all_nodes() {
+    return root->all_nodes();
+  }
 
   std::string un(const std::string& prefix) {
     return unique_name(prefix);

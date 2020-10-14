@@ -17851,6 +17851,16 @@ void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg
   }
 }
 
+vector<op*> unscheduled_nodes(schedule_info& sched, prog& prg) {
+  vector<op*> unscheduled;
+  for (auto op : prg.all_nodes()) {
+    if (!is_op_scheduled(op, sched, prg)) {
+      unscheduled.push_back(op);
+    }
+  }
+  return unscheduled;
+}
+
 bool all_ops_scheduled(schedule_info& sched, prog& prg) {
   for (auto op : prg.all_ops()) {
     if (!is_op_scheduled(op, sched, prg)) {
@@ -17925,6 +17935,11 @@ void dhuff_playground() {
   cout << "After fusing outer loops..." << endl;
   print_partial_schedule(sched, prg);
 
+  cout << endl;
+  cout << "Unscheduled..." << endl;
+  for (auto s : unscheduled_nodes(sched, prg)) {
+    cout << tab(1) << s->name << endl;
+  }
   assert(all_ops_scheduled(sched, prg));
   assert(false);
 
