@@ -15493,6 +15493,21 @@ vector<op*> inner_ops(prog& prg) {
   return ops;
 }
 
+void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
+  int latency = 0;
+  for (auto other : op->children) {
+    int old_latency = latency;
+    latency += hwinfo.total_latency(other);
+    if (old_latency == latency) {
+      latency += 1;
+    }
+  }
+
+  hwinfo.loop_iis[op->name] = max(latency, 1);
+
+  hwinfo.instance_latencies[op] = latency;
+}
+
 void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   cout << "scheduling: " << op->name << endl;
 
@@ -17933,6 +17948,9 @@ void dhuff_playground() {
   vector<op*> outer = ops_at_level(1, prg);
   fuse_sequentially(outer, sched, prg);
 
+  // Now set the root schedule?
+  set_scheduled_loop_latency(sched, prg.find_loop("root"), prg);
+
   cout << endl;
   cout << "After fusing outer loops..." << endl;
   print_partial_schedule(sched, prg);
@@ -17944,6 +17962,7 @@ void dhuff_playground() {
   }
   assert(unscheduled_nodes(sched, prg).size() + fully_scheduled_nodes(sched, prg).size() == prg.all_nodes().size());
   assert(all_ops_scheduled(sched, prg));
+
   assert(false);
 
   cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
