@@ -1272,6 +1272,8 @@ struct prog {
   map<op*, isl_map*> producer_maps(const std::string& buf);
   map<op*, isl_map*> consumer_maps(const std::string& buf);
 
+  void shift_address_range(const std::string& buf, const std::vector<int>& min_locs);
+
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();

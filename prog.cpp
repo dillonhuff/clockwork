@@ -5458,6 +5458,58 @@ map<op*, isl_map*> prog::producer_maps(const std::string& buf) {
   return m;
 }
 
+void prog::shift_address_range(const std::string& buf, const std::vector<int>& min_locs) {
+  //auto ivars = iter_vars();
+  //auto doms = domains();
+
+  auto ops = root->all_ops();
+  for (auto  op : ops) {
+    //auto vars = map_find(op, ivars);
+    //string ivar_str = sep_list(vars, "[", "]", ", ");
+    //auto dom = map_find(op, doms);
+
+    //umap* pmap = rdmap(ctx, "{}");
+    //TODO: replace this into a method
+    for (auto & p : op->produce_locs) {
+      if (p.first == buf) {
+        cout << "Visit produce locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+        cout << p.second.size() << endl;
+        for (size_t i = 0; i < p.second.size(); i ++ ) {
+            vector<string> new_addr;
+            vector<string> origin_addr = split_at(p.second.at(i).second, ",");
+            assert(origin_addr.size() == min_locs.size());
+            for (size_t dim = 0; dim < origin_addr.size(); dim ++) {
+                new_addr.push_back(origin_addr.at(dim) + "+" + to_string(- min_locs.at(dim)));
+                cout << "norm address" << new_addr.at(dim) << endl;
+            }
+            p.second.at(i).second = comma_list(new_addr);
+        }
+        cout << "New produce locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+      }
+    }
+
+    //TODO: replace this into a method
+    for (auto & p : op->consume_locs_pair) {
+      if (p.first == buf) {
+        cout << "Visit consume locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+        cout << p.second.size() << endl;
+        for (size_t i = 0; i < p.second.size(); i ++ ) {
+            vector<string> new_addr;
+            vector<string> origin_addr = split_at(p.second.at(i).second, ",");
+            assert(origin_addr.size() == min_locs.size());
+            for (size_t dim = 0; dim < origin_addr.size(); dim ++) {
+                new_addr.push_back(origin_addr.at(dim) + "+" + to_string(- min_locs.at(dim)));
+                cout << "norm address" << new_addr.at(dim) << endl;
+            }
+            p.second.at(i).second = comma_list(new_addr);
+        }
+        cout << "New consume locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+      }
+    }
+
+  }
+}
+
 map<op*, isl_map*> prog::consumer_maps(const std::string& buf) {
   auto ivars = iter_vars();
   auto doms = domains();
@@ -5765,6 +5817,7 @@ void normalize_address_offsets(prog& prg) {
         auto writes = range(opm.second);
         cout << "Writes: " << str(writes) << endl;
         for (int d = 0; d < num_dims(writes); d++) {
+            cout << "project out: " << str(project_all_but(writes, d)) << endl;
           auto mincoeff = to_int(lexminval(project_all_but(writes, d)));
           if (mincoeff < min_offset.at(d)) {
             min_offset[d] = mincoeff;
@@ -5773,6 +5826,10 @@ void normalize_address_offsets(prog& prg) {
       }
     }
     cout << tab(2) << "Min offset (counting only writers): " << sep_list(min_offset, "", "", ", ") << endl;
+
+    prg.shift_address_range(b, min_offset);
+    cout << "shift for buffer : " << b << endl;
+    prg.pretty_print();
   }
 }
 

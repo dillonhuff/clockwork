@@ -13826,6 +13826,46 @@ void lake_cascade_halide_test() {
 #endif
 }
 
+void lake_harris_garnet_test() {
+  prog prg = harris();
+  dsa_writers(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+  assert(false);
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  auto iis = garnet_fuse_ii_level(prg);
+  CodegenOptions options;
+  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.iis = iis;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+
+  for (auto& b : buffers_opt) {
+    cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
+    b.second.normalize_access_range();
+    cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
+  }
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+#ifdef COREIR
+  generate_garnet_tb(buffers_opt, prg, opt);
+#endif
+}
+
 void lake_harris_halide_test() {
   prog prg = harris();
   dsa_writers(prg);
@@ -15597,6 +15637,7 @@ void dual_port_lake_test();
 void lake_tests() {
   //dual_port_lake_test();
   //lake_agg_sram_tb_config_test();
+  lake_harris_garnet_test();
   lake_conv33_autovec_test();
   lake_conv33_recipe_test();
   lake_conv33_halide_test();
@@ -17689,7 +17730,7 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
-  //lake_tests();
+  lake_tests();
   //cnn_test();
   iccad_tests();
   exposure_fusion_iccad_apps("ef_cc_10_level");
