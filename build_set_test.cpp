@@ -17970,6 +17970,17 @@ void dhuff_playground() {
   auto sched_exprs = 
     its(op_times_map(sched, prg), prg.whole_iteration_domain());
   cout << "Times: " << str(sched_exprs) << endl;
+  for (auto op0 : get_maps(sched_exprs)) {
+    for (auto op1 : get_maps(sched_exprs)) {
+      string name0 = domain_name(op0);
+      string name1 = domain_name(op1);
+      if (name0 != name1 && share_resource(name0, name1, sched)) {
+        auto times = range(op0);
+        auto times1 = range(op1);
+        assert(empty(its(times, times1)));
+      }
+    }
+  }
   //assert(false);
 
   //cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
