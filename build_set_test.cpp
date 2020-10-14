@@ -17891,6 +17891,22 @@ bool all_ops_scheduled(schedule_info& sched, prog& prg) {
   return true;
 }
 
+bool share_resource(const std::string& op0, const std::string& op1, schedule_info& sched) {
+  resource_instance i0;
+  for (auto r : sched.resource_assignment) {
+    if (r.first->name == op0) {
+      i0 = r.second;
+    }
+  }
+  resource_instance i1;
+  for (auto r : sched.resource_assignment) {
+    if (r.first->name == op1) {
+      i1 = r.second;
+    }
+  }
+  return i0 == i1;
+}
+
 void dhuff_playground() {
   prog prg("time_sharing_pyramid_1d");
 
@@ -17975,9 +17991,12 @@ void dhuff_playground() {
       string name0 = domain_name(op0);
       string name1 = domain_name(op1);
       if (name0 != name1 && share_resource(name0, name1, sched)) {
+        cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
         auto times = range(op0);
         auto times1 = range(op1);
-        assert(empty(its(times, times1)));
+        auto overlap = its(times, times1);
+        cout << tab(2) << "Overlap: " << str(overlap) << endl;
+        assert(empty(overlap));
       }
     }
   }

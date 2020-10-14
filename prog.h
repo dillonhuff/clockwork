@@ -1718,6 +1718,11 @@ class resource_instance {
     int number;
 };
 
+static
+bool operator==(const resource_instance& a, const resource_instance& b) {
+  return a.type == b.type && a.number == b.number;
+}
+
 struct schedule_info {
   // Miscellaneous
   bool use_dse_compute;
