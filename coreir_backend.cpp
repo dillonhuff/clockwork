@@ -415,6 +415,9 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
 
   assert(bank_factors.size() == buf.logical_dimension());
 
+  vector<string> vars = {};
+  vector<string> vars1 = {};
+
   out << endl;
   //vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
   vector<string> port_decls{"input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
@@ -445,7 +448,24 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   out << "endmodule" << endl << endl;
 }
 
-void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank& bnk) {
+string print_cyclic_banks_inner_bank_offset_func(UBuffer& buf, vector<string> vars, vector<int> capacities, vector<int> bank_factors)
+{
+ int capacity_prod = 1;
+ vector<string> vars1;
+  for(int i = 0; i < buf.logical_dimension(); i ++)
+  {
+      vars1.push_back("$rtoi($floor(" + vars[i] + "/ " + to_string(bank_factors[i]) + "))*" + to_string(capacity_prod));
+      capacity_prod *= capacities[i];
+  }
+
+    string func = sep_list(vars1,"(",")","+");
+  cout << func << endl;
+  //assert(false);
+  return func;
+
+}
+
+vector<int> print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank& bnk) {
   int num_banks = card(bank_factors);
   //for (auto val : bank_factors) {
     //num_banks *= val;
@@ -453,6 +473,7 @@ void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank
   out << tab(1) << "// # of banks: " << num_banks << endl;
 
   int capacity = 1;
+  vector<int> capacities;
   auto dsets = get_sets(bnk.rddom);
   int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bnk.rddom))) : 0;
   for (int i = 0; i < dims; i++) {
@@ -460,7 +481,9 @@ void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank
     auto min = to_int(lexminval(s));
     auto max = to_int(lexmaxval(s));
     int length = max - min + 1;
+    length = ((length - 1) / bank_factors[i]) + 1;
     capacity *= length;
+    capacities.push_back(length);
   }
 
   vector<int> current_index;
@@ -468,6 +491,8 @@ void print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank
   for (int i = 0; i < num_banks; i++) {
     out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "bank_" << i << " [" << capacity << "];" << endl;
   }
+
+  return capacities;
 }
 
 UBuffer latency_adjusted_buffer(
@@ -743,36 +768,8 @@ map<string, pair<string, int> > determine_shift_reg_map(
   }
   return shift_registered_outputs;
 }
-void generate_platonic_ubuffer(
-    CodegenOptions& options,
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo) {
 
-  prg.pretty_print();
-
-  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
-  //int folding_factor = bank_folding_factor(bank_factors, prg, buf, hwinfo);
-
-  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
-  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
-
-  if(buf.name == "hw_input_global_wrapper_stencil")
-  {
-          cout << buf;
-          cout << "Output to output srs..." << endl;
-          for (auto ent : shift_registered_outputs_to_outputs) {
-              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
-          }
-  }
-
-  ostream& out = *verilog_collateral_file;
-
-
-  print_cyclic_banks_selector(out, bank_factors, buf);
-  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
-  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
-
+vector<string> verilog_port_decls(CodegenOptions& options, UBuffer& buf) {
   vector<string> port_decls{"input clk", "input flush", "input rst_n"};
 
   for (auto b : buf.port_bundles) {
@@ -797,13 +794,48 @@ void generate_platonic_ubuffer(
       port_decls.push_back( "output logic [" + str(pt_width - 1) + ":0] " + name + " [" + str(bd_width - 1) + ":0] ");
     }
   }
+
+  return port_decls;
+}
+
+void generate_platonic_ubuffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+
+  prg.pretty_print();
+
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+
+  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
+  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+
+  if(buf.name == "hw_input_global_wrapper_stencil")
+  {
+          cout << buf;
+          cout << "Output to output srs..." << endl;
+          for (auto ent : shift_registered_outputs_to_outputs) {
+              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
+          }
+  }
+
+  ostream& out = *verilog_collateral_file;
+
+
+  print_cyclic_banks_selector(out, bank_factors, buf);
+  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
+  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
+
+  vector<string> port_decls = verilog_port_decls(options, buf);
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
   out << endl;
 
 
   bank bnk = buf.compute_bank_info();
   out << tab(1) << "// Storage" << endl;
-  print_cyclic_banks(out, bank_factors, bnk);
+
+  auto capacities = print_cyclic_banks(out, bank_factors, bnk);
 
   out << endl;
 
@@ -849,15 +881,14 @@ void generate_platonic_ubuffer(
     for (auto pt : shift_registered_outputs) {
       string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
       if (pt.second.first == in) {
-          if(done_outpt.find(pt.first)!=done_outpt.end())
+        if(done_outpt.find(pt.first)!=done_outpt.end()) {
+          continue;
+        } else
         {
-                        continue;
-      } else
-          {
-              done_outpt.insert(pt.first);
-        out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-          }
+          done_outpt.insert(pt.first);
+          out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
         }
+      }
     }
   }
 
@@ -866,25 +897,21 @@ void generate_platonic_ubuffer(
 
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
-    string addr = parens(generate_linearized_verilog_addr(in, bnk, buf));
-    //string addr = parens(generate_linearized_verilog_addr(bank_factors, in, bnk, buf) + " % " + str(folding_factor));
+    string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
+
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
     int num_banks = card(bank_factors);
-    for (int b = 0; b < num_banks; b++) {
-      string source_ram = "bank_" + str(b);
-      out << tab(3) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << b << ") begin" << endl;
-      for (int other_bank = 0; other_bank < num_banks; other_bank++) {
-        if (other_bank != b) {
-          out << tab(4) << "if (" << buf.name << "_" << in << "_bank_selector.out == " << other_bank << ") begin $finish(-1); end" << endl;
-        }
 
+    out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
+      for (int b = 0; b < num_banks; b++) {
+          string source_ram = "bank_" + str(b);
+        out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
       }
-      out << tab(4) << source_ram << "[" << addr << "] <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
-      out << tab(3) << "end" << endl;
-    }
-    out << tab(2) << "end" << endl;
+      out << tab(4) << "default: $finish(-1);" << endl;
+      out << tab(3) << "endcase" << endl;
+      out << tab(2) << "end" << endl;
   }
   out << tab(1) << "end" << endl;
 
@@ -892,15 +919,17 @@ void generate_platonic_ubuffer(
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
     if (done_outpt.find(outpt) == done_outpt.end()) {
-      string addr = parens(generate_linearized_verilog_addr(outpt, bnk, buf));
-      //string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
+      string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(outpt,bnk,buf),capacities, bank_factors);
       int num_banks = card(bank_factors);
+
+      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
       for (int b = 0; b < num_banks; b++) {
-        string source_ram = "bank_" + str(b);
-        out << tab(3) << "if (" << buf.name << "_" << outpt << "_bank_selector.out == " << b << ") begin" << endl;
-        out << tab(2) << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
-        out << tab(3) << "end" << endl;
+          string source_ram = "bank_" + str(b);
+        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
       }
+      out << tab(4) << "default: $finish(-1);" << endl;
+      out << tab(3) << "endcase" << endl;
+
     }
   }
 
