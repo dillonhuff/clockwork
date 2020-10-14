@@ -1951,6 +1951,14 @@ isl_set* rdset(isl_ctx* ctx, const std::string& str) {
   return res;
 }
 
+isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str) {
+  auto res = isl_multi_aff_read_from_str(ctx, str.c_str());
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_aff: " << str << endl;
+    assert(false);
+  }
+  return res;
+}
 isl_aff* rdaff(isl_ctx* ctx, const std::string& str) {
   auto res = isl_aff_read_from_str(ctx, str.c_str());
   if (res == nullptr) {
@@ -3505,6 +3513,10 @@ isl_map* linear_address_map(isl_set* s) {
   }
   string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
   return isl_map_read_from_str(ctx(s), map_str.c_str());
+}
+
+isl_map* to_map(isl_multi_aff* s) {
+  return isl_map_from_multi_aff(cpy(s));
 }
 
 isl_map* to_map(isl_aff* s) {

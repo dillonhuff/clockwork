@@ -8911,7 +8911,7 @@ void gauss_pyramid_iccad_apps(const std::string& prefix) {
 
     move_to_benchmarks_folder(name + "_opt");
   }
-  assert(false);
+  //assert(false);
 }
 
 void exposure_fusion_iccad_apps(const std::string& prefix) {
@@ -8930,7 +8930,7 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
 
     move_to_benchmarks_folder(name + "_opt");
   }
-  assert(false);
+  //assert(false);
 }
 
 void exposure_fusion_fpga_test(const std::string& name) {
@@ -8985,7 +8985,7 @@ void gauss_pyramid_fpga_test(const std::string& name) {
     //run_regression_tb(name + "_naive");
   //compare("gp naive", naive, optimized);
   move_to_benchmarks_folder(name + "_naive");
-  assert(false);
+  //assert(false);
 }
 
 void exposure_fusion() {
@@ -11537,7 +11537,8 @@ int run_verilator_on(const std::string& top_module,
     const std::string& tb_file,
     const std::vector<string>& verilog_files) {
 
-  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
+  //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME");
   assert(verilator_build == 0);
 
   //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
@@ -15510,27 +15511,14 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
     int old_latency = latency;
     hwinfo.op_offset_within_parent[other] = latency;
     latency += hwinfo.total_latency(other);
-    //if (other->is_loop) {
-      //int inner_ii = map_find(other->name, hwinfo.loop_iis);
-      //latency += inner_ii*prg.trip_count(other->name);
-    //} else {
-      //latency += map_find(other, hwinfo.total_op_latencies);
-    //}
     if (old_latency == latency) {
       latency += 1;
     }
   }
 
-  //auto inner = get_inner_loops(prg);
-  //if (elem(op, inner)) {
-    //hwinfo.loop_iis[op->name] = 2; //max(latency, 1);
-  //} else {
-    //hwinfo.loop_iis[op->name] = max(latency, 1);
-  //}
   hwinfo.loop_iis[op->name] = max(latency, 1);
 
   hwinfo.instance_latencies[op] = latency;
-  //hwinfo.loop_latencies[op->name] = latency;
 }
 
 int max_loop_depth(prog& prg) {
@@ -15813,10 +15801,6 @@ void pad_to_single_depth(prog& prg) {
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   if (is_rate_matchable(prg)) {
-  //auto rvars = reduce_vars(prg);
-  //bool perfect = all_perfect_loop_nests(prg);
-  //if (rvars.size() == 0 &&
-      //perfect) {
     prg.pretty_print();
     bool single_depth = all_loop_nests_same_depth(prg);
     int max_depth = max_loop_depth(prg);
@@ -16115,6 +16099,7 @@ CodegenOptions garnet_codegen_options(prog& prg) {
 
 void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
   normalize_bounds(prg);
+  //normalize_address_offsets(prg);
 
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
@@ -16311,6 +16296,7 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
+  test_programs.push_back(harris());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(up_sample());
@@ -16322,7 +16308,6 @@ vector<prog> stencil_programs() {
 
 
   test_programs.push_back(unsharp());
-  test_programs.push_back(harris());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
   test_programs.push_back(camera_pipeline());
@@ -16339,6 +16324,7 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, stencil_programs());
 
  
   // Too large to fit in 16 bit controller
@@ -16354,14 +16340,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
-
-
-
-  concat(test_programs, stencil_programs());
-
-
-
-
 
   return test_programs;
 }
@@ -17361,8 +17339,8 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
-  lake_tests();
-  cnn_test();
+  //lake_tests();
+  //cnn_test();
   iccad_tests();
   exposure_fusion_iccad_apps("ef_cc_10_level");
   histogram_2d_test();
@@ -17821,11 +17799,127 @@ void blur_example() {
   assert(res == 0);
 }
 
+class fusion_group {
+  public:
+
+    std::map<op*, string> fuse_levels;
+};
+
+void print_partial_schedule(schedule_info& sched, prog& prg) {
+  cout << "IIs" << endl;
+  for (auto e : sched.loop_iis) {
+    cout << tab(1) << e.first << ": " << e.second << endl;
+  }
+  cout << endl;
+  cout << "Offsets in parent" << endl;
+  for (auto e : sched.op_offset_within_parent) {
+    cout << tab(1) << e.first->name << ": " << e.second << endl;
+  }
+  cout << endl;
+  cout << "Instance latencies" << endl;
+  for (auto e : sched.instance_latencies) {
+    cout << tab(1) << e.first->name << ": " << e.second << endl;
+  }
+}
+
+void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg) {
+  int delay = 0;
+  for (auto outer_loop : outer) {
+    for (auto c : outer_loop->children) {
+      delay += sched.instance_latency(c);
+    }
+    sched.op_offset_within_parent[outer_loop] = delay;
+  }
+  for (auto outer_loop : outer) {
+    sched.loop_iis[outer_loop->name] = delay;
+  }
+}
+
+void dhuff_playground() {
+  prog prg("time_sharing_pyramid_1d");
+
+  prg.add_input("in");
+  prg.add_output("out");
+
+  {
+    auto ld = prg.add_loop("i0", 0, 1)->add_op("cpy");
+    ld->add_load("in", "i0");
+    ld->add_store("b0", "i0");
+  }
+
+  {
+    auto ld = prg.add_loop("x0", 0, 1)->add_op("ldin0");
+    ld->add_load("b0", "2*x0 + 0");
+    ld->add_load("b0", "2*x0 + 1");
+    ld->add_store("b1", "x0");
+  }
+
+  {
+    auto ld = prg.add_loop("x1", 0, 1)->add_op("ldin1");
+    ld->add_load("b1", "2*x1 + 0");
+    ld->add_load("b1", "2*x1 + 1");
+    ld->add_store("b2", "x1");
+  }
+
+  infer_bounds("b2", {16}, prg);
+  auto xi = strip_mine(2, "x0", prg);
+  auto ii = strip_mine(4, "i0", prg);
+  prg.pretty_print();
+
+  auto options = garnet_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+
+  sched.resource_assignment[prg.find_op("cpy")] =
+  {"cpy_r", 0};
+  sched.resource_assignment[prg.find_op("ldin0")] =
+  {"gp_unit", 0};
+  sched.resource_assignment[prg.find_op("ldin1")] =
+  {"gp_unit", 0};
+
+  cout << "Inner x" << endl;
+  xi->pretty_print();
+  cout << "Inner i" << endl;
+  ii->pretty_print();
+
+  cout << "Before scheduling inner loops..." << endl;
+  print_partial_schedule(sched, prg);
+
+  sequential_schedule(sched, xi, prg);
+  sequential_schedule(sched, ii, prg);
+  sequential_schedule(sched, prg.find_op("ldin1"), prg);
+
+  cout << "After scheduling inner loops..." << endl;
+  print_partial_schedule(sched, prg);
+
+  cout << endl;
+  cout << "Getting ops" << endl;
+  vector<op*> outer = ops_at_level(1, prg);
+  fuse_sequentially(outer, sched, prg);
+
+  cout << endl;
+  cout << "After fusing outer loops..." << endl;
+  print_partial_schedule(sched, prg);
+  assert(false);
+
+  cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
+  for (auto out : outer) {
+    cout << "Outer loop..." << endl;
+    out->pretty_print();
+    auto read_vals = read_at(out->name, prg);
+    cout << tab(1) << "Reads: " << str(read_vals) << endl;
+  }
+}
+
 int main(int argc, char** argv) {
 
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+
+    if (cmd == "dhuff-playground") {
+      dhuff_playground();
+      return 0;
+    }
 
     if (cmd == "fpga-asplos-flow") {
       fpga_asplos_tests();

@@ -4392,6 +4392,24 @@ isl_schedule* prog::optimized_schedule() {
   return sched;
 }
 
+void get_op_levels(op* node, map<string,int>& variable_map, int current_level){
+	if(!node->is_loop){
+    variable_map[node->name] = current_level;
+	} else {
+		variable_map[node->name] = current_level;
+		current_level++;
+		for(auto child : node->children){
+			get_op_levels(child, variable_map, current_level);
+		}
+	}
+}
+
+map<string, int> get_op_levels(prog& prg){
+	map<string, int> variable_map;
+	get_op_levels(prg.root, variable_map, 0);
+	return variable_map;
+}
+
 void get_variable_levels(op* node, map<string,int>& variable_map, int current_level){
 	if(!node->is_loop){
 		return;
@@ -4613,7 +4631,11 @@ void normalize_bounds(prog& prg) {
   }
 }
 
-void strip_mine(const int factor, op* loop, prog& prg) {
+op* strip_mine(const int factor, const std::string& loop, prog& prg) {
+  return strip_mine(factor, prg.find_loop(loop), prg);
+}
+
+op* strip_mine(const int factor, op* loop, prog& prg) {
   assert(loop->is_loop);
   assert(loop->trip_count() % factor == 0);
 
@@ -4647,6 +4669,7 @@ void strip_mine(const int factor, op* loop, prog& prg) {
   cout << "outer tc = " << loop->trip_count() << endl;
   cout << "orig     = " << original_trip_count << endl;
   assert(inner->trip_count() * loop->trip_count() == original_trip_count);
+  return inner;
 }
 
 map<string, int> compute_unroll_factors(const std::string& buf, const int unroll_factor, prog& prg) {
@@ -4947,6 +4970,14 @@ void bft(prog& prg, F test) {
 template<typename F>
 void dft(prog& prg, F test) {
   dft(prg.root, test);
+}
+
+std::vector<op*> get_dft_nodes(prog& prg) {
+  std::vector<op*> inner;
+  dft(prg, [&inner](op* node) {
+      inner.push_back(node);
+      });
+  return inner;
 }
 
 std::vector<op*> get_dft_ops(prog& prg) {
@@ -5690,4 +5721,92 @@ umap* op_end_times_map(schedule_info& sched, prog& prg) {
   return to_umap(hs);
 }
 
+void normalize_address_offsets(prog& prg) {
+  prg.pretty_print();
+  for (auto b : all_buffers(prg)) {
+    cout << "Buffer: " << b << endl;
+    map<op*, isl_map*> prods = prg.producer_maps(b);
+    cout << tab(1) << "Producers..." << endl;
+    vector<int> min_offset;
+    if (prods.size() > 0) {
+      int ndims = num_dims((range(pick(prods).second)));
+      for (int d = 0; d < ndims; d++) {
+        min_offset.push_back(9999999); // TODO: Replace with int max value
+      }
 
+      for (auto opm : prods) {
+        op* op = opm.first;
+        auto writes = range(opm.second);
+        for (int d = 0; d < num_dims(writes); d++) {
+          auto mincoeff = to_int(lexminval(project_all_but(writes, d)));
+          if (mincoeff < min_offset.at(d)) {
+            min_offset[d] = mincoeff;
+          }
+        }
+      }
+    }
+
+    map<op*, isl_map*> cons = prg.consumer_maps(b);
+    if (prods.size() == 0) {
+      // Probably if there are no producers and consumers then
+      // we can ignore the buffer for normalization, since
+      // there are no accesses to it
+      assert(cons.size() > 0);
+      int ndims = num_dims((range(pick(cons).second)));
+      for (int d = 0; d < ndims; d++) {
+        min_offset.push_back(9999999); // TODO: Replace with int max value
+      }
+    }
+
+    cout << "Got consumers" << endl;
+    for (auto opm : cons) {
+      op* op = opm.first;
+      if (opm.second != nullptr) {
+        auto writes = range(opm.second);
+        cout << "Writes: " << str(writes) << endl;
+        for (int d = 0; d < num_dims(writes); d++) {
+          auto mincoeff = to_int(lexminval(project_all_but(writes, d)));
+          if (mincoeff < min_offset.at(d)) {
+            min_offset[d] = mincoeff;
+          }
+        }
+      }
+    }
+    cout << tab(2) << "Min offset (counting only writers): " << sep_list(min_offset, "", "", ", ") << endl;
+  }
+}
+
+vector<op*> ops_at_level(const int level, prog& prg) {
+  vector<op*> at_level;
+  vector<op*> ops = get_dft_nodes(prg);
+  map<string, int> op_levels = get_op_levels(prg);
+  for (auto op : ops) {
+    cout << tab(1) << op->name << " is at " << map_find(op->name, op_levels) << endl;
+    if (map_find(op->name, op_levels) == level) {
+      at_level.push_back(op);
+    }
+  }
+  return at_level;
+}
+
+umap* read_at(const std::string& level, prog& prg) {
+  auto ops = prg.find_loop(level)->descendant_ops();
+  std::set<string> buffers;
+  for (auto op : ops) {
+    for (auto b : op->buffers_read()) {
+      buffers.insert(b);
+    }
+  }
+  umap* rd = nullptr;
+  for (auto b : buffers) {
+    auto rdmap = read_at(level, b, prg);
+
+    if (rd == nullptr) {
+      rd = rdmap;
+    } else {
+      rd = unn(rd, rdmap);
+      release(rdmap);
+    }
+  }
+  return rd;
+}

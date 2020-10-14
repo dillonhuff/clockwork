@@ -12,16 +12,16 @@ using namespace std;
 #include "hw_classes.h"
 
 struct in_in_update_0_write0_merged_banks_9_cache {
-	// RAM Box: {[0, 1928], [0, 1086]}
-	// Capacity: 968
+	// RAM Box: {[-8, 1924], [-7, 1079]}
+	// Capacity: 972
 	// # of read delays: 6
-  // 0, 1, 483, 484, 966, 967
+  // 0, 1, 485, 486, 970, 971
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 481> f3;
+	fifo<hw_uint<16>, 483> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 481> f7;
+	fifo<hw_uint<16>, 483> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -34,31 +34,31 @@ struct in_in_update_0_write0_merged_banks_9_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_482() {
+	inline hw_uint<16> peek_484() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_483() {
+	inline hw_uint<16> peek_485() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_484() {
+	inline hw_uint<16> peek_486() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_969() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_966() {
+	inline hw_uint<16> peek_970() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_967() {
+	inline hw_uint<16> peek_971() {
 		return f10;
 	}
 
@@ -71,11 +71,11 @@ struct in_in_update_0_write0_merged_banks_9_cache {
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 481
+    // cap: 1 reading from capacity: 483
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 481 reading from capacity: 1
+    // cap: 483 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -83,11 +83,11 @@ struct in_in_update_0_write0_merged_banks_9_cache {
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 481
+    // cap: 1 reading from capacity: 483
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 481 reading from capacity: 1
+    // cap: 483 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -100,18 +100,16 @@ struct in_in_update_0_write0_merged_banks_9_cache {
 };
 
 struct in_in_update_0_write1_merged_banks_9_cache {
-	// RAM Box: {[1, 1929], [0, 1086]}
-	// Capacity: 968
-	// # of read delays: 6
-  // 0, 1, 483, 484, 966, 967
+	// RAM Box: {[-7, 1921], [-7, 1079]}
+	// Capacity: 972
+	// # of read delays: 4
+  // 0, 1, 486, 971
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 481> f3;
+	fifo<hw_uint<16>, 484> f3;
 	hw_uint<16> f4;
+	fifo<hw_uint<16>, 484> f5;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 481> f7;
-	hw_uint<16> f8;
-	hw_uint<16> f10;
 
 
 	inline hw_uint<16> peek_0() {
@@ -122,32 +120,24 @@ struct in_in_update_0_write1_merged_banks_9_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_482() {
+	inline hw_uint<16> peek_485() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_483() {
+	inline hw_uint<16> peek_486() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_484() {
-		return f6;
-	}
-
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_970() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-		return f7.back();
+		return f5.back();
 	}
 
-	inline hw_uint<16> peek_966() {
-		return f8;
-	}
-
-	inline hw_uint<16> peek_967() {
-		return f10;
+	inline hw_uint<16> peek_971() {
+		return f6;
 	}
 
 
@@ -155,27 +145,19 @@ struct in_in_update_0_write1_merged_banks_9_cache {
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f10 = f8;
+    // cap: 1 reading from capacity: 484
+    f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 481
-    f8 = f7.back();
+    // cap: 484 reading from capacity: 1
+    f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 481 reading from capacity: 1
-    f7.push(f6);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f6 = f4;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 481
+    // cap: 1 reading from capacity: 484
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 481 reading from capacity: 1
+    // cap: 484 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -188,15 +170,15 @@ struct in_in_update_0_write1_merged_banks_9_cache {
 };
 
 struct in_in_update_0_write2_merged_banks_9_cache {
-	// RAM Box: {[2, 1930], [0, 1086]}
-	// Capacity: 968
+	// RAM Box: {[-6, 1922], [-7, 1079]}
+	// Capacity: 972
 	// # of read delays: 4
-  // 0, 1, 484, 967
+  // 0, 1, 486, 971
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 482> f3;
+	fifo<hw_uint<16>, 484> f3;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 482> f5;
+	fifo<hw_uint<16>, 484> f5;
 	hw_uint<16> f6;
 
 
@@ -208,23 +190,23 @@ struct in_in_update_0_write2_merged_banks_9_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_483() {
+	inline hw_uint<16> peek_485() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_484() {
+	inline hw_uint<16> peek_486() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_966() {
+	inline hw_uint<16> peek_970() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_967() {
+	inline hw_uint<16> peek_971() {
 		return f6;
 	}
 
@@ -233,19 +215,19 @@ struct in_in_update_0_write2_merged_banks_9_cache {
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 482
+    // cap: 1 reading from capacity: 484
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 482 reading from capacity: 1
+    // cap: 484 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 482
+    // cap: 1 reading from capacity: 484
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 482 reading from capacity: 1
+    // cap: 484 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -258,16 +240,19 @@ struct in_in_update_0_write2_merged_banks_9_cache {
 };
 
 struct in_in_update_0_write3_merged_banks_9_cache {
-	// RAM Box: {[3, 1931], [0, 1086]}
-	// Capacity: 968
-	// # of read delays: 4
-  // 0, 1, 484, 967
+	// RAM Box: {[-9, 1923], [-7, 1079]}
+	// Capacity: 973
+	// # of read delays: 7
+  // 0, 1, 2, 486, 487, 971, 972
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 482> f3;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 482> f5;
+	fifo<hw_uint<16>, 483> f5;
 	hw_uint<16> f6;
+	hw_uint<16> f8;
+	fifo<hw_uint<16>, 483> f9;
+	hw_uint<16> f10;
+	hw_uint<16> f12;
 
 
 	inline hw_uint<16> peek_0() {
@@ -278,24 +263,36 @@ struct in_in_update_0_write3_merged_banks_9_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_483() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_484() {
+	inline hw_uint<16> peek_2() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_966() {
+	inline hw_uint<16> peek_485() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_967() {
+	inline hw_uint<16> peek_486() {
 		return f6;
+	}
+
+	inline hw_uint<16> peek_487() {
+		return f8;
+	}
+
+	inline hw_uint<16> peek_970() {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+		return f9.back();
+	}
+
+	inline hw_uint<16> peek_971() {
+		return f10;
+	}
+
+	inline hw_uint<16> peek_972() {
+		return f12;
 	}
 
 
@@ -303,20 +300,32 @@ struct in_in_update_0_write3_merged_banks_9_cache {
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 482
+    // cap: 1 reading from capacity: 1
+    f12 = f10;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 483
+    f10 = f9.back();
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 483 reading from capacity: 1
+    f9.push(f8);
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f8 = f6;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 483
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 482 reading from capacity: 1
+    // cap: 483 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 482
-    f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 482 reading from capacity: 1
-    f3.push(f2);
+    // cap: 1 reading from capacity: 1
+    f4 = f2;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
@@ -356,396 +365,396 @@ inline void in_in_update_0_write3_write(hw_uint<16>& in_in_update_0_write3, in_c
 inline hw_uint<16> in_gauss_blur_1_rd0_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd0 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_967();
-  return value_in_in_update_0_write0;
+  // in_gauss_blur_1_rd0 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[-1 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_972();
+  return value_in_in_update_0_write3;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd1_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd1 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_484();
-  return value_in_in_update_0_write0;
+  // in_gauss_blur_1_rd1 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[-1 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_487();
+  return value_in_in_update_0_write3;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd10_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd10 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_484();
-  return value_in_in_update_0_write1;
+  // in_gauss_blur_1_rd10 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_486();
+  return value_in_in_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd11_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd11 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_1();
-  return value_in_in_update_0_write1;
+  // in_gauss_blur_1_rd11 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_1();
+  return value_in_in_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd12_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd12 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_967();
-  return value_in_in_update_0_write2;
+  // in_gauss_blur_1_rd12 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_971();
+  return value_in_in_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd13_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd13 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_484();
-  return value_in_in_update_0_write2;
+  // in_gauss_blur_1_rd13 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_486();
+  return value_in_in_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd14_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd14 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_1();
-  return value_in_in_update_0_write2;
+  // in_gauss_blur_1_rd14 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_1();
+  return value_in_in_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd15_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd15 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_967();
-  return value_in_in_update_0_write3;
+  // in_gauss_blur_1_rd15 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_971();
+  return value_in_in_update_0_write2;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd16_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd16 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_484();
-  return value_in_in_update_0_write3;
+  // in_gauss_blur_1_rd16 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_486();
+  return value_in_in_update_0_write2;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd17_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd17 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_1();
-  return value_in_in_update_0_write3;
+  // in_gauss_blur_1_rd17 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_1();
+  return value_in_in_update_0_write2;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd18_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd18 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_967();
-  return value_in_in_update_0_write2;
+  // in_gauss_blur_1_rd18 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_971();
+  return value_in_in_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd19_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd19 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_484();
-  return value_in_in_update_0_write2;
+  // in_gauss_blur_1_rd19 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_486();
+  return value_in_in_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd2_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd2 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_1();
-  return value_in_in_update_0_write0;
+  // in_gauss_blur_1_rd2 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[-1 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_2();
+  return value_in_in_update_0_write3;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd20_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd20 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_1();
-  return value_in_in_update_0_write2;
+  // in_gauss_blur_1_rd20 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_1();
+  return value_in_in_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd21_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd21 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_967();
-  return value_in_in_update_0_write3;
+  // in_gauss_blur_1_rd21 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_971();
+  return value_in_in_update_0_write2;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd22_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd22 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_484();
-  return value_in_in_update_0_write3;
+  // in_gauss_blur_1_rd22 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_486();
+  return value_in_in_update_0_write2;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd23_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd23 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_1();
-  return value_in_in_update_0_write3;
+  // in_gauss_blur_1_rd23 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_1();
+  return value_in_in_update_0_write2;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd24_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd24 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_966();
-  return value_in_in_update_0_write0;
+  // in_gauss_blur_1_rd24 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_971();
+  return value_in_in_update_0_write3;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd25_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd25 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_483();
-  return value_in_in_update_0_write0;
+  // in_gauss_blur_1_rd25 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_486();
+  return value_in_in_update_0_write3;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd26_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd26 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_0();
-  return value_in_in_update_0_write0;
+  // in_gauss_blur_1_rd26 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_1();
+  return value_in_in_update_0_write3;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd27_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd27 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_967();
-  return value_in_in_update_0_write3;
+  // in_gauss_blur_1_rd27 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_971();
+  return value_in_in_update_0_write2;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd28_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd28 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_484();
-  return value_in_in_update_0_write3;
+  // in_gauss_blur_1_rd28 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_486();
+  return value_in_in_update_0_write2;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd29_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd29 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_1();
-  return value_in_in_update_0_write3;
+  // in_gauss_blur_1_rd29 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_1();
+  return value_in_in_update_0_write2;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd3_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd3 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_967();
-  return value_in_in_update_0_write1;
+  // in_gauss_blur_1_rd3 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_971();
+  return value_in_in_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd30_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd30 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_966();
-  return value_in_in_update_0_write0;
+  // in_gauss_blur_1_rd30 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_971();
+  return value_in_in_update_0_write3;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd31_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd31 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_483();
-  return value_in_in_update_0_write0;
+  // in_gauss_blur_1_rd31 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_486();
+  return value_in_in_update_0_write3;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd32_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd32 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_0();
-  return value_in_in_update_0_write0;
+  // in_gauss_blur_1_rd32 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[3 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write3 = in.in_in_update_0_write3_merged_banks_9.peek_1();
+  return value_in_in_update_0_write3;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd33_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd33 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[5 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_966();
-  return value_in_in_update_0_write1;
+  // in_gauss_blur_1_rd33 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_970();
+  return value_in_in_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd34_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd34 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[5 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_483();
-  return value_in_in_update_0_write1;
+  // in_gauss_blur_1_rd34 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_485();
+  return value_in_in_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd35_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd35 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[5 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_0();
-  return value_in_in_update_0_write1;
+  // in_gauss_blur_1_rd35 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_0();
+  return value_in_in_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd4_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd4 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_484();
-  return value_in_in_update_0_write1;
+  // in_gauss_blur_1_rd4 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_486();
+  return value_in_in_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd5_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd5 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_1();
-  return value_in_in_update_0_write1;
+  // in_gauss_blur_1_rd5 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_1();
+  return value_in_in_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd6_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd6 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_967();
-  return value_in_in_update_0_write2;
+  // in_gauss_blur_1_rd6 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_971();
+  return value_in_in_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd7_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd7 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, 1 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_484();
-  return value_in_in_update_0_write2;
+  // in_gauss_blur_1_rd7 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_486();
+  return value_in_in_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd8_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd8 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[2 + 4d0, 2 + d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write2 = in.in_in_update_0_write2_merged_banks_9.peek_1();
-  return value_in_in_update_0_write2;
+  // in_gauss_blur_1_rd8 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, 1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_1();
+  return value_in_in_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_1_rd9_select(in_cache& in, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_1_rd9 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[1 + 4d0, d1] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-  auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_9.peek_967();
-  return value_in_in_update_0_write1;
+  // in_gauss_blur_1_rd9 read pattern: { in_gauss_blur_1_update_0[d0, d1] -> in[4d0, -1 + d1] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Read schedule : { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+  auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_9.peek_971();
+  return value_in_in_update_0_write0;
   return 0;
 }
 
@@ -921,7 +930,7 @@ inline void in_in_update_0_write_bundle_write(hw_uint<64>& in_update_0_write, in
 #include "hw_classes.h"
 
 struct in_gauss_blur_1_in_gauss_blur_1_update_0_write0_to_in_gauss_ds_1_rd0_cache {
-	// RAM Box: {[0, 1924], [0, 1084]}
+	// RAM Box: {[-8, 1920], [-6, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
   // 0, 0
@@ -943,7 +952,7 @@ struct in_gauss_blur_1_in_gauss_blur_1_update_0_write0_to_in_gauss_ds_1_rd0_cach
 };
 
 struct in_gauss_blur_1_in_gauss_blur_1_update_0_write2_to_in_gauss_ds_1_rd1_cache {
-	// RAM Box: {[2, 1926], [0, 1084]}
+	// RAM Box: {[-6, 1922], [-6, 1078]}
 	// Capacity: 1
 	// # of read delays: 2
   // 0, 0
@@ -989,9 +998,9 @@ inline void in_gauss_blur_1_in_gauss_blur_1_update_0_write3_write(hw_uint<16>& i
 inline hw_uint<16> in_gauss_ds_1_rd0_select(in_gauss_blur_1_cache& in_gauss_blur_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_ds_1_rd0 read pattern: { in_gauss_ds_1_update_0[d0, d1] -> in_gauss_blur_1[4d0, 2d1] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  // Read schedule : { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  // Write schedule: { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
+  // in_gauss_ds_1_rd0 read pattern: { in_gauss_ds_1_update_0[d0, d1] -> in_gauss_blur_1[4d0, 2d1] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  // Read schedule : { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  // Write schedule: { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
   auto value_in_gauss_blur_1_in_gauss_blur_1_update_0_write0 = in_gauss_blur_1.in_gauss_blur_1_in_gauss_blur_1_update_0_write0_to_in_gauss_ds_1_rd0.peek(/* one reader or all rams */ 0);
   return value_in_gauss_blur_1_in_gauss_blur_1_update_0_write0;
   return 0;
@@ -1000,9 +1009,9 @@ inline hw_uint<16> in_gauss_ds_1_rd0_select(in_gauss_blur_1_cache& in_gauss_blur
 inline hw_uint<16> in_gauss_ds_1_rd1_select(in_gauss_blur_1_cache& in_gauss_blur_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_ds_1_rd1 read pattern: { in_gauss_ds_1_update_0[d0, d1] -> in_gauss_blur_1[2 + 4d0, 2d1] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  // Read schedule : { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  // Write schedule: { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
+  // in_gauss_ds_1_rd1 read pattern: { in_gauss_ds_1_update_0[d0, d1] -> in_gauss_blur_1[2 + 4d0, 2d1] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  // Read schedule : { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  // Write schedule: { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
   auto value_in_gauss_blur_1_in_gauss_blur_1_update_0_write2 = in_gauss_blur_1.in_gauss_blur_1_in_gauss_blur_1_update_0_write2_to_in_gauss_ds_1_rd1.peek(/* one reader or all rams */ 0);
   return value_in_gauss_blur_1_in_gauss_blur_1_update_0_write2;
   return 0;
@@ -1044,7 +1053,7 @@ inline hw_uint<32> in_gauss_blur_1_in_gauss_ds_1_update_0_read_bundle_read(in_ga
 #include "hw_classes.h"
 
 struct in_gauss_blur_2_in_gauss_blur_2_update_0_write0_to_in_gauss_ds_2_rd0_cache {
-	// RAM Box: {[0, 960], [0, 540]}
+	// RAM Box: {[-2, 958], [-2, 538]}
 	// Capacity: 1
 	// # of read delays: 2
   // 0, 0
@@ -1082,9 +1091,9 @@ inline void in_gauss_blur_2_in_gauss_blur_2_update_0_write1_write(hw_uint<16>& i
 inline hw_uint<16> in_gauss_ds_2_rd0_select(in_gauss_blur_2_cache& in_gauss_blur_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_ds_2_rd0 read pattern: { in_gauss_ds_2_update_0[d0, d1] -> in_gauss_blur_2[2d0, 2d1] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
-  // Read schedule : { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
-  // Write schedule: { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
+  // in_gauss_ds_2_rd0 read pattern: { in_gauss_ds_2_update_0[d0, d1] -> in_gauss_blur_2[2d0, 2d1] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
+  // Read schedule : { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
+  // Write schedule: { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
   auto value_in_gauss_blur_2_in_gauss_blur_2_update_0_write0 = in_gauss_blur_2.in_gauss_blur_2_in_gauss_blur_2_update_0_write0_to_in_gauss_ds_2_rd0.peek(/* one reader or all rams */ 0);
   return value_in_gauss_blur_2_in_gauss_blur_2_update_0_write0;
   return 0;
@@ -1152,8 +1161,8 @@ inline hw_uint<16> in_gauss_ds_3_rd0_select(in_gauss_blur_3_cache& in_gauss_blur
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // in_gauss_ds_3_rd0 read pattern: { in_gauss_ds_3_update_0[d0, d1] -> in_gauss_blur_3[2d0, 2d1] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
-  // Read schedule : { in_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 4 + 2d0, 7] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
-  // Write schedule: { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_ds_3_update_0[d0, d1] -> [7 + 8d1, 3 + 2d0, 7] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
+  // Write schedule: { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
   auto value_in_gauss_blur_3_in_gauss_blur_3_update_0_write0 = in_gauss_blur_3.in_gauss_blur_3_in_gauss_blur_3_update_0_write0_to_in_gauss_ds_3_rd0.peek(/* one reader or all rams */ 0);
   return value_in_gauss_blur_3_in_gauss_blur_3_update_0_write0;
   return 0;
@@ -1182,16 +1191,16 @@ inline hw_uint<16> in_gauss_blur_3_in_gauss_ds_3_update_0_read_bundle_read(in_ga
 #include "hw_classes.h"
 
 struct in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9_cache {
-	// RAM Box: {[0, 962], [0, 542]}
-	// Capacity: 966
+	// RAM Box: {[-2, 960], [-3, 539]}
+	// Capacity: 968
 	// # of read delays: 6
-  // 0, 1, 482, 483, 964, 965
+  // 0, 1, 483, 484, 966, 967
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 480> f3;
+	fifo<hw_uint<16>, 481> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 480> f7;
+	fifo<hw_uint<16>, 481> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -1204,31 +1213,31 @@ struct in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_481() {
+	inline hw_uint<16> peek_482() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_482() {
+	inline hw_uint<16> peek_483() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_483() {
+	inline hw_uint<16> peek_484() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_965() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_966() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_967() {
 		return f10;
 	}
 
@@ -1241,11 +1250,11 @@ struct in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9_cache {
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 480
+    // cap: 1 reading from capacity: 481
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 480 reading from capacity: 1
+    // cap: 481 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1253,11 +1262,11 @@ struct in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9_cache {
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 480
+    // cap: 1 reading from capacity: 481
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 480 reading from capacity: 1
+    // cap: 481 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1270,18 +1279,19 @@ struct in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9_cache {
 };
 
 struct in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9_cache {
-	// RAM Box: {[1, 963], [0, 542]}
-	// Capacity: 966
-	// # of read delays: 6
-  // 0, 1, 482, 483, 964, 965
+	// RAM Box: {[-3, 959], [-3, 539]}
+	// Capacity: 969
+	// # of read delays: 7
+  // 0, 1, 2, 484, 485, 967, 968
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 480> f3;
 	hw_uint<16> f4;
+	fifo<hw_uint<16>, 481> f5;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 480> f7;
 	hw_uint<16> f8;
+	fifo<hw_uint<16>, 481> f9;
 	hw_uint<16> f10;
+	hw_uint<16> f12;
 
 
 	inline hw_uint<16> peek_0() {
@@ -1292,32 +1302,36 @@ struct in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_481() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_482() {
+	inline hw_uint<16> peek_2() {
 		return f4;
 	}
 
 	inline hw_uint<16> peek_483() {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+		return f5.back();
+	}
+
+	inline hw_uint<16> peek_484() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_963() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f7.back();
-	}
-
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_485() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_966() {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+		return f9.back();
+	}
+
+	inline hw_uint<16> peek_967() {
 		return f10;
+	}
+
+	inline hw_uint<16> peek_968() {
+		return f12;
 	}
 
 
@@ -1326,27 +1340,31 @@ struct in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9_cache {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
-    f10 = f8;
+    f12 = f10;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 480
-    f8 = f7.back();
+    // cap: 1 reading from capacity: 481
+    f10 = f9.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 480 reading from capacity: 1
-    f7.push(f6);
+    // cap: 481 reading from capacity: 1
+    f9.push(f8);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
-    f6 = f4;
+    f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 480
-    f4 = f3.back();
+    // cap: 1 reading from capacity: 481
+    f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 480 reading from capacity: 1
-    f3.push(f2);
+    // cap: 481 reading from capacity: 1
+    f5.push(f4);
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f4 = f2;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
@@ -1376,198 +1394,198 @@ inline void in_gauss_ds_1_in_gauss_ds_1_update_0_write1_write(hw_uint<16>& in_ga
 inline hw_uint<16> in_gauss_blur_2_rd0_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd0 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2d0, d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_965();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
+  // in_gauss_blur_2_rd0 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[-1 + 2d0, -1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_968();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd1_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd1 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2d0, 1 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_483();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
+  // in_gauss_blur_2_rd1 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[-1 + 2d0, d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_485();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd10_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd10 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, 1 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_483();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
+  // in_gauss_blur_2_rd10 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2d0, d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_484();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd11_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd11 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, 2 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_1();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
+  // in_gauss_blur_2_rd11 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2d0, 1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_1();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd12_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd12 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2 + 2d0, d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_964();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
+  // in_gauss_blur_2_rd12 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, -1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_967();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd13_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd13 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2 + 2d0, 1 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_482();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
+  // in_gauss_blur_2_rd13 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_484();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd14_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd14 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2 + 2d0, 2 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_0();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
+  // in_gauss_blur_2_rd14 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, 1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_1();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd15_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd15 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[3 + 2d0, d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_964();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
+  // in_gauss_blur_2_rd15 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2 + 2d0, -1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_966();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd16_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd16 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[3 + 2d0, 1 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_482();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
+  // in_gauss_blur_2_rd16 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2 + 2d0, d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_483();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd17_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd17 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[3 + 2d0, 2 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_0();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
+  // in_gauss_blur_2_rd17 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2 + 2d0, 1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_0();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd2_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd2 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2d0, 2 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_1();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
+  // in_gauss_blur_2_rd2 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[-1 + 2d0, 1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_2();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd3_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd3 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_965();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
+  // in_gauss_blur_2_rd3 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2d0, -1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_967();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd4_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd4 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, 1 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_483();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
+  // in_gauss_blur_2_rd4 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2d0, d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_484();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd5_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd5 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, 2 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_1();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
+  // in_gauss_blur_2_rd5 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2d0, 1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_1();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd6_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd6 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2 + 2d0, d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_964();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
+  // in_gauss_blur_2_rd6 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, -1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_967();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd7_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd7 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2 + 2d0, 1 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_482();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
+  // in_gauss_blur_2_rd7 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_484();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd8_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd8 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2 + 2d0, 2 + d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_0();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
+  // in_gauss_blur_2_rd8 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, 1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_1();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
   return 0;
 }
 
 inline hw_uint<16> in_gauss_blur_2_rd9_select(in_gauss_ds_1_cache& in_gauss_ds_1, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_2_rd9 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[1 + 2d0, d1] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write1_merged_banks_9.peek_965();
-  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write1;
+  // in_gauss_blur_2_rd9 read pattern: { in_gauss_blur_2_update_0[d0, d1] -> in_gauss_ds_1[2d0, -1 + d1] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Read schedule : { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+  // Write schedule: { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+  auto value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0 = in_gauss_ds_1.in_gauss_ds_1_in_gauss_ds_1_update_0_write0_merged_banks_9.peek_967();
+  return value_in_gauss_ds_1_in_gauss_ds_1_update_0_write0;
   return 0;
 }
 
@@ -1665,7 +1683,7 @@ inline void in_gauss_ds_1_in_gauss_ds_1_update_0_write_bundle_write(hw_uint<32>&
 #include "hw_classes.h"
 
 struct in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9_cache {
-	// RAM Box: {[0, 480], [0, 270]}
+	// RAM Box: {[-1, 479], [-1, 269]}
 	// Capacity: 965
 	// # of read delays: 9
   // 0, 1, 2, 481, 482, 483, 962, 963, 964
@@ -1793,9 +1811,9 @@ inline void in_gauss_ds_2_in_gauss_ds_2_update_0_write0_write(hw_uint<16>& in_ga
 inline hw_uint<16> in_gauss_blur_3_rd0_select(in_gauss_ds_2_cache& in_gauss_ds_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_3_rd0 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
+  // in_gauss_blur_3_rd0 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[-1 + d0, -1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
   auto value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0 = in_gauss_ds_2.in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9.peek_964();
   return value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0;
   return 0;
@@ -1804,9 +1822,9 @@ inline hw_uint<16> in_gauss_blur_3_rd0_select(in_gauss_ds_2_cache& in_gauss_ds_2
 inline hw_uint<16> in_gauss_blur_3_rd1_select(in_gauss_ds_2_cache& in_gauss_ds_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_3_rd1 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
+  // in_gauss_blur_3_rd1 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[-1 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
   auto value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0 = in_gauss_ds_2.in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9.peek_483();
   return value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0;
   return 0;
@@ -1815,9 +1833,9 @@ inline hw_uint<16> in_gauss_blur_3_rd1_select(in_gauss_ds_2_cache& in_gauss_ds_2
 inline hw_uint<16> in_gauss_blur_3_rd2_select(in_gauss_ds_2_cache& in_gauss_ds_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_3_rd2 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
+  // in_gauss_blur_3_rd2 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[-1 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
   auto value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0 = in_gauss_ds_2.in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9.peek_2();
   return value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0;
   return 0;
@@ -1826,9 +1844,9 @@ inline hw_uint<16> in_gauss_blur_3_rd2_select(in_gauss_ds_2_cache& in_gauss_ds_2
 inline hw_uint<16> in_gauss_blur_3_rd3_select(in_gauss_ds_2_cache& in_gauss_ds_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_3_rd3 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
+  // in_gauss_blur_3_rd3 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[d0, -1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
   auto value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0 = in_gauss_ds_2.in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9.peek_963();
   return value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0;
   return 0;
@@ -1837,9 +1855,9 @@ inline hw_uint<16> in_gauss_blur_3_rd3_select(in_gauss_ds_2_cache& in_gauss_ds_2
 inline hw_uint<16> in_gauss_blur_3_rd4_select(in_gauss_ds_2_cache& in_gauss_ds_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_3_rd4 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
+  // in_gauss_blur_3_rd4 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
   auto value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0 = in_gauss_ds_2.in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9.peek_482();
   return value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0;
   return 0;
@@ -1848,9 +1866,9 @@ inline hw_uint<16> in_gauss_blur_3_rd4_select(in_gauss_ds_2_cache& in_gauss_ds_2
 inline hw_uint<16> in_gauss_blur_3_rd5_select(in_gauss_ds_2_cache& in_gauss_ds_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_3_rd5 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[1 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
+  // in_gauss_blur_3_rd5 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
   auto value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0 = in_gauss_ds_2.in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9.peek_1();
   return value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0;
   return 0;
@@ -1859,9 +1877,9 @@ inline hw_uint<16> in_gauss_blur_3_rd5_select(in_gauss_ds_2_cache& in_gauss_ds_2
 inline hw_uint<16> in_gauss_blur_3_rd6_select(in_gauss_ds_2_cache& in_gauss_ds_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_3_rd6 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[2 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
+  // in_gauss_blur_3_rd6 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[1 + d0, -1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
   auto value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0 = in_gauss_ds_2.in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9.peek_962();
   return value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0;
   return 0;
@@ -1870,9 +1888,9 @@ inline hw_uint<16> in_gauss_blur_3_rd6_select(in_gauss_ds_2_cache& in_gauss_ds_2
 inline hw_uint<16> in_gauss_blur_3_rd7_select(in_gauss_ds_2_cache& in_gauss_ds_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_3_rd7 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[2 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
+  // in_gauss_blur_3_rd7 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
   auto value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0 = in_gauss_ds_2.in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9.peek_481();
   return value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0;
   return 0;
@@ -1881,9 +1899,9 @@ inline hw_uint<16> in_gauss_blur_3_rd7_select(in_gauss_ds_2_cache& in_gauss_ds_2
 inline hw_uint<16> in_gauss_blur_3_rd8_select(in_gauss_ds_2_cache& in_gauss_ds_2, int d0, int d1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // in_gauss_blur_3_rd8 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[2 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
+  // in_gauss_blur_3_rd8 read pattern: { in_gauss_blur_3_update_0[d0, d1] -> in_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Read schedule : { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+  // Write schedule: { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
   auto value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0 = in_gauss_ds_2.in_gauss_ds_2_in_gauss_ds_2_update_0_write0_merged_banks_9.peek_0();
   return value_in_gauss_ds_2_in_gauss_ds_2_update_0_write0;
   return 0;
@@ -1980,8 +1998,8 @@ inline hw_uint<16> gp_fpga_4_rd0_select(in_gauss_ds_3_cache& in_gauss_ds_3, int 
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gp_fpga_4_rd0 read pattern: { gp_fpga_4_update_0[d0, d1] -> in_gauss_ds_3[d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
-  // Read schedule : { gp_fpga_4_update_0[d0, d1] -> [14 + 8d1, 4 + 2d0, 8] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
-  // Write schedule: { in_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 4 + 2d0, 7] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
+  // Read schedule : { gp_fpga_4_update_0[d0, d1] -> [7 + 8d1, 3 + 2d0, 8] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
+  // Write schedule: { in_gauss_ds_3_update_0[d0, d1] -> [7 + 8d1, 3 + 2d0, 7] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
   auto value_in_gauss_ds_3_in_gauss_ds_3_update_0_write0 = in_gauss_ds_3.in_gauss_ds_3_in_gauss_ds_3_update_0_write0_to_gp_fpga_4_rd0.peek(/* one reader or all rams */ 0);
   return value_in_gauss_ds_3_in_gauss_ds_3_update_0_write0;
   return 0;
@@ -2007,10 +2025,46 @@ inline void in_gauss_ds_3_in_gauss_ds_3_update_0_write_bundle_write(hw_uint<16>&
 	in_gauss_ds_3_in_gauss_ds_3_update_0_write0_write(in_gauss_ds_3_in_gauss_ds_3_update_0_write0_res, in_gauss_ds_3, d0, d1, dynamic_address);
 }
 
-// Total re-use buffer capacity: 108192 bits
+// Total re-use buffer capacity: 108544 bits
 
 
 // Operation logic
+inline void in_gauss_blur_3_update_0(in_gauss_ds_2_cache& in_gauss_ds_2, in_gauss_blur_3_cache& in_gauss_blur_3, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_gauss_ds_2
+	auto in_gauss_ds_2_0_c__0_value = in_gauss_ds_2_in_gauss_blur_3_update_0_read_bundle_read(in_gauss_ds_2/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(in_gauss_ds_2_0_c__0_value);
+	// Produce: in_gauss_blur_3
+	in_gauss_blur_3_in_gauss_blur_3_update_0_write_bundle_write(/* arg names */compute_result, in_gauss_blur_3, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_gauss_ds_3_update_0(in_gauss_blur_3_cache& in_gauss_blur_3, in_gauss_ds_3_cache& in_gauss_ds_3, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in_gauss_blur_3
+	auto in_gauss_blur_3_0_c__0_value = in_gauss_blur_3_in_gauss_ds_3_update_0_read_bundle_read(in_gauss_blur_3/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(in_gauss_blur_3_0_c__0_value);
+	// Produce: in_gauss_ds_3
+	in_gauss_ds_3_in_gauss_ds_3_update_0_write_bundle_write(/* arg names */compute_result, in_gauss_ds_3, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 4 */in_off_chip, in_cache& in, int d0, int d1) {
   // Dynamic address computation
 
@@ -2061,42 +2115,6 @@ inline void in_gauss_ds_1_update_0(in_gauss_blur_1_cache& in_gauss_blur_1, in_ga
 
 }
 
-inline void in_gauss_blur_3_update_0(in_gauss_ds_2_cache& in_gauss_ds_2, in_gauss_blur_3_cache& in_gauss_blur_3, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_gauss_ds_2
-	auto in_gauss_ds_2_0_c__0_value = in_gauss_ds_2_in_gauss_blur_3_update_0_read_bundle_read(in_gauss_ds_2/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(in_gauss_ds_2_0_c__0_value);
-	// Produce: in_gauss_blur_3
-	in_gauss_blur_3_in_gauss_blur_3_update_0_write_bundle_write(/* arg names */compute_result, in_gauss_blur_3, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void gp_fpga_4_update_0(in_gauss_ds_3_cache& in_gauss_ds_3, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */gp_fpga_4, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in_gauss_ds_3
-	auto in_gauss_ds_3_0_c__0_value = in_gauss_ds_3_gp_fpga_4_update_0_read_bundle_read(in_gauss_ds_3/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(in_gauss_ds_3_0_c__0_value);
-	// Produce: gp_fpga_4
-	gp_fpga_4.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void in_gauss_blur_2_update_0(in_gauss_ds_1_cache& in_gauss_ds_1, in_gauss_blur_2_cache& in_gauss_blur_2, int d0, int d1) {
   // Dynamic address computation
 
@@ -2133,18 +2151,18 @@ inline void in_gauss_ds_2_update_0(in_gauss_blur_2_cache& in_gauss_blur_2, in_ga
 
 }
 
-inline void in_gauss_ds_3_update_0(in_gauss_blur_3_cache& in_gauss_blur_3, in_gauss_ds_3_cache& in_gauss_ds_3, int d0, int d1) {
+inline void gp_fpga_4_update_0(in_gauss_ds_3_cache& in_gauss_ds_3, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */gp_fpga_4, int d0, int d1) {
   // Dynamic address computation
 
-	// Consume: in_gauss_blur_3
-	auto in_gauss_blur_3_0_c__0_value = in_gauss_blur_3_in_gauss_ds_3_update_0_read_bundle_read(in_gauss_blur_3/* source_delay */, d0, d1, 0);
+	// Consume: in_gauss_ds_3
+	auto in_gauss_ds_3_0_c__0_value = in_gauss_ds_3_gp_fpga_4_update_0_read_bundle_read(in_gauss_ds_3/* source_delay */, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = id_unrolled_1(in_gauss_blur_3_0_c__0_value);
-	// Produce: in_gauss_ds_3
-	in_gauss_ds_3_in_gauss_ds_3_update_0_write_bundle_write(/* arg names */compute_result, in_gauss_ds_3, d0, d1, 0);
+	auto compute_result = id_unrolled_1(in_gauss_ds_3_0_c__0_value);
+	// Produce: gp_fpga_4
+	gp_fpga_4.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2183,72 +2201,72 @@ void gp_fpga_4_opt(HWStream<hw_uint<64> >& /* get_args num ports = 4 */in_off_ch
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540; in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268; in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270; in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542; in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084; in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086; in_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 4 + 2d0, 7] : 0 <= d0 <= 239 and 0 <= d1 <= 134; gp_fpga_4_update_0[d0, d1] -> [14 + 8d1, 4 + 2d0, 8] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
-//   { in_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 2 + d0, 4] : 0 <= d0 <= 480 and 0 <= d1 <= 540 }
-// Condition for in_gauss_blur_2_update_0(((-i0 + 2*floord(i0, 2) == 0) && (-4 + i2 == 0) && (-2 + i1 >= 0) && (482 - i1 >= 0) && (-6 + i0 >= 0) && (1086 - i0 >= 0)))
-//   { in_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 4 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
-// Condition for in_gauss_blur_3_update_0(((-2 - i0 + 4*floord(2 + i0, 4) == 0) && (-6 + i2 == 0) && (-4 + i1 >= 0) && (482 - i1 >= 0) && (-14 + i0 >= 0) && (1086 - i0 >= 0)))
-//   { in_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 2 + d0, 5] : 0 <= d0 <= 480 and 0 <= d1 <= 270 }
-// Condition for in_gauss_ds_2_update_0(((-2 - i0 + 4*floord(2 + i0, 4) == 0) && (-5 + i2 == 0) && (-2 + i1 >= 0) && (482 - i1 >= 0) && (-6 + i0 >= 0) && (1086 - i0 >= 0)))
-//   { in_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 3] : 0 <= d0 <= 481 and 0 <= d1 <= 542 }
-// Condition for in_gauss_ds_1_update_0(((-i0 + 2*floord(i0, 2) == 0) && (-3 + i2 == 0) && (-1 + i1 >= 0) && (482 - i1 >= 0) && (-2 + i0 >= 0) && (1086 - i0 >= 0)))
-//   { in_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 2] : 0 <= d0 <= 481 and 0 <= d1 <= 1084 }
-// Condition for in_gauss_blur_1_update_0(((-2 + i2 == 0) && (-1 + i1 >= 0) && (482 - i1 >= 0) && (-2 + i0 >= 0) && (1086 - i0 >= 0)))
-//   { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 482 and 0 <= d1 <= 1086 }
-// Condition for in_update_0(((-1 + i2 == 0) && (i1 >= 0) && (482 - i1 >= 0) && (i0 >= 0) && (1086 - i0 >= 0)))
-//   { in_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 4 + 2d0, 7] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
-// Condition for in_gauss_ds_3_update_0(((-2 - i0 + 8*floord(2 + i0, 8) == 0) && (-i1 + 2*floord(i1, 2) == 0) && (-7 + i2 == 0) && (-4 + i1 >= 0) && (482 - i1 >= 0) && (-14 + i0 >= 0) && (1086 - i0 >= 0)))
-//   { gp_fpga_4_update_0[d0, d1] -> [14 + 8d1, 4 + 2d0, 8] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
-// Condition for gp_fpga_4_update_0(((-2 - i0 + 8*floord(2 + i0, 8) == 0) && (-i1 + 2*floord(i1, 2) == 0) && (-8 + i2 == 0) && (-4 + i1 >= 0) && (482 - i1 >= 0) && (-14 + i0 >= 0) && (1086 - i0 >= 0)))
+// schedule: { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538; in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268; in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269; in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539; in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078; in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079; in_gauss_ds_3_update_0[d0, d1] -> [7 + 8d1, 3 + 2d0, 7] : 0 <= d0 <= 239 and 0 <= d1 <= 134; gp_fpga_4_update_0[d0, d1] -> [7 + 8d1, 3 + 2d0, 8] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
+//   { in_gauss_blur_2_update_0[d0, d1] -> [3 + 2d1, 2 + d0, 4] : -1 <= d0 <= 479 and -2 <= d1 <= 538 }
+// Condition for in_gauss_blur_2_update_0(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-4 + i2 == 0) && (-1 + i1 >= 0) && (481 - i1 >= 0) && (1 + i0 >= 0) && (1079 - i0 >= 0)))
+//   { in_gauss_blur_3_update_0[d0, d1] -> [7 + 4d1, 3 + d0, 6] : 0 <= d0 <= 478 and 0 <= d1 <= 268 }
+// Condition for in_gauss_blur_3_update_0(((-1 - i0 + 4*floord(1 + i0, 4) == 0) && (-6 + i2 == 0) && (-3 + i1 >= 0) && (481 - i1 >= 0) && (-7 + i0 >= 0) && (1079 - i0 >= 0)))
+//   { in_gauss_ds_2_update_0[d0, d1] -> [3 + 4d1, 2 + d0, 5] : -1 <= d0 <= 479 and -1 <= d1 <= 269 }
+// Condition for in_gauss_ds_2_update_0(((-1 - i0 + 4*floord(1 + i0, 4) == 0) && (-5 + i2 == 0) && (-1 + i1 >= 0) && (481 - i1 >= 0) && (1 + i0 >= 0) && (1079 - i0 >= 0)))
+//   { in_gauss_ds_1_update_0[d0, d1] -> [1 + 2d1, 1 + d0, 3] : -2 <= d0 <= 480 and -3 <= d1 <= 539 }
+// Condition for in_gauss_ds_1_update_0(((-1 - i0 + 2*floord(1 + i0, 2) == 0) && (-3 + i2 == 0) && (1 + i1 >= 0) && (481 - i1 >= 0) && (5 + i0 >= 0) && (1079 - i0 >= 0)))
+//   { in_gauss_blur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : -2 <= d0 <= 480 and -6 <= d1 <= 1078 }
+// Condition for in_gauss_blur_1_update_0(((-2 + i2 == 0) && (1 + i1 >= 0) && (481 - i1 >= 0) && (5 + i0 >= 0) && (1079 - i0 >= 0)))
+//   { in_update_0[d0, d1] -> [d1, d0, 1] : -3 <= d0 <= 481 and -7 <= d1 <= 1079 }
+// Condition for in_update_0(((-1 + i2 == 0) && (3 + i1 >= 0) && (481 - i1 >= 0) && (7 + i0 >= 0) && (1079 - i0 >= 0)))
+//   { in_gauss_ds_3_update_0[d0, d1] -> [7 + 8d1, 3 + 2d0, 7] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
+// Condition for in_gauss_ds_3_update_0(((-1 - i0 + 8*floord(1 + i0, 8) == 0) && (-1 - i1 + 2*floord(1 + i1, 2) == 0) && (-7 + i2 == 0) && (-3 + i1 >= 0) && (481 - i1 >= 0) && (-7 + i0 >= 0) && (1079 - i0 >= 0)))
+//   { gp_fpga_4_update_0[d0, d1] -> [7 + 8d1, 3 + 2d0, 8] : 0 <= d0 <= 239 and 0 <= d1 <= 134 }
+// Condition for gp_fpga_4_update_0(((-1 - i0 + 8*floord(1 + i0, 8) == 0) && (-1 - i1 + 2*floord(1 + i1, 2) == 0) && (-8 + i2 == 0) && (-3 + i1 >= 0) && (481 - i1 >= 0) && (-7 + i0 >= 0) && (1079 - i0 >= 0)))
 
   /*
   // Schedules...
-    // gp_fpga_4_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*2 + 1*4,1*8]
-    // in_gauss_blur_1_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*2]
-    // in_gauss_blur_2_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*2,1*4]
-    // in_gauss_blur_3_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*1 + 1*4,1*6]
-    // in_gauss_ds_1_update_0 -> [1*d1*1*2 + 1*2,1*d0*1*1 + 1*1,1*3]
-    // in_gauss_ds_2_update_0 -> [1*d1*1*4 + 1*6,1*d0*1*1 + 1*2,1*5]
-    // in_gauss_ds_3_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*2 + 1*4,1*7]
+    // gp_fpga_4_update_0 -> [1*d1*1*8 + 1*7,1*d0*1*2 + 1*3,1*8]
+    // in_gauss_blur_1_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
+    // in_gauss_blur_2_update_0 -> [1*d1*1*2 + 1*3,1*d0*1*1 + 1*2,1*4]
+    // in_gauss_blur_3_update_0 -> [1*d1*1*4 + 1*7,1*d0*1*1 + 1*3,1*6]
+    // in_gauss_ds_1_update_0 -> [1*d1*1*2 + 1*1,1*d0*1*1 + 1*1,1*3]
+    // in_gauss_ds_2_update_0 -> [1*d1*1*4 + 1*3,1*d0*1*1 + 1*2,1*5]
+    // in_gauss_ds_3_update_0 -> [1*d1*1*8 + 1*7,1*d0*1*2 + 1*3,1*7]
     // in_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
     // in_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
-for (int c0 = 0; c0 <= 1086; c0++) {
-  for (int c1 = 0; c1 <= 482; c1++) {
+for (int c0 = -7; c0 <= 1079; c0++) {
+  for (int c1 = -3; c1 <= 481; c1++) {
 
 #ifdef __VIVADO_SYNTH__
 #pragma HLS pipeline II=1
 #endif // __VIVADO_SYNTH__
 
-    if ((0 <= c1 && c1 <= 482) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1086) && ((c0 - 0) % 1 == 0)) {
+    if ((-3 <= c1 && c1 <= 481) && ((c1 - 0) % 1 == 0) && (-7 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
       in_update_0((c1 - 0) / 1, (c0 - 0) / 1);
     }
 
-    if ((1 <= c1 && c1 <= 482) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1086) && ((c0 - 2) % 1 == 0)) {
-      in_gauss_blur_1_update_0((c1 - 1) / 1, (c0 - 2) / 1);
+    if ((-1 <= c1 && c1 <= 481) && ((c1 - 1) % 1 == 0) && (-5 <= c0 && c0 <= 1079) && ((c0 - 1) % 1 == 0)) {
+      in_gauss_blur_1_update_0((c1 - 1) / 1, (c0 - 1) / 1);
     }
 
-    if ((1 <= c1 && c1 <= 482) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1086) && ((c0 - 2) % 2 == 0)) {
-      in_gauss_ds_1_update_0((c1 - 1) / 1, (c0 - 2) / 2);
+    if ((-1 <= c1 && c1 <= 481) && ((c1 - 1) % 1 == 0) && (-5 <= c0 && c0 <= 1079) && ((c0 - 1) % 2 == 0)) {
+      in_gauss_ds_1_update_0((c1 - 1) / 1, (c0 - 1) / 2);
     }
 
-    if ((2 <= c1 && c1 <= 482) && ((c1 - 2) % 1 == 0) && (6 <= c0 && c0 <= 1086) && ((c0 - 6) % 2 == 0)) {
-      in_gauss_blur_2_update_0((c1 - 2) / 1, (c0 - 6) / 2);
+    if ((1 <= c1 && c1 <= 481) && ((c1 - 2) % 1 == 0) && (-1 <= c0 && c0 <= 1079) && ((c0 - 3) % 2 == 0)) {
+      in_gauss_blur_2_update_0((c1 - 2) / 1, (c0 - 3) / 2);
     }
 
-    if ((2 <= c1 && c1 <= 482) && ((c1 - 2) % 1 == 0) && (6 <= c0 && c0 <= 1086) && ((c0 - 6) % 4 == 0)) {
-      in_gauss_ds_2_update_0((c1 - 2) / 1, (c0 - 6) / 4);
+    if ((1 <= c1 && c1 <= 481) && ((c1 - 2) % 1 == 0) && (-1 <= c0 && c0 <= 1079) && ((c0 - 3) % 4 == 0)) {
+      in_gauss_ds_2_update_0((c1 - 2) / 1, (c0 - 3) / 4);
     }
 
-    if ((4 <= c1 && c1 <= 482) && ((c1 - 4) % 1 == 0) && (14 <= c0 && c0 <= 1086) && ((c0 - 14) % 4 == 0)) {
-      in_gauss_blur_3_update_0((c1 - 4) / 1, (c0 - 14) / 4);
+    if ((3 <= c1 && c1 <= 481) && ((c1 - 3) % 1 == 0) && (7 <= c0 && c0 <= 1079) && ((c0 - 7) % 4 == 0)) {
+      in_gauss_blur_3_update_0((c1 - 3) / 1, (c0 - 7) / 4);
     }
 
-    if ((4 <= c1 && c1 <= 482) && ((c1 - 4) % 2 == 0) && (14 <= c0 && c0 <= 1086) && ((c0 - 14) % 8 == 0)) {
-      in_gauss_ds_3_update_0((c1 - 4) / 2, (c0 - 14) / 8);
+    if ((3 <= c1 && c1 <= 481) && ((c1 - 3) % 2 == 0) && (7 <= c0 && c0 <= 1079) && ((c0 - 7) % 8 == 0)) {
+      in_gauss_ds_3_update_0((c1 - 3) / 2, (c0 - 7) / 8);
     }
 
-    if ((4 <= c1 && c1 <= 482) && ((c1 - 4) % 2 == 0) && (14 <= c0 && c0 <= 1086) && ((c0 - 14) % 8 == 0)) {
-      gp_fpga_4_update_0((c1 - 4) / 2, (c0 - 14) / 8);
+    if ((3 <= c1 && c1 <= 481) && ((c1 - 3) % 2 == 0) && (7 <= c0 && c0 <= 1079) && ((c0 - 7) % 8 == 0)) {
+      gp_fpga_4_update_0((c1 - 3) / 2, (c0 - 7) / 8);
     }
 
   }
@@ -2256,52 +2274,52 @@ for (int c0 = 0; c0 <= 1086; c0++) {
 
   */
 	  // Schedules...
-	    // gp_fpga_4_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*2 + 1*4,1*8]
-	    // in_gauss_blur_1_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*2]
-	    // in_gauss_blur_2_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*2,1*4]
-	    // in_gauss_blur_3_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*1 + 1*4,1*6]
-	    // in_gauss_ds_1_update_0 -> [1*d1*1*2 + 1*2,1*d0*1*1 + 1*1,1*3]
-	    // in_gauss_ds_2_update_0 -> [1*d1*1*4 + 1*6,1*d0*1*1 + 1*2,1*5]
-	    // in_gauss_ds_3_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*2 + 1*4,1*7]
+	    // gp_fpga_4_update_0 -> [1*d1*1*8 + 1*7,1*d0*1*2 + 1*3,1*8]
+	    // in_gauss_blur_1_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
+	    // in_gauss_blur_2_update_0 -> [1*d1*1*2 + 1*3,1*d0*1*1 + 1*2,1*4]
+	    // in_gauss_blur_3_update_0 -> [1*d1*1*4 + 1*7,1*d0*1*1 + 1*3,1*6]
+	    // in_gauss_ds_1_update_0 -> [1*d1*1*2 + 1*1,1*d0*1*1 + 1*1,1*3]
+	    // in_gauss_ds_2_update_0 -> [1*d1*1*4 + 1*3,1*d0*1*1 + 1*2,1*5]
+	    // in_gauss_ds_3_update_0 -> [1*d1*1*8 + 1*7,1*d0*1*2 + 1*3,1*7]
 	    // in_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
 	    // in_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
-	for (int c0 = 0; c0 <= 1086; c0++) {
-	  for (int c1 = 0; c1 <= 482; c1++) {
+	for (int c0 = -7; c0 <= 1079; c0++) {
+	  for (int c1 = -3; c1 <= 481; c1++) {
 	
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	    if ((0 <= c1 && c1 <= 482) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1086) && ((c0 - 0) % 1 == 0)) {
+	    if ((-3 <= c1 && c1 <= 481) && ((c1 - 0) % 1 == 0) && (-7 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
 	      in_update_0(in_off_chip /* buf name */, in, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 482) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1086) && ((c0 - 2) % 1 == 0)) {
-	      in_gauss_blur_1_update_0(in /* buf name */, in_gauss_blur_1, (c1 - 1) / 1, (c0 - 2) / 1);
+	    if ((-1 <= c1 && c1 <= 481) && ((c1 - 1) % 1 == 0) && (-5 <= c0 && c0 <= 1079) && ((c0 - 1) % 1 == 0)) {
+	      in_gauss_blur_1_update_0(in /* buf name */, in_gauss_blur_1, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 482) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1086) && ((c0 - 2) % 2 == 0)) {
-	      in_gauss_ds_1_update_0(in_gauss_blur_1 /* buf name */, in_gauss_ds_1, (c1 - 1) / 1, (c0 - 2) / 2);
+	    if ((-1 <= c1 && c1 <= 481) && ((c1 - 1) % 1 == 0) && (-5 <= c0 && c0 <= 1079) && ((c0 - 1) % 2 == 0)) {
+	      in_gauss_ds_1_update_0(in_gauss_blur_1 /* buf name */, in_gauss_ds_1, (c1 - 1) / 1, (c0 - 1) / 2);
 	    }
 	
-	    if ((2 <= c1 && c1 <= 482) && ((c1 - 2) % 1 == 0) && (6 <= c0 && c0 <= 1086) && ((c0 - 6) % 2 == 0)) {
-	      in_gauss_blur_2_update_0(in_gauss_ds_1 /* buf name */, in_gauss_blur_2, (c1 - 2) / 1, (c0 - 6) / 2);
+	    if ((1 <= c1 && c1 <= 481) && ((c1 - 2) % 1 == 0) && (-1 <= c0 && c0 <= 1079) && ((c0 - 3) % 2 == 0)) {
+	      in_gauss_blur_2_update_0(in_gauss_ds_1 /* buf name */, in_gauss_blur_2, (c1 - 2) / 1, (c0 - 3) / 2);
 	    }
 	
-	    if ((2 <= c1 && c1 <= 482) && ((c1 - 2) % 1 == 0) && (6 <= c0 && c0 <= 1086) && ((c0 - 6) % 4 == 0)) {
-	      in_gauss_ds_2_update_0(in_gauss_blur_2 /* buf name */, in_gauss_ds_2, (c1 - 2) / 1, (c0 - 6) / 4);
+	    if ((1 <= c1 && c1 <= 481) && ((c1 - 2) % 1 == 0) && (-1 <= c0 && c0 <= 1079) && ((c0 - 3) % 4 == 0)) {
+	      in_gauss_ds_2_update_0(in_gauss_blur_2 /* buf name */, in_gauss_ds_2, (c1 - 2) / 1, (c0 - 3) / 4);
 	    }
 	
-	    if ((4 <= c1 && c1 <= 482) && ((c1 - 4) % 1 == 0) && (14 <= c0 && c0 <= 1086) && ((c0 - 14) % 4 == 0)) {
-	      in_gauss_blur_3_update_0(in_gauss_ds_2 /* buf name */, in_gauss_blur_3, (c1 - 4) / 1, (c0 - 14) / 4);
+	    if ((3 <= c1 && c1 <= 481) && ((c1 - 3) % 1 == 0) && (7 <= c0 && c0 <= 1079) && ((c0 - 7) % 4 == 0)) {
+	      in_gauss_blur_3_update_0(in_gauss_ds_2 /* buf name */, in_gauss_blur_3, (c1 - 3) / 1, (c0 - 7) / 4);
 	    }
 	
-	    if ((4 <= c1 && c1 <= 482) && ((c1 - 4) % 2 == 0) && (14 <= c0 && c0 <= 1086) && ((c0 - 14) % 8 == 0)) {
-	      in_gauss_ds_3_update_0(in_gauss_blur_3 /* buf name */, in_gauss_ds_3, (c1 - 4) / 2, (c0 - 14) / 8);
+	    if ((3 <= c1 && c1 <= 481) && ((c1 - 3) % 2 == 0) && (7 <= c0 && c0 <= 1079) && ((c0 - 7) % 8 == 0)) {
+	      in_gauss_ds_3_update_0(in_gauss_blur_3 /* buf name */, in_gauss_ds_3, (c1 - 3) / 2, (c0 - 7) / 8);
 	    }
 	
-	    if ((4 <= c1 && c1 <= 482) && ((c1 - 4) % 2 == 0) && (14 <= c0 && c0 <= 1086) && ((c0 - 14) % 8 == 0)) {
-	      gp_fpga_4_update_0(in_gauss_ds_3 /* buf name */, gp_fpga_4, (c1 - 4) / 2, (c0 - 14) / 8);
+	    if ((3 <= c1 && c1 <= 481) && ((c1 - 3) % 2 == 0) && (7 <= c0 && c0 <= 1079) && ((c0 - 7) % 8 == 0)) {
+	      gp_fpga_4_update_0(in_gauss_ds_3 /* buf name */, gp_fpga_4, (c1 - 3) / 2, (c0 - 7) / 8);
 	    }
 	
 	  }
@@ -2321,8 +2339,8 @@ void gp_fpga_4_opt_wrapper(HWStream<hw_uint<64> >& /* get_args num ports = 4 */i
 #ifdef __VIVADO_SYNTH__
   // { gp_fpga_4_update_0[root = 0, gp_fpga_4_0, gp_fpga_4_1] -> gp_fpga_4[0, 0] : 0 <= gp_fpga_4_0 <= 239 and 0 <= gp_fpga_4_1 <= 134 }
 const int gp_fpga_4_update_0_write_pipe0_num_transfers = 32400;
-  // { in_update_0[root = 0, in_0, in_1] -> in_off_chip[0, 0] : 0 <= in_0 <= 482 and 0 <= in_1 <= 1086 }
-const int in_update_0_read_pipe0_num_transfers = 525021;
+  // { in_update_0[root = 0, in_0, in_1] -> in_off_chip[0, 0] : -3 <= in_0 <= 481 and -7 <= in_1 <= 1079 }
+const int in_update_0_read_pipe0_num_transfers = 527195;
 
 
 extern "C" {

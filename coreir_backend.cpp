@@ -158,6 +158,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto def = ub->newModuleDef();
 
   if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
+    embarassing_partition(buf, hwinfo);
     generate_platonic_ubuffer(options, prg, buf, hwinfo);
   } else {
     generate_synthesizable_functional_model(options, buf, def, hwinfo);
@@ -415,7 +416,10 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   assert(bank_factors.size() == buf.logical_dimension());
 
   out << endl;
-  vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
+  //vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
+  vector<string> port_decls{"input logic [" + str(CONTROLPATH_WIDTH) + "*" + str(bank_factors.size()) + " - 1 :0] d", "output logic [" + str(CONTROLPATH_WIDTH - 1) + ":0] out"};
+  //vector<string> port_decls{"input logic [" + str(CONTROLPATH_WIDTH) + ":0] d [" + str(bank_factors.size() - 1) + ":0]",
+    //"output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
   out << "module " << buf.name << "_bank_selector(" << comma_list(port_decls) << ");" << endl;
 
   vector<string> bank_strides;
@@ -427,7 +431,8 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   int i = 0;
   vector<string> terms;
   for (auto p : bank_factors) {
-    string var = "d" + brackets(str(i));
+    //string var = "d" + brackets(str(i));
+    string var = "d[" + str((i + 1)*CONTROLPATH_WIDTH - 1) + ":" + str(i*CONTROLPATH_WIDTH) + "]";
     out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] bank_index_" << i << ";" << endl;
     //out << tab(1) << "assign " << "bank_index_" << i << " = " << "$floor(" << var << " / " << p << ");" << endl;
     out << tab(1) << "assign " << "bank_index_" << i << " = " << "(" << var << " % " << p << ");" << endl;
@@ -582,11 +587,15 @@ void print_shift_registers(
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
+    int addrwidth = ceil(log2(delay + 1));
 
     out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
-    out << tab(1) << "reg [15:0] read_addr;" << endl;
-    out << tab(1) << "reg [15:0] write_addr;" << endl;
+    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
+    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
+
+    //out << tab(1) << "reg [15:0] read_addr;" << endl;
+    //out << tab(1) << "reg [15:0] write_addr;" << endl;
 
     out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
     out << tab(2) << "if (~rst_n) begin" << endl;

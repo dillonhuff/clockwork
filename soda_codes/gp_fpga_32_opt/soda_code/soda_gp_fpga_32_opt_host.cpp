@@ -18,16 +18,20 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int gp_fpga_32_update_0_write_DATA_SIZE = num_epochs*2191392;
+  size_t total_size_bytes_read = 0;
+  size_t total_size_bytes_written = 0;
+  const int gp_fpga_32_update_0_write_DATA_SIZE = num_epochs*2295744;
   const int gp_fpga_32_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t gp_fpga_32_update_0_write_size_bytes = gp_fpga_32_update_0_write_BYTES_PER_PIXEL * gp_fpga_32_update_0_write_DATA_SIZE;
 
   total_size_bytes += gp_fpga_32_update_0_write_size_bytes;
-  const int in_update_0_read_DATA_SIZE = num_epochs*2191392;
+  total_size_bytes_written += gp_fpga_32_update_0_write_size_bytes;
+  const int in_update_0_read_DATA_SIZE = num_epochs*2295744;
   const int in_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_DATA_SIZE;
 
   total_size_bytes += in_update_0_read_size_bytes;
+  total_size_bytes_read += in_update_0_read_size_bytes;
 
   cl_int err;
   cl::Context context;
@@ -84,7 +88,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer in_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_read_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(2191392 / 32);
+  uint64_t transfer_size = num_epochs*(2295744 / 32);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;

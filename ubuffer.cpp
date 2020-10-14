@@ -4452,29 +4452,20 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   return out;
 }
 
-typedef std::map<int, std::set<int> > embarassing_partition;
+// map from address components to the value of the address
+// at that component
+typedef std::map<int, int> fixed_subaddress;
 
-map<int, std::set<int> > find_embarassing_partitions(const vector<string>& ports, UBuffer& buf) {
-  map<int, std::set<int> > constant_offset_lists;
+map<string, fixed_subaddress> find_fixed_subaddresses(const vector<string>& ports, UBuffer& buf) {
+  map<string, fixed_subaddress> addrs;
   for (auto pt : ports) {
-    cout << tab(2) << pt << endl;
     isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
     map<int, isl_val*> constant_offsets = constant_components(access);
-    cout << tab(2) << str(access) << endl;
     for (auto ent : constant_offsets) {
-      cout << tab(3) << "Constant offset in component " << ent.first << ": " << str(ent.second) << endl;
-      constant_offset_lists[ent.first].insert(to_int(ent.second));
+      addrs[pt][ent.first] = to_int(ent.second);
     }
   }
-
-  map<int, std::set<int> > embarassing_partitions;
-  for (auto cs : constant_offset_lists) {
-    if (cs.second.size() == ports.size()) {
-      cout << tab(1) << "Embarassing partition in " << cs.first << " of size: " << cs.second.size() << endl;
-      embarassing_partitions[cs.first] = cs.second;
-    }
-  }
-  return embarassing_partitions;
+  return addrs;
 }
 
 vector<vector<string> > overlapping_ports(UBuffer& buf) {
@@ -4511,143 +4502,84 @@ vector<vector<string> > overlapping_ports(UBuffer& buf) {
   return overlapping;
 }
 
-maybe<pair<int, std::set<int> > > pick_embarassing_partition(const vector<vector<string> >& large_groups, UBuffer& buf) {
-  cout << "# of large groups: " << large_groups.size() << endl;
-  std::map<embarassing_partition, std::set<vector<string> > > viable_partitions;
-
-  int num_pt_groups = 0;
-  for (auto g : large_groups) {
-    vector<string> inpts;
-    vector<string> outpts;
-    cout << "Group with " << g.size() << " ports" << endl;
-    for (auto pt : g) {
-      if (buf.is_in_pt(pt)) {
-        inpts.push_back(pt);
-      } else {
-        assert(buf.is_out_pt(pt));
-        outpts.push_back(pt);
-      }
-    }
-
-    cout << tab(1) << "Input ports..." << endl;
-    for (auto pt : inpts) {
-      cout << tab(2) << pt << endl;
-    }
-    if (inpts.size() > 0) {
-      num_pt_groups++;
-    }
-    auto partitions = find_embarassing_partitions(inpts, buf);
-    if (partitions.size() > 0) {
-      viable_partitions[partitions].insert(inpts);
-    }
-
-    cout << endl;
-    cout << tab(1) << "Output ports..." << endl;
-    for (auto pt : outpts) {
-      isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
-      cout << tab(2) << str(access) << endl;
-    }
-
-    if (outpts.size() > 0) {
-      num_pt_groups++;
-    }
-    auto out_partitions = find_embarassing_partitions(outpts, buf);
-    if (out_partitions.size() > 0) {
-      viable_partitions[out_partitions].insert(outpts);
-    }
-  }
-
-  cout << "Viable partitions by port group:" << endl;
-  for (auto part : viable_partitions) {
-    if (num_pt_groups > 0 && part.second.size() == num_pt_groups) {
-      cout << "FOUND VIABLE PARTITION for " << buf.name << endl;
-      auto partition = pick(part.first);
-      cout << tab(1) << "Component: " << partition.first << endl;
-      for (auto off : partition.second) {
-        cout << tab(2) << off << endl;
-      }
-      return {partition};
-    }
-  }
-
-  return {};
-}
-
-void overlapping_operations(UBuffer& buf, schedule_info& hwinfo) {
+vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction) {
   vector<vector<string> > overlapping = overlapping_ports(buf);
 
   int grouped = 0;
-  vector<vector<string> > large_groups;
   for (auto& grp : overlapping) {
     grouped += grp.size();
-    if (grp.size() > 1) {
-      large_groups.push_back(grp);
-    }
   }
 
   assert(grouped == buf.get_all_ports().size());
 
-
-  cout << "No viable embarassing partioning strategy for " << buf.name << endl;
-  map<string, pair<string, int> > srs;
-  auto sched = buf.global_schedule();
-  for (auto g : large_groups) {
+  vector<vector<string> > filtered_io_groups;
+  for (auto& g : overlapping) {
+    vector<string> ins;
+    vector<string> outs;
     for (auto pt : g) {
-      for (auto other_pt : g) {
-        if (pt != other_pt) {
+      if (buf.is_in_pt(pt)) {
+        ins.push_back(pt);
+      } else {
+        assert(buf.is_out_pt(pt));
+        outs.push_back(pt);
+      }
+    }
+    if (ins.size() > ports_per_direction) {
+      filtered_io_groups.push_back(ins);
+    }
+    if (outs.size() > ports_per_direction) {
+      filtered_io_groups.push_back(outs);
+    }
+  }
 
-          auto pt_dom = set_name(cpy(buf.domain.at(pt)), "a");
-          auto other_dom = set_name(cpy(buf.domain.at(other_pt)), "a");
+  return filtered_io_groups;
+}
 
-          auto pt_accesses = range(buf.access_map.at(pt));
-          auto other_pt_accesses = range(buf.access_map.at(other_pt));
+isl_multi_aff* embarassing_partition_function(UBuffer& buf, const std::set<int>& dims) {
+  vector<string> vars;
+  vector<string> outs;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    vars.push_back("d" + str(i));
+    if (elem(i, dims)) {
+      outs.push_back("(d" + str(i) + ")");
+    }
+  }
+  string bs = curlies(buf.name + sep_list(vars, "[", "]", ", ") + " -> " + "Bank" + sep_list(outs, "[", "]", ", "));
+  return rdmultiaff(buf.ctx, bs);
+}
 
-          isl_aff* pt_sched = set_name(get_aff(buf.schedule.at(pt)), "a");
-          isl_aff* other_pt_sched = set_name(get_aff(buf.schedule.at(other_pt)), "a");
-          isl_aff* diff = sub(other_pt_sched, pt_sched);
-          if (isl_aff_is_cst(diff) &&
-              (to_int(const_coeff(diff)) >= 0) &&
-              subset(pt_dom, other_dom) &&
-              subset(pt_accesses, other_pt_accesses)) {
-            srs[pt] = {other_pt, 1};
-          }
-        }
+maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo) {
+  vector<vector<string> > filtered_io_groups =
+    overlapping_large_io_port_groups(buf, 1);
+
+  std::set<int> dims;
+  for (auto g : filtered_io_groups) {
+    auto parts = find_fixed_subaddresses(g, buf);
+    cout << "Error: No viable banking strategy for " << buf.name << endl;
+    cout << tab(1) << "Cannot partition group: " << endl;
+    for (auto pt : g) {
+      cout << tab(2) << pt << endl;
+      cout << tab(3) << str(buf.access_map.at(pt)) << endl;
+    }
+    if (parts.size() < g.size()) {
+      return {};
+    }
+    for (auto ent : parts) {
+      for (auto d : ent.second) {
+        dims.insert(d.first);
       }
     }
   }
 
-  cout << endl;
-  cout << buf.name << " has " << srs.size() << " output -> Output shift registers..." << endl;
-  for (auto b : srs) {
-    cout << tab(1) << b.first << " -> " << b.second.first << " : " << b.second.second << endl;
-  }
-  vector<vector<string> > filtered_groups;
-  for (auto g : large_groups) {
-    vector<string> gs;
-    for (auto pt : g) {
-      if (!contains_key(pt, srs)) {
-        gs.push_back(pt);
-      }
-    }
-    if (gs.size() > 0) {
-      filtered_groups.push_back(gs);
-    }
-  }
-  cout << "Filtered groups" << endl;
-  for (auto& grp : filtered_groups) {
-    cout << "Group: " << grp.size() << endl;
-    for (auto g : grp) {
-      cout << tab(1) << g << endl;
-      cout << tab(2) << str(buf.access_map.at(g)) << endl;
-    }
+  cout << "FOUND EMBARASSING PARTITION OF " << buf.name << " in dimensions..." << endl;
+  for (auto d : dims) {
+    cout << tab(1) << d << endl;
   }
 
-  maybe<pair<int, std::set<int> > > partition =
-    pick_embarassing_partition(filtered_groups, buf);
-
-  if (partition.has_value()) {
-    return;
-  }
-  cout << "Error: No viable banking strategy for " << buf.name << endl;
+  isl_multi_aff* bank_func = embarassing_partition_function(buf, dims);
+  cout << tab(1) << "bank func: " << str(bank_func) << endl;
+  //bool legal = banking_scheme_is_legal(to_map(bank_func), buf);
+  //cout << tab(2) << "Legal: " << legal << endl;
   //assert(false);
+  return dims;
 }
