@@ -3876,6 +3876,45 @@ replace_variable(const address& addr, const std::string& var, const int v) {
   return comma_list(new_addr);
 }
 
+void ir_node::shift_address(const string & buf, const std::vector<int> & min_locs) {
+  //TODO: replace this into a method
+  for (auto & p : produce_locs) {
+    if (p.first == buf) {
+      cout << "Visit produce locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+      //cout << p.second.size() << endl;
+      for (size_t i = 0; i < p.second.size(); i ++ ) {
+          vector<string> new_addr;
+          vector<string> origin_addr = split_at(p.second.at(i).second, ",");
+          assert(origin_addr.size() == min_locs.size());
+          for (size_t dim = 0; dim < origin_addr.size(); dim ++) {
+              new_addr.push_back(origin_addr.at(dim) + "+" + to_string(- min_locs.at(dim)));
+              //cout << "norm address" << new_addr.at(dim) << endl;
+          }
+          p.second.at(i).second = comma_list(new_addr);
+      }
+      cout << "New produce locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+    }
+  }
+
+  for (auto & p : consume_locs_pair) {
+    if (p.first == buf) {
+      cout << "Visit consume locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+      //cout << p.second.size() << endl;
+      for (size_t i = 0; i < p.second.size(); i ++ ) {
+          vector<string> new_addr;
+          vector<string> origin_addr = split_at(p.second.at(i).second, ",");
+          assert(origin_addr.size() == min_locs.size());
+          for (size_t dim = 0; dim < origin_addr.size(); dim ++) {
+              new_addr.push_back(origin_addr.at(dim) + "+" + to_string(- min_locs.at(dim)));
+              //cout << "norm address" << new_addr.at(dim) << endl;
+          }
+          p.second.at(i).second = comma_list(new_addr);
+      }
+      cout << "New consume locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+    }
+  }
+}
+
 void ir_node::replace_variable(const std::string& var, const std::string& val) {
 
   for (auto& addr : produce_locs) {
@@ -5459,54 +5498,9 @@ map<op*, isl_map*> prog::producer_maps(const std::string& buf) {
 }
 
 void prog::shift_address_range(const std::string& buf, const std::vector<int>& min_locs) {
-  //auto ivars = iter_vars();
-  //auto doms = domains();
-
   auto ops = root->all_ops();
   for (auto  op : ops) {
-    //auto vars = map_find(op, ivars);
-    //string ivar_str = sep_list(vars, "[", "]", ", ");
-    //auto dom = map_find(op, doms);
-
-    //umap* pmap = rdmap(ctx, "{}");
-    //TODO: replace this into a method
-    for (auto & p : op->produce_locs) {
-      if (p.first == buf) {
-        cout << "Visit produce locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
-        cout << p.second.size() << endl;
-        for (size_t i = 0; i < p.second.size(); i ++ ) {
-            vector<string> new_addr;
-            vector<string> origin_addr = split_at(p.second.at(i).second, ",");
-            assert(origin_addr.size() == min_locs.size());
-            for (size_t dim = 0; dim < origin_addr.size(); dim ++) {
-                new_addr.push_back(origin_addr.at(dim) + "+" + to_string(- min_locs.at(dim)));
-                cout << "norm address" << new_addr.at(dim) << endl;
-            }
-            p.second.at(i).second = comma_list(new_addr);
-        }
-        cout << "New produce locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
-      }
-    }
-
-    //TODO: replace this into a method
-    for (auto & p : op->consume_locs_pair) {
-      if (p.first == buf) {
-        cout << "Visit consume locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
-        cout << p.second.size() << endl;
-        for (size_t i = 0; i < p.second.size(); i ++ ) {
-            vector<string> new_addr;
-            vector<string> origin_addr = split_at(p.second.at(i).second, ",");
-            assert(origin_addr.size() == min_locs.size());
-            for (size_t dim = 0; dim < origin_addr.size(); dim ++) {
-                new_addr.push_back(origin_addr.at(dim) + "+" + to_string(- min_locs.at(dim)));
-                cout << "norm address" << new_addr.at(dim) << endl;
-            }
-            p.second.at(i).second = comma_list(new_addr);
-        }
-        cout << "New consume locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
-      }
-    }
-
+    op->shift_address(buf, min_locs);
   }
 }
 
@@ -5783,7 +5777,7 @@ void normalize_address_offsets(prog& prg) {
     if (prods.size() > 0) {
       int ndims = num_dims((range(pick(prods).second)));
       for (int d = 0; d < ndims; d++) {
-        min_offset.push_back(9999999); // TODO: Replace with int max value
+        min_offset.push_back(INT_MAX); // TODO: Replace with int max value
       }
 
       for (auto opm : prods) {
@@ -5806,7 +5800,7 @@ void normalize_address_offsets(prog& prg) {
       assert(cons.size() > 0);
       int ndims = num_dims((range(pick(cons).second)));
       for (int d = 0; d < ndims; d++) {
-        min_offset.push_back(9999999); // TODO: Replace with int max value
+        min_offset.push_back(INT_MAX); // TODO: Replace with int max value
       }
     }
 
@@ -5817,7 +5811,6 @@ void normalize_address_offsets(prog& prg) {
         auto writes = range(opm.second);
         cout << "Writes: " << str(writes) << endl;
         for (int d = 0; d < num_dims(writes); d++) {
-            cout << "project out: " << str(project_all_but(writes, d)) << endl;
           auto mincoeff = to_int(lexminval(project_all_but(writes, d)));
           if (mincoeff < min_offset.at(d)) {
             min_offset[d] = mincoeff;
@@ -5828,8 +5821,7 @@ void normalize_address_offsets(prog& prg) {
     cout << tab(2) << "Min offset (counting only writers): " << sep_list(min_offset, "", "", ", ") << endl;
 
     prg.shift_address_range(b, min_offset);
-    cout << "shift for buffer : " << b << endl;
-    prg.pretty_print();
+    //prg.pretty_print();
   }
 }
 
