@@ -17861,8 +17861,12 @@ void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg
       delay += sched.instance_latency(c);
     }
     sched.op_offset_within_parent[outer_loop] = 0;
-    sched.instance_latencies[outer_loop] = 100;
   }
+
+  for (auto outer_loop : outer) {
+    sched.instance_latencies[outer_loop] = delay;
+  }
+
   for (auto outer_loop : outer) {
     sched.loop_iis[outer_loop->name] = delay;
   }
