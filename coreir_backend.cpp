@@ -768,36 +768,8 @@ map<string, pair<string, int> > determine_shift_reg_map(
   }
   return shift_registered_outputs;
 }
-void generate_platonic_ubuffer(
-    CodegenOptions& options,
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo) {
 
-  prg.pretty_print();
-
-  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
-  //int folding_factor = bank_folding_factor(bank_factors, prg, buf, hwinfo);
-
-  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
-  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
-
-  if(buf.name == "hw_input_global_wrapper_stencil")
-  {
-          cout << buf;
-          cout << "Output to output srs..." << endl;
-          for (auto ent : shift_registered_outputs_to_outputs) {
-              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
-          }
-  }
-
-  ostream& out = *verilog_collateral_file;
-
-
-  print_cyclic_banks_selector(out, bank_factors, buf);
-  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
-  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
-
+vector<string> verilog_port_decls(CodegenOptions& options, UBuffer& buf) {
   vector<string> port_decls{"input clk", "input flush", "input rst_n"};
 
   for (auto b : buf.port_bundles) {
@@ -822,6 +794,40 @@ void generate_platonic_ubuffer(
       port_decls.push_back( "output logic [" + str(pt_width - 1) + ":0] " + name + " [" + str(bd_width - 1) + ":0] ");
     }
   }
+
+  return port_decls;
+}
+
+void generate_platonic_ubuffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+
+  prg.pretty_print();
+
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+
+  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
+  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+
+  if(buf.name == "hw_input_global_wrapper_stencil")
+  {
+          cout << buf;
+          cout << "Output to output srs..." << endl;
+          for (auto ent : shift_registered_outputs_to_outputs) {
+              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
+          }
+  }
+
+  ostream& out = *verilog_collateral_file;
+
+
+  print_cyclic_banks_selector(out, bank_factors, buf);
+  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
+  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
+
+  vector<string> port_decls = verilog_port_decls(options, buf);
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
   out << endl;
 
@@ -875,15 +881,14 @@ void generate_platonic_ubuffer(
     for (auto pt : shift_registered_outputs) {
       string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
       if (pt.second.first == in) {
-          if(done_outpt.find(pt.first)!=done_outpt.end())
+        if(done_outpt.find(pt.first)!=done_outpt.end()) {
+          continue;
+        } else
         {
-                        continue;
-      } else
-          {
-              done_outpt.insert(pt.first);
-        out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-          }
+          done_outpt.insert(pt.first);
+          out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
         }
+      }
     }
   }
 
@@ -892,10 +897,8 @@ void generate_platonic_ubuffer(
 
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
-    //string addr = parens(generate_linearized_verilog_addr(in, bnk, buf));
     string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
 
-    //string addr = parens(generate_linearized_verilog_addr(bank_factors, in, bnk, buf) + " % " + str(folding_factor));
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
@@ -917,7 +920,6 @@ void generate_platonic_ubuffer(
   for (auto outpt : buf.get_out_ports()) {
     if (done_outpt.find(outpt) == done_outpt.end()) {
       string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(outpt,bnk,buf),capacities, bank_factors);
-      //string addr = parens(generate_linearized_verilog_addr(bank_factors, outpt, bnk, buf) + " % " + str(folding_factor));
       int num_banks = card(bank_factors);
 
       out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
