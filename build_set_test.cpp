@@ -13826,8 +13826,62 @@ void lake_cascade_halide_test() {
 #endif
 }
 
+void compile_for_garnet_single_port_mem(prog & prg);
+
+void test_single_port_mem() {
+  vector<prog> test_apps;
+  //test_apps.push_back(resnet());
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(rom());
+  for ( auto app: test_apps) {
+    compile_for_garnet_single_port_mem(app);
+  }
+}
+
 void lake_harris_garnet_test() {
   prog prg = harris();
+//  dsa_writers(prg);
+//  normalize_bounds(prg);
+//  normalize_address_offsets(prg);
+//  prg.sanity_check();
+//  prg.pretty_print();
+//
+//
+//  //optimized schedule
+//  cmd("mkdir -p aha_garnet_design/" + prg.name);
+//  auto iis = garnet_fuse_ii_level(prg);
+//  CodegenOptions options;
+//  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+//  CodegenOptions opt;
+//  opt.conditional_merge = true;
+//  opt.merge_threshold = 4;
+//  opt.iis = iis;
+//  int max_inpt = 2, max_outpt = 2;
+//  //auto sched = global_schedule_from_buffers(buffers_opt);
+//
+//  //for (auto& b : buffers_opt) {
+//  //  cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
+//  //  b.second.normalize_access_range();
+//  //  cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
+//  //}
+//  for (auto& b : buffers_opt) {
+//    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+//    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+//        continue;
+//    b.second.generate_banks_and_merge(opt);
+//    b.second.port_group2bank(max_inpt, max_outpt);
+//  }
+//
+//#ifdef COREIR
+//  generate_garnet_tb(buffers_opt, prg, opt);
+//#endif
+}
+
+void lake_rom_garnet_test() {
+  prog prg = rom();
+
   dsa_writers(prg);
   normalize_bounds(prg);
   normalize_address_offsets(prg);
@@ -13863,6 +13917,7 @@ void lake_harris_garnet_test() {
 #ifdef COREIR
   generate_garnet_tb(buffers_opt, prg, opt);
 #endif
+  assert(false);
 }
 
 void lake_harris_halide_test() {
@@ -15636,7 +15691,10 @@ void dual_port_lake_test();
 void lake_tests() {
   //dual_port_lake_test();
   //lake_agg_sram_tb_config_test();
+  test_single_port_mem();
+  assert(false);
   lake_harris_garnet_test();
+  lake_rom_garnet_test();
   lake_conv33_autovec_test();
   lake_conv33_recipe_test();
   lake_conv33_halide_test();
@@ -16550,6 +16608,52 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   auto options = garnet_codegen_dual_port_with_addrgen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
   return compile_cycle_accurate_hw(options, sched, prg);
+}
+
+void compile_for_garnet_single_port_mem(prog& prg) {
+
+  dsa_writers(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  auto iis = garnet_fuse_ii_level(prg);
+  CodegenOptions options;
+  //schedule_info sched =
+  //  garnet_schedule_info(options, prg);
+  //garnet_dual_port_ram_schedule(sched, prg.root, prg);
+  //auto sched_map = op_times_map(sched, prg);
+  //auto hw_sched = its(sched_map,
+  //        prg.whole_iteration_domain());
+  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  //auto buffers_opt = build_buffers(prg, hw_sched);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.iis = iis;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+
+  //for (auto& b : buffers_opt) {
+  //  cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
+  //  b.second.normalize_access_range();
+  //  cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
+  //}
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+#ifdef COREIR
+  generate_garnet_tb(buffers_opt, prg, opt);
+#endif
 }
 
 umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {

@@ -5798,7 +5798,17 @@ void normalize_address_offsets(prog& prg) {
       // we can ignore the buffer for normalization, since
       // there are no accesses to it
       assert(cons.size() > 0);
-      int ndims = num_dims((range(pick(cons).second)));
+      cout << cons.size() << endl;
+      isl_map* tmp = nullptr;
+      for (auto con: cons) {
+          if (con.second) {
+            tmp = con.second;
+            break;
+          }
+      }
+      assert(tmp != nullptr);
+      //cout << str(pick(cons).second) << endl;
+      int ndims = num_dims(range(tmp));
       for (int d = 0; d < ndims; d++) {
         min_offset.push_back(INT_MAX); // TODO: Replace with int max value
       }
