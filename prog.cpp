@@ -5810,3 +5810,8 @@ umap* read_at(const std::string& level, prog& prg) {
   }
   return rd;
 }
+
+int schedule_info::instance_latency(op* op) {
+  assert(contains_key(op, instance_latencies));
+  return map_find(op, instance_latencies);
+}

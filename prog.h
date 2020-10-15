@@ -1751,10 +1751,7 @@ struct schedule_info {
     return II(op)*(op->trip_count() - 1) + instance_latency(op);
   }
 
-  int instance_latency(op* op) {
-    assert(contains_key(op, instance_latencies));
-    return map_find(op, instance_latencies);
-  }
+  int instance_latency(op* op);
 
   int II(op* op) {
     assert(op->is_loop);
