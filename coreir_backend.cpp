@@ -469,6 +469,22 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   out << "endmodule" << endl << endl;
 }
 
+string print_embarassing_banks_inner_bank_offset_func(UBuffer& buf, vector<string> vars, vector<int> capacities, vector<int> bank_factors)
+{
+ int capacity_prod = 1;
+ vector<string> vars1;
+  for(int i = 0; i < buf.logical_dimension(); i ++)
+  {
+      vars1.push_back("$rtoi($floor(" + vars[i] + "/ " + to_string(bank_factors[i]) + "))*" + to_string(capacity_prod));
+      capacity_prod *= capacities[i];
+  }
+
+    string func = sep_list(vars1,"(",")","+");
+  cout << func << endl;
+  //assert(false);
+  return func;
+
+}
 string print_cyclic_banks_inner_bank_offset_func(UBuffer& buf, vector<string> vars, vector<int> capacities, vector<int> bank_factors)
 {
  int capacity_prod = 1;
@@ -1017,23 +1033,23 @@ void generate_platonic_ubuffer(
 
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
+    string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
     if (has_embarassing_partition) {
-    } else {
-      string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
-
-      string bundle_wen = buf.container_bundle(in) + "_wen";
-      out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
-
-
-      out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
-      for (int b = 0; b < num_banks; b++) {
-        string source_ram = "bank_" + str(b);
-        out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
-      }
-      out << tab(4) << "default: $finish(-1);" << endl;
-      out << tab(3) << "endcase" << endl;
-      out << tab(2) << "end" << endl;
+      string addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
     }
+
+    string bundle_wen = buf.container_bundle(in) + "_wen";
+    out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
+
+
+    out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
+    for (int b = 0; b < num_banks; b++) {
+      string source_ram = "bank_" + str(b);
+      out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+    }
+    out << tab(4) << "default: $finish(-1);" << endl;
+    out << tab(3) << "endcase" << endl;
+    out << tab(2) << "end" << endl;
   }
   out << tab(1) << "end" << endl;
 
@@ -1041,19 +1057,22 @@ void generate_platonic_ubuffer(
   out << tab(1) << "always @(*) begin" << endl;
   for (auto outpt : buf.get_out_ports()) {
     if (done_outpt.find(outpt) == done_outpt.end()) {
+      string addr =
+        print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(outpt,bnk,buf),capacities, bank_factors);
+
       if (has_embarassing_partition) {
-      } else {
-
-        string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(outpt,bnk,buf),capacities, bank_factors);
-
-        out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
-        for (int b = 0; b < num_banks; b++) {
-          string source_ram = "bank_" + str(b);
-          out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
-        }
-        out << tab(4) << "default: $finish(-1);" << endl;
-        out << tab(3) << "endcase" << endl;
+        string addr =
+          print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
       }
+
+
+      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
+      for (int b = 0; b < num_banks; b++) {
+        string source_ram = "bank_" + str(b);
+        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
+      }
+      out << tab(4) << "default: $finish(-1);" << endl;
+      out << tab(3) << "endcase" << endl;
     }
   }
 
