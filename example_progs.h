@@ -22,6 +22,7 @@ prog down_sample();
 prog conv_layer(); //reduce
 prog camera_pipeline_dse_1();
 prog rom();
+prog demosaic_complex();
 prog bilateral();
 prog stereo();
 prog histogram();

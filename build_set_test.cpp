@@ -13830,11 +13830,18 @@ void compile_for_garnet_single_port_mem(prog & prg);
 
 void test_single_port_mem() {
   vector<prog> test_apps;
-  //test_apps.push_back(resnet());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
-  test_apps.push_back(rom());
+
+  //TODO:need to update cgra mem
+  //test_apps.push_back(rom());
+
+  //TODO:has issue with high dimensional schedule with multiple input
+  //test_apps.push_back(demosaic_complex());
+
+  //TODO:need to use the new scheduler
+  //test_apps.push_back(resnet());
   for ( auto app: test_apps) {
     compile_for_garnet_single_port_mem(app);
   }
