@@ -820,6 +820,16 @@ struct ir_node {
     return find_root()->all_ops();
   }
 
+  std::set<op*> all_nodes() {
+    std::set<op*> ops{this};
+    for (auto c : children) {
+      for (auto op : c->all_nodes()) {
+        ops.insert(op);
+      }
+    }
+    return ops;
+  }
+
   std::set<op*> all_ops() {
     std::set<op*> ops{this};
     if (is_loop) {
@@ -862,6 +872,10 @@ struct prog {
 
   void set_bounds(const std::string& loop, const int start, const int end_exclusive);
   void extend_bounds(const std::string& loop, const int start, const int end_exclusive);
+
+  std::set<op*> all_nodes() {
+    return root->all_nodes();
+  }
 
   std::string un(const std::string& prefix) {
     return unique_name(prefix);
@@ -1704,6 +1718,11 @@ class resource_instance {
     int number;
 };
 
+static
+bool operator==(const resource_instance& a, const resource_instance& b) {
+  return a.type == b.type && a.number == b.number;
+}
+
 struct schedule_info {
   // Miscellaneous
   bool use_dse_compute;
@@ -1795,3 +1814,4 @@ map<string, isl_set*> op_start_times_domains(prog& prg);
 void normalize_address_offsets(prog& prg);
 
 vector<op*> ops_at_level(const int level, prog& prg);
+bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);
