@@ -15616,8 +15616,6 @@ void dsa_writers(prog& prg) {
     prg.pretty_print();
     cout << "Is rate matchable" << endl;
 
-    //assert(false);
-
     std::set<string> all_buffers;
     std::set<string> multi_write_buffers;
     map<string, std::set<string> > producer_kernels;
@@ -15648,7 +15646,6 @@ void dsa_writers(prog& prg) {
         cout << tab(2) << "MULTIPLE PRODUCERS" << endl;
       }
     }
-    //assert(false);
     
     for (auto k : get_kernels(prg)) {
       for (auto b : get_produced_buffers(k, prg)) {
@@ -15676,7 +15673,6 @@ void dsa_writers(prog& prg) {
     for (auto b : multi_write_buffers) {
       cout << tab(1) << b << endl;
       auto writers = find_writers(b, prg);
-      //assert(writers.size() == 2);
       vector<op*> ws;
       for (auto w : writers) {
         ws.push_back(w);
@@ -16337,9 +16333,14 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  test_programs.push_back(mobilenet_small());
+  test_programs.push_back(resnet());
+  test_programs.push_back(unet_conv_3_3());
+  test_programs.push_back(conv_multi());
+  test_programs.push_back(conv_layer());
+
   concat(test_programs, stencil_programs());
 
- 
   // Too large to fit in 16 bit controller
   //test_programs.push_back(mobilenet());
   //
@@ -16347,12 +16348,6 @@ vector<prog> all_cgra_programs() {
   //test_programs.push_back(accumulation());
 
 
-  test_programs.push_back(mobilenet_small());
-  test_programs.push_back(resnet());
-
-  test_programs.push_back(unet_conv_3_3());
-  test_programs.push_back(conv_multi());
-  test_programs.push_back(conv_layer());
 
   return test_programs;
 }

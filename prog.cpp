@@ -5812,6 +5812,25 @@ umap* read_at(const std::string& level, prog& prg) {
 }
 
 int schedule_info::instance_latency(op* op) {
+  if (op->is_loop) {
+    int maxoffset = 1;
+    for (auto c : op->children) {
+      int delay = map_find(c, op_offset_within_parent);
+      int latency = total_latency(c);
+      int inner_delay = delay + latency;
+      maxoffset = max(maxoffset, inner_delay);
+    }
+
+    cout << "Offset for " << op->name << endl;
+    op->pretty_print();
+    cout << "instance latency in map     = " << map_find(op, instance_latencies) << endl;
+    cout << "calculated instance latency = " << maxoffset << endl;
+
+    //assert(map_find(op, instance_latencies) == maxoffset);
+
+    return maxoffset;
+  }
+
   assert(contains_key(op, instance_latencies));
   return map_find(op, instance_latencies);
 }
