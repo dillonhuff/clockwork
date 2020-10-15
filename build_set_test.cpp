@@ -15579,12 +15579,10 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
   for (auto lp : get_inner_loops(prg)) {
     cout << "Adjusting ii of " << lp->name << endl;
     int old_ii = map_find(lp->name, sched.loop_iis);
-    int old_total_latency = old_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
     int try_ii = 1;
     bool found_smaller_ii = false;
     while (try_ii < old_ii) {
       sched.loop_iis[lp->name] = try_ii;
-      //sched.total_op_latencies[lp] = try_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
         found_smaller_ii = true;
         break;
@@ -15594,7 +15592,6 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
 
     if (!found_smaller_ii) {
       sched.loop_iis[lp->name] = old_ii;
-      //sched.total_op_latencies[lp] = old_total_latency;
     }
   }
 }
@@ -17826,7 +17823,7 @@ void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg
   int delay = 0;
   for (auto outer_loop : outer) {
     for (auto c : outer_loop->children) {
-      delay += sched.instance_latency(c);
+      delay += sched.total_latency(c);
     }
     sched.op_offset_within_parent[outer_loop] = delay;
   }
