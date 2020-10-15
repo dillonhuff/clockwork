@@ -15505,7 +15505,7 @@ void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
 
   hwinfo.loop_iis[op->name] = max(latency, 1);
 
-  hwinfo.instance_latencies[op] = latency;
+  //hwinfo.instance_latencies[op] = latency;
 }
 
 void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
@@ -15533,7 +15533,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 
   hwinfo.loop_iis[op->name] = max(latency, 1);
 
-  hwinfo.instance_latencies[op] = latency;
+  //hwinfo.instance_latencies[op] = latency;
 }
 
 int max_loop_depth(prog& prg) {
@@ -15912,7 +15912,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
         sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
         // TODO: Set this to the latency read from the compute units
-        sched.instance_latencies[container] = 1;
+        //sched.instance_latencies[container] = 1;
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
@@ -17857,7 +17857,7 @@ void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg
   }
 
   for (auto outer_loop : outer) {
-    sched.instance_latencies[outer_loop] = delay;
+    //sched.instance_latencies[outer_loop] = delay;
   }
 
   for (auto outer_loop : outer) {

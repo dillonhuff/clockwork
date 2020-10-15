@@ -5821,10 +5821,10 @@ int schedule_info::instance_latency(op* op) {
       maxoffset = max(maxoffset, inner_delay);
     }
 
-    cout << "Offset for " << op->name << endl;
-    op->pretty_print();
-    cout << "instance latency in map     = " << map_find(op, instance_latencies) << endl;
-    cout << "calculated instance latency = " << maxoffset << endl;
+    //cout << "Offset for " << op->name << endl;
+    //op->pretty_print();
+    //cout << "instance latency in map     = " << map_find(op, instance_latencies) << endl;
+    //cout << "calculated instance latency = " << maxoffset << endl;
 
     //assert(map_find(op, instance_latencies) == maxoffset);
 
