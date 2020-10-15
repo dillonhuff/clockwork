@@ -524,7 +524,7 @@ void print_embarassing_banks(std::ostream& out, const map<int, int>& partitioned
   }
 
   for (int i = 0; i < num_banks; i++) {
-    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "embarassing_bank_" << i << " [" << capacity << "];" << endl;
+    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "bank_" << i << " [" << capacity << "];" << endl;
   }
 }
 
@@ -945,6 +945,8 @@ void generate_platonic_ubuffer(
   out << endl;
 
   out << tab(1) << "// Storage" << endl;
+
+  map<int, int> partitioned_dimension_extents;
   if (embarassing_banking.has_value()) {
     std::set<int> partition_dims = embarassing_banking.get_value();
     vector<int> min_offsets = min_offsets_by_dimension(buf);
@@ -954,7 +956,6 @@ void generate_platonic_ubuffer(
       extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
     }
     cout << "Extents in selected dimensions..." << endl;
-    map<int, int> partitioned_dimension_extents;
     for (auto d : partition_dims) {
       cout << tab(1) << extents.at(d) << endl;
       partitioned_dimension_extents[d] = extents.at(d);
@@ -966,7 +967,24 @@ void generate_platonic_ubuffer(
 
   bank bnk = buf.compute_bank_info();
 
-  auto capacities = print_cyclic_banks(out, bank_factors, bnk);
+  vector<int> capacities;
+  if (!has_embarassing_partition) {
+    capacities = print_cyclic_banks(out, bank_factors, bnk);
+  } else {
+    std::set<int> partition_dims = embarassing_banking.get_value();
+    vector<int> min_offsets = min_offsets_by_dimension(buf);
+    vector<int> max_offsets = max_offsets_by_dimension(buf);
+    vector<int> extents;
+    for (int i = 0; i < min_offsets.size(); i++) {
+      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+    }
+    cout << "Extents in selected dimensions..." << endl;
+    for (auto d : partition_dims) {
+      cout << tab(1) << extents.at(d) << endl;
+      partitioned_dimension_extents[d] = extents.at(d);
+    }
+    capacities = extents;
+  }
 
   out << endl;
 
@@ -1030,6 +1048,12 @@ void generate_platonic_ubuffer(
 
   out << endl;
   int num_banks = card(bank_factors);
+  if (has_embarassing_partition) {
+    num_banks = 1;
+    for (auto ent : partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+  }
 
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
