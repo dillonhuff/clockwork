@@ -17962,7 +17962,9 @@ void dhuff_playground() {
   fuse_sequentially(outer, sched, prg);
 
   // Now set the root schedule?
-  set_scheduled_loop_latency(sched, prg.find_loop("root"), prg);
+
+  sched.loop_iis["root"] = sched.instance_latency(prg.find_loop("root"));
+  //set_scheduled_loop_latency(sched, prg.find_loop("root"), prg);
 
   cout << endl;
   cout << "After fusing outer loops..." << endl;
@@ -17993,15 +17995,7 @@ void dhuff_playground() {
       }
     }
   }
-  //assert(false);
-
-  //cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
-  //for (auto out : outer) {
-    //cout << "Outer loop..." << endl;
-    //out->pretty_print();
-    //auto read_vals = read_at(out->name, prg);
-    //cout << tab(1) << "Reads: " << str(read_vals) << endl;
-  //}
+  assert(no_violated_cycle_accurate_dependencies(sched, prg));
 }
 
 int main(int argc, char** argv) {
