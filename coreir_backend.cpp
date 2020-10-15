@@ -158,7 +158,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto def = ub->newModuleDef();
 
   if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
-    embarassing_partition(buf, hwinfo);
     generate_platonic_ubuffer(options, prg, buf, hwinfo);
   } else {
     generate_synthesizable_functional_model(options, buf, def, hwinfo);
@@ -793,6 +792,37 @@ vector<string> verilog_port_decls(CodegenOptions& options, UBuffer& buf) {
   return port_decls;
 }
 
+vector<int> min_offsets_by_dimension(UBuffer& buf) {
+  vector<int> min_offsets;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    min_offsets.push_back(INT_MAX);
+  }
+  for (auto pt : buf.get_all_ports()) {
+    vector<int> pts = parse_pt(lexminpt(range(buf.access_map.at(pt))));
+    for (int d = 0; d < pts.size(); d++) {
+      if (pts.at(d) < min_offsets.at(d)) {
+        min_offsets[d] = pts.at(d);
+      }
+    }
+  }
+  return min_offsets;
+}
+
+vector<int> max_offsets_by_dimension(UBuffer& buf) {
+  vector<int> min_offsets;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    min_offsets.push_back(INT_MIN);
+  }
+  for (auto pt : buf.get_all_ports()) {
+    vector<int> pts = parse_pt(lexminpt(range(buf.access_map.at(pt))));
+    for (int d = 0; d < pts.size(); d++) {
+      if (pts.at(d) > min_offsets.at(d)) {
+        min_offsets[d] = pts.at(d);
+      }
+    }
+  }
+  return min_offsets;
+}
 void generate_platonic_ubuffer(
     CodegenOptions& options,
     prog& prg,
@@ -803,7 +833,20 @@ void generate_platonic_ubuffer(
 
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
+  std::set<int> partition_dims = embarassing_banking.get_value();
+
   if (embarassing_banking.has_value()) {
+    vector<int> min_offsets = min_offsets_by_dimension(buf);
+    vector<int> max_offsets = max_offsets_by_dimension(buf);
+    vector<int> extents;
+    for (int i = 0; i < min_offsets.size(); i++) {
+      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+    }
+    cout << "Extents in selected dimensions..." << endl;
+    for (auto d : partition_dims) {
+      cout << tab(1) << extents.at(d) << endl;
+    }
+
     assert(false);
   }
 
