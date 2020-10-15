@@ -469,19 +469,19 @@ void print_cyclic_banks_selector(std::ostream& out, const vector<int>& bank_fact
   out << "endmodule" << endl << endl;
 }
 
-string print_embarassing_banks_inner_bank_offset_func(UBuffer& buf, vector<string> vars, vector<int> capacities, vector<int> bank_factors)
+string print_embarassing_banks_inner_bank_offset_func(UBuffer& buf, vector<string> vars, vector<int> capacities, map<int, int> partitioned_dimension_extents)
 {
  int capacity_prod = 1;
  vector<string> vars1;
-  for(int i = 0; i < buf.logical_dimension(); i ++)
-  {
-      vars1.push_back("$rtoi($floor(" + vars[i] + "/ " + to_string(bank_factors[i]) + "))*" + to_string(capacity_prod));
+  for(int i = 0; i < buf.logical_dimension(); i++) {
+    if (!contains_key(i, partitioned_dimension_extents)) {
+      vars1.push_back("(" + vars[i] + ")*" + to_string(capacity_prod));
       capacity_prod *= capacities[i];
+    }
   }
 
-    string func = sep_list(vars1,"(",")","+");
+  string func = sep_list(vars1,"(",")","+");
   cout << func << endl;
-  //assert(false);
   return func;
 
 }
@@ -1059,7 +1059,7 @@ void generate_platonic_ubuffer(
   for (auto in : buf.get_in_ports()) {
     string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
     if (has_embarassing_partition) {
-      string addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
+      addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
     }
 
     string bundle_wen = buf.container_bundle(in) + "_wen";
@@ -1085,8 +1085,8 @@ void generate_platonic_ubuffer(
         print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
 
       if (has_embarassing_partition) {
-        string addr =
-          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
+        addr =
+          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
       }
 
 
