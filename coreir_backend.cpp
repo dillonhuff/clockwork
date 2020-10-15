@@ -801,6 +801,12 @@ void generate_platonic_ubuffer(
 
   prg.pretty_print();
 
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf, hwinfo);
+  if (embarassing_banking.has_value()) {
+    assert(false);
+  }
+
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
 
   auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
