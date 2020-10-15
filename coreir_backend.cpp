@@ -1058,11 +1058,11 @@ void generate_platonic_ubuffer(
   for (auto outpt : buf.get_out_ports()) {
     if (done_outpt.find(outpt) == done_outpt.end()) {
       string addr =
-        print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(outpt,bnk,buf),capacities, bank_factors);
+        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
 
       if (has_embarassing_partition) {
         string addr =
-          print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
+          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
       }
 
 
