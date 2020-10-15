@@ -883,6 +883,7 @@ void generate_platonic_ubuffer(
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
 
+  out << tab(1) << "// Storage" << endl;
   if (embarassing_banking.has_value()) {
     std::set<int> partition_dims = embarassing_banking.get_value();
     vector<int> min_offsets = min_offsets_by_dimension(buf);
@@ -903,7 +904,6 @@ void generate_platonic_ubuffer(
 
 
   bank bnk = buf.compute_bank_info();
-  out << tab(1) << "// Storage" << endl;
 
   auto capacities = print_cyclic_banks(out, bank_factors, bnk);
 
@@ -964,6 +964,7 @@ void generate_platonic_ubuffer(
 
 
   out << endl;
+  int num_banks = card(bank_factors);
 
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (auto in : buf.get_in_ports()) {
@@ -972,16 +973,15 @@ void generate_platonic_ubuffer(
     string bundle_wen = buf.container_bundle(in) + "_wen";
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
-    int num_banks = card(bank_factors);
 
     out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
-      for (int b = 0; b < num_banks; b++) {
-          string source_ram = "bank_" + str(b);
-        out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
-      }
-      out << tab(4) << "default: $finish(-1);" << endl;
-      out << tab(3) << "endcase" << endl;
-      out << tab(2) << "end" << endl;
+    for (int b = 0; b < num_banks; b++) {
+      string source_ram = "bank_" + str(b);
+      out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+    }
+    out << tab(4) << "default: $finish(-1);" << endl;
+    out << tab(3) << "endcase" << endl;
+    out << tab(2) << "end" << endl;
   }
   out << tab(1) << "end" << endl;
 
@@ -990,11 +990,11 @@ void generate_platonic_ubuffer(
   for (auto outpt : buf.get_out_ports()) {
     if (done_outpt.find(outpt) == done_outpt.end()) {
       string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(outpt,bnk,buf),capacities, bank_factors);
-      int num_banks = card(bank_factors);
+      //int num_banks = card(bank_factors);
 
       out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
       for (int b = 0; b < num_banks; b++) {
-          string source_ram = "bank_" + str(b);
+        string source_ram = "bank_" + str(b);
         out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
       }
       out << tab(4) << "default: $finish(-1);" << endl;
