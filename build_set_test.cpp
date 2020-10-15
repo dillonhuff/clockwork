@@ -15915,6 +15915,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
         sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
         sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+        // TODO: Set this to the latency read from the compute units
         sched.instance_latencies[container] = 1;
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
@@ -17844,10 +17845,10 @@ void print_partial_schedule(schedule_info& sched, prog& prg) {
     cout << tab(1) << e.first->name << ": " << e.second << endl;
   }
   cout << endl;
-  cout << "Instance latencies" << endl;
-  for (auto e : sched.instance_latencies) {
-    cout << tab(1) << e.first->name << ": " << e.second << endl;
-  }
+  //cout << "Instance latencies" << endl;
+  //for (auto e : sched.instance_latencies) {
+    //cout << tab(1) << e.first->name << ": " << e.second << endl;
+  //}
 }
 
 void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg) {
