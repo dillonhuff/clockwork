@@ -17900,6 +17900,29 @@ bool share_resource(const std::string& op0, const std::string& op1, schedule_inf
   return i0 == i1;
 }
 
+bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
+  auto sched_exprs = 
+    its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  cout << "Times: " << str(sched_exprs) << endl;
+  for (auto op0 : get_maps(sched_exprs)) {
+    for (auto op1 : get_maps(sched_exprs)) {
+      string name0 = domain_name(op0);
+      string name1 = domain_name(op1);
+      if (name0 != name1 && share_resource(name0, name1, sched)) {
+        cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
+        auto times = range(op0);
+        auto times1 = range(op1);
+        auto overlap = its(times, times1);
+        cout << tab(2) << "Overlap: " << str(overlap) << endl;
+        if (!empty(overlap)) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 void dhuff_playground() {
   prog prg("time_sharing_pyramid_1d");
 
@@ -17975,26 +17998,10 @@ void dhuff_playground() {
   for (auto s : unscheduled_nodes(sched, prg)) {
     cout << tab(1) << s->name << endl;
   }
+
   assert(unscheduled_nodes(sched, prg).size() + fully_scheduled_nodes(sched, prg).size() == prg.all_nodes().size());
   assert(all_ops_scheduled(sched, prg));
-
-  auto sched_exprs = 
-    its(op_times_map(sched, prg), prg.whole_iteration_domain());
-  cout << "Times: " << str(sched_exprs) << endl;
-  for (auto op0 : get_maps(sched_exprs)) {
-    for (auto op1 : get_maps(sched_exprs)) {
-      string name0 = domain_name(op0);
-      string name1 = domain_name(op1);
-      if (name0 != name1 && share_resource(name0, name1, sched)) {
-        cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
-        auto times = range(op0);
-        auto times1 = range(op1);
-        auto overlap = its(times, times1);
-        cout << tab(2) << "Overlap: " << str(overlap) << endl;
-        assert(empty(overlap));
-      }
-    }
-  }
+  assert(no_violated_resource_assignments(sched, prg));
   assert(no_violated_cycle_accurate_dependencies(sched, prg));
 }
 
