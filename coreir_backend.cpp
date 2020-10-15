@@ -900,6 +900,7 @@ void generate_platonic_ubuffer(
 
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
+  bool has_embarassing_partition = embarassing_banking.has_value();
 
   if (embarassing_banking.has_value()) {
     std::set<int> partition_dims = embarassing_banking.get_value();
@@ -966,7 +967,11 @@ void generate_platonic_ubuffer(
       i++;
     }
     reverse(comps);
-    out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
+    if (has_embarassing_partition) {
+      out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
+    } else {
+      out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
+    }
   }
 
   out << endl;
