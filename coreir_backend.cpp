@@ -459,11 +459,34 @@ string print_cyclic_banks_inner_bank_offset_func(UBuffer& buf, vector<string> va
 
 }
 
+void print_embarassing_banks(std::ostream& out, const map<int, int>& partitioned_dimension_extents, UBuffer& buf) {
+  bank bnk = buf.compute_bank_info();
+  int num_banks = 1;
+  for (auto ent : partitioned_dimension_extents) {
+    num_banks *= ent.second;
+  }
+  out << tab(1) << "// # of banks: " << num_banks << endl;
+
+  int capacity = 1;
+  auto dsets = get_sets(bnk.rddom);
+  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bnk.rddom))) : 0;
+  for (int i = 0; i < dims; i++) {
+    if (!contains_key(i, partitioned_dimension_extents)) {
+      auto s = project_all_but(to_set(bnk.rddom), i);
+      auto min = to_int(lexminval(s));
+      auto max = to_int(lexmaxval(s));
+      int length = max - min + 1;
+      capacity *= length;
+    }
+  }
+
+  for (int i = 0; i < num_banks; i++) {
+    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "embarassing_bank_" << i << " [" << capacity << "];" << endl;
+  }
+}
+
 vector<int> print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank& bnk) {
   int num_banks = card(bank_factors);
-  //for (auto val : bank_factors) {
-    //num_banks *= val;
-  //}
   out << tab(1) << "// # of banks: " << num_banks << endl;
 
   int capacity = 1;
@@ -823,32 +846,15 @@ vector<int> max_offsets_by_dimension(UBuffer& buf) {
   }
   return min_offsets;
 }
+
 void generate_platonic_ubuffer(
     CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo) {
+  ostream& out = *verilog_collateral_file;
 
   prg.pretty_print();
-
-  maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf, hwinfo);
-  std::set<int> partition_dims = embarassing_banking.get_value();
-
-  if (embarassing_banking.has_value()) {
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
-    cout << "Extents in selected dimensions..." << endl;
-    for (auto d : partition_dims) {
-      cout << tab(1) << extents.at(d) << endl;
-    }
-
-    assert(false);
-  }
 
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
 
@@ -864,7 +870,6 @@ void generate_platonic_ubuffer(
           }
   }
 
-  ostream& out = *verilog_collateral_file;
 
 
   print_cyclic_banks_selector(out, bank_factors, buf);
@@ -874,6 +879,27 @@ void generate_platonic_ubuffer(
   vector<string> port_decls = verilog_port_decls(options, buf);
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
   out << endl;
+
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf, hwinfo);
+
+  if (embarassing_banking.has_value()) {
+    std::set<int> partition_dims = embarassing_banking.get_value();
+    vector<int> min_offsets = min_offsets_by_dimension(buf);
+    vector<int> max_offsets = max_offsets_by_dimension(buf);
+    vector<int> extents;
+    for (int i = 0; i < min_offsets.size(); i++) {
+      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+    }
+    cout << "Extents in selected dimensions..." << endl;
+    map<int, int> partitioned_dimension_extents;
+    for (auto d : partition_dims) {
+      cout << tab(1) << extents.at(d) << endl;
+      partitioned_dimension_extents[d] = extents.at(d);
+    }
+
+    print_embarassing_banks(out, partitioned_dimension_extents, buf);
+  }
 
 
   bank bnk = buf.compute_bank_info();
