@@ -729,20 +729,6 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     for (auto outpt : buf.get_out_ports()) {
       for (auto outpt_src : buf.get_out_ports()) {
 
-          assert(get_maps(buf.schedule.at(outpt)).size()==1);
-          auto aff = get_aff(get_maps(buf.schedule.at(outpt))[0]);
-//          cout << str(aff) << endl;
-//          cout << num_in_dims(aff) << endl;
-//
-//          cout << to_int(const_coeff(aff)) << endl;
-//          cout << str(get_coeff(aff,0)) << endl;
-//          cout << str(get_coeff(aff,1)) << endl;
-//          cout << str(get_coeff(aff,2)) << endl;
-//          cout << str(get_coeff(aff,3)) << endl;
-//          cout << str(get_coeff(aff,4)) << endl;
-
-          //assert(false);
-
           if(outpt == outpt_src) {
               continue;
           }
@@ -784,7 +770,7 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
                   continue;
               }
 
-              if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) != 0)
+              if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) < 0)
               {
                   continue;
               }
@@ -961,6 +947,66 @@ void generate_platonic_ubuffer(
   print_cyclic_banks_selector(out, bank_factors, buf);
   print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
   print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
+
+  // todo: print the fsm modules that get the ctrl_variables
+
+  for(auto pt: buf.get_all_ports()){
+
+      string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+      assert(get_maps(buf.schedule.at(pt)).size()==1);
+      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
+      int dims = num_in_dims(aff);
+
+      cout << str(aff) << endl;
+      cout << dims << endl;
+
+      cout << to_int(const_coeff(aff)) << endl;
+      for(int i = 0; i < dims; i ++)
+      {
+            cout << str(get_coeff(aff,i)) << endl;
+
+      }
+
+      out << "module " << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims << ":0] );" << endl;
+      out << tab(1) << "logic [15:0] global_counter;" << endl;
+      out << tab(1) << "logic [15:0] counters[" << dims << ":0];" << endl;
+      out << tab(1) << "integer i;" << endl;
+      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+      out << tab(2) << "if (~rst_n) begin" << endl;
+      out << tab(3) <<  "global_counter <= 0" << endl;
+      out << tab(3) <<  "for(i = 0; i < " << dims << ";i ++) begin" << endl;
+      out << tab(4) <<  ctrl_vars << "[i] <= 16'b0;" << endl;
+      out << tab(4) <<  "counters[i] <= 16'b0;" << endl;
+      out << tab(3) <<   "end;" << endl;
+      out << tab(2) <<  "end else begin" << endl;
+      out << tab(3) <<   "if(global_counter ==" << to_int(const_coeff(aff)) << ") begin" << endl;
+      out << tab(4) << "for(i = 0; i <" <<  dims << " - 1;i ++) begin" << endl;
+      out << tab(5) <<  ctrl_vars << "[i] <= 16b'0;" << endl;
+      out << tab(5) <<  "counters[i] <= 16'b0;" << endl;
+      out << tab(4) <<   "end" << endl;
+      out << tab(4) <<   ctrl_vars << "[" << dims << "-1] <= 1;" << endl;
+      out << tab(4) <<    "counters[" << dims << "-1] <= 1;" << endl;
+      out << tab(3) <<    "end else begin" << endl;
+      out << tab(4) <<    "for(i = 0; i <" << dims << "- 1;i ++) begin" << endl;
+      out << tab(5) <<    "counters[i] <= 16'b0;" << endl;
+      out << tab(4) <<    "end" << endl;
+      for(int i = 0; i < dims; i ++) {
+        out << tab(4) << "if(counters[" << i << "] == " << to_int(get_coeff(aff,i)) << ") begin" << endl;
+        out << tab(5) <<  ctrl_vars <<  "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
+        out << tab(5) << "counters[" << i << "] <= 1;" << endl;
+        out << tab(4) << "end" << endl;
+        }
+
+      out << tab(3) <<  "end" << endl;
+       out << tab(2) << "end" << endl;
+       out << tab(1) << "end" << endl;
+    out << "endmodule" << endl;
+
+      assert(false);
+  }
+
+
+
 
   vector<string> port_decls = verilog_port_decls(options, buf);
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
