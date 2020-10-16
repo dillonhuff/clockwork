@@ -524,7 +524,7 @@ void print_embarassing_banks(std::ostream& out, const map<int, int>& partitioned
   }
 
   for (int i = 0; i < num_banks; i++) {
-    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "embarassing_bank_" << i << " [" << capacity << "];" << endl;
+    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << " bank_" << i << " [" << capacity << "];" << endl;
   }
 }
 
@@ -895,7 +895,7 @@ vector<int> max_offsets_by_dimension(UBuffer& buf) {
     min_offsets.push_back(INT_MIN);
   }
   for (auto pt : buf.get_all_ports()) {
-    vector<int> pts = parse_pt(lexminpt(range(buf.access_map.at(pt))));
+    vector<int> pts = parse_pt(lexmaxpt(range(buf.access_map.at(pt))));
     for (int d = 0; d < pts.size(); d++) {
       if (pts.at(d) > min_offsets.at(d)) {
         min_offsets[d] = pts.at(d);
@@ -931,10 +931,9 @@ void generate_platonic_ubuffer(
 
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  //bool has_embarassing_partition = embarassing_banking.has_value();
-  bool has_embarassing_partition = false;
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  //bool has_embarassing_partition = false;
 
-  //if (embarassing_banking.has_value()) {
   if (has_embarassing_partition)  {
     std::set<int> partition_dims = embarassing_banking.get_value();
     vector<int> min_offsets = min_offsets_by_dimension(buf);
@@ -964,7 +963,6 @@ void generate_platonic_ubuffer(
   out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
 
   map<int, int> partitioned_dimension_extents;
-  //if (embarassing_banking.has_value()) {
   if (has_embarassing_partition) {
     std::set<int> partition_dims = embarassing_banking.get_value();
     vector<int> min_offsets = min_offsets_by_dimension(buf);
@@ -1004,6 +1002,10 @@ void generate_platonic_ubuffer(
     capacities = extents;
   }
 
+  out << "// Capacities in " << buf.name << endl;
+  for (auto c : capacities) {
+    out << tab(1) << "// " << c << endl;
+  }
   out << endl;
 
   for (auto in : buf.get_all_ports()) {
