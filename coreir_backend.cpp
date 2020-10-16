@@ -524,7 +524,7 @@ void print_embarassing_banks(std::ostream& out, const map<int, int>& partitioned
   }
 
   for (int i = 0; i < num_banks; i++) {
-    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "bank_" << i << " [" << capacity << "];" << endl;
+    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << "embarassing_bank_" << i << " [" << capacity << "];" << endl;
   }
 }
 
@@ -916,7 +916,8 @@ void generate_platonic_ubuffer(
 
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  bool has_embarassing_partition = embarassing_banking.has_value();
+  //bool has_embarassing_partition = embarassing_banking.has_value();
+  bool has_embarassing_partition = false;
 
   if (embarassing_banking.has_value()) {
     std::set<int> partition_dims = embarassing_banking.get_value();
