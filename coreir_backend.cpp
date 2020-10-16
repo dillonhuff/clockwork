@@ -555,6 +555,21 @@ vector<int> print_cyclic_banks(std::ostream& out, const vector<int>& bank_factor
   return capacities;
 }
 
+int total_capacity(UBuffer& buf) {
+  bank bank = buf.compute_bank_info();
+  int capacity = 1;
+  auto dsets = get_sets(bank.rddom);
+  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
+  for (int i = 0; i < dims; i++) {
+    auto s = project_all_but(to_set(bank.rddom), i);
+    auto min = to_int(lexminval(s));
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    capacity *= length;
+  }
+  return capacity;
+}
+
 UBuffer latency_adjusted_buffer(
     CodegenOptions& options,
     prog& prg,
@@ -919,7 +934,8 @@ void generate_platonic_ubuffer(
   //bool has_embarassing_partition = embarassing_banking.has_value();
   bool has_embarassing_partition = false;
 
-  if (embarassing_banking.has_value()) {
+  //if (embarassing_banking.has_value()) {
+  if (has_embarassing_partition)  {
     std::set<int> partition_dims = embarassing_banking.get_value();
     vector<int> min_offsets = min_offsets_by_dimension(buf);
     vector<int> max_offsets = max_offsets_by_dimension(buf);
@@ -945,10 +961,11 @@ void generate_platonic_ubuffer(
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
   out << endl;
 
-  out << tab(1) << "// Storage" << endl;
+  out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
 
   map<int, int> partitioned_dimension_extents;
-  if (embarassing_banking.has_value()) {
+  //if (embarassing_banking.has_value()) {
+  if (has_embarassing_partition) {
     std::set<int> partition_dims = embarassing_banking.get_value();
     vector<int> min_offsets = min_offsets_by_dimension(buf);
     vector<int> max_offsets = max_offsets_by_dimension(buf);
