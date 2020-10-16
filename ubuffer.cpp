@@ -108,10 +108,22 @@ map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffe
   return in_ports_to_conditions;
 }
 
+//This is assuming read after write if they are scheduled
+//for the same hardware cycle
+umap* schedule_guard(umap* sched, bool is_rd) {
+  if (num_out_dims(to_map(sched))  == 1) {
+    int index = is_rd ? 1 : 0;
+    return pad_one_more_dim_to_sched_map_innermost(sched, index);
+  } else {
+    return sched;
+  }
+}
+
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
-    auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+    auto beforeAcc = lex_gt(schedule_guard(buf.schedule.at(outpt), true),
+            schedule_guard(buf.schedule.at(inpt),false));
     if (src_map == nullptr) {
       auto outmap = buf.access_map.at(outpt);
       auto inmap = buf.access_map.at(inpt);
@@ -133,7 +145,7 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   }
   assert(src_map != nullptr);
 
-  auto sched = buf.global_schedule();
+  auto sched = buf.global_schedule_with_guard();
   auto after = lex_gt(sched, sched);
 
   src_map = its(src_map, after);
@@ -1164,7 +1176,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       contain_memory_tile = true;
 
       string ub_ins_name = "ub_"+bk.name;
-      if (options.inline_vectorization) {
+
+      //vectorization pass for lake tile
+      if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
         buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
         config_file = generate_ubuf_args(options, rewrite_buffer);
 
@@ -1179,7 +1193,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           cout << "original outpt schedule: " << str(get_outpt_sched()) << endl;
           assert(isl_union_map_is_single_valued(outpt_sched));
 
-          auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, true);
+          auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, false);
           cout << "Stencil Valid signal 1D: " << str(outpt_sched_1D) << endl;
           auto sched = get_aff(outpt_sched_1D);
           auto stencil_valid = emit_lake_controller_config(::domain(outpt_sched_1D), sched);
@@ -1815,6 +1829,57 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
     }
   }
+
+isl_union_set* UBuffer::compute_dd_hw_schedule(const string& inpt, const string& outpt) {
+  auto writes = access_map.at(inpt);
+  auto reads = access_map.at(outpt);
+  cout << "writes: " << str(writes) << endl;
+  cout << "reads : " << str(reads) << endl;
+  cout << "Schedule..." << endl;
+  umap* sched = global_schedule();
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+
+  auto time_to_write = dot(inv(sched), (writes));
+  auto time_to_read = dot(inv(sched), (reads));
+
+  cout << "Time to write: " << str(time_to_write) << endl;
+  cout << "Time to read : " << str(time_to_read) << endl;
+
+  auto pc_times = dot(time_to_write, inv(time_to_read));
+  cout << "PC times     : " << str(pc_times) << endl;
+  auto dds = isl_union_map_deltas(pc_times);
+  return dds;
+}
+
+
+
+maybe<int> UBuffer::dependence_distance_singleton(const string& inpt, const string& outpt) {
+
+  auto dds = compute_dd_hw_schedule(inpt, outpt);
+  cout << "DDs          : " << str(dds) << endl;
+  if (!empty(dds)) {
+    auto ddc = to_set(dds);
+
+    if (!(isl_set_is_singleton(ddc))) {
+      return {};
+    }
+    assert(isl_set_is_singleton(ddc));
+
+    int dd = to_int(lexminval(ddc));
+    cout << "DD           : " << dd << endl;
+    string writer_name = domain_name(pick(get_maps(access_map.at(inpt))));
+    cout << "writer op    : " << writer_name << endl;
+    dd = dd;
+
+    return {dd};
+  } else {
+    return {};
+  }
+  return {};
+}
 
 maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
     umap* sched) {
@@ -2752,7 +2817,8 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     cout << "Buffer = " << name << endl;
     assert(get_in_ports().size() > 0);
     for (auto inpt : get_in_ports()) {
-      auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
+      auto beforeAcc = lex_gt(schedule_guard(schedule.at(outpt), true),
+              schedule_guard(schedule.at(inpt), false));
       if (src_map == nullptr) {
         auto outmap = access_map.at(outpt);
         auto inmap = access_map.at(inpt);
@@ -2778,7 +2844,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     assert(src_map != nullptr);
 
     //cout << "src map done: " << str(src_map) << endl;
-    auto sched = global_schedule();
+    auto sched = global_schedule_with_guard();
     auto after = lex_gt(sched, sched);
 
     src_map = its(src_map, after);
@@ -3072,8 +3138,12 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
       const std::string& outpt) {
 
     if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
-
-      int maxdelay = compute_dd_bound(outpt, inpt, true);
+      int maxdelay = -1;
+      //TODO: change to hardware scheudle flag
+      if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN)
+        maxdelay = -to_int(lexminval(to_set(compute_dd_hw_schedule(outpt, inpt))));
+      else
+        maxdelay = compute_dd_bound(outpt, inpt, true);
       cout << "max delay btw " << inpt << " and " << outpt <<" is " << maxdelay << endl;
       vector<int> read_delays{0};
 
@@ -3087,8 +3157,15 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
 
       if (!isl_union_set_is_empty(act_dom)) {
         num_readers++;
-        int qpd = compute_dd_bound(outpt, inpt, true);
-        int lb = compute_dd_bound(outpt, inpt, false);
+        int qpd, lb;
+        if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+          qpd = -to_int(lexminval(to_set(compute_dd_hw_schedule(outpt, inpt))));
+          lb = -to_int(lexmaxval(to_set(compute_dd_hw_schedule(outpt, inpt))));
+        } else {
+          qpd = compute_dd_bound(outpt, inpt, true);
+          lb = compute_dd_bound(outpt, inpt, false);
+        }
+        cout << "qpd: " << qpd << ", lb: " << lb << endl;
 
         for (int i = lb; i < qpd + 1; i++) {
           read_delays.push_back(i);
@@ -4292,15 +4369,15 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     //auto in_sched_vec = collect_sched_vec(in_sched);
     //auto out_sched_vec = collect_sched_vec(out_sched);
     cout << "\tin_sched: " << str(in_sched) << "\t\nout_sched: " << str(out_sched) << endl;
-    auto in_sched_new = linear_schedule(to_map(in_sched), iis, 0, true);
+    auto in_sched_new = linear_schedule(to_map(in_sched), iis, 0, false);
     //hardcode this recipe
-    auto in_sched_vec = linear_schedule(to_map(in_sched), iis, fetch_width, true);
+    auto in_sched_vec = linear_schedule(to_map(in_sched), iis, fetch_width, false);
     //auto in_sched_vec = gen_hw_sched_from_sched_vec(ctx,
     //        {expr + "+" + to_string(fetch_width)}, var_list, op_name);
     //in_sched_vec = pad_one_more_dim_to_sched_map_innermost(in_sched_vec, 0);
 
-    auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, true);
-    auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -(fetch_width+1), true);
+    auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, false);
+    auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -(fetch_width+1), false);
     out_sched_vec = pad_one_more_dim_to_sched_map_innermost(out_sched_vec, 0);
     //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
 

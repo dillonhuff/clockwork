@@ -41,6 +41,10 @@ std::ostream& operator<< (std::ostream& out, const std::map<string, T>& m) {
     return out;
 }
 
+//This is assuming read after write if they are scheduled
+//for the same hardware cycle
+umap* schedule_guard(umap* sched, bool is_rd);
+
 struct HWconstraints {
     size_t in_port_width = 1;
     size_t out_port_width = 1;
@@ -1650,6 +1654,18 @@ class UBuffer {
       return s;
     }
 
+    isl_union_map* global_schedule_with_guard() const {
+      umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      for (auto other : schedule) {
+        if (isIn.at(other.first)) {
+          s = unn(s, (schedule_guard(cpy(other.second), false)));
+        } else {
+          s = unn(s, (schedule_guard(cpy(other.second), true)));
+        }
+      }
+      return s;
+    }
+
     isl_union_map* producer_map() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto pt: get_in_ports()) {
@@ -1971,6 +1987,8 @@ class UBuffer {
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
 
+    isl_union_set* compute_dd_hw_schedule(const string& inpt, const string& outpt);
+
     bank compute_bank_info();
     bank compute_bank_info(uset*, isl_point*, std::set<string>, std::set<string>);
     bank compute_bank_info(CodegenOptions& options, const std::string& inpt, const std::string& outpt);
@@ -2019,6 +2037,8 @@ class UBuffer {
     isl_map* merge_output_pt(vector<string> merge_pt);
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
     pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);
+
+    maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt);
 
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
 

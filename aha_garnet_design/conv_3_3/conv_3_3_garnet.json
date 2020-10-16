@@ -393,22 +393,30 @@
           ["op_hcompute_conv_stencil_1$inner_compute$mul_hw_input_global_wrapper_stencil_5_295_296$binop.data.in.1","op_hcompute_conv_stencil_1$inner_compute$const_p255__295.out"]
         ]
       },
-      "conv_stencil_ub":{
+      "conv_stencil_clkwrk_dsa0_ub":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
           ["reset","BitIn"],
           ["op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"Bit"]]],
           ["op_hcompute_conv_stencil_1_read_extra_ctrl","Bit"],
+          ["op_hcompute_conv_stencil_write",["Array",1,["Array",16,"BitIn"]]],
+          ["op_hcompute_conv_stencil_write_extra_ctrl","BitIn"]
+        ]],
+        "connections":[
+          ["self.op_hcompute_conv_stencil_write.0","self.op_hcompute_conv_stencil_1_read.0"],
+          ["self.op_hcompute_conv_stencil_write_extra_ctrl","self.op_hcompute_conv_stencil_1_read_extra_ctrl"]
+        ]
+      },
+      "conv_stencil_ub":{
+        "type":["Record",[
+          ["clk",["Named","coreir.clkIn"]],
+          ["reset","BitIn"],
           ["op_hcompute_conv_stencil_1_write",["Array",1,["Array",16,"BitIn"]]],
           ["op_hcompute_conv_stencil_1_write_extra_ctrl","BitIn"],
-          ["op_hcompute_conv_stencil_write",["Array",1,["Array",16,"BitIn"]]],
-          ["op_hcompute_conv_stencil_write_extra_ctrl","BitIn"],
           ["op_hcompute_hw_output_stencil_read",["Array",1,["Array",16,"Bit"]]],
           ["op_hcompute_hw_output_stencil_read_extra_ctrl","Bit"]
         ]],
         "connections":[
-          ["self.op_hcompute_conv_stencil_write.0","self.op_hcompute_conv_stencil_1_read.0"],
-          ["self.op_hcompute_conv_stencil_write_extra_ctrl","self.op_hcompute_conv_stencil_1_read_extra_ctrl"],
           ["self.op_hcompute_hw_output_stencil_read.0","self.op_hcompute_conv_stencil_1_write.0"],
           ["self.op_hcompute_hw_output_stencil_read_extra_ctrl","self.op_hcompute_conv_stencil_1_write_extra_ctrl"]
         ]
@@ -418,7 +426,7 @@
           ["clk",["Named","coreir.clkIn"]],
           ["valid_pass_in","BitIn"],
           ["valid_pass_out","Bit"],
-          ["conv_stencil_op_hcompute_conv_stencil_write",["Array",1,["Array",16,"Bit"]]]
+          ["conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
           "inner_compute$const_p0__258":{
@@ -428,7 +436,7 @@
           }
         },
         "connections":[
-          ["self.conv_stencil_op_hcompute_conv_stencil_write.0","inner_compute$const_p0__258.out"],
+          ["self.conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_write.0","inner_compute$const_p0__258.out"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -437,7 +445,7 @@
           ["clk",["Named","coreir.clkIn"]],
           ["valid_pass_in","BitIn"],
           ["valid_pass_out","Bit"],
-          ["conv_stencil_op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
+          ["conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_1_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_1_read",["Array",9,["Array",16,"BitIn"]]],
           ["conv_stencil_op_hcompute_conv_stencil_1_write",["Array",1,["Array",16,"Bit"]]]
         ]],
@@ -597,7 +605,7 @@
           ["inner_compute$add_302_304_305$binop.data.out","inner_compute$add_300_305_306$binop.data.in.1"],
           ["inner_compute$mul_hw_input_global_wrapper_stencil_8_301_302$binop.data.out","inner_compute$add_302_304_305$binop.data.in.0"],
           ["inner_compute$mul_hw_input_global_wrapper_stencil_9_303_304$binop.data.out","inner_compute$add_302_304_305$binop.data.in.1"],
-          ["self.conv_stencil_op_hcompute_conv_stencil_1_read.0","inner_compute$add_conv_stencil_1_311_312$binop.data.in.0"],
+          ["self.conv_stencil_clkwrk_dsa0_op_hcompute_conv_stencil_1_read.0","inner_compute$add_conv_stencil_1_311_312$binop.data.in.0"],
           ["inner_compute$mul_hw_input_global_wrapper_stencil_1_287_288$binop.data.in.1","inner_compute$const_p11__287.out"],
           ["inner_compute$mul_hw_input_global_wrapper_stencil_4_293_294$binop.data.in.1","inner_compute$const_p12__293.out"],
           ["inner_compute$mul_hw_input_global_wrapper_stencil_7_299_300$binop.data.in.1","inner_compute$const_p13__299.out"],

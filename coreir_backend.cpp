@@ -2020,8 +2020,10 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
         if (options.pass_through_valid) {
           //we disable wiring if we found first memory tile
           if (need_pass_valid) {
-            //skip the self loop I/O
-            if (! elem(buf_name, outgoing_buffers(buffers, op, prg))){
+            //skip the self loop I/O, or the node with init
+            //FIXME this may not work with multiple input
+            if ( (!elem(buf_name, outgoing_buffers(buffers, op, prg))) &&
+                    (!contains(buf_name, "clkwrk_dsa"))){
                def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
             }
           }
