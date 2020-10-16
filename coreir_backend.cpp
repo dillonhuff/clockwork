@@ -41,60 +41,8 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 
-template<typename T>
-T prod_after(const std::vector<T>& strides, const int i) {
-  T r = 1;
-  for (int s = i; s < (int) strides.size(); s++) {
-    r *= strides.at(s);
-  }
-  return r;
-}
-
-template<typename T>
-T prod_before(const std::vector<T>& strides, const int i) {
-  T r = 1;
-  for (int s = 0; s < min(i, (int) strides.size()); s++) {
-    r *= strides.at(s);
-  }
-  return r;
-}
-
-template<typename T>
-T card(const std::vector<T>& strides) {
-  return prod_after(strides, 0);
-}
-
-template<typename T>
-vector<T> strides(const std::vector<T>& lengths) {
-  vector<T> strs;
-  for (int i = 0; i < (int) lengths.size(); i++) {
-    strs.push_back(prod_after(lengths, i + 1));
-  }
-  return strs;
-}
-
-template<typename T>
-T position(const std::vector<T>& indexes, const std::vector<T>& lengths) {
-  auto strs = strides(lengths);
-  T r = 0;
-  for (int i = 0; i < (int) strs.size(); i++) {
-    r += lengths.at(i)*strs.at(i);
-  }
-  return r;
-}
-
-template<typename T>
-vector<T> indexes(const T& position, const std::vector<T>& lengths) {
-  vector<T> inds;
-  auto strs = strides(lengths);
-  T current = position;
-  for (int i = 0; i < (int) strs.size(); i++) {
-    T coeff = floor(current / strs.at(i));
-    inds.push_back(coeff);
-    current = current - coeff*strs.at(i);
-  }
-  return inds;
-}
+static int fully_optimizable = 0;
+static int not_fully_optimizable = 0;
 
 static int DATAPATH_WIDTH = 16;
 static int CONTROLPATH_WIDTH = 16;
@@ -1123,6 +1071,15 @@ void generate_platonic_ubuffer(
   out << tab(1) << "end" << endl;
 
   out << endl;
+
+  if (!has_embarassing_partition &&
+      done_outpt.size() < buf.get_out_ports().size()) {
+    cout << "BUFFER: " << buf.name << " cannot be fully optimized by shift registers and embarassing partitioning" << endl;
+    not_fully_optimizable++;
+  } else {
+    fully_optimizable++;
+  }
+  cout << "FULLY OPTIMIZABLE: " << fully_optimizable << " / " << (fully_optimizable + not_fully_optimizable) << endl;
   out << "endmodule" << endl << endl;
 }
 

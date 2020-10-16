@@ -15807,7 +15807,17 @@ void pad_to_single_depth(prog& prg) {
 
 }
 
+void assign_to_least_used_resource(op* op, schedule_info& sched) {
+  sched.resource_assignment[op] = {map_find(op, sched.resource_requirements), 0};
+}
+
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+
+  for (auto op : prg.all_ops()) {
+    assert(contains_key(op, sched.resource_requirements));
+    assign_to_least_used_resource(op, sched);
+  }
+
   if (is_rate_matchable(prg)) {
     prg.pretty_print();
     bool single_depth = all_loop_nests_same_depth(prg);
@@ -16106,9 +16116,17 @@ CodegenOptions garnet_codegen_options(prog& prg) {
   return options;
 }
 
+bool all_operations_assigned_to_resources(schedule_info& sched, prog& prg) {
+  for (auto op : prg.all_ops()) {
+    if (!contains_key(op, sched.resource_assignment)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
   normalize_bounds(prg);
-  //normalize_address_offsets(prg);
 
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
@@ -16150,6 +16168,7 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 
   //assert(false);
 
+  assert(all_operations_assigned_to_resources(sched, prg));
   assert(no_violated_cycle_accurate_dependencies(sched, prg));
   assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
 
@@ -16170,13 +16189,13 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 void compile_for_garnet_platonic_mem(prog& prg) {
   auto options = garnet_codegen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
-  return compile_cycle_accurate_hw(options, sched, prg);
+  compile_cycle_accurate_hw(options, sched, prg);
 }
 
 void compile_for_garnet_dual_port_mem(prog& prg) {
   auto options = garnet_codegen_dual_port_with_addrgen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
-  return compile_cycle_accurate_hw(options, sched, prg);
+  compile_cycle_accurate_hw(options, sched, prg);
 }
 
 umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
@@ -16680,10 +16699,6 @@ void cgra_flow_tests() {
     all_cgra_programs();
 
   test_platonic_codegen(test_programs);
-
-  //auto dual_with_addrgen_programs =
-    //stencil_programs();
-
 }
 
 void dse_flow_tests() {
@@ -17969,35 +17984,34 @@ void dhuff_playground() {
   cout << "Inner i" << endl;
   ii->pretty_print();
 
+  //schedule_info sched = garnet_schedule_info(options, prg);
+  garnet_dual_port_ram_schedule(sched, prg.root, prg);
   cout << "Before scheduling inner loops..." << endl;
   print_partial_schedule(sched, prg);
 
-  sequential_schedule(sched, xi, prg);
-  sequential_schedule(sched, ii, prg);
-  sequential_schedule(sched, prg.find_op("ldin1"), prg);
+  //sequential_schedule(sched, xi, prg);
+  //sequential_schedule(sched, ii, prg);
+  //sequential_schedule(sched, prg.find_op("ldin1"), prg);
 
-  cout << "After scheduling inner loops..." << endl;
-  print_partial_schedule(sched, prg);
+  //cout << "After scheduling inner loops..." << endl;
+  //print_partial_schedule(sched, prg);
 
-  cout << endl;
-  cout << "Getting ops" << endl;
-  vector<op*> outer = ops_at_level(1, prg);
-  fuse_sequentially(outer, sched, prg);
+  //cout << endl;
+  //cout << "Getting ops" << endl;
+  //vector<op*> outer = ops_at_level(1, prg);
+  //fuse_sequentially(outer, sched, prg);
 
-  // Now set the root schedule?
+  //sched.loop_iis["root"] = sched.instance_latency(prg.find_loop("root"));
+  
+  //cout << endl;
+  //cout << "After fusing outer loops..." << endl;
+  //print_partial_schedule(sched, prg);
 
-  sched.loop_iis["root"] = sched.instance_latency(prg.find_loop("root"));
-  //set_scheduled_loop_latency(sched, prg.find_loop("root"), prg);
-
-  cout << endl;
-  cout << "After fusing outer loops..." << endl;
-  print_partial_schedule(sched, prg);
-
-  cout << endl;
-  cout << "Unscheduled..." << endl;
-  for (auto s : unscheduled_nodes(sched, prg)) {
-    cout << tab(1) << s->name << endl;
-  }
+  //cout << endl;
+  //cout << "Unscheduled..." << endl;
+  //for (auto s : unscheduled_nodes(sched, prg)) {
+    //cout << tab(1) << s->name << endl;
+  //}
 
   assert(unscheduled_nodes(sched, prg).size() + fully_scheduled_nodes(sched, prg).size() == prg.all_nodes().size());
   assert(all_ops_scheduled(sched, prg));
