@@ -663,6 +663,19 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     for (auto outpt : buf.get_out_ports()) {
       for (auto outpt_src : buf.get_out_ports()) {
 
+          assert(get_maps(buf.schedule.at(outpt)).size()==1);
+          auto aff = get_aff(get_maps(buf.schedule.at(outpt))[0]);
+          cout << str(aff) << endl;
+          cout << num_in_dims(aff) << endl;
+
+          cout << to_int(const_coeff(aff)) << endl;
+          cout << str(get_coeff(aff,0)) << endl;
+          cout << str(get_coeff(aff,1)) << endl;
+          cout << str(get_coeff(aff,2)) << endl;
+          cout << str(get_coeff(aff,3)) << endl;
+          cout << str(get_coeff(aff,4)) << endl;
+
+          assert(false);
 
           if(outpt == outpt_src) {
               continue;
@@ -739,6 +752,8 @@ map<string, pair<string, int> > determine_shift_reg_map(
     for (auto outpt : buf.get_out_ports()) {
       for (auto inpt : buf.get_in_ports()) {
         string reader_name = domain_name(pick(get_maps(buf.access_map.at(outpt))));
+
+
         op* read_op = prg.find_op(reader_name);
 
         auto read = read_op->buffers_read();
