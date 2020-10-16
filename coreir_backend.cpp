@@ -992,6 +992,10 @@ void generate_platonic_ubuffer(
         out << tab(4) << "if(counters[" << i << "] == " << to_int(get_coeff(aff,i)) << ") begin" << endl;
         out << tab(5) <<  ctrl_vars <<  "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
         out << tab(5) << "counters[" << i << "] <= counters[" << i << "] + 1;" << endl;
+        for(int j = i+ 1; j < dims; j ++)
+        {
+            out << tab(5) << "counters[" << j << "] <= 1;" << endl;
+        }
         out << tab(4) << "end" << endl;
         }
 
