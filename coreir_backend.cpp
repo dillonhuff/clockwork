@@ -491,7 +491,13 @@ string print_cyclic_banks_inner_bank_offset_func(UBuffer& buf, vector<string> va
  vector<string> vars1;
   for(int i = 0; i < buf.logical_dimension(); i ++)
   {
+      if(ceil(log2(bank_factors[i])) == log2(bank_factors[i]))
+      {
+      vars1.push_back("(" + vars[i] + ">>" + to_string((int)log2(bank_factors[i])) + ")*" + to_string(capacity_prod));
+      } else{
       vars1.push_back("$rtoi($floor(" + vars[i] + "/ " + to_string(bank_factors[i]) + "))*" + to_string(capacity_prod));
+
+      }
       capacity_prod *= capacities[i];
   }
 
@@ -725,17 +731,17 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
 
           assert(get_maps(buf.schedule.at(outpt)).size()==1);
           auto aff = get_aff(get_maps(buf.schedule.at(outpt))[0]);
-          cout << str(aff) << endl;
-          cout << num_in_dims(aff) << endl;
+//          cout << str(aff) << endl;
+//          cout << num_in_dims(aff) << endl;
+//
+//          cout << to_int(const_coeff(aff)) << endl;
+//          cout << str(get_coeff(aff,0)) << endl;
+//          cout << str(get_coeff(aff,1)) << endl;
+//          cout << str(get_coeff(aff,2)) << endl;
+//          cout << str(get_coeff(aff,3)) << endl;
+//          cout << str(get_coeff(aff,4)) << endl;
 
-          cout << to_int(const_coeff(aff)) << endl;
-          cout << str(get_coeff(aff,0)) << endl;
-          cout << str(get_coeff(aff,1)) << endl;
-          cout << str(get_coeff(aff,2)) << endl;
-          cout << str(get_coeff(aff,3)) << endl;
-          cout << str(get_coeff(aff,4)) << endl;
-
-          assert(false);
+          //assert(false);
 
           if(outpt == outpt_src) {
               continue;
