@@ -15493,6 +15493,21 @@ vector<op*> inner_ops(prog& prg) {
   return ops;
 }
 
+void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
+  int latency = 0;
+  for (auto other : op->children) {
+    int old_latency = latency;
+    latency += hwinfo.total_latency(other);
+    if (old_latency == latency) {
+      latency += 1;
+    }
+  }
+
+  hwinfo.loop_iis[op->name] = max(latency, 1);
+
+  //hwinfo.instance_latencies[op] = latency;
+}
+
 void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   cout << "scheduling: " << op->name << endl;
 
@@ -15518,7 +15533,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 
   hwinfo.loop_iis[op->name] = max(latency, 1);
 
-  hwinfo.instance_latencies[op] = latency;
+  //hwinfo.instance_latencies[op] = latency;
 }
 
 int max_loop_depth(prog& prg) {
@@ -15579,12 +15594,10 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
   for (auto lp : get_inner_loops(prg)) {
     cout << "Adjusting ii of " << lp->name << endl;
     int old_ii = map_find(lp->name, sched.loop_iis);
-    int old_total_latency = old_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
     int try_ii = 1;
     bool found_smaller_ii = false;
     while (try_ii < old_ii) {
       sched.loop_iis[lp->name] = try_ii;
-      //sched.total_op_latencies[lp] = try_ii*(lp->trip_count() - 1) + sched.instance_latency(lp);
       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
         found_smaller_ii = true;
         break;
@@ -15594,7 +15607,6 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
 
     if (!found_smaller_ii) {
       sched.loop_iis[lp->name] = old_ii;
-      //sched.total_op_latencies[lp] = old_total_latency;
     }
   }
 }
@@ -15603,8 +15615,6 @@ void dsa_writers(prog& prg) {
   if (is_rate_matchable(prg)) {
     prg.pretty_print();
     cout << "Is rate matchable" << endl;
-
-    //assert(false);
 
     std::set<string> all_buffers;
     std::set<string> multi_write_buffers;
@@ -15636,7 +15646,6 @@ void dsa_writers(prog& prg) {
         cout << tab(2) << "MULTIPLE PRODUCERS" << endl;
       }
     }
-    //assert(false);
     
     for (auto k : get_kernels(prg)) {
       for (auto b : get_produced_buffers(k, prg)) {
@@ -15664,7 +15673,6 @@ void dsa_writers(prog& prg) {
     for (auto b : multi_write_buffers) {
       cout << tab(1) << b << endl;
       auto writers = find_writers(b, prg);
-      //assert(writers.size() == 2);
       vector<op*> ws;
       for (auto w : writers) {
         ws.push_back(w);
@@ -15903,7 +15911,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
         sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
         sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
-        sched.instance_latencies[container] = 1;
+        // TODO: Set this to the latency read from the compute units
+        //sched.instance_latencies[container] = 1;
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
@@ -16325,8 +16334,6 @@ vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
 
-
- 
   // Too large to fit in 16 bit controller
   //test_programs.push_back(mobilenet());
   //
@@ -17807,7 +17814,23 @@ class fusion_group {
     std::map<op*, string> fuse_levels;
 };
 
+vector<op*> fully_scheduled_nodes(schedule_info& sched, prog& prg)  {
+  vector<op*> ops;
+  for (auto op : prg.all_nodes()) {
+    if (is_op_scheduled(op, sched, prg)) {
+      ops.push_back(op);
+    }
+  }
+  return ops;
+}
+
 void print_partial_schedule(schedule_info& sched, prog& prg) {
+  auto scheduled = fully_scheduled_nodes(sched, prg);
+  cout << "Fully scheduled ops..." << endl;
+  for (auto op : scheduled) {
+    cout << tab(1) << op->name << endl;
+  }
+  cout << endl;
   cout << "IIs" << endl;
   for (auto e : sched.loop_iis) {
     cout << tab(1) << e.first << ": " << e.second << endl;
@@ -17818,23 +17841,87 @@ void print_partial_schedule(schedule_info& sched, prog& prg) {
     cout << tab(1) << e.first->name << ": " << e.second << endl;
   }
   cout << endl;
-  cout << "Instance latencies" << endl;
-  for (auto e : sched.instance_latencies) {
-    cout << tab(1) << e.first->name << ": " << e.second << endl;
-  }
+  //cout << "Instance latencies" << endl;
+  //for (auto e : sched.instance_latencies) {
+    //cout << tab(1) << e.first->name << ": " << e.second << endl;
+  //}
 }
 
 void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg) {
   int delay = 0;
   for (auto outer_loop : outer) {
     for (auto c : outer_loop->children) {
-      delay += sched.instance_latency(c);
+      sched.op_offset_within_parent[c] = delay;
+      delay += sched.total_latency(c);
     }
-    sched.op_offset_within_parent[outer_loop] = delay;
+    sched.op_offset_within_parent[outer_loop] = 0;
   }
+
+  for (auto outer_loop : outer) {
+    //sched.instance_latencies[outer_loop] = delay;
+  }
+
   for (auto outer_loop : outer) {
     sched.loop_iis[outer_loop->name] = delay;
   }
+}
+
+vector<op*> unscheduled_nodes(schedule_info& sched, prog& prg) {
+  vector<op*> unscheduled;
+  for (auto op : prg.all_nodes()) {
+    if (!is_op_scheduled(op, sched, prg)) {
+      unscheduled.push_back(op);
+    }
+  }
+  return unscheduled;
+}
+
+bool all_ops_scheduled(schedule_info& sched, prog& prg) {
+  for (auto op : prg.all_ops()) {
+    if (!is_op_scheduled(op, sched, prg)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool share_resource(const std::string& op0, const std::string& op1, schedule_info& sched) {
+  resource_instance i0;
+  for (auto r : sched.resource_assignment) {
+    if (r.first->name == op0) {
+      i0 = r.second;
+    }
+  }
+  resource_instance i1;
+  for (auto r : sched.resource_assignment) {
+    if (r.first->name == op1) {
+      i1 = r.second;
+    }
+  }
+  return i0 == i1;
+}
+
+bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
+  auto sched_exprs = 
+    its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  cout << "Times: " << str(sched_exprs) << endl;
+  for (auto op0 : get_maps(sched_exprs)) {
+    for (auto op1 : get_maps(sched_exprs)) {
+      string name0 = domain_name(op0);
+      string name1 = domain_name(op1);
+      if (name0 != name1 && share_resource(name0, name1, sched)) {
+        cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
+        auto times = range(op0);
+        auto times1 = range(op1);
+        auto overlap = its(times, times1);
+        cout << tab(2) << "Overlap: " << str(overlap) << endl;
+        if (!empty(overlap)) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
 }
 
 void dhuff_playground() {
@@ -17898,18 +17985,25 @@ void dhuff_playground() {
   vector<op*> outer = ops_at_level(1, prg);
   fuse_sequentially(outer, sched, prg);
 
+  // Now set the root schedule?
+
+  sched.loop_iis["root"] = sched.instance_latency(prg.find_loop("root"));
+  //set_scheduled_loop_latency(sched, prg.find_loop("root"), prg);
+
   cout << endl;
   cout << "After fusing outer loops..." << endl;
   print_partial_schedule(sched, prg);
-  assert(false);
 
-  cout << "# of ops at level " << 1 << " = " << outer.size() << endl;
-  for (auto out : outer) {
-    cout << "Outer loop..." << endl;
-    out->pretty_print();
-    auto read_vals = read_at(out->name, prg);
-    cout << tab(1) << "Reads: " << str(read_vals) << endl;
+  cout << endl;
+  cout << "Unscheduled..." << endl;
+  for (auto s : unscheduled_nodes(sched, prg)) {
+    cout << tab(1) << s->name << endl;
   }
+
+  assert(unscheduled_nodes(sched, prg).size() + fully_scheduled_nodes(sched, prg).size() == prg.all_nodes().size());
+  assert(all_ops_scheduled(sched, prg));
+  assert(no_violated_resource_assignments(sched, prg));
+  assert(no_violated_cycle_accurate_dependencies(sched, prg));
 }
 
 int main(int argc, char** argv) {

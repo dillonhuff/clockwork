@@ -5810,3 +5810,44 @@ umap* read_at(const std::string& level, prog& prg) {
   }
   return rd;
 }
+
+int schedule_info::instance_latency(op* op) {
+  if (op->is_loop) {
+    int maxoffset = 1;
+    for (auto c : op->children) {
+      int delay = map_find(c, op_offset_within_parent);
+      int latency = total_latency(c);
+      int inner_delay = delay + latency;
+      maxoffset = max(maxoffset, inner_delay);
+    }
+
+    //cout << "Offset for " << op->name << endl;
+    //op->pretty_print();
+    //cout << "instance latency in map     = " << map_find(op, instance_latencies) << endl;
+    //cout << "calculated instance latency = " << maxoffset << endl;
+
+    //assert(map_find(op, instance_latencies) == maxoffset);
+
+    return maxoffset;
+  }
+
+  assert(contains_key(op, instance_latencies));
+  return map_find(op, instance_latencies);
+}
+
+bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
+  bool has_latency = contains_key(op, sched.instance_latencies);
+  bool has_offset = contains_key(op, sched.op_offset_within_parent);
+  bool has_ii = contains_key(op->name, sched.loop_iis);
+
+  if (op == prg.root) {
+    return has_latency && has_ii;
+  }
+
+  if (op->is_loop) {
+    return has_latency && has_ii && has_offset;
+  }
+
+  return has_latency && has_offset;
+}
+

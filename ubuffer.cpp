@@ -4552,8 +4552,14 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
   vector<vector<string> > filtered_io_groups =
     overlapping_large_io_port_groups(buf, 1);
 
+  if (filtered_io_groups.size() == 0) {
+    return {};
+  }
+
   std::set<int> dims;
   for (auto g : filtered_io_groups) {
+    assert(g.size() > 0);
+
     auto parts = find_fixed_subaddresses(g, buf);
     cout << "Error: No viable banking strategy for " << buf.name << endl;
     cout << tab(1) << "Cannot partition group: " << endl;
@@ -4571,7 +4577,8 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
     }
   }
 
-  cout << "FOUND EMBARASSING PARTITION OF " << buf.name << " in dimensions..." << endl;
+  cout << "FOUND EMBARASSING PARTITION OF "
+    << buf.name << " in " << dims.size() << " dimensions..." << endl;
   for (auto d : dims) {
     cout << tab(1) << d << endl;
   }
