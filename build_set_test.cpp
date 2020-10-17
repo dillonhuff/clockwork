@@ -12864,6 +12864,7 @@ void check_lake_config(const vector<string> & op_name_vec, string out_dir, strin
   }
 }
 
+#ifdef COREIR
 vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
         umap* hardware_schedule, string dir) {
   vector<string> generated_op;
@@ -12969,6 +12970,8 @@ vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
   }
   return generated_op;
 }
+
+#endif // COREIR
 
 isl_aff* get_aff_addr(op* op, const std::string& buf_name,
     const address& addr,
