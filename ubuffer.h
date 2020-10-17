@@ -2014,6 +2014,7 @@ class UBuffer {
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
     //ubuffer coreir generation for tahoe memory tile
     void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def);
+    Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
 #endif
 
     vector<string> map2address(isl_map* m);
@@ -2040,7 +2041,6 @@ class UBuffer {
 
     maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt);
 
-    Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
 
 };
 
