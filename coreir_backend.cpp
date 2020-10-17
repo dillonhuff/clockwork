@@ -950,6 +950,7 @@ void generate_platonic_ubuffer(
 
   // todo: print the fsm modules that get the ctrl_variables
 
+
   for(auto pt: buf.get_all_ports()){
 
       string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
@@ -957,7 +958,7 @@ void generate_platonic_ubuffer(
       auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
       int dims = num_in_dims(aff);
 
-      cout << str(aff) << endl;
+      cout << str(get_maps(buf.schedule.at(pt))[0]) << endl;
       cout << dims << endl;
 
       cout << to_int(const_coeff(aff)) << endl;
@@ -968,45 +969,60 @@ void generate_platonic_ubuffer(
       }
 
       out << "module " << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims << ":0] );" << endl;
-      out << tab(1) << "logic [15:0] global_counter;" << endl;
-      out << tab(1) << "logic [15:0] counters[" << dims << ":0];" << endl;
+      out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
       out << tab(1) << "integer i;" << endl;
+      out << tab(1) << "integer dims = " << dims << ";" << endl;
       out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
       out << tab(2) << "if (~rst_n) begin" << endl;
-      out << tab(3) <<  "global_counter <= 0" << endl;
-      out << tab(3) <<  "for(i = 0; i < " << dims << ";i ++) begin" << endl;
+      out << tab(3) <<  "for(i = 0; i < dims ;i ++) begin" << endl;
       out << tab(4) <<  ctrl_vars << "[i] <= 16'b0;" << endl;
-      out << tab(4) <<  "counters[i] <= 16'b0;" << endl;
+      out << tab(4) <<  "counter[i] <= 16'b0;" << endl;
       out << tab(3) <<   "end;" << endl;
       out << tab(2) <<  "end else begin" << endl;
-      out << tab(3) <<   "if(global_counter ==" << to_int(const_coeff(aff)) << ") begin" << endl;
-      out << tab(4) << "for(i = 0; i <" <<  dims << " - 1;i ++) begin" << endl;
-      out << tab(5) <<  ctrl_vars << "[i] <= 16b'0;" << endl;
-      out << tab(5) <<  "counters[i] <= 16'b0;" << endl;
-      out << tab(4) <<   "end" << endl;
-      out << tab(4) <<   ctrl_vars << "[" << dims << "-1] <= 1;" << endl;
-      out << tab(4) <<    "counters[" << dims << "-1] <= 1;" << endl;
-      out << tab(3) <<    "end else begin" << endl;
+      out << tab(3) <<   "if(counter[0] ==" << to_int(const_coeff(aff)) - 1 << ") begin" << endl;
+      out << tab(4) << "for(i = 0; i < dims ;i ++) begin" << endl;
+      out << tab(5) <<  ctrl_vars << "[i] <= 16'b0;" << endl;
+      out << tab(5) <<  "counter[i] <= 16'b0;" << endl;
+      out << tab(4) <<  "end" << endl;
+      out << tab(4) << "counter[0] <= 0;" << endl;
 
-      for(int i = 0; i < dims; i ++) {
-        out << tab(4) << "if(counters[" << i << "] == " << to_int(get_coeff(aff,i)) << ") begin" << endl;
-        out << tab(5) <<  ctrl_vars <<  "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
-        out << tab(5) << "counters[" << i << "] <= counters[" << i << "] + 1;" << endl;
-        for(int j = i+ 1; j < dims; j ++)
-        {
-            out << tab(5) << "counters[" << j << "] <= 1;" << endl;
-        }
-        out << tab(4) << "end" << endl;
-        }
-
-      out << tab(3) <<  "end" << endl;
+      out << tab(3) <<  "end else begin" << endl;
+      out << tab(4) << "counter[0] <= counter[0] + 1;" << endl;
+      out << tab(4) << "if(counter[1] == " << to_int(get_coeff(aff,1)) - 1 << ") begin" << endl;
+      out << tab(5) << "for(i = 1; i < dims; i ++ ) begin" << endl;
+      out << tab(6) << "counter[i] <= 0;" << endl;
+      out << tab(5) << "end" << endl;
+      out << tab(5) << "for(i = 2; i < dims; i ++ ) begin" << endl;
+      out << tab(6) << ctrl_vars << "[i] <= 0;" << endl;
+      out << tab(5) << "end" << endl;
+      out << tab(5) << ctrl_vars << "[1] <= " << ctrl_vars << "[1] + 1;" << endl;
+      for(int i = 2; i < dims; i ++)
+      {
+            out << tab(4) << "end else if(counter[" << i << "] == " << to_int(get_coeff(aff,i)) - 1 << ") begin" << endl;
+            out << tab(5) << "for(i = 1; i < " << i << "; i ++ ) begin" << endl;
+            out << tab(6) << "counter[i] <= counter[i] + 1;" << endl;
+            out << tab(5) << "end" << endl;
+            out << tab(5) << "for(i = " << i << "; i < dims; i ++ ) begin" << endl;
+            out << tab(6) << "counter[i] <= 0;" << endl;
+            out << tab(5) << "end" << endl;
+            out << tab(5) << "for(i = " << i + 1 << " ; i < dims; i ++ ) begin" << endl;
+            out << tab(6) << ctrl_vars << "[i] <= 0;" << endl;
+            out << tab(5) << "end" << endl;
+            out << tab(5) << ctrl_vars << "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
+      }
+      out << tab(4) << "end else begin" << endl;
+      out << tab(5) << "for(i = 1; i < dims; i ++ ) begin" << endl;
+    out << tab(6) << "counter[i] <= counter[i] + 1;" << endl;
+    out << tab(5) << "end" << endl;
+      out << tab(4) << "end" << endl;
+      out << tab(3) << "end" << endl;
        out << tab(2) << "end" << endl;
        out << tab(1) << "end" << endl;
     out << "endmodule" << endl;
 
-      assert(false);
   }
 
+      assert(false);
 
 
 
@@ -1015,6 +1031,12 @@ void generate_platonic_ubuffer(
   out << endl;
 
   out << tab(1) << "// Storage" << endl;
+
+//  for(auto pt: buf.get_all_ports)
+//  {
+//        out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(.clk(clk), .flush(flush), .rst_n(rst_n), output logic [15:0] " << ctrl_vars << "[" << dims << ":0] );" << endl;
+//
+//  }
 
   map<int, int> partitioned_dimension_extents;
   if (embarassing_banking.has_value()) {
