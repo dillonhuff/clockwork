@@ -1830,32 +1830,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
-isl_union_set* UBuffer::compute_dd_hw_schedule(const string& inpt, const string& outpt) {
-  auto writes = access_map.at(inpt);
-  auto reads = access_map.at(outpt);
-  cout << "writes: " << str(writes) << endl;
-  cout << "reads : " << str(reads) << endl;
-  cout << "Schedule..." << endl;
-  umap* sched = global_schedule();
-  for (auto m : get_maps(sched)) {
-    cout << tab(1) << str(m) << endl;
-    release(m);
-  }
-
-  auto time_to_write = dot(inv(sched), (writes));
-  auto time_to_read = dot(inv(sched), (reads));
-
-  cout << "Time to write: " << str(time_to_write) << endl;
-  cout << "Time to read : " << str(time_to_read) << endl;
-
-  auto pc_times = dot(time_to_write, inv(time_to_read));
-  cout << "PC times     : " << str(pc_times) << endl;
-  auto dds = isl_union_map_deltas(pc_times);
-  return dds;
-}
-
-
-
 maybe<int> UBuffer::dependence_distance_singleton(const string& inpt, const string& outpt) {
 
   auto dds = compute_dd_hw_schedule(inpt, outpt);
@@ -5243,3 +5217,31 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
   //assert(false);
   return dims;
 }
+
+
+isl_union_set* UBuffer::compute_dd_hw_schedule(const string& inpt, const string& outpt) {
+  auto writes = access_map.at(inpt);
+  auto reads = access_map.at(outpt);
+  cout << "writes: " << str(writes) << endl;
+  cout << "reads : " << str(reads) << endl;
+  cout << "Schedule..." << endl;
+  umap* sched = global_schedule();
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+
+  auto time_to_write = dot(inv(sched), (writes));
+  auto time_to_read = dot(inv(sched), (reads));
+
+  cout << "Time to write: " << str(time_to_write) << endl;
+  cout << "Time to read : " << str(time_to_read) << endl;
+
+  auto pc_times = dot(time_to_write, inv(time_to_read));
+  cout << "PC times     : " << str(pc_times) << endl;
+  auto dds = isl_union_map_deltas(pc_times);
+  return dds;
+}
+
+
+
