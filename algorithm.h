@@ -832,7 +832,7 @@ T prod_after(const std::vector<T>& strides, const int i) {
 template<typename T>
 T prod_before(const std::vector<T>& strides, const int i) {
   T r = 1;
-  for (int s = 0; s < min(i, (int) strides.size()); s++) {
+  for (int s = 0; s < std::min(i, (int) strides.size()); s++) {
     r *= strides.at(s);
   }
   return r;
@@ -844,8 +844,8 @@ T card(const std::vector<T>& strides) {
 }
 
 template<typename T>
-vector<T> strides(const std::vector<T>& lengths) {
-  vector<T> strs;
+std::vector<T> strides(const std::vector<T>& lengths) {
+  std::vector<T> strs;
   for (int i = 0; i < (int) lengths.size(); i++) {
     strs.push_back(prod_after(lengths, i + 1));
   }
@@ -863,8 +863,8 @@ T position(const std::vector<T>& indexes, const std::vector<T>& lengths) {
 }
 
 template<typename T>
-vector<T> indexes(const T& position, const std::vector<T>& lengths) {
-  vector<T> inds;
+std::vector<T> indexes(const T& position, const std::vector<T>& lengths) {
+  std::vector<T> inds;
   auto strs = strides(lengths);
   T current = position;
   for (int i = 0; i < (int) strs.size(); i++) {

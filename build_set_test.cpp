@@ -15814,8 +15814,10 @@ void assign_to_least_used_resource(op* op, schedule_info& sched) {
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
   for (auto op : prg.all_ops()) {
-    assert(contains_key(op, sched.resource_requirements));
-    assign_to_least_used_resource(op, sched);
+    if (op->func != "") {
+      assert(contains_key(op, sched.resource_requirements));
+      assign_to_least_used_resource(op, sched);
+    }
   }
 
   if (is_rate_matchable(prg)) {
@@ -16045,6 +16047,10 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   sched.use_dse_compute = false;
   //sched.use_dse_compute = true;
   for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      sched.resource_requirements[op] = op->func;
+    }
+
     // Extremely hacky rom latency introduction
     if (op->func == "hcompute_curved_stencil") {
       sched.compute_unit_latencies[op->func] = 1;
@@ -16169,6 +16175,7 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
   //assert(false);
 
   assert(all_operations_assigned_to_resources(sched, prg));
+  assert(no_violated_resource_assignments(sched, prg));
   assert(no_violated_cycle_accurate_dependencies(sched, prg));
   assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
 
@@ -17894,45 +17901,6 @@ bool all_ops_scheduled(schedule_info& sched, prog& prg) {
   for (auto op : prg.all_ops()) {
     if (!is_op_scheduled(op, sched, prg)) {
       return false;
-    }
-  }
-  return true;
-}
-
-bool share_resource(const std::string& op0, const std::string& op1, schedule_info& sched) {
-  resource_instance i0;
-  for (auto r : sched.resource_assignment) {
-    if (r.first->name == op0) {
-      i0 = r.second;
-    }
-  }
-  resource_instance i1;
-  for (auto r : sched.resource_assignment) {
-    if (r.first->name == op1) {
-      i1 = r.second;
-    }
-  }
-  return i0 == i1;
-}
-
-bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
-  auto sched_exprs = 
-    its(op_times_map(sched, prg), prg.whole_iteration_domain());
-  cout << "Times: " << str(sched_exprs) << endl;
-  for (auto op0 : get_maps(sched_exprs)) {
-    for (auto op1 : get_maps(sched_exprs)) {
-      string name0 = domain_name(op0);
-      string name1 = domain_name(op1);
-      if (name0 != name1 && share_resource(name0, name1, sched)) {
-        cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
-        auto times = range(op0);
-        auto times1 = range(op1);
-        auto overlap = its(times, times1);
-        cout << tab(2) << "Overlap: " << str(overlap) << endl;
-        if (!empty(overlap)) {
-          return false;
-        }
-      }
     }
   }
   return true;

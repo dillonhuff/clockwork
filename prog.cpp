@@ -5851,3 +5851,42 @@ bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
   return has_latency && has_offset;
 }
 
+bool share_resource(const std::string& op0, const std::string& op1, schedule_info& sched) {
+  resource_instance i0;
+  for (auto r : sched.resource_assignment) {
+    if (r.first->name == op0) {
+      i0 = r.second;
+    }
+  }
+  resource_instance i1;
+  for (auto r : sched.resource_assignment) {
+    if (r.first->name == op1) {
+      i1 = r.second;
+    }
+  }
+  return i0 == i1;
+}
+
+bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
+  auto sched_exprs = 
+    its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  cout << "Times: " << str(sched_exprs) << endl;
+  for (auto op0 : get_maps(sched_exprs)) {
+    for (auto op1 : get_maps(sched_exprs)) {
+      string name0 = domain_name(op0);
+      string name1 = domain_name(op1);
+      if (name0 != name1 && share_resource(name0, name1, sched)) {
+        cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
+        auto times = range(op0);
+        auto times1 = range(op1);
+        auto overlap = its(times, times1);
+        cout << tab(2) << "Overlap: " << str(overlap) << endl;
+        if (!empty(overlap)) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
