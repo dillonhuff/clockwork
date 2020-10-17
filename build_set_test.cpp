@@ -16796,20 +16796,23 @@ void compile_for_garnet_single_port_mem(prog& prg) {
   int max_inpt = 2, max_outpt = 2;
   //for (auto b: buffers_opt) {
   //    cout << "create shift register for " << b.first << endl;
+
+  //  //compare out2in
   //  auto shift_registered_outputs = determine_shift_reg_map(prg, b.second, sched);
+  //  //compare out2out
   //  auto o2o = determine_output_shift_reg_map(prg, b.second, sched);
   //  cout << o2o.size() << endl;
   //  for (auto it: shift_registered_outputs) {
   //    cout << it.first << " -> " << it.second.first << ", depth = " << it.second.second << endl;
   //  }
   //}
-  //auto sched = global_schedule_from_buffers(buffers_opt);
+  ////auto sched = global_schedule_from_buffers(buffers_opt);
 
-  //for (auto& b : buffers_opt) {
-  //  cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
+  for (auto& b : buffers_opt) {
+    cout << "Before Normalization: "<< b.second << endl;
   //  b.second.normalize_access_range();
   //  cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
-  //}
+  }
   for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
@@ -18000,7 +18003,7 @@ void histogram_2d_test() {
 }
 
 void application_tests() {
-  lake_tests();
+  //lake_tests();
   //cnn_test();
   iccad_tests();
   exposure_fusion_iccad_apps("ef_cc_10_level");
@@ -18624,6 +18627,11 @@ int main(int argc, char** argv) {
     }
     if (cmd == "travis-tests") {
       travis_tests();
+      return 0;
+    }
+
+    if (cmd == "lake-tests") {
+      lake_tests();
       return 0;
     }
 

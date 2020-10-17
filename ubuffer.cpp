@@ -3516,6 +3516,14 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     }
 
     cout << tab(1) << "after banking there are " << bank_list.size() << " banks" << endl;
+    for (auto & b:bank_list) {
+      cout << "\tinput: ";
+      for (auto inpt: banks_to_inputs.at(b.name))
+              cout <<tab(1) << inpt <<endl;
+      cout << "\t output: ";
+      for (auto outpt: banks_to_outputs.at(b.name))
+              cout <<tab(1) << outpt <<endl;
+    }
   }
 
   void UBuffer::generate_banks_and_merge(CodegenOptions& options) {
