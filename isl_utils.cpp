@@ -186,6 +186,10 @@ bool equal(uset* const l, uset* const r) {
   return isl_union_set_is_equal(l, r);
 }
 
+bool equal(umap* const l, umap* const r) {
+  return isl_union_map_is_equal(l, r);
+}
+
 bool empty(isl_basic_set* const s) {
   return isl_basic_set_is_empty(s);
 }
@@ -348,6 +352,18 @@ isl_map* add_range_suffix(isl_map* const m, string suffix) {
     string origin_name = range_name(m);
     string new_name = origin_name + suffix;
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
+}
+
+isl_map* add_domain_suffix(isl_map* const m, string suffix) {
+    string origin_name = domain_name(m);
+    string new_name = origin_name + suffix;
+    return isl_map_set_tuple_name(m, isl_dim_in, new_name.c_str());
+}
+
+isl_set* add_suffix(isl_set* const m, string suffix) {
+    string origin_name = name(m);
+    string new_name = origin_name + suffix;
+    return isl_set_set_tuple_name(m, new_name.c_str());
 }
 
 isl_set* to_set(isl_union_set* const m) {
@@ -1861,14 +1877,14 @@ umap* flatten_map_domain_trans(isl_map* s, int ii) {
 
 isl_map* retrive_map_domain_dim(isl_map* flat_map, isl_set* dom) {
     auto trans = flatten_set_trans(dom, 1);
-    auto new_sched = dot(trans, to_umap(flat_map));
+    auto new_sched = its(dot(trans, to_umap(flat_map)), dom);
     return to_map(new_sched);
 }
 
 isl_map* retrive_map_domain_with_dim(isl_map* flat_map, isl_set* dom) {
     int dim_from_inner = get_dim(dom) - get_in_dim(flat_map) + 1;
     auto trans = flatten_set_trans_with_dim(dom, dim_from_inner);
-    auto new_sched = dot(trans, to_umap(flat_map));
+    auto new_sched = its(dot(trans, to_umap(flat_map)), dom);
     return to_map(new_sched);
 }
 
@@ -2113,6 +2129,7 @@ isl_map* delay_schedule_inner_most(isl_map* m, int delay) {
       auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
       //This is the schedule vector you need to increment
       c = isl_constraint_set_constant_si(c, val - delay);
+      cout << "Delayed Constraints: " << str(c) << endl;
     }
   }
   auto b_ret = isl_basic_map_universe(get_space(m));
@@ -2291,6 +2308,81 @@ isl_map* pad_to_domain_map(isl_map* m, int depth) {
           c = isl_constraint_set_constant_si(c , val+depth);
       }
     }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
+//method to transform the domain to positive integer
+isl_map* shift_domain_map(isl_map* m, vector<int> shift_depth) {
+
+  auto c_vec = constraints(m);
+  assert(shift_depth.size() == get_in_dim(m));
+  for (int dim = 0; dim < get_in_dim(m); dim ++) {
+  auto depth = shift_depth.at(dim);
+
+  //no need to pad for the dimension with positive bound
+  if (depth == 0)
+    continue;
+
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_in, dim, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_equality(c)) {
+          c = isl_constraint_set_constant_si(c, val + depth);
+      } else {
+        if (isl_constraint_is_upper_bound(c, isl_dim_in, dim))
+          c = isl_constraint_set_constant_si(c , val+depth);
+        else
+          c = isl_constraint_set_constant_si(c , val-depth);
+      }
+    }
+  }
+
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
+//method to transform the range to positive integer
+isl_map* shift_range_map(isl_map* m, vector<int> shift_depth) {
+
+  auto c_vec = constraints(m);
+  assert(get_out_dim(m) == shift_depth.size());
+  for (int dim = 0; dim < get_out_dim(m); dim ++) {
+  auto depth = shift_depth.at(dim);
+
+  //no need to pad for the dimension with positive bound
+  if (depth == 0)
+    continue;
+
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_out, dim, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_equality(c)) {
+          c = isl_constraint_set_constant_si(c, val - depth);
+      }
+    }
+
+  }
   }
   auto b_ret = isl_basic_map_universe(get_space(m));
   for (auto c: c_vec) {
@@ -2526,6 +2618,33 @@ isl_constraint* pad_dim_to_constraint(isl_constraint* c) {
   }
   //cout << "rewrite constraits: " << str(cons) << endl;
   return cons;
+}
+
+isl_map* pad_one_more_dim_to_sched_map_innermost(isl_map* const um, int pad_val) {
+    auto sched_map = um;
+    auto c_vec = constraints(sched_map);
+    vector<isl_constraint*> new_c;
+
+    //pad the space for the original constraints
+    for (auto c : c_vec) {
+        auto tmp = pad_dim_to_constraint(c);
+        new_c.push_back(tmp);
+    }
+
+    auto sp = get_space(pick(new_c));
+    auto cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+    int out_dim = isl_constraint_dim(cons, isl_dim_out);
+    cons = isl_constraint_set_constant_si(cons, -pad_val);
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_out, out_dim - 1, 1);
+    new_c.push_back(cons);
+
+    auto ret = isl_basic_map_universe(sp);
+    for (auto c : new_c) {
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    return ret_m;
 }
 
 umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val) {
@@ -3493,6 +3612,26 @@ void release(isl_union_map* m) {
 void release(isl_union_pw_qpolynomial* m) {
   isl_union_pw_qpolynomial_free(m);
 }
+
+isl_map* linear_schedule(isl_map* in_sched, vector<int> iis, int offset, bool ignore_innermost) {
+    cout << "iis: " << iis << endl;
+  auto sched_aff_vec = get_aff_vec(in_sched);
+  if (ignore_innermost)
+    sched_aff_vec.pop_back();
+  vector<string> expr_list;
+  for (size_t i = 0; i < sched_aff_vec.size(); i ++) {
+    auto sched_aff = sched_aff_vec.at(i);
+    string expr = take_btw(str(sched_aff), "[(", ")]");
+    expr_list.push_back("(" + expr + ")*" + to_string(iis.at(i)));
+  }
+  string expr = sep_list(expr_list, "", "", "+");
+  auto var_list = get_map_in_dim_id(in_sched);
+  string op_name = domain_name(in_sched);
+  expr = expr + "+" + to_string(offset);
+  auto in_sched_new = gen_hw_sched_from_sched_vec(ctx(in_sched), {expr}, var_list, op_name);
+  return its(in_sched_new, domain(in_sched));
+}
+
 
 isl_map* linear_address_map(isl_set* s) {
   assert(s != nullptr);

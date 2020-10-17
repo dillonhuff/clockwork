@@ -73,6 +73,7 @@ struct ir_node {
   void copy_memory_operations_from(op* other);
   void replace_variable(const std::string& var, const int val);
   void replace_variable(const std::string& var, const std::string& val);
+  void shift_address(const std::string& var, const std::vector<int>& min_locs);
 
   void delete_child(op* c) {
     vector<op*> new_children;
@@ -1286,6 +1287,8 @@ struct prog {
   map<op*, isl_map*> producer_maps(const std::string& buf);
   map<op*, isl_map*> consumer_maps(const std::string& buf);
 
+  void shift_address_range(const std::string& buf, const std::vector<int>& min_locs);
+
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
@@ -1500,6 +1503,8 @@ prog duplicate_interface(prog& p);
 
 vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
 vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
+vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
+vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
 
 
 std::vector<string> unoptimized_result(prog& prg);

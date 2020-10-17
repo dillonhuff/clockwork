@@ -72,6 +72,16 @@ CoreIR::Wireable* delay_array(CoreIR::ModuleDef* def,
     int elem_width,
     int num_elems);
 
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
 void add_cgralib(CoreIR::Context* context);
 
 CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
