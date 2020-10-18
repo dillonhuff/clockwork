@@ -16305,10 +16305,11 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
+  test_programs.push_back(up_sample());
   test_programs.push_back(harris());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
-  test_programs.push_back(up_sample());
+
   // Fails with dual port tile?
   //test_programs.push_back(rom());
   test_programs.push_back(strided_conv());
@@ -16341,14 +16342,14 @@ vector<prog> all_cgra_programs() {
   //test_programs.push_back(accumulation());
 
 
-  test_programs.push_back(resnet());
-  test_programs.push_back(mobilenet_small());
-
-
   test_programs.push_back(unet_conv_3_3());
+  test_programs.push_back(resnet());
+
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
   concat(test_programs, stencil_programs());
+
+  test_programs.push_back(mobilenet_small());
 
   return test_programs;
 }

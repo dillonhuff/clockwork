@@ -966,7 +966,7 @@ void generate_platonic_ubuffer(
       auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
       int dims = num_in_dims(aff);
 
-      cout << str(get_maps(buf.schedule.at(pt))[0]) << endl;
+      out << "//" << str(get_maps(buf.schedule.at(pt))[0]) << endl;
       cout << dims << endl;
 
       cout << to_int(const_coeff(aff)) << endl;
@@ -988,7 +988,9 @@ void generate_platonic_ubuffer(
       }
       out << tab(2) <<  "end else begin" << endl;
       out << tab(3) <<   "if(counter[0] ==" << to_int(const_coeff(aff)) - 1 << ") begin" << endl;
-      for(int i = 0; i < dims ;i ++) {
+      out << tab(4) <<  ctrl_vars << brackets(str(0)) << "<= 16'b0;" << endl;
+      out << tab(4) <<  "counter" << brackets(str(0)) << " <= counter" << brackets(str(0)) << "+1;" << endl;
+      for(int i = 1; i < dims ;i ++) {
         out << tab(4) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
         out << tab(4) <<  "counter " << brackets(str(i)) << " <= 16'b0;" << endl;
       }
@@ -1028,7 +1030,7 @@ void generate_platonic_ubuffer(
 
   }
 
-   //   assert(false);
+   //assert(false);
 
 
 
@@ -1168,6 +1170,29 @@ void generate_platonic_ubuffer(
   }
 
   out << tab(1) << "always @(posedge clk) begin" << endl;
+  done_ctrl_vars.clear();
+  for(auto pt: buf.get_all_ports())
+  {
+      string name = buf.container_bundle(pt);
+      string ctrl_vars = name + "_ctrl_vars";
+      string enable = (name.find("write") == string::npos) ? name + "_ren" : name + "_wen";
+      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
+      {
+          continue;
+      }
+      done_ctrl_vars.insert(ctrl_vars);
+      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
+      int dims = num_in_dims(aff);
+      string gen_ctrl_vars = ctrl_vars + "_fsm_out";
+      out << tab(2) << "if(" << enable << ")begin" << endl;
+      out << tab(3) << "if(" << ctrl_vars << "[1]!=" << gen_ctrl_vars << "[1]) begin" << endl;
+      out << tab(4) << "$display(\"Different\");" << endl;
+      out << tab(4) << "$display(" << ctrl_vars << "[1]);" << endl;
+      out << tab(4) << "$display(" << gen_ctrl_vars << "[1]);" << endl;
+      out << tab(4) << "$finish(-1);" << endl;
+      out << tab(3) << "end" << endl;
+      out << tab(2) << "end" << endl;
+  }
   for (auto in : buf.get_in_ports()) {
     string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
     if (has_embarassing_partition) {
