@@ -18573,6 +18573,39 @@ bool all_ops_scheduled(schedule_info& sched, prog& prg) {
 }
 
 void dhuff_playground() {
+  {
+    prog prg("time_sharing_pyramid_1d");
+    prg.add_input("in");
+    prg.add_output("out");
+
+    auto ld = prg.add_loop("i0", 0, 1)->add_loop("i1", 0, 1)->add_op("cpy");
+    ld->add_load("in", "i0, i1");
+    ld->add_store("b0", "i0, i1");
+
+    auto ro = prg.add_loop("i", 0, 1)->add_loop("j", 0, 1)->add_op("ro");
+    ro->add_load("b0", "i - 1, j + 1");
+    //ro->add_load("b0", "i - 1, j");
+    ro->add_store("b0", "i, j");
+
+    auto st = prg.add_loop("s0", 0, 1)->add_loop("s1", 0, 1)->add_op("wo");
+    st->add_load("b0", "s0, s1");
+    st->add_store("b1", "s0, s1");
+    infer_bounds("b1", {16, 16}, prg);
+
+    prg.pretty_print();
+    auto valid = prg.validity_deps();
+    cout << "valid: " << str(valid) << endl;
+    auto ro_sched = rdmap(prg.ctx, "{ ro[r, i, j] -> [r, j, i] }");
+    //auto ro_sched = rdmap(prg.ctx, "{ ro[r, i, j] -> [r, i, j] }");
+    auto later_in_new_sched = lex_gt(ro_sched, ro_sched);
+    cout << "later in interchanged loop nest: " << str(later_in_new_sched) << endl;
+
+    auto violated = its(later_in_new_sched, valid);
+    cout << "violated: " << str(violated) << endl;
+
+    assert(false);
+  }
+
   prog prg("time_sharing_pyramid_1d");
 
   prg.add_input("in");

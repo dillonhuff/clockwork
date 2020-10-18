@@ -490,6 +490,7 @@ struct ir_node {
   }
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop);
+    assert(name != "");
     //assert(!elem(name, all_existing_loop_names()));
 
     auto lp = new op();
