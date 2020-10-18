@@ -211,7 +211,7 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
 }
 
 vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk, UBuffer& buf) {
-  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars_fsm_out";
 
   vector<int> mins;
   for (int i = 0; i < buf.logical_dimension(); i++) {
@@ -493,6 +493,7 @@ string print_cyclic_banks_inner_bank_offset_func(UBuffer& buf, vector<string> va
   {
       if(ceil(log2(bank_factors[i])) == log2(bank_factors[i]))
       {
+          cout << vars[i] << endl;
       vars1.push_back("(" + vars[i] + ">>" + to_string((int)log2(bank_factors[i])) + ")*" + to_string(capacity_prod));
       } else{
       vars1.push_back("$rtoi($floor(" + vars[i] + "/ " + to_string(bank_factors[i]) + "))*" + to_string(capacity_prod));
@@ -500,6 +501,7 @@ string print_cyclic_banks_inner_bank_offset_func(UBuffer& buf, vector<string> va
       }
       capacity_prod *= capacities[i];
   }
+          //assert(false);
 
     string func = sep_list(vars1,"(",")","+");
   cout << func << endl;
@@ -950,10 +952,16 @@ void generate_platonic_ubuffer(
 
   // todo: print the fsm modules that get the ctrl_variables
 
+  unordered_set<string> done_ctrl_vars;
 
   for(auto pt: buf.get_all_ports()){
 
       string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
+      {
+          continue;
+      }
+      done_ctrl_vars.insert(ctrl_vars);
       assert(get_maps(buf.schedule.at(pt)).size()==1);
       auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
       int dims = num_in_dims(aff);
@@ -968,52 +976,50 @@ void generate_platonic_ubuffer(
 
       }
 
-      out << "module " << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims << ":0] );" << endl;
+      out << "module " << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0] );" << endl;
       out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
       out << tab(1) << "integer i;" << endl;
       out << tab(1) << "integer dims = " << dims << ";" << endl;
       out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
       out << tab(2) << "if (~rst_n) begin" << endl;
-      out << tab(3) <<  "for(i = 0; i < dims ;i ++) begin" << endl;
-      out << tab(4) <<  ctrl_vars << "[i] <= 16'b0;" << endl;
-      out << tab(4) <<  "counter[i] <= 16'b0;" << endl;
-      out << tab(3) <<   "end;" << endl;
+      for(int i = 0; i < dims ;i ++) {
+      out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
+      out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
+      }
       out << tab(2) <<  "end else begin" << endl;
       out << tab(3) <<   "if(counter[0] ==" << to_int(const_coeff(aff)) - 1 << ") begin" << endl;
-      out << tab(4) << "for(i = 0; i < dims ;i ++) begin" << endl;
-      out << tab(5) <<  ctrl_vars << "[i] <= 16'b0;" << endl;
-      out << tab(5) <<  "counter[i] <= 16'b0;" << endl;
-      out << tab(4) <<  "end" << endl;
-      out << tab(4) << "counter[0] <= 0;" << endl;
-
+      for(int i = 0; i < dims ;i ++) {
+        out << tab(4) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
+        out << tab(4) <<  "counter " << brackets(str(i)) << " <= 16'b0;" << endl;
+      }
       out << tab(3) <<  "end else begin" << endl;
       out << tab(4) << "counter[0] <= counter[0] + 1;" << endl;
       out << tab(4) << "if(counter[1] == " << to_int(get_coeff(aff,1)) - 1 << ") begin" << endl;
-      out << tab(5) << "for(i = 1; i < dims; i ++ ) begin" << endl;
-      out << tab(6) << "counter[i] <= 0;" << endl;
-      out << tab(5) << "end" << endl;
-      out << tab(5) << "for(i = 2; i < dims; i ++ ) begin" << endl;
-      out << tab(6) << ctrl_vars << "[i] <= 0;" << endl;
-      out << tab(5) << "end" << endl;
+      for(int i = 1; i < dims; i ++ ) {
+        out << tab(5) << "counter" << brackets(str(i)) << "<= 0;" << endl;
+      }
+      for(int i = 2; i < dims; i ++ ){
+        out << tab(5) << ctrl_vars << brackets(str(i)) << "<= 0;" << endl;
+      }
       out << tab(5) << ctrl_vars << "[1] <= " << ctrl_vars << "[1] + 1;" << endl;
       for(int i = 2; i < dims; i ++)
       {
             out << tab(4) << "end else if(counter[" << i << "] == " << to_int(get_coeff(aff,i)) - 1 << ") begin" << endl;
-            out << tab(5) << "for(i = 1; i < " << i << "; i ++ ) begin" << endl;
-            out << tab(6) << "counter[i] <= counter[i] + 1;" << endl;
-            out << tab(5) << "end" << endl;
-            out << tab(5) << "for(i = " << i << "; i < dims; i ++ ) begin" << endl;
-            out << tab(6) << "counter[i] <= 0;" << endl;
-            out << tab(5) << "end" << endl;
-            out << tab(5) << "for(i = " << i + 1 << " ; i < dims; i ++ ) begin" << endl;
-            out << tab(6) << ctrl_vars << "[i] <= 0;" << endl;
-            out << tab(5) << "end" << endl;
+            for(int j = 1; j< i; j ++ ) {
+                out << tab(5) << "counter" << brackets(str(j)) << " <= counter" << brackets(str(j)) << " + 1;" << endl;
+            }
+            for(int j = i; j < dims; j ++ ) {
+                out << tab(5) << "counter" << brackets(str(j)) << " <= 0;" << endl;
+            }
+            for(int j = i + 1; j < dims; j ++ ) {
+                out << tab(5) << ctrl_vars << brackets(str(j)) << "<= 0;" << endl;
+            }
             out << tab(5) << ctrl_vars << "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
       }
       out << tab(4) << "end else begin" << endl;
-      out << tab(5) << "for(i = 1; i < dims; i ++ ) begin" << endl;
-    out << tab(6) << "counter[i] <= counter[i] + 1;" << endl;
-    out << tab(5) << "end" << endl;
+      for(int i = 1; i < dims; i ++ ) {
+        out << tab(5) << "counter" << brackets(str(i)) << " <= counter" << brackets(str(i)) << " + 1;" << endl;
+      }
       out << tab(4) << "end" << endl;
       out << tab(3) << "end" << endl;
        out << tab(2) << "end" << endl;
@@ -1022,21 +1028,35 @@ void generate_platonic_ubuffer(
 
   }
 
-      assert(false);
+   //   assert(false);
 
 
 
   vector<string> port_decls = verilog_port_decls(options, buf);
+
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
   out << endl;
 
   out << tab(1) << "// Storage" << endl;
 
-//  for(auto pt: buf.get_all_ports)
-//  {
-//        out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(.clk(clk), .flush(flush), .rst_n(rst_n), output logic [15:0] " << ctrl_vars << "[" << dims << ":0] );" << endl;
-//
-//  }
+  done_ctrl_vars.clear();
+  for(auto pt: buf.get_all_ports())
+  {
+      string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
+      {
+          continue;
+      }
+      done_ctrl_vars.insert(ctrl_vars);
+      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
+      int dims = num_in_dims(aff);
+      out << tab(1) << "logic [15:0]" << ctrl_vars << "_fsm_out[" << dims -1 << ":0];" << endl;
+      out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm " <<
+      buf.name << "_" <<  buf.container_bundle(pt) << "_fsm_inst "
+      << "(.clk(clk), .flush(flush), .rst_n(rst_n), ." << ctrl_vars << "( " + ctrl_vars << "_fsm_out ));" << endl;
+
+  }
+  //assert(false);
 
   map<int, int> partitioned_dimension_extents;
   if (embarassing_banking.has_value()) {
