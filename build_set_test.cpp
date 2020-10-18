@@ -12864,114 +12864,112 @@ void check_lake_config(const vector<string> & op_name_vec, string out_dir, strin
   }
 }
 
-#ifdef COREIR
-//vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
-        //umap* hardware_schedule, string dir) {
-  //vector<string> generated_op;
-  //auto glb_access_map = global_access_map_from_buffers(buffers_opt);
-  //auto glb_domain = global_domain_from_buffers(buffers_opt);
-  //auto glb_retrive_domain = retrive_domain_from_buffers(buffers_opt);
-  //auto retrive_dom_map = get_sets_in_map(glb_retrive_domain);
-  //auto dom_map = get_sets_in_map(glb_domain);
-  //auto access_maps = get_maps(glb_access_map);
+vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
+        umap* hardware_schedule, string dir) {
+  vector<string> generated_op;
+  auto glb_access_map = global_access_map_from_buffers(buffers_opt);
+  auto glb_domain = global_domain_from_buffers(buffers_opt);
+  auto glb_retrive_domain = retrive_domain_from_buffers(buffers_opt);
+  auto retrive_dom_map = get_sets_in_map(glb_retrive_domain);
+  auto dom_map = get_sets_in_map(glb_domain);
+  auto access_maps = get_maps(glb_access_map);
 
-  ////produce the schedule config for each op
-  //for (auto m : get_maps(hardware_schedule)) {
-    //cout << tab(1) << domain_name(m) << endl;
-    //string op_name = domain_name(m);
-    //generated_op.push_back(op_name);
+  //produce the schedule config for each op
+  for (auto m : get_maps(hardware_schedule)) {
+    cout << tab(1) << domain_name(m) << endl;
+    string op_name = domain_name(m);
+    generated_op.push_back(op_name);
 
-    //isl_map* write_sched = m;
-    //auto dom = dom_map.at(op_name);
-    //if (retrive_dom_map.count(op_name)) {
-      //dom = retrive_dom_map.at(op_name);
+    isl_map* write_sched = m;
+    auto dom = dom_map.at(op_name);
+    if (retrive_dom_map.count(op_name)) {
+      dom = retrive_dom_map.at(op_name);
 
-      ////transform the iteration domain back to it's original dimension
-      //write_sched = retrive_map_domain_with_dim(m, dom);
-      //for (auto& it: access_maps) {
-        //if (domain_name(it)== op_name) {
-          //it = retrive_map_domain_with_dim(it, dom);
-        //}
-      //}
+      //transform the iteration domain back to it's original dimension
+      write_sched = retrive_map_domain_with_dim(m, dom);
+      for (auto& it: access_maps) {
+        if (domain_name(it)== op_name) {
+          it = retrive_map_domain_with_dim(it, dom);
+        }
+      }
+    }
+    cout << "\tretrive dom: " << str(glb_retrive_domain) << endl;
+
+    //FIXME: The dimension retrive algorithm seems wrong for conv33, may have some special purpose for resnet
+    //if (num_in_dims(write_sched) != num_dims(dom_map.at(op_name))) {
+    //    cout << "\t retrive the domain for schedule: " << str(write_sched) << endl;
+    //    dom = dom_map.at(op_name);
+    //    write_sched = retrive_map_domain_with_dim(m, dom);
+    //    cout << "\t after retrive : " << str(write_sched) << endl;
     //}
-    //cout << "\tretrive dom: " << str(glb_retrive_domain) << endl;
-
-    ////FIXME: The dimension retrive algorithm seems wrong for conv33, may have some special purpose for resnet
-    ////if (num_in_dims(write_sched) != num_dims(dom_map.at(op_name))) {
-    ////    cout << "\t retrive the domain for schedule: " << str(write_sched) << endl;
-    ////    dom = dom_map.at(op_name);
-    ////    write_sched = retrive_map_domain_with_dim(m, dom);
-    ////    cout << "\t after retrive : " << str(write_sched) << endl;
-    ////}
 
     ////find the memory tile interface op we need to generate multiple file
-    //vector<isl_map*> access_map_for_op;
-    //for (auto acc_map: access_maps) {
-        //if (domain_name(acc_map) == op_name) {
+    vector<isl_map*> access_map_for_op;
+    for (auto acc_map: access_maps) {
+        if (domain_name(acc_map) == op_name) {
 
-            ////remove the wire
-            //string buf_name = range_name(acc_map);
-            //auto ubuf = buffers_opt.at(buf_name);
-            //cout << "buffer name: " << buf_name << " capacity = " << ubuf.capacity() << endl;
-            //if (ubuf.capacity() == 0) {
-                //cout << "remove 0 capacity buffer: " << buf_name << endl;
-                //continue;
-            //}
+            //remove the wire
+            string buf_name = range_name(acc_map);
+            auto ubuf = buffers_opt.at(buf_name);
+            cout << "buffer name: " << buf_name << " capacity = " << ubuf.capacity() << endl;
+            if (ubuf.capacity() == 0) {
+                cout << "remove 0 capacity buffer: " << buf_name << endl;
+                continue;
+            }
 
-            //access_map_for_op.push_back(acc_map);
-        //}
-    //}
+            access_map_for_op.push_back(acc_map);
+        }
+    }
 
 
-    //if (access_map_for_op.size() > 1) {
+    if (access_map_for_op.size() > 1) {
 
-        ////generate configuration for internal sram related controller
-        //string sub_folder = get_ubuf_name(access_maps, op_name);
-        //string sub_dir = dir + sub_folder;
-        //cout << "sub folder name: " << sub_folder << endl;
-        //cmd("mkdir -p " + sub_dir);
-        //ofstream out(sub_dir +"/" + op_name + ".csv");
-        //cout << "\tGenerate config csv for : " << tab(1) << op_name << endl;
+        //generate configuration for internal sram related controller
+        string sub_folder = get_ubuf_name(access_maps, op_name);
+        string sub_dir = dir + sub_folder;
+        cout << "sub folder name: " << sub_folder << endl;
+        cmd("mkdir -p " + sub_dir);
+        ofstream out(sub_dir +"/" + op_name + ".csv");
+        cout << "\tGenerate config csv for : " << tab(1) << op_name << endl;
 
-        //emit_lake_controller_config(out, dom, get_aff(write_sched));
+        emit_lake_controller_config(out, dom, get_aff(write_sched));
 
-        ////emit address config
-        //emit_lake_addrgen_config(out, buffers_opt, access_maps, op_name);
+        //emit address config
+        emit_lake_addrgen_config(out, buffers_opt, access_maps, op_name);
 
-        //out.close();
-    //}
-    //else if (access_map_for_op.size() == 1) {
-      //int pt_cnt = 0;
-      //for(auto single_access_map: get_basic_maps(pick(access_map_for_op))) {
-        //cout << "single access bmap : " << str(single_access_map) << endl;
+        out.close();
+    }
+    else if (access_map_for_op.size() == 1) {
+      int pt_cnt = 0;
+      for(auto single_access_map: get_basic_maps(pick(access_map_for_op))) {
+        cout << "single access bmap : " << str(single_access_map) << endl;
 
-        //string sub_folder = get_ubuf_name({to_map(single_access_map)}, op_name);
-        //string sub_dir = dir + sub_folder;
-        //cout << "sub folder name: " << sub_folder << endl;
+        string sub_folder = get_ubuf_name({to_map(single_access_map)}, op_name);
+        string sub_dir = dir + sub_folder;
+        cout << "sub folder name: " << sub_folder << endl;
 
-        //string buf_name = range_name(to_map(single_access_map));
-        //auto ubuf = buffers_opt.at(buf_name);
-        //string suffix = "_" + to_string(pt_cnt);
-        //if (ubuf.is_read_op(op_name))
-            //suffix = "_tb2out" + suffix;
-        //else
-            //suffix = "_in2agg" + suffix;
+        string buf_name = range_name(to_map(single_access_map));
+        auto ubuf = buffers_opt.at(buf_name);
+        string suffix = "_" + to_string(pt_cnt);
+        if (ubuf.is_read_op(op_name))
+          suffix = "_tb2out" + suffix;
+        else
+          suffix = "_in2agg" + suffix;
 
-        //cmd("mkdir -p " + sub_dir);
-        //ofstream out(sub_dir +"/"+ op_name + suffix + ".csv");
-        //cout << "\tGenerate config csv for : " << tab(1) << op_name + suffix << endl;
-        //emit_lake_controller_config(out, dom, get_aff(write_sched));
+        cmd("mkdir -p " + sub_dir);
+        ofstream out(sub_dir +"/"+ op_name + suffix + ".csv");
+        cout << "\tGenerate config csv for : " << tab(1) << op_name + suffix << endl;
+        emit_lake_controller_config(out, dom, get_aff(write_sched));
 
-        ////emit address config
-        //emit_lake_addrgen_config(out, buffers_opt, {to_map(single_access_map)}, op_name);
-        //pt_cnt ++;
-      //}
-    //}
-  //}
-  //return generated_op;
-//}
+        //emit address config
+        emit_lake_addrgen_config(out, buffers_opt, {to_map(single_access_map)}, op_name);
+        pt_cnt ++;
+      }
+    }
+  }
+  return generated_op;
+}
 
-#endif // COREIR
 
 isl_aff* get_aff_addr(op* op, const std::string& buf_name,
     const address& addr,
@@ -13299,152 +13297,152 @@ isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
   //}
 //}
 
-//void lake_resnet_test() {
-  //auto prg = resnet_hc();
-  //prg.pretty_print();
+void lake_resnet_test() {
+  auto prg = resnet_hc();
+  prg.pretty_print();
 
-  //CodegenOptions options;
-  //options.all_rams = true;
-  //all_register_files(prg, options);
-  //options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
-  //options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
-  //options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
-  //options.inner_bank_offset_mode =
-    //INNER_BANK_OFFSET_MULTILINEAR;
-  ////generate_optimized_code(options, prg);
+  CodegenOptions options;
+  options.all_rams = true;
+  all_register_files(prg, options);
+  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
+  options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
+  options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  //generate_optimized_code(options, prg);
 
-  //auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
-  ////optimized schedule
-  //auto buffers_opt = build_buffers(prg, sched_naive);
-  //CodegenOptions opt;
-  //opt.conditional_merge = true;
-  //opt.merge_threshold = 4;
-  //int max_inpt = 2, max_outpt = 2;
-  ////buffers_opt.at("buf").generate_bank_and_merge(opt);
-  ////cout << buffers_opt.at("buf") << endl;
-  ////buffers_opt.at("buf").port_group2bank(2, 2);
-  ////cout << buffers_opt.at("buf") << endl;
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg, sched_naive);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
+  //cout << buffers_opt.at("buf") << endl;
+  //buffers_opt.at("buf").port_group2bank(2, 2);
+  //cout << buffers_opt.at("buf") << endl;
 
-  //for (auto& b : buffers_opt) {
-    //cout << b.first << endl << b.second << endl;
-    //if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
-        //continue;
-    //b.second.generate_banks_and_merge(options);
-    //b.second.print_bank_info();
+  for (auto& b : buffers_opt) {
+    cout << b.first << endl << b.second << endl;
+    if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
+        continue;
+    b.second.generate_banks_and_merge(options);
+    b.second.print_bank_info();
 
-    ////Assign an configuration file,
-    ////json config_reg_map = parse_config_file("conv33_configuration.txt");
-    ////b.second.set_config(config_reg_map);
+    //Assign an configuration file,
+    //json config_reg_map = parse_config_file("conv33_configuration.txt");
+    //b.second.set_config(config_reg_map);
 
-    //b.second.port_group2bank(max_inpt, max_outpt);
-    //b.second.print_bank_info();
+    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.print_bank_info();
 
 
-//#ifdef COREIR
-    //CoreIR::Context* context = CoreIR::newContext();
-    //CoreIRLoadLibrary_commonlib(context);
-    //CoreIRLoadLibrary_cwlib(context);
-    //schedule_info hwinfo;
-    //hwinfo.use_dse_compute = false;
-    //auto def = generate_coreir_without_ctrl(opt, context, b.second, hwinfo);
-    //if(!saveToFile(context->getNamespace("global"), "lake_"+b.first+".json", def)) {
-      //cout << "Could not save ubuffer coreir!" << endl;
-      //context->die();
-    //}
-    //CoreIR::deleteContext(context);
-//#endif
+#ifdef COREIR
+    CoreIR::Context* context = CoreIR::newContext();
+    CoreIRLoadLibrary_commonlib(context);
+    CoreIRLoadLibrary_cwlib(context);
+    schedule_info hwinfo;
+    hwinfo.use_dse_compute = false;
+    auto def = generate_coreir_without_ctrl(opt, context, b.second, hwinfo);
+    if(!saveToFile(context->getNamespace("global"), "lake_"+b.first+".json", def)) {
+      cout << "Could not save ubuffer coreir!" << endl;
+      context->die();
+    }
+    CoreIR::deleteContext(context);
+#endif
 
-  //}
+  }
 
-//#ifdef COREIR
-  ////generate_cgra_tb(buffers_opt, prg, opt);
-//#endif
+#ifdef COREIR
+  //generate_cgra_tb(buffers_opt, prg, opt);
+#endif
 
-  //map<string, int> dim_id_map({{"hw_input_stencil", 1},
-          //{"hw_kernel_stencil", 2},
-          //{"conv_stencil", 2}});
-  ////auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
-  ////auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
-  //for (auto it: buffers_opt) {
-    //if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
-        //continue;
-    //}
-  //auto buf = it.second;
-  //auto ubuf_name = it.first;
-  //if (ubuf_name != "hw_input_stencil")
-      //continue;
-  ////auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
-  //auto post_proc_buffers = buf.generate_ubuffer(opt);
-  //opt.conditional_merge = false;
-  ////auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
-  ////auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
-  //auto rewrite_buffers = buf.generate_ubuffer(opt);
-  //for (auto it: post_proc_buffers) {
-    //cout << "\tpost: " << it.first << ": " << it.second << endl;
-  //}
-  //for (auto it: rewrite_buffers) {
-    //cout << "\trewrite_buffers: " << it.first << ": " << it.second << endl;
-  //}
+  map<string, int> dim_id_map({{"hw_input_stencil", 1},
+          {"hw_kernel_stencil", 2},
+          {"conv_stencil", 2}});
+  auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  //auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
+  for (auto it: buffers_opt) {
+    if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
+        continue;
+    }
+  auto buf = it.second;
+  auto ubuf_name = it.first;
+  if (ubuf_name != "hw_input_stencil")
+      continue;
+  //auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  auto post_proc_buffers = buf.generate_ubuffer(opt);
+  opt.conditional_merge = false;
+  //auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  //auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  auto rewrite_buffers = buf.generate_ubuffer(opt);
+  for (auto it: post_proc_buffers) {
+    cout << "\tpost: " << it.first << ": " << it.second << endl;
+  }
+  for (auto it: rewrite_buffers) {
+    cout << "\trewrite_buffers: " << it.first << ": " << it.second << endl;
+  }
 
-  //for (auto it : post_proc_buffers) {
-    //map<string, UBuffer> tmp;
-    //map<string, UBuffer> temp;
-    //tmp.insert(it);
-    //cout << "Vectorizing " << it.first << endl;
-    //cout << it.second << endl;
-    //buffer_vectorization(it.first, 2, 4, tmp);
-    //cout << "Done with vectorization" << endl;
-    //for (auto it: tmp) {
-        //auto buf = it.second;
-        //if (buf.get_in_ports().size() == 4)
-            //temp.insert(it);
-        //cout << it.first<< endl;
-    //}
+  for (auto it : post_proc_buffers) {
+    map<string, UBuffer> tmp;
+    map<string, UBuffer> temp;
+    tmp.insert(it);
+    cout << "Vectorizing " << it.first << endl;
+    cout << it.second << endl;
+    buffer_vectorization(it.first, 2, 4, tmp);
+    cout << "Done with vectorization" << endl;
+    for (auto it: tmp) {
+        auto buf = it.second;
+        if (buf.get_in_ports().size() == 4)
+            temp.insert(it);
+        cout << it.first<< endl;
+    }
 
-    ////auto opt_sched = optimized_schedule_from_buffers_feautrier(buffers_opt, false);
-    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
-    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+    //auto opt_sched = optimized_schedule_from_buffers_feautrier(buffers_opt, false);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
 
-    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
-    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
-    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
 
-    ////isl_union_set* gb_domain = global_domain_from_buffers(tmp);
-    ////isl_ctx* ctx = ::ctx(gb_domain);
-    ////auto um = isl_union_map_read_from_str(ctx,"{}");
-    ////auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
-    //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
-    //////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
-    ////cout << "\t global domain" << str(gb_domain) << endl;
-    ////cout << "\tDouble buffer dependency: " << str(um) << endl;
-    ////um = its(um, gb_domain);
-    ////cout << "\tDouble buffer dependency: " << str(um) << endl;
-    ////um = its_range(um, gb_domain);
-    ////cout << "\tDouble buffer dependency: " << str(um) << endl;
-    ////auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
-    ////auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
-    ////auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
-    //auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, {"op_hcompute_hw_input_stencil_agg2sram"}, um);
-    ////auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_conv_stencil_agg2sram", "op_hcompute_conv_stencil_1_agg2sram"});
-    //cout << str(opt_sched) << endl;
-    //cout << codegen_c(opt_sched) << endl;
-    //auto multi_tile_sched = pad_identity_relation_to_umap(opt_sched, 1, 0, 0, 3);
-    //cout << codegen_c(multi_tile_sched) << endl;
-    //cout << str(multi_tile_sched) << endl;
-    //map<pair<string, string>, int> latency({
-          //{{"op_hcompute_hw_input_stencil", "op_hcompute_hw_input_stencil_agg2sram"}, 1},
-          //{{"op_hcompute_hw_input_stencil_agg2sram", "op_hcompute_conv_stencil_1_sram2tb"}, 0},
-          //{{"op_hcompute_conv_stencil_1_sram2tb", "op_hcompute_conv_stencil_1"}, 1}});
-    //auto hsh = generate_hardware_schedule_heu_new(multi_tile_sched, tmp, latency, 1);
-    //cout << codegen_c(hsh) << endl;
-    //cmd("mkdir -p ./lake_controllers/resnet/");
-    ////auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
-    ////assert(false);
+    isl_union_set* gb_domain = global_domain_from_buffers(tmp);
+    isl_ctx* ctx = ::ctx(gb_domain);
+    //auto um = isl_union_map_read_from_str(ctx,"{}");
+    //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
+    auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    ////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
+    //cout << "\t global domain" << str(gb_domain) << endl;
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //um = its(um, gb_domain);
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //um = its_range(um, gb_domain);
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
+    //auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
+    auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, {"op_hcompute_hw_input_stencil_agg2sram"}, um);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_conv_stencil_agg2sram", "op_hcompute_conv_stencil_1_agg2sram"});
+    cout << str(opt_sched) << endl;
+    cout << codegen_c(opt_sched) << endl;
+    auto multi_tile_sched = pad_identity_relation_to_umap(opt_sched, 1, 0, 0, 3);
+    cout << codegen_c(multi_tile_sched) << endl;
+    cout << str(multi_tile_sched) << endl;
+    map<pair<string, string>, int> latency({
+          {{"op_hcompute_hw_input_stencil", "op_hcompute_hw_input_stencil_agg2sram"}, 1},
+          {{"op_hcompute_hw_input_stencil_agg2sram", "op_hcompute_conv_stencil_1_sram2tb"}, 0},
+          {{"op_hcompute_conv_stencil_1_sram2tb", "op_hcompute_conv_stencil_1"}, 1}});
+    auto hsh = generate_hardware_schedule_heu_new(multi_tile_sched, tmp, latency, 1);
+    cout << codegen_c(hsh) << endl;
+    cmd("mkdir -p ./lake_controllers/resnet/");
+    //auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
+    //assert(false);
 
-  //}
+  }
 
-  //}
-//}
+  }
+}
 
 void lake_cascade_autovec_test() {
   //prog prg = halide_cascade();
@@ -13522,7 +13520,7 @@ void lake_cascade_autovec_test() {
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/cascade/");
-  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
   //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/cascade/", false);
   //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
 }
@@ -13680,7 +13678,7 @@ void lake_conv33_autovec_aha_test() {
   auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
   cout << codegen_c(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/conv_3_3_aha/");
-  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_aha/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_aha/");
   cmd("mkdir -p ./lake_stream/conv_3_3_aha/");
   //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_new/", false);
   //check_lake_config(op_vec, "./lake_controllers/conv_3_3_aha/", "./lake_gold/conv_3_3_aha/");
@@ -13690,79 +13688,79 @@ umap* generate_garnet_hw_sched(prog& prg, CodegenOptions & options);
 umap* clockwork_schedule(prog& prg);
 vector<int> garnet_fuse_ii_level(prog& prg);
 
-//void lake_conv33_recipe_test() {
-  //prog prg;
-  //prg.compute_unit_file = "vec_access.h";
-  //prg.name = "conv_3_3_recipe";
-  //prg.add_input("hw_input_stencil");
-  //prg.add_output("conv_stencil");
-  ////prg.buffer_port_widths["T"] = 32*3;
-  //prg.buffer_port_widths["hw_input_stencil"] = 16;
-  //prg.buffer_port_widths["conv_stencil"] = 16;
-  //prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
+void lake_conv33_recipe_test() {
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "conv_3_3_recipe";
+  prg.add_input("hw_input_stencil");
+  prg.add_output("conv_stencil");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
 
-  //auto p = prg.add_nest("po", 0, 64, "pi", 0, 64);
-  //auto write = p->add_op("input");
-  //write->add_function("hcompute_hw_input_global_wrapper_stencil");
-  //write->add_load("hw_input_stencil", "po, pi");
-  //write->add_store("hw_input_global_wrapper_stencil", "po, pi");
+  auto p = prg.add_nest("po", 0, 64, "pi", 0, 64);
+  auto write = p->add_op("input");
+  write->add_function("hcompute_hw_input_global_wrapper_stencil");
+  write->add_load("hw_input_stencil", "po, pi");
+  write->add_store("hw_input_global_wrapper_stencil", "po, pi");
 
-  //auto q = prg.add_nest("qo", 0, 62, "qi", 0, 62);
-  //auto read = q->add_op("output");
-  //read->add_function("hcompute_conv_stencil_1");
-  //for (size_t wy = 0; wy < 3; wy ++) {
-      //for (size_t wx = 0; wx < 3; wx ++) {
-        //read->add_load("hw_input_global_wrapper_stencil", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
-      //}
-  //}
-  //read->add_store("conv_stencil", "qo, qi");
-
-
-  ////optimized schedule
-  //cmd("mkdir -p aha_garnet_design/" + prg.name);
-  //auto iis = garnet_fuse_ii_level(prg);
-  //CodegenOptions options;
-  //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-  //CodegenOptions opt;
-  //opt.conditional_merge = true;
-  //opt.merge_threshold = 4;
-  //opt.iis = iis;
-  //int max_inpt = 2, max_outpt = 2;
-  ////auto sched = global_schedule_from_buffers(buffers_opt);
-
-  //for (auto& b : buffers_opt) {
-    //cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
-    //if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-        //continue;
-    //b.second.generate_banks_and_merge(opt);
-    //b.second.port_group2bank(max_inpt, max_outpt);
-
-    ////auto def = generate_coreir(opt, context, b.second);
-
-    ////if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
-    ////  cout << "Could not save ubuffer coreir!" << endl;
-    ////  context->die();
-    ////}
-    ////CoreIR::deleteContext(context);
-  //}
-
-//#ifdef COREIR
-  //generate_garnet_tb(buffers_opt, prg, opt);
-//#endif
+  auto q = prg.add_nest("qo", 0, 62, "qi", 0, 62);
+  auto read = q->add_op("output");
+  read->add_function("hcompute_conv_stencil_1");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("hw_input_global_wrapper_stencil", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  }
+  read->add_store("conv_stencil", "qo, qi");
 
 
-  ////return the buffers after vectorization and the proximity deps you want to remove
-  //vector<string> input_vec_stmts;
-  //isl_ctx* ctx = isl_ctx_alloc();
-  //umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
-  //auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, iis, extra_raw_deps);
-  //isl_union_map* hsh = global_schedule_from_buffers(ubuf_pool);
-  //cout << "hardware schedule: " << str(hsh) << endl;
-  ////cmd("mkdir -p ./lake_stream/conv_3_3_recipe/");
-  ////emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_recipe/", false);
-  ////cmd("mkdir -p ./lake_controllers/conv_3_3_recipe/");
-  ////auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_recipe/");
-//}
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  auto iis = garnet_fuse_ii_level(prg);
+  CodegenOptions options;
+  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.iis = iis;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+
+    //auto def = generate_coreir(opt, context, b.second);
+
+    //if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
+    //  cout << "Could not save ubuffer coreir!" << endl;
+    //  context->die();
+    //}
+    //CoreIR::deleteContext(context);
+  }
+
+#ifdef COREIR
+  generate_garnet_tb(buffers_opt, prg, opt);
+#endif
+
+
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, iis, extra_raw_deps);
+  isl_union_map* hsh = global_schedule_from_buffers(ubuf_pool);
+  cout << "hardware schedule: " << str(hsh) << endl;
+  //cmd("mkdir -p ./lake_stream/conv_3_3_recipe/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_recipe/", false);
+  //cmd("mkdir -p ./lake_controllers/conv_3_3_recipe/");
+  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_recipe/");
+}
 
 void dsa_writers(prog& prg);
 void lake_conv33_halide_test() {
@@ -14041,10 +14039,10 @@ void lake_conv33_autovec_test() {
   cout << codegen_c(hsh) << endl;
   cout << "hardware schedule: " << str(hsh) << endl;
   cmd("mkdir -p ./lake_controllers/conv_3_3_new/");
-  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_new/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_new/");
   cmd("mkdir -p ./lake_stream/conv_3_3_new/");
   //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_new/", false);
-  //check_lake_config(op_vec, "./lake_controllers/conv_3_3_new/", "./lake_gold/conv_3_3_new/");
+  check_lake_config(op_vec, "./lake_controllers/conv_3_3_new/", "./lake_gold/conv_3_3_new/");
   /*
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
   opt.conditional_merge = false;
@@ -18669,7 +18667,7 @@ void dhuff_playground() {
   //fuse_sequentially(outer, sched, prg);
 
   //sched.loop_iis["root"] = sched.instance_latency(prg.find_loop("root"));
-  
+
   //cout << endl;
   //cout << "After fusing outer loops..." << endl;
   //print_partial_schedule(sched, prg);

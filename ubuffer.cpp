@@ -699,6 +699,52 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
   return buffers;
 }
 
+isl_union_map* global_schedule_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_sched = unn(buf.global_schedule(), global_sched);
+    }
+    cout << "Global schedule: " << str(global_sched) << endl;
+    return global_sched;
+}
+
+
+isl_union_map* global_access_map_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_acc_map = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_acc_map = unn(buf.producer_map(), global_acc_map);
+        global_acc_map = unn(buf.consumer_map(), global_acc_map);
+    }
+    cout << "Global access map: " << str(global_acc_map) << endl;
+    return global_acc_map;
+}
+
+isl_union_set* global_domain_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_dom = unn(buf.global_domain(), global_dom);
+    }
+    cout << "Global domain: " << str(global_dom) << endl;
+    return global_dom;
+}
+
+isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        auto buf = it.second;
+        global_dom = unn(buf.global_retrive_domain(), global_dom);
+    }
+    cout << "Global retrive domain: " << str(global_dom) << endl;
+    return global_dom;
+}
+
 #ifdef COREIR
 
 
@@ -1004,51 +1050,6 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     return create_lake_config(data);
 }
 
-isl_union_map* global_schedule_from_buffers(const map<string, UBuffer> &buffers) {
-    isl_ctx* ctx = pick(buffers).second.ctx;
-    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
-    for (auto it : buffers) {
-        auto buf = it.second;
-        global_sched = unn(buf.global_schedule(), global_sched);
-    }
-    cout << "Global schedule: " << str(global_sched) << endl;
-    return global_sched;
-}
-
-
-isl_union_map* global_access_map_from_buffers(const map<string, UBuffer> &buffers) {
-    isl_ctx* ctx = pick(buffers).second.ctx;
-    isl_union_map* global_acc_map = isl_union_map_read_from_str(ctx, "{}");
-    for (auto it : buffers) {
-        auto buf = it.second;
-        global_acc_map = unn(buf.producer_map(), global_acc_map);
-        global_acc_map = unn(buf.consumer_map(), global_acc_map);
-    }
-    cout << "Global access map: " << str(global_acc_map) << endl;
-    return global_acc_map;
-}
-
-isl_union_set* global_domain_from_buffers(const map<string, UBuffer> &buffers) {
-    isl_ctx* ctx = pick(buffers).second.ctx;
-    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
-    for (auto it : buffers) {
-        auto buf = it.second;
-        global_dom = unn(buf.global_domain(), global_dom);
-    }
-    cout << "Global domain: " << str(global_dom) << endl;
-    return global_dom;
-}
-
-isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers) {
-    isl_ctx* ctx = pick(buffers).second.ctx;
-    isl_union_set* global_dom = isl_union_set_read_from_str(ctx, "{}");
-    for (auto it : buffers) {
-        auto buf = it.second;
-        global_dom = unn(buf.global_retrive_domain(), global_dom);
-    }
-    cout << "Global retrive domain: " << str(global_dom) << endl;
-    return global_dom;
-}
 
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
@@ -1829,75 +1830,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
     }
   }
-
-maybe<int> UBuffer::dependence_distance_singleton(const string& inpt, const string& outpt) {
-
-  auto dds = compute_dd_hw_schedule(inpt, outpt);
-  cout << "DDs          : " << str(dds) << endl;
-  if (!empty(dds)) {
-    auto ddc = to_set(dds);
-
-    if (!(isl_set_is_singleton(ddc))) {
-      return {};
-    }
-    assert(isl_set_is_singleton(ddc));
-
-    int dd = to_int(lexminval(ddc));
-    cout << "DD           : " << dd << endl;
-    string writer_name = domain_name(pick(get_maps(access_map.at(inpt))));
-    cout << "writer op    : " << writer_name << endl;
-    dd = dd;
-
-    return {dd};
-  } else {
-    return {};
-  }
-  return {};
-}
-
-maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
-    umap* sched) {
-
-  auto writes = buf.access_map.at(inpt);
-  auto reads = buf.access_map.at(outpt);
-  cout << "writes: " << str(writes) << endl;
-  cout << "reads : " << str(reads) << endl;
-  cout << "Schedule..." << endl;
-  for (auto m : get_maps(sched)) {
-    cout << tab(1) << str(m) << endl;
-    release(m);
-  }
-
-  auto time_to_write = dot(inv(sched), (writes));
-  auto time_to_read = dot(inv(sched), (reads));
-
-  cout << "Time to write: " << str(time_to_write) << endl;
-  cout << "Time to read : " << str(time_to_read) << endl;
-
-  auto pc_times = dot(time_to_write, inv(time_to_read));
-  cout << "PC times     : " << str(pc_times) << endl;
-  auto dds = isl_union_map_deltas(pc_times);
-  cout << "DDs          : " << str(dds) << endl;
-  if (!empty(dds)) {
-    auto ddc = to_set(dds);
-
-    if (!(isl_set_is_singleton(ddc))) {
-      return {};
-    }
-    assert(isl_set_is_singleton(ddc));
-
-    int dd = to_int(lexminval(ddc));
-    cout << "DD           : " << dd << endl;
-    string writer_name = domain_name(pick(get_maps(writes)));
-    cout << "writer op    : " << writer_name << endl;
-    dd = dd;
-
-    return {dd};
-  } else {
-    return {};
-  }
-  return {};
-}
 
 bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
   bool built_dm = true;
@@ -5241,6 +5173,75 @@ isl_union_set* UBuffer::compute_dd_hw_schedule(const string& inpt, const string&
   cout << "PC times     : " << str(pc_times) << endl;
   auto dds = isl_union_map_deltas(pc_times);
   return dds;
+}
+
+maybe<int> UBuffer::dependence_distance_singleton(const string& inpt, const string& outpt) {
+
+  auto dds = compute_dd_hw_schedule(inpt, outpt);
+  cout << "DDs          : " << str(dds) << endl;
+  if (!empty(dds)) {
+    auto ddc = to_set(dds);
+
+    if (!(isl_set_is_singleton(ddc))) {
+      return {};
+    }
+    assert(isl_set_is_singleton(ddc));
+
+    int dd = to_int(lexminval(ddc));
+    cout << "DD           : " << dd << endl;
+    string writer_name = domain_name(pick(get_maps(access_map.at(inpt))));
+    cout << "writer op    : " << writer_name << endl;
+    dd = dd;
+
+    return {dd};
+  } else {
+    return {};
+  }
+  return {};
+}
+
+maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
+    umap* sched) {
+
+  auto writes = buf.access_map.at(inpt);
+  auto reads = buf.access_map.at(outpt);
+  cout << "writes: " << str(writes) << endl;
+  cout << "reads : " << str(reads) << endl;
+  cout << "Schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+
+  auto time_to_write = dot(inv(sched), (writes));
+  auto time_to_read = dot(inv(sched), (reads));
+
+  cout << "Time to write: " << str(time_to_write) << endl;
+  cout << "Time to read : " << str(time_to_read) << endl;
+
+  auto pc_times = dot(time_to_write, inv(time_to_read));
+  cout << "PC times     : " << str(pc_times) << endl;
+  auto dds = isl_union_map_deltas(pc_times);
+  cout << "DDs          : " << str(dds) << endl;
+  if (!empty(dds)) {
+    auto ddc = to_set(dds);
+
+    if (!(isl_set_is_singleton(ddc))) {
+      return {};
+    }
+    assert(isl_set_is_singleton(ddc));
+
+    int dd = to_int(lexminval(ddc));
+    cout << "DD           : " << dd << endl;
+    string writer_name = domain_name(pick(get_maps(writes)));
+    cout << "writer op    : " << writer_name << endl;
+    dd = dd;
+
+    return {dd};
+  } else {
+    return {};
+  }
+  return {};
 }
 
 
