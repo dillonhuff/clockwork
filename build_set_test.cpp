@@ -11578,7 +11578,7 @@ int run_verilator_on(const std::string& top_module,
 }
 
 void run_verilator_verilog_tb(const std::string& name) {
-  int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input ./coreir_compute/" + name + "_compute.json --output " + name + "_compute.v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input ./coreir_compute/" + name + "_compute.json --output " + name + "_compute.v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
   assert(compute_to_verilog_res == 0);
 
   int res = run_verilator_on(name, name + "_verilog_tb.cpp", {name + ".v", name + "_verilog_collateral.sv", "./lake_components/dualwithadd/lake_top.sv", name + "_compute.v"});
@@ -11589,7 +11589,7 @@ void run_verilator_tb(const std::string& name) {
 
   //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
   //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
   assert(to_verilog_res == 0);
 
   int res = run_verilator_on(name,
@@ -11612,6 +11612,13 @@ void generate_verilog_tb(const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
   int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+  assert(to_verilog_res == 0);
+}
+
+void generate_garnet_verilog_tb(const std::string& name) {
+
+    cmd("echo $LD_LIBRARY_PATH");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input aha_garnet_design/" + name + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 }
 
@@ -11645,6 +11652,7 @@ void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, Codegen
 
   auto sched = global_schedule_from_buffers(buffers_opt);
   generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
+  //generate_garnet_verilog_tb(prg.name);
 }
 #endif
 
@@ -13834,12 +13842,10 @@ void test_single_port_mem() {
   test_apps.push_back(conv_3_3());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
-
-  //TODO:need to update cgra mem
-  //test_apps.push_back(rom());
+  test_apps.push_back(rom());
 
   //TODO:has issue with high dimensional schedule with multiple input
-  //test_apps.push_back(demosaic_complex());
+  test_apps.push_back(demosaic_complex());
 
   //TODO:need to use the new scheduler
   //test_apps.push_back(resnet());

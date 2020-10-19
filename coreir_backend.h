@@ -82,9 +82,7 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     UBuffer& buf,
     schedule_info& hwinfo);
 
-void add_cgralib(CoreIR::Context* context);
-
-CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
+//CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
 
 void add_raw_dual_port_sram_generator(CoreIR::Context* c);
 

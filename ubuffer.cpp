@@ -1231,8 +1231,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       CoreIR::Instance* buf;
       CoreIR::Values genargs = {
         {"width", CoreIR::Const::make(context, port_widths)},
-        {"num_input", CoreIR::Const::make(context, banks_to_inputs.at(bk.name).size())},
-        {"num_output", CoreIR::Const::make(context, banks_to_outputs.at(bk.name).size())},
+        {"num_inputs", CoreIR::Const::make(context, banks_to_inputs.at(bk.name).size())},
+        {"num_outputs", CoreIR::Const::make(context, banks_to_outputs.at(bk.name).size())},
         {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
         {"has_flush",  CoreIR::Const::make(context, true)}
       };
