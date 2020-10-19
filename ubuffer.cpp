@@ -1242,8 +1242,10 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       cout << "Add ub node with input_num = " << banks_to_inputs.at(bk.name).size()
           << ", output_num = " << banks_to_outputs.at(bk.name).size() << endl;
       if (options.pass_through_valid) {
-        modargs["config"] = CoreIR::Const::make(context, config_file);
-        buf = def->addInstance(ub_ins_name, "cgralib.Mem", genargs, modargs);
+        //modargs["config"] = CoreIR::Const::make(context, config_file);
+        buf = def->addInstance(ub_ins_name, "cgralib.Mem", genargs);
+        buf->getMetaData()["config"] = config_file;
+        buf->getMetaData()["mode"] = string("lake");
       } else {
         genargs["config"] = CoreIR::Const::make(context, config_file);
         buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);

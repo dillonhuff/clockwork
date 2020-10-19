@@ -252,9 +252,9 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   auto CGRALibMemModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
     Params p; //params
     Values d; //defaults
-    p["mode"] = c->String();
+    //p["mode"] = c->String();
 
-    p["config"] = CoreIR::JsonType::make(c);
+    //p["config"] = CoreIR::JsonType::make(c);
 
     //p["depth"] = c->Int();
     //d["depth"] = Const::make(c,1024);

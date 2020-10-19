@@ -11652,7 +11652,7 @@ void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, Codegen
 
   auto sched = global_schedule_from_buffers(buffers_opt);
   generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
-  //generate_garnet_verilog_tb(prg.name);
+  generate_garnet_verilog_tb(prg.name);
 }
 #endif
 

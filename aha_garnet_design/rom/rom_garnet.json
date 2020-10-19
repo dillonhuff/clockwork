@@ -238,7 +238,7 @@
           "inner_compute$rom_curvea0$1":{
             "genref":"cgralib.Mem",
             "genargs":{"has_flush":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "modargs":{"config":["Json",{"init":[0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,13,14,14,14,14,15,15,15,15,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,22,22,22,22,23,23,23,23,24,24,24,24,25,25,25,25,26,26,26,26,27,27,27,27,28,28,28,28,29,29,29,29,30,30,30,30,31,31,31,31,32,32,32,32,33,33,33,33,34,34,34,34,35,35,35,35,36,36,36,36,37,37,37,37,38,38,38,38,39,39,39,39,40,40,40,40,41,41,41,41,42,42,42,42,43,43,43,43,44,44,44,44,45,45,45,45,46,46,46,46,47,47,47,47,48,48,48,48,49,49,49,49,50,50,50,50,51,51,51,51,52,52,52,52,53,53,53,53,54,54,54,54,55,55,55,55,56,56,56,56,57,57,57,57,58,58,58,58,59,59,59,59,60,60,60,60,61,61,61,61,62,62,62,62,63,63,63],"mode":"sram"}], "mode":["String","lake"]}
+            "metadata":{"config":["Json",{"init":[0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,13,14,14,14,14,15,15,15,15,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,22,22,22,22,23,23,23,23,24,24,24,24,25,25,25,25,26,26,26,26,27,27,27,27,28,28,28,28,29,29,29,29,30,30,30,30,31,31,31,31,32,32,32,32,33,33,33,33,34,34,34,34,35,35,35,35,36,36,36,36,37,37,37,37,38,38,38,38,39,39,39,39,40,40,40,40,41,41,41,41,42,42,42,42,43,43,43,43,44,44,44,44,45,45,45,45,46,46,46,46,47,47,47,47,48,48,48,48,49,49,49,49,50,50,50,50,51,51,51,51,52,52,52,52,53,53,53,53,54,54,54,54,55,55,55,55,56,56,56,56,57,57,57,57,58,58,58,58,59,59,59,59,60,60,60,60,61,61,61,61,62,62,62,62,63,63,63],"mode":"sram"}],"mode":["String","lake"]}
           },
           "inner_compute$smax_776_777_778$max_mux$mux":{
             "genref":"cgralib.PE",
@@ -264,8 +264,8 @@
         "connections":[
           ["inner_compute$smax_776_777_778$max_mux$mux.data.in.1","inner_compute$const_p0__777.out"],
           ["inner_compute$smax_776_777_778$scomp$compop.data.in.1","inner_compute$const_p0__7771.out"],
-          ["inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","inner_compute$const_p1023__775.out"],
-          ["inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","inner_compute$const_p1023__7751.out"],
+          ["inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","inner_compute$const_p1023__775.out"],
+          ["inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","inner_compute$const_p1023__7751.out"],
           ["self.clk","inner_compute$rom_curvea0$1.clk"],
           ["inner_compute$smax_776_777_778$max_mux$mux.data.out","inner_compute$rom_curvea0$1.data_in_0"],
           ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0","inner_compute$rom_curvea0$1.data_out_0"],
@@ -317,7 +317,7 @@
           "rom_curvea0$1":{
             "genref":"cgralib.Mem",
             "genargs":{"has_flush":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "modargs":{"config":["Json",{"init":[0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,13,14,14,14,14,15,15,15,15,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,22,22,22,22,23,23,23,23,24,24,24,24,25,25,25,25,26,26,26,26,27,27,27,27,28,28,28,28,29,29,29,29,30,30,30,30,31,31,31,31,32,32,32,32,33,33,33,33,34,34,34,34,35,35,35,35,36,36,36,36,37,37,37,37,38,38,38,38,39,39,39,39,40,40,40,40,41,41,41,41,42,42,42,42,43,43,43,43,44,44,44,44,45,45,45,45,46,46,46,46,47,47,47,47,48,48,48,48,49,49,49,49,50,50,50,50,51,51,51,51,52,52,52,52,53,53,53,53,54,54,54,54,55,55,55,55,56,56,56,56,57,57,57,57,58,58,58,58,59,59,59,59,60,60,60,60,61,61,61,61,62,62,62,62,63,63,63],"mode":"sram"}], "mode":["String","lake"]}
+            "metadata":{"config":["Json",{"init":[0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,13,14,14,14,14,15,15,15,15,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,22,22,22,22,23,23,23,23,24,24,24,24,25,25,25,25,26,26,26,26,27,27,27,27,28,28,28,28,29,29,29,29,30,30,30,30,31,31,31,31,32,32,32,32,33,33,33,33,34,34,34,34,35,35,35,35,36,36,36,36,37,37,37,37,38,38,38,38,39,39,39,39,40,40,40,40,41,41,41,41,42,42,42,42,43,43,43,43,44,44,44,44,45,45,45,45,46,46,46,46,47,47,47,47,48,48,48,48,49,49,49,49,50,50,50,50,51,51,51,51,52,52,52,52,53,53,53,53,54,54,54,54,55,55,55,55,56,56,56,56,57,57,57,57,58,58,58,58,59,59,59,59,60,60,60,60,61,61,61,61,62,62,62,62,63,63,63],"mode":"sram"}],"mode":["String","lake"]}
           },
           "smax_776_777_778$max_mux$mux":{
             "genref":"cgralib.PE",
@@ -343,8 +343,8 @@
         "connections":[
           ["smax_776_777_778$max_mux$mux.data.in.1","const_p0__777.out"],
           ["smax_776_777_778$scomp$compop.data.in.1","const_p0__7771.out"],
-          ["smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","const_p1023__775.out"],
-          ["smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","const_p1023__7751.out"],
+          ["smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","const_p1023__775.out"],
+          ["smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","const_p1023__7751.out"],
           ["self.clk","rom_curvea0$1.clk"],
           ["smax_776_777_778$max_mux$mux.data.out","rom_curvea0$1.data_in_0"],
           ["self.out_hw_output_stencil","rom_curvea0$1.data_out_0"],
@@ -421,7 +421,7 @@
           "op_hcompute_hw_output_stencil$inner_compute$rom_curvea0$1":{
             "genref":"cgralib.Mem",
             "genargs":{"has_flush":["Bool",false], "has_reset":["Bool",false], "has_stencil_valid":["Bool",false], "has_valid":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
-            "modargs":{"config":["Json",{"init":[0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,13,14,14,14,14,15,15,15,15,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,22,22,22,22,23,23,23,23,24,24,24,24,25,25,25,25,26,26,26,26,27,27,27,27,28,28,28,28,29,29,29,29,30,30,30,30,31,31,31,31,32,32,32,32,33,33,33,33,34,34,34,34,35,35,35,35,36,36,36,36,37,37,37,37,38,38,38,38,39,39,39,39,40,40,40,40,41,41,41,41,42,42,42,42,43,43,43,43,44,44,44,44,45,45,45,45,46,46,46,46,47,47,47,47,48,48,48,48,49,49,49,49,50,50,50,50,51,51,51,51,52,52,52,52,53,53,53,53,54,54,54,54,55,55,55,55,56,56,56,56,57,57,57,57,58,58,58,58,59,59,59,59,60,60,60,60,61,61,61,61,62,62,62,62,63,63,63],"mode":"sram"}], "mode":["String","lake"]}
+            "metadata":{"config":["Json",{"init":[0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,13,14,14,14,14,15,15,15,15,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,22,22,22,22,23,23,23,23,24,24,24,24,25,25,25,25,26,26,26,26,27,27,27,27,28,28,28,28,29,29,29,29,30,30,30,30,31,31,31,31,32,32,32,32,33,33,33,33,34,34,34,34,35,35,35,35,36,36,36,36,37,37,37,37,38,38,38,38,39,39,39,39,40,40,40,40,41,41,41,41,42,42,42,42,43,43,43,43,44,44,44,44,45,45,45,45,46,46,46,46,47,47,47,47,48,48,48,48,49,49,49,49,50,50,50,50,51,51,51,51,52,52,52,52,53,53,53,53,54,54,54,54,55,55,55,55,56,56,56,56,57,57,57,57,58,58,58,58,59,59,59,59,60,60,60,60,61,61,61,61,62,62,62,62,63,63,63],"mode":"sram"}],"mode":["String","lake"]}
           },
           "op_hcompute_hw_output_stencil$inner_compute$smax_776_777_778$max_mux$mux":{
             "genref":"cgralib.PE",
@@ -450,8 +450,8 @@
           ["op_hcompute_hw_output_stencil$inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.0","io16in_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_0.out"],
           ["op_hcompute_hw_output_stencil$inner_compute$smax_776_777_778$max_mux$mux.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p0__777.out"],
           ["op_hcompute_hw_output_stencil$inner_compute$smax_776_777_778$scomp$compop.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p0__7771.out"],
-          ["op_hcompute_hw_output_stencil$inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p1023__775.out"],
-          ["op_hcompute_hw_output_stencil$inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p1023__7751.out"],
+          ["op_hcompute_hw_output_stencil$inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p1023__775.out"],
+          ["op_hcompute_hw_output_stencil$inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","op_hcompute_hw_output_stencil$inner_compute$const_p1023__7751.out"],
           ["op_hcompute_hw_output_stencil$inner_compute$smax_776_777_778$max_mux$mux.data.out","op_hcompute_hw_output_stencil$inner_compute$rom_curvea0$1.data_in_0"],
           ["op_hcompute_hw_output_stencil$inner_compute$smax_776_777_778$scomp$compop.bit.out","op_hcompute_hw_output_stencil$inner_compute$smax_776_777_778$max_mux$mux.bit.in.0"],
           ["op_hcompute_hw_output_stencil$inner_compute$smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.out","op_hcompute_hw_output_stencil$inner_compute$smax_776_777_778$max_mux$mux.data.in.0"],
