@@ -13,6 +13,7 @@ prog pointwise(); //point
 prog brighten_blur(); //stencil
 prog halide_harris();
 prog conv_3_3(); //stencil
+prog conv_1_2(); //stencil
 prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 //prog mini_conv_halide_fixed();
