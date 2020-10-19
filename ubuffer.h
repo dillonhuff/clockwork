@@ -1525,6 +1525,39 @@ class UBuffer {
       }
     }
 
+    //For lake codegen banking chaining
+    int get_consumer_bank_dim_id() {
+      vector<int> id_candidate;
+      auto outpt_map = access_map.at(pick(get_out_ports()));
+      auto rng = to_set(range(outpt_map));
+      for(int i = 0; i < ::num_dims(rng); i ++) {
+        auto s = project_all_but(rng, i);
+        if (to_int(lexminval(s)) == to_int(lexmaxval(s))) {
+          id_candidate.push_back(i);
+        }
+      }
+      if (id_candidate.size() == 0)
+          return -1;
+      assert(id_candidate.size() == 1);
+      return pick(id_candidate);
+    }
+
+    int get_producer_bank_dim_id() {
+      vector<int> id_candidate;
+      auto inpt_map = access_map.at(pick(get_in_ports()));
+      auto rng = to_set(range(inpt_map));
+      for(int i = 0; i < ::num_dims(rng); i ++) {
+        auto s = project_all_but(rng, i);
+        if (to_int(lexminval(s)) == to_int(lexmaxval(s))) {
+          id_candidate.push_back(i);
+        }
+      }
+      if (id_candidate.size() == 0)
+          return -1;
+      assert(id_candidate.size() == 1);
+      return pick(id_candidate);
+    }
+
     int lanes_in_bundle(const std::string& bn) {
       assert(contains_key(bn, port_bundles));
       return map_find(bn, port_bundles).size();

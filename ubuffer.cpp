@@ -840,6 +840,19 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         for(int i = 0; i < port_width / bk_num; i ++) {
             range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
         }
+        //A processing pass for remove starting address in multiple bank cases
+        int project_dim;
+        if (is_read){
+          project_dim = buf.get_consumer_bank_dim_id();
+        } else {
+          project_dim = buf.get_producer_bank_dim_id();
+        }
+        if (project_dim != -1) {
+          cout << "before project: " << str(range_per_bank) << endl;
+          range_per_bank = project_out(range_per_bank, project_dim);
+
+          cout << "after project: " << str(range_per_bank) << endl;
+        }
         auto reduce_map = linear_address_map_lake(range_per_bank);
 
         for (int i = 0; i < bk_num; i ++)
@@ -857,9 +870,12 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
             if (need_mux) {
                 vector<int> mux_index;
                 vector<int> addr_index;
+                int bank_dim_id = buf.get_consumer_bank_dim_id();
+                assert(bank_dim_id == num_out_dims(map) - 2);
+                cout << "Auto Select bank id: " << bank_dim_id << "Hardcode: " << num_out_dims(map) - 2 << endl;
                 for (int i = num_out_dims(map)-1; i >= 0; i--) {
                     //FIXME: this is hardcoded
-                    if (i == num_out_dims(map) - 2) {
+                    if (i == bank_dim_id) {
                         mux_index.push_back(i);
                     } else {
                         addr_index.push_back(i);
@@ -896,7 +912,16 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
             int capacity = options.mem_tile.capacity.at(micro_buf_name);
             //int ww = is_read ?options.mem_tile.out_port_width.at(micro_buf_name)
             //    : options.mem_tile.in_port_width.at(micro_buf_name);
-            auto addr_expr_map = dot(to_map(bmap), reduce_map);
+
+            isl_map* project_access_map;
+            if (project_dim != -1) {
+              project_access_map = project_out(to_map(bmap), project_dim);
+            } else {
+              project_access_map = to_map(bmap);
+            }
+
+            auto addr_expr_map = dot(project_access_map, reduce_map);
+            cout << str(reduce_map) << endl << str(addr_expr_map) << endl;
             auto addr = get_aff(addr_expr_map);
             cout << str(addr) << endl;
             vals.merge(generate_config_from_aff_expr(addr, is_read, false, ww, capacity, pw));
