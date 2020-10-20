@@ -2048,6 +2048,14 @@ class UBuffer {
     //ubuffer coreir generation for tahoe memory tile
     void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
+
+    void generate_stencil_valid_config(CodegenOptions& options);
+    CoreIR::Instance* generate_lake_tile_instance(
+        CoreIR::ModuleDef* def,
+        CodegenOptions options,
+        string ub_ins_name,
+        size_t input_num, size_t output_num,
+        bool has_stencil_valid, bool has_flush);
 #endif
 
     vector<string> map2address(isl_map* m);

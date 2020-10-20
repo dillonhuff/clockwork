@@ -343,8 +343,8 @@
         "connections":[
           ["smax_776_777_778$max_mux$mux.data.in.1","const_p0__777.out"],
           ["smax_776_777_778$scomp$compop.data.in.1","const_p0__7771.out"],
-          ["smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","const_p1023__775.out"],
-          ["smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","const_p1023__7751.out"],
+          ["smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","const_p1023__775.out"],
+          ["smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","const_p1023__7751.out"],
           ["self.clk","rom_curvea0$1.clk"],
           ["smax_776_777_778$max_mux$mux.data.out","rom_curvea0$1.data_in_0"],
           ["self.out_hw_output_stencil","rom_curvea0$1.data_out_0"],

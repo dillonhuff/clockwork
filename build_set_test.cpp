@@ -13843,9 +13843,10 @@ void test_single_port_mem() {
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
 
   //TODO:has issue with high dimensional schedule with multiple input
-  test_apps.push_back(demosaic_complex());
+  //test_apps.push_back(demosaic_complex());
 
   //TODO:need to use the new scheduler
   //test_apps.push_back(resnet());

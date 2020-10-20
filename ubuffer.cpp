@@ -1075,6 +1075,72 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     return create_lake_config(data);
 }
 
+CoreIR::Instance* UBuffer::generate_lake_tile_instance(
+        ModuleDef* def,
+        CodegenOptions options,
+        string ub_ins_name,
+        size_t input_num, size_t output_num,
+        bool has_stencil_valid, bool has_flush) {
+
+  auto context = def->getContext();
+  CoreIR::Instance* buf;
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(context, port_widths)},
+    {"num_inputs", CoreIR::Const::make(context, input_num)},
+    {"num_outputs", CoreIR::Const::make(context, output_num)},
+    {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
+    {"has_flush",  CoreIR::Const::make(context, has_flush)}
+  };
+  CoreIR::Values modargs = {
+    {"mode", CoreIR::Const::make(context, "lake")}
+  };
+  if (has_stencil_valid) {
+    generate_stencil_valid_config(options);
+  }
+  cout << "Add ub node with input_num = " << input_num
+      << ", output_num = " << output_num << endl;
+  if (options.pass_through_valid) {
+    //modargs["config"] = CoreIR::Const::make(context, config_file);
+    buf = def->addInstance(ub_ins_name, "cgralib.Mem", genargs);
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = string("lake");
+  } else {
+    //TODO: remove cwlib in the future
+    genargs["config"] = CoreIR::Const::make(context, config_file);
+    buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
+  }
+
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+
+  //garnet wire reset to flush of memory
+  def->connect(buf->sel("flush"), def->sel("self.reset"));
+  def->connect(buf->sel("clk"), def->sel("self.clk"));
+  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+
+  //Wire stencil valid
+  //if (options.pass_through_valid) {
+  //  if (has_stencil_valid) {
+  //    def->connect(buf->sel("stencil_valid"), def->sel("self."+get_bundle(pick(outpts)) + "_extra_ctrl"));
+  //    use_memtile_gen_stencil_valid = true;
+  //  }
+  //}
+  return buf;
+}
+
+void UBuffer::generate_stencil_valid_config(CodegenOptions& options) {
+  auto outpt_sched = get_stencil_valid_sched(pick(bank_list).name);
+  cout << "original outpt schedule: " << str(get_outpt_sched()) << endl;
+  assert(isl_union_map_is_single_valued(outpt_sched));
+
+  auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, false);
+  cout << "Stencil Valid signal 1D: " << str(outpt_sched_1D) << endl;
+  auto sched = get_aff(outpt_sched_1D);
+  auto stencil_valid = emit_lake_controller_config(::domain(outpt_sched_1D), sched);
+  //FIXME:possible bug if one ubuffer contains more than one tile
+  add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
+}
+
 
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
@@ -1135,7 +1201,20 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   //generate all the ubuffer for internal vectorization
   auto rewrite_buffer = generate_ubuffer(options);
 
+  //Some control signal for stencil valid signal
   bool has_stencil_valid = false;
+  bool use_memtile_gen_stencil_valid = false;
+
+  //Judge if stencil valid is needed from the very beginning
+  if (options.pass_through_valid) {
+    //generate stencil valid
+    cout << "ubuffer global schedule: " << str(global_schedule()) << endl;
+    cout << "ubuffer output schedule: " << str(get_outpt_sched()) << endl;
+    if (!equal(global_outpt_sched(), get_outpt_sched())) {
+      has_stencil_valid = true;
+      use_memtile_gen_stencil_valid = false;
+    }
+  }
   for (auto bk : bank_list) {
     //assert(false);
     std::set<string> inpts = get_bank_inputs(bk.name);
@@ -1207,63 +1286,18 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
         buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
         config_file = generate_ubuf_args(options, rewrite_buffer);
-
       }
 
-      if (options.pass_through_valid) {
-        //generate stencil valid
-        cout << "ubuffer global schedule: " << str(global_schedule()) << endl;
-        cout << "ubuffer output schedule: " << str(get_outpt_sched()) << endl;
-        if (!equal(global_outpt_sched(), get_outpt_sched())) {
-          auto outpt_sched = get_stencil_valid_sched(bk.name);
-          cout << "original outpt schedule: " << str(get_outpt_sched()) << endl;
-          assert(isl_union_map_is_single_valued(outpt_sched));
-
-          auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, false);
-          cout << "Stencil Valid signal 1D: " << str(outpt_sched_1D) << endl;
-          auto sched = get_aff(outpt_sched_1D);
-          auto stencil_valid = emit_lake_controller_config(::domain(outpt_sched_1D), sched);
-          add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
-          has_stencil_valid = true;
-        }
-      }
-
-      CoreIR::Instance* buf;
-      CoreIR::Values genargs = {
-        {"width", CoreIR::Const::make(context, port_widths)},
-        {"num_inputs", CoreIR::Const::make(context, banks_to_inputs.at(bk.name).size())},
-        {"num_outputs", CoreIR::Const::make(context, banks_to_outputs.at(bk.name).size())},
-        {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
-        {"has_flush",  CoreIR::Const::make(context, true)}
-      };
-      CoreIR::Values modargs = {
-        {"mode", CoreIR::Const::make(context, "lake")}
-      };
-      cout << "Add ub node with input_num = " << banks_to_inputs.at(bk.name).size()
-          << ", output_num = " << banks_to_outputs.at(bk.name).size() << endl;
-      if (options.pass_through_valid) {
-        //modargs["config"] = CoreIR::Const::make(context, config_file);
-        buf = def->addInstance(ub_ins_name, "cgralib.Mem", genargs);
-        buf->getMetaData()["config"] = config_file;
-        buf->getMetaData()["mode"] = string("lake");
-      } else {
-        genargs["config"] = CoreIR::Const::make(context, config_file);
-        buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
-      }
-
-      CoreIR::Values widthArg = {{"width", CoreIR::Const::make(context, 1)}};
-      auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
-              {{"value", CoreIR::Const::make(context, true)}});
-      //def->connect(buf->sel("rst_n"), def->sel("self.reset"));
-      //TODO: why garnet wire reset to flush of memory
-      def->connect(buf->sel("flush"), def->sel("self.reset"));
-      def->connect(buf->sel("clk"), def->sel("self.clk"));
-      def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+      //create the tile instance
+      CoreIR::Instance* buf = generate_lake_tile_instance(def, options, ub_ins_name,
+        banks_to_inputs.at(bk.name).size(), banks_to_outputs.at(bk.name).size(),
+        has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
 
       //Wire stencil valid
       if (options.pass_through_valid) {
-        if (has_stencil_valid) {
+        if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
           def->connect(buf->sel("stencil_valid"), def->sel("self."+get_bundle(pick(outpts)) + "_extra_ctrl"));
+          use_memtile_gen_stencil_valid = true;
         }
       }
 
@@ -1319,8 +1353,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           }
           outpt_cnt++;
         }
-      }
-      else {
+      } else {
         //Wiring the multi input case
         for (auto inpt: inpts) {
           def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), pt2wire.at(inpt));
@@ -1345,6 +1378,19 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         }
       }
     }
+  }
+
+  //This is the situation that stencil valid is needed but do not have memtile in ubuffer
+  if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
+    CoreIR::Instance* buf = generate_lake_tile_instance(def, options,
+            this->name + "_stencil_valid_gen", 0, 0, true, true);
+    auto out_bds = get_out_bundles();
+
+    //Only consider one output bundle now
+    assert(out_bds.size() == 1);
+
+    def->connect(buf->sel("stencil_valid"), def->sel("self." + pick(out_bds) + "_extra_ctrl"));
+    use_memtile_gen_stencil_valid = true;
   }
 
   //wire the control var if not using stencil_Valid
