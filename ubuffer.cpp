@@ -936,6 +936,44 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     return ret;
 }
 
+/* Helper function for generating csv
+ * */
+void emit_lake_config2csv(json data, ofstream& out) {
+    cout << "\t\tEnter the specific controller" << endl;
+    for (auto it = data.begin(); it != data.end(); ++it) {
+        cout << "\t\t\tFeature: " << it.key() << ", val: " << it.value() << endl;
+        //cout << "\t\t\tis array" << it.value().is_array() << endl;
+        auto data_domain = it.value();
+        string key = it.key();
+        if (data_domain.is_array()) {
+          int cnt = 0;
+          for (auto data_it : data_domain) {
+            //cout << tab(2) << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
+            if (data_domain.size() == 1)
+              out << "\""+key+"\"," << data_it << ",0"<< endl;
+            else
+              out << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
+            cnt ++;
+          }
+        } else {
+            //cout << tab(2) << "\""+key+"\"," << data_domain << ",0"<< endl;
+            out << "\""+key+"\"," << data_domain << ",0"<< endl;
+        }
+    }
+}
+
+void UBuffer::emit_lake_config_collateral(CodegenOptions options, string tile_name) {
+    cout << "\tGenerate collateral for buffer: " << tile_name << endl;
+    string file_dir = options.dir + "lake_collateral/" + tile_name;
+    cmd("mkdir -p " + file_dir);
+    for (auto it = config_file.begin(); it != config_file.end(); ++it) {
+        cout << "\t\tconfig key: " << it.key() << ", " << it.value() << endl;
+        ofstream out(file_dir + "/" + it.key() + ".csv");
+        emit_lake_config2csv(it.value(), out);
+        out.close();
+    }
+}
+
 Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
   Json jdata;
   for (auto& map_pair : mem_conxs) {
@@ -1330,8 +1368,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         for (auto it: bk.delay_map) {
             cout << "Bank delay map: "  <<it.first << ", " << it.second << endl;
         }
-    vector<string> pt_vec(outpts.begin(), outpts.end());
-    sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+
+        vector<string> pt_vec(outpts.begin(), outpts.end());
+        sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
               auto l_start = lexminpt(range(access_map.at(l)));
               auto r_start = lexminpt(range(access_map.at(r)));
               return lex_lt_pt(l_start, r_start);
@@ -1377,6 +1416,10 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           outpt_cnt++;
         }
       }
+      //generate verilog collateral
+      cout << "Generating Verilog Testing Collateral for: " << buf->getModuleRef()->getGenerator()->toString() << endl;
+      //dump to root and mv later
+      emit_lake_config_collateral(options, ub_ins_name);
     }
   }
 

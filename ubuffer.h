@@ -2056,7 +2056,9 @@ class UBuffer {
         string ub_ins_name,
         size_t input_num, size_t output_num,
         bool has_stencil_valid, bool has_flush);
+    void emit_lake_config_collateral(CodegenOptions options, string dir);
 #endif
+
 
     vector<string> map2address(isl_map* m);
     vector<string> get_ram_address(const std::string& pt);
