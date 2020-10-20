@@ -1176,10 +1176,7 @@ void generate_platonic_ubuffer(
   for(auto pt: buf.get_all_ports())
   {
       string name = buf.container_bundle(pt);
-      if(name.find("write") != string::npos)
-          {
-          continue;
-          }
+      
       string ctrl_vars = name + "_ctrl_vars";
       string enable = (name.find("write") == string::npos) ? name + "_ren" : name + "_wen";
       if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
@@ -1195,7 +1192,7 @@ void generate_platonic_ubuffer(
       out << tab(4) << "$display(\"Different\");" << endl;
       out << tab(4) << "$display(" << ctrl_vars << "[1]);" << endl;
       out << tab(4) << "$display(" << gen_ctrl_vars << "[1]);" << endl;
-      //out << tab(4) << "$finish(-1);" << endl;
+      out << tab(4) << "$finish(-1);" << endl;
       out << tab(3) << "end" << endl;
       out << tab(2) << "end" << endl;
   }
