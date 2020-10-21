@@ -1171,7 +1171,7 @@ void generate_platonic_ubuffer(
       int dims = num_in_dims(aff);
       string gen_ctrl_vars = ctrl_vars + "_fsm_out";
       out << tab(2) << "if(" << enable << ")begin" << endl;
-      out << tab(3) << "if(" << ctrl_vars << "[1]!=" << gen_ctrl_vars << "[1]) begin" << endl;
+      out << tab(3) << "if(" << ctrl_vars << "!=" << gen_ctrl_vars << ") begin" << endl;
       out << tab(4) << "$display(\"Different\");" << endl;
       out << tab(4) << "$display(" << ctrl_vars << "[1]);" << endl;
       out << tab(4) << "$display(" << gen_ctrl_vars << "[1]);" << endl;
@@ -1217,7 +1217,8 @@ void generate_platonic_ubuffer(
           print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
       }
 
-
+    string bundle_ren = buf.container_bundle(outpt) + "_ren";
+    out << tab(2) << "if (" << bundle_ren << ") begin" << endl;
       out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
@@ -1225,6 +1226,7 @@ void generate_platonic_ubuffer(
       }
       out << tab(4) << "default: $finish(-1);" << endl;
       out << tab(3) << "endcase" << endl;
+      out << tab(2) << "end" << endl;
     }
   }
 
