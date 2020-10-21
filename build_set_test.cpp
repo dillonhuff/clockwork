@@ -11570,7 +11570,7 @@ void run_verilator_tb(const std::string& name) {
       //"./lake_components/wide_tile/lake_top_1_port.sv",
       //"./lake_components/ASPLOS_designs/bare_dual_port.v",
       "./lake_components/inner_affine_controller.sv"});
-
+  cmd("rm -rf obj_dir/");
   assert(res == 0);
   //int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
   //assert(verilator_build == 0);
@@ -16342,6 +16342,7 @@ vector<prog> all_cgra_programs() {
   //test_programs.push_back(accumulation());
 
 
+  test_programs.push_back(resnet());
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
@@ -16349,7 +16350,7 @@ vector<prog> all_cgra_programs() {
 
   test_programs.push_back(mobilenet_small());
 
-  test_programs.push_back(resnet());
+
 
 
 

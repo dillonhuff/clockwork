@@ -955,8 +955,9 @@ void generate_platonic_ubuffer(
   unordered_set<string> done_ctrl_vars;
 
   for(auto pt: buf.get_all_ports()){
-
-      string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+      string name = buf.container_bundle(pt);
+      string ctrl_vars = name + "_ctrl_vars";
+      string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
       if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
       {
           continue;
@@ -976,7 +977,7 @@ void generate_platonic_ubuffer(
 
       }
 
-      out << "module " << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0] );" << endl;
+      out << "module " << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output logic " << enable << " );" << endl;
       out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
       out << tab(1) << "integer i;" << endl;
       out << tab(1) << "integer dims = " << dims << ";" << endl;
@@ -986,6 +987,8 @@ void generate_platonic_ubuffer(
       out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
       out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
       }
+      out << tab(3) << enable << "<= 0;" << endl;
+
       out << tab(2) <<  "end else begin" << endl;
       out << tab(3) <<   "if(counter[0] ==" << to_int(const_coeff(aff)) - 1 << ") begin" << endl;
       out << tab(4) <<  ctrl_vars << brackets(str(0)) << "<= 16'b0;" << endl;
@@ -994,6 +997,8 @@ void generate_platonic_ubuffer(
         out << tab(4) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
         out << tab(4) <<  "counter " << brackets(str(i)) << " <= 16'b0;" << endl;
       }
+      out << tab(4) << enable << "<= 0;" << endl;
+
       out << tab(3) <<  "end else begin" << endl;
       out << tab(4) << "counter[0] <= counter[0] + 1;" << endl;
       out << tab(4) << "if(counter[1] == " << to_int(get_coeff(aff,1)) - 1 << ") begin" << endl;
@@ -1004,6 +1009,7 @@ void generate_platonic_ubuffer(
         out << tab(5) << ctrl_vars << brackets(str(i)) << "<= 0;" << endl;
       }
       out << tab(5) << ctrl_vars << "[1] <= " << ctrl_vars << "[1] + 1;" << endl;
+      out << tab(5) << enable << "<= 1;" << endl;
       for(int i = 2; i < dims; i ++)
       {
             out << tab(4) << "end else if(counter[" << i << "] == " << to_int(get_coeff(aff,i)) - 1 << ") begin" << endl;
@@ -1017,11 +1023,15 @@ void generate_platonic_ubuffer(
                 out << tab(5) << ctrl_vars << brackets(str(j)) << "<= 0;" << endl;
             }
             out << tab(5) << ctrl_vars << "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
+              out << tab(5) << enable << "<= 1;" << endl;
+
       }
       out << tab(4) << "end else begin" << endl;
       for(int i = 1; i < dims; i ++ ) {
         out << tab(5) << "counter" << brackets(str(i)) << " <= counter" << brackets(str(i)) << " + 1;" << endl;
       }
+        out << tab(5) << enable << "<= 0;" << endl;
+
       out << tab(4) << "end" << endl;
       out << tab(3) << "end" << endl;
        out << tab(2) << "end" << endl;
@@ -1044,7 +1054,9 @@ void generate_platonic_ubuffer(
   done_ctrl_vars.clear();
   for(auto pt: buf.get_all_ports())
   {
-      string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+      string name = buf.container_bundle(pt);
+      string ctrl_vars = name + "_ctrl_vars";
+      string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
       if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
       {
           continue;
@@ -1054,9 +1066,12 @@ void generate_platonic_ubuffer(
       int dims = num_in_dims(aff);
 
       out << tab(1) << "logic [15:0]" << ctrl_vars << "_fsm_out[" << dims -1 << ":0];" << endl;
+     out << tab(1) << "logic " << enable << "_fsm_out;" << endl;
+
       out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm " <<
       buf.name << "_" <<  buf.container_bundle(pt) << "_fsm_inst "
-      << "(.clk(clk), .flush(flush), .rst_n(rst_n), ." << ctrl_vars << "( " + ctrl_vars << "_fsm_out ));" << endl;
+      << "(.clk(clk), .flush(flush), .rst_n(rst_n), ." << ctrl_vars << "( " + ctrl_vars << "_fsm_out), ." << enable << "("
+      << enable << "_fsm_out));" << endl;
 
 
   }
@@ -1176,7 +1191,7 @@ void generate_platonic_ubuffer(
   for(auto pt: buf.get_all_ports())
   {
       string name = buf.container_bundle(pt);
-      
+
       string ctrl_vars = name + "_ctrl_vars";
       string enable = (name.find("write") == string::npos) ? name + "_ren" : name + "_wen";
       if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
