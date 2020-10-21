@@ -3876,6 +3876,45 @@ replace_variable(const address& addr, const std::string& var, const int v) {
   return comma_list(new_addr);
 }
 
+void ir_node::shift_address(const string & buf, const std::vector<int> & min_locs) {
+  //TODO: replace this into a method
+  for (auto & p : produce_locs) {
+    if (p.first == buf) {
+      cout << "Visit produce locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+      //cout << p.second.size() << endl;
+      for (size_t i = 0; i < p.second.size(); i ++ ) {
+          vector<string> new_addr;
+          vector<string> origin_addr = split_at(p.second.at(i).second, ",");
+          assert(origin_addr.size() == min_locs.size());
+          for (size_t dim = 0; dim < origin_addr.size(); dim ++) {
+              new_addr.push_back(origin_addr.at(dim) + "+" + to_string(- min_locs.at(dim)));
+              //cout << "norm address" << new_addr.at(dim) << endl;
+          }
+          p.second.at(i).second = comma_list(new_addr);
+      }
+      cout << "New produce locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+    }
+  }
+
+  for (auto & p : consume_locs_pair) {
+    if (p.first == buf) {
+      cout << "Visit consume locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+      //cout << p.second.size() << endl;
+      for (size_t i = 0; i < p.second.size(); i ++ ) {
+          vector<string> new_addr;
+          vector<string> origin_addr = split_at(p.second.at(i).second, ",");
+          assert(origin_addr.size() == min_locs.size());
+          for (size_t dim = 0; dim < origin_addr.size(); dim ++) {
+              new_addr.push_back(origin_addr.at(dim) + "+" + to_string(- min_locs.at(dim)));
+              //cout << "norm address" << new_addr.at(dim) << endl;
+          }
+          p.second.at(i).second = comma_list(new_addr);
+      }
+      cout << "New consume locations: " << p.first << ": addr =  " <<  str(p.second) << endl;
+    }
+  }
+}
+
 void ir_node::replace_variable(const std::string& var, const std::string& val) {
 
   for (auto& addr : produce_locs) {
@@ -5308,7 +5347,7 @@ void generate_verilator_tb(prog& prg,
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
       //out.first + "_" + out.second + "_en";
-      out.first + "_" + out.second + "_en";
+      out.first + "_" + out.second + "_valid";
     rgtb << tab(1) << "int " << ctrl_name << "_count = 0;" << endl;
   }
 
@@ -5321,7 +5360,7 @@ void generate_verilator_tb(prog& prg,
   rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
   for (auto out : inputs(buffers, prg)) {
     string ctrl_name =
-      out.first + "_" + out.second + "_valid";
+      out.first + "_" + out.second + "_en";
     string data_name =
       "dut." + out.first + "_" + out.second;
     rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
@@ -5332,7 +5371,7 @@ void generate_verilator_tb(prog& prg,
 
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
-      out.first + "_" + out.second + "_en";
+      out.first + "_" + out.second + "_valid";
     string data_name =
       "dut." + out.first + "_" + out.second;
     rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
@@ -5353,7 +5392,7 @@ void generate_verilator_tb(prog& prg,
 
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
-      out.first + "_" + out.second + "_en";
+      out.first + "_" + out.second + "_valid";
     rgtb << tab(2) << "cout << " << ctrl_name << "_count << endl;" << endl;
   }
 
@@ -5456,6 +5495,13 @@ map<op*, isl_map*> prog::producer_maps(const std::string& buf) {
     }
   }
   return m;
+}
+
+void prog::shift_address_range(const std::string& buf, const std::vector<int>& min_locs) {
+  auto ops = root->all_ops();
+  for (auto  op : ops) {
+    op->shift_address(buf, min_locs);
+  }
 }
 
 map<op*, isl_map*> prog::consumer_maps(const std::string& buf) {
@@ -5731,7 +5777,7 @@ void normalize_address_offsets(prog& prg) {
     if (prods.size() > 0) {
       int ndims = num_dims((range(pick(prods).second)));
       for (int d = 0; d < ndims; d++) {
-        min_offset.push_back(9999999); // TODO: Replace with int max value
+        min_offset.push_back(INT_MAX); // TODO: Replace with int max value
       }
 
       for (auto opm : prods) {
@@ -5752,9 +5798,19 @@ void normalize_address_offsets(prog& prg) {
       // we can ignore the buffer for normalization, since
       // there are no accesses to it
       assert(cons.size() > 0);
-      int ndims = num_dims((range(pick(cons).second)));
+      cout << cons.size() << endl;
+      isl_map* tmp = nullptr;
+      for (auto con: cons) {
+          if (con.second) {
+            tmp = con.second;
+            break;
+          }
+      }
+      assert(tmp != nullptr);
+      //cout << str(pick(cons).second) << endl;
+      int ndims = num_dims(range(tmp));
       for (int d = 0; d < ndims; d++) {
-        min_offset.push_back(9999999); // TODO: Replace with int max value
+        min_offset.push_back(INT_MAX); // TODO: Replace with int max value
       }
     }
 
@@ -5773,6 +5829,9 @@ void normalize_address_offsets(prog& prg) {
       }
     }
     cout << tab(2) << "Min offset (counting only writers): " << sep_list(min_offset, "", "", ", ") << endl;
+
+    prg.shift_address_range(b, min_offset);
+    //prg.pretty_print();
   }
 }
 
@@ -5849,5 +5908,44 @@ bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
   }
 
   return has_latency && has_offset;
+}
+
+bool share_resource(const std::string& op0, const std::string& op1, schedule_info& sched) {
+  resource_instance i0;
+  for (auto r : sched.resource_assignment) {
+    if (r.first->name == op0) {
+      i0 = r.second;
+    }
+  }
+  resource_instance i1;
+  for (auto r : sched.resource_assignment) {
+    if (r.first->name == op1) {
+      i1 = r.second;
+    }
+  }
+  return i0 == i1;
+}
+
+bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
+  auto sched_exprs = 
+    its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  cout << "Times: " << str(sched_exprs) << endl;
+  for (auto op0 : get_maps(sched_exprs)) {
+    for (auto op1 : get_maps(sched_exprs)) {
+      string name0 = domain_name(op0);
+      string name1 = domain_name(op1);
+      if (name0 != name1 && share_resource(name0, name1, sched)) {
+        cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
+        auto times = range(op0);
+        auto times1 = range(op1);
+        auto overlap = its(times, times1);
+        cout << tab(2) << "Overlap: " << str(overlap) << endl;
+        if (!empty(overlap)) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
 }
 

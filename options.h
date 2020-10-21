@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <set>
 
 using namespace std;
@@ -46,6 +47,22 @@ struct RTLOptions {
   TargetTile target_tile;
 
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false) {}
+  //RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), use_prebuilt_memory(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
+};
+
+struct LakeCollateral {
+    std::unordered_map<string, int> word_width;
+    std::unordered_map<string, int> bank_num;
+    std::unordered_map<string, int> capacity;
+    std::unordered_map<string, int> in_port_width;
+    std::unordered_map<string, int> out_port_width;
+
+    LakeCollateral():
+        word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
+        in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
+        out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
+        bank_num({{"agg", 2}, {"sram", 1}, {"tb", 2}}),
+        capacity({{"agg", 4}, {"sram", 512}, {"tb", 16}}) {}
 };
 
 struct CodegenOptions {
@@ -60,6 +77,14 @@ struct CodegenOptions {
   //TODO:for merge banks, we should separate codegen from rewrite
   bool conditional_merge;
   size_t merge_threshold;
+
+  //Use for create hardware schedule
+  bool inline_vectorization;
+  vector<int> iis;
+
+  //Use for garnet
+  bool pass_through_valid;
+  string dir;
 
   bool use_epochs;
   int num_input_epochs;
@@ -77,10 +102,13 @@ struct CodegenOptions {
   RTLOptions rtl_options;
 
   DebugOptions debug_options;
+  LakeCollateral mem_tile;
 
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
   use_custom_code_string(false), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
+  inline_vectorization(false), iis({}),
+  pass_through_valid(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),
   push_garbage_outputs(false),

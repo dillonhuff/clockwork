@@ -820,4 +820,59 @@ namespace dbhc {
 
 }
 
+template<typename T>
+T prod_after(const std::vector<T>& strides, const int i) {
+  T r = 1;
+  for (int s = i; s < (int) strides.size(); s++) {
+    r *= strides.at(s);
+  }
+  return r;
+}
+
+template<typename T>
+T prod_before(const std::vector<T>& strides, const int i) {
+  T r = 1;
+  for (int s = 0; s < std::min(i, (int) strides.size()); s++) {
+    r *= strides.at(s);
+  }
+  return r;
+}
+
+template<typename T>
+T card(const std::vector<T>& strides) {
+  return prod_after(strides, 0);
+}
+
+template<typename T>
+std::vector<T> strides(const std::vector<T>& lengths) {
+  std::vector<T> strs;
+  for (int i = 0; i < (int) lengths.size(); i++) {
+    strs.push_back(prod_after(lengths, i + 1));
+  }
+  return strs;
+}
+
+template<typename T>
+T position(const std::vector<T>& indexes, const std::vector<T>& lengths) {
+  auto strs = strides(lengths);
+  T r = 0;
+  for (int i = 0; i < (int) strs.size(); i++) {
+    r += lengths.at(i)*strs.at(i);
+  }
+  return r;
+}
+
+template<typename T>
+std::vector<T> indexes(const T& position, const std::vector<T>& lengths) {
+  std::vector<T> inds;
+  auto strs = strides(lengths);
+  T current = position;
+  for (int i = 0; i < (int) strs.size(); i++) {
+    T coeff = floor(current / strs.at(i));
+    inds.push_back(coeff);
+    current = current - coeff*strs.at(i);
+  }
+  return inds;
+}
+
 #endif

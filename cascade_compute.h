@@ -1,6 +1,6 @@
 #pragma once
 #include "hw_classes.h"
-#include "conv_3x3.h"
+#include "clockwork_standard_compute_units.h"
 
 
 //store is: hw_input_global_wrapper.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
@@ -55,7 +55,7 @@ hw_uint<16> hcompute_conv2_stencil() {
   return _322;
 }
 
-//store is: conv2.stencil(conv2_s1_x, conv2_s1_y) = ((conv1.stencil(conv2_s1_x, conv2_s1_y)*(uint16)33) + (conv2.stencil(conv2_s1_x, conv2_s1_y) + (((conv1.stencil((conv2_s1_x + 1), conv2_s1_y)*(uint16)2) + (conv1.stencil((conv2_s1_x + 2), conv2_s1_y) + ((conv1.stencil(conv2_s1_x, (conv2_s1_y + 1))*(uint16)2) + ((conv1.stencil((conv2_s1_x + 1), (conv2_s1_y + 1))*(uint16)4) + ((conv1.stencil((conv2_s1_x + 2), (conv2_s1_y + 1))*(uint16)2) + (conv1.stencil(conv2_s1_x, (conv2_s1_y + 2)) + (conv1.stencil((conv2_s1_x + 2), (conv2_s1_y + 2)) + (conv1.stencil((conv2_s1_x + 1), (conv2_s1_y + 2))*(uint16)2))))))))*(uint16)33)))
+//store is: conv2.stencil(conv2_s1_x, conv2_s1_y) = (conv1.stencil(conv2_s1_x, conv2_s1_y) + (conv2.stencil(conv2_s1_x, conv2_s1_y) + ((conv1.stencil((conv2_s1_x + 1), conv2_s1_y)*(uint16)2) + (conv1.stencil((conv2_s1_x + 2), conv2_s1_y) + ((conv1.stencil(conv2_s1_x, (conv2_s1_y + 1))*(uint16)2) + ((conv1.stencil((conv2_s1_x + 1), (conv2_s1_y + 1))*(uint16)4) + ((conv1.stencil((conv2_s1_x + 2), (conv2_s1_y + 1))*(uint16)2) + (conv1.stencil(conv2_s1_x, (conv2_s1_y + 2)) + (conv1.stencil((conv2_s1_x + 2), (conv2_s1_y + 2)) + (conv1.stencil((conv2_s1_x + 1), (conv2_s1_y + 2))*(uint16)2))))))))))
 hw_uint<16> hcompute_conv2_stencil_1(hw_uint<144>& conv1_stencil, hw_uint<16>& conv2_stencil) {
   uint16_t _conv1_stencil_10 = (uint16_t) conv1_stencil.extract<0, 15>();
   uint16_t _conv1_stencil_2 = (uint16_t) conv1_stencil.extract<16, 31>();
@@ -69,26 +69,23 @@ hw_uint<16> hcompute_conv2_stencil_1(hw_uint<144>& conv1_stencil, hw_uint<16>& c
 
   uint16_t _conv2_stencil_1 = (uint16_t) conv2_stencil.extract<0, 15>();
 
-  uint16_t _325 = (uint16_t)(33);
-  uint16_t _326 = _conv1_stencil_2 * _325;
-  uint16_t _327 = (uint16_t)(2);
-  uint16_t _328 = _conv1_stencil_3 * _327;
-  uint16_t _329 = _conv1_stencil_5 * _327;
-  uint16_t _330 = (uint16_t)(4);
-  uint16_t _331 = _conv1_stencil_6 * _330;
-  uint16_t _332 = _conv1_stencil_7 * _327;
-  uint16_t _333 = _conv1_stencil_10 * _327;
-  uint16_t _334 = _conv1_stencil_9 + _333;
-  uint16_t _335 = _conv1_stencil_8 + _334;
-  uint16_t _336 = _332 + _335;
-  uint16_t _337 = _331 + _336;
-  uint16_t _338 = _329 + _337;
-  uint16_t _339 = _conv1_stencil_4 + _338;
-  uint16_t _340 = _328 + _339;
-  uint16_t _341 = _340 * _325;
-  uint16_t _342 = _conv2_stencil_1 + _341;
-  uint16_t _343 = _326 + _342;
-  return _343;
+  uint16_t _325 = (uint16_t)(2);
+  uint16_t _326 = _conv1_stencil_3 * _325;
+  uint16_t _327 = _conv1_stencil_5 * _325;
+  uint16_t _328 = (uint16_t)(4);
+  uint16_t _329 = _conv1_stencil_6 * _328;
+  uint16_t _330 = _conv1_stencil_7 * _325;
+  uint16_t _331 = _conv1_stencil_10 * _325;
+  uint16_t _332 = _conv1_stencil_9 + _331;
+  uint16_t _333 = _conv1_stencil_8 + _332;
+  uint16_t _334 = _330 + _333;
+  uint16_t _335 = _329 + _334;
+  uint16_t _336 = _327 + _335;
+  uint16_t _337 = _conv1_stencil_4 + _336;
+  uint16_t _338 = _326 + _337;
+  uint16_t _339 = _conv2_stencil_1 + _338;
+  uint16_t _340 = _conv1_stencil_2 + _339;
+  return _340;
 }
 
 //store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi) = conv2.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi)
