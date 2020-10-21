@@ -18571,6 +18571,8 @@ bool all_ops_scheduled(schedule_info& sched, prog& prg) {
 }
 
 void tile_for_time_sharing(prog& prg) {
+  assert(is_rate_matchable(prg));
+
   vector<isl_map*> mps;
   for (auto m : get_maps(prg.validity_deps())) {
     mps.push_back(project_all_but(m, 1));
@@ -18602,7 +18604,7 @@ void dhuff_playground() {
   prog prg("time_sharing_pyramid_1d");
 
   prg.add_input("in");
-  prg.add_output("out");
+  prg.add_output("b2");
 
   {
     auto ld = prg.add_loop("i0", 0, 1)->add_op("cpy");
@@ -18615,6 +18617,7 @@ void dhuff_playground() {
     ld->add_load("b0", "2*x0 + 0");
     ld->add_load("b0", "2*x0 + 1");
     ld->add_store("b1", "x0");
+    ld->add_function("add_2");
   }
 
   {
@@ -18622,13 +18625,17 @@ void dhuff_playground() {
     ld->add_load("b1", "2*x1 + 0");
     ld->add_load("b1", "2*x1 + 1");
     ld->add_store("b2", "x1");
+    ld->add_function("add_2");
   }
 
   infer_bounds("b2", {16}, prg);
+  auto unopt = unoptimized_result(prg);
   prg.pretty_print();
 
   tile_for_time_sharing(prg);
   prg.pretty_print();
+  auto tiled = unoptimized_result(prg);
+  compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
 }
 
 int main(int argc, char** argv) {
