@@ -1218,6 +1218,11 @@ void generate_platonic_ubuffer(
     }
 
     string bundle_wen = buf.container_bundle(in) + "_wen";
+    out << tab(2) << "if (" << bundle_wen << "!=" << bundle_wen << "_fsm_out) begin" << endl;
+    out << tab(4)<< "$display(" << bundle_wen << ");" << endl;
+      out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
+    //out << tab(3) << "$finish(-1);" << endl;
+    out << tab(2) << "end" << endl;
     out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
 
 
