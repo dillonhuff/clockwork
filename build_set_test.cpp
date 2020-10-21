@@ -18600,7 +18600,31 @@ void tile_for_time_sharing(prog& prg) {
 
 }
 
+void test_time_sharing_gaussian_pyramid() {
+  int num_pyramid_levels = 4;
+
+  prog prg("time_sharing_gauss_pyramid");
+
+  prg.add_input("in");
+  prg.add_output("out");
+
+  load_input("in", "gray", 2, prg);
+
+  // Make input Gaussian pyramid
+  vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
+  cpy("out", gray_levels.back(), 2, prg);
+
+  infer_bounds("out", {4, 4}, prg);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+
+  prg.pretty_print();
+  assert(false);
+}
+
 void dhuff_playground() {
+  test_time_sharing_gaussian_pyramid();
   prog prg("time_sharing_pyramid_1d");
 
   prg.add_input("in");
