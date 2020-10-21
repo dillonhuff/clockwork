@@ -3806,6 +3806,10 @@ vector<op*> surrounding_vars_ops(op* loop, prog& prg) {
   return surrounding;
 }
 
+vector<string> surrounding_vars(const std::string& op, prog& prg) {
+  return surrounding_vars(prg.find_op(op), prg);
+}
+
 vector<string> surrounding_vars(op* loop, prog& prg) {
   assert(loop != nullptr);
   vector<string> surrounding;

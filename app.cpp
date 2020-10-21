@@ -858,7 +858,7 @@ map<string, isl_val*> simplify(const vector<pair<string, isl_val*> >& terms) {
 }
 
 map<isl_map*, vector<pair<isl_val*, isl_val*> > >
-extract_schedule_params(vector<isl_map*>& deps) {
+extract_schedule_params(const vector<isl_map*>& deps) {
 
   vector<isl_map*> consumed_data;
   for (auto d : deps) {
@@ -949,7 +949,7 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
 }
 
 map<string, isl_val*>
-compute_qfactors(vector<isl_map*>& deps) {
+compute_qfactors(const vector<isl_map*>& deps) {
   auto schedule_params =
     extract_schedule_params(deps);
 
