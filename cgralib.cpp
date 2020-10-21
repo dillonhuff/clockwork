@@ -184,6 +184,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"has_valid", c->Bool()},
         {"has_stencil_valid", c->Bool()},
         {"has_flush", c->Bool()},
+        {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
         {"has_reset", c->Bool()}
     });
 
@@ -242,6 +243,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
   auto cgralib_mem_gen = cgralib->newGeneratorDecl("Mem", cgralib->getTypeGen("cgralib_mem_type"), cgralibmemparams);
   cgralib_mem_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
   cgralib_mem_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_valid", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});

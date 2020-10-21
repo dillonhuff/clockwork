@@ -65,6 +65,56 @@ vector<string> split_at(const string& t, const string& delimiter) {
   return tokens;
 }
 
+/* remove string and substitute with other string
+ * trim space
+ * https://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
+ * */
+static inline
+std::string trim(const std::string& str,
+        const std::string& whitespace = " \t")
+{
+    const auto strBegin = str.find_first_not_of(whitespace);
+    if (strBegin == std::string::npos)
+        return ""; // no content
+
+    const auto strEnd = str.find_last_not_of(whitespace);
+    const auto strRange = strEnd - strBegin + 1;
+
+    return str.substr(strBegin, strRange);
+}
+
+static inline
+std::string reduce(const std::string& str,
+        const std::string& fill = " ",
+        const std::string& whitespace = " \t")
+{
+    //trim first
+    auto result = trim(str, whitespace);
+
+    // replace sub ranges
+    auto beginSpace = result.find_first_of(whitespace);
+    while (beginSpace != std::string::npos) {
+
+        const auto endSpace = result.find_first_not_of(whitespace, beginSpace);
+        const auto range = endSpace - beginSpace;
+
+        result.replace(beginSpace, range, fill);
+
+
+        const auto newStart = beginSpace + fill.length();
+        beginSpace = result.find_first_of(whitespace, newStart);
+    }
+
+    return result;
+}
+
+static inline
+string take_from(const std::string& s, const std::string& delim) {
+  std::size_t found = s.find(delim);
+  found += delim.size();
+  return s.substr(found, s.size() - found);
+}
+
 static inline
 string take_until(const std::string& s, const std::string& delim) {
   std::size_t found = s.find_first_of(delim);

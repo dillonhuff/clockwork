@@ -1127,6 +1127,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     {"num_inputs", CoreIR::Const::make(context, input_num)},
     {"num_outputs", CoreIR::Const::make(context, output_num)},
     {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())},
     {"has_flush",  CoreIR::Const::make(context, has_flush)}
   };
   CoreIR::Values modargs = {
@@ -1416,14 +1417,36 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           outpt_cnt++;
         }
       }
+
       //generate verilog collateral
-      cout << "Generating Verilog Testing Collateral for: " << buf->getModuleRef()->getGenerator()->toString() << endl;
-      //dump to root and mv later
+      cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
+          << buf->getModuleRef()->toString() << endl;
+
+      //FIXME: a hack to get correct module name, fix this after coreIR update
+      string v_name = take_from(buf->getModuleRef()->toString(), ": ");
+      v_name = take_until_str(v_name, "Type");
+      v_name = trim(v_name);
+      v_name = trim(v_name, "\n");
+      v_name = ReplaceString(v_name, ".", "_");
+      v_name = ReplaceString(v_name, "(","__");
+      v_name = ReplaceString(v_name, ":", "");
+      v_name = ReplaceString(v_name, ", ", "__");
+      v_name = ReplaceString(v_name, ")", "");
+      cout << "Verilog module type: " << v_name << endl;
+
+      //dump the collateral file
       emit_lake_config_collateral(options, ub_ins_name);
+
+      //run the lake generation cmd
+      //cmd("export LAKE_CONTROLLER=/nobackup/joeyliu/aha/poly/clockwork/");
+      cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
+      cmd("python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+      cmd("mkdir -p "+options.dir+"verilog");
+      cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
     }
   }
 
-  //This is the situation that stencil valid is needed but do not have memtile in ubuffer
+  //This is the situation that stencil valid is needed but do not have memtile in ubufub_ins_namefer
   if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
     CoreIR::Instance* buf = generate_lake_tile_instance(def, options,
             this->name + "_stencil_valid_gen", 0, 0, true, true);

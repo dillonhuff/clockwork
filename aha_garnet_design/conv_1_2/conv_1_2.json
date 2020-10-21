@@ -12,7 +12,7 @@
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "_U1":{
+          "_U2":{
             "genref":"mantle.reg",
             "genargs":{"has_clr":["Bool",false], "has_en":["Bool",false], "has_rst":["Bool",false], "width":["Int",16]},
             "modargs":{"init":[["BitVector",16],"16'h0000"]}
@@ -40,8 +40,8 @@
           }
         },
         "connections":[
-          ["self.clk","_U1.clk"],
-          ["self.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U1.in"],
+          ["self.clk","_U2.clk"],
+          ["self.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","_U2.in"],
           ["self.clk","conv_stencil.clk"],
           ["op_hcompute_conv_stencil_1.conv_stencil_op_hcompute_conv_stencil_1_write","conv_stencil.op_hcompute_conv_stencil_1_write"],
           ["op_hcompute_conv_stencil_1.valid_pass_out","conv_stencil.op_hcompute_conv_stencil_1_write_extra_ctrl"],
@@ -258,7 +258,7 @@
           },
           "hw_input_global_wrapper_stencil_stencil_valid_gen":{
             "genref":"cgralib.Mem",
-            "genargs":{"has_flush":["Bool",true], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "width":["Int",16]},
+            "genargs":{"ID":["String","_U1"], "has_flush":["Bool",true], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "num_inputs":["Int",0], "num_outputs":["Int",0], "width":["Int",16]},
             "metadata":{"config":{"stencil_valid":{"cycle_starting_addr":[1],"cycle_stride":[1,64,0],"dimensionality":3,"extent":[63,64,1]}},"mode":"lake"}
           },
           "hw_input_global_wrapper_stencil_stencil_valid_gen_clk_en_const":{
