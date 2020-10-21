@@ -18570,6 +18570,20 @@ bool all_ops_scheduled(schedule_info& sched, prog& prg) {
   return true;
 }
 
+void naively_extend_bounds_to_multiple_of(op* loop, const int inner_tile_size) {
+  loop->pretty_print();
+  if (loop->trip_count() % inner_tile_size == 0)  {
+    return;
+  }
+
+  cout << tab(1) << "Tile size:  " << inner_tile_size << endl;
+  cout << tab(1) << "Trip count: " << loop->trip_count() << endl;
+  assert(loop->start == 0);
+  loop->end_exclusive = loop->end_exclusive + (inner_tile_size - loop->trip_count() % inner_tile_size);
+  loop->pretty_print();
+  assert(loop->trip_count() % inner_tile_size == 0);
+}
+
 void tile_for_time_sharing(prog& prg) {
   assert(is_rate_matchable(prg));
 
@@ -18595,7 +18609,9 @@ void tile_for_time_sharing(prog& prg) {
     string name = q.first.substr(2);
     int inner_tile_size = max / to_int(q.second);
     cout << tab(1) << name << " -> " << max / to_int(q.second) << endl;
-    strip_mine(inner_tile_size, surrounding_vars(name, prg).at(1), prg);
+    op* loop = prg.find_loop(surrounding_vars(name, prg).at(1));
+    naively_extend_bounds_to_multiple_of(loop, inner_tile_size);
+    strip_mine(inner_tile_size, loop, prg);
   }
 
 }
@@ -18618,7 +18634,11 @@ void test_time_sharing_gaussian_pyramid() {
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
+  normalize_bounds(prg);
 
+  prg.pretty_print();
+
+  tile_for_time_sharing(prg);
   prg.pretty_print();
   assert(false);
 }
