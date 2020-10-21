@@ -18584,10 +18584,54 @@ void naively_extend_bounds_to_multiple_of(op* loop, const int inner_tile_size) {
   assert(loop->trip_count() % inner_tile_size == 0);
 }
 
+void push_below(loop* outer, loop* inner, prog& prg) {
+  assert(outer->children.size() == 1);
+  assert(pick(outer->children) == inner);
+
+  cout << "Original outer..." << endl;
+  outer->pretty_print();
+
+  vector<op*> inner_children = inner->children;
+
+  for (auto lp : prg.all_loops()) {
+    if (elem(outer, lp->children)) {
+      lp->replace_child(outer, inner);
+    }
+  }
+
+  outer->children = inner_children;
+  inner->children = {outer};
+
+  auto old_parent = outer->parent;
+  inner->parent = old_parent;
+  outer->parent = inner;
+
+  cout << "New outer..." << endl;
+  inner->pretty_print();
+}
+
+void push_to_bottom_of_band_ignoring(vector<loop*>& base, loop* lp, prog& prg) {
+  assert(lp->is_loop);
+  assert(lp->children.size() == 1);
+
+  int old_num_loops = prg.all_loops().size();
+  prg.pretty_print();
+
+  if (!is_inner_loop(lp) && !elem(pick(lp->children), base)) {
+    auto inner_lp = pick(lp->children);
+    push_below(lp, inner_lp, prg);
+    push_to_bottom_of_band_ignoring(base, lp, prg);
+  }
+
+  prg.pretty_print();
+  assert(prg.all_loops().size() == old_num_loops);
+}
+
 void tile_for_time_sharing(prog& prg) {
   assert(is_rate_matchable(prg));
   int num_levels = loop_depth(prg.root);
 
+  map<string, vector<op*> > inner_tiles;
   for (int level = num_levels - 1; level > 0; level--) {
     vector<isl_map*> mps;
     for (auto m : get_maps(prg.validity_deps())) {
@@ -18609,42 +18653,23 @@ void tile_for_time_sharing(prog& prg) {
     cout << "Tile factors..." << endl;
     for (auto q : qfs) {
       string name = q.first.substr(2);
+      if (!contains_key(name, inner_tiles)) {
+        inner_tiles[name] = {};
+      }
       int inner_tile_size = max / to_int(q.second);
       cout << tab(1) << name << " -> " << max / to_int(q.second) << endl;
       op* loop = prg.find_loop(surrounding_vars(name, prg).at(level));
       naively_extend_bounds_to_multiple_of(loop, inner_tile_size);
-      strip_mine(inner_tile_size, loop, prg);
+      op* inner_tile_loop = strip_mine(inner_tile_size, loop, prg);
+      inner_tiles[name].push_back(inner_tile_loop);
     }
-
   }
 
-  //vector<isl_map*> mps;
-  //for (auto m : get_maps(prg.validity_deps())) {
-    //mps.push_back(project_all_but(m, 1));
-    //release(m);
-  //}
-  //map<string, isl_val*> qfs =
-    //compute_qfactors(mps);
-  //cout << "QFactors..." << endl;
-  //int max = -1;
-  //for (auto q : qfs) {
-    //cout << tab(1) << q.first << " -> " << str(q.second) << endl;
-    //if (to_int(q.second) > max) {
-      //max = to_int(q.second);
-    //}
-  //}
-  //assert(max >= 1);
-
-  //cout << "Tile factors..." << endl;
-  //for (auto q : qfs) {
-    //string name = q.first.substr(2);
-    //int inner_tile_size = max / to_int(q.second);
-    //cout << tab(1) << name << " -> " << max / to_int(q.second) << endl;
-    //op* loop = prg.find_loop(surrounding_vars(name, prg).at(1));
-    //naively_extend_bounds_to_multiple_of(loop, inner_tile_size);
-    //strip_mine(inner_tile_size, loop, prg);
-  //}
-
+  for (auto& ent : inner_tiles) {
+    for (auto lp : ent.second) {
+      push_to_bottom_of_band_ignoring(ent.second, lp, prg);
+    }
+  }
 }
 
 void test_time_sharing_gaussian_pyramid() {
@@ -18671,11 +18696,9 @@ void test_time_sharing_gaussian_pyramid() {
 
   tile_for_time_sharing(prg);
   prg.pretty_print();
-  assert(false);
 }
 
 void dhuff_playground() {
-  test_time_sharing_gaussian_pyramid();
   prog prg("time_sharing_pyramid_1d");
 
   prg.add_input("in");
@@ -18711,6 +18734,8 @@ void dhuff_playground() {
   prg.pretty_print();
   auto tiled = unoptimized_result(prg);
   compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
+
+  test_time_sharing_gaussian_pyramid();
 }
 
 int main(int argc, char** argv) {
