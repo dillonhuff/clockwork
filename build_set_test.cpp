@@ -18570,40 +18570,35 @@ bool all_ops_scheduled(schedule_info& sched, prog& prg) {
   return true;
 }
 
+void tile_for_time_sharing(prog& prg) {
+  vector<isl_map*> mps;
+  for (auto m : get_maps(prg.validity_deps())) {
+    mps.push_back(project_all_but(m, 1));
+    release(m);
+  }
+  map<string, isl_val*> qfs =
+    compute_qfactors(mps);
+  cout << "QFactors..." << endl;
+  int max = -1;
+  for (auto q : qfs) {
+    cout << tab(1) << q.first << " -> " << str(q.second) << endl;
+    if (to_int(q.second) > max) {
+      max = to_int(q.second);
+    }
+  }
+  assert(max >= 1);
+
+  cout << "Tile factors..." << endl;
+  for (auto q : qfs) {
+    string name = q.first.substr(2);
+    int inner_tile_size = max / to_int(q.second);
+    cout << tab(1) << name << " -> " << max / to_int(q.second) << endl;
+    strip_mine(inner_tile_size, surrounding_vars(name, prg).at(1), prg);
+  }
+
+}
+
 void dhuff_playground() {
-  //{
-    //prog prg("time_sharing_pyramid_1d");
-    //prg.add_input("in");
-    //prg.add_output("out");
-
-    //auto ld = prg.add_loop("i0", 0, 1)->add_loop("i1", 0, 1)->add_op("cpy");
-    //ld->add_load("in", "i0, i1");
-    //ld->add_store("b0", "i0, i1");
-
-    //auto ro = prg.add_loop("i", 0, 1)->add_loop("j", 0, 1)->add_op("ro");
-    //ro->add_load("b0", "i - 1, j + 1");
-    ////ro->add_load("b0", "i - 1, j");
-    //ro->add_store("b0", "i, j");
-
-    //auto st = prg.add_loop("s0", 0, 1)->add_loop("s1", 0, 1)->add_op("wo");
-    //st->add_load("b0", "s0, s1");
-    //st->add_store("b1", "s0, s1");
-    //infer_bounds("b1", {16, 16}, prg);
-
-    //prg.pretty_print();
-    //auto valid = prg.validity_deps();
-    //cout << "valid: " << str(valid) << endl;
-    //auto ro_sched = rdmap(prg.ctx, "{ ro[r, i, j] -> [r, j, i] }");
-    ////auto ro_sched = rdmap(prg.ctx, "{ ro[r, i, j] -> [r, i, j] }");
-    //auto later_in_new_sched = lex_gt(ro_sched, ro_sched);
-    //cout << "later in interchanged loop nest: " << str(later_in_new_sched) << endl;
-
-    //auto violated = its(later_in_new_sched, valid);
-    //cout << "violated: " << str(violated) << endl;
-
-    //assert(false);
-  //}
-
   prog prg("time_sharing_pyramid_1d");
 
   prg.add_input("in");
@@ -18632,104 +18627,8 @@ void dhuff_playground() {
   infer_bounds("b2", {16}, prg);
   prg.pretty_print();
 
-  vector<isl_map*> mps;
-  for (auto m : get_maps(prg.validity_deps())) {
-    mps.push_back(project_all_but(m, 1));
-    release(m);
-  }
-  map<string, isl_val*> qfs =
-    compute_qfactors(mps);
-  cout << "QFactors..." << endl;
-  int max = -1;
-  for (auto q : qfs) {
-    cout << tab(1) << q.first << " -> " << str(q.second) << endl;
-    if (to_int(q.second) > max) {
-      max = to_int(q.second);
-    }
-  }
-  assert(max >= 1);
-
-  cout << "Tile factors..." << endl;
-  for (auto q : qfs) {
-    string name = q.first.substr(2);
-    int inner_tile_size = max / to_int(q.second);
-    cout << tab(1) << name << " -> " << max / to_int(q.second) << endl;
-    strip_mine(inner_tile_size, surrounding_vars(name, prg).at(1), prg);
-  }
-
+  tile_for_time_sharing(prg);
   prg.pretty_print();
-
-  {
-    vector<isl_map*> mps;
-    for (auto m : get_maps(prg.validity_deps())) {
-      mps.push_back(project_all_but(m, 1));
-      release(m);
-    }
-    map<string, isl_val*> qfs =
-      compute_qfactors(mps);
-    cout << "QFactors..." << endl;
-    int max = -1;
-    for (auto q : qfs) {
-      cout << tab(1) << q.first << " -> " << str(q.second) << endl;
-      if (to_int(q.second) > max) {
-        max = to_int(q.second);
-      }
-    }
-  }
-
-
-  //auto xi = strip_mine(2, "x0", prg);
-  //auto ii = strip_mine(4, "i0", prg);
-  //prg.pretty_print();
-
-  //auto options = garnet_codegen_options(prg);
-  //schedule_info sched = garnet_schedule_info(options, prg);
-
-  //sched.resource_assignment[prg.find_op("cpy")] =
-  //{"cpy_r", 0};
-  //sched.resource_assignment[prg.find_op("ldin0")] =
-  //{"gp_unit", 0};
-  //sched.resource_assignment[prg.find_op("ldin1")] =
-  //{"gp_unit", 0};
-
-  //cout << "Inner x" << endl;
-  //xi->pretty_print();
-  //cout << "Inner i" << endl;
-  //ii->pretty_print();
-
-  ////schedule_info sched = garnet_schedule_info(options, prg);
-  //garnet_dual_port_ram_schedule(sched, prg.root, prg);
-  //cout << "Before scheduling inner loops..." << endl;
-  //print_partial_schedule(sched, prg);
-
-  //sequential_schedule(sched, xi, prg);
-  //sequential_schedule(sched, ii, prg);
-  //sequential_schedule(sched, prg.find_op("ldin1"), prg);
-
-  //cout << "After scheduling inner loops..." << endl;
-  //print_partial_schedule(sched, prg);
-
-  //cout << endl;
-  //cout << "Getting ops" << endl;
-  //vector<op*> outer = ops_at_level(1, prg);
-  //fuse_sequentially(outer, sched, prg);
-
-  //sched.loop_iis["root"] = sched.instance_latency(prg.find_loop("root"));
-
-  //cout << endl;
-  //cout << "After fusing outer loops..." << endl;
-  //print_partial_schedule(sched, prg);
-
-  //cout << endl;
-  //cout << "Unscheduled..." << endl;
-  //for (auto s : unscheduled_nodes(sched, prg)) {
-    //cout << tab(1) << s->name << endl;
-  //}
-
-  //assert(unscheduled_nodes(sched, prg).size() + fully_scheduled_nodes(sched, prg).size() == prg.all_nodes().size());
-  //assert(all_ops_scheduled(sched, prg));
-  //assert(no_violated_resource_assignments(sched, prg));
-  //assert(no_violated_cycle_accurate_dependencies(sched, prg));
 }
 
 int main(int argc, char** argv) {
