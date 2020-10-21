@@ -18586,33 +18586,64 @@ void naively_extend_bounds_to_multiple_of(op* loop, const int inner_tile_size) {
 
 void tile_for_time_sharing(prog& prg) {
   assert(is_rate_matchable(prg));
+  int num_levels = loop_depth(prg.root);
 
-  vector<isl_map*> mps;
-  for (auto m : get_maps(prg.validity_deps())) {
-    mps.push_back(project_all_but(m, 1));
-    release(m);
-  }
-  map<string, isl_val*> qfs =
-    compute_qfactors(mps);
-  cout << "QFactors..." << endl;
-  int max = -1;
-  for (auto q : qfs) {
-    cout << tab(1) << q.first << " -> " << str(q.second) << endl;
-    if (to_int(q.second) > max) {
-      max = to_int(q.second);
+  for (int level = num_levels - 1; level > 0; level--) {
+    vector<isl_map*> mps;
+    for (auto m : get_maps(prg.validity_deps())) {
+      mps.push_back(project_all_but(m, level));
+      release(m);
     }
-  }
-  assert(max >= 1);
+    map<string, isl_val*> qfs =
+      compute_qfactors(mps);
+    cout << "QFactors..." << endl;
+    int max = -1;
+    for (auto q : qfs) {
+      cout << tab(1) << q.first << " -> " << str(q.second) << endl;
+      if (to_int(q.second) > max) {
+        max = to_int(q.second);
+      }
+    }
+    assert(max >= 1);
 
-  cout << "Tile factors..." << endl;
-  for (auto q : qfs) {
-    string name = q.first.substr(2);
-    int inner_tile_size = max / to_int(q.second);
-    cout << tab(1) << name << " -> " << max / to_int(q.second) << endl;
-    op* loop = prg.find_loop(surrounding_vars(name, prg).at(1));
-    naively_extend_bounds_to_multiple_of(loop, inner_tile_size);
-    strip_mine(inner_tile_size, loop, prg);
+    cout << "Tile factors..." << endl;
+    for (auto q : qfs) {
+      string name = q.first.substr(2);
+      int inner_tile_size = max / to_int(q.second);
+      cout << tab(1) << name << " -> " << max / to_int(q.second) << endl;
+      op* loop = prg.find_loop(surrounding_vars(name, prg).at(level));
+      naively_extend_bounds_to_multiple_of(loop, inner_tile_size);
+      strip_mine(inner_tile_size, loop, prg);
+    }
+
   }
+
+  //vector<isl_map*> mps;
+  //for (auto m : get_maps(prg.validity_deps())) {
+    //mps.push_back(project_all_but(m, 1));
+    //release(m);
+  //}
+  //map<string, isl_val*> qfs =
+    //compute_qfactors(mps);
+  //cout << "QFactors..." << endl;
+  //int max = -1;
+  //for (auto q : qfs) {
+    //cout << tab(1) << q.first << " -> " << str(q.second) << endl;
+    //if (to_int(q.second) > max) {
+      //max = to_int(q.second);
+    //}
+  //}
+  //assert(max >= 1);
+
+  //cout << "Tile factors..." << endl;
+  //for (auto q : qfs) {
+    //string name = q.first.substr(2);
+    //int inner_tile_size = max / to_int(q.second);
+    //cout << tab(1) << name << " -> " << max / to_int(q.second) << endl;
+    //op* loop = prg.find_loop(surrounding_vars(name, prg).at(1));
+    //naively_extend_bounds_to_multiple_of(loop, inner_tile_size);
+    //strip_mine(inner_tile_size, loop, prg);
+  //}
 
 }
 
