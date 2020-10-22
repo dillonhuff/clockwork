@@ -930,9 +930,18 @@ void generate_platonic_ubuffer(
       assert(get_maps(buf.schedule.at(pt)).size()==1);
       auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
       int dims = num_in_dims(aff);
-
+      isl_set * dom = domain(get_maps(buf.schedule.at(pt))[0]);
+//        cout << "domain " << str(dom) << endl;
+//        cout << get_dim(dom) << endl;
+//        cout << get_dim_max(dom,0) << endl;
+//        cout << get_dim_min(dom,0) << endl;
+//        cout << get_dim_max(dom,1) << endl;
+//        cout << get_dim_min(dom,1) << endl;
+//        cout << get_dim_max(dom,2) << endl;
+//        cout << get_dim_min(dom,2) << endl;
       out << "//" << str(get_maps(buf.schedule.at(pt))[0]) << endl;
-      cout << dims << endl;
+//      cout << dims << endl;
+//      assert(false);
 
       cout << to_int(const_coeff(aff)) << endl;
       for(int i = 0; i < dims; i ++)
@@ -941,27 +950,40 @@ void generate_platonic_ubuffer(
 
       }
 
-      out << "module " << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output logic " << enable << " );" << endl;
+      out << "module " << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
       out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
+      out << tab(1) << "logic on;" << endl;
+      out << tab(1) << "logic on2;" << endl;
       out << tab(1) << "integer i;" << endl;
       out << tab(1) << "integer dims = " << dims << ";" << endl;
+
+      string condition = "assign " + enable + " =(on && on2 && " + ctrl_vars + brackets(str(0)) + "==0";
+      for(int i =1; i< dims; i ++)
+      {
+        condition += " && " + ctrl_vars + brackets(str(i)) + "<=" + str(get_dim_max(dom,i));
+        //condition += " && " + ctrl_vars + brackets(str(i)) + ">=0";
+      }
+      condition += ");";
+      out << tab(1) << condition << endl;
+
       out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
       out << tab(2) << "if (~rst_n) begin" << endl;
       for(int i = 0; i < dims ;i ++) {
-      out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
+      out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b1010101010101010;" << endl;
       out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
       }
-      out << tab(3) << enable << "<= 0;" << endl;
-
+      out << tab(3) << "on <=0;" << endl;
+      out << tab(3) << "on2 <= 0;" << endl;
       out << tab(2) <<  "end else begin" << endl;
       out << tab(3) <<   "if(counter[0] ==" << to_int(const_coeff(aff)) - 1 << ") begin" << endl;
+      out << tab(4) << "on <=1;" << endl;
+      out << tab(4) << "on2 <= 1;" << endl;
       out << tab(4) <<  ctrl_vars << brackets(str(0)) << "<= 16'b0;" << endl;
       out << tab(4) <<  "counter" << brackets(str(0)) << " <= counter" << brackets(str(0)) << "+1;" << endl;
       for(int i = 1; i < dims ;i ++) {
         out << tab(4) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
         out << tab(4) <<  "counter " << brackets(str(i)) << " <= 16'b0;" << endl;
       }
-      out << tab(4) << enable << "<= 0;" << endl;
 
       out << tab(3) <<  "end else begin" << endl;
       out << tab(4) << "counter[0] <= counter[0] + 1;" << endl;
@@ -973,7 +995,7 @@ void generate_platonic_ubuffer(
         out << tab(5) << ctrl_vars << brackets(str(i)) << "<= 0;" << endl;
       }
       out << tab(5) << ctrl_vars << "[1] <= " << ctrl_vars << "[1] + 1;" << endl;
-      out << tab(5) << enable << "<= 1;" << endl;
+      out << tab(5) << "on2 <= 1;" <<endl;
       for(int i = 2; i < dims; i ++)
       {
             out << tab(4) << "end else if(counter[" << i << "] == " << to_int(get_coeff(aff,i)) - 1 << ") begin" << endl;
@@ -987,15 +1009,13 @@ void generate_platonic_ubuffer(
                 out << tab(5) << ctrl_vars << brackets(str(j)) << "<= 0;" << endl;
             }
             out << tab(5) << ctrl_vars << "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
-              out << tab(5) << enable << "<= 1;" << endl;
-
+            out << tab(5) << "on2 <= 1;" << endl;
       }
       out << tab(4) << "end else begin" << endl;
       for(int i = 1; i < dims; i ++ ) {
         out << tab(5) << "counter" << brackets(str(i)) << " <= counter" << brackets(str(i)) << " + 1;" << endl;
       }
-        out << tab(5) << enable << "<= 0;" << endl;
-
+        out << tab(5) << "on2 <= 0;" << endl;
       out << tab(4) << "end" << endl;
       out << tab(3) << "end" << endl;
        out << tab(2) << "end" << endl;
@@ -1173,9 +1193,13 @@ void generate_platonic_ubuffer(
       out << tab(2) << "if(" << enable << ")begin" << endl;
       out << tab(3) << "if(" << ctrl_vars << "!=" << gen_ctrl_vars << ") begin" << endl;
       out << tab(4) << "$display(\"Different\");" << endl;
-      out << tab(4) << "$display(" << ctrl_vars << "[1]);" << endl;
-      out << tab(4) << "$display(" << gen_ctrl_vars << "[1]);" << endl;
-      out << tab(4) << "$finish(-1);" << endl;
+//      out << tab(4) << "$display(" << ctrl_vars << "[1]);" << endl;
+//      out << tab(4) << "$display(" << gen_ctrl_vars << "[1]);" << endl;
+//      out << tab(4) << "$display(" << ctrl_vars << "[2]);" << endl;
+//      out << tab(4) << "$display(" << gen_ctrl_vars << "[2]);" << endl;
+//      out << tab(4) << "$display(" << ctrl_vars << "[0]);" << endl;
+//      out << tab(4) << "$display(" << gen_ctrl_vars << "[0]);" << endl;
+      //out << tab(4) << "$finish(-1);" << endl;
       out << tab(3) << "end" << endl;
       out << tab(2) << "end" << endl;
   }
@@ -1186,12 +1210,12 @@ void generate_platonic_ubuffer(
     }
 
     string bundle_wen = buf.container_bundle(in) + "_wen";
-//    out << tab(2) << "if (" << bundle_wen << "!=" << bundle_wen << "_fsm_out) begin" << endl;
-//    out << tab(4)<< "$display(" << bundle_wen << ");" << endl;
-//      out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
+    out << tab(2) << "if (" << bundle_wen << "!=" << bundle_wen << "_fsm_out) begin" << endl;
+    out << tab(4)<< "$display(" << bundle_wen << ");" << endl;
+      out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
     //out << tab(3) << "$finish(-1);" << endl;
-//    out << tab(2) << "end" << endl;
-    out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
+    out << tab(2) << "end" << endl;
+    out << tab(2) << "if (" << bundle_wen << "_fsm_out) begin" << endl;
 
 
     out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
@@ -1218,6 +1242,11 @@ void generate_platonic_ubuffer(
       }
 
     string bundle_ren = buf.container_bundle(outpt) + "_ren";
+    out << tab(2) << "if (" << bundle_ren << "!=" << bundle_ren << "_fsm_out) begin" << endl;
+    out << tab(4)<< "$display(" << bundle_ren << ");" << endl;
+      out << tab(4) << "$display("<< bundle_ren << "_fsm_out);" << endl;
+    out << tab(3) << "$finish(-1);" << endl;
+    out << tab(2) << "end" << endl;
     out << tab(2) << "if (" << bundle_ren << ") begin" << endl;
       out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
       for (int b = 0; b < num_banks; b++) {
