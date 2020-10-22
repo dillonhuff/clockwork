@@ -1567,6 +1567,7 @@ void all_register_files(prog& prg, CodegenOptions& options);
 int compile_compute(const std::string& name);
 
 vector<string> surrounding_vars(op* loop, prog& prg);
+vector<string> surrounding_vars(const std::string& op, prog& prg);
 vector<op*> surrounding_vars_ops(op* loop, prog& prg);
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
 

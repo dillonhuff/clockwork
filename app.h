@@ -1063,7 +1063,7 @@ string compute_unit_string(const num_type tp,
 }
 
 map<string, isl_val*>
-compute_qfactors(vector<isl_map*>& deps);
+compute_qfactors(const vector<isl_map*>& deps);
 
 map<string, vector<int> >
 pad_insertion_indexes(uset* domain, umap* validity);
