@@ -3920,10 +3920,16 @@ void ir_node::shift_address(const string & buf, const std::vector<int> & min_loc
 }
 
 void ir_node::replace_variable(const std::string& var, const std::string& val) {
+  if (is_loop) {
+    for (auto c : children) {
+      c->replace_variable(var, val);
+    }
+  }
 
   for (auto& addr : produce_locs) {
     piecewise_address pw;
     for (auto& comp : addr.second) {
+      cout << "replacing " << var << " with " << val << " in " << comp.second << endl;
       pw.push_back({comp.first, ::replace_variable(comp.second, var, val)});
     }
     addr.second = pw;
@@ -3938,8 +3944,13 @@ void ir_node::replace_variable(const std::string& var, const std::string& val) {
   }
 
 }
-void ir_node::replace_variable(const std::string& var, const int val) {
 
+void ir_node::replace_variable(const std::string& var, const int val) {
+  if (is_loop) {
+    for (auto c : children) {
+      c->replace_variable(var, val);
+    }
+  }
   for (auto& addr : produce_locs) {
     piecewise_address pw;
     for (auto& comp : addr.second) {

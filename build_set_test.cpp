@@ -18672,10 +18672,43 @@ void tile_for_time_sharing(prog& prg) {
   }
 }
 
+void test_outer_strip_mine() {
+  prog prg("time_sharing_pyramid_1d");
+
+  prg.add_input("in");
+  prg.add_output("b1");
+
+  {
+    auto ld = prg.add_loop("i0", 0, 1)->add_loop("i1", 0, 1)->add_op("cpy");
+    ld->add_load("in", "i0, i1");
+    ld->add_store("b0", "i0, i1");
+  }
+
+  {
+    auto ld = prg.add_loop("x0", 0, 1)->add_loop("x1", 0, 1)->add_op("ldin0");
+    ld->add_load("b0", "2*x0 + 0, 2*x1 + 1");
+    ld->add_load("b0", "2*x0 + 1, 2*x1 + 1");
+    ld->add_store("b1", "x0, x1");
+    ld->add_function("add_2");
+  }
+
+
+  infer_bounds("b1", {4, 4}, prg);
+  auto unopt = unoptimized_result(prg);
+
+  strip_mine(2, "x0", prg);
+  prg.pretty_print();
+
+  auto strip_mined = unoptimized_result(prg);
+  prg.pretty_print();
+  compare("outer_strip_mine_" + prg.name + "_vs_unopt", strip_mined, unopt);
+}
+
 void test_time_sharing_gaussian_pyramid() {
   int num_pyramid_levels = 4;
 
   prog prg("time_sharing_gauss_pyramid");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
 
   prg.add_input("in");
   prg.add_output("out");
@@ -18692,13 +18725,20 @@ void test_time_sharing_gaussian_pyramid() {
   merge_basic_block_ops(prg);
   normalize_bounds(prg);
 
+  auto unopt = unoptimized_result(prg);
+
   prg.pretty_print();
 
   tile_for_time_sharing(prg);
   prg.pretty_print();
+
+  auto tiled = unoptimized_result(prg);
+  compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
 }
 
 void dhuff_playground() {
+  test_outer_strip_mine();
+
   prog prg("time_sharing_pyramid_1d");
 
   prg.add_input("in");
