@@ -18588,9 +18588,6 @@ void push_below(loop* outer, loop* inner, prog& prg) {
   assert(outer->children.size() == 1);
   assert(pick(outer->children) == inner);
 
-  cout << "Original outer..." << endl;
-  outer->pretty_print();
-
   vector<op*> inner_children = inner->children;
 
   for (auto lp : prg.all_loops()) {
@@ -18605,9 +18602,6 @@ void push_below(loop* outer, loop* inner, prog& prg) {
   auto old_parent = outer->parent;
   inner->parent = old_parent;
   outer->parent = inner;
-
-  cout << "New outer..." << endl;
-  inner->pretty_print();
 }
 
 void push_to_bottom_of_band_ignoring(vector<loop*>& base, loop* lp, prog& prg) {
@@ -18705,7 +18699,7 @@ void test_outer_strip_mine() {
 }
 
 void test_time_sharing_gaussian_pyramid() {
-  int num_pyramid_levels = 4;
+  int num_pyramid_levels = 2;
 
   prog prg("time_sharing_gauss_pyramid");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
@@ -18730,6 +18724,7 @@ void test_time_sharing_gaussian_pyramid() {
   prg.pretty_print();
 
   tile_for_time_sharing(prg);
+  prg.name = "time_sharing_gauss_pyramid_tiled";
   prg.pretty_print();
 
   auto tiled = unoptimized_result(prg);
