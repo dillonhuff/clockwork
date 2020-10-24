@@ -585,6 +585,8 @@ isl_val* neg(isl_val* a);
 isl_aff* sub(isl_aff* a, isl_aff* b);
 int to_int(isl_val* a);
 
+isl_multi_aff* sub(isl_multi_aff* a, isl_multi_aff* b);
+
 isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v);
 isl_aff* set_const_coeff(isl_aff* const a, isl_val* v);
 isl_val* coeff(isl_aff* const a, const int pos);
@@ -642,12 +644,16 @@ isl_basic_set* zero(isl_basic_set* fs, const int var);
 std::string codegen_c(isl_aff* const bset);
 isl_set* set_name(isl_set* const m, string new_name);
 isl_aff* set_name(isl_aff* const m, string new_name);
+isl_multi_aff* set_name(isl_multi_aff* const m, string new_name);
+isl_multi_aff* set_in_name(isl_multi_aff* const m, string new_name);
 
 void release(isl_set* s);
 void release(isl_map* m);
 void release(isl_union_set* s);
 void release(isl_union_map* m);
 void release(isl_union_pw_qpolynomial* m);
+void release(isl_aff* s);
+
 isl_multi_aff* get_multi_aff(isl_union_map* m);
 isl_multi_aff* get_multi_aff(isl_map* m);
 

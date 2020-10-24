@@ -16726,6 +16726,16 @@ bool all_operations_assigned_to_resources(schedule_info& sched, prog& prg) {
   return true;
 }
 
+bool is_cst(isl_multi_aff* diff) {
+  for (auto aff : get_affs(diff)) {
+    if (!isl_aff_is_cst(aff)) {
+      return false;
+    }
+    release(aff);
+  }
+  return true;
+}
+
 void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
   normalize_bounds(prg);
 
@@ -16775,6 +16785,43 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
   assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
 
   auto buffers = build_buffers(prg, hw_sched);
+
+  for (auto& bufe : buffers) {
+    auto& buf = bufe.second;
+    maybe<std::set<int> > part =
+      embarassing_partition(buf, sched);
+    vector<vector<string> > filtered_io_groups =
+      overlapping_large_io_port_groups(buf, 1);
+
+    if (filtered_io_groups.size() > 0 && !part.has_value()) {
+      cout << tab(1) << "======= No embarassing partition for " << buf.name << endl;
+      cout << tab(2) << "Groups" << endl;
+      for (auto gp : filtered_io_groups) {
+        cout << tab(3) << "------ GP" << endl;
+        for (auto pt : gp) {
+          cout << tab(4) << pt << endl;
+          isl_multi_aff* aff = get_multi_aff(buf.access_map.at(pt));
+          cout << tab(5) << str(aff) << endl;
+        }
+      }
+
+      bool all_diffs_constant = true;
+      for (auto gp : filtered_io_groups) {
+        for (auto pt0 : gp) {
+          for (auto pt1 : gp) {
+            isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
+            isl_multi_aff* aff1 = set_in_name(get_multi_aff(buf.access_map.at(pt1)), "s");
+            auto diff = sub(aff0, aff1);
+            cout << tab(5) << "Diff: " << str(diff) << endl;
+            if (!is_cst(diff)) {
+              all_diffs_constant = false;
+            }
+          }
+        }
+      }
+      assert(all_diffs_constant);
+    }
+  }
 
 #ifdef COREIR
 
@@ -18732,6 +18779,23 @@ void test_time_sharing_gaussian_pyramid() {
 }
 
 void dhuff_playground() {
+  for (auto prg : all_cgra_programs()) {
+    cout << "====== Running CGRA test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    dsa_writers(prg);
+    prg.pretty_print();
+
+    compile_for_garnet_platonic_mem(prg);
+  }
+  assert(false);
+
+  {
+    auto prg = three_level_memory();
+    prg.pretty_print();
+    assert(false);
+  }
   test_outer_strip_mine();
 
   prog prg("time_sharing_pyramid_1d");

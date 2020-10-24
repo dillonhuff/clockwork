@@ -3,6 +3,7 @@
 #ifdef COREIR
 
 #include "prog.h"
+
 #define COREMK(ctx, v) CoreIR::Const::make((ctx), (v))
 
 static inline
@@ -135,4 +136,12 @@ CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
     const std::string& out_name,
     CoreIR::Wireable* w,
     const int cycles);
+
+void generate_platonic_ubuffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
 #endif
+
