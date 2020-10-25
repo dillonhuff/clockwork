@@ -1,6 +1,6 @@
 #include "codegen.h"
 
-using namespace minihls;
+//using namespace minihls;
 
 
 //module_type* sr_buffer(block& blk, const int width, const int depth) {
