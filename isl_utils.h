@@ -673,3 +673,4 @@ isl_aff* div(isl_aff* start_time_aff, const int compute_latency);
 std::vector<isl_aff*> get_affs(isl_multi_aff* saff);
 std::map<int, isl_val*> constant_components(isl_multi_aff* access);
 isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str);
+isl_val* constant(isl_aff* a);

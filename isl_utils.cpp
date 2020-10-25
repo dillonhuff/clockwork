@@ -3725,3 +3725,8 @@ std::map<int, isl_val*> constant_components(isl_multi_aff* access) {
   }
   return ret;
 }
+
+isl_val* constant(isl_aff* a) {
+  return isl_aff_get_constant_val(a);
+}
+

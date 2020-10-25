@@ -10555,10 +10555,6 @@ void blur_and_downsample_test() {
   regression_test(prg);
 }
 
-isl_val* constant(isl_aff* a) {
-  return isl_aff_get_constant_val(a);
-}
-
 void playground() {
     //{
     //isl_ctx* ctx = isl_ctx_alloc();
@@ -16818,6 +16814,47 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
             }
           }
         }
+      }
+      if (all_diffs_constant) {
+        cout << "All diffs constant. Looking for cyclic banking..." << endl;
+        vector<string> vars;
+        vector<int> factors;
+        for (int d = 0; d < buf.logical_dimension(); d++) {
+          vars.push_back("d_" + str(d));
+          int min_offset = INT_MAX;
+          int max_offset = INT_MIN;
+          for (auto gp : filtered_io_groups) {
+            for (auto pt0 : gp) {
+              isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
+              isl_aff* aff = isl_multi_aff_get_aff(aff0, d);
+              int offset = to_int(constant(aff));
+              if (offset < min_offset) {
+                min_offset = offset;
+              }
+              if (offset > max_offset) {
+                max_offset = offset;
+              }
+            }
+          }
+          cout << tab(1) << "min = " << min_offset << endl;
+          cout << tab(1) << "max = " << max_offset << endl;
+          cout << tab(1) << "bf  = " << (max_offset - min_offset + 1) << endl;
+          factors.push_back(max_offset - min_offset + 1);
+        }
+        vector<string> factor_exprs;
+        int i = 0;
+        for (auto f : factors) {
+          auto var = vars.at(i);
+          factor_exprs.push_back(var + " % " + str(f));
+          i++;
+        }
+        string bank_func =
+          curlies(buf.name + bracket_list(vars) + " -> B" + bracket_list(factor_exprs));
+        cout << "BF: " << bank_func << endl;
+        isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+        cout << "M : " << str(m) << endl;
+        bool legal = banking_scheme_is_legal(m, buf);
+        assert(legal);
       }
       assert(all_diffs_constant);
     }
