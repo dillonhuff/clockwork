@@ -5243,6 +5243,3 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
   }
   return {};
 }
-
-
-

@@ -1823,3 +1823,9 @@ void normalize_address_offsets(prog& prg);
 vector<op*> ops_at_level(const int level, prog& prg);
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);
 bool no_violated_resource_assignments(schedule_info& sched, prog& prg);
+
+
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);

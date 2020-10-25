@@ -16773,8 +16773,6 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
     cout << tab(1) << str(m) << endl;
   }
 
-  //assert(false);
-
   assert(all_operations_assigned_to_resources(sched, prg));
   assert(no_violated_resource_assignments(sched, prg));
   assert(no_violated_cycle_accurate_dependencies(sched, prg));
@@ -16784,6 +16782,12 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 
   for (auto& bufe : buffers) {
     auto& buf = bufe.second;
+    auto shift_registered_outputs =
+      determine_shift_reg_map(prg, buf, sched);
+    if (shift_registered_outputs.size() == buf.get_out_ports().size()) {
+      cout << buf.name << " is really a shift register" << endl;
+      continue;
+    }
     maybe<std::set<int> > part =
       embarassing_partition(buf, sched);
     vector<vector<string> > filtered_io_groups =
