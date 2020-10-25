@@ -5,15 +5,15 @@
 
 #define US + "_" +
 
-using minihls::outpt;
-using minihls::inpt;
-using minihls::block;
-using minihls::instr;
-using minihls::instruction_binding;
-using minihls::instruction_type;
-using minihls::module_type;
-using minihls::module_instance;
-using minihls::port;
+//using minihls::outpt;
+//using minihls::inpt;
+//using minihls::block;
+//using minihls::instr;
+//using minihls::instruction_binding;
+//using minihls::instruction_type;
+//using minihls::module_type;
+//using minihls::module_instance;
+//using minihls::port;
 
 //static inline
 //module_type* out_wire_type(block& blk, const string& wname, const int width) {
