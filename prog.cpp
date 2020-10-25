@@ -1916,7 +1916,8 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
-compute_kernel generate_compute_op(
+//compute_kernel generate_compute_op(
+void generate_compute_op(
     ostream& conv_out,
     prog& prg,
     op* op,
@@ -1925,9 +1926,9 @@ compute_kernel generate_compute_op(
 
   cout << "Generating compute for: " << op->name << endl;
 
-  compute_kernel kernel;
-  kernel.name = op->name;
-  kernel.functional_unit = op->func;
+  //compute_kernel kernel;
+  //kernel.name = op->name;
+  //kernel.functional_unit = op->func;
 
   vector<string> buf_srcs;
   concat(buf_srcs, buffer_args(buffers, op, prg));
@@ -1938,7 +1939,7 @@ compute_kernel generate_compute_op(
   vector<string> dim_args;
   for (auto a : space_var_args(s)) {
     dim_args.push_back(a);
-    kernel.iteration_variables.push_back(a);
+    //kernel.iteration_variables.push_back(a);
   }
   dim_args.push_back("0");
 
@@ -1979,7 +1980,7 @@ compute_kernel generate_compute_op(
     conv_out << "\tauto " << value_name << " = ";
 
     string bundle_name = op->name + "_read";
-    kernel.input_buffers.push_back({in_buffer, bundle_name});
+    //kernel.input_buffers.push_back({in_buffer, bundle_name});
 
     if (prg.is_boundary(in_buffer)) {
       conv_out << in_buffer << ".read();" << endl;
@@ -2034,7 +2035,7 @@ compute_kernel generate_compute_op(
   conv_out << "\t// Produce: " << out_buffer << endl;
 
   string bundle_name = op->name + "_write";
-  kernel.output_buffer = {out_buffer, bundle_name};
+  //kernel.output_buffer = {out_buffer, bundle_name};
 
   cout << "Checking if program is a boundary" << endl;
 
@@ -2085,7 +2086,7 @@ compute_kernel generate_compute_op(
   conv_out << endl;
   conv_out << "}" << endl << endl;
 
-  return kernel;
+  //return kernel;
 }
 
 //module_type* generate_rtl_buffer(CodegenOptions& options,
@@ -2177,15 +2178,15 @@ compute_kernel generate_compute_op(
   //return mod;
 //}
 
-vector<compute_kernel> writers(vector<compute_kernel>& kernels, const std::string& in_buf) {
-  vector<compute_kernel> ws;
-  for (auto k : kernels) {
-    if (k.output_buffer.first == in_buf) {
-      ws.push_back(k);
-    }
-  }
-  return ws;
-}
+//vector<compute_kernel> writers(vector<compute_kernel>& kernels, const std::string& in_buf) {
+  //vector<compute_kernel> ws;
+  //for (auto k : kernels) {
+    //if (k.output_buffer.first == in_buf) {
+      //ws.push_back(k);
+    //}
+  //}
+  //return ws;
+//}
 
 //void generate_verilog_code(CodegenOptions& options,
     //map<string, UBuffer>& buffers,
@@ -2426,9 +2427,10 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
-  vector<compute_kernel> kernels;
+  //vector<compute_kernel> kernels;
   for (auto op : prg.all_ops()) {
-    kernels.push_back(generate_compute_op(conv_out, prg, op, buffers, domain_map));
+    //kernels.push_back(generate_compute_op(conv_out, prg, op, buffers, domain_map));
+    generate_compute_op(conv_out, prg, op, buffers, domain_map);
   }
 
   conv_out << "// Driver function" << endl;
@@ -3617,9 +3619,9 @@ void generate_compute_trace(
 
   cout << "Generating compute for: " << op->name << endl;
 
-  compute_kernel kernel;
-  kernel.name = op->name;
-  kernel.functional_unit = op->func;
+  //compute_kernel kernel;
+  //kernel.name = op->name;
+  //kernel.functional_unit = op->func;
 
   vector<string> buf_srcs;
 

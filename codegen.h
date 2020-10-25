@@ -15,245 +15,245 @@ using minihls::module_type;
 using minihls::module_instance;
 using minihls::port;
 
-static inline
-module_type* out_wire_type(block& blk, const string& wname, const int width) {
-  string name = "out_wire_" + wname;
-  if (blk.has_module_type(name)) {
-    return blk.get_module_type(name);
-  }
+//static inline
+//module_type* out_wire_type(block& blk, const string& wname, const int width) {
+  //string name = "out_wire_" + wname;
+  //if (blk.has_module_type(name)) {
+    //return blk.get_module_type(name);
+  //}
 
-  vector<port> pts{inpt(wname, width)};
-  return blk.add_module_type(name, pts);
-}
+  //vector<port> pts{inpt(wname, width)};
+  //return blk.add_module_type(name, pts);
+//}
 
-static inline
-module_instance* get_out_wire(block& blk, const string& name, int width) {
-  if (blk.has_inst(name)) {
-    return blk.get_inst(name);
-  }
+//static inline
+//module_instance* get_out_wire(block& blk, const string& name, int width) {
+  //if (blk.has_inst(name)) {
+    //return blk.get_inst(name);
+  //}
 
-  module_type* wtp = out_wire_type(blk, name, width);
+  //module_type* wtp = out_wire_type(blk, name, width);
 
-  auto winst = blk.add_external_module_instance(name, wtp);
-  winst->print_name_at_interface = false;
-  return winst;
-}
+  //auto winst = blk.add_external_module_instance(name, wtp);
+  //winst->print_name_at_interface = false;
+  //return winst;
+//}
 
-static inline
-instruction_type* wr_out_wire_instr(block& blk, const std::string& arg_name, int width) {
-  string name = "wr_out_wire_instr_" + arg_name + "_" + to_string(width);
-  if (blk.has_instruction_type(name)) {
-    return blk.get_instruction_type(name);
-  }
+//static inline
+//instruction_type* wr_out_wire_instr(block& blk, const std::string& arg_name, int width) {
+  //string name = "wr_out_wire_instr_" + arg_name + "_" + to_string(width);
+  //if (blk.has_instruction_type(name)) {
+    //return blk.get_instruction_type(name);
+  //}
 
-  return blk.add_instruction_type(name);
-}
+  //return blk.add_instruction_type(name);
+//}
 
-static inline
-instruction_binding* wr_out_wire_binding(block& blk, const std::string& wire_name, int width) {
-  string name = "wr_out_wire_binding_" + wire_name + "_" + str(width);
-  if (blk.has_instruction_binding(name)) {
-    return blk.get_instruction_binding(name);
-  }
+//static inline
+//instruction_binding* wr_out_wire_binding(block& blk, const std::string& wire_name, int width) {
+  //string name = "wr_out_wire_binding_" + wire_name + "_" + str(width);
+  //if (blk.has_instruction_binding(name)) {
+    //return blk.get_instruction_binding(name);
+  //}
 
-  return blk.add_instruction_binding(name,
-      wr_out_wire_instr(blk, wire_name, width),
-      out_wire_type(blk, wire_name, width), "", {{0, wire_name}});
-}
+  //return blk.add_instruction_binding(name,
+      //wr_out_wire_instr(blk, wire_name, width),
+      //out_wire_type(blk, wire_name, width), "", {{0, wire_name}});
+//}
 
-static inline
-instr* out_wire_write(block& blk, const string& arg_name, int width, instr* arg) {
-  module_instance* arg_wire =
-    get_out_wire(blk, arg_name, width);
+//static inline
+//instr* out_wire_write(block& blk, const string& arg_name, int width, instr* arg) {
+  //module_instance* arg_wire =
+    //get_out_wire(blk, arg_name, width);
 
-  instruction_binding* rd_wire =
-    wr_out_wire_binding(blk, arg_name, width);
+  //instruction_binding* rd_wire =
+    //wr_out_wire_binding(blk, arg_name, width);
 
-  instruction_type* instr_tp =
-    wr_out_wire_instr(blk, arg_name, width);
+  //instruction_type* instr_tp =
+    //wr_out_wire_instr(blk, arg_name, width);
 
-  auto instr = blk.add_instr(blk.unique_name("wr"), instr_tp, {arg});
-  instr->bind_procedure(rd_wire);
-  instr->bind_unit(arg_wire);
+  //auto instr = blk.add_instr(blk.unique_name("wr"), instr_tp, {arg});
+  //instr->bind_procedure(rd_wire);
+  //instr->bind_unit(arg_wire);
 
-  return instr;
-}
+  //return instr;
+//}
 
-static inline
-module_type* in_wire_type(block& blk, const string& arg_name, const int width) {
-  string name = "in_wire_" + arg_name;
-  if (blk.has_module_type(name)) {
-    return blk.get_module_type(name);
-  }
+//static inline
+//module_type* in_wire_type(block& blk, const string& arg_name, const int width) {
+  //string name = "in_wire_" + arg_name;
+  //if (blk.has_module_type(name)) {
+    //return blk.get_module_type(name);
+  //}
 
-  vector<port> pts{outpt(arg_name, width)};
-  return blk.add_module_type(name, pts);
-}
+  //vector<port> pts{outpt(arg_name, width)};
+  //return blk.add_module_type(name, pts);
+//}
 
-static inline
-instruction_type* read_in_wire_instr(block& blk, const std::string& arg_name, int width) {
-  string name = "rd_in_wire_instr_" + arg_name + "_" + to_string(width);
-  if (blk.has_instruction_type(name)) {
-    return blk.get_instruction_type(name);
-  }
+//static inline
+//instruction_type* read_in_wire_instr(block& blk, const std::string& arg_name, int width) {
+  //string name = "rd_in_wire_instr_" + arg_name + "_" + to_string(width);
+  //if (blk.has_instruction_type(name)) {
+    //return blk.get_instruction_type(name);
+  //}
 
-  return blk.add_instruction_type(name);
-}
+  //return blk.add_instruction_type(name);
+//}
 
-static inline
-instruction_binding* read_in_wire_binding(block& blk, const std::string& wire_name, int width) {
-  string name = "rd_in_wire_binding_" + wire_name + "_" + str(width);
-  if (blk.has_instruction_binding(name)) {
-    return blk.get_instruction_binding(name);
-  }
+//static inline
+//instruction_binding* read_in_wire_binding(block& blk, const std::string& wire_name, int width) {
+  //string name = "rd_in_wire_binding_" + wire_name + "_" + str(width);
+  //if (blk.has_instruction_binding(name)) {
+    //return blk.get_instruction_binding(name);
+  //}
 
-  return blk.add_instruction_binding(name,
-      read_in_wire_instr(blk, wire_name, width),
-      in_wire_type(blk, wire_name, width), wire_name, {});
-}
+  //return blk.add_instruction_binding(name,
+      //read_in_wire_instr(blk, wire_name, width),
+      //in_wire_type(blk, wire_name, width), wire_name, {});
+//}
 
-static inline
-module_instance* get_in_wire(block& blk, const string& name, int width) {
-  if (blk.has_inst(name)) {
-    return blk.get_inst(name);
-  }
+//static inline
+//module_instance* get_in_wire(block& blk, const string& name, int width) {
+  //if (blk.has_inst(name)) {
+    //return blk.get_inst(name);
+  //}
 
-  module_type* wtp = in_wire_type(blk, name, width);
+  //module_type* wtp = in_wire_type(blk, name, width);
 
-  auto winst = blk.add_external_module_instance(name, wtp);
-  winst->print_name_at_interface = false;
-  return winst;
-}
+  //auto winst = blk.add_external_module_instance(name, wtp);
+  //winst->print_name_at_interface = false;
+  //return winst;
+//}
 
-static inline
-instr* in_wire_read(block& blk, const string& arg_name, int width) {
-  module_instance* arg_wire =
-    get_in_wire(blk, arg_name, width);
+//static inline
+//instr* in_wire_read(block& blk, const string& arg_name, int width) {
+  //module_instance* arg_wire =
+    //get_in_wire(blk, arg_name, width);
 
-  instruction_binding* rd_wire =
-    read_in_wire_binding(blk, arg_name, width);
+  //instruction_binding* rd_wire =
+    //read_in_wire_binding(blk, arg_name, width);
 
-  instruction_type* instr_tp =
-    read_in_wire_instr(blk, arg_name, width);
+  //instruction_type* instr_tp =
+    //read_in_wire_instr(blk, arg_name, width);
 
-  auto instr = blk.add_instr(blk.unique_name("rd"), instr_tp);
-  instr->bind_procedure(rd_wire);
-  instr->bind_unit(arg_wire);
+  //auto instr = blk.add_instr(blk.unique_name("rd"), instr_tp);
+  //instr->bind_procedure(rd_wire);
+  //instr->bind_unit(arg_wire);
 
-  return instr;
-}
+  //return instr;
+//}
 
-static inline
-module_type* wire_type(block& blk, const int width) {
-  string name = "wire_" + to_string(width);
-  if (blk.has_module_type(name)) {
-    return blk.get_module_type(name);
-  }
+//static inline
+//module_type* wire_type(block& blk, const int width) {
+  //string name = "wire_" + to_string(width);
+  //if (blk.has_module_type(name)) {
+    //return blk.get_module_type(name);
+  //}
 
-  vector<port> pts{inpt("in", width), outpt("out", width)};
-  string body = tab(1) + "assign out = in;";
-  return blk.add_module_type(name, pts, body);
-}
+  //vector<port> pts{inpt("in", width), outpt("out", width)};
+  //string body = tab(1) + "assign out = in;";
+  //return blk.add_module_type(name, pts, body);
+//}
 
-static inline
-instruction_type* wr_wire_instr(block& blk, int width) {
-  string name = "wr_wire_instr_" + to_string(width);
-  if (blk.has_instruction_type(name)) {
-    return blk.get_instruction_type(name);
-  }
+//static inline
+//instruction_type* wr_wire_instr(block& blk, int width) {
+  //string name = "wr_wire_instr_" + to_string(width);
+  //if (blk.has_instruction_type(name)) {
+    //return blk.get_instruction_type(name);
+  //}
 
-  return blk.add_instruction_type(name);
-}
+  //return blk.add_instruction_type(name);
+//}
 
-static inline
-instruction_binding* wr_wire_binding(block& blk, int width) {
-  string name = "wr_wire_binding_" + to_string(width);
-  if (blk.has_instruction_binding(name)) {
-    return blk.get_instruction_binding(name);
-  }
+//static inline
+//instruction_binding* wr_wire_binding(block& blk, int width) {
+  //string name = "wr_wire_binding_" + to_string(width);
+  //if (blk.has_instruction_binding(name)) {
+    //return blk.get_instruction_binding(name);
+  //}
 
-  return blk.add_instruction_binding(name, wr_wire_instr(blk, width), wire_type(blk, width), "", {{0, "in"}});
-}
+  //return blk.add_instruction_binding(name, wr_wire_instr(blk, width), wire_type(blk, width), "", {{0, "in"}});
+//}
 
-static inline
-instruction_type* rd_wire_instr(block& blk, int width) {
-  string name = "rd_wire_instr_" + to_string(width);
-  if (blk.has_instruction_type(name)) {
-    return blk.get_instruction_type(name);
-  }
+//static inline
+//instruction_type* rd_wire_instr(block& blk, int width) {
+  //string name = "rd_wire_instr_" + to_string(width);
+  //if (blk.has_instruction_type(name)) {
+    //return blk.get_instruction_type(name);
+  //}
 
-  return blk.add_instruction_type(name);
-}
+  //return blk.add_instruction_type(name);
+//}
 
-static inline
-instruction_binding* rd_wire_binding(block& blk, int width) {
-  string name = "rd_wire_binding_" + to_string(width);
-  if (blk.has_instruction_binding(name)) {
-    return blk.get_instruction_binding(name);
-  }
+//static inline
+//instruction_binding* rd_wire_binding(block& blk, int width) {
+  //string name = "rd_wire_binding_" + to_string(width);
+  //if (blk.has_instruction_binding(name)) {
+    //return blk.get_instruction_binding(name);
+  //}
 
-  return blk.add_instruction_binding(name, rd_wire_instr(blk, width), wire_type(blk, width), "out", {});
-}
+  //return blk.add_instruction_binding(name, rd_wire_instr(blk, width), wire_type(blk, width), "out", {});
+//}
 
-static inline
-module_instance* get_wire(block& blk, const string& name, int width) {
-  if (blk.has_inst(name)) {
-    return blk.get_inst(name);
-  }
+//static inline
+//module_instance* get_wire(block& blk, const string& name, int width) {
+  //if (blk.has_inst(name)) {
+    //return blk.get_inst(name);
+  //}
 
-  module_type* wtp = wire_type(blk, width);
+  //module_type* wtp = wire_type(blk, width);
 
-  return blk.add_external_module_instance(name, wtp);
-}
+  //return blk.add_external_module_instance(name, wtp);
+//}
 
-static inline
-instr* wire_write(block& blk, const string& arg_name, int width, instr* arg) {
-  module_instance* arg_wire =
-    get_wire(blk, arg_name, width);
+//static inline
+//instr* wire_write(block& blk, const string& arg_name, int width, instr* arg) {
+  //module_instance* arg_wire =
+    //get_wire(blk, arg_name, width);
 
-  instruction_binding* rd_wire =
-    wr_wire_binding(blk, width);
+  //instruction_binding* rd_wire =
+    //wr_wire_binding(blk, width);
 
-  instruction_type* instr_tp =
-    wr_wire_instr(blk, width);
+  //instruction_type* instr_tp =
+    //wr_wire_instr(blk, width);
 
-  auto instr = blk.add_instr(blk.unique_name("wr"), instr_tp, {arg});
-  instr->bind_procedure(rd_wire);
-  instr->bind_unit(arg_wire);
+  //auto instr = blk.add_instr(blk.unique_name("wr"), instr_tp, {arg});
+  //instr->bind_procedure(rd_wire);
+  //instr->bind_unit(arg_wire);
 
-  return instr;
-}
+  //return instr;
+//}
 
-static inline
-instr* wire_read(block& blk, const string& arg_name, int width) {
-  module_instance* arg_wire =
-    get_wire(blk, arg_name, width);
+//static inline
+//instr* wire_read(block& blk, const string& arg_name, int width) {
+  //module_instance* arg_wire =
+    //get_wire(blk, arg_name, width);
 
-  instruction_binding* rd_wire =
-    rd_wire_binding(blk, width);
+  //instruction_binding* rd_wire =
+    //rd_wire_binding(blk, width);
 
-  instruction_type* instr_tp =
-    rd_wire_instr(blk, width);
+  //instruction_type* instr_tp =
+    //rd_wire_instr(blk, width);
 
-  auto instr = blk.add_instr(blk.unique_name("rd"), instr_tp);
-  instr->bind_procedure(rd_wire);
-  instr->bind_unit(arg_wire);
+  //auto instr = blk.add_instr(blk.unique_name("rd"), instr_tp);
+  //instr->bind_procedure(rd_wire);
+  //instr->bind_unit(arg_wire);
 
-  return instr;
-}
-struct compute_kernel {
-  string name;
-  vector<pair<string, string> > input_buffers;
-  vector<string> iteration_variables;
-  string functional_unit;
-  pair<string, string> output_buffer;
-};
+  //return instr;
+//}
+//struct compute_kernel {
+  //string name;
+  //vector<pair<string, string> > input_buffers;
+  //vector<string> iteration_variables;
+  //string functional_unit;
+  //pair<string, string> output_buffer;
+//};
 
-minihls::instruction_type* reduce(minihls::context& c, map<string, minihls::module_type*>& buffers, vector<string>& index_variables);
+//minihls::instruction_type* reduce(minihls::context& c, map<string, minihls::module_type*>& buffers, vector<string>& index_variables);
 
-minihls::module_type* sr_buffer(minihls::block& blk, const int width, const int depth);
+//minihls::module_type* sr_buffer(minihls::block& blk, const int width, const int depth);
 
-minihls::module_type* gen_bank(minihls::block& blk, const bank& bnk);
+//minihls::module_type* gen_bank(minihls::block& blk, const bank& bnk);
 
 static inline
 void ignore_inter_deps(std::ostream& out, const string& var) {
