@@ -2187,12 +2187,12 @@ vector<compute_kernel> writers(vector<compute_kernel>& kernels, const std::strin
   return ws;
 }
 
-void generate_verilog_code(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map,
-    vector<compute_kernel>& kernels) {
+//void generate_verilog_code(CodegenOptions& options,
+    //map<string, UBuffer>& buffers,
+    //prog& prg,
+    //umap* schedmap,
+    //map<string, isl_set*>& domain_map,
+    //vector<compute_kernel>& kernels) {
 
   //vector<compute_kernel> sorted_kernels;
   //set<string> done;
@@ -2309,7 +2309,7 @@ void generate_verilog_code(CodegenOptions& options,
 
   //compile(*main_blk);
   ////assert(false);
-}
+//}
 
 std::string perfect_loop_codegen(umap* schedmap) {
   ostringstream conv_out;
@@ -2549,7 +2549,7 @@ void generate_app_code(CodegenOptions& options,
   generate_xilinx_aws_ddr_config(options, buffers, prg);
   generate_xilinx_accel_soda_host(options, buffers, prg);
   generate_xilinx_accel_host(options, buffers, prg);
-  generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
+  //generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
   generate_tb_compare_scripts(buffers, prg);
 
