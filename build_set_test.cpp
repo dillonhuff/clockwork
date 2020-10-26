@@ -11099,41 +11099,6 @@ void register_file_test() {
   //assert(false);
 }
 
-void travis_tests() {
-  jacobi_2d_2_test();
-  register_file_test();
-  reduce_1d_test();
-  reduce_2d_test();
-  compute_unit_with_index_variables_test();
-  upsample2d_test();
-  downsample2d_test();
-  up_stencil_down_test();
-  gaussian_pyramid_test();
-
-  return;
-
-  heat_3d_test();
-  halide_dnn_test();
-
-  exposure_fusion();
-
-  blur_and_downsample_test();
-  downsample_and_blur_test();
-  upsample_stencil_2d_test();
-  upsample_stencil_1d_test();
-  updown_merge_test();
-  harris_unrolled_test();
-  mismatched_stencil_test();
-  sobel_test();
-  upsample_reduce_test();
-  pointwise_test();
-  stencil_3d_test();
-  soda_blur_test();
-  two_in_window_test();
-  two_in_conv2d_test();
-  warp_and_upsample_test();
-}
-
 void print_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -18758,6 +18723,7 @@ void test_outer_strip_mine() {
   compare("outer_strip_mine_" + prg.name + "_vs_unopt", strip_mined, unopt);
 }
 
+
 void test_time_sharing_gaussian_pyramid() {
   int num_pyramid_levels = 3;
 
@@ -18867,6 +18833,41 @@ void dhuff_playground() {
 
 }
 
+void travis_tests() {
+  test_time_sharing_gaussian_pyramid();
+  jacobi_2d_2_test();
+  register_file_test();
+  reduce_1d_test();
+  reduce_2d_test();
+  compute_unit_with_index_variables_test();
+  upsample2d_test();
+  downsample2d_test();
+  up_stencil_down_test();
+  gaussian_pyramid_test();
+
+  return;
+
+  heat_3d_test();
+  halide_dnn_test();
+
+  exposure_fusion();
+
+  blur_and_downsample_test();
+  downsample_and_blur_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  updown_merge_test();
+  harris_unrolled_test();
+  mismatched_stencil_test();
+  sobel_test();
+  upsample_reduce_test();
+  pointwise_test();
+  stencil_3d_test();
+  soda_blur_test();
+  two_in_window_test();
+  two_in_conv2d_test();
+  warp_and_upsample_test();
+}
 int main(int argc, char** argv) {
 
   if (argc > 1) {
