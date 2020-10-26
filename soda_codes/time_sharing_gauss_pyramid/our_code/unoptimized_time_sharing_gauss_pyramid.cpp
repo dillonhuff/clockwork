@@ -12,8 +12,8 @@ using namespace std;
 #include "hw_classes.h"
 
 struct gp_gray_1_buf4_all_inputs_to_all_outputs_cache {
-	// RAM Box: {[0, 9], [0, 9]}
-  hw_uint<32>  RAM[10][10];
+	// RAM Box: {[0, 33], [0, 33]}
+  hw_uint<32>  RAM[34][34];
   inline hw_uint<32>  read(int d0, int d1) {
     return RAM[d0][d1];
   }
@@ -40,7 +40,7 @@ inline void gp_gray_1_buf4_gp_gray_16_merged74_14_write(hw_uint<32> & gp_gray_1_
 inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_10_select(gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_213, int gp_gray_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_1_buf4_gp_gray_214_merged77_10 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2 + 2gp_gray_214, 1 + 2gp_gray_213] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
+  // gp_gray_1_buf4_gp_gray_214_merged77_10 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2 + 2gp_gray_214, 1 + 2gp_gray_213] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
   auto value_gp_gray_1_buf4_gp_gray_16_merged74_14 = gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs.read(2 + 2*gp_gray_214 - 0, 1 + 2*gp_gray_213 - 0);
   return value_gp_gray_1_buf4_gp_gray_16_merged74_14;
   return 0;
@@ -49,7 +49,7 @@ inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_10_select(gp_gray_1_buf4
 inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_11_select(gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_213, int gp_gray_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_1_buf4_gp_gray_214_merged77_11 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2gp_gray_214, 2gp_gray_213] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
+  // gp_gray_1_buf4_gp_gray_214_merged77_11 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2gp_gray_214, 2gp_gray_213] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
   auto value_gp_gray_1_buf4_gp_gray_16_merged74_14 = gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs.read(2*gp_gray_214 - 0, 2*gp_gray_213 - 0);
   return value_gp_gray_1_buf4_gp_gray_16_merged74_14;
   return 0;
@@ -58,7 +58,7 @@ inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_11_select(gp_gray_1_buf4
 inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_12_select(gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_213, int gp_gray_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_1_buf4_gp_gray_214_merged77_12 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[1 + 2gp_gray_214, 2gp_gray_213] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
+  // gp_gray_1_buf4_gp_gray_214_merged77_12 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[1 + 2gp_gray_214, 2gp_gray_213] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
   auto value_gp_gray_1_buf4_gp_gray_16_merged74_14 = gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs.read(1 + 2*gp_gray_214 - 0, 2*gp_gray_213 - 0);
   return value_gp_gray_1_buf4_gp_gray_16_merged74_14;
   return 0;
@@ -67,7 +67,7 @@ inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_12_select(gp_gray_1_buf4
 inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_13_select(gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_213, int gp_gray_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_1_buf4_gp_gray_214_merged77_13 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2 + 2gp_gray_214, 2gp_gray_213] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
+  // gp_gray_1_buf4_gp_gray_214_merged77_13 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2 + 2gp_gray_214, 2gp_gray_213] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
   auto value_gp_gray_1_buf4_gp_gray_16_merged74_14 = gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs.read(2 + 2*gp_gray_214 - 0, 2*gp_gray_213 - 0);
   return value_gp_gray_1_buf4_gp_gray_16_merged74_14;
   return 0;
@@ -76,7 +76,7 @@ inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_13_select(gp_gray_1_buf4
 inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_5_select(gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_213, int gp_gray_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_1_buf4_gp_gray_214_merged77_5 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2gp_gray_214, 2 + 2gp_gray_213] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
+  // gp_gray_1_buf4_gp_gray_214_merged77_5 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2gp_gray_214, 2 + 2gp_gray_213] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
   auto value_gp_gray_1_buf4_gp_gray_16_merged74_14 = gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs.read(2*gp_gray_214 - 0, 2 + 2*gp_gray_213 - 0);
   return value_gp_gray_1_buf4_gp_gray_16_merged74_14;
   return 0;
@@ -85,7 +85,7 @@ inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_5_select(gp_gray_1_buf4_
 inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_6_select(gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_213, int gp_gray_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_1_buf4_gp_gray_214_merged77_6 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[1 + 2gp_gray_214, 2 + 2gp_gray_213] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
+  // gp_gray_1_buf4_gp_gray_214_merged77_6 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[1 + 2gp_gray_214, 2 + 2gp_gray_213] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
   auto value_gp_gray_1_buf4_gp_gray_16_merged74_14 = gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs.read(1 + 2*gp_gray_214 - 0, 2 + 2*gp_gray_213 - 0);
   return value_gp_gray_1_buf4_gp_gray_16_merged74_14;
   return 0;
@@ -94,7 +94,7 @@ inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_6_select(gp_gray_1_buf4_
 inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_7_select(gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_213, int gp_gray_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_1_buf4_gp_gray_214_merged77_7 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2 + 2gp_gray_214, 2 + 2gp_gray_213] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
+  // gp_gray_1_buf4_gp_gray_214_merged77_7 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2 + 2gp_gray_214, 2 + 2gp_gray_213] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
   auto value_gp_gray_1_buf4_gp_gray_16_merged74_14 = gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs.read(2 + 2*gp_gray_214 - 0, 2 + 2*gp_gray_213 - 0);
   return value_gp_gray_1_buf4_gp_gray_16_merged74_14;
   return 0;
@@ -103,7 +103,7 @@ inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_7_select(gp_gray_1_buf4_
 inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_8_select(gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_213, int gp_gray_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_1_buf4_gp_gray_214_merged77_8 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2gp_gray_214, 1 + 2gp_gray_213] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
+  // gp_gray_1_buf4_gp_gray_214_merged77_8 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[2gp_gray_214, 1 + 2gp_gray_213] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
   auto value_gp_gray_1_buf4_gp_gray_16_merged74_14 = gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs.read(2*gp_gray_214 - 0, 1 + 2*gp_gray_213 - 0);
   return value_gp_gray_1_buf4_gp_gray_16_merged74_14;
   return 0;
@@ -112,7 +112,7 @@ inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_8_select(gp_gray_1_buf4_
 inline hw_uint<32>  gp_gray_1_buf4_gp_gray_214_merged77_9_select(gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_213, int gp_gray_214, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_1_buf4_gp_gray_214_merged77_9 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[1 + 2gp_gray_214, 1 + 2gp_gray_213] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
+  // gp_gray_1_buf4_gp_gray_214_merged77_9 read pattern: { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> gp_gray_1_buf4[1 + 2gp_gray_214, 1 + 2gp_gray_213] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
   auto value_gp_gray_1_buf4_gp_gray_16_merged74_14 = gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs.read(1 + 2*gp_gray_214 - 0, 1 + 2*gp_gray_213 - 0);
   return value_gp_gray_1_buf4_gp_gray_16_merged74_14;
   return 0;
@@ -173,8 +173,8 @@ inline hw_uint<288> gp_gray_1_buf4_gp_gray_214_merged77_read_bundle_read(gp_gray
 #include "hw_classes.h"
 
 struct gp_gray_2_buf12_all_inputs_to_all_outputs_cache {
-	// RAM Box: {[0, 3], [0, 3]}
-  hw_uint<32>  RAM[4][4];
+	// RAM Box: {[0, 15], [0, 15]}
+  hw_uint<32>  RAM[16][16];
   inline hw_uint<32>  read(int d0, int d1) {
     return RAM[d0][d1];
   }
@@ -201,7 +201,7 @@ inline void gp_gray_2_buf12_gp_gray_214_merged77_4_write(hw_uint<32> & gp_gray_2
 inline hw_uint<32>  gp_gray_2_buf12_pw_math_gp_gray_2_buf122023_1_select(gp_gray_2_buf12_cache& gp_gray_2_buf12, int root, int pw_math_gp_gray_2_buf122021, int pw_math_gp_gray_2_buf122022, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gp_gray_2_buf12_pw_math_gp_gray_2_buf122023_1 read pattern: { pw_math_gp_gray_2_buf122023[root = 0, pw_math_gp_gray_2_buf122021, pw_math_gp_gray_2_buf122022] -> gp_gray_2_buf12[pw_math_gp_gray_2_buf122022, pw_math_gp_gray_2_buf122021] : 0 <= pw_math_gp_gray_2_buf122021 <= 3 and 0 <= pw_math_gp_gray_2_buf122022 <= 3 }
+  // gp_gray_2_buf12_pw_math_gp_gray_2_buf122023_1 read pattern: { pw_math_gp_gray_2_buf122023[root = 0, pw_math_gp_gray_2_buf122021, pw_math_gp_gray_2_buf122022] -> gp_gray_2_buf12[pw_math_gp_gray_2_buf122022, pw_math_gp_gray_2_buf122021] : 0 <= pw_math_gp_gray_2_buf122021 <= 15 and 0 <= pw_math_gp_gray_2_buf122022 <= 15 }
   auto value_gp_gray_2_buf12_gp_gray_214_merged77_4 = gp_gray_2_buf12.gp_gray_2_buf12_all_inputs_to_all_outputs.read(pw_math_gp_gray_2_buf122022 - 0, pw_math_gp_gray_2_buf122021 - 0);
   return value_gp_gray_2_buf12_gp_gray_214_merged77_4;
   return 0;
@@ -230,8 +230,8 @@ inline hw_uint<32> gp_gray_2_buf12_pw_math_gp_gray_2_buf122023_read_bundle_read(
 #include "hw_classes.h"
 
 struct gray_all_inputs_to_all_outputs_cache {
-	// RAM Box: {[0, 20], [0, 20]}
-  hw_uint<32>  RAM[21][21];
+	// RAM Box: {[0, 68], [0, 68]}
+  hw_uint<32>  RAM[69][69];
   inline hw_uint<32>  read(int d0, int d1) {
     return RAM[d0][d1];
   }
@@ -258,8 +258,8 @@ inline void gray_oc_load_in03_2_write(hw_uint<32> & gray_oc_load_in03_2, gray_ca
 inline hw_uint<32>  gray_gp_gray_16_merged74_15_select(gray_cache& gray, int root, int gp_gray_15, int gp_gray_16, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_gp_gray_16_merged74_15 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2gp_gray_16, 2 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(gp_gray_16 - 0, 2 + gp_gray_15 - 0);
+  // gray_gp_gray_16_merged74_15 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2gp_gray_16, 2 + 2gp_gray_15] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2*gp_gray_16 - 0, 2 + 2*gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -267,8 +267,8 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_15_select(gray_cache& gray, int roo
 inline hw_uint<32>  gray_gp_gray_16_merged74_16_select(gray_cache& gray, int root, int gp_gray_15, int gp_gray_16, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_gp_gray_16_merged74_16 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[1 + 2gp_gray_16, 2 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + gp_gray_16 - 0, 2 + gp_gray_15 - 0);
+  // gray_gp_gray_16_merged74_16 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[1 + 2gp_gray_16, 2 + 2gp_gray_15] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + 2*gp_gray_16 - 0, 2 + 2*gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -276,8 +276,8 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_16_select(gray_cache& gray, int roo
 inline hw_uint<32>  gray_gp_gray_16_merged74_17_select(gray_cache& gray, int root, int gp_gray_15, int gp_gray_16, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_gp_gray_16_merged74_17 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2 + 2gp_gray_16, 2 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + gp_gray_16 - 0, 2 + gp_gray_15 - 0);
+  // gray_gp_gray_16_merged74_17 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2 + 2gp_gray_16, 2 + 2gp_gray_15] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + 2*gp_gray_16 - 0, 2 + 2*gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -285,8 +285,8 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_17_select(gray_cache& gray, int roo
 inline hw_uint<32>  gray_gp_gray_16_merged74_18_select(gray_cache& gray, int root, int gp_gray_15, int gp_gray_16, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_gp_gray_16_merged74_18 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2gp_gray_16, 1 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(gp_gray_16 - 0, 1 + gp_gray_15 - 0);
+  // gray_gp_gray_16_merged74_18 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2gp_gray_16, 1 + 2gp_gray_15] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2*gp_gray_16 - 0, 1 + 2*gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -294,8 +294,8 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_18_select(gray_cache& gray, int roo
 inline hw_uint<32>  gray_gp_gray_16_merged74_19_select(gray_cache& gray, int root, int gp_gray_15, int gp_gray_16, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_gp_gray_16_merged74_19 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[1 + 2gp_gray_16, 1 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + gp_gray_16 - 0, 1 + gp_gray_15 - 0);
+  // gray_gp_gray_16_merged74_19 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[1 + 2gp_gray_16, 1 + 2gp_gray_15] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + 2*gp_gray_16 - 0, 1 + 2*gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -303,8 +303,8 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_19_select(gray_cache& gray, int roo
 inline hw_uint<32>  gray_gp_gray_16_merged74_20_select(gray_cache& gray, int root, int gp_gray_15, int gp_gray_16, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_gp_gray_16_merged74_20 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2 + 2gp_gray_16, 1 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + gp_gray_16 - 0, 1 + gp_gray_15 - 0);
+  // gray_gp_gray_16_merged74_20 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2 + 2gp_gray_16, 1 + 2gp_gray_15] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + 2*gp_gray_16 - 0, 1 + 2*gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -312,8 +312,8 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_20_select(gray_cache& gray, int roo
 inline hw_uint<32>  gray_gp_gray_16_merged74_21_select(gray_cache& gray, int root, int gp_gray_15, int gp_gray_16, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_gp_gray_16_merged74_21 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2gp_gray_16, 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(gp_gray_16 - 0, gp_gray_15 - 0);
+  // gray_gp_gray_16_merged74_21 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2gp_gray_16, 2gp_gray_15] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2*gp_gray_16 - 0, 2*gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -321,8 +321,8 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_21_select(gray_cache& gray, int roo
 inline hw_uint<32>  gray_gp_gray_16_merged74_22_select(gray_cache& gray, int root, int gp_gray_15, int gp_gray_16, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_gp_gray_16_merged74_22 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[1 + 2gp_gray_16, 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + gp_gray_16 - 0, gp_gray_15 - 0);
+  // gray_gp_gray_16_merged74_22 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[1 + 2gp_gray_16, 2gp_gray_15] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + 2*gp_gray_16 - 0, 2*gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -330,8 +330,8 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_22_select(gray_cache& gray, int roo
 inline hw_uint<32>  gray_gp_gray_16_merged74_23_select(gray_cache& gray, int root, int gp_gray_15, int gp_gray_16, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_gp_gray_16_merged74_23 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2 + 2gp_gray_16, 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + gp_gray_16 - 0, gp_gray_15 - 0);
+  // gray_gp_gray_16_merged74_23 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2 + 2gp_gray_16, 2gp_gray_15] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + 2*gp_gray_16 - 0, 2*gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -388,7 +388,7 @@ inline void gray_oc_load_in03_write_bundle_write(hw_uint<32>& oc_load_in03_write
 	gray_oc_load_in03_2_write(gray_oc_load_in03_2_res, gray, root, oc_load_in01, oc_load_in02, dynamic_address);
 }
 
-// Total re-use buffer capacity: 17824 bits
+// Total re-use buffer capacity: 197536 bits
 
 
 // Operation logic
@@ -423,24 +423,6 @@ inline void pw_math_gp_gray_2_buf122023(gp_gray_2_buf12_cache& gp_gray_2_buf12, 
 
 }
 
-inline void gp_gray_214_merged77(gp_gray_1_buf4_cache& gp_gray_1_buf4, gp_gray_2_buf12_cache& gp_gray_2_buf12, int root, int gp_gray_213, int gp_gray_214) {
-  // Dynamic address computation
-
-	// Consume: gp_gray_1_buf4
-	auto gp_gray_1_buf4_2_m_gp_gray_214__p___m_1_p_1_c_____2_m_gp_gray_213__p__1_p_1_value = gp_gray_1_buf4_gp_gray_214_merged77_read_bundle_read(gp_gray_1_buf4/* source_delay */, root, gp_gray_213, gp_gray_214, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = gp_gray_214_cu75(gp_gray_1_buf4_2_m_gp_gray_214__p___m_1_p_1_c_____2_m_gp_gray_213__p__1_p_1_value);
-	// Produce: gp_gray_2_buf12
-	gp_gray_2_buf12_gp_gray_214_merged77_write_bundle_write(/* arg names */compute_result, gp_gray_2_buf12, root, gp_gray_213, gp_gray_214, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void gp_gray_16_merged74(gray_cache& gray, gp_gray_1_buf4_cache& gp_gray_1_buf4, int root, int gp_gray_15, int gp_gray_16) {
   // Dynamic address computation
 
@@ -453,6 +435,24 @@ inline void gp_gray_16_merged74(gray_cache& gray, gp_gray_1_buf4_cache& gp_gray_
 	auto compute_result = gp_gray_16_cu72(gray_2_m__lp_gp_gray_16__p___m_1_rp___p___m_1_p_3_c_______2_m__lp_gp_gray_15__p___m_1_rp___p__1_p_3_value);
 	// Produce: gp_gray_1_buf4
 	gp_gray_1_buf4_gp_gray_16_merged74_write_bundle_write(/* arg names */compute_result, gp_gray_1_buf4, root, gp_gray_15, gp_gray_16, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void gp_gray_214_merged77(gp_gray_1_buf4_cache& gp_gray_1_buf4, gp_gray_2_buf12_cache& gp_gray_2_buf12, int root, int gp_gray_213, int gp_gray_214) {
+  // Dynamic address computation
+
+	// Consume: gp_gray_1_buf4
+	auto gp_gray_1_buf4_2_m_gp_gray_214__p___m_1_p_1_c_____2_m_gp_gray_213__p__1_p_1_value = gp_gray_1_buf4_gp_gray_214_merged77_read_bundle_read(gp_gray_1_buf4/* source_delay */, root, gp_gray_213, gp_gray_214, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = gp_gray_214_cu75(gp_gray_1_buf4_2_m_gp_gray_214__p___m_1_p_1_c_____2_m_gp_gray_213__p__1_p_1_value);
+	// Produce: gp_gray_2_buf12
+	gp_gray_2_buf12_gp_gray_214_merged77_write_bundle_write(/* arg names */compute_result, gp_gray_2_buf12, root, gp_gray_213, gp_gray_214, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -473,58 +473,51 @@ void unoptimized_time_sharing_gauss_pyramid(HWStream<hw_uint<32> >& /* no bundle
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   gray_cache gray;
-//#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs complete dim=0
-#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs cyclic factor=4 dim=1
-#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs cyclic factor=4 dim=2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { pw_math_gp_gray_2_buf122023[root = 0, pw_math_gp_gray_2_buf122021, pw_math_gp_gray_2_buf122022] -> [0, 0, 3, pw_math_gp_gray_2_buf122021, 0, pw_math_gp_gray_2_buf122022, 0] : 0 <= pw_math_gp_gray_2_buf122021 <= 3 and 0 <= pw_math_gp_gray_2_buf122022 <= 3; oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [0, 0, 0, oc_load_in01, 0, oc_load_in02, 0] : 0 <= oc_load_in01 <= 19 and 0 <= oc_load_in02 <= 19; gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> [0, 0, 1, gp_gray_15, 0, gp_gray_16, 0] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9; gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> [0, 0, 2, gp_gray_213, 0, gp_gray_214, 0] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
-//   { pw_math_gp_gray_2_buf122023[root = 0, pw_math_gp_gray_2_buf122021, pw_math_gp_gray_2_buf122022] -> [0, 0, 3, pw_math_gp_gray_2_buf122021, 0, pw_math_gp_gray_2_buf122022, 0] : 0 <= pw_math_gp_gray_2_buf122021 <= 3 and 0 <= pw_math_gp_gray_2_buf122022 <= 3 }
-// Condition for pw_math_gp_gray_2_buf122023(((i6 == 0) && (i4 == 0) && (-3 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (3 - i3 >= 0) && (i5 >= 0) && (3 - i5 >= 0)))
-//   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [0, 0, 0, oc_load_in01, 0, oc_load_in02, 0] : 0 <= oc_load_in01 <= 19 and 0 <= oc_load_in02 <= 19 }
-// Condition for oc_load_in03(((i6 == 0) && (i4 == 0) && (i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (19 - i3 >= 0) && (i5 >= 0) && (19 - i5 >= 0)))
-//   { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> [0, 0, 1, gp_gray_15, 0, gp_gray_16, 0] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-// Condition for gp_gray_16_merged74(((i6 == 0) && (i4 == 0) && (-1 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (9 - i3 >= 0) && (i5 >= 0) && (9 - i5 >= 0)))
-//   { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> [0, 0, 2, gp_gray_213, 0, gp_gray_214, 0] : 0 <= gp_gray_213 <= 3 and 0 <= gp_gray_214 <= 3 }
-// Condition for gp_gray_214_merged77(((i6 == 0) && (i4 == 0) && (-2 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (3 - i3 >= 0) && (i5 >= 0) && (3 - i5 >= 0)))
+// schedule: { pw_math_gp_gray_2_buf122023[root = 0, pw_math_gp_gray_2_buf122021, pw_math_gp_gray_2_buf122022] -> [0, 0, 3, pw_math_gp_gray_2_buf122021, 0, pw_math_gp_gray_2_buf122022, 0] : 0 <= pw_math_gp_gray_2_buf122021 <= 15 and 0 <= pw_math_gp_gray_2_buf122022 <= 15; oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [0, 0, 0, oc_load_in01, 0, oc_load_in02, 0] : 0 <= oc_load_in01 <= 67 and 0 <= oc_load_in02 <= 67; gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> [0, 0, 1, gp_gray_15, 0, gp_gray_16, 0] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33; gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> [0, 0, 2, gp_gray_213, 0, gp_gray_214, 0] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
+//   { pw_math_gp_gray_2_buf122023[root = 0, pw_math_gp_gray_2_buf122021, pw_math_gp_gray_2_buf122022] -> [0, 0, 3, pw_math_gp_gray_2_buf122021, 0, pw_math_gp_gray_2_buf122022, 0] : 0 <= pw_math_gp_gray_2_buf122021 <= 15 and 0 <= pw_math_gp_gray_2_buf122022 <= 15 }
+// Condition for pw_math_gp_gray_2_buf122023(((i6 == 0) && (i4 == 0) && (-3 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (15 - i3 >= 0) && (i5 >= 0) && (15 - i5 >= 0)))
+//   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [0, 0, 0, oc_load_in01, 0, oc_load_in02, 0] : 0 <= oc_load_in01 <= 67 and 0 <= oc_load_in02 <= 67 }
+// Condition for oc_load_in03(((i6 == 0) && (i4 == 0) && (i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (67 - i3 >= 0) && (i5 >= 0) && (67 - i5 >= 0)))
+//   { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> [0, 0, 1, gp_gray_15, 0, gp_gray_16, 0] : 0 <= gp_gray_15 <= 33 and 0 <= gp_gray_16 <= 33 }
+// Condition for gp_gray_16_merged74(((i6 == 0) && (i4 == 0) && (-1 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (33 - i3 >= 0) && (i5 >= 0) && (33 - i5 >= 0)))
+//   { gp_gray_214_merged77[root = 0, gp_gray_213, gp_gray_214] -> [0, 0, 2, gp_gray_213, 0, gp_gray_214, 0] : 0 <= gp_gray_213 <= 15 and 0 <= gp_gray_214 <= 15 }
+// Condition for gp_gray_214_merged77(((i6 == 0) && (i4 == 0) && (-2 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (15 - i3 >= 0) && (i5 >= 0) && (15 - i5 >= 0)))
 
   /*
 {
-  for (int c3 = 0; c3 <= 19; c3 += 1)
-    for (int c5 = 0; c5 <= 19; c5 += 1)
+  for (int c3 = 0; c3 <= 67; c3 += 1)
+    for (int c5 = 0; c5 <= 67; c5 += 1)
       oc_load_in03(0, c3, c5);
-  for (int c3 = 0; c3 <= 9; c3 += 1)
-    for (int c5 = 0; c5 <= 9; c5 += 1)
+  for (int c3 = 0; c3 <= 33; c3 += 1)
+    for (int c5 = 0; c5 <= 33; c5 += 1)
       gp_gray_16_merged74(0, c3, c5);
-  for (int c3 = 0; c3 <= 3; c3 += 1)
-    for (int c5 = 0; c5 <= 3; c5 += 1)
+  for (int c3 = 0; c3 <= 15; c3 += 1)
+    for (int c5 = 0; c5 <= 15; c5 += 1)
       gp_gray_214_merged77(0, c3, c5);
-  for (int c3 = 0; c3 <= 3; c3 += 1)
-    for (int c5 = 0; c5 <= 3; c5 += 1)
+  for (int c3 = 0; c3 <= 15; c3 += 1)
+    for (int c5 = 0; c5 <= 15; c5 += 1)
       pw_math_gp_gray_2_buf122023(0, c3, c5);
 }
 
   */
 	{
-	  for (int c3 = 0; c3 <= 19; c3 += 1)
-	    for (int c5 = 0; c5 <= 19; c5 += 1)
-#pragma HLS pipeline II=1
+	  for (int c3 = 0; c3 <= 67; c3 += 1)
+	    for (int c5 = 0; c5 <= 67; c5 += 1)
 	      oc_load_in03(in /* buf name */, gray, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 9; c3 += 1)
-	    for (int c5 = 0; c5 <= 9; c5 += 1)
-#pragma HLS pipeline II=1
+	  for (int c3 = 0; c3 <= 33; c3 += 1)
+	    for (int c5 = 0; c5 <= 33; c5 += 1)
 	      gp_gray_16_merged74(gray /* buf name */, gp_gray_1_buf4, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 3; c3 += 1)
-	    for (int c5 = 0; c5 <= 3; c5 += 1)
-#pragma HLS pipeline II=1
+	  for (int c3 = 0; c3 <= 15; c3 += 1)
+	    for (int c5 = 0; c5 <= 15; c5 += 1)
 	      gp_gray_214_merged77(gp_gray_1_buf4 /* buf name */, gp_gray_2_buf12, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 3; c3 += 1)
-	    for (int c5 = 0; c5 <= 3; c5 += 1)
-#pragma HLS pipeline II=1
+	  for (int c3 = 0; c3 <= 15; c3 += 1)
+	    for (int c5 = 0; c5 <= 15; c5 += 1)
 	      pw_math_gp_gray_2_buf122023(gp_gray_2_buf12 /* buf name */, out, 0, c3, c5);
 	}
 	
@@ -540,10 +533,10 @@ void unoptimized_time_sharing_gauss_pyramid_wrapper(HWStream<hw_uint<32> >& /* n
   }
 }
 #ifdef __VIVADO_SYNTH__
-  // { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> in[oc_load_in02, oc_load_in01] : 0 <= oc_load_in01 <= 19 and 0 <= oc_load_in02 <= 19 }
-const int oc_load_in03_read_pipe0_num_transfers = 400;
-  // { pw_math_gp_gray_2_buf122023[root = 0, pw_math_gp_gray_2_buf122021, pw_math_gp_gray_2_buf122022] -> out[pw_math_gp_gray_2_buf122022, pw_math_gp_gray_2_buf122021] : 0 <= pw_math_gp_gray_2_buf122021 <= 3 and 0 <= pw_math_gp_gray_2_buf122022 <= 3 }
-const int pw_math_gp_gray_2_buf122023_write_pipe0_num_transfers = 16;
+  // { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> in[oc_load_in02, oc_load_in01] : 0 <= oc_load_in01 <= 67 and 0 <= oc_load_in02 <= 67 }
+const int oc_load_in03_read_pipe0_num_transfers = 4624;
+  // { pw_math_gp_gray_2_buf122023[root = 0, pw_math_gp_gray_2_buf122021, pw_math_gp_gray_2_buf122022] -> out[pw_math_gp_gray_2_buf122022, pw_math_gp_gray_2_buf122021] : 0 <= pw_math_gp_gray_2_buf122021 <= 15 and 0 <= pw_math_gp_gray_2_buf122022 <= 15 }
+const int pw_math_gp_gray_2_buf122023_write_pipe0_num_transfers = 256;
 
 
 extern "C" {
