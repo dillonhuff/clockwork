@@ -259,7 +259,7 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_15_select(gray_cache& gray, int roo
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_gp_gray_16_merged74_15 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2gp_gray_16, 2 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2*gp_gray_16 - 0, 2 + 2*gp_gray_15 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(gp_gray_16 - 0, 2 + gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -268,7 +268,7 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_16_select(gray_cache& gray, int roo
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_gp_gray_16_merged74_16 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[1 + 2gp_gray_16, 2 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + 2*gp_gray_16 - 0, 2 + 2*gp_gray_15 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + gp_gray_16 - 0, 2 + gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -277,7 +277,7 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_17_select(gray_cache& gray, int roo
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_gp_gray_16_merged74_17 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2 + 2gp_gray_16, 2 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + 2*gp_gray_16 - 0, 2 + 2*gp_gray_15 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + gp_gray_16 - 0, 2 + gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -286,7 +286,7 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_18_select(gray_cache& gray, int roo
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_gp_gray_16_merged74_18 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2gp_gray_16, 1 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2*gp_gray_16 - 0, 1 + 2*gp_gray_15 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(gp_gray_16 - 0, 1 + gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -295,7 +295,7 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_19_select(gray_cache& gray, int roo
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_gp_gray_16_merged74_19 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[1 + 2gp_gray_16, 1 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + 2*gp_gray_16 - 0, 1 + 2*gp_gray_15 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + gp_gray_16 - 0, 1 + gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -304,7 +304,7 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_20_select(gray_cache& gray, int roo
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_gp_gray_16_merged74_20 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2 + 2gp_gray_16, 1 + 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + 2*gp_gray_16 - 0, 1 + 2*gp_gray_15 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + gp_gray_16 - 0, 1 + gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -313,7 +313,7 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_21_select(gray_cache& gray, int roo
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_gp_gray_16_merged74_21 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2gp_gray_16, 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2*gp_gray_16 - 0, 2*gp_gray_15 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(gp_gray_16 - 0, gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -322,7 +322,7 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_22_select(gray_cache& gray, int roo
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_gp_gray_16_merged74_22 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[1 + 2gp_gray_16, 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + 2*gp_gray_16 - 0, 2*gp_gray_15 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(1 + gp_gray_16 - 0, gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -331,7 +331,7 @@ inline hw_uint<32>  gray_gp_gray_16_merged74_23_select(gray_cache& gray, int roo
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // gray_gp_gray_16_merged74_23 read pattern: { gp_gray_16_merged74[root = 0, gp_gray_15, gp_gray_16] -> gray[2 + 2gp_gray_16, 2gp_gray_15] : 0 <= gp_gray_15 <= 9 and 0 <= gp_gray_16 <= 9 }
-  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + 2*gp_gray_16 - 0, 2*gp_gray_15 - 0);
+  auto value_gray_oc_load_in03_2 = gray.gray_all_inputs_to_all_outputs.read(2 + gp_gray_16 - 0, gp_gray_15 - 0);
   return value_gray_oc_load_in03_2;
   return 0;
 }
@@ -473,6 +473,9 @@ void unoptimized_time_sharing_gauss_pyramid(HWStream<hw_uint<32> >& /* no bundle
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   gray_cache gray;
+//#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs complete dim=0
+#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs cyclic factor=4 dim=1
+#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs cyclic factor=4 dim=2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
@@ -509,15 +512,19 @@ void unoptimized_time_sharing_gauss_pyramid(HWStream<hw_uint<32> >& /* no bundle
 	{
 	  for (int c3 = 0; c3 <= 19; c3 += 1)
 	    for (int c5 = 0; c5 <= 19; c5 += 1)
+#pragma HLS pipeline II=1
 	      oc_load_in03(in /* buf name */, gray, 0, c3, c5);
 	  for (int c3 = 0; c3 <= 9; c3 += 1)
 	    for (int c5 = 0; c5 <= 9; c5 += 1)
+#pragma HLS pipeline II=1
 	      gp_gray_16_merged74(gray /* buf name */, gp_gray_1_buf4, 0, c3, c5);
 	  for (int c3 = 0; c3 <= 3; c3 += 1)
 	    for (int c5 = 0; c5 <= 3; c5 += 1)
+#pragma HLS pipeline II=1
 	      gp_gray_214_merged77(gp_gray_1_buf4 /* buf name */, gp_gray_2_buf12, 0, c3, c5);
 	  for (int c3 = 0; c3 <= 3; c3 += 1)
 	    for (int c5 = 0; c5 <= 3; c5 += 1)
+#pragma HLS pipeline II=1
 	      pw_math_gp_gray_2_buf122023(gp_gray_2_buf12 /* buf name */, out, 0, c3, c5);
 	}
 	
