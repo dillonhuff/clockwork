@@ -18787,11 +18787,9 @@ void test_time_sharing_gaussian_pyramid() {
   }
   prg.pretty_print();
 
-  auto unopt = unoptimized_result(prg);
+  auto unopt_postprocessed = unoptimized_result(prg);
 
-  cout << tab(1) << "# of outputs: " << unopt.size() << endl;
-
-  //tile_for_time_sharing(prg);
+  tile_for_time_sharing(prg);
   prg.name = "time_sharing_gauss_pyramid_tiled";
   prg.pretty_print();
 
@@ -18811,7 +18809,7 @@ void test_time_sharing_gaussian_pyramid() {
   //assert(false);
 
   auto tiled = unoptimized_result(prg);
-  compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
+  compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt_postprocessed);
 }
 
 void dhuff_playground() {
