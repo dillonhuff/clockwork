@@ -18797,11 +18797,10 @@ void test_time_sharing_gaussian_pyramid() {
   auto in = lp->add_loop(prg.un("d"), 0, 5*4);
   auto rd = in->add_op(prg.un("rob"));
 
-  rd->add_load("in", lp->name, in->name);
-  rd->add_store("in_rob", lp->name, in->name);
+  rd->add_load("in", in->name, lp->name);
+  rd->add_store("in_rob", in->name, lp->name);
 
   prg.pretty_print();
-  assert(false);
 
   auto tiled = unoptimized_result(prg);
   compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);

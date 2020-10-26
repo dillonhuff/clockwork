@@ -5760,3 +5760,31 @@ map<string, pair<string, int> > determine_shift_reg_map(
   }
   return shift_registered_outputs;
 }
+
+
+void ir_node::replace_writes_to(const std::string& source_buf, const std::string& replacement) {
+  if (is_loop) {
+    for (auto c : children) {
+      c->replace_writes_to(source_buf, replacement);
+    }
+  }
+  for (auto& b : produce_locs) {
+    if (b.first == source_buf) {
+      b.first = replacement;
+    }
+  }
+}
+
+void ir_node::replace_reads_from(const std::string& source_buf, const std::string& replacement) {
+  if (is_loop) {
+    for (auto c : children) {
+      c->replace_reads_from(source_buf, replacement);
+    }
+  }
+  for (auto& b : consume_locs_pair) {
+    if (b.first == source_buf) {
+      b.first = replacement;
+    }
+  }
+}
+

@@ -137,21 +137,6 @@ struct ir_node {
     }
   }
 
-  void replace_writes_to(const std::string& source_buf, const std::string& replacement) {
-    for (auto& b : produce_locs) {
-      if (b.first == source_buf) {
-        b.first = replacement;
-      }
-    }
-  }
-  void replace_reads_from(const std::string& source_buf, const std::string& replacement) {
-    for (auto& b : consume_locs_pair) {
-      if (b.first == source_buf) {
-        b.first = replacement;
-      }
-    }
-  }
-
   void replace_child(op* c, op* replacement) {
     for (int i = 0; i < (int) children.size(); i++) {
       if (children.at(i) == c) {
@@ -162,6 +147,8 @@ struct ir_node {
     assert(false);
   }
 
+  void replace_reads_from(const std::string& source_buf, const std::string& replacement);
+  void replace_writes_to(const std::string& source_buf, const std::string& replacement);
   vector<piecewise_address> read_addrs() const {
     vector<piecewise_address> addrs;
     for (auto l : consume_locs_pair) {
