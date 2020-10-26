@@ -18759,7 +18759,7 @@ void test_outer_strip_mine() {
 }
 
 void test_time_sharing_gaussian_pyramid() {
-  int num_pyramid_levels = 2;
+  int num_pyramid_levels = 3;
 
   prog prg("time_sharing_gauss_pyramid");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
@@ -18792,23 +18792,20 @@ void test_time_sharing_gaussian_pyramid() {
 }
 
 void dhuff_playground() {
-  for (auto prg : all_cgra_programs()) {
-    cout << "====== Running CGRA test for " << prg.name << endl;
-    prg.pretty_print();
-    prg.sanity_check();
+  test_time_sharing_gaussian_pyramid();
 
-    dsa_writers(prg);
-    prg.pretty_print();
+  //for (auto prg : all_cgra_programs()) {
+    //cout << "====== Running CGRA test for " << prg.name << endl;
+    //prg.pretty_print();
+    //prg.sanity_check();
 
-    compile_for_garnet_platonic_mem(prg);
-  }
-  assert(false);
+    //dsa_writers(prg);
+    //prg.pretty_print();
 
-  {
-    auto prg = three_level_memory();
-    prg.pretty_print();
-    assert(false);
-  }
+    //compile_for_garnet_platonic_mem(prg);
+  //}
+  //assert(false);
+
   test_outer_strip_mine();
 
   prog prg("time_sharing_pyramid_1d");
@@ -18847,7 +18844,6 @@ void dhuff_playground() {
   auto tiled = unoptimized_result(prg);
   compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
 
-  test_time_sharing_gaussian_pyramid();
 }
 
 int main(int argc, char** argv) {
