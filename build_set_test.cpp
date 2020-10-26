@@ -18716,7 +18716,6 @@ void test_outer_strip_mine() {
   compare("outer_strip_mine_" + prg.name + "_vs_unopt", strip_mined, unopt);
 }
 
-
 void test_time_sharing_gaussian_pyramid() {
   int num_pyramid_levels = 3;
 
@@ -18747,6 +18746,7 @@ void test_time_sharing_gaussian_pyramid() {
   prg.pretty_print();
 
   auto unopt_postprocessed = unoptimized_result(prg);
+  move_to_benchmarks_folder(prg.name);
 
   tile_for_time_sharing(prg);
   prg.name = "time_sharing_gauss_pyramid_tiled";
@@ -18769,6 +18769,7 @@ void test_time_sharing_gaussian_pyramid() {
 
   auto tiled = unoptimized_result(prg);
   compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt_postprocessed);
+  move_to_benchmarks_folder(prg.name);
 }
 
 void dhuff_playground() {
