@@ -16987,12 +16987,12 @@ void test_schedules(vector<prog>& test_programs) {
 
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
+  //test_programs.push_back(rom());
   test_programs.push_back(harris());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
   test_programs.push_back(up_sample());
   // Fails with dual port tile?
-  //test_programs.push_back(rom());
   test_programs.push_back(strided_conv());
   test_programs.push_back(mini_conv_halide_fixed());
 
@@ -17064,13 +17064,6 @@ void test_platonic_codegen(vector<prog>& test_programs) {
     //string app_type = "dualwithaddr";
     string app_type = "platonic_buffer";
     cpy_app_to_folder(app_type, prg.name);
-    //cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg.name);
-    //cmd("mv " + prg.name + ".json ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + ".v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + "_compute.v ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/" + app_type + "/" + prg.name + "/");
-    //cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg.name + "/");
   }
 }
 
