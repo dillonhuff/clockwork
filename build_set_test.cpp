@@ -18789,22 +18789,22 @@ void test_time_sharing_gaussian_pyramid() {
 
   cout << tab(1) << "# of outputs: " << unopt.size() << endl;
 
-  tile_for_time_sharing(prg);
+  //tile_for_time_sharing(prg);
   prg.name = "time_sharing_gauss_pyramid_tiled";
   prg.pretty_print();
 
-  prg.root->replace_reads_from("in", "in_rob");
+  //prg.root->replace_reads_from("in", "in_rob");
 
-  auto lp = prg.root->add_loop_before(
-      prg.root->children.front(),
-      prg.un("reorder_load"),
-      0,
-      5*4);
-  auto in = lp->add_loop(prg.un("d"), 0, 5*4);
-  auto rd = in->add_op(prg.un("rob"));
+  //auto lp = prg.root->add_loop_before(
+      //prg.root->children.front(),
+      //prg.un("reorder_load"),
+      //0,
+      //5*4);
+  //auto in = lp->add_loop(prg.un("d"), 0, 5*4);
+  //auto rd = in->add_op(prg.un("rob"));
 
-  rd->add_load("in", in->name, lp->name);
-  rd->add_store("in_rob", in->name, lp->name);
+  //rd->add_load("in", in->name, lp->name);
+  //rd->add_store("in_rob", in->name, lp->name);
 
   prg.pretty_print();
 
