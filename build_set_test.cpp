@@ -18778,10 +18778,15 @@ void test_time_sharing_gaussian_pyramid() {
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
   normalize_bounds(prg);
+  for (auto lp : prg.all_loops()) {
+    naively_extend_bounds_to_multiple_of(lp, 2);
+  }
+  prg.pretty_print();
 
   auto unopt = unoptimized_result(prg);
 
-  prg.pretty_print();
+  cout << tab(1) << "# of outputs: " << unopt.size() << endl;
+  assert(false);
 
   tile_for_time_sharing(prg);
   prg.name = "time_sharing_gauss_pyramid_tiled";
