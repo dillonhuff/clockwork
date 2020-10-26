@@ -18787,6 +18787,22 @@ void test_time_sharing_gaussian_pyramid() {
   prg.name = "time_sharing_gauss_pyramid_tiled";
   prg.pretty_print();
 
+  prg.root->replace_reads_from("in", "in_rob");
+
+  auto lp = prg.root->add_loop_before(
+      prg.root->children.front(),
+      prg.un("reorder_load"),
+      0,
+      5*4);
+  auto in = lp->add_loop(prg.un("d"), 0, 5*4);
+  auto rd = in->add_op(prg.un("rob"));
+
+  rd->add_load("in", lp->name, in->name);
+  rd->add_store("in_rob", lp->name, in->name);
+
+  prg.pretty_print();
+  assert(false);
+
   auto tiled = unoptimized_result(prg);
   compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
 }
