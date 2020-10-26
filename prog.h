@@ -137,21 +137,6 @@ struct ir_node {
     }
   }
 
-  void replace_writes_to(const std::string& source_buf, const std::string& replacement) {
-    for (auto& b : produce_locs) {
-      if (b.first == source_buf) {
-        b.first = replacement;
-      }
-    }
-  }
-  void replace_reads_from(const std::string& source_buf, const std::string& replacement) {
-    for (auto& b : consume_locs_pair) {
-      if (b.first == source_buf) {
-        b.first = replacement;
-      }
-    }
-  }
-
   void replace_child(op* c, op* replacement) {
     for (int i = 0; i < (int) children.size(); i++) {
       if (children.at(i) == c) {
@@ -162,6 +147,8 @@ struct ir_node {
     assert(false);
   }
 
+  void replace_reads_from(const std::string& source_buf, const std::string& replacement);
+  void replace_writes_to(const std::string& source_buf, const std::string& replacement);
   vector<piecewise_address> read_addrs() const {
     vector<piecewise_address> addrs;
     for (auto l : consume_locs_pair) {
@@ -1567,6 +1554,7 @@ void all_register_files(prog& prg, CodegenOptions& options);
 int compile_compute(const std::string& name);
 
 vector<string> surrounding_vars(op* loop, prog& prg);
+vector<string> surrounding_vars(const std::string& op, prog& prg);
 vector<op*> surrounding_vars_ops(op* loop, prog& prg);
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
 
@@ -1822,3 +1810,9 @@ void normalize_address_offsets(prog& prg);
 vector<op*> ops_at_level(const int level, prog& prg);
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);
 bool no_violated_resource_assignments(schedule_info& sched, prog& prg);
+
+
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);

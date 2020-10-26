@@ -1916,7 +1916,8 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
-compute_kernel generate_compute_op(
+//compute_kernel generate_compute_op(
+void generate_compute_op(
     ostream& conv_out,
     prog& prg,
     op* op,
@@ -1925,9 +1926,9 @@ compute_kernel generate_compute_op(
 
   cout << "Generating compute for: " << op->name << endl;
 
-  compute_kernel kernel;
-  kernel.name = op->name;
-  kernel.functional_unit = op->func;
+  //compute_kernel kernel;
+  //kernel.name = op->name;
+  //kernel.functional_unit = op->func;
 
   vector<string> buf_srcs;
   concat(buf_srcs, buffer_args(buffers, op, prg));
@@ -1938,7 +1939,7 @@ compute_kernel generate_compute_op(
   vector<string> dim_args;
   for (auto a : space_var_args(s)) {
     dim_args.push_back(a);
-    kernel.iteration_variables.push_back(a);
+    //kernel.iteration_variables.push_back(a);
   }
   dim_args.push_back("0");
 
@@ -1979,7 +1980,7 @@ compute_kernel generate_compute_op(
     conv_out << "\tauto " << value_name << " = ";
 
     string bundle_name = op->name + "_read";
-    kernel.input_buffers.push_back({in_buffer, bundle_name});
+    //kernel.input_buffers.push_back({in_buffer, bundle_name});
 
     if (prg.is_boundary(in_buffer)) {
       conv_out << in_buffer << ".read();" << endl;
@@ -2034,7 +2035,7 @@ compute_kernel generate_compute_op(
   conv_out << "\t// Produce: " << out_buffer << endl;
 
   string bundle_name = op->name + "_write";
-  kernel.output_buffer = {out_buffer, bundle_name};
+  //kernel.output_buffer = {out_buffer, bundle_name};
 
   cout << "Checking if program is a boundary" << endl;
 
@@ -2053,262 +2054,11 @@ compute_kernel generate_compute_op(
   conv_out << endl;
   open_debug_scope(conv_out);
 
-  ////cout << "emitting bundle code" << endl;
-  //auto& buf = buffers.at(out_buffer);
-  //int bundle_width = buf.port_bundle_width(bundle_name);
-
-  //int unroll_factor = op->unroll_factor;
-  //int element_width = bundle_width / op->unroll_factor;
-
-
-  //string dbg_res_name = "debug_" + res;
-  //conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << "(" << res << ");" << endl;
-  //vector<string> lane_values =
-    //split_bv(1, conv_out, dbg_res_name, element_width, op->unroll_factor);
-
-  //for (int lane = 0; lane < unroll_factor; lane++) {
-    //conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
-    //int i = 0;
-    //for (auto v : kernel.iteration_variables) {
-      //if (i == 0) {
-        //conv_out << "(" << unroll_factor << "*" << v << " + " << lane << ") << \",\" << ";
-      //} else {
-        //conv_out << v << "<< \",\" << ";
-      //}
-      //i++;
-    //}
-    //assert(lane < lane_values.size());
-    //conv_out << " " << lane_values.at(lane) << " << endl;" << endl;
-  //}
 
   close_debug_scope(conv_out);
   conv_out << endl;
   conv_out << "}" << endl << endl;
 
-  return kernel;
-}
-
-//module_type* generate_rtl_buffer(CodegenOptions& options,
-    //minihls::context& minigen,
-    //UBuffer& buffer) {
-
-  //minihls::block* blk = minigen.add_block(buffer.name);
-  //for (auto bank_struct : buffer.get_banks()) {
-    //auto bankprog = minigen.add_block(bank_struct.name);
-
-    //map<string, minihls::module_instance*> partitions;
-    //map<string, minihls::instruction_instance*> read_partitions;
-    //for (auto part : bank_struct.get_partitions()) {
-      //auto part_tp = sr_buffer(*bankprog,
-          //32,
-          //part.second);
-      //partitions[part.first] =
-        //bankprog->add_module_instance(part.first, part_tp);
-    //}
-
-    //auto bankmod = minigen.compile(bankprog);
-    //blk->add_module_instance(bank_struct.name, bankmod);
-  //}
-
-  //for (auto osel : buffer.selectors) {
-    //selector sel = osel.second;
-    //vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
-    //for (auto pt : sel.vars) {
-      //ports.push_back(minihls::inpt(pt, 32));
-    //}
-    //ports.push_back(minihls::outpt("out", 32));
-
-    //ostringstream body;
-    //for (int i = 0; i < sel.bank_conditions.size(); i++) {
-      //body << tab(1) << "always @(*) begin" << endl;
-      //body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
-      //body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
-      //body << tab(2) << "end" << endl;
-      //body << tab(1) << "end" << endl;
-    //}
-    //auto ubufmod =
-      //blk->add_module_type(sel.name, ports, body.str());
-    //blk->add_module_instance("selector_" + sel.name,
-        //ubufmod);
-  //}
-
-
-  //for (auto out_bundle : buffer.get_in_bundles()) {
-    //// Here I need to get all banks which receive data from this bundle
-    //// and write to them
-    //in_wire_read(*blk, out_bundle US "wen", 1);
-    //in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
-  //}
-
-  //for (auto out_bundle : buffer.get_out_bundles()) {
-    //auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
-    //// Here I need to get all sources of this bundle and concatenate
-    //// them together
-    //out_wire_write(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle), dummy);
-  //}
-
-  //auto mod = minigen.compile(blk);
-
-  //for (auto out_bundle : buffer.get_in_bundles()) {
-    //auto wr_bundle =
-      //blk->add_instruction_type(buffer.name US out_bundle US "write");
-    //auto wr_bind =
-      //blk->add_instruction_binding(buffer.name US out_bundle US "write_binding",
-          //wr_bundle,
-          //mod,
-          //out_bundle US "wdata",
-          //{});
-    //wr_bind->latency = 1;
-    //wr_bind->en = out_bundle US "wen";
-  //}
-
-  //for (auto bundle : buffer.get_out_bundles()) {
-    //auto rd_bundle =
-      //blk->add_instruction_type(buffer.name US bundle US "read");
-    //auto rd_bind =
-      //blk->add_instruction_binding(buffer.name US bundle US "read_binding",
-          //rd_bundle,
-          //mod,
-          //bundle US "rdata",
-          //{});
-    //rd_bind->latency = 1;
-  //}
-
-  //return mod;
-//}
-
-vector<compute_kernel> writers(vector<compute_kernel>& kernels, const std::string& in_buf) {
-  vector<compute_kernel> ws;
-  for (auto k : kernels) {
-    if (k.output_buffer.first == in_buf) {
-      ws.push_back(k);
-    }
-  }
-  return ws;
-}
-
-void generate_verilog_code(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map,
-    vector<compute_kernel>& kernels) {
-
-  //vector<compute_kernel> sorted_kernels;
-  //set<string> done;
-  //while (sorted_kernels.size() < kernels.size()) {
-
-    //for (auto k : kernels) {
-      //if (!elem(k.name, done)) {
-        //bool all_args_scheduled = true;
-        //for (auto in_buf : k.input_buffers) {
-          //for (auto writer : writers(kernels, in_buf.first)) {
-            //if (!elem(writer.name, done)) {
-              //all_args_scheduled = false;
-              //break;
-            //}
-          //}
-        //}
-        //if (all_args_scheduled) {
-          //sorted_kernels.push_back(k);
-          //done.insert(k.name);
-        //}
-      //}
-    //}
-
-    //cout << "sorted kernels size = " << sorted_kernels.size() << endl;
-  //}
-
-  //minihls::context minigen;
-
-  //map<string, minihls::module_type*> buffer_mods;
-  //for (auto& b : buffers) {
-    //buffer_mods[b.first] =
-      //generate_rtl_buffer(options, minigen, b.second);
-  //}
-
-  //map<string, minihls::module_type*> operation_mods;
-  //map<string, minihls::instruction_type*> kernel_instrs;
-  //for (auto op : sorted_kernels) {
-    //minihls::block* blk = minigen.add_block(op.name);
-    //auto res = wire_read(*blk, "src", 32);
-    //out_wire_write(*blk, "out", 32, res);
-
-    //operation_mods[op.name] = minigen.compile(blk);
-    //auto blkmod = operation_mods[op.name];
-    //auto apply_instr =
-      //blk->add_instruction_type(op.name US "apply");
-    //kernel_instrs[op.name] = apply_instr;
-    //auto apply_bind =
-      //blk->add_instruction_binding(op.name US "apply_binding",
-          //apply_instr,
-          //blkmod,
-          //"out",
-          //{});
-    //apply_bind->latency = 1;
-  //}
-
-  //auto main_blk = minigen.add_block(prg.name);
-  //for (auto b : buffer_mods) {
-    //if (prg.is_boundary(b.first)) {
-      //main_blk->add_external_module_instance("buf_" + b.second->get_name(), b.second);
-    //} else {
-      //main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
-    //}
-  //}
-
-  //vector<minihls::instruction_instance*> earlier;
-  //map<string, set<minihls::instruction_instance*> > earlier_writes;
-  //map<pair<string, string>, minihls::instruction_instance*> reads;
-  //map<string, set<minihls::instruction_instance*> > reads_from_buffers;
-  //for (auto instr : sorted_kernels) {
-    //cout << "Kernel = " << instr.name << endl;
-    //auto instr_tp = map_find(instr.name, kernel_instrs);
-
-    //for (auto inbuf : instr.input_buffers) {
-      //reads[inbuf] =
-        //main_blk->call("buf_" + inbuf.first, inbuf.second);
-      //reads_from_buffers[inbuf.first].insert(reads.at(inbuf));
-    //}
-
-    //auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
-    ////for (auto rd : reads) {
-      ////main_blk->add_data_dependence(rd.second, instr_inst, 0);
-    ////}
-
-    ////for (auto earlier_inst : earlier) {
-      ////main_blk->add_data_dependence(earlier_inst, instr_inst, 0);
-    ////}
-
-    //// Store the output to the result buffer
-    //string out_buf = "buf_" + instr.output_buffer.first;
-    //string out_bundle = instr.output_buffer.second;
-
-    //auto write_inst = main_blk->call(out_buf, out_bundle);
-    //earlier_writes[instr.output_buffer.first].insert(write_inst);
-    ////main_blk->add_data_dependence(instr_inst, write_inst, 0);
-
-    //earlier.push_back(instr_inst);
-    //earlier.push_back(write_inst);
-  //}
-
-  //auto instrs = main_blk->instruction_list();
-  //for (int i = 0; i < instrs.size() - 1; i++) {
-    //auto current = instrs[i];
-    //auto next = instrs[i + 1];
-    //main_blk->add_data_dependence(current, next, 0);
-  //}
-
-  ////for (auto rds : reads_from_buffers) {
-    ////for (auto rd : rds.second) {
-      ////for (auto wr : earlier_writes[rds.first]) {
-        ////main_blk->add_data_dependence(wr, rd, 0);
-      ////}
-    ////}
-  ////}
-
-  //compile(*main_blk);
-  ////assert(false);
 }
 
 std::string perfect_loop_codegen(umap* schedmap) {
@@ -2426,9 +2176,10 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
-  vector<compute_kernel> kernels;
+  //vector<compute_kernel> kernels;
   for (auto op : prg.all_ops()) {
-    kernels.push_back(generate_compute_op(conv_out, prg, op, buffers, domain_map));
+    //kernels.push_back(generate_compute_op(conv_out, prg, op, buffers, domain_map));
+    generate_compute_op(conv_out, prg, op, buffers, domain_map);
   }
 
   conv_out << "// Driver function" << endl;
@@ -2537,10 +2288,6 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << endl;
 
-  //ofstream test_out("multi_channel_accel_wrapper.cpp");
-  //generate_xilinx_multi_channel_accel_wrapper(options, test_out, buffers, prg);
-  //test_out.close();
-
   // Collateral generation
   generate_vivado_tcl(prg.name);
   generate_sw_bmp_test_harness(buffers, prg);
@@ -2549,7 +2296,6 @@ void generate_app_code(CodegenOptions& options,
   generate_xilinx_aws_ddr_config(options, buffers, prg);
   generate_xilinx_accel_soda_host(options, buffers, prg);
   generate_xilinx_accel_host(options, buffers, prg);
-  generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
   generate_tb_compare_scripts(buffers, prg);
 
@@ -3617,9 +3363,9 @@ void generate_compute_trace(
 
   cout << "Generating compute for: " << op->name << endl;
 
-  compute_kernel kernel;
-  kernel.name = op->name;
-  kernel.functional_unit = op->func;
+  //compute_kernel kernel;
+  //kernel.name = op->name;
+  //kernel.functional_unit = op->func;
 
   vector<string> buf_srcs;
 
@@ -3806,6 +3552,10 @@ vector<op*> surrounding_vars_ops(op* loop, prog& prg) {
   return surrounding;
 }
 
+vector<string> surrounding_vars(const std::string& op, prog& prg) {
+  return surrounding_vars(prg.find_op(op), prg);
+}
+
 vector<string> surrounding_vars(op* loop, prog& prg) {
   assert(loop != nullptr);
   vector<string> surrounding;
@@ -3916,10 +3666,16 @@ void ir_node::shift_address(const string & buf, const std::vector<int> & min_loc
 }
 
 void ir_node::replace_variable(const std::string& var, const std::string& val) {
+  if (is_loop) {
+    for (auto c : children) {
+      c->replace_variable(var, val);
+    }
+  }
 
   for (auto& addr : produce_locs) {
     piecewise_address pw;
     for (auto& comp : addr.second) {
+      cout << "replacing " << var << " with " << val << " in " << comp.second << endl;
       pw.push_back({comp.first, ::replace_variable(comp.second, var, val)});
     }
     addr.second = pw;
@@ -3934,8 +3690,13 @@ void ir_node::replace_variable(const std::string& var, const std::string& val) {
   }
 
 }
-void ir_node::replace_variable(const std::string& var, const int val) {
 
+void ir_node::replace_variable(const std::string& var, const int val) {
+  if (is_loop) {
+    for (auto c : children) {
+      c->replace_variable(var, val);
+    }
+  }
   for (auto& addr : produce_locs) {
     piecewise_address pw;
     for (auto& comp : addr.second) {
@@ -5947,5 +5708,83 @@ bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
     }
   }
   return true;
+}
+
+
+
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
+  auto sc = buf.global_schedule();
+  bool any_reduce_ops_on_buffer = false;
+  map<string, pair<string, int> > shift_registered_outputs;
+  for (auto op : prg.all_ops()) {
+    if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
+      any_reduce_ops_on_buffer = true;
+      break;
+    }
+  }
+
+  if (!any_reduce_ops_on_buffer) {
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto inpt : buf.get_in_ports()) {
+        string reader_name = domain_name(pick(get_maps(buf.access_map.at(outpt))));
+        op* read_op = prg.find_op(reader_name);
+
+        auto read = read_op->buffers_read();
+        auto written = read_op->buffers_written();
+
+        string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
+        cout << "Writer name: " << writer_name << endl;
+        op* write_op = prg.find_op(writer_name);
+
+        // Dont shift register rolled-reduces
+        if (intersection(read, written).size() == 0 &&
+            intersection(write_op->buffers_read(), write_op->buffers_written()).size() == 0) {
+          auto dd =
+            dependence_distance_singleton(buf, inpt, outpt, sc);
+          //assert(false);
+          if (dd.has_value()) {
+            int dd_raw = dd.get_value();
+            if (write_op->func != "") {
+              dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+            }
+            dd_raw = dd_raw - 1;
+            shift_registered_outputs[outpt] = {inpt, dd_raw};
+          }
+        }
+      }
+    }
+  }
+  return shift_registered_outputs;
+}
+
+
+void ir_node::replace_writes_to(const std::string& source_buf, const std::string& replacement) {
+  if (is_loop) {
+    for (auto c : children) {
+      c->replace_writes_to(source_buf, replacement);
+    }
+  }
+  for (auto& b : produce_locs) {
+    if (b.first == source_buf) {
+      b.first = replacement;
+    }
+  }
+}
+
+void ir_node::replace_reads_from(const std::string& source_buf, const std::string& replacement) {
+  if (is_loop) {
+    for (auto c : children) {
+      c->replace_reads_from(source_buf, replacement);
+    }
+  }
+  for (auto& b : consume_locs_pair) {
+    if (b.first == source_buf) {
+      b.first = replacement;
+    }
+  }
 }
 
