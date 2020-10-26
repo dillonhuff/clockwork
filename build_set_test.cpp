@@ -18751,6 +18751,7 @@ void test_time_sharing_gaussian_pyramid() {
   tile_for_time_sharing(prg);
   prg.name = "time_sharing_gauss_pyramid_tiled";
   prg.pretty_print();
+  assert(false);
 
   prg.root->replace_reads_from("in", "in_rob");
 

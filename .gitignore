@@ -61,3 +61,5 @@ user_settings/private_settings.sh
 images/
 synthesis/
 warp_and_upsample*
+ef_*
+unoptimized_*
