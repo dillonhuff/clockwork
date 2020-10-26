@@ -18778,6 +18778,8 @@ void test_time_sharing_gaussian_pyramid() {
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
   normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
   for (auto lp : prg.all_loops()) {
     if (lp->name != "root") {
       naively_extend_bounds_to_multiple_of(lp, 2);
@@ -18793,20 +18795,20 @@ void test_time_sharing_gaussian_pyramid() {
   prg.name = "time_sharing_gauss_pyramid_tiled";
   prg.pretty_print();
 
-  //prg.root->replace_reads_from("in", "in_rob");
+  prg.root->replace_reads_from("in", "in_rob");
 
-  //auto lp = prg.root->add_loop_before(
-      //prg.root->children.front(),
-      //prg.un("reorder_load"),
-      //0,
-      //5*4);
-  //auto in = lp->add_loop(prg.un("d"), 0, 5*4);
-  //auto rd = in->add_op(prg.un("rob"));
-
-  //rd->add_load("in", in->name, lp->name);
-  //rd->add_store("in_rob", in->name, lp->name);
+  auto lp = prg.root->add_loop_before(
+      prg.root->children.front(),
+      prg.un("reorder_load"),
+      0,
+      5*4);
+  auto in = lp->add_loop(prg.un("d"), 0, 5*4);
+  auto rd = in->add_op(prg.un("rob"));
+  rd->add_load("in", in->name, lp->name);
+  rd->add_store("in_rob", in->name, lp->name);
 
   prg.pretty_print();
+  //assert(false);
 
   auto tiled = unoptimized_result(prg);
   compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
