@@ -18738,7 +18738,7 @@ void test_time_sharing_gaussian_pyramid() {
   vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
   cpy("out", gray_levels.back(), 2, prg);
 
-  infer_bounds("out", {4, 4}, prg);
+  infer_bounds("out", {16, 16}, prg);
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
@@ -18758,7 +18758,7 @@ void test_time_sharing_gaussian_pyramid() {
   tile_for_time_sharing(prg);
   prg.name = "time_sharing_gauss_pyramid_tiled";
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   prg.root->replace_reads_from("in", "in_rob");
 
@@ -18870,6 +18870,7 @@ void travis_tests() {
   two_in_conv2d_test();
   warp_and_upsample_test();
 }
+
 int main(int argc, char** argv) {
 
   if (argc > 1) {
