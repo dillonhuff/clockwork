@@ -2165,6 +2165,32 @@ void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg)
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
 }
 
+void generate_app_collateral(CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+  open_synth_scope(conv_out);
+  generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
+  generate_xilinx_accel_rdai_wrapper(options, conv_out, buffers, prg);
+  close_synth_scope(conv_out);
+
+  conv_out << endl;
+
+  // Collateral generation
+  generate_vivado_tcl(prg.name);
+  generate_sw_bmp_test_harness(buffers, prg);
+  generate_app_code_header(buffers, prg);
+  generate_soda_tb(options, buffers, prg);
+  generate_xilinx_aws_ddr_config(options, buffers, prg);
+  generate_xilinx_accel_soda_host(options, buffers, prg);
+  generate_xilinx_accel_host(options, buffers, prg);
+  generate_tb_run_scripts(prg);
+  generate_tb_compare_scripts(buffers, prg);
+
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2299,23 +2325,12 @@ void generate_app_code(CodegenOptions& options,
     conv_out << "}" << endl;
   }
 
-  open_synth_scope(conv_out);
-  generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
-  generate_xilinx_accel_rdai_wrapper(options, conv_out, buffers, prg);
-  close_synth_scope(conv_out);
-
-  conv_out << endl;
-
-  // Collateral generation
-  generate_vivado_tcl(prg.name);
-  generate_sw_bmp_test_harness(buffers, prg);
-  generate_app_code_header(buffers, prg);
-  generate_soda_tb(options, buffers, prg);
-  generate_xilinx_aws_ddr_config(options, buffers, prg);
-  generate_xilinx_accel_soda_host(options, buffers, prg);
-  generate_xilinx_accel_host(options, buffers, prg);
-  generate_tb_run_scripts(prg);
-  generate_tb_compare_scripts(buffers, prg);
+  generate_app_collateral(options,
+      conv_out,
+      buffers,
+      prg,
+      schedmap,
+      domain_map);
 
   conv_out.close();
 }
