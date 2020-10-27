@@ -2205,6 +2205,14 @@ void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out,
   close_debug_scope(conv_out);
 }
 
+void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog prg) {
+  open_debug_scope(conv_out);
+  conv_out << tab(1) << "debug_file.close();" << endl;
+  close_debug_scope(conv_out);
+
+  conv_out << "}" << endl << endl;
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2238,17 +2246,6 @@ void generate_app_code(CodegenOptions& options,
   }
 
   generate_driver_function_prefix(options, conv_out, buffers, prg);
-  //conv_out << "// Driver function" << endl;
-  //vector<string> arg_buf_list = get_args(buffers, prg);
-  //auto inner_args = arg_buf_list;
-  //string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
-
-  //conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
-
-  //open_debug_scope(conv_out);
-  //conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
-  //conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
-  //close_debug_scope(conv_out);
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2310,11 +2307,7 @@ void generate_app_code(CodegenOptions& options,
   conv_out << tab(1) << "*/" << endl;
   conv_out << code_string << endl;
 
-  open_debug_scope(conv_out);
-  conv_out << tab(1) << "debug_file.close();" << endl;
-  close_debug_scope(conv_out);
-
-  conv_out << "}" << endl << endl;
+  generate_driver_function_suffix(options, conv_out, buffers, prg);
 
   {
     vector<string> arg_buf_list = get_args(buffers, prg);
