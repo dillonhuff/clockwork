@@ -1797,7 +1797,7 @@ prog conv_1_2() {
 
 prog conv_3_3() {
   prog prg;
-  prg.compute_unit_file = "conv_3_3_compute.h";
+  prg.compute_unit_file = "conv_3_3_halide_compute.h";
   prg.name = "conv_3_3";
 
 // Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;

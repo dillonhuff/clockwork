@@ -199,6 +199,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
             RecordParams recordparams = {
                 {"rst_n", c->BitIn()},
+                {"chain_chain_en", c->BitIn()},
                 {"clk_en", c->BitIn()},
                 {"clk", c->Named("coreir.clkIn")}
             };

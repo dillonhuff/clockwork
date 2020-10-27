@@ -1703,6 +1703,10 @@ void generate_verilator_tb(prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers);
 
+void generate_garnet_verilator_tb(prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers);
+
 template<typename T>
 void print_box_bounds(const std::string& name, T* pr){
   auto lmin = lexmin(pr);

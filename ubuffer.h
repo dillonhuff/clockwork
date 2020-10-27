@@ -2056,6 +2056,7 @@ class UBuffer {
         string ub_ins_name,
         size_t input_num, size_t output_num,
         bool has_stencil_valid, bool has_flush);
+
     void emit_lake_config_collateral(CodegenOptions options, string dir);
 #endif
 
@@ -2172,6 +2173,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf);
 void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo);
+
+CoreIR::Instance* affine_controller_use_lake_tile(CoreIR::ModuleDef*, CoreIR::Context*, isl_set*, isl_aff*, string);
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);

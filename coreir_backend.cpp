@@ -1843,32 +1843,48 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
   return def->sel(write_start_name(opname))->sel("out");
 }
 
-void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
-
+void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
+  cout << "Find compute" << endl;
   int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
   int read_latency =
     op->buffers_read().size() == 0 ? 0 :
     map_find(pick(op->buffers_read()), hwinfo.buffer_load_latencies);
+    cout << "Done Finding compute , op Latency : " << op_latency
+        << ", read Latency: " << read_latency << endl;
 
-  Wireable* op_start_wire = controller->sel("valid");
-  Wireable* op_start_loop_vars = controller->sel("d");
+  if (options.rtl_options.use_external_controllers) {
+    Wireable* op_start_wire = controller->sel("valid");
+    Wireable* op_start_loop_vars = controller->sel("d");
 
-  Wireable* read_start_wire =
-    delay_by(def, read_start_name(op->name), op_start_wire, 0);
-  Wireable* read_start_loop_vars =
-    delay_by(def, read_start_control_vars_name(op->name), op_start_loop_vars, 0);
+    cout << "Delaying read" << endl;
+    Wireable* read_start_wire =
+      delay_by(def, read_start_name(op->name), op_start_wire, 0);
+    Wireable* read_start_loop_vars =
+      delay_by(def, read_start_control_vars_name(op->name), op_start_loop_vars, 0);
 
-  cout << "Delaying exe" << endl;
-  Wireable* exe_start_wire =
-    delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
-  Wireable* exe_start_loop_vars =
-    delay_by(def, exe_start_control_vars_name(op->name), op_start_loop_vars, read_latency);
+    cout << "Delaying exe" << endl;
+    Wireable* exe_start_wire =
+      delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
+    Wireable* exe_start_loop_vars =
+      delay_by(def, exe_start_control_vars_name(op->name), op_start_loop_vars, read_latency);
 
-  cout << "Delaying writes" << endl;
-  Wireable* write_start_wire =
-    delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
-  Wireable* write_start_loop_vars =
-    delay_by(def, write_start_control_vars_name(op->name), op_start_loop_vars, read_latency + op_latency);
+    cout << "Delaying writes" << endl;
+    Wireable* write_start_wire =
+      delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
+    Wireable* write_start_loop_vars =
+      delay_by(def, write_start_control_vars_name(op->name), op_start_loop_vars, read_latency + op_latency);
+  } else {
+    Wireable* op_start_wire = controller->sel("stencil_valid");
+    cout << "Delaying read" << endl;
+    Wireable* read_start_wire =
+      delay_by(def, read_start_name(op->name), op_start_wire, 0);
+    cout << "Delaying exe" << endl;
+    Wireable* exe_start_wire =
+      delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
+    cout << "Delaying writes" << endl;
+    Wireable* write_start_wire =
+      delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
+  }
 
   //auto c = def->getContext();
   //wirebit(def, read_start_name(op->name), op_start_wire);
@@ -1886,7 +1902,87 @@ void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Ins
       //1);
 }
 
-Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
+//TODO: Remove this hack naming method after ross update coreIR
+string get_coreir_genenerator_name(const string & name) {
+  string v_name = take_from(name, ": ");
+  v_name = take_until_str(v_name, "Type");
+  v_name = trim(v_name);
+  v_name = trim(v_name, "\n");
+  v_name = ReplaceString(v_name, ".", "_");
+  v_name = ReplaceString(v_name, "(","__");
+  v_name = ReplaceString(v_name, ":", "");
+  v_name = ReplaceString(v_name, ", ", "__");
+  v_name = ReplaceString(v_name, ")", "");
+  cout << "Verilog module type: " << v_name << endl;
+  return v_name;
+}
+
+/* Helper function for generating csv
+ * */
+void emit_lake_config2csv(json data, ofstream& out) {
+    cout << "\t\tEnter the specific controller" << endl;
+    for (auto it = data.begin(); it != data.end(); ++it) {
+        cout << "\t\t\tFeature: " << it.key() << ", val: " << it.value() << endl;
+        //cout << "\t\t\tis array" << it.value().is_array() << endl;
+        auto data_domain = it.value();
+        string key = it.key();
+        if (data_domain.is_array()) {
+          int cnt = 0;
+          for (auto data_it : data_domain) {
+            //cout << tab(2) << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
+            if (data_domain.size() == 1)
+              out << "\""+key+"\"," << data_it << ",0"<< endl;
+            else
+              out << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
+            cnt ++;
+          }
+        } else {
+            //cout << tab(2) << "\""+key+"\"," << data_domain << ",0"<< endl;
+            out << "\""+key+"\"," << data_domain << ",0"<< endl;
+        }
+    }
+}
+
+
+void emit_lake_config_collateral(CodegenOptions options, string tile_name, json config_file) {
+    cout << "\tGenerate collateral for buffer: " << tile_name << endl;
+    string file_dir = options.dir + "lake_collateral/" + tile_name;
+    cmd("mkdir -p " + file_dir);
+    for (auto it = config_file.begin(); it != config_file.end(); ++it) {
+        cout << "\t\tconfig key: " << it.key() << ", " << it.value() << endl;
+        ofstream out(file_dir + "/" + it.key() + ".csv");
+        emit_lake_config2csv(it.value(), out);
+        out.close();
+    }
+}
+
+void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
+  //cmd("export LAKE_CONTROLLER=/nobackup/joeyliu/aha/poly/clockwork/");
+  cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
+  int res_lake = cmd("python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+  assert(res_lake == 0);
+  cmd("mkdir -p "+options.dir+"verilog");
+  cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+}
+
+void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
+
+  cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
+      << buf->getModuleRef()->toString() << endl;
+  string ub_ins_name = buf->toString();
+  //FIXME: a hack to get correct module name, fix this after coreIR update
+  string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+
+  //dump the collateral file
+  emit_lake_config_collateral(options, ub_ins_name, buf->getMetaData()["config"]);
+
+  //run the lake generation cmd
+  run_lake_verilog_codegen(options, v_name, ub_ins_name);
+}
+
+//Add CodegenOptions, if we do not use extra control,
+//we will use lake tile to generate affine controller
+Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
   auto c = def->getContext();
 
   isl_map* sched = nullptr;
@@ -1912,11 +2008,20 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
 
   // TODO: Assert multi size == 1
   auto aff = isl_multi_aff_get_aff(saff, 0);
-  auto aff_c = affine_controller(c, dom, aff);
-  aff_c->print();
-  auto controller = def->addInstance(controller_name(op->name), aff_c);
+  Instance* controller;
+  if (options.rtl_options.use_external_controllers) {
+    auto aff_c = affine_controller(c, dom, aff);
+    aff_c->print();
+    controller = def->addInstance(controller_name(op->name), aff_c);
+  } else {
+    controller = affine_controller_use_lake_tile(
+            def, c, dom, aff,
+            controller_name(op->name));
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, controller);
+  }
 
-  connect_op_control_wires(def, op, hwinfo, controller);
+  connect_op_control_wires(options, def, op, hwinfo, controller);
   return controller;
 }
 
@@ -2037,7 +2142,9 @@ coreir_moduledef(CodegenOptions& options,
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
   if (options.rtl_options.use_prebuilt_memory) {
-    ub_field.push_back({"reset", context->BitIn()});
+    //ub_field.push_back({"reset", context->BitIn()});
+    ub_field.push_back({"rst_n", context->BitIn()});
+    ub_field.push_back({"flush", context->BitIn()});
   } else {
     ub_field.push_back({"rst_n", context->BitIn()});
     ub_field.push_back({"flush", context->BitIn()});
@@ -2053,16 +2160,16 @@ coreir_moduledef(CodegenOptions& options,
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      if (options.rtl_options.use_external_controllers ||
-              (options.rtl_options.use_prebuilt_memory == false)) {
+      //if (options.rtl_options.use_external_controllers ||
+      //        (options.rtl_options.use_prebuilt_memory == false)) {
         ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
-      }
+      //}
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
     } else {
-      if (options.rtl_options.use_external_controllers ||
-              (options.rtl_options.use_prebuilt_memory == false)) {
+      //if (options.rtl_options.use_external_controllers ||
+      //        (options.rtl_options.use_prebuilt_memory == false)) {
         ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
-      }
+      //}
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
   }
@@ -2071,6 +2178,15 @@ coreir_moduledef(CodegenOptions& options,
   auto ub = ns->newModuleDecl(prg.name, utp);
 
   return ub;
+}
+
+bool app_contains_memory_tiles(map<string, UBuffer> &buffers) {
+  for (auto it: buffers) {
+    if (it.second.contain_memory_tile) {
+      return true;
+    }
+  }
+  return false;
 }
 
 CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
@@ -2105,7 +2221,6 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
-    //generate_coreir_op_controller(def, op, sched_maps, hwinfo);
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
 
@@ -2115,7 +2230,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       def->addInstance(buf.second.name, ub_mod);
       //TODO: add reset connection for garnet mapping
       //cout << "connected reset for " << buf.first << buf.second.name <<  endl;
-      def->connect(def->sel(buf.first + ".reset"), def->sel("self.reset"));
+      def->connect(def->sel(buf.first + ".rst_n"), def->sel("self.rst_n"));
+      def->connect(def->sel(buf.first + ".flush"), def->sel("self.flush"));
     }
   }
 
@@ -2148,15 +2264,19 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       assert(buf.is_input_bundle(bundle.second));
 
       if (prg.is_output(buf_name)) {
-        /*if (options.rtl_options.use_external_controllers) {
-          auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
-          def->connect(def->sel(output_en),
-              write_start_wire(def, op->name));
-        }*/
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         if (options.pass_through_valid) {
+          if (app_contains_memory_tiles(buffers)) {
             def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
             need_pass_valid = true;
+          } else {
+            cout << "This app does not have memory tile!" << endl;
+            //This is the situation does not have memory tile, we need to use affine generator
+            generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+            auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
+            def->connect(def->sel(output_en),
+                write_start_wire(def, op->name));
+          }
         }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
@@ -2180,13 +2300,29 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       assert(buf.is_output_bundle(bundle.second));
 
       if (prg.is_input(buf_name)) {
+
+        //create the op controller for input will remove for garnet test
+        generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_en";
         auto input_bus = "self." + pg(buf_name, bundle_name);
+
+
+        def->connect(def->sel(input_bus),
+            def->sel(op->name + "." + pg(buf_name, bundle_name)));
+
+        def->connect(def->sel(output_valid),
+            read_start_wire(def, op->name));
+        //auto const_1 = def->addInstance("true",
+        //    "corebit.const",
+        //    {{"value", CoreIR::Const::make(context, true)}});
+        //def->connect(def->sel(output_valid), const_1->sel("out"));
+
         auto delayed_input = delay(def, def->sel(input_bus)->sel(0), DATAPATH_WIDTH);
         // TODO: This delayed input is a hack that I insert to
         // ensure that I can assume all buffer reads take 1 cycle
-        def->connect(def->sel(input_bus)->sel(0),
-            def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
+        //def->connect(def->sel(input_bus)->sel(0),
+        //    def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
 
@@ -2371,7 +2507,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
     if (options.rtl_options.use_external_controllers) {
-      generate_coreir_op_controller(def, op, sched_maps, hwinfo);
+      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
     }
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
@@ -2459,6 +2595,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ub->print();
 
   connect_signal("reset", ub);
+  //connect_signal("rst_n", ub);
   context->runPasses({"rungenerators", "wireclocks-clk"});
 
   verilog_collateral.close();

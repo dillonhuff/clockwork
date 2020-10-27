@@ -5,7 +5,9 @@
 #include <streambuf>
 #include <sstream>
 #include <regex>
+#include <experimental/filesystem>
 
+namespace fs = std::experimental::filesystem;
 using namespace dbhc;
 using namespace std;
 
@@ -467,5 +469,6 @@ void compare(const std::string& name,
     vector<string>& opt,
     vector<string>& naive);
 
+vector<string> get_files(const std::string& path);
 
 int run_sw_bmp_test_harness(const std::string& app_name);

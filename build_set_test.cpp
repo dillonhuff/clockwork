@@ -11567,7 +11567,7 @@ int run_verilator_on(const std::string& top_module,
     const std::vector<string>& verilog_files) {
 
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
-  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME");
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP");
   assert(verilator_build == 0);
 
   //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
@@ -11615,14 +11615,22 @@ void generate_verilog_tb(const std::string& name) {
   assert(to_verilog_res == 0);
 }
 
-void generate_garnet_verilog_tb(const std::string& name) {
+#ifdef COREIR
+void generate_garnet_verilog_top(const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
   int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input aha_garnet_design/" + name + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
+
+  //run verilator on all the generated verilog
+  //auto verilog_files = get_files("./aha_garnet_design/"+name+"/verilog/");
+  //verilog_files.push_back(name + ".v");
+  //verilog_files.push_back("LakeWrapper.v");
+  //int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files);
+  //cmd("rm LakeWrapper.v");
+  //assert(res == 0);
 }
 
-#ifdef COREIR
 void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
@@ -11630,20 +11638,22 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   schedule_info hwinfo;
   hwinfo.use_dse_compute = false;
   opt.rtl_options.use_prebuilt_memory = true;
+  opt.rtl_options.use_external_controllers = false;
   auto sched = global_schedule_from_buffers(buffers_opt);
   generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
   generate_verilog_tb(prg.name);
 }
 
-void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt) {
+void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
-  schedule_info hwinfo;
+  //schedule_info hwinfo;
 
   //coreIR codegen options
   hwinfo.use_dse_compute = false;
   opt.rtl_options.use_prebuilt_memory = true;
+  opt.rtl_options.use_external_controllers = false;
   opt.inline_vectorization = true;
   opt.pass_through_valid= true;
   opt.dir = "aha_garnet_design/"+prg.name+"/";
@@ -11652,7 +11662,9 @@ void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, Codegen
 
   auto sched = global_schedule_from_buffers(buffers_opt);
   generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
-  generate_garnet_verilog_tb(prg.name);
+  generate_garnet_verilog_top(prg.name);
+
+  //cmd("mv " + prg.name + ".v " + opt.dir + "verilog");
 }
 #endif
 
@@ -13753,7 +13765,7 @@ void lake_conv33_recipe_test() {
   }
 
 #ifdef COREIR
-  generate_garnet_tb(buffers_opt, prg, opt);
+  //generate_garnet_tb(buffers_opt, prg, opt);
 #endif
 
 
@@ -13799,7 +13811,7 @@ void lake_conv33_halide_test() {
   }
 
 #ifdef COREIR
-  generate_garnet_tb(buffers_opt, prg, opt);
+  //generate_garnet_tb(buffers_opt, prg, opt);
 #endif
 }
 
@@ -13831,27 +13843,56 @@ void lake_cascade_halide_test() {
   }
 
 #ifdef COREIR
-  generate_garnet_tb(buffers_opt, prg, opt);
+  //generate_garnet_tb(buffers_opt, prg, opt);
 #endif
 }
 
 void compile_for_garnet_single_port_mem(prog & prg);
+void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_single_port_mem() {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
-  test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
+  test_apps.push_back(rom());
 
   //TODO:has issue with high dimensional schedule with multiple input
   //test_apps.push_back(demosaic_complex());
 
   //TODO:need to use the new scheduler
   //test_apps.push_back(resnet());
-  for ( auto app: test_apps) {
-    compile_for_garnet_single_port_mem(app);
+  for ( auto prg: test_apps) {
+    cout << "====== Running CGRA Single Port test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    dsa_writers(prg);
+    prg.pretty_print();
+    auto cpu = unoptimized_result(prg);
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem(prg);
+    generate_regression_testbench(prg);
+
+    cout << "Output name: " << prg.name << endl;
+    //run_verilator_tb(prg.name);
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    string name = prg.name;
+    auto verilog_files = get_files("./aha_garnet_design/"+name+"/verilog/");
+    verilog_files.push_back(name + ".v");
+    verilog_files.push_back("LakeWrapper.v");
+    int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files);
+    assert(res == 0);
+    cmd("rm LakeWrapper.v");
+
+    auto verilator_res = verilator_results(prg.name);
+    compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+    //string app_type = "dualwithaddr";
+    string app_type = "single_port_buffer";
+    cpy_app_to_folder(app_type, prg.name);
   }
 }
 
@@ -13930,7 +13971,7 @@ void lake_rom_garnet_test() {
   }
 
 #ifdef COREIR
-  generate_garnet_tb(buffers_opt, prg, opt);
+  //generate_garnet_tb(buffers_opt, prg, opt);
 #endif
   assert(false);
 }
@@ -13969,7 +14010,7 @@ void lake_harris_halide_test() {
   }
 
 #ifdef COREIR
-  generate_garnet_tb(buffers_opt, prg, opt);
+  //generate_garnet_tb(buffers_opt, prg, opt);
 #endif
 }
 
@@ -16381,7 +16422,13 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
       total_latency += op_latency(op, sched);
     }
 
-    adjust_schedule_forward(sched, prg, 0);
+    //Hack for rom, Rom need to be conservative
+    //because the affine controller output on cycle of flush is undeterministic
+    if (prg.name == "rom") {
+      adjust_schedule_forward(sched, prg, 1);
+    } else {
+      adjust_schedule_forward(sched, prg, 0);
+    }
     return;
   }
 
@@ -16809,7 +16856,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
 void compile_for_garnet_single_port_mem(prog& prg) {
 
-  dsa_writers(prg);
+  //dsa_writers(prg);
   normalize_bounds(prg);
   normalize_address_offsets(prg);
   prg.sanity_check();
@@ -16829,6 +16876,7 @@ void compile_for_garnet_single_port_mem(prog& prg) {
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
           prg.whole_iteration_domain());
+  cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
   CodegenOptions opt;
   opt.conditional_merge = true;
@@ -16864,7 +16912,8 @@ void compile_for_garnet_single_port_mem(prog& prg) {
   }
 
 #ifdef COREIR
-  generate_garnet_tb(buffers_opt, prg, opt);
+  generate_garnet_tb(buffers_opt, prg, opt, sched);
+  generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
 #endif
 }
 
@@ -17001,7 +17050,7 @@ vector<prog> stencil_programs() {
   // Fails with dual port tile?
   //test_programs.push_back(rom());
   test_programs.push_back(strided_conv());
-  test_programs.push_back(mini_conv_halide_fixed());
+  //test_programs.push_back(mini_conv_halide_fixed());
 
 
 

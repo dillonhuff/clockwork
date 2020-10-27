@@ -936,43 +936,6 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     return ret;
 }
 
-/* Helper function for generating csv
- * */
-void emit_lake_config2csv(json data, ofstream& out) {
-    cout << "\t\tEnter the specific controller" << endl;
-    for (auto it = data.begin(); it != data.end(); ++it) {
-        cout << "\t\t\tFeature: " << it.key() << ", val: " << it.value() << endl;
-        //cout << "\t\t\tis array" << it.value().is_array() << endl;
-        auto data_domain = it.value();
-        string key = it.key();
-        if (data_domain.is_array()) {
-          int cnt = 0;
-          for (auto data_it : data_domain) {
-            //cout << tab(2) << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
-            if (data_domain.size() == 1)
-              out << "\""+key+"\"," << data_it << ",0"<< endl;
-            else
-              out << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
-            cnt ++;
-          }
-        } else {
-            //cout << tab(2) << "\""+key+"\"," << data_domain << ",0"<< endl;
-            out << "\""+key+"\"," << data_domain << ",0"<< endl;
-        }
-    }
-}
-
-void UBuffer::emit_lake_config_collateral(CodegenOptions options, string tile_name) {
-    cout << "\tGenerate collateral for buffer: " << tile_name << endl;
-    string file_dir = options.dir + "lake_collateral/" + tile_name;
-    cmd("mkdir -p " + file_dir);
-    for (auto it = config_file.begin(); it != config_file.end(); ++it) {
-        cout << "\t\tconfig key: " << it.key() << ", " << it.value() << endl;
-        ofstream out(file_dir + "/" + it.key() + ".csv");
-        emit_lake_config2csv(it.value(), out);
-        out.close();
-    }
-}
 
 Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
   Json jdata;
@@ -1113,6 +1076,44 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     return create_lake_config(data);
 }
 
+CoreIR::Instance* affine_controller_use_lake_tile(
+        ModuleDef* def,
+        CoreIR::Context* context,
+        isl_set* dom,
+        isl_aff* aff,
+        string ub_ins_name) {
+
+  CoreIR::Instance* buf;
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(context, 16)},
+    {"num_inputs", CoreIR::Const::make(context, 0)},
+    {"num_outputs", CoreIR::Const::make(context, 0)},
+    {"has_stencil_valid", CoreIR::Const::make(context, true)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())},
+    {"has_flush",  CoreIR::Const::make(context, true)}
+  };
+  auto stencil_valid = emit_lake_controller_config(dom, aff);
+  //FIXME:possible bug if one ubuffer contains more than one tile
+  json config_file;
+  add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+  cout << "Add ub node to be aff ctrl"  << endl;
+
+  buf = def->addInstance(ub_ins_name, "cgralib.Mem", genargs);
+  buf->getMetaData()["config"] = config_file;
+  buf->getMetaData()["mode"] = string("lake");
+
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+
+  //garnet wire reset to flush of memory
+  def->connect(buf->sel("flush"), def->sel("self.flush"));
+  def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(buf->sel("clk"), def->sel("self.clk"));
+  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+
+  return buf;
+}
+
 CoreIR::Instance* UBuffer::generate_lake_tile_instance(
         ModuleDef* def,
         CodegenOptions options,
@@ -1153,7 +1154,8 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
           {{"value", CoreIR::Const::make(context, true)}});
 
   //garnet wire reset to flush of memory
-  def->connect(buf->sel("flush"), def->sel("self.reset"));
+  def->connect(buf->sel("flush"), def->sel("self.flush"));
+  def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
   def->connect(buf->sel("clk"), def->sel("self.clk"));
   def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
 
@@ -1419,30 +1421,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
 
       //generate verilog collateral
-      cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
-          << buf->getModuleRef()->toString() << endl;
+      generate_lake_tile_verilog(options, buf);
 
-      //FIXME: a hack to get correct module name, fix this after coreIR update
-      string v_name = take_from(buf->getModuleRef()->toString(), ": ");
-      v_name = take_until_str(v_name, "Type");
-      v_name = trim(v_name);
-      v_name = trim(v_name, "\n");
-      v_name = ReplaceString(v_name, ".", "_");
-      v_name = ReplaceString(v_name, "(","__");
-      v_name = ReplaceString(v_name, ":", "");
-      v_name = ReplaceString(v_name, ", ", "__");
-      v_name = ReplaceString(v_name, ")", "");
-      cout << "Verilog module type: " << v_name << endl;
-
-      //dump the collateral file
-      emit_lake_config_collateral(options, ub_ins_name);
-
-      //run the lake generation cmd
-      //cmd("export LAKE_CONTROLLER=/nobackup/joeyliu/aha/poly/clockwork/");
-      cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
-      cmd("python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
-      cmd("mkdir -p "+options.dir+"verilog");
-      cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
     }
   }
 
@@ -1457,6 +1437,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     def->connect(buf->sel("stencil_valid"), def->sel("self." + pick(out_bds) + "_extra_ctrl"));
     use_memtile_gen_stencil_valid = true;
+
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, buf);
   }
 
   //wire the control var if not using stencil_Valid
@@ -1497,12 +1480,15 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
   //Add the chaining pass
+  std::set<Wireable*> chain_enable_tile, chain_disable_tile;
   for (auto itr: outpt_bank_rd) {
     string outpt = itr.first;
     auto connect_vec = itr.second;
 
     if (connect_vec.size() == 1) {
       def->connect(pick(connect_vec), pt2wire.at(outpt));
+      cout << "Parent node: " << pick(connect_vec)->getTopParent()->toString() << endl;;
+      chain_disable_tile.insert(pick(connect_vec)->getTopParent());
     }
     else {
       //wiring the chaining pass
@@ -1511,15 +1497,39 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         if (it == 0) {
           //wire the first output to the ubuf outpt
           def->connect(wire, pt2wire.at(outpt));
+
+          //push it to chain enable
+          chain_enable_tile.insert(wire->getTopParent());
         }
         else {
           auto last_bank = connect_vec[it-1]->getTopParent();
           string portID = split_at(wire->toString(), "_").back();
           def->connect(wire, last_bank->sel("chain_in_" + portID));
+
+          //push it to chain enable tile
+          chain_enable_tile.insert(wire->getTopParent());
         }
       }
     }
   }
+
+  //wire the chain enable disable signal
+  if (chain_enable_tile.size()) {
+    auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+            {{"value", CoreIR::Const::make(context, true)}});
+    for (auto t: chain_enable_tile) {
+      def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
+    }
+  }
+
+  if (chain_disable_tile.size()) {
+    auto chain_en_const = def->addInstance("chain_disen_const"+context->getUnique(), "corebit.const",
+            {{"value", CoreIR::Const::make(context, false)}});
+    for (auto t: chain_disable_tile) {
+      def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
+    }
+  }
+
 
   //second pass wire all the register input port
   for (auto it: reg_in) {
@@ -2265,7 +2275,9 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
 
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")},
-          {"reset", context->BitIn()}};
+          //{"reset", context->BitIn()}};
+          {"flush", context->BitIn()},
+          {"rst_n", context->BitIn()}};
 
     for (auto b : buf.port_bundles) {
       int pt_width = buf.port_widths;
@@ -2775,7 +2787,8 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     generate_hls_code(options, out, buf);
   }
 
-  void generate_header(const UBuffer& buf) {
+  //Rename to avoid ambiguous
+  void generate_hls_header(const UBuffer& buf) {
     //cout << "Header file generation..." << endl;
     ofstream of(buf.name + ".h");
     of << "#pragma once\n\n" << endl;
@@ -2853,7 +2866,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     out << "}" << endl;
 
 
-    generate_header(buf);
+    generate_hls_header(buf);
     generate_vivado_tcl(buf);
   }
 

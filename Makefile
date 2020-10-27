@@ -18,7 +18,7 @@ ifneq ($(UNAME), Darwin)
 CXX_FLAGS += -fPIC
 endif
 
-LINK_FLAGS = -L ./lib -L $(OPT_LIB_PATH) -L $(ISL_PATH) -lclkwrk -lbarvinok -lisl -lntl -lgmp -lpolylibgmp -lpthread 
+LINK_FLAGS = -L ./lib -L $(OPT_LIB_PATH) -L $(ISL_PATH) -lclkwrk -lbarvinok -lisl -lntl -lgmp -lpolylibgmp -lpthread -lstdc++fs
 
 ifeq ($(COREIR),1)
 ifndef COREIR_PATH
