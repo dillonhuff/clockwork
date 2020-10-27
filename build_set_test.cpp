@@ -18456,11 +18456,14 @@ void test_multi_kernel_design() {
           read.push_back(dom);
         }
       }
+      
       isl_set* s = unn(read);
       cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
       assert(contains_key(group_name, dag.fusion_group_progs));
       prog& gp = dag.fusion_group_progs.at(group_name);
-      read_in(gp.root, s, "test_rb", gp);
+      string replacement = prg.un(b.first + "_FIFO_buf");
+      gp.root->replace_reads_from(b.first, replacement);
+      read_in(gp.root, s, replacement, gp);
       gp.pretty_print();
     }
   }
