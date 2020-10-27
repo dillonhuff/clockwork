@@ -18380,6 +18380,15 @@ struct app_dag {
   map<string, prog> fusion_group_progs;
   map<string, int> channel_sizes;
 
+  string producer_group(const std::string& buf) {
+    for (auto& gp : fusion_groups) {
+      if (elem(buf, get_produced_buffers(gp.second, prg))) {
+        return gp.first;
+      }
+    }
+    assert(false);
+  }
+
   bool in_group(op* op, const std::string& group_name) {
     for (std::string g : map_find(group_name, fusion_groups)) {
       //cout << "checking if " << op->name << " is in " << g << endl;
@@ -18467,8 +18476,8 @@ void test_multi_kernel_design() {
   for (auto b : kernel_broadcasts) {
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
-    vector<isl_set*> read;
     for (auto group_name : b.second) {
+      vector<isl_set*> read;
       for (auto m : consumers) {
         if (m.second != nullptr && dag.in_group(m.first, group_name)) {
           auto dom = range(m.second);
@@ -18492,7 +18501,22 @@ void test_multi_kernel_design() {
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
     auto consumers = prg.consumer_maps(b.first);
     for (auto group_name : b.second) {
+      vector<isl_set*> read;
+      for (auto m : consumers) {
+        if (m.second != nullptr && dag.in_group(m.first, group_name)) {
+          auto dom = range(m.second);
+          cout << tab(2) << group_name << " reads " << str(dom) << endl;
+          read.push_back(dom);
+        }
+      }
+      
+      isl_set* s = unn(read);
       string broadcast = prg.un(b.first + "_to_" + group_name);
+      prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
+
+      write_out_no_dsa(pp.root, s, broadcast, pp);
+      pp.pretty_print();
+
       assert(contains_key(group_name, dag.fusion_group_progs));
       prog& gp = dag.fusion_group_progs.at(group_name);
       gp.root->replace_reads_from(b.first, broadcast);

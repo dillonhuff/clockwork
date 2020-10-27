@@ -6172,3 +6172,26 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
 
 }
 
+void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+
+  for (int d = 0; d < num_dims(read_data); d++) {
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("store_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+
+}
