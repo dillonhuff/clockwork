@@ -1423,6 +1423,18 @@ isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
 }
 
+isl_set* unn(const std::vector<isl_set*>& sets) {
+  isl_set* res = nullptr;
+  for (auto s : sets) {
+    if (res == nullptr) {
+      res = cpy(s);
+    } else {
+      res = unn(res, s);
+    }
+  }
+  return res;
+}
+
 isl_set* unn(isl_set* const m0, isl_set* const m1) {
   return isl_set_union(cpy(m0), cpy(m1));
 }

@@ -18724,12 +18724,24 @@ void test_outer_strip_mine() {
 }
 
 struct app_dag {
-  prog original;
+  prog prg;
   map<string, std::set<string> > fusion_groups;
 
   // This is constructed later.
   map<string, prog> fusion_group_programs;
   map<string, int> channel_sizes;
+
+  bool in_group(op* op, const std::string& group_name) {
+    for (std::string g : map_find(group_name, fusion_groups)) {
+      //cout << "checking if " << op->name << " is in " << g << endl;
+      auto lp = prg.find_loop(g);
+      //lp->pretty_print();
+      if (lp == op || elem(op, lp->descendant_ops())) {
+        return true;
+      }
+    }
+    return false;
+  }
 };
 
 void test_multi_kernel_design() {
@@ -18772,27 +18784,30 @@ void test_multi_kernel_design() {
         auto consumed = get_consumed_buffers(other_gp.second, prg);
         for (auto buf : consumed) {
           if (elem(buf, produced)) {
-            kernel_broadcasts[buf].push_back(pick(other_gp.second));
+            kernel_broadcasts[buf].push_back(other_gp.first);
           }
         }
       }
     }
-    //cout << "===== Extracting group " << gp << endl;
-    //prog gpp = extract_group_to_separate_prog(gp, prg);
-    //cout << "Inputs..." << endl;
-    //for (auto in : gpp.ins) {
-      //cout << tab(1) << in << endl;
-    //}
-    //cout << "Outputs..." << endl;
-    //for (auto out : gpp.outs) {
-      //cout << tab(1) << out << endl;
-    //}
-    //gpp.pretty_print();
   }
   cout << "===== Cross kernel deps" << endl;
   for (auto b : kernel_broadcasts) {
     cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
+    auto consumers = prg.consumer_maps(b.first);
+    vector<isl_set*> read;
+    for (auto group_name : b.second) {
+      for (auto m : consumers) {
+        if (m.second != nullptr && dag.in_group(m.first, group_name)) {
+          auto dom = range(m.second);
+          cout << tab(2) << group_name << " reads " << str(dom) << endl;
+          read.push_back(dom);
+        }
+      }
+      isl_set* s = unn(read);
+      cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
+    }
   }
+
   assert(false);
 
   //cout << "===== Final" << endl;
