@@ -3012,6 +3012,16 @@ std::vector<string> topologically_sort_kernels(prog& prg){
 	return topologically_sorted_kernels;
 }
 
+std::set<string> buffers_read(prog& prg) {
+  std::set<string> written;
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_read()) {
+      written.insert(b);
+    }
+  }
+  return written;
+}
+
 std::set<string> buffers_written(prog& prg) {
   std::set<string> written;
   for (auto op : prg.all_ops()) {

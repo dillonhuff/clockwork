@@ -18380,6 +18380,10 @@ struct app_dag {
   map<string, prog> fusion_group_progs;
   map<string, int> channel_sizes;
 
+  bool is_boundary(const std::string& buf) {
+    return prg.is_boundary(buf);
+  }
+
   string producer_group(const std::string& buf) {
     assert(fusion_groups.size() == fusion_group_progs.size());
 
@@ -18408,8 +18412,9 @@ struct app_dag {
 bool all_kernel_inputs_are_program_inputs(app_dag& dag) {
   for (auto& g : dag.fusion_group_progs) {
     auto& gp = g.second;
-    for (auto buf : all_buffers(gp)) {
-      if (dag.producer_group(buf) != g.first) {
+    for (auto buf : buffers_read(gp)) {
+      if ((dag.is_boundary(buf) || dag.producer_group(buf) != g.first) &&
+          !elem(buf, gp.ins)) {
         cout << buf << " is not an in of " << endl;
         gp.pretty_print();
         return false;

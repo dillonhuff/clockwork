@@ -1513,6 +1513,7 @@ std::vector<string> topologically_sort_kernels(prog& prg);
 
 std::set<string> buffers_written(op* p);
 std::set<string> buffers_written(prog& prg);
+std::set<string> buffers_read(prog& prg);
 
 bool writes(const std::string& target_buf, op* p);
 
