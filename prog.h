@@ -1817,3 +1817,8 @@ void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, pr
 void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
 
 void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg);
+void generate_app_collateral(CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap);

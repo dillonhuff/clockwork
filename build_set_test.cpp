@@ -18447,8 +18447,14 @@ bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
 
 void generate_app_code(CodegenOptions& options,
     app_dag& dag) {
+
+  // Dummy interface for the application
+  auto sched = dag.prg.unoptimized_schedule();
+  auto buffers = build_buffers(dag.prg, dag.prg.unoptimized_schedule());
+
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
+  generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
 }
 
 void test_multi_kernel_design() {

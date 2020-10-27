@@ -2169,8 +2169,7 @@ void generate_app_collateral(CodegenOptions& options,
     ostream& conv_out,
     map<string, UBuffer>& buffers,
     prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map) {
+    umap* schedmap) {
   open_synth_scope(conv_out);
   generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
   generate_xilinx_accel_rdai_wrapper(options, conv_out, buffers, prg);
@@ -2329,8 +2328,7 @@ void generate_app_code(CodegenOptions& options,
       conv_out,
       buffers,
       prg,
-      schedmap,
-      domain_map);
+      schedmap);
 
   conv_out.close();
 }
