@@ -4307,6 +4307,10 @@ prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& or
 
 	std::set<string> all_consumed_buffers = get_consumed_buffers(group, original);
 	std::set<string> all_produced_buffers = get_produced_buffers(group, original);
+  cout << tab(1) << "All consumed buffers" << endl;
+  for (auto c : all_consumed_buffers) {
+    cout << tab(1) << c << endl;
+  }
 	for(auto consumed : all_consumed_buffers){
 		if(!elem(consumed, all_produced_buffers)){
 			extracted.add_input(consumed);

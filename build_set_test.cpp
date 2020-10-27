@@ -18745,27 +18745,57 @@ void test_multi_kernel_design() {
   normalize_bounds(prg);
   normalize_address_offsets(prg);
 
+  vector<std::set<string> > fusion_groups;
   for (auto gp : get_kernels(prg)) {
-    cout << "===== Extracting group " << gp << endl;
-    prog gpp = extract_group_to_separate_prog({gp}, prg);
-    gpp.pretty_print();
+    fusion_groups.push_back({gp});
   }
-  cout << "===== Final" << endl;
-  prg.pretty_print();
 
+  // Map from buffers to the kernels they read
+  map<string, vector<string> > kernel_broadcasts;
+  for (auto gp : fusion_groups) {
+    auto produced = get_produced_buffers(gp, prg);
+    for (auto other_gp : fusion_groups) {
+      if (gp != other_gp) {
+        auto consumed = get_consumed_buffers(other_gp, prg);
+        for (auto buf : consumed) {
+          if (elem(buf, produced)) {
+            kernel_broadcasts[buf].push_back(pick(other_gp));
+          }
+        }
+      }
+    }
+    //cout << "===== Extracting group " << gp << endl;
+    //prog gpp = extract_group_to_separate_prog(gp, prg);
+    //cout << "Inputs..." << endl;
+    //for (auto in : gpp.ins) {
+      //cout << tab(1) << in << endl;
+    //}
+    //cout << "Outputs..." << endl;
+    //for (auto out : gpp.outs) {
+      //cout << tab(1) << out << endl;
+    //}
+    //gpp.pretty_print();
+  }
+  cout << "===== Cross kernel deps" << endl;
+  for (auto b : kernel_broadcasts) {
+    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
+  }
   assert(false);
 
-  auto unopt_postprocessed = unoptimized_result(prg);
-  move_to_benchmarks_folder(prg.name);
+  //cout << "===== Final" << endl;
+  //prg.pretty_print();
 
-  prg.name = "multi_kernel_gaussian_pyramid";
-  prg.pretty_print();
+  //auto unopt_postprocessed = unoptimized_result(prg);
+  //move_to_benchmarks_folder(prg.name);
 
-  prg.pretty_print();
+  //prg.name = "multi_kernel_gaussian_pyramid";
+  //prg.pretty_print();
 
-  auto tiled = unoptimized_result(prg);
-  compare("multi_kernel_" + prg.name + "_vs_unopt", tiled, unopt_postprocessed);
-  move_to_benchmarks_folder(prg.name);
+  //prg.pretty_print();
+
+  //auto tiled = unoptimized_result(prg);
+  //compare("multi_kernel_" + prg.name + "_vs_unopt", tiled, unopt_postprocessed);
+  //move_to_benchmarks_folder(prg.name);
 }
 
 void test_time_sharing_gaussian_pyramid() {
