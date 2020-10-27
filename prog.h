@@ -1074,6 +1074,17 @@ struct prog {
     return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max, k, k_min, k_max);
   }
 
+  vector<string> boundary_buffers() const {
+    vector<string> bufs;
+    for (auto in : ins) {
+      bufs.push_back(in);
+    }
+    for (auto out : outs) {
+      bufs.push_back(out);
+    }
+    return bufs;
+  }
+
   bool is_output(const std::string& name) {
     return elem(name, outs);
   }

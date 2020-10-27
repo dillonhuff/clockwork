@@ -18456,6 +18456,25 @@ void generate_app_code(CodegenOptions& options,
   generate_app_prefix(options, conv_out, dag.prg);
 
   generate_driver_function_prefix(options, conv_out, buffers, dag.prg);
+
+  conv_out << endl;
+
+  std::set<std::string> done;
+  for (auto& buf : dag.prg.boundary_buffers()) {
+    done.insert(buf);
+  }
+
+  for (auto& gp : dag.fusion_group_progs) {
+    for (auto& buf : gp.second.boundary_buffers()) {
+      if (!elem(buf, done)) {
+        conv_out << tab(1) << "HWStream<hw_uint<32> > " << buf << ";" << endl;
+        done.insert(buf);
+      }
+    }
+  }
+
+  conv_out << endl;
+
   generate_driver_function_suffix(options, conv_out, buffers, dag.prg);
 
   generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
