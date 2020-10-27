@@ -2215,22 +2215,18 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
   cout << "Prog: " << prg.name << endl;
-  //assert(false);
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
-  //vector<compute_kernel> kernels;
   for (auto op : prg.all_ops()) {
-    //kernels.push_back(generate_compute_op(conv_out, prg, op, buffers, domain_map));
     generate_compute_op(conv_out, prg, op, buffers, domain_map);
   }
 
   conv_out << "// Driver function" << endl;
   vector<string> arg_buf_list = get_args(buffers, prg);
-  string outer_arg_buffers = sep_list(arg_buf_list, "(", ")", ", ");
+  //string outer_arg_buffers = sep_list(arg_buf_list, "(", ")", ", ");
 
   auto inner_args = arg_buf_list;
-  //inner_args.push_back("int num_epochs");
   string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
 
   conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
@@ -2298,13 +2294,7 @@ void generate_app_code(CodegenOptions& options,
   conv_out << tab(1) << "/*" << endl;
   conv_out << original_isl_code_string << endl;
   conv_out << tab(1) << "*/" << endl;
-  //if (options.num_input_epochs < 0) {
-    //conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
-  //} else {
-    //conv_out << tab(1) << "for (int epoch = 0; epoch < " << options.num_input_epochs << "; epoch++) {" << endl;
-  //}
   conv_out << code_string << endl;
-  //conv_out << tab(1) << "}" << endl << endl;
 
   open_debug_scope(conv_out);
   conv_out << tab(1) << "debug_file.close();" << endl;

@@ -18454,6 +18454,9 @@ void generate_app_code(CodegenOptions& options,
 
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
+
+
+
   generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
 }
 
@@ -18582,19 +18585,7 @@ void test_multi_kernel_design() {
   generate_app_code(options, dag);
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
-  //cout << "===== Final" << endl;
-  //prg.pretty_print();
-
-  //move_to_benchmarks_folder(prg.name);
-
-  //prg.name = "multi_kernel_gaussian_pyramid";
-  //prg.pretty_print();
-
-  //prg.pretty_print();
-
-  //auto tiled = unoptimized_result(prg);
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
-  //move_to_benchmarks_folder(prg.name);
 }
 
 void test_time_sharing_gaussian_pyramid() {
