@@ -18393,6 +18393,26 @@ struct app_dag {
   }
 };
 
+bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
+  for (auto& g : dag.fusion_groups) {
+    assert(contains_key(g.first, dag.fusion_group_progs));
+    for (auto out : dag.fusion_group_progs.at(g.first).outs) {
+      int num_receivers = 0;
+      for (auto& other : dag.fusion_group_progs) {
+        for (auto in : other.second.ins) {
+          if (out == in) {
+            num_receivers++;
+          }
+        }
+      }
+      if (num_receivers <= 1) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 void test_multi_kernel_design() {
   int num_pyramid_levels = 3;
 
@@ -18468,7 +18488,7 @@ void test_multi_kernel_design() {
     }
   }
 
-  assert(false);
+  assert(all_kernel_outputs_have_fanout_one(dag));
 
   //cout << "===== Final" << endl;
   //prg.pretty_print();
