@@ -18445,10 +18445,16 @@ bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
   return true;
 }
 
+void generate_app_code(CodegenOptions& options,
+    app_dag& dag) {
+  ofstream conv_out(dag.prg.name + ".cpp");
+  generate_app_prefix(options, conv_out, dag.prg);
+}
+
 void test_multi_kernel_design() {
   int num_pyramid_levels = 3;
 
-  prog prg("time_sharing_gauss_pyramid");
+  prog prg("multi_kernel_design");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
 
   prg.add_input("in");
@@ -18466,6 +18472,8 @@ void test_multi_kernel_design() {
   merge_basic_block_ops(prg);
   normalize_bounds(prg);
   normalize_address_offsets(prg);
+
+  auto unopt_postprocessed = unoptimized_result(prg);
 
   map<std::string, std::set<string> > fusion_groups;
   int i = 0;
@@ -18557,10 +18565,20 @@ void test_multi_kernel_design() {
   assert(all_kernel_outputs_have_fanout_one(dag));
   assert(all_kernel_inputs_are_program_inputs(dag));
 
+  generate_regression_testbench(dag.prg);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  all_unbanked(prg, options);
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  generate_app_code(options, dag);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
   //cout << "===== Final" << endl;
   //prg.pretty_print();
 
-  //auto unopt_postprocessed = unoptimized_result(prg);
   //move_to_benchmarks_folder(prg.name);
 
   //prg.name = "multi_kernel_gaussian_pyramid";
@@ -18569,7 +18587,7 @@ void test_multi_kernel_design() {
   //prg.pretty_print();
 
   //auto tiled = unoptimized_result(prg);
-  //compare("multi_kernel_" + prg.name + "_vs_unopt", tiled, unopt_postprocessed);
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
   //move_to_benchmarks_folder(prg.name);
 }
 

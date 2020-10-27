@@ -2152,18 +2152,7 @@ int buffer_capacity(UBuffer& buf) {
   return c * buf.port_widths;
 }
 
-void generate_app_code(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map) {
-  //for (auto b : buffers) {
-    //cout << b.second << endl;
-  //}
-  //assert(false);
-
-  ofstream conv_out(prg.name + ".cpp");
-
+void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg) {
   open_debug_scope(conv_out);
   conv_out << "#include <fstream>" << endl;
   conv_out << "using namespace std;" << endl << endl;
@@ -2174,6 +2163,17 @@ void generate_app_code(CodegenOptions& options,
   assert(prg.compute_unit_file != "");
   conv_out << "// compute file: " << prg.compute_unit_file << endl;
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+}
+
+void generate_app_code(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
+  ofstream conv_out(prg.name + ".cpp");
+  generate_app_prefix(options, conv_out, prg);
+
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);

@@ -1815,3 +1815,5 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
 void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
 void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
 void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+
+void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg);
