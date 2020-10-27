@@ -18488,6 +18488,18 @@ void test_multi_kernel_design() {
     }
   }
 
+  for (auto b : kernel_broadcasts) {
+    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
+    auto consumers = prg.consumer_maps(b.first);
+    for (auto group_name : b.second) {
+      string broadcast = prg.un(b.first + "_to_" + group_name);
+      assert(contains_key(group_name, dag.fusion_group_progs));
+      prog& gp = dag.fusion_group_progs.at(group_name);
+      gp.root->replace_reads_from(b.first, broadcast);
+      gp.pretty_print();
+    }
+  }
+
   assert(all_kernel_outputs_have_fanout_one(dag));
 
   //cout << "===== Final" << endl;
