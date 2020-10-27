@@ -1820,3 +1820,4 @@ map<string, pair<string, int> > determine_shift_reg_map(
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg);
 
 void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);

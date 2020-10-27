@@ -5938,17 +5938,17 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
   ld->add_store(rb_name, comma_list(store_addrs));
 }
 
-void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
   assert(loop->is_loop);
 
   string buf = name(read_data);
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  for (auto v : surrounding_vars(loop, prg)) {
-    store_addrs.push_back(v);
-  }
-  store_addrs.push_back(loop->name);
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
 
   for (int d = 0; d < num_dims(read_data); d++) {
     auto ps = project_all_but(read_data, d);
@@ -5995,6 +5995,32 @@ isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
   //assert(false);
   return demands;
 
+}
+void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  for (auto v : surrounding_vars(loop, prg)) {
+    store_addrs.push_back(v);
+  }
+  store_addrs.push_back(loop->name);
+
+  for (int d = 0; d < num_dims(read_data); d++) {
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop_front(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
 }
 
 isl_map* delta_data(loop* loop, const std::string& buffer, prog& prg) {

@@ -18463,7 +18463,7 @@ void test_multi_kernel_design() {
       prog& gp = dag.fusion_group_progs.at(group_name);
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
-      read_in(gp.root, s, replacement, gp);
+      read_in_no_dsa(gp.root, s, replacement, gp);
       gp.pretty_print();
     }
   }
