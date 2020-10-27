@@ -2509,7 +2509,6 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
         << (p + 1)*port_width - 1 << ">();" << endl;
 
       rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
-      //rgtb << tab(2) << "fout << (uint64_t) actual_lane_" << p << " << endl;" << endl;
     }
 
     rgtb << tab(1) << "}" << endl << endl;
@@ -4288,7 +4287,7 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
 }
 
 
-prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
+prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original) {
 	prog extracted;
 	string prg_name = "Extracted_";
 	for(auto g : group){
@@ -4312,7 +4311,9 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 		if(!elem(consumed, all_produced_buffers)){
 			extracted.add_input(consumed);
 			cout << "Input added: " << consumed << endl;
-			extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
+			extracted.buffer_port_widths[consumed] =
+        original.buffer_port_width(consumed);
+        //map_find(consumed, original.buffer_port_widths);
 			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
 		}
 	}
@@ -4321,7 +4322,9 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 		if(!elem(produced, all_consumed_buffers)){
 			extracted.add_output(produced);
 			cout << "Output added: " << produced << endl;
-			extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
+			extracted.buffer_port_widths[produced] =
+        original.buffer_port_width(produced);
+			//extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
 			cout << "Output width: " << extracted.buffer_port_widths[produced] << endl;
 		}
 	}
