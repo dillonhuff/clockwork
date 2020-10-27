@@ -18723,6 +18723,15 @@ void test_outer_strip_mine() {
   compare("outer_strip_mine_" + prg.name + "_vs_unopt", strip_mined, unopt);
 }
 
+struct app_dag {
+  prog original;
+  map<string, std::set<string> > fusion_groups;
+
+  // This is constructed later.
+  map<string, prog> fusion_group_programs;
+  map<string, int> channel_sizes;
+};
+
 void test_multi_kernel_design() {
   int num_pyramid_levels = 3;
 
@@ -18745,21 +18754,25 @@ void test_multi_kernel_design() {
   normalize_bounds(prg);
   normalize_address_offsets(prg);
 
-  vector<std::set<string> > fusion_groups;
+  map<std::string, std::set<string> > fusion_groups;
+  int i = 0;
   for (auto gp : get_kernels(prg)) {
-    fusion_groups.push_back({gp});
+    fusion_groups["gp_" + str(i)] = {gp};
+    i++;
   }
+
+  app_dag dag{prg, fusion_groups};
 
   // Map from buffers to the kernels they read
   map<string, vector<string> > kernel_broadcasts;
-  for (auto gp : fusion_groups) {
-    auto produced = get_produced_buffers(gp, prg);
+  for (auto gp : dag.fusion_groups) {
+    auto produced = get_produced_buffers(gp.second, prg);
     for (auto other_gp : fusion_groups) {
       if (gp != other_gp) {
-        auto consumed = get_consumed_buffers(other_gp, prg);
+        auto consumed = get_consumed_buffers(other_gp.second, prg);
         for (auto buf : consumed) {
           if (elem(buf, produced)) {
-            kernel_broadcasts[buf].push_back(pick(other_gp));
+            kernel_broadcasts[buf].push_back(pick(other_gp.second));
           }
         }
       }
