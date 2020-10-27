@@ -18386,6 +18386,7 @@ struct app_dag {
         return gp.first;
       }
     }
+    cout << "Error: No producer group for: " << buf << endl;
     assert(false);
   }
 
@@ -18402,6 +18403,18 @@ struct app_dag {
   }
 };
 
+bool all_kernel_inputs_are_program_inputs(app_dag& dag) {
+  for (auto& g : dag.fusion_group_progs) {
+    auto& gp = g.second;
+    for (auto buf : all_buffers(gp)) {
+      if (dag.producer_group(buf) != g.first) {
+        assert(elem(buf, gp.ins));
+      }
+    }
+  }
+  return true;
+}
+
 bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
   for (auto& g : dag.fusion_groups) {
     assert(contains_key(g.first, dag.fusion_group_progs));
@@ -18414,7 +18427,8 @@ bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
           }
         }
       }
-      if (num_receivers <= 1) {
+      if (num_receivers >= 2) {
+        cout << out << " has " << num_receivers << " readers" << endl;
         return false;
       }
     }
@@ -18513,6 +18527,7 @@ void test_multi_kernel_design() {
       isl_set* s = unn(read);
       string broadcast = prg.un(b.first + "_to_" + group_name);
       prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
+      pp.outs.insert(broadcast);
 
       write_out_no_dsa(pp.root, s, broadcast, pp);
       pp.pretty_print();
@@ -18521,10 +18536,13 @@ void test_multi_kernel_design() {
       prog& gp = dag.fusion_group_progs.at(group_name);
       gp.root->replace_reads_from(b.first, broadcast);
       gp.pretty_print();
+
+      pp.outs.erase(b.first);
     }
   }
 
   assert(all_kernel_outputs_have_fanout_one(dag));
+  assert(all_kernel_inputs_are_program_inputs(dag));
 
   //cout << "===== Final" << endl;
   //prg.pretty_print();
