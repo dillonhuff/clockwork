@@ -1816,3 +1816,5 @@ map<string, pair<string, int> > determine_shift_reg_map(
         prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);
+
+void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg);
