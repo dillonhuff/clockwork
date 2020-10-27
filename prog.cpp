@@ -2190,6 +2190,21 @@ void generate_app_collateral(CodegenOptions& options,
 
 }
 
+void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog prg) {
+
+  conv_out << "// Driver function" << endl;
+  vector<string> arg_buf_list = get_args(buffers, prg);
+  auto inner_args = arg_buf_list;
+  string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
+
+  conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
+
+  open_debug_scope(conv_out);
+  conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
+  conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
+  close_debug_scope(conv_out);
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2222,19 +2237,18 @@ void generate_app_code(CodegenOptions& options,
     generate_compute_op(conv_out, prg, op, buffers, domain_map);
   }
 
-  conv_out << "// Driver function" << endl;
-  vector<string> arg_buf_list = get_args(buffers, prg);
-  //string outer_arg_buffers = sep_list(arg_buf_list, "(", ")", ", ");
+  generate_driver_function_prefix(options, conv_out, buffers, prg);
+  //conv_out << "// Driver function" << endl;
+  //vector<string> arg_buf_list = get_args(buffers, prg);
+  //auto inner_args = arg_buf_list;
+  //string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
 
-  auto inner_args = arg_buf_list;
-  string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
+  //conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
 
-  conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
-
-  open_debug_scope(conv_out);
-  conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
-  conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
-  close_debug_scope(conv_out);
+  //open_debug_scope(conv_out);
+  //conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
+  //conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
+  //close_debug_scope(conv_out);
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2303,6 +2317,7 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl << endl;
 
   {
+    vector<string> arg_buf_list = get_args(buffers, prg);
     vector<string> ls = arg_buf_list;
     ls.push_back("const int num_epochs");
     string outer_arg_buffers = sep_list(ls, "(", ")", ", ");
