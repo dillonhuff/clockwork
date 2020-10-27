@@ -1574,7 +1574,7 @@ std::set<string> all_buffers(prog& prg);
 std::set<op*> find_readers(const string& buff, prog& prg);
 
 std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group);
-prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
+//prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
 
 void release(ir_node* op);
 void release(prog& prg);
@@ -1818,3 +1818,5 @@ map<string, pair<string, int> > determine_shift_reg_map(
     schedule_info& hwinfo);
 
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg);
+
+void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);

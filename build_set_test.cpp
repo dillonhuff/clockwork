@@ -18377,7 +18377,7 @@ struct app_dag {
   map<string, std::set<string> > fusion_groups;
 
   // This is constructed later.
-  map<string, prog> fusion_group_programs;
+  map<string, prog> fusion_group_progs;
   map<string, int> channel_sizes;
 
   bool in_group(op* op, const std::string& group_name) {
@@ -18423,6 +18423,10 @@ void test_multi_kernel_design() {
   }
 
   app_dag dag{prg, fusion_groups};
+  for (auto& g : dag.fusion_groups) {
+    dag.fusion_group_progs[g.first] =
+      extract_group_to_separate_prog(g.second, dag.prg);
+  }
 
   // Map from buffers to the kernels they read
   map<string, vector<string> > kernel_broadcasts;
@@ -18454,6 +18458,10 @@ void test_multi_kernel_design() {
       }
       isl_set* s = unn(read);
       cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
+      assert(contains_key(group_name, dag.fusion_group_progs));
+      prog& gp = dag.fusion_group_progs.at(group_name);
+      read_in(gp.root, s, "test_rb", gp);
+      gp.pretty_print();
     }
   }
 
