@@ -18738,7 +18738,7 @@ void test_time_sharing_gaussian_pyramid() {
   vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
   cpy("out", gray_levels.back(), 2, prg);
 
-  infer_bounds("out", {16, 16}, prg);
+  infer_bounds("out", {4, 4}, prg);
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
