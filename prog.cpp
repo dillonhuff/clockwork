@@ -2190,7 +2190,7 @@ void generate_app_collateral(CodegenOptions& options,
 
 }
 
-void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog prg) {
+void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg) {
 
   conv_out << "// Driver function" << endl;
   vector<string> arg_buf_list = get_args(buffers, prg);
@@ -2205,7 +2205,7 @@ void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out,
   close_debug_scope(conv_out);
 }
 
-void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog prg) {
+void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg) {
   open_debug_scope(conv_out);
   conv_out << tab(1) << "debug_file.close();" << endl;
   close_debug_scope(conv_out);

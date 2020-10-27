@@ -18455,7 +18455,8 @@ void generate_app_code(CodegenOptions& options,
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
 
-
+  generate_driver_function_prefix(options, conv_out, buffers, dag.prg);
+  generate_driver_function_suffix(options, conv_out, buffers, dag.prg);
 
   generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
 }
