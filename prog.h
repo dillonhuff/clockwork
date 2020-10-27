@@ -969,16 +969,7 @@ struct prog {
       return root->get_domain_boxes();
   }
 
-
-  void pretty_print() {
-    cout << "program: " << name << endl;
-    cout << "buffers..." << endl;
-    for (auto b : buffer_bounds) {
-      cout << tab(1) << b.first << bracket_list(b.second) << endl;
-    }
-    cout << "operations..." << endl;
-    root->pretty_print(cout, 0);
-  }
+  void pretty_print();
 
   int buffer_port_width(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
@@ -1521,6 +1512,7 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
 std::vector<string> topologically_sort_kernels(prog& prg);
 
 std::set<string> buffers_written(op* p);
+std::set<string> buffers_written(prog& prg);
 
 bool writes(const std::string& target_buf, op* p);
 

@@ -3,6 +3,24 @@
 #include "app.h"
 #include "rdai_collateral.h"
 
+void prog::pretty_print() {
+  cout << "program: " << name << endl;
+  cout << "Inputs..." << endl;
+  for (auto in : ins) {
+    cout << tab(1) << in << endl;
+  }
+  cout << "Outputs..." << endl;
+  for (auto in : outs) {
+    cout << tab(1) << in << endl;
+  }
+  cout << "buffers..." << endl;
+  for (auto b : buffer_bounds) {
+    cout << tab(1) << b.first << bracket_list(b.second) << endl;
+  }
+  cout << "operations..." << endl;
+  root->pretty_print(cout, 0);
+}
+
 std::string us(const std::string& a, const std::string& b) {
   return a + "_" + b;
 }
@@ -2992,6 +3010,16 @@ std::vector<string> topologically_sort_kernels(prog& prg){
 
   assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
 	return topologically_sorted_kernels;
+}
+
+std::set<string> buffers_written(prog& prg) {
+  std::set<string> written;
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_written()) {
+      written.insert(b);
+    }
+  }
+  return written;
 }
 
 std::set<string> buffers_written(op* p) {

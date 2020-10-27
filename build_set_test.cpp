@@ -18381,8 +18381,10 @@ struct app_dag {
   map<string, int> channel_sizes;
 
   string producer_group(const std::string& buf) {
-    for (auto& gp : fusion_groups) {
-      if (elem(buf, get_produced_buffers(gp.second, prg))) {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    for (auto& gp : fusion_group_progs) {
+      if (elem(buf, buffers_written(gp.second))) {
         return gp.first;
       }
     }
@@ -18408,7 +18410,9 @@ bool all_kernel_inputs_are_program_inputs(app_dag& dag) {
     auto& gp = g.second;
     for (auto buf : all_buffers(gp)) {
       if (dag.producer_group(buf) != g.first) {
-        assert(elem(buf, gp.ins));
+        cout << buf << " is not an in of " << endl;
+        gp.pretty_print();
+        return false;
       }
     }
   }
@@ -18507,6 +18511,7 @@ void test_multi_kernel_design() {
       string replacement = prg.un(b.first + "_FIFO_buf");
       gp.root->replace_reads_from(b.first, replacement);
       read_in_no_dsa(gp.root, s, replacement, gp);
+
       gp.pretty_print();
     }
   }
@@ -18535,6 +18540,9 @@ void test_multi_kernel_design() {
       assert(contains_key(group_name, dag.fusion_group_progs));
       prog& gp = dag.fusion_group_progs.at(group_name);
       gp.root->replace_reads_from(b.first, broadcast);
+      gp.ins.erase(b.first);
+      gp.ins.insert(broadcast);
+
       gp.pretty_print();
 
       pp.outs.erase(b.first);
