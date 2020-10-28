@@ -336,6 +336,14 @@ isl_map* set_range_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
 }
 
+isl_multi_aff* set_in_name(isl_multi_aff* const m, string new_name) {
+    return isl_multi_aff_set_tuple_id(m, isl_dim_in, id(ctx(m), new_name));
+}
+
+isl_multi_aff* set_name(isl_multi_aff* const m, string new_name) {
+    return isl_multi_aff_set_tuple_id(m, isl_dim_out, id(ctx(m), new_name));
+}
+
 isl_aff* set_name(isl_aff* const m, string new_name) {
     return isl_aff_set_tuple_id(m, isl_dim_out, id(ctx(m), new_name));
 }
@@ -1413,6 +1421,18 @@ isl_map* lexmax(isl_map* const m0) {
 
 isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
+}
+
+isl_set* unn(const std::vector<isl_set*>& sets) {
+  isl_set* res = nullptr;
+  for (auto s : sets) {
+    if (res == nullptr) {
+      res = cpy(s);
+    } else {
+      res = unn(res, s);
+    }
+  }
+  return res;
 }
 
 isl_set* unn(isl_set* const m0, isl_set* const m1) {
@@ -3589,8 +3609,16 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
   return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
 }
 
+isl_multi_aff* sub(isl_multi_aff* a, isl_multi_aff* b) {
+  return isl_multi_aff_sub(cpy(a), cpy(b));
+}
+
 isl_aff* sub(isl_aff* a, isl_aff* b) {
   return isl_aff_sub(cpy(a), cpy(b));
+}
+
+void release(isl_aff* s) {
+  isl_aff_free(s);
 }
 
 void release(isl_set* s) {
@@ -3709,3 +3737,8 @@ std::map<int, isl_val*> constant_components(isl_multi_aff* access) {
   }
   return ret;
 }
+
+isl_val* constant(isl_aff* a) {
+  return isl_aff_get_constant_val(a);
+}
+
