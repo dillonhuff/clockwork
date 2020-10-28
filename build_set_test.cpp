@@ -18454,6 +18454,10 @@ void generate_app_code(CodegenOptions& options,
   ofstream conv_out(dag.prg.name + ".cpp");
   generate_app_prefix(options, conv_out, dag.prg);
 
+  for (auto& gp : dag.fusion_group_progs) {
+
+  }
+
   generate_driver_function_prefix(options, conv_out, buffers, dag.prg);
 
   conv_out << endl;

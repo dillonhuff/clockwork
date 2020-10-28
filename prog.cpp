@@ -2213,6 +2213,13 @@ void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out,
   conv_out << "}" << endl << endl;
 }
 
+void generate_app_code_body(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2221,6 +2228,12 @@ void generate_app_code(CodegenOptions& options,
 
   ofstream conv_out(prg.name + ".cpp");
   generate_app_prefix(options, conv_out, prg);
+
+  generate_app_code_body(options,
+    buffers,
+    prg,
+    schedmap,
+    domain_map);
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
