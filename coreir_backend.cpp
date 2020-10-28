@@ -2805,6 +2805,21 @@ void MapperPasses::ConstDuplication::setVisitorInfo() {
 
 }
 
+void disconnect_input_enable(Module* top) {
+  Context* c = top->getContext();
+  ModuleDef* def = top->getDef();
+  for (auto it: def->sel("self")->getSelects()) {
+      string port = it.first;
+      cout << "Find top interface: " << port << endl;
+    if (contains(port, "read_en")) {
+      auto conns = def->sel("self")->sel(port)->getConnectedWireables();
+      for (auto conn: conns) {
+        def->disconnect(def->sel("self")->sel(port), conn);
+      }
+    }
+  }
+}
+
 void garnet_map_module(Module* top) {
   auto c = top->getContext();
 
@@ -2812,6 +2827,9 @@ void garnet_map_module(Module* top) {
 
   //load_cgramapping(c);
   LoadDefinition_cgralib(c);
+
+  //A new pass to remove input enable signal affine controller
+  disconnect_input_enable(top);
   c->runPasses({"deletedeadinstances"});
 
   c->runPasses({"cullgraph"});
