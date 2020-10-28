@@ -533,21 +533,33 @@ UBuffer latency_adjusted_buffer(
     UBuffer& buf,
     schedule_info& hwinfo) {
   UBuffer cpy = buf;
+  cout << "Adjusted latencies" << endl;
+  for (auto l : hwinfo.compute_unit_latencies) {
+      cout << tab(1) << l.first << " -> " << l.second << endl;
+  }
   for (auto pt : buf.get_in_ports()) {
-    int write_start = 1;
-    //write_start_offset(op, hwinfo);
+      string op_name = domain_name(pick(get_maps(buf.access_map.at(pt))));
+      cout << "latency adjustment for op name = " << op_name << endl;
+      op* op = prg.find_op(op_name);
+      int write_start = 0;
+      cout << "bumpbump" << op->func << endl;
+      if (contains_key(op->func, hwinfo.compute_unit_latencies)) {
+          cout << "bumpbumpbump" << op->func << endl;
+          write_start = map_find(op->func, hwinfo.compute_unit_latencies);
+      }
+
     isl_aff* adjusted =
       add(get_aff(buf.schedule.at(pt)), write_start);
     cpy.schedule[pt] =
       to_umap(to_map(adjusted));
   }
-  for (auto pt : buf.get_out_ports()) {
-    int read_start = 0;
-    isl_aff* adjusted =
-      add(get_aff(buf.schedule.at(pt)), read_start);
-    cpy.schedule[pt] =
-      to_umap(to_map(adjusted));
-  }
+//  for (auto pt : buf.get_out_ports()) {
+//    int read_start = 0;
+//    isl_aff* adjusted =
+//      add(get_aff(buf.schedule.at(pt)), read_start);
+//    cpy.schedule[pt] =
+//      to_umap(to_map(adjusted));
+//  }
   cout << "---- Original" << endl;
   cout << buf << endl;
   cout << "---- Latency adjusted" << endl;
@@ -927,10 +939,12 @@ void generate_platonic_ubuffer(
           continue;
       }
       done_ctrl_vars.insert(ctrl_vars);
-      assert(get_maps(buf.schedule.at(pt)).size()==1);
-      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
+      auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
+
+      assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
+      auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
       int dims = num_in_dims(aff);
-      isl_set * dom = domain(get_maps(buf.schedule.at(pt))[0]);
+      isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
 //        cout << "domain " << str(dom) << endl;
 //        cout << get_dim(dom) << endl;
 //        cout << get_dim_max(dom,0) << endl;
@@ -939,7 +953,7 @@ void generate_platonic_ubuffer(
 //        cout << get_dim_min(dom,1) << endl;
 //        cout << get_dim_max(dom,2) << endl;
 //        cout << get_dim_min(dom,2) << endl;
-      out << "//" << str(get_maps(buf.schedule.at(pt))[0]) << endl;
+      out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
 //      cout << dims << endl;
 //      assert(false);
 
@@ -949,8 +963,7 @@ void generate_platonic_ubuffer(
             cout << str(get_coeff(aff,i)) << endl;
 
       }
-
-      out << "module " << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
+      out << "module " << adjusted_buf.name << "_" <<  adjusted_buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
       out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
       out << tab(1) << "logic on;" << endl;
       out << tab(1) << "logic on2;" << endl;
@@ -1213,7 +1226,7 @@ void generate_platonic_ubuffer(
     out << tab(2) << "if (" << bundle_wen << "!=" << bundle_wen << "_fsm_out) begin" << endl;
     out << tab(4)<< "$display(" << bundle_wen << ");" << endl;
       out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
-    //out << tab(3) << "$finish(-1);" << endl;
+    out << tab(3) << "$finish(-1);" << endl;
     out << tab(2) << "end" << endl;
     out << tab(2) << "if (" << bundle_wen << "_fsm_out) begin" << endl;
 
