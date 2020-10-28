@@ -160,7 +160,7 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
 }
 
 vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk, UBuffer& buf) {
-  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
+  string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars_fsm_out";
 
   vector<int> mins;
   for (int i = 0; i < buf.logical_dimension(); i++) {
@@ -440,9 +440,17 @@ string print_cyclic_banks_inner_bank_offset_func(UBuffer& buf, vector<string> va
  vector<string> vars1;
   for(int i = 0; i < buf.logical_dimension(); i ++)
   {
+      if(ceil(log2(bank_factors[i])) == log2(bank_factors[i]))
+      {
+          cout << vars[i] << endl;
+      vars1.push_back("(" + vars[i] + ">>" + to_string((int)log2(bank_factors[i])) + ")*" + to_string(capacity_prod));
+      } else{
       vars1.push_back("$rtoi($floor(" + vars[i] + "/ " + to_string(bank_factors[i]) + "))*" + to_string(capacity_prod));
+
+      }
       capacity_prod *= capacities[i];
   }
+          //assert(false);
 
     string func = sep_list(vars1,"(",")","+");
   cout << func << endl;
@@ -525,21 +533,35 @@ UBuffer latency_adjusted_buffer(
     UBuffer& buf,
     schedule_info& hwinfo) {
   UBuffer cpy = buf;
+  cout << "Adjusted latencies" << endl;
+  for (auto l : hwinfo.compute_unit_latencies) {
+      cout << tab(1) << l.first << " -> " << l.second << endl;
+  }
   for (auto pt : buf.get_in_ports()) {
-    int write_start = 1;
-    //write_start_offset(op, hwinfo);
+      string op_name = domain_name(pick(get_maps(buf.access_map.at(pt))));
+      cout << "latency adjustment for op name = " << op_name << endl;
+      op* op = prg.find_op(op_name);
+      int write_start = 0;
+      cout << "bumpbump" << op->func << endl;
+      if (contains_key(op->func, hwinfo.compute_unit_latencies)) {
+          write_start = map_find(op->func, hwinfo.compute_unit_latencies);
+          cout << "bumpbumpbump " << write_start << endl;
+
+      }
+
     isl_aff* adjusted =
-      add(get_aff(buf.schedule.at(pt)), write_start);
+      add(get_aff(buf.schedule.at(pt)), (int)write_start);
     cpy.schedule[pt] =
-      to_umap(to_map(adjusted));
+      //to_umap(to_map(adjusted));
+      its(to_umap(to_map(adjusted)),buf.domain.at(pt));
   }
-  for (auto pt : buf.get_out_ports()) {
-    int read_start = 0;
-    isl_aff* adjusted =
-      add(get_aff(buf.schedule.at(pt)), read_start);
-    cpy.schedule[pt] =
-      to_umap(to_map(adjusted));
-  }
+//  for (auto pt : buf.get_out_ports()) {
+//    int read_start = 0;
+//    isl_aff* adjusted =
+//      add(get_aff(buf.schedule.at(pt)), read_start);
+//    cpy.schedule[pt] =
+//      to_umap(to_map(adjusted));
+//  }
   cout << "---- Original" << endl;
   cout << buf << endl;
   cout << "---- Latency adjusted" << endl;
@@ -687,7 +709,6 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     for (auto outpt : buf.get_out_ports()) {
       for (auto outpt_src : buf.get_out_ports()) {
 
-
           if(outpt == outpt_src) {
               continue;
           }
@@ -729,7 +750,7 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
                   continue;
               }
 
-              if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) != 0)
+              if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) < 0)
               {
                   continue;
               }
@@ -805,6 +826,421 @@ vector<int> max_offsets_by_dimension(UBuffer& buf) {
   }
   return min_offsets;
 }
+
+void generate_platonic_ubuffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+  ostream& out = *verilog_collateral_file;
+
+  prg.pretty_print();
+
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+
+  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
+  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+
+  if(buf.name == "hw_input_global_wrapper_stencil")
+  {
+          cout << buf;
+          cout << "Output to output srs..." << endl;
+          for (auto ent : shift_registered_outputs_to_outputs) {
+              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
+          }
+  }
+
+
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf, hwinfo);
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  //bool has_embarassing_partition = false;
+
+  if (has_embarassing_partition)  {
+    std::set<int> partition_dims = embarassing_banking.get_value();
+    vector<int> min_offsets = min_offsets_by_dimension(buf);
+    vector<int> max_offsets = max_offsets_by_dimension(buf);
+    vector<int> extents;
+    for (int i = 0; i < min_offsets.size(); i++) {
+      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+    }
+    cout << "Extents in selected dimensions..." << endl;
+    map<int, int> partitioned_dimension_extents;
+    for (auto d : partition_dims) {
+      cout << tab(1) << extents.at(d) << endl;
+      partitioned_dimension_extents[d] = extents.at(d);
+    }
+
+    print_embarassing_banks_selector(out, partitioned_dimension_extents, buf);
+  }
+
+  print_cyclic_banks_selector(out, bank_factors, buf);
+  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
+  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
+
+  // todo: print the fsm modules that get the ctrl_variables
+
+  unordered_set<string> done_ctrl_vars;
+
+  for(auto pt: buf.get_all_ports()){
+      string name = buf.container_bundle(pt);
+      string ctrl_vars = name + "_ctrl_vars";
+      string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
+      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
+      {
+          continue;
+      }
+      done_ctrl_vars.insert(ctrl_vars);
+      auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
+      cout << "adjusted buffer " << adjusted_buf << endl;
+      cout << "actual buffer " << buf << endl;
+      //auto adjusted_buf = buf;
+      assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
+      auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
+      int dims = num_in_dims(aff);
+      isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
+//        cout << "domain " << str(dom) << endl;
+//        cout << get_dim(dom) << endl;
+//        cout << get_dim_max(dom,0) << endl;
+//        cout << get_dim_min(dom,0) << endl;
+//        cout << get_dim_max(dom,1) << endl;
+//        cout << get_dim_min(dom,1) << endl;
+//        cout << get_dim_max(dom,2) << endl;
+//        cout << get_dim_min(dom,2) << endl;
+      out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
+//      cout << dims << endl;
+//      assert(false);
+
+      cout << to_int(const_coeff(aff)) << endl;
+      for(int i = 0; i < dims; i ++)
+      {
+            cout << str(get_coeff(aff,i)) << endl;
+
+      }
+      out << "module " << adjusted_buf.name << "_" <<  adjusted_buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
+      out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
+      out << tab(1) << "logic on;" << endl;
+      out << tab(1) << "logic on2;" << endl;
+      out << tab(1) << "integer i;" << endl;
+      out << tab(1) << "integer dims = " << dims << ";" << endl;
+
+      string condition = "assign " + enable + " =(on && on2 && " + ctrl_vars + brackets(str(0)) + "==0";
+      for(int i =1; i< dims; i ++)
+      {
+        condition += " && " + ctrl_vars + brackets(str(i)) + "<=" + str(get_dim_max(dom,i));
+        //condition += " && " + ctrl_vars + brackets(str(i)) + ">=0";
+      }
+      condition += ");";
+      out << tab(1) << condition << endl;
+
+      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+      out << tab(2) << "if (~rst_n) begin" << endl;
+      for(int i = 0; i < dims ;i ++) {
+      out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b1010101010101010;" << endl;
+      out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
+      }
+      out << tab(3) << "on <=0;" << endl;
+      out << tab(3) << "on2 <= 0;" << endl;
+      out << tab(2) <<  "end else begin" << endl;
+      out << tab(3) <<   "if(counter[0] ==" << to_int(const_coeff(aff)) - 1 << ") begin" << endl;
+      out << tab(4) << "on <=1;" << endl;
+      out << tab(4) << "on2 <= 1;" << endl;
+      out << tab(4) <<  ctrl_vars << brackets(str(0)) << "<= 16'b0;" << endl;
+      out << tab(4) <<  "counter" << brackets(str(0)) << " <= counter" << brackets(str(0)) << "+1;" << endl;
+      for(int i = 1; i < dims ;i ++) {
+        out << tab(4) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
+        out << tab(4) <<  "counter " << brackets(str(i)) << " <= 16'b0;" << endl;
+      }
+
+      out << tab(3) <<  "end else begin" << endl;
+      out << tab(4) << "counter[0] <= counter[0] + 1;" << endl;
+      out << tab(4) << "if(counter[1] == " << to_int(get_coeff(aff,1)) - 1 << ") begin" << endl;
+      for(int i = 1; i < dims; i ++ ) {
+        out << tab(5) << "counter" << brackets(str(i)) << "<= 0;" << endl;
+      }
+      for(int i = 2; i < dims; i ++ ){
+        out << tab(5) << ctrl_vars << brackets(str(i)) << "<= 0;" << endl;
+      }
+      out << tab(5) << ctrl_vars << "[1] <= " << ctrl_vars << "[1] + 1;" << endl;
+      out << tab(5) << "on2 <= 1;" <<endl;
+      for(int i = 2; i < dims; i ++)
+      {
+            out << tab(4) << "end else if(counter[" << i << "] == " << to_int(get_coeff(aff,i)) - 1 << ") begin" << endl;
+            for(int j = 1; j< i; j ++ ) {
+                out << tab(5) << "counter" << brackets(str(j)) << " <= counter" << brackets(str(j)) << " + 1;" << endl;
+            }
+            for(int j = i; j < dims; j ++ ) {
+                out << tab(5) << "counter" << brackets(str(j)) << " <= 0;" << endl;
+            }
+            for(int j = i + 1; j < dims; j ++ ) {
+                out << tab(5) << ctrl_vars << brackets(str(j)) << "<= 0;" << endl;
+            }
+            out << tab(5) << ctrl_vars << "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
+            out << tab(5) << "on2 <= 1;" << endl;
+      }
+      out << tab(4) << "end else begin" << endl;
+      for(int i = 1; i < dims; i ++ ) {
+        out << tab(5) << "counter" << brackets(str(i)) << " <= counter" << brackets(str(i)) << " + 1;" << endl;
+      }
+        out << tab(5) << "on2 <= 0;" << endl;
+      out << tab(4) << "end" << endl;
+      out << tab(3) << "end" << endl;
+       out << tab(2) << "end" << endl;
+       out << tab(1) << "end" << endl;
+    out << "endmodule" << endl;
+
+  }
+
+   //assert(false);
+
+
+
+  vector<string> port_decls = verilog_port_decls(options, buf);
+
+  out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
+  out << endl;
+
+  out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
+
+  done_ctrl_vars.clear();
+  for(auto pt: buf.get_all_ports())
+  {
+      string name = buf.container_bundle(pt);
+      string ctrl_vars = name + "_ctrl_vars";
+      string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
+      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
+      {
+          continue;
+      }
+      done_ctrl_vars.insert(ctrl_vars);
+      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
+      int dims = num_in_dims(aff);
+
+      out << tab(1) << "logic [15:0]" << ctrl_vars << "_fsm_out[" << dims -1 << ":0];" << endl;
+     out << tab(1) << "logic " << enable << "_fsm_out;" << endl;
+
+      out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm " <<
+      buf.name << "_" <<  buf.container_bundle(pt) << "_fsm_inst "
+      << "(.clk(clk), .flush(flush), .rst_n(rst_n), ." << ctrl_vars << "( " + ctrl_vars << "_fsm_out), ." << enable << "("
+      << enable << "_fsm_out));" << endl;
+
+
+  }
+  //assert(false);
+
+  map<int, int> partitioned_dimension_extents;
+  if (has_embarassing_partition) {
+    std::set<int> partition_dims = embarassing_banking.get_value();
+    vector<int> min_offsets = min_offsets_by_dimension(buf);
+    vector<int> max_offsets = max_offsets_by_dimension(buf);
+    vector<int> extents;
+    for (int i = 0; i < min_offsets.size(); i++) {
+      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+    }
+    cout << "Extents in selected dimensions..." << endl;
+    for (auto d : partition_dims) {
+      cout << tab(1) << extents.at(d) << endl;
+      partitioned_dimension_extents[d] = extents.at(d);
+    }
+
+    print_embarassing_banks(out, partitioned_dimension_extents, buf);
+  }
+
+
+  bank bnk = buf.compute_bank_info();
+
+  vector<int> capacities;
+  if (!has_embarassing_partition) {
+    capacities = print_cyclic_banks(out, bank_factors, bnk);
+  } else {
+    std::set<int> partition_dims = embarassing_banking.get_value();
+    vector<int> min_offsets = min_offsets_by_dimension(buf);
+    vector<int> max_offsets = max_offsets_by_dimension(buf);
+    vector<int> extents;
+    for (int i = 0; i < min_offsets.size(); i++) {
+      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+    }
+    cout << "Extents in selected dimensions..." << endl;
+    for (auto d : partition_dims) {
+      cout << tab(1) << extents.at(d) << endl;
+      partitioned_dimension_extents[d] = extents.at(d);
+    }
+    capacities = extents;
+  }
+
+  out << "// Capacities in " << buf.name << endl;
+  for (auto c : capacities) {
+    out << tab(1) << "// " << c << endl;
+  }
+  out << endl;
+
+  for (auto in : buf.get_all_ports()) {
+    auto comps_raw =
+      generate_verilog_addr_components(in, bnk, buf);
+
+    vector<string> comps;
+    int i = 0;
+    for (auto c : comps_raw) {
+      out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
+      out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
+      comps.push_back(buf.name + "_" + in + "_" + str(i));
+      i++;
+    }
+    reverse(comps);
+    if (has_embarassing_partition) {
+      out << buf.name << "_embarassing_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
+    } else {
+      out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
+    }
+  }
+
+  out << endl;
+
+  vector<pair<string,pair<string,int>>> sorted_shift_registered_outputs_to_outputs = shift_registered_outputs_to_outputs;
+  sort_lt(sorted_shift_registered_outputs_to_outputs,[](const pair<string,pair<string,int>> &x) {return x.second.second;});
+
+  unordered_set<string> done_outpt;
+  for (auto pt : shift_registered_outputs_to_outputs) {
+
+        if(done_outpt.find(pt.first)!=done_outpt.end())
+        {
+            continue;
+        } else{
+            done_outpt.insert(pt.first);
+        }
+
+        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+
+    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
+      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+
+  }
+  for (auto in : buf.get_in_ports()) {
+    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
+    for (auto pt : shift_registered_outputs) {
+      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+      if (pt.second.first == in) {
+        if(done_outpt.find(pt.first)!=done_outpt.end()) {
+          continue;
+        } else
+        {
+          done_outpt.insert(pt.first);
+          out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+        }
+      }
+    }
+  }
+
+
+  out << endl;
+  int num_banks = card(bank_factors);
+  if (has_embarassing_partition) {
+    num_banks = 1;
+    for (auto ent : partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+  }
+
+  out << tab(1) << "always @(posedge clk) begin" << endl;
+  done_ctrl_vars.clear();
+  for(auto pt: buf.get_all_ports())
+  {
+      string name = buf.container_bundle(pt);
+
+      string ctrl_vars = name + "_ctrl_vars";
+      string enable = (name.find("write") == string::npos) ? name + "_ren" : name + "_wen";
+      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
+      {
+          continue;
+      }
+      done_ctrl_vars.insert(ctrl_vars);
+      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
+      int dims = num_in_dims(aff);
+      string gen_ctrl_vars = ctrl_vars + "_fsm_out";
+      out << tab(2) << "if(" << enable << ")begin" << endl;
+      out << tab(3) << "if(" << ctrl_vars << "!=" << gen_ctrl_vars << ") begin" << endl;
+      out << tab(4) << "$display(\"Different\");" << endl;
+//      out << tab(4) << "$display(" << ctrl_vars << "[1]);" << endl;
+//      out << tab(4) << "$display(" << gen_ctrl_vars << "[1]);" << endl;
+//      out << tab(4) << "$display(" << ctrl_vars << "[2]);" << endl;
+//      out << tab(4) << "$display(" << gen_ctrl_vars << "[2]);" << endl;
+//      out << tab(4) << "$display(" << ctrl_vars << "[0]);" << endl;
+//      out << tab(4) << "$display(" << gen_ctrl_vars << "[0]);" << endl;
+      //out << tab(4) << "$finish(-1);" << endl;
+      out << tab(3) << "end" << endl;
+      out << tab(2) << "end" << endl;
+  }
+  for (auto in : buf.get_in_ports()) {
+    string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
+    if (has_embarassing_partition) {
+      addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
+    }
+
+    string bundle_wen = buf.container_bundle(in) + "_wen";
+    out << tab(2) << "if (" << bundle_wen << "!=" << bundle_wen << "_fsm_out) begin" << endl;
+    out << tab(4)<< "$display(" << bundle_wen << ");" << endl;
+      out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
+    out << tab(3) << "$finish(-1);" << endl;
+    out << tab(2) << "end" << endl;
+    out << tab(2) << "if (" << bundle_wen << "_fsm_out) begin" << endl;
+
+
+    out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
+    for (int b = 0; b < num_banks; b++) {
+      string source_ram = "bank_" + str(b);
+      out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+    }
+    out << tab(4) << "default: $finish(-1);" << endl;
+    out << tab(3) << "endcase" << endl;
+    out << tab(2) << "end" << endl;
+  }
+  out << tab(1) << "end" << endl;
+
+
+  out << tab(1) << "always @(*) begin" << endl;
+  for (auto outpt : buf.get_out_ports()) {
+    if (done_outpt.find(outpt) == done_outpt.end()) {
+      string addr =
+        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
+
+      if (has_embarassing_partition) {
+        addr =
+          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
+      }
+
+    string bundle_ren = buf.container_bundle(outpt) + "_ren";
+    out << tab(2) << "if (" << bundle_ren << "!=" << bundle_ren << "_fsm_out) begin" << endl;
+    out << tab(4)<< "$display(" << bundle_ren << ");" << endl;
+      out << tab(4) << "$display("<< bundle_ren << "_fsm_out);" << endl;
+    out << tab(3) << "$finish(-1);" << endl;
+    out << tab(2) << "end" << endl;
+    out << tab(2) << "if (" << bundle_ren << ") begin" << endl;
+      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
+      for (int b = 0; b < num_banks; b++) {
+        string source_ram = "bank_" + str(b);
+        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
+      }
+      out << tab(4) << "default: $finish(-1);" << endl;
+      out << tab(3) << "endcase" << endl;
+      out << tab(2) << "end" << endl;
+    }
+  }
+
+  out << tab(1) << "end" << endl;
+
+  out << endl;
+
+  if (!has_embarassing_partition &&
+      done_outpt.size() < buf.get_out_ports().size()) {
+    cout << "BUFFER: " << buf.name << " cannot be fully optimized by shift registers and embarassing partitioning" << endl;
+    not_fully_optimizable++;
+  } else {
+    fully_optimizable++;
+  }
+  cout << "FULLY OPTIMIZABLE: " << fully_optimizable << " / " << (fully_optimizable + not_fully_optimizable) << endl;
+  out << "endmodule" << endl << endl;
+}
+
 
 //Assumes common has been loaded
 void load_mem_ext(Context* c) {
@@ -3845,235 +4281,235 @@ CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
 }
 
 
-void generate_platonic_ubuffer(
-    CodegenOptions& options,
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo) {
-  ostream& out = *verilog_collateral_file;
-
-  prg.pretty_print();
-
-  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
-
-  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
-  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
-
-  if(buf.name == "hw_input_global_wrapper_stencil")
-  {
-          cout << buf;
-          cout << "Output to output srs..." << endl;
-          for (auto ent : shift_registered_outputs_to_outputs) {
-              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
-          }
-  }
-
-
-  maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf, hwinfo);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  //bool has_embarassing_partition = false;
-
-  if (has_embarassing_partition)  {
-    std::set<int> partition_dims = embarassing_banking.get_value();
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
-    cout << "Extents in selected dimensions..." << endl;
-    map<int, int> partitioned_dimension_extents;
-    for (auto d : partition_dims) {
-      cout << tab(1) << extents.at(d) << endl;
-      partitioned_dimension_extents[d] = extents.at(d);
-    }
-
-    print_embarassing_banks_selector(out, partitioned_dimension_extents, buf);
-  }
-
-  print_cyclic_banks_selector(out, bank_factors, buf);
-  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
-  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
-
-  vector<string> port_decls = verilog_port_decls(options, buf);
-  out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
-  out << endl;
-
-  out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
-
-  map<int, int> partitioned_dimension_extents;
-  if (has_embarassing_partition) {
-    std::set<int> partition_dims = embarassing_banking.get_value();
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
-    cout << "Extents in selected dimensions..." << endl;
-    for (auto d : partition_dims) {
-      cout << tab(1) << extents.at(d) << endl;
-      partitioned_dimension_extents[d] = extents.at(d);
-    }
-
-    print_embarassing_banks(out, partitioned_dimension_extents, buf);
-  }
-
-
-  bank bnk = buf.compute_bank_info();
-
-  vector<int> capacities;
-  if (!has_embarassing_partition) {
-    capacities = print_cyclic_banks(out, bank_factors, bnk);
-  } else {
-    std::set<int> partition_dims = embarassing_banking.get_value();
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
-    cout << "Extents in selected dimensions..." << endl;
-    for (auto d : partition_dims) {
-      cout << tab(1) << extents.at(d) << endl;
-      partitioned_dimension_extents[d] = extents.at(d);
-    }
-    capacities = extents;
-  }
-
-  out << "// Capacities in " << buf.name << endl;
-  for (auto c : capacities) {
-    out << tab(1) << "// " << c << endl;
-  }
-  out << endl;
-
-  for (auto in : buf.get_all_ports()) {
-    auto comps_raw =
-      generate_verilog_addr_components(in, bnk, buf);
-
-    vector<string> comps;
-    int i = 0;
-    for (auto c : comps_raw) {
-      out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
-      out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
-      comps.push_back(buf.name + "_" + in + "_" + str(i));
-      i++;
-    }
-    reverse(comps);
-    if (has_embarassing_partition) {
-      out << buf.name << "_embarassing_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
-    } else {
-      out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
-    }
-  }
-
-  out << endl;
-
-  vector<pair<string,pair<string,int>>> sorted_shift_registered_outputs_to_outputs = shift_registered_outputs_to_outputs;
-  sort_lt(sorted_shift_registered_outputs_to_outputs,[](const pair<string,pair<string,int>> &x) {return x.second.second;});
-
-  unordered_set<string> done_outpt;
-  for (auto pt : shift_registered_outputs_to_outputs) {
-
-        if(done_outpt.find(pt.first)!=done_outpt.end())
-        {
-            continue;
-        } else{
-            done_outpt.insert(pt.first);
-        }
-
-        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-
-    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
-      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-
-  }
-  for (auto in : buf.get_in_ports()) {
-    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
-    for (auto pt : shift_registered_outputs) {
-      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
-      if (pt.second.first == in) {
-        if(done_outpt.find(pt.first)!=done_outpt.end()) {
-          continue;
-        } else
-        {
-          done_outpt.insert(pt.first);
-          out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-        }
-      }
-    }
-  }
-
-
-  out << endl;
-  int num_banks = card(bank_factors);
-  if (has_embarassing_partition) {
-    num_banks = 1;
-    for (auto ent : partitioned_dimension_extents) {
-      num_banks *= ent.second;
-    }
-  }
-
-  out << tab(1) << "always @(posedge clk) begin" << endl;
-  for (auto in : buf.get_in_ports()) {
-    string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
-    if (has_embarassing_partition) {
-      addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
-    }
-
-    string bundle_wen = buf.container_bundle(in) + "_wen";
-    out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
-
-
-    out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
-    for (int b = 0; b < num_banks; b++) {
-      string source_ram = "bank_" + str(b);
-      out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
-    }
-    out << tab(4) << "default: $finish(-1);" << endl;
-    out << tab(3) << "endcase" << endl;
-    out << tab(2) << "end" << endl;
-  }
-  out << tab(1) << "end" << endl;
-
-
-  out << tab(1) << "always @(*) begin" << endl;
-  for (auto outpt : buf.get_out_ports()) {
-    if (done_outpt.find(outpt) == done_outpt.end()) {
-      string addr =
-        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
-
-      if (has_embarassing_partition) {
-        addr =
-          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
-      }
-
-
-      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
-      for (int b = 0; b < num_banks; b++) {
-        string source_ram = "bank_" + str(b);
-        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
-      }
-      out << tab(4) << "default: $finish(-1);" << endl;
-      out << tab(3) << "endcase" << endl;
-    }
-  }
-
-  out << tab(1) << "end" << endl;
-
-  out << endl;
-
-  if (!has_embarassing_partition &&
-      done_outpt.size() < buf.get_out_ports().size()) {
-    cout << "BUFFER: " << buf.name << " cannot be fully optimized by shift registers and embarassing partitioning" << endl;
-    not_fully_optimizable++;
-  } else {
-    fully_optimizable++;
-  }
-  cout << "FULLY OPTIMIZABLE: " << fully_optimizable << " / " << (fully_optimizable + not_fully_optimizable) << endl;
-  out << "endmodule" << endl << endl;
-}
+//void generate_platonic_ubuffer(
+//    CodegenOptions& options,
+//    prog& prg,
+//    UBuffer& buf,
+//    schedule_info& hwinfo) {
+//  ostream& out = *verilog_collateral_file;
+//
+//  prg.pretty_print();
+//
+//  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+//
+//  auto shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
+//  auto shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+//
+//  if(buf.name == "hw_input_global_wrapper_stencil")
+//  {
+//          cout << buf;
+//          cout << "Output to output srs..." << endl;
+//          for (auto ent : shift_registered_outputs_to_outputs) {
+//              cout << tab(1) << ent.first << " -> " << ent.second.first << ", " << ent.second.second << endl;
+//          }
+//  }
+//
+//
+//  maybe<std::set<int> > embarassing_banking =
+//    embarassing_partition(buf, hwinfo);
+//  bool has_embarassing_partition = embarassing_banking.has_value();
+//  //bool has_embarassing_partition = false;
+//
+//  if (has_embarassing_partition)  {
+//    std::set<int> partition_dims = embarassing_banking.get_value();
+//    vector<int> min_offsets = min_offsets_by_dimension(buf);
+//    vector<int> max_offsets = max_offsets_by_dimension(buf);
+//    vector<int> extents;
+//    for (int i = 0; i < min_offsets.size(); i++) {
+//      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+//    }
+//    cout << "Extents in selected dimensions..." << endl;
+//    map<int, int> partitioned_dimension_extents;
+//    for (auto d : partition_dims) {
+//      cout << tab(1) << extents.at(d) << endl;
+//      partitioned_dimension_extents[d] = extents.at(d);
+//    }
+//
+//    print_embarassing_banks_selector(out, partitioned_dimension_extents, buf);
+//  }
+//
+//  print_cyclic_banks_selector(out, bank_factors, buf);
+//  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
+//  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
+//
+//  vector<string> port_decls = verilog_port_decls(options, buf);
+//  out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
+//  out << endl;
+//
+//  out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
+//
+//  map<int, int> partitioned_dimension_extents;
+//  if (has_embarassing_partition) {
+//    std::set<int> partition_dims = embarassing_banking.get_value();
+//    vector<int> min_offsets = min_offsets_by_dimension(buf);
+//    vector<int> max_offsets = max_offsets_by_dimension(buf);
+//    vector<int> extents;
+//    for (int i = 0; i < min_offsets.size(); i++) {
+//      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+//    }
+//    cout << "Extents in selected dimensions..." << endl;
+//    for (auto d : partition_dims) {
+//      cout << tab(1) << extents.at(d) << endl;
+//      partitioned_dimension_extents[d] = extents.at(d);
+//    }
+//
+//    print_embarassing_banks(out, partitioned_dimension_extents, buf);
+//  }
+//
+//
+//  bank bnk = buf.compute_bank_info();
+//
+//  vector<int> capacities;
+//  if (!has_embarassing_partition) {
+//    capacities = print_cyclic_banks(out, bank_factors, bnk);
+//  } else {
+//    std::set<int> partition_dims = embarassing_banking.get_value();
+//    vector<int> min_offsets = min_offsets_by_dimension(buf);
+//    vector<int> max_offsets = max_offsets_by_dimension(buf);
+//    vector<int> extents;
+//    for (int i = 0; i < min_offsets.size(); i++) {
+//      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+//    }
+//    cout << "Extents in selected dimensions..." << endl;
+//    for (auto d : partition_dims) {
+//      cout << tab(1) << extents.at(d) << endl;
+//      partitioned_dimension_extents[d] = extents.at(d);
+//    }
+//    capacities = extents;
+//  }
+//
+//  out << "// Capacities in " << buf.name << endl;
+//  for (auto c : capacities) {
+//    out << tab(1) << "// " << c << endl;
+//  }
+//  out << endl;
+//
+//  for (auto in : buf.get_all_ports()) {
+//    auto comps_raw =
+//      generate_verilog_addr_components(in, bnk, buf);
+//
+//    vector<string> comps;
+//    int i = 0;
+//    for (auto c : comps_raw) {
+//      out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
+//      out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
+//      comps.push_back(buf.name + "_" + in + "_" + str(i));
+//      i++;
+//    }
+//    reverse(comps);
+//    if (has_embarassing_partition) {
+//      out << buf.name << "_embarassing_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
+//    } else {
+//      out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
+//    }
+//  }
+//
+//  out << endl;
+//
+//  vector<pair<string,pair<string,int>>> sorted_shift_registered_outputs_to_outputs = shift_registered_outputs_to_outputs;
+//  sort_lt(sorted_shift_registered_outputs_to_outputs,[](const pair<string,pair<string,int>> &x) {return x.second.second;});
+//
+//  unordered_set<string> done_outpt;
+//  for (auto pt : shift_registered_outputs_to_outputs) {
+//
+//        if(done_outpt.find(pt.first)!=done_outpt.end())
+//        {
+//            continue;
+//        } else{
+//            done_outpt.insert(pt.first);
+//        }
+//
+//        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+//
+//    string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
+//      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+//
+//  }
+//  for (auto in : buf.get_in_ports()) {
+//    string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
+//    for (auto pt : shift_registered_outputs) {
+//      string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+//      if (pt.second.first == in) {
+//        if(done_outpt.find(pt.first)!=done_outpt.end()) {
+//          continue;
+//        } else
+//        {
+//          done_outpt.insert(pt.first);
+//          out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
+//        }
+//      }
+//    }
+//  }
+//
+//
+//  out << endl;
+//  int num_banks = card(bank_factors);
+//  if (has_embarassing_partition) {
+//    num_banks = 1;
+//    for (auto ent : partitioned_dimension_extents) {
+//      num_banks *= ent.second;
+//    }
+//  }
+//
+//  out << tab(1) << "always @(posedge clk) begin" << endl;
+//  for (auto in : buf.get_in_ports()) {
+//    string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
+//    if (has_embarassing_partition) {
+//      addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
+//    }
+//
+//    string bundle_wen = buf.container_bundle(in) + "_wen";
+//    out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
+//
+//
+//    out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
+//    for (int b = 0; b < num_banks; b++) {
+//      string source_ram = "bank_" + str(b);
+//      out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
+//    }
+//    out << tab(4) << "default: $finish(-1);" << endl;
+//    out << tab(3) << "endcase" << endl;
+//    out << tab(2) << "end" << endl;
+//  }
+//  out << tab(1) << "end" << endl;
+//
+//
+//  out << tab(1) << "always @(*) begin" << endl;
+//  for (auto outpt : buf.get_out_ports()) {
+//    if (done_outpt.find(outpt) == done_outpt.end()) {
+//      string addr =
+//        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
+//
+//      if (has_embarassing_partition) {
+//        addr =
+//          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
+//      }
+//
+//
+//      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
+//      for (int b = 0; b < num_banks; b++) {
+//        string source_ram = "bank_" + str(b);
+//        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[" << addr << "]" << ";" << endl;
+//      }
+//      out << tab(4) << "default: $finish(-1);" << endl;
+//      out << tab(3) << "endcase" << endl;
+//    }
+//  }
+//
+//  out << tab(1) << "end" << endl;
+//
+//  out << endl;
+//
+//  if (!has_embarassing_partition &&
+//      done_outpt.size() < buf.get_out_ports().size()) {
+//    cout << "BUFFER: " << buf.name << " cannot be fully optimized by shift registers and embarassing partitioning" << endl;
+//    not_fully_optimizable++;
+//  } else {
+//    fully_optimizable++;
+//  }
+//  cout << "FULLY OPTIMIZABLE: " << fully_optimizable << " / " << (fully_optimizable + not_fully_optimizable) << endl;
+//  out << "endmodule" << endl << endl;
+//}
 
 #endif
 

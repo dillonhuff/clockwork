@@ -473,6 +473,9 @@ void unoptimized_time_sharing_gauss_pyramid(HWStream<hw_uint<32> >& /* no bundle
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   gray_cache gray;
+#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs cyclic factor=4 dim=1
+#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs cyclic factor=4 dim=2
+
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
@@ -509,15 +512,19 @@ void unoptimized_time_sharing_gauss_pyramid(HWStream<hw_uint<32> >& /* no bundle
 	{
 	  for (int c3 = 0; c3 <= 67; c3 += 1)
 	    for (int c5 = 0; c5 <= 67; c5 += 1)
+#pragma HLS pipeline II=1
 	      oc_load_in03(in /* buf name */, gray, 0, c3, c5);
 	  for (int c3 = 0; c3 <= 33; c3 += 1)
 	    for (int c5 = 0; c5 <= 33; c5 += 1)
+#pragma HLS pipeline II=1
 	      gp_gray_16_merged74(gray /* buf name */, gp_gray_1_buf4, 0, c3, c5);
 	  for (int c3 = 0; c3 <= 15; c3 += 1)
 	    for (int c5 = 0; c5 <= 15; c5 += 1)
+#pragma HLS pipeline II=1
 	      gp_gray_214_merged77(gp_gray_1_buf4 /* buf name */, gp_gray_2_buf12, 0, c3, c5);
 	  for (int c3 = 0; c3 <= 15; c3 += 1)
 	    for (int c5 = 0; c5 <= 15; c5 += 1)
+#pragma HLS pipeline II=1
 	      pw_math_gp_gray_2_buf122023(gp_gray_2_buf12 /* buf name */, out, 0, c3, c5);
 	}
 	

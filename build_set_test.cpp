@@ -11560,7 +11560,7 @@ void run_verilator_tb(const std::string& name) {
       //"./lake_components/wide_tile/lake_top_1_port.sv",
       //"./lake_components/ASPLOS_designs/bare_dual_port.v",
       "./lake_components/inner_affine_controller.sv"});
-
+  cmd("rm -rf obj_dir/");
   assert(res == 0);
   //int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
   //assert(verilator_build == 0);
@@ -16394,89 +16394,89 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 
   auto buffers = build_buffers(prg, hw_sched);
 
-  for (auto& bufe : buffers) {
-    auto& buf = bufe.second;
-    auto shift_registered_outputs =
-      determine_shift_reg_map(prg, buf, sched);
-    if (shift_registered_outputs.size() == buf.get_out_ports().size()) {
-      cout << buf.name << " is really a shift register" << endl;
-      continue;
-    }
-    maybe<std::set<int> > part =
-      embarassing_partition(buf, sched);
-    vector<vector<string> > filtered_io_groups =
-      overlapping_large_io_port_groups(buf, 1);
-
-    if (filtered_io_groups.size() > 0 && !part.has_value()) {
-      cout << tab(1) << "======= No embarassing partition for " << buf.name << endl;
-      cout << tab(2) << "Groups" << endl;
-      for (auto gp : filtered_io_groups) {
-        cout << tab(3) << "------ GP" << endl;
-        for (auto pt : gp) {
-          cout << tab(4) << pt << endl;
-          isl_multi_aff* aff = get_multi_aff(buf.access_map.at(pt));
-          cout << tab(5) << str(aff) << endl;
-        }
-      }
-
-      bool all_diffs_constant = true;
-      for (auto gp : filtered_io_groups) {
-        for (auto pt0 : gp) {
-          for (auto pt1 : gp) {
-            isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
-            isl_multi_aff* aff1 = set_in_name(get_multi_aff(buf.access_map.at(pt1)), "s");
-            auto diff = sub(aff0, aff1);
-            cout << tab(5) << "Diff: " << str(diff) << endl;
-            if (!is_cst(diff)) {
-              all_diffs_constant = false;
-            }
-          }
-        }
-      }
-      if (all_diffs_constant) {
-        cout << "All diffs constant. Looking for cyclic banking..." << endl;
-        vector<string> vars;
-        vector<int> factors;
-        for (int d = 0; d < buf.logical_dimension(); d++) {
-          vars.push_back("d_" + str(d));
-          int min_offset = INT_MAX;
-          int max_offset = INT_MIN;
-          for (auto gp : filtered_io_groups) {
-            for (auto pt0 : gp) {
-              isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
-              isl_aff* aff = isl_multi_aff_get_aff(aff0, d);
-              int offset = to_int(constant(aff));
-              if (offset < min_offset) {
-                min_offset = offset;
-              }
-              if (offset > max_offset) {
-                max_offset = offset;
-              }
-            }
-          }
-          cout << tab(1) << "min = " << min_offset << endl;
-          cout << tab(1) << "max = " << max_offset << endl;
-          cout << tab(1) << "bf  = " << (max_offset - min_offset + 1) << endl;
-          factors.push_back(max_offset - min_offset + 1);
-        }
-        vector<string> factor_exprs;
-        int i = 0;
-        for (auto f : factors) {
-          auto var = vars.at(i);
-          factor_exprs.push_back(var + " % " + str(f));
-          i++;
-        }
-        string bank_func =
-          curlies(buf.name + bracket_list(vars) + " -> B" + bracket_list(factor_exprs));
-        cout << "BF: " << bank_func << endl;
-        isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
-        cout << "M : " << str(m) << endl;
-        bool legal = banking_scheme_is_legal(m, buf);
-        assert(legal);
-      }
-      assert(all_diffs_constant);
-    }
-  }
+//  for (auto& bufe : buffers) {
+//    auto& buf = bufe.second;
+//    auto shift_registered_outputs =
+//      determine_shift_reg_map(prg, buf, sched);
+//    if (shift_registered_outputs.size() == buf.get_out_ports().size()) {
+//      cout << buf.name << " is really a shift register" << endl;
+//      continue;
+//    }
+//    maybe<std::set<int> > part =
+//      embarassing_partition(buf, sched);
+//    vector<vector<string> > filtered_io_groups =
+//      overlapping_large_io_port_groups(buf, 1);
+//
+//    if (filtered_io_groups.size() > 0 && !part.has_value()) {
+//      cout << tab(1) << "======= No embarassing partition for " << buf.name << endl;
+//      cout << tab(2) << "Groups" << endl;
+//      for (auto gp : filtered_io_groups) {
+//        cout << tab(3) << "------ GP" << endl;
+//        for (auto pt : gp) {
+//          cout << tab(4) << pt << endl;
+//          isl_multi_aff* aff = get_multi_aff(buf.access_map.at(pt));
+//          cout << tab(5) << str(aff) << endl;
+//        }
+//      }
+//
+//      bool all_diffs_constant = true;
+//      for (auto gp : filtered_io_groups) {
+//        for (auto pt0 : gp) {
+//          for (auto pt1 : gp) {
+//            isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
+//            isl_multi_aff* aff1 = set_in_name(get_multi_aff(buf.access_map.at(pt1)), "s");
+//            auto diff = sub(aff0, aff1);
+//            cout << tab(5) << "Diff: " << str(diff) << endl;
+//            if (!is_cst(diff)) {
+//              all_diffs_constant = false;
+//            }
+//          }
+//        }
+//      }
+//      if (all_diffs_constant) {
+//        cout << "All diffs constant. Looking for cyclic banking..." << endl;
+//        vector<string> vars;
+//        vector<int> factors;
+//        for (int d = 0; d < buf.logical_dimension(); d++) {
+//          vars.push_back("d_" + str(d));
+//          int min_offset = INT_MAX;
+//          int max_offset = INT_MIN;
+//          for (auto gp : filtered_io_groups) {
+//            for (auto pt0 : gp) {
+//              isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
+//              isl_aff* aff = isl_multi_aff_get_aff(aff0, d);
+//              int offset = to_int(constant(aff));
+//              if (offset < min_offset) {
+//                min_offset = offset;
+//              }
+//              if (offset > max_offset) {
+//                max_offset = offset;
+//              }
+//            }
+//          }
+//          cout << tab(1) << "min = " << min_offset << endl;
+//          cout << tab(1) << "max = " << max_offset << endl;
+//          cout << tab(1) << "bf  = " << (max_offset - min_offset + 1) << endl;
+//          factors.push_back(max_offset - min_offset + 1);
+//        }
+//        vector<string> factor_exprs;
+//        int i = 0;
+//        for (auto f : factors) {
+//          auto var = vars.at(i);
+//          factor_exprs.push_back(var + " % " + str(f));
+//          i++;
+//        }
+//        string bank_func =
+//          curlies(buf.name + bracket_list(vars) + " -> B" + bracket_list(factor_exprs));
+//        cout << "BF: " << bank_func << endl;
+//        isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+//        cout << "M : " << str(m) << endl;
+//        bool legal = banking_scheme_is_legal(m, buf);
+//        assert(legal);
+//      }
+//      assert(all_diffs_constant);
+//    }
+//  }
 
 #ifdef COREIR
 
@@ -16690,20 +16690,22 @@ void test_schedules(vector<prog>& test_programs) {
 vector<prog> stencil_programs() {
   vector<prog> test_programs;
   //test_programs.push_back(rom());
+
+
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(up_sample());
   test_programs.push_back(harris());
   test_programs.push_back(gaussian());
   test_programs.push_back(pointwise());
-  test_programs.push_back(up_sample());
+
   // Fails with dual port tile?
   test_programs.push_back(strided_conv());
   test_programs.push_back(mini_conv_halide_fixed());
-
-
-
   test_programs.push_back(unsharp());
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
-  test_programs.push_back(camera_pipeline());
+
+
 
   // Bounds are too long. Software simulation
   // takes forever
@@ -16717,19 +16719,23 @@ vector<prog> stencil_programs() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  test_programs.push_back(resnet());
-  test_programs.push_back(mobilenet_small());
-  test_programs.push_back(unet_conv_3_3());
-  test_programs.push_back(conv_multi());
-  test_programs.push_back(conv_layer());
-
-  concat(test_programs, stencil_programs());
 
   // Too large to fit in 16 bit controller
   //test_programs.push_back(mobilenet());
   //
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
+
+
+
+  test_programs.push_back(resnet());
+  test_programs.push_back(unet_conv_3_3());
+  test_programs.push_back(conv_multi());
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(mobilenet_small());
+  concat(test_programs, stencil_programs());
+
+
 
 
 
