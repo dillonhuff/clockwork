@@ -18546,6 +18546,19 @@ void generate_app_code(CodegenOptions& options,
 
   generate_driver_function_suffix(options, conv_out, buffers, dag.prg);
 
+  {
+    vector<string> arg_buf_list = get_args(buffers, dag.prg);
+    vector<string> ls = arg_buf_list;
+    ls.push_back("const int num_epochs");
+    string outer_arg_buffers = sep_list(ls, "(", ")", ", ");
+    conv_out << "void " << dag.prg.name << "_wrapper" << outer_arg_buffers << " {" << endl << endl;
+    vector<string> arg_strings = get_arg_names(buffers, dag.prg);
+    conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
+    conv_out << tab(2) << dag.prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
+    conv_out << tab(1) << "}" << endl;
+    conv_out << "}" << endl;
+  }
+
   generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
 }
 

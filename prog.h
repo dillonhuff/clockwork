@@ -1846,3 +1846,6 @@ void generate_app_code_body(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     map<string, isl_set*>& domain_map);
+
+vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg);
+vector<string> get_arg_names(const map<string, UBuffer>& buffers, prog& prg);
