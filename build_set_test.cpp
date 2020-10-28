@@ -18508,6 +18508,10 @@ void generate_app_code(CodegenOptions& options,
   generate_driver_function_prefix(options, conv_out, buffers, dag.prg);
 
   conv_out << endl;
+  open_synth_scope(conv_out);
+  conv_out << "#pragma HLS dataflow" << endl;
+  close_synth_scope(conv_out);
+  conv_out << endl;
 
   std::set<std::string> done;
   for (auto& buf : dag.prg.boundary_buffers()) {
@@ -18556,16 +18560,18 @@ void test_multi_kernel_design() {
 
   load_input("in", "gray", 2, prg);
 
-  // Make input Gaussian pyramid
-  vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
-  cpy("out", gray_levels.back(), 2, prg);
+  cpy("out", "gray", 2, prg);
 
   infer_bounds("out", {4, 4}, prg);
+
+  prg.pretty_print();
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
   normalize_bounds(prg);
   normalize_address_offsets(prg);
+
+  prg.pretty_print();
 
   auto unopt_postprocessed = unoptimized_result(prg);
 
@@ -18671,6 +18677,7 @@ void test_multi_kernel_design() {
   vector<string> multi_kernel_res = run_regression_tb(dag.prg);
 
   compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
 }
 
 void test_time_sharing_gaussian_pyramid() {
@@ -18788,6 +18795,7 @@ void dhuff_playground() {
 }
 
 void travis_tests() {
+  test_multi_kernel_design();
   test_time_sharing_gaussian_pyramid();
   jacobi_2d_2_test();
   register_file_test();
