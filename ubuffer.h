@@ -2088,6 +2088,60 @@ class UBuffer {
 
 };
 
+
+//Data structure to append top level stream and generate
+struct lakeStream {
+    vector<string> data_in;
+    vector<string> data_out;
+    vector<bool> valid_in, valid_out;
+    int in_width;
+    int out_width;
+
+    void append_data(const vector<int> & in, const vector<int> & out, bool v_in, bool v_out) {
+        data_in.push_back(sep_list(in, "[", "]", " "));
+        data_out.push_back(sep_list(out, "[", "]", " "));
+        valid_in.push_back(v_in);
+        valid_out.push_back(v_out);
+    }
+
+    void emit_csv(string fname) {
+      ofstream out(fname+"_SMT.csv");
+      cout << "fname: " << fname << endl;
+      size_t stream_length = data_out.size();
+      out << "data_in, valid_in, data_out, valid_out" << endl;
+      for (size_t i = 0; i < stream_length; i ++) {
+        cout << "Cycle No." << i << endl;
+        out << data_in.at(i) << ", "
+        << valid_in.at(i) << ", "
+        << data_out.at(i) << ", "
+        << valid_out.at(i) << endl;
+      }
+    }
+
+    lakeStream(){}
+
+    lakeStream(lakeStream aggStream, lakeStream tbStream) {
+      data_in = aggStream.data_in;
+      valid_in = aggStream.valid_in;
+      data_out = tbStream.data_out;
+      valid_out = tbStream.valid_out;
+      in_width = aggStream.in_width;
+      out_width = tbStream.out_width;
+      int size_diff = data_out.size() - data_in.size();
+      for (int i = 0; i < size_diff; i ++) {
+        vector<int> tmp = vector<int>(0, in_width);
+        data_in.push_back(sep_list(tmp, "[", "]", ""));
+        valid_in.push_back("0");
+      }
+    }
+};
+
+//Generating smt stream
+void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched);
+void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir);
+lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr);
+
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
 vector<string> buffer_vectorization(vector<int> iis,

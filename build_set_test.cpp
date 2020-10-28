@@ -2187,119 +2187,7 @@ void flatten_sched_test() {
   cout << str(new_opt_sched) << endl;
 }
 
-struct lakeStream {
-    vector<string> data_in;
-    vector<string> data_out;
-    vector<bool> valid_in, valid_out;
-    int in_width;
-    int out_width;
 
-    void append_data(const vector<int> & in, const vector<int> & out, bool v_in, bool v_out) {
-        data_in.push_back(sep_list(in, "[", "]", " "));
-        data_out.push_back(sep_list(out, "[", "]", " "));
-        valid_in.push_back(v_in);
-        valid_out.push_back(v_out);
-    }
-
-    void emit_csv(string fname) {
-      ofstream out(fname+"_SMT.csv");
-      cout << "fname: " << fname << endl;
-      size_t stream_length = data_out.size();
-      out << "data_in, valid_in, data_out, valid_out" << endl;
-      for (size_t i = 0; i < stream_length; i ++) {
-        cout << "Cycle No." << i << endl;
-        out << data_in.at(i) << ", "
-        << valid_in.at(i) << ", "
-        << data_out.at(i) << ", "
-        << valid_out.at(i) << endl;
-      }
-    }
-
-    lakeStream(){}
-
-    lakeStream(lakeStream aggStream, lakeStream tbStream) {
-      data_in = aggStream.data_in;
-      valid_in = aggStream.valid_in;
-      data_out = tbStream.data_out;
-      valid_out = tbStream.valid_out;
-      in_width = aggStream.in_width;
-      out_width = tbStream.out_width;
-      int size_diff = data_out.size() - data_in.size();
-      for (int i = 0; i < size_diff; i ++) {
-        vector<int> tmp = vector<int>(0, in_width);
-        data_in.push_back(sep_list(tmp, "[", "]", ""));
-        valid_in.push_back("0");
-      }
-    }
-};
-
-lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
-        vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
-  ofstream out(fname+"_SMT.csv");
-  cout << "fname: " << fname << endl;
-
-  lakeStream ret;
-
-  //TODO: put this into a tile constraint file
-  int input_width = pick(write_addr).size();
-  int output_width = pick(read_addr).size();
-  ret.in_width = input_width;
-  ret.out_width = output_width;
-
-  int cycle = 0;
-  size_t rd_itr = 0;
-  size_t wr_itr = 0;
-  out << "data_in, valid_in, data_out, valid_out" << endl;
-  auto addr_out = vector<int>(output_width, 0);
-  while (rd_itr < read_cycle.size() || wr_itr < write_cycle.size()) {
-    bool valid_in = false, valid_out = false;
-    auto addr_in = vector<int>(input_width, 0);
-    if (rd_itr < read_cycle.size()) {
-      if (read_cycle.at(rd_itr) == cycle) {
-        valid_out = true;
-        for (size_t i = 0; i < read_addr.at(rd_itr).size(); i ++)
-          addr_out.at(i) = read_addr.at(rd_itr).at(i);
-
-        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
-        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr_out, "[", "]", " ") << endl;
-        rd_itr ++;
-      }
-    }
-    if (wr_itr < write_cycle.size()) {
-      if (write_cycle.at(wr_itr) == cycle) {
-        valid_in = true;
-        for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
-          addr_in.at(i) = write_addr.at(wr_itr).at(i);
-        //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
-        //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr_in, "[", "]", " ") << endl;
-        //out << cycle << tab(1) << "wr"  << endl;
-        wr_itr ++;
-      }
-    }
-
-    int out_width = pick(read_addr).size();
-    int in_width = pick(write_addr).size();
-    int mul_out = pow(2, out_width) - 1;
-    int mul_in = pow(2, in_width) - 1;
-
-    //Some fix for the output format
-    //string l_in = addr_in.size() > 1 ? "[[" : "";
-    //string l_out = addr_out.size() > 1 ? "[[" : "";
-    //string r_in = addr_in.size() > 1 ? "]]" : "";
-    //string r_out = addr_out.size() > 1 ? "]]" : "";
-
-    //out << sep_list(addr_in, l_in, r_in, "],[") << ", " << sep_list(addr_out, l_out, r_out, "],[") << endl;
-    out << sep_list(addr_in, "[", "]", " ") << ", "
-        << valid_in << ", "
-        << sep_list(addr_out, "[", "]", " ") << ", "
-        << valid_out << endl;
-    ret.append_data(addr_in, addr_out, valid_in, valid_out);
-
-    cycle ++;
-  }
-  out.close();
-  return ret;
-}
 
 void emit_top_address_stream(string fname, TileConstraints lake_mem_tile, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
@@ -2449,63 +2337,6 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
 
 }
 
-void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched) {
-
-  //compute the bound of the schedule
-  cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
-  auto bound = Box(opt_sched);
-  isl_set* sched_set = bound.to_set(buffer.ctx, "");
-  auto bset_vec = constraints(sched_set);
-  for (auto bset: bset_vec) {
-      cout << "constraints: " << str(bset) << endl;
-  }
-
-  //Initialize the variable for lattice count
-  size_t cycle = 0;
-  cout << str(sched_set) << endl;
-  auto point_vec = get_points(sched_set);
-  std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
-  auto & buf = buffer;
-  for (auto point : point_vec) {
-    //cout << str(point) << endl;
-    //auto input_sched = op2sched.at("input");
-    //auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
-    //cout <<"Card Expr: " << str(isExeQP) << endl;
-    //bool isExe = int_lower_bound(isExeQP) == 1;
-    //cout << "input OP execute in this point = " << isExe << endl;
-    //cout << "Buffer: " << buf.name << endl;
-    //cout << str(point) << " read = " << buf.is_rd(point) << endl;
-    //cout << str(point) << " write = " << buf.is_wr(point) << endl;
-    //tcout << endl;
-
-
-    if (buf.is_wr(point) ) {
-      auto pt = pick(buf.get_in_ports());
-      auto rd_sched = to_map(buf.schedule.at(pt));
-      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
-      buf.mark_write(cycle, iter_set);
-
-      cout << "Buffer: " << buf.name << endl;
-      //cout << str(point) << " read = " << buf.is_rd(point) << endl;
-      cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
-      cout << endl;
-
-    }
-    if (buf.is_rd(point)) {
-      auto pt = pick(buf.get_out_ports());
-      auto rd_sched = to_map(buf.schedule.at(pt));
-      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
-      buf.mark_read(cycle, iter_set);
-      cout << "read at iter: " << str(iter_set) << endl;
-
-      cout << "Buffer: " << buf.name << endl;
-      cout << str(point) << " read = " << buf.is_rd(point) << " at cycle:" << cycle << endl;
-      //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
-      cout << endl;
-    }
-    cycle ++;
-  }
-}
 
 void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap* opt_sched, HWconstraints sram) {
 
@@ -2633,33 +2464,6 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
   }
 }
 
-void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir) {
-  map<string, pair<lakeStream, lakeStream> > top_stream;
-  for (auto it: buffers_opt) {
-    string buf_name = it.first;
-    UBuffer buf = it.second;
-    if (buf.get_in_ports().size() == 0 || buf.get_out_ports().size() == 0) {
-      continue;
-    }
-    vector<int> sram_read = buf.read_cycle;
-    vector<int> sram_write = buf.write_cycle;
-    auto read_addr = buf.read_addr;
-    auto write_addr = buf.write_addr;
-    lakeStream stream_data = emit_top_address_stream(dir + "/" + buf_name , sram_read, sram_write, read_addr, write_addr);
-    if (contains(buf_name, "agg")) {
-        string tile_name = take_until_str(buf_name, "_agg");
-        top_stream[tile_name].first = stream_data;
-    } else if (contains(buf_name, "tb")) {
-        string tile_name = take_until_str(buf_name, "_tb");
-        top_stream[tile_name].second = stream_data;
-    }
-  }
-  for (auto it: top_stream) {
-    auto agg_tb_pair = it.second;
-    lakeStream top(agg_tb_pair.first, agg_tb_pair.second);
-    top.emit_csv(dir + "/" + it.first + "_top");
-  }
-}
 
 void find_high_bandwidth_non_const_rd_reads(prog& prg) {
   cout << "Ops..." << endl;
@@ -13847,7 +13651,7 @@ void lake_cascade_halide_test() {
 #endif
 }
 
-void compile_for_garnet_single_port_mem(prog & prg);
+void compile_for_garnet_single_port_mem(prog & prg, bool gen_smt_stream);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
 void test_single_port_mem() {
@@ -13873,7 +13677,7 @@ void test_single_port_mem() {
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg);
+    compile_for_garnet_single_port_mem(prg, false);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -13893,6 +13697,31 @@ void test_single_port_mem() {
     //string app_type = "dualwithaddr";
     string app_type = "single_port_buffer";
     cpy_app_to_folder(app_type, prg.name);
+  }
+}
+
+void test_single_port_mem_smt_stream() {
+  vector<prog> test_apps;
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(rom());
+
+  for ( auto prg: test_apps) {
+    cout << "====== Running CGRA Single Port test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    dsa_writers(prg);
+    prg.pretty_print();
+    auto cpu = unoptimized_result(prg);
+
+    //compile_for_garnet_platonic_mem(prg);
+    bool gen_smt_stream = true;
+    compile_for_garnet_single_port_mem(prg, gen_smt_stream);
+
+    cout << "Output name: " << prg.name << endl;
   }
 }
 
@@ -15747,6 +15576,7 @@ void dual_port_lake_test();
 void lake_tests() {
   //dual_port_lake_test();
   //lake_agg_sram_tb_config_test();
+  test_single_port_mem_smt_stream();
   test_single_port_mem();
   assert(false);
   lake_harris_garnet_test();
@@ -16854,7 +16684,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
-void compile_for_garnet_single_port_mem(prog& prg) {
+void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
 
   //dsa_writers(prg);
   normalize_bounds(prg);
@@ -16871,6 +16701,7 @@ void compile_for_garnet_single_port_mem(prog& prg) {
 
   CodegenOptions options;
   options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
+  options.emit_smt_stream = gen_smt_stream;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
@@ -16878,11 +16709,11 @@ void compile_for_garnet_single_port_mem(prog& prg) {
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  opt.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
-  opt.iis = {1};
+  //CodegenOptions opt;
+  options.conditional_merge = true;
+  options.merge_threshold = 4;
+  options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
+  options.iis = {1};
   int max_inpt = 2, max_outpt = 2;
   //for (auto b: buffers_opt) {
   //    cout << "create shift register for " << b.first << endl;
@@ -16907,12 +16738,12 @@ void compile_for_garnet_single_port_mem(prog& prg) {
     cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
-    b.second.generate_banks_and_merge(opt);
+    b.second.generate_banks_and_merge(options);
     b.second.port_group2bank(max_inpt, max_outpt);
   }
 
 #ifdef COREIR
-  generate_garnet_tb(buffers_opt, prg, opt, sched);
+  generate_garnet_tb(buffers_opt, prg, options, sched);
   generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
 #endif
 }
