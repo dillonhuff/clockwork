@@ -3,6 +3,24 @@
 #include "app.h"
 #include "rdai_collateral.h"
 
+void prog::pretty_print() {
+  cout << "program: " << name << endl;
+  cout << "Inputs..." << endl;
+  for (auto in : ins) {
+    cout << tab(1) << in << endl;
+  }
+  cout << "Outputs..." << endl;
+  for (auto in : outs) {
+    cout << tab(1) << in << endl;
+  }
+  cout << "buffers..." << endl;
+  for (auto b : buffer_bounds) {
+    cout << tab(1) << b.first << bracket_list(b.second) << endl;
+  }
+  cout << "operations..." << endl;
+  root->pretty_print(cout, 0);
+}
+
 std::string us(const std::string& a, const std::string& b) {
   return a + "_" + b;
 }
@@ -2134,18 +2152,7 @@ int buffer_capacity(UBuffer& buf) {
   return c * buf.port_widths;
 }
 
-void generate_app_code(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map) {
-  //for (auto b : buffers) {
-    //cout << b.second << endl;
-  //}
-  //assert(false);
-
-  ofstream conv_out(prg.name + ".cpp");
-
+void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg) {
   open_debug_scope(conv_out);
   conv_out << "#include <fstream>" << endl;
   conv_out << "using namespace std;" << endl << endl;
@@ -2156,6 +2163,65 @@ void generate_app_code(CodegenOptions& options,
   assert(prg.compute_unit_file != "");
   conv_out << "// compute file: " << prg.compute_unit_file << endl;
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+}
+
+void generate_app_collateral(CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap) {
+  open_synth_scope(conv_out);
+  generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
+  generate_xilinx_accel_rdai_wrapper(options, conv_out, buffers, prg);
+  close_synth_scope(conv_out);
+
+  conv_out << endl;
+
+  // Collateral generation
+  generate_vivado_tcl(prg.name);
+  generate_sw_bmp_test_harness(buffers, prg);
+  generate_app_code_header(buffers, prg);
+  generate_soda_tb(options, buffers, prg);
+  generate_xilinx_aws_ddr_config(options, buffers, prg);
+  generate_xilinx_accel_soda_host(options, buffers, prg);
+  generate_xilinx_accel_host(options, buffers, prg);
+  generate_tb_run_scripts(prg);
+  generate_tb_compare_scripts(buffers, prg);
+
+}
+
+void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg) {
+
+  conv_out << "// Driver function" << endl;
+  vector<string> arg_buf_list = get_args(buffers, prg);
+  auto inner_args = arg_buf_list;
+  string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
+
+  conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
+
+  open_debug_scope(conv_out);
+  conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
+  conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
+  close_debug_scope(conv_out);
+}
+
+void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg) {
+  open_debug_scope(conv_out);
+  conv_out << tab(1) << "debug_file.close();" << endl;
+  close_debug_scope(conv_out);
+
+  conv_out << "}" << endl << endl;
+}
+
+void generate_app_code(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
+  ofstream conv_out(prg.name + ".cpp");
+  generate_app_prefix(options, conv_out, prg);
+
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
@@ -2172,30 +2238,14 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << "// Total re-use buffer capacity: " << capacity << " bits" << endl;
   cout << "Prog: " << prg.name << endl;
-  //assert(false);
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
-  //vector<compute_kernel> kernels;
   for (auto op : prg.all_ops()) {
-    //kernels.push_back(generate_compute_op(conv_out, prg, op, buffers, domain_map));
     generate_compute_op(conv_out, prg, op, buffers, domain_map);
   }
 
-  conv_out << "// Driver function" << endl;
-  vector<string> arg_buf_list = get_args(buffers, prg);
-  string outer_arg_buffers = sep_list(arg_buf_list, "(", ")", ", ");
-
-  auto inner_args = arg_buf_list;
-  //inner_args.push_back("int num_epochs");
-  string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
-
-  conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
-
-  open_debug_scope(conv_out);
-  conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
-  conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
-  close_debug_scope(conv_out);
+  generate_driver_function_prefix(options, conv_out, buffers, prg);
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2255,21 +2305,12 @@ void generate_app_code(CodegenOptions& options,
   conv_out << tab(1) << "/*" << endl;
   conv_out << original_isl_code_string << endl;
   conv_out << tab(1) << "*/" << endl;
-  //if (options.num_input_epochs < 0) {
-    //conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
-  //} else {
-    //conv_out << tab(1) << "for (int epoch = 0; epoch < " << options.num_input_epochs << "; epoch++) {" << endl;
-  //}
   conv_out << code_string << endl;
-  //conv_out << tab(1) << "}" << endl << endl;
 
-  open_debug_scope(conv_out);
-  conv_out << tab(1) << "debug_file.close();" << endl;
-  close_debug_scope(conv_out);
-
-  conv_out << "}" << endl << endl;
+  generate_driver_function_suffix(options, conv_out, buffers, prg);
 
   {
+    vector<string> arg_buf_list = get_args(buffers, prg);
     vector<string> ls = arg_buf_list;
     ls.push_back("const int num_epochs");
     string outer_arg_buffers = sep_list(ls, "(", ")", ", ");
@@ -2281,23 +2322,11 @@ void generate_app_code(CodegenOptions& options,
     conv_out << "}" << endl;
   }
 
-  open_synth_scope(conv_out);
-  generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
-  generate_xilinx_accel_rdai_wrapper(options, conv_out, buffers, prg);
-  close_synth_scope(conv_out);
-
-  conv_out << endl;
-
-  // Collateral generation
-  generate_vivado_tcl(prg.name);
-  generate_sw_bmp_test_harness(buffers, prg);
-  generate_app_code_header(buffers, prg);
-  generate_soda_tb(options, buffers, prg);
-  generate_xilinx_aws_ddr_config(options, buffers, prg);
-  generate_xilinx_accel_soda_host(options, buffers, prg);
-  generate_xilinx_accel_host(options, buffers, prg);
-  generate_tb_run_scripts(prg);
-  generate_tb_compare_scripts(buffers, prg);
+  generate_app_collateral(options,
+      conv_out,
+      buffers,
+      prg,
+      schedmap);
 
   conv_out.close();
 }
@@ -2509,7 +2538,6 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
         << (p + 1)*port_width - 1 << ">();" << endl;
 
       rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
-      //rgtb << tab(2) << "fout << (uint64_t) actual_lane_" << p << " << endl;" << endl;
     }
 
     rgtb << tab(1) << "}" << endl << endl;
@@ -2993,6 +3021,26 @@ std::vector<string> topologically_sort_kernels(prog& prg){
 
   assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
 	return topologically_sorted_kernels;
+}
+
+std::set<string> buffers_read(prog& prg) {
+  std::set<string> written;
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_read()) {
+      written.insert(b);
+    }
+  }
+  return written;
+}
+
+std::set<string> buffers_written(prog& prg) {
+  std::set<string> written;
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_written()) {
+      written.insert(b);
+    }
+  }
+  return written;
 }
 
 std::set<string> buffers_written(op* p) {
@@ -4288,7 +4336,7 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
 }
 
 
-prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
+prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original) {
 	prog extracted;
 	string prg_name = "Extracted_";
 	for(auto g : group){
@@ -4308,11 +4356,17 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 
 	std::set<string> all_consumed_buffers = get_consumed_buffers(group, original);
 	std::set<string> all_produced_buffers = get_produced_buffers(group, original);
+  cout << tab(1) << "All consumed buffers" << endl;
+  for (auto c : all_consumed_buffers) {
+    cout << tab(1) << c << endl;
+  }
 	for(auto consumed : all_consumed_buffers){
 		if(!elem(consumed, all_produced_buffers)){
 			extracted.add_input(consumed);
 			cout << "Input added: " << consumed << endl;
-			extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
+			extracted.buffer_port_widths[consumed] =
+        original.buffer_port_width(consumed);
+        //map_find(consumed, original.buffer_port_widths);
 			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
 		}
 	}
@@ -4321,7 +4375,9 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 		if(!elem(produced, all_consumed_buffers)){
 			extracted.add_output(produced);
 			cout << "Output added: " << produced << endl;
-			extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
+			extracted.buffer_port_widths[produced] =
+        original.buffer_port_width(produced);
+			//extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
 			cout << "Output width: " << extracted.buffer_port_widths[produced] << endl;
 		}
 	}
@@ -5788,3 +5844,403 @@ void ir_node::replace_reads_from(const std::string& source_buf, const std::strin
   }
 }
 
+isl_map* next_iteration(isl_set* domain) {
+  vector<string> invars;
+  vector<string> outvars;
+  for (int d = 0; d < num_dims(domain); d++) {
+    string v = "v_" + str(d);
+    invars.push_back(v);
+    if (d == num_dims(domain) - 1) {
+      outvars.push_back(v + " + 1");
+    } else {
+      outvars.push_back(v);
+    }
+  }
+
+  string sname = name(domain);
+  return isl_map_read_from_str(ctx(domain), curlies(arrow(sname + bracket_list(invars), sname + bracket_list(outvars))).c_str());
+}
+
+void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
+
+  for (int d = 0; d < num_dims(read_data); d++) {
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_st");
+    next_lp = next_lp->add_loop(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("store_from_" + rb_name));
+  ld->add_load(rb_name, comma_list(store_addrs));
+  ld->add_store(buf, comma_list(load_addrs));
+}
+
+void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(iloop->is_loop);
+  string container = surrounding_vars(iloop, prg).back();
+  op* loop = prg.find_loop(container);
+
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
+  //store_addrs.push_back(str(iloop->start));
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+
+    int ext = to_int(const_coeff(diff)) + 1;
+    isl_aff* addr =
+      set_const_coeff(min, zero(prg.ctx));
+
+    int lb = 0;
+    int ub = ext;
+    string lname = prg.unique_name(buf + "_ld");
+    if (d == 0) {
+      next_lp = next_lp->add_loop_before(iloop, lname, lb, ub);
+    } else {
+      next_lp = next_lp->add_loop(lname, lb, ub);
+    }
+    load_addrs.push_back(lname + " + " + codegen_c(addr));
+    store_addrs.push_back(lname + " + " + codegen_c(addr));
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
+void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  cout << "reading in data: " << str(read_data) << " at " << loop->name << endl;
+
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+
+    int ext = to_int(const_coeff(diff)) + 1;
+    isl_aff* addr =
+      set_const_coeff(min, zero(prg.ctx));
+
+    int lb = 0;
+    int ub = ext;
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop(lname, lb, ub);
+    load_addrs.push_back(lname + " + " + codegen_c(addr));
+    store_addrs.push_back(lname + " + " + codegen_c(addr));
+    //load_addrs.push_back(lname);
+    //store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
+void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  //for (auto v : surrounding_vars(loop, prg)) {
+    //store_addrs.push_back(v);
+  //}
+  //store_addrs.push_back(loop->name);
+
+  for (int d = 0; d < num_dims(read_data); d++) {
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop_front(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
+isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
+
+  int num_params = start_of_inner_loops;
+  cout << "params in new set: " << num_params << endl;
+  auto pr = isl_map_project_out(cpy(m), isl_dim_in, start_of_inner_loops, num_in_dims(m) - start_of_inner_loops);
+  cout << "projected = " << str(pr) << endl;
+  auto bms = get_basic_maps(pr);
+  isl_set* demands = nullptr;
+  for (auto bm : bms) {
+    assert(num_div_dims(bm) == 0);
+    assert(num_param_dims(bm) == 0);
+
+    auto bs = flatten_bmap_to_bset(bm);
+    cout << "bs = " << str(bs) << endl;
+    auto eq = isl_basic_set_equalities_matrix(bs, isl_dim_set, isl_dim_param, isl_dim_div, isl_dim_cst);
+    auto ineq = isl_basic_set_inequalities_matrix(bs, isl_dim_set, isl_dim_param, isl_dim_div, isl_dim_cst);
+
+    auto space = isl_space_set_alloc(ctx(m), num_params, num_out_dims(pr) + num_in_dims(pr) - num_params);
+    auto ps = isl_basic_set_from_constraint_matrices(space, eq, ineq, isl_dim_param, isl_dim_set, isl_dim_div, isl_dim_cst);
+    cout << "ps = " << str(ps) << endl;
+    if (demands == nullptr) {
+      demands = to_set(ps);
+    } else {
+      demands = unn(demands, to_set(ps));
+    }
+  }
+  demands = set_name(demands, range_name(m));
+  //assert(false);
+  return demands;
+
+}
+void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  for (auto v : surrounding_vars(loop, prg)) {
+    store_addrs.push_back(v);
+  }
+  store_addrs.push_back(loop->name);
+
+  for (int d = 0; d < num_dims(read_data); d++) {
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop_front(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
+isl_map* delta_data(loop* loop, const std::string& buffer, prog& prg) {
+  auto level_map = get_variable_levels(prg);
+  auto ops = loop->descendant_ops();
+
+  auto idom = iteration_domain(loop, prg);
+  cout << str(idom) << endl;
+  auto earlier = its_range(its(isl_map_lex_gt(get_space(idom)), idom), idom);
+  cout << "earlier = " << str(earlier) << endl;
+  auto earlier_in_same_level = cpy(earlier);
+
+  auto later_in_same_level = its_range(its(isl_map_lex_lt(get_space(idom)), idom), idom);
+  for (int i = 0; i < num_in_dims(later_in_same_level) - 1; i++) {
+    later_in_same_level = isl_map_equate(later_in_same_level, isl_dim_in, i, isl_dim_out, i);
+    earlier_in_same_level = isl_map_equate(earlier_in_same_level, isl_dim_in, i, isl_dim_out, i);
+  }
+  cout << "later in same level = " << str(later_in_same_level) << endl;
+  auto next = lexmin(later_in_same_level);
+  cout << "next iter: " << str(next) << endl;
+  cout << endl;
+
+
+  auto reads = consumer_map(loop, buffer, prg);
+  auto read_by_next_iter = dot(next, reads);
+  print_box_bounds("read by next iter", read_by_next_iter);
+  auto read_before = dot(dot(next, earlier_in_same_level), reads);
+  print_box_bounds("already loaded to RB", read_before);
+  cout << endl;
+
+  auto diff_data = diff(read_by_next_iter, read_before);
+
+  return diff_data;
+}
+
+void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
+
+  //umap* reads = read_at(level, buffer, prg);
+  //cout << "reads = " << str(reads) << endl;
+
+  auto loop = prg.find_loop(level);
+  //int outer_vars = surrounding_vars(loop, prg).size();
+
+  //umap* first_reads = first_iteration_reads(reads, level, prg);
+  //cout << "first reads = " << str(first_reads) << endl;
+
+  //cout << "Re-use " << buffer << " at" << endl;
+  //loop->pretty_print();
+
+  //auto sched = prg.unoptimized_schedule();
+  //auto earlier = lex_gt(sched, sched);
+  //cout << "earlier = " << str(earlier) << endl;
+
+  //auto read = prg.consumer_map(buffer);
+  //cout << "consumed = " << str(read) << endl;
+  //for (auto m : get_maps(read)) {
+    //print_box_bounds(domain_name(m), m);
+  //}
+  //cout << endl;
+
+  //auto read_earlier = coalesce(dot(earlier, read));
+  //cout << "consumed earlier = " << str(read_earlier) << endl;
+  //for (auto m : get_maps(read_earlier)) {
+    //print_box_bounds(domain_name(m), m);
+  //}
+  //cout << endl;
+
+  //auto consumed_earlier_and_now = its(read_earlier, read);
+  //cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
+  //auto consumed_first_time = diff(read, consumed_earlier_and_now);
+  //auto csf = cpy(consumed_first_time);
+  //cout << "first time read  = " << str(consumed_first_time) << endl;
+  ////uset* not_first =
+  ////auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
+  ////cout << "not first        = " << str(not_first) << endl;
+  ////consumed_first_time = its(consumed_first_time, not_first);
+  //consumed_first_time = coalesce(consumed_first_time);
+  //cout << "first time read  = " << str(consumed_first_time) << endl;
+
+  isl_map* initial_data = get_initial_data(level, buffer, prg);
+  cout << "initially read: " << str(initial_data) << endl;
+  string rb_name = buffer + "_rb_at_" + level;
+  read_in_before(loop, initial_data, rb_name, prg);
+  //{
+    //auto lmin = lexmin(initial_data);
+    //auto lmax = lexmax(initial_data);
+    //cout << "Initial data min/max" << endl;
+    //cout << tab(1) << "min              = " << str(lmin) << endl;
+    //cout << tab(1) << "max              = " << str(lmax) << endl;
+  //}
+
+  //cout << "consumed first time = " << str(consumed_first_time) << endl;
+  //isl_map* pr = nullptr;
+  //for (auto m : get_maps(consumed_first_time)) {
+    //cout << "m = " << str(m) << endl;
+    //assert(outer_vars < num_in_dims(m));
+    //int to_remove = num_in_dims(m) - outer_vars;
+    //cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
+    //auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
+    //if (pr == nullptr) {
+      //pr = prj;
+    //} else {
+      //pr = unn(pr, prj);
+    //}
+  //}
+
+  ////auto maps = get_maps(consumed_first_time);
+  ////assert(maps.size() == 1);
+  ////auto mpa = maps.at(0);
+  ////cout << "mpa = " << str(mpa) << endl;
+  //cout << "initial data = " << str(initial_data) << endl;
+  //////mpa = diff(mpa, initial_data);
+  //////assert(false);
+  ////auto pr = isl_map_project_out(cpy(mpa), isl_dim_in, 2, 2);
+  //cout << "pr = " << str(pr) << endl;
+  //{
+    //auto lmin = lexmin(pr);
+    //auto lmax = lexmax(pr);
+    //cout << "pre-diff pr min              = " << str(lmin) << endl;
+    //cout << "pre-diff pr max              = " << str(lmax) << endl;
+  //}
+  //pr = diff(pr, initial_data);
+  //auto lmin = lexmin(pr);
+  //auto lmax = lexmax(pr);
+  //cout << "min              = " << str(lmin) << endl;
+  //cout << "max              = " << str(lmax) << endl;
+
+  auto pr = delta_data(loop, buffer, prg);
+  read_in_after(loop, pr, rb_name, prg);
+
+  cout << "pr = " << str(pr) << endl;
+
+  std::set<op*> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op);
+    }
+  }
+  cout << "Users..." << endl;
+  for (auto u : users) {
+    cout << tab(1) << u->name << endl;
+  }
+  for (auto rd : users) {
+    rd->replace_reads_from(buffer, rb_name);
+  }
+  for (auto rd : users) {
+    rd->replace_writes_to(buffer, rb_name);
+  }
+
+}
+
+void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+
+  for (int d = 0; d < num_dims(read_data); d++) {
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("store_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+
+}

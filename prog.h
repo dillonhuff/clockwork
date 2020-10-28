@@ -969,16 +969,7 @@ struct prog {
       return root->get_domain_boxes();
   }
 
-
-  void pretty_print() {
-    cout << "program: " << name << endl;
-    cout << "buffers..." << endl;
-    for (auto b : buffer_bounds) {
-      cout << tab(1) << b.first << bracket_list(b.second) << endl;
-    }
-    cout << "operations..." << endl;
-    root->pretty_print(cout, 0);
-  }
+  void pretty_print();
 
   int buffer_port_width(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
@@ -1081,6 +1072,17 @@ struct prog {
       const std::string& c, int c_min, int c_max,
       const std::string& k, int k_min, int k_max) {
     return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max, k, k_min, k_max);
+  }
+
+  vector<string> boundary_buffers() const {
+    vector<string> bufs;
+    for (auto in : ins) {
+      bufs.push_back(in);
+    }
+    for (auto out : outs) {
+      bufs.push_back(out);
+    }
+    return bufs;
   }
 
   bool is_output(const std::string& name) {
@@ -1521,6 +1523,8 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
 std::vector<string> topologically_sort_kernels(prog& prg);
 
 std::set<string> buffers_written(op* p);
+std::set<string> buffers_written(prog& prg);
+std::set<string> buffers_read(prog& prg);
 
 bool writes(const std::string& target_buf, op* p);
 
@@ -1556,7 +1560,7 @@ int compile_compute(const std::string& name);
 vector<string> surrounding_vars(op* loop, prog& prg);
 vector<string> surrounding_vars(const std::string& op, prog& prg);
 vector<op*> surrounding_vars_ops(op* loop, prog& prg);
-prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
+prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original);
 
 
 void unroll(prog& prg, const std::string& var);
@@ -1574,7 +1578,7 @@ std::set<string> all_buffers(prog& prg);
 std::set<op*> find_readers(const string& buff, prog& prg);
 
 std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group);
-prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
+//prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
 
 void release(ir_node* op);
 void release(prog& prg);
@@ -1816,3 +1820,22 @@ map<string, pair<string, int> > determine_shift_reg_map(
         prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);
+
+void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg);
+
+void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+
+void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg);
+void generate_app_collateral(CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap);
+
+
+void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
+
+
+void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
