@@ -18379,6 +18379,39 @@ struct app_dag {
   map<string, prog> fusion_group_progs;
   map<string, int> channel_sizes;
 
+  vector<string> sorted_fusion_groups() {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    vector<string> sorted;
+    std::set<string> finished_buffers;
+    for (auto b : prg.ins) {
+      finished_buffers.insert(b);
+    }
+
+    while (sorted.size() < fusion_groups.size()) {
+      for (auto& g : fusion_group_progs) {
+        if (!elem(g.first, sorted)) {
+          bool all_deps_done = true;
+          for (auto b : g.second.ins) {
+            if (!elem(b, finished_buffers)) {
+              all_deps_done = false;
+              break;
+            }
+          }
+
+          if (all_deps_done) {
+            for (auto b : g.second.outs) {
+              finished_buffers.insert(b);
+            }
+            sorted.push_back(g.first);
+          }
+        }
+      }
+
+    }
+    return sorted;
+  }
+
   bool is_boundary(const std::string& buf) {
     return prg.is_boundary(buf);
   }
@@ -18455,6 +18488,20 @@ void generate_app_code(CodegenOptions& options,
   generate_app_prefix(options, conv_out, dag.prg);
 
   for (auto& gp : dag.fusion_group_progs) {
+    auto sched = gp.second.unoptimized_schedule();
+
+    auto domains = gp.second.domains();
+    map<string, isl_set*> domain_map;
+    for (auto d : domains) {
+      domain_map[d.first->name] = d.second;
+    }
+    auto buffers = build_buffers(gp.second, sched);
+    generate_app_code_body(options,
+        conv_out,
+        buffers,
+        gp.second,
+        sched,
+        domain_map);
 
   }
 
@@ -18474,6 +18521,21 @@ void generate_app_code(CodegenOptions& options,
         done.insert(buf);
       }
     }
+  }
+
+  conv_out << endl << endl;
+
+  //for (auto& gp : dag.fusion_group_progs) {
+  for (auto& gpn : dag.sorted_fusion_groups()) {
+    auto& gp = dag.fusion_group_progs.at(gpn);
+    vector<string> args;
+    for (auto in : gp.ins) {
+      args.push_back(in);
+    }
+    for (auto out : gp.outs) {
+      args.push_back(out);
+    }
+    conv_out << tab(1) << gp.name << sep_list(args, "(", ")", ", ") << ";" << endl;
   }
 
   conv_out << endl;

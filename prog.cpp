@@ -2415,10 +2415,6 @@ void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
   cout << codegen_c(prg.unoptimized_schedule());
 
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
-  //for (auto b : buffers) {
-    //cout << b.second << endl;
-  //}
-  //assert(false);
 
   generate_app_code(options, buffers, prg, sched);
 
