@@ -2214,27 +2214,11 @@ void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out,
 }
 
 void generate_app_code_body(CodegenOptions& options,
+    ostream& conv_out,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
     map<string, isl_set*>& domain_map) {
-}
-
-void generate_app_code(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map) {
-
-  ofstream conv_out(prg.name + ".cpp");
-  generate_app_prefix(options, conv_out, prg);
-
-  generate_app_code_body(options,
-    buffers,
-    prg,
-    schedmap,
-    domain_map);
-
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
@@ -2321,6 +2305,25 @@ void generate_app_code(CodegenOptions& options,
   conv_out << code_string << endl;
 
   generate_driver_function_suffix(options, conv_out, buffers, prg);
+
+}
+
+void generate_app_code(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+
+  ofstream conv_out(prg.name + ".cpp");
+  generate_app_prefix(options, conv_out, prg);
+
+  generate_app_code_body(options,
+      conv_out,
+      buffers,
+      prg,
+      schedmap,
+      domain_map);
+
 
   {
     vector<string> arg_buf_list = get_args(buffers, prg);
