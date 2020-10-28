@@ -5314,7 +5314,7 @@ void generate_garnet_verilator_tb(prog& prg,
   }
 
 
-  //Use always high input enable, match the garnet test
+  //Use rst input enable, match the garnet test
   generate_verilator_tb_in_streams(
       rgtb,
       prg,
@@ -5324,20 +5324,20 @@ void generate_garnet_verilator_tb(prog& prg,
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
   rgtb << "dut.clk = 0;" << endl;
   rgtb << "dut.eval();" << endl;
-  rgtb << "dut.rst_n = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  //rgtb << "dut.rst_n = 0;" << endl;
+  //rgtb << "dut.eval();" << endl;
 
-  rgtb << "dut.rst_n = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  //rgtb << "dut.rst_n = 1;" << endl;
+  //rgtb << "dut.eval();" << endl;
 
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  //rgtb << "dut.clk = 0;" << endl;
+  //rgtb << "dut.eval();" << endl;
 
-  rgtb << "dut.flush = 1;" << endl;
+  rgtb << "dut.reset= 1;" << endl;
   rgtb << "dut.clk = 1;" << endl;
   rgtb << "dut.eval();" << endl;
 
-  rgtb << "dut.flush = 0;" << endl;
+  rgtb << "dut.reset= 0;" << endl;
   rgtb << "dut.clk = 0;" << endl;
   rgtb << "dut.eval();" << endl;
   for (auto out : inputs(buffers, prg)) {

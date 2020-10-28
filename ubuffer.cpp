@@ -1106,10 +1106,12 @@ CoreIR::Instance* affine_controller_use_lake_tile(
           {{"value", CoreIR::Const::make(context, true)}});
 
   //garnet wire reset to flush of memory
-  def->connect(buf->sel("flush"), def->sel("self.flush"));
-  def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(buf->sel("flush"), def->sel("self.reset"));
+  //def->connect(buf->sel("flush"), def->sel("self.flush"));
+  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
   def->connect(buf->sel("clk"), def->sel("self.clk"));
   def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
 
   return buf;
 }
@@ -1154,10 +1156,12 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
           {{"value", CoreIR::Const::make(context, true)}});
 
   //garnet wire reset to flush of memory
-  def->connect(buf->sel("flush"), def->sel("self.flush"));
-  def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(buf->sel("flush"), def->sel("self.reset"));
+  //def->connect(buf->sel("flush"), def->sel("self.flush"));
+  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
   def->connect(buf->sel("clk"), def->sel("self.clk"));
   def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
 
   //Wire stencil valid
   //if (options.pass_through_valid) {
@@ -2275,9 +2279,9 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
 
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")},
-          //{"reset", context->BitIn()}};
           {"flush", context->BitIn()},
-          {"rst_n", context->BitIn()}};
+          //{"rst_n", context->BitIn()}};
+          {"reset", context->BitIn()}};
 
     for (auto b : buf.port_bundles) {
       int pt_width = buf.port_widths;

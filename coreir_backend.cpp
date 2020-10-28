@@ -2142,9 +2142,9 @@ coreir_moduledef(CodegenOptions& options,
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
   if (options.rtl_options.use_prebuilt_memory) {
-    //ub_field.push_back({"reset", context->BitIn()});
-    ub_field.push_back({"rst_n", context->BitIn()});
-    ub_field.push_back({"flush", context->BitIn()});
+    ub_field.push_back({"reset", context->BitIn()});
+    //ub_field.push_back({"rst_n", context->BitIn()});
+    //ub_field.push_back({"flush", context->BitIn()});
   } else {
     ub_field.push_back({"rst_n", context->BitIn()});
     ub_field.push_back({"flush", context->BitIn()});
@@ -2230,8 +2230,9 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       def->addInstance(buf.second.name, ub_mod);
       //TODO: add reset connection for garnet mapping
       //cout << "connected reset for " << buf.first << buf.second.name <<  endl;
-      def->connect(def->sel(buf.first + ".rst_n"), def->sel("self.rst_n"));
-      def->connect(def->sel(buf.first + ".flush"), def->sel("self.flush"));
+      def->connect(def->sel(buf.first + ".reset"), def->sel("self.reset"));
+      //def->connect(def->sel(buf.first + ".rst_n"), def->sel("self.rst_n"));
+      //def->connect(def->sel(buf.first + ".flush"), def->sel("self.flush"));
     }
   }
 
