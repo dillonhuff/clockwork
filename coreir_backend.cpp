@@ -2763,6 +2763,51 @@ void MapperPasses::MemConst::setVisitorInfo() {
   }
 
 }
+
+namespace MapperPasses {
+class MemSubstitute: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    MemSubstitute() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to cgralib.Mem") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+bool MemtileReplace(Instance* cnst) {
+  cout << tab(2) << "memory syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+  auto config_file = cnst->getMetaData()["config"];
+  CoreIR::Values modargs = {
+      {"config", CoreIR::Const::make(c, config_file)},
+      {"mode", CoreIR::Const::make(c, "lake")}
+  };
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
+          "cgralib.Mem", genargs, modargs);
+  def->removeInstance(cnst);
+  def->connect(pt->sel("in"), buf);
+  inlineInstance(pt);
+  inlineInstance(buf);
+  return true;
+}
+
+std::string MapperPasses::MemSubstitute::ID = "memsubstitute";
+void MapperPasses::MemSubstitute::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("cgralib.Mem_amber")) {
+    addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), MemtileReplace);
+  }
+
+}
+
 namespace MapperPasses {
 class ConstDuplication : public CoreIR::InstanceVisitorPass {
   public :
@@ -2842,6 +2887,8 @@ void garnet_map_module(Module* top) {
   c->runPasses({"constduplication"});
   c->addPass(new MapperPasses::MemConst);
   c->runPasses({"memconst"});
+  c->addPass(new MapperPasses::MemSubstitute);
+  c->runPasses({"memsubstitute"});
 
   //c->runPasses({"flatten"});
   c->runPasses({"cullgraph"});

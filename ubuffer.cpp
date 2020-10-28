@@ -1098,9 +1098,9 @@ CoreIR::Instance* affine_controller_use_lake_tile(
   add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
   cout << "Add ub node to be aff ctrl"  << endl;
 
-  buf = def->addInstance(ub_ins_name, "cgralib.Mem", genargs);
+  buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
   buf->getMetaData()["config"] = config_file;
-  buf->getMetaData()["mode"] = string("lake");
+  buf->getMetaData()["mode"] = "lake";
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -1141,7 +1141,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
       << ", output_num = " << output_num << endl;
   if (options.pass_through_valid) {
     //modargs["config"] = CoreIR::Const::make(context, config_file);
-    buf = def->addInstance(ub_ins_name, "cgralib.Mem", genargs);
+    buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = string("lake");
   } else {
