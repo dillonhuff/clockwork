@@ -6,6 +6,12 @@
 #include "qexpr.h"
 #include "app.h"
 
+enum ir_node_type {
+  IR_NODE_TYPE_OPERATION,
+  IR_NODE_TYPE_LOOP,
+  IR_NODE_TYPE_IF
+};
+
 struct ir_node;
 struct prog;
 
@@ -35,6 +41,7 @@ struct ir_node {
 
   // Every ir_node is either a loop or an operation
   bool is_loop;
+  ir_node_type tp;
 
   // Loop bounds
   // TODO: Change these to either strings or QExprs
@@ -65,7 +72,7 @@ struct ir_node {
 
   isl_ctx* ctx;
 
-  ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
+  ir_node() : parent(nullptr), is_loop(false), tp(IR_NODE_TYPE_OPERATION), unroll_factor(1) {}
 
   ~ir_node();
 
@@ -401,6 +408,7 @@ struct ir_node {
     lp->ctx = ctx;
     lp->parent = this;
     lp->is_loop = true;
+    lp->tp = IR_NODE_TYPE_LOOP;
     lp->start = l;
     lp->end_exclusive = u;
     vector<op*> new_children;
@@ -438,6 +446,7 @@ struct ir_node {
     lp->ctx = ctx;
     lp->parent = this;
     lp->is_loop = true;
+    lp->tp = IR_NODE_TYPE_LOOP;
     lp->start = l;
     lp->end_exclusive = u;
     vector<op*> new_children;
@@ -469,6 +478,7 @@ struct ir_node {
     lp->ctx = ctx;
     lp->parent = this;
     lp->is_loop = true;
+    lp->tp = IR_NODE_TYPE_LOOP;
     lp->start = l;
     lp->end_exclusive = u;
     children.insert(begin(children), lp);
@@ -485,6 +495,7 @@ struct ir_node {
     lp->ctx = ctx;
     lp->parent = this;
     lp->is_loop = true;
+    lp->tp = IR_NODE_TYPE_LOOP;
     lp->start = l;
     lp->end_exclusive = u;
     children.push_back(lp);
@@ -636,17 +647,12 @@ struct ir_node {
 
   string add_load(const std::string& b, const std::string& loc) {
     return add_load(b, {{"", loc}});
-    //assert(!is_loop);
-    //consume_locs.push_back({b, loc});
-    //string val_name = c_sanitize(b + "_" + loc + "_value");
-    //return val_name;
   }
 
   vector<string> consumes() const {
     vector<string> ps;
     for (auto p : consume_locs_pair) {
       ps.push_back(p.first + str(p.second));
-      //"[" + p.second + "]");
     }
     return ps;
   }
@@ -1112,6 +1118,7 @@ struct prog {
     root->name = "root";
     root->ctx = ctx;
     root->is_loop = true;
+    root->tp = IR_NODE_TYPE_LOOP;
     root->start = 0;
     root->end_exclusive = 1;
     compute_unit_file = "clockwork_standard_compute_units.h";
@@ -1123,6 +1130,7 @@ struct prog {
     root->name = "root";
     root->ctx = ctx;
     root->is_loop = true;
+    root->tp = IR_NODE_TYPE_LOOP;
     root->start = 0;
     root->end_exclusive = 1;
     name = name_;
