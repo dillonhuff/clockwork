@@ -18797,7 +18797,7 @@ void test_multi_kernel_unsharp() {
   auto sched = prg.optimized_codegen();
   cout << "Optimized schedule: " << str(sched) << endl;
 
-  assert(false);
+  //assert(false);
 
   for (auto b : all_buffers(prg)) {
     auto r = prg.consumer_map(b);
@@ -18834,6 +18834,7 @@ void test_multi_kernel_unsharp() {
       cout << "live: " << str(live) << endl;
       cout << "Size = " << str(card(live)) << endl;
       cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
+      assert(false);
 
       //auto times_to_writes = dot(inv(sched), w);
       //auto times_to_reads = dot(inv(sched), r);
