@@ -2200,8 +2200,8 @@
           ["op_hcompute_lgxx_stencil_1$inner_compute$add_lxx_stencil_1_336_337$binop.data.in.0","lxx_stencil$d_reg__U14$reg0.out"],
           ["op_hcompute_lxx_stencil$inner_compute$ashr_310_311_312$binop.data.out","lxx_stencil$d_reg__U9$reg0.in"],
           ["op_hcompute_lgxx_stencil_1$inner_compute$add_lxx_stencil_8_lxx_stencil_9_329$binop.data.in.1","lxx_stencil$d_reg__U9$reg0.out"],
-          ["lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.clk_en","lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_clk_en_const.out"],
-          ["lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.rst_n","lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_clk_en_const1.out"],
+          ["lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.rst_n","lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_clk_en_const.out"],
+          ["lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.clk_en","lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_clk_en_const1.out"],
           ["op_hcompute_lxx_stencil$inner_compute$ashr_310_311_312$binop.data.out","lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.data_in_0"],
           ["op_hcompute_lgxx_stencil_1$inner_compute$add_lxx_stencil_3_333_334$binop.data.in.0","lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.data_out_0"],
           ["op_hcompute_lgxx_stencil_1$inner_compute$add_lxx_stencil_6_330_331$binop.data.in.0","lxx_stencil$ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.data_out_1"],
@@ -2384,8 +2384,8 @@
           ["padded16_global_wrapper_stencil$d_reg__U36$reg0.in","padded16_global_wrapper_stencil$d_reg__U35$reg0.out"],
           ["padded16_global_wrapper_stencil$ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.data_out_0","padded16_global_wrapper_stencil$d_reg__U37$reg0.in"],
           ["padded16_global_wrapper_stencil$d_reg__U38$reg0.in","padded16_global_wrapper_stencil$d_reg__U37$reg0.out"],
-          ["padded16_global_wrapper_stencil$ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.rst_n","padded16_global_wrapper_stencil$ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_clk_en_const.out"],
-          ["padded16_global_wrapper_stencil$ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.clk_en","padded16_global_wrapper_stencil$ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_clk_en_const1.out"]
+          ["padded16_global_wrapper_stencil$ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.clk_en","padded16_global_wrapper_stencil$ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_clk_en_const.out"],
+          ["padded16_global_wrapper_stencil$ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.rst_n","padded16_global_wrapper_stencil$ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_clk_en_const1.out"]
         ]
       },
       "hcompute_cim_output_stencil":{
@@ -3479,8 +3479,8 @@
           ["ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.stencil_valid","self.op_hcompute_lgxx_stencil_1_read_extra_ctrl"],
           ["ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.data_in_0","self.op_hcompute_lxx_stencil_write.0"],
           ["ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.flush","self.reset"],
-          ["ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.clk_en","ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_clk_en_const.out"],
-          ["ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.rst_n","ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_clk_en_const1.out"]
+          ["ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.rst_n","ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_clk_en_const.out"],
+          ["ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_garnet.clk_en","ub_lxx_stencil_op_hcompute_lxx_stencil_7_to_lxx_stencil_op_hcompute_lgxx_stencil_1_37_clk_en_const1.out"]
         ]
       },
       "lxy_stencil_ub":{
@@ -3781,8 +3781,8 @@
           ["self.op_hcompute_padded16_global_wrapper_stencil_write.0","self.op_hcompute_grad_y_stencil_read.4"],
           ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.data_in_0","self.op_hcompute_padded16_global_wrapper_stencil_write.0"],
           ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.flush","self.reset"],
-          ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.rst_n","ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_clk_en_const.out"],
-          ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.clk_en","ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_clk_en_const1.out"]
+          ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.clk_en","ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_clk_en_const.out"],
+          ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_garnet.rst_n","ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_clk_en_const1.out"]
         ]
       }
     },
