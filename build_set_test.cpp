@@ -18804,13 +18804,32 @@ void test_multi_kernel_unsharp() {
       cout << tab(1) << str(w) << endl;
       
       auto write_times = dot(inv(w), sched);
-      auto written_before = lex_gt(write_times, write_times);
+      auto read_times = dot(inv(r), sched);
+
+      auto op_times = unn(write_times, read_times);
+
+      //auto written_before = lex_gt(write_times, write_times);
+      auto written_before = lex_gt(op_times, write_times);
       cout << "written before: " << str(written_before) << endl;
       auto times_to_written_before =
-        unn(dot(inv(write_times), written_before), inv(write_times));
+        //to_map(unn(dot(inv(write_times), written_before), inv(write_times)));
+        to_map(unn(dot(inv(op_times), written_before), inv(write_times)));
       cout << "Values written before time: " << str(times_to_written_before) << endl;
-      cout << "Size = " << str(card(times_to_written_before)) << endl;
-      cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
+      //cout << "Size = " << str(card(times_to_written_before)) << endl;
+      //cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
+
+      //auto read_after = lex_lt(read_times, read_times);
+      auto read_after = lex_lt(op_times, read_times);
+      auto times_to_read_after =
+        to_map(unn(dot(inv(op_times), read_after), inv(read_times)));
+      cout << "Values read after time: " << str(times_to_read_after) << endl;
+      //cout << "Size = " << str(card(times_to_read_after)) << endl;
+      //cout << "Bound = " << str(int_upper_bound(card(times_to_read_after))) << endl;
+
+      auto live = coalesce(simplify(its(times_to_read_after, times_to_written_before)));
+      cout << "live: " << str(live) << endl;
+      cout << "Size = " << str(card(live)) << endl;
+      cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
 
       //auto times_to_writes = dot(inv(sched), w);
       //auto times_to_reads = dot(inv(sched), r);

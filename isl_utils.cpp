@@ -1566,6 +1566,10 @@ isl_union_set* coalesce(isl_union_set* const m0) {
   return isl_union_set_coalesce(cpy(m0));
 }
 
+isl_map* coalesce(isl_map* const m0) {
+  return isl_map_coalesce(cpy(m0));
+}
+
 isl_union_map* coalesce(isl_union_map* const m0) {
   return isl_union_map_coalesce(cpy(m0));
 }

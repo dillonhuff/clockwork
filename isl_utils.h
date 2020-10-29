@@ -457,6 +457,7 @@ isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 isl_union_set* coalesce(isl_union_set* const m0);
 
 isl_union_map* coalesce(isl_union_map* const m0);
+isl_map* coalesce(isl_map* const m0);
 
 isl_union_map* dot_domain(isl_union_map* const m0, isl_union_map* const m1);
 
