@@ -18764,18 +18764,22 @@ void test_multi_kernel_unsharp() {
   prg.add_output("out");
 
   load_input("in", "gray", 2, prg);
+  cpy("gray_blur", "gray", 2, prg);
+  cpy("gray_blur_cache", "gray_blur", 2, prg);
 
   auto blurred = prg.add_nest("xb", 0, 1, "yb", 0, 1)->add_op("blur");
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
-      blurred->add_load("gray", "xb + " + str(i), "yb + " + str(j));
+      blurred->add_load("gray_blur_cache", "xb + " + str(i), "yb + " + str(j));
     }
   }
   blurred->add_store("blurred", "xb", "yb");
   blurred->add_function("conv_3_3");
 
+
+  cpy("gray_diff", "gray", 2, prg);
   auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
-  diff->add_load("gray", "x", "y");
+  diff->add_load("gray_diff", "x", "y");
   diff->add_load("blurred", "x", "y");
   diff->add_load("blurred", "x", "y + 1");
   diff->add_store("out", "x", "y");
