@@ -18802,15 +18802,28 @@ void test_multi_kernel_unsharp() {
       cout << "========= " << b << endl;
       cout << tab(1) << str(r) << endl;
       cout << tab(1) << str(w) << endl;
+      
+      auto write_times = dot(inv(w), sched);
+      auto written_before = lex_gt(write_times, write_times);
+      cout << "written before: " << str(written_before) << endl;
+      auto times_to_written_before =
+        unn(dot(inv(write_times), written_before), inv(write_times));
+      cout << "Values written before time: " << str(times_to_written_before) << endl;
+      cout << "Size = " << str(card(times_to_written_before)) << endl;
+      cout << "Bound = " << str(int_upper_bound(card(times_to_written_before))) << endl;
 
-      auto times_to_writes = dot(inv(sched), w);
-      auto times_to_reads = dot(inv(sched), r);
+      //auto times_to_writes = dot(inv(sched), w);
+      //auto times_to_reads = dot(inv(sched), r);
 
-      cout << "times to writes: " << str(times_to_writes) << endl;
-      cout << "times to reads : " << str(times_to_reads) << endl;
+      //cout << "times to writes: " << str(times_to_writes) << endl;
+      //cout << "times to reads : " << str(times_to_reads) << endl;
 
       // What am I trying to construct?
-      // 1. An expression for max(#Writes(t) - #Reads(t))
+      //   An expression for max(#Writes(t) - #Reads(t))
+      // Need: #(Data written at time t that has not yet been read)
+      // Need: A map from times to the set of locations that have been written but not read
+      //   A map from times to the set of locations that have been written
+      //   A map from times to the set of locations that have not been read yet but will be
     }
   }
   assert(false);
