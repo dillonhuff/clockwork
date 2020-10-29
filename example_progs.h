@@ -29,3 +29,4 @@ prog stereo();
 prog histogram();
 prog mobilenet();
 prog mobilenet_small();
+prog three_level_memory();

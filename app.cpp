@@ -799,7 +799,7 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
 
   assert(in_dims == 1);
   assert(out_dims == 1);
-  cout << "div dims = " << div_dims << endl;
+  //cout << "div dims = " << div_dims << endl;
 
   if (div_dims == 0) {
     auto dkb = extract_div_free_linear_rational_approximation(aff_bound);
@@ -810,11 +810,11 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
 
     return {k, b};
   } else {
-    cout << "Getting div bound for: " << str(aff_bound) << endl;
-    cout << "Div exprs..." << endl;
+    //cout << "Getting div bound for: " << str(aff_bound) << endl;
+    //cout << "Div exprs..." << endl;
     for (int i = 0; i < div_dims; i++) {
       auto dexpr = isl_aff_get_div(aff_bound, i);
-      cout << tab(1) << str(dexpr) << endl;
+      //cout << tab(1) << str(dexpr) << endl;
     }
     assert(div_dims == 1);
 
@@ -858,31 +858,31 @@ map<string, isl_val*> simplify(const vector<pair<string, isl_val*> >& terms) {
 }
 
 map<isl_map*, vector<pair<isl_val*, isl_val*> > >
-extract_schedule_params(vector<isl_map*>& deps) {
+extract_schedule_params(const vector<isl_map*>& deps) {
 
   vector<isl_map*> consumed_data;
   for (auto d : deps) {
-    cout << tab(1) << str(d) << endl;
+    //cout << tab(1) << str(d) << endl;
     consumed_data.push_back(inv(d));
   }
 
-  cout << "Consumed data..." << endl;
+  //cout << "Consumed data..." << endl;
   map<isl_map*, vector<pair<isl_val*, isl_val*> > > schedule_params;
   for (auto c : consumed_data) {
     auto lm = isl_map_lexmax_pw_multi_aff(cpy(c));
-    cout << tab(1) << str(c) << endl;
-    cout << tab(2) << "lexmax: " << str(lm) << endl;
+    //cout << tab(1) << str(c) << endl;
+    //cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
     //assert(pieces.size() <= 1);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
-      cout << "bound: " << str(bound) << endl;
+      //cout << "bound: " << str(bound) << endl;
       assert(get_size(bound) == 1);
       isl_aff* aff_bound =
         isl_multi_aff_get_aff(bound, 0);
-      cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
-      cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
+      //cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
+      //cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
       pair<isl_val*, isl_val*> kb =
         extract_linear_rational_approximation(aff_bound);
       schedule_params[c].push_back(kb);
@@ -949,7 +949,7 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
 }
 
 map<string, isl_val*>
-compute_qfactors(vector<isl_map*>& deps) {
+compute_qfactors(const vector<isl_map*>& deps) {
   auto schedule_params =
     extract_schedule_params(deps);
 
@@ -2245,5 +2245,5 @@ void mathlog_problem(ilp_builder& builder, const map<string, isl_val*>& obj) {
   }
   out << "end;" << endl;
   out.close();
-  cout << "Done writing out problem to mod file" << endl;
+  //cout << "Done writing out problem to mod file" << endl;
 }

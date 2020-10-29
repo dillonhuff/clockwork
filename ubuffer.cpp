@@ -2081,7 +2081,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     for (auto bank : buf.get_banks()) {
       if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
         int capacity = int_upper_bound(card(bank.rddom));
-        int addr_width = minihls::clog2(capacity);
+        int addr_width = ceil(log2(capacity));
         //auto bnk = def->addInstance(bank.name, lake_rf(width, capacity));
         ram_module(c, width, capacity);
         //auto bnk = def->addInstance(
@@ -5570,6 +5570,3 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
   }
   return {};
 }
-
-
-

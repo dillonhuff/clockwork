@@ -137,21 +137,6 @@ struct ir_node {
     }
   }
 
-  void replace_writes_to(const std::string& source_buf, const std::string& replacement) {
-    for (auto& b : produce_locs) {
-      if (b.first == source_buf) {
-        b.first = replacement;
-      }
-    }
-  }
-  void replace_reads_from(const std::string& source_buf, const std::string& replacement) {
-    for (auto& b : consume_locs_pair) {
-      if (b.first == source_buf) {
-        b.first = replacement;
-      }
-    }
-  }
-
   void replace_child(op* c, op* replacement) {
     for (int i = 0; i < (int) children.size(); i++) {
       if (children.at(i) == c) {
@@ -162,6 +147,8 @@ struct ir_node {
     assert(false);
   }
 
+  void replace_reads_from(const std::string& source_buf, const std::string& replacement);
+  void replace_writes_to(const std::string& source_buf, const std::string& replacement);
   vector<piecewise_address> read_addrs() const {
     vector<piecewise_address> addrs;
     for (auto l : consume_locs_pair) {
@@ -490,6 +477,7 @@ struct ir_node {
   }
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop);
+    assert(name != "");
     //assert(!elem(name, all_existing_loop_names()));
 
     auto lp = new op();
@@ -981,16 +969,7 @@ struct prog {
       return root->get_domain_boxes();
   }
 
-
-  void pretty_print() {
-    cout << "program: " << name << endl;
-    cout << "buffers..." << endl;
-    for (auto b : buffer_bounds) {
-      cout << tab(1) << b.first << bracket_list(b.second) << endl;
-    }
-    cout << "operations..." << endl;
-    root->pretty_print(cout, 0);
-  }
+  void pretty_print();
 
   int buffer_port_width(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
@@ -1093,6 +1072,17 @@ struct prog {
       const std::string& c, int c_min, int c_max,
       const std::string& k, int k_min, int k_max) {
     return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max, k, k_min, k_max);
+  }
+
+  vector<string> boundary_buffers() const {
+    vector<string> bufs;
+    for (auto in : ins) {
+      bufs.push_back(in);
+    }
+    for (auto out : outs) {
+      bufs.push_back(out);
+    }
+    return bufs;
   }
 
   bool is_output(const std::string& name) {
@@ -1533,6 +1523,8 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
 std::vector<string> topologically_sort_kernels(prog& prg);
 
 std::set<string> buffers_written(op* p);
+std::set<string> buffers_written(prog& prg);
+std::set<string> buffers_read(prog& prg);
 
 bool writes(const std::string& target_buf, op* p);
 
@@ -1566,8 +1558,9 @@ void all_register_files(prog& prg, CodegenOptions& options);
 int compile_compute(const std::string& name);
 
 vector<string> surrounding_vars(op* loop, prog& prg);
+vector<string> surrounding_vars(const std::string& op, prog& prg);
 vector<op*> surrounding_vars_ops(op* loop, prog& prg);
-prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
+prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original);
 
 
 void unroll(prog& prg, const std::string& var);
@@ -1585,7 +1578,7 @@ std::set<string> all_buffers(prog& prg);
 std::set<op*> find_readers(const string& buff, prog& prg);
 
 std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group);
-prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
+//prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
 
 void release(ir_node* op);
 void release(prog& prg);
@@ -1825,3 +1818,38 @@ void normalize_address_offsets(prog& prg);
 vector<op*> ops_at_level(const int level, prog& prg);
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);
 bool no_violated_resource_assignments(schedule_info& sched, prog& prg);
+
+
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg);
+
+void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+
+void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg);
+void generate_app_collateral(CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap);
+
+
+void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
+
+
+void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
+
+void generate_app_code_body(CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map);
+
+vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg);
+vector<string> get_arg_names(const map<string, UBuffer>& buffers, prog& prg);
