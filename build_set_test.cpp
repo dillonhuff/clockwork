@@ -18750,9 +18750,46 @@ void test_time_sharing_gaussian_pyramid() {
   move_to_benchmarks_folder(prg.name);
 }
 
-void dhuff_playground() {
-  test_multi_kernel_design();
+void test_multi_kernel_unsharp() {
+  prog prg("unsharp_multi_kernel");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  load_input("in", "gray", 2, prg);
+
+  auto blurred = prg.add_nest("xb", 0, 1, "yb", 0, 1)->add_op("blur");
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      blurred->add_load("gray", "xb + " + str(i), "yb + " + str(j));
+    }
+  }
+  blurred->add_store("blurred", "xb", "yb");
+
+  auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
+  diff->add_load("in", "x", "y");
+  diff->add_load("blurred", "x", "y");
+  diff->add_store("out", "x", "y");
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds("out", {4, 4}, prg);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
   assert(false);
+}
+
+void dhuff_playground() {
+  test_multi_kernel_unsharp();
+  assert(false);
+  test_multi_kernel_design();
   test_time_sharing_gaussian_pyramid();
 
   //for (auto prg : all_cgra_programs()) {
