@@ -1,6 +1,6 @@
 top_dir=$PWD
 
-wget https://shoup.net/ntl/ntl-11.4.1.tar.gz
+curl -OL https://shoup.net/ntl/ntl-11.4.1.tar.gz
 tar -xvzf ntl-11.4.1.tar.gz
 cd ntl-11.4.1/src
 ./configure NTL_GMP_LIP=on PREFIX=$top_dir

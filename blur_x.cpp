@@ -6,6 +6,7 @@ using namespace std;
   ofstream* global_debug_handle;
 
 #endif //__VIVADO_SYNTH__
+// compute file: conv_3x3.h
 #include "conv_3x3.h"
 
 #include "hw_classes.h"
@@ -14,6 +15,7 @@ struct I_I_id0_4_merged_banks_3_cache {
 	// RAM Box: {[0, 31], [0, 7]}
 	// Capacity: 65
 	// # of read delays: 3
+  // 0, 32, 64
 	hw_uint<16> f0;
 	fifo<hw_uint<16>, 31> f1;
 	hw_uint<16> f2;
@@ -71,97 +73,86 @@ struct I_I_id0_4_merged_banks_3_cache {
 };
 
 struct I_cache {
+  // # of banks: 1
   I_I_id0_4_merged_banks_3_cache I_I_id0_4_merged_banks_3;
 };
 
 
 
-inline void I_I_id0_4_write(hw_uint<16>& I_I_id0_4, I_cache& I, int root, int id1, int id0) {
+inline void I_I_id0_4_write(hw_uint<16>& I_I_id0_4, I_cache& I, int root, int id1, int id0, int dynamic_address) {
   I.I_I_id0_4_merged_banks_3.push(I_I_id0_4);
 }
 
-inline hw_uint<16> I_out_blur_30_1_select(I_cache& I, int root, int d1, int d0) {
+inline hw_uint<16> I_out_blur_30_1_select(I_cache& I, int root, int d1, int d0, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // I_out_blur_30_1 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Read schedule : { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Write schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
-  // DD fold: { out_blur_30[root, d1, d0] -> 64 : root = 0 and 0 <= d1 <= 5 and 0 < d0 <= 30; out_blur_30[root, d1, d0] -> (33 + d0) : root = 0 and d0 = 31 and 0 <= d1 <= 5; out_blur_30[root, d1, d0] -> 64 : root = 0 and d0 = 0 and 0 <= d1 <= 5 }
   auto value_I_I_id0_4 = I.I_I_id0_4_merged_banks_3.peek_64();
   return value_I_I_id0_4;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
-inline hw_uint<16> I_out_blur_30_2_select(I_cache& I, int root, int d1, int d0) {
+inline hw_uint<16> I_out_blur_30_2_select(I_cache& I, int root, int d1, int d0, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // I_out_blur_30_2 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Read schedule : { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Write schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
-  // DD fold: { out_blur_30[root, d1, d0] -> 32 : root = 0 and 0 <= d1 <= 5 and 0 < d0 <= 30; out_blur_30[root, d1, d0] -> (1 + d0) : root = 0 and d0 = 31 and 0 <= d1 <= 5; out_blur_30[root, d1, d0] -> 32 : root = 0 and d0 = 0 and 0 <= d1 <= 5 }
   auto value_I_I_id0_4 = I.I_I_id0_4_merged_banks_3.peek_32();
   return value_I_I_id0_4;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
-inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) {
+inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // I_out_blur_30_3 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 2 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Read schedule : { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Write schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
-  // DD fold: {  }
   auto value_I_I_id0_4 = I.I_I_id0_4_merged_banks_3.peek_0();
   return value_I_I_id0_4;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 // # of bundles = 2
 // I_id0_write
 //	I_I_id0_4
-inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I, int root, int id1, int id0) {
+inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I, int root, int id1, int id0, int dynamic_address) {
 	hw_uint<16> I_I_id0_4_res = I_id0_write.extract<0, 15>();
-	I_I_id0_4_write(I_I_id0_4_res, I, root, id1, id0);
+	I_I_id0_4_write(I_I_id0_4_res, I, root, id1, id0, dynamic_address);
 }
 
 // out_blur_30_read
 //	I_out_blur_30_1
 //	I_out_blur_30_2
 //	I_out_blur_30_3
-inline hw_uint<48> I_out_blur_30_read_bundle_read(I_cache& I, int root, int d1, int d0) {
+inline hw_uint<48> I_out_blur_30_read_bundle_read(I_cache& I, int root, int d1, int d0, int dynamic_address) {
   // # of ports in bundle: 3
     // I_out_blur_30_1
     // I_out_blur_30_2
     // I_out_blur_30_3
 
 	hw_uint<48> result;
-	hw_uint<16> I_out_blur_30_1_res = I_out_blur_30_1_select(I, root, d1, d0);
+	hw_uint<16> I_out_blur_30_1_res = I_out_blur_30_1_select(I, root, d1, d0, dynamic_address);
 	set_at<0, 48>(result, I_out_blur_30_1_res);
-	hw_uint<16> I_out_blur_30_2_res = I_out_blur_30_2_select(I, root, d1, d0);
+	hw_uint<16> I_out_blur_30_2_res = I_out_blur_30_2_select(I, root, d1, d0, dynamic_address);
 	set_at<16, 48>(result, I_out_blur_30_2_res);
-	hw_uint<16> I_out_blur_30_3_res = I_out_blur_30_3_select(I, root, d1, d0);
+	hw_uint<16> I_out_blur_30_3_res = I_out_blur_30_3_select(I, root, d1, d0, dynamic_address);
 	set_at<32, 48>(result, I_out_blur_30_3_res);
 	return result;
 }
 
+// Total re-use buffer capacity: 1024 bits
 
 
 // Operation logic
 inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
+  // Dynamic address computation
+
 	// Consume: I
-	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I/* source_delay */, root, d1, d0);
+	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I/* source_delay */, root, d1, d0, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -176,11 +167,13 @@ inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num p
 }
 
 inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int id1, int id0) {
+  // Dynamic address computation
+
 	// Consume: in
 	auto in_id0_c__id1_value = in.read();
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
-	I_I_id0_write_bundle_write(/* arg names */compute_result, I, root, id1, id0);
+	I_I_id0_write_bundle_write(/* arg names */compute_result, I, root, id1, id0, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -202,6 +195,11 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
 #endif // __VIVADO_SYNTH__
 
 // schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31; out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+//   { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
+// Condition for I_id0(((i2 == 0) && (i0 >= 0) && (7 - i0 >= 0) && (i1 >= 0) && (31 - i1 >= 0)))
+//   { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+// Condition for out_blur_30(((-1 + i2 == 0) && (-2 + i0 >= 0) && (7 - i0 >= 0) && (i1 >= 0) && (31 - i1 >= 0)))
+
   /*
 for (int c0 = 0; c0 <= 7; c0 += 1)
   for (int c1 = 0; c1 <= 31; c1 += 1) {
@@ -223,51 +221,58 @@ for (int c0 = 0; c0 <= 7; c0 += 1)
 #endif //__VIVADO_SYNTH__
 }
 
+void blur_x_wrapper(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out, const int num_epochs) {
+
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
+    blur_x(in, out);
+  }
+}
 #ifdef __VIVADO_SYNTH__
-const int I_id0_read_num_transfers = 180;
-const int out_blur_30_write_num_transfers = 0;
+  // { I_id0[root = 0, id1, id0] -> in[id0, id1] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
+const int I_id0_read_pipe0_num_transfers = 256;
+  // { out_blur_30[root = 0, d1, d0] -> out[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+const int out_blur_30_write_pipe0_num_transfers = 192;
 
 
 extern "C" {
 
-static void read_I_id0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
-  hw_uint<16> burst_reg;
-  int num_transfers = I_id0_read_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = input[i];
-    v.write(burst_reg);
-  }
-}
-
-static void write_out_blur_30_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
-  hw_uint<16> burst_reg;
-  int num_transfers = out_blur_30_write_num_transfers*size;
-  for (int i = 0; i < num_transfers; i++) {
-    #pragma HLS pipeline II=1
-    burst_reg = v.read();
-    output[i] = burst_reg;
-  }
-}
-
-void blur_x_accel(hw_uint<16>* I_id0_read, hw_uint<16>* out_blur_30_write, const int size) { 
+void blur_x_accel(hw_uint<16>* I_id0_read_pipe0, hw_uint<16>* out_blur_30_write_pipe0, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = I_id0_read offset = slave depth = 65536 bundle = gmem0
-#pragma HLS INTERFACE m_axi port = out_blur_30_write offset = slave depth = 65536 bundle = gmem1
+#pragma HLS INTERFACE m_axi port = I_id0_read_pipe0 offset = slave depth = 65536 bundle = gmem0
+#pragma HLS INTERFACE m_axi port = out_blur_30_write_pipe0 offset = slave depth = 65536 bundle = gmem1
 
-#pragma HLS INTERFACE s_axilite port = I_id0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = out_blur_30_write bundle = control
+#pragma HLS INTERFACE s_axilite port = I_id0_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = out_blur_30_write_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = size bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
-  static HWStream<hw_uint<16> > I_id0_read_channel;
-  static HWStream<hw_uint<16> > out_blur_30_write_channel;
 
-  read_I_id0_read(I_id0_read, I_id0_read_channel, size);
+  // Pipeline # 0
+  static HWStream<hw_uint<16> > I_id0_read_pipe0_channel;
+  static HWStream<hw_uint<16> > out_blur_30_write_pipe0_channel;
 
-  blur_x(I_id0_read_channel, out_blur_30_write_channel, size);
+  burst_read<16>(I_id0_read_pipe0, I_id0_read_pipe0_channel, I_id0_read_pipe0_num_transfers*size);
 
-  write_out_blur_30_write(out_blur_30_write, out_blur_30_write_channel, size);
+  blur_x_wrapper(I_id0_read_pipe0_channel, out_blur_30_write_pipe0_channel, size);
+
+  burst_write<16>(out_blur_30_write_pipe0, out_blur_30_write_pipe0_channel, out_blur_30_write_pipe0_num_transfers*size);
+}
+
+}
+extern "C" {
+
+void blur_x_rdai(HWStream<hw_uint<16> >& I_id0_read_pipe0, HWStream<hw_uint<16> >&  out_blur_30_write_pipe0) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE axis register port = I_id0_read_pipe0
+#pragma HLS INTERFACE axis register port = out_blur_30_write_pipe0
+
+#pragma HLS INTERFACE ap_ctrl_none port = return
+
+
+  // Pipeline # 0
+
+  blur_x(I_id0_read_pipe0, out_blur_30_write_pipe0);
+
 }
 
 }

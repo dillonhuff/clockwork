@@ -1,0 +1,16 @@
+"dimensionality",4,0
+"cycle_starting_addr",390,0
+"extent_3",1,0
+"cycle_stride_3",0,0
+"extent_2",58,0
+"cycle_stride_2",64,0
+"extent_1",15,0
+"cycle_stride_1",4,0
+"extent_0",4,0
+"cycle_stride_0",1,0
+"read","cim_stencil_op_hcompute_cim_stencil_55_to_cim_stencil_op_hcompute_cim_output_stencil_63_ubuf_0_tb"
+"read_data_starting_addr",0,0
+"read_data_stride_3",0,0
+"read_data_stride_2",60,0
+"read_data_stride_1",4,0
+"read_data_stride_0",1,0

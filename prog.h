@@ -15,6 +15,11 @@ typedef std::string buffer_name;
 typedef std::string address;
 typedef std::vector<std::pair<std::string, std::string> > piecewise_address;
 
+static inline
+std::string pipe_cpy(const std::string& a, const int pipe) {
+  return a + "_pipe" + str(pipe);
+}
+
 isl_multi_aff*
 to_multi_aff(isl_ctx* context, const std::vector<std::string>& vars, const std::string& addr);
 
@@ -43,11 +48,15 @@ struct ir_node {
   // Operation fields
   std::string name;
   // Locations written
-  std::vector<pair<buffer_name, address> > produce_locs;
+  //std::vector<pair<buffer_name, address> > produce_locs;
+  std::vector<pair<buffer_name, piecewise_address> > produce_locs;
+  std::vector<dynamic_address> dynamic_store_addresses;
+
   // Locations read
-  //std::vector<pair<buffer_name, address> > consume_locs;
-  std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
-  // The name of the HL C++ function that this op invokes
+  std::vector<pair<buffer_name, piecewise_address> > consume_locs_pair;
+  std::vector<dynamic_address> dynamic_load_addresses;
+
+  // The name of the HLS C++ function that this op invokes
   std::string func;
   // Name of loop index variables used by this unit
   std::vector<std::string> index_variables_needed_by_compute;
@@ -58,15 +67,72 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  ~ir_node();
+
+  void copy_fields_from(op* other);
+  void copy_memory_operations_from(op* other);
+  void replace_variable(const std::string& var, const int val);
+  void replace_variable(const std::string& var, const std::string& val);
+  void shift_address(const std::string& var, const std::vector<int>& min_locs);
+
+  void delete_child(op* c) {
+    vector<op*> new_children;
+    for (auto ch : children) {
+      if (ch != c) {
+        new_children.push_back(ch);
+      }
+    }
+    children = new_children;
+  }
+
+  bool dynamic_writes(const std::string& buf) {
+    for (auto d : dynamic_store_addresses) {
+      if (d.buffer == buf) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool dynamic_reads(const std::string& buf) {
+    for (auto d : dynamic_load_addresses) {
+      if (d.buffer == buf) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   int trip_count() const {
     assert(is_loop);
     return end_exclusive - start;
   }
 
-  void replace_reads_from(const std::string& source_buf, const std::string& replacement) {
+  void add_prefix_to_writes(const std::string& prefix,
+      const std::string& buf) {
+    for (auto& b : produce_locs) {
+      if (b.first == buf) {
+        for (auto& p : b.second) {
+          p.second = prefix + ", " + p.second;
+        }
+
+      }
+    }
+    //for (auto& b : produce_locs) {
+      //if (b.first == buf) {
+        //b.second = prefix + ", " + b.second;
+      //}
+    //}
+  }
+
+  void add_prefix_to_reads(const std::string& prefix,
+      const std::string& buf) {
     for (auto& b : consume_locs_pair) {
-      if (b.first == source_buf) {
-        b.first = replacement;
+      if (b.first == buf) {
+        for (auto& p : b.second) {
+          p.second = prefix + ", " + p.second;
+        }
+
       }
     }
   }
@@ -81,11 +147,30 @@ struct ir_node {
     assert(false);
   }
 
+  void replace_reads_from(const std::string& source_buf, const std::string& replacement);
+  void replace_writes_to(const std::string& source_buf, const std::string& replacement);
+  vector<piecewise_address> read_addrs() const {
+    vector<piecewise_address> addrs;
+    for (auto l : consume_locs_pair) {
+      addrs.push_back(l.second);
+    }
+    return addrs;
+  }
+
+  vector<piecewise_address> write_addrs() const {
+    vector<piecewise_address> addrs;
+    for (auto l : produces_pair()) {
+      addrs.push_back(l.second);
+    }
+    return addrs;
+  }
+
   vector<piecewise_address> write_addrs(const std::string& buf) const {
     vector<piecewise_address> addrs;
-    for (auto l : produce_locs) {
+    for (auto l : produces_pair()) {
       if (l.first == buf) {
-        addrs.push_back({{"", l.second}});
+        addrs.push_back(l.second);
+        //addrs.push_back({{"", l.second}});
       }
     }
     return addrs;
@@ -109,6 +194,22 @@ struct ir_node {
       }
     }
     return reads;
+  }
+
+  std::set<string> buffers_referenced() const {
+    std::set<string> written = buffers_written();
+    for (auto b : buffers_read()) {
+      written.insert(b);
+    }
+    return written;
+  }
+
+  std::set<string> buffers_written() const {
+    std::set<string> written;
+    for (auto l : produces_pair()) {
+      written.insert(l.first);
+    }
+    return written;
   }
 
   std::set<string> buffers_read() const {
@@ -180,6 +281,14 @@ struct ir_node {
       }
   }
 
+  void pretty_print() const {
+    pretty_print(std::cout, 0);
+  }
+
+  void pretty_print(int level) const {
+    pretty_print(std::cout, level);
+  }
+
   void pretty_print(std::ostream& out, int level) const {
 
     if (is_loop) {
@@ -217,10 +326,12 @@ struct ir_node {
   }
 
   void add_function(const std::string& n) {
+    //assert(n != name);
     func = n;
   }
 
   void add_function(const std::string& n, const vector<string>& args) {
+    //assert(n != name);
     func = n;
   }
 
@@ -248,7 +359,20 @@ struct ir_node {
     return cl;
   }
 
+  op* add_nest(
+      const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max,
+      const std::string& c, int c_min, int c_max,
+      const std::string& k, int k_min, int k_max) {
+    auto xl = this->add_loop(x, x_min, x_max);
+    auto yl = xl->add_loop(y, y_min, y_max);
+    auto cl = yl->add_loop(c, c_min, c_max);
+    auto kl = cl->add_loop(k, k_min, k_max);
+    return kl;
+  }
+
   op* container_child(op* source) {
+    assert(source != nullptr);
     for (auto c : children) {
       if (source == c) {
         return c;
@@ -263,6 +387,43 @@ struct ir_node {
     }
     return nullptr;
   }
+
+  op* add_loop_before(op* source, const std::string& name, const int l, const int u) {
+    assert(is_loop);
+
+    op* sr = container_child(source);
+    assert(sr != nullptr);
+
+    cout << "Before inserting " << name << " we have " << children.size() << " children" << endl;
+
+    auto lp = new op();
+    lp->name = name;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->is_loop = true;
+    lp->start = l;
+    lp->end_exclusive = u;
+    vector<op*> new_children;
+    bool found_sr = false;
+    for (auto c : children) {
+      if (c == sr) {
+        new_children.push_back(lp);
+        found_sr = true;
+      }
+      new_children.push_back(c);
+    }
+    cout << "After inserting " << name << " we have " << children.size() << " children" << endl;
+
+
+    assert(found_sr);
+    assert(new_children.size() == children.size() + 1);
+
+    this->children = new_children;
+
+    return lp;
+  }
+
+  op* add_op_after(op* source, const std::string& name);
 
   op* add_loop_after(op* source, const std::string& name, const int l, const int u) {
     assert(is_loop);
@@ -299,8 +460,24 @@ struct ir_node {
     return lp;
   }
 
+  op* add_loop_front(const std::string& name, const int l, const int u) {
+    assert(is_loop);
+    //assert(!elem(name, all_existing_loop_names()));
+
+    auto lp = new op();
+    lp->name = name;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->is_loop = true;
+    lp->start = l;
+    lp->end_exclusive = u;
+    children.insert(begin(children), lp);
+
+    return lp;
+  }
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop);
+    assert(name != "");
     //assert(!elem(name, all_existing_loop_names()));
 
     auto lp = new op();
@@ -378,6 +555,56 @@ struct ir_node {
     return fo;
   }
 
+  void add_dynamic_store(const std::string& buf,
+      const std::string& addr_table,
+      const vector<std::string>& table_offset) {
+    //add_load(addr_table, table_offset);
+    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
+    //add_store(buf, "0");
+  }
+
+  void add_dynamic_load(const std::string& buf,
+      const std::string& addr_table,
+      const vector<std::string>& table_offset) {
+    //add_load(addr_table, table_offset);
+    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
+    //add_load(buf, "0");
+  }
+
+  void add_dynamic_store(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset0,
+      const std::string& table_offset1) {
+    //add_load(addr_table, table_offset);
+    //dynamic_load_addresses.push_back({buf, addr_table, table_offset});
+    //add_store(buf, "0");
+  }
+
+  void add_dynamic_load(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset0,
+      const std::string& table_offset1) {
+    //add_load(addr_table, table_offset);
+    //dynamic_store_addresses.push_back({buf, addr_table, table_offset});
+    //add_load(buf, "0");
+  }
+
+  void add_dynamic_store(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset) {
+    add_load(addr_table, table_offset);
+    dynamic_load_addresses.push_back({buf, addr_table, table_offset});
+    add_store(buf, "0");
+  }
+
+  void add_dynamic_load(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset) {
+    add_load(addr_table, table_offset);
+    dynamic_store_addresses.push_back({buf, addr_table, table_offset});
+    add_load(buf, "0");
+  }
+
   string add_load(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
     assert(!is_loop);
     consume_locs_pair.push_back({b, loc});
@@ -392,7 +619,13 @@ struct ir_node {
     //return val_name;
   }
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
+    return add_load(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4);
+  }
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3) {
+    return add_load(b, d0 + ", " + d1 + ", " + d2 + ", " + d3);
+  }
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
     return add_load(b, d0 + ", " + d1 + ", " + d2);
   }
@@ -422,12 +655,36 @@ struct ir_node {
    return consume_locs_pair;
   }
 
+  std::vector<pair<buffer_name, piecewise_address> > produces_pair() const {
+    return produce_locs;
+    //std::vector<pair<buffer_name, piecewise_address> > ps;
+    //for (auto p : produce_locs) {
+      //buffer_name b = p.first;
+      //address addr = p.second;
+      ////pair<buffer_name, address> pr{b, addr};
+      //pair<string, address> pr{"", addr};
+      //piecewise_address paddr{pr};
+      //pair<buffer_name, piecewise_address> psa{b, paddr};
+      //ps.push_back(psa);
+    //}
+    //return ps;
+  }
+
   vector<string> produces() const {
     vector<string> ps;
-    for (auto p : produce_locs) {
-      ps.push_back(p.first + "[" + p.second + "]");
+    for (auto p : produces_pair()) {
+      ps.push_back(p.first + str(p.second));
     }
     return ps;
+
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3, const std::string& d4) {
+    add_store(b, d0 + ", " + d1 + ", " + d2 + ", " + d3 + ", " + d4);
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3) {
+    add_store(b, d0 + ", " + d1 + ", " + d2 + ", " + d3);
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
@@ -440,7 +697,8 @@ struct ir_node {
 
   void add_store(const std::string& b, const std::string& loc) {
     assert(!is_loop);
-    produce_locs.push_back({b, loc});
+    //produce_locs.push_back({b, loc});
+    produce_locs.push_back({b, {{"", loc}}});
   }
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
@@ -551,6 +809,16 @@ struct ir_node {
     return find_root()->all_ops();
   }
 
+  std::set<op*> all_nodes() {
+    std::set<op*> ops{this};
+    for (auto c : children) {
+      for (auto op : c->all_nodes()) {
+        ops.insert(op);
+      }
+    }
+    return ops;
+  }
+
   std::set<op*> all_ops() {
     std::set<op*> ops{this};
     if (is_loop) {
@@ -570,6 +838,7 @@ struct ir_node {
 
 struct prog {
 
+  int unique_num;
   std::string name;
   struct isl_ctx* ctx;
 
@@ -585,6 +854,33 @@ struct prog {
   string compute_unit_file;
 
   map<string, vector<int> > buffer_bounds;
+
+  void sanity_check();
+
+  op* parent(op* p);
+
+  void set_bounds(const std::string& loop, const int start, const int end_exclusive);
+  void extend_bounds(const std::string& loop, const int start, const int end_exclusive);
+
+  std::set<op*> all_nodes() {
+    return root->all_nodes();
+  }
+
+  std::string un(const std::string& prefix) {
+    return unique_name(prefix);
+  }
+
+  std::string unique_name(const std::string& prefix) {
+    auto name = prefix + str(unique_num);
+    unique_num++;
+    return name;
+  }
+
+  op* merge_ops(const std::string& loop);
+
+  op* add_loop(const int l, const int u) {
+    return add_loop(unique_name("l"), l, u);
+  }
 
   isl_set* domain(op* op);
   umap* read_map(op* op);
@@ -673,16 +969,7 @@ struct prog {
       return root->get_domain_boxes();
   }
 
-
-  void pretty_print() {
-    cout << "program: " << name << endl;
-    cout << "buffers..." << endl;
-    for (auto b : buffer_bounds) {
-      cout << tab(1) << b.first << endl;
-      //"[" << comma_list(b.second) << "]" << endl;
-    }
-    root->pretty_print(cout, 0);
-  }
+  void pretty_print();
 
   int buffer_port_width(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
@@ -779,6 +1066,25 @@ struct prog {
     return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max);
   }
 
+  op* add_nest(
+      const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max,
+      const std::string& c, int c_min, int c_max,
+      const std::string& k, int k_min, int k_max) {
+    return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max, k, k_min, k_max);
+  }
+
+  vector<string> boundary_buffers() const {
+    vector<string> bufs;
+    for (auto in : ins) {
+      bufs.push_back(in);
+    }
+    for (auto out : outs) {
+      bufs.push_back(out);
+    }
+    return bufs;
+  }
+
   bool is_output(const std::string& name) {
     return elem(name, outs);
   }
@@ -799,7 +1105,8 @@ struct prog {
     ins.insert(name);
   }
 
-  prog() {
+
+  prog() : unique_num(0) {
     ctx = isl_ctx_alloc();
     root = new op();
     root->name = "root";
@@ -807,6 +1114,19 @@ struct prog {
     root->is_loop = true;
     root->start = 0;
     root->end_exclusive = 1;
+    compute_unit_file = "clockwork_standard_compute_units.h";
+  }
+
+  prog(const std::string& name_) : unique_num(0) {
+    ctx = isl_ctx_alloc();
+    root = new op();
+    root->name = "root";
+    root->ctx = ctx;
+    root->is_loop = true;
+    root->start = 0;
+    root->end_exclusive = 1;
+    name = name_;
+    compute_unit_file = "clockwork_standard_compute_units.h";
   }
 
   ~prog() {
@@ -844,6 +1164,9 @@ struct prog {
     return whole_d;
   }
 
+  vector<string> iter_vars(op* o) {
+    return map_find(o, iter_vars());
+  }
   map<op*, vector<string> > iter_vars() {
     vector<string> act;
     map<op*, vector<string> > ivars;
@@ -949,51 +1272,12 @@ struct prog {
     return m;
   }
 
-  //map<string, Result> data_demands_maps() {
-    //map<string, Result> m;
-    //auto ivars = iter_vars();
-    //auto doms = domains();
+  map<op*, isl_map*> producer_maps_no_domain();
 
-    //auto ops = root->all_ops();
-    //for (auto op : ops) {
-        //if (!op->is_loop) {
-            //Window win;
-            //string result_buf = "";
-            //for (auto p : op->produces()) {
-                //result_buf= take_until(p, "[");
-                //cout << "Producer :" << p << endl;
-            //}
-            //assert(result_buf != "");
+  map<op*, isl_map*> producer_maps(const std::string& buf);
+  map<op*, isl_map*> consumer_maps(const std::string& buf);
 
-            //auto vars = map_find(op, ivars);
-            ////TODO: fix this hack
-            ////reverse(vars);
-            ////vars.pop_back();
-            ////reverse(vars);
-            //string ivar_str = sep_list(vars, "[", "]", ", ");
-            //auto dom = map_find(op, doms);
-
-            //umap* pmap = rdmap(ctx, "{}");
-            //int cnt_ld_st_pair = 0;
-            //auto producers = op->produces();
-            //for (auto p : op->consumes()) {
-                //cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
-                //isl_union_map* vmap =
-                  //rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
-                  ////rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
-                //pmap = unn(pmap, vmap);
-                //cnt_ld_st_pair ++;
-                //cout << "Consumer map : " << str(pmap) << endl;
-            //}
-            //win.needed = pmap;
-            //Result res;
-            //res.srcs.push_back(win);
-            //m[op->name] = res;
-        //}
-    //}
-      //return m;
-  //}
-
+  void shift_address_range(const std::string& buf, const std::vector<int>& min_locs);
 
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
@@ -1017,6 +1301,7 @@ struct prog {
     return m;
 
   }
+
   umap* producer_map(const std::string& buf_name) {
     auto ivars = iter_vars();
     auto doms = domains();
@@ -1055,31 +1340,25 @@ struct prog {
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
      // adding vector pair
-     for (auto top_pair : op->consumes_pair()) {
-      string cond = "{ ";
-        for (auto sec_pair : top_pair.second) {
-          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
-        }
-        cond = cond.substr(0, cond.length() - 2);
-        cond = cond + string(" }");
+      for (auto top_pair : op->consumes_pair()) {
+        if (top_pair.first == buf_name) {
+          string cond = "{ ";
+          for (auto sec_pair : top_pair.second) {
+            cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+          }
+          cond = cond.substr(0, cond.length() - 2);
+          cond = cond + string(" }");
 
-        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
-        pmap = unn(pmap, vmap);
+          umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
+          pmap = unn(pmap, vmap);
+        }
      }
      m = unn(m, pmap);
-     // original
-     //for (auto p : op->consumes()) {
-       //string buf = take_until(p, "[");
-       //if (buf == buf_name) {
-         //umap* vmap =
-           //its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-         //pmap = unn(pmap, vmap);
-       //}
-     //}
-     //m = unn(m, pmap);
     }
     return m;
   }
+
+  map<op*, umap*> consumer_maps();
 
   umap* consumer_map() {
     auto ivars = iter_vars();
@@ -1107,15 +1386,6 @@ struct prog {
      }
      m = unn(m, pmap);
 
-     // original case
-     //for (auto p : op-> consumes()){
-      ////cout << "second for loop" << endl;
-       //umap* vmap =
-          //its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-
-        //pmap = unn(pmap, vmap);
-      //}
-      //m = unn(m, pmap);
     }
     return m;
   }
@@ -1152,37 +1422,18 @@ struct prog {
 
     cout << "Got producer / consumer maps" << endl;
 
-    isl_union_map *validity =
+    //isl_union_map *validity =
+      //its(dot(writes, inv(writes)), before);
+    auto validity =
       its(dot(writes, inv(reads)), before);
+    //isl_union_map *validity =
+      //its(dot(writes, inv(reads)), before);
 
     //assert(false);
     return validity;
   }
 
-  isl_schedule* optimized_schedule() {
-    auto domain = whole_iteration_domain();
-
-    auto order_deps = relative_orders();
-    cout << "Order deps..." << endl;
-    cout << tab(1) << str(order_deps) << endl;
-    cout << "Getting validity deps..." << endl;
-    isl_union_map *raw_deps = validity_deps();
-    cout << "Got validity deps..." << endl;
-    auto validity =
-      unn(order_deps, raw_deps);
-    isl_union_map *proximity =
-      cpy(raw_deps);
-
-    cout << "Computing schedule for: " << str(domain) << endl << tab(1) << " subject to " << str(validity) << endl;
-    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
-
-    cout << endl;
-    cout << "Result: " << str(sched) << endl;
-
-    //assert(false);
-
-    return sched;
-  }
+  isl_schedule* optimized_schedule();
 
   isl_union_map* optimized_codegen() {
     auto domain = whole_iteration_domain();
@@ -1204,7 +1455,9 @@ struct prog {
 
 // Schedules all loops in sequential order
 // and emits HLS C++ code for the program
+void generate_vanilla_hls_code(prog& prg);
 void generate_unoptimized_code(prog& prg);
+void generate_unoptimized_code(CodegenOptions& options, prog& prg);
 
 // Re-schedules all loops using ISL
 // and then emits HLS C++ code for the program
@@ -1240,8 +1493,11 @@ prog duplicate_interface(prog& p);
 
 vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
 vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
+vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
+vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg);
 
 
+std::vector<string> unoptimized_result(prog& prg);
 void generate_regression_testbench(prog& prg);
 void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
 
@@ -1254,6 +1510,7 @@ std::vector<std::string> run_regression_tb(prog& prg);
 void run_tb(prog& prg);
 
 void regression_test(prog& prg);
+void regression_test(CodegenOptions& options, prog& prg);
 
 std::set<std::string> get_kernels(prog& prg);
 
@@ -1263,8 +1520,336 @@ vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& pr
 
 void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg);
 
+std::vector<string> topologically_sort_kernels(prog& prg);
+
 std::set<string> buffers_written(op* p);
+std::set<string> buffers_written(prog& prg);
+std::set<string> buffers_read(prog& prg);
 
 bool writes(const std::string& target_buf, op* p);
 
 op* find_writer(const std::string& target_buf, prog& prg);
+
+std::set<string> get_producers(string next_kernel, prog& prg);
+
+void deep_copy_child(op* dest, op* source, prog& original);
+
+std::set<string> get_consumed_buffers(const std::string& kernel, prog& original);
+std::set<string> get_produced_buffers(const std::string& kernel, prog& original);
+
+std::set<string> get_consumed_buffers(const std::set<std::string>& group, prog& original);
+std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
+
+
+std::set<string> get_produced_buffers(const std::set<std::string>& group, prog& original);
+
+void generate_verilog(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap);
+
+umap* hardware_schedule(prog& prg);
+
+std::string optimized_code_string(prog& prg);
+
+void generate_trace(prog& prg, umap* sched);
+
+void all_register_files(prog& prg, CodegenOptions& options);
+int compile_compute(const std::string& name);
+
+vector<string> surrounding_vars(op* loop, prog& prg);
+vector<string> surrounding_vars(const std::string& op, prog& prg);
+vector<op*> surrounding_vars_ops(op* loop, prog& prg);
+prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original);
+
+
+void unroll(prog& prg, const std::string& var);
+
+vector<int> indexes(op* p);
+vector<string> write_vars(const std::string& target_buf, op* reader, prog& prg);
+
+void all_unbanked(prog& prg, CodegenOptions& options);
+void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, prog& prg);
+
+void get_variable_levels(op* node, map<string,int>& variable_map, int current_level);
+map<string, int> get_variable_levels(prog& prg);
+
+std::set<string> all_buffers(prog& prg);
+std::set<op*> find_readers(const string& buff, prog& prg);
+
+std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group);
+//prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
+
+void release(ir_node* op);
+void release(prog& prg);
+
+void unroll_reduce_loops(prog& prg);
+
+
+void
+pack_bv(const int indent,
+    ostream& conv_out,
+    const string& value,
+    const std::vector<string>& lanes,
+    const int lane_width);
+
+vector<string>
+split_bv(const int indent,
+    ostream& conv_out,
+    const string& value,
+    const int lane_width,
+    const int nlanes);
+
+pair<std::string, std::string> remove_whitespace(const pair<std::string, std::string>& addr);
+std::string remove_whitespace(const std::string& addr);
+piecewise_address remove_whitespace(const piecewise_address& addr);
+
+std::set<op*> find_writers(const string& buff, prog& prg);
+
+
+void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog& prg);
+
+
+void infer_bounds_and_unroll(const std::string& out, const std::vector<int>& bounds, const int unroll_factor, prog& prg);
+
+void unroll_producer_matching(const std::string& buf, const int unroll_factor, prog& prg);
+
+op* strip_mine(const int factor, op* loop, prog& prg);
+op* strip_mine(const int factor, const std::string& loop, prog& prg);
+
+
+typedef std::string simplified_addr;
+
+struct cu_val {
+  bool is_arg;
+  string name;
+  int arg_buf_pos;
+
+  std::string str() const {
+    if (is_arg) {
+      return name + "_lane_" + ::str(arg_buf_pos);
+    } else {
+      return name;
+    }
+  }
+};
+
+struct compute_unit_internals {
+  std::string name;
+  vector<op*> operations;
+  map<op*, string> result_names;
+  map<op*, vector<cu_val> > arg_names;
+  vector<op*> output_producers;
+
+  map<op*, map<string, map<address, string> > > res_names;
+  vector<pair<buffer_name, piecewise_address> > raddrs;
+  vector<pair<buffer_name, address> > waddrs;
+
+  vector<string> buffers_read() {
+    vector<string> br;
+    for (auto b : raddrs) {
+      if (!elem(b.first, br)) {
+        br.push_back(b.first);
+      }
+    }
+    return br;
+  }
+
+  int num_lanes(const std::string& buf) {
+    int cnt = 0;
+    for (auto b : raddrs) {
+      if (b.first == buf) {
+        cnt++;
+      }
+    }
+    return cnt;
+  }
+
+};
+
+simplified_addr simplify(const piecewise_address& ar);
+
+
+void merge_basic_block_ops(prog& prg);
+
+std::set<op*> get_inner_loops(prog& prg);
+std::vector<op*> get_ordered_inner_loops(prog& prg);
+
+
+isl_set* iteration_domain(op* loop, prog& prg);
+
+isl_map* consumer_map(op* loop, const std::string& b, prog& prg);
+umap* read_at(const std::string& level, const std::string& buffer, prog& prg);
+umap* read_at(const std::string& level, prog& prg);
+umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg);
+isl_map* get_initial_data(const std::string& level, const std::string& buffer, prog& prg);
+
+
+void all_exhaustive_banked(prog& prg, CodegenOptions& options);
+
+
+vector<string> reduce_vars(prog& prg);
+
+void sanity_check_all_reads_defined(prog& prg);
+
+void generate_verilator_tb(prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers);
+
+void generate_garnet_verilator_tb(prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers);
+
+template<typename T>
+void print_box_bounds(const std::string& name, T* pr){
+  auto lmin = lexmin(pr);
+  auto lmax = lexmax(pr);
+  cout << "======= Box bounds for " << name << endl;
+  cout << tab(1) << "min              = " << str(lmin) << endl;
+  cout << tab(1) << "max              = " << str(lmax) << endl;
+}
+
+void normalize_bounds(prog& prg);
+
+bool is_inner_loop(op* op);
+
+class resource_instance {
+  public:
+
+    std::string type;
+    int number;
+};
+
+static
+bool operator==(const resource_instance& a, const resource_instance& b) {
+  return a.type == b.type && a.number == b.number;
+}
+
+struct schedule_info {
+  // Miscellaneous
+  bool use_dse_compute;
+
+  // Schedule constraints
+  map<string, int> buffer_load_latencies;
+  map<string, int> buffer_store_latencies;
+  map<string, int> compute_unit_latencies;
+  map<string, int> op_compute_unit_latencies;
+
+  // Resource constraints
+  map<string, int> resource_quantities;
+  map<op*, string> resource_requirements;
+
+  // Resource use info
+  map<op*, resource_instance> resource_assignment;
+
+  // Schedule offsets
+  map<string, int> loop_iis;
+  map<op*, int> instance_latencies;
+  map<op*, int> op_offset_within_parent;
+
+  int offset_in_parent(op* c) {
+    assert(contains_key(c, op_offset_within_parent));
+    return map_find(c, op_offset_within_parent);
+  }
+
+  int last_update_delay(op* op) {
+    assert(op->is_loop);
+    int last_delay = 0;
+    for (auto c : op->children) {
+      int delay = offset_in_parent(c) + total_latency(c);
+      if (delay > last_delay) {
+        last_delay = delay;
+      }
+    }
+    return last_delay;
+  }
+
+  int total_latency(op* op) {
+    if (!op->is_loop) {
+      assert(contains_key(op, instance_latencies));
+      return map_find(op, instance_latencies);
+    }
+    return II(op)*(op->trip_count() - 1) + instance_latency(op);
+  }
+
+  int instance_latency(op* op);
+
+  int II(op* op) {
+    assert(op->is_loop);
+    assert(contains_key(op->name, loop_iis));
+    return map_find(op->name, loop_iis);
+  }
+
+};
+
+std::set<string> all_buffers(prog& prg);
+bool is_reduce_buffer(const std::string& buff, prog& prg);
+int num_write_ports(const std::string& b, prog& prg);
+int num_read_ports(const std::string& b, prog& prg);
+
+
+bool is_rate_matchable(prog& prg);
+
+int loop_depth(op* op);
+bool all_loop_nests_same_depth(prog& prg);
+
+bool is_perfect(op* loop, prog& prg);
+bool all_perfect_loop_nests(prog& prg);
+std::vector<op*> get_dft_ops(prog& prg);
+
+
+void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg);
+
+map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg);
+
+map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg);
+
+uset* op_start_times_domain(prog& prg);
+
+umap* op_times_map(schedule_info& sched, prog& prg);
+umap* op_start_times_map(schedule_info& sched, prog& prg);
+
+umap* op_end_times_map(schedule_info& sched, prog& prg);
+
+
+map<string, isl_set*> op_start_times_domains(prog& prg);
+void normalize_address_offsets(prog& prg);
+
+vector<op*> ops_at_level(const int level, prog& prg);
+bool is_op_scheduled(op* op, schedule_info& sched, prog& prg);
+bool no_violated_resource_assignments(schedule_info& sched, prog& prg);
+
+
+map<string, pair<string, int> > determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
+void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg);
+
+void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg);
+
+void generate_app_prefix(CodegenOptions& options, ofstream& conv_out, prog& prg);
+void generate_app_collateral(CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap);
+
+
+void generate_driver_function_prefix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
+
+
+void generate_driver_function_suffix(CodegenOptions& options, ostream& conv_out, map<string, UBuffer>& buffers, prog& prg);
+
+void generate_app_code_body(CodegenOptions& options,
+    ostream& conv_out,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map);
+
+vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg);
+vector<string> get_arg_names(const map<string, UBuffer>& buffers, prog& prg);

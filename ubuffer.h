@@ -9,6 +9,14 @@
 
 using namespace std;
 
+struct schedule_info;
+
+struct dynamic_address {
+  std::string buffer;
+  std::string table;
+  std::string table_offset;
+};
+
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     if ( !v.empty()  ) {
@@ -19,27 +27,32 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     return out;
 }
 
-enum bank_type {
-  BANK_TYPE_STACK,
-  BANK_TYPE_RAM
-};
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::map<string, T>& m) {
+    if ( !m.empty()  ) {
+      for (const auto &p : m)
+      {
+        out << p.first << ": ";
+        out << p.second << ' ';
+        out << std::endl;
+      }
 
-struct selector {
-  string buf_name;
-  string pt_type;
-  string out_port;
-  string name;
-  vector<string> vars;
-  vector<string> bank_conditions;
-  vector<string> inner_bank_offsets;
-};
+    }
+    return out;
+}
+
+//This is assuming read after write if they are scheduled
+//for the same hardware cycle
+umap* schedule_guard(umap* sched, bool is_rd);
 
 struct HWconstraints {
-    size_t port_width;
-    size_t port_number;
-    size_t capacity;
-    bool raw_same_cycle;
-    bool war_same_cycle;
+    size_t in_port_width = 1;
+    size_t out_port_width = 1;
+    size_t in_port_number = 1;
+    size_t out_port_number = 1;
+    size_t capacity = 512;
+    bool raw_same_cycle = false;
+    bool war_same_cycle = false;
 };
 
 struct TileConstraints{
@@ -50,7 +63,7 @@ struct TileConstraints{
 
 struct bank {
   std::string name;
-  bank_type tp;
+  InnerBankOffsetMode tp;
 
   // Stack bank properties
   std::string pt_type_string;
@@ -70,7 +83,7 @@ struct bank {
 
   //method to extract box from data_domain
   Box extract_layout() {
-    //cout << "extracting box from " << str(rddom) << endl;
+    cout << "extracting box from " << str(rddom) << endl;
     auto min_pt =
       parse_pt(sample(lexmin(rddom)));
     auto max_pt =
@@ -98,6 +111,15 @@ struct bank {
       return true;
   }
 
+  bool onlyWire() const {
+      auto delays = sort_unique(read_delays);
+      cout << "Bank has delay: " << delays << endl;
+      if (delays.size() == 1)
+        if (pick(delays) == 0)
+            return true;
+      return false;
+  }
+
   //return a vector of port string
   vector<string> get_out_ports() {
     vector<string> ret;
@@ -105,6 +127,23 @@ struct bank {
         ret.push_back(itr.first);
     }
     return ret;
+  }
+
+  vector<pair<string, int> > get_sort_delay_map() {
+    vector<pair<string, int> > delay_vec(delay_map.begin(), delay_map.end());
+    sort(delay_vec.begin(), delay_vec.end(),
+            [](const pair<string, int> &l, const pair<string, int> &r)
+            {return l.second < r.second;});
+    return delay_vec;
+  }
+
+  vector<string> get_outpt_with_ascending_addr() {
+      auto tmp = get_sort_delay_map();
+      vector<string> ret;
+      for (auto it : tmp) {
+        ret.push_back(it.first);
+      }
+      return ret;
   }
 
   vector<int> get_end_inds() const {
@@ -188,6 +227,9 @@ class AccessPattern {
       vector<int> out_range;
       vector<int> start_addr;
 
+      //relation map help us to remove reaccess
+      vector<bool> rel_map;
+
       //This save the fetch width info,
       //SRAM address is on the unit of wider fetch width
       vector<int> vec_stride_in_addr;
@@ -217,16 +259,16 @@ class AccessPattern {
       }
 
       isl_set* get_domain(isl_ctx* ctx) {
-          vector<string> var_list(var_dim);
+          vector<string> var_list(var_dim-1);
           vector<string> bd_list(var_dim-1);
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
-              var_list[itr.second] = itr.first;
+              var_list[itr.second-1] = itr.first;
               string bd = "0 <= " + itr.first + " <= " + std::to_string(in_range[itr.second-1]-1);
               bd_list[itr.second-1] = bd;
           }
-          var_list[0] = "root=0";
+          //var_list[0] = "root=0";
           auto vars = sep_list(var_list, "[", "]", "," );
           auto ds = sep_list(bd_list, "", "", " and ");
           return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
@@ -242,13 +284,13 @@ class AccessPattern {
       }
 
       umap* get_access_map(isl_ctx* ctx) {
-          vector<string> var_list(var_dim);
+          vector<string> var_list(var_dim-1);
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
-              var_list[itr.second] = itr.first;
+              var_list[itr.second-1] = itr.first;
           }
-          var_list[0] = "root=0";
+          //var_list[0] = "root=0";
           auto vars = sep_list(var_list, "[", "]", "," );
           vector<string> nd_expr;
           for (auto row: access_matrix) {
@@ -275,12 +317,32 @@ class AccessPattern {
           return to_umap(its(access_map, domain));
       }
 
-      isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id) {
-          vector<string> var_list(var_dim);
+      vector<int> get_non_inner_most_reaccess_dim() {
+        vector<int> acc_map, ret;
+        int cnt = 0;
+        acc_map.push_back(0);
+        for (auto rel: rel_map) {
+          if (rel)
+            cnt ++;
+          acc_map.push_back(cnt);
+        }
+        int total = acc_map.back();
+        for (int i = 1; i < acc_map.size(); i++) {
+            if (acc_map[i] - acc_map[i-1] == 0) {
+                if (acc_map[i] != total){
+                    ret.push_back(i-1);
+                }
+            }
+        }
+        return ret;
+      }
+
+      isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, bool rm_const=false) {
+          vector<string> var_list(var_dim-1);
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
-              var_list[itr.second] = itr.first;
+              var_list[itr.second-1] = itr.first;
           }
           var_list[0] = "root=0";
           auto vars = sep_list(var_list, "[", "]", "," );
@@ -289,8 +351,9 @@ class AccessPattern {
               auto row = access_matrix[row_cnt];
               vector<string> sum_list;
               for(auto itr = row.begin() + 1; itr != row.end(); itr ++) {
+                  //skip const.
                   int item = *itr;
-                  int cnt = itr - row.begin() ;
+                  int cnt = itr - row.begin() - 1;
                   if (item == 0)
                       continue;
                   if (row_cnt < dim_id) {
@@ -312,7 +375,25 @@ class AccessPattern {
                       nd_expr.push_back(std::to_string(row.front()));
               }
           }
-          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          auto tb_pad = get_non_inner_most_reaccess_dim();
+          cout << "tb pad dim: " << tb_pad << endl;
+          vector<string> nd_expr_new ;
+          for (auto cnt: tb_pad) {
+              if (cnt == 0)
+                continue;
+              auto it = nd_expr.begin();
+              nd_expr.insert(it, get_expr(1, cnt, var_list));
+          }
+          if (rm_const) {
+            for (auto expr: nd_expr) {
+              if (!is_number(expr)) {
+                nd_expr_new.push_back(expr);
+              }
+            }
+          } else {
+            nd_expr_new = nd_expr;
+          }
+          string nd_expr_str = sep_list(nd_expr_new, "[", "]", ", ");
           cout << "access map expr:" << nd_expr_str << endl;
           auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name  + nd_expr_str + "}").c_str());
           auto domain = get_domain(ctx);
@@ -322,6 +403,8 @@ class AccessPattern {
 
       void initial_access_mat(isl_map* access_map, isl_ctx* ctx) {
           //cout << "\t\tProduced: " << str(access_map) << endl;
+
+          rel_map = relation_map(access_map);
 
           auto mpa = isl_pw_multi_aff_from_map(access_map);
           addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
@@ -502,31 +585,137 @@ class AccessPattern {
           }
       }
 
-      isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width) {
+      int get_inner_most_related_dom_dim() {
+        int inner_most_address_related_dim_id = 0;
+        for (size_t i = rel_map.size() - 1; i >= 0; i -- ) {
+          if (rel_map.at(i) != 0) {
+            inner_most_address_related_dim_id = i;
+            break;
+          }
+        }
+        return inner_most_address_related_dim_id;
+      }
+
+      isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
           vector<int> & stride_in_target = access_matrix[dim_id];
-          vector<string> var_list(var_dim);
-          vector<string> origin_var_list(var_dim);
-          var_list.front() = "root";
-          origin_var_list.front() = "root";
+          int inner_most = get_inner_most_related_dom_dim();
+          cout << "trans op dim: " << inner_most << endl;
+          vector<string> var_list(inner_most+1);
+          vector<string> origin_var_list(var_dim-1);
+          //var_list.front() = "root";
+          //origin_var_list.front() = "root";
           //TODO: handle reuse pattern
           for (auto it: name2idx) {
               if (it.first == "const")
                   continue;
-              int id = it.second;
-              if (stride_in_target[id] != 0 && (stride_in_target[id] < 4)) {
-                  string trans = "floor("+ it.first + "/" + to_string(fetch_width) + ")";
-                  var_list[it.second] = trans;
-                  origin_var_list[it.second] = it.first;
+              int id = it.second-1;
+              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4)) {
+                  int factor = fetch_width / stride_in_target[it.second];
+                  string trans = "floor("+ it.first + "/" + to_string(factor) + ")";
+                  var_list[id] = trans;
+                  origin_var_list[id] = it.first;
               }
               else {
-                  var_list[it.second] = it.first;
-                  origin_var_list[it.second] = it.first;
+                  if (id <= inner_most)
+                      var_list[id] = it.first;
+                  origin_var_list[id] = it.first;
               }
           }
           auto vars = sep_list(var_list, "[", "]", "," );
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
           cout <<"OP name: " << op_name << endl;
-          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name +"_vec" + vars + "}").c_str()));
+          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name + suffix + vars + "}").c_str()));
+          return multi_map;
+      }
+
+
+      isl_map* get_op_stripmining(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
+          vector<int> & stride_in_target = access_matrix[dim_id];
+          int inner_most = get_inner_most_related_dom_dim();
+          cout << "trans op dim: " << inner_most << endl;
+          vector<string> var_list(inner_most+1);
+          vector<string> origin_var_list(var_dim-1);
+          //var_list.front() = "root";
+          //origin_var_list.front() = "root";
+          //TODO: handle reuse pattern
+          for (auto it: name2idx) {
+              if (it.first == "const")
+                  continue;
+              int id = it.second-1;
+              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4)) {
+                  int factor = fetch_width / stride_in_target[it.second];
+                  string trans = "floor("+ it.first + "/" + to_string(factor) + ")";
+                  string rems = it.first + "%" + to_string(factor);
+                  var_list[id] = trans;
+                  var_list.push_back(rems);
+                  origin_var_list[id] = it.first;
+              }
+              else {
+                  if (id <= inner_most)
+                      var_list[id] = it.first;
+                  origin_var_list[id] = it.first;
+              }
+          }
+          auto vars = sep_list(var_list, "[", "]", "," );
+          auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
+          cout <<"OP name: " << op_name << endl;
+          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name + suffix + vars + "}").c_str()));
+          return multi_map;
+      }
+
+      isl_set* get_dom_slice(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
+          vector<int> & stride_in_target = access_matrix[dim_id];
+          int inner_most = get_inner_most_related_dom_dim();
+          cout << "stride in target: " << stride_in_target << endl;
+          cout << "trans op dim: " << inner_most << endl;
+          vector<string> var_list(inner_most+1);
+          vector<string> origin_var_list(var_dim-1);
+          vector<string> trans_constraints;
+          //var_list.front() = "root";
+          //origin_var_list.front() = "root";
+          //TODO: handle reuse pattern
+          for (auto it: name2idx) {
+              if (it.first == "const")
+                  continue;
+              int id = it.second-1;
+              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4)) {
+                  int factor = fetch_width / stride_in_target[it.second];
+                  string trans = it.first + "%" + to_string(factor) + " = 0";
+                  trans_constraints.push_back(trans);
+                  var_list[id] = it.first;
+                  origin_var_list[id] = it.first;
+              }
+              else {
+                  if (id <= inner_most)
+                      var_list[id] = it.first;
+                  origin_var_list[id] = it.first;
+              }
+          }
+          auto vars = sep_list(var_list, "[", "]", "," );
+          auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
+          auto constraints = sep_list(trans_constraints, "", "", " and ");
+          cout <<"OP name: " << op_name << endl;
+          isl_set* slice = (rdset(ctx, string("{ " + op_name +origin_vars + " : " + constraints + "}").c_str()));
+          return slice;
+      }
+
+      isl_map* pad_one_dim_to_dom(isl_ctx* ctx, int time_stamp) {
+          vector<string> var_list(var_dim-1);
+          vector<string> origin_var_list(var_dim-1);
+          //var_list.front() = "root";
+          //origin_var_list.front() = "root";
+          for (auto it: name2idx) {
+              if (it.first == "const")
+                  continue;
+              var_list[it.second-1] = it.first;
+              origin_var_list[it.second-1] = it.first;
+          }
+          origin_var_list.push_back(to_string(time_stamp));
+
+          auto vars = sep_list(var_list, "[", "]", "," );
+          auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
+          cout <<"OP name: " << op_name << endl;
+          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name +"_sram2tb" + origin_vars + " -> " + op_name +"_sram2tb" + vars + "}").c_str()));
           return multi_map;
       }
 
@@ -537,18 +726,17 @@ class AccessPattern {
           vector<string> var_list;
           vector<isl_map*> slices;
           for (size_t dim = 0; dim < addr_dim; dim ++) {
-              var_list.push_back("p" + to_string(dim));
+              var_list.push_back("i" + to_string(dim));
           }
 
           auto vars = sep_list(var_list, "[", "]", ",");
           for(size_t i = 0; i < fetch_width; i ++) {
-              string constraint = "p" + to_string(dim_id) + "%" + to_string(fetch_width) + "=" + to_string(i);
+              string constraint = "i" + to_string(dim_id) + "%" + to_string(fetch_width) + "=" + to_string(i);
               isl_map* slice_constriant = to_map(rdmap(ctx, string("{" + buf_name + vars + " -> " + new_buf_name + vars + ":" +constraint + "}" ).c_str()));
               slices.push_back(slice_constriant);
           }
           return slices;
       }
-
 
       vector<AccessPattern> vectorization(int dim_id, int fetch_width) {
           AccessPattern origin(*this);
@@ -598,6 +786,14 @@ class AccessPattern {
       }
 };
 
+struct MemConnSch {
+  int dimensionality;
+  unordered_map<string, vector<int>> vals;
+  string read;
+  string mux_write;
+  string write;
+};
+
 class UBuffer {
 
   public:
@@ -608,15 +804,23 @@ class UBuffer {
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
 
-    //Stencil valid domain for each port
-    std::map<string, isl_set*> sv_domain;
+    //This is used to retrive the flattened iteration domain
+    std::map<string, isl_set*> retrive_domain;
+
+    std::set<string> dynamic_ports;
+
+    //Stencil valid map for each port
+    std::map<string, umap*> sv_map;
+    bool contain_memory_tile = false;
 
     std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
-    map<pair<string, string>, stack_bank > stack_banks;
-    map<string, selector> selectors;
+    banking_strategy banking;
+    std::vector<bank> bank_list;
+    map<string, std::set<string> > banks_to_inputs;
+    map<string, std::set<string> > banks_to_outputs;
 
     //lowering ubuffer to memtile
     vector<int> read_cycle, write_cycle;
@@ -641,6 +845,8 @@ class UBuffer {
     }
 #endif
 
+    int logical_dimension();
+
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
         for (auto it: port_bundles) {
@@ -653,6 +859,31 @@ class UBuffer {
         }
         assert(false);
         return false;
+    }
+
+    int bundle_offset(const std::string& port) {
+      for (auto b : port_bundles) {
+        if (elem(port, b.second)) {
+          for (int i = 0; i < (int) b.second.size(); i++) {
+            if (b.second.at(i) == port) {
+              return i;
+            }
+          }
+        }
+      }
+
+      cout << "Error: No bundle for " << port << endl;
+      assert(false);
+    }
+
+    std::string container_bundle(const std::string& port) {
+      for (auto b : port_bundles) {
+        if (elem(port, b.second)) {
+          return b.first;
+        }
+      }
+      cout << "Error: No bundle for " << port << endl;
+      assert(false);
     }
 
     bool is_wr(isl_point* pt) {
@@ -688,13 +919,14 @@ class UBuffer {
             tmp.push_back(addr_queue.front());
             addr_queue.pop();
         }
+        cout << "read data: " << tmp << endl;
         read_addr.push_back(tmp);
     }
 
     //TODO: add a bundle name
     vector<string> get_bd_in_ports() {
         auto wr_bd = get_in_bundles();
-        assert(wr_bd.size() == 1);
+        //assert(wr_bd.size() == 1);
         string bd_name = pick(wr_bd);
         vector<string> pt_vec = port_bundles.at(bd_name);
         return pt_vec;
@@ -702,7 +934,7 @@ class UBuffer {
 
     vector<string> get_bd_out_ports() {
         auto rd_bd = get_out_bundles();
-        assert(rd_bd.size() == 1);
+        //assert(rd_bd.size() == 1);
         string bd_name = pick(rd_bd);
         vector<string> pt_vec = port_bundles.at(bd_name);
         return pt_vec;
@@ -710,12 +942,12 @@ class UBuffer {
 
     size_t get_wr_cycle() {
         auto pt_vec = get_bd_in_ports();
-        return pt_vec.size() / hardware.port_width;
+        return pt_vec.size() / hardware.in_port_width;
     }
 
     size_t get_rd_cycle() {
         auto pt_vec = get_bd_out_ports();
-        return pt_vec.size() / hardware.port_width;
+        return pt_vec.size() / hardware.out_port_width;
     }
 
     //TODO: put it into qexpr.h
@@ -732,6 +964,18 @@ class UBuffer {
         auto b = extract_access_range();
         for (size_t i = 0; i < b.dimension(); i ++) {
             ret.push_back(b.r_cardinality(i));
+        }
+        return ret;
+    }
+
+    bool is_overlap_with_port(string pt, isl_map* acc) {
+      return !empty(its(range(access_map.at(pt)), range(to_umap(acc))));
+    }
+
+    map<string, bool> get_connection_map_to_outpt(isl_map* acc) {
+        map<string, bool> ret;
+        for (string out_pt: get_out_ports()) {
+            ret.insert(make_pair(out_pt, is_overlap_with_port(out_pt, acc)));
         }
         return ret;
     }
@@ -786,6 +1030,9 @@ class UBuffer {
         sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
         for (auto point:  point_vec) {
             auto b = get_linearization_vector();
+            //FIXME: hack the tb address
+            if (is_suffix(name, "tb"))
+                b.back() /= num_out_ports();
             auto a = parse_pt(point);
             int addr = std::inner_product(a.begin(), a.end(), b.rbegin(), 0);
             ret.push(addr);
@@ -801,7 +1048,7 @@ class UBuffer {
         for (size_t delay = 1; delay < num_cycle + 1; delay ++) {
             write_cycle.push_back(cycle + delay);
             vector<int> tmp;
-            for (size_t i = 0; i < hardware.port_width; i ++) {
+            for (size_t i = 0; i < hardware.in_port_width; i ++) {
                 assert(!addr_queue.empty());
                 tmp.push_back(addr_queue.front());
                 addr_queue.pop();
@@ -893,7 +1140,7 @@ class UBuffer {
             while (!scheduled.empty()) {
                 read_cycle.push_back(scheduled.top());
                 vector<int>  tmp;
-                for (size_t i = 0; i < hardware.port_width; i ++) {
+                for (size_t i = 0; i < hardware.in_port_width; i ++) {
                     assert(!addr_queue.empty());
                     tmp.push_back(addr_queue.front());
                     addr_queue.pop();
@@ -915,108 +1162,309 @@ class UBuffer {
       return num_out_dims(maps.at(0));
     }
 
-    bank get_bank(const std::string& name) const {
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          return b.second;
+    bool is_bank_input(const string& name) const{
+      for (auto bk: bank_list) {
+        if (elem(name, banks_to_inputs.at(bk.name))) {
+          return true;
         }
       }
+      return false;
+    }
+
+    vector<stack_bank> receiver_banks(const std::string& inpt) {
+      vector<stack_bank> bnks;
+      for (auto b : bank_list) {
+        if (elem(inpt, map_find(b.name, banks_to_inputs))) {
+          bnks.push_back(b);
+        }
+      }
+      //vector<stack_bank> bnks;
+      //vector<string> done;
+      //for (auto bs : stack_banks) {
+        //if (bs.first.first == inpt) {
+          //if (!elem(bs.second.name, done)) {
+            //bnks.push_back(bs.second);
+            //done.push_back(bs.second.name);
+          //}
+
+        //}
+      //}
+      return bnks;
+    }
+
+    isl_union_map* get_stencil_valid_sched(string bk_name) {
+      auto outpts = get_bank_outputs(bk_name);
+      //only consider the shift register condition now
+      string outpt = pick(outpts);
+      if (!is_bank_input(outpt)) {
+        return schedule.at(outpt);
+      } else {
+        auto ret = isl_union_map_read_from_str(ctx, "{}");
+        for (auto bk: receiver_banks(outpt)) {
+          ret = unn(ret, get_stencil_valid_sched(bk.name));
+        }
+        return ret;
+      }
+    }
+
+    isl_union_map* get_outpt_sched() const {
+      auto ret = isl_union_map_read_from_str(ctx, "{}");
+      for (auto pt: get_out_ports()) {
+        if (!is_bank_input(pt)) {
+            ret = unn(ret, schedule.at(pt));
+        }
+      }
+      return ret;
+    }
+
+    isl_union_map* global_outpt_sched() const {
+      auto ret = isl_union_map_read_from_str(ctx, "{}");
+      for (auto pt: get_out_ports()) {
+        ret = unn(ret, schedule.at(pt));
+      }
+      return ret;
+    }
+
+    bank get_bank(const std::string& name) const {
+      for (auto bank : bank_list) {
+        if (bank.name == name) {
+          return bank;
+        }
+      }
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //return b.second;
+        //}
+      //}
       cout << "Error: No such bank as: " << name << endl;
       assert(false);
       return {};
     }
 
-    string get_bank_input(const std::string& name) const {
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          return b.first.first;
-        }
+    bool is_bank_SR(const std::string& name) const {
+      auto inputs = get_bank_inputs(name);
+      bool ret = true;
+      for (auto pt: inputs) {
+        ret &= !isIn.at(pt);
       }
-      cout << "Error: No such bank as: " << name << endl;
-      assert(false);
-      return "";
+      cout << "BK: " << name << "is SR: " << ret << endl;
+
+      //check if input ports are all output port in ubuf
+      return ret;
+    }
+
+    string get_bank_input(const std::string& name) const {
+      auto inputs = get_bank_inputs(name);
+      assert(inputs.size() == 1);
+      return *(std::begin(inputs));
     }
 
     std::set<string> get_bank_inputs(const std::string& name) const {
+      assert(contains_key(name, banks_to_inputs));
+
       std::set<string> ret;
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          ret.insert(b.first.first);
-        }
+      for (auto in : map_find(name, banks_to_inputs)) {
+        ret.insert(in);
       }
       return ret;
+
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //ret.insert(b.first.first);
+        //}
+      //}
+      //return ret;
     }
 
     std::set<string> get_bank_outputs(const std::string& name) const {
+      if (!(contains_key(name, banks_to_outputs))) {
+        cout << "Error: No outputs for bank " << name << endl;
+      }
+      assert(contains_key(name, banks_to_outputs));
       std::set<string> ret;
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          ret.insert(b.first.second);
-        }
+      for (auto out : map_find(name, banks_to_outputs)) {
+        ret.insert(out);
       }
       return ret;
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //ret.insert(b.first.second);
+        //}
+      //}
+      //return ret;
+    }
+
+
+    bool has_bank(const std::string& name) {
+      for (auto& bnk : bank_list) {
+        if (bnk.name == name) {
+          return true;
+        }
+      }
+      return false;
     }
 
     void replace_bank(stack_bank& target, stack_bank& replacement) {
-      for (auto bnk : stack_banks) {
-        if (bnk.second.name == target.name) {
-          stack_banks[bnk.first] = replacement;
-          break;
+      if (!has_bank(replacement.name)) {
+        bank_list.push_back(replacement);
+      }
+
+      for (auto in : get_bank_inputs(target.name)) {
+        banks_to_inputs[replacement.name].insert(in);
+      }
+
+      for (auto out : get_bank_outputs(target.name)) {
+        banks_to_outputs[replacement.name].insert(out);
+      }
+
+      remove_bank(target);
+      //banks_to_inputs[target.name] = {};
+      //banks_to_outputs[target.name] = {};
+
+      //for (auto bnk : stack_banks) {
+        //if (bnk.second.name == target.name) {
+          //stack_banks[bnk.first] = replacement;
+          //break;
+        //}
+      //}
+    }
+
+    void remove_bank(const bank& to_remove) {
+      vector<bank> replace;
+      for (auto bnk : get_banks()) {
+        if (bnk.name == to_remove.name) {
+          banks_to_inputs.erase(bnk.name);
+          banks_to_outputs.erase(bnk.name);
+        } else {
+          replace.push_back(bnk);
         }
       }
+      bank_list = replace;
+
+      //map<pair<string, string>, bank> replace;
+      //for (auto bnk : stack_banks) {
+        //if (bnk.first.second != pt_name) {
+          //replace.insert(bnk);
+        //}
+      //}
+      //stack_banks = replace;
     }
 
     void remove_bank(string pt_name) {
-        map<pair<string, string>, bank> replace;
-        for (auto bnk : stack_banks) {
-            if (bnk.first.second != pt_name) {
-                replace.insert(bnk);
-            }
+      vector<bank> replace;
+      for (auto bnk : get_banks()) {
+        if (elem(pt_name, get_bank_outputs(bnk.name))) {
+          banks_to_inputs.erase(bnk.name);
+          banks_to_outputs.erase(bnk.name);
+        } else {
+          replace.push_back(bnk);
         }
-        stack_banks = replace;
+      }
+      bank_list = replace;
+
+      //map<pair<string, string>, bank> replace;
+      //for (auto bnk : stack_banks) {
+        //if (bnk.first.second != pt_name) {
+          //replace.insert(bnk);
+        //}
+      //}
+      //stack_banks = replace;
     }
 
     //The method replace the original access map and add a valid domain
     void replace_pt(string pt, isl_map* target, isl_map* sched) {
+        if (sv_map.count(pt) == 0) {
+          sv_map[pt] = dot(to_umap(target), inv(access_map.at(pt)));
+        } else {
+          auto original_addr2iter = dot(inv(access_map.at(pt)), sv_map.at(pt));
+          sv_map.at(pt) = dot(to_umap(target), original_addr2iter);
+        }
+        cout << "Add pt: " << pt << " stencil valid map: " << str(sv_map.at(pt)) << endl;
         access_map.at(pt) = to_umap(target);
-        sv_domain[pt] = domain.at(pt);
         domain.at(pt) = ::domain(target);
         schedule.at(pt) = to_umap(sched);
     }
 
     vector<stack_bank> get_banks() {
-      vector<stack_bank> bnk;
-      std::set<string> done;
-      for (auto bs : stack_banks) {
-        if (!elem(bs.second.name, done)) {
-          bnk.push_back(bs.second);
-          done.insert(bs.second.name);
-        }
-      }
-      return bnk;
+      return bank_list;
+      //vector<stack_bank> bnk;
+      //std::set<string> done;
+      //for (auto bs : stack_banks) {
+        //if (!elem(bs.second.name, done)) {
+          //bnk.push_back(bs.second);
+          //done.insert(bs.second.name);
+        //}
+      //}
+      //return bnk;
+    }
+    vector<stack_bank> get_banks_and_sort() {
+      auto bank_list = get_banks();
+      sort(bank_list.begin(), bank_list.end(), [](const bank l, const bank r) {
+                return l.maxdelay > r.maxdelay;
+              } );
+      return bank_list;
     }
 
-    void add_bank_between(const std::string& inpt, const std::string& outpt, stack_bank& bank) {
-      stack_banks[{inpt, outpt}] = bank;
+    void add_bank_between(const std::string& inpt, const std::string& outpt, const stack_bank& bank) {
+      if (!has_bank(bank.name)) {
+        bank_list.push_back(bank);
+      }
+      banks_to_inputs[bank.name].insert(inpt);
+      banks_to_outputs[bank.name].insert(outpt);
+
+      assert(get_bank_outputs(bank.name).size() >= 0);
+      assert(get_bank_inputs(bank.name).size() >= 0);
+
+      //stack_banks[{inpt, outpt}] = bank;
+    }
+
+    void add_bank_between(const std::set<string>& inpt_set, const std::set<string>& outpt_set, const stack_bank& bank) {
+      if (!has_bank(bank.name)) {
+        bank_list.push_back(bank);
+      }
+      for (auto inpt: inpt_set) {
+        banks_to_inputs[bank.name].insert(inpt);
+      }
+      for (auto outpt: outpt_set) {
+        banks_to_outputs[bank.name].insert(outpt);
+      }
+
+      assert(get_bank_outputs(bank.name).size() >= 0);
+      assert(get_bank_inputs(bank.name).size() >= 0);
+
     }
 
     bool has_bank_between(const std::string& inpt, const std::string& outpt) const {
-      for (auto bs : stack_banks) {
-        if (bs.first.first == inpt && bs.first.second == outpt) {
+      for (auto b : bank_list) {
+        if (elem(inpt, map_find(b.name, banks_to_inputs)) &&
+            elem(outpt, map_find(b.name, banks_to_outputs))) {
           return true;
         }
       }
-
       return false;
+      //for (auto bs : stack_banks) {
+        //if (bs.first.first == inpt && bs.first.second == outpt) {
+          //return true;
+        //}
+      //}
+
+      //return false;
     }
 
     string bank_between(const std::string& inpt, const std::string& outpt) const {
 
-      for (auto bs : stack_banks) {
-        if (bs.first.first == inpt && bs.first.second == outpt) {
-          return bs.second.name;
+      for (auto b : bank_list) {
+        if (elem(inpt, map_find(b.name, banks_to_inputs)) &&
+            elem(outpt, map_find(b.name, banks_to_outputs))) {
+          return b.name;
         }
       }
+      //return false;
+      //for (auto bs : stack_banks) {
+        //if (bs.first.first == inpt && bs.first.second == outpt) {
+          //return bs.second.name;
+        //}
+      //}
 
       cout << "Error: No bank between: " << inpt << " and " << outpt << endl;
       assert(false);
@@ -1028,22 +1476,6 @@ class UBuffer {
       return get_bank(bk_name);
     }
 
-    vector<stack_bank> receiver_banks(const std::string& inpt) {
-      vector<stack_bank> bnks;
-      vector<string> done;
-      for (auto bs : stack_banks) {
-        if (bs.first.first == inpt) {
-
-          if (!elem(bs.second.name, done)) {
-            bnks.push_back(bs.second);
-            done.push_back(bs.second.name);
-          }
-
-          //assert(bnks.back().read_delays.size() == bs.second.read_delays.size());
-        }
-      }
-      return bnks;
-    }
 
     UBuffer() : port_widths(32) {}
 
@@ -1085,11 +1517,45 @@ class UBuffer {
       for (auto inpt: get_in_ports()) {
           for (auto outpt: get_out_ports()) {
               if (buf.has_bank_between(inpt, outpt)) {
-                  stack_banks[make_pair(inpt, outpt)] =
-                      buf.get_bank_between(inpt, outpt);
+                add_bank_between(inpt, outpt, buf.get_bank_between(inpt, outpt));
+                  //stack_banks[make_pair(inpt, outpt)] =
+                      //buf.get_bank_between(inpt, outpt);
               }
           }
       }
+    }
+
+    //For lake codegen banking chaining
+    int get_consumer_bank_dim_id() {
+      vector<int> id_candidate;
+      auto outpt_map = access_map.at(pick(get_out_ports()));
+      auto rng = to_set(range(outpt_map));
+      for(int i = 0; i < ::num_dims(rng); i ++) {
+        auto s = project_all_but(rng, i);
+        if (to_int(lexminval(s)) == to_int(lexmaxval(s))) {
+          id_candidate.push_back(i);
+        }
+      }
+      if (id_candidate.size() == 0)
+          return -1;
+      assert(id_candidate.size() == 1);
+      return pick(id_candidate);
+    }
+
+    int get_producer_bank_dim_id() {
+      vector<int> id_candidate;
+      auto inpt_map = access_map.at(pick(get_in_ports()));
+      auto rng = to_set(range(inpt_map));
+      for(int i = 0; i < ::num_dims(rng); i ++) {
+        auto s = project_all_but(rng, i);
+        if (to_int(lexminval(s)) == to_int(lexmaxval(s))) {
+          id_candidate.push_back(i);
+        }
+      }
+      if (id_candidate.size() == 0)
+          return -1;
+      assert(id_candidate.size() == 1);
+      return pick(id_candidate);
     }
 
     int lanes_in_bundle(const std::string& bn) {
@@ -1167,6 +1633,14 @@ class UBuffer {
       return range(m);
     }
 
+    isl_union_map* global_sv_map() {
+        umap* m = isl_union_map_read_from_str(ctx, "{  }");
+        for (auto it: sv_map) {
+            m = unn(m, it.second);
+        }
+        return m;
+    }
+
     isl_union_set* global_domain() {
       uset* s = isl_union_set_read_from_str(ctx, "{ }");
       for (auto other : domain) {
@@ -1175,12 +1649,53 @@ class UBuffer {
       return s;
     }
 
+    isl_union_set* global_retrive_domain() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      for (auto other : retrive_domain) {
+        s = unn(s, to_uset(cpy(other.second)));
+      }
+      return s;
+    }
+
+    isl_union_set* global_range() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      for (auto other : access_map) {
+        s = unn(s, (range(other.second)));
+      }
+      return s;
+    }
+
+    void normalize_access_range() {
+      auto rng = to_set(global_range());
+      vector<int> start_locs(num_dims());
+      for (int dim = 0; dim < num_dims(); dim ++) {
+        start_locs.at(dim) = -get_dim_min(rng, dim);
+      }
+      for (auto & it: access_map) {
+        auto acc_map = it.second;
+        it.second = to_umap(shift_range_map(to_map(acc_map), start_locs));
+      }
+    }
+
+
     isl_union_map* global_schedule() const {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto other : schedule) {
         s = unn(s, (cpy(other.second)));
       }
 
+      return s;
+    }
+
+    isl_union_map* global_schedule_with_guard() const {
+      umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      for (auto other : schedule) {
+        if (isIn.at(other.first)) {
+          s = unn(s, (schedule_guard(cpy(other.second), false)));
+        } else {
+          s = unn(s, (schedule_guard(cpy(other.second), true)));
+        }
+      }
       return s;
     }
 
@@ -1200,8 +1715,19 @@ class UBuffer {
       return s;
     }
 
+    //check the operation is read the buffer or not
+    bool is_read_op(const std::string& name) const {
+      for ( auto it : schedule ) {
+        string op_name = domain_name(it.second);
+        if (op_name == name) {
+          return is_out_pt(it.first);
+        }
+      }
+      cout << "Not found statement named: " << name << "in this buffer.\n";
+      assert(false);
+    }
+
     bool is_in_pt(const std::string& name) const {
-      cout << "Checking if " << name << " is an input..." << endl;
       assert(contains_key(name, isIn));
       return isIn.at(name);
     }
@@ -1329,6 +1855,20 @@ class UBuffer {
       return outpts;
     }
 
+    int num_out_ports() const {
+      return get_out_ports().size();
+    }
+
+    int num_in_ports() const {
+      return get_in_ports().size();
+    }
+
+    vector<string> get_all_ports() const {
+      auto in = get_in_ports();
+      concat(in, get_out_ports());
+      return in;
+    }
+
     vector<string> get_in_ports() const {
       vector<string> outpts;
       for (auto m : isIn) {
@@ -1359,13 +1899,35 @@ class UBuffer {
       assert(false);
     }
 
+    bool has_hw_schedule() const {
+      for (auto pt: get_all_ports()) {
+        auto sched = schedule.at(pt);
+        if (num_out_dims(to_map(sched)) > 1)
+            return false;
+      }
+      return true;
+    }
+
+    void linear_buf_schedule(vector<int> iis) {
+        for (auto pt: get_all_ports()) {
+            auto sched = schedule.at(pt);
+            int out_dim = num_out_dims(to_map(sched));
+            if (out_dim == 1)
+                continue;
+            cout << str(sched) << endl << iis << endl;
+            assert(out_dim == iis.size() + 1);
+            auto dom = domain.at(pt);
+            schedule.at(pt) = its(to_umap(linear_schedule(to_map(sched), iis, 0, true)), dom);
+        }
+    }
+
     //ppint the same access pattern to a different buffer domain
     isl_map* remap_access_to_new_buffer(string pt_name, string suffix) {
         auto origin_map = access_map.at(pt_name);
         string new_buf_name = name + suffix;
         vector<string> addr_var;
         for (size_t i = 0; i < get_out_dim(to_map(origin_map)); i ++) {
-            addr_var.push_back("p" + to_string(i));
+            addr_var.push_back("i" + to_string(i));
         }
         string vars = sep_list(addr_var, "[", "]", ",");
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
@@ -1373,54 +1935,227 @@ class UBuffer {
         return to_map(dot(origin_map, buf_map));
     }
 
+    map<string, std::set<string> > get_stmt2bd() {
+      map<string, std::set<string> > stmt2bd;
+      for (auto it: schedule) {
+        string bd = get_bundle(it.first);
+        auto sched = it.second;
+        string stmt_name = domain_name(sched);
+        stmt2bd[stmt_name].insert(bd);
+      }
+      return stmt2bd;
+    }
+
+    bool is_self_loop(string pt_name) {
+      auto stmt2bd = get_stmt2bd();
+      auto op_name = domain_name(access_map.at(pt_name));
+      auto bd_vec = stmt2bd.at(op_name);
+      return bd_vec.size() > 1;
+    }
+
+    bool is_self_loop_in(string pt_name) {
+      auto stmt2bd = get_stmt2bd();
+      auto op_name = domain_name(access_map.at(pt_name));
+      auto bd_set = stmt2bd.at(op_name);
+      if (bd_set.size() == 1) {
+        return false;
+      } else {
+        return is_in_pt(pt_name);
+      }
+    }
+
+    bool is_self_loop_out(string pt_name) {
+      auto stmt2bd = get_stmt2bd();
+      auto op_name = domain_name(access_map.at(pt_name));
+      auto bd_set = stmt2bd.at(op_name);
+      if (bd_set.size() == 1) {
+        return false;
+      } else {
+        return is_out_pt(pt_name);
+      }
+    }
+
+    int capacity(string inpt) {
+        int m = 0;
+        for (auto outpt: get_out_ports()){
+            int depth = compute_dd_bound(outpt, inpt, true);
+            std::cout << "Got depth: " << depth << endl;
+            m = std::max(m, depth);
+        }
+        return m;
+    }
+
+    int capacity() {
+        auto pt = pick(get_in_ports());
+        return capacity(pt);
+    }
+
+    umap* pad_dom_buf2op(AccessPattern , umap* , int);
+
+    isl_map* pad_dom_sched(AccessPattern , isl_map* , int);
+
+    //pad the read domain
+    void pad_read_dom(int dim_id, int fetch_width);
+    void pad_write_dom(int dim_id, int fetch_width);
+
 
     //change the input and output and return the agg and tb ubuffer stucture
-    void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
+    pair<std::map<string, UBuffer>, vector<string> >
+        vectorization(int dim_id, int fetch_width, vector<int> iis);
 
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
+    int add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, int dim_id, int fetch_width);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, vector<int> iis, int fetch_width);
 
     void print_bank_info();
+
     umap* get_lexmax_events(const std::string& outpt) const;
     umap* get_lexmax_events(const std::string& inpt, const std::string& outpt);
     umap* get_lexmax_events(umap* insched, umap* outsched, const std::string& inpt, const std::string& outpt);
+
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
-    bank compute_bank_info(const std::string& inpt, const std::string& outpt);
+
+    isl_union_set* compute_dd_hw_schedule(const string& inpt, const string& outpt);
+
+    bank compute_bank_info();
+    bank compute_bank_info(uset*, isl_point*, std::set<string>, std::set<string>);
+    bank compute_bank_info(CodegenOptions& options, const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
+    bank compute_bank_info(const std::string& inpt, const std::string& outpt, int depth);
+
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
-    void generate_bank_and_merge(CodegenOptions& options);
+
+    void generate_banks(CodegenOptions& options);
+    void generate_banks_and_merge(CodegenOptions& options);
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
 
 #ifdef COREIR
+    CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
+    //kernel function for generate coreir
+    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
+
+    //Wrappers for generate coreir
+    //original memory generation for memory tile with enable and valid
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
+    //ubuffer coreir generation for tahoe memory tile
+    void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def);
+    Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
+
+    void generate_stencil_valid_config(CodegenOptions& options);
+    CoreIR::Instance* generate_lake_tile_instance(
+        CoreIR::ModuleDef* def,
+        CodegenOptions options,
+        string ub_ins_name,
+        size_t input_num, size_t output_num,
+        bool has_stencil_valid, bool has_flush);
+
+    void emit_lake_config_collateral(CodegenOptions options, string dir);
 #endif
+
 
     vector<string> map2address(isl_map* m);
     vector<string> get_ram_address(const std::string& pt);
     umap* separate_offset_dim(const std::string& pt);
     Box get_bundle_box(const std::string& pt);
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
-    string generate_linearize_ram_addr(const std::string& pt);
+    //string generate_linearize_ram_addr(const std::string& pt);
+    string generate_linearize_ram_addr(const std::string& pt, bank& bank);
+
     vector<UBuffer> port_grouping(int port_width);
 
     //helper function for port group2bank
-    void create_subbank_branch(
+    uset* create_subbank_branch(
             std::set<string> & inpt_set,
             std::set<string> & outpt_set,
+            std::map<string, int> & pt_name2delay,
             map<string, pair<isl_map*, isl_map*> > & outpt_merge,
             vector<pair<string, string> > & back_edge);
     void port_group2bank(int in_port_width, int out_port_width);
     isl_map* merge_output_pt(vector<string> merge_pt);
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
+    pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);
+
+    maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt);
+
 
 };
 
+
+//Data structure to append top level stream and generate
+struct lakeStream {
+    vector<string> data_in;
+    vector<string> data_out;
+    vector<bool> valid_in, valid_out;
+    int in_width;
+    int out_width;
+
+    void append_data(const vector<int> & in, const vector<int> & out, bool v_in, bool v_out) {
+        data_in.push_back(sep_list(in, "[", "]", " "));
+        data_out.push_back(sep_list(out, "[", "]", " "));
+        valid_in.push_back(v_in);
+        valid_out.push_back(v_out);
+    }
+
+    void emit_csv(string fname) {
+      ofstream out(fname+"_SMT.csv");
+      cout << "fname: " << fname << endl;
+      size_t stream_length = data_out.size();
+      out << "data_in, valid_in, data_out, valid_out" << endl;
+      for (size_t i = 0; i < stream_length; i ++) {
+        cout << "Cycle No." << i << endl;
+        out << data_in.at(i) << ", "
+        << valid_in.at(i) << ", "
+        << data_out.at(i) << ", "
+        << valid_out.at(i) << endl;
+      }
+    }
+
+    lakeStream(){}
+
+    lakeStream(lakeStream aggStream, lakeStream tbStream) {
+      data_in = aggStream.data_in;
+      valid_in = aggStream.valid_in;
+      data_out = tbStream.data_out;
+      valid_out = tbStream.valid_out;
+      in_width = aggStream.in_width;
+      out_width = tbStream.out_width;
+      int size_diff = data_out.size() - data_in.size();
+      for (int i = 0; i < size_diff; i ++) {
+        vector<int> tmp = vector<int>(0, in_width);
+        data_in.push_back(sep_list(tmp, "[", "]", ""));
+        valid_in.push_back("0");
+      }
+    }
+};
+
+//Generating smt stream
+void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched);
+void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir);
+lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr);
+
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
+vector<string> buffer_vectorization(vector<int> iis,
+        vector<string> buf_name_vec,
+        int dim_id, int fetch_width,
+        map<string, UBuffer> & buffers);
+
+//Vectorization API function on top of ubuffer class method
+vector<string> buffer_vectorization(vector<int> iis,
+        string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
+
+vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
+
+vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
 
 static inline
 std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
@@ -1442,60 +2177,7 @@ std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
 }
 
 
-static inline
-std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
-  out << "--- " << buf.name << endl;
-  out << "\t---- " << buf.get_in_ports().size() << " in ports" << endl;
-
-  //add a copy for compute_max_dd function
-  UBuffer tmp = buf;
-  for (auto inpt : buf.get_in_ports()) {
-    out << "\t\t" << inpt << endl;
-    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
-    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
-    out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
-    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
-    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
-    out << endl;
-  }
-
-  out << "\t---- " << buf.get_out_ports().size() << " out ports:" << endl;
-  for (auto inpt : buf.get_out_ports()) {
-    out << "\t\t" << inpt << endl;
-    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
-    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
-    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
-    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
-    //out << "\t\t\tlexmax events: " << str(buf.get_lexmax_events(inpt)) << endl;
-
-    out << endl;
-  }
-
-
-  out << "\t---- Input Bundles" << endl;
-  for (auto in_bundle : buf.get_in_bundles()) {
-    out << "\t\t" << in_bundle << endl;
-    auto ports = buf.port_bundles.at(in_bundle);
-    out << "\t\t---- Ports..." << endl;
-    for (auto p : ports) {
-      out << "\t\t\t" << p << endl;
-    }
-
-  }
-  out << "\t---- Output Bundles" << endl;
-  for (auto out_bundle : buf.get_out_bundles()) {
-    out << "\t\t" << out_bundle << endl;
-    auto ports = buf.port_bundles.at(out_bundle);
-    out << "\t\t---- Ports..." << endl;
-    for (auto p : ports) {
-      out << "\t\t\t" << p << endl;
-    }
-
-  }
-  return out;
-}
+std::ostream& operator<<(std::ostream& out, const UBuffer& buf);
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf);
 
@@ -1510,11 +2192,16 @@ int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::stri
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port);
 
 
+isl_union_map* global_schedule_from_buffers(const map<string, UBuffer> &buffers);
+isl_union_map* global_access_map_from_buffers(const map<string, UBuffer> &buffers);
+isl_union_set* global_domain_from_buffers(const map<string, UBuffer> &buffers);
+isl_union_set* retrive_domain_from_buffers(const map<string, UBuffer> &buffers);
+
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
-void generate_ram_bank(CodegenOptions& options,
-    std::ostream& out,
-    stack_bank& bank);
+//void generate_ram_bank(CodegenOptions& options,
+    //std::ostream& out,
+    //stack_bank& bank);
 
 void generate_bank(CodegenOptions& options,
     std::ostream& out,
@@ -1532,9 +2219,43 @@ vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
 #ifdef COREIR
+CoreIR::Module* generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
+
+CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
+
+CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, schedule_info& hwinfo);
+
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf);
+void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo);
+
+CoreIR::Instance* affine_controller_use_lake_tile(CoreIR::ModuleDef*, CoreIR::Context*, isl_set*, isl_aff*, string);
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
+
+map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf);
+
+bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf);
+bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf);
+
+bool inner_bank_offset_is_legal(isl_map* slot_func,
+    umap* op_writes,
+    umap* op_reads,
+    umap* sched);
+
+
+map<string, std::set<string> >
+get_unique_output_ports(UBuffer& buf);
+
+vector<string> generate_multilinear_address_components(const std::string& pt, bank& bnk, UBuffer& buf);
+
+maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const string& outpt,
+    umap* sched);
+
+
+maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo);
+vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
+
+

@@ -5,20 +5,648 @@
 #include "app.h"
 #include "prog_splitting_test.h"
 #include "codegen.h"
+#include "example_progs.h"
+#include "lake_target.h"
+#include "simple_example_progs.h"
 #include "prog.h"
+#include "ubuffer.h"
 
 #include <chrono>
 
-void compare(vector<string>& opt, vector<string>& naive) {
-  assert(opt.size() == naive.size());
-  for (size_t i = 0; i < opt.size(); i++) {
-    if (!(opt.at(i) == naive.at(i))) {
-      cout << "Error: Opt and naive disagree at " << i << ", opt = " << opt.at(i) << ", naive = " << naive.at(i) << endl;
-    }
-    assert(opt.at(i) == naive.at(i));
+#ifdef COREIR
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+#endif
+
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
+
+void blur_example();
+
+prog resnet_hc_multitile() {
+  prog prg;
+  prg.compute_unit_file = "resnet_compute.h";
+  prg.name = "resnet";
+
+// Stencil<uint16_t, 8, 30, 30> &input_copy_stencil = arg_0;
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+// Stencil<uint16_t, 8, 16, 3, 3> &kernel_copy_stencil = arg_1;
+  prg.add_input("kernel_copy_stencil");
+  prg.buffer_port_widths["kernel_copy_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_2;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming kernel_copy.stencil
+
+//consuming input_copy.stencil
+////producing hw_input.stencil
+  auto hw_input_s0_t = prg.add_loop("hw_input_s0_t", 0, 4);
+  auto hw_input_s0_y = hw_input_s0_t->add_loop("hw_input_s0_y", 0, 32);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 32);
+  auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 8);
+
+//store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
+  auto hcompute_hw_input_stencil = hw_input_s0_z->add_op("op_hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_t", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_t", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
+////producing hw_kernel.stencil
+  auto hw_kernel_s0_t = prg.add_loop("hw_kernel_s0_t", 0, 4);
+  auto hw_kernel_s0_y = hw_kernel_s0_t->add_loop("hw_kernel_s0_y", 0, 3);
+  auto hw_kernel_s0_x = hw_kernel_s0_y->add_loop("hw_kernel_s0_x", 0, 3);
+  auto hw_kernel_s0_w = hw_kernel_s0_x->add_loop("hw_kernel_s0_w", 0, 16);
+  auto hw_kernel_s0_z = hw_kernel_s0_w->add_loop("hw_kernel_s0_z", 0, 8);
+
+//store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
+  auto hcompute_hw_kernel_stencil = hw_kernel_s0_z->add_op("op_hcompute_hw_kernel_stencil");
+  hcompute_hw_kernel_stencil->add_function("hcompute_hw_kernel_stencil");
+  hcompute_hw_kernel_stencil->add_load("kernel_copy_stencil", "hw_kernel_s0_t", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
+  prg.buffer_port_widths["hw_kernel_stencil"] = 16;
+  hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_t", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
+////producing conv.stencil
+  auto conv_s0_t = prg.add_loop("conv_s0_t", 0, 4);
+  auto conv_s0_w = conv_s0_t->add_loop("conv_s0_w", 0, 16);
+  auto conv_s0_y = conv_s0_w->add_loop("conv_s0_y", 0, 28);
+  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 28);
+
+//store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = (uint16)0
+  auto hcompute_conv_stencil = conv_s0_x->add_op("op_hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_t", "conv_s0_y", "conv_s0_x", "conv_s0_w");
+
+//consuming hw_kernel.stencil
+
+//consuming hw_input.stencil
+  auto conv_s1_r_t = prg.add_loop("conv_s1_r_t", 0, 4);
+  auto conv_s1_r_y = conv_s1_r_t->add_loop("conv_s1_r_y", 0, 3);
+  auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
+  auto conv_s1_oc = conv_s1_r_x->add_loop("conv_s1_oc", 0, 4);
+  auto conv_s1_y = conv_s1_oc->add_loop("conv_s1_y", 0, 28);
+  auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 28);
+  auto conv_s1_ic = conv_s1_x->add_loop("conv_s1_ic", 0, 4);
+
+//store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  auto hcompute_conv_stencil_1 = conv_s1_ic->add_op("op_hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  for (int oc_unroll = 0; oc_unroll < 4; oc_unroll ++) {
+    hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_r_t", "conv_s1_y", "conv_s1_x", "conv_s1_oc*4+" +  to_string(oc_unroll));
+      for (int ic_unroll = 0; ic_unroll < 2; ic_unroll ++) {
+        if (oc_unroll == 0)
+          hcompute_conv_stencil_1->add_load(
+                   "hw_input_stencil", "conv_s1_r_t",
+                  "(conv_s1_r_y + conv_s1_y)",
+                  "(conv_s1_r_x + conv_s1_x)",
+                  to_string(ic_unroll) + "+conv_s1_ic*2");
+        hcompute_conv_stencil_1->add_load(
+                "hw_kernel_stencil", "conv_s1_r_t",
+                "(conv_s1_r_y)", "(conv_s1_r_x)",
+                to_string(oc_unroll) + "+conv_s1_oc*4",
+                to_string(ic_unroll) + "+conv_s1_ic*2");
+      }
+    hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_r_t", "conv_s1_y", "conv_s1_x", to_string(oc_unroll) + "+conv_s1_oc*4");
   }
-  assert(opt == naive);
+
+//consuming conv.stencil
+  auto hw_output_s0_t = prg.add_loop("hw_output_s0_t", 0, 4);
+  auto hw_output_s0_w = hw_output_s0_t->add_loop("hw_output_s0_w", 0, 16);
+  auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 28);
+  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 28);
+
+//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
+  auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_t", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_w");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_t", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_w");
+
+  return prg;
 }
+
+prog resnet_hc() {
+  prog prg;
+  prg.compute_unit_file = "resnet_compute.h";
+  prg.name = "resnet";
+
+// Stencil<uint16_t, 8, 30, 30> &input_copy_stencil = arg_0;
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+// Stencil<uint16_t, 8, 16, 3, 3> &kernel_copy_stencil = arg_1;
+  prg.add_input("kernel_copy_stencil");
+  prg.buffer_port_widths["kernel_copy_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_2;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming kernel_copy.stencil
+
+//consuming input_copy.stencil
+////producing hw_input.stencil
+  auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 32);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 32);
+  auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 8);
+
+//store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
+  auto hcompute_hw_input_stencil = hw_input_s0_z->add_op("op_hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_y", "hw_input_s0_x", "hw_input_s0_z");
+////producing hw_kernel.stencil
+  auto hw_kernel_s0_y = prg.add_loop("hw_kernel_s0_y", 0, 3);
+  auto hw_kernel_s0_x = hw_kernel_s0_y->add_loop("hw_kernel_s0_x", 0, 3);
+  auto hw_kernel_s0_w = hw_kernel_s0_x->add_loop("hw_kernel_s0_w", 0, 16);
+  auto hw_kernel_s0_z = hw_kernel_s0_w->add_loop("hw_kernel_s0_z", 0, 8);
+
+//store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
+  auto hcompute_hw_kernel_stencil = hw_kernel_s0_z->add_op("op_hcompute_hw_kernel_stencil");
+  hcompute_hw_kernel_stencil->add_function("hcompute_hw_kernel_stencil");
+  hcompute_hw_kernel_stencil->add_load("kernel_copy_stencil", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
+  prg.buffer_port_widths["hw_kernel_stencil"] = 16;
+  hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_y", "hw_kernel_s0_x", "hw_kernel_s0_w", "hw_kernel_s0_z");
+////producing conv.stencil
+  auto conv_s0_w = prg.add_loop("conv_s0_w", 0, 16);
+  auto conv_s0_y = conv_s0_w->add_loop("conv_s0_y", 0, 28);
+  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 28);
+
+//store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = (uint16)0
+  auto hcompute_conv_stencil = conv_s0_x->add_op("op_hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_y", "conv_s0_x", "conv_s0_w");
+
+//consuming hw_kernel.stencil
+
+//consuming hw_input.stencil
+  auto conv_s1_r_y = prg.add_loop("conv_s1_r_y", 0, 3);
+  auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
+  auto conv_s1_oc = conv_s1_r_x->add_loop("conv_s1_oc", 0, 4);
+  auto conv_s1_y = conv_s1_oc->add_loop("conv_s1_y", 0, 28);
+  auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 28);
+  auto conv_s1_ic = conv_s1_x->add_loop("conv_s1_ic", 0, 4);
+
+//store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  auto hcompute_conv_stencil_1 = conv_s1_ic->add_op("op_hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  for (int oc_unroll = 0; oc_unroll < 4; oc_unroll ++) {
+    hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_y", "conv_s1_x", "conv_s1_oc*4+" +  to_string(oc_unroll));
+      for (int ic_unroll = 0; ic_unroll < 2; ic_unroll ++) {
+        if (oc_unroll == 0)
+          hcompute_conv_stencil_1->add_load("hw_input_stencil",
+                  "(conv_s1_r_y + conv_s1_y)",
+                  "(conv_s1_r_x + conv_s1_x)",
+                  to_string(ic_unroll) + "+conv_s1_ic*2");
+        hcompute_conv_stencil_1->add_load("hw_kernel_stencil",
+                "(conv_s1_r_y)", "(conv_s1_r_x)",
+                to_string(oc_unroll) + "+conv_s1_oc*4",
+                to_string(ic_unroll) + "+conv_s1_ic*2");
+      }
+    hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_y", "conv_s1_x", to_string(oc_unroll) + "+conv_s1_oc*4");
+  }
+
+//consuming conv.stencil
+  auto hw_output_s0_w = prg.add_loop("hw_output_s0_w", 0, 16);
+  auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 28);
+  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 28);
+
+//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
+  auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_w");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_y_yi", "hw_output_s0_x_xi", "hw_output_s0_w");
+
+  return prg;
+}
+
+//prog resnet() {
+  //prog prg;
+  //prg.compute_unit_file = "resnet_compute.h";
+  //prg.name = "resnet";
+
+//// Stencil<uint16_t, 8, 30, 30> &input_copy_stencil = arg_0;
+  //prg.add_input("input_copy_stencil");
+  //prg.buffer_port_widths["input_copy_stencil"] = 16;
+//// Stencil<uint16_t, 8, 16, 3, 3> &kernel_copy_stencil = arg_1;
+  //prg.add_input("kernel_copy_stencil");
+  //prg.buffer_port_widths["kernel_copy_stencil"] = 16;
+//// Stencil<void *> &hw_output_stencil = arg_2;
+  //prg.add_output("hw_output_stencil");
+  //prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+////consuming kernel_copy.stencil
+
+////consuming input_copy.stencil
+//////producing hw_input.stencil
+  //auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 30);
+  //auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 30);
+  //auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 8);
+
+////store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
+  //auto hcompute_hw_input_stencil = hw_input_s0_z->add_op("op_hcompute_hw_input_stencil");
+  //hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  //hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_z", "hw_input_s0_x", "hw_input_s0_y");
+  //prg.buffer_port_widths["hw_input_stencil"] = 16;
+  //hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_z", "hw_input_s0_x", "hw_input_s0_y");
+//////producing hw_kernel.stencil
+  //auto hw_kernel_s0_y = prg.add_loop("hw_kernel_s0_y", 0, 3);
+  //auto hw_kernel_s0_x = hw_kernel_s0_y->add_loop("hw_kernel_s0_x", 0, 3);
+  //auto hw_kernel_s0_w = hw_kernel_s0_x->add_loop("hw_kernel_s0_w", 0, 16);
+  //auto hw_kernel_s0_z = hw_kernel_s0_w->add_loop("hw_kernel_s0_z", 0, 8);
+
+////store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
+  //auto hcompute_hw_kernel_stencil = hw_kernel_s0_z->add_op("op_hcompute_hw_kernel_stencil");
+  //hcompute_hw_kernel_stencil->add_function("hcompute_hw_kernel_stencil");
+  //hcompute_hw_kernel_stencil->add_load("kernel_copy_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
+  //prg.buffer_port_widths["hw_kernel_stencil"] = 16;
+  //hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
+//////producing conv.stencil
+  //auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 28);
+  //auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 28);
+  //auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 16);
+
+////store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = (uint16)0
+  //auto hcompute_conv_stencil = conv_s0_w->add_op("op_hcompute_conv_stencil");
+  //hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  //prg.buffer_port_widths["conv_stencil"] = 16;
+  //hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y", "conv_s0_w");
+
+////consuming hw_kernel.stencil
+
+////consuming hw_input.stencil
+  //auto conv_s1_r_y = prg.add_loop("conv_s1_r_y", 0, 3);
+  //auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
+  //auto conv_s1_y = conv_s1_r_x->add_loop("conv_s1_y", 0, 28);
+  //auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 28);
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 0) = ((hw_kernel.stencil(0, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 0) + (hw_kernel.stencil(7, 0, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_1 = conv_s1_x->add_op("op_hcompute_conv_stencil_1");
+  //hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  //hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "0");
+  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "0", "0", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "1", "0", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "2", "0", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "3", "0", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "4", "0", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "5", "0", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "6", "0", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "7", "0", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "0");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 1) = ((hw_kernel.stencil(0, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 1) + (hw_kernel.stencil(7, 1, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_2 = conv_s1_x->add_op("op_hcompute_conv_stencil_2");
+  //hcompute_conv_stencil_2->add_function("hcompute_conv_stencil_2");
+  //hcompute_conv_stencil_2->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "1");
+  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_2->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "1", "1", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "2", "1", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "3", "1", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "4", "1", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "5", "1", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "6", "1", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "7", "1", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "0", "1", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_2->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "1");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 2) = ((hw_kernel.stencil(0, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 2) + (hw_kernel.stencil(7, 2, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_3 = conv_s1_x->add_op("op_hcompute_conv_stencil_3");
+  //hcompute_conv_stencil_3->add_function("hcompute_conv_stencil_3");
+  //hcompute_conv_stencil_3->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "2");
+  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "0", "2", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "1", "2", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "2", "2", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "3", "2", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "4", "2", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "5", "2", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "6", "2", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "7", "2", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_3->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "2");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 3) = ((hw_kernel.stencil(0, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 3) + (hw_kernel.stencil(7, 3, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_4 = conv_s1_x->add_op("op_hcompute_conv_stencil_4");
+  //hcompute_conv_stencil_4->add_function("hcompute_conv_stencil_4");
+  //hcompute_conv_stencil_4->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "3");
+  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_4->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "0", "3", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "1", "3", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "2", "3", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "3", "3", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "4", "3", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "5", "3", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "6", "3", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "7", "3", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_4->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "3");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 4) = ((hw_kernel.stencil(0, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 4) + (hw_kernel.stencil(7, 4, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_5 = conv_s1_x->add_op("op_hcompute_conv_stencil_5");
+  //hcompute_conv_stencil_5->add_function("hcompute_conv_stencil_5");
+  //hcompute_conv_stencil_5->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "4");
+  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_5->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "0", "4", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "1", "4", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "2", "4", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "3", "4", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "4", "4", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "5", "4", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "6", "4", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "7", "4", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_5->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "4");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 5) = ((hw_kernel.stencil(0, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 5) + (hw_kernel.stencil(7, 5, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_6 = conv_s1_x->add_op("op_hcompute_conv_stencil_6");
+  //hcompute_conv_stencil_6->add_function("hcompute_conv_stencil_6");
+  //hcompute_conv_stencil_6->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "5");
+  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_6->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "0", "5", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "1", "5", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "2", "5", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "3", "5", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "4", "5", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "5", "5", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "6", "5", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "7", "5", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_6->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "5");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 6) = ((hw_kernel.stencil(0, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 6) + (hw_kernel.stencil(7, 6, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_7 = conv_s1_x->add_op("op_hcompute_conv_stencil_7");
+  //hcompute_conv_stencil_7->add_function("hcompute_conv_stencil_7");
+  //hcompute_conv_stencil_7->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "6");
+  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_7->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "0", "6", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "1", "6", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "2", "6", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "3", "6", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "4", "6", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "5", "6", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "6", "6", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "7", "6", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_7->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "6");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 7) = ((hw_kernel.stencil(0, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 7) + (hw_kernel.stencil(7, 7, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_8 = conv_s1_x->add_op("op_hcompute_conv_stencil_8");
+  //hcompute_conv_stencil_8->add_function("hcompute_conv_stencil_8");
+  //hcompute_conv_stencil_8->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "7");
+  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_8->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "0", "7", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "1", "7", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "2", "7", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "3", "7", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "4", "7", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "5", "7", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "6", "7", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "7", "7", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_8->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "7");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 8) = ((hw_kernel.stencil(0, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 8) + (hw_kernel.stencil(7, 8, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_9 = conv_s1_x->add_op("op_hcompute_conv_stencil_9");
+  //hcompute_conv_stencil_9->add_function("hcompute_conv_stencil_9");
+  //hcompute_conv_stencil_9->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "8");
+  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_9->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "0", "8", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "1", "8", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "2", "8", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "3", "8", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "4", "8", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "5", "8", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "6", "8", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "7", "8", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_9->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "8");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 9) = ((hw_kernel.stencil(0, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 9) + (hw_kernel.stencil(7, 9, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_10 = conv_s1_x->add_op("op_hcompute_conv_stencil_10");
+  //hcompute_conv_stencil_10->add_function("hcompute_conv_stencil_10");
+  //hcompute_conv_stencil_10->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "9");
+  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_10->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "0", "9", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "1", "9", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "2", "9", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "3", "9", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "4", "9", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "5", "9", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "6", "9", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_10->add_load("hw_kernel_stencil", "7", "9", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_10->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "9");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 10) = ((hw_kernel.stencil(0, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 10) + (hw_kernel.stencil(7, 10, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_11 = conv_s1_x->add_op("op_hcompute_conv_stencil_11");
+  //hcompute_conv_stencil_11->add_function("hcompute_conv_stencil_11");
+  //hcompute_conv_stencil_11->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "10");
+  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_11->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "0", "10", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "1", "10", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "2", "10", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "3", "10", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "4", "10", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "5", "10", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "6", "10", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_11->add_load("hw_kernel_stencil", "7", "10", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_11->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "10");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 11) = ((hw_kernel.stencil(0, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 11) + (hw_kernel.stencil(7, 11, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_12 = conv_s1_x->add_op("op_hcompute_conv_stencil_12");
+  //hcompute_conv_stencil_12->add_function("hcompute_conv_stencil_12");
+  //hcompute_conv_stencil_12->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "11");
+  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_12->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "0", "11", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "1", "11", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "2", "11", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "3", "11", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "4", "11", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "5", "11", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "6", "11", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_12->add_load("hw_kernel_stencil", "7", "11", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_12->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "11");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 12) = ((hw_kernel.stencil(0, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 12) + (hw_kernel.stencil(7, 12, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_13 = conv_s1_x->add_op("op_hcompute_conv_stencil_13");
+  //hcompute_conv_stencil_13->add_function("hcompute_conv_stencil_13");
+  //hcompute_conv_stencil_13->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "12");
+  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_13->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "3", "12", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "4", "12", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "5", "12", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "6", "12", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "7", "12", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "0", "12", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "1", "12", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_13->add_load("hw_kernel_stencil", "2", "12", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_13->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "12");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 13) = ((hw_kernel.stencil(0, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 13) + (hw_kernel.stencil(7, 13, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_14 = conv_s1_x->add_op("op_hcompute_conv_stencil_14");
+  //hcompute_conv_stencil_14->add_function("hcompute_conv_stencil_14");
+  //hcompute_conv_stencil_14->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "13");
+  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_14->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "0", "13", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "1", "13", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "2", "13", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "3", "13", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "4", "13", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "5", "13", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "6", "13", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_14->add_load("hw_kernel_stencil", "7", "13", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_14->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "13");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 14) = ((hw_kernel.stencil(0, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 14) + (hw_kernel.stencil(7, 14, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_15 = conv_s1_x->add_op("op_hcompute_conv_stencil_15");
+  //hcompute_conv_stencil_15->add_function("hcompute_conv_stencil_15");
+  //hcompute_conv_stencil_15->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "14");
+  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_15->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "0", "14", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "1", "14", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "2", "14", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "3", "14", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "4", "14", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "5", "14", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "6", "14", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_15->add_load("hw_kernel_stencil", "7", "14", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_15->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "14");
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, 15) = ((hw_kernel.stencil(0, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(0, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(1, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(1, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(2, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(2, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(3, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(3, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(4, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(4, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(5, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(5, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + ((hw_kernel.stencil(6, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(6, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y))) + (conv.stencil(conv.s1.x, conv.s1.y, 15) + (hw_kernel.stencil(7, 15, conv.s1.r$x, conv.s1.r$y)*hw_input.stencil(7, (conv.s1.r$x + conv.s1.x), (conv.s1.r$y + conv.s1.y)))))))))))
+  //auto hcompute_conv_stencil_16 = conv_s1_x->add_op("op_hcompute_conv_stencil_16");
+  //hcompute_conv_stencil_16->add_function("hcompute_conv_stencil_16");
+  //hcompute_conv_stencil_16->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "15");
+  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "0", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "1", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "2", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "3", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "4", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "5", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "6", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_16->add_load("hw_input_stencil", "7", "(conv_s1_r_x + conv_s1_x)", "(conv_s1_r_y + conv_s1_y)");
+  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "0", "15", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "1", "15", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "2", "15", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "3", "15", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "4", "15", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "5", "15", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "6", "15", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_16->add_load("hw_kernel_stencil", "7", "15", "conv_s1_r_x", "conv_s1_r_y");
+  //hcompute_conv_stencil_16->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "15");
+
+////consuming conv.stencil
+  //auto hw_output_s0_w = prg.add_loop("hw_output_s0_w", 0, 16);
+  //auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 28);
+  //auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 28);
+
+////store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
+  //auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
+  //hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  //hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_w");
+  //hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_w");
+
+  //return prg;
+//}
 
 prog mini_conv_halide_fixed() {
   prog prg;
@@ -538,63 +1166,165 @@ void synth_lb_test() {
   isl_ctx_free(buf.ctx);
 }
 
-void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
-    /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
-     * generate the new domain and access map and also add two other buffer on
-     * both input and output side
-     * */
-    //TODO: add SRAM, do not overwrite the original sram
-    UBuffer agg, tb, sram;
-    for(auto it : buffers) {
-        if (it.first == vec_buf_name) {
-            auto target_buffer = it.second;
-            target_buffer.vectorization(dim_id, fetch_width, agg, sram, tb);
-            break;
-        }
-        //else {
-        //    //add extra dimension in the schedule vector
-        //    auto buffer = it.second;
-        //    for(auto it_sched : buffer.schedule) {
-        //        cout << "pad one more dim" << endl;
-        //        umap* sched = it_sched.second;
-        //        string key = it_sched.first;
-        //        buffer.schedule[key] = pad_one_more_dim_to_sched_map(buffer.ctx, sched, "0");
-        //    }
+
+/* Main driver function for vectorization, loop through all the ubuffer
+ * Find the one with depth large than shift register,
+ * vectorize it and return the new ubuffer,
+ * Also need to return the input_vec statement for sheduler to remove proximity
+ * and a umap to add extra raw dependency for those added shift registers
+ */
+map<string, UBuffer> vectorization_from_buf_map(
+        map<string, UBuffer> & buffers_opt,
+        vector<string> & input_vec_stmt,
+        umap* & extra_raw_deps) {
+
+  vector<string> vec_cand;
+  map<string, UBuffer> ubuf_pool;
+
+  CodegenOptions opt;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+
+  cout << "post processing buf" << endl;
+  for (auto it: buffers_opt) {
+    opt.conditional_merge = true;
+    auto post_proc_buffers = it.second.generate_ubuffer(opt);
+    opt.conditional_merge = false;
+    auto rewrite_buffer = it.second.generate_ubuffer(opt);
+    for (auto it: post_proc_buffers) {
+      cout << "post: " << it.first << endl;
+      vec_cand.push_back(it.first);
+      extra_raw_deps = unn(extra_raw_deps, it.second.global_sv_map());
+    }
+    for (auto it: rewrite_buffer) {
+      cout << "rewrite: " << it.first << endl;
+      ubuf_pool.insert(it);
+    }
+  }
+
+  input_vec_stmt = buffer_vectorization(vec_cand, 1, 4, ubuf_pool);
+
+  return ubuf_pool;
+}
+
+map<string, UBuffer> vectorization_from_buf_map(
+        map<string, UBuffer> & buffers_opt,
+        vector<string> & input_vec_stmt,
+        vector<int> & iis,
+        umap* & extra_raw_deps) {
+
+  vector<string> vec_cand;
+  map<string, UBuffer> ubuf_pool;
+
+  CodegenOptions opt;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+
+  cout << "post processing buf" << endl;
+  for (auto it: buffers_opt) {
+    opt.conditional_merge = true;
+    auto post_proc_buffers = it.second.generate_ubuffer(opt);
+    opt.conditional_merge = false;
+    auto rewrite_buffer = it.second.generate_ubuffer(opt);
+    for (auto it: post_proc_buffers) {
+      cout << "post: " << it.first << endl;
+      vec_cand.push_back(it.first);
+      extra_raw_deps = unn(extra_raw_deps, it.second.global_sv_map());
+    }
+    for (auto it: rewrite_buffer) {
+      cout << "rewrite: " << it.first << endl;
+      ubuf_pool.insert(it);
+    }
+  }
+
+  input_vec_stmt = buffer_vectorization(iis, vec_cand, 1, 4, ubuf_pool);
+  cout << "\nPrint all the buffers\n" << endl;
+
+  //linearize schedule for all the non-vectorized buffers
+  for (auto & it: ubuf_pool) {
+    auto & buf = it.second;
+    if (!buf.has_hw_schedule()) {
+      buf.linear_buf_schedule(iis);
+    }
+    cout << it.second << endl;
+  }
+
+  return ubuf_pool;
+}
+////This method does not work.
+//isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
+    //vector<isl_map*> deps_map = get_maps(deps);
+    //umap* ret = rdmap(ctx, "{}");
+    //for ( auto m : deps_map ) {
+        //auto dname = domain_name(m);
+        //auto rname = range_name(m);
+        //bool is_sram_in = dname.find("output_vec") != std::string::npos;
+        //bool is_sram_out = rname.find("output") != std::string::npos;
+        //if (is_sram_in && is_sram_out) {
+            //ret = unn(ret, to_umap(inv(m)));
         //}
-    }
-    buffers.erase(vec_buf_name);
-    buffers[agg.name] = agg;
-    buffers[sram.name] = sram;
-    buffers[tb.name] = tb;
-}
+        //else {
+            //cout << "union: " << str(m) << endl;
+            //ret = unn(ret, to_umap(m));
+        //}
+    //}
+    //return ret;
+//}
 
 
-//This method does not work.
-isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
-    vector<isl_map*> deps_map = get_maps(deps);
-    umap* ret = rdmap(ctx, "{}");
-    for ( auto m : deps_map ) {
-        auto dname = domain_name(m);
-        auto rname = range_name(m);
-        bool is_sram_in = dname.find("output_vec") != std::string::npos;
-        bool is_sram_out = rname.find("output") != std::string::npos;
-        if (is_sram_in && is_sram_out) {
-            ret = unn(ret, to_umap(inv(m)));
-        }
-        else {
-            cout << "union: " << str(m) << endl;
-            ret = unn(ret, to_umap(m));
-        }
-    }
-    return ret;
-}
 
-isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
+isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
     isl_ctx* ctx = pick(buffers).second.ctx;
     isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
     isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
     isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
     isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+      string buf_name = it.first;
+      auto buf = it.second;
+      global_sched = unn(buf.global_schedule(), global_sched);
+      global_p_map = unn(buf.producer_map(), global_p_map);
+      global_c_map = unn(buf.consumer_map(), global_c_map);
+      domain = unn(buf.global_domain(), domain);
+    }
+    global_c_map = flatten_umap_domain_with_dim_from_outer(global_c_map, 2);
+    global_p_map = flatten_umap_domain_with_dim_from_outer(global_p_map, 2);
+    global_sched = flatten_umap_domain_with_dim_from_outer(global_sched, 2);
+    domain = ::domain(global_sched);
+    cout << "Global Schedule: " << str(global_sched) << endl;
+    cout << "Global Domain: " << str(domain) << endl;
+    cout << "Producer Map: " << str(global_p_map) << endl;
+    cout << "Consumer Map: " << str(global_c_map) << endl;
+    auto order_deps = get_rel_order(ctx, global_sched);
+    cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    extra = flatten_umap_domain_with_dim_from_outer(extra, 2);
+    extra = inv(flatten_umap_domain_with_dim_from_outer(inv(extra), 2));
+    raw_deps = unn(extra, raw_deps);
+    auto validity = unn(order_deps, raw_deps);
+    validity = unn(validity, extra);
+    auto proximity = cpy(raw_deps);
+
+    for (string remove_stmt: remove_deps){
+      proximity = remove_dep_domain_name(proximity, remove_stmt);
+    }
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
+
+isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
+    //auto extra = rdmap(ctx, "{ conv_2[0, i0, i1] -> conv[0, i0, i1-2] : 0<=i0<=13 and 2<=i1<=15 }");
     for (auto it : buffers) {
         string buf_name = it.first;
         auto buf = it.second;
@@ -609,11 +1339,15 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
     auto order_deps = get_rel_order(ctx, global_sched);
     cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    raw_deps = unn(raw_deps, extra);
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
 
     //Try to remove proximity between_input vec to output_vec
     //proximity = filter_inner_sram_deps(ctx, proximity);
+    for (string remove_stmt: remove_deps){
+        proximity = remove_dep_domain_name(proximity, remove_stmt);
+    }
 
     cout << "Raw_deps: " << str(raw_deps) << endl;
     cout << "proximity: " << str(proximity) << endl;
@@ -622,6 +1356,12 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
     auto sched_map = its(isl_schedule_get_map(sched), domain);
     return sched_map;
 
+}
+
+isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = isl_ctx_alloc();
+    auto um = isl_union_map_read_from_str(ctx, "{}");
+    return optimized_schedule_from_buffers(buffers, {}, um);
 }
 
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, isl_union_map* global_sched, bool has_global_constraint) {
@@ -659,7 +1399,8 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
 
 }
 
-isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer> &buffers, bool second_round) {
+
+vector<std::string> topological_sort_from_buffer(const map<string, UBuffer> &buffers, vector<string> remove_deps = {}) {
     //map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
     isl_ctx* ctx = pick(buffers).second.ctx;
     isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
@@ -678,15 +1419,97 @@ isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer
     global_sched = flatten_umap_domain(ctx, global_sched);
     isl_union_set* domain = ::domain(global_sched);
 
-    cout << "Global Schedule: " << str(global_sched) << endl;
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    auto validity = unn(order_deps, raw_deps);
+      for (auto name : remove_deps) {
+        validity = remove_dep_domain_name(validity, name);
+      }
+    return topological_sort(get_sets(domain), get_maps(validity));
+}
+
+isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer> &buffers, bool second_round, vector<string> domain_name_list) {
+    //map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        global_sched = unn(its(buf.global_schedule(), buf.global_domain()), global_sched);
+    }
+    cout << "\tschedule: " << str(coalesce(global_sched)) << endl;
+    //get all map domain flatten
+    global_c_map = flatten_umap_domain(ctx, global_c_map);
+    global_p_map = flatten_umap_domain(ctx, global_p_map);
+    global_sched = flatten_umap_domain(ctx, global_sched);
+    isl_union_set* domain = ::domain(global_sched);
+
     auto order_deps = get_rel_order(ctx, global_sched);
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
 
     //Try to remove proximity between_input vec to output_vec
-    //FIXME: using the name is hacky
+    //FIXME: the name is hacky
+    if (second_round) {
+      for (auto name : domain_name_list) {
+        proximity = remove_dep_domain_name(proximity, name);
+      }
+    }
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
+
+isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer> &buffers, bool second_round) {
+    //map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        global_sched = unn(its(buf.global_schedule(), buf.global_domain()), global_sched);
+        cout << "dom buf: " << it.first << "\n " << str(buf.global_domain()) << endl;
+        cout << "sched  buf: " << it.first << "\n " << str(buf.global_schedule()) << endl;
+        cout << "GLB sched after buf: " << it.first << "\n " << str(global_sched) << endl;
+    }
+    cout << "\tschedule: " << str(coalesce(global_sched)) << endl;
+    cout << "Producer Map: " << str(global_p_map) << endl;
+    cout << "Consumer Map: " << str(global_c_map) << endl;
+    //get all map domain flatten
+    global_c_map = flatten_umap_domain(ctx, global_c_map);
+    global_p_map = flatten_umap_domain(ctx, global_p_map);
+    global_sched = flatten_umap_domain(ctx, global_sched);
+    isl_union_set* domain = ::domain(global_sched);
+
+    auto identity_map = isl_union_set_identity(cpy(domain));
+
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    auto validity = unn(order_deps, raw_deps);
+
+    cout << "\tits identity with validity: " << str(its(validity, identity_map)) << endl;
+    //assert(false);
+
+    auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    //FIXME: the name is hacky
     if (second_round)
+        //proximity = remove_dep_domain_name(proximity, "op_hcompute_hw_input_stencil_vec");
         proximity = remove_dep_domain_name(proximity, "input_vec");
     //proximity = filter_inner_sram_deps(ctx, proximity);
 
@@ -697,6 +1520,148 @@ isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer
     auto sched_map = its(isl_schedule_get_map(sched), domain);
     return sched_map;
 
+}
+
+isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const map<string, UBuffer> &buffers, vector<string> rem_deps, umap* extra) {
+
+    isl_ctx* ctx = pick(buffers).second.ctx;
+
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        global_sched = unn(its(buf.global_schedule(), buf.global_domain()), global_sched);
+    }
+    cout << "\tschedule: " << str(coalesce(global_sched)) << endl;
+    //get all map domain flatten
+    global_c_map = flatten_umap_domain(ctx, global_c_map);
+    global_p_map = flatten_umap_domain(ctx, global_p_map);
+    global_sched = flatten_umap_domain(ctx, global_sched);
+    isl_union_set* domain = ::domain(global_sched);
+    //extra = flatten_umap_domain(ctx, extra);
+    //extra = flatten_umap_domain(ctx, inv(extra));
+
+    //auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    //auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_conv_stencil[root=0, 12543]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    raw_deps = unn(raw_deps, extra);
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    //FIXME: the name is hacky
+    for (auto dep: rem_deps) {
+      proximity = remove_dep_domain_name(proximity, dep);
+    }
+
+    //proximity = filter_inner_sram_deps(ctx, proximity);
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
+
+isl_union_map* optimized_schedule_from_buffers_flatten_extra_with_validity(const map<string, UBuffer> &buffers, bool second_round, vector<string> rem_deps) {
+    //map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
+
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    //auto extra = rdmap(ctx, "{ conv[0, i0, i1] -> conv_2[0, i0, i1+2] : 0<=i0<=13 and 0<=i1<=13 }");
+    //extra = unn(extra, rdmap(ctx, "{ conv2[0, i0, 15] -> conv[0, i0+1, 0] : 0<=i0<=12 }"));
+
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        global_sched = unn(its(buf.global_schedule(), buf.global_domain()), global_sched);
+    }
+    cout << "\tschedule: " << str(coalesce(global_sched)) << endl;
+    //get all map domain flatten
+    global_c_map = flatten_umap_domain(ctx, global_c_map);
+    global_p_map = flatten_umap_domain(ctx, global_p_map);
+    global_sched = flatten_umap_domain(ctx, global_sched);
+    isl_union_set* domain = ::domain(global_sched);
+    //extra = flatten_umap_domain(ctx, extra);
+    //extra = flatten_umap_domain(ctx, inv(extra));
+
+    //auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    auto extra = isl_union_map_read_from_str(ctx,"{op_hcompute_conv_stencil[root=0, 12543]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    raw_deps = unn(raw_deps, extra);
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    //FIXME: the name is hacky
+    if (second_round) {
+        for (auto dep: rem_deps) {
+            proximity = remove_dep_domain_name(proximity, dep);
+        }
+    }
+    //proximity = filter_inner_sram_deps(ctx, proximity);
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
+
+isl_union_map* optimized_schedule_from_buffers_feautrier(const map<string, UBuffer> &buffers, bool second_round) {
+    //map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        global_sched = unn(its(buf.global_schedule(), buf.global_domain()), global_sched);
+    }
+    //get all map domain flatten
+    //global_c_map = flatten_umap_domain(ctx, global_c_map);
+    //global_p_map = flatten_umap_domain(ctx, global_p_map);
+    //global_sched = flatten_umap_domain(ctx, global_sched);
+    isl_union_set* domain = ::domain(global_sched);
+
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    //FIXME: using the name is hacky
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    auto c = ::ctx(domain);
+    //int val = isl_options_get_schedule_whole_component(c);
+    int val = isl_options_get_schedule_algorithm(c);
+    cout << "\n\n\n\n\n get options: " << val << endl;
+    //isl_options_set_schedule_whole_component(c, 0);
+    //isl_options_set_schedule_serialize_sccs(c, 1);
+    isl_options_set_schedule_algorithm(c, 1);
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
 }
 
 void permute_test() {
@@ -1203,7 +2168,7 @@ void flatten_sched_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  buffers_opt.at("buf").generate_banks_and_merge(opt);
   cout << buffers_opt.at("buf") << endl;
   auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   for (auto buf : rewrite_buf) {
@@ -1221,6 +2186,8 @@ void flatten_sched_test() {
   cout << "Flatten-dim schedule:\n" << codegen_c(new_opt_sched) << endl;
   cout << str(new_opt_sched) << endl;
 }
+
+
 
 void emit_top_address_stream(string fname, TileConstraints lake_mem_tile, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
@@ -1294,56 +2261,34 @@ void emit_sram_address_stream(string fname, vector<int> read_cycle, vector<int> 
   int in_width = pick(write_addr).size();
   int out_width = pick(read_addr).size();
   auto addr_out = vector<int>(out_width, 0);
-
-  auto addr_out_cache = vector<int>(out_width, 0);
-  bool use_cache = false, delay_cycle = false;
   while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
     bool wen = false, cen =false, valid = false;
     auto addr_in = vector<int>(in_width, 0);
+    if (rd_itr < read_cycle.size()) {
+      if (cen_itr < read_cycle.size())
+        if (read_cycle.at(cen_itr) == cycle + 1) {
+          cen = true;
+          cen_itr ++;
+      }
+      if (read_cycle.at(rd_itr) == cycle) {
+        valid = true;
+        addr_out = read_addr.at(rd_itr);
+
+        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
+        rd_itr ++;
+      }
+    }
     if (wr_itr < write_cycle.size()) {
       if (write_cycle.at(wr_itr) == cycle) {
         wen = true;
         cen = true;
         addr_in = write_addr.at(wr_itr);
-        //addr_out = vector<int>(out_width, 0);
+        addr_out = vector<int>(out_width, 0);
         //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
         //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
         //out << cycle << tab(1) << "wr"  << endl;
         wr_itr ++;
-      }
-    }
-    if (rd_itr < read_cycle.size()) {
-      if (cen_itr < read_cycle.size())
-        if (read_cycle.at(cen_itr) == cycle-1) {
-          cen = true;
-          cen_itr ++;
-      }
-      if (read_cycle.at(rd_itr) == cycle-2) {
-        if (wen) {
-          addr_out = read_addr.at(rd_itr);
-          valid = true;
-          addr_out_cache = read_addr.at(rd_itr);
-          use_cache = true;
-          delay_cycle = true;
-        }
-        else if(delay_cycle) {
-          addr_out = addr_out_cache;
-          addr_out_cache = read_addr.at(rd_itr);
-          delay_cycle = false;
-          cen = true;
-        } else {
-          valid = true;
-          addr_out = read_addr.at(rd_itr);
-          addr_out_cache = addr_out;
-        }
-
-        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
-        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
-        rd_itr ++;
-      } else if (use_cache) {
-        use_cache = false;
-        addr_out = addr_out_cache;
-        valid = true;
       }
     }
 
@@ -1353,7 +2298,7 @@ void emit_sram_address_stream(string fname, vector<int> read_cycle, vector<int> 
   out.close();
 }
 
-map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sched) {
+map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sched, bool flatten=true) {
   map<string, umap*> op2sched;
   //get a map from op to schedule
   for (auto & buf : buffers_opt) {
@@ -1364,8 +2309,10 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
           auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
           cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
           buffer.schedule.at(pt) = pt_sched;
-          auto origin_access_map = buffer.access_map.at(pt);
-          buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          if (flatten) {
+            auto origin_access_map = buffer.access_map.at(pt);
+            buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          }
           if(op2sched.count(op_name) == 0) {
               op2sched[op_name] = pt_sched;
           }
@@ -1376,9 +2323,11 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
           auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
           cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
           buffer.schedule.at(pt) = pt_sched;
-          //flatten_access map
-          auto origin_access_map = buffer.access_map.at(pt);
-          buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          if (flatten) {
+            //flatten_access map
+            auto origin_access_map = buffer.access_map.at(pt);
+            buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          }
           if(op2sched.count(op_name) == 0) {
               op2sched[op_name] = pt_sched;
           }
@@ -1387,6 +2336,7 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
   return op2sched;
 
 }
+
 
 void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap* opt_sched, HWconstraints sram) {
 
@@ -1514,6 +2464,7 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
   }
 }
 
+
 void find_high_bandwidth_non_const_rd_reads(prog& prg) {
   cout << "Ops..." << endl;
   map<string, vector<op*> > high_bw_buffers;
@@ -1640,12 +2591,14 @@ std::set<string> buffers_referenced(op* p) {
   assert(!p->is_loop);
 
   std::set<string> bufs;
-  for (auto b : p->produce_locs) {
-    bufs.insert(b.first);
+  //for (auto b : p->produce_locs) {
+  for (auto b : p->buffers_written()) {
+    bufs.insert(b);
   }
 
-  for (auto b : p->consume_locs_pair) {
-    bufs.insert(b.first);
+  //for (auto b : p->consume_locs_pair) {
+  for (auto b : p->buffers_read()) {
+    bufs.insert(b);
   }
 
   return bufs;
@@ -1680,7 +2633,7 @@ void reaccess_no_hierarchy_rolled_test() {
 
   auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
   auto init_out = q->add_op("init_out");
-  init_out->add_function("zero");
+  init_out->add_function("set_zero_16");
   init_out->add_store("out", "qi, qo, ao");
 
   auto qw = q->add_loop("wy", 0, 3);
@@ -1762,7 +2715,7 @@ void reaccess_no_hierarchy_rolled_test() {
 
   cout << "After loop insertion" << endl;
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
@@ -1840,10 +2793,17 @@ void reaccess_no_hierarchy_test() {
 
   cout << "After loop insertion" << endl;
   prg.pretty_print();
-  generate_optimized_code(prg);
+  //generate_optimized_code(prg);
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  //options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  generate_optimized_code(options, prg);
+
   generate_regression_testbench(prg);
   vector<string> optimized_res = run_regression_tb(prg);
   assert(optimized_res == unoptimized_res);
+  //assert(false);
 }
 
 void reaccess_test() {
@@ -1890,14 +2850,16 @@ void reaccess_test() {
   int max_inpt = 2;
   int max_outpt = 2;
   for (auto& b : bufs) {
-    b.second.generate_bank_and_merge(opt);
+    if (b.second.get_in_ports().size() > 0) {
+      b.second.generate_banks_and_merge(opt);
 
-    //Assign an configuration file,
-    json config;
-    config["name"][0] = "TOP_address.csv";
-    b.second.set_config(config);
+      //Assign an configuration file,
+      json config;
+      config["name"][0] = "TOP_address.csv";
+      b.second.set_config(config);
 
-    b.second.port_group2bank(max_inpt, max_outpt);
+      b.second.port_group2bank(max_inpt, max_outpt);
+    }
   }
   generate_coreir(opt, bufs, prg, schedmap);
 #endif
@@ -1938,8 +2900,8 @@ void conv45_test() {
   prg.add_input("in");
   prg.add_output("out");
   //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
@@ -1964,7 +2926,7 @@ void conv45_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  buffers_opt.at("buf").generate_banks_and_merge(opt);
   cout << buffers_opt.at("buf") << endl;
   buffers_opt.at("buf").port_group2bank(2, 2);
   cout << buffers_opt.at("buf") << endl;
@@ -1978,7 +2940,7 @@ void conv45_test() {
   json config_reg_map;
   config_reg_map["name"][0] = "TOP_address.csv";
   buffers_opt.at("buf").set_config(config_reg_map);
-  generate_coreir(opt, context, buffers_opt.at("buf"));
+  auto def = generate_coreir(opt, context, buffers_opt.at("buf"));
 
   if(!saveToFile(context->getNamespace("global"), "conv45_ubuffer.json")) {
     cout << "Could not save ubuffer coreir!" << endl;
@@ -2012,16 +2974,119 @@ void conv45_test() {
   }*/
 }
 
+prog cnn_conv_layer() {
+
+  prog prg;
+  /*
+  string read_string = "{conv_read[root, i] -> [i+2]: 0<=i<=9 }";
+  string write_string = "{conv_write[root, j] -> [j]: 0<=j<=11}";
+  isl_map* read_sched= isl_map_read_from_str(prg.ctx, read_string.c_str());
+  isl_map* write_sched= isl_map_read_from_str(prg.ctx, write_string.c_str());
+  auto before_acc = lex_gt(read_sched, write_sched);
+  cout <<"\tlexlt result: " << str(before_acc) << endl;
+  */
+
+  prg.compute_unit_file = "mobilenet_compute.h";
+  prg.name = "cnn_conv_layer";
+  prg.add_input("ifmap");
+  //prg.add_input("weight");
+  prg.add_output("ofmap");
+  prg.buffer_port_widths["ifmap"] = 32;
+  prg.buffer_port_widths["ifbuf"] = 32;
+  prg.buffer_port_widths["ofmap"] = 32;
+  //prg.buffer_port_widths["weight"] = 32;
+  int unroll_pi = 4, unroll_po = 1;
+
+  {
+    auto y = prg.add_loop("y", 0, 16);
+    auto x = y->add_loop("x", 0, 16);
+    auto ich = x->add_loop("ich", 0, 32 / unroll_pi);
+    auto write = ich->add_op("dma_if");
+    for (int i = 0; i < unroll_pi; i ++) {
+        string channel = "ich*" + to_string(unroll_pi) + "+" + to_string(i);
+        write->add_load("ifmap", channel + ", x, y");
+        write->add_store("ifbuf", channel + ", x, y");
+    }
+  }
+
+  {
+    auto buf_y = prg.add_loop("ly", 0, 16 - 2);
+    auto buf_x = buf_y->add_loop("lx", 0, 16 - 2);
+    auto buf_och= buf_x->add_loop("loch", 0, 32 / unroll_po);
+    auto init = buf_och->add_op("init_psum");
+    init->add_function("set_zero_32");
+    init->add_store("psum", "0");
+    auto buf_fy= buf_och->add_loop("lfy", 0, 3);
+    auto buf_fx= buf_fy->add_loop("lfx", 0, 3);
+    auto buf_ich = buf_fx->add_loop("lich", 0, 32 / unroll_pi);
+    auto mac = buf_ich->add_op("mac");
+    // Need to load 9 values
+    for (int po = 0; po < unroll_po; po++) {
+      for (int pi = 0; pi < unroll_pi; pi++) {
+        string c = to_string(unroll_pi) + "*lich + " + to_string(pi);
+        mac->add_load("ifbuf", c + ", lfx + lx, lfy + ly" );
+      }
+    }
+    mac->add_load("psum", "0");
+    mac->add_function("cnn_mac");
+    mac->add_store("psum", "0");
+    auto output = buf_och-> add_op("output");
+    output->add_load("psum", "0");
+    output->add_store("ofmap", "loch, lx, ly");
+  }
+  return prg;
+}
+
+void double_buffer_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "db_test";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["buf"] = 16;
+
+  auto tile = prg.add_nest("t", 0, 4);
+  auto p = tile->add_nest("po", 0, 16, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "t, po, pi");
+  write->add_store("buf", "t, po, pi");
+
+  auto q = tile->add_nest( "r", 0, 2, "qo", 0, 16, "qi", 0, 16);
+  auto read = q->add_op("output");
+  read->add_load("buf", "t, qi, qo");
+  read->add_store("out", "r, t, qo, qi");
+
+  //unoptimized_schedule
+  auto buffer_opt = build_buffers(prg);
+  auto sched_nf = optimized_schedule_from_buffers(buffer_opt);
+  auto sched_opt = optimized_schedule_from_buffers_flatten(buffer_opt, false);
+  auto sched_fea = optimized_schedule_from_buffers_feautrier(buffer_opt, false);
+  umap* sched = isl_union_map_read_from_str(ctx(sched_opt),
+          "{input[root=0, t, po, pi]->[t, pi+16*po]: 0<=t<=3 and 0<=po<=15 and 0<=pi<=15;output[root=0, t, po, pi, c]->[t+1, c + 8*pi + 128*po]: 0<=t<=3 and 0<=c<=7 and 0<=po<=15 and 0<=pi<=15}");
+  cout << str(sched) << endl;
+  cout << str(sched_opt) << endl;
+  cout <<codegen_c(sched_opt) << endl;
+  cout <<codegen_c(sched_nf) << endl;
+  cout <<codegen_c(sched_fea) << endl;
+  cout <<codegen_c(sched) << endl;
+
+}
+
 void conv33_test() {
 
   prog prg;
   prg.compute_unit_file = "vec_access.h";
-  prg.name = "vec";
+  prg.name = "conv33_naive_compute";
   prg.add_input("in");
   prg.add_output("out");
   //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["buf"] = 16;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
@@ -2037,41 +3102,57 @@ void conv33_test() {
   }
   read->add_store("out", "po, pi");
 
-  //unoptimized schedule
+  //unoptimized_schedule
   auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
-  auto buffers = build_buffers(prg, sched_naive);
 
   //optimized schedule
   auto buffers_opt = build_buffers(prg);
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
-  cout << buffers_opt.at("buf") << endl;
-  buffers_opt.at("buf").port_group2bank(2, 2);
-  cout << buffers_opt.at("buf") << endl;
+  int max_inpt = 2, max_outpt = 2;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
+  //cout << buffers_opt.at("buf") << endl;
+  //buffers_opt.at("buf").port_group2bank(2, 2);
+  //cout << buffers_opt.at("buf") << endl;
 
 #ifdef COREIR
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
-  json config_reg_map = parse_config_file("sample_configuration.txt");
-  buffers_opt.at("buf").set_config(config_reg_map);
-  generate_coreir(opt, context, buffers_opt.at("buf"));
+  //json config_reg_map = parse_config_file("sample_configuration.txt");
+  //buffers_opt.at("buf").set_config(config_reg_map);
+  //auto def = generate_coreir(opt, context, buffers_opt.at("buf"));
 
-  if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json")) {
-    cout << "Could not save ubuffer coreir!" << endl;
-    context->die();
+  //if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json", def)) {
+  //  cout << "Could not save ubuffer coreir!" << endl;
+  //  context->die();
+  //}
+  //CoreIR::deleteContext(context);
+  for (auto& b : buffers_opt) {
+    b.second.generate_banks_and_merge(opt);
+
+    //Assign an configuration file,
+    json config_reg_map = parse_config_file("conv33_configuration.txt");
+    b.second.set_config(config_reg_map);
+
+    b.second.port_group2bank(max_inpt, max_outpt);
   }
-  CoreIR::deleteContext(context);
+  generate_coreir(opt, buffers_opt, prg, sched_naive);
 #endif
+
+  cout << "post processing buf" << endl;
+  cout << buffers_opt.at("buf");
 
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
   opt.conditional_merge = false;
   auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
 
-  for (auto it: post_proc_buffers) {
+  for (auto it : post_proc_buffers) {
+    cout << "Vectorizing " << it.first << endl;
+    cout << it.second << endl;
     buffer_vectorization(it.first, 1, 4, rewrite_buffers);
+    cout << "Done with vectorization" << endl;
 
     //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
     auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
@@ -2125,7 +3206,7 @@ void conv33_large_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  buffers_opt.at("buf").generate_banks_and_merge(opt);
   cout << buffers_opt.at("buf") << endl;
   buffers_opt.at("buf").port_group2bank(2, 2);
   cout << buffers_opt.at("buf") << endl;
@@ -2162,7 +3243,7 @@ void conv33_large_test() {
 
     lattice_schedule_buf(prg.ctx, rewrite_buffers, opt_sched, sram);
 
-    TileConstraints tc{2,2,0};
+    TileConstraints tc{1,3,0};
     emit_address_stream2file(rewrite_buffers, it.first+"_sram", it.first+"_sram", it.first+"_SRAM_large_address", false, tc);
     emit_address_stream2file(rewrite_buffers, it.first+"_tb", it.first+"_agg", it.first+"_reg_TOP_large_address", true, tc);
     //compare_to_gold(it.first+"_SRAM_address.csv", "SRAM_address_tapeout.csv");
@@ -2198,7 +3279,7 @@ void bankmerge_vec_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  buffers_opt.at("buf").generate_banks_and_merge(opt);
   //cout << buffers_opt.at("buf") << endl;
   //auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   buffers_opt.at("buf").port_group2bank(2, 2);
@@ -2343,38 +3424,38 @@ isl_schedule_node* print_sched_tp(isl_schedule_node* n, void* user) {
   return n;
 }
 
-void mmul_test() {
-  prog prg;
-  auto r = prg.add_loop("r", 0, 8);
-  auto c = r->add_loop("c", 0, 8);
-  auto rd = c->add_op("read");
-  rd->add_store("T", "0");
+//void mmul_test() {
+  //prog prg;
+  //auto r = prg.add_loop("r", 0, 8);
+  //auto c = r->add_loop("c", 0, 8);
+  //auto rd = c->add_op("read");
+  //rd->add_store("T", "0");
 
-  auto k = c->add_loop("k", 0, 8);
-  auto accum = k->add_op("accum");
-  accum->add_load("T", "0");
-  accum->add_store("T", "0");
+  //auto k = c->add_loop("k", 0, 8);
+  //auto accum = k->add_op("accum");
+  //accum->add_load("T", "0");
+  //accum->add_store("T", "0");
 
-  auto write = c->add_op("write");
-  write->add_load("T", "0");
-  write->add_store("M", "r, c");
-
-
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
-
-  cout << "Program with optimized schedule..." << endl;
-  isl_schedule* opt_sched = prg.optimized_schedule();
-
-  int ind = 0;
-  opt_sched = isl_schedule_map_schedule_node_bottom_up(opt_sched, print_sched_tp, &ind);
+  //auto write = c->add_op("write");
+  //write->add_load("T", "0");
+  //write->add_store("M", "r, c");
 
 
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(isl_schedule_get_map(opt_sched), domain);
-  //cout << "Optimized schedule..." << endl;
-  //cout << codegen_c(schedmap);
-}
+  //cout << "Program code without optimization..." << endl;
+  //prg.unoptimized_codegen();
+
+  //cout << "Program with optimized schedule..." << endl;
+  //isl_schedule* opt_sched = prg.optimized_schedule();
+
+  //int ind = 0;
+  //opt_sched = isl_schedule_map_schedule_node_bottom_up(opt_sched, print_sched_tp, &ind);
+
+
+  //auto domain = prg.whole_iteration_domain();
+  //auto schedmap = its(isl_schedule_get_map(opt_sched), domain);
+  ////cout << "Optimized schedule..." << endl;
+  ////cout << codegen_c(schedmap);
+//}
 
 void pyramid_test() {
   prog prg;
@@ -2475,74 +3556,12 @@ prog conv_2d() {
 }
 
 
-prog cnn_conv_layer() {
-
-  prog prg;
-  /*
-  string read_string = "{conv_read[root, i] -> [i+2]: 0<=i<=9 }";
-  string write_string = "{conv_write[root, j] -> [j]: 0<=j<=11}";
-  isl_map* read_sched= isl_map_read_from_str(prg.ctx, read_string.c_str());
-  isl_map* write_sched= isl_map_read_from_str(prg.ctx, write_string.c_str());
-  auto before_acc = lex_gt(read_sched, write_sched);
-  cout <<"\tlexlt result: " << str(before_acc) << endl;
-  */
-
-  prg.compute_unit_file = "mobilenet_compute.h";
-  prg.name = "cnn_conv_layer";
-  prg.add_input("ifmap");
-  //prg.add_input("weight");
-  prg.add_output("ofmap");
-  prg.buffer_port_widths["ifmap"] = 32;
-  prg.buffer_port_widths["ifbuf"] = 32;
-  prg.buffer_port_widths["ofmap"] = 32;
-  //prg.buffer_port_widths["weight"] = 32;
-  int unroll_pi = 4, unroll_po = 1;
-
-  {
-    auto y = prg.add_loop("y", 0, 16);
-    auto x = y->add_loop("x", 0, 16);
-    auto ich = x->add_loop("ich", 0, 32 / unroll_pi);
-    auto write = ich->add_op("dma_if");
-    for (int i = 0; i < unroll_pi; i ++) {
-        string channel = "ich*" + to_string(unroll_pi) + "+" + to_string(i);
-        write->add_load("ifmap", channel + ", x, y");
-        write->add_store("ifbuf", channel + ", x, y");
-    }
-  }
-
-  {
-    auto buf_y = prg.add_loop("ly", 0, 16 - 2);
-    auto buf_x = buf_y->add_loop("lx", 0, 16 - 2);
-    auto buf_och= buf_x->add_loop("loch", 0, 32 / unroll_po);
-    auto init = buf_och->add_op("init_psum");
-    init->add_function("set_zero_32");
-    init->add_store("psum", "0");
-    auto buf_fy= buf_och->add_loop("lfy", 0, 3);
-    auto buf_fx= buf_fy->add_loop("lfx", 0, 3);
-    auto buf_ich = buf_fx->add_loop("lich", 0, 32 / unroll_pi);
-    auto mac = buf_ich->add_op("mac");
-    // Need to load 9 values
-    for (int po = 0; po < unroll_po; po++) {
-      for (int pi = 0; pi < unroll_pi; pi++) {
-        string c = to_string(unroll_pi) + "*lich + " + to_string(pi);
-        mac->add_load("ifbuf", c + ", lfx + lx, lfy + ly" );
-      }
-    }
-    mac->add_load("psum", "0");
-    mac->add_function("cnn_mac");
-    mac->add_store("psum", "0");
-    auto output = buf_och-> add_op("output");
-    output->add_load("psum", "0");
-    output->add_store("ofmap", "loch, lx, ly");
-  }
-  return prg;
-}
 
 void ram_addr_unit_test() {
 
   prog prg;
   prg.compute_unit_file = "mobilenet_compute.h";
-  prg.name = "ram_addr_unit_test";
+  prg.name = "ram_addr_unit_test_linear";
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
@@ -2587,46 +3606,58 @@ void ram_addr_unit_test() {
   cout << "Optimized schedule..." << endl;
   cout << codegen_c(schedmap);
 
-  auto buffers = build_buffers(prg);
-  CodegenOptions options;
-  options.internal = true;
-  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
-  generate_app_code(options, buffers, prg, opt_sched);
+  {
+    auto buffers = build_buffers(prg);
+    CodegenOptions options;
+    options.internal = true;
+    options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+    all_register_files(prg, options);
+    generate_app_code(options, buffers, prg, opt_sched);
+  }
+  //generate_regression_testbench(prg, buffers);
+  generate_regression_testbench(prg);
+  auto linear_res = run_regression_tb(prg);
 
-  generate_regression_testbench(prg, buffers);
-  //generate_regression_testbench(prg);
+  {
+    prg.name = "ram_addr_unit_test_stack";
+    auto buffers = build_buffers(prg);
+    CodegenOptions options;
+    options.internal = true;
+    generate_app_code(options, buffers, prg, opt_sched);
+  }
+  generate_regression_testbench(prg);
+  auto stack_res = run_regression_tb(prg);
 
-  int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
-  assert(res == 0);
-
-  res = system("./a.out");
-  assert(res == 0);
+  assert(linear_res == stack_res);
 }
 
 void cnn_test() {
-  prog prg = cnn_conv_layer();
-  //auto domain = prg.whole_iteration_domain();
+  //prog prg = cnn_conv_layer();
+  //prog prg = resnet();
+  prog prg = harris();
+  auto domain = prg.whole_iteration_domain();
 
-  //auto order_deps = prg.relative_orders();
-  //cout << "Getting validity deps..." << endl;
-  //isl_union_map *raw_deps = prg.validity_deps();
-  //cout << "Got validity deps..." << endl;
-  //cout << "Validity: " << str(raw_deps) << endl;
-  //auto validity =
-    //unn(order_deps, raw_deps);
-  //isl_union_map *proximity =
-    //cpy(raw_deps);
+  auto order_deps = prg.relative_orders();
+  cout << "Getting validity deps..." << endl;
+  isl_union_map *raw_deps = prg.validity_deps();
+  cout << "Got validity deps..." << endl;
+  cout << "Validity: " << str(raw_deps) << endl;
+  auto validity =
+    unn(order_deps, raw_deps);
+  isl_union_map *proximity =
+    cpy(raw_deps);
 
-  //auto clksched = hardware_schedule(domain, validity, proximity);
-  //auto doms = get_sets(domain);
-  //cout << "---- Domains..." << endl;
-  //for (auto d : doms) {
-    //cout << tab(1) << str(d) << endl;
-  //}
-  //cout << "---- Hardware schedule:" << endl;
-  //for (auto s : clksched) {
-    //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
-  //}
+  auto clksched = hardware_schedule(domain, validity, proximity);
+  auto doms = get_sets(domain);
+  cout << "---- Domains..." << endl;
+  for (auto d : doms) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "---- Hardware schedule:" << endl;
+  for (auto s : clksched) {
+    cout << tab(1) << s.first << " -> " << str(s.second) << endl;
+  }
+  assert(false);
   umap* opt_sched = prg.optimized_codegen();
   ////cout << "------ ISL schedule" << endl;
   ////for (auto m : get_maps(opt_sched)) {
@@ -2807,36 +3838,82 @@ void reduce_1d_test() {
 
 }
 
-void reduce_2d_test() {
+void reduce_rows_test() {
+  prog prg;
+  prg.compute_unit_file = "mobilenet_compute.h";
+  prg.name = "reduce_rows";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
 
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["tmp"] = 32;
+
+  auto read_in =
+    prg.add_nest("rd_r", 0, 3, "rd_c", 0, 10)->add_op({"I", "rd_c, rd_r"}, "id", {"in", "rd_c, rd_r"});
+
+  {
+
+    //auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 10);
+    auto accum_loop = prg.add_nest("ar", 0, 3);
+    auto init = accum_loop->add_op("set_z");
+    init->add_function("set_zero_32");
+    init->add_store("tmp", "ar");
+
+    auto accum_inner_loop = accum_loop->add_loop("ac", 0, 10);
+    auto accum = accum_inner_loop->add_op("accumulate");
+    auto tmp = accum->add_load("tmp", "ar");
+    auto next = accum->add_load("I", "ac, ar");
+    accum->add_function("inc", {tmp, next});
+    accum->add_store("tmp", "ar");
+
+    auto write_out = accum_loop->add_op("output");
+    write_out->add_load("tmp", "ar");
+    write_out->add_store("out", "ar");
+  }
+
+  //prg.pretty_print();
+  //assert(false);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  //options.inner_bank_offset_mode = INNER_BANK_OFFSET_STACK;
+  regression_test(options, prg);
+  //assert(false);
+}
+
+void reduce_2d_test() {
   prog prg;
   prg.compute_unit_file = "mobilenet_compute.h";
   prg.name = "reduce_2d";
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
-  prg.buffer_bounds["in"] = {3, 3};
+  //prg.buffer_bounds["in"] = {3, 3};
 
   prg.buffer_port_widths["out"] = 32;
   prg.buffer_bounds["out"] = {1};
 
   prg.buffer_port_widths["I"] = 32;
-  prg.buffer_bounds["I"] = {3, 3};
+  //prg.buffer_bounds["I"] = {3, 3};
 
   prg.buffer_port_widths["tmp"] = 32;
   prg.buffer_bounds["tmp"] = {1};
 
-  auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
+  auto read_in =
+    prg.add_nest("rd_r", 0, 3, "rd_c", 0, 10)->add_op({"I", "rd_c, rd_r"}, "id", {"in", "rd_c, rd_r"});
 
   {
     auto init = prg.add_op("set_z");
     init->add_function("set_zero_32");
     init->add_store("tmp", "0");
 
-    auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
+    auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 10);
     auto accum = accum_loop->add_op("accumulate");
     auto tmp = accum->add_load("tmp", "0");
-    auto next = accum->add_load("I", "ar, ac");
+    auto next = accum->add_load("I", "ac, ar");
     accum->add_function("inc", {tmp, next});
     accum->add_store("tmp", "0");
 
@@ -2845,81 +3922,11 @@ void reduce_2d_test() {
     write_out->add_store("out", "0");
   }
 
-  regression_test(prg);
+  CodegenOptions options;
+  options.internal = true;
+  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  regression_test(options, prg);
 }
-
-//void mobilenet_test() {
-
-  //prog prg;
-  //prg.compute_unit_file = "mobilenet_compute.h";
-  //prg.name = "mobilenet";
-  //prg.add_input("in");
-  //prg.add_input("weights");
-  //prg.add_output("out");
-  //prg.buffer_port_widths["in"] = 32;
-  //prg.buffer_port_widths["out"] = 32;
-  //prg.buffer_port_widths["dw_conv"] = 32;
-  //prg.buffer_port_widths["weights"] = 32;
-  //prg.buffer_port_widths["I"] = 32;
-
-  //{
-    //auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
-    //auto write = read_in->add_op("read_input_stream");
-    //write->add_load("in", "px, py, pc");
-    //write->add_store("I", "px, py, pc");
-  //}
-
-  //{
-    //auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
-    //auto write = read_in->add_op("read_weight_input_stream");
-    //write->add_load("weights", "px, py, pc");
-    //write->add_store("weight_buffer", "px, py, pc");
-  //}
-
-  //{
-    //// dw_conv
-    //auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
-    //auto init_dw = set_dw->add_op("init_dw");
-    //init_dw->add_store("dw_conv", "dwx, dwy, dwz");
-    //init_dw->add_function("set_zero_32");
-    //// Set dw_conv to be
-    //auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
-    //auto rdw = update_dw->add_op("rdw");
-    //auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
-    //auto w = rdw->add_load("weight_buffer", "dwx + rx, dwy + ry, dwc");
-    //auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
-    //rdw->add_function("fma", {l1, w, l2});
-    //rdw->add_store("dw_conv", "dwx, dwy, dwc");
-  //}
-
-  //{
-    //auto read_in = prg.add_nest("ox", 0, 14 - 2, "oy", 0, 14 - 2, "ok", 0, 4);
-    //auto write = read_in->add_op("write_max_out");
-    //write->add_load("dw_conv", "ox, oy, ok");
-    //write->add_function("max_zero");
-    //write->add_store("out", "ox, oy, ok");
-  //}
-
-  //cout << "Program code without optimization..." << endl;
-  //prg.unoptimized_codegen();
-
-  //umap* opt_sched = prg.optimized_codegen();
-  //auto domain = prg.whole_iteration_domain();
-  //auto schedmap = its(opt_sched, domain);
-  //cout << "Optimized schedule..." << endl;
-  //cout << codegen_c(schedmap);
-
-  //auto buffers = build_buffers(prg);
-  //generate_app_code(buffers, prg);
-
-  //int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
-  //assert(res == 0);
-
-  //res = system("./a.out");
-  //assert(res == 0);
-
-//}
-
 
 umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
 
@@ -4085,6 +5092,10 @@ struct App {
     isl_ctx_free(ctx);
   }
 
+  void compute_unit_needs_index_variable(const int index, const std::string& func) {
+    app_dag[func].updates[0].index_variables_needed.push_back("d" + str(index));
+  }
+
   void update(const string& func,
       const string& accum,
       const string& compute,
@@ -4616,23 +5627,37 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const vector<int>& dims) {
+    fill_data_domain({{name, dims}});
+  }
 
-    Box sbox;
+  void fill_data_domain(const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
+    domain_boxes = {};
+
     int max_dims = data_dimension();
+    for (auto b : bounds) {
+      string name = b.first;
+      vector<int> dims = b.second;
+      Box sbox;
 
-    cout << "# dims = " << dims.size() << endl;
-    for (auto d : dims) {
-      cout << tab(1) << d << endl;
-      sbox.intervals.push_back({0, d - 1});
+      cout << "Filling: " << name << endl;
+      cout << "# dims = " << dims.size() << endl;
+      for (auto d : dims) {
+        cout << tab(1) << d << endl;
+        sbox.intervals.push_back({0, d - 1});
+      }
+      for (int i = dims.size(); i < max_dims; i++) {
+        sbox.intervals.push_back({0, 0});
+      }
+
+      cout << "padding to " << last_update(name).unroll_factor << endl;
+      sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
+
+      cout << "Filling data domain " << name << " from: " << sbox << endl;
+
+      string n = name;
+      domain_boxes[n] = sbox;
     }
-    for (int i = dims.size(); i < max_dims; i++) {
-      sbox.intervals.push_back({0, 0});
-    }
-
-    cout << "padding to " << last_update(name).unroll_factor << endl;
-    sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
-
-    cout << "Filling data domain " << name << " from: " << sbox << endl;
+    //assert(false);
 
     vector<string> buffers = sort_functions();
     assert(buffers.size() > 0);
@@ -4644,15 +5669,16 @@ struct App {
       cout << tab(1) << b << endl;
     }
 
-    assert(buffers.at(0) == name);
-    string n = name;
-    domain_boxes = {};
-    domain_boxes[n] = sbox;
-    //for (auto update : app_dag.at(n).updates) {
-      //fill_compute_domain(n, update);
-    //}
-
-    for (int i = 1; i < (int) buffers.size(); i++) {
+    bool found = false;
+    for (auto b : bounds) {
+      if (buffers.at(0) == b.first) {
+        found = true;
+      }
+    }
+    assert(found);
+    //assert(buffers.at(0) == name);
+    //for (int i = 1; i < (int) buffers.size(); i++) {
+    for (int i = bounds.size(); i < (int) buffers.size(); i++) {
       string next = buffers.at(i);
       cout << next << " has consumers " << endl;
       map<string, Box> needed_windows;
@@ -4698,6 +5724,7 @@ struct App {
       cout << f << " = " << d << endl;
     }
 
+    //assert(false);
     //fill_compute_domain();
   }
 
@@ -4837,6 +5864,9 @@ struct App {
       cout << tab(2) << comma_list(b.second) << endl;
     }
 
+
+    //print_hw_schedule(cpy(domain), cpy(validity));
+    //assert(false);
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -5133,7 +6163,12 @@ struct App {
     return buffers;
   }
 
-  void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
+  void populate_program(CodegenOptions& options,
+      prog& prg,
+      const string& name,
+      const std::vector<string>& outputs,
+      umap* m,
+      map<string, UBuffer>& buffers) {
 
     generate_compute_unit_file(prg.compute_unit_file);
 
@@ -5181,6 +6216,9 @@ struct App {
           }
 
           op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
+          for (auto index : u.index_variables_needed_by_compute()) {
+            op->compute_unit_needs_index_variable(index);
+          }
           op->unroll_factor = u.unroll_factor;
 
           domain_map[u.name()] =
@@ -5189,19 +6227,9 @@ struct App {
       }
     }
 
-    //cout << "Op consume / produce locs..." << endl;
-    //for (auto op : prg.all_ops()) {
-      //cout << "### " << op->name << endl;
-      //for (auto l : op->produce_locs) {
-        //cout << tab(1) << l.first << endl;
-      //}
-      ////cout << "Consume..." << endl;
-      //for (auto l : op->consume_locs) {
-        //cout << tab(1) << l.first << endl;
-      //}
-    //}
-
-    prg.outs = {name};
+    for (auto out : outputs) {
+      prg.add_output(out);
+    }
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg, buffers);
@@ -5343,8 +6371,10 @@ struct App {
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
+
     fill_data_domain(name, dims);
     set_unroll_factors(name, name, 1);
+
     fill_compute_domain();
 
     umap* m = nullptr;
@@ -5354,7 +6384,6 @@ struct App {
       assert(options.scheduling_algorithm == SCHEDULE_ALGORITHM_ISL);
       m = schedule_isl();
     }
-    //schedule_isl();
 
     assert(m != nullptr);
     cout << "Schedule: " << str(m) << endl;
@@ -5364,7 +6393,11 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = prg.name + "_compute_units.h";
-    populate_program(options, prg, name, m, buffers);
+
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_MULTILINEAR;
+    options.default_banking_strategy = {"none"};
+    populate_program(options, prg, name, {name}, m, buffers);
 
     return;
   }
@@ -5452,12 +6485,14 @@ struct App {
           int input_bits = arg_width*lanes*offsets_per_lane;
 
           args_and_widths.push_back({input_bits, p.name});
-          //args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name).pts().size(), p.name});
         }
 
         vector<string> arg_decls;
         for (auto a : args_and_widths) {
           arg_decls.push_back("hw_uint<" + to_string(a.first) + ">& " + a.second);
+        }
+        for (auto index : u.index_variables_needed_by_compute()) {
+          arg_decls.push_back("int " + index);
         }
 
         string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
@@ -5474,7 +6509,6 @@ struct App {
             string p = arg.second;
             Window arg_input_window =
               data_window_needed_by_one_compute_lane(u.name(), p);
-              //data_window_needed_by_compute(u.name(), p);
             int offsets_per_lane =
               arg_input_window.pts().size();
             int input_bits = arg_width*offsets_per_lane;
@@ -5483,31 +6517,16 @@ struct App {
 
             arg_names.push_back(arg_name);
             cout << "getting window for " << u.name() << endl;
-            //Window orig_dw =
-              //data_window_needed_by_one_compute_lane(u.name(), p);
-            //Window win_needed =
-              //data_window_needed_by_one_compute_lane(u.name(), p).increment(orig_dw.stride(0), lane);
-            //cout << "Win needed: " << win_needed << endl;
 
             int base = lane*input_bits;
             int end = (lane + 1)*input_bits - 1;
 
             cfile << tab(1) << "hw_uint<" << input_bits << "> " << arg_name << ";" << endl;
             cfile << tab(1) << "set_at<0, " << input_bits << ", " << input_bits << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
-            //int win_pos = 0;
-            //for (auto off : win_needed.offsets) {
-              //cfile << tab(1) << "// Need offset: " << str(off) << endl;
-              //int npts = win_needed.pts().size()*arg_width;
-              //for (int i = 0; i < arg_input_window.offsets.size(); i++) {
-                //if (arg_input_window.offsets.at(i) == off) {
-                  //int base = i*arg_width;
-                  //int end = (i + 1)*arg_width - 1;
-                  //cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ", " << arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
-                //}
-              //}
-              //win_pos++;
-            //}
           }
+        for (auto index : u.index_variables_needed_by_compute()) {
+          arg_names.push_back(index);
+        }
           cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
           cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ", " << fwidth << ">(whole_result, result_" << lane << ");" << endl;
         }
@@ -5547,7 +6566,7 @@ struct App {
     return whole_dom;
   }
 
-  void schedule_and_codegen(CodegenOptions& options, const std::string& name) {
+  void schedule_and_codegen(CodegenOptions& options, const std::string& name, const std::vector<string>& outputs) {
     time_t rawtime;
     struct tm * timeinfo;
     char buffer[80];
@@ -5563,11 +6582,11 @@ struct App {
     auto scheds = schedule_opt();
     umap* m = qschedule_to_map(ctx, scheds);
     //umap* m = schedule();
-    ofstream schedule_out(name + "_sched_" + time_str);
-    for (auto k : get_maps(m)) {
-      schedule_out << str(k) << endl;
-    }
-    schedule_out.close();
+    //ofstream schedule_out(name + "_sched_" + time_str);
+    //for (auto k : get_maps(m)) {
+      //schedule_out << str(k) << endl;
+    //}
+    //schedule_out.close();
     assert(m != nullptr);
 
     map<string, Box> compute_domains;
@@ -5592,7 +6611,10 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
 
-    populate_program(options, prg, name, m, buffers);
+    //populate_program(options, prg, name, m, buffers);
+    populate_program(options, prg, name, outputs, m, buffers);
+
+    release(prg);
 
     return;
   }
@@ -5608,16 +6630,24 @@ struct App {
   void set_unroll_factors(const std::string& reference_function,
       const std::string& to_unroll_function,
       const int unroll_factor) {
+    int dummy_value = 10;
+    set_unroll_factors({{reference_function, {dummy_value, dummy_value}}}, to_unroll_function, unroll_factor);
+  }
+
+  void set_unroll_factors(
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
+      const std::string& to_unroll_function,
+      const int unroll_factor) {
     cout << "Unrolling " << to_unroll_function << " by " << unroll_factor << endl;
 
-    //assert(reference_function == to_unroll_function);
 
     // Preprocess application graph to compute qfactors
     App cpy = *this;
-    // TODO: Update to fill with ndims dimensions
-    int dummy_value = 10;
+    //// TODO: Update to fill with ndims dimensions
     cpy.no_unrolling();
-    cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
+    //cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
+    cpy.fill_data_domain(bounds);
+    //reference_function, {dummy_value, dummy_value});
     cpy.fill_compute_domain();
 
     cout << "Padding validity deps..." << endl;
@@ -5639,7 +6669,6 @@ struct App {
 
     string reference_update =
       sched_var_name(last_update(to_unroll_function).name());
-      //sched_var_name(last_update(reference_function).name());
     cout << "reference: " << reference_update << endl;
 
     cout << "to unroll: " << to_unroll_function << endl;
@@ -5654,6 +6683,8 @@ struct App {
       for (auto& u : r.second.updates) {
         cout << "finding factor for: " << u.name() << endl;
         int u_qfactor = to_int(map_find(sched_var_name(u.name()), qfs));
+        cout << tab(1) << "u_qfactor = " << u_qfactor << endl;
+        cout << tab(1) << "ref update= " << umax << endl;
         int fres = (int) max(1.0f, floor(((float) umax) / (float) u_qfactor));
         int u_unroll_factor = fres;
         u.unroll_factor = u_unroll_factor;
@@ -5663,16 +6694,26 @@ struct App {
         }
       }
     }
+    //assert(false);
   }
 
   void realize_no_unroll(CodegenOptions& options,
       const std::string& name,
       const std::vector<int>& dims) {
-    fill_data_domain(name, dims);
-    fill_compute_domain();
-    schedule_and_codegen(options, name);
+    realize_no_unroll(options, {{name, dims}});
   }
 
+  void realize_no_unroll(CodegenOptions& options,
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds) {
+    fill_data_domain(bounds);
+    fill_compute_domain();
+    vector<string> names;
+    for (auto n : bounds) {
+      names.push_back(n.first);
+    }
+    string concat_name = sep_list(names, "", "", "_");
+    schedule_and_codegen(options, concat_name, names);
+  }
 
   void realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
@@ -5702,26 +6743,41 @@ struct App {
       const vector<int>& dims,
       const std::string& unroll_target,
       const int unroll_factor) {
-      double total_elapsed = 0.;
-      auto start = std::chrono::system_clock::now();
+    realize(options, {{out_name, dims}}, unroll_target, unroll_factor);
+  }
 
-      //assert(out_name == unroll_target);
-      set_unroll_factors(out_name, unroll_target, unroll_factor);
-      realize_no_unroll(options, out_name, dims);
+  void realize(CodegenOptions& options,
+      const std::vector<std::pair<std::string, std::vector<int> > >& bounds,
+      const std::string& unroll_target,
+      const int unroll_factor) {
 
-      auto end = std::chrono::system_clock::now();
-      std::chrono::duration<double> elapsed = end - start;
-      total_elapsed += elapsed.count();
-      ofstream schedule_info("./scratch/" + out_name + ".txt");
-      schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
-      schedule_info.close();
+    double total_elapsed = 0.;
+    auto start = std::chrono::system_clock::now();
+
+    assert(bounds.size() > 0);
+
+    string out_name = bounds.at(0).first;
+    vector<int> dims = bounds.at(0).second;
+
+    set_unroll_factors(bounds, unroll_target, unroll_factor);
+    realize_no_unroll(options, bounds);
+
+    //set_unroll_factors(out_name, unroll_target, unroll_factor);
+    //realize_no_unroll(options, out_name, dims);
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    total_elapsed += elapsed.count();
+    ofstream schedule_info("./scratch/" + out_name + ".txt");
+    schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
+    schedule_info.close();
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
 
     realize(options, name, {d0, d1}, unroll_factor);
   }
@@ -5892,6 +6948,8 @@ Window pt3(const std::string& name) {
   return Window{name, {1, 1, 1}, {{0, 0, 0}}};
 }
 
+App gauss_pyramid_fpga(const std::string& out_name);
+
 void updown_merge_test() {
   App ds;
   ds.func2d("A_off");
@@ -5934,280 +6992,48 @@ void downsample2d_test() {
   assert(res == 0);
 }
 
-App tricky_reconvergence(const std::string& name) {
-  App dn;
-  dn.set_default_num_type(NUM_TYPE_FLOAT);
+//App tricky_reconvergence(const std::string& name) {
+  //App dn;
+  //dn.set_default_num_type(NUM_TYPE_FLOAT);
 
-  dn.func2d("f_off_chip");
-  dn.func2d("u_off_chip");
-  dn.func2d("f", v("f_off_chip"));
-  dn.func2d("u", v("u_off_chip"));
+  //dn.func2d("f_off_chip");
+  //dn.func2d("u_off_chip");
+  //dn.func2d("f", v("f_off_chip"));
+  //dn.func2d("u", v("u_off_chip"));
 
-  Expr* diff = sub(v("u", 0, -1), v("u", 0, 0));
-  dn.func2d("diff_qwe", diff);
-  dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
-  dn.func2d("diff_l", "diff_l2d", "u", {
-      {-1, 0},
-      {0, 0}
-      });
-  dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
+  //Expr* diff = sub(v("u", 0, -1), v("u", 0, 0));
+  //dn.func2d("diff_qwe", diff);
+  //dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
+  //dn.func2d("diff_l", "diff_l2d", "u", {
+      //{-1, 0},
+      //{0, 0}
+      //});
+  //dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
 
-  dn.func2d("g", div(fc("1.0f"), func("sqrt", add({sq("diff_qwe"), sq("diff_d"), sq("diff_l"), sq("diff_r")}))));
-  dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
-  dn.func2d("r1", "r1_comp2d", pt("r0"));
-  //dn.func2d(name, "r1_comp2d", pt("r0"));
-  dn.func2d(name,
-      "out_comp_dn2d",
-      {pt("r1"),
-      pt("f"),
-      win("u", {
-          {-1, 0},
-          {0, -1},
-          {0, 0},
-          {1, 0}
-          }),
-      win("g", {
-          {-1, 0},
-          {0, -1},
-          {0, 1},
-          {1, 0}
-          })});
+  //dn.func2d("g", div(fc("1.0f"), func("sqrt", add({sq("diff_qwe"), sq("diff_d"), sq("diff_l"), sq("diff_r")}))));
+  //dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
+  //dn.func2d("r1", "r1_comp2d", pt("r0"));
+  ////dn.func2d(name, "r1_comp2d", pt("r0"));
+  //dn.func2d(name,
+      //"out_comp_dn2d",
+      //{pt("r1"),
+      //pt("f"),
+      //win("u", {
+          //{-1, 0},
+          //{0, -1},
+          //{0, 0},
+          //{1, 0}
+          //}),
+      //win("g", {
+          //{-1, 0},
+          //{0, -1},
+          //{0, 1},
+          //{1, 0}
+          //})});
 
-  return dn;
-}
+  //return dn;
+//}
 
-prog halide_harris() {
-  prog prg;
-  prg.compute_unit_file = "harris_compute.h";
-  prg.name = "harris";
-
-// Stencil<int16_t, 64, 64> &hw_input_copy_stencil = arg_0;
-  prg.add_input("hw_input_copy_stencil");
-  prg.buffer_port_widths["hw_input_copy_stencil"] = 16;
-// Stencil<void *> &hw_output_stencil = arg_1;
-  prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 16;
-
-
-//consuming hw_input_copy.stencil
-////producing padded16.stencil
-  auto loop_padded16_s0_y = prg.add_loop("padded16_s0_y", -3, 64);
-  auto loop_padded16_s0_x = loop_padded16_s0_y->add_loop("padded16_s0_x", -3, 64);
-
-//store is: padded16.stencil(padded16.s0.x, padded16.s0.y) = hw_input_copy.stencil(padded16.s0.x, padded16.s0.y)
-  auto hcompute_padded16_stencil = loop_padded16_s0_x->add_op("hcompute_padded16_stencil");
-  hcompute_padded16_stencil->add_function("hcompute_padded16_stencil");
-  hcompute_padded16_stencil->add_load("hw_input_copy_stencil", "padded16_s0_x", "padded16_s0_y");
-  prg.buffer_port_widths["padded16_stencil"] = 16;
-  hcompute_padded16_stencil->add_store("padded16_stencil", "padded16_s0_x", "padded16_s0_y");
-////producing grad_x.stencil
-
-//consuming padded16.stencil
-  auto loop_grad_x_s0_y = prg.add_loop("grad_x_s0_y", -2, 62);
-  auto loop_grad_x_s0_x = loop_grad_x_s0_y->add_loop("grad_x_s0_x", -2, 62);
-
-//store is: grad_x.stencil(grad_x.s0.x, grad_x.s0.y) = max(min(((((padded16.stencil((grad_x.s0.x + 1), (grad_x.s0.y + -1)) + (padded16.stencil((grad_x.s0.x + 1), (grad_x.s0.y + 1)) + (padded16.stencil((grad_x.s0.x + 1), grad_x.s0.y)*(int16)2))) - padded16.stencil((grad_x.s0.x + -1), (grad_x.s0.y + -1))) - (padded16.stencil((grad_x.s0.x + -1), grad_x.s0.y)*(int16)2)) - padded16.stencil((grad_x.s0.x + -1), (grad_x.s0.y + 1))), (int16)255), (int16)-255)
-  auto hcompute_grad_x_stencil = loop_grad_x_s0_x->add_op("hcompute_grad_x_stencil");
-  hcompute_grad_x_stencil->add_function("hcompute_grad_x_stencil");
-  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + 1)", "(grad_x_s0_y + -1)");
-  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + 1)", "(grad_x_s0_y + 1)");
-  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + 1)", "grad_x_s0_y");
-  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + -1)", "(grad_x_s0_y + -1)");
-  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + -1)", "grad_x_s0_y");
-  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + -1)", "(grad_x_s0_y + 1)");
-  prg.buffer_port_widths["grad_x_stencil"] = 16;
-  hcompute_grad_x_stencil->add_store("grad_x_stencil", "grad_x_s0_x", "grad_x_s0_y");
-////producing lxx.stencil
-
-//consuming grad_x.stencil
-  auto loop_lxx_s0_y = prg.add_loop("lxx_s0_y", -2, 62);
-  auto loop_lxx_s0_x = loop_lxx_s0_y->add_loop("lxx_s0_x", -2, 62);
-
-//store is: lxx.stencil(lxx.s0.x, lxx.s0.y) = ((int32(grad_x.stencil(lxx.s0.x, lxx.s0.y))*int32(grad_x.stencil(lxx.s0.x, lxx.s0.y)))/128)
-  auto hcompute_lxx_stencil = loop_lxx_s0_x->add_op("hcompute_lxx_stencil");
-  hcompute_lxx_stencil->add_function("hcompute_lxx_stencil");
-  hcompute_lxx_stencil->add_load("grad_x_stencil", "lxx_s0_x", "lxx_s0_y");
-  prg.buffer_port_widths["lxx_stencil"] = 16;
-  hcompute_lxx_stencil->add_store("lxx_stencil", "lxx_s0_x", "lxx_s0_y");
-////producing lgxx.stencil
-  auto loop_lgxx_s0_y = prg.add_loop("lgxx_s0_y", -1, 60);
-  auto loop_lgxx_s0_x = loop_lgxx_s0_y->add_loop("lgxx_s0_x", -1, 60);
-
-//store is: lgxx.stencil(lgxx.s0.x, lgxx.s0.y) = 0
-  auto hcompute_lgxx_stencil = loop_lgxx_s0_x->add_op("hcompute_lgxx_stencil");
-  hcompute_lgxx_stencil->add_function("hcompute_lgxx_stencil");
-  prg.buffer_port_widths["lgxx_stencil"] = 16;
-  hcompute_lgxx_stencil->add_store("lgxx_stencil", "lgxx_s0_x", "lgxx_s0_y");
-
-//consuming lxx.stencil
-  auto loop_lgxx_s1_y = prg.add_loop("lgxx_s1_y", -1, 60);
-  auto loop_lgxx_s1_x = loop_lgxx_s1_y->add_loop("lgxx_s1_x", -1, 60);
-
-//store is: lgxx.stencil(lgxx.s1.x, lgxx.s1.y) = (lxx.stencil((lgxx.s1.x + -1), (lgxx.s1.y + -1)) + (lgxx.stencil(lgxx.s1.x, lgxx.s1.y) + (lxx.stencil(lgxx.s1.x, (lgxx.s1.y + -1)) + (lxx.stencil((lgxx.s1.x + 1), (lgxx.s1.y + -1)) + (lxx.stencil((lgxx.s1.x + -1), lgxx.s1.y) + (lxx.stencil(lgxx.s1.x, lgxx.s1.y) + (lxx.stencil((lgxx.s1.x + 1), lgxx.s1.y) + (lxx.stencil((lgxx.s1.x + -1), (lgxx.s1.y + 1)) + (lxx.stencil((lgxx.s1.x + 1), (lgxx.s1.y + 1)) + lxx.stencil(lgxx.s1.x, (lgxx.s1.y + 1)))))))))))
-  auto hcompute_lgxx_stencil_1 = loop_lgxx_s1_x->add_op("hcompute_lgxx_stencil_1");
-  hcompute_lgxx_stencil_1->add_function("hcompute_lgxx_stencil_1");
-  hcompute_lgxx_stencil_1->add_load("lgxx_stencil", "lgxx_s1_x", "lgxx_s1_y");
-  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + -1)", "(lgxx_s1_y + -1)");
-  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "lgxx_s1_x", "(lgxx_s1_y + -1)");
-  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + 1)", "(lgxx_s1_y + -1)");
-  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + -1)", "lgxx_s1_y");
-  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "lgxx_s1_x", "lgxx_s1_y");
-  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + 1)", "lgxx_s1_y");
-  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + -1)", "(lgxx_s1_y + 1)");
-  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + 1)", "(lgxx_s1_y + 1)");
-  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "lgxx_s1_x", "(lgxx_s1_y + 1)");
-  hcompute_lgxx_stencil_1->add_store("lgxx_stencil", "lgxx_s1_x", "lgxx_s1_y");
-////producing grad_y.stencil
-
-//consuming padded16.stencil
-  auto loop_grad_y_s0_y = prg.add_loop("grad_y_s0_y", -2, 62);
-  auto loop_grad_y_s0_x = loop_grad_y_s0_y->add_loop("grad_y_s0_x", -2, 62);
-
-//store is: grad_y.stencil(grad_y.s0.x, grad_y.s0.y) = max(min(((((padded16.stencil((grad_y.s0.x + -1), (grad_y.s0.y + 1)) + (padded16.stencil((grad_y.s0.x + 1), (grad_y.s0.y + 1)) + (padded16.stencil(grad_y.s0.x, (grad_y.s0.y + 1))*(int16)2))) - padded16.stencil((grad_y.s0.x + -1), (grad_y.s0.y + -1))) - (padded16.stencil(grad_y.s0.x, (grad_y.s0.y + -1))*(int16)2)) - padded16.stencil((grad_y.s0.x + 1), (grad_y.s0.y + -1))), (int16)255), (int16)-255)
-  auto hcompute_grad_y_stencil = loop_grad_y_s0_x->add_op("hcompute_grad_y_stencil");
-  hcompute_grad_y_stencil->add_function("hcompute_grad_y_stencil");
-  hcompute_grad_y_stencil->add_load("padded16_stencil", "(grad_y_s0_x + -1)", "(grad_y_s0_y + -1)");
-  hcompute_grad_y_stencil->add_load("padded16_stencil", "grad_y_s0_x", "(grad_y_s0_y + -1)");
-  hcompute_grad_y_stencil->add_load("padded16_stencil", "(grad_y_s0_x + 1)", "(grad_y_s0_y + -1)");
-  hcompute_grad_y_stencil->add_load("padded16_stencil", "(grad_y_s0_x + -1)", "(grad_y_s0_y + 1)");
-  hcompute_grad_y_stencil->add_load("padded16_stencil", "(grad_y_s0_x + 1)", "(grad_y_s0_y + 1)");
-  hcompute_grad_y_stencil->add_load("padded16_stencil", "grad_y_s0_x", "(grad_y_s0_y + 1)");
-  prg.buffer_port_widths["grad_y_stencil"] = 16;
-  hcompute_grad_y_stencil->add_store("grad_y_stencil", "grad_y_s0_x", "grad_y_s0_y");
-////producing lxy.stencil
-
-//consuming grad_y.stencil
-
-//consuming grad_x.stencil
-  auto loop_lxy_s0_y = prg.add_loop("lxy_s0_y", -2, 62);
-  auto loop_lxy_s0_x = loop_lxy_s0_y->add_loop("lxy_s0_x", -2, 62);
-
-//store is: lxy.stencil(lxy.s0.x, lxy.s0.y) = ((int32(grad_x.stencil(lxy.s0.x, lxy.s0.y))*int32(grad_y.stencil(lxy.s0.x, lxy.s0.y)))/128)
-  auto hcompute_lxy_stencil = loop_lxy_s0_x->add_op("hcompute_lxy_stencil");
-  hcompute_lxy_stencil->add_function("hcompute_lxy_stencil");
-  hcompute_lxy_stencil->add_load("grad_x_stencil", "lxy_s0_x", "lxy_s0_y");
-  hcompute_lxy_stencil->add_load("grad_y_stencil", "lxy_s0_x", "lxy_s0_y");
-  prg.buffer_port_widths["lxy_stencil"] = 16;
-  hcompute_lxy_stencil->add_store("lxy_stencil", "lxy_s0_x", "lxy_s0_y");
-////producing lgxy.stencil
-  auto loop_lgxy_s0_y = prg.add_loop("lgxy_s0_y", -1, 60);
-  auto loop_lgxy_s0_x = loop_lgxy_s0_y->add_loop("lgxy_s0_x", -1, 60);
-
-//store is: lgxy.stencil(lgxy.s0.x, lgxy.s0.y) = 0
-  auto hcompute_lgxy_stencil = loop_lgxy_s0_x->add_op("hcompute_lgxy_stencil");
-  hcompute_lgxy_stencil->add_function("hcompute_lgxy_stencil");
-  prg.buffer_port_widths["lgxy_stencil"] = 16;
-  hcompute_lgxy_stencil->add_store("lgxy_stencil", "lgxy_s0_x", "lgxy_s0_y");
-
-//consuming lxy.stencil
-  auto loop_lgxy_s1_y = prg.add_loop("lgxy_s1_y", -1, 60);
-  auto loop_lgxy_s1_x = loop_lgxy_s1_y->add_loop("lgxy_s1_x", -1, 60);
-
-//store is: lgxy.stencil(lgxy.s1.x, lgxy.s1.y) = (lxy.stencil((lgxy.s1.x + -1), (lgxy.s1.y + -1)) + (lgxy.stencil(lgxy.s1.x, lgxy.s1.y) + (lxy.stencil(lgxy.s1.x, (lgxy.s1.y + -1)) + (lxy.stencil((lgxy.s1.x + 1), (lgxy.s1.y + -1)) + (lxy.stencil((lgxy.s1.x + -1), lgxy.s1.y) + (lxy.stencil(lgxy.s1.x, lgxy.s1.y) + (lxy.stencil((lgxy.s1.x + 1), lgxy.s1.y) + (lxy.stencil((lgxy.s1.x + -1), (lgxy.s1.y + 1)) + (lxy.stencil((lgxy.s1.x + 1), (lgxy.s1.y + 1)) + lxy.stencil(lgxy.s1.x, (lgxy.s1.y + 1)))))))))))
-  auto hcompute_lgxy_stencil_1 = loop_lgxy_s1_x->add_op("hcompute_lgxy_stencil_1");
-  hcompute_lgxy_stencil_1->add_function("hcompute_lgxy_stencil_1");
-  hcompute_lgxy_stencil_1->add_load("lgxy_stencil", "lgxy_s1_x", "lgxy_s1_y");
-  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + -1)", "(lgxy_s1_y + -1)");
-  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "lgxy_s1_x", "(lgxy_s1_y + -1)");
-  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + 1)", "(lgxy_s1_y + -1)");
-  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + -1)", "lgxy_s1_y");
-  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "lgxy_s1_x", "lgxy_s1_y");
-  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + 1)", "lgxy_s1_y");
-  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + -1)", "(lgxy_s1_y + 1)");
-  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + 1)", "(lgxy_s1_y + 1)");
-  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "lgxy_s1_x", "(lgxy_s1_y + 1)");
-  hcompute_lgxy_stencil_1->add_store("lgxy_stencil", "lgxy_s1_x", "lgxy_s1_y");
-////producing lyy.stencil
-
-//consuming grad_y.stencil
-  auto loop_lyy_s0_y = prg.add_loop("lyy_s0_y", -2, 62);
-  auto loop_lyy_s0_x = loop_lyy_s0_y->add_loop("lyy_s0_x", -2, 62);
-
-//store is: lyy.stencil(lyy.s0.x, lyy.s0.y) = ((int32(grad_y.stencil(lyy.s0.x, lyy.s0.y))*int32(grad_y.stencil(lyy.s0.x, lyy.s0.y)))/128)
-  auto hcompute_lyy_stencil = loop_lyy_s0_x->add_op("hcompute_lyy_stencil");
-  hcompute_lyy_stencil->add_function("hcompute_lyy_stencil");
-  hcompute_lyy_stencil->add_load("grad_y_stencil", "lyy_s0_x", "lyy_s0_y");
-  prg.buffer_port_widths["lyy_stencil"] = 16;
-  hcompute_lyy_stencil->add_store("lyy_stencil", "lyy_s0_x", "lyy_s0_y");
-////producing lgyy.stencil
-  auto loop_lgyy_s0_y = prg.add_loop("lgyy_s0_y", -1, 60);
-  auto loop_lgyy_s0_x = loop_lgyy_s0_y->add_loop("lgyy_s0_x", -1, 60);
-
-//store is: lgyy.stencil(lgyy.s0.x, lgyy.s0.y) = 0
-  auto hcompute_lgyy_stencil = loop_lgyy_s0_x->add_op("hcompute_lgyy_stencil");
-  hcompute_lgyy_stencil->add_function("hcompute_lgyy_stencil");
-  prg.buffer_port_widths["lgyy_stencil"] = 16;
-  hcompute_lgyy_stencil->add_store("lgyy_stencil", "lgyy_s0_x", "lgyy_s0_y");
-
-//consuming lyy.stencil
-  auto loop_lgyy_s1_y = prg.add_loop("lgyy_s1_y", -1, 60);
-  auto loop_lgyy_s1_x = loop_lgyy_s1_y->add_loop("lgyy_s1_x", -1, 60);
-
-//store is: lgyy.stencil(lgyy.s1.x, lgyy.s1.y) = (lyy.stencil((lgyy.s1.x + -1), (lgyy.s1.y + -1)) + (lgyy.stencil(lgyy.s1.x, lgyy.s1.y) + (lyy.stencil(lgyy.s1.x, (lgyy.s1.y + -1)) + (lyy.stencil((lgyy.s1.x + 1), (lgyy.s1.y + -1)) + (lyy.stencil((lgyy.s1.x + -1), lgyy.s1.y) + (lyy.stencil(lgyy.s1.x, lgyy.s1.y) + (lyy.stencil((lgyy.s1.x + 1), lgyy.s1.y) + (lyy.stencil((lgyy.s1.x + -1), (lgyy.s1.y + 1)) + (lyy.stencil((lgyy.s1.x + 1), (lgyy.s1.y + 1)) + lyy.stencil(lgyy.s1.x, (lgyy.s1.y + 1)))))))))))
-  auto hcompute_lgyy_stencil_1 = loop_lgyy_s1_x->add_op("hcompute_lgyy_stencil_1");
-  hcompute_lgyy_stencil_1->add_function("hcompute_lgyy_stencil_1");
-  hcompute_lgyy_stencil_1->add_load("lgyy_stencil", "lgyy_s1_x", "lgyy_s1_y");
-  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + -1)", "(lgyy_s1_y + -1)");
-  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "lgyy_s1_x", "(lgyy_s1_y + -1)");
-  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + 1)", "(lgyy_s1_y + -1)");
-  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + -1)", "lgyy_s1_y");
-  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "lgyy_s1_x", "lgyy_s1_y");
-  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + 1)", "lgyy_s1_y");
-  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + -1)", "(lgyy_s1_y + 1)");
-  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + 1)", "(lgyy_s1_y + 1)");
-  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "lgyy_s1_x", "(lgyy_s1_y + 1)");
-  hcompute_lgyy_stencil_1->add_store("lgyy_stencil", "lgyy_s1_x", "lgyy_s1_y");
-////producing cim.stencil
-
-//consuming lgyy.stencil
-
-//consuming lgxy.stencil
-
-//consuming lgxx.stencil
-  auto loop_cim_s0_y = prg.add_loop("cim_s0_y", -1, 60);
-  auto loop_cim_s0_x = loop_cim_s0_y->add_loop("cim_s0_x", -1, 60);
-
-//store is: cim.stencil(cim.s0.x, cim.s0.y) = ((((lgxx.stencil(cim.s0.x, cim.s0.y)/64)*(lgyy.stencil(cim.s0.x, cim.s0.y)/64)) - ((lgxy.stencil(cim.s0.x, cim.s0.y)/64)*(lgxy.stencil(cim.s0.x, cim.s0.y)/64))) - ((((lgxx.stencil(cim.s0.x, cim.s0.y)/64) + (lgyy.stencil(cim.s0.x, cim.s0.y)/64))*((lgxx.stencil(cim.s0.x, cim.s0.y)/64) + (lgyy.stencil(cim.s0.x, cim.s0.y)/64)))/16))
-  auto hcompute_cim_stencil = loop_cim_s0_x->add_op("hcompute_cim_stencil");
-  hcompute_cim_stencil->add_function("hcompute_cim_stencil");
-  hcompute_cim_stencil->add_load("lgxx_stencil", "cim_s0_x", "cim_s0_y");
-  hcompute_cim_stencil->add_load("lgxy_stencil", "cim_s0_x", "cim_s0_y");
-  hcompute_cim_stencil->add_load("lgyy_stencil", "cim_s0_x", "cim_s0_y");
-  prg.buffer_port_widths["cim_stencil"] = 16;
-  hcompute_cim_stencil->add_store("cim_stencil", "cim_s0_x", "cim_s0_y");
-////producing cim_output.stencil
-
-//consuming cim.stencil
-  auto loop_cim_output_s0_y = prg.add_loop("cim_output_s0_y", 0, 58);
-  auto loop_cim_output_s0_x = loop_cim_output_s0_y->add_loop("cim_output_s0_x", 0, 58);
-
-//store is: cim_output.stencil(cim_output.s0.x, cim_output.s0.y) = uint8(select((((((((((cim.stencil((cim_output.s0.x + -1), (cim_output.s0.y + -1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y)) && (cim.stencil(cim_output.s0.x, (cim_output.s0.y + -1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + 1), (cim_output.s0.y + -1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + -1), cim_output.s0.y) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + 1), cim_output.s0.y) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + -1), (cim_output.s0.y + 1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil(cim_output.s0.x, (cim_output.s0.y + 1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + 1), (cim_output.s0.y + 1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (1 <= cim.stencil(cim_output.s0.x, cim_output.s0.y))), 255, 0))
-  auto hcompute_cim_output_stencil = loop_cim_output_s0_x->add_op("hcompute_cim_output_stencil");
-  hcompute_cim_output_stencil->add_function("hcompute_cim_output_stencil");
-  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + -1)", "(cim_output_s0_y + -1)");
-  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
-  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "(cim_output_s0_y + -1)");
-  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + 1)", "(cim_output_s0_y + -1)");
-  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + -1)", "cim_output_s0_y");
-  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + 1)", "cim_output_s0_y");
-  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + -1)", "(cim_output_s0_y + 1)");
-  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "(cim_output_s0_y + 1)");
-  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + 1)", "(cim_output_s0_y + 1)");
-  prg.buffer_port_widths["cim_output_stencil"] = 16;
-  hcompute_cim_output_stencil->add_store("cim_output_stencil", "cim_output_s0_x", "cim_output_s0_y");
-
-//consuming cim_output.stencil
-  auto loop_hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 58);
-  auto loop_hw_output_s0_x_xi = loop_hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 58);
-
-//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi) = cim_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi)
-  auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
-  hcompute_hw_output_stencil->add_load("cim_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
-  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
-
-  return prg;
-}
 
 prog halide_dnn_conv() {
   prog prg;
@@ -6302,16 +7128,16 @@ prog halide_cascade() {
   int size = 64;
 //consuming hw_input.stencil
 ////producing conv1.stencil
-  auto loop_conv1_s0_y = prg.add_loop("conv1_s0_y", 0, size);
-  auto loop_conv1_s0_x = loop_conv1_s0_y->add_loop("conv1_s0_x", 0, size);
+  auto loop_conv1_s0_y = prg.add_loop("conv1_s0_x", 0, size);
+  auto loop_conv1_s0_x = loop_conv1_s0_y->add_loop("conv1_s0_y", 0, size);
 
 //store is: conv1.stencil(conv1.s0.x, conv1.s0.y) = 0
   auto compute_conv1_stencil = loop_conv1_s0_x->add_op("compute_conv1_stencil");
   compute_conv1_stencil->add_function("compute_conv1_stencil");
   prg.buffer_port_widths["conv1_stencil"] = 16;
   compute_conv1_stencil->add_store("conv1_stencil", "conv1_s0_x", "conv1_s0_y");
-  auto loop_conv1_s1_y = prg.add_loop("conv1_s1_y", 0, size);
-  auto loop_conv1_s1_x = loop_conv1_s1_y->add_loop("conv1_s1_x", 0, size);
+  auto loop_conv1_s1_y = prg.add_loop("conv1_s1_x", 0, size);
+  auto loop_conv1_s1_x = loop_conv1_s1_y->add_loop("conv1_s1_y", 0, size);
 
 //store is: conv1.stencil(conv1.s1.x, conv1.s1.y) = (((((conv1.stencil(conv1.s1.x, conv1.s1.y) + (((((int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 1)))*2) + (int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 2))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 1))))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 1)))) + int32(hw_input.stencil((conv1.s1.x + 1), conv1.s1.y)))*2)) + int32(hw_input.stencil(conv1.s1.x, conv1.s1.y))) + int32(hw_input.stencil((conv1.s1.x + 2), conv1.s1.y))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 2)))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 2))))
   auto compute_conv1_stencil_1 = loop_conv1_s1_x->add_op("compute_conv1_stencil_1");
@@ -6328,8 +7154,8 @@ prog halide_cascade() {
   compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "(conv1_s1_y + 2)");
   compute_conv1_stencil_1->add_store("conv1_stencil", "conv1_s1_x", "conv1_s1_y");
 ////producing conv2.stencil
-  auto loop_conv2_s0_y = prg.add_loop("conv2_s0_y", 0, size - 2);
-  auto loop_conv2_s0_x = loop_conv2_s0_y->add_loop("conv2_s0_x", 0, size - 2);
+  auto loop_conv2_s0_y = prg.add_loop("conv2_s0_x", 0, size - 2);
+  auto loop_conv2_s0_x = loop_conv2_s0_y->add_loop("conv2_s0_y", 0, size - 2);
 
 //store is: conv2.stencil(conv2.s0.x, conv2.s0.y) = 0
   auto compute_conv2_stencil = loop_conv2_s0_x->add_op("compute_conv2_stencil");
@@ -6338,8 +7164,8 @@ prog halide_cascade() {
   compute_conv2_stencil->add_store("conv2_stencil", "conv2_s0_x", "conv2_s0_y");
 
 //consuming conv1.stencil
-  auto loop_conv2_s1_y = prg.add_loop("conv2_s1_y", 0, size - 2);
-  auto loop_conv2_s1_x = loop_conv2_s1_y->add_loop("conv2_s1_x", 0, size - 2);
+  auto loop_conv2_s1_y = prg.add_loop("conv2_s1_x", 0, size - 2);
+  auto loop_conv2_s1_x = loop_conv2_s1_y->add_loop("conv2_s1_y", 0, size - 2);
 
 //store is: conv2.stencil(conv2.s1.x, conv2.s1.y) = (conv1.stencil(conv2.s1.x, conv2.s1.y) + (conv2.stencil(conv2.s1.x, conv2.s1.y) + ((conv1.stencil((conv2.s1.x + 1), conv2.s1.y)*2) + (conv1.stencil((conv2.s1.x + 2), conv2.s1.y) + ((conv1.stencil(conv2.s1.x, (conv2.s1.y + 1))*2) + ((conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 1))*4) + ((conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 1))*2) + (conv1.stencil(conv2.s1.x, (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 2))*2))))))))))
   auto compute_conv2_stencil_1 = loop_conv2_s1_x->add_op("compute_conv2_stencil_1");
@@ -6357,8 +7183,8 @@ prog halide_cascade() {
   compute_conv2_stencil_1->add_store("conv2_stencil", "conv2_s1_x", "conv2_s1_y");
 
 //consuming conv2.stencil
-  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, size - 2);
-  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, size - 2);
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_x_xo", 0, size - 2);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_y_yo", 0, size - 2);
 
 //store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv2.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
   auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
@@ -6369,23 +7195,23 @@ prog halide_cascade() {
   return prg;
 }
 
-void mini_conv_halide_test() {
+//void mini_conv_halide_test() {
 
-  prog prg = mini_conv_halide();
-  prg.pretty_print();
+  //prog prg = mini_conv_halide();
+  //prg.pretty_print();
 
-  generate_optimized_code(prg);
-  generate_regression_testbench(prg);
-  vector<string> auto_gen_res = run_regression_tb(prg);
+  //generate_optimized_code(prg);
+  //generate_regression_testbench(prg);
+  //vector<string> auto_gen_res = run_regression_tb(prg);
 
-  prog prg_fixed = mini_conv_halide_fixed();
-  prg_fixed.pretty_print();
+  //prog prg_fixed = mini_conv_halide_fixed();
+  //prg_fixed.pretty_print();
 
-  generate_optimized_code(prg_fixed);
-  generate_regression_testbench(prg_fixed);
-  vector<string> optimized_res = run_regression_tb(prg_fixed);
-  assert(optimized_res == auto_gen_res);
-}
+  //generate_optimized_code(prg_fixed);
+  //generate_regression_testbench(prg_fixed);
+  //vector<string> optimized_res = run_regression_tb(prg_fixed);
+  //assert(optimized_res == auto_gen_res);
+//}
 
 void conv_3_3_halide_test() {
   prog prg_fixed = conv_3_3_halide_fixed();
@@ -6410,44 +7236,45 @@ void halide_cascade_test() {
   cout << "Created program..." << endl;
   prg.pretty_print();
 
-  auto domain = prg.whole_iteration_domain();
+  //auto domain = prg.whole_iteration_domain();
 
-  auto order_deps = prg.relative_orders();
-  cout << "Getting validity deps..." << endl;
-  isl_union_map *raw_deps = prg.validity_deps();
-  cout << "Got validity deps..." << endl;
-  cout << "Validity: " << str(raw_deps) << endl;
-  auto validity =
-    unn(order_deps, raw_deps);
-  isl_union_map *proximity =
-    cpy(raw_deps);
+  //auto order_deps = prg.relative_orders();
+  //cout << "Getting validity deps..." << endl;
+  //isl_union_map *raw_deps = prg.validity_deps();
+  //cout << "Got validity deps..." << endl;
+  //cout << "Validity: " << str(raw_deps) << endl;
+  //auto validity =
+    //unn(order_deps, raw_deps);
+  //isl_union_map *proximity =
+    //cpy(raw_deps);
 
-  auto clksched = clockwork_schedule(domain, validity, proximity);
-  cout << "---- Clockwork schedule:" << endl;
-  isl_space* test_space = map_space(prg.ctx, 2, 3);
-  isl_local_space* aff_space = local_set_space(prg.ctx, 2);
-  for (auto s : clksched) {
-    auto ma = isl_multi_aff_zero(test_space);
+  //auto clksched = clockwork_schedule(domain, validity, proximity);
+  //cout << "---- Clockwork schedule:" << endl;
+  //isl_space* test_space = map_space(prg.ctx, 2, 3);
+  //isl_local_space* aff_space = local_set_space(prg.ctx, 2);
+  //for (auto s : clksched) {
+    //auto ma = isl_multi_aff_zero(test_space);
 
-    cout << tab(1) << s.first << " -> ";
-    int i = 0;
-    for (auto v : s.second) {
-      cout << str(v) << ", ";
-      isl_aff* av = isl_aff_zero_on_domain(aff_space);
-      av = set_const_coeff(av, const_coeff(v));
-      isl_multi_aff_set_aff(ma, i, av);
-      i++;
-    }
-    cout << endl;
-    cout << tab(2) << "ma = " << str(ma) << endl;
-  }
+    //cout << tab(1) << s.first << " -> ";
+    //int i = 0;
+    //for (auto v : s.second) {
+      //cout << str(v) << ", ";
+      //isl_aff* av = isl_aff_zero_on_domain(aff_space);
+      //av = set_const_coeff(av, const_coeff(v));
+      //isl_multi_aff_set_aff(ma, i, av);
+      //i++;
+    //}
+    //cout << endl;
+    //cout << tab(2) << "ma = " << str(ma) << endl;
+  //}
 
   //generate_optimized_code(prg);
 
-  //regression_test(prg);
+  regression_test(prg);
 }
 
 void halide_frontend_test() {
+  // call the function generated by Halide to hardware
   prog prg = clockwork_target();
   cout << "Created program..." << endl;
   prg.pretty_print();
@@ -6457,7 +7284,6 @@ void halide_frontend_test() {
 }
 
 void tricky_shift_register_reconvergence_test() {
-  //App sobel = tricky_reconvergence("A");
   App sobel;
   sobel.func2d("C_oc");
   sobel.func2d("C", v("C_oc"));
@@ -6550,8 +7376,10 @@ vector<string> gauss_pyramid(const int num_levels, const string& func, App& app)
     string next_out = func + "_gauss_ds_" + str(l);
 
     vector<vector<int > > offsets;
-    for (int r = 0; r < 3; r++) {
-      for (int c = 0; c < 3; c++) {
+    //for (int r = 0; r < 3; r++) {
+      //for (int c = 0; c < 3; c++) {
+    for (int r = -1; r < 2; r++) {
+      for (int c = -1; c < 2; c++) {
         offsets.push_back({c, r});
       }
     }
@@ -6854,7 +7682,7 @@ void up_stencil_down_test() {
   lp.realize_naive(options, "ds", size, size);
   auto naive = run_regression_tb("ds_naive");
 
-  compare(opt, naive);
+  compare("ds", opt, naive);
   //assert(opt == naive);
 }
 
@@ -7130,6 +7958,38 @@ App camera_pipeline(const std::string& out_name) {
 
   cp.func2d(out_name, add(v(sharpened), 20));
   return cp;
+}
+
+void generate_app_benchmark(
+    const std::string& name,
+    App& app,
+    const std::vector<int>& dimensions,
+    const int unroll_factor) {
+
+  vector<int> mini_dimensions;
+  mini_dimensions.resize(dimensions.size(), 256);
+
+  CodegenOptions options;
+  options.use_custom_code_string = true;
+  app.realize(options, name, mini_dimensions, 1);
+  int bmp_res = run_sw_bmp_test_harness(name + "_opt");
+  assert(false);
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    options.unroll_factors_as_pad = true;
+    app.realize_naive(options, name, mini_dimensions);
+  }
+
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
+  compare(name + " generate app benchmark mini sanity check", optimized, naive);
+
+  app.realize(options, name, dimensions, unroll_factor);
+  move_to_benchmarks_folder(name + "_opt");
 }
 
 void camera_pipeline_all_adds_only_denoise_demosaic_test(const std::string& prefix) {
@@ -7440,6 +8300,7 @@ void denoise3d_test() {
 
 App max_pooling(const std::string& out_name) {
   App mp;
+  mp.set_default_pixel_width(16);
   mp.func3d("in_oc");
   mp.func3d("in", "id", pt3("in_oc"));
   Window max_win{"in", {qconst(2), qconst(2), qconst(1)}, {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
@@ -7474,12 +8335,46 @@ void max_pooling_test_sizes(const std::string& prefix) {
   move_naive_to_benchmarks_folder(name);
 }
 
+void gauss_pyramid_test(const std::string& prefix) {
+
+  int in_rows = 1080;
+  int in_cols = 1920;
+
+  int rows = 1080 / pow(2, 4 - 1);
+  int cols = 1920 / pow(2, 4 - 1);
+  //vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  vector<int> unroll_factors{32};
+  for (auto factor : unroll_factors) {
+    string name = prefix + "_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+
+    gauss_pyramid_fpga(name).realize(options, name, {cols, rows}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+
+  //CodegenOptions options;
+  //options.internal = true;
+  //options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  //max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
+  //move_to_benchmarks_folder("mp_naive");
+
+  //std::vector<std::string> naive =
+    //run_regression_tb("max_pool_opt");
+  //std::vector<std::string> optimized =
+    //run_regression_tb("max_pool_naive");
+  //assert(naive == optimized);
+}
 void max_pooling_test(const std::string& prefix) {
   int W = 64;
   int H = 64;
   int D = 64;
 
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  //vector<int> unroll_factors{32};
   for (auto factor : unroll_factors) {
     string name = prefix + "_" + str(factor);
     CodegenOptions options;
@@ -7495,14 +8390,32 @@ void max_pooling_test(const std::string& prefix) {
   //options.internal = true;
   //options.all_rams = true;
   //options.unroll_factors_as_pad = true;
-  //mp.realize_naive(options, "max_pool", {H, W, D});
+  //max_pooling("mp_naive").realize_naive(options, "mp_naive", {H, W, D});
+  //move_to_benchmarks_folder("mp_naive");
 
   //std::vector<std::string> naive =
     //run_regression_tb("max_pool_opt");
   //std::vector<std::string> optimized =
     //run_regression_tb("max_pool_naive");
   //assert(naive == optimized);
+}
 
+App gauss_pyramid_fpga(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  int pyramid_levels = 4;
+
+  auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "in", lp);
+
+  lp.func2d(out_name, "id", pt(dark_weight_pyramid.back()));
+
+  return lp;
 }
 
 App ef_cartoon(const std::string& out_name) {
@@ -7546,8 +8459,8 @@ App ef_cartoon(const std::string& out_name) {
   string image = merged_images.back();
   for (int i = merged_images.size() - 2; i >= 0; i--) {
     string merged_level = "final_merged_" + str(i);
-    lp.func2d(merged_level, "average", {upsample(2, image), pt(merged_images.at(i))});
-    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    //lp.func2d(merged_level, "average", {upsample(2, image), pt(merged_images.at(i))});
+    lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
     image = merged_level;
   }
 
@@ -7557,14 +8470,123 @@ App ef_cartoon(const std::string& out_name) {
   return lp;
 }
 
-App exposure_fusion_app(const std::string& out_name) {
-  App lp;
-  lp.set_default_pixel_width(16);
-  // The off chip input we are reading from
-  lp.func2d("in_off_chip");
+void weight_add_exposure_fusion_app(
+    const std::string& in_name,
+    const std::string& out_name,
+    App& lp) {
 
-  // The temporary buffer we store the input image in
-  lp.func2d("in", "id", pt("in_off_chip"));
+  const int pyramid_levels = 4;
+
+  lp.func2d("in", "id", pt(in_name));
+
+  // Two synthetic exposures
+  lp.func2d("bright", "id", pt("in"));
+  lp.func2d("dark", "scale_exposure", pt("in"));
+
+  // Compute weights which measure the "quality" of
+  // pixels in each image
+  lp.func2d("bright_weights", "exposure_weight", pt("bright"));
+  lp.func2d("dark_weights", "exposure_weight", pt("dark"));
+
+  // Normalize weights so that the weight matrices entries sum to one
+  lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
+  lp.func2d("bright_weights_normed", "f_divide", pt("bright_weights"), pt("weight_sums"));
+  lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
+
+  string fused = "fused_level_" + str((int) 0);
+  lp.func2d(fused, "merge_exposures", {pt("bright"), pt("dark"),
+      pt("bright_weights_normed"), pt("dark_weights_normed")});
+
+  //int n_levels = 2;
+  //// Create pyramids of the weights
+  //auto dark_weight_pyramid = gauss_pyramid(n_levels, "dark_weights_normed", lp);
+  //auto bright_weight_pyramid = gauss_pyramid(n_levels, "bright_weights_normed", lp);
+
+  //// Create laplacian pyramids of the synthetic exposures
+  //auto dark_pyramid = laplace_pyramid(n_levels, "dark", lp);
+  //auto bright_pyramid = laplace_pyramid(n_levels, "bright", lp);
+
+  //// Merge weighted pyramids
+  //vector<string> merged_images;
+  //for (int i = 0; i < dark_pyramid.size(); i++) {
+    //string fused = "fused_level_" + str(i);
+    //lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
+        //pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
+    //merged_images.push_back(fused);
+  //}
+
+  //// Collapse the blended pyramid into a single image
+  //assert(merged_images.size() == n_levels);
+  //string image = merged_images.back();
+  //for (int i = merged_images.size() - 2; i >= 0; i--) {
+    //string merged_level = "final_merged_" + str(i);
+    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    //image = merged_level;
+  //}
+
+  lp.func2d(out_name, "id", pt(fused));
+}
+
+void two_level_exposure_fusion_app(
+    const std::string& in_name,
+    const std::string& out_name,
+    App& lp) {
+
+  lp.func2d("in", "id", pt(in_name));
+
+  // Two synthetic exposures
+  lp.func2d("bright", "id", pt("in"));
+  lp.func2d("dark", "scale_exposure", pt("in"));
+
+  // Compute weights which measure the "quality" of
+  // pixels in each image
+  lp.func2d("bright_weights", "exposure_weight", pt("bright"));
+  lp.func2d("dark_weights", "exposure_weight", pt("dark"));
+
+  // Normalize weights so that the weight matrices entries sum to one
+  lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
+  lp.func2d("bright_weights_normed", "f_divide", pt("bright_weights"), pt("weight_sums"));
+  lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
+
+
+  int n_levels = 2;
+  // Create pyramids of the weights
+  auto dark_weight_pyramid = gauss_pyramid(n_levels, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(n_levels, "bright_weights_normed", lp);
+
+  // Create laplacian pyramids of the synthetic exposures
+  auto dark_pyramid = laplace_pyramid(n_levels, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(n_levels, "bright", lp);
+
+  // Merge weighted pyramids
+  vector<string> merged_images;
+  for (int i = 0; i < dark_pyramid.size(); i++) {
+    string fused = "fused_level_" + str(i);
+    lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
+        pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
+    merged_images.push_back(fused);
+  }
+
+  // Collapse the blended pyramid into a single image
+  assert(merged_images.size() == n_levels);
+  string image = merged_images.back();
+  for (int i = merged_images.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    image = merged_level;
+  }
+
+  lp.func2d(out_name, "id", pt(image));
+}
+
+void exposure_fusion_app(
+    const std::string& in_name,
+    const std::string& out_name,
+    App& lp) {
+
+  lp.func2d("in", "id", pt(in_name));
+
+  const int pyramid_levels = 4;
 
   // Two synthetic exposures
   lp.func2d("bright", "id", pt("in"));
@@ -7582,12 +8604,12 @@ App exposure_fusion_app(const std::string& out_name) {
 
 
   // Create pyramids of the weights
-  auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
-  auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
+  auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(pyramid_levels, "bright_weights_normed", lp);
 
   // Create laplacian pyramids of the synthetic exposures
-  auto dark_pyramid = laplace_pyramid(4, "dark", lp);
-  auto bright_pyramid = laplace_pyramid(4, "bright", lp);
+  auto dark_pyramid = laplace_pyramid(pyramid_levels, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(pyramid_levels, "bright", lp);
 
   // Merge weighted pyramids
   vector<string> merged_images;
@@ -7599,7 +8621,7 @@ App exposure_fusion_app(const std::string& out_name) {
   }
 
   // Collapse the blended pyramid into a single image
-  assert(merged_images.size() == 4);
+  assert(merged_images.size() == pyramid_levels);
   string image = merged_images.back();
   for (int i = merged_images.size() - 2; i >= 0; i--) {
     string merged_level = "final_merged_" + str(i);
@@ -7608,7 +8630,17 @@ App exposure_fusion_app(const std::string& out_name) {
   }
 
   lp.func2d(out_name, "id", pt(image));
+}
 
+App exposure_fusion_app(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  exposure_fusion_app("in_off_chip", out_name, lp);
+
+  // The temporary buffer we store the input image in
   return lp;
 }
 
@@ -7698,17 +8730,95 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
   }
 }
 
-void exposure_fusion_iccad_apps(const std::string& prefix) {
-  vector<int> throughputs{1, 2, 4, 8, 16, 32};
+void gauss_pyramid_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16};
   for (auto throughput : throughputs) {
-    //const int throughput = 4;
+    string name = prefix + "_" + str(throughput);
+    App lp = gauss_pyramid_fpga(name);
+    int rows = 1080 / pow(2, 4 - 1);
+    int cols = 1920 / pow(2, 4 - 1);
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, {cols, rows}, "in", throughput);
+
+    move_to_benchmarks_folder(name + "_opt");
+  }
+  //assert(false);
+}
+
+void exposure_fusion_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16};
+  //vector<int> throughputs{16};
+  for (auto throughput : throughputs) {
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
     int rows = 1080;
     int cols = 1920;
-    lp.realize(name, cols, rows, throughput);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    lp.realize(options, name, cols, rows, throughput);
+
     move_to_benchmarks_folder(name + "_opt");
   }
+  //assert(false);
+}
+
+void exposure_fusion_fpga_test(const std::string& name) {
+
+  int in_rows = 1080;
+  int in_cols = 1920;
+
+  int rows = 1080;
+  int cols = 1920;
+  App gp = exposure_fusion_app(name);
+  //gp.realize(name, cols, rows);
+  ////move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+
+  ////lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, name, cols, rows);
+
+  //std::vector<std::string> optimized =
+    //run_regression_tb("out_opt");
+  //std::vector<std::string> naive =
+    //run_regression_tb(name + "_naive");
+  //compare("exposure fusion naive", naive, optimized);
+  move_to_benchmarks_folder(name + "_naive");
+}
+
+void gauss_pyramid_fpga_test(const std::string& name) {
+
+  int in_rows = 1080;
+  int in_cols = 1920;
+
+  int rows = 1080 / pow(2, 4 - 1);
+  int cols = 1920 / pow(2, 4 - 1);
+  App gp = gauss_pyramid_fpga(name);
+  gp.realize(name, cols, rows);
+  ////move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+
+  ////lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, name, cols, rows);
+
+  //std::vector<std::string> optimized =
+    //run_regression_tb("out_opt");
+  //std::vector<std::string> naive =
+    //run_regression_tb(name + "_naive");
+  //compare("gp naive", naive, optimized);
+  move_to_benchmarks_folder(name + "_naive");
+  //assert(false);
 }
 
 void exposure_fusion() {
@@ -7905,28 +9015,30 @@ void single_gaussian_pyramid_app_test() {
 void ef_cartoon_test(const std::string& out_name) {
   App gp = ef_cartoon(out_name);
   //int size = 200;
-  int cols = 256;
-  int rows = 256;
-  //{
-    //CodegenOptions options;
-    //options.internal = true;
-    //options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
-    //gp.realize(options, out_name, {cols, rows}, "in", 1);
-  //}
+  int cols = 1920;
+  int rows = 1080;
   {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = false;
-    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
-    gp.realize_naive(options, out_name, {cols, rows});
-    //move_to_benchmarks_folder(out_name + "_opt");
+    options.use_custom_code_string = true;
+    gp.realize(options, out_name, {cols, rows}, "in", 32);
+    move_naive_to_benchmarks_folder(out_name + "_opt");
   }
+  //{
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    //options.use_custom_code_string = false;
+    //options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    //gp.realize_naive(options, out_name, {cols, rows});
+    ////move_to_benchmarks_folder(out_name + "_opt");
+  //}
 }
 
 
 void gaussian_pyramid_app_test(const std::string& prefix) {
+  cout << "Starting gaussian pyramid test" << endl;
   string name = "gp";
   App gp = gaussian_pyramid_app(name, 3);
   int size = 64;
@@ -7945,11 +9057,16 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
   options.unroll_factors_as_pad = true;
   gp.realize_naive(options, name, size, size);
 
+  cout << "Running naive " << name << endl;
   std::vector<std::string> naive =
     run_regression_tb(name + "_naive");
+
+  cout << "Running optimized " << name << endl;
   std::vector<std::string> optimized =
     run_regression_tb(name + "_opt");
   assert(naive == optimized);
+
+  //assert(false);
 
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
   for (auto factor : unroll_factors) {
@@ -8074,6 +9191,21 @@ App pointwise_add(const std::string output_name) {
   jac.func2d("input_arg");
   jac.func2d("input", v("input_arg"));
   jac.func2d(output_name, div(v("input"), 9));
+  return jac;
+}
+
+App multi_channel(const std::string output_name) {
+  App jac;
+  jac.set_default_pixel_width(16);
+  jac.func2d("in0_oc");
+  jac.func2d("in1_oc");
+  jac.func2d("in0", "id", pt("in0_oc"));
+  jac.func2d("in1", "id", pt("in1_oc"));
+
+  Window in0 = pt("in0");
+  Window in1 = pt("in1");
+  jac.func2d("average", "add", {in0, in1});
+  jac.func2d(output_name, "id", pt("average"));
   return jac;
 }
 
@@ -9160,7 +10292,9 @@ void two_in_window_test() {
   }
   cpi->add_op({"out", "c"}, "conv_1_3", ld);
 
+  prg.pretty_print();
   regression_test(prg);
+  //assert(false);
 }
 
 void upsample_reduce_test() {
@@ -9225,174 +10359,325 @@ void blur_and_downsample_test() {
   regression_test(prg);
 }
 
-isl_val* constant(isl_aff* a) {
-  return isl_aff_get_constant_val(a);
-}
-
 void playground() {
+    //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto access_map = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
+    //auto padded = pad_map(access_map, 5);
+    //auto tile_map = pad_identity_relation_to_map(access_map, 1, 0, -1, 3);
+    //cout << "Insert: " << str(tile_map) << endl;
+    //cout << "Padded: " << str(padded) << endl;
+    //cout << str(access_map) << endl << str(simplify_expr(access_map)) << endl;
+    //cout << str(get_aff(simplify_expr(access_map))) << endl;
+    //assert(false);
+    //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto access_map = isl_map_read_from_str(ctx, "{ conv[root = 0, x, y, z]->data[x, y, z]: 0<=x<=4 and 0<=y<=6 and 0<=z<=1 }");
+    //auto reduce_map = linear_address_map_with_index(range(access_map), {0,1,2});
+    //auto reduce_map_2D = linear_address_map_with_index(range(access_map), {0,2});
+    //auto flatten_access_map = dot(access_map, reduce_map);
+    //auto flatten_access_map_2D = dot(access_map, reduce_map_2D);
+    //cout << "Origin: " << str(access_map) << endl;
+    //cout << "Rewrite: " << str(flatten_access_map) << endl;
+    //cout << "Rewrite 2D: " << str(flatten_access_map_2D) << endl;
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[2*x + y, 4*z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
+    //for (int i = 0; i < get_in_dim(access_map); i ++) {
+        //cout << "map input : " << get_dim_min(domain(access_map), i)
+            //<< get_dim_max(domain(access_map), i) <<endl;
+    //}
+    //for (int i = 0; i < get_out_dim(access_map); i ++) {
+        //cout << "map output card: " << str(get_out_range(access_map, i)) << endl;
+    //}
+    //assert(false);
 
-  prog prg;
-  prg.compute_unit_file = "mobilenet_compute.h";
-  prg.name = "reduce_2d";
-  prg.add_input("in");
-  prg.add_output("out");
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_bounds["in"] = {3, 3};
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto sched = rdmap(ctx, "{ op_hcompute_hw_input_stencil_agg2sram[0,i0, i1] -> [i0, 3 + 4i1, 2] : 0 <= i0 <= 3 and 0 <= i1 <= 2047; op_hcompute_conv_stencil_1[0, i0, i1] -> [i0, 8191 + i1, 3] : 0 <= i0 <= 3 and 0 <= i1 <= 112895; op_hcompute_hw_input_stencil[0, i0, i1] -> [i0, i1, 0] : 0<= i0 <= 3 and 0 <= i1 <= 8191; op_hcompute_conv_stencil_1_sram2tb[0, i0, i1] -> [i0, 8191 + 2i1, 1] : 0 <= i0 <= 3 and 0 <= i1 <= 56447 }");
+    //cout << codegen_c(sched) << endl;
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //cout << str(form_pt({0,1})) << endl;
+    //auto access_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> b[x + y, z]: 0<=x<=7 and 0<=y<=7 and 0<=z<=3}");
+    //cout << str(project_all_but(access_map, 1)) << endl;
+    //cout << str(project_all_but(access_map, 0)) << endl;
+    //auto acc_map = isl_map_read_from_str(ctx, "{ a[root=0, x, y, z]-> [x + y, x]: z=2}");
+    //auto sched = isl_map_read_from_str(ctx, "{ p[x, y, z]->[0, 0, x, 0, y, 0, z, 0]}");
+    //auto sched_exp = isl_map_read_from_str(ctx, "{ p[0, x, y, z]->[x+2, y+1, 2*z+3]: 0<=x<=14 and 0<=y<=15 and 0<=z<=10}");
+    //cout << str(sample(range(sched_exp))) << endl;
+    //cout << int_upper_bound(get_out_range(sched_exp, 2));
+    //auto pad_sched = pad_one_more_dim_to_sched_map_with_id(to_umap(sched_exp), 1, 0);
+    //auto delay_sched = delay_schedule_domain_dim(sched, 2 , 1);
+    //auto peel_sched = peel_schedule_domain_dim(sched, 1 , 1);
+    //auto trans = flatten_map_domain_trans_with_dim(sched_exp, 2);
+    //cout << str(trans) << endl;
+    //cout << "origin: " << str(sched) << "\ndelay: " << str(delay_sched) << "\npeel:" << str(peel_sched) <<  endl;
+    //cout << "origin: " << str(sched_exp) << "\npad_sched: " << str(pad_sched) <<  endl;
+    //cout << "relation map:" << relation_map(acc_map) << endl;
 
-  prg.buffer_port_widths["out"] = 32;
-  prg.buffer_bounds["out"] = {1};
+    //isl_ctx_free(ctx);
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto dom = isl_union_set_read_from_str(ctx, "{ p[x] : 0 <= x <= 200; c[x] : 30 <= x <= 50 }");
+    //auto dep = rdmap(ctx, "{ p[x] -> c[y] : 2*y - 10 <= x <= 2*y + 10 }");
+    //print_hw_schedule(dom, its(dep, dom));
 
-  prg.buffer_port_widths["I"] = 32;
-  prg.buffer_bounds["I"] = {3, 3};
+    //isl_ctx_free(ctx);
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto dom = isl_map_read_from_str(ctx, "{ p[x] -> c[k] : exists y : 2y = x and x = 3*k }");
+    //cout << "dom = " << str(dom) << endl;
+    //for (auto m : get_basic_maps(dom)) {
+      //cout << "flattened = " << str(flatten_bmap_to_bset(m)) << endl;
+    //}
+    ////auto dep = rdmap(ctx, "{ p[x, y] -> c[x, y] }");
+    ////print_hw_schedule(dom, its(dep, dom));
 
-  prg.buffer_port_widths["tmp"] = 32;
-  prg.buffer_bounds["tmp"] = {1};
+    //isl_ctx_free(ctx);
+    //assert(false);
+  //}
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto dom = isl_union_set_read_from_str(ctx, "{ p[x, y] : 0 <= x <= 200 and 0 <= y <= 10; c[x, y] : 30 <= x <= 50 and 0 <= y <= 10}");
+    //auto dep = rdmap(ctx, "{ p[x, y] -> c[x, y] }");
+    //print_hw_schedule(dom, its(dep, dom));
 
-  auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
+    //isl_ctx_free(ctx);
+    //assert(false);
+  //}
 
-  {
-    auto init = prg.add_op("set_z");
-    init->add_function("set_zero_32");
-    init->add_store("tmp", "0");
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto s = rdset(ctx, "{ [x, y] : 2y = x }");
+    //cout << "pre projection: " << str(s) << endl;
 
-    auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
-    auto accum = accum_loop->add_op("accumulate");
-    auto tmp = accum->add_load("tmp", "0");
-    auto next = accum->add_load("I", "ar, ac");
-    accum->add_function("inc", {tmp, next});
-    accum->add_store("tmp", "0");
+    //auto p = isl_set_project_out(s, isl_dim_set, 1, 1);
+    //cout << "post          : " << str(p) << endl;
+    //for (auto bset : get_basic_sets(p)) {
+      //cout << str(bset) << endl;
+      //auto ineqs = isl_basic_set_inequalities_matrix(bset,
+          //isl_dim_set, isl_dim_div, isl_dim_param, isl_dim_cst);
+      //cout << "ineqs: " << endl;
+      //cout << str(ineqs) << endl;
+      //auto eqs = isl_basic_set_equalities_matrix(bset,
+          //isl_dim_set, isl_dim_div, isl_dim_param, isl_dim_cst);
+      //cout << "eqs: " << endl;
+      //cout << str(eqs) << endl;
+    //}
+    //isl_ctx_free(ctx);
+    //assert(false);
+  //}
 
-    auto write_out = prg.add_op("output");
-    write_out->add_load("tmp", "0");
-    write_out->add_store("out", "0");
-  }
+  //{
+    //isl_ctx* ctx = isl_ctx_alloc();
+    //auto s = rdset(ctx, "{ [x, y] : y = 5 and x >= -4 and x < 19}");
+    //auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}, {"y", "II_y"}}, "d");
+    //cout << "fs = " << str(fs) << endl;
+    //auto extra_constraint = rdset(ctx, "{ [II_x, II_y, b, c, d, e, f, g] : II_y >= 1 and II_x >= 1 }");
+    //auto sol = its(extra_constraint, to_set(fs));
+    //cout << "New fs = " << str(sol) << endl;
+    //auto pt = sample(sol);
+    //cout << "Example solution: " << str(pt) << endl;
+    //isl_ctx_free(ctx);
+  //}
 
-  cout << "Original program" << endl;
-  prg.pretty_print();
-  cout << endl;
+  //assert(false);
+  //{
+    //prog prg;
 
-  auto domain = prg.whole_iteration_domain();
 
-  auto order_deps = prg.relative_orders();
-  cout << "Getting validity deps..." << endl;
-  isl_union_map *raw_deps = prg.validity_deps();
-  cout << "Got validity deps..." << endl;
-  cout << "Validity: " << str(raw_deps) << endl;
-  auto validity =
-    unn(order_deps, raw_deps);
-  isl_union_map *proximity =
-    cpy(raw_deps);
+    //umap* sched = rdmap(prg.ctx, "{ B[k, 0] -> [k, 0]; B[k, 1] -> [k, 1] }");
+    //umap* m = rdmap(prg.ctx, "{ B[k, 0] -> b[k]; B[k, 1] -> b[k + 1]}");
+    //auto read_id = isl_union_set_identity(cpy(domain(m)));
+    //auto same = diff(dot(m, inv(m)), read_id);
+    //cout << "same = " << str(same) << endl;
+    //auto earlier = lex_gt(sched, sched);
+    //auto se = its(same, earlier);
+    //cout << "se   = " << str(se) << endl;
+    //for (auto m : get_maps(se)) {
+      //auto pw = isl_pw_multi_aff_from_map(m);
+      //cout << tab(1) << str(pw) << endl;
+    //}
+    //assert(false);
+  //}
 
-  auto clksched = clockwork_schedule(domain, validity, proximity);
-  cout << "---- Clockwork schedule:" << endl;
-  for (auto s : clksched) {
-    cout << tab(1) << s.first << " -> ";
-    for (auto v : s.second) {
-      cout << str(v) << ", ";
-    }
-    cout << endl;
-  }
+  //prog prg;
+  //prg.compute_unit_file = "mobilenet_compute.h";
+  //prg.name = "reduce_2d";
+  //prg.add_input("in");
+  //prg.add_output("out");
+  //prg.buffer_port_widths["in"] = 32;
+  //prg.buffer_bounds["in"] = {3, 3};
 
-  //cout << "Program code without optimization..." << endl;
-  //prg.unoptimized_codegen();
+  //prg.buffer_port_widths["out"] = 32;
+  //prg.buffer_bounds["out"] = {1};
+
+  //prg.buffer_port_widths["I"] = 32;
+  //prg.buffer_bounds["I"] = {3, 3};
+
+  //prg.buffer_port_widths["tmp"] = 32;
+  //prg.buffer_bounds["tmp"] = {1};
+
+  //auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
+
+  //{
+    //auto init = prg.add_op("set_z");
+    //init->add_function("set_zero_32");
+    //init->add_store("tmp", "0");
+
+    //auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
+    //auto accum = accum_loop->add_op("accumulate");
+    //auto tmp = accum->add_load("tmp", "0");
+    //auto next = accum->add_load("I", "ar, ac");
+    //accum->add_function("inc", {tmp, next});
+    //accum->add_store("tmp", "0");
+
+    //auto write_out = prg.add_op("output");
+    //write_out->add_load("tmp", "0");
+    //write_out->add_store("out", "0");
+  //}
+
+  //cout << "Original program" << endl;
+  //prg.pretty_print();
   //cout << endl;
 
-  //cout << "Program with optimized schedule..." << endl;
-  //umap* opt_sched = prg.optimized_codegen();
-  //cout << "Consumer maps..." << endl;
-  //cout << tab(1) << str(prg.consumer_map()) << endl;
+  //auto domain = prg.whole_iteration_domain();
 
-  //cout << "Schedules..." << endl;
-  //for (auto s : prg.schedules()) {
-    //cout << tab(1) << str(s.second) << endl;
-    //auto next_op = lexmin(lex_lt(s.second, s.second));
-    //cout << "next op: " << str(next_op) << endl;
-  //}
+  //auto order_deps = prg.relative_orders();
+  //cout << "Getting validity deps..." << endl;
+  //isl_union_map *raw_deps = prg.validity_deps();
+  //cout << "Got validity deps..." << endl;
+  //cout << "Validity: " << str(raw_deps) << endl;
+  //auto validity =
+    //unn(order_deps, raw_deps);
+  //isl_union_map *proximity =
+    //cpy(raw_deps);
 
-  //isl_ctx* ct = isl_ctx_alloc();
-
-  ////uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
-  //uset* dom =
-    //isl_union_set_read_from_str(ct, "{ P[x, k] : 0 <= x <= 10 and 0 <= k <= 10; C[x, k] : 0 <= x <= 10 and 0 <= k <= 10 }");
-  //umap* validity =
-    //rdmap(ct, "{ P[x, k] -> C[y, l] : x = 2y + 3 }");
-    ////rdmap(ct, "{ P[x, k] -> C[y, l] : k = l and x = 2y + 3 }");
-    ////rdmap(ct, "{ P[x] -> C[y] : x = 2y + 3 }");
-    ////rdmap(ct, "{ P[x] -> C[y] : x = floor(y/2) }");
-    ////rdmap(ct, "{ P[x] -> C[x] }");
-  //umap* proximity =
-    //cpy(validity);
-
-  //clockwork_schedule(dom, validity, proximity);
-  ////experimental_opt(dom, validity, proximity);
-
-
-  //isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
-  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [3 a / 2 + 2 b / 15] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) % 2] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b) / 2)] }");
-  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + 3b) % 2 + a / 6] }");
-  //cout << "aff = " << str(aff) << endl;
-  //cout << "const = " << str(constant(aff)) << endl;
-  //int in_dims = num_in_dims(aff);
-  //cout << "input dimension: " << in_dims << endl;
-  //int out_dims = num_out_dims(aff);
-  //cout << "output dimension: " << out_dims << endl;
-
-  //isl_local_space* ls = isl_aff_get_local_space(aff);
-  //int div_dims = isl_local_space_dim(ls, isl_dim_div);
-  //cout << "div dimension   : " << isl_local_space_dim(ls, isl_dim_div) << endl;
-  //cout << "all dimensions  : " << isl_local_space_dim(ls, isl_dim_all) << endl;
-  //cout << "Local space: " << str(ls) << endl;
-
-  //for (int i = 0; i < in_dims; i++) {
-    //cout << i << "th coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_in, i)) << endl;
-  //}
-  ////for (int i = 0; i < out_dims; i++) {
-    ////cout << i << "th div  : " << str(isl_aff_get_div(aff, i)) << endl;
+  //umap* clksched_map = clockwork_schedule_umap(domain, validity, proximity);
+  ////map<string, isl_aff*> clksched = clockwork_schedule(domain, validity, proximity);
+  ////cout << "---- Clockwork schedule:" << endl;
+  ////for (auto s : clksched) {
+    ////cout << tab(1) << s.first << " -> ";
+    ////for (auto v : s.second) {
+      ////cout << str(v) << ", ";
+    ////}
+    ////cout << endl;
   ////}
-  //for (int i = 0; i < div_dims; i++) {
-    //cout << i << "th div      : " << str(isl_aff_get_div(aff, i)) << endl;
-    //cout << i << "th div coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_div, i)) << endl;
-  //}
 
-  //isl_basic_set* bset = isl_aff_eq_basic_set(cpy(aff), cpy(zero));
-    ////isl_basic_set_read_from_str(ct, "{ [a, b] }");
-    ////isl_basic_set_universe(get_space(aff));
+  ////auto clksched_map = its(to_umap(clksched), domain);
+  //cout << "sched map: " << str(clksched_map) << endl;
+  ////assert(false);
+  ////cout << "Program code without optimization..." << endl;
+  ////prg.unoptimized_codegen();
+  ////cout << endl;
+
+  ////cout << "Program with optimized schedule..." << endl;
+  ////umap* opt_sched = prg.optimized_codegen();
+  ////cout << "Consumer maps..." << endl;
+  ////cout << tab(1) << str(prg.consumer_map()) << endl;
+
+  ////cout << "Schedules..." << endl;
+  ////for (auto s : prg.schedules()) {
+    ////cout << tab(1) << str(s.second) << endl;
+    ////auto next_op = lexmin(lex_lt(s.second, s.second));
+    ////cout << "next op: " << str(next_op) << endl;
+  ////}
+
+  ////isl_ctx* ct = isl_ctx_alloc();
+
+  //////uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
+  ////uset* dom =
+    ////isl_union_set_read_from_str(ct, "{ P[x, k] : 0 <= x <= 10 and 0 <= k <= 10; C[x, k] : 0 <= x <= 10 and 0 <= k <= 10 }");
+  ////umap* validity =
+    ////rdmap(ct, "{ P[x, k] -> C[y, l] : x = 2y + 3 }");
+    //////rdmap(ct, "{ P[x, k] -> C[y, l] : k = l and x = 2y + 3 }");
+    //////rdmap(ct, "{ P[x] -> C[y] : x = 2y + 3 }");
+    //////rdmap(ct, "{ P[x] -> C[y] : x = floor(y/2) }");
+    //////rdmap(ct, "{ P[x] -> C[x] }");
+  ////umap* proximity =
+    ////cpy(validity);
+
+  ////clockwork_schedule(dom, validity, proximity);
+  //////experimental_opt(dom, validity, proximity);
 
 
-  //cout << "bset: " << str(bset) << endl;
-  //auto mat = isl_basic_set_equalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
-  //cout << "Eq Rows: " << isl_mat_rows(mat) << endl;
-  //cout << "Eq Cols: " << isl_mat_cols(mat) << endl;
+  ////isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
+  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [3 a / 2 + 2 b / 15] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) % 2] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b) / 2)] }");
+  //////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + 3b) % 2 + a / 6] }");
+  ////cout << "aff = " << str(aff) << endl;
+  ////cout << "const = " << str(constant(aff)) << endl;
+  ////int in_dims = num_in_dims(aff);
+  ////cout << "input dimension: " << in_dims << endl;
+  ////int out_dims = num_out_dims(aff);
+  ////cout << "output dimension: " << out_dims << endl;
 
-  //auto ineqmat = isl_basic_set_inequalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
-  //cout << "Ineq Rows: " << isl_mat_rows(ineqmat) << endl;
-  //cout << "Ineq Cols: " << isl_mat_cols(ineqmat) << endl;
-  //for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
-    //for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
-      //cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
-    //}
-    //cout << endl;
-  //}
+  ////isl_local_space* ls = isl_aff_get_local_space(aff);
+  ////int div_dims = isl_local_space_dim(ls, isl_dim_div);
+  ////cout << "div dimension   : " << isl_local_space_dim(ls, isl_dim_div) << endl;
+  ////cout << "all dimensions  : " << isl_local_space_dim(ls, isl_dim_all) << endl;
+  ////cout << "Local space: " << str(ls) << endl;
+
+  ////for (int i = 0; i < in_dims; i++) {
+    ////cout << i << "th coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_in, i)) << endl;
+  ////}
+  //////for (int i = 0; i < out_dims; i++) {
+    //////cout << i << "th div  : " << str(isl_aff_get_div(aff, i)) << endl;
+  //////}
+  ////for (int i = 0; i < div_dims; i++) {
+    ////cout << i << "th div      : " << str(isl_aff_get_div(aff, i)) << endl;
+    ////cout << i << "th div coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_div, i)) << endl;
+  ////}
+
+  ////isl_basic_set* bset = isl_aff_eq_basic_set(cpy(aff), cpy(zero));
+    //////isl_basic_set_read_from_str(ct, "{ [a, b] }");
+    //////isl_basic_set_universe(get_space(aff));
 
 
-  //auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
-  //auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
+  ////cout << "bset: " << str(bset) << endl;
+  ////auto mat = isl_basic_set_equalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
+  ////cout << "Eq Rows: " << isl_mat_rows(mat) << endl;
+  ////cout << "Eq Cols: " << isl_mat_cols(mat) << endl;
 
-  //cout << "prev: " << str(prev) << endl;
-  //cout << "next: " << str(next) << endl;
-  //cout << "diff: " << str(isl_aff_sub(cpy(next), cpy(prev))) << endl;
+  ////auto ineqmat = isl_basic_set_inequalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
+  ////cout << "Ineq Rows: " << isl_mat_rows(ineqmat) << endl;
+  ////cout << "Ineq Cols: " << isl_mat_cols(ineqmat) << endl;
+  ////for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+    ////for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
+      ////cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
+    ////}
+    ////cout << endl;
+  ////}
 
-  //auto comps_set = isl_set_read_from_str(ct, "{ [a, b] : 0 <= a <= 10 and 0 <= b <= 11 }");
-  //auto flat_set = isl_set_flatten(cpy(comps_set));
-  //cout << "comps_set: " << str(comps_set) << endl;
-  //cout << "flat_set : " << str(flat_set) << endl;
 
-  ////isl_mat* matrix = aff->ls->div;
-  //isl_ctx_free(ct);
+  ////auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
+  ////auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
+
+  ////cout << "prev: " << str(prev) << endl;
+  ////cout << "next: " << str(next) << endl;
+  ////cout << "diff: " << str(isl_aff_sub(cpy(next), cpy(prev))) << endl;
+
+  ////auto comps_set = isl_set_read_from_str(ct, "{ [a, b] : 0 <= a <= 10 and 0 <= b <= 11 }");
+  ////auto flat_set = isl_set_flatten(cpy(comps_set));
+  ////cout << "comps_set: " << str(comps_set) << endl;
+  ////cout << "flat_set : " << str(flat_set) << endl;
+
+  //////isl_mat* matrix = aff->ls->div;
+  ////isl_ctx_free(ct);
 
 }
 
@@ -9405,13 +10690,30 @@ void new_bankmerge_tests() {
   flatten_sched_test();
 }
 
-void iccad_tests() {
-  //ef_cartoon_test("ef_cartoon_gauss");
-  //assert(false);
-
-  gaussian_pyramid_app_test("gp64x64");
-
+void naive_implementations() {
+  exposure_fusion_fpga_test("ef_fpga");
+  gauss_pyramid_fpga_test("gp_fpga");
   max_pooling_test("mp25");
+  //assert(false);
+}
+
+void iccad_tests() {
+  //App ef = ef_cartoon("ef_sm");
+  //generate_app_benchmark("ef_sm", ef, {1920, 1080}, 1);
+  //assert(false);
+  exposure_fusion_iccad_apps("ef_fpga");
+  gauss_pyramid_iccad_apps("gp_fpga");
+  gauss_pyramid_test("gp_fpga");
+  max_pooling_test("mpr16b_32");
+
+
+  App gp = gauss_pyramid_fpga("gp_sm");
+  generate_app_benchmark("gp_sm", gp, {64, 64}, 1);
+
+  gauss_pyramid_fpga_test("gp_fpga");
+  ef_cartoon_test("ef_cartoon");
+
+  gauss_pyramid_fpga_test("gp_fpga");
   exposure_fusion();
 
   int index = 20;
@@ -9419,15 +10721,10 @@ void iccad_tests() {
 
   camera_pipeline_test("cp_noinit_" + istr);
   blur_xy_16_app_test("bxy_noinit_p2" + istr);
-
   harris16_test("hr" + istr);
   sobel_16_app_test("sbl" + istr);
-
-  denoise3d_reconvergence_test();
-
   different_path_latencies_test("dp");
   harris_test();
-
   pointwise_app_test();
 }
 
@@ -9566,35 +10863,44 @@ void compute_unit_with_index_variables_test() {
 
 }
 
-void travis_tests() {
-  reduce_1d_test();
-  reduce_2d_test();
-  return;
-  heat_3d_test();
-  upsample2d_test();
-  halide_dnn_test();
-  compute_unit_with_index_variables_test();
+void register_file_test() {
+  prog prg("reduce_register_file");
+  prg.add_input("in_oc");
+  prg.add_output("out_oc");
 
-  exposure_fusion();
+  int len = 1000;
 
-  downsample2d_test();
-  up_stencil_down_test();
-  blur_and_downsample_test();
-  downsample_and_blur_test();
-  upsample_stencil_2d_test();
-  upsample_stencil_1d_test();
-  updown_merge_test();
-  harris_unrolled_test();
-  mismatched_stencil_test();
-  sobel_test();
-  upsample_reduce_test();
-  pointwise_test();
-  stencil_3d_test();
-  soda_blur_test();
-  two_in_window_test();
-  two_in_conv2d_test();
-  gaussian_pyramid_test();
-  warp_and_upsample_test();
+  auto load_in = prg.add_loop("li", 0, len);
+  auto ld = load_in->add_op("ld_in");
+  ld->add_load("in_oc", "li");
+  ld->add_store("in", "li");
+
+  auto clp = prg.add_loop("c", 0, len - 2);
+  auto init = clp->add_op("init_tmp");
+  init->add_function("set_zero_32");
+  init->add_store("tmp", "c");
+  auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
+  comp->add_function("add");
+  comp->add_load("tmp", "c");
+  comp->add_load("in", "c + i");
+  comp->add_store("tmp", "c");
+
+  auto st = clp->add_op("store_out");
+  st->add_load("tmp", "c");
+  st->add_store("out_oc", "c");
+
+  prg.pretty_print();
+  prg.sanity_check();
+  //assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  options.banking_strategies["tmp"] = {"register_file"};
+  options.banking_strategies["in"] = {"register_file"};
+  regression_test(options, prg);
+  //assert(false);
 }
 
 void print_test() {
@@ -9680,77 +10986,6636 @@ void manual_unroll_test() {
   //assert(false);
 }
 
-void application_tests() {
-  //halide_harris_test();
-  //reaccess_no_hierarchy_rolled_test();
-  reaccess_no_hierarchy_test();
-  mini_conv_halide_test();
-  conv_3_3_halide_test();
-  reduce_1d_test();
-  reduce_2d_test();
-  halide_cascade_test();
-  halide_frontend_test();
-  grayscale_conversion_test();
+void histogram_test() {
+  prog prg;
+  prg.name = "histogram";
+  prg.compute_unit_file = "clockwork_standard_compute_units.h";
+  prg.add_input("image_oc");
+  prg.add_output("color_counts");
+
+  auto ld = prg.add_loop("im", 0, 20)->
+    add_op("load_image_oc");
+  ld->add_load("image_oc", "im");
+  ld->add_store("image", "im");
+
+  // Assume zero initialization for now
+  {
+    auto st = prg.add_loop("iz", 0, 20)->
+      add_op("init_counts");
+    st->add_function("set_zero_32");
+    st->add_store("buckets", "iz");
+  }
+
+  auto count_loop = prg.add_loop("i", 0, 20);
+  auto update = count_loop->add_op("update_counts");
+  update->add_function("histogram_inc");
+  update->add_dynamic_load("buckets", "image", "i"); // buckets[image[i]]
+  update->add_dynamic_store("buckets", "image", "i");// buckets[image[i]]
+
+  auto st = prg.add_loop("sm", 0, 20)->
+    add_op("store_results");
+  st->add_load("buckets", "sm");
+  st->add_store("color_counts", "sm");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  generate_unoptimized_code(options, prg);
+  generate_regression_testbench(prg);
+
+  int res = system(string("g++ -fstack-protector-all -std=c++11 -c unoptimized_" + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  int compile_res = system("g++ -std=c++11 unoptimized_histogram.cpp ./manual_tbs/histogram_tb.cpp -I .");
+  assert(compile_res == 0);
+
+  int run_res = system("./a.out");
+  assert(run_res == 0);
+}
+
+template<typename T>
+vector<T> levels_above(const T& target_level, const std::vector<T>& c) {
+  vector<T> above;
+  for (auto l : c) {
+    if (l != target_level) {
+      above.push_back(l);
+    } else {
+      break;
+    }
+  }
+  return above;
+}
+
+template<typename T>
+T last_common_level(const std::vector<T>& a, const std::vector<T>& b) {
+  for (int i = 0; i < (int) a.size() - 1; i++) {
+    assert((int) a.size() > i + 1);
+    assert((int) b.size() > i + 1);
+    if (a.at(i + 1) != b.at(i + 1)) {
+      return a.at(i);
+    }
+  }
+
+  assert(false);
+  return a.back();
+}
+
+template<typename T>
+vector<T> levels_below(const T& target_level, const std::vector<T>& c) {
+  vector<T> above;
+  bool past = false;
+  for (auto l : c) {
+    if (l != target_level) {
+      if (past) {
+        above.push_back(l);
+      }
+    } else {
+      past = true;
+    }
+  }
+  return above;
+}
+
+
+void register_file_optimization_test() {
+  prog prg("register_file");
+  prg.add_input("in_oc");
+  prg.add_output("out_oc");
+
+  int len = 1000;
+
+  auto load_in = prg.add_loop("li", 0, len);
+  auto ld = load_in->add_op("ld_in");
+  ld->add_load("in_oc", "li");
+  ld->add_store("in", "li");
+
+  auto clp = prg.add_loop("c", 0, len - 2);
+  auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
+  comp->add_function("add");
+  comp->add_load("tmp", "c");
+  //comp->add_load("in_rf", "c, i");
+  //comp->add_load("in", "c, i");
+  comp->add_load("in", "c + i");
+  comp->add_store("tmp", "c");
+
+  auto st = clp->add_op("store_out");
+  st->add_load("tmp", "c");
+  st->add_store("out_oc", "c");
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  string old_name = prg.name;
+  prg.name = "unoptimized_" + prg.name;
+  generate_unoptimized_code(prg);
+  generate_regression_testbench(prg);
+  auto unopt = run_regression_tb(prg);
+  prg.name = old_name;
+
+  auto iter_vars = prg.iter_vars();
+  string target_buf = "in";
+  string target_level = "c";
+  cout << "Registerizing: " << target_buf << " at level " << target_level << endl;
+  op* source = find_writer(target_buf, prg);
+  auto source_levels = map_find(source, iter_vars);
+  cout << "source = " << source->name << endl;
+  auto possible_ops = prg.find_loop(target_level)->descendant_ops();
+  for (auto op : possible_ops) {
+    if (elem(target_buf, buffers_referenced(op))) {
+      cout << tab(1) << "op: " << op->name << endl;
+      auto levels = map_find(op, iter_vars);
+      cout << tab(2) << "levels: " << str(levels) << endl;
+      cout << tab(3) << "above target: " << str(levels_above(target_level, levels)) << endl;
+      cout << tab(3) << "below target: " << str(levels_below(target_level, levels)) << endl;
+      cout << tab(3) << "last common : " << last_common_level(levels, source_levels) << endl;
+
+      auto level_c = prg.find_loop(target_level);
+      auto lc = prg.find_loop(last_common_level(levels, source_levels));
+      string rf_var = target_buf + "_rf";
+      auto fresh = lc->add_loop_after(source, rf_var, level_c->start - 2, level_c->end_exclusive);
+      int i = 0;
+      string register_file = target_buf + "_rf_at_" + op->name;
+      for (auto lv : levels_below(target_level, levels)) {
+        for (int tc = 0; tc < prg.trip_count(lv); tc++) {
+          auto ld = fresh->add_op("unrolled_" + str(i));
+          ld->add_load(target_buf, rf_var + " + " + str(i));
+          ld->add_store(register_file, rf_var + ", " + str(i));
+          i++;
+        }
+      }
+
+      op->replace_reads_from(target_buf, register_file);
+      piecewise_address addr{{"", "c, i"}};
+      op->consume_locs_pair[1] =
+      {op->consume_locs_pair[1].first, addr};
+    }
+  }
+
+  cout << "After registerizing" << endl;
+  prg.pretty_print();
   //assert(false);
-  //print_test();
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  //options.register_files.insert("in_rf");
+  options.banking_strategies["in_rf_at_cp"] = {"register_file"};
+
+  assert(prg.compute_unit_file != "");
+
+
   //assert(false);
-  ram_addr_unit_test();
-  //manual_unroll_test();
+  generate_optimized_code(options, prg);
+  generate_regression_testbench(prg);
+  auto opt = run_regression_tb(prg);
+
+  compare("register_file_optimization_test", opt, unopt);
+
+  assert(false);
+}
+
+prog conv_layer_3D() {
+  prog prg;
+  prg.compute_unit_file = "conv_layer_3D_compute.h";
+  prg.name = "conv_layer_3D";
+
+// Stencil<uint16_t, 18, 26, 64> &input_copy_stencil = arg_0;
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+// Stencil<uint16_t, 3, 3, 64, 46> &weight_copy_stencil = arg_1;
+  prg.add_input("weight_copy_stencil");
+  prg.buffer_port_widths["weight_copy_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_2;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming weight_copy.stencil
+//consuming input_copy.stencil
+////producing hw_input.stencil
+  auto loop_hw_input_s0_c = prg.add_loop("hw_input_s0_c", 0, 64);
+  auto loop_hw_input_s0_y = loop_hw_input_s0_c->add_loop("hw_input_s0_y", 0, 26);
+  auto loop_hw_input_s0_x = loop_hw_input_s0_y->add_loop("hw_input_s0_x", 0, 18);
+
+//store is: hw_input.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.c) = input_copy.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.c)
+  auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_c");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_c");
+////producing hw_weight.stencil
+  auto loop_hw_weight_s0_k = prg.add_loop("hw_weight_s0_k", 0, 46);
+  auto loop_hw_weight_s0_c = loop_hw_weight_s0_k->add_loop("hw_weight_s0_c", 0, 64);
+  auto loop_hw_weight_s0_y = loop_hw_weight_s0_c->add_loop("hw_weight_s0_y", 0, 3);
+  auto loop_hw_weight_s0_x = loop_hw_weight_s0_y->add_loop("hw_weight_s0_x", 0, 3);
+
+//store is: hw_weight.stencil(hw_weight.s0.x, hw_weight.s0.y, hw_weight.s0.c, hw_weight.s0.k) = weight_copy.stencil(hw_weight.s0.x, hw_weight.s0.y, hw_weight.s0.c, hw_weight.s0.k)
+  auto hcompute_hw_weight_stencil = loop_hw_weight_s0_x->add_op("hcompute_hw_weight_stencil");
+  hcompute_hw_weight_stencil->add_function("hcompute_hw_weight_stencil");
+  hcompute_hw_weight_stencil->add_load("weight_copy_stencil", "hw_weight_s0_x", "hw_weight_s0_y", "hw_weight_s0_c", "hw_weight_s0_k");
+  prg.buffer_port_widths["hw_weight_stencil"] = 16;
+  hcompute_hw_weight_stencil->add_store("hw_weight_stencil", "hw_weight_s0_x", "hw_weight_s0_y", "hw_weight_s0_c", "hw_weight_s0_k");
+////producing conv.stencil
+  auto loop_conv_s0_k = prg.add_loop("conv_s0_k", 0, 46);
+  auto loop_conv_s0_y = loop_conv_s0_k->add_loop("conv_s0_y", 0, 24);
+  auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 16);
+
+//store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.k) = 0
+  auto hcompute_conv_stencil = loop_conv_s0_x->add_op("hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y", "conv_s0_k");
+
+//consuming hw_weight.stencil
+
+//consuming hw_input.stencil
+  auto loop_conv_s1_k = prg.add_loop("conv_s1_k", 0, 46);
+  auto loop_conv_s1_y = loop_conv_s1_k->add_loop("conv_s1_y", 0, 24);
+  auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 16);
+  auto loop_conv_s1_win_z = loop_conv_s1_x->add_loop("conv_s1_win_z", 0, 64);
+  auto loop_conv_s1_win_y = loop_conv_s1_win_z->add_loop("conv_s1_win_y", 0, 3);
+  auto loop_conv_s1_win_x = loop_conv_s1_win_y->add_loop("conv_s1_win_x", 0, 3);
+
+//store is: conv.stencil(conv.s1.x, conv.s1.y, conv.s1.k) = (conv.stencil(conv.s1.x, conv.s1.y, conv.s1.k) + int32((hw_weight.stencil(conv.s1.win$x, conv.s1.win$y, conv.s1.win$z, conv.s1.k)*hw_input.stencil((conv.s1.win$x + conv.s1.x), (conv.s1.win$y + conv.s1.y), conv.s1.win$z))))
+  auto hcompute_conv_stencil_1 = loop_conv_s1_win_x->add_op("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "conv_s1_k");
+  hcompute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_win_x + conv_s1_x)", "(conv_s1_win_y + conv_s1_y)", "conv_s1_win_z");
+  hcompute_conv_stencil_1->add_load("hw_weight_stencil", "conv_s1_win_x", "conv_s1_win_y", "conv_s1_win_z", "conv_s1_k");
+  hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "conv_s1_k");
+
+//consuming conv.stencil
+  auto loop_hw_output_s0_k_ki = prg.add_loop("hw_output_s0_k_ki", 0, 46);
+  auto loop_hw_output_s0_y_yi = loop_hw_output_s0_k_ki->add_loop("hw_output_s0_y_yi", 0, 24);
+  auto loop_hw_output_s0_x_xi = loop_hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 16);
+
+//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.k.ki) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.k.ki))
+  auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_k_ki");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_k_ki");
+
+  return prg;
+}
+
+prog simplified_conv_layer() {
+  prog prg;
+  prg.compute_unit_file = "conv_layer_3D_compute.h";
+  prg.name = "conv_layer_3D";
+
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+  prg.add_input("weight_copy_stencil");
+  prg.buffer_port_widths["weight_copy_stencil"] = 16;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+  int bound = 20;
+
+  auto loop_hw_input_s0_x = prg.add_loop("hw_input_s0_x", 0, bound);
+
+  auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_x");
+
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_x");
+
+  auto loop_hw_weight_s0_x = prg.add_loop("hw_weight_s0_x", 0, bound);
+
+  auto hcompute_hw_weight_stencil = loop_hw_weight_s0_x->add_op("hcompute_hw_weight_stencil");
+  hcompute_hw_weight_stencil->add_function("hcompute_hw_weight_stencil");
+  hcompute_hw_weight_stencil->add_load("weight_copy_stencil", "hw_weight_s0_x");
+  prg.buffer_port_widths["hw_weight_stencil"] = 16;
+  hcompute_hw_weight_stencil->add_store("hw_weight_stencil", "hw_weight_s0_x");
+
+  auto loop_conv_s0_x = prg.add_loop("conv_s0_x", 0, bound);
+  auto hcompute_conv_stencil = loop_conv_s0_x->add_op("hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x");
+
+  auto loop_conv_s1_win_x = prg.add_loop("conv_s1_win_x", 0, bound);
+
+  auto hcompute_conv_stencil_1 = loop_conv_s1_win_x->add_op("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_win_x");
+  hcompute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_win_x");
+  hcompute_conv_stencil_1->add_load("hw_weight_stencil", "conv_s1_win_x");
+  hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_win_x");
+
+  auto loop_hw_output_s0_x_xi = prg.add_loop("hw_output_s0_x_xi", 0, bound);
+  auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi");
+
+  return prg;
+}
+
+std::vector<string> verilator_results(const std::string& name) {
+  ifstream infile("regression_result_" + name + "_verilog.txt");
+  vector<string> lines;
+  std::string line;
+  while (std::getline(infile, line))
+  {
+    lines.push_back(line);
+  }
+  return lines;
+}
+
+int run_verilator_on(const std::string& top_module,
+    const std::string& tb_file,
+    const std::vector<string>& verilog_files) {
+
+  //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP");
+  assert(verilator_build == 0);
+
+  //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
+  //assert(verilator_d == 0);
+
+  int verilator_run = cmd("./obj_dir/V" + top_module);
+  return verilator_run;
+}
+
+void run_verilator_verilog_tb(const std::string& name) {
+  int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input ./coreir_compute/" + name + "_compute.json --output " + name + "_compute.v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  assert(compute_to_verilog_res == 0);
+
+  int res = run_verilator_on(name, name + "_verilog_tb.cpp", {name + ".v", name + "_verilog_collateral.sv", "./lake_components/dualwithadd/lake_top.sv", name + "_compute.v"});
+  assert(res == 0);
+}
+
+void run_verilator_tb(const std::string& name) {
+
+  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --load_libs commonlib --input " + name + ".json --output " + name + ".v --passes rungenerators;flattentypes;verilog");
+  //int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib --input " + name + ".json --output " + name + ".v");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  assert(to_verilog_res == 0);
+
+  int res = run_verilator_on(name,
+      name + "_verilog_tb.cpp",
+      {name + ".v", name + "_verilog_collateral.sv",
+      "./lake_components/dualwithadd/lake_top.sv",
+      //"./lake_components/wide_tile/lake_top_1_port.sv",
+      //"./lake_components/ASPLOS_designs/bare_dual_port.v",
+      "./lake_components/inner_affine_controller.sv"});
+  cmd("rm -rf obj_dir/");
+  assert(res == 0);
+  //int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/V" + name);
+  //assert(verilator_run == 0);
+}
+
+void generate_verilog_tb(const std::string& name) {
+
+    cmd("echo $LD_LIBRARY_PATH");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+  assert(to_verilog_res == 0);
+}
+
+#ifdef COREIR
+void generate_garnet_verilog_top(const std::string& name) {
+
+    cmd("echo $LD_LIBRARY_PATH");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input aha_garnet_design/" + name + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+  assert(to_verilog_res == 0);
+
+  //run verilator on all the generated verilog
+  //auto verilog_files = get_files("./aha_garnet_design/"+name+"/verilog/");
+  //verilog_files.push_back(name + ".v");
+  //verilog_files.push_back("LakeWrapper.v");
+  //int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files);
+  //cmd("rm LakeWrapper.v");
+  //assert(res == 0);
+}
+
+void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt) {
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  schedule_info hwinfo;
+  hwinfo.use_dse_compute = false;
+  opt.rtl_options.use_prebuilt_memory = true;
+  opt.rtl_options.use_external_controllers = false;
+  auto sched = global_schedule_from_buffers(buffers_opt);
+  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
+  generate_verilog_tb(prg.name);
+}
+
+void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo) {
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  //schedule_info hwinfo;
+
+  //coreIR codegen options
+  hwinfo.use_dse_compute = false;
+  opt.rtl_options.use_prebuilt_memory = true;
+  opt.rtl_options.use_external_controllers = false;
+  opt.inline_vectorization = true;
+  opt.pass_through_valid= true;
+  opt.dir = "aha_garnet_design/"+prg.name+"/";
+
+  //TODO: add lake memory tile configuration here
+
+  auto sched = global_schedule_from_buffers(buffers_opt);
+  generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
+  generate_garnet_verilog_top(prg.name);
+
+  //cmd("mv " + prg.name + ".v " + opt.dir + "verilog");
+}
+#endif
+
+void identity_stream_through_mem_coreir_test() {
+  prog prg("identity_stream_through_mem");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["in_buf"] = 16;
+  prg.buffer_port_widths["tmp"] = 16;
+
+  prg.add_input("in");
+  prg.add_output("out");
+  auto ld = prg.add_loop("x", 0, 10)->add_op("ld");
+  ld->add_load("in", "x");
+  ld->add_store("in_buf", "x");
+
+  auto rd = prg.add_loop("r", 0, 10)->add_op("transfer");
+  rd->add_load("in_buf", "r");
+  rd->add_store("tmp", "r");
+
+  auto st = prg.add_loop("y", 0, 10)->add_op("st");
+  st->add_load("tmp", "y");
+  st->add_store("out", "y");
+  prg.pretty_print();
   //assert(false);
 
-  iccad_tests();
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
 
-  compute_unit_with_index_variables_test();
+#ifdef COREIR
 
-  //pyr_1d_conv_test();
-  halide_dnn_test();
-  //conv_1d_bc_test();
+  //auto dom = pad_uset(prg.whole_iteration_domain());
+  //auto valid = pad_map(prg.validity_deps());
+  auto dom = (prg.whole_iteration_domain());
+  auto valid = (prg.validity_deps());
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "sched before its = " << str(sched) << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
+  sched = its(sched, dom);
+  cout << "sched after its = " << str(sched) << endl;
 
-  denoise2d_test();
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
 
-  conv_1d_test();
+  //assert(false);
 
-  tricky_shift_register_reconvergence_test();
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
 
+  //assert(false);
+
+  generate_coreir(options, bufs, prg, sched);
+  run_verilator_tb(prg.name);
+  //assert(false);
+#endif
+
+}
+
+void reduce_stream_schedule_test() {
+  auto ctx = isl_ctx_alloc();
+
+  //auto dom = isl_union_set_read_from_str(ctx, "{ reduce[root = 0, r, k] : 0 <= r < 6 and 0 <= k <= 2 }");
+  //auto valid = rdmap(ctx, "{ reduce[x] -> reduce[e] : e > x }");
+  //auto dom = isl_union_set_read_from_str(ctx, "{ reduce[root = 0, r, k] : 0 <= r < 6 and 0 <= k <= 2; init[root = 0, r] : 0 <= r <= 6 }");
+  //auto valid = rdmap(ctx, "{ reduce[root = 0, r, k] -> reduce[root' = 0, r' = r, k'] : 0 <= r <= 6 and 0 <= k <= 2 and k' > k and 0 <= k' <= 2; init[root = 0, r] -> reduce[root' = 0, r' = r, k] : 0 <= r <= 6 and 0 <= k <= 7 }");
+
+  auto dom = isl_union_set_read_from_str(ctx, "{ reduce[r, k] : 0 <= r < 6 and 0 <= k <= 2; init[r] : 0 <= r <= 6 }");
+  auto valid = rdmap(ctx, "{ reduce[r, k] -> reduce[r' = r, k'] : 0 <= r <= 6 and 0 <= k <= 2 and k' > k and 0 <= k' <= 2; init[r] -> reduce[r' = r, k] : 0 <= r <= 6 and 0 <= k <= 2 }");
+
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "valids..." << endl;
+  for (auto d : get_maps(valid)) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  isl_ctx_free(ctx);
+  assert(false);
+}
+
+void reduce_stream_coreir_test() {
+  prog prg("reduce_stream");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["in_buf"] = 16;
+  prg.buffer_port_widths["tmp"] = 16;
+
+  prg.add_input("in");
+  prg.add_output("out");
+  auto ld = prg.add_loop("x", 0, 10)->add_loop("dx", 0, 1)->add_op("ld");
+  ld->add_load("in", "x");
+  ld->add_store("in_buf", "x");
+
+  auto rd = prg.add_loop("r", 0, 7);
+  auto init = rd->add_op("init");
+  init->add_function("set_zero_16");
+  init->add_store("tmp", "r");
+  auto reduce = rd->add_loop("k", 0, 3)->add_op("reduce");
+  reduce->add_function("fmadd_16");
+  reduce->add_load("tmp", "r");
+  reduce->add_load("in_buf", "r + k");
+  reduce->add_store("tmp", "r");
+
+  auto st = prg.add_loop("y", 0, 7)->add_op("st");
+  st->add_load("tmp", "y");
+  st->add_store("out", "y");
+  prg.pretty_print();
+  regression_test(prg);
+  //assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+
+#ifdef COREIR
+
+  //auto dom = pad_uset(prg.whole_iteration_domain());
+  //auto valid = pad_map(prg.validity_deps());
+  auto dom = (prg.whole_iteration_domain());
+  auto valid = (prg.validity_deps());
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "domains..." << endl;
+  for (auto d : get_sets(dom)) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "valid..." << endl;
+  for (auto v : get_maps(valid)) {
+    cout << tab(1) << str(v) << endl;
+  }
+  cout << "schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  cout << "sched before its = " << str(sched) << endl;
+  sched = its(sched, dom);
+  cout << "sched after its = " << str(sched) << endl;
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  //assert(false);
+
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  //assert(false);
+
+  generate_coreir(options, bufs, prg, sched);
+  run_verilator_tb(prg.name);
+  //assert(false);
+
+#endif
+
+}
+
+void identity_stream_2d_coreir_test() {
+  prog prg("identity_stream_2d");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["in_buf"] = 16;
+
+  prg.add_input("in");
+  prg.add_output("out");
+  auto ld = prg.add_loop("x", 0, 10)->add_loop("xi", 0, 4)->add_op("ld");
+  ld->add_load("in", "x, xi");
+  ld->add_store("in_buf", "x, xi");
+
+  auto st = prg.add_loop("y", 0, 10)->add_loop("yi", 0, 4)->add_op("st");
+  st->add_load("in_buf", "y, yi");
+  st->add_store("out", "y, yi");
+  prg.pretty_print();
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+
+#ifdef COREIR
+
+  auto dom = prg.whole_iteration_domain();
+  auto valid = prg.validity_deps();
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  sched = its(sched, prg.whole_iteration_domain());
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  //assert(false);
+
+  generate_coreir(options, bufs, prg, sched);
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
+
+  //int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/Videntity_stream");
+  //assert(verilator_run == 0);
+
+  //assert(false);
+#endif
+
+}
+
+void identity_stream_coreir_test() {
+  prog prg("identity_stream");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["in_buf"] = 16;
+
+  prg.add_input("in");
+  prg.add_output("out");
+  auto ld = prg.add_loop("x", 0, 10)->add_op("ld");
+  ld->add_load("in", "x");
+  ld->add_store("in_buf", "x");
+
+  auto st = prg.add_loop("y", 0, 10)->add_op("st");
+  st->add_load("in_buf", "y");
+  st->add_store("out", "y");
+  prg.pretty_print();
+  //assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+
+#ifdef COREIR
+
+  auto dom = prg.whole_iteration_domain();
+  auto valid = prg.validity_deps();
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  sched = its(sched, prg.whole_iteration_domain());
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  //assert(false);
+
+  generate_coreir(options, bufs, prg, sched);
+
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
+
+  //int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/Videntity_stream");
+  //assert(verilator_run == 0);
+
+  //assert(false);
+#endif
+
+}
+void weight_streaming_test() {
+  prog prg = simplified_conv_layer();
+  prg.pretty_print();
+  regression_test(prg);
+  //assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  //generate_optimized_code(options, prg);
+
+#ifdef COREIR
+
+  auto dom = prg.whole_iteration_domain();
+  auto valid = prg.validity_deps();
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  sched = its(sched, prg.whole_iteration_domain());
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
+
+  //string hw_str = string("{ hcompute_conv_stencil[root = 0, conv_s0_x] -> [conv_s0_x + 1] : 0 <= conv_s0_x <= 19; ") +
+    //"hcompute_conv_stencil_1[root = 0, conv_s1_win_x] -> [20 + conv_s1_win_x] : 0 <= conv_s1_win_x <= 19; " +
+    //"hcompute_hw_weight_stencil[root = 0, hw_weight_s0_x] -> [hw_weight_s0_x + 1] : 0 <= hw_weight_s0_x <= 19; " +
+    //"hcompute_hw_output_stencil[root = 0, hw_output_s0_x_xi] -> [2*hw_output_s0_x_xi + 40] : 0 <= hw_output_s0_x_xi <= 19; " +
+    //"hcompute_hw_input_stencil[root = 0, hw_input_s0_x] -> [hw_input_s0_x + 1] : 0 <= hw_input_s0_x <= 19 }";
+  //auto sched = isl_union_map_read_from_str(prg.ctx, hw_str.c_str());
+
+  //auto sched = prg.optimized_codegen();
+  //cout << "=== sched: " << str(sched) << endl;
+  //string sstre = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
+  //string sstr = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
+ //cout << "=== sched; " << str(sched) << endl;
+ //string oned_sched = "{ ld_o[root = 0, cs] -> [2 + cs, 1] : 0 <= cs <= 2; ld[root = 0, c] -> [c, 0] : 0 <= c <= 2 }";
+  //string hw_sched = "{ ld_o[root = 0, cs] -> [10 + 2*cs] : 0 <= cs <= 2; ld[root = 0, c] -> [2*c] : 0 <= c <= 2 }";
+  //auto sched = isl_union_map_read_from_str(prg.ctx, hw_sched.c_str());
+
+ //assert(false);
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  //generate_verilog(options, bufs, prg, sched);
+  //assert(false);
+
+  generate_coreir(options, bufs, prg, sched);
+
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
+
+  //int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  //assert(verilator_run == 0);
+
+  //assert(false);
+#endif
+
+}
+
+void halide_conv_layer_3D_test() {
+  prog prg = conv_layer_3D();
+  prg.pretty_print();
+
+  cout << "getting validity / dom"  << endl;
+  auto dom = prg.whole_iteration_domain();
+  auto valid = prg.validity_deps();
+  auto proximity = cpy(valid);
+
+  cout << "createing hw schedule" << endl;
+
+  //auto hs = hardware_schedule(dom, valid, proximity);
+  //for (auto h : hs) {
+    //cout << tab(1) << h.first << " -> " << str(h.second) << endl;
+  //}
+  //assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  //generate_optimized_code(options, prg);
+
+#ifdef COREIR
+  auto sched = prg.optimized_codegen();
+  cout << "sched = " << str(sched) << endl;
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  generate_coreir(options, bufs, prg, sched);
+
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
+
+  //int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  //assert(verilator_build == 0);
+
+  //assert(false);
+#endif
+
+  //regression_test(prg);
+  //assert(false);
+}
+
+void load_buffer(const std::string& dest, const std::string& src, const vector<int>& ranges, prog& prg) {
+  assert(ranges.size() % 2 == 0);
+
+  auto op = prg.root;
+  for (int r = 0; r < ranges.size() / 2; r++) {
+    op = op->add_loop(prg.unique_name("l"), ranges.at(2*r), ranges.at(2*r + 1));
+  }
+  op = op->add_op(prg.unique_name("op"));
+  vector<string> vs = map_find(op, prg.iter_vars());
+  reverse(vs);
+  // root is not used
+  vs.pop_back();
+  op->add_load(src, comma_list(vs));
+  op->add_store(dest, comma_list(vs));
+}
+
+prog partially_unrolled_conv() {
+  prog prg("cyclic_banked_conv");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  load_buffer("in", "in_oc", {0, 10, 0, 10}, prg);
+  auto reduce = prg.add_nest("y", 0, 8, "x", 0, 8, "yi", 0, 3)->add_op(prg.unique_name("op"));
+  reduce->add_function("conv_1_3");
+  for (int c = 0; c < 3; c++) {
+    reduce->add_load("in", "x + " + str(c), "y + yi");
+  }
+  reduce->add_store("out", "x, y");
+
+  return prg;
+
+}
+
+void reuse_buffered_conv_test() {
+  prog prg = partially_unrolled_conv();
+  prg.pretty_print();
+  prg.sanity_check();
+
+  {
+    CodegenOptions options;
+    options.all_rams = true;
+    all_register_files(prg, options);
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+    generate_unoptimized_code(options, prg);
+
+  }
+
+  auto naive = run_regression_tb(prg);
+
+  add_reuse_buffer("y", "in", prg);
+
+  prg.pretty_print();
+  //assert(false);
+
+  CodegenOptions options;
+  options.all_rams = true;
+  all_register_files(prg, options);
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+
+  generate_unoptimized_code(options, prg);
+  auto opt = run_regression_tb(prg);
+
+  compare("reuse_buffered_conv", opt, naive);
+  //assert(false);
+}
+
+void cyclic_banked_conv_test() {
+  prog prg = partially_unrolled_conv();
+  prg.pretty_print();
+  prg.sanity_check();
+
+  CodegenOptions options;
+  options.all_rams = true;
+  options.banking_strategies["in"] =
+  {"cyclic", {3, 1}};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+
+  generate_optimized_code(options, prg);
+}
+
+void copy(const std::string& dst, const std::string& src, const std::vector<int>& dims, prog& prg) {
+  op* lp = prg.root;
+  for (int d : dims) {
+    lp = lp->add_loop(prg.unique_name("c"), 0, d);
+  }
+  auto c = lp->add_op(prg.unique_name("cp"));
+  auto iter_vars_no_root = prg.iter_vars(c);
+  reverse(iter_vars_no_root);
+  iter_vars_no_root.pop_back();
+  reverse(iter_vars_no_root);
+  c->add_load(src, comma_list(iter_vars_no_root));
+  c->add_store(dst, comma_list(iter_vars_no_root));
+}
+
+void init(const std::string& dst, const std::string& func, const std::vector<int>& dims, prog& prg) {
+  op* lp = prg.root;
+  for (int d : dims) {
+    lp = lp->add_loop(prg.unique_name("i"), 0, d);
+  }
+  auto c = lp->add_op(prg.unique_name("init"));
+  auto iter_vars_no_root = prg.iter_vars(c);
+  reverse(iter_vars_no_root);
+  iter_vars_no_root.pop_back();
+  reverse(iter_vars_no_root);
+  c->add_function(func);
+  c->add_store(dst, comma_list(iter_vars_no_root));
+}
+
+typedef std::vector<int> dimlist;
+
+void reduce(
+    const dimlist& dims,
+    const std::string& dst, const dimlist& cvars,
+    const std::string& func,
+    const std::string& a, const dimlist& avars,
+    const std::string& b, const dimlist& bvars,
+    prog& prg) {
+
+  op* lp = prg.root;
+  for (int d : dims) {
+    lp = lp->add_loop(prg.unique_name("r"), 0, d);
+  }
+  auto c = lp->add_op(prg.unique_name("reduce"));
+  auto iter_vars_no_root = prg.iter_vars(c);
+  reverse(iter_vars_no_root);
+  iter_vars_no_root.pop_back();
+  reverse(iter_vars_no_root);
+
+  vector<string> avar_names;
+  for (auto d : avars) {
+    avar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  vector<string> bvar_names;
+  for (auto d : bvars) {
+    bvar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  vector<string> cvar_names;
+  for (auto d : cvars) {
+    cvar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  c->add_function(func);
+  c->add_load(dst, comma_list(cvar_names));
+  c->add_load(a, comma_list(avar_names));
+  c->add_load(b, comma_list(bvar_names));
+  c->add_store(dst, comma_list(cvar_names));
+}
+
+void copy(const dimlist& dims, const std::string dst, const dimlist& avars,
+    const std::string& src,
+    const dimlist& bvars,
+    prog& prg) {
+
+  op* lp = prg.root;
+  for (int d : dims) {
+    lp = lp->add_loop(prg.unique_name("c"), 0, d);
+  }
+  auto c = lp->add_op(prg.unique_name("c"));
+  auto iter_vars_no_root = prg.iter_vars(c);
+  reverse(iter_vars_no_root);
+  iter_vars_no_root.pop_back();
+  reverse(iter_vars_no_root);
+
+  vector<string> avar_names;
+  for (auto d : avars) {
+    avar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  vector<string> bvar_names;
+  for (auto d : bvars) {
+    bvar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  c->add_store(dst, comma_list(avar_names));
+  c->add_load(src, comma_list(bvar_names));
+}
+
+void mmul_outer_prod_test() {
+  prog prg("mmul_outer_prod");
+  prg.add_input("B_oc");
+  prg.add_input("A_oc");
+  prg.add_output("C_oc");
+
+  int M = 5;
+  int t = 200;
+  int K = 10;
+
+  copy("A", "A_oc", {5, 2, 10}, prg);
+  // Upsample
+  copy({5, 5, t, 10}, "Ar", {0, 1, 2, 3}, "A", {0, 2, 3}, prg);
+  copy("B", "B_oc", {5, 5, 10, t}, prg);
+  init("C", "set_zero_32", {5, 5, t, t}, prg);
+  reduce({5, 5, 10, t, t}, "C", {0, 1, 3, 4}, "fma_32", "Ar", {0, 1, 4, 2}, "B", {0, 1, 2, 4}, prg);
+  copy("C_oc", "C", {5, 5, t, t}, prg);
+
+  //copy("A", "A_oc", {5, 5, 2, 2}, prg);
+  //copy("B", "B_oc", {5, 5, 2, 2}, prg);
+  //init("C", "set_zero_32", {5, 5, 2, 2}, prg);
+  //reduce({5, 5, 5, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 3, 4}, "B", {0, 1, 3, 4}, prg);
+  ////reduce({5, 5, 5, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 2, 3}, "B", {0, 1, 2, 3}, prg);
+  //copy("C_oc", "C", {5, 5, 2, 2}, prg);
+
+  //auto ldc =
+    //prg.add_nest("cit", 0, 10, "cjt", 0, 10)->add_op("init_c");
+  //ldc->add_store("C", "cit", "cjt");
+  //ldc->add_function("set_zero_32");
+
+  //auto update_c =
+    //prg.add_nest("ucit", 0, 10, "ucjt", 0, 10, "uck", 0, 10)->
+    //add_op("update_c");
+  //update_c->add_load("C", "ucit", "ucjt");
+  //update_c->add_load("A_oc", "ucit", "uck");
+  //update_c->add_load("B_oc", "uck", "ucjt");
+  //update_c->add_store("C", "ucit", "ucjt");
+  //update_c->add_function("fma_32");
+
+  //auto stc =
+    //prg.add_nest("sit", 0, 10, "sjt", 0, 10)->add_op("store_c_oc");
+  //stc->add_load("C", "sit", "sjt");
+  //stc->add_store("C_oc", "sit", "sjt");
+
+  //auto ldc =
+    //prg.add_nest("cit", 0, 10, "cjt", 0, 10,
+        //"cii", 0, 3, "cji", 0, 3)->add_op("init_c");
+  //ldc->add_store("C", "cit", "cjt", "cii", "cji");
+  //ldc->add_function("set_zero_32");
+
+  //auto ldb =
+    //prg.add_nest("bit", 0, 10, "bjt", 0, 10,
+        //// within each tile of C:
+        //"bii", 0, 10, "bij", 0, 3)->add_op("ld_b");
+  //ldb->add_load("B_oc", "bit", "bjt", "bii", "bij");
+  //ldb->add_store("B", "bit", "bjt", "bii", "bij");
+
+  //auto lda =
+    //prg.add_nest("ait", 0, 10,
+        //// within each row of tiles of C:
+        //"aii", 0, 3, "aij", 0, 10)->add_op("ld_a");
+  //lda->add_load("A_oc", "ait", "aii", "aij");
+  //lda->add_store("A", "ait", "aii", "aij");
+
+  //auto update_c =
+    //prg.add_nest("ucit", 0, 10, "ucjt", 0, 10,
+        //"uck", 0, 10)->add_nest(
+        //"ucii", 0, 3, "ucji", 0, 3)->add_op("update_c");
+  //update_c->add_load("C", "ucit", "ucjt", "ucii", "ucji");
+  //update_c->add_load("A", "ucit", "uck", "ucji");
+  //update_c->add_load("B", "ucit, ucjt, ucii, uck");
+  //update_c->add_store("C", "ucit", "ucjt", "ucii", "ucji");
+  //update_c->add_function("fma_32");
+
+  //auto stc =
+    //prg.add_nest("ocit", 0, 10, "ocjt", 0, 10,
+        //"ocii", 0, 3, "ocji", 0, 3)->add_op("out_c");
+  //stc->add_load("C", "ocit", "ocjt", "ocii", "ocji");
+  //stc->add_store("C_oc", "ocit", "ocjt", "ocii", "ocji");
+
+  prg.pretty_print();
+  prg.sanity_check();
+  //assert(false);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.use_custom_code_string = true;
+  options.banking_strategies["C"] = {"register_file"};
+  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  generate_optimized_code(options, prg);
+  //regression_test(options, prg);
+  move_to_synthesis_folder(prg.name);
+
+  //assert(false);
+}
+
+//void emit_lake_controller_config(const std::string& filename, isl_set* write_domain, isl_aff* write_sched, isl_aff* write_addr) {
+void emit_lake_controller_config(std::ostream& out, isl_set* write_domain, isl_aff* write_sched) {
+  cout << str(write_sched) << endl;
+  out << "\"dimensionality\"," << num_dims(write_domain) << ",0" << endl;
+  out << "\"cycle_starting_addr\"," << to_int(const_coeff(write_sched)) << ",0" << endl;
+  for (int d = 0; d < num_dims(write_domain); d++) {
+    auto ds = project_all_but(write_domain, d);
+    int extent_d = to_int(lexmaxval(ds)) - to_int(lexminval(ds)) + 1;
+    int ldim = num_dims(write_domain) - d - 1;
+    out << "\"extent_" << ldim << "\"," << extent_d << ",0" << endl;
+    out << "\"cycle_stride_" << ldim << "\"," << to_int(get_coeff(write_sched, d)) << ",0" << endl;
+  }
+}
+
+int get_stride_from_ubuf(UBuffer& ubuf, int raw_st, bool is_rd) {
+    int st = raw_st;
+    int capacity = ubuf.capacity() + 1;
+    cout << "buffer : " << ubuf.name << " capacity = " << capacity << endl;
+    if (contains(ubuf.name, "tb")) {
+        st = st;
+    }
+    if (contains(ubuf.name, "agg" ) ){
+        st = st % 4;
+    }
+    if (is_rd && (ubuf.hardware.out_port_width > 1) ) {
+        st = st / ubuf.hardware.out_port_width;
+    } else if (!is_rd && (ubuf.hardware.in_port_width > 1) ) {
+        st = st / ubuf.hardware.in_port_width;
+    }
+    return st;
+}
+
+string get_ubuf_name(vector<isl_map*> access_maps, string op_name) {
+    for (auto access_map: access_maps) {
+        if (domain_name(access_map) == op_name) {
+            string buf_name = range_name(access_map);
+            cout << "bufname: " << buf_name << endl;
+            string ret = take_until_str(buf_name, "ubuf");
+            cout << ret << endl;
+            return ret + "ubuf";
+        }
+    }
+    cout << "Error: Did not found the op name in all rewritten ubuffers." << endl;
+    assert(false);
+}
+
+void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_opt, vector<isl_map*> access_maps, string op_name) {
+  for (auto access_map: access_maps) {
+    if (domain_name(access_map) == op_name) {
+      cout << "\taddress info: " << str(simplify(access_map)) << endl;
+
+      for(auto single_access_map: get_basic_maps(access_map)) {
+          cout << "single access bmap : " << str(single_access_map) << endl;
+        string buf_name = range_name(access_map);
+        auto reduce_map = linear_address_map_lake(range(access_map));
+        auto ubuf = buffers_opt.at(buf_name);
+        bool is_rd = ubuf.is_read_op(op_name);
+
+        //Need to judge whether we need selection logic
+        //Case are we have only one input port
+        //but multiple output port for this buffer
+        //that means we need selection logic
+        if ( (ubuf.num_in_ports() > 1)) {
+            //TODO: this only work for tb
+            auto pt2connect = ubuf.get_connection_map_to_outpt(to_map(single_access_map));
+            bool need_mux = true;
+            for (auto it: pt2connect) {
+                need_mux &= it.second;
+            }
+            int out_dim = num_out_dims(access_map);
+            vector<int> mux_index;
+            vector<int> addr_index;
+            for (int i = out_dim - 1; i >= 0; i --) {
+                //FIXME: this is hardcode, may not work for dnn
+                if (i == out_dim - 2) {
+                    mux_index.push_back(i);
+                } else {
+                    addr_index.push_back(i);
+                }
+            }
+            //rewrite the original addr_reduce map
+            if (contains(buf_name, "tb"))
+              reduce_map = linear_address_map_with_index(range(access_map), addr_index);
+            if (need_mux) {
+                auto mux_reduce_map = linear_address_map_with_index(range(access_map), mux_index);
+                auto mux_addr_expr = dot(access_map, mux_reduce_map);
+                cout << str(mux_addr_expr) << endl;
+                isl_aff* addr = get_aff(mux_addr_expr);
+                string prefix = is_rd ? "mux_read" : "mux_write";
+                out << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
+                out << "\""+prefix+"_data_starting_addr\"," <<
+                    to_int(const_coeff(addr))  << ",0" << endl;
+                for (int d = 0; d < num_in_dims(addr); d++) {
+                  int ldim = num_in_dims(addr) - d - 1;
+                  out << "\""+prefix+"_data_stride_" << ldim << "\"," <<
+                      to_int(get_coeff(addr, d))  << ",0" << endl;
+                }
+            }
+        }
+        cout << "reduce map: " << str(reduce_map) << endl;
+
+
+        auto addr_expr_map = dot(to_map(single_access_map), reduce_map);
+        cout << str(addr_expr_map) << endl;
+        string pt = is_rd ? pick(ubuf.get_out_ports()) : pick(ubuf.get_in_ports());
+        isl_aff* addr = get_aff(addr_expr_map);
+
+        //Simplify map will work only when you its with domain
+        if (ubuf.retrive_domain.count(pt) )
+            addr = get_aff(simplify(its(addr_expr_map, ubuf.retrive_domain.at(pt))));
+        cout << "\t address generator aff expr:" << str(addr) << endl;
+
+        string prefix = is_rd ? "read" : "write";
+        out << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
+
+        //FIXME: this function is a hack for fetch width = 4 aggregator
+        int st = get_stride_from_ubuf(ubuf, to_int(const_coeff(addr)), is_rd);
+
+        out << "\""+prefix+"_data_starting_addr\"," << st << ",0" << endl;
+        for (int d = 0; d < num_in_dims(addr); d++) {
+          int ldim = num_in_dims(addr) - d - 1;
+          int st = get_stride_from_ubuf(ubuf, to_int(get_coeff(addr, d)), is_rd);
+          cout << "get st: " << st << endl;
+          out << "\""+prefix+"_data_stride_" << ldim << "\"," << st << ",0" << endl;
+        }
+        if (is_rd && (ubuf.hardware.out_port_width > 1) )
+            break;
+        if (!is_rd&& (ubuf.hardware.in_port_width > 1) )
+            break;
+      }
+    }
+  }
+}
+
+void emit_lake_stream(map<string, UBuffer>& buffers_opt,
+        umap* hardware_schedule, string dir, bool flatten=true) {
+  //assign the hardware schedule to each buffer
+  auto op2sched = get_op2sched(buffers_opt, hardware_schedule, flatten);
+  for (auto & it : buffers_opt) {
+    if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
+      continue;
+    }
+    lattice_schedule_buf(it.second, hardware_schedule);
+  }
+  emit_lake_address_stream2file(buffers_opt, dir);
+}
+
+void check_lake_config(const vector<string> & op_name_vec, string out_dir, string gold_dir) {
+  for (string op_name: op_name_vec) {
+    string target = out_dir + op_name + ".csv";
+    string golden = gold_dir + op_name + ".csv";
+    compare_to_gold_file(target, golden);
+  }
+}
+
+vector<string> emit_lake_config(map<string, UBuffer>& buffers_opt,
+        umap* hardware_schedule, string dir) {
+  vector<string> generated_op;
+  auto glb_access_map = global_access_map_from_buffers(buffers_opt);
+  auto glb_domain = global_domain_from_buffers(buffers_opt);
+  auto glb_retrive_domain = retrive_domain_from_buffers(buffers_opt);
+  auto retrive_dom_map = get_sets_in_map(glb_retrive_domain);
+  auto dom_map = get_sets_in_map(glb_domain);
+  auto access_maps = get_maps(glb_access_map);
+
+  //produce the schedule config for each op
+  for (auto m : get_maps(hardware_schedule)) {
+    cout << tab(1) << domain_name(m) << endl;
+    string op_name = domain_name(m);
+    generated_op.push_back(op_name);
+
+    isl_map* write_sched = m;
+    auto dom = dom_map.at(op_name);
+    if (retrive_dom_map.count(op_name)) {
+      dom = retrive_dom_map.at(op_name);
+
+      //transform the iteration domain back to it's original dimension
+      write_sched = retrive_map_domain_with_dim(m, dom);
+      for (auto& it: access_maps) {
+        if (domain_name(it)== op_name) {
+          it = retrive_map_domain_with_dim(it, dom);
+        }
+      }
+    }
+    cout << "\tretrive dom: " << str(glb_retrive_domain) << endl;
+
+    //FIXME: The dimension retrive algorithm seems wrong for conv33, may have some special purpose for resnet
+    //if (num_in_dims(write_sched) != num_dims(dom_map.at(op_name))) {
+    //    cout << "\t retrive the domain for schedule: " << str(write_sched) << endl;
+    //    dom = dom_map.at(op_name);
+    //    write_sched = retrive_map_domain_with_dim(m, dom);
+    //    cout << "\t after retrive : " << str(write_sched) << endl;
+    //}
+
+    ////find the memory tile interface op we need to generate multiple file
+    vector<isl_map*> access_map_for_op;
+    for (auto acc_map: access_maps) {
+        if (domain_name(acc_map) == op_name) {
+
+            //remove the wire
+            string buf_name = range_name(acc_map);
+            auto ubuf = buffers_opt.at(buf_name);
+            cout << "buffer name: " << buf_name << " capacity = " << ubuf.capacity() << endl;
+            if (ubuf.capacity() == 0) {
+                cout << "remove 0 capacity buffer: " << buf_name << endl;
+                continue;
+            }
+
+            access_map_for_op.push_back(acc_map);
+        }
+    }
+
+
+    if (access_map_for_op.size() > 1) {
+
+        //generate configuration for internal sram related controller
+        string sub_folder = get_ubuf_name(access_maps, op_name);
+        string sub_dir = dir + sub_folder;
+        cout << "sub folder name: " << sub_folder << endl;
+        cmd("mkdir -p " + sub_dir);
+        ofstream out(sub_dir +"/" + op_name + ".csv");
+        cout << "\tGenerate config csv for : " << tab(1) << op_name << endl;
+
+        emit_lake_controller_config(out, dom, get_aff(write_sched));
+
+        //emit address config
+        emit_lake_addrgen_config(out, buffers_opt, access_maps, op_name);
+
+        out.close();
+    }
+    else if (access_map_for_op.size() == 1) {
+      int pt_cnt = 0;
+      for(auto single_access_map: get_basic_maps(pick(access_map_for_op))) {
+        cout << "single access bmap : " << str(single_access_map) << endl;
+
+        string sub_folder = get_ubuf_name({to_map(single_access_map)}, op_name);
+        string sub_dir = dir + sub_folder;
+        cout << "sub folder name: " << sub_folder << endl;
+
+        string buf_name = range_name(to_map(single_access_map));
+        auto ubuf = buffers_opt.at(buf_name);
+        string suffix = "_" + to_string(pt_cnt);
+        if (ubuf.is_read_op(op_name))
+          suffix = "_tb2out" + suffix;
+        else
+          suffix = "_in2agg" + suffix;
+
+        cmd("mkdir -p " + sub_dir);
+        ofstream out(sub_dir +"/"+ op_name + suffix + ".csv");
+        cout << "\tGenerate config csv for : " << tab(1) << op_name + suffix << endl;
+        emit_lake_controller_config(out, dom, get_aff(write_sched));
+
+        //emit address config
+        emit_lake_addrgen_config(out, buffers_opt, {to_map(single_access_map)}, op_name);
+        pt_cnt ++;
+      }
+    }
+  }
+  return generated_op;
+}
+
+
+isl_aff* get_aff_addr(op* op, const std::string& buf_name,
+    const address& addr,
+    prog& prg) {
+  auto vars = map_find(op, prg.iter_vars());
+  auto pwaff = to_multi_aff(prg.ctx, vars, addr);
+
+  assert(isl_multi_aff_dim(pwaff, isl_dim_set) == 1);
+
+  return isl_multi_aff_get_aff(pwaff, 0);
+}
+
+isl_union_map* generate_hardware_schedule_heu_new(isl_union_map* new_opt_sched,
+        map<string, UBuffer> buffers, map<pair<string, string>, int> latency, int ii, vector<string> remove = {}) {
+  vector<string> sort_op = topological_sort_from_buffer(buffers, remove);
+  cout << "Topology sort: " << sort_op << endl;
+
+  int i = 0;
+  map<string, isl_point*> sched_seq;
+  map<string, vector<string>> expr_base;
+  map<string, int> topo_seq, delay_map;
+  map<string, isl_map*> op2sched;
+
+  int loop_dim = get_in_dim(pick(get_maps(new_opt_sched))) - 1;
+  vector<int> max_iteration(loop_dim, 0);
+
+  for (auto op: sort_op) {
+    topo_seq[op] = i;
+    delay_map[op] = 0;
+    i ++;
+  }
+
+  //sort the latency according to the sequence of buffers
+  auto cmp = [&topo_seq](const pair<string, string>& p1,
+          const pair<string, string>& p2) {
+      return topo_seq.at(p1.first) < topo_seq.at(p2.first);
+  };
+  map<pair<string, string>, int, decltype(cmp)> latency_sort(cmp);
+
+  for (auto it: latency) {
+      latency_sort.insert(it);
+  }
+
+  //process the schedule map,
+  //From the observation, if we keep the schedule dimension
+  //It will give a schedule with in dim in front and a constant sequence vector
+  //We need to flatten the expression in the beginning into 1D
+  //And add the  constant offset based on the latency and sequence
+  for (auto m: get_maps(new_opt_sched)) {
+    string op_name = domain_name(m);
+    op2sched[op_name] = m;
+    auto affs = get_aff_vec(m);
+    assert(affs.size() >= get_in_dim(m));
+    vector<string> sched_expr_list;
+    vector<int> sched_seq_vec;
+    int dom_dim = get_in_dim(m) - 1;
+    for (int i = 0; i < dom_dim; i ++) {
+      sched_expr_list.push_back(take_btw(str(affs.at(i)), "[(", ")]"));
+      int card_range = int_upper_bound(get_out_range(m, i));
+      max_iteration.at(i) = std::max(card_range, max_iteration.at(i));
+    }
+    for (int i = dom_dim; i < affs.size(); i ++) {
+      sched_seq_vec.push_back(safe_stoi(take_btw(str(affs.at(i)), "[(", ")]")));
+    }
+    sched_seq[op_name] = form_pt(sched_seq_vec);
+    expr_base[op_name] = sched_expr_list;
+  }
+  cout << "max iteration: " << max_iteration <<endl;
+
+
+  for (auto it: latency_sort) {
+    string anchor = it.first.first;
+    string target = it.first.second;
+    int lat = it.second;
+
+    //if anchor is producer and targe is consumer
+    if (topo_seq.at(anchor) < topo_seq.at(target)) {
+      //assert(lat >= 0);
+      if ( lex_gt_pt(sched_seq.at(anchor), sched_seq.at(target)) )
+        lat -= 1;
+      delay_map.at(target) = delay_map.at(anchor) + lat;
+    }
+    //if anchor is consumer and target is producer
+    else {
+      //assert(lat <= 0);
+      if (lex_lt_pt(sched_seq.at(anchor), sched_seq.at(target)))
+        lat += 1;
+      delay_map.at(target) = delay_map.at(anchor) + lat;
+    }
+  }
+  cout << "Delay map: " << delay_map << endl;
+
+  vector<int> rolling_dim = rolling_vec_dim(max_iteration, ii);
+  cout << "rolling dim: " << rolling_dim << endl;
+
+  //reconstruct the 1D schedule
+  auto hw_sched = isl_union_map_empty(get_space(new_opt_sched));
+  for (auto op_name: sort_op) {
+    auto sched_map = op2sched.at(op_name);
+    auto expr_list = expr_base.at(op_name);
+    for ( size_t i = 0; i < expr_list.size(); i++ ){
+      expr_list.at(i) = "(" + expr_list.at(i)  + ")*" + to_string(rolling_dim.at(i));
+    }
+
+    //add the latency
+    expr_list.push_back(to_string(delay_map.at(op_name)));
+
+    string expr = sep_list(expr_list, "", "", "+");
+    auto ctx = ::ctx(sched_map);
+    auto var_list = get_map_in_dim_id(sched_map);
+    auto hs = gen_hw_sched_from_sched_vec(ctx, {expr}, var_list, op_name);
+    hs = its(hs, domain(sched_map));
+    hw_sched = unn(hw_sched, to_umap(hs));
+  }
+
+  //TODO: add a post check to see if there is any hardware violation
+  cout << "\tHW Schedule:" << str(hw_sched) << endl;
+
+  return hw_sched;
+}
+
+isl_union_map* generate_hardware_schedule_heu(isl_union_map* new_opt_sched,
+        map<string, UBuffer> buffers,
+        map<pair<string, string>, int> latency,
+        int ii,
+        vector<string> remove = {}) {
+  vector<string> sort_op = topological_sort_from_buffer(buffers, remove);
+  cout << "Topology sort: " << sort_op << endl;
+
+  int i = 0;
+  map<string, int> sched_seq, topo_seq, delay_map;
+  map<string, string> expr_base;
+  map<string, isl_map*> op2sched;
+  for (auto op: sort_op) {
+    topo_seq[op] = i;
+    delay_map[op] = 0;
+    i ++;
+  }
+
+  //sort the latency according to the sequence of buffers
+  auto cmp = [&topo_seq](const pair<string, string>& p1,
+          const pair<string, string>& p2) {
+      return topo_seq.at(p1.first) < topo_seq.at(p2.first);
+  };
+  map<pair<string, string>, int, decltype(cmp)> latency_sort(cmp);
+
+  for (auto it: latency) {
+      latency_sort.insert(it);
+  }
+
+  for (auto m: get_maps(new_opt_sched)) {
+    string op_name = domain_name(m);
+    op2sched[op_name] = m;
+    auto affs = get_aff_vec(m);
+    //assert(affs.size() == 2);
+    sched_seq[op_name] = safe_stoi(
+            take_btw(str(affs.at(1)), "[(", ")]"));
+    expr_base[op_name] = take_btw(str(affs.at(0)), "[(", ")]");
+
+  }
+
+  for (auto it: latency_sort) {
+    string anchor = it.first.first;
+    string target = it.first.second;
+    int lat = it.second;
+
+    //if anchor is producer and targe is consumer
+    if (topo_seq.at(anchor) < topo_seq.at(target)) {
+      assert(lat >= 0);
+      if (sched_seq.at(anchor) > topo_seq.at(target))
+        lat -= 1;
+      delay_map.at(target) = delay_map.at(anchor) + lat;
+    }
+    //if anchor is consumer and target is producer
+    else {
+      assert(lat <= 0);
+      if (sched_seq.at(anchor) < topo_seq.at(target))
+        lat += 1;
+      delay_map.at(target) = delay_map.at(anchor) + lat;
+    }
+  }
+
+  //reconstruct the 1D schedule
+  auto hw_sched = isl_union_map_empty(get_space(new_opt_sched));
+  for (auto op_name: sort_op) {
+    auto sched_map = op2sched.at(op_name);
+    string expr;
+    if (ii == 1) {
+      expr = expr_base.at(op_name) + "+"
+          + to_string(delay_map.at(op_name));
+    }
+    else {
+      expr = expr_base.at(op_name) + "*" + to_string(ii)
+          + "+" +to_string(delay_map.at(op_name));
+    }
+    auto ctx = ::ctx(sched_map);
+    auto hs = gen_hw_sched_from_sched_vec(ctx, {expr}, op_name);
+    hs = its(hs, domain(sched_map));
+    hw_sched = unn(hw_sched, to_umap(hs));
+  }
+  return hw_sched;
+}
+
+//void lake_resnet_multitile_test() {
+  //auto prg = resnet_hc_multitile();
+  //prg.pretty_print();
+
+  //CodegenOptions options;
+  //options.all_rams = true;
+  //all_register_files(prg, options);
+  //options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 1, 4}};
+  //options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
+  //options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
+  //options.inner_bank_offset_mode =
+    //INNER_BANK_OFFSET_MULTILINEAR;
+  ////generate_optimized_code(options, prg);
+
+  //auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  ////optimized schedule
+  //auto buffers_opt = build_buffers(prg, sched_naive);
+  //CodegenOptions opt;
+  //opt.conditional_merge = true;
+  //opt.merge_threshold = 4;
+  //int max_inpt = 2, max_outpt = 2;
+  ////buffers_opt.at("buf").generate_bank_and_merge(opt);
+  ////cout << buffers_opt.at("buf") << endl;
+  ////buffers_opt.at("buf").port_group2bank(2, 2);
+  ////cout << buffers_opt.at("buf") << endl;
+
+  //for (auto& b : buffers_opt) {
+    //cout << b.first << endl << b.second << endl;
+    //if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
+        //continue;
+    //b.second.generate_banks_and_merge(options);
+    //b.second.print_bank_info();
+
+    //b.second.port_group2bank(max_inpt, max_outpt);
+    //b.second.print_bank_info();
+  //}
+
+  ////auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  ////auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
+  //for (auto it: buffers_opt) {
+    //if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
+        //continue;
+    //}
+  //auto buf = it.second;
+  //auto ubuf_name = it.first;
+  //if (ubuf_name != "hw_input_stencil")
+      //continue;
+  ////auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  //auto post_proc_buffers = buf.generate_ubuffer(opt);
+  //opt.conditional_merge = false;
+  ////auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  ////auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  //auto rewrite_buffers = buf.generate_ubuffer(opt);
+  //for (auto it: post_proc_buffers) {
+    //cout << "\tpost: " << it.first << ": " << it.second << endl;
+  //}
+  //for (auto it: rewrite_buffers) {
+    //cout << "\trewrite_buffers: " << it.first << ": " << it.second << endl;
+  //}
+
+  //for (auto it : post_proc_buffers) {
+    //map<string, UBuffer> tmp;
+    //map<string, UBuffer> temp;
+    //tmp.insert(it);
+    //cout << "Vectorizing " << it.first << endl;
+    //cout << it.second << endl;
+    //buffer_vectorization(it.first, 3, 4, tmp);
+    //cout << "Done with vectorization" << endl;
+    //for (auto it: tmp) {
+        //auto buf = it.second;
+        //if (buf.get_in_ports().size() == 1)
+            //temp.insert(it);
+        //cout << it.first<< endl;
+    //}
+
+    ////auto opt_sched = optimized_schedule_from_buffers_feautrier(buffers_opt, false);
+    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+
+    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
+    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
+    ////auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
+
+    ////isl_union_set* gb_domain = global_domain_from_buffers(tmp);
+    ////isl_ctx* ctx = ::ctx(gb_domain);
+    ////auto um = isl_union_map_read_from_str(ctx,"{}");
+    ////auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
+    //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, i1, i2]->op_hcompute_conv_stencil_1[root, i1, i2'] : 0<=i1<=3}");
+
+    //cout << str(um) << endl;
+    //auto um2 = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i1, 0]->op_hcompute_hw_input_stencil[root, i1, 4] : 0<=i1<=3}");
+    //cout << str(um2) << endl;
+    //um = unn(um, um2);
+    //////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
+    ////cout << "\t global domain" << str(gb_domain) << endl;
+    ////cout << "\tDouble buffer dependency: " << str(um) << endl;
+    ////um = its(um, gb_domain);
+    ////cout << "\tDouble buffer dependency: " << str(um) << endl;
+    ////um = its_range(um, gb_domain);
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    ////auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
+    ////auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
+    ////auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
+    ////auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_hw_input_stencil_agg2sram"});
+    ////cout << str(opt_sched) << endl;
+    ////cout << codegen_c(opt_sched) << endl;
+    ////assert(false);
+    //int app_target_II = 1;
+
+    ////map<pair<string, string>, int> latency({{{"input", "input_vec"}, 1},
+    ////      {{"output_2", "output_2_vec"}, -1}});
+    ////auto hsh = generate_hardware_schedule_heu(opt_sched, tmp, {}, app_target_II, {"op_hcompute_conv_stencil_1_vec_in"});
+    ////cout << str(hsh) << endl;
+    ////cout << codegen_c(hsh) << endl;
+    ////cmd("mkdir -p ./lake_controllers/resnet/"+ubuf_name);
+    ////auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/"+ubuf_name);
+    //////check_lake_config(op_vec, "./lake_controllers/conv_3_3/", "./lake_gold/conv_3_3/");
+    ////assert(false);
+
+  //}
+
+  //}
+//}
+
+void lake_resnet_test() {
+  auto prg = resnet_hc();
+  prg.pretty_print();
+
+  CodegenOptions options;
+  options.all_rams = true;
+  all_register_files(prg, options);
+  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
+  options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
+  options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  //generate_optimized_code(options, prg);
+
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg, sched_naive);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
+  //cout << buffers_opt.at("buf") << endl;
+  //buffers_opt.at("buf").port_group2bank(2, 2);
+  //cout << buffers_opt.at("buf") << endl;
+
+  for (auto& b : buffers_opt) {
+    cout << b.first << endl << b.second << endl;
+    if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
+        continue;
+    b.second.generate_banks_and_merge(options);
+    b.second.print_bank_info();
+
+    //Assign an configuration file,
+    //json config_reg_map = parse_config_file("conv33_configuration.txt");
+    //b.second.set_config(config_reg_map);
+
+    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.print_bank_info();
+
+
+#ifdef COREIR
+    CoreIR::Context* context = CoreIR::newContext();
+    CoreIRLoadLibrary_commonlib(context);
+    CoreIRLoadLibrary_cwlib(context);
+    schedule_info hwinfo;
+    hwinfo.use_dse_compute = false;
+    auto def = generate_coreir_without_ctrl(opt, context, b.second, hwinfo);
+    if(!saveToFile(context->getNamespace("global"), "lake_"+b.first+".json", def)) {
+      cout << "Could not save ubuffer coreir!" << endl;
+      context->die();
+    }
+    CoreIR::deleteContext(context);
+#endif
+
+  }
+
+#ifdef COREIR
+  //generate_cgra_tb(buffers_opt, prg, opt);
+#endif
+
+  map<string, int> dim_id_map({{"hw_input_stencil", 1},
+          {"hw_kernel_stencil", 2},
+          {"conv_stencil", 2}});
+  auto post_proc_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  //auto post_proc_buffers = buffers_opt.at("hw_kernel_stencil").generate_ubuffer(opt);
+  for (auto it: buffers_opt) {
+    if (it.second.get_out_ports().size() == 0 || it.second.get_in_ports().size() == 0) {
+        continue;
+    }
+  auto buf = it.second;
+  auto ubuf_name = it.first;
+  if (ubuf_name != "hw_input_stencil")
+      continue;
+  //auto post_proc_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  auto post_proc_buffers = buf.generate_ubuffer(opt);
+  opt.conditional_merge = false;
+  //auto rewrite_buffers = buffers_opt.at("conv_stencil").generate_ubuffer(opt);
+  //auto rewrite_buffers = buffers_opt.at("hw_input_stencil").generate_ubuffer(opt);
+  auto rewrite_buffers = buf.generate_ubuffer(opt);
+  for (auto it: post_proc_buffers) {
+    cout << "\tpost: " << it.first << ": " << it.second << endl;
+  }
+  for (auto it: rewrite_buffers) {
+    cout << "\trewrite_buffers: " << it.first << ": " << it.second << endl;
+  }
+
+  for (auto it : post_proc_buffers) {
+    map<string, UBuffer> tmp;
+    map<string, UBuffer> temp;
+    tmp.insert(it);
+    cout << "Vectorizing " << it.first << endl;
+    cout << it.second << endl;
+    buffer_vectorization(it.first, 2, 4, tmp);
+    cout << "Done with vectorization" << endl;
+    for (auto it: tmp) {
+        auto buf = it.second;
+        if (buf.get_in_ports().size() == 4)
+            temp.insert(it);
+        cout << it.first<< endl;
+    }
+
+    //auto opt_sched = optimized_schedule_from_buffers_feautrier(buffers_opt, false);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, false);
+
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_input_stencil_vec"});
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_conv_stencil_vec", "op_hcompute_conv_stencil_1_vec_in"});
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(tmp, true, {"op_hcompute_hw_kernel_stencil_vec"});
+
+    isl_union_set* gb_domain = global_domain_from_buffers(tmp);
+    isl_ctx* ctx = ::ctx(gb_domain);
+    //auto um = isl_union_map_read_from_str(ctx,"{}");
+    //auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil_agg2sram[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1_sram2tb[root, i0, i1', i2', i3', i4', i5', i6']}");
+    auto um = isl_union_map_read_from_str(ctx,"{op_hcompute_hw_input_stencil[root=0, 8191]->op_hcompute_conv_stencil_1_sram2tb[root, 0]}");
+    ////        //"{op_hcompute_hw_input_stencil[root=0, i0, i1, i2, i3]->op_hcompute_conv_stencil_1[root, i0, i1', i2', i3', i4', i5', i6']; op_hcompute_conv_stencil_1[root=0, i0, i1', i2', i3', i4', i5', i6']->op_hcompute_hw_input_stencil[root, i0+1, i1, i2, i3]}");
+    //cout << "\t global domain" << str(gb_domain) << endl;
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //um = its(um, gb_domain);
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //um = its_range(um, gb_domain);
+    //cout << "\tDouble buffer dependency: " << str(um) << endl;
+    //auto opt_sched = optimized_schedule_from_buffers_DB(tmp, vector<string>({"op_hcompute_hw_input_stencil_agg2sram"}), um);
+    //auto opt_sched = optimized_schedule_from_buffers_DB(temp, vector<string>({}), um);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(temp, false);
+    auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, {"op_hcompute_hw_input_stencil_agg2sram"}, um);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten_extra_with_validity(tmp, true, {"op_hcompute_conv_stencil_agg2sram", "op_hcompute_conv_stencil_1_agg2sram"});
+    cout << str(opt_sched) << endl;
+    cout << codegen_c(opt_sched) << endl;
+    auto multi_tile_sched = pad_identity_relation_to_umap(opt_sched, 1, 0, 0, 3);
+    cout << codegen_c(multi_tile_sched) << endl;
+    cout << str(multi_tile_sched) << endl;
+    map<pair<string, string>, int> latency({
+          {{"op_hcompute_hw_input_stencil", "op_hcompute_hw_input_stencil_agg2sram"}, 1},
+          {{"op_hcompute_hw_input_stencil_agg2sram", "op_hcompute_conv_stencil_1_sram2tb"}, 0},
+          {{"op_hcompute_conv_stencil_1_sram2tb", "op_hcompute_conv_stencil_1"}, 1}});
+    auto hsh = generate_hardware_schedule_heu_new(multi_tile_sched, tmp, latency, 1);
+    cout << codegen_c(hsh) << endl;
+    cmd("mkdir -p ./lake_controllers/resnet/");
+    //auto op_vec = emit_lake_config(tmp, hsh, "./lake_controllers/resnet/");
+    //assert(false);
+
+  }
+
+  }
+}
+
+void lake_cascade_autovec_test() {
+  //prog prg = halide_cascade();
+  //cout << "Created program..." << endl;
+  //prg.pretty_print();
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "cascade_lake";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["buf1"] = 16;
+  prg.buffer_port_widths["buf2"] = 16;
+
+  auto p = prg.add_nest("po", 0, 20, "pi", 0, 20);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf1", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 16, "qi", 0, 16);
+  auto read = q->add_op("conv");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf1", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  }
+  read->add_store("buf2", "qo, qi");
+
+  auto k = prg.add_nest("ko", 0, 14, "ki", 0, 14);
+  auto read_ = k->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read_->add_load("buf2", "ko+" + to_string(wy) + ", ki+" + to_string(wx));
+      }
+  }
+  read_->add_store("out", "ko, ki");
+
+  //naive buffer without banking
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl;
+    if (b.first == "in" || b.first == "out")
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+#ifdef COREIR
+  generate_cgra_tb(buffers_opt, prg, opt);
+#endif
+
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  cout << str(opt_sched) << endl << endl;
+  cout << codegen_c(opt_sched) << endl << endl;
+  map<pair<string, string>, int> latency({
+          {{"input", "input_agg2sram"}, 1},
+          {{"input_agg2sram", "conv_2_sram2tb"}, -3},
+          {{"conv_2_sram2tb", "conv_2"}, 2},
+          {{"conv_2", "conv"}, -1},
+          {{"conv", "conv_agg2sram"}, 0},
+          {{"conv_agg2sram", "output_2_sram2tb"}, -1},
+          {{"output_2_sram2tb", "output_2"}, 1}});
+  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  cout << codegen_c(hsh) << endl;
+  cmd("mkdir -p ./lake_controllers/cascade/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/cascade/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/cascade/", false);
+  //check_lake_config(op_vec, "./lake_controllers/cascade/", "./lake_gold/cascade/");
+}
+
+//void lake_harris_autovec_test() {
+  //prog prg = harris_remove();
+
+  ////optimized schedule
+  //auto buffers_opt = build_buffers(prg);
+  //CodegenOptions opt;
+  //opt.conditional_merge = true;
+  //opt.merge_threshold = 4;
+  //int max_inpt = 2, max_outpt = 2;
+
+  //for (auto& b : buffers_opt) {
+    //cout << "\tGenerate bank for buffer: " << b.first << b.second << endl;
+    //if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        //continue;
+    //b.second.generate_banks_and_merge(opt);
+    //b.second.port_group2bank(max_inpt, max_outpt);
+  //}
+//#ifdef COREIR
+  //generate_cgra_tb(buffers_opt, prg, opt);
+//#endif
+
+  ////return the buffers after vectorization and the proximity deps you want to remove
+  //vector<string> input_vec_stmts;
+  //isl_ctx* ctx = isl_ctx_alloc();
+  //umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  //auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  //auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  //cout << str(opt_sched) << endl << endl;
+  //cout << codegen_c(opt_sched) << endl << endl;
+
+  //map<pair<string, string>, int> latency({});
+  //auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  //cout << codegen_c(hsh) << endl;
+  //cmd("mkdir -p ./lake_controllers/harris/");
+  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/harris/");
+  //cmd("mkdir -p ./lake_stream/harris/");
+  ////emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
+//}
+
+void lake_gaussian_autovec_test() {
+  prog prg = gaussian();
+
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+#ifdef COREIR
+  generate_cgra_tb(buffers_opt, prg, opt);
+#endif
+
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  cout << str(opt_sched) << endl << endl;
+  cout << codegen_c(opt_sched) << endl << endl;
+
+  map<pair<string, string>, int> latency({
+          {{"op_hcompute_hw_input_stencil", "op_hcompute_hw_input_stencil_agg2sram"}, 1},
+          {{"op_hcompute_hw_input_stencil_agg2sram", "op_hcompute_blur_unnormalized_stencil_1_2_sram2tb"}, -3},
+          {{"op_hcompute_blur_unnormalized_stencil_1_2_sram2tb", "op_hcompute_blur_unnormalized_stencil_1_2"}, 2}});
+  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  cout << codegen_c(hsh) << endl;
+  cmd("mkdir -p ./lake_controllers/gaussian/");
+  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/gaussian/");
+  cmd("mkdir -p ./lake_stream/gaussian/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/harris/", false);
+}
+
+void lake_conv33_autovec_aha_test() {
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "conv33_naive_compute";
+  prg.add_input("in_inst");
+  prg.add_output("out_inst");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in_inst"] = 16;
+  prg.buffer_port_widths["out_inst"] = 16;
+  prg.buffer_port_widths["buf_inst"] = 16;
+
+  auto p = prg.add_nest("po", 0, 64, "pi", 0, 64);
+  auto write = p->add_op("input");
+  write->add_load("in_inst", "po, pi");
+  write->add_store("buf_inst", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 62, "qi", 0, 62);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf_inst", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  }
+  read->add_store("out_inst", "qo, qi");
+
+
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.rtl_options.use_prebuilt_memory = true;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+  //generate_coreir(opt, buffers_opt, prg, sched);
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+
+    //auto def = generate_coreir(opt, context, b.second);
+
+    //if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
+    //  cout << "Could not save ubuffer coreir!" << endl;
+    //  context->die();
+    //}
+    //CoreIR::deleteContext(context);
+  }
+
+#ifdef COREIR
+  generate_cgra_tb(buffers_opt, prg, opt);
+#endif
+
+
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  cout << str(opt_sched) << endl << endl;
+  cout << codegen_c(opt_sched) << endl << endl;
+  map<pair<string, string>, int> latency({
+          {{"input", "input_agg2sram"}, 1},
+          {{"input_agg2sram", "output_2_sram2tb"}, -3},
+          {{"output_2_sram2tb", "output_2"}, 2}});
+  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  cout << codegen_c(hsh) << endl;
+  cmd("mkdir -p ./lake_controllers/conv_3_3_aha/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_aha/");
+  cmd("mkdir -p ./lake_stream/conv_3_3_aha/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_new/", false);
+  //check_lake_config(op_vec, "./lake_controllers/conv_3_3_aha/", "./lake_gold/conv_3_3_aha/");
+}
+
+umap* generate_garnet_hw_sched(prog& prg, CodegenOptions & options);
+umap* clockwork_schedule(prog& prg);
+vector<int> garnet_fuse_ii_level(prog& prg);
+
+void lake_conv33_recipe_test() {
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "conv_3_3_recipe";
+  prg.add_input("hw_input_stencil");
+  prg.add_output("conv_stencil");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
+
+  auto p = prg.add_nest("po", 0, 64, "pi", 0, 64);
+  auto write = p->add_op("input");
+  write->add_function("hcompute_hw_input_global_wrapper_stencil");
+  write->add_load("hw_input_stencil", "po, pi");
+  write->add_store("hw_input_global_wrapper_stencil", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 62, "qi", 0, 62);
+  auto read = q->add_op("output");
+  read->add_function("hcompute_conv_stencil_1");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("hw_input_global_wrapper_stencil", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  }
+  read->add_store("conv_stencil", "qo, qi");
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  auto iis = garnet_fuse_ii_level(prg);
+  CodegenOptions options;
+  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.iis = iis;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+
+    //auto def = generate_coreir(opt, context, b.second);
+
+    //if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
+    //  cout << "Could not save ubuffer coreir!" << endl;
+    //  context->die();
+    //}
+    //CoreIR::deleteContext(context);
+  }
+
+#ifdef COREIR
+  //generate_garnet_tb(buffers_opt, prg, opt);
+#endif
+
+
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, iis, extra_raw_deps);
+  isl_union_map* hsh = global_schedule_from_buffers(ubuf_pool);
+  cout << "hardware schedule: " << str(hsh) << endl;
+  //cmd("mkdir -p ./lake_stream/conv_3_3_recipe/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_recipe/", false);
+  //cmd("mkdir -p ./lake_controllers/conv_3_3_recipe/");
+  //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_recipe/");
+}
+
+void dsa_writers(prog& prg);
+void lake_conv33_halide_test() {
+  prog prg = conv_3_3();
+  dsa_writers(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  auto iis = garnet_fuse_ii_level(prg);
+  CodegenOptions options;
+  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.iis = iis;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+#ifdef COREIR
+  //generate_garnet_tb(buffers_opt, prg, opt);
+#endif
+}
+
+void lake_cascade_halide_test() {
+  prog prg = cascade();
+  dsa_writers(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  auto iis = garnet_fuse_ii_level(prg);
+  CodegenOptions options;
+  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.iis = iis;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+#ifdef COREIR
+  //generate_garnet_tb(buffers_opt, prg, opt);
+#endif
+}
+
+void compile_for_garnet_single_port_mem(prog & prg, bool gen_smt_stream);
+void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
+
+void test_single_port_mem() {
+  vector<prog> test_apps;
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(rom());
+
+  //TODO:has issue with high dimensional schedule with multiple input
+  //test_apps.push_back(demosaic_complex());
+
+  //TODO:need to use the new scheduler
+  //test_apps.push_back(resnet());
+  for ( auto prg: test_apps) {
+    cout << "====== Running CGRA Single Port test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    dsa_writers(prg);
+    prg.pretty_print();
+    auto cpu = unoptimized_result(prg);
+
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem(prg, false);
+    generate_regression_testbench(prg);
+
+    cout << "Output name: " << prg.name << endl;
+    //run_verilator_tb(prg.name);
+    //TODO: move to a function
+    //run verilator on all the generated verilog
+    string name = prg.name;
+    auto verilog_files = get_files("./aha_garnet_design/"+name+"/verilog/");
+    verilog_files.push_back(name + ".v");
+    verilog_files.push_back("LakeWrapper.v");
+    int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files);
+    assert(res == 0);
+    cmd("rm LakeWrapper.v");
+
+    auto verilator_res = verilator_results(prg.name);
+    compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+    //string app_type = "dualwithaddr";
+    string app_type = "single_port_buffer";
+    cpy_app_to_folder(app_type, prg.name);
+  }
+}
+
+void test_single_port_mem_smt_stream() {
+  vector<prog> test_apps;
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(rom());
+
+  for ( auto prg: test_apps) {
+    cout << "====== Running CGRA Single Port test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    dsa_writers(prg);
+    prg.pretty_print();
+    auto cpu = unoptimized_result(prg);
+
+    //compile_for_garnet_platonic_mem(prg);
+    bool gen_smt_stream = true;
+    compile_for_garnet_single_port_mem(prg, gen_smt_stream);
+
+    cout << "Output name: " << prg.name << endl;
+  }
+}
+
+void lake_harris_garnet_test() {
+  prog prg = harris();
+//  dsa_writers(prg);
+//  normalize_bounds(prg);
+//  normalize_address_offsets(prg);
+//  prg.sanity_check();
+//  prg.pretty_print();
+//
+//
+//  //optimized schedule
+//  cmd("mkdir -p aha_garnet_design/" + prg.name);
+//  auto iis = garnet_fuse_ii_level(prg);
+//  CodegenOptions options;
+//  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+//  CodegenOptions opt;
+//  opt.conditional_merge = true;
+//  opt.merge_threshold = 4;
+//  opt.iis = iis;
+//  int max_inpt = 2, max_outpt = 2;
+//  //auto sched = global_schedule_from_buffers(buffers_opt);
+//
+//  //for (auto& b : buffers_opt) {
+//  //  cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
+//  //  b.second.normalize_access_range();
+//  //  cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
+//  //}
+//  for (auto& b : buffers_opt) {
+//    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+//    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+//        continue;
+//    b.second.generate_banks_and_merge(opt);
+//    b.second.port_group2bank(max_inpt, max_outpt);
+//  }
+//
+//#ifdef COREIR
+//  generate_garnet_tb(buffers_opt, prg, opt);
+//#endif
+}
+
+void lake_rom_garnet_test() {
+  prog prg = rom();
+
+  dsa_writers(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  auto iis = garnet_fuse_ii_level(prg);
+  CodegenOptions options;
+  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.iis = iis;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+
+  //for (auto& b : buffers_opt) {
+  //  cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
+  //  b.second.normalize_access_range();
+  //  cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
+  //}
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+#ifdef COREIR
+  //generate_garnet_tb(buffers_opt, prg, opt);
+#endif
+  assert(false);
+}
+
+void lake_harris_halide_test() {
+  prog prg = harris();
+  dsa_writers(prg);
+  normalize_bounds(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  auto iis = garnet_fuse_ii_level(prg);
+  CodegenOptions options;
+  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.iis = iis;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+
+  for (auto& b : buffers_opt) {
+    cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
+    b.second.normalize_access_range();
+    cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
+  }
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+#ifdef COREIR
+  //generate_garnet_tb(buffers_opt, prg, opt);
+#endif
+}
+
+void lake_conv33_autovec_test() {
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "conv33_naive_compute";
+  prg.add_input("in_inst");
+  prg.add_output("out_inst");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in_inst"] = 16;
+  prg.buffer_port_widths["out_inst"] = 16;
+  prg.buffer_port_widths["buf_inst"] = 16;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in_inst", "po, pi");
+  write->add_store("buf_inst", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 14);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf_inst", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  }
+  read->add_store("out_inst", "qo, qi");
+
+
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  opt.rtl_options.use_prebuilt_memory = true;
+  int max_inpt = 2, max_outpt = 2;
+  //auto sched = global_schedule_from_buffers(buffers_opt);
+  //generate_coreir(opt, buffers_opt, prg, sched);
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
+
+    //auto def = generate_coreir(opt, context, b.second);
+
+    //if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
+    //  cout << "Could not save ubuffer coreir!" << endl;
+    //  context->die();
+    //}
+    //CoreIR::deleteContext(context);
+  }
+
+#ifdef COREIR
+  generate_cgra_tb(buffers_opt, prg, opt);
+#endif
+
+
+  //return the buffers after vectorization and the proximity deps you want to remove
+  vector<string> input_vec_stmts;
+  isl_ctx* ctx = isl_ctx_alloc();
+  umap* extra_raw_deps = isl_union_map_read_from_str(ctx, "{}");
+  auto ubuf_pool = vectorization_from_buf_map(buffers_opt, input_vec_stmts, extra_raw_deps);
+  auto opt_sched = optimized_schedule_from_buffers(ubuf_pool, input_vec_stmts, extra_raw_deps);
+  cout << str(opt_sched) << endl << endl;
+  cout << codegen_c(opt_sched) << endl << endl;
+  map<pair<string, string>, int> latency({
+          {{"input", "input_agg2sram"}, 1},
+          {{"input_agg2sram", "output_2_sram2tb"}, -3},
+          {{"output_2_sram2tb", "output_2"}, 2}});
+  auto hsh = generate_hardware_schedule_heu_new(opt_sched, ubuf_pool, latency, 1);
+  cout << codegen_c(hsh) << endl;
+  cout << "hardware schedule: " << str(hsh) << endl;
+  cmd("mkdir -p ./lake_controllers/conv_3_3_new/");
+  auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_new/");
+  cmd("mkdir -p ./lake_stream/conv_3_3_new/");
+  //emit_lake_stream(ubuf_pool, hsh, "./lake_stream/conv_3_3_new/", false);
+  check_lake_config(op_vec, "./lake_controllers/conv_3_3_new/", "./lake_gold/conv_3_3_new/");
+  /*
+  auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+  opt.conditional_merge = false;
+  auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+  for (auto it: post_proc_buffers) {
+    cout << "post: " << it.first << ": " << it.second << endl;
+  }
+  for (auto it: rewrite_buffers) {
+    cout << "rewrite_buffers: " << it.first << ": " << it.second << endl;
+  }
+
+  cmd("mkdir -p ./lake_controllers/conv_3_3/");
+  map<pair<string, string>, int> latency({{{"input", "input_vec"}, 1},
+          {{"output_2", "output_2_vec"}, -1}});
+  for (auto it : post_proc_buffers) {
+    cout << "Vectorizing " << it.first << endl;
+    cout << it.second << endl;
+    buffer_vectorization(it.first, 1, 4, rewrite_buffers);
+    cout << "Done with vectorization" << endl;
+
+    auto opt_sched = optimized_schedule_from_buffers(rewrite_buffers);
+    //auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
+    cout << str(opt_sched) << endl;
+    cout << codegen_c(opt_sched) << endl;
+    assert(false);
+
+    int app_target_II = 1;
+    auto hsh = generate_hardware_schedule_heu(opt_sched, rewrite_buffers, latency, app_target_II);
+    cout << str(hsh) << endl;
+    cout << codegen_c(hsh) << endl;
+
+    auto op_vec = emit_lake_config(rewrite_buffers, hsh, "./lake_controllers/conv_3_3/");
+    check_lake_config(op_vec, "./lake_controllers/conv_3_3/", "./lake_gold/conv_3_3/");
+  }*/
+
+}
+
+void lake_identity_stream_autovec_test() {
+  prog lake_agg("lake_agg_test");
+  lake_agg.add_input("in");
+  lake_agg.add_output("out");
+
+  int app_target_II = 1;
+
+  //corresponding to the aggI/O, sramI/O, TBI/O latency
+  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_vec"}, 1},
+          {{"in2buf_vec", "buf2out_vec"}, 2},
+          {{"buf2out_vec", "buf2out"}, 1}});
+
+  auto in2buf = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2buf");
+  in2buf->add_load("in", "a1, a0");
+  in2buf->add_store("buf", "a1, a0");
+
+  auto buf2out= lake_agg.add_nest("b1", 0, 8, "b0", 0, 8)->add_op("buf2out");
+  buf2out->add_load("buf", "b1, b0");
+  buf2out->add_store("out", "b1, b0");
+
+  auto buffers_opt = build_buffers(lake_agg);
+  buffer_vectorization("buf", 1, 4, buffers_opt);
+  auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
+  cout << "\t optimized schedule map: " << str(new_opt_sched) << endl;
+  cout << codegen_c(new_opt_sched) << endl;
+
+  auto hsh = generate_hardware_schedule_heu(new_opt_sched, buffers_opt, latency, app_target_II);
+  cout << str(hsh) << endl;
+  cout << codegen_c(hsh) << endl;
+
+  cmd("mkdir -p ./lake_controllers/identity_stream/");
+  //auto op_vec = emit_lake_config(buffers_opt, hsh, "./lake_controllers/identity_stream/");
+  //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
+  //cmd("mkdir -p ./lake_stream/identity_stream/");
+  //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
+
+
+}
+
+void lake_dual_port_test() {
+  prog lake_agg("lake_agg_test");
+  lake_agg.add_input("in");
+  lake_agg.add_output("out");
+
+  int app_target_II = 1;
+  map<pair<string, string>, int> latency({{{"in2buf", "buf2out"}, 1}});
+
+  auto in2buf = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2buf");
+  in2buf->add_load("in", "a1, a0");
+  in2buf->add_store("buf", "a1, a0");
+
+  auto buf2out= lake_agg.add_nest("b1", 0, 8, "b0", 0, 8, "r", 0, 2)->add_op("buf2out");
+  buf2out->add_load("buf", "b1, b0");
+  buf2out->add_store("out", "b1, b0");
+
+  auto buffers_opt = build_buffers(lake_agg);
+  auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
+  cout << "\t optimized schedule map: " << str(new_opt_sched) << endl;
+  cout << codegen_c(new_opt_sched) << endl;
+
+  auto hsh = generate_hardware_schedule_heu(new_opt_sched, buffers_opt, latency, app_target_II);
+  cout << str(hsh) << endl;
+  cout << codegen_c(hsh) << endl;
+
+  cmd("mkdir -p ./lake_controllers/dual_port_test/");
+  //auto op_vec = emit_lake_config(buffers_opt, hsh, "./lake_controllers/dual_port_test/");
+  cmd("mkdir -p ./lake_stream/dual_port_test/");
+  emit_lake_stream(buffers_opt, hsh, "./lake_stream/dual_port_test");
+  //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
+  //cmd("mkdir -p ./lake_stream/identity_stream/");
+  //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
+
+
+}
+
+void lake_identity_stream_SMT_test(int x, int y, string suffix) {
+  prog lake_agg("lake_agg_test");
+  lake_agg.add_input("in");
+  lake_agg.add_output("out");
+
+  int app_target_II = 1;
+
+  //corresponding to the aggI/O, sramI/O, TBI/O latency
+  map<pair<string, string>, int> latency({{{"in2buf", "in2buf_agg2sram"}, 1},
+          {{"in2buf_agg2sram", "buf2out_sram2tb"}, 2},
+          {{"buf2out_sram2tb", "buf2out"}, 1}});
+
+  auto in2buf = lake_agg.add_nest("a1", 0, y, "a0", 0, x)->add_op("in2buf");
+  in2buf->add_load("in", "a1, a0");
+  in2buf->add_store("buf", "a1, a0");
+
+  auto buf2out= lake_agg.add_nest("b1", 0, y, "b0", 0, x)->add_op("buf2out");
+  buf2out->add_load("buf", "b1, b0");
+  buf2out->add_store("out", "b1, b0");
+
+  auto buffers_opt = build_buffers(lake_agg);
+  buffer_vectorization("buf", 1, 4, buffers_opt);
+  auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, false);
+  cout << "\t optimized schedule map: " << str(new_opt_sched) << endl;
+  cout << codegen_c(new_opt_sched) << endl;
+
+  auto hsh = generate_hardware_schedule_heu(new_opt_sched, buffers_opt, latency, app_target_II);
+  cout << str(hsh) << endl;
+  cout << codegen_c(hsh) << endl;
+
+  cmd("mkdir -p ./lake_stream/identity_stream_"+suffix+"/");
+  emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream_"+suffix+"/");
+}
+
+void lake_agg_sram_tb_config_test() {
+  prog lake_agg("lake_agg_test");
+  lake_agg.add_input("in");
+  lake_agg.add_output("out");
+
+  auto in2agg = lake_agg.add_nest("a1", 0, 8, "a0", 0, 8)->add_op("in2agg");
+  in2agg->add_load("in", "a0 + 8*a1");
+  in2agg->add_store("agg", "a0 + 8*a1");
+
+  auto agg2sram = lake_agg.add_nest("as1", 0, 8, "as0", 0, 2)->add_op("agg2sram");
+  for (int i = 0; i < 4; i++) {
+    agg2sram->add_load("agg", str(i) + " + 4*as1");
+  }
+  agg2sram->add_store("sram", "as1");
+
+  auto sram2tb = lake_agg.add_nest("at1", 0, 8, "at0", 0, 2)->add_op("sram2tb");
+  sram2tb->add_load("sram", "at1");
+  for (int i = 0; i < 4; i++) {
+    sram2tb->add_store("tb", str(i) + " + 4*at1");
+  }
+
+  auto tb2out = lake_agg.add_nest("ao1", 0, 8, "ao0", 0, 8)->add_op("tb2out");
+  tb2out->add_load("tb", "ao0 + 8*ao1");
+  tb2out->add_store("out", "ao0 + 8*ao1");
+
+  lake_agg.pretty_print();
+  //assert(false);
+
+  auto valid = lake_agg.validity_deps();
+
+  lake_agg.pretty_print();
+  cout << "validity: " << str(valid) << endl;
+  cout << "Schedule..." << endl;
+  map<string, int> latencies;
+  map<string, int> iis;
+  for (auto f : get_sets(lake_agg.whole_iteration_domain())) {
+    latencies[name(f)] = 1;
+    iis[name(f)] = 1;
+  }
+
+  auto ct = lake_agg.ctx;
+  vector<pair<string, isl_val*> > obj;
+  for (auto f : get_sets(lake_agg.whole_iteration_domain())) {
+    string n = name(f);
+    int dim = num_dims(f);
+
+    for (int i = 0; i < dim; i++) {
+      //obj.push_back({ii_var(n, i), one(ct)});
+      obj.push_back({ii_var(n, i), isl_val_int_from_si(ct, 1000)});
+    }
+
+    obj.push_back({hw_delay_var(n), one(ct)});
+  }
+
+  vector<linear_constraint> extras;
+  extras.push_back(linear_constraint{{{hw_delay_var("sram2tb"), 1},
+    {hw_delay_var("sram2tb") + "_ml", -2}}, 1, true});
+
+  extras.push_back(linear_constraint{{{ii_var("sram2tb", 2), 1}}, -4, true});
+  extras.push_back(linear_constraint{{{ii_var("agg2sram", 2), 1}}, -4, true});
+
+  //auto valid = lake_agg.validity_deps();
+  auto prox = cpy(valid);
+  auto hs =
+        //hardware_schedule(lake_agg.whole_iteration_domain(), valid, prox, latencies, iis, obj, extras);
+    to_umap(
+        lake_agg.whole_iteration_domain(),
+        hardware_schedule(lake_agg.whole_iteration_domain(), valid, prox, latencies, iis, obj, extras));
+  hs = its(hs, lake_agg.whole_iteration_domain());
+  cout << "hs = " << str(hs) << endl;
+  //hs = its(hs, lake_agg.whole_iteration_domain());
+  //for (auto m : hs) {
+    //cout << tab(1) << m.first << " -> " << str(m.second) << endl;
+    ////cout << tab(1) << str(m) << endl;
+  //}
+  //cout << "schedule: " << codegen_c(hs) << endl;
+  //assert(false);
+
+  //auto buffers = build_buffers(lake_agg, hs);
+  //for (auto b : buffers) {
+    //if (b.first == "agg") {
+      //isl_map* fold_func = isl_map_read_from_str(lake_agg.ctx, "{ agg[x] -> M[x % 10] }");
+      //assert(inner_bank_offset_is_legal(fold_func, b.second));
+      //assert(false);
+    //}
+  //}
+  cmd("mkdir -p ./lake_controllers/identity_stream/");
+  for (auto op : lake_agg.all_ops()) {
+    ofstream out(string("./lake_controllers/identity_stream/") + op->name + ".csv");
+
+    bool found = false;
+    for (auto m : get_maps(hs)) {
+      cout << tab(1) << domain_name(m) << endl;
+      if (domain_name(m) == op->name) {
+        found = true;
+        cout << tab(1) << str(m) << endl;
+        auto dom = domain(m);
+        auto write_sched = m;
+        //isl_aff* write_addr =
+          //rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
+        emit_lake_controller_config(out, dom, get_aff(write_sched));
+        //, write_addr);
+        break;
+      }
+    }
+  //}
+
+    //assert(found);
+
+    //for (auto locs_written : op->produce_locs) {
+    ////for (auto locs_written : op->write_addrs()) {
+      ////assert(locs_written.size() == 1);
+      ////auto loc_sec = locs_written.at(0).second;
+      //out << "\"write\"," << "\"" << locs_written.first << "\"" << endl;
+      //isl_aff* write_addr = get_aff_addr(op, locs_written.first, locs_written.second, lake_agg);
+      ////isl_aff* write_addr = get_aff_addr(op, locs_written.first, loc_sec, lake_agg);
+      //out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
+      //for (int d = 0; d < num_in_dims(write_addr); d++) {
+        //int ldim = num_in_dims(write_addr) - d - 1;
+        //out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
+      //}
+    //}
+
+    for (auto locs_read : op->consume_locs_pair) {
+      out << "\"read\"," << "\"" << locs_read.first << "\"" << endl;
+      assert(locs_read.second.size() == 1);
+      auto lread = locs_read.second.at(0).second;
+      isl_aff* write_addr = get_aff_addr(op, locs_read.first, lread, lake_agg);
+      out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
+      for (int d = 0; d < num_in_dims(write_addr); d++) {
+        int ldim = num_in_dims(write_addr) - d - 1;
+        out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
+      }
+    }
+
+    out.close();
+  }
+}
+
+//void lake_accessor_config_test() {
+  //isl_ctx* ctx = isl_ctx_alloc();
+  //{
+    //isl_set* write_domain = rdset(ctx, "{ op[a] : 0 <= a <= 9 }");
+    //isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(2*a)]}");
+    //isl_aff* write_addr = rdaff(ctx, "{ op[a] -> [(a)]}");
+
+    //cout << "write domain: " << str(write_domain) << endl;
+    //cout << "write  sched: " << str(write_sched) << endl;
+
+    //emit_lake_controller_config("test_write_domain.csv", write_domain, write_sched, write_addr);
+  //}
+
+  //{
+    //isl_set* write_domain = rdset(ctx, "{ op[a] : 0 <= a <= 9 }");
+    //isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(2*a + 3)]}");
+    //isl_aff* write_addr = rdaff(ctx, "{ op[a] -> [(a)]}");
+
+    //cout << "write domain: " << str(write_domain) << endl;
+    //cout << "write  sched: " << str(write_sched) << endl;
+
+    //emit_lake_controller_config("test_read_domain.csv", write_domain, write_sched, write_addr);
+  //}
+  //isl_ctx_free(ctx);
+
+  ////assert(false);
+//}
+
+umap* clockwork_schedule(prog& prg) {
+  auto valid = prg.validity_deps();
+  auto dom = prg.whole_iteration_domain();
+  auto doms = get_sets(dom);
+  auto valids = get_maps(valid);
+  auto topologically_sorted =
+    topological_sort(doms, valids);
+
+  auto cs =
+    clockwork_schedule(dom, valid, cpy(valid));
+  umap* csm = (isl_union_map_read_from_str(prg.ctx, "{}"));
+  for (auto sched : cs) {
+
+    int num_dims = sched.second.size();
+    isl_multi_aff* sched_aff =
+      isl_multi_aff_zero(map_space(prg.ctx, num_dims, num_dims + 1));
+
+    for (int d = 0; d < num_dims; d++) {
+      isl_local_space* aff_space = local_set_space(prg.ctx, num_dims);
+      isl_aff* aff = isl_aff_zero_on_domain(aff_space);
+      aff = set_const_coeff(aff, const_coeff(sched.second.at(d)));
+      aff = set_coeff(aff, d, get_coeff(sched.second.at(d), 0));
+      isl_multi_aff_set_aff(sched_aff, d, aff);
+    }
+
+
+    {
+      isl_local_space* aff_space = local_set_space(prg.ctx, num_dims);
+      isl_aff* aff = isl_aff_zero_on_domain(aff_space);
+
+      int pos = -1;
+      for (int i = 0; i < topologically_sorted.size(); i++) {
+        if (topologically_sorted.at(i) == sched.first) {
+          pos = i;
+          break;
+        }
+      }
+      assert(pos >= 0);
+      aff = set_const_coeff(aff, isl_val_int_from_si(prg.ctx, pos));
+      isl_multi_aff_set_aff(sched_aff, num_dims, aff);
+    }
+
+    auto m = isl_map_from_multi_aff(sched_aff);
+    m = set_domain_name(m, sched.first);
+    csm = unn(csm, to_umap(m));
+  }
+  return csm;
+}
+
+void adobe_downsample_two_adds_epochs() {
+  prog prg("adobe_downsample");
+  prg.add_input("off_chip_image");
+  prg.add_output("out");
+
+  auto ld = prg.add_nest("yl", 0, 16, "ye", 0, 2, "xl", 0, 16)->add_op("load_from_off_chip");
+  ld->add_load("off_chip_image", "2*xl", "2*yl + ye");
+  ld->add_load("off_chip_image", "2*xl + 1", "2*yl + ye");
+  ld->add_store("image", "2*xl", "2*yl + ye");
+  ld->add_store("image", "2*xl + 1", "2*yl + ye");
+
+  {
+    auto ds = prg.add_nest("y", 0, 16, "dp", 0, 1, "x", 0, 16)->add_op("downsample");
+    ds->add_function("inc");
+    ds->add_load("image", "2*x", "2*y");
+    ds->add_load("image", "2*x + 1", "2*y");
+    ds->add_store("downsampled", "2*x", "y");
+    ds->add_store("downsampled", "2*x + 1", "y");
+  }
+
+  {
+    auto ds = prg.add_nest("oy", 0, 16, "oe", 0, 2, "ox", 0, 16)->add_op("scale");
+    ds->add_function("scale");
+    ds->add_load("downsampled", "ox + 16*oe", "oy");
+    ds->add_store("out", "ox + 16*oe", "oy");
+  }
+
+  prg.pretty_print();
+  //assert(false);
+  cout << optimized_code_string(prg) << endl;
+}
+
+void generate_optimized_trace(prog& prg) {
+  auto sched = prg.optimized_codegen();
+  generate_trace(prg, sched);
+}
+
+void adobe_downsample_two_adds() {
+  prog prg("adobe_downsample");
+  prg.add_input("off_chip_image");
+  prg.add_output("out");
+
+  auto ld = prg.add_nest("yl", 0, 32, "xl", 0, 16)->add_op("load_from_off_chip");
+  ld->add_load("off_chip_image", "2*xl", "yl");
+  ld->add_load("off_chip_image", "2*xl + 1", "yl");
+  ld->add_store("image", "2*xl", "yl");
+  ld->add_store("image", "2*xl + 1", "yl");
+
+  {
+    auto ds = prg.add_nest("y", 0, 16, "x", 0, 16)->add_op("downsample");
+    ds->add_function("inc");
+    ds->add_load("image", "2*x", "2*y");
+    ds->add_load("image", "2*x + 1", "2*y");
+    ds->add_store("downsampled", "2*x", "y");
+    ds->add_store("downsampled", "2*x + 1", "y");
+  }
+
+  {
+    auto ds = prg.add_nest("oy", 0, 16, "ox", 0, 32)->add_op("scale");
+    ds->add_function("scale");
+    ds->add_load("downsampled", "ox", "oy");
+    ds->add_store("out", "ox", "oy");
+  }
+
+  prg.pretty_print();
+  {
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    map<string, int> dummy_latencies;
+    for (auto d : get_sets(dom)) {
+      dummy_latencies[name(d)] = 1;
+    }
+
+    print_hw_schedule("scale", dom, valid, dummy_latencies);
+
+    //assert(false);
+    //auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
+    //cout << "fs = " << str(fs) << endl;
+    //auto extra_constraint = rdset(ctx, "{ [II_x, a, b, c, d] : II_x >= 1 }");
+    //auto sol = its(extra_constraint, to_set(fs));
+    //cout << "New fs = " << str(sol) << endl;
+    //auto pt = sample(sol);
+    //cout << "Example solution: " << str(pt) << endl;
+  }
+  //cout << optimized_code_string(prg) << endl;
+  //generate_optimized_trace(prg);
+  //assert(false);
+  //regression_test(prg);
+  //move_to_synthesis_folder(prg.name);
+}
+
+void adobe_downsample() {
+  prog prg("adobe_downsample");
+  prg.add_input("off_chip_image");
+  prg.add_output("out");
+
+  int rows = 4;
+  int cols = 4;
+
+  auto ld = prg.add_nest("yl", 0, rows, "xl", 0, cols)->add_op("load_from_off_chip");
+  ld->add_load("off_chip_image", "xl", "yl");
+  ld->add_store("image", "xl", "yl");
+
+  {
+    auto ds = prg.add_nest("y", 0, rows / 2, "x", 0, cols)->add_op("downsample");
+    ds->add_function("inc");
+    ds->add_load("image", "x", "2*y");
+    ds->add_store("downsampled", "x", "y");
+  }
+
+  {
+    auto ds = prg.add_nest("oy", 0, rows / 2, "ox", 0, cols)->add_op("scale");
+    ds->add_function("scale");
+    ds->add_load("downsampled", "ox", "oy");
+    ds->add_store("out", "ox", "oy");
+  }
+
+  prg.pretty_print();
+  auto cs = clockwork_schedule(prg);
+  cout << "clockwork schedule: " << str(cs) << endl;
+  cout << "Code..." << endl;
+  cout << codegen_c(its(cs, prg.whole_iteration_domain())) << endl;
+  //assert(false);
+  cmd("mkdir -p ./lake_controllers/identity_stream/");
+
+  //cout << optimized_code_string(prg) << endl;
+  //auto hs = hardware_schedule(prg);
+  //for (auto m : get_maps(hs)) {
+    //cout << tab(1) << str(m) << endl;
+    //auto dom = domain(m);
+    //auto write_sched = m;
+    //isl_aff* write_addr =
+      //rdaff(prg.ctx, domain_name(m) + "[a, b] -> [(2*a + b)]");
+    //emit_lake_controller_config("./lake_controllers/identity_stream/" + domain_name(m) + ".csv", dom, get_aff(write_sched), write_addr);
+  //}
+  //assert(false);
+  regression_test(prg);
+  move_to_synthesis_folder(prg.name);
+}
+
+void adobe_sharpen() {
+  prog prg("adobe_sharpen");
+  prg.add_input("off_chip_image");
+  prg.add_output("sharpened");
+
+  auto ld = prg.add_nest("yl", 0, 32, "xl", 0, 32)->add_op("load_from_off_chip");
+  ld->add_load("off_chip_image", "xl", "yl");
+  ld->add_store("image", "xl", "yl");
+
+  auto ds = prg.add_nest("y", 0, 32 - 2, "x", 0, 32 - 2)->add_op("blur");
+  ds->add_function("conv_3_3");
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      ds->add_load("image", "x + " + str(i), "y + " + str(j));
+    }
+  }
+  ds->add_store("blurred", "x", "y");
+
+  auto diff = prg.add_nest("yd", 0, 32 - 2, "xd", 0, 32 - 2)->add_op("diff");
+  diff->add_function("diff");
+  diff->add_load("image", "xd", "yd");
+  diff->add_load("blurred", "xd", "yd");
+  diff->add_store("sharpened", "xd", "yd");
+
+  prg.pretty_print();
+
+  regression_test(prg);
+  move_to_synthesis_folder(prg.name);
+
+}
+
+void adobe_meeting_apps() {
+  adobe_downsample_two_adds();
+  //assert(false);
+  adobe_downsample();
+  adobe_downsample_two_adds_epochs();
+  adobe_sharpen();
+}
+
+prog halide_up_sample() {
+  prog prg;
+  prg.compute_unit_file = "up_sample_compute.h";
+  prg.name = "up_sample";
+
+// Stencil<uint16_t, 32, 32, 4> &input_copy_stencil = arg_0;
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming input_copy.stencil
+////producing hw_input.stencil
+  auto hw_input_s0_z = prg.add_loop("hw_input_s0_z", 0, 4);
+  auto hw_input_s0_y = hw_input_s0_z->add_loop("hw_input_s0_y", 0, 32);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 32);
+
+//store is: hw_input.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.z) = input_copy.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.z)
+  auto hcompute_hw_input_stencil = hw_input_s0_x->add_op("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_z");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_z");
+////producing nearest_neighbor.stencil
+
+//consuming hw_input.stencil
+  auto nearest_neighbor_s0_z = prg.add_loop("nearest_neighbor_s0_z", 0, 4);
+  auto nearest_neighbor_s0_y = nearest_neighbor_s0_z->add_loop("nearest_neighbor_s0_y", 0, 64);
+  auto nearest_neighbor_s0_x = nearest_neighbor_s0_y->add_loop("nearest_neighbor_s0_x", 0, 64);
+
+//store is: nearest_neighbor.stencil(nearest_neighbor.s0.x, nearest_neighbor.s0.y, nearest_neighbor.s0.z) = hw_input.stencil((nearest_neighbor.s0.x/2), (nearest_neighbor.s0.y/2), nearest_neighbor.s0.z)
+  auto hcompute_nearest_neighbor_stencil = nearest_neighbor_s0_x->add_op("hcompute_nearest_neighbor_stencil");
+  hcompute_nearest_neighbor_stencil->add_function("hcompute_nearest_neighbor_stencil");
+  hcompute_nearest_neighbor_stencil->add_load("hw_input_stencil", "floor(nearest_neighbor_s0_x/2)", "floor(nearest_neighbor_s0_y/2)", "nearest_neighbor_s0_z");
+  prg.buffer_port_widths["nearest_neighbor_stencil"] = 16;
+  hcompute_nearest_neighbor_stencil->add_store("nearest_neighbor_stencil", "nearest_neighbor_s0_x", "nearest_neighbor_s0_y", "nearest_neighbor_s0_z");
+
+//consuming nearest_neighbor.stencil
+  auto hw_output_s0_z = prg.add_loop("hw_output_s0_z", 0, 4);
+  auto hw_output_s0_y_yo = hw_output_s0_z->add_loop("hw_output_s0_y_yo", 0, 64);
+  auto hw_output_s0_x_xo = hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 64);
+
+//store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo, hw_output.s0.z) = uint8(nearest_neighbor.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo, hw_output.s0.z))
+  auto hcompute_hw_output_stencil = hw_output_s0_x_xo->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("nearest_neighbor_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo", "hw_output_s0_z");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo", "hw_output_s0_z");
+
+  return prg;
+
+}
+
+void halide_up_sample_test() {
+  auto us = halide_up_sample();
+  us.pretty_print();
+  //assert(false);
+  regression_test(us);
+}
+
+void unet_conv_3_3_test() {
+  prog prg = unet_conv_3_3();
+  prg.pretty_print();
+
+  //prg.merge_ops("conv_s1_r_x");
+  prg.pretty_print();
+  //assert(false);
+
+  //auto sched = prg.unoptimized_schedule();
+
+
+  //auto buffers = build_buffers(prg, sched);
+  //auto buf = map_find(string("conv_stencil"), buffers);
+
+  //isl_map* bank_func =
+    //isl_map_read_from_str(prg.ctx,
+        //"{conv_stencil[x, y, z] -> B[x % 3, y % 3, z]}");
+  //assert(banking_scheme_is_legal(bank_func, buf));
+
+  CodegenOptions options;
+  options.all_rams = true;
+  //options.banking_strategies["conv_stencil"] = {"cyclic", {3, 3, 1}};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  all_register_files(prg, options);
+
+  //generate_optimized_code(options, prg);
+  //assert(false);
+  regression_test(options, prg);
+}
+
+void coreir_set_test() {
+#ifdef COREIR
+  CoreIR::Context* context = CoreIR::newContext();
+  isl_ctx* ctx = isl_ctx_alloc();
+
+  //auto dom = rdset(ctx, "{ st[root, y] : y <= 2 }");
+  auto dom = rdset(ctx, "{ reduce[root, r, k] : k > 0 }");
+
+  auto ctrl = coreir_for_set(context, dom);
+  context->runPasses({"wireclocks-coreir"});
+
+  ctrl->print();
+  if(!saveToFile(context->getNamespace("global"),
+        ctrl->getName() + ".json",
+        ctrl)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  run_verilator_tb(ctrl->getName());
+
+  //assert(false);
+  isl_ctx_free(ctx);
+  deleteContext(context);
+#endif // COREIR
+}
+
+void coreir_controller_test() {
+#ifdef COREIR
+  CoreIR::Context* context = CoreIR::newContext();
+  isl_ctx* ctx = isl_ctx_alloc();
+
+  auto aff = rdaff(ctx, "{ [y, yi] -> [(10*y + yi)] }");
+  auto dom = rdset(ctx, "{ [y, yi] : 0 <= y < 10 and 0 <= yi < 3 }");
+
+  auto ctrl = affine_controller(context, dom, aff);
+  context->runPasses({"wireclocks-coreir"});
+
+  ctrl->print();
+  if(!saveToFile(context->getNamespace("global"),
+        ctrl->getName() + ".json",
+        ctrl)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  run_verilator_tb(ctrl->getName());
+
+  isl_ctx_free(ctx);
+  deleteContext(context);
+#endif // COREIR
+}
+
+void unet_coreir_test() {
+  prog prg = unet_conv_3_3();
+
+#ifdef COREIR
+
+  auto dom = (prg.whole_iteration_domain());
+  auto valid = (prg.validity_deps());
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  sched = its(sched, dom);
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  assert(false);
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      //cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  generate_coreir(options, bufs, prg, sched);
+  run_verilator_tb(prg.name);
+
+#endif
+
+}
+
+void non_rate_matched_ds_test() {
+  prog prg("non_rate_matched_downsample");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  auto ld = prg.add_nest("ldy", 0, 8, "ldx", 0, 8)->add_op("ld");
+  ld->add_load("in_oc", "ldx, ldy");
+  ld->add_store("in", "ldx, ldy");
+
+  auto ds = prg.add_nest("dsy", 0, 4, "dsx", 0, 8)->add_op("ds");
+  ds->add_load("in", "dsx", "2*dsy");
+  ds->add_store("ds", "dsx, dsy");
+
+  auto ml = prg.add_nest("mly", 0, 4, "mlx", 0, 8)->add_op("ml");
+  ml->add_load("ds", "mlx, mly");
+  ml->add_store("out", "mlx, mly");
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  map<string, int> latencies{{"ld", 2}, {"ds", 2}, {"ml", 2}};
+  map<string, int> iis{{"ld", 1}, {"ds", 1}, {"ml", 2}};
+
+  auto dom = (prg.whole_iteration_domain());
+  auto valid = (prg.validity_deps());
+  auto prox = cpy(valid);
+
+  auto ct = ctx(dom);
+  vector<pair<string, isl_val*> > obj;
+  for (auto f : get_sets(dom)) {
+    string n = name(f);
+    int dim = num_dims(f);
+
+    if (n == "ml") {
+      for (int i = 0; i < dim; i++) {
+        auto dp = project_all_but(f, i);
+        auto tc =
+          sub(lexmaxval(dp), lexminval(dp));
+        //auto tc =
+          //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+        obj.push_back({ii_var(n, i), tc});
+      }
+      obj.push_back({hw_delay_var(n), one(ct)});
+    }
+  }
+  auto sched = hardware_schedule_umap(dom, valid, prox, latencies, iis, obj);
+  cout << "domains..." << endl;
+  for (auto d : get_sets(dom)) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "valid..." << endl;
+  for (auto v : get_maps(valid)) {
+    cout << tab(1) << str(v) << endl;
+  }
+  cout << "schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  auto later = lex_lt(sched, sched);
+  cout << "later = " << str(later) << endl;
+
+  auto violated = its(inv(later), valid);
+  cout << "violated = " << str(violated) << endl;
+  generate_trace(prg, its(sched, dom));
+  auto buffers = build_buffers(prg, its(sched, dom));
+  for (auto b : buffers) {
+    cout << b.second << endl;
+  }
+  //assert(false);
+  generate_app_code(buffers, prg, its(sched, dom));
+  //assert(false);
+}
+
+void coreir_tests() {
+  //reduce_stream_schedule_test();
+  //reduce_stream_coreir_test();
+  identity_stream_coreir_test();
+  identity_stream_through_mem_coreir_test();
+  //unet_coreir_test();
+
+  identity_stream_2d_coreir_test();
+  coreir_set_test();
+  coreir_controller_test();
+  weight_streaming_test();
+
+  // Not yet working
+  //assert(false);
+}
+
+void resnet_test() {
+  auto prg = resnet_hc();
+  prg.pretty_print();
+  //assert(false);
+  add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
+  prg.pretty_print();
+  //assert(false);
+  generate_unoptimized_code(prg);
+  //assert(false);
+
+  CodegenOptions options;
+  options.all_rams = true;
+  all_register_files(prg, options);
+  options.banking_strategies["conv_stencil"] = {"cyclic", {1, 1, 4}};
+  options.banking_strategies["hw_kernel_stencil"] = {"exhaustive"};
+  options.banking_strategies["hw_input_stencil"] = {"exhaustive"};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  //generate_optimized_code(options, prg);
+
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg, sched_naive);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2, max_outpt = 2;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
+  //cout << buffers_opt.at("buf") << endl;
+  //buffers_opt.at("buf").port_group2bank(2, 2);
+  //cout << buffers_opt.at("buf") << endl;
+
+#ifdef COREIR
+  for (auto& b : buffers_opt) {
+    cout << b.first << endl << b.second << endl;
+    if ((b.second.get_in_ports().size() && b.second.get_out_ports().size()) == 0)
+        continue;
+    b.second.generate_banks_and_merge(options);
+    b.second.print_bank_info();
+
+    //Assign an configuration file,
+    //json config_reg_map = parse_config_file("conv33_configuration.txt");
+    //b.second.set_config(config_reg_map);
+
+    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.print_bank_info();
+
+    CoreIR::Context* context = CoreIR::newContext();
+    CoreIRLoadLibrary_commonlib(context);
+    CoreIRLoadLibrary_cwlib(context);
+    json config_reg_map;
+    config_reg_map["name"][0] = "TOP_address.csv";
+    b.second.set_config(config_reg_map);
+    auto def = generate_coreir(options, context, b.second);
+
+    if(!saveToFile(context->getNamespace("global"), b.first+ ".json")) {
+      cout << "Could not save ubuffer coreir!" << endl;
+      context->die();
+    }
+    CoreIR::deleteContext(context);
+  }
+  generate_coreir(opt, buffers_opt, prg, sched_naive);
+#endif
+  //assert(false);
+
+  //assert(false);
+  //cout << "after adding rb" << endl;
+  //add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
+  //prg.pretty_print();
+  //assert(false);
+}
+
+void multi_output_app_test() {
+  App sobel;
+  sobel.set_default_pixel_width(16);
+
+  string out0 = "out0";
+  string out1 = "out1_ac";
+
+  sobel.func2d("in0_oc");
+  sobel.func2d("in1_oc");
+
+  sobel.func2d("in0", "id", "in0_oc", {1, 1}, {{0, 0}});
+  sobel.func2d("in1", "id", "in1_oc", {1, 1}, {{0, 0}});
+
+  sobel.func2d(out0, "id", "in0", {1, 1}, {{0, 0}});
+  sobel.func2d(out1, "id", "in1", {1, 1}, {{0, 0}});
+
+  int rows = 1080;
+  int cols = 1920;
+  int unroll = 32;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  sobel.realize(options, {{out0, {rows, cols}}, {out1,{rows, cols}}}, out0, unroll);
+
+  string name = out0 + "_" + out1;
+  //auto opt = run_regression_tb(name + "_opt");
+
+  // Generate un-optimized code
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  //sobel.realize_naive(options, {{out0, {rows, cols}}, {out1,{rows, cols}}}, out0, unroll);
+  //auto naive = run_regression_tb("us_naive");
+  //assert(false);
+
+  //assert(opt == naive);
+
+  move_to_benchmarks_folder(name);
+}
+
+string load_off_chip_one_channel(const std::string& prefix, App& lp) {
+  string in0_oc = prefix + "0_oc";
+
+  lp.func2d(in0_oc);
+
+  string in0 = prefix + "0";
+
+  lp.func2d(in0, "id", pt(in0_oc));
+  return in0;
+}
+
+string load_off_chip_two_channels(const std::string& prefix, App& lp) {
+  string in0_oc = prefix + "0_oc";
+  string in1_oc = prefix + "1_oc";
+
+  lp.func2d(in0_oc);
+  lp.func2d(in1_oc);
+
+  string in0 = prefix + "0";
+  string in1 = prefix + "1";
+
+  lp.func2d(in0, "id", pt(in0_oc));
+  lp.func2d(in1, "id", pt(in1_oc));
+
+  Window in0_win{in0, {qconst(1, 2), qconst(1)}, {{0, 0}}};;
+  Window in1_win{in1, {qconst(1, 2), qconst(1)}, {{0, 0}}};;
+
+  string res = in0_oc + "_" + in1_oc;
+  lp.func2d(res, "interleave", in0_win, in1_win);
+  lp.compute_unit_needs_index_variable(0, res);
+  return res;
+}
+
+string store_off_chip_one_channel(const std::string& input, App& lp) {
+
+  string res0 = input + "0";
+
+  lp.func2d(res0, "id", pt(input));
+
+  return res0;
+}
+
+pair<string, string> store_off_chip_two_channels(const std::string& input, App& lp) {
+
+  Window win0{input, {qconst(2), qconst(1)}, {{0, 0}}};;
+  Window win1{input, {qconst(2), qconst(1)}, {{1, 0}}};;
+
+  string res0 = input + "0";
+  string res1 = input + "1";
+
+  lp.func2d(res0, "id", win0);
+  lp.func2d(res1, "id", win1);
+
+  return {res0, res1};
+}
+
+void two_stage_psef() {
+  int rows = 1080;
+  int cols = 1920 / 2;
+  int unroll = 16;
+
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  string input_image = load_off_chip_two_channels("in_off_chip", lp);
+  two_level_exposure_fusion_app(input_image, "ls" + str(unroll), lp);
+
+
+  pair<string, string> output_image = store_off_chip_two_channels("ls" + str(unroll), lp);
+
+  string out0 = output_image.first;
+  string out1 = output_image.second;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
+
+  compile_compute(out0 + "_" + out1 + "_opt.cpp");
+
+  move_to_benchmarks_folder(out0 + "_" + out1);
+}
+
+void psef_multi_output_test() {
+  int rows = 1080;
+  int cols = 1920 / 2;
+  int unroll = 16;
+
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  string input_image = load_off_chip_two_channels("in_off_chip", lp);
+  exposure_fusion_app(input_image, "ps" + str(unroll), lp);
+
+
+  pair<string, string> output_image = store_off_chip_two_channels("ps" + str(unroll), lp);
+
+  string out0 = output_image.first;
+  string out1 = output_image.second;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
+
+  compile_compute(out0 + "_" + out1 + "_opt.cpp");
+
+  move_to_benchmarks_folder(out0 + "_" + out1);
+}
+
+void async_add_test() {
+  int rows = 1080;
+  int cols = 1920;
+  //int unroll = 32;
+
+  vector<int> ufs{1, 2, 4, 8, 16, 32};
+  for (int unroll : ufs) {
+    App lp;
+    lp.set_default_pixel_width(16);
+
+    // The off chip input we are reading from
+    string input_image = load_off_chip_one_channel("in_off_chip", lp);
+
+    string af = "one_pipe";
+    lp.func2d(af + str(unroll), "id", pt(input_image));
+
+    string output_image = store_off_chip_one_channel(af + str(unroll), lp);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.use_custom_code_string = true;
+    options.num_pipelines = 1;
+    lp.realize(options, {{output_image, {cols, rows}}}, output_image, unroll);
+
+    compile_compute(output_image);
+
+    move_to_benchmarks_folder(output_image);
+  }
+}
+
+void add_four_channels() {
+  int rows = 1080;
+  int cols = 1920 / 2;
+  int unroll = 32;
+
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  string input_image = load_off_chip_two_channels("in_off_chip", lp);
+
+  string af = "af";
+  lp.func2d(af + str(unroll), "id", pt(input_image));
+
+
+  pair<string, string> output_image = store_off_chip_two_channels(af + str(unroll), lp);
+
+  string out0 = output_image.first;
+  string out1 = output_image.second;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
+
+  compile_compute(out0 + "_" + out1 + "_opt.cpp");
+
+  move_to_benchmarks_folder(out0 + "_" + out1);
+}
+
+void weight_add_psef() {
+  int rows = 1080;
+  int cols = 1920 / 2;
+  int unroll = 32;
+
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  string input_image = load_off_chip_two_channels("in_off_chip", lp);
+
+  weight_add_exposure_fusion_app(input_image, "wa" + str(unroll), lp);
+
+
+  pair<string, string> output_image = store_off_chip_two_channels("wa" + str(unroll), lp);
+
+  string out0 = output_image.first;
+  string out1 = output_image.second;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  lp.realize(options, {{out0, {cols, rows}}, {out1, {cols, rows}}}, out0, unroll);
+
+  compile_compute(out0 + "_" + out1 + "_opt.cpp");
+
+  move_to_benchmarks_folder(out0 + "_" + out1);
+}
+
+void us_unroll_test() {
+  prog prg("us_unroll");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  {
+    auto in = prg.add_nest("iy", 0, 20, "ix", 0, 20)->add_op("inrd");
+    in->add_load("in", "ix, iy");
+    in->add_store("a", "ix, iy");
+  }
+
+  {
+    auto ol = prg.add_nest("y", 0, 10, "x", 0, 10);
+    auto init = ol->add_op("init");
+    init->add_store("comp", "x, y");
+    init->add_function("set_zero_32");
+    auto il = ol->add_nest("yi", 0, 3, "xi", 0, 3)->add_op("update");
+    il->add_load("comp", "x, y");
+    il->add_load("a", "x + floor(xi / 2), y + floor(yi / 2)");
+    il->add_store("comp", "x, y");
+    il->add_function("add");
+  }
+
+  {
+    auto in = prg.add_nest("oy", 0, 10, "ox", 0, 10)->add_op("outwr");
+    in->add_load("comp", "ox, oy");
+    in->add_store("out", "ox, oy");
+  }
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto pre = unoptimized_result(prg);
+
+  unroll(prg, "xi");
+  unroll(prg, "yi");
+
+  prg.pretty_print();
+
+  auto post = unoptimized_result(prg);
+  compare("us_unroll_test", pre, post);
+}
+
+void ds_unroll_test() {
+  prog prg("ds_unroll");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  {
+    auto in = prg.add_nest("iy", 0, 20, "ix", 0, 20)->add_op("inrd");
+    in->add_load("in", "ix, iy");
+    in->add_store("a", "ix, iy");
+  }
+
+  {
+    auto ol = prg.add_nest("y", 0, 10, "x", 0, 10);
+    auto init = ol->add_op("init");
+    init->add_store("comp", "x, y");
+    init->add_function("set_zero_32");
+    auto il = ol->add_nest("yi", 0, 3, "xi", 0, 3)->add_op("update");
+    il->add_load("comp", "x, y");
+    il->add_load("a", "x + 2*xi, y + 2*yi");
+    il->add_store("comp", "x, y");
+    il->add_function("add");
+  }
+
+  {
+    auto in = prg.add_nest("oy", 0, 10, "ox", 0, 10)->add_op("outwr");
+    in->add_load("comp", "ox, oy");
+    in->add_store("out", "ox, oy");
+  }
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+
+  auto pre = unoptimized_result(prg);
+
+  //assert(false);
+
+  unroll(prg, "xi");
+  unroll(prg, "yi");
+
+  prg.pretty_print();
+  //assert(false);
+
+  auto post = unoptimized_result(prg);
+  compare("ds_unroll_test", pre, post);
+
+}
+
+void prg_unroll_test() {
+  prog prg("pre_roll");
+
+  prg.add_input("in");
+  prg.add_output("out");
+
+  {
+    auto ns = prg.add_nest("xi", 0, 10, "yi", 0, 3);
+    auto p = ns->add_op("inw");
+    p->add_load("in", "xi", "yi");
+    p->add_store("a", "xi", "yi");
+  }
+
+  auto ns = prg.add_nest("x", 0, 10, "y", 0, 3);
+  auto p = ns->add_op("hello");
+  p->add_load("a", "x", "y");
+  p->add_store("b", "x", "y");
+
+  auto ot = prg.add_nest("xo", 0, 10, "yo", 0, 3);
+  auto px = ot->add_op("outw");
+  px->add_load("b", "xo", "yo");
+  px->add_store("out", "xo", "yo");
+
+  prg.pretty_print();
+  auto pre = unoptimized_result(prg);
+
+  unroll(prg, "y");
+
+  prg.pretty_print();
+  auto post = unoptimized_result(prg);
+
+  compare("unroll_test", pre, post);
+}
+
+void llf_to_grayscale(const std::string& out, const std::string& in, prog& prg) {
+  string pr = in + "_to_gray";
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+  auto cn = prg.add_nest(y, 0, 1, x, 0, 1);
+  auto convert = cn->add_op(prg.unique_name("to_gray"));
+  convert->add_function("llf_to_gray_float");
+  convert->add_load(in, "0", x, y);
+  convert->add_load(in, "1", x, y);
+  convert->add_load(in, "2", x, y);
+  convert->add_store(out, x, y);
+}
+
+void llf_to_color(const std::string& out, const std::string& original, const std::string& scales, const std::string& gray, prog& prg) {
+  string pr = out + "_to_color";
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+  string b = prg.unique_name(pr);
+  auto cn = prg.add_nest(y, 0, 1, x, 0, 1, b, 0, 3);
+
+  auto convert = cn->add_op(prg.unique_name("cc"));
+  convert->add_function("llf_to_color_float");
+  convert->add_load(scales, x, y);
+  convert->add_load(original, b, x, y);
+  convert->add_load(gray, x, y);
+  convert->add_store(out, b, x, y);
+}
+
+vector<string> gaussian_pyramid(const std::string& in, const int num_pyramid_levels, prog& prg) {
+  vector<string> gls;
+  gls.resize(num_pyramid_levels);
+  gls[0] = in;
+  for (int j = 1; j < num_pyramid_levels; j++) {
+    string pr = "gp_" + in + "_" + str(j);
+    string last_level = gls[j - 1];
+    string current_level = prg.unique_name(pr + "_buf");
+    string y = prg.unique_name(pr);
+    string x = prg.unique_name(pr);
+    string yi = prg.unique_name(pr);
+    string xi = prg.unique_name(pr);
+
+    auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
+    auto init = ol->add_op(prg.un("init"));
+    init->add_function("llf_set_zero_float_32");
+    init->add_store(current_level, x, y);
+    auto il = ol->add_nest(yi, -1, 2, xi, -1, 2);
+
+    auto update = il->add_op(prg.un("update"));
+    update->add_function("llf_add_float_32");
+    update->add_load(current_level, x, y);
+    update->add_load(last_level, "2*" + x + " + " + xi, "2*" + y + " + " + yi);
+    update->add_store(current_level, x, y);
+
+    auto avg = ol->add_op(prg.un("avg"));
+    avg->add_function("avg_9_float");
+    avg->add_load(current_level, x, y);
+    avg->add_store(current_level, x, y);
+
+    gls[j] = current_level;
+  }
+  return gls;
+}
+
+string upsample(const std::string& in, prog& prg) {
+  string pr = "us_" + in;
+  string current_level = prg.unique_name(in + "_us");
+  string y = prg.unique_name(pr);
+  string x = prg.unique_name(pr);
+
+  auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
+  auto update = ol->add_op(prg.un("us"));
+  update->add_load(in, "floor(" + x + " / 2)", "floor(" + y + " / 2)");
+  update->add_store(current_level, x, y);
+
+  return current_level;
+}
+
+vector<string> laplacian_pyramid(const std::string& in, const int num_pyramid_levels, prog& prg) {
+  vector<string> gls = gaussian_pyramid(in, num_pyramid_levels, prg);
+  assert((int) gls.size() == num_pyramid_levels);
+
+  vector<string> lls;
+  lls.resize(num_pyramid_levels);
+  lls[num_pyramid_levels - 1] = gls[num_pyramid_levels - 1];
+
+  cout << "input laplacians..." << endl;
+  int i = 0;
+  for (auto l : lls) {
+    cout << tab(1) << i << " = " << l << endl;
+    i++;
+  }
+  for (int j = num_pyramid_levels - 2; j >= 0; j--) {
+    string us_pyramid = upsample(gls.at(j + 1), prg);
+    string current_gs = gls.at(j);
+
+    string pr = "lp_" + in + "_" + str(j);
+    string current_level = prg.unique_name(pr + "_buf");
+    string y = prg.unique_name(pr);
+    string x = prg.unique_name(pr);
+
+    auto ol = prg.add_nest(y, 0, 1, x, 0, 1);
+    auto init = ol->add_op(prg.un("diff"));
+    init->add_function("llf_diff_float_32");
+    init->add_load(current_gs, x, y);
+    init->add_load(us_pyramid, x, y);
+    init->add_store(current_level, x, y);
+    lls[j] = current_level;
+  }
+  cout << "output laplacians..." << endl;
+  int ip = 0;
+  for (auto l : lls) {
+    cout << tab(1) << ip << " = " << l << endl;
+    ip++;
+  }
+  return lls;
+}
+
+string llf_interpolate_intensity(const std::string& gray, const std::vector<string>& intensity_levels, prog& prg) {
+  string out = prg.unique_name(gray + "_interpolated");
+
+  string pr = prg.unique_name(gray + "_interpolate_lp");
+  string y = prg.un(pr);
+  string x = prg.un(pr);
+  auto in = prg.add_nest(y, 0, 1, x, 0, 1)->add_op(prg.un("interp"));
+  in->add_function("llf_interpolate_float");
+  for (auto i : intensity_levels) {
+    assert(i != "");
+    in->add_load(i, x, y);
+  }
+  in->add_load(gray, x, y);
+  in->add_store(out, x, y);
+
+  return out;
+}
+
+string reconstruct_gaussian(const std::vector<string>& output_levels, prog& prg) {
+  assert(output_levels.size() >= 2);
+
+  vector<string> lgs;
+  lgs.resize(output_levels.size());
+  lgs[output_levels.size() - 1] = output_levels.back();
+
+  for (int i = output_levels.size() - 2; i >= 0; i--) {
+    string pr = prg.unique_name(output_levels.at(i) + "_reconstruct_lp");
+    string y = prg.un(pr);
+    string x = prg.un(pr);
+
+    string current_level = prg.unique_name(pr + "_buf");
+    string current_gs = output_levels.at(i);
+    string next_level = upsample(lgs.at(i + 1), prg);
+
+    auto ns = prg.add_nest(y, 0, 1, x, 0, 1)->add_op(prg.un("rc"));
+    ns->add_function("llf_add_float_32");
+    ns->add_load(current_gs, x, y);
+    ns->add_load(next_level, x, y);
+    ns->add_store(current_level, x, y);
+
+    lgs[i] = current_level;
+  }
+
+  return lgs[0];
+}
+
+
+void pointwise(const std::string& out, const std::string& func, const std::string& in, const int dim, prog& prg) {
+  string pr = prg.un("pw_math_" + in);
+  op* lp = prg.root;
+  vector<string> vars;
+  for (int d = 0; d < dim; d++) {
+    string var = prg.un(pr);
+    lp = lp->add_loop(var, 0, 1);
+    vars.push_back(var);
+  }
+  reverse(vars);
+  auto ld = lp->add_op(prg.un(pr));
+  string vlist = comma_list(vars);
+  ld->add_load(in, vlist);
+  ld->add_function(func);
+  ld->add_store(out, vlist);
+
+}
+
+void load_input(const std::string& in, const std::string& out, const int dim, prog& prg) {
+  string pr = prg.un("oc_load_" + in);
+  op* lp = prg.root;
+  vector<string> vars;
+  for (int d = 0; d < dim; d++) {
+    string var = prg.un(pr);
+    lp = lp->add_loop(var, 0, 1);
+    vars.push_back(var);
+  }
+  reverse(vars);
+  auto ld = lp->add_op(prg.un(pr));
+  string vlist = comma_list(vars);
+  ld->add_load(in, vlist);
+  ld->add_store(out, vlist);
+}
+
+void lchannel_test() {
+  prog prg("lchannel");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("color_in_oc");
+  prg.add_output("color_out");
+
+  load_input("color_in_oc", "color_in", 3, prg);
+  load_input("color_in", "color_out", 3, prg);
+
+  cout << "Before bounds inference..." << endl;
+  prg.pretty_print();
+
+  infer_bounds("color_out", {3, 256, 256}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  generate_unoptimized_code(prg);
+  compile_compute("unoptimized_" + prg.name + ".cpp");
+
+  //assert(false);
+}
+
+void gf_test() {
+  prog prg("gray_convert");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("color_in_oc");
+  prg.add_output("gray");
+
+  load_input("color_in_oc", "color_in", 3, prg);
+  llf_to_grayscale("gray", "color_in", prg);
+
+
+  infer_bounds("gray", {256, 256}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  generate_unoptimized_code(prg);
+  compile_compute("unoptimized_" + prg.name + ".cpp");
+
+}
+
+void cpy(const std::string& dst, const std::string& src, const int l, prog& prg) {
+  pointwise(dst, "id", src, l, prg);
+}
+
+void llf_pyramid_test() {
+  int num_pyramid_levels = 4;
+
+  prog prg("llf_pyramid_test");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("color_in_oc");
+  prg.add_output("color_out");
+
+  cpy("color_in_int", "color_in_oc", 2, prg);
+  vector<string> gray_levels = gaussian_pyramid("color_in_int", num_pyramid_levels, prg);
+
+  cpy("color_out", gray_levels.back(), 2, prg);
+
+  infer_bounds("color_out", {16, 16}, prg);
+
+  std::vector<string> orig_result =
+    unoptimized_result(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  unroll_reduce_loops(prg);
+
+  std::vector<string> unrolled_result =
+    unoptimized_result(prg);
+  cout << "======================================" << endl;
+  cout << "========= After unrolling reduce loops" << endl;
+  prg.pretty_print();
+
+  compare("llf_pyramid", orig_result, unrolled_result);
+
+  merge_basic_block_ops(prg);
+  prg.pretty_print();
+  //assert(false);
+
+  std::vector<string> merged_result =
+    unoptimized_result(prg);
+
+  compare("llf_pyramid_folded", orig_result, merged_result);
+
+  //assert(false);
+}
+
+void llf_test() {
+  int num_pyramid_levels = 4;
+  int num_intensity_levels = 8;
+
+  prog prg("local_laplacian_filters");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("color_in_oc");
+  prg.add_output("color_out");
+
+  load_input("color_in_oc", "color_in_int", 3, prg);
+  pointwise("color_in", "llf_int_to_float", "color_in_int", 3, prg);
+
+  llf_to_grayscale("gray", "color_in", prg);
+
+  // Make intensity pyramids
+  vector<vector<string> > intensity_level_pyramids;
+  for (int i = 0; i < num_intensity_levels; i++) {
+    string pw = prg.un("level_table");
+    pointwise(pw, "llf_level_entry_" + str(i), "gray", 2, prg);
+
+    intensity_level_pyramids.push_back(laplacian_pyramid(pw, num_pyramid_levels, prg));
+
+    //intensity_level_pyramids.push_back(laplacian_pyramid("gray", num_pyramid_levels, prg));
+  }
+
+  // Make input Gaussian pyramid
+  vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
+
+
+  // Compute levels for interpolated output
+  vector<string> output_levels;
+  for (int i = 0; i < num_pyramid_levels; i++) {
+    vector<string> intensities_at_level;
+    for (auto pyramid : intensity_level_pyramids) {
+      assert(pyramid.at(i) != "");
+      intensities_at_level.push_back(pyramid.at(i));
+    }
+    output_levels.push_back(llf_interpolate_intensity(gray_levels.at(i), intensities_at_level, prg));
+  }
+
+  string scales = reconstruct_gaussian(output_levels, prg);
+
+  llf_to_color("color_out_float", "color_in", scales, "gray", prg);
+  pointwise("color_out", "llf_float_to_int", "color_out_float", 3, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  cout << "# loop levels = " << prg.root->children.size() << endl;
+  cout << "# kernels     = " << get_kernels(prg).size() << endl;
+  //auto producers = get_producers("color_out_to_color431", prg);
+  //cout << "Producers for " << "color_out_to_color_431" << endl;
+  //for (auto p : producers) {
+    //cout << tab(1) << p << endl;
+  //}
+
+  //assert(false);
+
+  infer_bounds("color_out", {3, 256, 256}, prg);
+
+  cout << "After bounds inference..." << endl;
+  prg.pretty_print();
+
+  unroll_reduce_loops(prg);
+
+  cout << "======================================" << endl;
+  cout << "========= After unrolling reduce loops" << endl;
+  prg.pretty_print();
+
+  //assert(false);
+
+  //auto valid = prg.validity_deps();
+  //cout << "Got valid" << endl;
+  //auto valid_maps = get_maps(valid);
+  //auto qfs = compute_qfactors(valid_maps);
+  //cout << "Q factors" << endl;
+
+  //cout << "Getting optimized schedule..." << endl;
+  //auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  //cout << "Optimized schedule..." << endl;
+  //for (auto m : get_maps(sched)) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+  //assert(false);
+
+  generate_unoptimized_code(prg);
+  compile_compute("unoptimized_" + prg.name + ".cpp");
+
+  //assert(false);
+}
+
+void union_test() {
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_union_map* um0 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 0]->buf[i0, i1]: 0<=i0<=7 and 0<=i1<=7}");
+  cout << str(um0) << endl;
+  isl_union_map* um1 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 1]->buf[1+i0, i1]: 0<=i0<=7 and 0<=i1<=7}");
+  cout << str(um1) << endl;
+  auto out = unn(um0, um1);
+  cout << str(coalesce(out)) << endl;
+
+  isl_union_map* sched0 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 0]->[1, i0, i1,0]: 0<=i0<=7 and 0<=i1<=7}");
+  isl_union_map* sched1 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 1]->[1, i0, i1,1]: 0<=i0<=7 and 0<=i1<=7}");
+  auto out_sched = unn(sched0, sched1);
+  cout << str(coalesce(out_sched)) << endl;
+}
+
+void dual_port_lake_test();
+
+void lake_tests() {
+  //dual_port_lake_test();
+  //lake_agg_sram_tb_config_test();
+  test_single_port_mem();
+  //test_single_port_mem_smt_stream();
+  assert(false);
+  lake_conv33_autovec_aha_test();
+  //lake_identity_stream_SMT_test(128, 128, "128x128");
+  //lake_identity_stream_SMT_test(64, 64, "64x64");
+  //lake_identity_stream_SMT_test(32, 32, "32x32");
+  lake_identity_stream_SMT_test(16, 16, "16x16");
+  //assert (false);
+  //lake_identity_stream_SMT_test(20, 20, "20x20");
+  //double_buffer_test();
   //playground();
-  jacobi2d_app_test();
+  //lake_identity_stream_autovec_test();
+  //union_test();
+  lake_gaussian_autovec_test();
+  //lake_dual_port_test();
+  lake_cascade_autovec_test();
+  //lake_harris_autovec_test();
+  //lake_resnet_multitile_test();
+  //lake_resnet_test();
+  //resnet_test();
+}
 
-  upsample2d_test();
+void halide_camera_pipeline_test() {
+  prog prg = camera_pipeline();
+  prg.sanity_check();
+  regression_test(prg);
+}
 
-  denoise2d_test();
+void infer_uneven_bounds_test() {
+  prog prg("infer_bounds_unroll");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+  cpy("in", "in_oc", 2, prg);
 
-  downsample2d_test();
-  up_stencil_down_test();
-  blur_and_downsample_test();
-  downsample_and_blur_test();
+  auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+  auto init = lp->add_op(prg.un("init"));
+  init->add_store("c", "x, y");
+  init->add_function("set_zero_32");
+  auto red = lp->add_nest("ry", 0, 3, "rx", 0, 3)->add_op(prg.un("r"));
+  red->add_load("c", "x, y");
+  red->add_load("in", "x + rx, y + ry");
+  red->add_store("c", "x, y");
+  red->add_function("add");
+  cpy("out", "c", 2, prg);
 
-  upsample_stencil_2d_test();
-  upsample_stencil_1d_test();
+  infer_bounds_and_unroll("out", {16, 16}, 4, prg);
 
-  updown_merge_test();
-  harris_unrolled_test();
+  prg.pretty_print();
+  prg.sanity_check();
 
-  mismatched_stencil_test();
-  cnn_test();
+  regression_test(prg);
+}
+
+void infer_bounds_unrolled_test() {
+
+  vector<string> correct;
+  {
+    prog prg("infer_bounds_unroll");
+    prg.add_input("in_oc");
+    prg.add_output("out");
+    cpy("in", "in_oc", 2, prg);
+    cpy("out", "in", 2, prg);
+    infer_bounds("out", {32, 32}, prg);
+
+    correct = unoptimized_result(prg);
+  }
+
+  vector<string> actual;
+  {
+    prog prg("infer_bounds_unroll");
+    prg.add_input("in_oc");
+    prg.add_output("out");
+    cpy("in", "in_oc", 2, prg);
+    cpy("out", "in", 2, prg);
+
+    infer_bounds("out", {32, 32}, prg);
+    unroll_producer_matching("out", 4, prg);
+    merge_basic_block_ops(prg);
+
+    actual = unoptimized_result(prg);
+  }
+
+  compare("strip_mine_unroll_test", correct, actual);
+
+}
+
+int op_latency(op* op, const schedule_info& hwinfo) {
+  assert(!op->is_loop);
+
+  int total_latency = 0;
+
+  // Account for time to load data from inputs
+  vector<int> load_latencies;
+  for (auto b : op->buffers_read()) {
+    load_latencies.push_back(map_find(b, hwinfo.buffer_load_latencies));
+  }
+  sort(begin(load_latencies), end(load_latencies));
+  if (load_latencies.size() > 0) {
+    total_latency += load_latencies.back();
+  }
+
+  // Then we need to wait for the compute unit to finish
+  if (op->func != "") {
+    int latency = map_find(op->func, hwinfo.compute_unit_latencies);
+    //assert(latency == 0);
+    total_latency += latency;
+  }
+
+  // Then we need to wait for the data that comes out of the compute
+  // unit to be finished
+  vector<int> store_latencies;
+  for (auto b : op->buffers_written()) {
+    store_latencies.push_back(map_find(b, hwinfo.buffer_store_latencies));
+  }
+  sort(begin(store_latencies), end(store_latencies));
+  if (store_latencies.size() > 0) {
+    total_latency += store_latencies.back();
+  }
+
+  return total_latency;
+}
+
+vector<op*> inner_ops(prog& prg) {
+  vector<op*> ordered_inner =
+    get_ordered_inner_loops(prg);
+  vector<op*> ops;
+  for (auto ord : ordered_inner) {
+    for (auto c : ord->children) {
+      assert(!c->is_loop);
+      ops.push_back(c);
+    }
+  }
+  return ops;
+}
+
+void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
+  int latency = 0;
+  for (auto other : op->children) {
+    int old_latency = latency;
+    latency += hwinfo.total_latency(other);
+    if (old_latency == latency) {
+      latency += 1;
+    }
+  }
+
+  hwinfo.loop_iis[op->name] = max(latency, 1);
+
+  //hwinfo.instance_latencies[op] = latency;
+}
+
+void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
+  cout << "scheduling: " << op->name << endl;
+
+  if (!op->is_loop) {
+    int total_latency = op_latency(op, hwinfo);
+    hwinfo.instance_latencies[op] = total_latency;
+    return;
+  }
+
+  for (auto other : op->children) {
+    sequential_schedule(hwinfo, other, prg);
+  }
+
+  int latency = 0;
+  for (auto other : op->children) {
+    int old_latency = latency;
+    hwinfo.op_offset_within_parent[other] = latency;
+    latency += hwinfo.total_latency(other);
+    if (old_latency == latency) {
+      latency += 1;
+    }
+  }
+
+  hwinfo.loop_iis[op->name] = max(latency, 1);
+
+  //hwinfo.instance_latencies[op] = latency;
+}
+
+int max_loop_depth(prog& prg) {
+  int maxl = -1;
+  for (auto op : prg.all_ops()) {
+    int l = surrounding_vars(op, prg).size();
+    maxl = max(l, maxl);
+  }
+  return maxl;
+}
+
+void tighten_iis(schedule_info& sched, prog& prg) {
+  bool tightened = true;
+  while (tightened) {
+    tightened = false;
+    for (auto loop : prg.all_loops()) {
+      int ii = sched.II(loop);
+      if (ii != 1) {
+        int L = sched.last_update_delay(loop);
+        if (ii > L) {
+          cout << "Tightening ii " << loop->name << " from " << ii << " to " << L << endl;
+          sched.loop_iis[loop->name] = max(L, 1);
+          tightened = true;
+          break;
+        }
+      }
+    }
+  }
+}
+
+void adjust_outer_delays(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+
+    int old_delay = map_find(lp, sched.op_offset_within_parent);
+    int try_delay = 1;
+    bool found_smaller_delay = false;
+    while (try_delay < old_delay) {
+      sched.op_offset_within_parent[lp] = try_delay;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_delay = true;
+        break;
+      }
+      try_delay = min(try_delay * 2, try_delay + 1000);
+      //try_delay *= 2;
+    }
+
+    if (!found_smaller_delay) {
+      sched.op_offset_within_parent[lp] = old_delay;
+    }
+  }
+}
+
+void adjust_inner_iis(schedule_info& sched, prog& prg) {
+  cout << "Adjusting iis of " << prg.name << endl;
+  for (auto lp : get_inner_loops(prg)) {
+    cout << "Adjusting ii of " << lp->name << endl;
+    int old_ii = map_find(lp->name, sched.loop_iis);
+    int try_ii = 1;
+    bool found_smaller_ii = false;
+    while (try_ii < old_ii) {
+      sched.loop_iis[lp->name] = try_ii;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_ii = true;
+        break;
+      }
+      try_ii *= 2;
+    }
+
+    if (!found_smaller_ii) {
+      sched.loop_iis[lp->name] = old_ii;
+    }
+  }
+}
+
+void dsa_writers(prog& prg) {
+  if (is_rate_matchable(prg)) {
+    prg.pretty_print();
+    cout << "Is rate matchable" << endl;
+
+    std::set<string> all_buffers;
+    std::set<string> multi_write_buffers;
+    map<string, std::set<string> > producer_kernels;
+    std::set<string> reduced_kernels;
+    for (auto op : prg.all_ops()) {
+      auto read = op->buffers_read();
+      auto written = op->buffers_written();
+      for (auto b : intersection(read, written)) {
+        reduced_kernels.insert(b);
+        cout << "reduced kernel : " << b << endl;
+      }
+    }
+
+    for (auto k : get_kernels(prg)) {
+      for (auto b : get_produced_buffers(k, prg)) {
+        all_buffers.insert(b);
+        producer_kernels[b].insert(k);
+        cout << "insert kernel: " << k << " to producer buffer: " << b << endl;
+      }
+    }
+
+    cout << "Producer kernels..." << endl;
+    for (auto p : producer_kernels) {
+      cout << tab(1) << p.first << " -> ";
+      for (auto k : p.second) {
+        cout << k << " ";
+      }
+      cout << endl;
+      if (p.second.size() > 1) {
+        cout << tab(2) << "MULTIPLE PRODUCERS" << endl;
+      }
+    }
+    for (auto k : get_kernels(prg)) {
+      for (auto b : get_produced_buffers(k, prg)) {
+        auto producers = producer_kernels[b];
+
+        if (elem(b, reduced_kernels) && producers.size() >= 1) {
+          cout << b << " has " << producers.size() << " producers" << endl;
+          for (auto p : producers) {
+            cout << tab(1) << p << endl;
+          }
+          auto writers = find_writers(b, prg);
+          prg.pretty_print();
+          //assert(writers.size() <= 2);
+          if (writers.size() > 1) {
+            multi_write_buffers.insert(b);
+          }
+        }
+
+      }
+    }
+
+    cout << "Multi-write buffers" << endl;
+    map<string, op*> initializers;
+    map<string, op*> updaters;
+    for (auto b : multi_write_buffers) {
+      cout << tab(1) << b << endl;
+      auto writers = find_writers(b, prg);
+      vector<op*> ws;
+      for (auto w : writers) {
+        ws.push_back(w);
+      }
+      op* w0 = ws.at(0);
+      op* w1 = ws.at(1);
+
+      if (w0->read_addrs().size() == 0) {
+        initializers[b] = w0;
+        updaters[b] = w1;
+      } else {
+        initializers[b] = w1;
+        updaters[b] = w0;
+      }
+    }
+
+    cout << "Built initializer / update maps" << endl;
+    cout << tab(1) << "# multi_write buffers = " << multi_write_buffers.size() << endl;
+    //assert(false);
+    for (auto b : multi_write_buffers) {
+      string init_buffer = prg.un(b + "_clkwrk_dsa");
+      auto init = initializers[b];
+      assert(init != 0);
+      auto updated = updaters[b];
+      assert(updated != 0);
+      cout << "Replacing writes" << endl;
+      init->replace_writes_to(b, init_buffer);
+      cout << "Replacing reads from " << b << " in " << updated->name << endl;
+      updated->replace_reads_from(b, init_buffer);
+      prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+    }
+
+    prg.pretty_print();
+    //assert(false);
+
+    // Split up buffers that are read at constants in one of their components
+    for (auto b : all_buffers) {
+      auto writers = find_writers(b, prg);
+      auto readers = find_readers(b, prg);
+
+      if (writers.size() > 1 && readers.size() == 0) {
+        cout << b << " has " << writers.size() << " writers and " << readers.size() << " readers" << endl;
+        assert(prg.is_output(b));
+        for (auto writer : writers) {
+          string init_buffer = prg.un(b + "_clkwrk_write_duplicate");
+          writer->replace_writes_to(b, init_buffer);
+          prg.add_output(init_buffer);
+          prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
+        }
+
+        prg.outs.erase(b);
+
+        //// Now: Group writers and readers by their overlap sets?
+
+        //auto pmaps = prg.producer_maps(b);
+        //auto cmaps = prg.consumer_maps(b);
+        //map<op*, std::set<op*> > overlap;
+        //for (auto writer : writers) {
+        //auto written = map_find(writer, pmaps);
+        //for (auto reader : readers) {
+        //auto read = map_find(reader, cmaps);
+        //if (!empty(its(range(read), range(written)))) {
+        //overlap[writer].insert(reader);
+        //}
+        //}
+        //}
+
+        //cout << "Writer overlap..." << endl;
+        //for (auto w : overlap) {
+        //cout << tab(1) << w.first->name << " = " << w.second.size() << endl;
+        //}
+        //assert(false);
+      }
+    }
+
+  }
+}
+
+void adjust_schedule_forward(schedule_info& sched, prog& prg, int offset = 1) {
+  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+  cout << "Start times..." << endl;
+  cout << str(start_times) << endl;
+  auto ranges = range(start_times);
+  auto range_set = to_set(ranges);
+  int min = to_int(lexminval(range_set));
+  cout << tab(1) << "pre adjustment min: " << str(lexmin(ranges)) << endl;
+
+  // Just to be safe we start the cycle after reset
+  min = min - offset;
+
+  if (min <= 0) {
+    for (auto k : get_kernels(prg)) {
+      auto loop = prg.find_loop(k);
+      sched.op_offset_within_parent[loop] = map_find(loop, sched.op_offset_within_parent) - min;
+    }
+  }
+
+}
+
+void pad_to_single_depth(prog& prg) {
+  bool single_depth = all_loop_nests_same_depth(prg);
+  int max_depth = max_loop_depth(prg);
+
+
+  if (!single_depth) {
+    map<string, vector<int> > pad_indexes;
+    for (auto k : get_kernels(prg)) {
+      auto lp = prg.find_loop(k);
+      for (auto rep : lp->descendant_ops()) {
+        int depth_m = loop_depth(prg.find_loop(k));
+        vector<int> inds;
+        inds.push_back(0);
+        for (int p = 0; p < max_depth - depth_m; p++) {
+          inds.push_back(-1);
+        }
+        for (int d = 1; d < depth_m + 1; d++) {
+          inds.push_back(d);
+        }
+
+        pad_indexes[rep->name] = inds;
+      }
+    }
+    cout << "Pad inds..." << endl;
+    for (auto p : pad_indexes) {
+      cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+    }
+    insert_pad_loops(prg, pad_indexes);
+  }
+  prg.pretty_print();
+  single_depth = all_loop_nests_same_depth(prg);
+  assert(single_depth);
+
+}
+
+void assign_to_least_used_resource(op* op, schedule_info& sched) {
+  sched.resource_assignment[op] = {map_find(op, sched.resource_requirements), 0};
+}
+
+vector<int> garnet_fuse_ii_level(prog& prg) {
+  assert(is_rate_matchable(prg));
+  //auto rvars = reduce_vars(prg);
+  //bool perfect = all_perfect_loop_nests(prg);
+  //if (rvars.size() == 0 &&
+      //perfect) {
+    prg.pretty_print();
+    bool single_depth = all_loop_nests_same_depth(prg);
+    int max_depth = max_loop_depth(prg);
+
+
+    if (!single_depth) {
+      map<string, vector<int> > pad_indexes;
+      for (auto k : get_kernels(prg)) {
+        auto lp = prg.find_loop(k);
+        for (auto rep : lp->descendant_ops()) {
+          int depth_m = loop_depth(prg.find_loop(k));
+          vector<int> inds;
+          inds.push_back(0);
+          for (int p = 0; p < max_depth - depth_m; p++) {
+            inds.push_back(-1);
+          }
+          for (int d = 1; d < depth_m + 1; d++) {
+            inds.push_back(d);
+          }
+
+          pad_indexes[rep->name] = inds;
+        }
+      }
+      cout << "Pad inds..." << endl;
+      for (auto p : pad_indexes) {
+        cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+      }
+      insert_pad_loops(prg, pad_indexes);
+    }
+    prg.pretty_print();
+    single_depth = all_loop_nests_same_depth(prg);
+    assert(single_depth);
+
+    prg.pretty_print();
+    cout << prg.name << " is a stencil pipeline" << endl;
+    //assert(false);
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+    cout << "Clockwork schedule..." << endl;
+    for (auto m : get_maps(clksched_map)) {
+      cout << tab(1) << str(m) << endl;
+    }
+    cout << "Domain..." << endl;
+    for (auto d : get_sets(dom)) {
+      cout << tab(1) << str(d) << endl;
+    }
+    uset* sbounds = range(its(clksched_map, dom));
+    cout << "bounds..." << str(sbounds) << endl;
+    auto bsets = get_sets(sbounds);
+    assert(bsets.size() == 1);
+
+    auto bset = pick(bsets);
+    //assert(false);
+    vector<pair<int, int> > bounds;
+    vector<int> lengths;
+    for (int d = 0; d < num_dims(bset); d++) {
+      auto pr = project_all_but(bset, d);
+      int lmin = to_int(lexminval(pr));
+      int lmax = to_int(lexmaxval(pr));
+      bounds.push_back({lmin, lmax});
+      lengths.push_back(lmax - lmin + 1);
+    }
+
+    // Reorder so that root is level 0
+    reverse(lengths);
+    lengths.push_back(1);
+    reverse(bounds);
+
+    vector<int> fused_level_iis;
+    fused_level_iis.resize(lengths.size());
+    fused_level_iis[fused_level_iis.size() - 1] = 1;
+    for (int l = fused_level_iis.size() - 2; l >= 0; l--) {
+      fused_level_iis[l] = fused_level_iis[l + 1] * lengths.at(l + 1);
+    }
+
+    cout << "lengths" << endl;
+    for (auto l : lengths) {
+      cout << l << endl;
+    }
+
+    fused_level_iis.pop_back();
+
+    cout << "Fused iis" << endl;
+    for (auto i : fused_level_iis) {
+      cout << tab(1) << i << endl;
+    }
+    return fused_level_iis;
+}
+
+void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+  if (is_rate_matchable(prg)) {
+    prg.pretty_print();
+    bool single_depth = all_loop_nests_same_depth(prg);
+    int max_depth = max_loop_depth(prg);
+
+
+    if (!single_depth) {
+      map<string, vector<int> > pad_indexes;
+      for (auto k : get_kernels(prg)) {
+        auto lp = prg.find_loop(k);
+        for (auto rep : lp->descendant_ops()) {
+          int depth_m = loop_depth(prg.find_loop(k));
+          vector<int> inds;
+          inds.push_back(0);
+          for (int p = 0; p < max_depth - depth_m; p++) {
+            inds.push_back(-1);
+          }
+          for (int d = 1; d < depth_m + 1; d++) {
+            inds.push_back(d);
+          }
+
+          pad_indexes[rep->name] = inds;
+        }
+      }
+      cout << "Pad inds..." << endl;
+      for (auto p : pad_indexes) {
+        cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+      }
+      insert_pad_loops(prg, pad_indexes);
+    }
+    prg.pretty_print();
+    single_depth = all_loop_nests_same_depth(prg);
+    assert(single_depth);
+
+    prg.pretty_print();
+    cout << prg.name << " is a stencil pipeline" << endl;
+    //assert(false);
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+    cout << "Clockwork schedule..." << endl;
+    for (auto m : get_maps(clksched_map)) {
+      cout << tab(1) << str(m) << endl;
+    }
+    cout << "Domain..." << endl;
+    for (auto d : get_sets(dom)) {
+      cout << tab(1) << str(d) << endl;
+    }
+    uset* sbounds = range(its(clksched_map, dom));
+    cout << "bounds..." << str(sbounds) << endl;
+    auto bsets = get_sets(sbounds);
+    assert(bsets.size() == 1);
+
+    auto bset = pick(bsets);
+    //assert(false);
+    vector<pair<int, int> > bounds;
+    vector<int> lengths;
+    for (int d = 0; d < num_dims(bset); d++) {
+      auto pr = project_all_but(bset, d);
+      int lmin = to_int(lexminval(pr));
+      int lmax = to_int(lexmaxval(pr));
+      bounds.push_back({lmin, lmax});
+      lengths.push_back(lmax - lmin + 1);
+    }
+
+    // Reorder so that root is level 0
+    reverse(lengths);
+    lengths.push_back(1);
+    reverse(bounds);
+
+    vector<int> fused_level_iis;
+    fused_level_iis.resize(lengths.size());
+    fused_level_iis[fused_level_iis.size() - 1] = 1;
+    for (int l = fused_level_iis.size() - 2; l >= 0; l--) {
+      fused_level_iis[l] = fused_level_iis[l + 1] * lengths.at(l + 1);
+    }
+
+    cout << "lengths" << endl;
+    for (auto l : lengths) {
+      cout << l << endl;
+    }
+
+    fused_level_iis.pop_back();
+
+    cout << "Fused iis" << endl;
+    for (auto i : fused_level_iis) {
+      cout << tab(1) << i << endl;
+    }
+
+    auto cs = clockwork_schedule(dom, valid, cpy(valid));
+    auto levels = get_variable_levels(prg);
+    cout << "Original Loop iis" << endl;
+    for (auto op : prg.all_ops()) {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      for (auto var : surrounding) {
+        int level = map_find(var, levels);
+        auto container = prg.find_loop(var);
+        cout << op->name << endl;
+        int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
+        int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
+        cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
+        sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
+        sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+        sched.instance_latencies[container] = 1;
+        cout << tab(2) << "ii = " << sched.II(container) << endl;
+      }
+    }
+    int total_latency = 0;
+    for (auto op : inner_ops(prg)) {
+        cout << "inner ops: " << op->name << endl;
+      sched.op_offset_within_parent[op] = total_latency;
+      sched.instance_latencies[op] = op_latency(op, sched);
+      //total_latency += op_latency(op, sched) + 2;
+      total_latency += op_latency(op, sched);
+    }
+
+    //Hack for rom, Rom need to be conservative
+    //because the affine controller output on cycle of flush is undeterministic
+    if (prg.name == "rom") {
+      adjust_schedule_forward(sched, prg, 1);
+    } else {
+      adjust_schedule_forward(sched, prg, 0);
+    }
+    return;
+  }
+
+  prg.pretty_print();
+  cout << prg.name << " is not a stencil" << endl;
+  //cout << tab(1) << "Perfect: " << perfect << endl;
+  //cout << tab(1) << "# rvars: " << rvars.size() << endl;
+  //for (auto rv : rvars) {
+    //cout << tab(2) << rv << endl;
+  //}
+  //assert(false);
+
+  sequential_schedule(sched, root, prg);
+
+  adjust_inner_iis(sched, prg);
+  tighten_iis(sched, prg);
+  //adjust_outer_delays(sched, prg);
+
+  adjust_schedule_forward(sched, prg, 0);
+  return;
+}
+
+
+void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      assert(contains_key(op, sched.resource_requirements));
+      assign_to_least_used_resource(op, sched);
+    }
+  }
+
+  if (is_rate_matchable(prg)) {
+    prg.pretty_print();
+    bool single_depth = all_loop_nests_same_depth(prg);
+    int max_depth = max_loop_depth(prg);
+
+
+    if (!single_depth) {
+      map<string, vector<int> > pad_indexes;
+      for (auto k : get_kernels(prg)) {
+        auto lp = prg.find_loop(k);
+        for (auto rep : lp->descendant_ops()) {
+          int depth_m = loop_depth(prg.find_loop(k));
+          vector<int> inds;
+          inds.push_back(0);
+          for (int p = 0; p < max_depth - depth_m; p++) {
+            inds.push_back(-1);
+          }
+          for (int d = 1; d < depth_m + 1; d++) {
+            inds.push_back(d);
+          }
+
+          pad_indexes[rep->name] = inds;
+        }
+      }
+      cout << "Pad inds..." << endl;
+      for (auto p : pad_indexes) {
+        cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+      }
+      insert_pad_loops(prg, pad_indexes);
+    }
+    prg.pretty_print();
+    single_depth = all_loop_nests_same_depth(prg);
+    assert(single_depth);
+
+    prg.pretty_print();
+    cout << prg.name << " is a stencil pipeline" << endl;
+    //assert(false);
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+    cout << "Clockwork schedule..." << endl;
+    for (auto m : get_maps(clksched_map)) {
+      cout << tab(1) << str(m) << endl;
+    }
+    cout << "Domain..." << endl;
+    for (auto d : get_sets(dom)) {
+      cout << tab(1) << str(d) << endl;
+    }
+    uset* sbounds = range(its(clksched_map, dom));
+    cout << "bounds..." << str(sbounds) << endl;
+    auto bsets = get_sets(sbounds);
+    assert(bsets.size() == 1);
+
+    auto bset = pick(bsets);
+    //assert(false);
+    vector<pair<int, int> > bounds;
+    vector<int> lengths;
+    for (int d = 0; d < num_dims(bset); d++) {
+      auto pr = project_all_but(bset, d);
+      int lmin = to_int(lexminval(pr));
+      int lmax = to_int(lexmaxval(pr));
+      bounds.push_back({lmin, lmax});
+      lengths.push_back(lmax - lmin + 1);
+    }
+
+    // Reorder so that root is level 0
+    reverse(lengths);
+    lengths.push_back(1);
+    reverse(bounds);
+
+    vector<int> fused_level_iis;
+    fused_level_iis.resize(lengths.size());
+    fused_level_iis[fused_level_iis.size() - 1] = 1;
+    for (int l = fused_level_iis.size() - 2; l >= 0; l--) {
+      fused_level_iis[l] = fused_level_iis[l + 1] * lengths.at(l + 1);
+    }
+
+    cout << "lengths" << endl;
+    for (auto l : lengths) {
+      cout << l << endl;
+    }
+
+    fused_level_iis.pop_back();
+
+    cout << "Fused iis" << endl;
+    for (auto i : fused_level_iis) {
+      cout << tab(1) << i << endl;
+    }
+
+    auto cs = clockwork_schedule(dom, valid, cpy(valid));
+    auto levels = get_variable_levels(prg);
+    cout << "Original Loop iis" << endl;
+    for (auto op : prg.all_ops()) {
+      vector<string> surrounding = surrounding_vars(op, prg);
+      for (auto var : surrounding) {
+        int level = map_find(var, levels);
+        auto container = prg.find_loop(var);
+        cout << op->name << endl;
+        int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
+        int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
+        cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
+        sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
+        sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+        // TODO: Set this to the latency read from the compute units
+        //sched.instance_latencies[container] = 1;
+        cout << tab(2) << "ii = " << sched.II(container) << endl;
+      }
+    }
+    int total_latency = 0;
+    for (auto op : inner_ops(prg)) {
+        cout << "inner ops: " << op->name << endl;
+      sched.op_offset_within_parent[op] = total_latency;
+      sched.instance_latencies[op] = op_latency(op, sched);
+      //total_latency += op_latency(op, sched) + 2;
+      total_latency += op_latency(op, sched);
+    }
+
+    adjust_schedule_forward(sched, prg, 1);
+    return;
+  }
+
+  prg.pretty_print();
+  cout << prg.name << " is not a stencil" << endl;
+  //cout << tab(1) << "Perfect: " << perfect << endl;
+  //cout << tab(1) << "# rvars: " << rvars.size() << endl;
+  //for (auto rv : rvars) {
+    //cout << tab(2) << rv << endl;
+  //}
+  //assert(false);
+
+  sequential_schedule(sched, root, prg);
+
+  adjust_inner_iis(sched, prg);
+  tighten_iis(sched, prg);
+  //adjust_outer_delays(sched, prg);
+
+  adjust_schedule_forward(sched, prg, 1);
+  return;
+
+  //auto rvars = reduce_vars(prg);
+  //if (rvars.size() == 0) {
+    //auto valid = prg.validity_deps();
+    //auto dom = prg.whole_iteration_domain();
+    //auto cs = clockwork_schedule(dom, valid, cpy(valid));
+    //cout << "Clockwork schedule..." << endl;
+    //for (auto op : cs) {
+      //cout << tab(1) << op.first << " -> ";
+      //for (auto aff : op.second) {
+        //cout << str(aff) << " ";
+      //}
+      //cout << endl;
+    //}
+
+    //for (auto other : prg.all_ops()) {
+      //sched.op_offset_within_parent[other] = 0;
+    //}
+
+    //int num_levels = max_loop_depth(prg);
+
+    //// Offset of ops in parents we can assume will always be 0 (for now)
+    //// Offset of a loop within its parent will be delay_at_level * ii at that level
+    //// II at a given level will be?
+    ////  1 at level 1
+    ////  latency of lower levels?
+    ////
+
+    //vector<int> level_iis;
+    //level_iis.resize(num_levels, 0);
+    //for (int i = num_levels - 1; i >= 0; i--) {
+      //for (auto other : prg.all_ops()) {
+        //auto surrounding = surrounding_vars(other, prg);
+        //cout << "# surrounding = " << surrounding.size() << endl;
+        //cout << "i = " << i << endl;
+        //assert(surrounding.size() > i);
+        //string lname = surrounding.at(i);
+        //op* loop = prg.find_loop(lname);
+        //int lii = -1;
+        //int qfactor = to_int(get_coeff(map_find(other->name, cs).at(i), 0));
+        //int delay = to_int(int_const_coeff(map_find(other->name, cs).at(i)));
+
+        //if (i == num_levels - 1) {
+          //lii = qfactor;
+        //} else {
+          //lii = qfactor*loop->trip_count()*level_iis.at(i + 1);
+        //}
+        //lii = 1;
+        //assert(lii > 0);
+
+        //sched.loop_iis[lname] = lii;
+        //level_iis.at(i) = lii;
+        //sched.op_offset_within_parent[loop] = lii*delay;
+      //}
+    //}
+    ////assert(false);
+  //} else {
+    //sequential_schedule(sched, root, prg);
+  //}
+}
+
+int buffer_store_latency(CodegenOptions& options) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
+      options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
+    return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+    return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+    return 0;
+  }
+
+  assert(false);
+}
+
+int buffer_load_latency(CodegenOptions& options) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
+      options.rtl_options.target_tile == TARGET_TILE_PLATONIC ||
+      options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN
+      ) {
+    return 0;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+    return 1;
+  }
+  assert(false);
+}
+
+schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
+  schedule_info sched;
+  sched.use_dse_compute = false;
+  //sched.use_dse_compute = true;
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      sched.resource_requirements[op] = op->func;
+    }
+
+    // Extremely hacky rom latency introduction
+    if (op->func == "hcompute_curved_stencil") {
+      sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
+    } else if (op->func == "hcompute_curved_stencil_1") {
+      sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
+    } else if (op->func == "hcompute_curved_stencil_2") {
+      sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
+    } else if (prg.name == "rom" && op->func == "hcompute_hw_output_stencil") {
+      //assert(false);
+      sched.compute_unit_latencies[op->func] = 1;
+      sched.op_compute_unit_latencies[op->name] = 1;
+    } else if (op->func != "") {
+      sched.compute_unit_latencies[op->func] = 0;
+      sched.op_compute_unit_latencies[op->name] = 0;
+    } else {
+      sched.op_compute_unit_latencies[op->name] = 0;
+    }
+
+    for (auto b : op->buffers_referenced()) {
+      if (!prg.is_boundary(b)) {
+        sched.buffer_load_latencies[b] = buffer_load_latency(options);
+        sched.buffer_store_latencies[b] = buffer_store_latency(options);
+      } else {
+        sched.buffer_load_latencies[b] = 0;
+        sched.buffer_store_latencies[b] = 0;
+      }
+    }
+  }
+
+  return sched;
+}
+
+CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+  all_unbanked(prg, options);
+
+  if (is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_CYCLE_DELAY;
+  } else {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
+
+  return options;
+}
+
+CodegenOptions garnet_codegen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_PLATONIC;
+  all_unbanked(prg, options);
+
+  if (is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_CYCLE_DELAY;
+  } else {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
+
+  return options;
+}
+
+bool all_operations_assigned_to_resources(schedule_info& sched, prog& prg) {
+  for (auto op : prg.all_ops()) {
+    if (!contains_key(op, sched.resource_assignment)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool is_cst(isl_multi_aff* diff) {
+  for (auto aff : get_affs(diff)) {
+    if (!isl_aff_is_cst(aff)) {
+      return false;
+    }
+    release(aff);
+  }
+  return true;
+}
+
+void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
+  normalize_bounds(prg);
+
+  garnet_dual_port_ram_schedule(sched, prg.root, prg);
+
+  op* root = prg.root;
+  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
+  QExpr root_sched{{root_sched_t}};
+
+  map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  map<string, isl_aff*> schedule_affs;
+  build_schedule_exprs(root, schedule_exprs, sched, prg);
+
+  cout << "==== Schedules..." << endl;
+  for (auto opl : schedule_exprs) {
+    auto op = opl.first;
+    cout << tab(1) << op->name << " -> " << opl.second << endl;
+    ostringstream ss;
+    ss << opl.second;
+    if (!op->is_loop) {
+      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
+          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
+      schedule_affs[op->name] = aff;
+    }
+  }
+
+  prg.pretty_print();
+
+  cout << "==== Affine schedule expressions" << endl;
+  for (auto ef : schedule_affs) {
+    cout << tab(1) << ef.first<< " -> " << str(ef.second) << endl;
+  }
+
+  auto hw_sched = its(to_umap(prg.whole_iteration_domain(), schedule_affs), prg.whole_iteration_domain());
+  cout << endl << endl;
+  //cout << "Hw schedule..." << str(hw_sched) << endl;
+  cout << "Hw schedule..." << endl;
+  for (auto m : get_maps(hw_sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  assert(all_operations_assigned_to_resources(sched, prg));
+  assert(no_violated_resource_assignments(sched, prg));
+  assert(no_violated_cycle_accurate_dependencies(sched, prg));
+  assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
+
+  auto buffers = build_buffers(prg, hw_sched);
+
+//  for (auto& bufe : buffers) {
+//    auto& buf = bufe.second;
+//    auto shift_registered_outputs =
+//      determine_shift_reg_map(prg, buf, sched);
+//    if (shift_registered_outputs.size() == buf.get_out_ports().size()) {
+//      cout << buf.name << " is really a shift register" << endl;
+//      continue;
+//    }
+//    maybe<std::set<int> > part =
+//      embarassing_partition(buf, sched);
+//    vector<vector<string> > filtered_io_groups =
+//      overlapping_large_io_port_groups(buf, 1);
+//
+//    if (filtered_io_groups.size() > 0 && !part.has_value()) {
+//      cout << tab(1) << "======= No embarassing partition for " << buf.name << endl;
+//      cout << tab(2) << "Groups" << endl;
+//      for (auto gp : filtered_io_groups) {
+//        cout << tab(3) << "------ GP" << endl;
+//        for (auto pt : gp) {
+//          cout << tab(4) << pt << endl;
+//          isl_multi_aff* aff = get_multi_aff(buf.access_map.at(pt));
+//          cout << tab(5) << str(aff) << endl;
+//        }
+//      }
+//
+//      bool all_diffs_constant = true;
+//      for (auto gp : filtered_io_groups) {
+//        for (auto pt0 : gp) {
+//          for (auto pt1 : gp) {
+//            isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
+//            isl_multi_aff* aff1 = set_in_name(get_multi_aff(buf.access_map.at(pt1)), "s");
+//            auto diff = sub(aff0, aff1);
+//            cout << tab(5) << "Diff: " << str(diff) << endl;
+//            if (!is_cst(diff)) {
+//              all_diffs_constant = false;
+//            }
+//          }
+//        }
+//      }
+//      if (all_diffs_constant) {
+//        cout << "All diffs constant. Looking for cyclic banking..." << endl;
+//        vector<string> vars;
+//        vector<int> factors;
+//        for (int d = 0; d < buf.logical_dimension(); d++) {
+//          vars.push_back("d_" + str(d));
+//          int min_offset = INT_MAX;
+//          int max_offset = INT_MIN;
+//          for (auto gp : filtered_io_groups) {
+//            for (auto pt0 : gp) {
+//              isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
+//              isl_aff* aff = isl_multi_aff_get_aff(aff0, d);
+//              int offset = to_int(constant(aff));
+//              if (offset < min_offset) {
+//                min_offset = offset;
+//              }
+//              if (offset > max_offset) {
+//                max_offset = offset;
+//              }
+//            }
+//          }
+//          cout << tab(1) << "min = " << min_offset << endl;
+//          cout << tab(1) << "max = " << max_offset << endl;
+//          cout << tab(1) << "bf  = " << (max_offset - min_offset + 1) << endl;
+//          factors.push_back(max_offset - min_offset + 1);
+//        }
+//        vector<string> factor_exprs;
+//        int i = 0;
+//        for (auto f : factors) {
+//          auto var = vars.at(i);
+//          factor_exprs.push_back(var + " % " + str(f));
+//          i++;
+//        }
+//        string bank_func =
+//          curlies(buf.name + bracket_list(vars) + " -> B" + bracket_list(factor_exprs));
+//        cout << "BF: " << bank_func << endl;
+//        isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+//        cout << "M : " << str(m) << endl;
+//        bool legal = banking_scheme_is_legal(m, buf);
+//        assert(legal);
+//      }
+//      assert(all_diffs_constant);
+//    }
+//  }
+
+#ifdef COREIR
+
+  generate_coreir(options,
+    buffers,
+    prg,
+    hw_sched,
+    sched);
+  generate_verilator_tb(prg, hw_sched, buffers);
+
+#endif
+}
+
+void compile_for_garnet_platonic_mem(prog& prg) {
+  auto options = garnet_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  compile_cycle_accurate_hw(options, sched, prg);
+}
+
+void compile_for_garnet_dual_port_mem(prog& prg) {
+  auto options = garnet_codegen_dual_port_with_addrgen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  compile_cycle_accurate_hw(options, sched, prg);
+}
+
+void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
+
+  //dsa_writers(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+
+  //auto iis = garnet_fuse_ii_level(prg);
+  //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+
+  CodegenOptions options;
+  options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
+  options.emit_smt_stream = gen_smt_stream;
+  schedule_info sched = garnet_schedule_info(options, prg);
+  garnet_single_port_ram_schedule(sched, prg.root, prg);
+  auto sched_map = op_times_map(sched, prg);
+  auto hw_sched = its(sched_map,
+          prg.whole_iteration_domain());
+  cout << "result schedule: " << str(hw_sched) << endl;
+  auto buffers_opt = build_buffers(prg, hw_sched);
+  //CodegenOptions opt;
+  options.conditional_merge = true;
+  options.merge_threshold = 4;
+  options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
+  options.iis = {1};
+  int max_inpt = 2, max_outpt = 2;
+  //for (auto b: buffers_opt) {
+  //    cout << "create shift register for " << b.first << endl;
+
+  //  //compare out2in
+  //  auto shift_registered_outputs = determine_shift_reg_map(prg, b.second, sched);
+  //  //compare out2out
+  //  auto o2o = determine_output_shift_reg_map(prg, b.second, sched);
+  //  cout << o2o.size() << endl;
+  //  for (auto it: shift_registered_outputs) {
+  //    cout << it.first << " -> " << it.second.first << ", depth = " << it.second.second << endl;
+  //  }
+  //}
+  ////auto sched = global_schedule_from_buffers(buffers_opt);
+
+  for (auto& b : buffers_opt) {
+    cout << "Before Normalization: "<< b.second << endl;
+  //  b.second.normalize_access_range();
+  //  cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
+  }
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(options);
+    b.second.port_group2bank(max_inpt, max_outpt);
+  }
+
+#ifdef COREIR
+  generate_garnet_tb(buffers_opt, prg, options, sched);
+  generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
+#endif
+}
+
+umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
+  auto valid = prg.validity_deps();
+  umap* final_dep = rdmap(prg.ctx, "{}");
+  for (auto m : get_maps(valid)) {
+    string dom_name = "end_" + domain_name(m);
+    string rname = "start_" + range_name(m);
+    m = set_domain_name(set_range_name(m, rname), dom_name);
+    auto um = to_umap(m);
+    final_dep = unn(final_dep, um);
+    release(m);
+    release(um);
+  }
+
+  release(valid);
+  return final_dep;
+}
+
+void sanity_check_iis(schedule_info& sched) {
+  for (auto lii : sched.loop_iis) {
+    assert(lii.second > 0);
+  }
+}
+
+void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
+  auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+  cout << "Start times..." << endl;
+  //cout << str(start_times) << endl;
+  for (auto m : get_maps(start_times)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
+  auto ranges = range(start_times);
+  auto range_set = to_set(ranges);
+  int min = to_int(lexminval(range_set));
+
+  cout << tab(1) << "min: " << str(lexmin(ranges)) << endl;
+  assert(min >= 0);
+}
+
+bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg) {
+  int max_val = pow(2, bitwidth);
+
+  auto start_times =
+    its(op_start_times_map(sched, prg), op_start_times_domain(prg));
+  cout << endl << endl;
+  cout << "start times: " << str(start_times) << endl;
+  cout << endl << endl;
+  for (auto s : get_maps(start_times)) {
+    cout << str(s) << endl;
+    auto d = range(s);
+    cout << tab(1) << "Min: " << str(lexminval(d)) << endl;
+    cout << tab(1) << "Max: " << str(lexmaxval(d)) << endl;
+  }
+
+  cout << endl << endl;
+  for (auto s : get_sets(range(start_times))) {
+    int max_dim = to_int(lexmaxval(s));
+    cout << tab(1) << "max for s: " << max_dim << endl;
+    if (!(max_dim < max_val)) {
+      cout << tab(1) << "Error: Schedule max time of " << max_dim << " is larger than the largest controller supported value: " << max_val << endl;
+    }
+    assert(max_dim < max_val);
+
+    release(s);
+  }
+  return true;
+}
+
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg) {
+  prg.pretty_print();
+  sanity_check_iis(sched);
+  sanity_check_negative_starts(sched, prg);
+
+  auto start_times = op_start_times_map(sched, prg);
+  auto end_times = op_end_times_map(sched, prg);
+  auto all_times = unn(start_times, end_times);
+
+  cout << "Schedule..." << endl;
+  for (auto m : get_maps(start_times)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+  auto deps = cycle_accurate_deps(sched, prg);
+  cout << tab(1) << "Cycle deps: " << str(deps) << endl;
+
+  deps = inv(deps);
+  auto earlier = lex_lt(all_times, all_times);
+
+  cout << tab(1) << "Earlier deps: " << str(earlier) << endl;
+
+  auto violated = its(earlier, deps);
+
+  cout << tab(1) << "Violated deps: " << str(violated) << endl;
+  bool safe = empty(violated);
+
+  release(violated);
+  release(earlier);
+  release(start_times);
+  release(end_times);
+  release(all_times);
+  //assert(false);
+  return safe;
+}
+
+void test_schedules(vector<prog>& test_programs) {
+
+  for (auto& prg : test_programs) {
+    CodegenOptions options;
+    schedule_info sched =
+      garnet_schedule_info(options, prg);
+    garnet_dual_port_ram_schedule(sched, prg.root, prg);
+    cout << "Checking " << prg.name << " schedule" << endl;
+    prg.pretty_print();
+
+    assert(no_violated_cycle_accurate_dependencies(sched, prg));
+    auto ss = op_start_times_map(sched, prg);
+    for (auto m : get_maps(ss)) {
+      cout << tab(1) << str(m) << endl;
+    }
+  }
+
+  //assert(false);
+}
+
+vector<prog> stencil_programs() {
+  vector<prog> test_programs;
+  //test_programs.push_back(rom());
+
+
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(harris());
+  test_programs.push_back(gaussian());
+  test_programs.push_back(pointwise());
+
+  // Fails with dual port tile?
+  test_programs.push_back(strided_conv());
+  test_programs.push_back(mini_conv_halide_fixed());
+  test_programs.push_back(unsharp());
+  test_programs.push_back(down_sample());
+  test_programs.push_back(cascade());
+
+
+
+  // Bounds are too long. Software simulation
+  // takes forever
+  //test_programs.push_back(stereo());
+
+  // Compute units gone?
+
+  return test_programs;
+}
+
+vector<prog> all_cgra_programs() {
+
+  vector<prog> test_programs;
+
+  // Too large to fit in 16 bit controller
+  //test_programs.push_back(mobilenet());
+  //
+  // Uses a ROM which forces the code to be too small
+  //test_programs.push_back(accumulation());
+
+
+
+  test_programs.push_back(resnet());
+  test_programs.push_back(unet_conv_3_3());
+  test_programs.push_back(conv_multi());
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(mobilenet_small());
+  concat(test_programs, stencil_programs());
+
+
+
+
+
+  return test_programs;
+}
+
+void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name) {
+  cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg_name);
+  cmd("mv " + prg_name + ".json ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + ".v ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_compute.v ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv cycle_accurate_regression_result_" + prg_name + ".csv ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg_name + "/");
+}
+
+void test_platonic_codegen(vector<prog>& test_programs) {
+  for (auto& prg : test_programs) {
+    cout << "====== Running CGRA test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    dsa_writers(prg);
+    prg.pretty_print();
+    auto cpu = unoptimized_result(prg);
+
+    compile_for_garnet_platonic_mem(prg);
+    generate_regression_testbench(prg);
+
+    cout << "Output name: " << prg.name << endl;
+    run_verilator_tb(prg.name);
+    auto verilator_res = verilator_results(prg.name);
+    compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+    //string app_type = "dualwithaddr";
+    string app_type = "platonic_buffer";
+    cpy_app_to_folder(app_type, prg.name);
+  }
+}
+
+void cw_print_body(int level,
+    ostream& out,
+    const vector<string>& op_order,
+    const Box& whole_dom,
+    map<string, Box>& index_bounds,
+    map<string, vector<QExpr> >& scheds) {
+
+  int ndims = pick(index_bounds).second.intervals.size();
+  int next_level = level + 1;
+  out << endl;
+  out << "#ifdef __VIVADO_SYNTH__" << endl;
+  out << "#pragma HLS pipeline II=1" << endl;
+  out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+
+  vector<string> vars;
+  for (int i = 0; i < ndims; i++) {
+    vars.push_back("c" + str(i));
+  }
+  // NOTE: This is because scheduling reverses order of component variables
+  //reverse(vars);
+
+  for (auto f : op_order) {
+    auto box = index_bounds.at(f);
+    vector<int> rates;
+    vector<int> delays;
+    for (auto s : scheds.at(f)) {
+      rates.push_back(s.linear_coeff_int());
+      auto ct = s.const_term();
+      ct.simplify();
+      delays.push_back(ct.to_int());
+    }
+
+    //assert(delays.size() == vars.size() + 1);
+    //assert(rates.size() == vars.size() + 1);
+
+    //delays.pop_back();
+    //reverse(delays);
+    //rates.pop_back();
+    //reverse(rates);
+
+    out << tab(next_level) << "if (" << sep_list(ifconds(vars, box, rates, delays), "", "", " && ") << ") {" << endl;
+
+    vector<string> var_exprs;
+
+    for (int i = 0; i < vars.size(); i++) {
+      var_exprs.push_back("(" + vars.at(i) + " - " + str(delays.at(i)) + ") / " + str(rates.at(i)));
+    }
+
+    out << tab(next_level + 1) << f << "(" << comma_list(var_exprs) << ");" << endl;
+    out << tab(next_level) << "}" << endl << endl;
+  }
+}
+
+void cw_print_loops(int level,
+    ostream& out,
+    const vector<string>& op_order,
+    const Box& whole_dom,
+    map<string, Box>& index_bounds,
+    map<string, vector<QExpr> >& scheds) {
+
+  int ndims = pick(index_bounds).second.intervals.size();
+
+  int min = whole_dom.intervals.at(level).min;
+  int max = whole_dom.intervals.at(level).max;
+
+  string ivar = "c" + str(level);
+  out << tab(level) << "for (int " << ivar << " = " << min << "; " << ivar << " <= " << max << "; " << ivar << "++) {" << endl;
+  int next_level = level + 1;
+  if (next_level == ndims) {
+    cw_print_body(level, out, op_order, whole_dom, index_bounds, scheds);
+  } else {
+    cw_print_loops(level + 1, out, op_order, whole_dom, index_bounds, scheds);
+  }
+  out << tab(level) << "}" << endl;
+}
+
+std::string cw_box_codegen(CodegenOptions& options,
+    const vector<string>& op_order,
+    map<string, vector<QExpr> >& scheds,
+    map<string, Box>& compute_domains) {
+
+  assert(compute_domains.size() > 0);
+
+  ostringstream ss;
+  ss << tab(1) << "// Schedules..." << endl;
+  for (auto s : scheds) {
+    vector<string> qstrings;
+    for (auto q : s.second) {
+      ostringstream qs;
+      qs << q;
+      qstrings.push_back(qs.str());
+    }
+    string schedstr = sep_list(qstrings, "[", "]", ",");
+
+    ss << tab(2) <<  "// " << s.first << " -> " << schedstr << endl;
+  }
+
+  int ndims = pick(compute_domains).second.intervals.size();
+
+  map<string, Box> index_bounds;
+  Box whole_dom(ndims);
+  for (auto f : compute_domains) {
+
+    auto dom = f.second;
+    cout << "Processing " << f.first << endl;
+
+    cout << "Scheds..." << endl;
+    for (auto f : scheds) {
+      cout << tab(1) << f.first << " -> ";
+      for (auto s : f.second) {
+        cout << s << ", ";
+      }
+      cout << endl;
+    }
+
+    assert(contains_key(f.first, scheds));
+
+    Box bounds;
+    for (int d = 0; d < ndims; d++) {
+
+
+      int domain_min = dom.intervals.at(d).min;
+      int domain_max = dom.intervals.at(d).max;
+
+      cout << "----------------" << endl;
+      cout << "Domain " << d << " min: " << domain_min << endl;
+      cout << "Domain " << d << " max: " << domain_max << endl;
+      cout << endl;
+
+      // Note: The schedule is from innermost to outermost
+      int sched_min = scheds.at(f.first).at(d).const_eval_at(domain_min);
+      int sched_max = scheds.at(f.first).at(d).const_eval_at(domain_max);
+
+      cout << "Sched min: " << sched_min << endl;
+      cout << "Sched max: " << sched_max << endl;
+
+      bounds.intervals.push_back({sched_min, sched_max});
+    }
+    index_bounds[f.first] = bounds;
+    whole_dom = unn(whole_dom, bounds);
+  }
+
+  //auto& bnds = whole_dom.intervals;
+  //reverse(bnds);
+  cout << "Whole domain: " << whole_dom << endl;
+  //assert(false);
+  cw_print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
+
+  return ss.str();
+}
+
+void generate_fpga_clockwork_code(prog& prg) {
+  auto valid = prg.validity_deps();
+  auto dom = prg.whole_iteration_domain();
+  map<string, vector<isl_aff*> > cwsched =
+    clockwork_schedule(dom, valid, cpy(valid));
+
+  cout << "Clockwork sched..." << endl;
+  std::vector<op*> dft_ops = get_dft_ops(prg);
+  cout << "DFT op order" << endl;
+  int pos = 0;
+  map<string, int> positions;
+  vector<string> ops;
+  for (auto op : dft_ops) {
+    cout << tab(1) << op->name << endl;
+    positions[op->name] = pos;
+    ops.push_back(op->name);
+    pos++;
+  }
+
+  map<string, vector<QExpr> > scheds;
+  for (auto s : cwsched) {
+    string name = s.first;
+    vector<isl_aff*> vals = s.second;
+
+    scheds[name] = {};
+    int i = 0;
+    for (auto v : vals) {
+      QExpr rate = qexpr("d" + str(i));
+      auto rate_coeff =
+        qexpr(int_coeff(v, 0));
+      auto delay =
+        qexpr(int_const_coeff(v));
+
+      QExpr expr =
+        rate_coeff*rate + delay;
+      scheds[name].push_back(expr);
+      i++;
+    }
+  }
+
+  // schedule is dN, ..., d1, d0
+  //for (auto& s : scheds) {
+    //reverse(s.second);
+  //}
+
+  //// schedule is dN, ..., d1, d0
+  //for (auto& s : scheds) {
+    //reverse(s.second);
+    //QAV v = qconst(map_find(s.first, positions));
+    //QTerm t{{v}};
+    //QExpr e{{t}};
+    //s.second.push_back(e);
+  //}
+
+  cout << "Final schedule..." << endl;
+  for (auto s : scheds) {
+    cout << tab(1) << s.first << endl;
+    for (auto v : s.second) {
+      cout << tab(2) << v << endl;
+    }
+    cout << endl;
+  }
+
+  auto sched = qschedule_to_map_final_sort(prg.ctx, scheds, positions);
+  sched = its(sched, dom);
+
+  cout << "Optimized schedule..." << endl;
+  for (auto s : get_maps(sched)) {
+    cout << tab(1) << str(s) << endl;
+  }
+
+  //assert(false);
+  //cout << tab(1) << ": " << str(sched) << endl << endl;
+  //cout << codegen_c(sched) << endl;
+
+  auto buffers = build_buffers(prg, sched);
+
+  assert(prg.compute_unit_file != "");
+  cout << "Compute unit file: "
+    << prg.compute_unit_file << endl;
+  CodegenOptions options;
+  options.internal = true;
+  //options.use_custom_code_string = true;
+  //map<string, Box> compute_domains;
+  //for (auto s : get_sets(dom)) {
+    //ops.push_back(name(s));
+    //Box bounds;
+    //for (int d = 0; d < num_dims(s); d++) {
+      //auto pr = project_all_but(s, d);
+      //int minv = to_int(lexminval(pr));
+      //int maxv = to_int(lexmaxval(pr));
+      //bounds.intervals.push_back({minv, maxv});
+    //}
+    //compute_domains[name(s)] = bounds;
+  //}
+
+  //cout << "Boxes..." << endl;
+  //for (auto b : compute_domains) {
+    //cout << tab(1) << b.first << " -> " << b.second << endl;
+  //}
+  ////assert(false);
+  //cout << "Generating box codegen" << endl;
+  //string cgn = cw_box_codegen(options, ops, scheds, compute_domains);
+  //cout << "Done" << endl;
+  //options.code_string = cgn;
+  //cout << "Code string..." << endl;
+  //cout << cgn << endl;
+  generate_app_code(options, buffers, prg, sched);
+
+  release(sched);
+}
+
+void fpga_asplos_tests() {
+
+  auto test_programs = stencil_programs();
+  for (auto prg : test_programs) {
+    cout << "==== FPGA clockwork code for " << prg.name << endl;
+    dsa_writers(prg);
+    pad_to_single_depth(prg);
+    std::vector<string> no_opt =
+      unoptimized_result(prg);
+
+    generate_fpga_clockwork_code(prg);
+    generate_regression_testbench(prg);
+
+    std::vector<std::string> opt =
+      run_regression_tb(prg);
+    compare(prg.name + " ASPLOS FPGA flow", opt, no_opt);
+    move_to_benchmarks_folder(prg.name);
+  }
+}
+
+void cgra_flow_tests() {
+  auto test_programs =
+    all_cgra_programs();
+
+  test_platonic_codegen(test_programs);
+}
+
+void dse_flow_tests() {
+
+  vector<prog> test_programs;
+
+  // test_programs.push_back(camera_pipeline());
+  //test_programs.push_back(unsharp());
+  // test_programs.push_back(gaussian());
+  // test_programs.push_back(pointwise());
+  // test_programs.push_back(harris());
+  // test_programs.push_back(down_sample());
+  // test_programs.push_back(cascade());
+  test_programs.push_back(stereo());
+
+  // Delayed incorrectly?
+
+  // Compute units gone?
+  //test_programs.push_back(rom());
+  //test_programs.push_back(mini_conv_halide_fixed());
+  //test_programs.push_back(strided_conv());
+
+
+
+
+
+  test_platonic_codegen(test_programs);
+  //test_schedules(test_programs);
+
+  assert(false);
+}
+
+void dual_port_lake_test() {
+    auto prg = gaussian();
+    cout << "====== Running CGRA test for " << prg.name << endl;
+    dsa_writers(prg);
+    prg.sanity_check();
+    compile_for_garnet_dual_port_mem(prg);
+    assert(false);
+
+}
+
+void full_cgra_flow_tests() {
+
+#ifdef COREIR
+  //mini_sram_garnet_test();
+#endif // COREIR
+
+  vector<prog> test_programs;
+  test_programs.push_back(harris());
+  test_programs.push_back(camera_pipeline_dse_1());
+  test_programs.push_back(cascade());
+  test_programs.push_back(pointwise());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(unet_conv_3_3());
+
+  test_programs.push_back(gaussian());
+  //test_programs.push_back(mini_conv_halide_fixed());
+  test_programs.push_back(halide_harris());
+
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(partially_unrolled_conv());
+  test_programs.push_back(accumulation());
+  test_programs.push_back(up_sample());
+  test_programs.push_back(strided_conv());
+  test_programs.push_back(down_sample());
+  test_programs.push_back(resnet());
+
+  test_programs.push_back(unsharp());
+  test_programs.push_back(conv_multi());
+
+  test_schedules(test_programs);
+
+  for (auto& prg : test_programs) {
+    cout << "====== Running CGRA test for " << prg.name << endl;
+    prg.sanity_check();
+
+    //auto cpu = unoptimized_result(prg);
+    //assert(false);
+
+    compile_for_garnet_dual_port_mem(prg);
+    generate_regression_testbench(prg);
+    //auto cgra_sim = run_regression_tb(prg.name);
+
+    cout << "Output name: " << prg.name << endl;
+    //assert(false);
+    //compare("cgra_" + prg.name + "_cpu_comparison", cpu, cgra_sim);
+    run_verilator_tb(prg.name);
+    assert(false);
+    cmd("mkdir -p ./coreir_apps/raw_sram/" + prg.name);
+    cmd("mv " + prg.name + ".json ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv " + prg.name + ".v ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv cycle_accurate_regression_result_" + prg.name + ".csv ./coreir_apps/raw_sram/" + prg.name + "/");
+    cmd("mv " + prg.name + "_verilog_tb.cpp ./coreir_apps/raw_sram/" + prg.name + "/");
+    assert(false);
+  }
+}
+
+void infer_bounds_single_stage_negative_conv_test() {
+  prog prg("negative_single_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("in", "x - 1, y - 1");
+    red->add_load("in", "x - 1, y");
+    red->add_load("in", "x, y - 1");
+    red->add_load("in", "x, y");
+    red->add_store("down", "x, y");
+    red->add_function("blur_2x2_32");
+  }
+
+  cpy("out", "down", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  regression_test(prg);
+}
+
+void infer_bounds_multi_stage_negative_conv1d_test() {
+  prog prg("negative_multi_stage_conv1d_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 1, prg);
+
+  {
+    auto lp = prg.add_nest("x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("in", "x + 2");
+    red->add_load("in", "x + 1");
+    red->add_load("in", "x");
+    red->add_store("down", "x");
+    red->add_function("blur_1x3_32");
+  }
+
+  {
+    auto lp = prg.add_nest("x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("down", "x2 + 2");
+    red->add_load("down", "x2 + 1");
+    red->add_load("down", "x2");
+    red->add_store("down1", "x2");
+    red->add_function("blur_1x3_32");
+  }
+
+
+  cpy("out", "down1", 1, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds_and_unroll("out", {20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+  sanity_check_all_reads_defined(prg);
+
+  // Add inferred buffer size check too
+
+  regression_test(prg);
+}
+
+void infer_bounds_three_stage_negative_conv_test() {
+  prog prg("negative_three_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("in", "x - 1, y - 1");
+    red->add_load("in", "x - 1, y");
+    red->add_load("in", "x, y - 1");
+    red->add_load("in", "x, y");
+    red->add_store("down", "x, y");
+    red->add_function("blur_2x2_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("down", "x2 - 1, y2 - 1");
+    red->add_load("down", "x2 - 1, y2");
+    red->add_load("down", "x2, y2 - 1");
+    red->add_load("down", "x2, y2");
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_2x2_32");
+  }
+
+
+  {
+    auto lp = prg.add_nest("y3", 0, 1, "x3", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("down1", "x3 - 1, y3 - 1");
+    red->add_load("down1", "x3 - 1, y3");
+    red->add_load("down1", "x3, y3 - 1");
+    red->add_load("down1", "x3, y3");
+    red->add_store("down2", "x3, y3");
+    red->add_function("blur_2x2_32");
+  }
+  cpy("out", "down2", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+
+  //assert(false);
+}
+
+void infer_bounds_multi_5x1_stage_negative_conv_test() {
+  prog prg("negative_multi_5x1_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("incp", "in_oc", 1, prg);
+  cpy("in", "incp", 1, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int y = -2; y <= 2; y++) {
+      red->add_load("in", "y + " + str(y));
+    }
+    red->add_store("down", "y");
+    red->add_function("blur_5x1_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int y = -2; y <= 2; y++) {
+      red->add_load("down", "y2 + " + str(y));
+    }
+    red->add_store("down1", "y2");
+    red->add_function("blur_5x1_32");
+  }
+
+
+  cpy("out", "down1", 1, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //assert(false);
+
+  infer_bounds_and_unroll("out", {20}, 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+  //assert(false);
+}
+
+void infer_bounds_multi_5x5_stage_negative_conv_test() {
+  prog prg("negative_multi_5x5_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("incp", "in_oc", 2, prg);
+  cpy("in", "incp", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("in", "x + " + str(x), "y + " + str(y));
+      }
+    }
+    red->add_store("down", "x, y");
+    red->add_function("blur_5x5_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("down", "x2 + " + str(x), "y2 + " + str(y));
+      }
+    }
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_5x5_32");
+  }
+
+
+  cpy("out", "down1", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //assert(false);
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+
+  //assert(false);
+}
+void infer_bounds_multi_stage_negative_conv_test() {
+  prog prg("negative_multi_stage_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("in", "x - 1, y - 1");
+    red->add_load("in", "x - 1, y");
+    red->add_load("in", "x, y - 1");
+    red->add_load("in", "x, y");
+    red->add_store("down", "x, y");
+    red->add_function("blur_2x2_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    red->add_load("down", "x2 - 1, y2 - 1");
+    red->add_load("down", "x2 - 1, y2");
+    red->add_load("down", "x2, y2 - 1");
+    red->add_load("down", "x2, y2");
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_2x2_32");
+  }
+
+
+  cpy("out", "down1", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+
+  infer_bounds_and_unroll("out", {50, 55}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+
+  //assert(false);
+}
+
+void infer_bounds_negative_conv_test() {
+  prog prg("negative_conv_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+  auto red = lp->add_op(prg.un("ds"));
+  red->add_load("in", "x - 1, y - 1");
+  red->add_load("in", "x - 1, y");
+  red->add_load("in", "x, y - 1");
+  red->add_load("in", "x, y");
+  red->add_store("down", "x, y");
+  red->add_function("blur_2x2_32");
+
+  cpy("out", "down", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+  //assert(false);
+
+  regression_test(prg);
+
+}
+
+void infer_bounds_color_downsample_test() {
+  prog prg("infer_bounds_downsample");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+  cpy("in", "in_oc", 3, prg);
+
+  auto lp = prg.add_nest("c", 0, 1, "y", 0, 1, "x", 0, 1);
+  auto red = lp->add_op(prg.un("ds"));
+  red->add_load("in", "2*x, 2*y, c");
+  red->add_store("down", "x, y, c");
+
+  cpy("out", "down", 3, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds_and_unroll("out", {20, 20, 3}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+}
+
+void infer_bounds_multiple_inputs() {
+  prog prg("infer_bounds_multi_input");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("incp", "in_oc", 2, prg);
+  cpy("in", "incp", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("in", "x + " + str(x), "y + " + str(y));
+      }
+    }
+    red->add_store("down", "x, y");
+    red->add_function("blur_5x5_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("in", "x2 + " + str(x), "y2 + " + str(y));
+      }
+    }
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_5x5_32");
+  }
+
+  {
+    auto lp = prg.add_nest("ys", 0, 1, "xs", 0, 1);
+    auto red = lp->add_op(prg.un("add"));
+    red->add_load("down1", "xs, ys");
+    red->add_load("down", "xs, ys");
+    red->add_store("summed", "xs, ys");
+    red->add_function("add");
+  }
+
+
+  cpy("out", "summed", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //assert(false);
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+
+  regression_test(prg);
+
+  //assert(false);
+
+}
+
+void infer_bounds_16_stage_5x5_conv_test() {
+  prog prg("conv_16_stage_5x5_test");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("incp", "in_oc", 2, prg);
+  cpy("in", "incp", 2, prg);
+
+  {
+    auto lp = prg.add_nest("y", 0, 1, "x", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("in", "x + " + str(x), "y + " + str(y));
+      }
+    }
+    red->add_store("down", "x, y");
+    red->add_function("blur_5x5_32");
+  }
+
+  {
+    auto lp = prg.add_nest("y2", 0, 1, "x2", 0, 1);
+    auto red = lp->add_op(prg.un("ds"));
+    for (int x = -2; x <= 2; x++) {
+      for (int y = -2; y <= 2; y++) {
+        red->add_load("down", "x2 + " + str(x), "y2 + " + str(y));
+      }
+    }
+    red->add_store("down1", "x2, y2");
+    red->add_function("blur_5x5_32");
+  }
+
+
+  cpy("out", "down1", 2, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //assert(false);
+
+  infer_bounds_and_unroll("out", {20, 20}, 4, prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  sanity_check_all_reads_defined(prg);
+  //assert(false);
+
+  regression_test(prg);
+
+}
+
+void raw_memtile_verilog_test() {
+
+  int max_depth = (1 << 16) - 1;
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_aff* write_sched = rdaff(ctx, "{ wr[a] -> [(a)] }");
+  isl_aff* write_addr = rdaff(ctx, "{ wr[a] -> [(0)] }");
+  isl_set* write_dom = isl_set_read_from_str(ctx, ("{ wr[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+
+  isl_aff* read_sched = rdaff(ctx, "{ rd[a] -> [(a)] }");
+  isl_aff* read_addr = rdaff(ctx, "{ rd[a] -> [(0)] }");
+  isl_set* read_dom = isl_set_read_from_str(ctx, ("{ rd[a] : 0 <= a <= " + str(max_depth) + " }").c_str());
+
+  ofstream out("lake_verilog_tile.sv");
+  component_controller write_ctrl{"sram_write", write_sched, write_addr, write_dom, 16};
+  component_controller read_ctrl{"sram_read", read_sched, read_addr, read_dom, 16};
+  //generate_lake_collateral("lake_verilog_tile", out, {write_ctrl, read_ctrl}, write_sched, write_addr, write_dom, read_sched, read_addr, read_dom);
+  generate_lake_collateral("lake_verilog_tile", out, {write_ctrl, read_ctrl});
+  out.close();
+
+  run_verilator_on("lake_verilog_tile",
+        "lake_verilog_tb.cpp",
+        {"./lake_components/dualwithadd/lake_top.sv", "lake_verilog_tile.sv"});
+
+  isl_ctx_free(ctx);
+}
+
+void raw_memtile_verilog_as_delay_test() {
+
+  ofstream out("lake_delay_tile.sv");
+  generate_lake_collateral_delay("lake_delay_tile", out, 17);
+  out.close();
+
+  run_verilator_on("lake_delay_tile",
+        "lake_delay_verilog_tb.cpp",
+        {"./lake_components/dualwithadd/lake_top.sv", "lake_delay_tile.sv"});
+
+  assert(false);
+}
+
+void brighten_blur_asplos_example() {
+  prog prg("brighten_blur");
+  prg.add_input("in_oc");
+  prg.add_output("out");
+
+  cpy("in", "in_oc", 2, prg);
+
+  auto br = prg.add_nest("y0", 0, 1, "x0", 0, 1)->add_op("br");
+  br->add_load("in", "x0, y0");
+  br->add_store("brighten", "x0, y0");
+
+  auto bl = prg.add_nest("y1", 0, 1, "x1", 0, 1)->add_op("blur");
+  for (int x = 0; x < 2; x++) {
+    for (int y = 0; y < 2; y++) {
+      bl->add_load("brighten", "x1 + " + str(x) + ", y1 + " + str(y));
+    }
+  }
+  bl->add_store("blurred", "x1, y1");
+  cpy("out", "blurred", 2, prg);
+
+  infer_bounds("out", {63, 63}, prg);
+  prg.pretty_print();
+  prg.sanity_check();
+
+  //auto sched = its(prg.optimized_codegen(), prg.whole_iteration_domain());
+  //auto buffers = build_buffers(prg, sched);
+
+  CodegenOptions options;
+  schedule_info hwsched = garnet_schedule_info(options, prg);
+  garnet_dual_port_ram_schedule(hwsched, prg.root, prg);
+  auto sts = op_start_times_map(hwsched, prg);
+  for (auto m : get_maps(sts)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  sts = its(op_times_map(hwsched, prg), prg.whole_iteration_domain());
+  auto buffers = build_buffers(prg, sts);
+
+  //cout << "sts: " << str(sts) << endl;
+  cout << "Buffers..." << endl;
+  for (auto b : buffers) {
+    cout << b.second << endl;
+  }
+  //assert(false);
+}
+
+void histogram_2d_test() {
+  prog prg = histogram();
+  prg.pretty_print();
+
+  //assert(false);
+}
+
+void application_tests() {
+  //lake_tests();
+  //cnn_test();
+  iccad_tests();
+  exposure_fusion_iccad_apps("ef_cc_10_level");
+  histogram_2d_test();
+
+  // Possibly failing
+  //halide_harris_test();
+  conv_test();
+  //conv_2d_bc_test();
+
+  resnet_test();
+
+  coreir_tests();
+  multi_output_app_test();
 
   sobel_test();
-
-  seidel2d_test();
-  jacobi_2d_2_test();
   jacobi_2d_test();
 
+  reaccess_no_hierarchy_rolled_test();
 
   two_input_mag_test();
   one_input_mag_test();
-  sum_diffs_test();
+
   sum_float_test();
-  sum_denoise_test();
 
   sobel_mag_y_test();
   sobel_app_test();
   sobel_mag_x_test();
-
-
   heat_3d_test();
 
   upsample_reduce_test();
@@ -9758,9 +17623,16 @@ void application_tests() {
   pointwise_test();
 
   stencil_3d_test();
-  soda_blur_test();
-  two_in_window_test();
-  two_in_conv2d_test();
+  //assert(false);
+
+  //unet_conv_3_3_test();
+  cyclic_banked_conv_test();
+  //register_file_optimization_test();
+
+  // Does not work with register files?
+
+  neg_stencil_test();
+
   gaussian_pyramid_test();
   warp_and_upsample_test();
 
@@ -9768,7 +17640,6 @@ void application_tests() {
   //synth_upsample_test();
   unsharp_test();
   //conv_2d_rolled_test();
-  conv_2d_bc_test();
   //mobilenet_test();
   pyramid_2d_test();
   pyramid_test();
@@ -9780,49 +17651,185 @@ void application_tests() {
   conv3x3_app_test();
   conv3x3_app_unrolled_uneven_test();
 
-  up_unrolled_4_test();
-
-
-  up_unrolled_test();
-  up_down_unrolled_test();
-
   jacobi2d_app_test();
 
   up_stencil_test();
-  neg_stencil_test();
   blur_x_test();
+
+  //remove_reduce_inits_test();
+
+  reuse_buffered_conv_test();
+  infer_uneven_bounds_test();
+  llf_pyramid_test();
+  infer_bounds_unrolled_test();
+  llf_test();
+  blur_example();
+  //assert(false);
+  //halide_camera_pipeline_test();
+  register_file_test();
+
+
+  //assert(false);
+
+  // Failing?
+  two_in_window_test();
+  jacobi_2d_2_test();
+  soda_blur_test();
+  two_in_conv2d_test();
+  //assert(false);
 
   //parse_denoise3d_test();
   //app added for cnn
-  //conv_test();
 
-  sum_diffs_test();
 
   sobel_16_stage_x_app_test();
 
   up_stencil_test();
-  neg_stencil_test();
   blur_x_test();
 
   dummy_app_test();
 
+  blur_and_downsample_test();
+  denoise2d_test();
+
+  brighten_blur_asplos_example();
+  //raw_memtile_verilog_test();
+  //raw_memtile_verilog_as_delay_test();
+
+  infer_bounds_multiple_inputs();
+  infer_bounds_16_stage_5x5_conv_test();
+  infer_bounds_multi_5x1_stage_negative_conv_test();
+  infer_bounds_multi_5x5_stage_negative_conv_test();
+  infer_bounds_multi_stage_negative_conv_test();
+  //infer_bounds_color_downsample_test();
+  infer_bounds_multi_stage_negative_conv1d_test();
+  infer_bounds_three_stage_negative_conv_test();
+
+  infer_bounds_single_stage_negative_conv_test();
+  infer_bounds_negative_conv_test();
+
+
+  sum_diffs_test();
+  denoise3d_reconvergence_test();
+  tricky_shift_register_reconvergence_test();
+  mismatched_stencil_test();
+  gaussian_pyramid_app_test("gp64x64");
+
+  reduce_1d_test();
+  reduce_2d_test();
+  ram_addr_unit_test();
+
+
+  upsample2d_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  up_unrolled_4_test();
+  reduce_rows_test();
+  reaccess_no_hierarchy_test();
+  //playground();
+
+  up_unrolled_test();
+
+  //adobe_meeting_apps();
+  sum_denoise_test();
+  //assert(false);
+
+  up_down_unrolled_test();
+
+
+  histogram_test();
+  //assert(false);
+  halide_cascade_test();
+
+  //mmul_outer_prod_test();
+
+  tricky_shift_register_reconvergence_test();
+
+  mmul_outer_prod_test();
+  grayscale_conversion_test();
+  //print_test();
+  //manual_unroll_test();
+
+  compute_unit_with_index_variables_test();
+
+  //pyr_1d_conv_test();
+  halide_dnn_test();
+  //conv_1d_bc_test();
+
+  conv_1d_test();
+
+  jacobi2d_app_test();
+  downsample2d_test();
+  up_stencil_down_test();
+  downsample_and_blur_test();
+
+  updown_merge_test();
+  harris_unrolled_test();
+
+
+  identity_stream_coreir_test();
+  weight_streaming_test();
+
+  identity_stream_through_mem_coreir_test();
+  reduce_stream_coreir_test();
+
+  us_unroll_test();
+  ds_unroll_test();
+  prg_unroll_test();
+  lchannel_test();
+  gf_test();
+
+  halide_frontend_test();
+  halide_up_sample_test();
+  halide_conv_layer_3D_test();
+  conv_3_3_halide_test();
+
+  async_add_test();
+  lake_agg_sram_tb_config_test();
+  seidel2d_test();
+  add_four_channels();
+  weight_add_psef();
+
+  two_stage_psef();
+  psef_multi_output_test();
+
+  non_rate_matched_ds_test();
+
   //two_input_denoise_pipeline_test();
-
-
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
-
   //up_stencil_down_unrolled_test();
   //laplacian_pyramid_app_test();
 }
 
+void affine_controller_test() {
+#ifdef COREIR
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_set* dom = isl_set_read_from_str(ctx, "{ event[i, j] : 0 <= i <= 9 and 0 <= j <= 3 }");
+  isl_aff* aff = isl_aff_read_from_str(ctx, "{ event[i, j] -> [(10*i + j)] }");
+  auto context = CoreIR::newContext();
+  auto ac = affine_controller(context, dom, aff);
+
+  ac->print();
+  context->runPasses({"flattentypes", "flatten", "wireclocks-coreir"});
+
+  cmd("rm -f event.json");
+  saveToFile(context->getNamespace("global"), "event.json", ac);
+
+  deleteContext(context);
+  isl_ctx_free(ctx);
+  //assert(false);
+#endif
+}
+
 void memory_tile_tests() {
-  conv33_large_test();
-  assert(false);
+  affine_controller_test();
   conv33_test();
+  conv33_large_test();
   conv45_test();
+  //assert(false);
   vec_test();
   bankmerge_vec_test();
   reaccess_test();
@@ -9833,6 +17840,179 @@ void memory_tile_tests() {
   agg_test();
 
   //assert(false);
+}
+
+void multi_channel_example() {
+  int cols = 1920;
+  int rows = 1080;
+
+  const int unroll_factor = 32;
+  string out_name = "three_channel_" + str(unroll_factor);
+  multi_channel(out_name).realize(out_name, cols, rows, unroll_factor);
+  move_to_benchmarks_folder(out_name);
+}
+
+Window hblur_3(const std::string& name) {
+  return Window{name, {qconst(2), qconst(2)}, {{0, 0}, {1, 0}}};
+}
+
+string as_ds(const std::string& input, App& ds) {
+  string hb = input + "_hblur";
+
+  ds.func2d(hb, "as_hblur", hblur_3(input));
+  return hb;
+}
+
+vector<string> as_gauss_pyramid(const int num_levels, const string& func, App& app) {
+  string last = func;
+  vector<string> gauss_levels;
+  gauss_levels.push_back(last);
+  for (int l = 1; l < num_levels; l++) {
+    string next_blur = func + "_gauss_blur_" + str(l);
+    string next_out = func + "_gauss_ds_" + str(l);
+
+    //vector<vector<int > > offsets{{1, 0}, {0, 0}};
+    //Window blur_window{last, {qconst(1), qconst(1)}, offsets};
+    app.func2d(next_out, "as_hblur", hblur_3(last));
+
+    last = next_out;
+    gauss_levels.push_back(last);
+  }
+
+  assert(gauss_levels.size() == num_levels);
+
+  return gauss_levels;
+}
+
+vector<string> as_laplace_pyramid(const int num_levels, const string& func, App& app) {
+  auto gauss_levels = as_gauss_pyramid(num_levels, func, app);
+
+  vector<string> laplace_levels;
+  for (int l = 0; l < num_levels - 1; l++) {
+    string larger_image = gauss_levels.at(l);
+    string smaller_image = gauss_levels.at(l + 1);
+
+    string next_us = func + "_laplace_us_" + str(l);
+    string next_out = func + "_laplace_diff_" + str(l);
+
+    // Upsample the image
+    app.func2d(next_us, "id", smaller_image, {qconst(1, 2), qconst(1, 2)}, {{0, 0}});
+
+    Window ad{larger_image, {qconst(1), qconst(1)}, {{0, 0}}};
+    Window ud{next_us, {qconst(1), qconst(1)}, {{0, 0}}};
+    app.func2d(next_out, "diff", {ad, ud});
+
+    laplace_levels.push_back(next_out);
+  }
+
+  laplace_levels.push_back(gauss_levels.back());
+
+  assert(laplace_levels.size() == num_levels);
+
+  return laplace_levels;
+}
+
+void asplos_ds_test() {
+  App ds;
+  ds.func2d("in_oc");
+  ds.func2d("in", "id", pt("in_oc"));
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+
+  string hblur = as_ds("in", ds);
+  ds.realize(options, hblur, 30, 30, 1);
+}
+
+void asplos_gp_test() {
+  App ds;
+  ds.func2d("in_oc");
+  ds.func2d("in", "id", pt("in_oc"));
+
+  auto gp = as_gauss_pyramid(4, "in", ds);
+  cout << "GP functions" << endl;
+  for (auto g : gp) {
+    cout << tab(1) << g << endl;
+  }
+
+  string hblur = gp.back();
+  cout << "hblur = " << hblur << endl;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  ds.realize(options, hblur, 30, 30, 1);
+}
+
+void asplos_lp_test() {
+  App ds;
+  ds.func2d("in_oc");
+  ds.func2d("in", "id", pt("in_oc"));
+
+  auto lp = as_laplace_pyramid(4, "in", ds);
+  string image = lp.back();
+  for (int i = lp.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    ds.func2d(merged_level, "add", {upsample(2, image), pt(lp.at(i))});
+    image = merged_level;
+  }
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  ds.realize(options, image, 30, 30, 1);
+}
+
+void asplos_ef_test() {
+  App ds;
+  ds.func2d("in_oc");
+  ds.func2d("in", "id", pt("in_oc"));
+
+  ds.func2d("dark", "id", pt("in"));
+  ds.func2d("bright", "as_ef_scale", pt("in"));
+
+  ds.func2d("dark_weights", "as_ef_weight", pt("dark"));
+  ds.func2d("bright_weights", "as_ef_weight", pt("bright"));
+
+  auto dp = as_laplace_pyramid(4, "dark", ds);
+  auto bp = as_laplace_pyramid(4, "bright", ds);
+
+  auto dwp = as_gauss_pyramid(4, "dark_weights", ds);
+  auto bwp = as_gauss_pyramid(4, "bright_weights", ds);
+
+  vector<string> lp;
+  for (int i = 0; i < dp.size(); i++) {
+    string merged = "merged_weights_" + str(i);
+    ds.func2d(merged, "as_ef_merge", {pt(dp.at(i)), pt(dwp.at(i)), pt(bp.at(i)), pt(bwp.at(i))});
+    lp.push_back(merged);
+  }
+
+  string image = lp.back();
+  for (int i = lp.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    ds.func2d(merged_level, "add", {upsample(2, image), pt(lp.at(i))});
+    image = merged_level;
+  }
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  ds.realize(options, image, 30, 30, 1);
+
+}
+
+void generate_asplos_examples() {
+  asplos_ds_test();
+  asplos_gp_test();
+  asplos_lp_test();
+  asplos_ef_test();
 }
 
 void blur_example() {
@@ -9852,6 +18032,769 @@ void blur_example() {
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
+  system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
+  system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
+  system(("cp conv_3x3.h " + synth_dir).c_str());
+  system(("cp clockwork_standard_compute_units.h " + synth_dir).c_str());
+  system(("cp hw_classes.h " + synth_dir).c_str());
+  make_exe("set_app.sh");
+  system(("mv set_app.sh " + synth_dir).c_str());
+
+  int res = cmd("g++ -std=c++11 ./blur_example/blur_example_opt_sw_bmp_test_harness.cpp ./blur_example/blur_example_opt.cpp -I ./aws_collateral/ -I .");
+  assert(res == 0);
+}
+
+class fusion_group {
+  public:
+
+    std::map<op*, string> fuse_levels;
+};
+
+vector<op*> fully_scheduled_nodes(schedule_info& sched, prog& prg)  {
+  vector<op*> ops;
+  for (auto op : prg.all_nodes()) {
+    if (is_op_scheduled(op, sched, prg)) {
+      ops.push_back(op);
+    }
+  }
+  return ops;
+}
+
+void print_partial_schedule(schedule_info& sched, prog& prg) {
+  auto scheduled = fully_scheduled_nodes(sched, prg);
+  cout << "Fully scheduled ops..." << endl;
+  for (auto op : scheduled) {
+    cout << tab(1) << op->name << endl;
+  }
+  cout << endl;
+  cout << "IIs" << endl;
+  for (auto e : sched.loop_iis) {
+    cout << tab(1) << e.first << ": " << e.second << endl;
+  }
+  cout << endl;
+  cout << "Offsets in parent" << endl;
+  for (auto e : sched.op_offset_within_parent) {
+    cout << tab(1) << e.first->name << ": " << e.second << endl;
+  }
+  cout << endl;
+  //cout << "Instance latencies" << endl;
+  //for (auto e : sched.instance_latencies) {
+    //cout << tab(1) << e.first->name << ": " << e.second << endl;
+  //}
+}
+
+void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg) {
+  int delay = 0;
+  for (auto outer_loop : outer) {
+    for (auto c : outer_loop->children) {
+      sched.op_offset_within_parent[c] = delay;
+      delay += sched.total_latency(c);
+    }
+    sched.op_offset_within_parent[outer_loop] = 0;
+  }
+
+  for (auto outer_loop : outer) {
+    //sched.instance_latencies[outer_loop] = delay;
+  }
+
+  for (auto outer_loop : outer) {
+    sched.loop_iis[outer_loop->name] = delay;
+  }
+}
+
+vector<op*> unscheduled_nodes(schedule_info& sched, prog& prg) {
+  vector<op*> unscheduled;
+  for (auto op : prg.all_nodes()) {
+    if (!is_op_scheduled(op, sched, prg)) {
+      unscheduled.push_back(op);
+    }
+  }
+  return unscheduled;
+}
+
+bool all_ops_scheduled(schedule_info& sched, prog& prg) {
+  for (auto op : prg.all_ops()) {
+    if (!is_op_scheduled(op, sched, prg)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void naively_extend_bounds_to_multiple_of(op* loop, const int inner_tile_size) {
+  loop->pretty_print();
+  if (loop->trip_count() % inner_tile_size == 0)  {
+    return;
+  }
+
+  cout << tab(1) << "Tile size:  " << inner_tile_size << endl;
+  cout << tab(1) << "Trip count: " << loop->trip_count() << endl;
+  assert(loop->start == 0);
+  loop->end_exclusive = loop->end_exclusive + (inner_tile_size - loop->trip_count() % inner_tile_size);
+  loop->pretty_print();
+  assert(loop->trip_count() % inner_tile_size == 0);
+}
+
+void push_below(loop* outer, loop* inner, prog& prg) {
+  assert(outer->children.size() == 1);
+  assert(pick(outer->children) == inner);
+
+  vector<op*> inner_children = inner->children;
+
+  for (auto lp : prg.all_loops()) {
+    if (elem(outer, lp->children)) {
+      lp->replace_child(outer, inner);
+    }
+  }
+
+  outer->children = inner_children;
+  inner->children = {outer};
+
+  auto old_parent = outer->parent;
+  inner->parent = old_parent;
+  outer->parent = inner;
+}
+
+void push_to_bottom_of_band_ignoring(vector<loop*>& base, loop* lp, prog& prg) {
+  assert(lp->is_loop);
+  assert(lp->children.size() == 1);
+
+  int old_num_loops = prg.all_loops().size();
+  prg.pretty_print();
+
+  if (!is_inner_loop(lp) && !elem(pick(lp->children), base)) {
+    auto inner_lp = pick(lp->children);
+    push_below(lp, inner_lp, prg);
+    push_to_bottom_of_band_ignoring(base, lp, prg);
+  }
+
+  prg.pretty_print();
+  assert(prg.all_loops().size() == old_num_loops);
+}
+
+void tile_for_time_sharing(prog& prg) {
+  assert(is_rate_matchable(prg));
+  int num_levels = loop_depth(prg.root);
+
+  map<string, vector<op*> > inner_tiles;
+  for (int level = num_levels - 1; level > 0; level--) {
+    vector<isl_map*> mps;
+    for (auto m : get_maps(prg.validity_deps())) {
+      mps.push_back(project_all_but(m, level));
+      release(m);
+    }
+    map<string, isl_val*> qfs =
+      compute_qfactors(mps);
+    cout << "QFactors..." << endl;
+    int max = -1;
+    for (auto q : qfs) {
+      cout << tab(1) << q.first << " -> " << str(q.second) << endl;
+      if (to_int(q.second) > max) {
+        max = to_int(q.second);
+      }
+    }
+    assert(max >= 1);
+
+    cout << "Tile factors..." << endl;
+    for (auto q : qfs) {
+      string name = q.first.substr(2);
+      if (!contains_key(name, inner_tiles)) {
+        inner_tiles[name] = {};
+      }
+      int inner_tile_size = max / to_int(q.second);
+      cout << tab(1) << name << " -> " << max / to_int(q.second) << endl;
+      op* loop = prg.find_loop(surrounding_vars(name, prg).at(level));
+      naively_extend_bounds_to_multiple_of(loop, inner_tile_size);
+      op* inner_tile_loop = strip_mine(inner_tile_size, loop, prg);
+      inner_tiles[name].push_back(inner_tile_loop);
+    }
+  }
+
+  for (auto& ent : inner_tiles) {
+    for (auto lp : ent.second) {
+      push_to_bottom_of_band_ignoring(ent.second, lp, prg);
+    }
+  }
+}
+
+void test_outer_strip_mine() {
+  prog prg("time_sharing_pyramid_1d");
+
+  prg.add_input("in");
+  prg.add_output("b1");
+
+  {
+    auto ld = prg.add_loop("i0", 0, 1)->add_loop("i1", 0, 1)->add_op("cpy");
+    ld->add_load("in", "i0, i1");
+    ld->add_store("b0", "i0, i1");
+  }
+
+  {
+    auto ld = prg.add_loop("x0", 0, 1)->add_loop("x1", 0, 1)->add_op("ldin0");
+    ld->add_load("b0", "2*x0 + 0, 2*x1 + 1");
+    ld->add_load("b0", "2*x0 + 1, 2*x1 + 1");
+    ld->add_store("b1", "x0, x1");
+    ld->add_function("add_2");
+  }
+
+
+  infer_bounds("b1", {4, 4}, prg);
+  auto unopt = unoptimized_result(prg);
+
+  strip_mine(2, "x0", prg);
+  prg.pretty_print();
+
+  auto strip_mined = unoptimized_result(prg);
+  prg.pretty_print();
+  compare("outer_strip_mine_" + prg.name + "_vs_unopt", strip_mined, unopt);
+}
+
+struct app_dag {
+  prog prg;
+  map<string, std::set<string> > fusion_groups;
+
+  // This is constructed later.
+  map<string, prog> fusion_group_progs;
+  map<string, int> channel_sizes;
+
+  vector<string> sorted_fusion_groups() {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    vector<string> sorted;
+    std::set<string> finished_buffers;
+    for (auto b : prg.ins) {
+      finished_buffers.insert(b);
+    }
+
+    while (sorted.size() < fusion_groups.size()) {
+      for (auto& g : fusion_group_progs) {
+        if (!elem(g.first, sorted)) {
+          bool all_deps_done = true;
+          for (auto b : g.second.ins) {
+            if (!elem(b, finished_buffers)) {
+              all_deps_done = false;
+              break;
+            }
+          }
+
+          if (all_deps_done) {
+            for (auto b : g.second.outs) {
+              finished_buffers.insert(b);
+            }
+            sorted.push_back(g.first);
+          }
+        }
+      }
+
+    }
+    return sorted;
+  }
+
+  bool is_boundary(const std::string& buf) {
+    return prg.is_boundary(buf);
+  }
+
+  string producer_group(const std::string& buf) {
+    assert(fusion_groups.size() == fusion_group_progs.size());
+
+    for (auto& gp : fusion_group_progs) {
+      if (elem(buf, buffers_written(gp.second))) {
+        return gp.first;
+      }
+    }
+    cout << "Error: No producer group for: " << buf << endl;
+    assert(false);
+  }
+
+  bool in_group(op* op, const std::string& group_name) {
+    for (std::string g : map_find(group_name, fusion_groups)) {
+      //cout << "checking if " << op->name << " is in " << g << endl;
+      auto lp = prg.find_loop(g);
+      //lp->pretty_print();
+      if (lp == op || elem(op, lp->descendant_ops())) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
+bool all_kernel_inputs_are_program_inputs(app_dag& dag) {
+  for (auto& g : dag.fusion_group_progs) {
+    auto& gp = g.second;
+    for (auto buf : buffers_read(gp)) {
+      if ((dag.is_boundary(buf) || dag.producer_group(buf) != g.first) &&
+          !elem(buf, gp.ins)) {
+        cout << buf << " is not an in of " << endl;
+        gp.pretty_print();
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+bool all_kernel_outputs_have_fanout_one(app_dag& dag) {
+  for (auto& g : dag.fusion_groups) {
+    assert(contains_key(g.first, dag.fusion_group_progs));
+    for (auto out : dag.fusion_group_progs.at(g.first).outs) {
+      int num_receivers = 0;
+      for (auto& other : dag.fusion_group_progs) {
+        for (auto in : other.second.ins) {
+          if (out == in) {
+            num_receivers++;
+          }
+        }
+      }
+      if (num_receivers >= 2) {
+        cout << out << " has " << num_receivers << " readers" << endl;
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+void generate_app_code(CodegenOptions& options,
+    app_dag& dag) {
+
+  // Dummy interface for the application
+  auto sched = dag.prg.unoptimized_schedule();
+  auto buffers = build_buffers(dag.prg, dag.prg.unoptimized_schedule());
+
+  ofstream conv_out(dag.prg.name + ".cpp");
+  generate_app_prefix(options, conv_out, dag.prg);
+
+  for (auto& gp : dag.fusion_group_progs) {
+    //auto sched = gp.second.unoptimized_schedule();
+    auto sched = gp.second.optimized_codegen();
+
+    auto domains = gp.second.domains();
+    map<string, isl_set*> domain_map;
+    for (auto d : domains) {
+      domain_map[d.first->name] = d.second;
+    }
+    auto buffers = build_buffers(gp.second, sched);
+    generate_app_code_body(options,
+        conv_out,
+        buffers,
+        gp.second,
+        sched,
+        domain_map);
+
+  }
+
+  generate_driver_function_prefix(options, conv_out, buffers, dag.prg);
+
+  conv_out << endl;
+  open_synth_scope(conv_out);
+  conv_out << "#pragma HLS dataflow" << endl;
+  close_synth_scope(conv_out);
+  conv_out << endl;
+
+  std::set<std::string> done;
+  for (auto& buf : dag.prg.boundary_buffers()) {
+    done.insert(buf);
+  }
+
+  for (auto& gp : dag.fusion_group_progs) {
+    for (auto& buf : gp.second.boundary_buffers()) {
+      if (!elem(buf, done)) {
+        conv_out << tab(1) << "HWStream<hw_uint<32> > " << buf << ";" << endl;
+        done.insert(buf);
+      }
+    }
+  }
+
+  conv_out << endl << endl;
+
+  for (auto& gpn : dag.sorted_fusion_groups()) {
+    auto& gp = dag.fusion_group_progs.at(gpn);
+    vector<string> args;
+    for (auto in : gp.ins) {
+      args.push_back(in);
+    }
+    for (auto out : gp.outs) {
+      args.push_back(out);
+    }
+    conv_out << tab(1) << gp.name << sep_list(args, "(", ")", ", ") << ";" << endl;
+  }
+
+  conv_out << endl;
+
+  generate_driver_function_suffix(options, conv_out, buffers, dag.prg);
+
+  {
+    vector<string> arg_buf_list = get_args(buffers, dag.prg);
+    vector<string> ls = arg_buf_list;
+    ls.push_back("const int num_epochs");
+    string outer_arg_buffers = sep_list(ls, "(", ")", ", ");
+    conv_out << "void " << dag.prg.name << "_wrapper" << outer_arg_buffers << " {" << endl << endl;
+    vector<string> arg_strings = get_arg_names(buffers, dag.prg);
+    conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
+    conv_out << tab(2) << dag.prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
+    conv_out << tab(1) << "}" << endl;
+    conv_out << "}" << endl;
+  }
+
+  generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
+}
+
+app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
+  app_dag dag{prg, fusion_groups};
+  for (auto& g : dag.fusion_groups) {
+    dag.fusion_group_progs[g.first] =
+      extract_group_to_separate_prog(g.second, dag.prg);
+  }
+
+  // Map from buffers to the kernels they read
+  map<string, vector<string> > kernel_broadcasts;
+  for (auto gp : dag.fusion_groups) {
+    auto produced = get_produced_buffers(gp.second, prg);
+    for (auto other_gp : fusion_groups) {
+      if (gp != other_gp) {
+        auto consumed = get_consumed_buffers(other_gp.second, prg);
+        for (auto buf : consumed) {
+          if (elem(buf, produced)) {
+            kernel_broadcasts[buf].push_back(other_gp.first);
+          }
+        }
+      }
+    }
+  }
+  cout << "===== Cross kernel deps" << endl;
+  for (auto b : kernel_broadcasts) {
+    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
+    auto consumers = prg.consumer_maps(b.first);
+    for (auto group_name : b.second) {
+      vector<isl_set*> read;
+      for (auto m : consumers) {
+        if (m.second != nullptr && dag.in_group(m.first, group_name)) {
+          auto dom = range(m.second);
+          cout << tab(2) << group_name << " reads " << str(dom) << endl;
+          read.push_back(dom);
+        }
+      }
+
+      isl_set* s = unn(read);
+      cout << tab(2) << "Read: " << str(lexmin(s)) << " to " << str(lexmax(s)) << endl;
+      assert(contains_key(group_name, dag.fusion_group_progs));
+      prog& gp = dag.fusion_group_progs.at(group_name);
+      string replacement = prg.un(b.first + "_FIFO_buf");
+      gp.root->replace_reads_from(b.first, replacement);
+      read_in_no_dsa(gp.root, s, replacement, gp);
+
+      gp.pretty_print();
+    }
+  }
+
+  for (auto b : kernel_broadcasts) {
+    cout << tab(1) << b.first << " is used by " << sep_list(b.second, "[", "]", ", ") << endl;
+    auto consumers = prg.consumer_maps(b.first);
+    for (auto group_name : b.second) {
+      vector<isl_set*> read;
+      for (auto m : consumers) {
+        if (m.second != nullptr && dag.in_group(m.first, group_name)) {
+          auto dom = range(m.second);
+          cout << tab(2) << group_name << " reads " << str(dom) << endl;
+          read.push_back(dom);
+        }
+      }
+
+      isl_set* s = unn(read);
+      string broadcast = prg.un(b.first + "_to_" + group_name);
+      prog& pp = dag.fusion_group_progs.at(dag.producer_group(b.first));
+      pp.outs.insert(broadcast);
+
+      write_out_no_dsa(pp.root, s, broadcast, pp);
+      pp.pretty_print();
+
+      assert(contains_key(group_name, dag.fusion_group_progs));
+      prog& gp = dag.fusion_group_progs.at(group_name);
+      gp.root->replace_reads_from(b.first, broadcast);
+      gp.ins.erase(b.first);
+      gp.ins.insert(broadcast);
+
+      gp.pretty_print();
+
+      pp.outs.erase(b.first);
+    }
+  }
+
+  assert(all_kernel_outputs_have_fanout_one(dag));
+  assert(all_kernel_inputs_are_program_inputs(dag));
+
+  return dag;
+}
+
+void test_multi_kernel_design() {
+  int num_pyramid_levels = 3;
+
+  prog prg("multi_kernel_design");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("in");
+  prg.add_output("out");
+
+  load_input("in", "gray", 2, prg);
+
+  cpy("out", "gray", 2, prg);
+
+  infer_bounds("out", {4, 4}, prg);
+
+  prg.pretty_print();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  map<std::string, std::set<string> > fusion_groups;
+  int i = 0;
+  for (auto gp : get_kernels(prg)) {
+    fusion_groups["gp_" + str(i)] = {gp};
+    i++;
+  }
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  generate_regression_testbench(dag.prg);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  all_unbanked(prg, options);
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  generate_app_code(options, dag);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+}
+
+void test_time_sharing_gaussian_pyramid() {
+  int num_pyramid_levels = 3;
+
+  prog prg("time_sharing_gauss_pyramid");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("in");
+  prg.add_output("out");
+
+  load_input("in", "gray", 2, prg);
+
+  // Make input Gaussian pyramid
+  vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
+  cpy("out", gray_levels.back(), 2, prg);
+
+  infer_bounds("out", {4, 4}, prg);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  for (auto lp : prg.all_loops()) {
+    if (lp->name != "root") {
+      naively_extend_bounds_to_multiple_of(lp, 2);
+    }
+  }
+  prg.pretty_print();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+  move_to_benchmarks_folder(prg.name);
+
+  tile_for_time_sharing(prg);
+  prg.name = "time_sharing_gauss_pyramid_tiled";
+  prg.pretty_print();
+  //assert(false);
+
+  prg.root->replace_reads_from("in", "in_rob");
+
+  auto lp = prg.root->add_loop_before(
+      prg.root->children.front(),
+      prg.un("reorder_load"),
+      0,
+      5*4);
+  auto in = lp->add_loop(prg.un("d"), 0, 5*4);
+  auto rd = in->add_op(prg.un("rob"));
+  rd->add_load("in", in->name, lp->name);
+  rd->add_store("in_rob", in->name, lp->name);
+
+  prg.pretty_print();
+  //assert(false);
+
+  auto tiled = unoptimized_result(prg);
+  compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt_postprocessed);
+  move_to_benchmarks_folder(prg.name);
+}
+
+void test_multi_kernel_unsharp() {
+  prog prg("unsharp_multi_kernel");
+  prg.add_input("in");
+  prg.add_output("out");
+
+  load_input("in", "gray", 2, prg);
+
+  auto blurred = prg.add_nest("xb", 0, 1, "yb", 0, 1)->add_op("blur");
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      blurred->add_load("gray", "xb + " + str(i), "yb + " + str(j));
+    }
+  }
+  blurred->add_store("blurred", "xb", "yb");
+  blurred->add_function("conv_3_3");
+
+  auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
+  diff->add_load("gray", "x", "y");
+  diff->add_load("blurred", "x", "y");
+  diff->add_store("out", "x", "y");
+  diff->add_function("diff");
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  infer_bounds("out", {4, 4}, prg);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  map<std::string, std::set<string> > fusion_groups;
+  int i = 0;
+  for (auto gp : get_kernels(prg)) {
+    fusion_groups["gp_" + str(i)] = {gp};
+    i++;
+  }
+  app_dag dag = partition_application(fusion_groups, prg);
+  for (auto& gp : dag.fusion_group_progs) {
+    cout << "============================" << endl;
+    gp.second.pretty_print();
+    cout << endl;
+  }
+
+  generate_regression_testbench(dag.prg);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  all_unbanked(prg, options);
+  for (auto& gp : dag.fusion_group_progs) {
+    all_unbanked(gp.second, options);
+  }
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  generate_app_code(options, dag);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
+}
+
+void dhuff_playground() {
+  test_multi_kernel_unsharp();
+  assert(false);
+  test_multi_kernel_design();
+  test_time_sharing_gaussian_pyramid();
+
+  //for (auto prg : all_cgra_programs()) {
+    //cout << "====== Running CGRA test for " << prg.name << endl;
+    //prg.pretty_print();
+    //prg.sanity_check();
+
+    //dsa_writers(prg);
+    //prg.pretty_print();
+
+    //compile_for_garnet_platonic_mem(prg);
+  //}
+  //assert(false);
+
+  test_outer_strip_mine();
+
+  prog prg("time_sharing_pyramid_1d");
+
+  prg.add_input("in");
+  prg.add_output("b2");
+
+  {
+    auto ld = prg.add_loop("i0", 0, 1)->add_op("cpy");
+    ld->add_load("in", "i0");
+    ld->add_store("b0", "i0");
+  }
+
+  {
+    auto ld = prg.add_loop("x0", 0, 1)->add_op("ldin0");
+    ld->add_load("b0", "2*x0 + 0");
+    ld->add_load("b0", "2*x0 + 1");
+    ld->add_store("b1", "x0");
+    ld->add_function("add_2");
+  }
+
+  {
+    auto ld = prg.add_loop("x1", 0, 1)->add_op("ldin1");
+    ld->add_load("b1", "2*x1 + 0");
+    ld->add_load("b1", "2*x1 + 1");
+    ld->add_store("b2", "x1");
+    ld->add_function("add_2");
+  }
+
+  infer_bounds("b2", {16}, prg);
+  auto unopt = unoptimized_result(prg);
+  prg.pretty_print();
+
+  tile_for_time_sharing(prg);
+  prg.pretty_print();
+  auto tiled = unoptimized_result(prg);
+  compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
+
+}
+
+void travis_tests() {
+  test_multi_kernel_design();
+  test_time_sharing_gaussian_pyramid();
+  jacobi_2d_2_test();
+  register_file_test();
+  reduce_1d_test();
+  reduce_2d_test();
+  compute_unit_with_index_variables_test();
+  upsample2d_test();
+  downsample2d_test();
+  up_stencil_down_test();
+  gaussian_pyramid_test();
+
+  return;
+
+  heat_3d_test();
+  halide_dnn_test();
+
+  exposure_fusion();
+
+  blur_and_downsample_test();
+  downsample_and_blur_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  updown_merge_test();
+  harris_unrolled_test();
+  mismatched_stencil_test();
+  sobel_test();
+  upsample_reduce_test();
+  pointwise_test();
+  stencil_3d_test();
+  soda_blur_test();
+  two_in_window_test();
+  two_in_conv2d_test();
+  warp_and_upsample_test();
 }
 
 int main(int argc, char** argv) {
@@ -9860,12 +18803,58 @@ int main(int argc, char** argv) {
     assert(argc == 2);
     string cmd = argv[1];
 
+    if (cmd == "dhuff-playground") {
+      dhuff_playground();
+      return 0;
+    }
+
+    if (cmd == "fpga-asplos-flow") {
+      fpga_asplos_tests();
+      return 0;
+    }
+
+    if (cmd == "cgra-flow") {
+      cgra_flow_tests();
+      return 0;
+    }
+
+
+    if (cmd == "dse-flow") {
+      dse_flow_tests();
+      return 0;
+    }
+
+    if (cmd == "asplos-examples") {
+      generate_asplos_examples();
+      return 0;
+    }
+
+    if (cmd == "simple-example-progs") {
+      generate_simple_example_progs();
+      return 0;
+    }
+
+    if (cmd == "multi-channel-example") {
+      multi_channel_example();
+      return 0;
+    }
+
+    if (cmd == "isabela-project") {
+      prog_splitting_tests();
+      return 0;
+    }
+
     if (cmd == "blur-example") {
       blur_example();
       return 0;
     }
     if (cmd == "travis-tests") {
       travis_tests();
+      return 0;
+    }
+
+    if (cmd == "lake-tests") {
+      lake_tests();
       return 0;
     }
 
@@ -9922,9 +18911,9 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    memory_tile_tests();
     application_tests();
-    prog_splitting_tests();
+    memory_tile_tests();
+    //prog_splitting_tests();
     cout << "All tests passed" << endl;
 
   } else {
@@ -9932,6 +18921,4 @@ int main(int argc, char** argv) {
   }
 
   return 0;
-
 }
-

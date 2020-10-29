@@ -2,7 +2,6 @@
 
 extern "C" {
 #include <isl/id.h>
-#include <isl/aff.h>
 #include <isl/set.h>
 #include <isl/flow.h>
 #include <isl/polynomial.h>
@@ -17,6 +16,7 @@ extern "C" {
 #include <isl_ast_build_expr.h>
 #include <isl/options.h>
 #include <isl/map.h>
+#include <isl/aff.h>
 }
 
 #include "barvinok/barvinok.h"
@@ -33,10 +33,13 @@ using std::pair;
 using std::map;
 using std::string;
 
+std::string dim_name(isl_set* const a, const int d);
 std::string dim_name(isl_aff* const a, const int d);
 
 std::string name(isl_space* const s);
 std::string name(isl_set* const s);
+std::string name(isl_union_set* const s);
+
 isl_pw_aff* cpy(isl_pw_aff* const s);
 isl_multi_aff* cpy(isl_multi_aff* const s);
 
@@ -46,6 +49,7 @@ isl_basic_map* cpy(isl_basic_map* const s);
 isl_schedule* cpy(isl_schedule* const s);
 
 isl_pw_multi_aff* cpy(isl_pw_multi_aff* const s);
+//isl_union_pw_multi_aff* cpy(isl_union_pw_multi_aff* const s);
 
 isl_qpolynomial* cpy(isl_qpolynomial* const s);
 
@@ -85,6 +89,7 @@ bool is_zero(isl_val* c);
 isl_local_space* get_local_space(isl_set* const m);
 isl_local_space* get_local_space(isl_constraint* const m);
 isl_local_space* get_local_space(isl_basic_set* const m);
+isl_local_space* get_local_space(isl_basic_map* const m);
 isl_local_space* get_local_space(isl_aff* const m);
 isl_space* get_space(isl_constraint* const m);
 
@@ -94,6 +99,7 @@ isl_space* get_space(isl_map* const m);
 
 isl_space* get_space(isl_set* const m);
 isl_space* get_space(isl_basic_set* const m);
+isl_space* get_space(isl_basic_map* const m);
 isl_space* get_space(isl_union_set* const m);
 isl_space* get_space(isl_aff* const m);
 
@@ -108,7 +114,9 @@ int dim(isl_space* const s);
 bool equal(isl_space* const l, isl_space* const r);
 bool equal(isl_set* const l, isl_set* const r);
 bool equal(uset* const l, uset* const r);
+bool equal(umap* const l, umap* const r);
 
+bool empty(umap* const s);
 bool empty(isl_basic_set* const s);
 bool empty(uset* const s);
 bool empty(isl_set* const s);
@@ -127,10 +135,13 @@ std::string str(isl_local_space* const id);
 std::string domain_name(isl_map* const s);
 std::string range_name(isl_map* const s);
 
+std::string domain_name(isl_basic_map* const s);
+std::string range_name(isl_basic_map* const s);
+
 std::string domain_name(isl_space* const s);
 std::string range_name(isl_space* const s);
 
-std::string domain_name(isl_map* const m);
+std::string domain_name(umap* const m);
 
 std::string range_name(isl_map* const m);
 
@@ -139,10 +150,14 @@ isl_map* set_range_name(isl_map* const m, string new_name);
 isl_map* set_domain_name(isl_map* const m, string new_name);
 
 isl_map* add_range_suffix(isl_map* const m, string suffix);
+isl_map* add_domain_suffix(isl_map* const m, string suffix);
+isl_set* add_suffix(isl_set* const m, string suffix);
 
 
 isl_union_set* to_uset(isl_set* const m);
 isl_set* to_set(isl_basic_set* const m);
+isl_set* to_set(isl_union_set* const m);
+isl_set* to_set(isl_point* const m);
 
 vector<isl_point*> get_points(isl_set* m);
 
@@ -153,15 +168,22 @@ isl_stat get_maps(isl_map* m, void* user);
 vector<isl_map*> get_maps(isl_union_map* m);
 map<string, isl_map*> get_maps_in_map(isl_union_map* m);
 vector<isl_set*> get_sets(isl_union_set* m);
+map<string, isl_set*> get_sets_in_map(isl_union_set* m);
 vector<isl_basic_map*> get_basic_maps(isl_map* m);
 vector<isl_basic_set*> get_basic_sets(isl_set* m);
+isl_basic_set* to_bset(isl_set* m);
 
 std::string str(umap* const m);
 
 std::string str(isl_pw_multi_aff* const pma);
 std::string str(isl_multi_aff* const pma);
 
+std::string str(isl_union_pw_multi_aff* const pma);
 std::string str(isl_multi_union_pw_aff* const pma);
+
+isl_map* linear_address_map(isl_set* s);
+isl_map* linear_address_map_lake(isl_set* s);
+isl_map* linear_address_map_with_index(isl_set* s, vector<int> index);
 
 vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
 
@@ -181,6 +203,10 @@ isl_stat isl_pw_aff_set_var_name( isl_set *set,  isl_aff *aff, void *user);
 isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name);
 
 isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
+isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name, int vec_dim, int fetch_width);
+isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
+isl_map* gen_hw_sched_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, vector<string> var_list, string op_name);
+vector<string> get_map_in_dim_id(isl_map* m);
 
 unsigned get_dim(isl_set* const s);
 
@@ -206,6 +232,7 @@ isl_map* to_map(isl_union_map* const m);
 isl_map* to_map(isl_basic_map* const m);
 
 isl_union_map* to_umap(isl_map* const m);
+isl_union_map* to_umap(isl_union_set* const m);
 
 isl_ctx* ctx(isl_pw_aff* const m);
 
@@ -216,6 +243,7 @@ isl_ctx* ctx(isl_point* const m);
 isl_ctx* ctx(isl_constraint* const m);
 
 isl_ctx* ctx(isl_basic_set* const m);
+isl_ctx* ctx(isl_basic_map* const m);
 isl_ctx* ctx(isl_set* const m);
 
 isl_ctx* ctx(isl_space* const m);
@@ -226,6 +254,7 @@ isl_ctx* ctx(isl_qpolynomial* const m);
 isl_ctx* ctx(isl_union_pw_qpolynomial* const m);
 
 isl_ctx* ctx(isl_aff* const m);
+isl_ctx* ctx(isl_multi_aff* const m);
 
 isl_ctx* ctx(isl_val* const m);
 
@@ -247,10 +276,13 @@ vector<string> collect_sched_vec(isl_union_map* const um);
 
 umap* pad_one_more_dim_to_sched_map(isl_ctx* ctx, umap* const um, string pad_val);
 umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val);
+isl_map* pad_one_more_dim_to_sched_map_innermost(isl_map* const um, int pad_val);
+umap* pad_one_more_dim_to_sched_map_with_id(umap* const um, int dim_id, int pad_val);
 
 std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_union_set* bset);
 std::string codegen_c(isl_constraint* const bset);
+std::string codegen_c(isl_multi_aff* const bset);
 
 std::string codegen_c(isl_schedule* const bset);
 
@@ -335,6 +367,7 @@ isl_map* lexmax(isl_map* const m0);
 isl_map* inv(isl_map* const m0);
 
 isl_set* unn(isl_set* const m0, isl_set* const m1);
+isl_set* unn(const std::vector<isl_set*>& sets);
 
 isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1);
 
@@ -346,17 +379,31 @@ isl_union_map* flatten_umap_domain(isl_ctx* ctx, isl_union_map* const um, map<st
 isl_union_map* remove_dep_domain_name(umap* um, string name);
 
 
+umap* flatten_umap_domain_with_dim_from_outer(umap* um, int dim_from_outer);
 isl_stat flatten_map_domain(isl_map* s, void* user);
 umap* flatten_map_domain_with_ii(isl_map* s, int ii);
+umap* flatten_map_domain_with_dim(umap* s, int dim_id);
 umap* flatten_map_domain_trans(isl_map* s, int ii);
+umap* flatten_map_domain_trans_with_dim(isl_map* s, int dim_from_inner);
 isl_stat umap_lex_lt(isl_map* s,  void* user);
 isl_bool with_domain_name(isl_map* m, void* user);
+isl_map* retrive_map_domain_dim(isl_map*, isl_set*);
+isl_map* retrive_map_domain_with_dim(isl_map*, isl_set*);
 
 isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 isl_map* get_shift_map(isl_map* s);
+isl_map* delay_schedule_inner_most(isl_map* s, int delay);
+isl_map* delay_schedule_domain_dim(isl_map* s, int dom_dim, int delay);
+vector<bool> relation_map(isl_map* m);
+int get_involve_dim(isl_map* m, int out_dim);
+isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay);
+int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 
 //some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);
+isl_map* pad_to_domain_ubuf_map(isl_map* s, int depth);
+isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
+isl_map* shift_range_map(isl_map* s, vector<int> shift_depth);
 isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
 isl_map* delay_sched_map(isl_map* s, isl_map* write_sched);
 
@@ -396,10 +443,12 @@ isl_union_map* dot(isl_union_map* const m0, isl_map* const m1);
 
 isl_map* dot(isl_map* const m0, isl_map* const m1);
 
+isl_set* simplify(isl_set* const m);
 isl_union_set* simplify(uset* const m);
 isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 
 isl_map* simplify(isl_map* const m);
+isl_map* simplify_expr(isl_map* const m);
 
 umap* simplify(umap* const m);
 
@@ -449,6 +498,7 @@ int bnd_int(isl_union_pw_qpolynomial_fold* bound);
 int int_lower_bound(isl_union_pw_qpolynomial* range_card);
 int int_upper_bound(isl_union_pw_qpolynomial* range_card);
 
+//TODO: rename it to get in/out card
 isl_union_pw_qpolynomial* get_out_range(isl_map* m, int dim);
 
 isl_union_pw_qpolynomial_fold* lower_bound(isl_union_pw_qpolynomial* range_card);
@@ -479,6 +529,7 @@ get_polynomial_folds(isl_union_pw_qpolynomial_fold* p);
 vector<isl_pw_qpolynomial*>
 get_polynomials(isl_union_pw_qpolynomial* p);
 
+vector<isl_constraint*> constraints(isl_basic_set* s);
 vector<isl_constraint*> constraints(isl_set* s);
 vector<isl_constraint*> constraints(isl_map* s);
 
@@ -488,10 +539,14 @@ isl_set* universe(isl_space* s);
 isl_set* add_constraint(isl_set* s, isl_constraint* c);
 
 
+int num_div_dims(isl_local_space* const ls);
 int num_out_dims(isl_space* const s);
 int num_in_dims(isl_space* const s);
+int num_param_dims(isl_space* const s);
 int num_in_dims(isl_local_space* const s);
 int num_out_dims(isl_local_space* const s);
+
+int num_in_dims(isl_multi_aff* const s);
 
 int num_dims(isl_aff* const s);
 int num_in_dims(isl_aff* const s);
@@ -501,24 +556,39 @@ int num_out_dims(isl_aff* const s);
 int num_out_dims(isl_map* const s);
 int num_in_dims(isl_map* const s);
 
+int num_out_dims(isl_basic_map* const s);
+int num_in_dims(isl_basic_map* const s);
+int num_div_dims(isl_basic_map* const s);
+int num_param_dims(isl_basic_map* const s);
+
+int num_div_dims(isl_basic_set* const s);
+int num_param_dims(isl_basic_set* const s);
+
 vector<int> parse_pt(isl_point* p);
+isl_point* form_pt(vector<int> const_vec);
 
 uset* gist(uset* base, uset* context);
 isl_map* project_all_but(isl_map* const dmap, const int d);
 isl_set* project_all_but(isl_set* const dmap, const int d);
+isl_set* project_out(isl_set* const dmap, const int d);
+isl_map* project_out(isl_map* const dmap, const int d);
 
 
 vector<string> space_var_args(isl_space* s);
 vector<string> space_var_decls(isl_space* s);
 
 isl_aff* add(isl_aff* a, isl_aff* b);
+isl_aff* div(isl_aff* a, isl_aff* b);
 
 isl_val* add(isl_val* a, isl_val* b);
 isl_val* sub(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);
 isl_val* neg(isl_val* a);
 
+isl_aff* sub(isl_aff* a, isl_aff* b);
 int to_int(isl_val* a);
+
+isl_multi_aff* sub(isl_multi_aff* a, isl_multi_aff* b);
 
 isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v);
 isl_aff* set_const_coeff(isl_aff* const a, isl_val* v);
@@ -538,6 +608,12 @@ isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max);
 isl_set* pad_set(isl_set* s, const int max_dim);
 uset* pad_uset(uset* domain);
 umap* pad_map(umap* unpadded);
+isl_map* pad_map(isl_map* unpadded, const int max_dim);
+
+isl_map* pad_identity_relation_to_map(isl_map* m,
+        int in_dim, int out_dim, int lbd, int ubd);
+umap* pad_identity_relation_to_umap(umap* m,
+        int in_dim, int out_dim, int ldb, int ubd);
 
 isl_val* coord(isl_point* const p, const int pos);
 
@@ -546,3 +622,58 @@ bool lex_gt_pt(isl_point* const l, isl_point* const r);
 
 isl_val* get_coeff(isl_constraint* c, enum isl_dim_type type, int pos);
 isl_val* eval(isl_aff* a, isl_point* p);
+
+
+isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1);
+
+
+isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);
+isl_map* diff(isl_map* const m0, isl_map* const m1);
+
+isl_aff* get_aff(isl_map* m);
+isl_aff* get_aff(isl_union_map* m);
+std::vector<isl_aff*> get_aff_vec(isl_map* m);
+
+
+string str(isl_mat* const ineqmat);
+
+isl_basic_set* lift_divs(isl_basic_set* bm);
+isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm);
+isl_basic_set* negative(isl_basic_set* fs, const int var);
+isl_basic_set* positive(isl_basic_set* fs, const int var);
+isl_basic_set* zero(isl_basic_set* fs, const int var);
+
+
+std::string codegen_c(isl_aff* const bset);
+isl_set* set_name(isl_set* const m, string new_name);
+isl_aff* set_name(isl_aff* const m, string new_name);
+isl_multi_aff* set_name(isl_multi_aff* const m, string new_name);
+isl_multi_aff* set_in_name(isl_multi_aff* const m, string new_name);
+
+void release(isl_set* s);
+void release(isl_map* m);
+void release(isl_union_set* s);
+void release(isl_union_map* m);
+void release(isl_union_pw_qpolynomial* m);
+void release(isl_aff* s);
+
+isl_multi_aff* get_multi_aff(isl_union_map* m);
+isl_multi_aff* get_multi_aff(isl_map* m);
+
+
+isl_map* linear_address_map(isl_set* s);
+isl_map* linear_schedule(isl_map* sched, vector<int> iis, int offset, bool ignore);
+isl_map* to_map(isl_aff* s);
+isl_map* to_map(isl_multi_aff* s);
+bool no_divs(isl_aff* a);
+isl_aff* constant_aff(isl_aff* src, const int val);
+
+isl_aff* add(isl_aff* start_time_aff, const int compute_latency);
+isl_aff* sub(isl_aff* start_time_aff, const int compute_latency);
+isl_aff* mul(isl_aff* start_time_aff, const int compute_latency);
+isl_aff* div(isl_aff* start_time_aff, const int compute_latency);
+
+std::vector<isl_aff*> get_affs(isl_multi_aff* saff);
+std::map<int, isl_val*> constant_components(isl_multi_aff* access);
+isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str);
+isl_val* constant(isl_aff* a);

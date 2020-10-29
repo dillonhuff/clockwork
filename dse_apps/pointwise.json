@@ -1,0 +1,48 @@
+{
+"namespaces":{
+  "global":{
+    "modules":{
+      "hcompute_hw_input_global_wrapper_stencil":{
+        "type":["Record",[
+          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_input_global_wrapper_stencil","self.in0_hw_input_stencil.0"]
+        ]
+      },
+      "hcompute_hw_output_stencil":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_mult_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_output_stencil","self.in0_mult_stencil.0"]
+        ]
+      },
+      "hcompute_mult_stencil":{
+        "type":["Record",[
+          ["out_mult_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "const_p2__259":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0002"]}
+          },
+          "mul_hw_input_global_wrapper_stencil_1_259_260":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["mul_hw_input_global_wrapper_stencil_1_259_260.in1","const_p2__259.out"],
+          ["self.in0_hw_input_global_wrapper_stencil.0","mul_hw_input_global_wrapper_stencil_1_259_260.in0"],
+          ["self.out_mult_stencil","mul_hw_input_global_wrapper_stencil_1_259_260.out"]
+        ]
+      }
+    }
+  }
+}
+}

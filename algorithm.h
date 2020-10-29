@@ -60,12 +60,12 @@ namespace dbhc {
   bool elem(T e, const std::deque<T>& t) {
     return std::find(begin(t), end(t), e) != end(t);
   }
-  
+
   template<typename T>
   bool elem(T e, const std::set<T>& t) {
     return t.find(e) != end(t);
   }
-  
+
   template<typename InputIt, typename OutputIt, typename F>
   OutputIt apply_between(InputIt s, InputIt e, OutputIt r, F f) {
     while (s != (e - 1)) {
@@ -84,7 +84,7 @@ namespace dbhc {
       ++s;
     }
   }
-  
+
   template<typename InputIt, typename F>
   bool all_between(InputIt s, InputIt e, F f) {
     while (s != (e - 1)) {
@@ -102,7 +102,7 @@ namespace dbhc {
     }
     return false;
   }
-  
+
   template<typename InputIt, typename F>
   void greedy_adjacent_chains(InputIt s, InputIt e, F f) {
     if (s == e) { return; }
@@ -141,7 +141,7 @@ namespace dbhc {
     split_by(elems, split, f);
     return split;
   }
-  
+
   template<typename I, typename F>
   void split_by(const std::vector<I>& elems, std::vector<std::vector<I>>& res, F f) {
     auto it = elems.begin();
@@ -237,7 +237,7 @@ namespace dbhc {
 
     return inds_to_remove;
   }
-  
+
   template<typename I, typename P>
   std::vector<unsigned>
   dfs_by_neighbors(std::vector<unsigned>& inds, const std::vector<I>& elems, P p) {
@@ -367,7 +367,7 @@ namespace dbhc {
 		     std::begin(r), std::end(r),
 		     std::inserter(it, std::end(it)));
     return it;
-  }  
+  }
 
   template<typename A>
   std::deque<A>
@@ -379,7 +379,7 @@ namespace dbhc {
       }
     }
     return it;
-  }  
+  }
 
   template<typename A>
   std::vector<A>
@@ -391,8 +391,8 @@ namespace dbhc {
       }
     }
     return it;
-  }  
-  
+  }
+
   template<typename A>
   std::unordered_set<A>
   intersection(const std::unordered_set<A>& l, const std::unordered_set<A>& r) {
@@ -456,9 +456,9 @@ namespace dbhc {
 
     return diff;
   }
-  
+
   // End difference
-  
+
   template<typename I>
   std::vector<I> concat_all(const std::vector<std::vector<I>>& vs) {
     std::vector<I> all_vs;
@@ -508,7 +508,7 @@ namespace dbhc {
 
     return f->second;
   }
-  
+
   template<typename A, typename B>
   void map_insert(std::unordered_map<A, std::vector<B>>& m, A a, B b) {
     if (m.find(a) == std::end(m)) {
@@ -520,7 +520,7 @@ namespace dbhc {
       m[a] = elems;
     }
   }
-  
+
   // TODO: Make this more efficient
   template<typename T, typename F>
   std::vector<T>
@@ -548,7 +548,7 @@ namespace dbhc {
 			 const std::vector<Elem>& to_return_from,
 			 Orthogonal orthogonal) {
     assert(to_return_from.size() > 0);
-      
+
     if (to_check.size() == 0) { return to_return_from.front(); }
 
     for (unsigned i = 0; i < to_return_from.size(); i++) {
@@ -562,7 +562,7 @@ namespace dbhc {
 
     DBG_ASSERT(false);
   }
-  
+
   // TODO: Move to utils/algorithm
   template<typename Elem, typename Orthogonal>
   std::vector<Elem>
@@ -601,7 +601,7 @@ namespace dbhc {
   T min_e(const std::deque<T>& e) {
     return *min_element(begin(e), end(e));
   }
-  
+
   template<typename T, typename F>
   T min_e(const std::vector<T>& e, F f) {
     return *min_element(begin(e), end(e),
@@ -612,7 +612,7 @@ namespace dbhc {
   T min_e(const std::vector<T>& e) {
     return *min_element(begin(e), end(e));
   }
-  
+
   template<typename T, typename F>
   T min_e(const std::set<T>& e, F f) {
     return *min_element(begin(e), end(e),
@@ -628,7 +628,7 @@ namespace dbhc {
   // T max_e(const std::array<T, I>& e) {
   //   return *max_element(e.begin(), e.end());
   // }
-  
+
   template<typename T, typename F>
   T max_e(const std::vector<T>& e, F f) {
     return *max_element(begin(e), end(e),
@@ -661,7 +661,7 @@ namespace dbhc {
   T max_e(const std::set<T>& e) {
     return *max_element(begin(e), end(e));
   }
-  
+
   template<typename T, typename F>
   T max_e(const std::unordered_set<T>& e, F f) {
     return *max_element(begin(e), end(e),
@@ -799,7 +799,7 @@ namespace dbhc {
 
     maybe(const T& value_) : value(value_), has_val(true) {}
     maybe() : has_val(false) {}
-                                                         
+
     bool has_value() const { return has_val; }
 
     T get_value() const {
@@ -808,6 +808,71 @@ namespace dbhc {
     }
   };
 
+  template<typename T>
+  std::ostream& operator<<(std::ostream& out, const maybe<T>& m) {
+    if (m.has_value()) {
+      out << m.get_value();
+      return out;
+    }
+    out << "<NONE>";
+    return out;
+  }
+
+}
+
+template<typename T>
+T prod_after(const std::vector<T>& strides, const int i) {
+  T r = 1;
+  for (int s = i; s < (int) strides.size(); s++) {
+    r *= strides.at(s);
+  }
+  return r;
+}
+
+template<typename T>
+T prod_before(const std::vector<T>& strides, const int i) {
+  T r = 1;
+  for (int s = 0; s < std::min(i, (int) strides.size()); s++) {
+    r *= strides.at(s);
+  }
+  return r;
+}
+
+template<typename T>
+T card(const std::vector<T>& strides) {
+  return prod_after(strides, 0);
+}
+
+template<typename T>
+std::vector<T> strides(const std::vector<T>& lengths) {
+  std::vector<T> strs;
+  for (int i = 0; i < (int) lengths.size(); i++) {
+    strs.push_back(prod_after(lengths, i + 1));
+  }
+  return strs;
+}
+
+template<typename T>
+T position(const std::vector<T>& indexes, const std::vector<T>& lengths) {
+  auto strs = strides(lengths);
+  T r = 0;
+  for (int i = 0; i < (int) strs.size(); i++) {
+    r += lengths.at(i)*strs.at(i);
+  }
+  return r;
+}
+
+template<typename T>
+std::vector<T> indexes(const T& position, const std::vector<T>& lengths) {
+  std::vector<T> inds;
+  auto strs = strides(lengths);
+  T current = position;
+  for (int i = 0; i < (int) strs.size(); i++) {
+    T coeff = floor(current / strs.at(i));
+    inds.push_back(coeff);
+    current = current - coeff*strs.at(i);
+  }
+  return inds;
 }
 
 #endif

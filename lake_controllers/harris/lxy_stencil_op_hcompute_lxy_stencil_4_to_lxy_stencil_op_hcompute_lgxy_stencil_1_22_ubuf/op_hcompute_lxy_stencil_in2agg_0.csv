@@ -1,0 +1,16 @@
+"dimensionality",4,0
+"cycle_starting_addr",132,0
+"extent_3",1,0
+"cycle_stride_3",0,0
+"extent_2",62,0
+"cycle_stride_2",64,0
+"extent_1",16,0
+"cycle_stride_1",4,0
+"extent_0",4,0
+"cycle_stride_0",1,0
+"write","lxy_stencil_op_hcompute_lxy_stencil_4_to_lxy_stencil_op_hcompute_lgxy_stencil_1_22_ubuf_0_agg"
+"write_data_starting_addr",0,0
+"write_data_stride_3",0,0
+"write_data_stride_2",2,0
+"write_data_stride_1",0,0
+"write_data_stride_0",1,0

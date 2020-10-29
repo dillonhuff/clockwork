@@ -1,8 +1,20 @@
 #pragma once
 
 #include "hw_classes.h"
+#include <cstring>
 
 typedef int16_t int16;
+
+template<typename T>
+T clamp_val(const T& a, const T& lo, const T& hi) {
+  if (a < lo) {
+    return lo;
+  }
+  if (a > hi) {
+    return hi;
+  }
+  return a;
+}
 
 static inline
 float int_to_float(const hw_uint<32>& in) {
@@ -18,12 +30,12 @@ float to_float(const hw_uint<32>& in) {
 }
 
 static inline
-hw_uint<32>
-max_pool_2x2(const hw_uint<32*4>& in) {
-  hw_uint<32> v0 = in.extract<0, 31>();
-  hw_uint<32> v1 = in.extract<32, 63>();
-  hw_uint<32> v2 = in.extract<64, 95>();
-  hw_uint<32> v3 = in.extract<96, 127>();
+hw_uint<16>
+max_pool_2x2(const hw_uint<16*4>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  hw_uint<16> v2 = in.extract<32, 47>();
+  hw_uint<16> v3 = in.extract<48, 63>();
   return max(max(v0, v1), max(v2, v3));
 }
 
@@ -151,13 +163,11 @@ T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
 template<typename T>
 static inline
 T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
-  //cout << "bw = " << bright_weight << endl;
-  //cout << "dw = " << dark_weight << endl;
-  //assert(bright_weight + dark_weight == 2);
 
+  //return dark;
   return (bright_weight*bright + dark_weight*dark) / (bright_weight + dark_weight);
   //return (bright_weight*bright + dark_weight*dark);
-  //return (bright + dark);
+  //return (bright + dark) / 2;
 }
 
 template<typename T>
@@ -226,6 +236,13 @@ T diff(T& src, T& a0) {
 }
 
 static inline
+hw_uint<32> add_2(const hw_uint<32*2>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  return v0 + v1;
+}
+
+static inline
 hw_uint<32> diff_b(const hw_uint<32*2>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
@@ -241,8 +258,24 @@ T inc(T& src, T& a0) {
   //return src + a0;
 //}
 
+hw_uint<16> interleave(hw_uint<16>& src, hw_uint<16>& a0, const int column_index) {
+  return (column_index % 2) == 0 ? src : a0;
+}
+
+hw_uint<16> fmadd_16(hw_uint<16>& src, hw_uint<16>& a0) {
+  return src + a0;
+}
+
+hw_uint<32> fma_32(hw_uint<32>& src, hw_uint<32>& a0, hw_uint<32>& a1) {
+  return src + a0*a1;
+}
+
 int fma(int& src, int& a0, int& a1) {
   return src + a0*a1;
+}
+
+hw_uint<16> set_zero_16() {
+  return hw_uint<16>(0);
 }
 
 hw_uint<32> set_zero_32() {
@@ -429,9 +462,6 @@ hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v7 = in.extract<224, 255>();
   hw_uint<32> v8 = in.extract<256, 287>();
 
-  //cout << "v0 = " << v0.to_int() << endl;
-  //cout << "v3 = " << v3.to_int() << endl;
-  //cout << "v6 = " << v6.to_int() << endl;
 
   //assert(false);
 
@@ -622,3 +652,62 @@ hw_uint<16> blur_3_3(hw_uint<16*9>& in) {
     v6 + v7 + v8) / 9;
 }
 
+static inline
+hw_uint<32> histogram_inc(hw_uint<64>& ignore, hw_uint<32>& val) {
+  return val + 1;
+}
+
+static inline
+hw_uint<16> as_hblur(const hw_uint<16*2>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  return (v0 + v1) >> 1;
+}
+
+static inline
+hw_uint<32> blur_1x3_32(const hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+  return v0 + v1 + v2;
+}
+
+static inline
+hw_uint<32> blur_5x5_32(const hw_uint<32*5*5>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  hw_uint<32> v4 = in.extract<128, 159>();
+  return v0 + v1 + v2 + v3 + v4;
+}
+
+static inline
+hw_uint<32> blur_5x1_32(const hw_uint<32*5>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  hw_uint<32> v4 = in.extract<128, 159>();
+  return v0 + v1 + v2 + v3 + v4;
+}
+
+static inline
+hw_uint<32> blur_2x2_32(const hw_uint<32*4>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  return v0 + v1 + v2 + v3;
+}
+
+template<typename A, typename B>
+inline A reinterpret(const B &b) {
+    A a;
+    std::memcpy(&a, &b, sizeof(a));
+    return a;
+}
+inline float float_from_bits(uint32_t bits) {
+    return reinterpret<float, uint32_t>(bits);
+}

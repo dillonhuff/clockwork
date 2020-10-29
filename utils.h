@@ -5,7 +5,9 @@
 #include <streambuf>
 #include <sstream>
 #include <regex>
+#include <experimental/filesystem>
 
+namespace fs = std::experimental::filesystem;
 using namespace dbhc;
 using namespace std;
 
@@ -16,6 +18,8 @@ T pop(deque<T>& d) {
   d.pop_back();
   return v;
 }
+
+string isl_sanitize(const std::string& str);
 
 static inline
 string c_sanitize(const std::string& str) {
@@ -35,6 +39,8 @@ string c_sanitize(const std::string& str) {
       res += "_c_";
     } else if (c == '-') {
       res += "_m_";
+    } else if (c == '/') {
+      res += "_div_";
     } else {
       res += c;
     }
@@ -61,9 +67,65 @@ vector<string> split_at(const string& t, const string& delimiter) {
   return tokens;
 }
 
+/* remove string and substitute with other string
+ * trim space
+ * https://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
+ * */
+static inline
+std::string trim(const std::string& str,
+        const std::string& whitespace = " \t")
+{
+    const auto strBegin = str.find_first_not_of(whitespace);
+    if (strBegin == std::string::npos)
+        return ""; // no content
+
+    const auto strEnd = str.find_last_not_of(whitespace);
+    const auto strRange = strEnd - strBegin + 1;
+
+    return str.substr(strBegin, strRange);
+}
+
+static inline
+std::string reduce(const std::string& str,
+        const std::string& fill = " ",
+        const std::string& whitespace = " \t")
+{
+    //trim first
+    auto result = trim(str, whitespace);
+
+    // replace sub ranges
+    auto beginSpace = result.find_first_of(whitespace);
+    while (beginSpace != std::string::npos) {
+
+        const auto endSpace = result.find_first_not_of(whitespace, beginSpace);
+        const auto range = endSpace - beginSpace;
+
+        result.replace(beginSpace, range, fill);
+
+
+        const auto newStart = beginSpace + fill.length();
+        beginSpace = result.find_first_of(whitespace, newStart);
+    }
+
+    return result;
+}
+
+static inline
+string take_from(const std::string& s, const std::string& delim) {
+  std::size_t found = s.find(delim);
+  found += delim.size();
+  return s.substr(found, s.size() - found);
+}
+
 static inline
 string take_until(const std::string& s, const std::string& delim) {
   std::size_t found = s.find_first_of(delim);
+  return s.substr(0, found);
+}
+
+static inline
+string take_until_str(const std::string& s, const std::string& delim) {
+  std::size_t found = s.find(delim);
   return s.substr(0, found);
 }
 
@@ -75,20 +137,7 @@ string take_btw(const std::string& s, const std::string& ldel, const std::string
   return s.substr(found_l, found_r - found_l);
 }
 
-static inline
-bool is_number(string s) {
-
-  if (s[0] != '-' && !isdigit(s[0])) {
-    return false;
-  }
-
-  for (int i = 1; i < s.length(); i++)  {
-    if (isdigit(s[i]) == false) {
-      return false;
-    }
-  }
-  return true;
-}
+bool is_number(string s);
 
 static inline
 int safe_stoi(const string s) {
@@ -187,6 +236,24 @@ std::string comma_list(const std::vector<std::string>& strs) {
   return sep_list(strs, "", "", ", ");
 }
 
+static inline
+std::string bracket_list(const std::vector<std::string>& strs) {
+  return sep_list(strs, "[", "]", ", ");
+}
+
+
+template<typename T>
+static inline
+std::string bracket_list(const std::vector<T>& vals) {
+  vector<string> strs;
+  for (auto v : vals) {
+    ostringstream ss;
+    ss << v;
+    strs.push_back(ss.str());
+  }
+  return sep_list(strs, "[", "]", ", ");
+}
+
 template<typename T>
 static inline
 std::string comma_list(const std::vector<T>& vals) {
@@ -197,6 +264,18 @@ std::string comma_list(const std::vector<T>& vals) {
     strs.push_back(ss.str());
   }
   return sep_list(strs, "", "", ", ");
+}
+
+template<typename T>
+static inline
+std::string suffix_list(const std::vector<T>& vals) {
+  vector<string> strs;
+  for (auto v : vals) {
+    ostringstream ss;
+    ss << v;
+    strs.push_back(ss.str());
+  }
+  return sep_list(strs, "", "", "_");
 }
 
 static inline
@@ -214,6 +293,19 @@ std::string ReplaceString(std::string subject, const std::string& search,
          pos += replace.length();
     }
     return subject;
+}
+
+static inline
+std::vector<int> rolling_vec_dim(vector<int> dom_range, int ii) {
+  vector<int> rolling_dim;
+  for (size_t i = 0; i < dom_range.size(); i ++) {
+      int dim = std::accumulate(dom_range.rbegin(),
+              dom_range.rbegin() + i,
+              ii, std::multiplies<int>());
+      rolling_dim.push_back(dim);
+  }
+  std::reverse(rolling_dim.begin(), rolling_dim.end());
+  return rolling_dim;
 }
 
 template<typename T>
@@ -285,6 +377,16 @@ string str(const int i) {
 }
 
 static inline
+string arrow(const std::string& a, const std::string& b) {
+  return a + " -> " + b;
+}
+
+static inline
+string curlies(const std::string& s) {
+  return "{" + s + "}";
+}
+
+static inline
 string brackets(const std::string& s) {
   return "[" + s + "]";
 }
@@ -319,69 +421,9 @@ void move_naive_to_benchmarks_folder(const std::string& app_name) {
   system(("mv regression_tb_" + out_name + "_naive.cpp " + isl_dir).c_str());
 }
 
-static inline
-void move_to_benchmarks_folder(const std::string& app_name) {
-  string out_name = app_name;
-  string app_dir =
-    "./soda_codes/" + app_name;
-  string soda_dir =
-    "./soda_codes/" + app_name + "/soda_code/";
-  string synth_dir =
-    "./soda_codes/" + app_name + "/our_code/";
-  string isl_dir =
-    "./soda_codes/" + app_name + "/isl_code/";
+void move_to_synthesis_folder(const std::string& app_name);
 
-  system(("mkdir " + app_dir).c_str());
-  system(("mkdir " + synth_dir).c_str());
-  system(("mkdir " + soda_dir).c_str());
-
-  system(("mkdir " + isl_dir).c_str());
-
-  system(("cp ./aws_collateral/xrt.ini " + soda_dir).c_str());
-  system(("cp ./aws_collateral/soda_makefile.mk " + soda_dir + "/Makefile").c_str());
-  system(("cp ./aws_collateral/utils.mk " + soda_dir).c_str());
-
-  system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
-  system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
-  system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
-
-  system(("cp ./aws_collateral/xrt.ini " + isl_dir).c_str());
-  system(("cp ./aws_collateral/Makefile " + isl_dir).c_str());
-  system(("cp ./aws_collateral/utils.mk " + isl_dir).c_str());
-
-  system(("mv set_app.sh " + app_dir).c_str());
-  make_exe("set_app");
-
-  system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
-
-  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
-  system(("mv " + out_name + "*.h " + synth_dir).c_str());
-  system(("mv regression_tb_" + out_name + ".cpp " + synth_dir).c_str());
-  //system(("mv regression_tb_" + out_name + "_naive.cpp " + isl_dir).c_str());
-
-  make_exe("run_tb_" + out_name + ".sh");
-  system(("mv run_tb_" + out_name + ".sh " + synth_dir).c_str());
-
-  make_exe("aws_run_tb_" + out_name + ".sh");
-  system(("mv aws_run_tb_" + out_name + ".sh " + synth_dir).c_str());
-
-  make_exe("compare_regressions.sh");
-  system(("mv compare_regressions.sh " + app_dir).c_str());
-
-  make_exe("aws_compare_regressions.sh");
-  system(("mv aws_compare_regressions.sh " + app_dir).c_str());
-
-  system(("mv " + out_name + ".soda " + soda_dir).c_str());
-
-  system(("mv soda_" + out_name + "*_host.cpp " + soda_dir).c_str());
-  system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
-
-  make_exe("build_kernel.sh");
-  system(("mv build_kernel.sh " + soda_dir).c_str());
-
-  make_exe("run_tb.sh");
-  system(("mv run_tb.sh " + soda_dir).c_str());
-}
+void move_to_benchmarks_folder(const std::string& app_name);
 
 static inline
 void compare_to_gold(const std::string& name, const std::string& gold_name) {
@@ -396,7 +438,37 @@ void compare_to_gold(const std::string& name, const std::string& gold_name) {
 }
 
 static inline
+void compare_to_gold_file(const std::string& name, const std::string& gold_name) {
+  std::ifstream t(name);
+  std::string test_str((std::istreambuf_iterator<char>(t)),
+      std::istreambuf_iterator<char>());
+
+  std::ifstream gold(gold_name);
+  std::string gold_str((std::istreambuf_iterator<char>(gold)),
+      std::istreambuf_iterator<char>());
+  assert(test_str == gold_str);
+}
+
+static inline
 void compare_to_gold(const std::string& name) {
   compare_to_gold(name, name);
 }
 
+static inline
+bool contains(const std::string& s1, const std::string& s2) {
+  return s1.find(s2) != std::string::npos;
+}
+
+static inline
+int cmd(const std::string& cm) {
+  std::cout << "cmd: " << cm << std::endl;
+  return system(cm.c_str());
+}
+
+void compare(const std::string& name,
+    vector<string>& opt,
+    vector<string>& naive);
+
+vector<string> get_files(const std::string& path);
+
+int run_sw_bmp_test_harness(const std::string& app_name);
