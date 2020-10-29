@@ -18562,39 +18562,7 @@ void generate_app_code(CodegenOptions& options,
   generate_app_collateral(options, conv_out, buffers, dag.prg, sched);
 }
 
-void test_multi_kernel_design() {
-  int num_pyramid_levels = 3;
-
-  prog prg("multi_kernel_design");
-  prg.compute_unit_file = "local_laplacian_filters_compute.h";
-
-  prg.add_input("in");
-  prg.add_output("out");
-
-  load_input("in", "gray", 2, prg);
-
-  cpy("out", "gray", 2, prg);
-
-  infer_bounds("out", {4, 4}, prg);
-
-  prg.pretty_print();
-
-  unroll_reduce_loops(prg);
-  merge_basic_block_ops(prg);
-  normalize_bounds(prg);
-  normalize_address_offsets(prg);
-
-  prg.pretty_print();
-
-  auto unopt_postprocessed = unoptimized_result(prg);
-
-  map<std::string, std::set<string> > fusion_groups;
-  int i = 0;
-  for (auto gp : get_kernels(prg)) {
-    fusion_groups["gp_" + str(i)] = {gp};
-    i++;
-  }
-
+app_dag partition_application(const std::map<std::string, std::set<std::string> >& fusion_groups, prog& prg) {
   app_dag dag{prg, fusion_groups};
   for (auto& g : dag.fusion_groups) {
     dag.fusion_group_progs[g.first] =
@@ -18677,6 +18645,43 @@ void test_multi_kernel_design() {
 
   assert(all_kernel_outputs_have_fanout_one(dag));
   assert(all_kernel_inputs_are_program_inputs(dag));
+
+  return dag;
+}
+
+void test_multi_kernel_design() {
+  int num_pyramid_levels = 3;
+
+  prog prg("multi_kernel_design");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("in");
+  prg.add_output("out");
+
+  load_input("in", "gray", 2, prg);
+
+  cpy("out", "gray", 2, prg);
+
+  infer_bounds("out", {4, 4}, prg);
+
+  prg.pretty_print();
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+
+  auto unopt_postprocessed = unoptimized_result(prg);
+
+  map<std::string, std::set<string> > fusion_groups;
+  int i = 0;
+  for (auto gp : get_kernels(prg)) {
+    fusion_groups["gp_" + str(i)] = {gp};
+    i++;
+  }
+  app_dag dag = partition_application(fusion_groups, prg);
 
   generate_regression_testbench(dag.prg);
 
