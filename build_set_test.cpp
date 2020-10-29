@@ -18489,7 +18489,6 @@ void generate_app_code(CodegenOptions& options,
   generate_app_prefix(options, conv_out, dag.prg);
 
   for (auto& gp : dag.fusion_group_progs) {
-    //auto sched = gp.second.unoptimized_schedule();
     auto sched = gp.second.optimized_codegen();
 
     auto domains = gp.second.domains();
@@ -18504,7 +18503,6 @@ void generate_app_code(CodegenOptions& options,
         gp.second,
         sched,
         domain_map);
-
   }
 
   generate_driver_function_prefix(options, conv_out, buffers, dag.prg);
@@ -18524,6 +18522,10 @@ void generate_app_code(CodegenOptions& options,
     for (auto& buf : gp.second.boundary_buffers()) {
       if (!elem(buf, done)) {
         conv_out << tab(1) << "HWStream<hw_uint<32> > " << buf << ";" << endl;
+        open_synth_scope(conv_out);
+        int depth = 32;
+        conv_out << "#pragma HLS stream variable=" << buf << ".values depth=" << depth << endl;
+        close_synth_scope(conv_out);
         done.insert(buf);
       }
     }
@@ -18790,6 +18792,19 @@ void test_multi_kernel_unsharp() {
 
   prg.pretty_print();
   prg.sanity_check();
+
+  cout << "Channel sizes" << endl;
+  auto sched = prg.optimized_codegen();
+  for (auto b : all_buffers(prg)) {
+    auto m = prg.consumer_map(b);
+    auto c = prg.producer_map(b);
+    if (!prg.is_boundary(b)) {
+      cout << "========= " << b << endl;
+      cout << tab(1) << str(m) << endl;
+      cout << tab(1) << str(c) << endl;
+    }
+  }
+  assert(false);
 
   auto unopt_postprocessed = unoptimized_result(prg);
   
