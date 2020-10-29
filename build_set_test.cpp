@@ -18488,7 +18488,8 @@ void generate_app_code(CodegenOptions& options,
   generate_app_prefix(options, conv_out, dag.prg);
 
   for (auto& gp : dag.fusion_group_progs) {
-    auto sched = gp.second.unoptimized_schedule();
+    //auto sched = gp.second.unoptimized_schedule();
+    auto sched = gp.second.optimized_codegen();
 
     auto domains = gp.second.domains();
     map<string, isl_set*> domain_map;
@@ -18529,7 +18530,6 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << endl << endl;
 
-  //for (auto& gp : dag.fusion_group_progs) {
   for (auto& gpn : dag.sorted_fusion_groups()) {
     auto& gp = dag.fusion_group_progs.at(gpn);
     vector<string> args;

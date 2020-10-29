@@ -91,17 +91,13 @@ inline hw_uint<32> gray_store_to_gray_to_gp_295_read_bundle_read(gray_cache& gra
 
 
 // Operation logic
-inline void store_to_gray_to_gp_295(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_29, int root, int gray_ld3, int gray_ld4) {
+inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02) {
   // Dynamic address computation
 
-	// Consume: gray
-	auto gray_gray_ld3_c__gray_ld4_value = gray_store_to_gray_to_gp_295_read_bundle_read(gray/* source_delay */, root, gray_ld3, gray_ld4, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Produce: gray_to_gp_29
-	gray_to_gp_29.write(gray_gray_ld3_c__gray_ld4_value);
+	// Consume: in
+	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
+	// Produce: gray
+	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, root, oc_load_in01, oc_load_in02, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -125,13 +121,17 @@ inline void store_to_gray_to_gp_182(gray_cache& gray, HWStream<hw_uint<32> >& /*
 
 }
 
-inline void oc_load_in03(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, gray_cache& gray, int root, int oc_load_in01, int oc_load_in02) {
+inline void store_to_gray_to_gp_295(gray_cache& gray, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_29, int root, int gray_ld3, int gray_ld4) {
   // Dynamic address computation
 
-	// Consume: in
-	auto in_oc_load_in02_p_0_c___oc_load_in01_p_0_value = in.read();
-	// Produce: gray
-	gray_oc_load_in03_write_bundle_write(/* arg names */in_oc_load_in02_p_0_c___oc_load_in01_p_0_value, gray, root, oc_load_in01, oc_load_in02, 0);
+	// Consume: gray
+	auto gray_gray_ld3_c__gray_ld4_value = gray_store_to_gray_to_gp_295_read_bundle_read(gray/* source_delay */, root, gray_ld3, gray_ld4, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Produce: gray_to_gp_29
+	gray_to_gp_29.write(gray_gray_ld3_c__gray_ld4_value);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -152,39 +152,35 @@ void Extracted_oc_load_in01_(HWStream<hw_uint<32> >& /* no bundle get_args num p
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [0, 0, 0, oc_load_in01, 0, oc_load_in02, 0] : 0 <= oc_load_in01 <= 5 and 0 <= oc_load_in02 <= 5; store_to_gray_to_gp_182[root = 0, gray_ld0, gray_ld1] -> [0, 0, 1, gray_ld0, 0, gray_ld1, 0] : 0 <= gray_ld0 <= 3 and 0 <= gray_ld1 <= 3; store_to_gray_to_gp_295[root = 0, gray_ld3, gray_ld4] -> [0, 0, 2, gray_ld3, 0, gray_ld4, 0] : 0 <= gray_ld3 <= 5 and 0 <= gray_ld4 <= 5 }
-//   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [0, 0, 0, oc_load_in01, 0, oc_load_in02, 0] : 0 <= oc_load_in01 <= 5 and 0 <= oc_load_in02 <= 5 }
-// Condition for oc_load_in03(((i6 == 0) && (i4 == 0) && (i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (5 - i3 >= 0) && (i5 >= 0) && (5 - i5 >= 0)))
-//   { store_to_gray_to_gp_182[root = 0, gray_ld0, gray_ld1] -> [0, 0, 1, gray_ld0, 0, gray_ld1, 0] : 0 <= gray_ld0 <= 3 and 0 <= gray_ld1 <= 3 }
-// Condition for store_to_gray_to_gp_182(((i6 == 0) && (i4 == 0) && (-1 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (3 - i3 >= 0) && (i5 >= 0) && (3 - i5 >= 0)))
-//   { store_to_gray_to_gp_295[root = 0, gray_ld3, gray_ld4] -> [0, 0, 2, gray_ld3, 0, gray_ld4, 0] : 0 <= gray_ld3 <= 5 and 0 <= gray_ld4 <= 5 }
-// Condition for store_to_gray_to_gp_295(((i6 == 0) && (i4 == 0) && (-2 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (5 - i3 >= 0) && (i5 >= 0) && (5 - i5 >= 0)))
+// schedule: { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, 5 + oc_load_in02, 0] : 0 <= oc_load_in01 <= 5 and 0 <= oc_load_in02 <= 5; store_to_gray_to_gp_295[root = 0, gray_ld3, gray_ld4] -> [5 + gray_ld3, gray_ld4, 1] : 0 <= gray_ld3 <= 5 and 0 <= gray_ld4 <= 5; store_to_gray_to_gp_182[root = 0, gray_ld0, gray_ld1] -> [3 + gray_ld0, 2 + gray_ld1, 2] : 0 <= gray_ld0 <= 3 and 0 <= gray_ld1 <= 3 }
+//   { oc_load_in03[root = 0, oc_load_in01, oc_load_in02] -> [oc_load_in01, 5 + oc_load_in02, 0] : 0 <= oc_load_in01 <= 5 and 0 <= oc_load_in02 <= 5 }
+// Condition for oc_load_in03(((i2 == 0) && (i0 >= 0) && (5 - i0 >= 0) && (-5 + i1 >= 0) && (10 - i1 >= 0)))
+//   { store_to_gray_to_gp_295[root = 0, gray_ld3, gray_ld4] -> [5 + gray_ld3, gray_ld4, 1] : 0 <= gray_ld3 <= 5 and 0 <= gray_ld4 <= 5 }
+// Condition for store_to_gray_to_gp_295(((-1 + i2 == 0) && (-5 + i0 >= 0) && (10 - i0 >= 0) && (i1 >= 0) && (5 - i1 >= 0)))
+//   { store_to_gray_to_gp_182[root = 0, gray_ld0, gray_ld1] -> [3 + gray_ld0, 2 + gray_ld1, 2] : 0 <= gray_ld0 <= 3 and 0 <= gray_ld1 <= 3 }
+// Condition for store_to_gray_to_gp_182(((-2 + i2 == 0) && (-3 + i0 >= 0) && (6 - i0 >= 0) && (-2 + i1 >= 0) && (5 - i1 >= 0)))
 
   /*
-{
-  for (int c3 = 0; c3 <= 5; c3 += 1)
-    for (int c5 = 0; c5 <= 5; c5 += 1)
-      oc_load_in03(0, c3, c5);
-  for (int c3 = 0; c3 <= 3; c3 += 1)
-    for (int c5 = 0; c5 <= 3; c5 += 1)
-      store_to_gray_to_gp_182(0, c3, c5);
-  for (int c3 = 0; c3 <= 5; c3 += 1)
-    for (int c5 = 0; c5 <= 5; c5 += 1)
-      store_to_gray_to_gp_295(0, c3, c5);
-}
+for (int c0 = 0; c0 <= 10; c0 += 1)
+  for (int c1 = 0; c1 <= 10; c1 += 1) {
+    if (c0 <= 5 && c1 >= 5)
+      oc_load_in03(0, c0, c1 - 5);
+    if (c0 >= 5 && c1 <= 5)
+      store_to_gray_to_gp_295(0, c0 - 5, c1);
+    if (c0 >= 3 && c0 <= 6 && c1 >= 2 && c1 <= 5)
+      store_to_gray_to_gp_182(0, c0 - 3, c1 - 2);
+  }
 
   */
-	{
-	  for (int c3 = 0; c3 <= 5; c3 += 1)
-	    for (int c5 = 0; c5 <= 5; c5 += 1)
-	      oc_load_in03(in /* buf name */, gray, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 3; c3 += 1)
-	    for (int c5 = 0; c5 <= 3; c5 += 1)
-	      store_to_gray_to_gp_182(gray /* buf name */, gray_to_gp_18, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 5; c3 += 1)
-	    for (int c5 = 0; c5 <= 5; c5 += 1)
-	      store_to_gray_to_gp_295(gray /* buf name */, gray_to_gp_29, 0, c3, c5);
-	}
+	for (int c0 = 0; c0 <= 10; c0 += 1)
+	  for (int c1 = 0; c1 <= 10; c1 += 1) {
+	    if (c0 <= 5 && c1 >= 5)
+	      oc_load_in03(in /* buf name */, gray, 0, c0, c1 - 5);
+	    if (c0 >= 5 && c1 <= 5)
+	      store_to_gray_to_gp_295(gray /* buf name */, gray_to_gp_29, 0, c0 - 5, c1);
+	    if (c0 >= 3 && c0 <= 6 && c1 >= 2 && c1 <= 5)
+	      store_to_gray_to_gp_182(gray /* buf name */, gray_to_gp_18, 0, c0 - 3, c1 - 2);
+	  }
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
@@ -382,39 +378,29 @@ void Extracted_x_(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { diff[root = 0, x, y] -> [0, 0, 2, x, 0, y, 0] : 0 <= x <= 3 and 0 <= y <= 3; load_to_gray_FIFO_buf55[root = 0, gray_ld3, gray_ld4] -> [0, 0, 0, gray_ld3, 0, gray_ld4, 0] : 0 <= gray_ld3 <= 3 and 0 <= gray_ld4 <= 3; load_to_blurred_FIFO_buf42[root = 0, blurred_ld0, blurred_ld1] -> [0, 0, 1, blurred_ld0, 0, blurred_ld1, 0] : 0 <= blurred_ld0 <= 3 and 0 <= blurred_ld1 <= 3 }
-//   { diff[root = 0, x, y] -> [0, 0, 2, x, 0, y, 0] : 0 <= x <= 3 and 0 <= y <= 3 }
-// Condition for diff(((i6 == 0) && (i4 == 0) && (-2 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (3 - i3 >= 0) && (i5 >= 0) && (3 - i5 >= 0)))
-//   { load_to_gray_FIFO_buf55[root = 0, gray_ld3, gray_ld4] -> [0, 0, 0, gray_ld3, 0, gray_ld4, 0] : 0 <= gray_ld3 <= 3 and 0 <= gray_ld4 <= 3 }
-// Condition for load_to_gray_FIFO_buf55(((i6 == 0) && (i4 == 0) && (i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (3 - i3 >= 0) && (i5 >= 0) && (3 - i5 >= 0)))
-//   { load_to_blurred_FIFO_buf42[root = 0, blurred_ld0, blurred_ld1] -> [0, 0, 1, blurred_ld0, 0, blurred_ld1, 0] : 0 <= blurred_ld0 <= 3 and 0 <= blurred_ld1 <= 3 }
-// Condition for load_to_blurred_FIFO_buf42(((i6 == 0) && (i4 == 0) && (-1 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (3 - i3 >= 0) && (i5 >= 0) && (3 - i5 >= 0)))
+// schedule: { diff[root = 0, x, y] -> [x, y, 2] : 0 <= x <= 3 and 0 <= y <= 3; load_to_gray_FIFO_buf55[root = 0, gray_ld3, gray_ld4] -> [gray_ld3, gray_ld4, 1] : 0 <= gray_ld3 <= 3 and 0 <= gray_ld4 <= 3; load_to_blurred_FIFO_buf42[root = 0, blurred_ld0, blurred_ld1] -> [blurred_ld0, blurred_ld1, 0] : 0 <= blurred_ld0 <= 3 and 0 <= blurred_ld1 <= 3 }
+//   { diff[root = 0, x, y] -> [x, y, 2] : 0 <= x <= 3 and 0 <= y <= 3 }
+// Condition for diff(((-2 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+//   { load_to_gray_FIFO_buf55[root = 0, gray_ld3, gray_ld4] -> [gray_ld3, gray_ld4, 1] : 0 <= gray_ld3 <= 3 and 0 <= gray_ld4 <= 3 }
+// Condition for load_to_gray_FIFO_buf55(((-1 + i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
+//   { load_to_blurred_FIFO_buf42[root = 0, blurred_ld0, blurred_ld1] -> [blurred_ld0, blurred_ld1, 0] : 0 <= blurred_ld0 <= 3 and 0 <= blurred_ld1 <= 3 }
+// Condition for load_to_blurred_FIFO_buf42(((i2 == 0) && (i0 >= 0) && (3 - i0 >= 0) && (i1 >= 0) && (3 - i1 >= 0)))
 
   /*
-{
-  for (int c3 = 0; c3 <= 3; c3 += 1)
-    for (int c5 = 0; c5 <= 3; c5 += 1)
-      load_to_gray_FIFO_buf55(0, c3, c5);
-  for (int c3 = 0; c3 <= 3; c3 += 1)
-    for (int c5 = 0; c5 <= 3; c5 += 1)
-      load_to_blurred_FIFO_buf42(0, c3, c5);
-  for (int c3 = 0; c3 <= 3; c3 += 1)
-    for (int c5 = 0; c5 <= 3; c5 += 1)
-      diff(0, c3, c5);
-}
+for (int c0 = 0; c0 <= 3; c0 += 1)
+  for (int c1 = 0; c1 <= 3; c1 += 1) {
+    load_to_blurred_FIFO_buf42(0, c0, c1);
+    load_to_gray_FIFO_buf55(0, c0, c1);
+    diff(0, c0, c1);
+  }
 
   */
-	{
-	  for (int c3 = 0; c3 <= 3; c3 += 1)
-	    for (int c5 = 0; c5 <= 3; c5 += 1)
-	      load_to_gray_FIFO_buf55(gray_to_gp_18 /* buf name */, gray_FIFO_buf5, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 3; c3 += 1)
-	    for (int c5 = 0; c5 <= 3; c5 += 1)
-	      load_to_blurred_FIFO_buf42(blurred_to_gp_17 /* buf name */, blurred_FIFO_buf4, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 3; c3 += 1)
-	    for (int c5 = 0; c5 <= 3; c5 += 1)
-	      diff(gray_FIFO_buf5 /* buf name */, blurred_FIFO_buf4 /* buf name */, out, 0, c3, c5);
-	}
+	for (int c0 = 0; c0 <= 3; c0 += 1)
+	  for (int c1 = 0; c1 <= 3; c1 += 1) {
+	    load_to_blurred_FIFO_buf42(blurred_to_gp_17 /* buf name */, blurred_FIFO_buf4, 0, c0, c1);
+	    load_to_gray_FIFO_buf55(gray_to_gp_18 /* buf name */, gray_FIFO_buf5, 0, c0, c1);
+	    diff(gray_FIFO_buf5 /* buf name */, blurred_FIFO_buf4 /* buf name */, out, 0, c0, c1);
+	  }
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
@@ -649,6 +635,24 @@ inline void gray_FIFO_buf6_load_to_gray_FIFO_buf62_write_bundle_write(hw_uint<32
 
 
 // Operation logic
+inline void blur(gray_FIFO_buf6_cache& gray_FIFO_buf6, blurred_cache& blurred, int root, int xb, int yb) {
+  // Dynamic address computation
+
+	// Consume: gray_FIFO_buf6
+	auto gray_FIFO_buf6_xb__p__0_p_0_c___yb__p__0_p_0_value = gray_FIFO_buf6_blur_read_bundle_read(gray_FIFO_buf6/* source_delay */, root, xb, yb, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = conv_3_3(gray_FIFO_buf6_xb__p__0_p_0_c___yb__p__0_p_0_value);
+	// Produce: blurred
+	blurred_blur_write_bundle_write(/* arg names */compute_result, blurred, root, xb, yb, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void load_to_gray_FIFO_buf62(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */gray_to_gp_29, gray_FIFO_buf6_cache& gray_FIFO_buf6, int root, int gray_ld0, int gray_ld1) {
   // Dynamic address computation
 
@@ -679,24 +683,6 @@ inline void store_to_blurred_to_gp_175(blurred_cache& blurred, HWStream<hw_uint<
 
 }
 
-inline void blur(gray_FIFO_buf6_cache& gray_FIFO_buf6, blurred_cache& blurred, int root, int xb, int yb) {
-  // Dynamic address computation
-
-	// Consume: gray_FIFO_buf6
-	auto gray_FIFO_buf6_xb__p__0_p_0_c___yb__p__0_p_0_value = gray_FIFO_buf6_blur_read_bundle_read(gray_FIFO_buf6/* source_delay */, root, xb, yb, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = conv_3_3(gray_FIFO_buf6_xb__p__0_p_0_c___yb__p__0_p_0_value);
-	// Produce: blurred
-	blurred_blur_write_bundle_write(/* arg names */compute_result, blurred, root, xb, yb, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 // Driver function
 void Extracted_xb_(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */gray_to_gp_29, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */blurred_to_gp_17) {
 
@@ -714,39 +700,33 @@ void Extracted_xb_(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 *
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-// schedule: { load_to_gray_FIFO_buf62[root = 0, gray_ld0, gray_ld1] -> [0, 0, 0, gray_ld0, 0, gray_ld1, 0] : 0 <= gray_ld0 <= 5 and 0 <= gray_ld1 <= 5; store_to_blurred_to_gp_175[root = 0, blurred_ld3, blurred_ld4] -> [0, 0, 2, blurred_ld3, 0, blurred_ld4, 0] : 0 <= blurred_ld3 <= 3 and 0 <= blurred_ld4 <= 3; blur[root = 0, xb, yb] -> [0, 0, 1, xb, 0, yb, 0] : 0 <= xb <= 3 and 0 <= yb <= 3 }
-//   { load_to_gray_FIFO_buf62[root = 0, gray_ld0, gray_ld1] -> [0, 0, 0, gray_ld0, 0, gray_ld1, 0] : 0 <= gray_ld0 <= 5 and 0 <= gray_ld1 <= 5 }
-// Condition for load_to_gray_FIFO_buf62(((i6 == 0) && (i4 == 0) && (i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (5 - i3 >= 0) && (i5 >= 0) && (5 - i5 >= 0)))
-//   { store_to_blurred_to_gp_175[root = 0, blurred_ld3, blurred_ld4] -> [0, 0, 2, blurred_ld3, 0, blurred_ld4, 0] : 0 <= blurred_ld3 <= 3 and 0 <= blurred_ld4 <= 3 }
-// Condition for store_to_blurred_to_gp_175(((i6 == 0) && (i4 == 0) && (-2 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (3 - i3 >= 0) && (i5 >= 0) && (3 - i5 >= 0)))
-//   { blur[root = 0, xb, yb] -> [0, 0, 1, xb, 0, yb, 0] : 0 <= xb <= 3 and 0 <= yb <= 3 }
-// Condition for blur(((i6 == 0) && (i4 == 0) && (-1 + i2 == 0) && (i1 == 0) && (i0 == 0) && (i3 >= 0) && (3 - i3 >= 0) && (i5 >= 0) && (3 - i5 >= 0)))
+// schedule: { store_to_blurred_to_gp_175[root = 0, blurred_ld3, blurred_ld4] -> [2 + blurred_ld3, 2 + blurred_ld4, 2] : 0 <= blurred_ld3 <= 3 and 0 <= blurred_ld4 <= 3; load_to_gray_FIFO_buf62[root = 0, gray_ld0, gray_ld1] -> [gray_ld0, gray_ld1, 0] : 0 <= gray_ld0 <= 5 and 0 <= gray_ld1 <= 5; blur[root = 0, xb, yb] -> [2 + xb, 2 + yb, 1] : 0 <= xb <= 3 and 0 <= yb <= 3 }
+//   { store_to_blurred_to_gp_175[root = 0, blurred_ld3, blurred_ld4] -> [2 + blurred_ld3, 2 + blurred_ld4, 2] : 0 <= blurred_ld3 <= 3 and 0 <= blurred_ld4 <= 3 }
+// Condition for store_to_blurred_to_gp_175(((-2 + i2 == 0) && (-2 + i0 >= 0) && (5 - i0 >= 0) && (-2 + i1 >= 0) && (5 - i1 >= 0)))
+//   { load_to_gray_FIFO_buf62[root = 0, gray_ld0, gray_ld1] -> [gray_ld0, gray_ld1, 0] : 0 <= gray_ld0 <= 5 and 0 <= gray_ld1 <= 5 }
+// Condition for load_to_gray_FIFO_buf62(((i2 == 0) && (i0 >= 0) && (5 - i0 >= 0) && (i1 >= 0) && (5 - i1 >= 0)))
+//   { blur[root = 0, xb, yb] -> [2 + xb, 2 + yb, 1] : 0 <= xb <= 3 and 0 <= yb <= 3 }
+// Condition for blur(((-1 + i2 == 0) && (-2 + i0 >= 0) && (5 - i0 >= 0) && (-2 + i1 >= 0) && (5 - i1 >= 0)))
 
   /*
-{
-  for (int c3 = 0; c3 <= 5; c3 += 1)
-    for (int c5 = 0; c5 <= 5; c5 += 1)
-      load_to_gray_FIFO_buf62(0, c3, c5);
-  for (int c3 = 0; c3 <= 3; c3 += 1)
-    for (int c5 = 0; c5 <= 3; c5 += 1)
-      blur(0, c3, c5);
-  for (int c3 = 0; c3 <= 3; c3 += 1)
-    for (int c5 = 0; c5 <= 3; c5 += 1)
-      store_to_blurred_to_gp_175(0, c3, c5);
-}
+for (int c0 = 0; c0 <= 5; c0 += 1)
+  for (int c1 = 0; c1 <= 5; c1 += 1) {
+    load_to_gray_FIFO_buf62(0, c0, c1);
+    if (c0 >= 2 && c1 >= 2) {
+      blur(0, c0 - 2, c1 - 2);
+      store_to_blurred_to_gp_175(0, c0 - 2, c1 - 2);
+    }
+  }
 
   */
-	{
-	  for (int c3 = 0; c3 <= 5; c3 += 1)
-	    for (int c5 = 0; c5 <= 5; c5 += 1)
-	      load_to_gray_FIFO_buf62(gray_to_gp_29 /* buf name */, gray_FIFO_buf6, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 3; c3 += 1)
-	    for (int c5 = 0; c5 <= 3; c5 += 1)
-	      blur(gray_FIFO_buf6 /* buf name */, blurred, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 3; c3 += 1)
-	    for (int c5 = 0; c5 <= 3; c5 += 1)
-	      store_to_blurred_to_gp_175(blurred /* buf name */, blurred_to_gp_17, 0, c3, c5);
-	}
+	for (int c0 = 0; c0 <= 5; c0 += 1)
+	  for (int c1 = 0; c1 <= 5; c1 += 1) {
+	    load_to_gray_FIFO_buf62(gray_to_gp_29 /* buf name */, gray_FIFO_buf6, 0, c0, c1);
+	    if (c0 >= 2 && c1 >= 2) {
+	      blur(gray_FIFO_buf6 /* buf name */, blurred, 0, c0 - 2, c1 - 2);
+	      store_to_blurred_to_gp_175(blurred /* buf name */, blurred_to_gp_17, 0, c0 - 2, c1 - 2);
+	    }
+	  }
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
