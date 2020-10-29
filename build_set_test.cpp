@@ -18777,13 +18777,14 @@ void test_multi_kernel_unsharp() {
   auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
   diff->add_load("gray", "x", "y");
   diff->add_load("blurred", "x", "y");
+  diff->add_load("blurred", "x", "y + 1");
   diff->add_store("out", "x", "y");
   diff->add_function("diff");
 
   prg.pretty_print();
   prg.sanity_check();
 
-  infer_bounds("out", {4, 4}, prg);
+  infer_bounds("out", {64, 64}, prg);
 
   unroll_reduce_loops(prg);
   merge_basic_block_ops(prg);
@@ -18807,8 +18808,8 @@ void test_multi_kernel_unsharp() {
       cout << tab(1) << str(r) << endl;
       cout << tab(1) << str(w) << endl;
       
-      auto write_times = dot(inv(w), sched);
-      auto read_times = dot(inv(r), sched);
+      auto write_times = lexmin(dot(inv(w), sched));
+      auto read_times = lexmin(dot(inv(r), sched));
 
       auto op_times = unn(write_times, read_times);
 
@@ -18834,7 +18835,6 @@ void test_multi_kernel_unsharp() {
       cout << "live: " << str(live) << endl;
       cout << "Size = " << str(card(live)) << endl;
       cout << "Bound = " << str(int_upper_bound(card(to_umap(live)))) << endl;
-      assert(false);
 
       //auto times_to_writes = dot(inv(sched), w);
       //auto times_to_reads = dot(inv(sched), r);
