@@ -18769,11 +18769,13 @@ void test_multi_kernel_unsharp() {
     }
   }
   blurred->add_store("blurred", "xb", "yb");
+  blurred->add_function("conv_3_3");
 
   auto diff = prg.add_nest("x", 0, 1, "y", 0, 1)->add_op("diff");
-  diff->add_load("in", "x", "y");
+  diff->add_load("gray", "x", "y");
   diff->add_load("blurred", "x", "y");
   diff->add_store("out", "x", "y");
+  diff->add_function("diff");
 
   prg.pretty_print();
   prg.sanity_check();
@@ -18797,6 +18799,11 @@ void test_multi_kernel_unsharp() {
     i++;
   }
   app_dag dag = partition_application(fusion_groups, prg);
+  for (auto& gp : dag.fusion_group_progs) {
+    cout << "============================" << endl;
+    gp.second.pretty_print();
+    cout << endl;
+  }
 
   generate_regression_testbench(dag.prg);
 
@@ -18804,6 +18811,9 @@ void test_multi_kernel_unsharp() {
   options.internal = true;
   options.all_rams = true;
   all_unbanked(prg, options);
+  for (auto& gp : dag.fusion_group_progs) {
+    all_unbanked(gp.second, options);
+  }
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_MULTILINEAR;
   generate_app_code(options, dag);
