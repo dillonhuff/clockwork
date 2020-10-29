@@ -2738,7 +2738,7 @@ void regression_test(CodegenOptions& options,
 std::set<std::string> get_kernels(prog& prg) {
   std::set<string> kernels;
   for (auto child : prg.root->children) {
-    if (child->is_loop) {
+    if (child->is_loop()) {
       kernels.insert(child->name);
     }
   }
@@ -3056,7 +3056,7 @@ std::set<string> buffers_written(prog& prg) {
 }
 
 std::set<string> buffers_written(op* p) {
-  assert(!p->is_loop);
+  assert(!p->is_loop());
 
   std::set<string> bufs;
   for (auto b : p->buffers_written()) {
@@ -3198,7 +3198,7 @@ void ir_node::copy_fields_from(op* other){
 
 void deep_copy_child(op* dest, op* source, prog& original){
 	op* kernel_copy;
-	if(source -> is_loop){
+	if(source -> is_loop()){
 		kernel_copy = dest -> add_loop(source->name, original.start(source->name), original.end_exclusive(source->name));
 		for(auto child : original.find_loop(source->name)->children){
 			deep_copy_child(kernel_copy, child, original);
@@ -3561,7 +3561,7 @@ op* prog::merge_ops(const std::string& loop) {
   lp->children = {};
   op* merged = lp->add_op(unique_name("merged"));
   for (auto c : children_copies) {
-    assert(!c->is_loop);
+    assert(!c->is_loop());
     merged->copy_memory_operations_from(c);
   }
   merged->add_function(un(loop + "_merged_cu"));
@@ -3570,7 +3570,7 @@ op* prog::merge_ops(const std::string& loop) {
 }
 
 void ir_node::copy_memory_operations_from(op* other) {
-  assert(!other->is_loop);
+  assert(!other->is_loop());
 
   //for (auto pl : other->produce_locs) {
     //if (!elem(remove_whitespace(pl), produce_locs)) {
@@ -3726,7 +3726,7 @@ void ir_node::shift_address(const string & buf, const std::vector<int> & min_loc
 }
 
 void ir_node::replace_variable(const std::string& var, const std::string& val) {
-  if (is_loop) {
+  if (is_loop()) {
     for (auto c : children) {
       c->replace_variable(var, val);
     }
@@ -3752,7 +3752,7 @@ void ir_node::replace_variable(const std::string& var, const std::string& val) {
 }
 
 void ir_node::replace_variable(const std::string& var, const int val) {
-  if (is_loop) {
+  if (is_loop()) {
     for (auto c : children) {
       c->replace_variable(var, val);
     }
@@ -3803,7 +3803,7 @@ void unroll(prog& prg, const std::string& var) {
 
   for (auto v : indexes(p)) {
     for (auto child : children) {
-      if (!child->is_loop) {
+      if (!child->is_loop()) {
         string name = prg.unique_name(isl_sanitize(child->name + "_" + var + "_" + str(v)));
         auto val = container->add_op_after(p, prg.unique_name(child->name + "_" + var + "_" + str(v)));
         val->copy_fields_from(child);
@@ -3820,7 +3820,7 @@ void unroll(prog& prg, const std::string& var) {
 }
 
 vector<int> indexes(op* p) {
-  assert(p->is_loop);
+  assert(p->is_loop());
   vector<int> inds;
   for (int i = p->start; i < p->end_exclusive; i++) {
     inds.push_back(i);
@@ -3963,7 +3963,7 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     cout << "Kernel: " << next_kernel << " produces " << buf << endl;
     op* dop = nullptr;
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
-      if (!op->is_loop) {
+      if (!op->is_loop()) {
         dop = op;
         break;
       }
@@ -4136,7 +4136,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     cout << tab(1) << "Kernel: " << next_kernel << " produces " << buf << endl;
     op* dop = nullptr;
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
-      if (!op->is_loop) {
+      if (!op->is_loop()) {
         dop = op;
         break;
       }
@@ -4253,7 +4253,7 @@ isl_schedule* prog::optimized_schedule() {
 }
 
 void get_op_levels(op* node, map<string,int>& variable_map, int current_level){
-	if(!node->is_loop){
+	if(!node->is_loop()){
     variable_map[node->name] = current_level;
 	} else {
 		variable_map[node->name] = current_level;
@@ -4271,7 +4271,7 @@ map<string, int> get_op_levels(prog& prg){
 }
 
 void get_variable_levels(op* node, map<string,int>& variable_map, int current_level){
-	if(!node->is_loop){
+	if(!node->is_loop()){
 		return;
 	}else{
 		variable_map[node->name] = current_level;
@@ -4504,7 +4504,7 @@ op* strip_mine(const int factor, const std::string& loop, prog& prg) {
 }
 
 op* strip_mine(const int factor, op* loop, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
   assert(loop->trip_count() % factor == 0);
 
   cout << "strip mining loop: " << loop->name << ", start: " << loop->start << ", end exclusive: " << loop->end_exclusive << endl;
@@ -4563,7 +4563,7 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
   cout << "Writers of " << buf << endl;
   for (auto w : writers) {
     cout << tab(1) << w->name << endl;
-    assert(!w->is_loop);
+    assert(!w->is_loop());
   }
   string src = pick(writers)->name;
   cout << "src = " << src << endl;
@@ -4851,7 +4851,7 @@ std::vector<op*> get_dft_nodes(prog& prg) {
 std::vector<op*> get_dft_ops(prog& prg) {
   std::vector<op*> inner;
   dft(prg, [&inner](op* node) {
-      if (!node->is_loop) {
+      if (!node->is_loop()) {
       inner.push_back(node);
       }
       });
@@ -4875,7 +4875,7 @@ std::set<op*> get_inner_loops(prog& prg) {
     string vr = lp_pair.first;
     auto v = prg.find_loop(vr);
     for (auto c : v->children) {
-      if (c->is_loop) {
+      if (c->is_loop()) {
         all_children_ops = false;
         break;
       }
@@ -5286,13 +5286,13 @@ void generate_verilator_tb(prog& prg,
   }
 
 bool is_inner_loop(op* op) {
-  if (!op->is_loop) {
+  if (!op->is_loop()) {
     return false;
 
   }
 
   for (auto c : op->children) {
-    if (c->is_loop) {
+    if (c->is_loop()) {
       return false;
     }
   }
@@ -5410,7 +5410,7 @@ bool is_rate_matchable(prog& prg) {
 }
 
 int loop_depth(op* op) {
-  int d = op->is_loop;
+  int d = op->is_loop();
   int max_child_depth = 0;
   for (auto c : op->children) {
     max_child_depth = max(loop_depth(c), max_child_depth);
@@ -5432,7 +5432,7 @@ bool all_loop_nests_same_depth(prog& prg) {
 }
 
 bool is_perfect(op* loop, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
   if (is_inner_loop(loop)) {
     return true;
   }
@@ -5455,13 +5455,13 @@ bool all_perfect_loop_nests(prog& prg) {
 }
 
 void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
-  if (!parent->is_loop) {
+  if (!parent->is_loop()) {
     return;
   }
 
   QExpr parent_sched = map_find(parent, schedule_exprs);
   for (auto c : parent->children) {
-    if (c->is_loop) {
+    if (c->is_loop()) {
       QTerm root_sched_t{{qconst(map_find(c->name, sched.loop_iis)), qvar(c->name)}};
       QExpr root_sched{{root_sched_t}};
 
@@ -5498,7 +5498,7 @@ map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg) {
     cout << tab(1) << op->name << " -> " << opl.second << endl;
     ostringstream ss;
     ss << opl.second;
-    if (!op->is_loop) {
+    if (!op->is_loop()) {
       isl_aff* aff = isl_aff_read_from_str(prg.ctx,
           curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
       schedule_affs[op] = aff;
@@ -5528,7 +5528,7 @@ map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
     cout << tab(1) << op->name << " -> " << expr << endl;
     ostringstream ss;
     ss << expr;
-    if (!op->is_loop) {
+    if (!op->is_loop()) {
       isl_aff* aff = isl_aff_read_from_str(prg.ctx,
           curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
       schedule_affs[op] = aff;
@@ -5700,7 +5700,7 @@ umap* read_at(const std::string& level, prog& prg) {
 }
 
 int schedule_info::instance_latency(op* op) {
-  if (op->is_loop) {
+  if (op->is_loop()) {
     int maxoffset = 1;
     for (auto c : op->children) {
       int delay = map_find(c, op_offset_within_parent);
@@ -5732,7 +5732,7 @@ bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
     return has_latency && has_ii;
   }
 
-  if (op->is_loop) {
+  if (op->is_loop()) {
     return has_latency && has_ii && has_offset;
   }
 
@@ -5831,7 +5831,7 @@ map<string, pair<string, int> > determine_shift_reg_map(
 
 
 void ir_node::replace_writes_to(const std::string& source_buf, const std::string& replacement) {
-  if (is_loop) {
+  if (is_loop()) {
     for (auto c : children) {
       c->replace_writes_to(source_buf, replacement);
     }
@@ -5844,7 +5844,7 @@ void ir_node::replace_writes_to(const std::string& source_buf, const std::string
 }
 
 void ir_node::replace_reads_from(const std::string& source_buf, const std::string& replacement) {
-  if (is_loop) {
+  if (is_loop()) {
     for (auto c : children) {
       c->replace_reads_from(source_buf, replacement);
     }
@@ -5874,7 +5874,7 @@ isl_map* next_iteration(isl_set* domain) {
 }
 
 void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   string buf = name(read_data);
   op* next_lp = loop;
@@ -5901,7 +5901,7 @@ void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& p
 }
 
 void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
-  assert(iloop->is_loop);
+  assert(iloop->is_loop());
   string container = surrounding_vars(iloop, prg).back();
   op* loop = prg.find_loop(container);
 
@@ -5952,7 +5952,7 @@ void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, p
 }
 
 void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   cout << "reading in data: " << str(read_data) << " at " << loop->name << endl;
 
@@ -6000,7 +6000,7 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
 }
 
 void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   string buf = name(read_data);
   op* next_lp = loop;
@@ -6058,7 +6058,7 @@ isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
 
 }
 void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   string buf = name(read_data);
   op* next_lp = loop;
@@ -6234,7 +6234,7 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
 }
 
 void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   string buf = name(read_data);
   op* next_lp = loop;

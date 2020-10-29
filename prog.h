@@ -40,7 +40,7 @@ struct ir_node {
   ir_node* parent;
 
   // Every ir_node is either a loop or an operation
-  bool is_loop;
+  //bool is_loop();
   ir_node_type tp;
 
   // Loop bounds
@@ -72,9 +72,14 @@ struct ir_node {
 
   isl_ctx* ctx;
 
-  ir_node() : parent(nullptr), is_loop(false), tp(IR_NODE_TYPE_OPERATION), unroll_factor(1) {}
+  ir_node() : parent(nullptr),
+  //is_loop()(false),
+  tp(IR_NODE_TYPE_OPERATION),
+  unroll_factor(1) {}
 
   ~ir_node();
+
+  bool is_loop() const { return tp == IR_NODE_TYPE_LOOP; }
 
   void copy_fields_from(op* other);
   void copy_memory_operations_from(op* other);
@@ -111,7 +116,7 @@ struct ir_node {
   }
 
   int trip_count() const {
-    assert(is_loop);
+    assert(is_loop());
     return end_exclusive - start;
   }
 
@@ -239,7 +244,7 @@ struct ir_node {
     std::set<op*> dec = descendants();
     std::set<op*> ops;
     for (auto d : dec) {
-      if (!d->is_loop) {
+      if (!d->is_loop()) {
         ops.insert(d);
       }
     }
@@ -280,7 +285,7 @@ struct ir_node {
 
   void get_domain_boxes(Box b, map<op*, Box> & domain_map) {
       domain_map[this] = b;
-      if (is_loop) {
+      if (is_loop()) {
           b.intervals.push_back({start, end_exclusive-1});
       }
       for (auto c : children) {
@@ -298,7 +303,7 @@ struct ir_node {
 
   void pretty_print(std::ostream& out, int level) const {
 
-    if (is_loop) {
+    if (is_loop()) {
       out << tab(level) << "for (int " << name << " = " << start << "; " << name << " < " << end_exclusive << "; " << name << "++) {" << endl;
       for (auto c : children) {
         c->pretty_print(out, level + 1);
@@ -396,7 +401,7 @@ struct ir_node {
   }
 
   op* add_loop_before(op* source, const std::string& name, const int l, const int u) {
-    assert(is_loop);
+    assert(is_loop());
 
     op* sr = container_child(source);
     assert(sr != nullptr);
@@ -407,7 +412,7 @@ struct ir_node {
     lp->name = name;
     lp->ctx = ctx;
     lp->parent = this;
-    lp->is_loop = true;
+    //lp->is_loop() = true;
     lp->tp = IR_NODE_TYPE_LOOP;
     lp->start = l;
     lp->end_exclusive = u;
@@ -434,7 +439,7 @@ struct ir_node {
   op* add_op_after(op* source, const std::string& name);
 
   op* add_loop_after(op* source, const std::string& name, const int l, const int u) {
-    assert(is_loop);
+    assert(is_loop());
 
     op* sr = container_child(source);
     assert(sr != nullptr);
@@ -445,7 +450,7 @@ struct ir_node {
     lp->name = name;
     lp->ctx = ctx;
     lp->parent = this;
-    lp->is_loop = true;
+    //lp->is_loop() = true;
     lp->tp = IR_NODE_TYPE_LOOP;
     lp->start = l;
     lp->end_exclusive = u;
@@ -470,14 +475,14 @@ struct ir_node {
   }
 
   op* add_loop_front(const std::string& name, const int l, const int u) {
-    assert(is_loop);
+    assert(is_loop());
     //assert(!elem(name, all_existing_loop_names()));
 
     auto lp = new op();
     lp->name = name;
     lp->ctx = ctx;
     lp->parent = this;
-    lp->is_loop = true;
+    //lp->is_loop() = true;
     lp->tp = IR_NODE_TYPE_LOOP;
     lp->start = l;
     lp->end_exclusive = u;
@@ -486,7 +491,7 @@ struct ir_node {
     return lp;
   }
   op* add_loop(const std::string& name, const int l, const int u) {
-    assert(is_loop);
+    assert(is_loop());
     assert(name != "");
     //assert(!elem(name, all_existing_loop_names()));
 
@@ -494,7 +499,7 @@ struct ir_node {
     lp->name = name;
     lp->ctx = ctx;
     lp->parent = this;
-    lp->is_loop = true;
+    //lp->is_loop() = true;
     lp->tp = IR_NODE_TYPE_LOOP;
     lp->start = l;
     lp->end_exclusive = u;
@@ -617,7 +622,7 @@ struct ir_node {
   }
 
   string add_load(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
-    assert(!is_loop);
+    assert(!is_loop());
     consume_locs_pair.push_back({b, loc});
     return consumed_value_name({b, loc});
     //string val_name = b;
@@ -702,13 +707,13 @@ struct ir_node {
   }
 
   void add_store(const std::string& b, const std::string& loc) {
-    assert(!is_loop);
+    assert(!is_loop());
     //produce_locs.push_back({b, loc});
     produce_locs.push_back({b, {{"", loc}}});
   }
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
-    if (is_loop) {
+    if (is_loop()) {
       auto nds = active_vecs;
       nds.push_back(to_string(start) + " <= " + name + " < " + to_string(end_exclusive));
       for (auto c : children) {
@@ -723,7 +728,7 @@ struct ir_node {
   }
 
   void populate_schedule_vectors(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
-    if (is_loop) {
+    if (is_loop()) {
       auto nds = active_vecs;
       assert(nds.size() > 0);
 
@@ -757,7 +762,7 @@ struct ir_node {
   }
 
   void populate_iter_vars(map<op*, vector<string> >& varmap, vector<string>& active_vars) {
-    if (is_loop) {
+    if (is_loop()) {
       auto nv = active_vars;
       nv.push_back(name);
       for (auto c : children) {
@@ -773,7 +778,7 @@ struct ir_node {
 
   std::set<op*> all_loops() {
     std::set<op*> loops{this};
-    if (!is_loop) {
+    if (!is_loop()) {
       loops = {};
     }
     for (auto c : children) {
@@ -787,7 +792,7 @@ struct ir_node {
   std::set<std::string> all_existing_loop_names() {
     std::set<string> names;
     for (auto op : all_root_ops()) {
-      if (op->is_loop) {
+      if (op->is_loop()) {
         names.insert(op->name);
       }
     }
@@ -797,7 +802,7 @@ struct ir_node {
   std::set<std::string> all_existing_op_names() {
     std::set<string> names;
     for (auto op : all_root_ops()) {
-      if (!op->is_loop) {
+      if (!op->is_loop()) {
         names.insert(op->name);
       }
     }
@@ -827,7 +832,7 @@ struct ir_node {
 
   std::set<op*> all_ops() {
     std::set<op*> ops{this};
-    if (is_loop) {
+    if (is_loop()) {
       ops = {};
     }
     for (auto c : children) {
@@ -1117,7 +1122,7 @@ struct prog {
     root = new op();
     root->name = "root";
     root->ctx = ctx;
-    root->is_loop = true;
+    //root->is_loop() = true;
     root->tp = IR_NODE_TYPE_LOOP;
     root->start = 0;
     root->end_exclusive = 1;
@@ -1129,7 +1134,7 @@ struct prog {
     root = new op();
     root->name = "root";
     root->ctx = ctx;
-    root->is_loop = true;
+    //root->is_loop() = true;
     root->tp = IR_NODE_TYPE_LOOP;
     root->start = 0;
     root->end_exclusive = 1;
@@ -1757,7 +1762,7 @@ struct schedule_info {
   }
 
   int last_update_delay(op* op) {
-    assert(op->is_loop);
+    assert(op->is_loop());
     int last_delay = 0;
     for (auto c : op->children) {
       int delay = offset_in_parent(c) + total_latency(c);
@@ -1769,7 +1774,7 @@ struct schedule_info {
   }
 
   int total_latency(op* op) {
-    if (!op->is_loop) {
+    if (!op->is_loop()) {
       assert(contains_key(op, instance_latencies));
       return map_find(op, instance_latencies);
     }
@@ -1779,7 +1784,7 @@ struct schedule_info {
   int instance_latency(op* op);
 
   int II(op* op) {
-    assert(op->is_loop);
+    assert(op->is_loop());
     assert(contains_key(op->name, loop_iis));
     return map_find(op->name, loop_iis);
   }

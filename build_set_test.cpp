@@ -2746,7 +2746,7 @@ void find_high_bandwidth_non_const_rd_reads(prog& prg) {
 }
 
 void insert_pad_loops(const int level, op* root, const map<string, vector<int> >& pad_indexes) {
-  if (!root->is_loop) {
+  if (!root->is_loop()) {
     return;
   }
 
@@ -2762,7 +2762,8 @@ void insert_pad_loops(const int level, op* root, const map<string, vector<int> >
         lp->name = "pad_" + root->name + "_to_" + c->name;
         lp->ctx = root->ctx;
         lp->parent = root;
-        lp->is_loop = true;
+        //lp->is_loop() = true;
+        lp->tp = IR_NODE_TYPE_LOOP;
         lp->start = 0;
         lp->end_exclusive = 1;
         lp->children.push_back(c);
@@ -2784,7 +2785,7 @@ void insert_pad_loops(prog& prg, const map<string, vector<int> >& pad_indexes) {
 }
 
 std::set<string> buffers_referenced(op* p) {
-  assert(!p->is_loop);
+  assert(!p->is_loop());
 
   std::set<string> bufs;
   //for (auto b : p->produce_locs) {
@@ -15404,7 +15405,7 @@ void infer_bounds_unrolled_test() {
 }
 
 int op_latency(op* op, const schedule_info& hwinfo) {
-  assert(!op->is_loop);
+  assert(!op->is_loop());
 
   int total_latency = 0;
 
@@ -15445,7 +15446,7 @@ vector<op*> inner_ops(prog& prg) {
   vector<op*> ops;
   for (auto ord : ordered_inner) {
     for (auto c : ord->children) {
-      assert(!c->is_loop);
+      assert(!c->is_loop());
       ops.push_back(c);
     }
   }
@@ -15470,7 +15471,7 @@ void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
 void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   cout << "scheduling: " << op->name << endl;
 
-  if (!op->is_loop) {
+  if (!op->is_loop()) {
     int total_latency = op_latency(op, hwinfo);
     hwinfo.instance_latencies[op] = total_latency;
     return;
@@ -16365,7 +16366,7 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
     cout << tab(1) << op->name << " -> " << opl.second << endl;
     ostringstream ss;
     ss << opl.second;
-    if (!op->is_loop) {
+    if (!op->is_loop()) {
       isl_aff* aff = isl_aff_read_from_str(prg.ctx,
           curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
       schedule_affs[op->name] = aff;
@@ -18278,7 +18279,7 @@ void push_below(loop* outer, loop* inner, prog& prg) {
 }
 
 void push_to_bottom_of_band_ignoring(vector<loop*>& base, loop* lp, prog& prg) {
-  assert(lp->is_loop);
+  assert(lp->is_loop());
   assert(lp->children.size() == 1);
 
   int old_num_loops = prg.all_loops().size();
