@@ -18796,12 +18796,21 @@ void test_multi_kernel_unsharp() {
   cout << "Channel sizes" << endl;
   auto sched = prg.optimized_codegen();
   for (auto b : all_buffers(prg)) {
-    auto m = prg.consumer_map(b);
-    auto c = prg.producer_map(b);
+    auto r = prg.consumer_map(b);
+    auto w = prg.producer_map(b);
     if (!prg.is_boundary(b)) {
       cout << "========= " << b << endl;
-      cout << tab(1) << str(m) << endl;
-      cout << tab(1) << str(c) << endl;
+      cout << tab(1) << str(r) << endl;
+      cout << tab(1) << str(w) << endl;
+
+      auto times_to_writes = dot(inv(sched), w);
+      auto times_to_reads = dot(inv(sched), r);
+
+      cout << "times to writes: " << str(times_to_writes) << endl;
+      cout << "times to reads : " << str(times_to_reads) << endl;
+
+      // What am I trying to construct?
+      // 1. An expression for max(#Writes(t) - #Reads(t))
     }
   }
   assert(false);
