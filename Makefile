@@ -20,9 +20,10 @@ endif
 
 LINK_FLAGS = -L ./lib -L $(OPT_LIB_PATH) -L $(ISL_PATH) -lclkwrk -lbarvinok -lisl -lntl -lgmp -lpolylibgmp -lpthread 
 ifeq ($(UNMAE), Darwin)
-	LINK_FLAGS += -lc++experimental
-else
-	LINK_FLAGS += -lstdc++fs
+LINK_FLAGS += -lc++experimental
+endif
+ifneq ($(UNAME), Darwin)
+LINK_FLAGS += -lstdc++fs
 endif
 
 ifeq ($(COREIR),1)
