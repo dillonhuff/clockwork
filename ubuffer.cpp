@@ -1186,171 +1186,6 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options) {
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
 }
 
-void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched) {
-
-  //compute the bound of the schedule
-  cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
-  auto bound = Box(opt_sched);
-  isl_set* sched_set = bound.to_set(buffer.ctx, "");
-  auto bset_vec = constraints(sched_set);
-  for (auto bset: bset_vec) {
-      cout << "constraints: " << str(bset) << endl;
-  }
-
-  //Initialize the variable for lattice count
-  size_t cycle = 0;
-  cout << str(sched_set) << endl;
-  auto point_vec = get_points(sched_set);
-  std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
-  auto & buf = buffer;
-  for (auto point : point_vec) {
-    //cout << str(point) << endl;
-    //auto input_sched = op2sched.at("input");
-    //auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
-    //cout <<"Card Expr: " << str(isExeQP) << endl;
-    //bool isExe = int_lower_bound(isExeQP) == 1;
-    //cout << "input OP execute in this point = " << isExe << endl;
-    //cout << "Buffer: " << buf.name << endl;
-    //cout << str(point) << " read = " << buf.is_rd(point) << endl;
-    //cout << str(point) << " write = " << buf.is_wr(point) << endl;
-    //tcout << endl;
-
-
-    if (buf.is_wr(point) ) {
-      auto pt = pick(buf.get_in_ports());
-      auto rd_sched = to_map(buf.schedule.at(pt));
-      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
-      buf.mark_write(cycle, iter_set);
-
-      cout << "Buffer: " << buf.name << endl;
-      //cout << str(point) << " read = " << buf.is_rd(point) << endl;
-      cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
-      cout << endl;
-
-    }
-    if (buf.is_rd(point)) {
-      auto pt = pick(buf.get_out_ports());
-      auto rd_sched = to_map(buf.schedule.at(pt));
-      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
-      buf.mark_read(cycle, iter_set);
-      cout << "read at iter: " << str(iter_set) << endl;
-
-      cout << "Buffer: " << buf.name << endl;
-      cout << str(point) << " read = " << buf.is_rd(point) << " at cycle:" << cycle << endl;
-      //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
-      cout << endl;
-    }
-    cycle ++;
-  }
-}
-
-void generate_lake_stream(CodegenOptions & options,
-        map<string, UBuffer>& buffers_opt,
-        umap* hardware_schedule) {
-  for (auto & it : buffers_opt) {
-    lattice_schedule_buf(it.second, hardware_schedule);
-  }
-  string dir = options.dir + "lake_stream/";
-  cout << "Generating lake smt stream!" << endl;
-  cmd("mkdir -p " + dir);
-  emit_lake_address_stream2file(buffers_opt, dir);
-}
-
-void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir) {
-  map<string, pair<lakeStream, lakeStream> > top_stream;
-  for (auto it: buffers_opt) {
-    string buf_name = it.first;
-    UBuffer buf = it.second;
-    if (buf.get_in_ports().size() == 0 || buf.get_out_ports().size() == 0) {
-      continue;
-    }
-    vector<int> sram_read = buf.read_cycle;
-    vector<int> sram_write = buf.write_cycle;
-    auto read_addr = buf.read_addr;
-    auto write_addr = buf.write_addr;
-    lakeStream stream_data = emit_top_address_stream(dir + "/" + buf_name , sram_read, sram_write, read_addr, write_addr);
-    if (contains(buf_name, "agg")) {
-        string tile_name = take_until_str(buf_name, "_agg");
-        top_stream[tile_name].first = stream_data;
-    } else if (contains(buf_name, "tb")) {
-        string tile_name = take_until_str(buf_name, "_tb");
-        top_stream[tile_name].second = stream_data;
-    }
-  }
-  for (auto it: top_stream) {
-    auto agg_tb_pair = it.second;
-    lakeStream top(agg_tb_pair.first, agg_tb_pair.second);
-    top.emit_csv(dir + "/" + it.first + "_top");
-  }
-}
-
-lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
-        vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
-  ofstream out(fname+"_SMT.csv");
-  cout << "fname: " << fname << endl;
-
-  lakeStream ret;
-
-  //TODO: put this into a tile constraint file
-  int input_width = pick(write_addr).size();
-  int output_width = pick(read_addr).size();
-  ret.in_width = input_width;
-  ret.out_width = output_width;
-
-  int cycle = 0;
-  size_t rd_itr = 0;
-  size_t wr_itr = 0;
-  out << "data_in, valid_in, data_out, valid_out" << endl;
-  auto addr_out = vector<int>(output_width, 0);
-  while (rd_itr < read_cycle.size() || wr_itr < write_cycle.size()) {
-    bool valid_in = false, valid_out = false;
-    auto addr_in = vector<int>(input_width, 0);
-    if (rd_itr < read_cycle.size()) {
-      if (read_cycle.at(rd_itr) == cycle) {
-        valid_out = true;
-        for (size_t i = 0; i < read_addr.at(rd_itr).size(); i ++)
-          addr_out.at(i) = read_addr.at(rd_itr).at(i);
-
-        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
-        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr_out, "[", "]", " ") << endl;
-        rd_itr ++;
-      }
-    }
-    if (wr_itr < write_cycle.size()) {
-      if (write_cycle.at(wr_itr) == cycle) {
-        valid_in = true;
-        for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
-          addr_in.at(i) = write_addr.at(wr_itr).at(i);
-        //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
-        //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr_in, "[", "]", " ") << endl;
-        //out << cycle << tab(1) << "wr"  << endl;
-        wr_itr ++;
-      }
-    }
-
-    int out_width = pick(read_addr).size();
-    int in_width = pick(write_addr).size();
-    int mul_out = pow(2, out_width) - 1;
-    int mul_in = pow(2, in_width) - 1;
-
-    //Some fix for the output format
-    //string l_in = addr_in.size() > 1 ? "[[" : "";
-    //string l_out = addr_out.size() > 1 ? "[[" : "";
-    //string r_in = addr_in.size() > 1 ? "]]" : "";
-    //string r_out = addr_out.size() > 1 ? "]]" : "";
-
-    //out << sep_list(addr_in, l_in, r_in, "],[") << ", " << sep_list(addr_out, l_out, r_out, "],[") << endl;
-    out << sep_list(addr_in, "[", "]", " ") << ", "
-        << valid_in << ", "
-        << sep_list(addr_out, "[", "]", " ") << ", "
-        << valid_out << endl;
-    ret.append_data(addr_in, addr_out, valid_in, valid_out);
-
-    cycle ++;
-  }
-  out.close();
-  return ret;
-}
 
 
 //generate/realize the rewrite structure inside ubuffer node
@@ -2496,6 +2331,172 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
   }
 
 #endif
+
+void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched) {
+
+  //compute the bound of the schedule
+  cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
+  auto bound = Box(opt_sched);
+  isl_set* sched_set = bound.to_set(buffer.ctx, "");
+  auto bset_vec = constraints(sched_set);
+  for (auto bset: bset_vec) {
+      cout << "constraints: " << str(bset) << endl;
+  }
+
+  //Initialize the variable for lattice count
+  size_t cycle = 0;
+  cout << str(sched_set) << endl;
+  auto point_vec = get_points(sched_set);
+  std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
+  auto & buf = buffer;
+  for (auto point : point_vec) {
+    //cout << str(point) << endl;
+    //auto input_sched = op2sched.at("input");
+    //auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
+    //cout <<"Card Expr: " << str(isExeQP) << endl;
+    //bool isExe = int_lower_bound(isExeQP) == 1;
+    //cout << "input OP execute in this point = " << isExe << endl;
+    //cout << "Buffer: " << buf.name << endl;
+    //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+    //cout << str(point) << " write = " << buf.is_wr(point) << endl;
+    //tcout << endl;
+
+
+    if (buf.is_wr(point) ) {
+      auto pt = pick(buf.get_in_ports());
+      auto rd_sched = to_map(buf.schedule.at(pt));
+      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+      buf.mark_write(cycle, iter_set);
+
+      cout << "Buffer: " << buf.name << endl;
+      //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+      cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+      cout << endl;
+
+    }
+    if (buf.is_rd(point)) {
+      auto pt = pick(buf.get_out_ports());
+      auto rd_sched = to_map(buf.schedule.at(pt));
+      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+      buf.mark_read(cycle, iter_set);
+      cout << "read at iter: " << str(iter_set) << endl;
+
+      cout << "Buffer: " << buf.name << endl;
+      cout << str(point) << " read = " << buf.is_rd(point) << " at cycle:" << cycle << endl;
+      //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+      cout << endl;
+    }
+    cycle ++;
+  }
+}
+
+void generate_lake_stream(CodegenOptions & options,
+        map<string, UBuffer>& buffers_opt,
+        umap* hardware_schedule) {
+  for (auto & it : buffers_opt) {
+    lattice_schedule_buf(it.second, hardware_schedule);
+  }
+  string dir = options.dir + "lake_stream/";
+  cout << "Generating lake smt stream!" << endl;
+  cmd("mkdir -p " + dir);
+  emit_lake_address_stream2file(buffers_opt, dir);
+}
+
+void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir) {
+  map<string, pair<lakeStream, lakeStream> > top_stream;
+  for (auto it: buffers_opt) {
+    string buf_name = it.first;
+    UBuffer buf = it.second;
+    if (buf.get_in_ports().size() == 0 || buf.get_out_ports().size() == 0) {
+      continue;
+    }
+    vector<int> sram_read = buf.read_cycle;
+    vector<int> sram_write = buf.write_cycle;
+    auto read_addr = buf.read_addr;
+    auto write_addr = buf.write_addr;
+    lakeStream stream_data = emit_top_address_stream(dir + "/" + buf_name , sram_read, sram_write, read_addr, write_addr);
+    if (contains(buf_name, "agg")) {
+        string tile_name = take_until_str(buf_name, "_agg");
+        top_stream[tile_name].first = stream_data;
+    } else if (contains(buf_name, "tb")) {
+        string tile_name = take_until_str(buf_name, "_tb");
+        top_stream[tile_name].second = stream_data;
+    }
+  }
+  for (auto it: top_stream) {
+    auto agg_tb_pair = it.second;
+    lakeStream top(agg_tb_pair.first, agg_tb_pair.second);
+    top.emit_csv(dir + "/" + it.first + "_top");
+  }
+}
+
+lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
+  ofstream out(fname+"_SMT.csv");
+  cout << "fname: " << fname << endl;
+
+  lakeStream ret;
+
+  //TODO: put this into a tile constraint file
+  int input_width = pick(write_addr).size();
+  int output_width = pick(read_addr).size();
+  ret.in_width = input_width;
+  ret.out_width = output_width;
+
+  int cycle = 0;
+  size_t rd_itr = 0;
+  size_t wr_itr = 0;
+  out << "data_in, valid_in, data_out, valid_out" << endl;
+  auto addr_out = vector<int>(output_width, 0);
+  while (rd_itr < read_cycle.size() || wr_itr < write_cycle.size()) {
+    bool valid_in = false, valid_out = false;
+    auto addr_in = vector<int>(input_width, 0);
+    if (rd_itr < read_cycle.size()) {
+      if (read_cycle.at(rd_itr) == cycle) {
+        valid_out = true;
+        for (size_t i = 0; i < read_addr.at(rd_itr).size(); i ++)
+          addr_out.at(i) = read_addr.at(rd_itr).at(i);
+
+        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr_out, "[", "]", " ") << endl;
+        rd_itr ++;
+      }
+    }
+    if (wr_itr < write_cycle.size()) {
+      if (write_cycle.at(wr_itr) == cycle) {
+        valid_in = true;
+        for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
+          addr_in.at(i) = write_addr.at(wr_itr).at(i);
+        //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
+        //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr_in, "[", "]", " ") << endl;
+        //out << cycle << tab(1) << "wr"  << endl;
+        wr_itr ++;
+      }
+    }
+
+    int out_width = pick(read_addr).size();
+    int in_width = pick(write_addr).size();
+    int mul_out = pow(2, out_width) - 1;
+    int mul_in = pow(2, in_width) - 1;
+
+    //Some fix for the output format
+    //string l_in = addr_in.size() > 1 ? "[[" : "";
+    //string l_out = addr_out.size() > 1 ? "[[" : "";
+    //string r_in = addr_in.size() > 1 ? "]]" : "";
+    //string r_out = addr_out.size() > 1 ? "]]" : "";
+
+    //out << sep_list(addr_in, l_in, r_in, "],[") << ", " << sep_list(addr_out, l_out, r_out, "],[") << endl;
+    out << sep_list(addr_in, "[", "]", " ") << ", "
+        << valid_in << ", "
+        << sep_list(addr_out, "[", "]", " ") << ", "
+        << valid_out << endl;
+    ret.append_data(addr_in, addr_out, valid_in, valid_out);
+
+    cycle ++;
+  }
+  out.close();
+  return ret;
+}
 
   void generate_code_prefix(CodegenOptions& options,
       std::ostream& out,
