@@ -18788,7 +18788,29 @@ void test_multi_kernel_unsharp() {
   prg.pretty_print();
   prg.sanity_check();
 
-  assert(false);
+  auto unopt_postprocessed = unoptimized_result(prg);
+  
+  map<std::string, std::set<string> > fusion_groups;
+  int i = 0;
+  for (auto gp : get_kernels(prg)) {
+    fusion_groups["gp_" + str(i)] = {gp};
+    i++;
+  }
+  app_dag dag = partition_application(fusion_groups, prg);
+
+  generate_regression_testbench(dag.prg);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  all_unbanked(prg, options);
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  generate_app_code(options, dag);
+  vector<string> multi_kernel_res = run_regression_tb(dag.prg);
+
+  compare("multi_kernel_" + prg.name + "_vs_unopt", multi_kernel_res, unopt_postprocessed);
+  move_to_benchmarks_folder(dag.prg.name);
 }
 
 void dhuff_playground() {
