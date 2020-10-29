@@ -18795,6 +18795,10 @@ void test_multi_kernel_unsharp() {
 
   cout << "Channel sizes" << endl;
   auto sched = prg.optimized_codegen();
+  cout << "Optimized schedule: " << str(sched) << endl;
+
+  assert(false);
+
   for (auto b : all_buffers(prg)) {
     auto r = prg.consumer_map(b);
     auto w = prg.producer_map(b);
