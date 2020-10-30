@@ -676,3 +676,5 @@ std::vector<isl_aff*> get_affs(isl_multi_aff* saff);
 std::map<int, isl_val*> constant_components(isl_multi_aff* access);
 isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str);
 isl_val* constant(isl_aff* a);
+
+umap* to_umap(const vector<isl_aff*>& hs);

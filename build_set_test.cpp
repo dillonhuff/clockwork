@@ -18914,18 +18914,19 @@ void test_gaussian_pyramid_shared_pes() {
   prg.pretty_print();
 
   auto valid = prg.validity_deps();
-  //umap* sched = clockwork_schedule_umap(prg.whole_iteration_domain(), valid, cpy(valid));
 
   vector<op*> op_order = get_dft_ops(prg);
   auto sched_affs = clockwork_schedule(prg.whole_iteration_domain(), valid, cpy(valid));
+  cout << endl;
   cout << "Schedule..." << endl;
   int i = 0;
+  vector<isl_map*> schedules_at_level_1;
   for (auto aff : sched_affs) {
-    cout << tab(1) << aff.first << endl;
-    for (auto expr : aff.second) {
-      cout << tab(2) << str(expr) << endl;
-    }
-    cout << tab(2) << "Offset: " << i << endl;
+    auto expr = cpy(aff.second.at(1));
+    expr = set_name(expr, aff.first);
+    isl_map* m = to_map(expr);
+    cout << tab(1) << str(m) << endl;
+    schedules_at_level_1.push_back(m);
     i++;
   }
 

@@ -3746,3 +3746,18 @@ isl_val* constant(isl_aff* a) {
   return isl_aff_get_constant_val(a);
 }
 
+umap* to_umap(const vector<isl_aff*>& hs) {
+  assert(hs.size() > 0);
+
+  auto ct = ctx(pick(hs));
+  umap* schedmap = rdmap(ct, "{}");
+  for (auto sp : hs) {
+    isl_aff* sched = sp;
+
+    isl_map* sm = isl_map_from_aff(sched);
+    schedmap = unn(schedmap, to_umap(sm));
+  }
+
+  return schedmap;
+}
+
