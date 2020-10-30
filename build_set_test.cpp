@@ -11417,15 +11417,6 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
-void generate_smt_stream(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
-  for (auto & buf: buffers) {
-    if (!prg.is_boundary(buf.first)) {
-      //generate stream with the rewrite buffer
-      buf.second.generate_smt_stream(options);
-    }
-  }
-}
-
 void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
@@ -11442,6 +11433,16 @@ void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, Codegen
   //cmd("mv " + prg.name + ".v " + opt.dir + "verilog");
 }
 #endif
+
+void generate_smt_stream(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
+  for (auto & buf: buffers) {
+    if (!prg.is_boundary(buf.first)) {
+      //generate stream with the rewrite buffer
+      buf.second.generate_smt_stream(options);
+    }
+  }
+}
+
 
 void identity_stream_through_mem_coreir_test() {
   prog prg("identity_stream_through_mem");
@@ -13219,6 +13220,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem() {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
+  //test_apps.push_back(gaussian());
   //test_apps.push_back(cascade());
   //test_apps.push_back(harris());
   //test_apps.push_back(conv_1_2());
@@ -13227,12 +13229,12 @@ void test_single_port_mem() {
   //TODO: break in the middle of vectorization
   //test_apps.push_back(down_sample());
 
-  test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(camera_pipeline());
   //TODO:has issue  with multiple input
-  test_apps.push_back(demosaic_complex());
+  //test_apps.push_back(demosaic_complex());
 
   //TODO:need to use the new scheduler
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     prg.pretty_print();

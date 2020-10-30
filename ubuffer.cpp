@@ -1186,41 +1186,6 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options) {
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
 }
 
-//This the smt stream generation pass without coreIR generation
-void UBuffer::generate_smt_stream(CodegenOptions& options) {
-
-  //sort the bank by delay first
-  auto bank_list = get_banks_and_sort();
-
-  //generate all the ubuffer for internal vectorization
-  auto rewrite_buffer = generate_ubuffer(options);
-
-  for (auto bk : bank_list) {
-    //assert(false);
-    std::set<string> inpts = get_bank_inputs(bk.name);
-    std::set<string> outpts = get_bank_outputs(bk.name);
-    auto buf_inpts = get_in_ports();
-    cout << "Bank:" << bk.name << " has max_delay: " << bk.maxdelay << endl;
-    if (bk.maxdelay == 0) {
-      continue;
-    } else if (bk.maxdelay <= options.merge_threshold) {
-      continue;
-    } else {
-      string ub_ins_name = "ub_"+bk.name;
-
-      //vectorization pass for lake tile
-      if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
-        buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
-        //config_file = generate_ubuf_args(options, rewrite_buffer);
-      }
-      //Generate SMT stream if needed
-      if (options.emit_smt_stream) {
-        generate_lake_stream(options, rewrite_buffer, global_schedule_from_buffers(rewrite_buffer));
-      }
-    }
-  }
-}
-
 
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
@@ -2376,6 +2341,41 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
   }
 
 #endif
+
+//This the smt stream generation pass without coreIR generation
+void UBuffer::generate_smt_stream(CodegenOptions& options) {
+
+  //sort the bank by delay first
+  auto bank_list = get_banks_and_sort();
+
+  //generate all the ubuffer for internal vectorization
+  auto rewrite_buffer = generate_ubuffer(options);
+
+  for (auto bk : bank_list) {
+    //assert(false);
+    std::set<string> inpts = get_bank_inputs(bk.name);
+    std::set<string> outpts = get_bank_outputs(bk.name);
+    auto buf_inpts = get_in_ports();
+    cout << "Bank:" << bk.name << " has max_delay: " << bk.maxdelay << endl;
+    if (bk.maxdelay == 0) {
+      continue;
+    } else if (bk.maxdelay <= options.merge_threshold) {
+      continue;
+    } else {
+      string ub_ins_name = "ub_"+bk.name;
+
+      //vectorization pass for lake tile
+      if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+        buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+        //config_file = generate_ubuf_args(options, rewrite_buffer);
+      }
+      //Generate SMT stream if needed
+      if (options.emit_smt_stream) {
+        generate_lake_stream(options, rewrite_buffer, global_schedule_from_buffers(rewrite_buffer));
+      }
+    }
+  }
+}
 
 void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched) {
 
