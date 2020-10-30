@@ -18802,7 +18802,7 @@ void test_multi_kernel_unsharp() {
   auto sched = prg.optimized_codegen();
   cout << "Optimized schedule: " << str(sched) << endl;
 
-  //assert(false);
+  assert(false);
 
   for (auto b : all_buffers(prg)) {
     auto r = prg.consumer_map(b);
@@ -18889,9 +18889,47 @@ void test_multi_kernel_unsharp() {
   move_to_benchmarks_folder(dag.prg.name);
 }
 
-void dhuff_playground() {
-  test_multi_kernel_unsharp();
+void test_gaussian_pyramid_shared_pes() {
+  int num_pyramid_levels = 4;
+
+  prog prg("time_sharing_gauss_pyramid");
+  prg.compute_unit_file = "local_laplacian_filters_compute.h";
+
+  prg.add_input("in");
+  prg.add_output("out");
+
+  load_input("in", "gray", 2, prg);
+
+  // Make input Gaussian pyramid
+  vector<string> gray_levels = gaussian_pyramid("gray", num_pyramid_levels, prg);
+  cpy("out", gray_levels.back(), 2, prg);
+
+  infer_bounds("out", {4, 4}, prg);
+
+  unroll_reduce_loops(prg);
+  merge_basic_block_ops(prg);
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  prg.pretty_print();
+
+  auto valid = prg.validity_deps();
+  umap* sched = clockwork_schedule_umap(prg.whole_iteration_domain(), valid, cpy(valid));
+  cout << "Schedule..." << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+
   assert(false);
+}
+
+void dhuff_playground() {
+  test_gaussian_pyramid_shared_pes();
+
+  assert(false);
+
+  test_multi_kernel_unsharp();
   test_multi_kernel_design();
   test_time_sharing_gaussian_pyramid();
 
