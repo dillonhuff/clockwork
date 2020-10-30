@@ -1487,15 +1487,26 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
   //wire the control var if not using stencil_Valid
-  for (auto bk : bank_list) {
-    //assert(false);
-    std::set<string> inpts = get_bank_inputs(bk.name);
-    std::set<string> outpts = get_bank_outputs(bk.name);
-    if (options.pass_through_valid) {
-        if (!has_stencil_valid){
-          def->connect(def->sel("self." + get_bundle(pick(inpts)) + "_extra_ctrl"),
-                  def->sel("self." + get_bundle(pick(outpts)) + "_extra_ctrl"));
+  map<string, vector<CoreIR::Wireable*>> outctrl_to_inval;
+  if (options.pass_through_valid) {
+    if (!has_stencil_valid){
+      for (auto bk : bank_list) {
+        //assert(false);
+        std::set<string> inpts = get_bank_inputs(bk.name);
+        std::set<string> outpts = get_bank_outputs(bk.name);
+        for (auto outpt: outpts) {
+            cout << tab(1) << "Wire through the input bundle: " << get_bundle(pick(inpts))
+                << " and output bundle: " << get_bundle(outpt) << endl;
+            CoreIR::map_insert(outctrl_to_inval, get_bundle(outpt),
+                    (CoreIR::Wireable*)def->sel("self."+get_bundle(pick(inpts))+"_extra_ctrl"));
+            //def->connect(def->sel("self." + get_bundle(pick(inpts)) + "_extra_ctrl"),
+            //  def->sel("self." + get_bundle(outpt) + "_extra_ctrl"));
         }
+      }
+      for (auto it: outctrl_to_inval) {
+        auto out = andList(def, it.second);
+        def->connect(def->sel("self."+it.first+"_extra_ctrl"), out);
+      }
     }
   }
 
@@ -3896,6 +3907,7 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
      * instead of ubuffer. Think about ubuffer is the original
      * */
     stack<bank> bank_pool;
+    cout << tab(1) << "Start port group into multi-port memory tile!" << endl;
     for (auto inpt: get_in_ports()) {
       vector<bank> rec = receiver_banks(inpt);
       sort(rec.begin(), rec.end(), [](const bank& l, const bank& r) {
@@ -3903,7 +3915,7 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
           });
       for (auto bk : rec) {
         bank_pool.push(bk);
-        cout << tab(1) << bk.name << ", " << bk.maxdelay << ", SR only: " << bk.onlySR() << endl;
+        cout << tab(1) << bk.name << ", has max delay: " << bk.maxdelay << ", SR only: " << bk.onlySR() << endl;
       }
     }
     int group_in_port_width = 0;
@@ -3924,7 +3936,19 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
     vector<string> pt_vec;
     while(!bank_pool.empty()) {
       auto bk = bank_pool.top();
-      cout << bk.name << endl;
+      cout << tab(1) << "Pop bank: " << bk.name << " from bank pool." << endl;
+
+      //Check if we need a memory tile
+      //TODO: we could move the shift register optimization pass here
+      if (options.conditional_merge) {
+        if (bk.maxdelay <= options.merge_threshold) {
+            if (get_bank_outputs(bk.name).size() == 1){
+              bank_pool.pop();
+              continue;
+            }
+        }
+      }
+
       //First check if this bank already have saturized the hardware memory
       if (get_bank_inputs(bk.name).size() == in_port_width) {
           bank_pool.pop();
