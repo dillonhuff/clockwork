@@ -6,10 +6,11 @@ vector<string> get_files(const std::string& path) {
     struct dirent* diread;
     if ((dir = opendir(path.c_str())) != nullptr) {
         while ((diread = readdir(dir)) != nullptr) {
-            string fname = path + "/" +string(diread->d_name);
+            string fname = string(diread->d_name);
+            string full_path = path + "/" +string(diread->d_name);
             cout << "\tPush file: " << fname << "into list\n";
             if (fname != "." && fname!= "..")
-                file_list.push_back(fname);
+                file_list.push_back(full_path);
         }
         closedir(dir);
     } else {
