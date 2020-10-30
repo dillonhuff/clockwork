@@ -5,9 +5,8 @@
 #include <streambuf>
 #include <sstream>
 #include <regex>
-#include <experimental/filesystem>
+#include <dirent.h>
 
-namespace fs = std::experimental::filesystem;
 using namespace dbhc;
 using namespace std;
 

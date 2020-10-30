@@ -2,12 +2,20 @@
 
 vector<string> get_files(const std::string& path) {
     vector<string> file_list;
-    if (!fs::exists(path)) {
-        return {};
-    }
-    for (const auto & entry : fs::directory_iterator(path)) {
-        file_list.push_back(entry.path());
-        cout << "\tPush file: " << entry.path() << "into list\n";
+    DIR* dir;
+    struct dirent* diread;
+    if ((dir = opendir(path.c_str())) != nullptr) {
+        while ((diread = readdir(dir)) != nullptr) {
+            string fname = path + "/" +string(diread->d_name);
+            cout << "\tPush file: " << fname << "into list\n";
+            if (fname != "." && fname!= "..")
+                file_list.push_back(fname);
+        }
+        closedir(dir);
+    } else {
+        cout << "Directory path: " << path << " cannot be found!" << endl ;
+        perror("opendir");
+        assert(false);
     }
     return file_list;
 }
