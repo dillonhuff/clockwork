@@ -11528,7 +11528,7 @@ int run_verilator_on(const std::string& top_module,
     const std::vector<string>& verilog_files) {
 
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
-  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME");
+  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
   assert(verilator_build == 0);
 
   //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
@@ -16235,10 +16235,12 @@ int buffer_store_latency(CodegenOptions& options) {
 
 int buffer_load_latency(CodegenOptions& options) {
   if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
-      options.rtl_options.target_tile == TARGET_TILE_PLATONIC ||
       options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN
       ) {
     return 0;
+  } else if(options.rtl_options.target_tile == TARGET_TILE_PLATONIC)
+  {
+      return 0;
   }
 
   if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
