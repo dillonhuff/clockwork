@@ -11417,7 +11417,7 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
-void generate_lake_stream(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
+void generate_smt_stream(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   for (auto & buf: buffers) {
     if (!prg.is_boundary(buf.first)) {
       //generate stream with the rewrite buffer
@@ -13262,6 +13262,7 @@ void test_single_port_mem() {
   }
 }
 
+void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
@@ -13277,11 +13278,8 @@ void test_single_port_mem_smt_stream() {
 
     dsa_writers(prg);
     prg.pretty_print();
-    auto cpu = unoptimized_result(prg);
 
-    //compile_for_garnet_platonic_mem(prg);
-    bool gen_smt_stream = true;
-    compile_for_garnet_single_port_mem(prg, gen_smt_stream);
+    generate_smt_stream_for_garnet_single_port_mem(prg);
 
     cout << "Output name: " << prg.name << endl;
   }
@@ -15021,19 +15019,22 @@ void union_test() {
 
 void dual_port_lake_test();
 
+void lake_smt_tests() {
+  test_single_port_mem_smt_stream();
+  //lake_identity_stream_SMT_test(20, 20, "20x20");
+  //lake_identity_stream_SMT_test(128, 128, "128x128");
+  //lake_identity_stream_SMT_test(64, 64, "64x64");
+  //lake_identity_stream_SMT_test(32, 32, "32x32");
+  ////lake_identity_stream_SMT_test(16, 16, "16x16");
+  //assert (false);
+}
+
 void lake_tests() {
   //dual_port_lake_test();
   //lake_agg_sram_tb_config_test();
   test_single_port_mem();
-  //test_single_port_mem_smt_stream();
   assert(false);
   lake_conv33_autovec_aha_test();
-  //lake_identity_stream_SMT_test(128, 128, "128x128");
-  //lake_identity_stream_SMT_test(64, 64, "64x64");
-  //lake_identity_stream_SMT_test(32, 32, "32x32");
-  lake_identity_stream_SMT_test(16, 16, "16x16");
-  //assert (false);
-  //lake_identity_stream_SMT_test(20, 20, "20x20");
   //double_buffer_test();
   //playground();
   //lake_identity_stream_autovec_test();
@@ -16241,6 +16242,54 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
+void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
+
+  //make sure the loop bound and address is positive
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p aha_garnet_design/" + prg.name);
+
+  //auto iis = garnet_fuse_ii_level(prg);
+  //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg);
+  options.emit_smt_stream = true;
+  schedule_info sched = garnet_schedule_info(options, prg);
+  garnet_single_port_ram_schedule(sched, prg.root, prg);
+  auto sched_map = op_times_map(sched, prg);
+  auto hw_sched = its(sched_map,
+          prg.whole_iteration_domain());
+  cout << "result schedule: " << str(hw_sched) << endl;
+  auto buffers_opt = build_buffers(prg, hw_sched);
+  //for (auto b: buffers_opt) {
+  //    cout << "create shift register for " << b.first << endl;
+
+  //  //compare out2in
+  //  auto shift_registered_outputs = determine_shift_reg_map(prg, b.second, sched);
+  //  //compare out2out
+  //  auto o2o = determine_output_shift_reg_map(prg, b.second, sched);
+  //  cout << o2o.size() << endl;
+  //  for (auto it: shift_registered_outputs) {
+  //    cout << it.first << " -> " << it.second.first << ", depth = " << it.second.second << endl;
+  //  }
+  //}
+  ////auto sched = global_schedule_from_buffers(buffers_opt);
+
+  for (auto& b : buffers_opt) {
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
+        continue;
+    b.second.generate_banks_and_merge(options);
+    b.second.port_group2bank(options);
+  }
+  generate_smt_stream(options, buffers_opt, prg);
+}
+
 void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
 
   //make sure the loop bound and address is positive
@@ -16257,6 +16306,7 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg);
+  options.emit_smt_stream = gen_smt_stream;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
@@ -18705,6 +18755,11 @@ int main(int argc, char** argv) {
 
     if (cmd == "lake-tests") {
       lake_tests();
+      return 0;
+    }
+
+    if (cmd == "smt-tests") {
+      lake_smt_tests();
       return 0;
     }
 
