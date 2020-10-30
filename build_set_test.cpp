@@ -18890,7 +18890,7 @@ void test_multi_kernel_unsharp() {
 }
 
 void test_gaussian_pyramid_shared_pes() {
-  int num_pyramid_levels = 4;
+  int num_pyramid_levels = 8;
 
   prog prg("time_sharing_gauss_pyramid");
   prg.compute_unit_file = "local_laplacian_filters_compute.h";
