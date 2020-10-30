@@ -3073,7 +3073,7 @@ void generate_coreir(CodegenOptions& options,
   generate_coreir(options, buffers, prg, schedmap, info);
 }
 
-//This is the top_lvel coreIR generation function
+//This is the top_level coreIR generation function
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,

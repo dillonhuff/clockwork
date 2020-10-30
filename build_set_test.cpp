@@ -2847,8 +2847,8 @@ void reaccess_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  int max_inpt = 2;
-  int max_outpt = 2;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   for (auto& b : bufs) {
     if (b.second.get_in_ports().size() > 0) {
       b.second.generate_banks_and_merge(opt);
@@ -2858,7 +2858,7 @@ void reaccess_test() {
       config["name"][0] = "TOP_address.csv";
       b.second.set_config(config);
 
-      b.second.port_group2bank(max_inpt, max_outpt);
+      b.second.port_group2bank(opt);
     }
   }
   generate_coreir(opt, bufs, prg, schedmap);
@@ -2926,9 +2926,11 @@ void conv45_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   buffers_opt.at("buf").generate_banks_and_merge(opt);
   cout << buffers_opt.at("buf") << endl;
-  buffers_opt.at("buf").port_group2bank(2, 2);
+  buffers_opt.at("buf").port_group2bank(opt);
   cout << buffers_opt.at("buf") << endl;
   buffers_opt.at("buf").print_bank_info();
 
@@ -3110,7 +3112,9 @@ void conv33_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  int max_inpt = 2, max_outpt = 2;
+  //int max_inpt = 2, max_outpt = 2;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   //buffers_opt.at("buf").generate_bank_and_merge(opt);
   //cout << buffers_opt.at("buf") << endl;
   //buffers_opt.at("buf").port_group2bank(2, 2);
@@ -3136,7 +3140,7 @@ void conv33_test() {
     json config_reg_map = parse_config_file("conv33_configuration.txt");
     b.second.set_config(config_reg_map);
 
-    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(opt);
   }
   generate_coreir(opt, buffers_opt, prg, sched_naive);
 #endif
@@ -3206,9 +3210,11 @@ void conv33_large_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   buffers_opt.at("buf").generate_banks_and_merge(opt);
   cout << buffers_opt.at("buf") << endl;
-  buffers_opt.at("buf").port_group2bank(2, 2);
+  buffers_opt.at("buf").port_group2bank(opt);
   cout << buffers_opt.at("buf") << endl;
 
 #ifdef COREIR
@@ -3279,10 +3285,12 @@ void bankmerge_vec_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   buffers_opt.at("buf").generate_banks_and_merge(opt);
   //cout << buffers_opt.at("buf") << endl;
   //auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
-  buffers_opt.at("buf").port_group2bank(2, 2);
+  buffers_opt.at("buf").port_group2bank(opt);
 
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
   opt.conditional_merge = false;
@@ -11409,19 +11417,21 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
+void generate_lake_stream(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
+  for (auto & buf: buffers) {
+    if (!prg.is_boundary(buf.first)) {
+      //generate stream with the rewrite buffer
+      buf.second.generate_smt_stream(options);
+    }
+  }
+}
+
 void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
   //schedule_info hwinfo;
-
-  //coreIR codegen options
   hwinfo.use_dse_compute = false;
-  opt.rtl_options.use_prebuilt_memory = true;
-  opt.rtl_options.use_external_controllers = false;
-  opt.inline_vectorization = true;
-  opt.pass_through_valid= true;
-  opt.dir = "aha_garnet_design/"+prg.name+"/";
 
   //TODO: add lake memory tile configuration here
 
@@ -12751,7 +12761,8 @@ void lake_resnet_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  int max_inpt = 2, max_outpt = 2;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   //buffers_opt.at("buf").generate_bank_and_merge(opt);
   //cout << buffers_opt.at("buf") << endl;
   //buffers_opt.at("buf").port_group2bank(2, 2);
@@ -12768,7 +12779,7 @@ void lake_resnet_test() {
     //json config_reg_map = parse_config_file("conv33_configuration.txt");
     //b.second.set_config(config_reg_map);
 
-    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(opt);
     b.second.print_bank_info();
 
 
@@ -12922,14 +12933,15 @@ void lake_cascade_autovec_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  int max_inpt = 2, max_outpt = 2;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
 
   for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << endl;
     if (b.first == "in" || b.first == "out")
         continue;
     b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(opt);
   }
 #ifdef COREIR
   generate_cgra_tb(buffers_opt, prg, opt);
@@ -13006,14 +13018,15 @@ void lake_gaussian_autovec_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  int max_inpt = 2, max_outpt = 2;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
 
   for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
     b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(opt);
   }
 #ifdef COREIR
   generate_cgra_tb(buffers_opt, prg, opt);
@@ -13072,7 +13085,8 @@ void lake_conv33_autovec_aha_test() {
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
   opt.rtl_options.use_prebuilt_memory = true;
-  int max_inpt = 2, max_outpt = 2;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   //auto sched = global_schedule_from_buffers(buffers_opt);
   //generate_coreir(opt, buffers_opt, prg, sched);
 
@@ -13081,7 +13095,7 @@ void lake_conv33_autovec_aha_test() {
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
     b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(opt);
 
     //auto def = generate_coreir(opt, context, b.second);
 
@@ -13159,7 +13173,8 @@ void lake_conv33_recipe_test() {
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
   opt.iis = iis;
-  int max_inpt = 2, max_outpt = 2;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   //auto sched = global_schedule_from_buffers(buffers_opt);
 
   for (auto& b : buffers_opt) {
@@ -13167,7 +13182,7 @@ void lake_conv33_recipe_test() {
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
     b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(opt);
 
     //auto def = generate_coreir(opt, context, b.second);
 
@@ -13197,69 +13212,6 @@ void lake_conv33_recipe_test() {
 }
 
 void dsa_writers(prog& prg);
-void lake_conv33_halide_test() {
-  prog prg = conv_3_3();
-  dsa_writers(prg);
-  prg.sanity_check();
-  prg.pretty_print();
-
-
-  //optimized schedule
-  cmd("mkdir -p aha_garnet_design/" + prg.name);
-  auto iis = garnet_fuse_ii_level(prg);
-  CodegenOptions options;
-  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  opt.iis = iis;
-  int max_inpt = 2, max_outpt = 2;
-  //auto sched = global_schedule_from_buffers(buffers_opt);
-
-  for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
-    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-        continue;
-    b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
-  }
-
-#ifdef COREIR
-  //generate_garnet_tb(buffers_opt, prg, opt);
-#endif
-}
-
-void lake_cascade_halide_test() {
-  prog prg = cascade();
-  dsa_writers(prg);
-  prg.sanity_check();
-  prg.pretty_print();
-
-
-  //optimized schedule
-  cmd("mkdir -p aha_garnet_design/" + prg.name);
-  auto iis = garnet_fuse_ii_level(prg);
-  CodegenOptions options;
-  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  opt.iis = iis;
-  int max_inpt = 2, max_outpt = 2;
-  //auto sched = global_schedule_from_buffers(buffers_opt);
-
-  for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
-    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-        continue;
-    b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
-  }
-
-#ifdef COREIR
-  //generate_garnet_tb(buffers_opt, prg, opt);
-#endif
-}
 
 void compile_for_garnet_single_port_mem(prog & prg, bool gen_smt_stream);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
@@ -13335,123 +13287,7 @@ void test_single_port_mem_smt_stream() {
   }
 }
 
-void lake_harris_garnet_test() {
-  prog prg = harris();
-//  dsa_writers(prg);
-//  normalize_bounds(prg);
-//  normalize_address_offsets(prg);
-//  prg.sanity_check();
-//  prg.pretty_print();
-//
-//
-//  //optimized schedule
-//  cmd("mkdir -p aha_garnet_design/" + prg.name);
-//  auto iis = garnet_fuse_ii_level(prg);
-//  CodegenOptions options;
-//  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-//  CodegenOptions opt;
-//  opt.conditional_merge = true;
-//  opt.merge_threshold = 4;
-//  opt.iis = iis;
-//  int max_inpt = 2, max_outpt = 2;
-//  //auto sched = global_schedule_from_buffers(buffers_opt);
-//
-//  //for (auto& b : buffers_opt) {
-//  //  cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
-//  //  b.second.normalize_access_range();
-//  //  cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
-//  //}
-//  for (auto& b : buffers_opt) {
-//    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
-//    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-//        continue;
-//    b.second.generate_banks_and_merge(opt);
-//    b.second.port_group2bank(max_inpt, max_outpt);
-//  }
-//
-//#ifdef COREIR
-//  generate_garnet_tb(buffers_opt, prg, opt);
-//#endif
-}
 
-void lake_rom_garnet_test() {
-  prog prg = rom();
-
-  dsa_writers(prg);
-  normalize_bounds(prg);
-  normalize_address_offsets(prg);
-  prg.sanity_check();
-  prg.pretty_print();
-
-
-  //optimized schedule
-  cmd("mkdir -p aha_garnet_design/" + prg.name);
-  auto iis = garnet_fuse_ii_level(prg);
-  CodegenOptions options;
-  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  opt.iis = iis;
-  int max_inpt = 2, max_outpt = 2;
-  //auto sched = global_schedule_from_buffers(buffers_opt);
-
-  //for (auto& b : buffers_opt) {
-  //  cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
-  //  b.second.normalize_access_range();
-  //  cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
-  //}
-  for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
-    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-        continue;
-    b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
-  }
-
-#ifdef COREIR
-  //generate_garnet_tb(buffers_opt, prg, opt);
-#endif
-  assert(false);
-}
-
-void lake_harris_halide_test() {
-  prog prg = harris();
-  dsa_writers(prg);
-  normalize_bounds(prg);
-  prg.sanity_check();
-  prg.pretty_print();
-
-
-  //optimized schedule
-  cmd("mkdir -p aha_garnet_design/" + prg.name);
-  auto iis = garnet_fuse_ii_level(prg);
-  CodegenOptions options;
-  auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  opt.iis = iis;
-  int max_inpt = 2, max_outpt = 2;
-  //auto sched = global_schedule_from_buffers(buffers_opt);
-
-  for (auto& b : buffers_opt) {
-    cout << "Before Normalization: "<< str(to_set(b.second.global_range())) << endl;
-    b.second.normalize_access_range();
-    cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
-  }
-  for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
-    if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
-        continue;
-    b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
-  }
-
-#ifdef COREIR
-  //generate_garnet_tb(buffers_opt, prg, opt);
-#endif
-}
 
 void lake_conv33_autovec_test() {
   prog prg;
@@ -13485,7 +13321,8 @@ void lake_conv33_autovec_test() {
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
   opt.rtl_options.use_prebuilt_memory = true;
-  int max_inpt = 2, max_outpt = 2;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   //auto sched = global_schedule_from_buffers(buffers_opt);
   //generate_coreir(opt, buffers_opt, prg, sched);
 
@@ -13494,7 +13331,7 @@ void lake_conv33_autovec_test() {
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
     b.second.generate_banks_and_merge(opt);
-    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(opt);
 
     //auto def = generate_coreir(opt, context, b.second);
 
@@ -14369,7 +14206,8 @@ void resnet_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  int max_inpt = 2, max_outpt = 2;
+  opt.rtl_options.max_inpt = 2;
+  opt.rtl_options.max_outpt = 2;
   //buffers_opt.at("buf").generate_bank_and_merge(opt);
   //cout << buffers_opt.at("buf") << endl;
   //buffers_opt.at("buf").port_group2bank(2, 2);
@@ -14387,7 +14225,7 @@ void resnet_test() {
     //json config_reg_map = parse_config_file("conv33_configuration.txt");
     //b.second.set_config(config_reg_map);
 
-    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(opt);
     b.second.print_bank_info();
 
     CoreIR::Context* context = CoreIR::newContext();
@@ -16167,6 +16005,31 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   return sched;
 }
 
+CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
+  options.conditional_merge = true;
+  options.merge_threshold = 4;
+  options.iis = {1};
+  options.rtl_options.max_inpt = 2;
+  options.rtl_options.max_outpt = 2;
+  //all_unbanked(prg, options);
+
+  //coreIR codegen options
+  options.rtl_options.use_prebuilt_memory = true;
+  options.rtl_options.use_external_controllers = false;
+  options.inline_vectorization = true;
+  options.pass_through_valid= true;
+  options.dir = "aha_garnet_design/"+prg.name+"/";
+
+  if (!is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
+
+  return options;
+}
+
 CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
@@ -16380,7 +16243,7 @@ void compile_for_garnet_dual_port_mem(prog& prg) {
 
 void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
 
-  //dsa_writers(prg);
+  //make sure the loop bound and address is positive
   normalize_bounds(prg);
   normalize_address_offsets(prg);
   prg.sanity_check();
@@ -16393,9 +16256,7 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
-  CodegenOptions options;
-  options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
-  options.emit_smt_stream = gen_smt_stream;
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
@@ -16403,12 +16264,6 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
   auto buffers_opt = build_buffers(prg, hw_sched);
-  //CodegenOptions opt;
-  options.conditional_merge = true;
-  options.merge_threshold = 4;
-  options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
-  options.iis = {1};
-  int max_inpt = 2, max_outpt = 2;
   //for (auto b: buffers_opt) {
   //    cout << "create shift register for " << b.first << endl;
 
@@ -16424,16 +16279,11 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
   ////auto sched = global_schedule_from_buffers(buffers_opt);
 
   for (auto& b : buffers_opt) {
-    cout << "Before Normalization: "<< b.second << endl;
-  //  b.second.normalize_access_range();
-  //  cout << "after Normalization: "<< str(to_set(b.second.global_range())) << endl;
-  }
-  for (auto& b : buffers_opt) {
     cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
     b.second.generate_banks_and_merge(options);
-    b.second.port_group2bank(max_inpt, max_outpt);
+    b.second.port_group2bank(options);
   }
 
 #ifdef COREIR

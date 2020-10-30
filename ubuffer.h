@@ -2036,6 +2036,8 @@ class UBuffer {
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
 
+    //smt stream generation
+    void generate_smt_stream(CodegenOptions& options);
 #ifdef COREIR
     CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
@@ -2078,7 +2080,7 @@ class UBuffer {
             std::map<string, int> & pt_name2delay,
             map<string, pair<isl_map*, isl_map*> > & outpt_merge,
             vector<pair<string, string> > & back_edge);
-    void port_group2bank(int in_port_width, int out_port_width);
+    void port_group2bank(CodegenOptions& options);
     isl_map* merge_output_pt(vector<string> merge_pt);
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
     pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);

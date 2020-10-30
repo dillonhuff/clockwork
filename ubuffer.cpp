@@ -1186,6 +1186,40 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options) {
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
 }
 
+//This the smt stream generation pass without coreIR generation
+void UBuffer::generate_smt_stream(CodegenOptions& options) {
+
+  //sort the bank by delay first
+  auto bank_list = get_banks_and_sort();
+
+  //generate all the ubuffer for internal vectorization
+  auto rewrite_buffer = generate_ubuffer(options);
+
+  for (auto bk : bank_list) {
+    //assert(false);
+    std::set<string> inpts = get_bank_inputs(bk.name);
+    std::set<string> outpts = get_bank_outputs(bk.name);
+    auto buf_inpts = get_in_ports();
+    cout << "Bank:" << bk.name << " has max_delay: " << bk.maxdelay << endl;
+    if (bk.maxdelay == 0) {
+      continue;
+    } else if (bk.maxdelay <= options.merge_threshold) {
+      continue;
+    } else {
+      string ub_ins_name = "ub_"+bk.name;
+
+      //vectorization pass for lake tile
+      if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+        buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+        //config_file = generate_ubuf_args(options, rewrite_buffer);
+      }
+      //Generate SMT stream if needed
+      if (options.emit_smt_stream) {
+        generate_lake_stream(options, rewrite_buffer, global_schedule_from_buffers(rewrite_buffer));
+      }
+    }
+  }
+}
 
 
 //generate/realize the rewrite structure inside ubuffer node
@@ -3855,7 +3889,9 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
     return make_pair(ret, ret_sched);
   }
 
-  void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
+  void UBuffer::port_group2bank(CodegenOptions& options) {
+    int in_port_width = options.rtl_options.max_inpt;
+    int out_port_width = options.rtl_options.max_outpt;
     /*Refactor the port grouping algorithm, we should put it into bank,
      * instead of ubuffer. Think about ubuffer is the original
      * */
