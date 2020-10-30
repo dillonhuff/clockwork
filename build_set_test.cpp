@@ -11417,15 +11417,6 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
-void generate_smt_stream(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
-  for (auto & buf: buffers) {
-    if (!prg.is_boundary(buf.first)) {
-      //generate stream with the rewrite buffer
-      buf.second.generate_smt_stream(options);
-    }
-  }
-}
-
 void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
@@ -11442,6 +11433,16 @@ void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, Codegen
   //cmd("mv " + prg.name + ".v " + opt.dir + "verilog");
 }
 #endif
+
+void generate_smt_stream(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
+  for (auto & buf: buffers) {
+    if (!prg.is_boundary(buf.first)) {
+      //generate stream with the rewrite buffer
+      buf.second.generate_smt_stream(options);
+    }
+  }
+}
+
 
 void identity_stream_through_mem_coreir_test() {
   prog prg("identity_stream_through_mem");
