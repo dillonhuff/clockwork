@@ -18917,6 +18917,11 @@ void test_gaussian_pyramid_shared_pes() {
 
   vector<op*> op_order = get_dft_ops(prg);
   auto sched_affs = clockwork_schedule(prg.whole_iteration_domain(), valid, cpy(valid));
+  map<string, isl_set*> domains;
+  for (auto d : get_sets(prg.whole_iteration_domain())) {
+    domains[name(d)] = d;
+  }
+
   cout << endl;
   cout << "Schedule..." << endl;
   int i = 0;
@@ -18924,7 +18929,11 @@ void test_gaussian_pyramid_shared_pes() {
   for (auto aff : sched_affs) {
     auto expr = cpy(aff.second.at(1));
     expr = set_name(expr, aff.first);
-    isl_map* m = to_map(expr);
+    isl_set* dom = project_all_but(domains.at(aff.first), 1);
+
+    isl_map* m = its(to_map(expr), dom);
+
+
     cout << tab(1) << str(m) << endl;
     schedules_at_level_1.push_back(m);
     i++;
