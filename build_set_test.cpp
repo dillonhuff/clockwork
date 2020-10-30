@@ -18943,6 +18943,14 @@ void test_gaussian_pyramid_shared_pes() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = resnet();
+    prg.pretty_print();
+    prog mobile = mobilenet();
+    mobile.pretty_print();
+    assert(false);
+  }
+
   test_gaussian_pyramid_shared_pes();
 
   assert(false);
