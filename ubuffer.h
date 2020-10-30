@@ -2036,6 +2036,8 @@ class UBuffer {
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
 
+    //smt stream generation
+    void generate_smt_stream(CodegenOptions& options);
 #ifdef COREIR
     CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
@@ -2056,6 +2058,7 @@ class UBuffer {
         string ub_ins_name,
         size_t input_num, size_t output_num,
         bool has_stencil_valid, bool has_flush);
+
     void emit_lake_config_collateral(CodegenOptions options, string dir);
 #endif
 
@@ -2077,7 +2080,7 @@ class UBuffer {
             std::map<string, int> & pt_name2delay,
             map<string, pair<isl_map*, isl_map*> > & outpt_merge,
             vector<pair<string, string> > & back_edge);
-    void port_group2bank(int in_port_width, int out_port_width);
+    void port_group2bank(CodegenOptions& options);
     isl_map* merge_output_pt(vector<string> merge_pt);
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
     pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);
@@ -2086,6 +2089,63 @@ class UBuffer {
 
 
 };
+
+
+//Data structure to append top level stream and generate
+struct lakeStream {
+    vector<string> data_in;
+    vector<string> data_out;
+    vector<bool> valid_in, valid_out;
+    int in_width;
+    int out_width;
+
+    void append_data(const vector<int> & in, const vector<int> & out, bool v_in, bool v_out) {
+        data_in.push_back(sep_list(in, "[", "]", " "));
+        data_out.push_back(sep_list(out, "[", "]", " "));
+        valid_in.push_back(v_in);
+        valid_out.push_back(v_out);
+    }
+
+    void emit_csv(string fname) {
+      ofstream out(fname+"_SMT.csv");
+      cout << "fname: " << fname << endl;
+      size_t stream_length = data_out.size();
+      out << "data_in, valid_in, data_out, valid_out" << endl;
+      for (size_t i = 0; i < stream_length; i ++) {
+        cout << "Cycle No." << i << endl;
+        out << data_in.at(i) << ", "
+        << valid_in.at(i) << ", "
+        << data_out.at(i) << ", "
+        << valid_out.at(i) << endl;
+      }
+    }
+
+    lakeStream(){}
+
+    lakeStream(lakeStream aggStream, lakeStream tbStream) {
+      data_in = aggStream.data_in;
+      valid_in = aggStream.valid_in;
+      data_out = tbStream.data_out;
+      valid_out = tbStream.valid_out;
+      in_width = aggStream.in_width;
+      out_width = tbStream.out_width;
+      int size_diff = data_out.size() - data_in.size();
+      for (int i = 0; i < size_diff; i ++) {
+        vector<int> tmp = vector<int>(0, in_width);
+        data_in.push_back(sep_list(tmp, "[", "]", ""));
+        valid_in.push_back("0");
+      }
+    }
+};
+
+//Generating smt stream
+void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched);
+void generate_lake_stream(CodegenOptions & options,
+        map<string, UBuffer>& buffers_opt,
+        umap* hardware_schedule);
+void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir);
+lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr);
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
@@ -2172,6 +2232,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf);
 void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo);
+
+CoreIR::Instance* affine_controller_use_lake_tile(CoreIR::ModuleDef*, CoreIR::Context*, isl_set*, isl_aff*, string);
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
@@ -2199,3 +2261,6 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
 
 
 maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo);
+vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
+
+

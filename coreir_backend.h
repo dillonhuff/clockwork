@@ -3,6 +3,7 @@
 #ifdef COREIR
 
 #include "prog.h"
+
 #define COREMK(ctx, v) CoreIR::Const::make((ctx), (v))
 
 static inline
@@ -120,6 +121,8 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     UBuffer& buf,
     schedule_info& hwinfo);
 
+void generate_lake_tile_verilog(CodegenOptions& options, CoreIR::Instance* buf);
+
 CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
     CoreIR::Wireable* w,
     const int cycles);
@@ -133,4 +136,12 @@ CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
     const std::string& out_name,
     CoreIR::Wireable* w,
     const int cycles);
+
+void generate_platonic_ubuffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);
+
 #endif
+

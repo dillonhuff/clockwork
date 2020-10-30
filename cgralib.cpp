@@ -175,6 +175,91 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   Mem->addDefaultGenArgs({{"width",Const::make(c,16)},{"total_depth",Const::make(c,1024)}});
   Mem->setModParamsGen(MemModParamFun);
 
+  // cgralib.Mem_amber
+  Params cgralibmemamberparams = Params({
+        {"width", c->Int()},
+        {"num_inputs", c->Int()},
+        {"num_outputs", c->Int()},
+        //{"config", c->Json()},
+        {"has_valid", c->Bool()},
+        {"has_stencil_valid", c->Bool()},
+        {"has_flush", c->Bool()},
+        {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
+        {"has_reset", c->Bool()}
+    });
+
+  cgralib->newTypeGen(
+          "cgralib_mem_amber_type",
+          cgralibmemamberparams,
+          [](Context* c, Values genargs){
+            uint width = genargs.at("width")->get<int>();
+            uint num_input = genargs.at("num_inputs")->get<int>();
+            uint num_output = genargs.at("num_outputs")->get<int>();
+            //Json config = genargs.at("config")->get<Json>();
+
+            RecordParams recordparams = {
+                {"rst_n", c->BitIn()},
+                {"chain_chain_en", c->BitIn()},
+                {"clk_en", c->BitIn()},
+                {"clk", c->Named("coreir.clkIn")}
+            };
+
+            for (size_t i = 0; i < num_input; i ++) {
+                recordparams.push_back({"data_in_" + std::to_string(i),
+                        c->BitIn()->Arr(width)});
+            }
+            for (size_t i = 0; i < num_output; i ++) {
+                recordparams.push_back({"data_out_" + std::to_string(i),
+                        c->Bit()->Arr(width)});
+            }
+
+            bool has_valid = genargs.at("has_valid")->get<bool>();
+            bool has_stencil_valid = genargs.at("has_stencil_valid")->get<bool>();
+            bool has_flush = genargs.at("has_flush")->get<bool>();
+            bool has_reset = genargs.at("has_reset")->get<bool>();
+
+            if (has_valid) {
+              recordparams.push_back({"valid", c->Bit()});
+            }
+            if (has_stencil_valid) {
+              recordparams.push_back({"stencil_valid", c->Bit()});
+            }
+            if (has_flush) {
+              recordparams.push_back({"flush", c->BitIn()});
+            }
+            if (has_reset) {
+              recordparams.push_back({"reset", c->BitIn()});
+            }
+
+        return c->Record(recordparams);
+    }
+
+  );
+
+  auto cgralib_mem_amber_gen = cgralib->newGeneratorDecl("Mem_amber", cgralib->getTypeGen("cgralib_mem_amber_type"), cgralibmemamberparams);
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"has_valid", Const::make(c, false)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"has_flush", Const::make(c, false)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"has_reset", Const::make(c, false)}});
+
+
+  auto CGRALibMemAmberModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
+    Params p; //params
+    Values d; //defaults
+    //p["mode"] = c->String();
+
+    //p["config"] = CoreIR::JsonType::make(c);
+
+    //p["depth"] = c->Int();
+    //d["depth"] = Const::make(c,1024);
+
+    return {p,d};
+  };
+  cgralib_mem_amber_gen->setModParamsGen(CGRALibMemAmberModParamFun);
+
   // cgralib.Mem
   Params cgralibmemparams = Params({
         {"width", c->Int()},
@@ -184,6 +269,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"has_valid", c->Bool()},
         {"has_stencil_valid", c->Bool()},
         {"has_flush", c->Bool()},
+        {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
         {"has_reset", c->Bool()}
     });
 
@@ -198,6 +284,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
             RecordParams recordparams = {
                 {"rst_n", c->BitIn()},
+                {"chain_chain_en", c->BitIn()},
                 {"clk_en", c->BitIn()},
                 {"clk", c->Named("coreir.clkIn")}
             };
@@ -242,6 +329,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
   auto cgralib_mem_gen = cgralib->newGeneratorDecl("Mem", cgralib->getTypeGen("cgralib_mem_type"), cgralibmemparams);
   cgralib_mem_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
   cgralib_mem_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_valid", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});
@@ -252,9 +340,9 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   auto CGRALibMemModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
     Params p; //params
     Values d; //defaults
-    //p["mode"] = c->String();
+    p["mode"] = c->String();
 
-    //p["config"] = CoreIR::JsonType::make(c);
+    p["config"] = CoreIR::JsonType::make(c);
 
     //p["depth"] = c->Int();
     //d["depth"] = Const::make(c,1024);
