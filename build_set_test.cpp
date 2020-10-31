@@ -13219,18 +13219,19 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem() {
   vector<prog> test_apps;
+  test_apps.push_back(resnet());
   test_apps.push_back(conv_3_3());
   //test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(rom());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(rom());
 
   //TODO:has issue with high dimensional schedule with multiple input
   //test_apps.push_back(demosaic_complex());
 
   //TODO:need to use the new scheduler
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     prg.pretty_print();
@@ -16331,11 +16332,36 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
   ////auto sched = global_schedule_from_buffers(buffers_opt);
 
   for (auto& b : buffers_opt) {
-    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    //cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
-    b.second.generate_banks_and_merge(options);
-    b.second.port_group2bank(options);
+    if (is_rate_matchable(prg)) {
+      b.second.generate_banks_and_merge(options);
+      b.second.port_group2bank(options);
+    } else {
+      auto partition = embarassing_partition(b.second, sched);
+      assert(partition.has_value());
+      cout << tab(1) << "Found partition: " << endl;
+      std::set<int> partition_dim = partition.get_value();
+      vector<int> cyclic_partition_factor;
+      vector<int> min_addr, max_addr;
+      min_addr = min_offsets_by_dimension(b.second);
+      max_addr = max_offsets_by_dimension(b.second);
+      for (int d = 0; d < b.second.logical_dimension(); d ++) {
+          if (elem(d, partition_dim)) {
+            cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          } else {
+            cyclic_partition_factor.push_back(1);
+            //cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          }
+      }
+      for (auto dim : partition_dim) {
+          cout << tab(2) << "Partition: " << dim << endl;
+      }
+      cout << "number of banks = " << card(cyclic_partition_factor) << endl;
+      options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
+      b.second.generate_banks_and_merge(options);
+    }
   }
 
 #ifdef COREIR

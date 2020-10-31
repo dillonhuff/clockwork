@@ -3701,13 +3701,13 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
       }
 
       string bank_func =
-        curlies(name + bracket_list(dvs) + " -> " + bracket_list(addrs));
+        curlies(name + bracket_list(dvs) + " -> b" + bracket_list(addrs));
 
       //bank map: from address to the bank ID
       cout << "bank func = " << bank_func << endl;
       auto bank_map = isl_map_read_from_str(ctx, bank_func.c_str());
-      cout << str(bank_map) <<endl;
-      assert(banking_scheme_is_legal(bank_map, *this));
+      //cout << str(bank_map) <<endl;
+      //assert(banking_scheme_is_legal(bank_map, *this));
 
       //auto range2bank = dot(to_umap(global_range()), to_umap(bank_map));
       //get a map from data range to bankID
@@ -5630,4 +5630,36 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
     return {};
   }
   return {};
+}
+
+vector<int> min_offsets_by_dimension(UBuffer& buf) {
+  vector<int> min_offsets;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    min_offsets.push_back(INT_MAX);
+  }
+  for (auto pt : buf.get_all_ports()) {
+    vector<int> pts = parse_pt(lexminpt(range(buf.access_map.at(pt))));
+    for (int d = 0; d < pts.size(); d++) {
+      if (pts.at(d) < min_offsets.at(d)) {
+        min_offsets[d] = pts.at(d);
+      }
+    }
+  }
+  return min_offsets;
+}
+
+vector<int> max_offsets_by_dimension(UBuffer& buf) {
+  vector<int> min_offsets;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    min_offsets.push_back(INT_MIN);
+  }
+  for (auto pt : buf.get_all_ports()) {
+    vector<int> pts = parse_pt(lexmaxpt(range(buf.access_map.at(pt))));
+    for (int d = 0; d < pts.size(); d++) {
+      if (pts.at(d) > min_offsets.at(d)) {
+        min_offsets[d] = pts.at(d);
+      }
+    }
+  }
+  return min_offsets;
 }
