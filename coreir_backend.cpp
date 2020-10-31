@@ -796,37 +796,6 @@ vector<string> verilog_port_decls(CodegenOptions& options, UBuffer& buf) {
   return port_decls;
 }
 
-vector<int> min_offsets_by_dimension(UBuffer& buf) {
-  vector<int> min_offsets;
-  for (int d = 0; d < buf.logical_dimension(); d++) {
-    min_offsets.push_back(INT_MAX);
-  }
-  for (auto pt : buf.get_all_ports()) {
-    vector<int> pts = parse_pt(lexminpt(range(buf.access_map.at(pt))));
-    for (int d = 0; d < pts.size(); d++) {
-      if (pts.at(d) < min_offsets.at(d)) {
-        min_offsets[d] = pts.at(d);
-      }
-    }
-  }
-  return min_offsets;
-}
-
-vector<int> max_offsets_by_dimension(UBuffer& buf) {
-  vector<int> min_offsets;
-  for (int d = 0; d < buf.logical_dimension(); d++) {
-    min_offsets.push_back(INT_MIN);
-  }
-  for (auto pt : buf.get_all_ports()) {
-    vector<int> pts = parse_pt(lexmaxpt(range(buf.access_map.at(pt))));
-    for (int d = 0; d < pts.size(); d++) {
-      if (pts.at(d) > min_offsets.at(d)) {
-        min_offsets[d] = pts.at(d);
-      }
-    }
-  }
-  return min_offsets;
-}
 
 void generate_platonic_ubuffer(
     CodegenOptions& options,

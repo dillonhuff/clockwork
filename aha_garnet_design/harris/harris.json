@@ -451,7 +451,8 @@
         "connections":[
           ["self.op_hcompute_lxx_stencil_read.0","self.op_hcompute_grad_x_stencil_write.0"],
           ["self.op_hcompute_lxy_stencil_read.0","self.op_hcompute_grad_x_stencil_write.0"],
-          ["self.op_hcompute_lxx_stencil_read_extra_ctrl","self.op_hcompute_grad_x_stencil_write_extra_ctrl"]
+          ["self.op_hcompute_lxx_stencil_read_extra_ctrl","self.op_hcompute_grad_x_stencil_write_extra_ctrl"],
+          ["self.op_hcompute_lxy_stencil_read_extra_ctrl","self.op_hcompute_grad_x_stencil_write_extra_ctrl"]
         ]
       },
       "grad_y_stencil_ub":{
@@ -469,7 +470,8 @@
         "connections":[
           ["self.op_hcompute_lxy_stencil_read.0","self.op_hcompute_grad_y_stencil_write.0"],
           ["self.op_hcompute_lyy_stencil_read.0","self.op_hcompute_grad_y_stencil_write.0"],
-          ["self.op_hcompute_lxy_stencil_read_extra_ctrl","self.op_hcompute_grad_y_stencil_write_extra_ctrl"]
+          ["self.op_hcompute_lxy_stencil_read_extra_ctrl","self.op_hcompute_grad_y_stencil_write_extra_ctrl"],
+          ["self.op_hcompute_lyy_stencil_read_extra_ctrl","self.op_hcompute_grad_y_stencil_write_extra_ctrl"]
         ]
       },
       "harris":{
