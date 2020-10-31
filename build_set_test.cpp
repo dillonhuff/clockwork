@@ -18824,8 +18824,15 @@ void test_multi_kernel_unsharp() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = resnet_unrolled();
+    prg.pretty_print();
+    assert(false);
+  }
+
   test_multi_kernel_unsharp();
   assert(false);
+
   test_multi_kernel_design();
   test_time_sharing_gaussian_pyramid();
 
