@@ -18929,8 +18929,8 @@ void test_if_construction() {
 void dhuff_playground() {
   {
     prog prg("mmul");
-    auto init = prg.add_nest("i", 0, 1024, "j", 0, 1024)->add_op("init");
-    init->add_store("C", "i", "j");
+    auto init = prg.add_nest("ii", 0, 1024, "ji", 0, 1024)->add_op("init");
+    init->add_store("C", "ii", "ji");
     init->add_function("init_c");
 
     auto lp = prg.add_nest("i", 0, 1024, "j", 0, 1024, "k", 0, 1024)->add_op("mop");
@@ -18941,13 +18941,18 @@ void dhuff_playground() {
 
     prg.pretty_print();
 
-    //auto outer_i = strip_mine(4, "i", prg);
-    //auto outer_j = strip_mine(4, "j", prg);
-    //push_to_bottom_of_band_ignoring({}, outer_i, prg);
-    //push_to_bottom_of_band_ignoring({}, outer_j, prg);
+    auto outer_init_i = strip_mine(4, "ii", prg);
+    auto outer_init_j = strip_mine(4, "ji", prg);
+    push_to_bottom_of_band_ignoring({}, outer_init_i, prg);
+    push_to_bottom_of_band_ignoring({}, outer_init_j, prg);
 
-    //add_reuse_buffer("j", "A", prg);
-    //add_reuse_buffer("j", "B", prg);
+    auto outer_i = strip_mine(4, "i", prg);
+    auto outer_j = strip_mine(4, "j", prg);
+    push_to_bottom_of_band_ignoring({}, outer_i, prg);
+    push_to_bottom_of_band_ignoring({}, outer_j, prg);
+
+    add_reuse_buffer_no_delta("i", "A", prg);
+    add_reuse_buffer_no_delta("j", "B", prg);
     prg.pretty_print();
 
     assert(false);

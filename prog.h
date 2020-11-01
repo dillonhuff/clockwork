@@ -1845,3 +1845,5 @@ vector<string> get_arg_names(const map<string, UBuffer>& buffers, prog& prg);
 void push_to_bottom_of_band_ignoring(const vector<loop*>& base, loop* lp, prog& prg);
 
 void push_below(loop* outer, loop* inner, prog& prg);
+
+void add_reuse_buffer_no_delta(const std::string& level, const std::string& buffer, prog& prg);
