@@ -5873,6 +5873,53 @@ void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& p
   ld->add_store(buf, comma_list(load_addrs));
 }
 
+void read_in_at_start(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(iloop->is_loop());
+  //string container = surrounding_vars(iloop, prg).back();
+  //op* loop = prg.find_loop(container);
+
+  op* loop = iloop;
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+
+    int ext = to_int(const_coeff(diff)) + 1;
+    isl_aff* addr =
+      set_const_coeff(min, zero(prg.ctx));
+
+    int lb = 0;
+    int ub = ext;
+    string lname = prg.unique_name(buf + "_ld");
+    if (d == 0) {
+      next_lp = next_lp->add_loop_front(lname, lb, ub);
+    } else {
+      next_lp = next_lp->add_loop(lname, lb, ub);
+    }
+    load_addrs.push_back(lname + " + " + codegen_c(addr));
+    store_addrs.push_back(lname + " + " + codegen_c(addr));
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
 void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
   assert(iloop->is_loop());
   string container = surrounding_vars(iloop, prg).back();
@@ -5882,11 +5929,6 @@ void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, p
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  //for (auto v : surrounding_vars(loop, prg)) {
-    //store_addrs.push_back(v);
-  //}
-  //store_addrs.push_back(loop->name);
-  //store_addrs.push_back(str(iloop->start));
   auto minpw =
     isl_map_lexmin_pw_multi_aff(cpy(read_data));
   auto maxpw =
@@ -6093,7 +6135,10 @@ void add_reuse_buffer_no_delta(const std::string& level, const std::string& buff
 
   isl_map* reads = consumer_map(prg.find_loop(level), buffer, prg);
   cout << "Reads from " << buffer << " at " << level << ": " << str(reads) << endl;
-  assert(false);
+  string rb_name = prg.un(buffer + "_at_" + level);
+  read_in_at_start(prg.find_loop(level), reads, rb_name, prg);
+  //prg.pretty_print();
+  //assert(false);
 }
 
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
