@@ -18942,7 +18942,21 @@ void test_gaussian_pyramid_shared_pes() {
   assert(false);
 }
 
+void test_if_construction() {
+  prog prg("if_example");
+  auto lp = prg.add_loop("x", 0, 10);
+  auto ifs = lp->add_if("{ [x] : 0 <= x <= 5 }");
+  ifs->add_op("hello");
+  prg.pretty_print();
+
+  auto doms = prg.domains();
+  assert(doms.size() == 1);
+
+  //assert(false);
+}
+
 void dhuff_playground() {
+
   {
     prog prg = resnet();
     prg.pretty_print();
@@ -19012,6 +19026,7 @@ void dhuff_playground() {
 }
 
 void travis_tests() {
+  //test_if_construction();
   test_multi_kernel_design();
   test_time_sharing_gaussian_pyramid();
   jacobi_2d_2_test();

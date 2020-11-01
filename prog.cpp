@@ -6256,3 +6256,46 @@ void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, 
   ld->add_store(rb_name, comma_list(store_addrs));
 
 }
+
+void ir_node::pretty_print(std::ostream& out, int level) const {
+
+  if (is_loop()) {
+    out << tab(level) << "for (int " << name << " = " << start << "; " << name << " < " << end_exclusive << "; " << name << "++) {" << endl;
+    for (auto c : children) {
+      c->pretty_print(out, level + 1);
+    }
+    out << tab(level) << "}" << endl;
+  } else if (is_if()) {
+    out << tab(level) << "if (" << condition << ") {" << endl;
+    for (auto c : children) {
+      c->pretty_print(out, level + 1);
+    }
+    out << tab(level) << "}" << endl;
+  } else {
+    assert(is_op());
+    vector<string> args;
+    out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
+  }
+}
+
+map<op*, isl_set*> prog::domains() {
+  map<op*, vector<string> > idoms;
+  vector<string> act;
+  root->populate_iteration_domains(idoms, act);
+
+  map<op*, vector<string> > ivars;
+  root->populate_iter_vars(ivars, act);
+
+  map<op*, isl_set*> doms;
+  for (auto op : ivars) {
+    auto iters = map_find(op.first, ivars);
+    auto vars = sep_list(iters, "[", "]", ", ");
+
+    auto dom = map_find(op.first, idoms);
+    auto ds = sep_list(dom, "", "", " and ");
+
+    doms[op.first] =
+      isl_set_read_from_str(ctx, string("{ " + op.first->name + vars + " : " + ds + " }").c_str());
+  }
+  return doms;
+}

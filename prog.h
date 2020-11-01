@@ -40,7 +40,6 @@ struct ir_node {
   ir_node* parent;
 
   // Every ir_node is either a loop or an operation
-  //bool is_loop();
   ir_node_type tp;
 
   // Loop bounds
@@ -49,11 +48,15 @@ struct ir_node {
   int start;
   int end_exclusive;
 
+  // If statement condition
+  std::string condition;
+
   // Operations / other loops contained in this loop nest
   std::vector<op*> children;
 
   // Operation fields
   std::string name;
+
   // Locations written
   //std::vector<pair<buffer_name, address> > produce_locs;
   std::vector<pair<buffer_name, piecewise_address> > produce_locs;
@@ -73,13 +76,14 @@ struct ir_node {
   isl_ctx* ctx;
 
   ir_node() : parent(nullptr),
-  //is_loop()(false),
   tp(IR_NODE_TYPE_OPERATION),
   unroll_factor(1) {}
 
   ~ir_node();
 
   bool is_loop() const { return tp == IR_NODE_TYPE_LOOP; }
+  bool is_op() const { return tp == IR_NODE_TYPE_OPERATION; }
+  bool is_if() const { return tp == IR_NODE_TYPE_IF; }
 
   void copy_fields_from(op* other);
   void copy_memory_operations_from(op* other);
@@ -301,20 +305,7 @@ struct ir_node {
     pretty_print(std::cout, level);
   }
 
-  void pretty_print(std::ostream& out, int level) const {
-
-    if (is_loop()) {
-      out << tab(level) << "for (int " << name << " = " << start << "; " << name << " < " << end_exclusive << "; " << name << "++) {" << endl;
-      for (auto c : children) {
-        c->pretty_print(out, level + 1);
-      }
-      out << tab(level) << "}" << endl;
-    } else {
-      vector<string> args;
-      out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
-      //out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
-    }
-  }
+  void pretty_print(std::ostream& out, int level) const;
 
   string consumed_value_name(const pair<string, vector<pair<string, string> > >& val_loc) {
     string b = val_loc.first;
@@ -490,6 +481,20 @@ struct ir_node {
 
     return lp;
   }
+
+  op* add_if(const std::string& condition) {
+    assert(!is_op());
+
+    auto lp = new op();
+    lp->condition = condition;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->tp = IR_NODE_TYPE_IF;
+    children.push_back(lp);
+
+    return lp;
+  }
+
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop());
     assert(name != "");
@@ -713,7 +718,7 @@ struct ir_node {
   }
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
-    if (is_loop()) {
+    if (!is_op()) {
       auto nds = active_vecs;
       nds.push_back(to_string(start) + " <= " + name + " < " + to_string(end_exclusive));
       for (auto c : children) {
@@ -1187,33 +1192,7 @@ struct prog {
     return ivars;
   }
 
-  map<op*, isl_set*> domains() {
-    vector<string> sched_coeffs{"0"};
-    vector<string> sched_domains;
-
-    map<op*, vector<string> > idoms;
-    vector<string> act;
-    root->populate_iteration_domains(idoms, act);
-
-    map<op*, vector<string> > ivars;
-    root->populate_iter_vars(ivars, act);
-
-    map<op*, isl_set*> doms;
-    for (auto op : ivars) {
-      //cout << "Getting op production:" << op.first->name << endl;
-      auto iters = map_find(op.first, ivars);
-      auto vars = sep_list(iters, "[", "]", ", ");
-
-      auto dom = map_find(op.first, idoms);
-      auto ds = sep_list(dom, "", "", " and ");
-
-      doms[op.first] =
-        isl_set_read_from_str(ctx, string("{ " + op.first->name + vars + " : " + ds + " }").c_str());
-
-      //cout << "Got op..." << endl;
-    }
-    return doms;
-  }
+  map<op*, isl_set*> domains();
 
   map<op*, isl_map*> schedules() {
     map<op*, isl_map*> scheds;
