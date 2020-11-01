@@ -18929,20 +18929,25 @@ void test_if_construction() {
 void dhuff_playground() {
   {
     prog prg("mmul");
+    auto init = prg.add_nest("i", 0, 1024, "j", 0, 1024)->add_op("init");
+    init->add_store("C", "i", "j");
+    init->add_function("init_c");
+
     auto lp = prg.add_nest("i", 0, 1024, "j", 0, 1024, "k", 0, 1024)->add_op("mop");
     lp->add_load("A", "i", "k");
     lp->add_load("B", "k", "j");
     lp->add_store("C", "i", "j");
     lp->add_function("mac");
+
     prg.pretty_print();
 
-    auto outer_i = strip_mine(4, "i", prg);
-    auto outer_j = strip_mine(4, "j", prg);
-    push_to_bottom_of_band_ignoring({}, outer_i, prg);
-    push_to_bottom_of_band_ignoring({}, outer_j, prg);
+    //auto outer_i = strip_mine(4, "i", prg);
+    //auto outer_j = strip_mine(4, "j", prg);
+    //push_to_bottom_of_band_ignoring({}, outer_i, prg);
+    //push_to_bottom_of_band_ignoring({}, outer_j, prg);
 
-    add_reuse_buffer("j", "A", prg);
-    add_reuse_buffer("j", "B", prg);
+    //add_reuse_buffer("j", "A", prg);
+    //add_reuse_buffer("j", "B", prg);
     prg.pretty_print();
 
     assert(false);
