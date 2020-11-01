@@ -18258,42 +18258,6 @@ void naively_extend_bounds_to_multiple_of(op* loop, const int inner_tile_size) {
   assert(loop->trip_count() % inner_tile_size == 0);
 }
 
-void push_below(loop* outer, loop* inner, prog& prg) {
-  assert(outer->children.size() == 1);
-  assert(pick(outer->children) == inner);
-
-  vector<op*> inner_children = inner->children;
-
-  for (auto lp : prg.all_loops()) {
-    if (elem(outer, lp->children)) {
-      lp->replace_child(outer, inner);
-    }
-  }
-
-  outer->children = inner_children;
-  inner->children = {outer};
-
-  auto old_parent = outer->parent;
-  inner->parent = old_parent;
-  outer->parent = inner;
-}
-
-void push_to_bottom_of_band_ignoring(vector<loop*>& base, loop* lp, prog& prg) {
-  assert(lp->is_loop());
-  assert(lp->children.size() == 1);
-
-  int old_num_loops = prg.all_loops().size();
-  prg.pretty_print();
-
-  if (!is_inner_loop(lp) && !elem(pick(lp->children), base)) {
-    auto inner_lp = pick(lp->children);
-    push_below(lp, inner_lp, prg);
-    push_to_bottom_of_band_ignoring(base, lp, prg);
-  }
-
-  prg.pretty_print();
-  assert(prg.all_loops().size() == old_num_loops);
-}
 
 void tile_for_time_sharing(prog& prg) {
   assert(is_rate_matchable(prg));
@@ -18974,7 +18938,10 @@ void dhuff_playground() {
 
     auto outer_i = strip_mine(4, "i", prg);
     auto outer_j = strip_mine(4, "j", prg);
+    push_to_bottom_of_band_ignoring({}, outer_i, prg);
+    push_to_bottom_of_band_ignoring({}, outer_j, prg);
     prg.pretty_print();
+
     assert(false);
   }
 

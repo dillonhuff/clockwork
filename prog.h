@@ -1841,3 +1841,7 @@ void generate_app_code_body(CodegenOptions& options,
 
 vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg);
 vector<string> get_arg_names(const map<string, UBuffer>& buffers, prog& prg);
+
+void push_to_bottom_of_band_ignoring(const vector<loop*>& base, loop* lp, prog& prg);
+
+void push_below(loop* outer, loop* inner, prog& prg);
