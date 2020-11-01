@@ -6278,24 +6278,60 @@ void ir_node::pretty_print(std::ostream& out, int level) const {
   }
 }
 
-map<op*, isl_set*> prog::domains() {
-  map<op*, vector<string> > idoms;
-  vector<string> act;
-  root->populate_iteration_domains(idoms, act);
-
-  map<op*, vector<string> > ivars;
-  root->populate_iter_vars(ivars, act);
-
-  map<op*, isl_set*> doms;
-  for (auto op : ivars) {
-    auto iters = map_find(op.first, ivars);
-    auto vars = sep_list(iters, "[", "]", ", ");
-
-    auto dom = map_find(op.first, idoms);
-    auto ds = sep_list(dom, "", "", " and ");
-
-    doms[op.first] =
-      isl_set_read_from_str(ctx, string("{ " + op.first->name + vars + " : " + ds + " }").c_str());
+void ancestors(map<op*, vector<op*> >& ancestor_map, const std::vector<op*>& trace, op* current) {
+  if (current->is_op()) {
+    ancestor_map[current] = trace;
+  } else {
+    auto trace_cpy = trace;
+    trace_cpy.push_back(current);
+    for (auto c : current->children) {
+      ancestors(ancestor_map, trace_cpy, c);
+    }
   }
-  return doms;
+}
+
+map<op*, isl_set*> prog::domains() {
+  map<op*, vector<op*> > ancestor_map;
+  ancestors(ancestor_map, {}, root);
+
+  map<op*, isl_set*> domains;
+  for (auto op : ancestor_map) {
+    vector<string> vars;
+    vector<string> constraints;
+    for (auto ancestor : op.second) {
+      if (ancestor->is_loop()) {
+        vars.push_back(ancestor->name);
+        constraints.push_back(str(ancestor->start) + " <= " + ancestor->name + " < " + str(ancestor->end_exclusive));
+      } else {
+        assert(ancestor->is_if());
+        constraints.push_back(ancestor->condition);
+      }
+    }
+    string dom_str =
+      curlies(op.first->name + sep_list(vars, "[", "]", ", ") + " : " + sep_list(constraints, "", "", " and "));
+    domains[op.first] = rdset(ctx, dom_str);
+  }
+  //assert(false);
+  return domains;
+
+
+  //map<op*, vector<string> > idoms;
+  //vector<string> act;
+  //root->populate_iteration_domains(idoms, act);
+
+  //map<op*, vector<string> > ivars;
+  //root->populate_iter_vars(ivars, act);
+
+  //map<op*, isl_set*> doms;
+  //for (auto op : ivars) {
+    //auto iters = map_find(op.first, ivars);
+    //auto vars = sep_list(iters, "[", "]", ", ");
+
+    //auto dom = map_find(op.first, idoms);
+    //auto ds = sep_list(dom, "", "", " and ");
+
+    //doms[op.first] =
+      //isl_set_read_from_str(ctx, string("{ " + op.first->name + vars + " : " + ds + " }").c_str());
+  //}
+  //return doms;
 }
