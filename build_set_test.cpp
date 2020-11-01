@@ -18961,7 +18961,7 @@ void dhuff_playground() {
     prg.find_loop("ji")->children = {};
 
     prg.pretty_print();
-    assert(false);
+    //assert(false);
 
     add_reuse_buffer_no_delta("i", "A", prg);
     add_reuse_buffer_no_delta("j", "B", prg);
