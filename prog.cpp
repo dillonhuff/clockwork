@@ -6304,7 +6304,7 @@ map<op*, isl_set*> prog::domains() {
         constraints.push_back(str(ancestor->start) + " <= " + ancestor->name + " < " + str(ancestor->end_exclusive));
       } else {
         assert(ancestor->is_if());
-        constraints.push_back(ancestor->condition);
+        constraints.push_back(parens(ancestor->condition));
       }
     }
     string dom_str =
