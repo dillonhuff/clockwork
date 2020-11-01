@@ -18942,6 +18942,7 @@ void dhuff_playground() {
     push_to_bottom_of_band_ignoring({}, outer_j, prg);
 
     add_reuse_buffer("j", "A", prg);
+    add_reuse_buffer("j", "B", prg);
     prg.pretty_print();
 
     assert(false);
