@@ -18950,6 +18950,18 @@ void dhuff_playground() {
     auto outer_j = strip_mine(4, "j", prg);
     push_to_bottom_of_band_ignoring({}, outer_i, prg);
     push_to_bottom_of_band_ignoring({}, outer_j, prg);
+    prg.pretty_print();
+
+    vector<op*> children = {};
+    for (auto c : prg.find_loop("ji")->children) {
+      children.push_back(c);
+    }
+    concat(children, prg.find_loop("j")->children);
+    prg.find_loop("j")->children = children;
+    prg.find_loop("ji")->children = {};
+
+    prg.pretty_print();
+    assert(false);
 
     add_reuse_buffer_no_delta("i", "A", prg);
     add_reuse_buffer_no_delta("j", "B", prg);

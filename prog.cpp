@@ -6136,9 +6136,25 @@ void add_reuse_buffer_no_delta(const std::string& level, const std::string& buff
   isl_map* reads = consumer_map(prg.find_loop(level), buffer, prg);
   cout << "Reads from " << buffer << " at " << level << ": " << str(reads) << endl;
   string rb_name = prg.un(buffer + "_at_" + level);
+  auto loop = prg.find_loop(level);
+  std::set<op*> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op);
+    }
+  }
+  cout << "Users..." << endl;
+  for (auto u : users) {
+    cout << tab(1) << u->name << endl;
+  }
+  for (auto rd : users) {
+    rd->replace_reads_from(buffer, rb_name);
+  }
+  for (auto rd : users) {
+    rd->replace_writes_to(buffer, rb_name);
+  }
   read_in_at_start(prg.find_loop(level), reads, rb_name, prg);
-  //prg.pretty_print();
-  //assert(false);
+
 }
 
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
