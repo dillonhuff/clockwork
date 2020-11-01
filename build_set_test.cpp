@@ -18963,12 +18963,26 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg("mmul");
+    auto lp = prg.add_nest("i", 0, 1024, "j", 0, 1024, "k", 0, 1024)->add_op("mop");
+    lp->add_load("A", "i", "k");
+    lp->add_load("B", "k", "j");
+    lp->add_store("C", "i", "j");
+    lp->add_function("mac");
+    prg.pretty_print();
+
+    auto outer_i = strip_mine(4, "i", prg);
+    auto outer_j = strip_mine(4, "j", prg);
+    prg.pretty_print();
+    assert(false);
+  }
 
   {
     prog prg = resnet();
     prg.pretty_print();
-    prog mobile = mobilenet();
-    mobile.pretty_print();
+    //prog mobile = mobilenet();
+    //mobile.pretty_print();
     assert(false);
   }
 
