@@ -117,6 +117,7 @@ bool equal(uset* const l, uset* const r);
 bool equal(umap* const l, umap* const r);
 
 bool empty(umap* const s);
+bool empty(isl_map* const s);
 bool empty(isl_basic_set* const s);
 bool empty(uset* const s);
 bool empty(isl_set* const s);

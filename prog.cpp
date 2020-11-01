@@ -5955,15 +5955,14 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
   assert(loop->is_loop());
 
   cout << "reading in data: " << str(read_data) << " at " << loop->name << endl;
+  if (empty(read_data)) {
+    return;
+  }
 
   string buf = range_name(read_data);
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  //for (auto v : surrounding_vars(loop, prg)) {
-    //store_addrs.push_back(v);
-  //}
-  //store_addrs.push_back(loop->name);
   auto minpw =
     isl_map_lexmin_pw_multi_aff(cpy(read_data));
   auto maxpw =
@@ -6119,95 +6118,12 @@ isl_map* delta_data(loop* loop, const std::string& buffer, prog& prg) {
 
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
 
-  //umap* reads = read_at(level, buffer, prg);
-  //cout << "reads = " << str(reads) << endl;
-
   auto loop = prg.find_loop(level);
-  //int outer_vars = surrounding_vars(loop, prg).size();
-
-  //umap* first_reads = first_iteration_reads(reads, level, prg);
-  //cout << "first reads = " << str(first_reads) << endl;
-
-  //cout << "Re-use " << buffer << " at" << endl;
-  //loop->pretty_print();
-
-  //auto sched = prg.unoptimized_schedule();
-  //auto earlier = lex_gt(sched, sched);
-  //cout << "earlier = " << str(earlier) << endl;
-
-  //auto read = prg.consumer_map(buffer);
-  //cout << "consumed = " << str(read) << endl;
-  //for (auto m : get_maps(read)) {
-    //print_box_bounds(domain_name(m), m);
-  //}
-  //cout << endl;
-
-  //auto read_earlier = coalesce(dot(earlier, read));
-  //cout << "consumed earlier = " << str(read_earlier) << endl;
-  //for (auto m : get_maps(read_earlier)) {
-    //print_box_bounds(domain_name(m), m);
-  //}
-  //cout << endl;
-
-  //auto consumed_earlier_and_now = its(read_earlier, read);
-  //cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
-  //auto consumed_first_time = diff(read, consumed_earlier_and_now);
-  //auto csf = cpy(consumed_first_time);
-  //cout << "first time read  = " << str(consumed_first_time) << endl;
-  ////uset* not_first =
-  ////auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
-  ////cout << "not first        = " << str(not_first) << endl;
-  ////consumed_first_time = its(consumed_first_time, not_first);
-  //consumed_first_time = coalesce(consumed_first_time);
-  //cout << "first time read  = " << str(consumed_first_time) << endl;
 
   isl_map* initial_data = get_initial_data(level, buffer, prg);
   cout << "initially read: " << str(initial_data) << endl;
   string rb_name = buffer + "_rb_at_" + level;
   read_in_before(loop, initial_data, rb_name, prg);
-  //{
-    //auto lmin = lexmin(initial_data);
-    //auto lmax = lexmax(initial_data);
-    //cout << "Initial data min/max" << endl;
-    //cout << tab(1) << "min              = " << str(lmin) << endl;
-    //cout << tab(1) << "max              = " << str(lmax) << endl;
-  //}
-
-  //cout << "consumed first time = " << str(consumed_first_time) << endl;
-  //isl_map* pr = nullptr;
-  //for (auto m : get_maps(consumed_first_time)) {
-    //cout << "m = " << str(m) << endl;
-    //assert(outer_vars < num_in_dims(m));
-    //int to_remove = num_in_dims(m) - outer_vars;
-    //cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
-    //auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
-    //if (pr == nullptr) {
-      //pr = prj;
-    //} else {
-      //pr = unn(pr, prj);
-    //}
-  //}
-
-  ////auto maps = get_maps(consumed_first_time);
-  ////assert(maps.size() == 1);
-  ////auto mpa = maps.at(0);
-  ////cout << "mpa = " << str(mpa) << endl;
-  //cout << "initial data = " << str(initial_data) << endl;
-  //////mpa = diff(mpa, initial_data);
-  //////assert(false);
-  ////auto pr = isl_map_project_out(cpy(mpa), isl_dim_in, 2, 2);
-  //cout << "pr = " << str(pr) << endl;
-  //{
-    //auto lmin = lexmin(pr);
-    //auto lmax = lexmax(pr);
-    //cout << "pre-diff pr min              = " << str(lmin) << endl;
-    //cout << "pre-diff pr max              = " << str(lmax) << endl;
-  //}
-  //pr = diff(pr, initial_data);
-  //auto lmin = lexmin(pr);
-  //auto lmax = lexmax(pr);
-  //cout << "min              = " << str(lmin) << endl;
-  //cout << "max              = " << str(lmax) << endl;
 
   auto pr = delta_data(loop, buffer, prg);
   read_in_after(loop, pr, rb_name, prg);

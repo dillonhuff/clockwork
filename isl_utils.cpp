@@ -202,6 +202,10 @@ bool empty(uset* const s) {
   return isl_union_set_is_empty(s);
 }
 
+bool empty(isl_map* const s) {
+  return isl_map_is_empty(s);
+}
+
 bool empty(umap* const s) {
   return isl_union_map_is_empty(s);
 }

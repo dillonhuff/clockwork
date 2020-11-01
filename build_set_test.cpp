@@ -18940,6 +18940,8 @@ void dhuff_playground() {
     auto outer_j = strip_mine(4, "j", prg);
     push_to_bottom_of_band_ignoring({}, outer_i, prg);
     push_to_bottom_of_band_ignoring({}, outer_j, prg);
+
+    add_reuse_buffer("j", "A", prg);
     prg.pretty_print();
 
     assert(false);
