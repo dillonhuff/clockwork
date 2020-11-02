@@ -16153,15 +16153,25 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     prg.pretty_print();
     cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
 
-    op* op = find_coarse_grained_pipeline_loop(prg.root);
-    assert(op == nullptr);
-
     sequential_schedule(sched, root, prg);
 
     adjust_inner_iis(sched, prg);
     tighten_iis(sched, prg);
 
+    op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root);
+    if (coarse_pipeline_loop != nullptr) {
+      cout << "Found coarse pipeline loop:" << coarse_pipeline_loop->name << " with childreen..." << endl;
+      for (auto op : coarse_pipeline_loop->children) {
+        op->pretty_print();
+        cout << tab(1) << "Completion time: " << sched.total_latency(op) << endl;
+        cout << endl;
+      }
+      assert(false);
+    }
+
+
     adjust_schedule_forward(sched, prg, 1);
+
     return;
   }
 }
