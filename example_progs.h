@@ -30,3 +30,4 @@ prog mobilenet();
 prog mobilenet_small();
 prog three_level_memory();
 prog resnet_unrolled();
+prog resnet_coarse_pipeline_loop();

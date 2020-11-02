@@ -18928,6 +18928,13 @@ void test_if_construction() {
 
 void dhuff_playground() {
   {
+    prog prg = resnet_coarse_pipeline_loop();
+    prg.pretty_print();
+    //prog mobile = mobilenet();
+    //mobile.pretty_print();
+    assert(false);
+  }
+  {
     prog prg("mmul");
     auto init = prg.add_nest("ii", 0, 1024, "ji", 0, 1024)->add_op("init");
     init->add_store("C", "ii", "ji");
@@ -18976,13 +18983,6 @@ void dhuff_playground() {
     assert(false);
   }
 
-  {
-    prog prg = resnet();
-    prg.pretty_print();
-    //prog mobile = mobilenet();
-    //mobile.pretty_print();
-    assert(false);
-  }
 
   test_gaussian_pyramid_shared_pes();
 
