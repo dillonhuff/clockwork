@@ -16347,143 +16347,23 @@ bool is_cst(isl_multi_aff* diff) {
   return true;
 }
 
+void sanity_check_hw_schedule(schedule_info& sched, prog& prg) {
+  assert(all_operations_assigned_to_resources(sched, prg));
+  assert(no_violated_resource_assignments(sched, prg));
+  assert(no_violated_cycle_accurate_dependencies(sched, prg));
+  assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
+}
+
 void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
   normalize_bounds(prg);
 
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
-  //op* root = prg.root;
-  //QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
-  //QExpr root_sched{{root_sched_t}};
-
-  //map<op*, QExpr> schedule_exprs{{root, root_sched}};
-  //map<string, isl_aff*> schedule_affs;
-  //build_schedule_exprs(root, schedule_exprs, sched, prg);
-
-  //cout << "==== Schedules..." << endl;
-  //for (auto opl : schedule_exprs) {
-    //auto op = opl.first;
-    //cout << tab(1) << op->name << " -> " << opl.second << endl;
-    //ostringstream ss;
-    //ss << opl.second;
-    //if (!op->is_loop()) {
-      //isl_aff* aff = isl_aff_read_from_str(prg.ctx,
-          //curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
-      //schedule_affs[op->name] = aff;
-    //}
-  //}
-
-  //prg.pretty_print();
-
-  //cout << "==== Affine schedule expressions" << endl;
-  //for (auto ef : schedule_affs) {
-    //cout << tab(1) << ef.first<< " -> " << str(ef.second) << endl;
-  //}
-
-  //auto hw_sched = its(to_umap(prg.whole_iteration_domain(), schedule_affs), prg.whole_iteration_domain());
-  //cout << endl << endl;
-  ////cout << "Hw schedule..." << str(hw_sched) << endl;
-  //cout << "Hw schedule..." << endl;
-  //for (auto m : get_maps(hw_sched)) {
-    //cout << tab(1) << str(m) << endl;
-  //}
-
   auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
-  //auto a_hw_sched = op_times_map(sched, prg);
-  //cout << "Op times map: " << str(a_hw_sched) << endl;
-  cout << "HW Sched    : " << str(hw_sched) << endl;
-  //assert(false);
 
-  assert(all_operations_assigned_to_resources(sched, prg));
-  assert(no_violated_resource_assignments(sched, prg));
-  assert(no_violated_cycle_accurate_dependencies(sched, prg));
-  assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
+  sanity_check_hw_schedule(sched, prg);
 
   auto buffers = build_buffers(prg, hw_sched);
-
-//  for (auto& bufe : buffers) {
-//    auto& buf = bufe.second;
-//    auto shift_registered_outputs =
-//      determine_shift_reg_map(prg, buf, sched);
-//    if (shift_registered_outputs.size() == buf.get_out_ports().size()) {
-//      cout << buf.name << " is really a shift register" << endl;
-//      continue;
-//    }
-//    maybe<std::set<int> > part =
-//      embarassing_partition(buf, sched);
-//    vector<vector<string> > filtered_io_groups =
-//      overlapping_large_io_port_groups(buf, 1);
-//
-//    if (filtered_io_groups.size() > 0 && !part.has_value()) {
-//      cout << tab(1) << "======= No embarassing partition for " << buf.name << endl;
-//      cout << tab(2) << "Groups" << endl;
-//      for (auto gp : filtered_io_groups) {
-//        cout << tab(3) << "------ GP" << endl;
-//        for (auto pt : gp) {
-//          cout << tab(4) << pt << endl;
-//          isl_multi_aff* aff = get_multi_aff(buf.access_map.at(pt));
-//          cout << tab(5) << str(aff) << endl;
-//        }
-//      }
-//
-//      bool all_diffs_constant = true;
-//      for (auto gp : filtered_io_groups) {
-//        for (auto pt0 : gp) {
-//          for (auto pt1 : gp) {
-//            isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
-//            isl_multi_aff* aff1 = set_in_name(get_multi_aff(buf.access_map.at(pt1)), "s");
-//            auto diff = sub(aff0, aff1);
-//            cout << tab(5) << "Diff: " << str(diff) << endl;
-//            if (!is_cst(diff)) {
-//              all_diffs_constant = false;
-//            }
-//          }
-//        }
-//      }
-//      if (all_diffs_constant) {
-//        cout << "All diffs constant. Looking for cyclic banking..." << endl;
-//        vector<string> vars;
-//        vector<int> factors;
-//        for (int d = 0; d < buf.logical_dimension(); d++) {
-//          vars.push_back("d_" + str(d));
-//          int min_offset = INT_MAX;
-//          int max_offset = INT_MIN;
-//          for (auto gp : filtered_io_groups) {
-//            for (auto pt0 : gp) {
-//              isl_multi_aff* aff0 = set_in_name(get_multi_aff(buf.access_map.at(pt0)), "s");
-//              isl_aff* aff = isl_multi_aff_get_aff(aff0, d);
-//              int offset = to_int(constant(aff));
-//              if (offset < min_offset) {
-//                min_offset = offset;
-//              }
-//              if (offset > max_offset) {
-//                max_offset = offset;
-//              }
-//            }
-//          }
-//          cout << tab(1) << "min = " << min_offset << endl;
-//          cout << tab(1) << "max = " << max_offset << endl;
-//          cout << tab(1) << "bf  = " << (max_offset - min_offset + 1) << endl;
-//          factors.push_back(max_offset - min_offset + 1);
-//        }
-//        vector<string> factor_exprs;
-//        int i = 0;
-//        for (auto f : factors) {
-//          auto var = vars.at(i);
-//          factor_exprs.push_back(var + " % " + str(f));
-//          i++;
-//        }
-//        string bank_func =
-//          curlies(buf.name + bracket_list(vars) + " -> B" + bracket_list(factor_exprs));
-//        cout << "BF: " << bank_func << endl;
-//        isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
-//        cout << "M : " << str(m) << endl;
-//        bool legal = banking_scheme_is_legal(m, buf);
-//        assert(legal);
-//      }
-//      assert(all_diffs_constant);
-//    }
-//  }
 
 #ifdef COREIR
 
@@ -18937,7 +18817,8 @@ void dhuff_playground() {
     prog prg = resnet_coarse_pipeline_loop();
     prg.pretty_print();
     prg.sanity_check();
-    auto res = unoptimized_result(prg);
+    compile_for_garnet_platonic_mem(prg);
+    //auto res = unoptimized_result(prg);
     //prog mobile = mobilenet();
     //mobile.pretty_print();
     assert(false);
