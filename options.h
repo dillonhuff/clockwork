@@ -59,8 +59,10 @@ struct LakeCollateral {
     std::unordered_map<string, int> capacity;
     std::unordered_map<string, int> in_port_width;
     std::unordered_map<string, int> out_port_width;
+    int fetch_width;
 
     LakeCollateral():
+        fetch_width(4),
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
         out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),

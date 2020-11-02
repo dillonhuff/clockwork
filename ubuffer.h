@@ -1162,6 +1162,13 @@ class UBuffer {
       return num_out_dims(maps.at(0));
     }
 
+    int dom_dims() const {
+      assert(domain.size() > 0);
+      auto dom =
+        pick(domain).second;
+      return ::num_dims(dom);
+    }
+
     bool is_bank_input(const string& name) const{
       for (auto bk: bank_list) {
         if (elem(name, banks_to_inputs.at(bk.name))) {
@@ -2009,6 +2016,7 @@ class UBuffer {
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, int dim_id, int fetch_width);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, vector<int> iis, int fetch_width);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, vector<int> iis, int fetch_width);
 
     void print_bank_info();
@@ -2021,6 +2029,7 @@ class UBuffer {
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
 
     isl_union_set* compute_dd_hw_schedule(const string& inpt, const string& outpt);
+    isl_union_set* compute_dd_hw_schedule_decouple(const string& inpt, const string& outpt);
 
     bank compute_bank_info();
     bank compute_bank_info(uset*, isl_point*, std::set<string>, std::set<string>);
@@ -2085,7 +2094,8 @@ class UBuffer {
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
     pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);
 
-    maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt);
+    maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
+    maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
 
 
 };

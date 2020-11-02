@@ -13219,13 +13219,13 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem() {
   vector<prog> test_apps;
-  test_apps.push_back(resnet());
   test_apps.push_back(conv_3_3());
   //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(rom());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(rom());
+  test_apps.push_back(resnet());
 
   //TODO: break in the middle of vectorization
   //test_apps.push_back(down_sample());
@@ -16336,7 +16336,7 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
   ////auto sched = global_schedule_from_buffers(buffers_opt);
 
   for (auto& b : buffers_opt) {
-    //cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
+    cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
     if (is_rate_matchable(prg)) {
@@ -16365,6 +16365,7 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
       cout << "number of banks = " << card(cyclic_partition_factor) << endl;
       options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
       b.second.generate_banks_and_merge(options);
+      b.second.port_group2bank(options);
     }
   }
 

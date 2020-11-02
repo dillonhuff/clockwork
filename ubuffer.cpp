@@ -1329,7 +1329,11 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
       //vectorization pass for lake tile
       if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
-        buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+        //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+        buffer_vectorization(options.iis, bk.name + "_ubuf",
+                num_dims()-1,    //indicate the inner most dimension
+                options.mem_tile.fetch_width,
+                rewrite_buffer);
         config_file = generate_ubuf_args(options, rewrite_buffer);
       }
 
@@ -2366,7 +2370,10 @@ void UBuffer::generate_smt_stream(CodegenOptions& options) {
 
       //vectorization pass for lake tile
       if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
-        buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+        buffer_vectorization(options.iis, bk.name + "_ubuf",
+                num_dims()-1,    //indicate the inner most dimension
+                options.mem_tile.fetch_width,
+                rewrite_buffer);
         //config_file = generate_ubuf_args(options, rewrite_buffer);
       }
       //Generate SMT stream if needed
@@ -3379,6 +3386,43 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
     cout << "rddom = " << str(rddom) << endl;
 
     map<string, int> delay_map;
+    for (auto inpt: inpt_set) {
+      for (auto outpt: outpt_set) {
+        auto delay_info =
+            dependence_distance_max(inpt, outpt);
+        if (delay_info.has_value()) {
+          maxdelay = std::max(delay_info.get_value(), maxdelay);
+          delay_map[outpt] = maxdelay;
+        }
+      }
+    }
+
+    //sort output port by max delay and compute relative dependence distance
+    if (inpt_set.size() == 1) {
+      vector<pair<string, int> > pt_delay;
+      for (auto it: delay_map) {
+        pt_delay.push_back(it);
+      }
+      sort(pt_delay.begin(), pt_delay.end(),
+              [](pair<string, int> a, pair<string, int> b) {
+              return a.second < b.second;
+              });
+
+      //shift register optimization
+      for (auto i = 0; i < pt_delay.size() - 1; i ++) {
+        auto s_in = pt_delay.at(i).first;
+        auto s_out = pt_delay.at(i+1).first;
+        auto delay_info = dependence_distance_singleton(s_in, s_out, true);
+        if (delay_info.has_value()) {
+          delay_map.at(s_out) = delay_info.get_value();
+        } else {
+          assert(false);
+        }
+      }
+      delay_map.at(pt_delay.begin()->first) = 0;
+    }
+
+    cout << "Max delay : " << maxdelay << endl;
 
     stack_bank bank{bank_name, INNER_BANK_OFFSET_LINEAR, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
 
@@ -3796,12 +3840,13 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
 
     cout << tab(1) << "after banking there are " << bank_list.size() << " banks" << endl;
     for (auto & b:bank_list) {
-      cout << "\tinput: ";
+      cout << tab(1) << "Bank name: " << b.name << endl;
+      cout << "\tinput: \n";
       for (auto inpt: banks_to_inputs.at(b.name))
-              cout <<tab(1) << inpt <<endl;
-      cout << "\t output: ";
+              cout <<tab(2) << inpt <<endl;
+      cout << "\t output: \n";
       for (auto outpt: banks_to_outputs.at(b.name))
-              cout <<tab(1) << outpt <<endl;
+              cout <<tab(2) << outpt <<endl;
     }
   }
 
@@ -4452,13 +4497,15 @@ vector<string> buffer_vectorization(vector<int> iis,
     if (std::find(buf_name_vec.begin(), buf_name_vec.end(), it.first) != buf_name_vec.end()) {
       rem_origin_ubuf.push_back(it.first);
       auto target_buffer = it.second;
-      cout << "buffer_vectorization Vectorizing: " << target_buffer.name << endl;
+      cout << tab(1) << "buffer_vectorization Vectorizing: " << target_buffer.name << endl
+          << tab(1)<< " On addr dim: " << dim_id << ", fetch_width: " << fetch_width
+          << endl;
       cout << target_buffer << endl;
 
       //Input must be take care
       //need to first pad the buffer output to the multiplier of
-      target_buffer.pad_read_dom(dim_id, fetch_width);
-      target_buffer.pad_write_dom(dim_id, fetch_width);
+      target_buffer.pad_read_dom(target_buffer.dom_dims()-1, fetch_width);
+      target_buffer.pad_write_dom(target_buffer.dom_dims()-1, fetch_width);
 
       //ret is a pair of vectorized_buffer and the dependency need to be removed
       auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
@@ -4699,6 +4746,46 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     new_sched.insert(make_pair(out_op, out_sched_new));
     new_sched.insert(make_pair(in_op + "_agg2sram", in_sched_vec));
     new_sched.insert(make_pair(out_op + "_sram2tb", out_sched_vec));
+
+    cout << "\tnew in map: " << str(in_sched_new)
+    << "\n\tvec in map: " << str(in_sched_vec)
+    << "\n\tnew out map: " << str(out_sched_new)
+    << "\n\tvec out map: " << str(out_sched_vec) << endl;
+
+    return new_sched;
+  }
+
+//new recipe schedule provider for accumulation buffer
+  map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, string self_loop_bd,vector<int> iis,  int fetch_width) {
+    string in_pt_name = pick(port_bundles.at(in_bd_name));
+    string out_pt_name = pick(port_bundles.at(out_bd_name));
+    string in_op = domain_name(to_map(access_map.at(in_pt_name)));
+    string out_op = domain_name(to_map(access_map.at(out_pt_name)));
+    auto in_sched = schedule.at(in_pt_name);
+    auto out_sched = schedule.at(out_pt_name);
+
+    string update_name = pick(port_bundles.at(self_loop_bd));
+    string update_op = domain_name(to_map(access_map.at(update_name)));
+    auto update_sched = schedule.at(update_name);
+
+    auto in_sched_new = linear_schedule(to_map(in_sched), iis, 0, false);
+    auto in_sched_vec = linear_schedule(to_map(in_sched), iis, fetch_width, false);
+
+    auto out_sched_new = linear_schedule(to_map(in_sched), iis, 0, false);
+    auto out_sched_vec = linear_schedule(to_map(in_sched), iis, -fetch_width - 1, false);
+
+    auto update_sched_vec_out = linear_schedule(to_map(update_sched), iis, -fetch_width - 1, false);
+    auto update_sched_vec_in = linear_schedule(to_map(update_sched), iis, fetch_width, false);
+    auto update_sched_new = to_map(update_sched);
+
+    map<string, isl_map*> new_sched;
+    new_sched.insert(make_pair(in_op, in_sched_new));
+    new_sched.insert(make_pair(out_op, out_sched_new));
+    new_sched.insert(make_pair(in_op + "_agg2sram", in_sched_vec));
+    new_sched.insert(make_pair(out_op + "_sram2tb", out_sched_vec));
+    new_sched.insert(make_pair(update_op + "_agg2sram", update_sched_vec_in));
+    new_sched.insert(make_pair(update_op + "_sram2tb", update_sched_vec_out));
+    new_sched.insert(make_pair(update_op, update_sched_new));
 
     cout << "\tnew in map: " << str(in_sched_new)
     << "\n\tvec in map: " << str(in_sched_vec)
@@ -4994,8 +5081,8 @@ void UBuffer::pad_write_dom(int dim_id, int fetch_width) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
             cout << "\t original range input access map: " << str((am)) << endl;
-            assert(get_dim_min(::domain(am), dim_id+1) == 0);
-            auto rem = (get_dim_max(::domain(am), dim_id+1) + 1) % fetch_width;
+            assert(get_dim_min(::domain(am), dim_id) == 0);
+            auto rem = (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
             if (rem) {
                 //need padding
                 auto pad_am = pad_to_domain_ubuf_map(am, fetch_width - rem);
@@ -5014,8 +5101,8 @@ void UBuffer::pad_read_dom(int dim_id, int fetch_width) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
             cout << "\t original range output access map: " << str((am)) << endl;
-            assert(get_dim_min(::domain(am), dim_id+1) == 0);
-            auto rem = (get_dim_max(::domain(am), dim_id+1) + 1) % fetch_width;
+            assert(get_dim_min(::domain(am), dim_id) == 0);
+            auto rem = (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
             if (rem) {
                 //need padding
                 auto pad_am = pad_to_domain_ubuf_map(am, fetch_width - rem);
@@ -5085,8 +5172,12 @@ pair<std::map<string, UBuffer>, vector<string> >
       }
       //only consider the accumulation buffer
       assert(bd_vec.size() ==3 );
-      auto tmp = produce_vectorized_schedule(bd_vec.at(0), bd_vec.at(2), bd_vec.at(1), dim_id, fetch_width);
-      new_sched.insert(tmp.begin(), tmp.end());
+      if (iis.size()) {
+        new_sched = produce_vectorized_schedule(bd_vec.at(0), bd_vec.at(2), bd_vec.at(1), iis, fetch_width);
+      } else {
+        new_sched = produce_vectorized_schedule(bd_vec.at(0), bd_vec.at(2), bd_vec.at(1), dim_id, fetch_width);
+      }
+      //new_sched.insert(tmp.begin(), tmp.end());
 
       for (auto it: new_sched) {
         cout << it.first << ", " << str(it.second) << endl;
@@ -5539,6 +5630,34 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
 }
 
 
+isl_union_set* UBuffer::compute_dd_hw_schedule_decouple(const string& inpt, const string& outpt) {
+  auto writes = to_map(access_map.at(inpt));
+  AccessPattern acc_pt(writes, ctx);
+  writes = acc_pt.get_access_map_and_decouple_reuse(ctx, num_out_dims(writes));
+  auto reads = to_map(access_map.at(outpt));
+  AccessPattern acc_pt_rd(reads, ctx);
+  reads = acc_pt_rd.get_access_map_and_decouple_reuse(ctx, num_out_dims(reads));
+  cout << "writes: " << str(writes) << endl;
+  cout << "reads : " << str(reads) << endl;
+  cout << "Schedule..." << endl;
+  umap* sched = global_schedule();
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+    release(m);
+  }
+
+  auto time_to_write = dot(inv(sched), (writes));
+  auto time_to_read = dot(inv(sched), (reads));
+
+  cout << "Time to write: " << str(time_to_write) << endl;
+  cout << "Time to read : " << str(time_to_read) << endl;
+
+  auto pc_times = dot(time_to_write, inv(time_to_read));
+  cout << "PC times     : " << str(pc_times) << endl;
+  auto dds = isl_union_map_deltas(pc_times);
+  return dds;
+}
+
 isl_union_set* UBuffer::compute_dd_hw_schedule(const string& inpt, const string& outpt) {
   auto writes = access_map.at(inpt);
   auto reads = access_map.at(outpt);
@@ -5563,10 +5682,31 @@ isl_union_set* UBuffer::compute_dd_hw_schedule(const string& inpt, const string&
   return dds;
 }
 
-maybe<int> UBuffer::dependence_distance_singleton(const string& inpt, const string& outpt) {
+maybe<int> UBuffer::dependence_distance_max(const string& inpt, const string& outpt) {
 
   auto dds = compute_dd_hw_schedule(inpt, outpt);
   cout << "DDs          : " << str(dds) << endl;
+  if (!empty(dds)) {
+    auto ddc = to_set(dds);
+
+    int dd = to_int(lexminval(ddc));
+    cout << "DD           : " << dd << endl;
+    return {dd};
+  } else {
+    return {};
+  }
+}
+
+maybe<int> UBuffer::dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple) {
+
+  auto dds = compute_dd_hw_schedule(inpt, outpt);
+  if (decouple)
+    dds = compute_dd_hw_schedule_decouple(inpt, outpt);
+  cout << "inpt schedule: " << str(schedule.at(inpt)) << endl;
+  cout << "outpt schedule: " << str(schedule.at(outpt)) << endl;
+  cout << "DDs          : " << str(dds) << endl;
+  cout << "DDmin : " << str(lexminval(to_set(dds))) << endl;
+  cout << "DDmax: " << str(lexmaxval(to_set(dds))) << endl;
   if (!empty(dds)) {
     auto ddc = to_set(dds);
 
