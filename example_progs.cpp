@@ -3533,6 +3533,12 @@ prog resnet_coarse_pipeline_loop() {
         piece.second += ", gb_tile";
       }
     }
+    for (auto& addr : op->consume_locs_pair) {
+      auto& pwa = addr.second;
+      for (auto& piece : pwa) {
+        piece.second += ", gb_tile";
+      }
+    }
   }
   return prg;
 }
