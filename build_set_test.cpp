@@ -16161,11 +16161,20 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root);
     if (coarse_pipeline_loop != nullptr) {
       cout << "Found coarse pipeline loop:" << coarse_pipeline_loop->name << " with childreen..." << endl;
+      int max_time = INT_MIN;
+      op* most_compute_intensive_stage = nullptr;
       for (auto op : coarse_pipeline_loop->children) {
         op->pretty_print();
         cout << tab(1) << "Completion time: " << sched.total_latency(op) << endl;
         cout << endl;
+        if (sched.total_latency(op) > max_time) {
+          max_time = sched.total_latency(op);
+          most_compute_intensive_stage = op;
+        }
       }
+      assert(most_compute_intensive_stage != nullptr);
+
+      cout << "Most compute intensive stage: " << most_compute_intensive_stage->name;
       assert(false);
     }
 
