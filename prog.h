@@ -1851,3 +1851,5 @@ void push_to_bottom_of_band_ignoring(const vector<loop*>& base, loop* lp, prog& 
 void push_below(loop* outer, loop* inner, prog& prg);
 
 void add_reuse_buffer_no_delta(const std::string& level, const std::string& buffer, prog& prg);
+
+op* find_coarse_grained_pipeline_loop(op* lp);

@@ -6244,3 +6244,18 @@ void push_to_bottom_of_band_ignoring(const vector<loop*>& base, loop* lp, prog& 
 
   assert(prg.all_loops().size() == old_num_loops);
 }
+
+op* find_coarse_grained_pipeline_loop(op* lp) {
+  assert(lp->is_loop());
+  if (lp->name != "root" && lp->children.size() == 1) {
+    return lp;
+  }
+  if (lp->name == "root" && lp->children.size() > 1) {
+    return nullptr;
+  }
+  if (lp->name == "root" && lp->children.size() == 1) {
+    return lp->children.back();
+  }
+  return nullptr;
+}
+
