@@ -15526,10 +15526,32 @@ void tighten_iis(schedule_info& sched, prog& prg) {
 
 void adjust_outer_delays(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+
+    int old_delay = map_find(lp, sched.op_offset_within_parent);
+    int try_delay = 1;
+    bool found_smaller_delay = false;
+    while (try_delay < old_delay) {
+      sched.op_offset_within_parent[lp] = try_delay;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_delay = true;
+        break;
+      }
+      try_delay = max(try_delay * 2, try_delay + 1000);
+      //try_delay = min(try_delay * 2, try_delay + 1000);
+      //try_delay *= 2;
+    }
+
+    if (!found_smaller_delay) {
+      sched.op_offset_within_parent[lp] = old_delay;
+    }
+  }
+}
+void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
   for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
-  //for (auto name : topologically_sort_kernels(prg)) {
-    //auto lp = prg.find_loop(name);
-    //cout << "Adjusting delay of " << lp->name << endl;
 
     int old_delay = map_find(lp, sched.op_offset_within_parent);
     int try_delay = 1;
@@ -16168,7 +16190,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       sched.loop_iis[coarse_pipeline_loop->name] =
         sched.total_latency(most_compute_intensive_stage);
 
-      adjust_outer_delays(sched, prg);
+      adjust_outer_pipeline_delays(sched, prg);
       //assert(false);
     }
 
@@ -18794,8 +18816,8 @@ void dhuff_playground() {
     auto buffers = build_buffers(prg, hw_sched);
 
     auto& buf = buffers["conv_stencil"];
-    //string bank_func = "{ conv_stencil[c, x, y, t] -> B[c % 3, x % 1, y % 1, t % 2] }";
-    string bank_func = "{ conv_stencil[c, x, y, t] -> B[c % 3, x % 1, y % 1, t % 1] }";
+    string bank_func = "{ conv_stencil[c, x, y, t] -> B[c % 3, x % 1, y % 1, t % 2] }";
+    //string bank_func = "{ conv_stencil[c, x, y, t] -> B[c % 3, x % 1, y % 1, t % 1] }";
     isl_map* bf =
       isl_map_read_from_str(buf.ctx, bank_func.c_str());
 
