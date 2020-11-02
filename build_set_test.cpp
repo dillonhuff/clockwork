@@ -18930,6 +18930,8 @@ void dhuff_playground() {
   {
     prog prg = resnet_coarse_pipeline_loop();
     prg.pretty_print();
+    prg.sanity_check();
+    auto res = unoptimized_result(prg);
     //prog mobile = mobilenet();
     //mobile.pretty_print();
     assert(false);
