@@ -16586,6 +16586,7 @@ vector<prog> all_cgra_programs() {
 
 
 
+  test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(resnet());
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
