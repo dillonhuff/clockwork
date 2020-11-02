@@ -16174,8 +16174,11 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       }
       assert(most_compute_intensive_stage != nullptr);
 
-      cout << "Most compute intensive stage: " << most_compute_intensive_stage->name;
-      assert(false);
+      cout << "Most compute intensive stage: " << most_compute_intensive_stage->name << endl;
+      sched.loop_iis[coarse_pipeline_loop->name] =
+        sched.total_latency(most_compute_intensive_stage);
+
+      //assert(false);
     }
 
 
