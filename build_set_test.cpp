@@ -18934,6 +18934,7 @@ void dhuff_playground() {
     init->add_function("init_c");
 
     auto lp = prg.add_nest("i", 0, 1024, "j", 0, 1024, "k", 0, 1024)->add_op("mop");
+    lp->add_load("C", "i", "j");
     lp->add_load("A", "i", "k");
     lp->add_load("B", "k", "j");
     lp->add_store("C", "i", "j");
@@ -18961,10 +18962,15 @@ void dhuff_playground() {
     prg.find_loop("ji")->children = {};
 
     prg.pretty_print();
-    //assert(false);
 
     add_reuse_buffer_no_delta("i", "A", prg);
     add_reuse_buffer_no_delta("j", "B", prg);
+
+    prg.root->replace_variable("ii", "i");
+    prg.root->replace_variable("ji", "j");
+
+    add_reuse_buffer_no_delta("j", "C", prg);
+
     prg.pretty_print();
 
     assert(false);
