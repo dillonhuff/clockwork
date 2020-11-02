@@ -18787,12 +18787,29 @@ void test_if_construction() {
 void dhuff_playground() {
   {
     prog prg = resnet_coarse_pipeline_loop();
+    //prog prg = resnet();
     prg.pretty_print();
     prg.sanity_check();
-    compile_for_garnet_platonic_mem(prg);
-    //auto res = unoptimized_result(prg);
-    //prog mobile = mobilenet();
-    //mobile.pretty_print();
+    auto options = garnet_codegen_options(prg);
+    schedule_info sched = garnet_schedule_info(options, prg);
+    normalize_bounds(prg);
+
+    garnet_dual_port_ram_schedule(sched, prg.root, prg);
+
+    auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+    //sanity_check_hw_schedule(sched, prg);
+
+    auto buffers = build_buffers(prg, hw_sched);
+
+    auto& buf = buffers["conv_stencil"];
+    string bank_func = "{ conv_stencil[c, x, y, t] -> B[c % 3, x % 1, y % 1, t % 3] }";
+    isl_map* bf =
+      isl_map_read_from_str(buf.ctx, bank_func.c_str());
+
+    bool bs = banking_scheme_is_legal(bf, buf);
+    cout << "Legal banking: " << bs << endl;
+
     assert(false);
   }
   {

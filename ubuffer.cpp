@@ -4875,18 +4875,21 @@ bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {
   auto read = range(op_reads);
   auto all_data = unn(written, read);
 
+  auto read_id = isl_union_set_identity(cpy(read));
+
   auto read_times = dot(inv(op_reads), sched);
-  auto simul_reads = dot(read_times, inv(read_times));
+  //auto simul_reads = dot(read_times, inv(read_times));
+  // Set of simultaneous reads to different locations
+  auto simul_reads = diff(dot(read_times, inv(read_times)), read_id);
 
   cout << "simul reads: " << str(simul_reads) << endl;
-  cout << tab(1) << "any simultaneous reads: " << empty(simul_reads) << endl;
+  cout << tab(1) << "any simultaneous reads: " << !empty(simul_reads) << endl;
 
   auto data_to_bank = its(to_umap(bank_func), read);
   auto same_bank = dot(data_to_bank, inv(data_to_bank));
 
   cout << "data_to_bank: " << str(data_to_bank) << endl;
 
-  auto read_id = isl_union_set_identity(cpy(read));
   auto bank_read_conflicts = diff(its(same_bank, simul_reads), read_id);
 
   cout << "bank conflicts = " << str(bank_read_conflicts) << endl;
