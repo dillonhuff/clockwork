@@ -1671,8 +1671,12 @@ std::vector<op*> get_ordered_inner_loops(prog& prg);
 isl_set* iteration_domain(op* loop, prog& prg);
 
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg);
+
 umap* read_at(const std::string& level, const std::string& buffer, prog& prg);
 umap* read_at(const std::string& level, prog& prg);
+
+umap* written_at(const std::string& level, const std::string& buffer, prog& prg);
+
 umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg);
 isl_map* get_initial_data(const std::string& level, const std::string& buffer, prog& prg);
 

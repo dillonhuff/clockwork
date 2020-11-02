@@ -4694,6 +4694,32 @@ isl_set* iteration_domain(op* loop, prog& prg) {
   return bounds;
 }
 
+isl_map* producer_map(op* loop, const std::string& b, prog& prg) {
+  auto reads = written_at(loop->name, b, prg);
+
+  if (reads == nullptr) {
+    return nullptr;
+  }
+
+  isl_map* m = nullptr;
+  auto level = map_find(loop->name, get_variable_levels(prg));
+
+  for (auto rm : get_maps(reads)) {
+    int base = num_in_dims(rm) - 1;
+    assert(base >= level);
+    int diff = base - level;
+    auto r = rm;
+    if (diff != 0) {
+      cout << "Projecting out " << diff << " levels from " << str(r) << endl;
+      r = isl_map_project_out(r, isl_dim_in, level + 1, diff);
+    }
+    r = set_domain_name(r, level_name(loop->name));
+    m = unn(m, r);
+  }
+  assert(m != nullptr);
+  return m;
+}
+
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
   auto reads = read_at(loop->name, b, prg);
   isl_map* m = nullptr;
@@ -4713,6 +4739,31 @@ isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
   }
   assert(m != nullptr);
   return m;
+}
+
+umap* written_at(const std::string& level, const std::string& buffer, prog& prg) {
+  auto loop = prg.find_loop(level);
+  auto read_maps = get_maps(prg.producer_map(buffer));
+
+  std::set<string> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op->name);
+    }
+  }
+
+  umap* all_reads = nullptr;
+  for (auto m : read_maps) {
+    if (elem(domain_name(m), users)) {
+      if (all_reads == nullptr) {
+        all_reads = to_umap(m);
+      } else {
+        all_reads = unn(all_reads, to_umap(m));
+      }
+    }
+  }
+
+  return all_reads;
 }
 
 umap* read_at(const std::string& level, const std::string& buffer, prog& prg) {
@@ -5438,6 +5489,28 @@ vector<op*> ops_at_level(const int level, prog& prg) {
   return at_level;
 }
 
+umap* written_at(const std::string& level, prog& prg) {
+  auto ops = prg.find_loop(level)->descendant_ops();
+  std::set<string> buffers;
+  for (auto op : ops) {
+    for (auto b : op->buffers_written()) {
+      buffers.insert(b);
+    }
+  }
+  umap* rd = nullptr;
+  for (auto b : buffers) {
+    auto rdmap = written_at(level, b, prg);
+
+    if (rd == nullptr) {
+      rd = rdmap;
+    } else {
+      rd = unn(rd, rdmap);
+      release(rdmap);
+    }
+  }
+  return rd;
+}
+
 umap* read_at(const std::string& level, prog& prg) {
   auto ops = prg.find_loop(level)->descendant_ops();
   std::set<string> buffers;
@@ -5660,6 +5733,56 @@ void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& p
   ld->add_load(rb_name, comma_list(store_addrs));
   ld->add_store(buf, comma_list(load_addrs));
 }
+
+void write_out_at_end(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(iloop->is_loop());
+
+  if (empty(read_data)) {
+    return;
+  }
+
+  op* loop = iloop;
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+
+    int ext = to_int(const_coeff(diff)) + 1;
+    isl_aff* addr =
+      set_const_coeff(min, zero(prg.ctx));
+
+    int lb = 0;
+    int ub = ext;
+    string lname = prg.unique_name(buf + "_ld");
+    if (d == 0) {
+      next_lp = next_lp->add_loop(lname, lb, ub);
+    } else {
+      next_lp = next_lp->add_loop(lname, lb, ub);
+    }
+    load_addrs.push_back(lname + " + " + codegen_c(addr));
+    store_addrs.push_back(lname + " + " + codegen_c(addr));
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("store_to_" + rb_name));
+  ld->add_store(buf, comma_list(load_addrs));
+  ld->add_load(rb_name, comma_list(store_addrs));
+}
+
 
 void read_in_at_start(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
   assert(iloop->is_loop());
@@ -5924,6 +6047,8 @@ isl_map* delta_data(loop* loop, const std::string& buffer, prog& prg) {
 void add_reuse_buffer_no_delta(const std::string& level, const std::string& buffer, prog& prg) {
 
   isl_map* reads = consumer_map(prg.find_loop(level), buffer, prg);
+  isl_map* writes = producer_map(prg.find_loop(level), buffer, prg);
+
   cout << "Reads from " << buffer << " at " << level << ": " << str(reads) << endl;
   string rb_name = prg.un(buffer + "_at_" + level);
   auto loop = prg.find_loop(level);
@@ -5943,7 +6068,9 @@ void add_reuse_buffer_no_delta(const std::string& level, const std::string& buff
   for (auto rd : users) {
     rd->replace_writes_to(buffer, rb_name);
   }
+
   read_in_at_start(prg.find_loop(level), reads, rb_name, prg);
+  write_out_at_end(prg.find_loop(level), writes, rb_name, prg);
 
 }
 
