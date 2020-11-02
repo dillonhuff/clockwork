@@ -16008,6 +16008,19 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
   return;
 }
 
+op* find_coarse_grained_pipeline_loop(op* lp) {
+  assert(lp->is_loop());
+  if (lp->name != "root" && lp->children.size() == 1) {
+    return lp;
+  }
+  if (lp->name == "root" && lp->children.size() > 1) {
+    return nullptr;
+  }
+  if (lp->name == "root" && lp->children.size() == 1) {
+    return lp->children.back();
+  }
+  return nullptr;
+}
 
 void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
@@ -16022,7 +16035,6 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     prg.pretty_print();
     bool single_depth = all_loop_nests_same_depth(prg);
     int max_depth = max_loop_depth(prg);
-
 
     if (!single_depth) {
       map<string, vector<int> > pad_indexes;
@@ -16137,84 +16149,21 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
     adjust_schedule_forward(sched, prg, 1);
     return;
+  } else {
+    prg.pretty_print();
+    cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
+
+    op* op = find_coarse_grained_pipeline_loop(prg.root);
+    assert(op == nullptr);
+
+    sequential_schedule(sched, root, prg);
+
+    adjust_inner_iis(sched, prg);
+    tighten_iis(sched, prg);
+
+    adjust_schedule_forward(sched, prg, 1);
+    return;
   }
-
-  prg.pretty_print();
-  cout << prg.name << " is not a stencil" << endl;
-  //cout << tab(1) << "Perfect: " << perfect << endl;
-  //cout << tab(1) << "# rvars: " << rvars.size() << endl;
-  //for (auto rv : rvars) {
-    //cout << tab(2) << rv << endl;
-  //}
-  //assert(false);
-
-  sequential_schedule(sched, root, prg);
-
-  adjust_inner_iis(sched, prg);
-  tighten_iis(sched, prg);
-  //adjust_outer_delays(sched, prg);
-
-  adjust_schedule_forward(sched, prg, 1);
-  return;
-
-  //auto rvars = reduce_vars(prg);
-  //if (rvars.size() == 0) {
-    //auto valid = prg.validity_deps();
-    //auto dom = prg.whole_iteration_domain();
-    //auto cs = clockwork_schedule(dom, valid, cpy(valid));
-    //cout << "Clockwork schedule..." << endl;
-    //for (auto op : cs) {
-      //cout << tab(1) << op.first << " -> ";
-      //for (auto aff : op.second) {
-        //cout << str(aff) << " ";
-      //}
-      //cout << endl;
-    //}
-
-    //for (auto other : prg.all_ops()) {
-      //sched.op_offset_within_parent[other] = 0;
-    //}
-
-    //int num_levels = max_loop_depth(prg);
-
-    //// Offset of ops in parents we can assume will always be 0 (for now)
-    //// Offset of a loop within its parent will be delay_at_level * ii at that level
-    //// II at a given level will be?
-    ////  1 at level 1
-    ////  latency of lower levels?
-    ////
-
-    //vector<int> level_iis;
-    //level_iis.resize(num_levels, 0);
-    //for (int i = num_levels - 1; i >= 0; i--) {
-      //for (auto other : prg.all_ops()) {
-        //auto surrounding = surrounding_vars(other, prg);
-        //cout << "# surrounding = " << surrounding.size() << endl;
-        //cout << "i = " << i << endl;
-        //assert(surrounding.size() > i);
-        //string lname = surrounding.at(i);
-        //op* loop = prg.find_loop(lname);
-        //int lii = -1;
-        //int qfactor = to_int(get_coeff(map_find(other->name, cs).at(i), 0));
-        //int delay = to_int(int_const_coeff(map_find(other->name, cs).at(i)));
-
-        //if (i == num_levels - 1) {
-          //lii = qfactor;
-        //} else {
-          //lii = qfactor*loop->trip_count()*level_iis.at(i + 1);
-        //}
-        //lii = 1;
-        //assert(lii > 0);
-
-        //sched.loop_iis[lname] = lii;
-        //level_iis.at(i) = lii;
-        //sched.op_offset_within_parent[loop] = lii*delay;
-      //}
-    //}
-    ////assert(false);
-  //} else {
-    //sequential_schedule(sched, root, prg);
-  //}
 }
 
 int buffer_store_latency(CodegenOptions& options) {
