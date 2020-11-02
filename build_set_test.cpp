@@ -16352,41 +16352,47 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 
   garnet_dual_port_ram_schedule(sched, prg.root, prg);
 
-  op* root = prg.root;
-  QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
-  QExpr root_sched{{root_sched_t}};
+  //op* root = prg.root;
+  //QTerm root_sched_t{{qconst(map_find(root->name, sched.loop_iis)), qvar(root->name)}};
+  //QExpr root_sched{{root_sched_t}};
 
-  map<op*, QExpr> schedule_exprs{{root, root_sched}};
-  map<string, isl_aff*> schedule_affs;
-  build_schedule_exprs(root, schedule_exprs, sched, prg);
+  //map<op*, QExpr> schedule_exprs{{root, root_sched}};
+  //map<string, isl_aff*> schedule_affs;
+  //build_schedule_exprs(root, schedule_exprs, sched, prg);
 
-  cout << "==== Schedules..." << endl;
-  for (auto opl : schedule_exprs) {
-    auto op = opl.first;
-    cout << tab(1) << op->name << " -> " << opl.second << endl;
-    ostringstream ss;
-    ss << opl.second;
-    if (!op->is_loop()) {
-      isl_aff* aff = isl_aff_read_from_str(prg.ctx,
-          curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
-      schedule_affs[op->name] = aff;
-    }
-  }
+  //cout << "==== Schedules..." << endl;
+  //for (auto opl : schedule_exprs) {
+    //auto op = opl.first;
+    //cout << tab(1) << op->name << " -> " << opl.second << endl;
+    //ostringstream ss;
+    //ss << opl.second;
+    //if (!op->is_loop()) {
+      //isl_aff* aff = isl_aff_read_from_str(prg.ctx,
+          //curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
+      //schedule_affs[op->name] = aff;
+    //}
+  //}
 
-  prg.pretty_print();
+  //prg.pretty_print();
 
-  cout << "==== Affine schedule expressions" << endl;
-  for (auto ef : schedule_affs) {
-    cout << tab(1) << ef.first<< " -> " << str(ef.second) << endl;
-  }
+  //cout << "==== Affine schedule expressions" << endl;
+  //for (auto ef : schedule_affs) {
+    //cout << tab(1) << ef.first<< " -> " << str(ef.second) << endl;
+  //}
 
-  auto hw_sched = its(to_umap(prg.whole_iteration_domain(), schedule_affs), prg.whole_iteration_domain());
-  cout << endl << endl;
-  //cout << "Hw schedule..." << str(hw_sched) << endl;
-  cout << "Hw schedule..." << endl;
-  for (auto m : get_maps(hw_sched)) {
-    cout << tab(1) << str(m) << endl;
-  }
+  //auto hw_sched = its(to_umap(prg.whole_iteration_domain(), schedule_affs), prg.whole_iteration_domain());
+  //cout << endl << endl;
+  ////cout << "Hw schedule..." << str(hw_sched) << endl;
+  //cout << "Hw schedule..." << endl;
+  //for (auto m : get_maps(hw_sched)) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+
+  auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+  //auto a_hw_sched = op_times_map(sched, prg);
+  //cout << "Op times map: " << str(a_hw_sched) << endl;
+  cout << "HW Sched    : " << str(hw_sched) << endl;
+  //assert(false);
 
   assert(all_operations_assigned_to_resources(sched, prg));
   assert(no_violated_resource_assignments(sched, prg));
