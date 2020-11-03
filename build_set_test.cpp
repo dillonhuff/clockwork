@@ -16445,7 +16445,7 @@ vector<prog> harris_variants() {
   // coreir is wrong?
   //test_programs.push_back(harris_sch1());
   // Bank list has length 0?
-  //test_programs.push_back(harris_sch6());
+  test_programs.push_back(harris_sch6());
 
   // Verilator breaks?
   //test_programs.push_back(harris_sch2());
@@ -18674,6 +18674,14 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = harris_sch6();
+    cout << "Harris schedule variant 6" << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+    auto res = unoptimized_result(prg);
+    assert(false);
+  }
   {
     prog prg = mobilenet_unrolled();
     dsa_writers(prg);

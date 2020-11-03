@@ -2911,9 +2911,20 @@ void prog::sanity_check() {
     for (auto b : op->buffers_written()) {
       buffer_names.insert(b);
       if (is_input(b)) {
-        cout << "Error: " << b << " is written, but is not an input" << endl;
+        cout << "Error: " << b << " is written, but it is an input" << endl;
       }
       assert(!is_input(b));
+    }
+  }
+
+  for (auto b : all_buffers(*this)) {
+    if (!is_boundary(b)) {
+      auto readers = find_readers(b, *this);
+      auto writers = find_writers(b, *this);
+      if (readers.size() > 0 && writers.size() == 0) {
+        cout << "Error: " << b << " has " << readers.size() << " readers, but it is never written." << endl;
+        assert(false);
+      }
     }
   }
   //for (auto b : buffer_names) {

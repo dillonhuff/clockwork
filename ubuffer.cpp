@@ -3681,9 +3681,12 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
       bank bnk = compute_bank_info();
       for (auto inpt : get_in_ports()) {
         for (auto outpt : get_out_ports()) {
+          cout << "Adding bank between " << inpt << " and " << outpt << endl;
           add_bank_between(inpt, outpt, bnk);
         }
       }
+
+      cout << "Done generating register-file style banks for " << name << ", bank list size = " << bank_list.size() << endl;
 
     } else if (banking.partition == "cyclic") {
       int dim = logical_dimension();
