@@ -15886,7 +15886,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     tighten_iis(sched, prg);
 
     op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root);
-    if (coarse_pipeline_loop != nullptr) {
+    if (coarse_pipeline_loop != nullptr &&
+        coarse_pipeline_loop->name != "root") {
       cout << "Found coarse pipeline loop:" << coarse_pipeline_loop->name << " with childreen..." << endl;
       int max_time = INT_MIN;
       op* most_compute_intensive_stage = nullptr;
@@ -15907,11 +15908,11 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       sched.loop_iis[coarse_pipeline_loop->name] =
         sched.total_latency(most_compute_intensive_stage);
 
-      adjust_outer_pipeline_delays(sched, prg);
       //assert(false);
     }
 
 
+    adjust_outer_pipeline_delays(sched, prg);
     adjust_schedule_forward(sched, prg, 1);
 
     return;
@@ -16376,10 +16377,12 @@ vector<prog> harris_variants() {
   // Bank list has length 0?
   //test_programs.push_back(harris_sch6());
 
-  // schedule takes too long
+  // Verilator breaks?
   //test_programs.push_back(harris_sch2());
+  
+  // schedule takes too long
   //test_programs.push_back(harris_sch3());
-  //test_programs.push_back(harris_sch4());
+  test_programs.push_back(harris_sch4());
 
   // Works
   test_programs.push_back(harris_sch5());
@@ -16399,15 +16402,16 @@ vector<prog> all_cgra_programs() {
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
-
   concat(test_programs, harris_variants());
 
+  test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(resnet());
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
   test_programs.push_back(mobilenet_small());
+
 
   concat(test_programs, stencil_programs());
 
@@ -18598,6 +18602,12 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = mobilenet_unrolled();
+    prg.pretty_print();
+    assert(false);
+  }
+
   {
     prog prg = resnet_coarse_pipeline_loop();
     //prog prg = resnet();
