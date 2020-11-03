@@ -3103,7 +3103,7 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
-  garnet_map_module(prg_mod);
+  //garnet_map_module(prg_mod);
   context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
   auto ns_new = context->getNamespace("global");

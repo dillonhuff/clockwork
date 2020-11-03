@@ -16443,7 +16443,7 @@ vector<prog> harris_variants() {
   vector<prog> test_programs;
 
   // coreir is wrong?
-  //test_programs.push_back(harris_sch1());
+  test_programs.push_back(harris_sch1());
   // Bank list has length 0?
   //test_programs.push_back(harris_sch6());
 
@@ -16465,6 +16465,7 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, harris_variants());
 
   // Too large to fit in 16 bit controller,
   // and not the schedule we want anyway
@@ -16483,7 +16484,6 @@ vector<prog> all_cgra_programs() {
 
 
   concat(test_programs, stencil_programs());
-  concat(test_programs, harris_variants());
 
   return test_programs;
 }
