@@ -16370,8 +16370,11 @@ vector<prog> stencil_programs() {
 
 vector<prog> harris_variants() {
   vector<prog> test_programs;
+
   // coreir is wrong?
   //test_programs.push_back(harris_sch1());
+  // Bank list has length 0?
+  //test_programs.push_back(harris_sch6());
 
   // schedule takes too long
   //test_programs.push_back(harris_sch2());
@@ -16379,11 +16382,7 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch4());
 
   // Works
-  //test_programs.push_back(harris_sch5());
-
-  // Bank list has length 0?
-  //test_programs.push_back(harris_sch6());
-
+  test_programs.push_back(harris_sch5());
   test_programs.push_back(harris_sch7());
   test_programs.push_back(harris_sch8());
 
