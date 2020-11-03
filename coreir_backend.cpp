@@ -4,6 +4,7 @@
 #ifdef COREIR
 
 #include "cwlib.h"
+#include "cgralib.h"
 std::ostream* verilog_collateral_file;
 
 #include "coreir/passes/analysis/coreirjson.h"
@@ -2000,32 +2001,48 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
   return def->sel(write_start_name(opname))->sel("out");
 }
 
-void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
-
+void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
+  cout << "Find compute" << endl;
   int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
   int read_latency =
     op->buffers_read().size() == 0 ? 0 :
     map_find(pick(op->buffers_read()), hwinfo.buffer_load_latencies);
+    cout << "Done Finding compute , op Latency : " << op_latency
+        << ", read Latency: " << read_latency << endl;
 
-  Wireable* op_start_wire = controller->sel("valid");
-  Wireable* op_start_loop_vars = controller->sel("d");
+  if (options.rtl_options.use_external_controllers) {
+    Wireable* op_start_wire = controller->sel("valid");
+    Wireable* op_start_loop_vars = controller->sel("d");
 
-  Wireable* read_start_wire =
-    delay_by(def, read_start_name(op->name), op_start_wire, 0);
-  Wireable* read_start_loop_vars =
-    delay_by(def, read_start_control_vars_name(op->name), op_start_loop_vars, 0);
+    cout << "Delaying read" << endl;
+    Wireable* read_start_wire =
+      delay_by(def, read_start_name(op->name), op_start_wire, 0);
+    Wireable* read_start_loop_vars =
+      delay_by(def, read_start_control_vars_name(op->name), op_start_loop_vars, 0);
 
-  cout << "Delaying exe" << endl;
-  Wireable* exe_start_wire =
-    delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
-  Wireable* exe_start_loop_vars =
-    delay_by(def, exe_start_control_vars_name(op->name), op_start_loop_vars, read_latency);
+    cout << "Delaying exe" << endl;
+    Wireable* exe_start_wire =
+      delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
+    Wireable* exe_start_loop_vars =
+      delay_by(def, exe_start_control_vars_name(op->name), op_start_loop_vars, read_latency);
 
-  cout << "Delaying writes" << endl;
-  Wireable* write_start_wire =
-    delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
-  Wireable* write_start_loop_vars =
-    delay_by(def, write_start_control_vars_name(op->name), op_start_loop_vars, read_latency + op_latency);
+    cout << "Delaying writes" << endl;
+    Wireable* write_start_wire =
+      delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
+    Wireable* write_start_loop_vars =
+      delay_by(def, write_start_control_vars_name(op->name), op_start_loop_vars, read_latency + op_latency);
+  } else {
+    Wireable* op_start_wire = controller->sel("stencil_valid");
+    cout << "Delaying read" << endl;
+    Wireable* read_start_wire =
+      delay_by(def, read_start_name(op->name), op_start_wire, 0);
+    cout << "Delaying exe" << endl;
+    Wireable* exe_start_wire =
+      delay_by(def, exe_start_name(op->name), op_start_wire, read_latency);
+    cout << "Delaying writes" << endl;
+    Wireable* write_start_wire =
+      delay_by(def, write_start_name(op->name), op_start_wire, read_latency + op_latency);
+  }
 
   //auto c = def->getContext();
   //wirebit(def, read_start_name(op->name), op_start_wire);
@@ -2043,7 +2060,88 @@ void connect_op_control_wires(ModuleDef* def, op* op, schedule_info& hwinfo, Ins
       //1);
 }
 
-Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
+//TODO: Remove this hack naming method after ross update coreIR
+string get_coreir_genenerator_name(const string & name) {
+  string v_name = take_from(name, ": ");
+  v_name = take_until_str(v_name, "Type");
+  v_name = trim(v_name);
+  v_name = trim(v_name, "\n");
+  v_name = ReplaceString(v_name, ".", "_");
+  v_name = ReplaceString(v_name, "(","__");
+  v_name = ReplaceString(v_name, ":", "");
+  v_name = ReplaceString(v_name, ", ", "__");
+  v_name = ReplaceString(v_name, ")", "");
+  cout << "Verilog module type: " << v_name << endl;
+  return v_name;
+}
+
+/* Helper function for generating csv
+ * */
+void emit_lake_config2csv(json data, ofstream& out) {
+    cout << "\t\tEnter the specific controller" << endl;
+    for (auto it = data.begin(); it != data.end(); ++it) {
+        cout << "\t\t\tFeature: " << it.key() << ", val: " << it.value() << endl;
+        //cout << "\t\t\tis array" << it.value().is_array() << endl;
+        auto data_domain = it.value();
+        string key = it.key();
+        if (data_domain.is_array()) {
+          int cnt = 0;
+          for (auto data_it : data_domain) {
+            //cout << tab(2) << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
+            if (data_domain.size() == 1)
+              out << "\""+key+"\"," << data_it << ",0"<< endl;
+            else
+              out << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
+            cnt ++;
+          }
+        } else {
+            //cout << tab(2) << "\""+key+"\"," << data_domain << ",0"<< endl;
+            out << "\""+key+"\"," << data_domain << ",0"<< endl;
+        }
+    }
+}
+
+
+void emit_lake_config_collateral(CodegenOptions options, string tile_name, json config_file) {
+    cout << "\tGenerate collateral for buffer: " << tile_name << endl;
+    string file_dir = options.dir + "lake_collateral/" + tile_name;
+    cmd("mkdir -p " + file_dir);
+    for (auto it = config_file.begin(); it != config_file.end(); ++it) {
+        cout << "\t\tconfig key: " << it.key() << ", " << it.value() << endl;
+        ofstream out(file_dir + "/" + it.key() + ".csv");
+        emit_lake_config2csv(it.value(), out);
+        out.close();
+    }
+}
+
+void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
+  //cmd("export LAKE_CONTROLLERS=$PWD");
+  cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
+  ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
+  int res_lake = cmd("python $LAKE_PATH/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+  assert(res_lake == 0);
+  cmd("mkdir -p "+options.dir+"verilog");
+  cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+}
+
+void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
+
+  cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
+      << buf->getModuleRef()->toString() << endl;
+  string ub_ins_name = buf->toString();
+  //FIXME: a hack to get correct module name, fix this after coreIR update
+  string v_name =  get_coreir_genenerator_name(buf->getModuleRef()->toString());
+
+  //dump the collateral file
+  emit_lake_config_collateral(options, ub_ins_name, buf->getMetaData()["config"]);
+
+  //run the lake generation cmd
+  run_lake_verilog_codegen(options, v_name, ub_ins_name);
+}
+
+//Add CodegenOptions, if we do not use extra control,
+//we will use lake tile to generate affine controller
+Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
   auto c = def->getContext();
 
   isl_map* sched = nullptr;
@@ -2069,11 +2167,20 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
 
   // TODO: Assert multi size == 1
   auto aff = isl_multi_aff_get_aff(saff, 0);
-  auto aff_c = affine_controller(c, dom, aff);
-  aff_c->print();
-  auto controller = def->addInstance(controller_name(op->name), aff_c);
+  Instance* controller;
+  if (options.rtl_options.use_external_controllers) {
+    auto aff_c = affine_controller(c, dom, aff);
+    aff_c->print();
+    controller = def->addInstance(controller_name(op->name), aff_c);
+  } else {
+    controller = affine_controller_use_lake_tile(
+            def, c, dom, aff,
+            controller_name(op->name));
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, controller);
+  }
 
-  connect_op_control_wires(def, op, hwinfo, controller);
+  connect_op_control_wires(options, def, op, hwinfo, controller);
   return controller;
 }
 
@@ -2195,6 +2302,8 @@ coreir_moduledef(CodegenOptions& options,
     ub_field{{"clk", context->Named("coreir.clkIn")}};
   if (options.rtl_options.use_prebuilt_memory) {
     ub_field.push_back({"reset", context->BitIn()});
+    //ub_field.push_back({"rst_n", context->BitIn()});
+    //ub_field.push_back({"flush", context->BitIn()});
   } else {
     ub_field.push_back({"rst_n", context->BitIn()});
     ub_field.push_back({"flush", context->BitIn()});
@@ -2210,16 +2319,16 @@ coreir_moduledef(CodegenOptions& options,
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      if (options.rtl_options.use_external_controllers ||
-              (options.rtl_options.use_prebuilt_memory == false)) {
+      //if (options.rtl_options.use_external_controllers ||
+      //        (options.rtl_options.use_prebuilt_memory == false)) {
         ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
-      }
+      //}
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
     } else {
-      if (options.rtl_options.use_external_controllers ||
-              (options.rtl_options.use_prebuilt_memory == false)) {
+      //if (options.rtl_options.use_external_controllers ||
+      //        (options.rtl_options.use_prebuilt_memory == false)) {
         ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
-      }
+      //}
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
   }
@@ -2228,6 +2337,15 @@ coreir_moduledef(CodegenOptions& options,
   auto ub = ns->newModuleDecl(prg.name, utp);
 
   return ub;
+}
+
+bool app_contains_memory_tiles(map<string, UBuffer> &buffers) {
+  for (auto it: buffers) {
+    if (it.second.contain_memory_tile) {
+      return true;
+    }
+  }
+  return false;
 }
 
 CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
@@ -2262,7 +2380,6 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
-    //generate_coreir_op_controller(def, op, sched_maps, hwinfo);
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
 
@@ -2273,6 +2390,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       //TODO: add reset connection for garnet mapping
       //cout << "connected reset for " << buf.first << buf.second.name <<  endl;
       def->connect(def->sel(buf.first + ".reset"), def->sel("self.reset"));
+      //def->connect(def->sel(buf.first + ".rst_n"), def->sel("self.rst_n"));
+      //def->connect(def->sel(buf.first + ".flush"), def->sel("self.flush"));
     }
   }
 
@@ -2305,15 +2424,19 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       assert(buf.is_input_bundle(bundle.second));
 
       if (prg.is_output(buf_name)) {
-        /*if (options.rtl_options.use_external_controllers) {
-          auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
-          def->connect(def->sel(output_en),
-              write_start_wire(def, op->name));
-        }*/
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         if (options.pass_through_valid) {
+          if (app_contains_memory_tiles(buffers)) {
             def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
             need_pass_valid = true;
+          } else {
+            cout << "This app does not have memory tile!" << endl;
+            //This is the situation does not have memory tile, we need to use affine generator
+            generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+            auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
+            def->connect(def->sel(output_en),
+                write_start_wire(def, op->name));
+          }
         }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
@@ -2337,13 +2460,29 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       assert(buf.is_output_bundle(bundle.second));
 
       if (prg.is_input(buf_name)) {
+
+        //create the op controller for input will remove for garnet test
+        generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_en";
         auto input_bus = "self." + pg(buf_name, bundle_name);
+
+
+        def->connect(def->sel(input_bus),
+            def->sel(op->name + "." + pg(buf_name, bundle_name)));
+
+        def->connect(def->sel(output_valid),
+            read_start_wire(def, op->name));
+        //auto const_1 = def->addInstance("true",
+        //    "corebit.const",
+        //    {{"value", CoreIR::Const::make(context, true)}});
+        //def->connect(def->sel(output_valid), const_1->sel("out"));
+
         auto delayed_input = delay(def, def->sel(input_bus)->sel(0), DATAPATH_WIDTH);
         // TODO: This delayed input is a hack that I insert to
         // ensure that I can assume all buffer reads take 1 cycle
-        def->connect(def->sel(input_bus)->sel(0),
-            def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
+        //def->connect(def->sel(input_bus)->sel(0),
+        //    def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
 
@@ -2528,7 +2667,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
     if (options.rtl_options.use_external_controllers) {
-      generate_coreir_op_controller(def, op, sched_maps, hwinfo);
+      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
     }
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
@@ -2616,6 +2755,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ub->print();
 
   connect_signal("reset", ub);
+  //connect_signal("rst_n", ub);
   context->runPasses({"rungenerators", "wireclocks-clk"});
 
   verilog_collateral.close();
@@ -2624,267 +2764,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   return ub;
 }
 
-void add_cgralib(CoreIR::Context* context) {
+//void add_cgralib(CoreIR::Context* context) {
+//
+//}
 
-}
-
-CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
-
-  CoreIR::Namespace* cgralib = c->newNamespace("cgralib");
-
-
-  //PE declaration
-  CoreIR::Params PEGenParams = {{"op_kind",c->String()},{"width",c->Int()},{"numbitports",c->Int()},{"numdataports",c->Int()}};
-
-  cgralib->newTypeGen("PEType",PEGenParams,[](Context* c, Values args) {
-    uint width = args.at("width")->get<int>();
-    uint numdataports = args.at("numdataports")->get<int>();
-    uint numbitports = args.at("numbitports")->get<int>();
-    return c->Record({
-      {"data",c->Record({
-        {"in",c->BitIn()->Arr(width)->Arr(numdataports)},
-        {"out",c->Bit()->Arr(width)}
-      })},
-      {"bit",c->Record({
-        {"in",c->BitIn()->Arr(numbitports)},
-        {"out",c->Bit()}
-      })}
-    });
-  });
-
-  //Generates the mod params and the default mod args
-  auto PEModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
-    Params p; //params
-    Values d; //defaults
-    string op_kind = genargs.at("op_kind")->get<string>();
-    int numbitports = genargs.at("numbitports")->get<int>();
-    int numdataports = genargs.at("numdataports")->get<int>();
-    int width = genargs.at("width")->get<int>();
-    if (op_kind == "alu" || op_kind == "combined") {
-      p["alu_op"] = c->String();
-      p["signed"] = c->Bool();
-     for (int i=0; i<numdataports; ++i) {
-        string mode = "data"+to_string(i)+"_mode";
-        p[mode] = c->String();
-        d[mode] = Const::make(c,"BYPASS");
-        string value = "data"+to_string(i)+"_value";
-        p[value] = c->BitVector(width);
-        d[value] = Const::make(c,BitVector(width,0));
-      }
-    }
-    if (op_kind == "bit" || op_kind == "combined") {
-      p["flag_sel"] = c->String();
-      p["lut_value"] = c->BitVector(1<<numbitports);
-      d["lut_value"] = Const::make(c,BitVector(1<<numbitports,0));
-      for (int i=0; i<numbitports; ++i) {
-        string mode = "bit"+to_string(i)+"_mode";
-        p[mode] = c->String();
-        d[mode] = Const::make(c,"BYPASS");
-        string value = "bit"+to_string(i)+"_value";
-        p[value] = c->Bool();
-        d[value] = Const::make(c,false);
-      }
-    }
-    if (op_kind == "bit") {
-      d["flag_sel"] = Const::make(c,"lut");
-    }
-    return {p,d};
-  };
-
-  Generator* PE = cgralib->newGeneratorDecl("PE",cgralib->getTypeGen("PEType"),PEGenParams);
-  PE->addDefaultGenArgs({{"width",Const::make(c,16)},{"numdataports",Const::make(c,2)},{"numbitports",Const::make(c,3)}});
-  PE->setModParamsGen(PEModParamFun);
-
-  //Unary op declaration
-  Params widthParams = {{"width",c->Int()}};
-  cgralib->newTypeGen("unary",widthParams,[](Context* c, Values args) {
-    uint width = args.at("width")->get<int>();
-    return c->Record({
-      {"in",c->BitIn()->Arr(width)},
-      {"out",c->Bit()->Arr(width)},
-    });
-  });
-
-  //IO Declaration
-  Params modeParams = {{"mode",c->String()}};
-  Generator* IO = cgralib->newGeneratorDecl("IO",cgralib->getTypeGen("unary"),widthParams);
-  IO->setModParamsGen(modeParams);
-  cgralib->newModuleDecl("BitIO",c->Record({{"in",c->BitIn()},{"out",c->Bit()}}),modeParams);
-
-  //Mem declaration
-  Params MemGenParams = {{"width",c->Int()},{"total_depth",c->Int()}};
-  cgralib->newTypeGen("MemType",MemGenParams,[](Context* c, Values args) {
-    uint width = args.at("width")->get<int>();
-    return c->Record({
-      {"addr", c->BitIn()->Arr(width)}, //both read and write addr
-      {"wdata", c->BitIn()->Arr(width)},
-      {"wen", c->BitIn()}, //upstream valid
-      {"rdata", c->Bit()->Arr(width)},
-      {"ren", c->BitIn()}, //Downstream ready
-      {"almost_full", c->Bit()}, //Upstream ready
-      {"almost_empty", c->Bit()}, //"downstream validish" Try not to use
-      {"valid", c->Bit()}, //Downstream valid
-      {"cg_en", c->BitIn()}, //Global stall
-    });
-  });
-  auto MemModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
-    Params p; //params
-    Values d; //defaults
-    p["mode"] = c->String();
-
-    p["depth"] = c->Int();
-    d["depth"] = Const::make(c,1024);
-
-    p["almost_count"] = c->Int(); //Will do almost full and empty
-    d["almost_count"] = Const::make(c,0);
-
-    p["tile_en"] = c->Bool(); //Always put 1
-    d["tile_en"] = Const::make(c,true); //Always put 1
-
-    p["chain_enable"] = c->Bool(); //tie to 0 inially.
-    d["chain_enable"] = Const::make(c,false);
-
-    p["init"] = JsonType::make(c);
-    Json jdata;
-    jdata["init"][0] = 0;
-    d["init"] = Const::make(c,jdata);
-
-    p["rate_matched"] = c->Bool();
-    d["rate_matched"] = Const::make(c, false);
-    p["stencil_width"] = c->Int();
-    d["stencil_width"] = Const::make(c, 0);
-    p["iter_cnt"] = c->Int();
-    d["iter_cnt"] = Const::make(c, 0);
-    p["dimensionality"] = c->Int();
-    d["dimensionality"] = Const::make(c, 0);
-    p["stride_0"] = c->Int();
-    d["stride_0"] = Const::make(c, 0);
-    p["range_0"] = c->Int();
-    d["range_0"] = Const::make(c, 0);
-    p["stride_1"] = c->Int();
-    d["stride_1"] = Const::make(c, 0);
-    p["range_1"] = c->Int();
-    d["range_1"] = Const::make(c, 0);
-    p["stride_2"] = c->Int();
-    d["stride_2"] = Const::make(c, 0);
-    p["range_2"] = c->Int();
-    d["range_2"] = Const::make(c, 0);
-    p["stride_3"] = c->Int();
-    d["stride_3"] = Const::make(c, 0);
-    p["range_3"] = c->Int();
-    d["range_3"] = Const::make(c, 0);
-    p["stride_4"] = c->Int();
-    d["stride_4"] = Const::make(c, 0);
-    p["range_4"] = c->Int();
-    d["range_4"] = Const::make(c, 0);
-    p["stride_5"] = c->Int();
-    d["stride_5"] = Const::make(c, 0);
-    p["range_5"] = c->Int();
-    d["range_5"] = Const::make(c, 0);
-    p["chain_en"] = c->Bool();
-    d["chain_en"] = Const::make(c, false);
-    p["chain_idx"] = c->Int();
-    d["chain_idx"] = Const::make(c, 0);
-    p["starting_addr"] = c->Int();
-    d["starting_addr"] = Const::make(c, 0);
-
-    return {p,d};
-  };
-
-  Generator* Mem = cgralib->newGeneratorDecl("Mem_jade",cgralib->getTypeGen("MemType"),MemGenParams);
-  Mem->addDefaultGenArgs({{"width",Const::make(c,16)},{"total_depth",Const::make(c,1024)}});
-  Mem->setModParamsGen(MemModParamFun);
-
-  // cgralib.Mem
-  Params cgralibmemparams = Params({
-        {"width", c->Int()},
-        {"num_input", c->Int()},
-        {"num_output", c->Int()},
-        //{"config", c->Json()},
-        {"has_valid", c->Bool()},
-        {"has_stencil_valid", c->Bool()},
-        {"has_flush", c->Bool()},
-        {"has_reset", c->Bool()}
-    });
-
-  cgralib->newTypeGen(
-          "cgralib_mem_type",
-          cgralibmemparams,
-          [](Context* c, Values genargs){
-            uint width = genargs.at("width")->get<int>();
-            uint num_input = genargs.at("num_input")->get<int>();
-            uint num_output = genargs.at("num_output")->get<int>();
-            //Json config = genargs.at("config")->get<Json>();
-
-            RecordParams recordparams = {
-                {"rst_n", c->BitIn()},
-                {"clk_en", c->BitIn()},
-                {"clk", c->Named("coreir.clkIn")}
-            };
-
-            for (size_t i = 0; i < num_input; i ++) {
-                recordparams.push_back({"data_in_" + std::to_string(i),
-                        c->BitIn()->Arr(width)});
-                //recordparams.push_back({"wen_" + std::to_string(i),
-                //        c->BitIn()});
-            }
-            for (size_t i = 0; i < num_output; i ++) {
-                recordparams.push_back({"data_out_" + std::to_string(i),
-                        c->Bit()->Arr(width)});
-                //recordparams.push_back({"valid_" + std::to_string(i),
-                //        c->Bit()});
-                //recordparams.push_back({"ren_" + std::to_string(i),
-                //        c->BitIn()});
-            }
-
-            bool has_valid = genargs.at("has_valid")->get<bool>();
-            bool has_stencil_valid = genargs.at("has_stencil_valid")->get<bool>();
-            bool has_flush = genargs.at("has_flush")->get<bool>();
-            bool has_reset = genargs.at("has_reset")->get<bool>();
-
-            if (has_valid) {
-              recordparams.push_back({"valid", c->Bit()});
-            }
-            if (has_stencil_valid) {
-              recordparams.push_back({"stencil_valid", c->Bit()});
-            }
-            if (has_flush) {
-              recordparams.push_back({"flush", c->BitIn()});
-            }
-            if (has_reset) {
-              recordparams.push_back({"reset", c->BitIn()});
-            }
-
-        return c->Record(recordparams);
-    }
-
-  );
-
-  auto cgralib_mem_gen = cgralib->newGeneratorDecl("Mem", cgralib->getTypeGen("cgralib_mem_type"), cgralibmemparams);
-  cgralib_mem_gen->addDefaultGenArgs({{"num_input", Const::make(c, 1)}});
-  cgralib_mem_gen->addDefaultGenArgs({{"num_output", Const::make(c, 1)}});
-  cgralib_mem_gen->addDefaultGenArgs({{"has_valid", Const::make(c, false)}});
-  cgralib_mem_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});
-  cgralib_mem_gen->addDefaultGenArgs({{"has_flush", Const::make(c, false)}});
-  cgralib_mem_gen->addDefaultGenArgs({{"has_reset", Const::make(c, false)}});
-
-
-  auto CGRALibMemModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
-    Params p; //params
-    Values d; //defaults
-    p["mode"] = c->String();
-
-    p["config"] = CoreIR::JsonType::make(c);
-
-    //p["depth"] = c->Int();
-    //d["depth"] = Const::make(c,1024);
-
-    return {p,d};
-  };
-  cgralib_mem_gen->setModParamsGen(CGRALibMemModParamFun);
-
-  return cgralib;
-}
 
 typedef struct {
   vector<SelectPath> IO16;
@@ -3040,6 +2923,51 @@ void MapperPasses::MemConst::setVisitorInfo() {
   }
 
 }
+
+namespace MapperPasses {
+class MemSubstitute: public CoreIR::InstanceVisitorPass {
+  public :
+    static std::string ID;
+    MemSubstitute() : InstanceVisitorPass(ID,"replace cgralib.Mem_amber to cgralib.Mem") {}
+    void setVisitorInfo() override;
+};
+
+}
+
+bool MemtileReplace(Instance* cnst) {
+  cout << tab(2) << "memory syntax transformation!" << endl;
+  cout << tab(2) << toString(cnst) << endl;
+  Context* c = cnst->getContext();
+  auto allSels = cnst->getSelects();
+  for (auto itr: allSels) {
+    cout << tab(2) << "Sel: " << itr.first << endl;
+  }
+  ModuleDef* def = cnst->getContainer();
+  auto genargs = cnst->getModuleRef()->getGenArgs();
+  auto config_file = cnst->getMetaData()["config"];
+  CoreIR::Values modargs = {
+      {"config", CoreIR::Const::make(c, config_file)},
+      {"mode", CoreIR::Const::make(c, "lake")}
+  };
+  auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
+          "cgralib.Mem", genargs, modargs);
+  def->removeInstance(cnst);
+  def->connect(pt->sel("in"), buf);
+  inlineInstance(pt);
+  inlineInstance(buf);
+  return true;
+}
+
+std::string MapperPasses::MemSubstitute::ID = "memsubstitute";
+void MapperPasses::MemSubstitute::setVisitorInfo() {
+  Context* c = this->getContext();
+  if (c->hasGenerator("cgralib.Mem_amber")) {
+    addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), MemtileReplace);
+  }
+
+}
+
 namespace MapperPasses {
 class ConstDuplication : public CoreIR::InstanceVisitorPass {
   public :
@@ -3082,6 +3010,21 @@ void MapperPasses::ConstDuplication::setVisitorInfo() {
 
 }
 
+void disconnect_input_enable(Module* top) {
+  Context* c = top->getContext();
+  ModuleDef* def = top->getDef();
+  for (auto it: def->sel("self")->getSelects()) {
+      string port = it.first;
+      cout << "Find top interface: " << port << endl;
+    if (contains(port, "read_en")) {
+      auto conns = def->sel("self")->sel(port)->getConnectedWireables();
+      for (auto conn: conns) {
+        def->disconnect(def->sel("self")->sel(port), conn);
+      }
+    }
+  }
+}
+
 void garnet_map_module(Module* top) {
   auto c = top->getContext();
 
@@ -3089,6 +3032,9 @@ void garnet_map_module(Module* top) {
 
   //load_cgramapping(c);
   LoadDefinition_cgralib(c);
+
+  //A new pass to remove input enable signal affine controller
+  disconnect_input_enable(top);
   c->runPasses({"deletedeadinstances"});
 
   c->runPasses({"cullgraph"});
@@ -3101,6 +3047,8 @@ void garnet_map_module(Module* top) {
   c->runPasses({"constduplication"});
   c->addPass(new MapperPasses::MemConst);
   c->runPasses({"memconst"});
+  c->addPass(new MapperPasses::MemSubstitute);
+  c->runPasses({"memsubstitute"});
 
   //c->runPasses({"flatten"});
   c->runPasses({"cullgraph"});
@@ -3125,7 +3073,7 @@ void generate_coreir(CodegenOptions& options,
   generate_coreir(options, buffers, prg, schedmap, info);
 }
 
-//This is the top_lvel coreIR generation function
+//This is the top_level coreIR generation function
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,

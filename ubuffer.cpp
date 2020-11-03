@@ -840,6 +840,19 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         for(int i = 0; i < port_width / bk_num; i ++) {
             range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
         }
+        //A processing pass for remove starting address in multiple bank cases
+        int project_dim;
+        if (is_read){
+          project_dim = buf.get_consumer_bank_dim_id();
+        } else {
+          project_dim = buf.get_producer_bank_dim_id();
+        }
+        if (project_dim != -1) {
+          cout << "before project: " << str(range_per_bank) << endl;
+          range_per_bank = project_out(range_per_bank, project_dim);
+
+          cout << "after project: " << str(range_per_bank) << endl;
+        }
         auto reduce_map = linear_address_map_lake(range_per_bank);
 
         for (int i = 0; i < bk_num; i ++)
@@ -857,9 +870,12 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
             if (need_mux) {
                 vector<int> mux_index;
                 vector<int> addr_index;
+                int bank_dim_id = buf.get_consumer_bank_dim_id();
+                assert(bank_dim_id == num_out_dims(map) - 2);
+                cout << "Auto Select bank id: " << bank_dim_id << "Hardcode: " << num_out_dims(map) - 2 << endl;
                 for (int i = num_out_dims(map)-1; i >= 0; i--) {
                     //FIXME: this is hardcoded
-                    if (i == num_out_dims(map) - 2) {
+                    if (i == bank_dim_id) {
                         mux_index.push_back(i);
                     } else {
                         addr_index.push_back(i);
@@ -896,7 +912,16 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
             int capacity = options.mem_tile.capacity.at(micro_buf_name);
             //int ww = is_read ?options.mem_tile.out_port_width.at(micro_buf_name)
             //    : options.mem_tile.in_port_width.at(micro_buf_name);
-            auto addr_expr_map = dot(to_map(bmap), reduce_map);
+
+            isl_map* project_access_map;
+            if (project_dim != -1) {
+              project_access_map = project_out(to_map(bmap), project_dim);
+            } else {
+              project_access_map = to_map(bmap);
+            }
+
+            auto addr_expr_map = dot(project_access_map, reduce_map);
+            cout << str(reduce_map) << endl << str(addr_expr_map) << endl;
             auto addr = get_aff(addr_expr_map);
             cout << str(addr) << endl;
             vals.merge(generate_config_from_aff_expr(addr, is_read, false, ww, capacity, pw));
@@ -910,6 +935,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     }
     return ret;
 }
+
 
 Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
   Json jdata;
@@ -1050,6 +1076,116 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     return create_lake_config(data);
 }
 
+CoreIR::Instance* affine_controller_use_lake_tile(
+        ModuleDef* def,
+        CoreIR::Context* context,
+        isl_set* dom,
+        isl_aff* aff,
+        string ub_ins_name) {
+
+  CoreIR::Instance* buf;
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(context, 16)},
+    {"num_inputs", CoreIR::Const::make(context, 0)},
+    {"num_outputs", CoreIR::Const::make(context, 0)},
+    {"has_stencil_valid", CoreIR::Const::make(context, true)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())},
+    {"has_flush",  CoreIR::Const::make(context, true)}
+  };
+  auto stencil_valid = emit_lake_controller_config(dom, aff);
+  //FIXME:possible bug if one ubuffer contains more than one tile
+  json config_file;
+  add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+  cout << "Add ub node to be aff ctrl"  << endl;
+
+  buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
+  buf->getMetaData()["config"] = config_file;
+  buf->getMetaData()["mode"] = "lake";
+
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+
+  //garnet wire reset to flush of memory
+  def->connect(buf->sel("flush"), def->sel("self.reset"));
+  //def->connect(buf->sel("flush"), def->sel("self.flush"));
+  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(buf->sel("clk"), def->sel("self.clk"));
+  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+
+  return buf;
+}
+
+CoreIR::Instance* UBuffer::generate_lake_tile_instance(
+        ModuleDef* def,
+        CodegenOptions options,
+        string ub_ins_name,
+        size_t input_num, size_t output_num,
+        bool has_stencil_valid, bool has_flush) {
+
+  auto context = def->getContext();
+  CoreIR::Instance* buf;
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(context, port_widths)},
+    {"num_inputs", CoreIR::Const::make(context, input_num)},
+    {"num_outputs", CoreIR::Const::make(context, output_num)},
+    {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())},
+    {"has_flush",  CoreIR::Const::make(context, has_flush)}
+  };
+  CoreIR::Values modargs = {
+    {"mode", CoreIR::Const::make(context, "lake")}
+  };
+  if (has_stencil_valid) {
+    generate_stencil_valid_config(options);
+  }
+  cout << "Add ub node with input_num = " << input_num
+      << ", output_num = " << output_num << endl;
+  if (options.pass_through_valid) {
+    //modargs["config"] = CoreIR::Const::make(context, config_file);
+    buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = string("lake");
+  } else {
+    //TODO: remove cwlib in the future
+    genargs["config"] = CoreIR::Const::make(context, config_file);
+    buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
+  }
+
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+
+  //garnet wire reset to flush of memory
+  def->connect(buf->sel("flush"), def->sel("self.reset"));
+  //def->connect(buf->sel("flush"), def->sel("self.flush"));
+  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(buf->sel("clk"), def->sel("self.clk"));
+  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+
+  //Wire stencil valid
+  //if (options.pass_through_valid) {
+  //  if (has_stencil_valid) {
+  //    def->connect(buf->sel("stencil_valid"), def->sel("self."+get_bundle(pick(outpts)) + "_extra_ctrl"));
+  //    use_memtile_gen_stencil_valid = true;
+  //  }
+  //}
+  return buf;
+}
+
+void UBuffer::generate_stencil_valid_config(CodegenOptions& options) {
+  auto outpt_sched = get_stencil_valid_sched(pick(bank_list).name);
+  cout << "original outpt schedule: " << str(get_outpt_sched()) << endl;
+  assert(isl_union_map_is_single_valued(outpt_sched));
+
+  auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, false);
+  cout << "Stencil Valid signal 1D: " << str(outpt_sched_1D) << endl;
+  auto sched = get_aff(outpt_sched_1D);
+  auto stencil_valid = emit_lake_controller_config(::domain(outpt_sched_1D), sched);
+  //FIXME:possible bug if one ubuffer contains more than one tile
+  add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
+}
+
 
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
@@ -1110,7 +1246,20 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   //generate all the ubuffer for internal vectorization
   auto rewrite_buffer = generate_ubuffer(options);
 
+  //Some control signal for stencil valid signal
   bool has_stencil_valid = false;
+  bool use_memtile_gen_stencil_valid = false;
+
+  //Judge if stencil valid is needed from the very beginning
+  if (options.pass_through_valid) {
+    //generate stencil valid
+    cout << "ubuffer global schedule: " << str(global_schedule()) << endl;
+    cout << "ubuffer output schedule: " << str(get_outpt_sched()) << endl;
+    if (!equal(global_outpt_sched(), get_outpt_sched())) {
+      has_stencil_valid = true;
+      use_memtile_gen_stencil_valid = false;
+    }
+  }
   for (auto bk : bank_list) {
     //assert(false);
     std::set<string> inpts = get_bank_inputs(bk.name);
@@ -1182,61 +1331,23 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
         buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
         config_file = generate_ubuf_args(options, rewrite_buffer);
-
       }
 
-      if (options.pass_through_valid) {
-        //generate stencil valid
-        cout << "ubuffer global schedule: " << str(global_schedule()) << endl;
-        cout << "ubuffer output schedule: " << str(get_outpt_sched()) << endl;
-        if (!equal(global_outpt_sched(), get_outpt_sched())) {
-          auto outpt_sched = get_stencil_valid_sched(bk.name);
-          cout << "original outpt schedule: " << str(get_outpt_sched()) << endl;
-          assert(isl_union_map_is_single_valued(outpt_sched));
-
-          auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, false);
-          cout << "Stencil Valid signal 1D: " << str(outpt_sched_1D) << endl;
-          auto sched = get_aff(outpt_sched_1D);
-          auto stencil_valid = emit_lake_controller_config(::domain(outpt_sched_1D), sched);
-          add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
-          has_stencil_valid = true;
-        }
+      //Generate SMT stream if needed
+      if (options.emit_smt_stream) {
+        generate_lake_stream(options, rewrite_buffer, global_schedule_from_buffers(rewrite_buffer));
       }
 
-      CoreIR::Instance* buf;
-      CoreIR::Values genargs = {
-        {"width", CoreIR::Const::make(context, port_widths)},
-        {"num_input", CoreIR::Const::make(context, banks_to_inputs.at(bk.name).size())},
-        {"num_output", CoreIR::Const::make(context, banks_to_outputs.at(bk.name).size())},
-        {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
-        {"has_flush",  CoreIR::Const::make(context, true)}
-      };
-      CoreIR::Values modargs = {
-        {"mode", CoreIR::Const::make(context, "lake")}
-      };
-      cout << "Add ub node with input_num = " << banks_to_inputs.at(bk.name).size()
-          << ", output_num = " << banks_to_outputs.at(bk.name).size() << endl;
-      if (options.pass_through_valid) {
-        modargs["config"] = CoreIR::Const::make(context, config_file);
-        buf = def->addInstance(ub_ins_name, "cgralib.Mem", genargs, modargs);
-      } else {
-        genargs["config"] = CoreIR::Const::make(context, config_file);
-        buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
-      }
-
-      CoreIR::Values widthArg = {{"width", CoreIR::Const::make(context, 1)}};
-      auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
-              {{"value", CoreIR::Const::make(context, true)}});
-      //def->connect(buf->sel("rst_n"), def->sel("self.reset"));
-      //TODO: why garnet wire reset to flush of memory
-      def->connect(buf->sel("flush"), def->sel("self.reset"));
-      def->connect(buf->sel("clk"), def->sel("self.clk"));
-      def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+      //create the tile instance
+      CoreIR::Instance* buf = generate_lake_tile_instance(def, options, ub_ins_name,
+        banks_to_inputs.at(bk.name).size(), banks_to_outputs.at(bk.name).size(),
+        has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
 
       //Wire stencil valid
       if (options.pass_through_valid) {
-        if (has_stencil_valid) {
+        if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
           def->connect(buf->sel("stencil_valid"), def->sel("self."+get_bundle(pick(outpts)) + "_extra_ctrl"));
+          use_memtile_gen_stencil_valid = true;
         }
       }
 
@@ -1269,8 +1380,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         for (auto it: bk.delay_map) {
             cout << "Bank delay map: "  <<it.first << ", " << it.second << endl;
         }
-    vector<string> pt_vec(outpts.begin(), outpts.end());
-    sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+
+        vector<string> pt_vec(outpts.begin(), outpts.end());
+        sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
               auto l_start = lexminpt(range(access_map.at(l)));
               auto r_start = lexminpt(range(access_map.at(r)));
               return lex_lt_pt(l_start, r_start);
@@ -1292,8 +1404,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           }
           outpt_cnt++;
         }
-      }
-      else {
+      } else {
         //Wiring the multi input case
         for (auto inpt: inpts) {
           def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), pt2wire.at(inpt));
@@ -1317,19 +1428,50 @@ void UBuffer::generate_coreir(CodegenOptions& options,
           outpt_cnt++;
         }
       }
+
+      //generate verilog collateral
+      generate_lake_tile_verilog(options, buf);
+
     }
   }
 
+  //This is the situation that stencil valid is needed but do not have memtile in ubufub_ins_namefer
+  if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
+    CoreIR::Instance* buf = generate_lake_tile_instance(def, options,
+            this->name + "_stencil_valid_gen", 0, 0, true, true);
+    auto out_bds = get_out_bundles();
+
+    //Only consider one output bundle now
+    assert(out_bds.size() == 1);
+
+    def->connect(buf->sel("stencil_valid"), def->sel("self." + pick(out_bds) + "_extra_ctrl"));
+    use_memtile_gen_stencil_valid = true;
+
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, buf);
+  }
+
   //wire the control var if not using stencil_Valid
-  for (auto bk : bank_list) {
-    //assert(false);
-    std::set<string> inpts = get_bank_inputs(bk.name);
-    std::set<string> outpts = get_bank_outputs(bk.name);
-    if (options.pass_through_valid) {
-        if (!has_stencil_valid){
-          def->connect(def->sel("self." + get_bundle(pick(inpts)) + "_extra_ctrl"),
-                  def->sel("self." + get_bundle(pick(outpts)) + "_extra_ctrl"));
+  map<string, vector<CoreIR::Wireable*>> outctrl_to_inval;
+  if (options.pass_through_valid) {
+    if (!has_stencil_valid){
+      for (auto bk : bank_list) {
+        //assert(false);
+        std::set<string> inpts = get_bank_inputs(bk.name);
+        std::set<string> outpts = get_bank_outputs(bk.name);
+        for (auto outpt: outpts) {
+            cout << tab(1) << "Wire through the input bundle: " << get_bundle(pick(inpts))
+                << " and output bundle: " << get_bundle(outpt) << endl;
+            CoreIR::map_insert(outctrl_to_inval, get_bundle(outpt),
+                    (CoreIR::Wireable*)def->sel("self."+get_bundle(pick(inpts))+"_extra_ctrl"));
+            //def->connect(def->sel("self." + get_bundle(pick(inpts)) + "_extra_ctrl"),
+            //  def->sel("self." + get_bundle(outpt) + "_extra_ctrl"));
         }
+      }
+      for (auto it: outctrl_to_inval) {
+        auto out = andList(def, it.second);
+        def->connect(def->sel("self."+it.first+"_extra_ctrl"), out);
+      }
     }
   }
 
@@ -1358,12 +1500,15 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
   //Add the chaining pass
+  std::set<Wireable*> chain_enable_tile, chain_disable_tile;
   for (auto itr: outpt_bank_rd) {
     string outpt = itr.first;
     auto connect_vec = itr.second;
 
     if (connect_vec.size() == 1) {
       def->connect(pick(connect_vec), pt2wire.at(outpt));
+      cout << "Parent node: " << pick(connect_vec)->getTopParent()->toString() << endl;;
+      chain_disable_tile.insert(pick(connect_vec)->getTopParent());
     }
     else {
       //wiring the chaining pass
@@ -1372,15 +1517,39 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         if (it == 0) {
           //wire the first output to the ubuf outpt
           def->connect(wire, pt2wire.at(outpt));
+
+          //push it to chain enable
+          chain_enable_tile.insert(wire->getTopParent());
         }
         else {
           auto last_bank = connect_vec[it-1]->getTopParent();
           string portID = split_at(wire->toString(), "_").back();
           def->connect(wire, last_bank->sel("chain_in_" + portID));
+
+          //push it to chain enable tile
+          chain_enable_tile.insert(wire->getTopParent());
         }
       }
     }
   }
+
+  //wire the chain enable disable signal
+  if (chain_enable_tile.size()) {
+    auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
+            {{"value", CoreIR::Const::make(context, true)}});
+    for (auto t: chain_enable_tile) {
+      def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
+    }
+  }
+
+  if (chain_disable_tile.size()) {
+    auto chain_en_const = def->addInstance("chain_disen_const"+context->getUnique(), "corebit.const",
+            {{"value", CoreIR::Const::make(context, false)}});
+    for (auto t: chain_disable_tile) {
+      def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
+    }
+  }
+
 
   //second pass wire all the register input port
   for (auto it: reg_in) {
@@ -2126,6 +2295,8 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
 
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")},
+          {"flush", context->BitIn()},
+          //{"rst_n", context->BitIn()}};
           {"reset", context->BitIn()}};
 
     for (auto b : buf.port_bundles) {
@@ -2170,6 +2341,207 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
   }
 
 #endif
+
+//This the smt stream generation pass without coreIR generation
+void UBuffer::generate_smt_stream(CodegenOptions& options) {
+
+  //sort the bank by delay first
+  auto bank_list = get_banks_and_sort();
+
+  //generate all the ubuffer for internal vectorization
+  auto rewrite_buffer = generate_ubuffer(options);
+
+  for (auto bk : bank_list) {
+    //assert(false);
+    std::set<string> inpts = get_bank_inputs(bk.name);
+    std::set<string> outpts = get_bank_outputs(bk.name);
+    auto buf_inpts = get_in_ports();
+    cout << "Bank:" << bk.name << " has max_delay: " << bk.maxdelay << endl;
+    if (bk.maxdelay == 0) {
+      continue;
+    } else if (bk.maxdelay <= options.merge_threshold) {
+      continue;
+    } else {
+      string ub_ins_name = "ub_"+bk.name;
+
+      //vectorization pass for lake tile
+      if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+        buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+        //config_file = generate_ubuf_args(options, rewrite_buffer);
+      }
+      //Generate SMT stream if needed
+      if (options.emit_smt_stream) {
+        generate_lake_stream(options, rewrite_buffer, global_schedule_from_buffers(rewrite_buffer));
+      }
+    }
+  }
+}
+
+void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched) {
+
+  //compute the bound of the schedule
+  cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
+  auto bound = Box(opt_sched);
+  isl_set* sched_set = bound.to_set(buffer.ctx, "");
+  auto bset_vec = constraints(sched_set);
+  for (auto bset: bset_vec) {
+      cout << "constraints: " << str(bset) << endl;
+  }
+
+  //Initialize the variable for lattice count
+  size_t cycle = 0;
+  cout << str(sched_set) << endl;
+  auto point_vec = get_points(sched_set);
+  std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
+  auto & buf = buffer;
+  for (auto point : point_vec) {
+    //cout << str(point) << endl;
+    //auto input_sched = op2sched.at("input");
+    //auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
+    //cout <<"Card Expr: " << str(isExeQP) << endl;
+    //bool isExe = int_lower_bound(isExeQP) == 1;
+    //cout << "input OP execute in this point = " << isExe << endl;
+    //cout << "Buffer: " << buf.name << endl;
+    //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+    //cout << str(point) << " write = " << buf.is_wr(point) << endl;
+    //tcout << endl;
+
+
+    if (buf.is_wr(point) ) {
+      auto pt = pick(buf.get_in_ports());
+      auto rd_sched = to_map(buf.schedule.at(pt));
+      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+      buf.mark_write(cycle, iter_set);
+
+      cout << "Buffer: " << buf.name << endl;
+      //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+      cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+      cout << endl;
+
+    }
+    if (buf.is_rd(point)) {
+      auto pt = pick(buf.get_out_ports());
+      auto rd_sched = to_map(buf.schedule.at(pt));
+      auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+      buf.mark_read(cycle, iter_set);
+      cout << "read at iter: " << str(iter_set) << endl;
+
+      cout << "Buffer: " << buf.name << endl;
+      cout << str(point) << " read = " << buf.is_rd(point) << " at cycle:" << cycle << endl;
+      //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+      cout << endl;
+    }
+    cycle ++;
+  }
+}
+
+void generate_lake_stream(CodegenOptions & options,
+        map<string, UBuffer>& buffers_opt,
+        umap* hardware_schedule) {
+  for (auto & it : buffers_opt) {
+    lattice_schedule_buf(it.second, hardware_schedule);
+  }
+  string dir = options.dir + "lake_stream/";
+  cout << "Generating lake smt stream!" << endl;
+  cmd("mkdir -p " + dir);
+  emit_lake_address_stream2file(buffers_opt, dir);
+}
+
+void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir) {
+  map<string, pair<lakeStream, lakeStream> > top_stream;
+  for (auto it: buffers_opt) {
+    string buf_name = it.first;
+    UBuffer buf = it.second;
+    if (buf.get_in_ports().size() == 0 || buf.get_out_ports().size() == 0) {
+      continue;
+    }
+    vector<int> sram_read = buf.read_cycle;
+    vector<int> sram_write = buf.write_cycle;
+    auto read_addr = buf.read_addr;
+    auto write_addr = buf.write_addr;
+    lakeStream stream_data = emit_top_address_stream(dir + "/" + buf_name , sram_read, sram_write, read_addr, write_addr);
+    if (contains(buf_name, "agg")) {
+        string tile_name = take_until_str(buf_name, "_agg");
+        top_stream[tile_name].first = stream_data;
+    } else if (contains(buf_name, "tb")) {
+        string tile_name = take_until_str(buf_name, "_tb");
+        top_stream[tile_name].second = stream_data;
+    }
+  }
+  for (auto it: top_stream) {
+    auto agg_tb_pair = it.second;
+    lakeStream top(agg_tb_pair.first, agg_tb_pair.second);
+    top.emit_csv(dir + "/" + it.first + "_top");
+  }
+}
+
+lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
+  ofstream out(fname+"_SMT.csv");
+  cout << "fname: " << fname << endl;
+
+  lakeStream ret;
+
+  //TODO: put this into a tile constraint file
+  int input_width = pick(write_addr).size();
+  int output_width = pick(read_addr).size();
+  ret.in_width = input_width;
+  ret.out_width = output_width;
+
+  int cycle = 0;
+  size_t rd_itr = 0;
+  size_t wr_itr = 0;
+  out << "data_in, valid_in, data_out, valid_out" << endl;
+  auto addr_out = vector<int>(output_width, 0);
+  while (rd_itr < read_cycle.size() || wr_itr < write_cycle.size()) {
+    bool valid_in = false, valid_out = false;
+    auto addr_in = vector<int>(input_width, 0);
+    if (rd_itr < read_cycle.size()) {
+      if (read_cycle.at(rd_itr) == cycle) {
+        valid_out = true;
+        for (size_t i = 0; i < read_addr.at(rd_itr).size(); i ++)
+          addr_out.at(i) = read_addr.at(rd_itr).at(i);
+
+        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr_out, "[", "]", " ") << endl;
+        rd_itr ++;
+      }
+    }
+    if (wr_itr < write_cycle.size()) {
+      if (write_cycle.at(wr_itr) == cycle) {
+        valid_in = true;
+        for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
+          addr_in.at(i) = write_addr.at(wr_itr).at(i);
+        //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
+        //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr_in, "[", "]", " ") << endl;
+        //out << cycle << tab(1) << "wr"  << endl;
+        wr_itr ++;
+      }
+    }
+
+    int out_width = pick(read_addr).size();
+    int in_width = pick(write_addr).size();
+    int mul_out = pow(2, out_width) - 1;
+    int mul_in = pow(2, in_width) - 1;
+
+    //Some fix for the output format
+    //string l_in = addr_in.size() > 1 ? "[[" : "";
+    //string l_out = addr_out.size() > 1 ? "[[" : "";
+    //string r_in = addr_in.size() > 1 ? "]]" : "";
+    //string r_out = addr_out.size() > 1 ? "]]" : "";
+
+    //out << sep_list(addr_in, l_in, r_in, "],[") << ", " << sep_list(addr_out, l_out, r_out, "],[") << endl;
+    out << sep_list(addr_in, "[", "]", " ") << ", "
+        << valid_in << ", "
+        << sep_list(addr_out, "[", "]", " ") << ", "
+        << valid_out << endl;
+    ret.append_data(addr_in, addr_out, valid_in, valid_out);
+
+    cycle ++;
+  }
+  out.close();
+  return ret;
+}
 
   void generate_code_prefix(CodegenOptions& options,
       std::ostream& out,
@@ -2636,7 +3008,8 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     generate_hls_code(options, out, buf);
   }
 
-  void generate_header(const UBuffer& buf) {
+  //Rename to avoid ambiguous
+  void generate_hls_header(const UBuffer& buf) {
     //cout << "Header file generation..." << endl;
     ofstream of(buf.name + ".h");
     of << "#pragma once\n\n" << endl;
@@ -2714,7 +3087,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     out << "}" << endl;
 
 
-    generate_header(buf);
+    generate_hls_header(buf);
     generate_vivado_tcl(buf);
   }
 
@@ -3527,11 +3900,14 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     return make_pair(ret, ret_sched);
   }
 
-  void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
+  void UBuffer::port_group2bank(CodegenOptions& options) {
+    int in_port_width = options.rtl_options.max_inpt;
+    int out_port_width = options.rtl_options.max_outpt;
     /*Refactor the port grouping algorithm, we should put it into bank,
      * instead of ubuffer. Think about ubuffer is the original
      * */
     stack<bank> bank_pool;
+    cout << tab(1) << "Start port group into multi-port memory tile!" << endl;
     for (auto inpt: get_in_ports()) {
       vector<bank> rec = receiver_banks(inpt);
       sort(rec.begin(), rec.end(), [](const bank& l, const bank& r) {
@@ -3539,7 +3915,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
           });
       for (auto bk : rec) {
         bank_pool.push(bk);
-        cout << tab(1) << bk.name << ", " << bk.maxdelay << ", SR only: " << bk.onlySR() << endl;
+        cout << tab(1) << bk.name << ", has max delay: " << bk.maxdelay << ", SR only: " << bk.onlySR() << endl;
       }
     }
     int group_in_port_width = 0;
@@ -3560,7 +3936,19 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
     vector<string> pt_vec;
     while(!bank_pool.empty()) {
       auto bk = bank_pool.top();
-      cout << bk.name << endl;
+      cout << tab(1) << "Pop bank: " << bk.name << " from bank pool." << endl;
+
+      //Check if we need a memory tile
+      //TODO: we could move the shift register optimization pass here
+      if (options.conditional_merge) {
+        if (bk.maxdelay <= options.merge_threshold) {
+            if (get_bank_outputs(bk.name).size() == 1){
+              bank_pool.pop();
+              continue;
+            }
+        }
+      }
+
       //First check if this bank already have saturized the hardware memory
       if (get_bank_inputs(bk.name).size() == in_port_width) {
           bank_pool.pop();
