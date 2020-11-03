@@ -5751,7 +5751,7 @@ prog harris_sch8() {
   return prg;
 }
 
-prog three_level_memory() {
+prog three_level_memory_two() {
   prog prg;
   prg.compute_unit_file = "three_level_memory_compute.h";
   prg.name = "three_level_memory";
