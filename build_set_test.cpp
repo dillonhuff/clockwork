@@ -15179,6 +15179,43 @@ void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
   //hwinfo.instance_latencies[op] = latency;
 }
 
+void asap_inner_loops_schedule(schedule_info& hwinfo, op* op, prog& prg) {
+  cout << "scheduling: " << op->name << endl;
+
+  if (!op->is_loop()) {
+    int total_latency = op_latency(op, hwinfo);
+    hwinfo.instance_latencies[op] = total_latency;
+    return;
+  }
+
+  for (auto other : op->children) {
+    asap_inner_loops_schedule(hwinfo, other, prg);
+  }
+
+  if (is_inner_loop(op)) {
+    int latency = 0;
+    for (auto other : op->children) {
+      int old_latency = latency;
+      hwinfo.op_offset_within_parent[other] = 0;
+      latency = max(latency, hwinfo.total_latency(other));
+    }
+    hwinfo.loop_iis[op->name] = max(latency, 1);
+  } else {
+    int latency = 0;
+    for (auto other : op->children) {
+      int old_latency = latency;
+      hwinfo.op_offset_within_parent[other] = latency;
+      latency += hwinfo.total_latency(other);
+      if (old_latency == latency) {
+        latency += 1;
+      }
+    }
+    hwinfo.loop_iis[op->name] = max(latency, 1);
+  }
+
+
+}
+
 void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   cout << "scheduling: " << op->name << endl;
 
@@ -15913,6 +15950,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
 
     sequential_schedule(sched, root, prg);
+    //asap_inner_loops_schedule(sched, root, prg);
 
     adjust_inner_iis(sched, prg);
     tighten_iis(sched, prg);
@@ -16428,16 +16466,16 @@ vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
 
-  // Too large to fit in 16 bit controller
+  // Too large to fit in 16 bit controller,
+  // and not the schedule we want anyway
   //test_programs.push_back(mobilenet());
   //
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
-
   //test_programs.push_back(mobilenet_unrolled());
-  test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(resnet());
+  test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
