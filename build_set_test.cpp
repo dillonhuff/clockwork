@@ -16368,6 +16368,28 @@ vector<prog> stencil_programs() {
   return test_programs;
 }
 
+vector<prog> harris_variants() {
+  vector<prog> test_programs;
+  // coreir is wrong?
+  //test_programs.push_back(harris_sch1());
+
+  // schedule takes too long
+  //test_programs.push_back(harris_sch2());
+  //test_programs.push_back(harris_sch3());
+  //test_programs.push_back(harris_sch4());
+
+  // Works
+  //test_programs.push_back(harris_sch5());
+
+  // Bank list has length 0?
+  //test_programs.push_back(harris_sch6());
+
+  test_programs.push_back(harris_sch7());
+  test_programs.push_back(harris_sch8());
+
+  return test_programs;
+}
+
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
@@ -16379,6 +16401,7 @@ vector<prog> all_cgra_programs() {
   //test_programs.push_back(accumulation());
 
 
+  concat(test_programs, harris_variants());
 
   test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(resnet());
@@ -16386,11 +16409,8 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
   test_programs.push_back(mobilenet_small());
+
   concat(test_programs, stencil_programs());
-
-
-
-
 
   return test_programs;
 }
