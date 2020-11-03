@@ -2566,7 +2566,6 @@ void insert_pad_loops(const int level, op* root, const map<string, vector<int> >
         lp->name = "pad_" + root->name + "_to_" + c->name;
         lp->ctx = root->ctx;
         lp->parent = root;
-        //lp->is_loop() = true;
         lp->tp = IR_NODE_TYPE_LOOP;
         lp->start = 0;
         lp->end_exclusive = 1;
@@ -15473,6 +15472,10 @@ void pad_to_single_depth(prog& prg) {
 
 
   if (!single_depth) {
+    for (auto c : prg.root->children) {
+      assert(c->is_loop());
+    }
+
     map<string, vector<int> > pad_indexes;
     for (auto k : get_kernels(prg)) {
       auto lp = prg.find_loop(k);
@@ -15763,6 +15766,22 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     int max_depth = max_loop_depth(prg);
 
     if (!single_depth) {
+      vector<op*> old_children = prg.root->children;
+      prg.root->children = {};
+      for (auto c : old_children) {
+        if (c->is_loop()) {
+          prg.root->children.push_back(c);
+        } else {
+          op* lp = prg.root->add_loop(prg.un("pad_wrapper"), 0, 1);
+          for (int d = 1; d < max_depth; d++) {
+            lp = lp->add_loop(prg.un("pad_wrapper"), 0, 1);
+          }
+          lp->children.push_back(c);
+        }
+      }
+      prg.pretty_print();
+      assert(false);
+
       map<string, vector<int> > pad_indexes;
       for (auto k : get_kernels(prg)) {
         auto lp = prg.find_loop(k);
@@ -16434,6 +16453,8 @@ void test_platonic_codegen(vector<prog>& test_programs) {
     prg.sanity_check();
 
     dsa_writers(prg);
+    break_up_multi_channel_inputs(prg);
+
     prg.pretty_print();
     auto cpu = unoptimized_result(prg);
 
