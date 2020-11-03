@@ -3050,7 +3050,6 @@ void garnet_map_module(Module* top) {
   c->addPass(new MapperPasses::MemSubstitute);
   c->runPasses({"memsubstitute"});
 
-  //c->runPasses({"flatten"});
   c->runPasses({"cullgraph"});
   c->getPassManager()->printLog();
   cout << "Trying to save" << endl;
@@ -3103,7 +3102,7 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
-  //garnet_map_module(prg_mod);
+  garnet_map_module(prg_mod);
   context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
   auto ns_new = context->getNamespace("global");

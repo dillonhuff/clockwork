@@ -16443,7 +16443,7 @@ vector<prog> harris_variants() {
   vector<prog> test_programs;
 
   // coreir is wrong?
-  test_programs.push_back(harris_sch1());
+  //test_programs.push_back(harris_sch1());
   // Bank list has length 0?
   //test_programs.push_back(harris_sch6());
 
