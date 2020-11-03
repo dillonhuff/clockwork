@@ -1173,6 +1173,8 @@ struct prog {
     return o->name + vars;
   }
 
+  umap* validity_deps();
+
   isl_union_set* whole_iteration_domain() {
     map<op*, isl_set*> doms = domains();
     isl_union_set* whole_d = isl_union_set_read_from_str(ctx, "{ }");
@@ -1393,36 +1395,6 @@ struct prog {
 
     cout << "Rel order = " << str(rel_order) << endl;
     return rel_order;
-  }
-
-  umap* validity_deps() {
-    umap* naive_sched = unoptimized_schedule();
-    cout << "Naive sched: " << str(naive_sched) << endl;
-
-    auto before = lex_lt(naive_sched, naive_sched);
-
-    cout << "Getting iteration domain..."<< endl;
-
-    auto domain = whole_iteration_domain();
-
-    cout << "Got domain..." << endl;
-
-    auto writes =
-      its(producer_map(), domain);
-    auto reads =
-      its(consumer_map(), domain);
-
-    cout << "Got producer / consumer maps" << endl;
-
-    //isl_union_map *validity =
-      //its(dot(writes, inv(writes)), before);
-    auto validity =
-      its(dot(writes, inv(reads)), before);
-    //isl_union_map *validity =
-      //its(dot(writes, inv(reads)), before);
-
-    //assert(false);
-    return validity;
   }
 
   isl_schedule* optimized_schedule();

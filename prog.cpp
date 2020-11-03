@@ -6426,3 +6426,35 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
   //return nullptr;
 }
 
+umap* prog::validity_deps() {
+  umap* naive_sched = unoptimized_schedule();
+  cout << "Naive sched: " << str(naive_sched) << endl;
+
+  auto before = lex_lt(naive_sched, naive_sched);
+
+  cout << "Getting iteration domain..."<< endl;
+
+  auto domain = whole_iteration_domain();
+
+  cout << "Got domain..." << endl;
+
+  auto writes =
+    its(producer_map(), domain);
+
+  auto reads =
+    its(consumer_map(), domain);
+
+  cout << "Got producer / consumer maps" << endl;
+  auto writers_to_readers = dot(writes, inv(reads));
+  cout << "Writers to readers: " << endl;
+  for (auto m : get_maps(writers_to_readers)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
+  auto validity =
+    its(writers_to_readers, before);
+    //its(dot(writes, inv(reads)), before);
+
+  return validity;
+}
+

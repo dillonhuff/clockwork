@@ -16535,6 +16535,8 @@ void test_platonic_codegen(vector<prog>& test_programs) {
     break_up_multi_channel_inputs(prg);
 
     prg.pretty_print();
+    prg.sanity_check();
+
     auto cpu = unoptimized_result(prg);
 
     compile_for_garnet_platonic_mem(prg);
@@ -18702,6 +18704,51 @@ void test_if_construction() {
 
 void dhuff_playground() {
   {
+    prog prg = mobilenet_unrolled();
+    dsa_writers(prg);
+    break_up_multi_channel_inputs(prg);
+
+    prg.pretty_print();
+    prg.sanity_check();
+
+    auto domain = prg.whole_iteration_domain();
+
+    string target = "op_hcompute_dw_conv_stencil";
+    auto writes =
+      its(prg.producer_map(), domain);
+    for (auto m : get_maps(writes)) {
+      if (domain_name(m) == target) {
+        cout << "writes by " << target << ": " << str(m) << endl;
+        assert(false);
+      }
+    }
+
+    auto reads =
+      its(prg.consumer_map(), domain);
+
+
+    assert(false);
+
+    //auto valid = prg.validity_deps();
+    //auto dom = prg.whole_iteration_domain();
+    //cout << "Validity deps..." << endl;
+    //std::set<string> validity_doms;
+    //for (auto v : get_maps(valid)) {
+      //cout << tab(1) << str(v) << endl;
+      //validity_doms.insert(range_name(v));
+      //validity_doms.insert(domain_name(v));
+    //}
+    //cout << "Dependence checks" << endl;
+    //for (auto s : get_sets(dom)) {
+      //if (!elem(name(s), validity_doms)) {
+        //cout << tab(1) << name(s) << " is not used in any dependency" << endl;
+      //}
+    //}
+    //auto res = unoptimized_result(prg);
+    assert(false);
+  }
+
+  {
     prog prg = harris_sch6();
     cout << "Harris schedule variant 6" << endl;
     prg.pretty_print();
@@ -18709,15 +18756,6 @@ void dhuff_playground() {
     auto res = unoptimized_result(prg);
     assert(false);
   }
-  {
-    prog prg = mobilenet_unrolled();
-    dsa_writers(prg);
-    break_up_multi_channel_inputs(prg);
-    prg.pretty_print();
-    auto res = unoptimized_result(prg);
-    assert(false);
-  }
-
   {
     prog prg = resnet_coarse_pipeline_loop();
     //prog prg = resnet();

@@ -974,6 +974,18 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps) {
 
+  std::set<string> dep_names;
+  for (auto d : deps) {
+    dep_names.insert(domain_name(d));
+    dep_names.insert(range_name(d));
+  }
+  std::set<string> dom_names;
+  for (auto d : domains) {
+    if (!elem(name(d), dep_names)) {
+      cout << tab(1) << name(d) << " is not a producer or consumer of any dependency" << endl;
+      assert(false);
+    }
+  }
   //cout << "Deps..." << endl;
   assert(deps.size() > 0);
   isl_ctx* ct = ctx(deps.at(0));
@@ -1015,7 +1027,9 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   vector<map<string, isl_val*> > lb_objs;
 
   // Add delay legality constraints
+  cout << "Schedule params..." << endl;
   for (auto s : schedule_params) {
+    cout << tab(1) << str(s.first) << endl;
     string consumer = domain_name(s.first);
     string producer = range_name(s.first);
 
