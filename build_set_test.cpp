@@ -16492,6 +16492,7 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, harris_variants());
 
   // Too large to fit in 16 bit controller,
   // and not the schedule we want anyway
@@ -16500,7 +16501,7 @@ vector<prog> all_cgra_programs() {
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
-  test_programs.push_back(mobilenet_unrolled());
+  //test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
   test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(unet_conv_3_3());
@@ -16509,7 +16510,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(mobilenet_small());
 
 
-  concat(test_programs, harris_variants());
   concat(test_programs, stencil_programs());
 
   return test_programs;
