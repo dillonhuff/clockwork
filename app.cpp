@@ -1949,6 +1949,11 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
     }
   }
 
+  for (auto s : get_sets(domain)) {
+    assert(contains_key(name(s), scheds));
+    release(s);
+  }
+
   return scheds;
 }
 

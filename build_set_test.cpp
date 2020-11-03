@@ -15904,11 +15904,37 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     }
 
     auto cs = clockwork_schedule(dom, valid, cpy(valid));
+    for (auto s : get_sets(dom)) {
+      assert(contains_key(name(s), cs));
+    }
+    for (auto op : prg.all_ops()) {
+      assert(contains_key(op->name, cs));
+    }
     auto levels = get_variable_levels(prg);
     cout << "Domain..." << endl;
+    auto ops = prg.all_ops();
     for (auto s : get_sets(dom)) {
       cout << tab(1) << str(s) << endl;
+      bool found = false;
+      for (auto op : ops) {
+        if (op->name == name(s)) {
+          found = true;
+          break;
+        }
+      }
+      assert(found);
     }
+    for (auto op : ops) {
+      bool found = false;
+      for (auto s : get_sets(dom)) {
+        if (op->name == name(s)) {
+          found = true;
+          break;
+        }
+      }
+      assert(found);
+    }
+    
     prg.pretty_print();
     cout << "Original Loop iis" << endl;
     for (auto op : prg.all_ops()) {
@@ -16444,8 +16470,9 @@ vector<prog> harris_variants() {
 
   // coreir is wrong?
   //test_programs.push_back(harris_sch1());
-  // Bank list has length 0?
-  test_programs.push_back(harris_sch6());
+  // Bank list has length 0? grad_x_unclamp
+  // stencil is never written?
+  //test_programs.push_back(harris_sch6());
 
   // Verilator breaks?
   //test_programs.push_back(harris_sch2());
@@ -16465,7 +16492,6 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  concat(test_programs, harris_variants());
 
   // Too large to fit in 16 bit controller,
   // and not the schedule we want anyway
@@ -16474,7 +16500,7 @@ vector<prog> all_cgra_programs() {
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
-  //test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
   test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(unet_conv_3_3());
@@ -16483,6 +16509,7 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(mobilenet_small());
 
 
+  concat(test_programs, harris_variants());
   concat(test_programs, stencil_programs());
 
   return test_programs;
