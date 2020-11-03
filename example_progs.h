@@ -31,3 +31,13 @@ prog mobilenet_small();
 prog three_level_memory();
 prog resnet_unrolled();
 prog resnet_coarse_pipeline_loop();
+prog mobilenet_unrolled();
+prog harris_sch1();
+prog harris_sch2();
+prog harris_sch3();
+prog harris_sch4();
+prog harris_sch5();
+prog harris_sch6();
+prog harris_sch7();
+prog harris_sch8();
+
