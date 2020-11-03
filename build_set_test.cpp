@@ -13214,6 +13214,7 @@ void lake_conv33_recipe_test() {
 }
 
 void dsa_writers(prog& prg);
+void dsa_readers(prog& prg);
 
 void compile_for_garnet_single_port_mem(prog & prg, bool gen_smt_stream);
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
@@ -15306,6 +15307,25 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
   }
 }
 
+void break_up_multi_channel_inputs(prog& prg) {
+  std::set<string> to_erase;
+  for (auto in : prg.ins) {
+    std::set<op*> readers = find_readers(in, prg);
+    if (readers.size() > 1) {
+      for (auto rd : readers) {
+        string replacement = prg.un(in);
+        rd->replace_reads_from(in, replacement);
+        prg.ins.insert(replacement);
+        prg.buffer_port_widths[replacement] = prg.buffer_port_width(in);
+      }
+      to_erase.insert(in);
+    }
+  }
+  for (auto e : to_erase) {
+    prg.ins.erase(e);
+  }
+}
+
 void dsa_writers(prog& prg) {
   if (is_rate_matchable(prg)) {
     prg.pretty_print();
@@ -15420,27 +15440,6 @@ void dsa_writers(prog& prg) {
         }
 
         prg.outs.erase(b);
-
-        //// Now: Group writers and readers by their overlap sets?
-
-        //auto pmaps = prg.producer_maps(b);
-        //auto cmaps = prg.consumer_maps(b);
-        //map<op*, std::set<op*> > overlap;
-        //for (auto writer : writers) {
-        //auto written = map_find(writer, pmaps);
-        //for (auto reader : readers) {
-        //auto read = map_find(reader, cmaps);
-        //if (!empty(its(range(read), range(written)))) {
-        //overlap[writer].insert(reader);
-        //}
-        //}
-        //}
-
-        //cout << "Writer overlap..." << endl;
-        //for (auto w : overlap) {
-        //cout << tab(1) << w.first->name << " = " << w.second.size() << endl;
-        //}
-        //assert(false);
       }
     }
 
@@ -16403,7 +16402,7 @@ vector<prog> all_cgra_programs() {
   //test_programs.push_back(accumulation());
 
 
-  //test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(resnet());
   test_programs.push_back(unet_conv_3_3());
@@ -18604,7 +18603,10 @@ void test_if_construction() {
 void dhuff_playground() {
   {
     prog prg = mobilenet_unrolled();
+    dsa_writers(prg);
+    break_up_multi_channel_inputs(prg);
     prg.pretty_print();
+    auto res = unoptimized_result(prg);
     assert(false);
   }
 
