@@ -3751,7 +3751,7 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
       cout << "bank func = " << bank_func << endl;
       auto bank_map = isl_map_read_from_str(ctx, bank_func.c_str());
       //cout << str(bank_map) <<endl;
-      //assert(banking_scheme_is_legal(bank_map, *this));
+      assert(banking_scheme_is_legal(bank_map, *this));
 
       //auto range2bank = dot(to_umap(global_range()), to_umap(bank_map));
       //get a map from data range to bankID
@@ -4771,8 +4771,8 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     auto in_sched_new = linear_schedule(to_map(in_sched), iis, 0, false);
     auto in_sched_vec = linear_schedule(to_map(in_sched), iis, fetch_width, false);
 
-    auto out_sched_new = linear_schedule(to_map(in_sched), iis, 0, false);
-    auto out_sched_vec = linear_schedule(to_map(in_sched), iis, -fetch_width - 1, false);
+    auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, false);
+    auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -fetch_width - 1, false);
 
     auto update_sched_vec_out = linear_schedule(to_map(update_sched), iis, -fetch_width - 1, false);
     auto update_sched_vec_in = linear_schedule(to_map(update_sched), iis, fetch_width, false);
@@ -5046,6 +5046,9 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
       if (is_out) {
         string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
         target_buf.port_bundles[bd_name].push_back(pt_name);
+        //cout << "Schedule before its domain: " << str(sched) << endl;
+        //cout << "its domain: " << str(dom) << endl;
+        //cout << "Schedule add to the new agg: " << str(simplify_expr(its(sched, dom))) << endl;
         target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), simplify_expr(its(sched, dom)));
 
         //remap the access map for self loop input
@@ -5229,9 +5232,9 @@ pair<std::map<string, UBuffer>, vector<string> >
         agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
 
         isl_map* sched;
-        if (is_self_loop(in_pt_name)) {
-            sched = new_sched.at(::name(new_op_domain));
-        } else {
+       // if (is_self_loop(in_pt_name)) {
+       //     sched = new_sched.at(::name(new_op_domain));
+       // } else {
           auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
           cout << "Slice dim: " << str(slice_dim) << endl;
           cout << "original loop: " << str(new_sched.at(::name(new_op_domain))) << endl;
@@ -5239,7 +5242,7 @@ pair<std::map<string, UBuffer>, vector<string> >
           sched = dot(inv(op_trans), sched);
           cout << "sched: " << str(sched) << endl;
 
-        }
+       // }
 
         //add out port to agg_buf
         add_vectorized_pt_to_ubuf(agg_buf, rewrite_buf2op, sched, in_pt_name, bd_name+"_agg_out", dim_id, fetch_width, true);
@@ -5288,14 +5291,19 @@ pair<std::map<string, UBuffer>, vector<string> >
 
         //potential not work for accumulation buffers
         isl_map* op_sched;
-        if (is_self_loop(out_pt_name)) {
-            op_sched = new_sched.at(::name(new_op_domain));
-        } else {
+        //if (is_self_loop(out_pt_name)) {
+        //    op_sched = new_sched.at(::name(new_op_domain));
+        //} else {
             auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
+            //cout << "slice dim: " << str(slice_dim) << endl;
+            //cout << "new_op_domain: " << str(new_op_domain) << endl;
+            //cout << "original loop: " << str(new_sched.at(::name(new_op_domain))) << endl;
             op_sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
+            //cout << "op schedule before trans: " << str(op_sched) << endl;
+            //cout << "trans: " << str(op_trans) << endl;
             op_sched = dot(inv(op_trans), op_sched);
             cout << "op schedule: " << str(op_sched) << endl;
-        }
+        //}
 
 
         op_sched_map[out_pt_name] = op_sched;
