@@ -15764,6 +15764,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     prg.pretty_print();
     bool single_depth = all_loop_nests_same_depth(prg);
     int max_depth = max_loop_depth(prg);
+    assert(max_depth >= 1);
 
     if (!single_depth) {
       vector<op*> old_children = prg.root->children;
@@ -15773,14 +15774,15 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
           prg.root->children.push_back(c);
         } else {
           op* lp = prg.root->add_loop(prg.un("pad_wrapper"), 0, 1);
-          for (int d = 1; d < max_depth; d++) {
+          for (int d = 1; d < max_depth - 1; d++) {
             lp = lp->add_loop(prg.un("pad_wrapper"), 0, 1);
           }
           lp->children.push_back(c);
+          c->parent = lp;
         }
       }
       prg.pretty_print();
-      assert(false);
+      //assert(false);
 
       map<string, vector<int> > pad_indexes;
       for (auto k : get_kernels(prg)) {
@@ -15866,16 +15868,26 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
     auto cs = clockwork_schedule(dom, valid, cpy(valid));
     auto levels = get_variable_levels(prg);
+    cout << "Domain..." << endl;
+    for (auto s : get_sets(dom)) {
+      cout << tab(1) << str(s) << endl;
+    }
+    prg.pretty_print();
     cout << "Original Loop iis" << endl;
     for (auto op : prg.all_ops()) {
       vector<string> surrounding = surrounding_vars(op, prg);
+      cout << tab(1) << "OP: " << op->name << endl;
       for (auto var : surrounding) {
+        cout << tab(2) << "Getting variable levels for: " << var << endl;
+
         int level = map_find(var, levels);
         auto container = prg.find_loop(var);
-        cout << op->name << endl;
+
+        assert(contains_key(op->name, cs));
+
         int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
         int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
-        cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
+        cout << tab(2) << var << " q: " << qfactor << ", d = " << delay << endl;
         sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
         sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
         // TODO: Set this to the latency read from the compute units
@@ -15883,12 +15895,14 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
+
+    //assert(false);
+
     int total_latency = 0;
     for (auto op : inner_ops(prg)) {
         cout << "inner ops: " << op->name << endl;
       sched.op_offset_within_parent[op] = total_latency;
       sched.instance_latencies[op] = op_latency(op, sched);
-      //total_latency += op_latency(op, sched) + 2;
       total_latency += op_latency(op, sched);
     }
 
@@ -16421,7 +16435,7 @@ vector<prog> all_cgra_programs() {
   //test_programs.push_back(accumulation());
 
 
-  test_programs.push_back(mobilenet_unrolled());
+  //test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(resnet());
   test_programs.push_back(unet_conv_3_3());
