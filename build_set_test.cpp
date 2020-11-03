@@ -16382,7 +16382,7 @@ vector<prog> harris_variants() {
   
   // schedule takes too long
   //test_programs.push_back(harris_sch3());
-  test_programs.push_back(harris_sch4());
+  //test_programs.push_back(harris_sch4());
 
   // Works
   test_programs.push_back(harris_sch5());
@@ -16402,9 +16402,8 @@ vector<prog> all_cgra_programs() {
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
-  concat(test_programs, harris_variants());
 
-  test_programs.push_back(mobilenet_unrolled());
+  //test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(resnet());
   test_programs.push_back(unet_conv_3_3());
@@ -16414,6 +16413,7 @@ vector<prog> all_cgra_programs() {
 
 
   concat(test_programs, stencil_programs());
+  concat(test_programs, harris_variants());
 
   return test_programs;
 }
