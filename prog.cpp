@@ -5810,13 +5810,17 @@ map<string, pair<string, int> > determine_shift_reg_map(
             intersection(write_op->buffers_read(), write_op->buffers_written()).size() == 0) {
           auto dd =
             dependence_distance_singleton(buf, inpt, outpt, sc);
-          //assert(false);
           if (dd.has_value()) {
             int dd_raw = dd.get_value();
             if (write_op->func != "") {
               dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
             }
             dd_raw = dd_raw - 1;
+
+            if (!(dd_raw >= 0)) {
+              cout << "Error: Negative dependence distance: " << dd_raw << endl;
+            }
+            assert(dd_raw >= 0);
             shift_registered_outputs[outpt] = {inpt, dd_raw};
           }
         }

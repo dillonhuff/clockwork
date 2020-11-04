@@ -579,6 +579,9 @@ void print_shift_registers(
   for (auto sr : shift_registered_outputs) {
     int delay = sr.second.second;
 
+    if (!(delay >= 0)) {
+      cout << "Error: Negative delay: " << delay << endl;
+    }
     assert(delay >= 0);
 
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
