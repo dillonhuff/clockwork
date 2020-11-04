@@ -754,127 +754,128 @@ void generate_fsm(
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo
-        ) {
+    ) {
+
+  string name = buf.container_bundle(pt);
+  string ctrl_vars = name + "_ctrl_vars";
+  string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
+  auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
+  cout << "adjusted buffer " << adjusted_buf << endl;
+  cout << "actual buffer " << buf << endl;
+  //auto adjusted_buf = buf;
+  assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
+  auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
+  int dims = num_in_dims(aff);
+  isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
+  //        cout << "domain " << str(dom) << endl;
+  //        cout << get_dim(dom) << endl;
+  //        cout << get_dim_max(dom,0) << endl;
+  //        cout << get_dim_min(dom,0) << endl;
+  //        cout << get_dim_max(dom,1) << endl;
+  //        cout << get_dim_min(dom,1) << endl;
+  //        cout << get_dim_max(dom,2) << endl;
+  //        cout << get_dim_min(dom,2) << endl;
+  out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
+  //      cout << dims << endl;
+  //      assert(false);
+
+  cout << to_int(const_coeff(aff)) << endl;
+  for(int i = 0; i < dims; i ++)
+  {
+    cout << str(get_coeff(aff,i)) << endl;
+
+  }
+  out << "module " << adjusted_buf.name << "_" <<  adjusted_buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
+  out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
+  out << tab(1) << "logic on;" << endl;
+  out << tab(1) << "logic on2;" << endl;
+  out << tab(1) << "integer i;" << endl;
+  out << tab(1) << "integer dims = " << dims << ";" << endl;
+
+  string condition = "assign " + enable + " =(on && on2 && " + ctrl_vars + brackets(str(0)) + "==0";
+  for(int i =1; i< dims; i ++)
+  {
+    condition += " && " + ctrl_vars + brackets(str(i)) + "<=" + str(get_dim_max(dom,i));
+    //condition += " && " + ctrl_vars + brackets(str(i)) + ">=0";
+  }
+  condition += ");";
+  out << tab(1) << condition << endl;
+
+  out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+  out << tab(2) << "if (~rst_n) begin" << endl;
+  for(int i = 0; i < dims ;i ++) {
+    out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b1010101010101010;" << endl;
+    out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
+  }
+  out << tab(3) << "on <=0;" << endl;
+  out << tab(3) << "on2 <= 0;" << endl;
+  out << tab(2) <<  "end else begin" << endl;
+  out << tab(3) <<   "if(counter[0] ==" << to_int(const_coeff(aff)) - 1 << ") begin" << endl;
+  out << tab(4) << "on <=1;" << endl;
+  out << tab(4) << "on2 <= 1;" << endl;
+  out << tab(4) <<  ctrl_vars << brackets(str(0)) << "<= 16'b0;" << endl;
+  out << tab(4) <<  "counter" << brackets(str(0)) << " <= counter" << brackets(str(0)) << "+1;" << endl;
+  for(int i = 1; i < dims ;i ++) {
+    out << tab(4) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
+    out << tab(4) <<  "counter " << brackets(str(i)) << " <= 16'b0;" << endl;
+  }
+
+  out << tab(3) <<  "end else begin" << endl;
+  out << tab(4) << "counter[0] <= counter[0] + 1;" << endl;
+  out << tab(4) << "if(counter[1] == " << to_int(get_coeff(aff,1)) - 1 << ") begin" << endl;
+  for(int i = 1; i < dims; i ++ ) {
+    out << tab(5) << "counter" << brackets(str(i)) << "<= 0;" << endl;
+  }
+  for(int i = 2; i < dims; i ++ ){
+    out << tab(5) << ctrl_vars << brackets(str(i)) << "<= 0;" << endl;
+  }
+  out << tab(5) << ctrl_vars << "[1] <= " << ctrl_vars << "[1] + 1;" << endl;
+  out << tab(5) << "on2 <= 1;" <<endl;
+  for(int i = 2; i < dims; i ++)
+  {
+    out << tab(4) << "end else if(counter[" << i << "] == " << to_int(get_coeff(aff,i)) - 1 << ") begin" << endl;
+    for(int j = 1; j< i; j ++ ) {
+      out << tab(5) << "counter" << brackets(str(j)) << " <= counter" << brackets(str(j)) << " + 1;" << endl;
+    }
+    for(int j = i; j < dims; j ++ ) {
+      out << tab(5) << "counter" << brackets(str(j)) << " <= 0;" << endl;
+    }
+    for(int j = i + 1; j < dims; j ++ ) {
+      out << tab(5) << ctrl_vars << brackets(str(j)) << "<= 0;" << endl;
+    }
+    out << tab(5) << ctrl_vars << "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
+    out << tab(5) << "on2 <= 1;" << endl;
+  }
+  out << tab(4) << "end else begin" << endl;
+  for(int i = 1; i < dims; i ++ ) {
+    out << tab(5) << "counter" << brackets(str(i)) << " <= counter" << brackets(str(i)) << " + 1;" << endl;
+  }
+  out << tab(5) << "on2 <= 0;" << endl;
+  out << tab(4) << "end" << endl;
+  out << tab(3) << "end" << endl;
+  out << tab(2) << "end" << endl;
+  out << tab(1) << "end" << endl;
+  out << "endmodule" << endl;
 }
 
 void generate_fsms(
-        ostream& out,
+    ostream& out,
     CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo
-        )
+    )
 {
-      unordered_set<string> done_ctrl_vars;
+  unordered_set<string> done_ctrl_vars;
 
-    for(auto pt : buf.get_all_ports()){
-      generate_fsm(out, options, pt, prg, buf, hwinfo);
-      string name = buf.container_bundle(pt);
-      string ctrl_vars = name + "_ctrl_vars";
-      string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
-      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
-      {
-          continue;
-      }
-      done_ctrl_vars.insert(ctrl_vars);
-      auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
-      cout << "adjusted buffer " << adjusted_buf << endl;
-      cout << "actual buffer " << buf << endl;
-      //auto adjusted_buf = buf;
-      assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
-      auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
-      int dims = num_in_dims(aff);
-      isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
-//        cout << "domain " << str(dom) << endl;
-//        cout << get_dim(dom) << endl;
-//        cout << get_dim_max(dom,0) << endl;
-//        cout << get_dim_min(dom,0) << endl;
-//        cout << get_dim_max(dom,1) << endl;
-//        cout << get_dim_min(dom,1) << endl;
-//        cout << get_dim_max(dom,2) << endl;
-//        cout << get_dim_min(dom,2) << endl;
-      out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
-//      cout << dims << endl;
-//      assert(false);
-
-      cout << to_int(const_coeff(aff)) << endl;
-      for(int i = 0; i < dims; i ++)
-      {
-            cout << str(get_coeff(aff,i)) << endl;
-
-      }
-      out << "module " << adjusted_buf.name << "_" <<  adjusted_buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
-      out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
-      out << tab(1) << "logic on;" << endl;
-      out << tab(1) << "logic on2;" << endl;
-      out << tab(1) << "integer i;" << endl;
-      out << tab(1) << "integer dims = " << dims << ";" << endl;
-
-      string condition = "assign " + enable + " =(on && on2 && " + ctrl_vars + brackets(str(0)) + "==0";
-      for(int i =1; i< dims; i ++)
-      {
-        condition += " && " + ctrl_vars + brackets(str(i)) + "<=" + str(get_dim_max(dom,i));
-        //condition += " && " + ctrl_vars + brackets(str(i)) + ">=0";
-      }
-      condition += ");";
-      out << tab(1) << condition << endl;
-
-      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-      out << tab(2) << "if (~rst_n) begin" << endl;
-      for(int i = 0; i < dims ;i ++) {
-      out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b1010101010101010;" << endl;
-      out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
-      }
-      out << tab(3) << "on <=0;" << endl;
-      out << tab(3) << "on2 <= 0;" << endl;
-      out << tab(2) <<  "end else begin" << endl;
-      out << tab(3) <<   "if(counter[0] ==" << to_int(const_coeff(aff)) - 1 << ") begin" << endl;
-      out << tab(4) << "on <=1;" << endl;
-      out << tab(4) << "on2 <= 1;" << endl;
-      out << tab(4) <<  ctrl_vars << brackets(str(0)) << "<= 16'b0;" << endl;
-      out << tab(4) <<  "counter" << brackets(str(0)) << " <= counter" << brackets(str(0)) << "+1;" << endl;
-      for(int i = 1; i < dims ;i ++) {
-        out << tab(4) <<  ctrl_vars << brackets(str(i)) << "<= 16'b0;" << endl;
-        out << tab(4) <<  "counter " << brackets(str(i)) << " <= 16'b0;" << endl;
-      }
-
-      out << tab(3) <<  "end else begin" << endl;
-      out << tab(4) << "counter[0] <= counter[0] + 1;" << endl;
-      out << tab(4) << "if(counter[1] == " << to_int(get_coeff(aff,1)) - 1 << ") begin" << endl;
-      for(int i = 1; i < dims; i ++ ) {
-        out << tab(5) << "counter" << brackets(str(i)) << "<= 0;" << endl;
-      }
-      for(int i = 2; i < dims; i ++ ){
-        out << tab(5) << ctrl_vars << brackets(str(i)) << "<= 0;" << endl;
-      }
-      out << tab(5) << ctrl_vars << "[1] <= " << ctrl_vars << "[1] + 1;" << endl;
-      out << tab(5) << "on2 <= 1;" <<endl;
-      for(int i = 2; i < dims; i ++)
-      {
-            out << tab(4) << "end else if(counter[" << i << "] == " << to_int(get_coeff(aff,i)) - 1 << ") begin" << endl;
-            for(int j = 1; j< i; j ++ ) {
-                out << tab(5) << "counter" << brackets(str(j)) << " <= counter" << brackets(str(j)) << " + 1;" << endl;
-            }
-            for(int j = i; j < dims; j ++ ) {
-                out << tab(5) << "counter" << brackets(str(j)) << " <= 0;" << endl;
-            }
-            for(int j = i + 1; j < dims; j ++ ) {
-                out << tab(5) << ctrl_vars << brackets(str(j)) << "<= 0;" << endl;
-            }
-            out << tab(5) << ctrl_vars << "[" << i << "] <= " << ctrl_vars << "[" << i << "] + 1;" << endl;
-            out << tab(5) << "on2 <= 1;" << endl;
-      }
-      out << tab(4) << "end else begin" << endl;
-      for(int i = 1; i < dims; i ++ ) {
-        out << tab(5) << "counter" << brackets(str(i)) << " <= counter" << brackets(str(i)) << " + 1;" << endl;
-      }
-        out << tab(5) << "on2 <= 0;" << endl;
-      out << tab(4) << "end" << endl;
-      out << tab(3) << "end" << endl;
-       out << tab(2) << "end" << endl;
-       out << tab(1) << "end" << endl;
-    out << "endmodule" << endl;
-
+  for(auto pt : buf.get_all_ports()){
+    string name = buf.container_bundle(pt);
+    string ctrl_vars = name + "_ctrl_vars";
+    if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end()) {
+      continue;
+    }
+    generate_fsm(out, options, pt, prg, buf, hwinfo);
+    done_ctrl_vars.insert(ctrl_vars);
   }
 }
 
