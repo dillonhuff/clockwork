@@ -2,7 +2,7 @@
 
 #ifdef COREIR
 
-#include "prog.h"
+#include "verilog_backend.h"
 
 #define COREMK(ctx, v) CoreIR::Const::make((ctx), (v))
 
