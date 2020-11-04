@@ -750,42 +750,40 @@ vector<int> max_offsets_by_dimension(UBuffer& buf) {
 void generate_fsm(
         ostream& out,
     CodegenOptions& options,
-    const std::string& pt,
-    //prog& prg,
-    UBuffer& adjusted_buf,
-    schedule_info& hwinfo
-    ) {
+    const std::string& module_name,
+    const std::string& ctrl_vars,
+    const std::string& enable,
+    isl_aff* aff,
+    isl_set* dom) {
 
-  string name = adjusted_buf.container_bundle(pt);
-  string ctrl_vars = name + "_ctrl_vars";
-  string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
-  //auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
-  cout << "adjusted buffer " << adjusted_buf << endl;
-  //cout << "actual buffer " << buf << endl;
-  //auto adjusted_buf = buf;
-  assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
-  auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
-  int dims = num_in_dims(aff);
-  isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
-  //        cout << "domain " << str(dom) << endl;
-  //        cout << get_dim(dom) << endl;
-  //        cout << get_dim_max(dom,0) << endl;
-  //        cout << get_dim_min(dom,0) << endl;
-  //        cout << get_dim_max(dom,1) << endl;
-  //        cout << get_dim_min(dom,1) << endl;
-  //        cout << get_dim_max(dom,2) << endl;
-  //        cout << get_dim_min(dom,2) << endl;
-  out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
-  //      cout << dims << endl;
-  //      assert(false);
+    //const std::string& pt,
+    ////prog& prg,
+    //UBuffer& adjusted_buf,
+    //schedule_info& hwinfo) {
 
+  //string name = adjusted_buf.container_bundle(pt);
+  //string ctrl_vars = name + "_ctrl_vars";
+  //string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
+  //string module_name = adjusted_buf.name + "_" + adjusted_buf.container_bundle(pt) + "_fsm";
+
+  //assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
+
+  //auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
+  //int dims = num_in_dims(aff);
+  //isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
+  //out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
+
+  //out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
+  out << "// " << str(aff) << endl;
   cout << to_int(const_coeff(aff)) << endl;
+  int dims = num_in_dims(aff);
   for(int i = 0; i < dims; i ++)
   {
     cout << str(get_coeff(aff,i)) << endl;
-
   }
-  out << "module " << adjusted_buf.name << "_" <<  adjusted_buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
+
+  //out << "module " << adjusted_buf.name << "_" <<  adjusted_buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
+  out << "module " << module_name << "(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
   out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
   out << tab(1) << "logic on;" << endl;
   out << tab(1) << "logic on2;" << endl;
@@ -875,8 +873,20 @@ void generate_fsms(
     if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end()) {
       continue;
     }
-    //generate_fsm(out, options, pt, prg, buf, hwinfo);
-    generate_fsm(out, options, pt, adjusted_buf, hwinfo);
+
+    assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
+
+    auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
+    int dims = num_in_dims(aff);
+    isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
+
+    //string name = adjusted_buf.container_bundle(pt);
+    //string ctrl_vars = name + "_ctrl_vars";
+    string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
+    string module_name = adjusted_buf.name + "_" + adjusted_buf.container_bundle(pt) + "_fsm";
+    generate_fsm(out, options, module_name, ctrl_vars, enable, aff, dom);
+    //pt, adjusted_buf, hwinfo);
+    //generate_fsm(out, options, pt, adjusted_buf, hwinfo);
     done_ctrl_vars.insert(ctrl_vars);
   }
 }
