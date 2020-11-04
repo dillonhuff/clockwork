@@ -5815,21 +5815,19 @@ map<string, pair<string, int> > determine_shift_reg_map(
             if (write_op->func != "") {
               dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
             }
-            //dd_raw = dd_raw - 1;
             bool not_input_reader = false;
             string non_in_buffer = "";
             for (auto b : write_op->buffers_read()) {
-              //if (!prg.is_input(b)) {
-                not_input_reader = true;
-                non_in_buffer = b;
-                break;
-              //}
+              not_input_reader = true;
+              non_in_buffer = b;
+              break;
             }
             if (not_input_reader) {
               dd_raw -= map_find(non_in_buffer, hwinfo.buffer_load_latencies);
             }
 
             dd_raw += map_find(buf.name, hwinfo.buffer_load_latencies);
+
             if (!(dd_raw >= 0)) {
               cout << "Error: Negative dependence distance: " << dd_raw << endl;
             }
