@@ -3873,3 +3873,17 @@ isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_se
   //return isl_aff_floor(div(flat, 2));
 }
 
+
+isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors) {
+  vector<string> dvs;
+  vector<string> bank_exprs;
+  for (int i = 0; i < (int) bank_factors.size(); i++) {
+    dvs.push_back("d" + str(i));
+    bank_exprs.push_back("d" + str(i) + " % " + str(bank_factors.at(i)));
+  }
+
+  string folded_output = "Bank" + brackets(sep_list(bank_exprs, "", "", ", "));
+
+  string bank_str = curlies(name + brackets(sep_list(dvs, "", "", ", ")) + " -> " + folded_output);
+  return isl_map_read_from_str(ctx, bank_str.c_str());
+}

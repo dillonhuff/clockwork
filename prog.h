@@ -1847,3 +1847,8 @@ void push_below(loop* outer, loop* inner, prog& prg);
 void add_reuse_buffer_no_delta(const std::string& level, const std::string& buffer, prog& prg);
 
 op* find_coarse_grained_pipeline_loop(op* lp);
+
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);

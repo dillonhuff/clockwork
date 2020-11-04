@@ -435,21 +435,6 @@ vector<int> print_cyclic_banks(std::ostream& out, const vector<int>& bank_factor
   return capacities;
 }
 
-int total_capacity(UBuffer& buf) {
-  bank bank = buf.compute_bank_info();
-  int capacity = 1;
-  auto dsets = get_sets(bank.rddom);
-  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
-  for (int i = 0; i < dims; i++) {
-    auto s = project_all_but(to_set(bank.rddom), i);
-    auto min = to_int(lexminval(s));
-    auto max = to_int(lexmaxval(s));
-    int length = max - min + 1;
-    capacity *= length;
-  }
-  return capacity;
-}
-
 UBuffer latency_adjusted_buffer(
     CodegenOptions& options,
     prog& prg,
@@ -486,20 +471,6 @@ vector<int> cyclic_banking(prog& prg, UBuffer& buf, schedule_info& info) {
   }
 
   return bank_factors;
-}
-
-isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors) {
-  vector<string> dvs;
-  vector<string> bank_exprs;
-  for (int i = 0; i < (int) bank_factors.size(); i++) {
-    dvs.push_back("d" + str(i));
-    bank_exprs.push_back("d" + str(i) + " % " + str(bank_factors.at(i)));
-  }
-
-  string folded_output = "Bank" + brackets(sep_list(bank_exprs, "", "", ", "));
-
-  string bank_str = curlies(name + brackets(sep_list(dvs, "", "", ", ")) + " -> " + folded_output);
-  return isl_map_read_from_str(ctx, bank_str.c_str());
 }
 
 int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
@@ -599,88 +570,6 @@ void print_shift_registers(
   }
 }
 
-vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
-    prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo)
-{
-  auto sc = buf.global_schedule();
-  bool any_reduce_ops_on_buffer = false;
-  vector<pair<string, pair<string, int> >> shift_registered_outputs;
-  for (auto op : prg.all_ops()) {
-    if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
-      cout << buf.name << endl;
-
-      any_reduce_ops_on_buffer = true;
-      break;
-    }
-  }
-
-  if (!any_reduce_ops_on_buffer) {
-    for (auto outpt : buf.get_out_ports()) {
-      for (auto outpt_src : buf.get_out_ports()) {
-
-        if(outpt == outpt_src) {
-          continue;
-        }
-
-        auto reads = buf.access_map.at(outpt);
-        auto reads_src = buf.access_map.at(outpt_src);
-        cout << "reads: " << str(reads) << endl;
-        cout << "reads_src: " << str(reads_src) << endl;
-
-        auto outpt_read_data = range(reads);
-        auto outpt_src_read_data = range(reads_src);
-        if(num_in_dims(to_map(reads)) != num_in_dims(to_map(reads_src)))
-        {
-          continue;
-        }
-
-        if(!subset(outpt_read_data,outpt_src_read_data))
-        {
-          continue;
-        }
-
-        cout << str(buf.schedule.at(outpt)) << endl;
-        cout << str(buf.schedule.at(outpt_src)) << endl;
-        isl_aff * outpt_sched = get_aff(buf.schedule.at(outpt));
-        isl_aff * outpt_src_sched = get_aff(buf.schedule.at(outpt_src));
-        outpt_sched = set_name(outpt_sched,"bump");
-        outpt_src_sched = set_name(outpt_src_sched,"bump");
-        isl_aff * diff = sub(outpt_sched,outpt_src_sched);
-        isl_aff * reads_aff = get_aff(reads);
-        isl_aff * reads_src_aff = get_aff(reads_src);
-        reads_aff = set_name(reads_aff,"bump");
-        reads_src_aff = set_name(reads_src_aff,"bump");
-        isl_aff * diff_loc = sub(reads_aff, reads_src_aff);
-
-        cout << str(diff) << endl;
-
-        if(!isl_aff_is_cst(diff) || to_int(const_coeff(diff)) < 0)
-        {
-          continue;
-        }
-
-        if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) < 0)
-        {
-          continue;
-        }
-
-        auto time_to_read_src = dot(inv(sc), (reads_src));
-        auto time_to_read = dot(inv(sc), (reads));
-
-        int dd = to_int(const_coeff(diff));
-
-        assert(dd >= 0);
-
-        shift_registered_outputs.push_back({outpt,{outpt_src, dd}});
-      }
-
-    }
-  }
-  return shift_registered_outputs;
-}
-
 vector<string> verilog_port_decls(CodegenOptions& options, UBuffer& buf) {
   vector<string> port_decls{"input clk", "input flush", "input rst_n"};
 
@@ -708,48 +597,6 @@ vector<string> verilog_port_decls(CodegenOptions& options, UBuffer& buf) {
   }
 
   return port_decls;
-}
-
-vector<int> min_offsets_by_dimension(UBuffer& buf) {
-  vector<int> min_offsets;
-  for (int d = 0; d < buf.logical_dimension(); d++) {
-    min_offsets.push_back(INT_MAX);
-  }
-  for (auto pt : buf.get_all_ports()) {
-    vector<int> pts = parse_pt(lexminpt(range(buf.access_map.at(pt))));
-    for (int d = 0; d < pts.size(); d++) {
-      if (pts.at(d) < min_offsets.at(d)) {
-        min_offsets[d] = pts.at(d);
-      }
-    }
-  }
-  return min_offsets;
-}
-
-vector<int> max_offsets_by_dimension(UBuffer& buf) {
-  vector<int> min_offsets;
-  for (int d = 0; d < buf.logical_dimension(); d++) {
-    min_offsets.push_back(INT_MIN);
-  }
-  for (auto pt : buf.get_all_ports()) {
-    vector<int> pts = parse_pt(lexmaxpt(range(buf.access_map.at(pt))));
-    for (int d = 0; d < pts.size(); d++) {
-      if (pts.at(d) > min_offsets.at(d)) {
-        min_offsets[d] = pts.at(d);
-      }
-    }
-  }
-  return min_offsets;
-}
-
-vector<int> extents_by_dimension(UBuffer& buf) {
-  vector<int> min_offsets = min_offsets_by_dimension(buf);
-  vector<int> max_offsets = max_offsets_by_dimension(buf);
-  vector<int> extents;
-  for (int i = 0; i < min_offsets.size(); i++) {
-    extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-  }
-  return extents;
 }
 
 void generate_fsm(
