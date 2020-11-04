@@ -766,6 +766,16 @@ vector<int> max_offsets_by_dimension(UBuffer& buf) {
   return min_offsets;
 }
 
+vector<int> extents_by_dimension(UBuffer& buf) {
+  vector<int> min_offsets = min_offsets_by_dimension(buf);
+  vector<int> max_offsets = max_offsets_by_dimension(buf);
+  vector<int> extents;
+  for (int i = 0; i < min_offsets.size(); i++) {
+    extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+  }
+  return extents;
+}
+
 void generate_fsm(
         ostream& out,
     CodegenOptions& options,
@@ -976,12 +986,13 @@ void generate_platonic_ubuffer(
 
   if (has_embarassing_partition)  {
     std::set<int> partition_dims = embarassing_banking.get_value();
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
+    vector<int> extents = extents_by_dimension(buf);
+    //vector<int> min_offsets = min_offsets_by_dimension(buf);
+    //vector<int> max_offsets = max_offsets_by_dimension(buf);
+    //vector<int> extents;
+    //for (int i = 0; i < min_offsets.size(); i++) {
+      //extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+    //}
     cout << "Extents in selected dimensions..." << endl;
     map<int, int> partitioned_dimension_extents;
     for (auto d : partition_dims) {
@@ -1035,12 +1046,13 @@ void generate_platonic_ubuffer(
   map<int, int> partitioned_dimension_extents;
   if (has_embarassing_partition) {
     std::set<int> partition_dims = embarassing_banking.get_value();
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
+    //vector<int> min_offsets = min_offsets_by_dimension(buf);
+    //vector<int> max_offsets = max_offsets_by_dimension(buf);
+    //vector<int> extents;
+    //for (int i = 0; i < min_offsets.size(); i++) {
+      //extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+    //}
+    vector<int> extents = extents_by_dimension(buf);
     cout << "Extents in selected dimensions..." << endl;
     for (auto d : partition_dims) {
       cout << tab(1) << extents.at(d) << endl;
@@ -1058,12 +1070,13 @@ void generate_platonic_ubuffer(
     capacities = print_cyclic_banks(out, bank_factors, bnk);
   } else {
     std::set<int> partition_dims = embarassing_banking.get_value();
-    vector<int> min_offsets = min_offsets_by_dimension(buf);
-    vector<int> max_offsets = max_offsets_by_dimension(buf);
-    vector<int> extents;
-    for (int i = 0; i < min_offsets.size(); i++) {
-      extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
-    }
+    vector<int> extents = extents_by_dimension(buf);
+    //vector<int> min_offsets = min_offsets_by_dimension(buf);
+    //vector<int> max_offsets = max_offsets_by_dimension(buf);
+    //vector<int> extents;
+    //for (int i = 0; i < min_offsets.size(); i++) {
+      //extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+    //}
     cout << "Extents in selected dimensions..." << endl;
     for (auto d : partition_dims) {
       cout << tab(1) << extents.at(d) << endl;
