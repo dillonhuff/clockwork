@@ -952,8 +952,8 @@ void generate_platonic_ubuffer(
 
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  //bool has_embarassing_partition = embarassing_banking.has_value();
-  bool has_embarassing_partition = false;
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  //bool has_embarassing_partition = false;
 
   if (has_embarassing_partition)  {
     std::set<int> partition_dims = embarassing_banking.get_value();
