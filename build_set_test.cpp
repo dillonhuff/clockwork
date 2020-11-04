@@ -16135,6 +16135,24 @@ CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg) {
   return options;
 }
 
+CodegenOptions FPGA_BRAM_codegen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_BRAM;
+  all_unbanked(prg, options);
+
+  if (is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_CYCLE_DELAY;
+  } else {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
+
+  return options;
+}
+
 CodegenOptions garnet_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
@@ -16200,6 +16218,12 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
   generate_verilator_tb(prg, hw_sched, buffers);
 
 #endif
+}
+
+void compile_for_FPGA_BRAM_mem(prog& prg) {
+  auto options = FPGA_BRAM_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  compile_cycle_accurate_hw(options, sched, prg);
 }
 
 void compile_for_garnet_platonic_mem(prog& prg) {
@@ -16847,6 +16871,8 @@ void cgra_flow_tests() {
   auto test_programs =
     all_cgra_programs();
 
+  vector<prog> bram_test_programs{resnet(), camera_pipeline()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
   test_platonic_codegen(test_programs);
 }
 

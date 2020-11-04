@@ -98,7 +98,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
   auto def = ub->newModuleDef();
 
-  if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
+  if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC ||
+      options.rtl_options.target_tile == TARGET_TILE_BRAM) {
     generate_platonic_ubuffer(options, prg, buf, hwinfo);
   } else {
     generate_synthesizable_functional_model(options, buf, def, hwinfo);
