@@ -45,16 +45,12 @@ std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
 
 vector<string> generate_verilog_addr_components(const std::string& pt, bank& bnk, UBuffer& buf) {
   string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars_fsm_out";
-  //string ctrl_vars = buf.container_bundle(pt) + "_ctrl_vars";
 
   vector<int> mins;
   for (int i = 0; i < buf.logical_dimension(); i++) {
     auto s = project_all_but(to_set(bnk.rddom), i);
     auto min = to_int(lexminval(s));
     mins.push_back(min);
-    //auto max = to_int(lexmaxval(s));
-    //int length = max - min + 1;
-    //lengths.push_back(length);
   }
 
 
