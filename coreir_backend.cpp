@@ -465,30 +465,10 @@ UBuffer latency_adjusted_buffer(
     cout << "latency adjustment for op name = " << op_name << endl;
     op* op = prg.find_op(op_name);
     int write_start = hwinfo.compute_latency(op);
-    //int write_start = 0;
-    //cout << "bumpbump" << op->func << endl;
-    //if (contains_key(op->func, hwinfo.compute_unit_latencies)) {
-      //write_start = map_find(op->func, hwinfo.compute_unit_latencies);
-      //cout << "bumpbumpbump " << write_start << endl;
-
-    //}
 
     if (op->buffers_read().size() > 0) {
       write_start += hwinfo.load_latency(pick(op->buffers_read()));
     }
-    //bool not_input_reader = false;
-    //string non_in_buffer = "";
-    //for (auto b : op->buffers_read()) {
-      //if (!prg.is_input(b)) {
-        //not_input_reader = true;
-        //non_in_buffer = b;
-        //break;
-      //}
-    //}
-    //if (not_input_reader) {
-      //write_start += map_find(non_in_buffer, hwinfo.buffer_load_latencies);
-    //}
-
 
     isl_aff* adjusted =
       add(get_aff(buf.schedule.at(pt)), (int)write_start);
@@ -689,20 +669,17 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
         auto time_to_read_src = dot(inv(sc), (reads_src));
         auto time_to_read = dot(inv(sc), (reads));
 
-        //int dd = to_int(const_coeff(diff))-1;
         int dd = to_int(const_coeff(diff));
-        
-        assert(dd >= 0);
-        
-        shift_registered_outputs.push_back({outpt,{outpt_src, dd}});
 
-        //shift_registered_outputs.push_back({outpt,{outpt_src, to_int(const_coeff(diff))-1}});
+        assert(dd >= 0);
+
+        shift_registered_outputs.push_back({outpt,{outpt_src, dd}});
       }
 
     }
   }
   return shift_registered_outputs;
-  }
+}
 
 vector<string> verilog_port_decls(CodegenOptions& options, UBuffer& buf) {
   vector<string> port_decls{"input clk", "input flush", "input rst_n"};
@@ -1144,7 +1121,8 @@ void generate_platonic_ubuffer(
     }
   }
 
-  int load_latency = map_find(buf.name, hwinfo.buffer_load_latencies);
+  //int load_latency = map_find(buf.name, hwinfo.buffer_load_latencies);
+  int load_latency = hwinfo.load_latency(buf.name);
   assert(load_latency >= 0);
   assert(load_latency <= 1);
 
@@ -1173,7 +1151,6 @@ void generate_platonic_ubuffer(
       string source_ram = "bank_" + str(b);
       string assign_str = load_latency == 0 ? " = " : " <= ";
       out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << assign_str << source_ram << "[addr" << counter << "];" << endl;
-      //out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[addr" << counter << "];" << endl;
     }
     counter ++;
 #if SIM
@@ -1955,7 +1932,8 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
   int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
   int read_latency =
     op->buffers_read().size() == 0 ? 0 :
-    map_find(pick(op->buffers_read()), hwinfo.buffer_load_latencies);
+    hwinfo.load_latency(pick(op->buffers_read()));
+    //map_find(pick(op->buffers_read()), hwinfo.buffer_load_latencies);
     cout << "Done Finding compute , op Latency : " << op_latency
         << ", read Latency: " << read_latency << endl;
 
@@ -2473,113 +2451,113 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
 }
 
-void generate_micro_op_controllers(CodegenOptions& options,
-    ModuleDef* def,
-    prog& prg,
-    schedule_info& hwinfo) {
-  auto c = def->getContext();
+//void generate_micro_op_controllers(CodegenOptions& options,
+    //ModuleDef* def,
+    //prog& prg,
+    //schedule_info& hwinfo) {
+  //auto c = def->getContext();
 
-  cout << "Buffer load latencies..." << endl;
-  for (auto bl : hwinfo.buffer_load_latencies) {
-    cout << tab(1) << bl.first << " -> " << bl.second << endl;
-  }
+  //cout << "Buffer load latencies..." << endl;
+  //for (auto bl : hwinfo.buffer_load_latencies) {
+    //cout << tab(1) << bl.first << " -> " << bl.second << endl;
+  //}
 
-  cout << "Buffer store latencies..." << endl;
-  for (auto bl : hwinfo.buffer_store_latencies) {
-    cout << tab(1) << bl.first << " -> " << bl.second << endl;
-  }
+  //cout << "Buffer store latencies..." << endl;
+  //for (auto bl : hwinfo.buffer_store_latencies) {
+    //cout << tab(1) << bl.first << " -> " << bl.second << endl;
+  //}
 
-  auto start_times = op_start_times(hwinfo, prg);
-  auto end_times = op_end_times(hwinfo, prg);
-  auto domains = op_start_times_domains(prg);
-  for (auto d : domains) {
-    cout << d.first << " -> " << str(d.second) << endl;
-  }
+  //auto start_times = op_start_times(hwinfo, prg);
+  //auto end_times = op_end_times(hwinfo, prg);
+  //auto domains = op_start_times_domains(prg);
+  //for (auto d : domains) {
+    //cout << d.first << " -> " << str(d.second) << endl;
+  //}
 
-  map<string, Wireable*> micro_op_enables;
-  cout << "Micro-op breakdown" << endl;
-  for (auto op : prg.all_ops()) {
-    auto start_time_aff = map_find(op, start_times);
-    auto domain = map_find("start_" + op->name, domains);
-    int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
-    cout << tab(1) << "--- " << op->name << endl;
-    cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
-    cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
-    cout << tab(2) << "Dom  : " << str(domain) << endl;
-    for (auto b : op->buffers_read()) {
-      int l = map_find(b, hwinfo.buffer_load_latencies);
-      auto cst_aff = constant_aff(start_time_aff, l);
-      cout << "cst_aff = " << str(cst_aff) << endl;
+  //map<string, Wireable*> micro_op_enables;
+  //cout << "Micro-op breakdown" << endl;
+  //for (auto op : prg.all_ops()) {
+    //auto start_time_aff = map_find(op, start_times);
+    //auto domain = map_find("start_" + op->name, domains);
+    //int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
+    //cout << tab(1) << "--- " << op->name << endl;
+    //cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
+    //cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
+    //cout << tab(2) << "Dom  : " << str(domain) << endl;
+    //for (auto b : op->buffers_read()) {
+      //int l = map_find(b, hwinfo.buffer_load_latencies);
+      //auto cst_aff = constant_aff(start_time_aff, l);
+      //cout << "cst_aff = " << str(cst_aff) << endl;
 
-      isl_aff* offset = sub(start_time_aff, cst_aff);
+      //isl_aff* offset = sub(start_time_aff, cst_aff);
 
-      auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
-        affine_controller(c, domain, offset));
-      auto end_controller = def->addInstance(
-          controller_name(op->name) + c->getUnique(),
-          affine_controller(c, domain, start_time_aff));
+      //auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
+        //affine_controller(c, domain, offset));
+      //auto end_controller = def->addInstance(
+          //controller_name(op->name) + c->getUnique(),
+          //affine_controller(c, domain, start_time_aff));
 
-      string rd_start = op->name + "_ISSUE_Read_" + b;
-      string rd_end = op->name + "_RCV_Read_" + b;
+      //string rd_start = op->name + "_ISSUE_Read_" + b;
+      //string rd_end = op->name + "_RCV_Read_" + b;
 
-      micro_op_enables[rd_start] = start_controller;
-      micro_op_enables[rd_end] = end_controller;
+      //micro_op_enables[rd_start] = start_controller;
+      //micro_op_enables[rd_end] = end_controller;
 
-      cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
-      cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
-    }
+      //cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
+      //cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
+    //}
 
 
-    string rd_start = op->name + "_ISSUE_exe";
-    string rd_end = op->name + "_RCV_exe";
+    //string rd_start = op->name + "_ISSUE_exe";
+    //string rd_end = op->name + "_RCV_exe";
 
-    isl_aff* offset = add(start_time_aff, compute_latency);
+    //isl_aff* offset = add(start_time_aff, compute_latency);
 
-    auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
-        affine_controller(c, domain, start_time_aff));
-    auto end_controller = def->addInstance(
-        controller_name(op->name) + c->getUnique(),
-        affine_controller(c, domain, offset));
+    //auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
+        //affine_controller(c, domain, start_time_aff));
+    //auto end_controller = def->addInstance(
+        //controller_name(op->name) + c->getUnique(),
+        //affine_controller(c, domain, offset));
 
-    micro_op_enables[rd_start] = start_controller;
-    micro_op_enables[rd_end] = end_controller;
+    //micro_op_enables[rd_start] = start_controller;
+    //micro_op_enables[rd_end] = end_controller;
 
-    if (op->func != "") {
-      cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
-      cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
-    } else {
-      cout << tab(2) << op->name << " (Issue) Exe   " << "NONE" << " at " << 0 << endl;
-      cout << tab(2) << op->name << " (Rcv)   Exe   " << "NONE" << " at " << compute_latency << endl;
-    }
+    //if (op->func != "") {
+      //cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
+      //cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
+    //} else {
+      //cout << tab(2) << op->name << " (Issue) Exe   " << "NONE" << " at " << 0 << endl;
+      //cout << tab(2) << op->name << " (Rcv)   Exe   " << "NONE" << " at " << compute_latency << endl;
+    //}
 
-    for (auto b : op->buffers_written()) {
-      int l = map_find(b, hwinfo.buffer_store_latencies);
-      auto start_write_aff = add(start_time_aff, compute_latency);
-      auto end_write_aff = add(start_time_aff, l + compute_latency);
+    //for (auto b : op->buffers_written()) {
+      //int l = map_find(b, hwinfo.buffer_store_latencies);
+      //auto start_write_aff = add(start_time_aff, compute_latency);
+      //auto end_write_aff = add(start_time_aff, l + compute_latency);
 
-      string rd_start = op->name + "_ISSUE_Write_" + b;
-      string rd_end = op->name + "_RCV_Write_" + b;
+      //string rd_start = op->name + "_ISSUE_Write_" + b;
+      //string rd_end = op->name + "_RCV_Write_" + b;
 
-      auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
-          affine_controller(c, domain, start_write_aff));
-      auto end_controller = def->addInstance(
-          controller_name(op->name) + c->getUnique(),
-          affine_controller(c, domain, end_write_aff));
-      micro_op_enables[rd_start] = start_controller;
-      micro_op_enables[rd_end] = end_controller;
+      //auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
+          //affine_controller(c, domain, start_write_aff));
+      //auto end_controller = def->addInstance(
+          //controller_name(op->name) + c->getUnique(),
+          //affine_controller(c, domain, end_write_aff));
+      //micro_op_enables[rd_start] = start_controller;
+      //micro_op_enables[rd_end] = end_controller;
 
-      cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
-      cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
-    }
-  }
+      //cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
+      //cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
+    //}
+  //}
 
-  cout << "Ops..." << endl;
-  for (auto op : micro_op_enables) {
-    cout << tab(1) << op.first << endl;
-    assert(op.second != nullptr);
-  }
-  //assert(false);
-}
+  //cout << "Ops..." << endl;
+  //for (auto op : micro_op_enables) {
+    //cout << tab(1) << op.first << endl;
+    //assert(op.second != nullptr);
+  //}
+  ////assert(false);
+//}
 
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -2611,7 +2589,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   }
 
   auto def = ub->newModuleDef();
-  //generate_micro_op_controllers(options, def, prg, hwinfo);
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
