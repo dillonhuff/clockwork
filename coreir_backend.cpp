@@ -988,10 +988,10 @@ void generate_platonic_ubuffer(
     print_cyclic_banks_selector(out, bank_factors, buf);
   }
 
-  map<string,pair<string,int>> shift_registered_outputs;
+  //map<string,pair<string,int>> shift_registered_outputs;
   //vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
 
-  //map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
 
   print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);

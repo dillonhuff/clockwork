@@ -16878,9 +16878,9 @@ void cgra_flow_tests() {
   auto test_programs =
     all_cgra_programs();
 
-  vector<prog> bram_test_programs{pointwise(), resnet(), camera_pipeline()};
-
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  //vector<prog> bram_test_programs{pointwise(), resnet(), camera_pipeline()};
+  //test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  
   test_platonic_codegen(test_programs);
 }
 
