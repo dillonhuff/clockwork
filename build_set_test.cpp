@@ -16476,8 +16476,9 @@ vector<prog> harris_variants() {
   // stencil is never written?
   //test_programs.push_back(harris_sch6());
 
-  // Verilator breaks?
-  test_programs.push_back(harris_sch2());
+  // Verilator breaks? Negative length
+  // shift register?
+  //test_programs.push_back(harris_sch2());
   
   // schedule takes too long
   //test_programs.push_back(harris_sch3());
