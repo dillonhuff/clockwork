@@ -2,7 +2,7 @@
 #include "lake_target.h"
 
 #ifdef COREIR
-#define SIM 0
+#define SIM 1
 #include "cwlib.h"
 #include "cgralib.h"
 std::ostream* verilog_collateral_file;
@@ -458,46 +458,39 @@ UBuffer latency_adjusted_buffer(
   UBuffer cpy = buf;
   cout << "Adjusted latencies" << endl;
   for (auto l : hwinfo.compute_unit_latencies) {
-      cout << tab(1) << l.first << " -> " << l.second << endl;
+    cout << tab(1) << l.first << " -> " << l.second << endl;
   }
   for (auto pt : buf.get_in_ports()) {
-      string op_name = domain_name(pick(get_maps(buf.access_map.at(pt))));
-      cout << "latency adjustment for op name = " << op_name << endl;
-      op* op = prg.find_op(op_name);
-      int write_start = 0;
-      cout << "bumpbump" << op->func << endl;
-      if (contains_key(op->func, hwinfo.compute_unit_latencies)) {
-          write_start = map_find(op->func, hwinfo.compute_unit_latencies);
-          cout << "bumpbumpbump " << write_start << endl;
+    string op_name = domain_name(pick(get_maps(buf.access_map.at(pt))));
+    cout << "latency adjustment for op name = " << op_name << endl;
+    op* op = prg.find_op(op_name);
+    int write_start = 0;
+    cout << "bumpbump" << op->func << endl;
+    if (contains_key(op->func, hwinfo.compute_unit_latencies)) {
+      write_start = map_find(op->func, hwinfo.compute_unit_latencies);
+      cout << "bumpbumpbump " << write_start << endl;
 
+    }
+    bool not_input_reader = false;
+    string non_in_buffer = "";
+    for (auto b : op->buffers_read()) {
+      if (!prg.is_input(b)) {
+        not_input_reader = true;
+        non_in_buffer = b;
+        break;
       }
-      //write_start += 1;
+    }
+    if (not_input_reader) {
+      write_start += map_find(non_in_buffer, hwinfo.buffer_load_latencies);
+    }
+
 
     isl_aff* adjusted =
       add(get_aff(buf.schedule.at(pt)), (int)write_start);
     cpy.schedule[pt] =
-      //to_umap(to_map(adjusted));
       its(to_umap(to_map(adjusted)),buf.domain.at(pt));
   }
-//  for (auto pt : buf.get_out_ports()) {
-//    int read_start = 0;
-//    isl_aff* adjusted =
-//      add(get_aff(buf.schedule.at(pt)), read_start);
-//    cpy.schedule[pt] =
-//      to_umap(to_map(adjusted));
-//  }
-  cout << "---- Original" << endl;
-  cout << buf << endl;
-  cout << "---- Latency adjusted" << endl;
-  cout << cpy << endl;
 
-  // Now: How do we search for good bankings?
-  //  1. The basic object is the map from times to locations written for each port
-  cout << "Timing maps..." << endl;
-  for (auto pt : cpy.get_all_ports()) {
-    auto timing_map = dot(inv(cpy.schedule[pt]), cpy.access_map[pt]);
-    cout << pt << ": " << str(timing_map) << endl;
-  }
   return cpy;
 }
 
@@ -910,13 +903,9 @@ void generate_fsms(
     int dims = num_in_dims(aff);
     isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
 
-    //string name = adjusted_buf.container_bundle(pt);
-    //string ctrl_vars = name + "_ctrl_vars";
     string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
     string module_name = adjusted_buf.name + "_" + adjusted_buf.container_bundle(pt) + "_fsm";
     generate_fsm(out, options, module_name, ctrl_vars, enable, aff, dom);
-    //pt, adjusted_buf, hwinfo);
-    //generate_fsm(out, options, pt, adjusted_buf, hwinfo);
     done_ctrl_vars.insert(ctrl_vars);
   }
 }
@@ -999,8 +988,11 @@ void generate_platonic_ubuffer(
     print_cyclic_banks_selector(out, bank_factors, buf);
   }
 
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+  map<string,pair<string,int>> shift_registered_outputs;
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+
+  //map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
+  //vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
 
   print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
   print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
@@ -1094,6 +1086,7 @@ void generate_platonic_ubuffer(
       out << tab(2) << "if(" << enable << ")begin" << endl;
       out << tab(3) << "if(" << ctrl_vars << "!=" << gen_ctrl_vars << ") begin" << endl;
       out << tab(4) << "$display(\"Different\");" << endl;
+      out << tab(4) << "$finish(-1);" << endl;
       out << tab(3) << "end" << endl;
       out << tab(2) << "end" << endl;
 #endif
@@ -1145,7 +1138,16 @@ void generate_platonic_ubuffer(
         counter ++;
     }
   }
-  out << tab(1) << "always @(*) begin" << endl;
+
+  int load_latency = map_find(buf.name, hwinfo.buffer_load_latencies);
+  assert(load_latency >= 0);
+  assert(load_latency <= 1);
+
+  if (load_latency == 0) {
+    out << tab(1) << "always @(*) begin" << endl;
+  } else {
+    out << tab(1) << "always @(posedge clk) begin" << endl;
+  }
   counter = 0;
   for (auto outpt : buf.get_out_ports()) {
     if (done_outpt.find(outpt) == done_outpt.end()) {
@@ -1160,19 +1162,20 @@ void generate_platonic_ubuffer(
     out << tab(2) << "end" << endl;
 #endif
     out << tab(2) << "if (" << bundle_ren << "_fsm_out) begin" << endl;
-    //out << tab(2) << "if (" << bundle_ren << ") begin" << endl;
 
-      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
-      for (int b = 0; b < num_banks; b++) {
-        string source_ram = "bank_" + str(b);
-        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[addr" << counter << "];" << endl;
-      }
-      counter ++;
+    out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
+    for (int b = 0; b < num_banks; b++) {
+      string source_ram = "bank_" + str(b);
+      string assign_str = load_latency == 0 ? " = " : " <= ";
+      out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << assign_str << source_ram << "[addr" << counter << "];" << endl;
+      //out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << " = " << source_ram << "[addr" << counter << "];" << endl;
+    }
+    counter ++;
 #if SIM
-      out << tab(4) << "default: $finish(-1);" << endl;
+    out << tab(4) << "default: $finish(-1);" << endl;
 #endif
-      out << tab(3) << "endcase" << endl;
-      out << tab(2) << "end" << endl;
+    out << tab(3) << "endcase" << endl;
+    out << tab(2) << "end" << endl;
     }
   }
 
