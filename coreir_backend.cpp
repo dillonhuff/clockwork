@@ -747,6 +747,16 @@ vector<int> max_offsets_by_dimension(UBuffer& buf) {
   return min_offsets;
 }
 
+void generate_fsm(
+        ostream& out,
+    CodegenOptions& options,
+    const std::string& pt,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo
+        ) {
+}
+
 void generate_fsms(
         ostream& out,
     CodegenOptions& options,
@@ -757,7 +767,8 @@ void generate_fsms(
 {
       unordered_set<string> done_ctrl_vars;
 
-    for(auto pt: buf.get_all_ports()){
+    for(auto pt : buf.get_all_ports()){
+      generate_fsm(out, options, pt, prg, buf, hwinfo);
       string name = buf.container_bundle(pt);
       string ctrl_vars = name + "_ctrl_vars";
       string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
