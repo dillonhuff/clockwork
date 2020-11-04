@@ -435,7 +435,7 @@ vector<int> print_cyclic_banks(std::ostream& out, const vector<int>& bank_factor
   return capacities;
 }
 
-UBuffer latency_adjusted_buffer(
+UBuffer write_latency_adjusted_buffer(
     CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
@@ -717,7 +717,7 @@ void generate_fsms(
     )
 {
   unordered_set<string> done_ctrl_vars;
-  auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
+  auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
   for(auto pt : buf.get_all_ports()){
     string name = buf.container_bundle(pt);
@@ -783,6 +783,33 @@ unordered_set<string> instantiate_shift_regs(
   return done_outpt;
 }
 
+void instantiate_control_fsms(ostream& out, UBuffer& buf) {
+  unordered_set<string> done_ctrl_vars;
+  for(auto pt : buf.get_all_ports())
+  {
+    string name = buf.container_bundle(pt);
+    string ctrl_vars = name + "_ctrl_vars";
+    string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
+    if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
+    {
+      continue;
+    }
+    done_ctrl_vars.insert(ctrl_vars);
+    auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
+    int dims = num_in_dims(aff);
+
+    out << tab(1) << "logic [15:0]" << ctrl_vars << "_fsm_out[" << dims -1 << ":0];" << endl;
+    out << tab(1) << "logic " << enable << "_fsm_out;" << endl;
+
+    out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm " <<
+      buf.name << "_" <<  buf.container_bundle(pt) << "_fsm_inst "
+      << "(.clk(clk), .flush(flush), .rst_n(rst_n), ." << ctrl_vars << "( " + ctrl_vars << "_fsm_out), ." << enable << "("
+      << enable << "_fsm_out));" << endl;
+
+
+  }
+}
+
 void generate_platonic_ubuffer(
     CodegenOptions& options,
     prog& prg,
@@ -834,32 +861,36 @@ void generate_platonic_ubuffer(
   out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
   out << endl;
 
+  auto done_outpt =
+    instantiate_shift_regs(out, buf, shift_registered_outputs ,shift_registered_outputs_to_outputs);
+
   out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
 
-  unordered_set<string> done_ctrl_vars;
-  for(auto pt: buf.get_all_ports())
-  {
-      string name = buf.container_bundle(pt);
-      string ctrl_vars = name + "_ctrl_vars";
-      string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
-      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
-      {
-          continue;
-      }
-      done_ctrl_vars.insert(ctrl_vars);
-      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
-      int dims = num_in_dims(aff);
+  instantiate_control_fsms(out, buf);
+  //unordered_set<string> done_ctrl_vars;
+  //for(auto pt : buf.get_all_ports())
+  //{
+      //string name = buf.container_bundle(pt);
+      //string ctrl_vars = name + "_ctrl_vars";
+      //string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
+      //if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
+      //{
+          //continue;
+      //}
+      //done_ctrl_vars.insert(ctrl_vars);
+      //auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
+      //int dims = num_in_dims(aff);
 
-      out << tab(1) << "logic [15:0]" << ctrl_vars << "_fsm_out[" << dims -1 << ":0];" << endl;
-     out << tab(1) << "logic " << enable << "_fsm_out;" << endl;
+      //out << tab(1) << "logic [15:0]" << ctrl_vars << "_fsm_out[" << dims -1 << ":0];" << endl;
+     //out << tab(1) << "logic " << enable << "_fsm_out;" << endl;
 
-      out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm " <<
-      buf.name << "_" <<  buf.container_bundle(pt) << "_fsm_inst "
-      << "(.clk(clk), .flush(flush), .rst_n(rst_n), ." << ctrl_vars << "( " + ctrl_vars << "_fsm_out), ." << enable << "("
-      << enable << "_fsm_out));" << endl;
+      //out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm " <<
+      //buf.name << "_" <<  buf.container_bundle(pt) << "_fsm_inst "
+      //<< "(.clk(clk), .flush(flush), .rst_n(rst_n), ." << ctrl_vars << "( " + ctrl_vars << "_fsm_out), ." << enable << "("
+      //<< enable << "_fsm_out));" << endl;
 
 
-  }
+  //}
 
   bank bnk = buf.compute_bank_info();
   vector<int> capacities;
@@ -892,11 +923,11 @@ void generate_platonic_ubuffer(
 
   out << endl;
 
-  auto done_outpt = instantiate_shift_regs(
-    out, buf, shift_registered_outputs ,shift_registered_outputs_to_outputs);
-
+  int store_latency = hwinfo.store_latency(buf.name);
+  assert(store_latency == 1);
   out << tab(1) << "always @(posedge clk) begin" << endl;
-  done_ctrl_vars.clear();
+  std::set<string> done_ctrl_vars;
+  //done_ctrl_vars.clear();
   for(auto pt: buf.get_all_ports())
   {
       string name = buf.container_bundle(pt);
@@ -935,10 +966,6 @@ void generate_platonic_ubuffer(
     out << tab(2) << "end" << endl;
 #endif
     out << tab(2) << "if (" << bundle_wen << "_fsm_out) begin" << endl;
-    //out << tab(2) << "if (" << bundle_wen << ") begin" << endl;
-
-
-
     out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
     for (int b = 0; b < num_banks; b++) {
       string source_ram = "bank_" + str(b);
@@ -968,7 +995,6 @@ void generate_platonic_ubuffer(
     }
   }
 
-  //int load_latency = map_find(buf.name, hwinfo.buffer_load_latencies);
   int load_latency = hwinfo.load_latency(buf.name);
   assert(load_latency >= 0);
   assert(load_latency <= 1);
