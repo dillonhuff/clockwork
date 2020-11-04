@@ -13219,8 +13219,8 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem() {
   vector<prog> test_apps;
-  test_apps.push_back(resnet());
   test_apps.push_back(conv_3_3());
+  test_apps.push_back(resnet());
   //test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());

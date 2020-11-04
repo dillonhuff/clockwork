@@ -804,6 +804,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         UBuffer buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
 
     vector<ConfigMap> ret;
+    cout << "Generate addr configuration for op: " << op_name << endl;
     for (auto map: get_maps(tmp)) {
         cout << "access map: " << str(map) << endl;
 
@@ -871,19 +872,26 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
                 vector<int> mux_index;
                 vector<int> addr_index;
                 int bank_dim_id = buf.get_consumer_bank_dim_id();
-                assert(bank_dim_id == num_out_dims(map) - 2);
+                //assert(bank_dim_id == num_out_dims(map) - 2);
                 cout << "Auto Select bank id: " << bank_dim_id << "Hardcode: " << num_out_dims(map) - 2 << endl;
                 for (int i = num_out_dims(map)-1; i >= 0; i--) {
                     //FIXME: this is hardcoded
                     if (i == bank_dim_id) {
                         mux_index.push_back(i);
                     } else {
-                        addr_index.push_back(i);
+                        if ((i > bank_dim_id) && (project_dim != -1)) {
+                          addr_index.push_back(i-1);
+                        } else {
+                          addr_index.push_back(i);
+                        }
                     }
                 }
 
                 //rewrite the address gen
-                reduce_map = linear_address_map_with_index(range(map), addr_index);
+                reduce_map = linear_address_map_with_index(range_per_bank, addr_index);
+                cout << "Reduce map after mux insertion: " << str(reduce_map) << endl;
+                cout << "Range per bank: " << str(range_per_bank) << endl;
+                cout << "Range origin: " << str(range(map)) << endl;
 
                 auto mux_reduce_map = linear_address_map_with_index(range(map), mux_index);
                 auto mux_addr_expr = dot(to_map(bmap), mux_reduce_map);
@@ -920,6 +928,8 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
               project_access_map = to_map(bmap);
             }
 
+            cout <<tab(1) << "Reduce map:" << str(reduce_map) << endl
+                << tab(1) << "project access map" << str(project_access_map) << endl;
             auto addr_expr_map = dot(project_access_map, reduce_map);
             cout << str(reduce_map) << endl << str(addr_expr_map) << endl;
             auto addr = get_aff(addr_expr_map);
@@ -962,6 +972,11 @@ void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string dom
 }
 
 Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer) {
+    cout << "Generating ubuf argument! " << endl << endl;
+    for (auto it : rewrite_buffer) {
+        cout << "\t\tBuf name: " << it.first << endl
+            << it.second << endl;
+    }
     auto hardware_schedule = global_schedule_from_buffers(rewrite_buffer);
     auto glb_access_map = global_access_map_from_buffers(rewrite_buffer);
 
@@ -980,15 +995,19 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
         op2sched[op_name] = m;
         for ( auto it: rewrite_buffer) {
             auto buf = it.second;
-            auto out_acc_map = buf.producer_map();
-            if (domain_name(out_acc_map) == op_name) {
-                op2write_buf[op_name] = it.first;
-                map_insert(op2write_map, op_name, out_acc_map);
+            auto out_acc_umap = buf.producer_map();
+            for (auto out_acc_map: get_maps(out_acc_umap)) {
+                if (domain_name(out_acc_map) == op_name) {
+                    op2write_buf[op_name] = it.first;
+                    map_insert(op2write_map, op_name, to_umap(out_acc_map));
+                }
             }
-            auto in_acc_map = buf.consumer_map();
-            if (domain_name(in_acc_map) == op_name) {
-                op2read_buf[op_name] = it.first;
-                map_insert(op2read_map, op_name, in_acc_map);
+            auto in_acc_umap = buf.consumer_map();
+            for (auto in_acc_map: get_maps(in_acc_umap)) {
+                if (domain_name(in_acc_map) == op_name) {
+                    op2read_buf[op_name] = it.first;
+                    map_insert(op2read_map, op_name, to_umap(in_acc_map));
+                }
             }
         }
     }
@@ -1326,20 +1345,24 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       contain_memory_tile = true;
 
       string ub_ins_name = "ub_"+bk.name;
+      map<string, UBuffer> vectorized_buf;
+      vectorized_buf.insert(
+              {bk.name + "_ubuf", rewrite_buffer.at(bk.name + "_ubuf")});
 
       //vectorization pass for lake tile
       if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
         //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
+        cout << "vectorization bk name: " << bk.name << endl;
         buffer_vectorization(options.iis, bk.name + "_ubuf",
                 num_dims()-1,    //indicate the inner most dimension
                 options.mem_tile.fetch_width,
-                rewrite_buffer);
-        config_file = generate_ubuf_args(options, rewrite_buffer);
+                vectorized_buf);
+        config_file = generate_ubuf_args(options, vectorized_buf);
       }
 
       //Generate SMT stream if needed
       if (options.emit_smt_stream) {
-        generate_lake_stream(options, rewrite_buffer, global_schedule_from_buffers(rewrite_buffer));
+        generate_lake_stream(options, vectorized_buf, global_schedule_from_buffers(vectorized_buf));
       }
 
       //create the tile instance
@@ -3751,7 +3774,7 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
       cout << "bank func = " << bank_func << endl;
       auto bank_map = isl_map_read_from_str(ctx, bank_func.c_str());
       //cout << str(bank_map) <<endl;
-      assert(banking_scheme_is_legal(bank_map, *this));
+      //assert(banking_scheme_is_legal(bank_map, *this));
 
       //auto range2bank = dot(to_umap(global_range()), to_umap(bank_map));
       //get a map from data range to bankID
