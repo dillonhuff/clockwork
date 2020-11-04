@@ -751,17 +751,17 @@ void generate_fsm(
         ostream& out,
     CodegenOptions& options,
     const std::string& pt,
-    prog& prg,
-    UBuffer& buf,
+    //prog& prg,
+    UBuffer& adjusted_buf,
     schedule_info& hwinfo
     ) {
 
-  string name = buf.container_bundle(pt);
+  string name = adjusted_buf.container_bundle(pt);
   string ctrl_vars = name + "_ctrl_vars";
   string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
-  auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
+  //auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
   cout << "adjusted buffer " << adjusted_buf << endl;
-  cout << "actual buffer " << buf << endl;
+  //cout << "actual buffer " << buf << endl;
   //auto adjusted_buf = buf;
   assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
   auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
@@ -867,6 +867,7 @@ void generate_fsms(
     )
 {
   unordered_set<string> done_ctrl_vars;
+  auto adjusted_buf = latency_adjusted_buffer( options, prg, buf, hwinfo);
 
   for(auto pt : buf.get_all_ports()){
     string name = buf.container_bundle(pt);
@@ -874,7 +875,8 @@ void generate_fsms(
     if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end()) {
       continue;
     }
-    generate_fsm(out, options, pt, prg, buf, hwinfo);
+    //generate_fsm(out, options, pt, prg, buf, hwinfo);
+    generate_fsm(out, options, pt, adjusted_buf, hwinfo);
     done_ctrl_vars.insert(ctrl_vars);
   }
 }
