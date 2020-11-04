@@ -16029,6 +16029,9 @@ int buffer_store_latency(CodegenOptions& options) {
     return 0;
   }
 
+  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
+    return 1;
+  }
   assert(false);
 }
 
@@ -16043,6 +16046,10 @@ int buffer_load_latency(CodegenOptions& options) {
   }
 
   if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+    return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
     return 1;
   }
   assert(false);
