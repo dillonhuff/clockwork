@@ -578,6 +578,9 @@ void print_shift_registers(
     schedule_info& hwinfo) {
   for (auto sr : shift_registered_outputs) {
     int delay = sr.second.second;
+
+    assert(delay >= 0);
+
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 

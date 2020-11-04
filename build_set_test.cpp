@@ -16477,7 +16477,7 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch6());
 
   // Verilator breaks?
-  //test_programs.push_back(harris_sch2());
+  test_programs.push_back(harris_sch2());
   
   // schedule takes too long
   //test_programs.push_back(harris_sch3());
