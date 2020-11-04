@@ -810,21 +810,21 @@ void instantiate_control_fsms(ostream& out, UBuffer& buf) {
   }
 }
 
-void generate_platonic_ubuffer(
+void instantiate_banks(
+    ostream& out,
     CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
-    schedule_info& hwinfo) {
-  ostream& out = *verilog_collateral_file;
-
-  prg.pretty_print();
+    schedule_info& hwinfo,
+    const std::unordered_set<string>& done_outpt) {
 
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
   bool has_embarassing_partition = embarassing_banking.has_value();
-  //bool has_embarassing_partition = false;
 
+  bank bnk = buf.compute_bank_info();
+  vector<int> capacities;
   int num_banks = card(bank_factors);
   vector<int> extents;
   map<int, int> partitioned_dimension_extents;
@@ -834,72 +834,17 @@ void generate_platonic_ubuffer(
     for (auto d : partition_dims) {
       partitioned_dimension_extents[d] = extents.at(d);
     }
-
-    print_embarassing_banks_selector(out, partitioned_dimension_extents, buf);
     num_banks = 1;
     for (auto ent : partitioned_dimension_extents) {
       num_banks *= ent.second;
     }
-  } else {
-    print_cyclic_banks_selector(out, bank_factors, buf);
-  }
-
-  //map<string,pair<string,int>> shift_registered_outputs;
-  //vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
-
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
-
-  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
-  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
-
-  // print the fsm modules that get the ctrl_variables
-  generate_fsms(out,options,prg,buf,hwinfo);
-
-  vector<string> port_decls = verilog_port_decls(options, buf);
-
-  out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
-  out << endl;
-
-  auto done_outpt =
-    instantiate_shift_regs(out, buf, shift_registered_outputs ,shift_registered_outputs_to_outputs);
-
-  out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
-
-  instantiate_control_fsms(out, buf);
-  //unordered_set<string> done_ctrl_vars;
-  //for(auto pt : buf.get_all_ports())
-  //{
-      //string name = buf.container_bundle(pt);
-      //string ctrl_vars = name + "_ctrl_vars";
-      //string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
-      //if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
-      //{
-          //continue;
-      //}
-      //done_ctrl_vars.insert(ctrl_vars);
-      //auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
-      //int dims = num_in_dims(aff);
-
-      //out << tab(1) << "logic [15:0]" << ctrl_vars << "_fsm_out[" << dims -1 << ":0];" << endl;
-     //out << tab(1) << "logic " << enable << "_fsm_out;" << endl;
-
-      //out << tab(1) << buf.name << "_" <<  buf.container_bundle(pt) << "_fsm " <<
-      //buf.name << "_" <<  buf.container_bundle(pt) << "_fsm_inst "
-      //<< "(.clk(clk), .flush(flush), .rst_n(rst_n), ." << ctrl_vars << "( " + ctrl_vars << "_fsm_out), ." << enable << "("
-      //<< enable << "_fsm_out));" << endl;
-
-
-  //}
-
-  bank bnk = buf.compute_bank_info();
-  vector<int> capacities;
-  if (has_embarassing_partition) {
-    print_embarassing_banks(out, partitioned_dimension_extents, buf);
     capacities = extents;
+    print_embarassing_banks(out, partitioned_dimension_extents, buf);
   } else {
     capacities = print_cyclic_banks(out, bank_factors, bnk);
   }
+
+
 
   for (auto in : buf.get_all_ports()) {
     auto comps_raw =
@@ -927,7 +872,6 @@ void generate_platonic_ubuffer(
   assert(store_latency == 1);
   out << tab(1) << "always @(posedge clk) begin" << endl;
   std::set<string> done_ctrl_vars;
-  //done_ctrl_vars.clear();
   for(auto pt: buf.get_all_ports())
   {
       string name = buf.container_bundle(pt);
@@ -1037,6 +981,63 @@ void generate_platonic_ubuffer(
   out << tab(1) << "end" << endl;
 
   out << endl;
+}
+
+void generate_platonic_ubuffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+  ostream& out = *verilog_collateral_file;
+
+  prg.pretty_print();
+
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf, hwinfo);
+  bool has_embarassing_partition = embarassing_banking.has_value();
+
+  int num_banks = card(bank_factors);
+  vector<int> extents;
+  map<int, int> partitioned_dimension_extents;
+  if (has_embarassing_partition)  {
+    std::set<int> partition_dims = embarassing_banking.get_value();
+    extents = extents_by_dimension(buf);
+    for (auto d : partition_dims) {
+      partitioned_dimension_extents[d] = extents.at(d);
+    }
+
+    print_embarassing_banks_selector(out, partitioned_dimension_extents, buf);
+    num_banks = 1;
+    for (auto ent : partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+  } else {
+    print_cyclic_banks_selector(out, bank_factors, buf);
+  }
+
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+
+  print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
+  print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
+
+  // print the fsm modules that get the ctrl_variables
+  generate_fsms(out, options, prg, buf, hwinfo);
+
+  vector<string> port_decls = verilog_port_decls(options, buf);
+
+  out << "module " << buf.name << "_ub" << "(" << sep_list(port_decls, "\n\t", "", ",\n\t") << ");" << endl;
+  out << endl;
+
+  auto done_outpt =
+    instantiate_shift_regs(out, buf, shift_registered_outputs ,shift_registered_outputs_to_outputs);
+
+  out << tab(1) << "// Storage capacity pre-banking: " << total_capacity(buf) << endl;
+
+  instantiate_control_fsms(out, buf);
+
+  instantiate_banks(out, options, prg, buf, hwinfo, done_outpt);
 
   out << "endmodule" << endl << endl;
 }
