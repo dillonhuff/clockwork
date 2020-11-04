@@ -3802,3 +3802,74 @@ umap* to_umap(const vector<isl_aff*>& hs) {
   return schedmap;
 }
 
+
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << "aff: " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    flat = add(flat, flt);
+    cout << "flat: " << str(flat) << endl;
+  }
+
+  return flat;
+}
+
+isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << "aff: " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(isl_aff_floor(div(sub(aff, mins.at(d)), bank_factors.at(d))), length);
+    //isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    flat = add(flat, flt);
+    cout << "flat: " << str(flat) << endl;
+  }
+
+  return flat;
+  //return isl_aff_floor(div(flat, 2));
+}
+

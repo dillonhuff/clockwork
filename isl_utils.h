@@ -681,3 +681,7 @@ isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str);
 isl_val* constant(isl_aff* a);
 
 umap* to_umap(const vector<isl_aff*>& hs);
+
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom);
+
+isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom);
