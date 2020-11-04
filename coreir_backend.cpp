@@ -608,24 +608,6 @@ void generate_fsm(
     isl_aff* aff,
     isl_set* dom) {
 
-    //const std::string& pt,
-    ////prog& prg,
-    //UBuffer& adjusted_buf,
-    //schedule_info& hwinfo) {
-
-  //string name = adjusted_buf.container_bundle(pt);
-  //string ctrl_vars = name + "_ctrl_vars";
-  //string enable = (name.find("write") != string::npos) ? name + "_wen" : name + "_ren";
-  //string module_name = adjusted_buf.name + "_" + adjusted_buf.container_bundle(pt) + "_fsm";
-
-  //assert(get_maps(adjusted_buf.schedule.at(pt)).size()==1);
-
-  //auto aff = get_aff(get_maps(adjusted_buf.schedule.at(pt))[0]);
-  //int dims = num_in_dims(aff);
-  //isl_set * dom = domain(get_maps(adjusted_buf.schedule.at(pt))[0]);
-  //out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
-
-  //out << "//" << str(get_maps(adjusted_buf.schedule.at(pt))[0]) << endl;
   out << "// " << str(aff) << endl;
   cout << to_int(const_coeff(aff)) << endl;
   int dims = num_in_dims(aff);
@@ -634,7 +616,6 @@ void generate_fsm(
     cout << str(get_coeff(aff,i)) << endl;
   }
 
-  //out << "module " << adjusted_buf.name << "_" <<  adjusted_buf.container_bundle(pt) << "_fsm(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
   out << "module " << module_name << "(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
   out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
   out << tab(1) << "logic on;" << endl;
@@ -646,7 +627,6 @@ void generate_fsm(
   for(int i =1; i< dims; i ++)
   {
     condition += " && " + ctrl_vars + brackets(str(i)) + "<=" + str(get_dim_max(dom,i));
-    //condition += " && " + ctrl_vars + brackets(str(i)) + ">=0";
   }
   condition += ");";
   out << tab(1) << condition << endl;
