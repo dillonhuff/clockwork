@@ -464,25 +464,30 @@ UBuffer latency_adjusted_buffer(
     string op_name = domain_name(pick(get_maps(buf.access_map.at(pt))));
     cout << "latency adjustment for op name = " << op_name << endl;
     op* op = prg.find_op(op_name);
-    int write_start = 0;
-    cout << "bumpbump" << op->func << endl;
-    if (contains_key(op->func, hwinfo.compute_unit_latencies)) {
-      write_start = map_find(op->func, hwinfo.compute_unit_latencies);
-      cout << "bumpbumpbump " << write_start << endl;
+    int write_start = hwinfo.compute_latency(op);
+    //int write_start = 0;
+    //cout << "bumpbump" << op->func << endl;
+    //if (contains_key(op->func, hwinfo.compute_unit_latencies)) {
+      //write_start = map_find(op->func, hwinfo.compute_unit_latencies);
+      //cout << "bumpbumpbump " << write_start << endl;
 
+    //}
+
+    if (op->buffers_read().size() > 0) {
+      write_start += hwinfo.load_latency(pick(op->buffers_read()));
     }
-    bool not_input_reader = false;
-    string non_in_buffer = "";
-    for (auto b : op->buffers_read()) {
-      if (!prg.is_input(b)) {
-        not_input_reader = true;
-        non_in_buffer = b;
-        break;
-      }
-    }
-    if (not_input_reader) {
-      write_start += map_find(non_in_buffer, hwinfo.buffer_load_latencies);
-    }
+    //bool not_input_reader = false;
+    //string non_in_buffer = "";
+    //for (auto b : op->buffers_read()) {
+      //if (!prg.is_input(b)) {
+        //not_input_reader = true;
+        //non_in_buffer = b;
+        //break;
+      //}
+    //}
+    //if (not_input_reader) {
+      //write_start += map_find(non_in_buffer, hwinfo.buffer_load_latencies);
+    //}
 
 
     isl_aff* adjusted =
