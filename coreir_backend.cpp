@@ -584,31 +584,37 @@ void print_shift_registers(
     }
     assert(delay >= 0);
 
+    delay = delay - 1;
+
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
-    int addrwidth = ceil(log2(delay + 1));
+    if (delay >= 0) {
+      int addrwidth = ceil(log2(delay + 1));
 
-    out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
+      out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
-    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
-    out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
+      out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
+      out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
 
-    out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-    out << tab(2) << "if (~rst_n) begin" << endl;
-    out << tab(3) << "read_addr <= 0;" << endl;
-    out << tab(3) << "write_addr <= " << delay << ";" << endl;
-    out << tab(2) << "end else begin" << endl;
-    out << tab(3) << "storage[write_addr] <= in;" << endl;
-    out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
-    out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
+      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+      out << tab(2) << "if (~rst_n) begin" << endl;
+      out << tab(3) << "read_addr <= 0;" << endl;
+      out << tab(3) << "write_addr <= " << delay << ";" << endl;
+      out << tab(2) << "end else begin" << endl;
+      out << tab(3) << "storage[write_addr] <= in;" << endl;
+      out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
+      out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
 
-    out << tab(2) << "end" << endl << endl;
-    out << tab(1) << "end" << endl << endl;
+      out << tab(2) << "end" << endl << endl;
+      out << tab(1) << "end" << endl << endl;
 
-    out << tab(1) << "always @(*) begin" << endl;
-    out << tab(2) << "out = storage[read_addr];" << endl;
-    out << tab(1) << "end" << endl << endl;
+      out << tab(1) << "always @(*) begin" << endl;
+      out << tab(2) << "out = storage[read_addr];" << endl;
+      out << tab(1) << "end" << endl << endl;
+    } else {
+      out << tab(1) << "assign out = in;" << endl;
+    }
 
     out << "endmodule" << endl << endl;
   }
@@ -684,7 +690,8 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
         auto time_to_read_src = dot(inv(sc), (reads_src));
         auto time_to_read = dot(inv(sc), (reads));
 
-        int dd = to_int(const_coeff(diff))-1;
+        //int dd = to_int(const_coeff(diff))-1;
+        int dd = to_int(const_coeff(diff));
         
         assert(dd >= 0);
         
