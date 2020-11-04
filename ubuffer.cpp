@@ -2444,10 +2444,33 @@ void generate_lake_stream(CodegenOptions & options,
   string dir = options.dir + "lake_stream/";
   cout << "Generating lake smt stream!" << endl;
   cmd("mkdir -p " + dir);
-  emit_lake_address_stream2file(buffers_opt, dir);
+  emit_lake_address_stream2file(options, buffers_opt, dir);
 }
 
-void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir) {
+pair<int, int> get_stream_vector_size(CodegenOptions &options, string buf_name) {
+    auto mem_tile_collateral = options.mem_tile;
+    if (contains(buf_name, "agg")) {
+        int in_width = mem_tile_collateral.in_port_width.at("agg")
+            * mem_tile_collateral.bank_num.at("agg");
+        int out_width = mem_tile_collateral.out_port_width.at("agg");
+        return {in_width, out_width};
+    } else if (contains(buf_name, "sram")) {
+        int in_width = mem_tile_collateral.in_port_width.at("sram");
+        int out_width = mem_tile_collateral.out_port_width.at("sram");
+        return {in_width, out_width};
+    } else if (contains(buf_name, "tb")) {
+        int in_width = mem_tile_collateral.in_port_width.at("tb");
+        int out_width = mem_tile_collateral.out_port_width.at("tb")
+            * mem_tile_collateral.bank_num.at("tb");
+        return {in_width, out_width};
+    } else {
+        cout << "Buffer name is not recognized!" << endl;
+        assert(false);
+    }
+}
+
+void emit_lake_address_stream2file(CodegenOptions &options,
+        map<string, UBuffer> buffers_opt, string dir) {
   map<string, pair<lakeStream, lakeStream> > top_stream;
   for (auto it: buffers_opt) {
     string buf_name = it.first;
@@ -2459,7 +2482,8 @@ void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir)
     vector<int> sram_write = buf.write_cycle;
     auto read_addr = buf.read_addr;
     auto write_addr = buf.write_addr;
-    lakeStream stream_data = emit_top_address_stream(dir + "/" + buf_name , sram_read, sram_write, read_addr, write_addr);
+    auto IO_width = get_stream_vector_size(options, buf_name);
+    lakeStream stream_data = emit_top_address_stream(dir + "/" + buf_name , sram_read, sram_write, read_addr, write_addr, IO_width.first, IO_width.second);
     if (contains(buf_name, "agg")) {
         string tile_name = take_until_str(buf_name, "_agg");
         top_stream[tile_name].first = stream_data;
@@ -2475,16 +2499,15 @@ void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir)
   }
 }
 
-lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
-        vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
+lakeStream emit_top_address_stream(string fname,
+        vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr,
+        int input_width, int output_width) {
   ofstream out(fname+"_SMT.csv");
   cout << "fname: " << fname << endl;
 
   lakeStream ret;
 
-  //TODO: put this into a tile constraint file
-  int input_width = pick(write_addr).size();
-  int output_width = pick(read_addr).size();
   ret.in_width = input_width;
   ret.out_width = output_width;
 

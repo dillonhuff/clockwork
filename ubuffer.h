@@ -2143,9 +2143,9 @@ void lattice_schedule_buf(UBuffer& buffer, umap* opt_sched);
 void generate_lake_stream(CodegenOptions & options,
         map<string, UBuffer>& buffers_opt,
         umap* hardware_schedule);
-void emit_lake_address_stream2file(map<string, UBuffer> buffers_opt, string dir);
+void emit_lake_address_stream2file(CodegenOptions& options, map<string, UBuffer> buffers_opt, string dir);
 lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
-        vector<vector<int> > read_addr, vector<vector<int> > write_addr);
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr, int input_width, int output_width);
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
