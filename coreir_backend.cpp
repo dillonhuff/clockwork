@@ -2111,40 +2111,6 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   return controller;
 }
 
-//CoreIR::Module* create_prog_declaration(CodegenOptions& options,
-    //map<string, UBuffer>& buffers,
-    //prog& prg,
-    //umap* schedmap,
-    //CoreIR::Context* context) {
-  //auto ns = context->getNamespace("global");
-  //vector<pair<string, CoreIR::Type*> >
-    //ub_field{{"clk", context->Named("coreir.clkIn")}, {"rst_n", context->BitIn()}};
-  //ub_field.push_back({"rst_n", context->BitIn()});
-  //ub_field.push_back({"flush", context->BitIn()});
-
-  //for (auto eb : edge_buffers(buffers, prg)) {
-    //string out_rep = eb.first;
-    //string out_bundle = eb.second;
-
-    //UBuffer out_buf = map_find(out_rep, buffers);
-
-    //int pixel_width = out_buf.port_widths;
-    //int pix_per_burst =
-      //out_buf.lanes_in_bundle(out_bundle);
-
-    //if (prg.is_input(out_rep)) {
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
-    //} else {
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
-    //}
-  //}
-
-  //CoreIR::RecordType* utp = context->Record(ub_field);
-  //auto ub = ns->newModuleDecl(prg.name, utp);
-  //return ub;
-//}
 
 CoreIR::Module* generate_dual_port_addrgen_buf(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
 
@@ -2450,114 +2416,6 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   //assert(false);
 
 }
-
-//void generate_micro_op_controllers(CodegenOptions& options,
-    //ModuleDef* def,
-    //prog& prg,
-    //schedule_info& hwinfo) {
-  //auto c = def->getContext();
-
-  //cout << "Buffer load latencies..." << endl;
-  //for (auto bl : hwinfo.buffer_load_latencies) {
-    //cout << tab(1) << bl.first << " -> " << bl.second << endl;
-  //}
-
-  //cout << "Buffer store latencies..." << endl;
-  //for (auto bl : hwinfo.buffer_store_latencies) {
-    //cout << tab(1) << bl.first << " -> " << bl.second << endl;
-  //}
-
-  //auto start_times = op_start_times(hwinfo, prg);
-  //auto end_times = op_end_times(hwinfo, prg);
-  //auto domains = op_start_times_domains(prg);
-  //for (auto d : domains) {
-    //cout << d.first << " -> " << str(d.second) << endl;
-  //}
-
-  //map<string, Wireable*> micro_op_enables;
-  //cout << "Micro-op breakdown" << endl;
-  //for (auto op : prg.all_ops()) {
-    //auto start_time_aff = map_find(op, start_times);
-    //auto domain = map_find("start_" + op->name, domains);
-    //int compute_latency = op->func == "" ? 0 : map_find(op->func, hwinfo.compute_unit_latencies);
-    //cout << tab(1) << "--- " << op->name << endl;
-    //cout << tab(2) << "Start: " << str(map_find(op, start_times)) << endl;
-    //cout << tab(2) << "End  : " << str(map_find(op, end_times)) << endl;
-    //cout << tab(2) << "Dom  : " << str(domain) << endl;
-    //for (auto b : op->buffers_read()) {
-      //int l = map_find(b, hwinfo.buffer_load_latencies);
-      //auto cst_aff = constant_aff(start_time_aff, l);
-      //cout << "cst_aff = " << str(cst_aff) << endl;
-
-      //isl_aff* offset = sub(start_time_aff, cst_aff);
-
-      //auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
-        //affine_controller(c, domain, offset));
-      //auto end_controller = def->addInstance(
-          //controller_name(op->name) + c->getUnique(),
-          //affine_controller(c, domain, start_time_aff));
-
-      //string rd_start = op->name + "_ISSUE_Read_" + b;
-      //string rd_end = op->name + "_RCV_Read_" + b;
-
-      //micro_op_enables[rd_start] = start_controller;
-      //micro_op_enables[rd_end] = end_controller;
-
-      //cout << tab(2) << op->name << " (Issue) Read  " << b << " at " << -1*l << endl;
-      //cout << tab(2) << op->name << " (Rcv)   Read  " << b << " at " << 0 << endl;
-    //}
-
-
-    //string rd_start = op->name + "_ISSUE_exe";
-    //string rd_end = op->name + "_RCV_exe";
-
-    //isl_aff* offset = add(start_time_aff, compute_latency);
-
-    //auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
-        //affine_controller(c, domain, start_time_aff));
-    //auto end_controller = def->addInstance(
-        //controller_name(op->name) + c->getUnique(),
-        //affine_controller(c, domain, offset));
-
-    //micro_op_enables[rd_start] = start_controller;
-    //micro_op_enables[rd_end] = end_controller;
-
-    //if (op->func != "") {
-      //cout << tab(2) << op->name << " (Issue) Exe   " << op->func << " at " << 0 << endl;
-      //cout << tab(2) << op->name << " (Rcv)   Exe   " << op->func << " at " << compute_latency << endl;
-    //} else {
-      //cout << tab(2) << op->name << " (Issue) Exe   " << "NONE" << " at " << 0 << endl;
-      //cout << tab(2) << op->name << " (Rcv)   Exe   " << "NONE" << " at " << compute_latency << endl;
-    //}
-
-    //for (auto b : op->buffers_written()) {
-      //int l = map_find(b, hwinfo.buffer_store_latencies);
-      //auto start_write_aff = add(start_time_aff, compute_latency);
-      //auto end_write_aff = add(start_time_aff, l + compute_latency);
-
-      //string rd_start = op->name + "_ISSUE_Write_" + b;
-      //string rd_end = op->name + "_RCV_Write_" + b;
-
-      //auto start_controller = def->addInstance(controller_name(op->name) + c->getUnique(),
-          //affine_controller(c, domain, start_write_aff));
-      //auto end_controller = def->addInstance(
-          //controller_name(op->name) + c->getUnique(),
-          //affine_controller(c, domain, end_write_aff));
-      //micro_op_enables[rd_start] = start_controller;
-      //micro_op_enables[rd_end] = end_controller;
-
-      //cout << tab(2) << op->name << " (Issue) Write " << b << " at " << compute_latency << endl;
-      //cout << tab(2) << op->name << " (Rcv)   Write " << b << " at " << compute_latency + l << endl;
-    //}
-  //}
-
-  //cout << "Ops..." << endl;
-  //for (auto op : micro_op_enables) {
-    //cout << tab(1) << op.first << endl;
-    //assert(op.second != nullptr);
-  //}
-  ////assert(false);
-//}
 
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
@@ -3303,51 +3161,11 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
     auto res = sum_term_numerators(def, a);
     auto val = mul(def, shiftr(def, res, 1), coeff);
     terms.push_back(val);
-    //if (coeff != 0) {
-      //for (int k = 0; k < num_in_dims(a); k++) {
-        //auto inner_coeff = get_coeff(a, k);
-        //cout << tab(3) << str(inner_coeff) << endl;
-      //}
-      //cout << tab(3) << "coeff = " << coeff << endl;
-      //auto term_aff = def->addInstance("div_aff_" + context->getUnique(), coreir_for_aff(context, a));
-      //def->connect(term_aff->sel("d"), self->sel("d"));
-      //// Replace with shift by 1
-      ////terms.push_back(term_aff->sel("out"));
-    //}
   }
-  //assert(num_div_dims(aff) == 0);
 
   auto outr = sum_term_numerators(def, aff);
   terms.push_back(outr);
   auto out = addList(def, terms);
-  //for (int d = 0; d < dims; d++) {
-    //auto rcoeff = get_coeff(aff, d);
-    //cout << "raw coeff: " << str(rcoeff) << endl;
-    //int v = to_int(get_coeff(aff, d));
-    //cout << "coeff: " << v << endl;
-    //auto constant = def->addInstance(
-        //"coeff_" + str(d),
-        ////context->getUnique(),
-        //"coreir.const",
-      //{{"width", CoreIR::Const::make(c, width)}},
-      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-    //auto m = def->addInstance(
-        //"mul_d" + str(d) + "_" + context->getUnique(),
-        //"coreir.mul",
-        //{{"width", CoreIR::Const::make(c, width)}});
-    //def->connect(m->sel("in0"), constant->sel("out"));
-    //def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
-    //terms.push_back(m->sel("out"));
-  //}
-  //int v = to_int(const_coeff(aff));
-  //cout << "coeff: " << v << endl;
-  //auto constant = def->addInstance(
-      //"const_term",
-      //"coreir.const",
-      //{{"width", CoreIR::Const::make(c, width)}},
-      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-  //terms.push_back(constant->sel("out"));
-  //auto out = addList(def, terms);
   def->connect(def->sel("self.out"), out);
   m->setDef(def);
 
@@ -3378,30 +3196,6 @@ CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* af
 
   auto c = context;
 
-  //vector<CoreIR::Wireable*> terms;
-  //for (int d = 0; d < dims; d++) {
-    //int v = to_int(get_coeff(aff, d));
-    //cout << "coeff: " << v << endl;
-    //auto constant = def->addInstance(context->getUnique(),
-        //"coreir.const",
-      //{{"width", CoreIR::Const::make(c, width)}},
-      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-    //auto m = def->addInstance(context->getUnique(),
-        //"coreir.mul",
-        //{{"width", CoreIR::Const::make(c, width)}});
-    //def->connect(m->sel("in0"), constant->sel("out"));
-    //def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
-    //terms.push_back(m->sel("out"));
-  //}
-  //int v = to_int(const_coeff(aff));
-  //cout << "coeff: " << v << endl;
-  //auto constant = def->addInstance(context->getUnique(),
-      //"coreir.const",
-      //{{"width", CoreIR::Const::make(c, width)}},
-      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-  //terms.push_back(constant->sel("out"));
-  //auto out = addList(def, terms);
-  //def->connect(def->sel("self.out"), out);
   m->setDef(def);
 
   return m;
