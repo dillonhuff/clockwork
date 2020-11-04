@@ -740,7 +740,7 @@ void instantiate_banks(
   out << endl;
 
   int store_latency = hwinfo.store_latency(buf.name);
-  assert(store_latency == 1);
+  assert(store_latency <= 2);
   out << tab(1) << "always @(posedge clk) begin" << endl;
   std::set<string> done_ctrl_vars;
   for(auto pt: buf.get_all_ports())
@@ -812,7 +812,7 @@ void instantiate_banks(
 
   int load_latency = hwinfo.load_latency(buf.name);
   assert(load_latency >= 0);
-  assert(load_latency <= 1);
+  assert(load_latency <= 2);
 
   if (load_latency == 0) {
     out << tab(1) << "always @(*) begin" << endl;

@@ -97,7 +97,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto def = ub->newModuleDef();
 
   if (options.rtl_options.target_tile == TARGET_TILE_PLATONIC ||
-      options.rtl_options.target_tile == TARGET_TILE_BRAM) {
+      options.rtl_options.target_tile == TARGET_TILE_BRAM ||
+      options.rtl_options.target_tile == TARGET_TILE_GENERIC_SRAM) {
     assert(verilog_collateral_file != nullptr);
     cout << "Verilog collateral file = " << verilog_collateral_file << endl;
     generate_platonic_ubuffer(*verilog_collateral_file, options, prg, buf, hwinfo);

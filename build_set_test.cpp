@@ -16029,8 +16029,12 @@ int buffer_store_latency(CodegenOptions& options) {
     return 0;
   }
 
-  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
+  if (options.rtl_options.target_tile == TARGET_TILE_GENERIC_SRAM) {
     return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
+    return 2;
   }
   assert(false);
 }
@@ -16049,8 +16053,12 @@ int buffer_load_latency(CodegenOptions& options) {
     return 1;
   }
 
-  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
+  if (options.rtl_options.target_tile == TARGET_TILE_GENERIC_SRAM) {
     return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
+    return 2;
   }
   assert(false);
 }
@@ -16129,6 +16137,24 @@ CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg) {
   options.rtl_options.use_external_controllers = true;
   options.rtl_options.target_tile =
     TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
+  all_unbanked(prg, options);
+
+  if (is_rate_matchable(prg)) {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_CYCLE_DELAY;
+  } else {
+    options.inner_bank_offset_mode =
+      INNER_BANK_OFFSET_LINEAR;
+  }
+
+  return options;
+}
+
+CodegenOptions generic_SRAM_codegen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_GENERIC_SRAM;
   all_unbanked(prg, options);
 
   if (is_rate_matchable(prg)) {
@@ -16225,6 +16251,12 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
   generate_verilator_tb(prg, hw_sched, buffers);
 
 #endif
+}
+
+void compile_for_generic_SRAM_mem(prog& prg) {
+  auto options = generic_SRAM_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  compile_cycle_accurate_hw(options, sched, prg);
 }
 
 void compile_for_FPGA_BRAM_mem(prog& prg) {
@@ -16875,12 +16907,14 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  vector<prog> bram_test_programs{resnet()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+
+  vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
+  test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
+  
   auto test_programs =
     all_cgra_programs();
-
-  vector<prog> bram_test_programs{pointwise(), camera_pipeline(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
-  
   test_platonic_codegen(test_programs);
 }
 
