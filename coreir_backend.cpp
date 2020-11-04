@@ -1048,12 +1048,6 @@ void generate_platonic_ubuffer(
     capacities = print_cyclic_banks(out, bank_factors, bnk);
   }
 
-  //if (!has_embarassing_partition) {
-    //capacities = print_cyclic_banks(out, bank_factors, bnk);
-  //} else {
-    //capacities = extents;
-  //}
-
   for (auto in : buf.get_all_ports()) {
     auto comps_raw =
       generate_verilog_addr_components(in, bnk, buf);

@@ -16527,7 +16527,8 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
   cmd("mv " + prg_name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg_name + "/");
 }
 
-void test_platonic_codegen(vector<prog>& test_programs) {
+template<typename CodegenFunction>
+void test_codegen(vector<prog>& test_programs, CodegenFunction& codegen) {
   for (auto& prg : test_programs) {
     cout << "====== Running CGRA test for " << prg.name << endl;
     prg.pretty_print();
@@ -16541,7 +16542,8 @@ void test_platonic_codegen(vector<prog>& test_programs) {
 
     auto cpu = unoptimized_result(prg);
 
-    compile_for_garnet_platonic_mem(prg);
+    codegen(prg);
+    //compile_for_garnet_platonic_mem(prg);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -16552,6 +16554,10 @@ void test_platonic_codegen(vector<prog>& test_programs) {
     string app_type = "platonic_buffer";
     cpy_app_to_folder(app_type, prg.name);
   }
+}
+
+void test_platonic_codegen(vector<prog>& test_programs) {
+  test_codegen(test_programs, compile_for_garnet_platonic_mem);
 }
 
 void cw_print_body(int level,
