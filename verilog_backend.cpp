@@ -701,8 +701,30 @@ void instantiate_variable_checks(std::ostream& out, UBuffer& buf) {
     out << tab(3) << "end" << endl;
     out << tab(2) << "end" << endl;
 #endif
-  }
 
+
+    if (buf.is_out_pt(pt)) {
+      string bundle_ren = buf.container_bundle(pt) + "_ren";
+#if SIM
+      out << tab(2) << "if (" << bundle_ren << "!=" << bundle_ren << "_fsm_out) begin" << endl;
+      out << tab(4)<< "$display(" << bundle_ren << ");" << endl;
+      out << tab(4) << "$display("<< bundle_ren << "_fsm_out);" << endl;
+      out << tab(3) << "$finish(-1);" << endl;
+      out << tab(2) << "end" << endl;
+#endif
+    }
+
+    if (buf.is_in_pt(pt)) {
+      string bundle_wen = buf.container_bundle(pt) + "_wen";
+#if SIM
+      out << tab(2) << "if (" << bundle_wen << "!=" << bundle_wen << "_fsm_out) begin" << endl;
+      out << tab(4)<< "$display(" << bundle_wen << ");" << endl;
+      out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
+      out << tab(3) << "$finish(-1);" << endl;
+      out << tab(2) << "end" << endl;
+#endif
+    }
+  }
 }
 
 void instantiate_banks(
@@ -767,19 +789,12 @@ void instantiate_banks(
 
   instantiate_variable_checks(out, buf);
   for (auto in : buf.get_in_ports()) {
+    string bundle_wen = buf.container_bundle(in) + "_wen";
     string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
     if (has_embarassing_partition) {
       addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
     }
 
-    string bundle_wen = buf.container_bundle(in) + "_wen";
-#if SIM
-    out << tab(2) << "if (" << bundle_wen << "!=" << bundle_wen << "_fsm_out) begin" << endl;
-    out << tab(4)<< "$display(" << bundle_wen << ");" << endl;
-    out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
-    out << tab(3) << "$finish(-1);" << endl;
-    out << tab(2) << "end" << endl;
-#endif
     out << tab(2) << "if (" << bundle_wen << "_fsm_out) begin" << endl;
     out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
     for (int b = 0; b < num_banks; b++) {
@@ -821,15 +836,8 @@ void instantiate_banks(
   }
   counter = 0;
   for (auto outpt : buf.get_out_ports()) {
+    string bundle_ren = buf.container_bundle(outpt) + "_ren";
     if (done_outpt.find(outpt) == done_outpt.end()) {
-      string bundle_ren = buf.container_bundle(outpt) + "_ren";
-#if SIM
-      out << tab(2) << "if (" << bundle_ren << "!=" << bundle_ren << "_fsm_out) begin" << endl;
-      out << tab(4)<< "$display(" << bundle_ren << ");" << endl;
-      out << tab(4) << "$display("<< bundle_ren << "_fsm_out);" << endl;
-      out << tab(3) << "$finish(-1);" << endl;
-      out << tab(2) << "end" << endl;
-#endif
       out << tab(2) << "if (" << bundle_ren << "_fsm_out) begin" << endl;
 
       out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
