@@ -973,41 +973,34 @@ void generate_platonic_ubuffer(
 
   prg.pretty_print();
 
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
-
-
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
   bool has_embarassing_partition = embarassing_banking.has_value();
   //bool has_embarassing_partition = false;
 
+  int num_banks = card(bank_factors);
   vector<int> extents;
   map<int, int> partitioned_dimension_extents;
   if (has_embarassing_partition)  {
     std::set<int> partition_dims = embarassing_banking.get_value();
-    //vector<int> extents = extents_by_dimension(buf);
     extents = extents_by_dimension(buf);
-    cout << "Extents in selected dimensions..." << endl;
-    //map<int, int> partitioned_dimension_extents;
     for (auto d : partition_dims) {
-      cout << tab(1) << extents.at(d) << endl;
       partitioned_dimension_extents[d] = extents.at(d);
     }
 
     print_embarassing_banks_selector(out, partitioned_dimension_extents, buf);
-  }
-  int num_banks = card(bank_factors);
-  if (has_embarassing_partition) {
     num_banks = 1;
     for (auto ent : partitioned_dimension_extents) {
       num_banks *= ent.second;
     }
+  } else {
+    print_cyclic_banks_selector(out, bank_factors, buf);
   }
 
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf,hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
 
-  print_cyclic_banks_selector(out, bank_factors, buf);
   print_shift_registers(out, shift_registered_outputs, options, prg, buf, hwinfo);
   print_shift_registers(out, shift_registered_outputs_to_outputs, options, prg, buf, hwinfo);
 
@@ -1045,37 +1038,21 @@ void generate_platonic_ubuffer(
 
 
   }
-  //assert(false);
-
-  //map<int, int> partitioned_dimension_extents;
-  if (has_embarassing_partition) {
-    //std::set<int> partition_dims = embarassing_banking.get_value();
-    //vector<int> extents = extents_by_dimension(buf);
-    //cout << "Extents in selected dimensions..." << endl;
-    //for (auto d : partition_dims) {
-      //cout << tab(1) << extents.at(d) << endl;
-      //partitioned_dimension_extents[d] = extents.at(d);
-    //}
-
-    print_embarassing_banks(out, partitioned_dimension_extents, buf);
-  }
-
 
   bank bnk = buf.compute_bank_info();
-
   vector<int> capacities;
-  if (!has_embarassing_partition) {
-    capacities = print_cyclic_banks(out, bank_factors, bnk);
-  } else {
-    //std::set<int> partition_dims = embarassing_banking.get_value();
-    //vector<int> extents = extents_by_dimension(buf);
-    //cout << "Extents in selected dimensions..." << endl;
-    //for (auto d : partition_dims) {
-      //cout << tab(1) << extents.at(d) << endl;
-      //partitioned_dimension_extents[d] = extents.at(d);
-    //}
+  if (has_embarassing_partition) {
+    print_embarassing_banks(out, partitioned_dimension_extents, buf);
     capacities = extents;
+  } else {
+    capacities = print_cyclic_banks(out, bank_factors, bnk);
   }
+
+  //if (!has_embarassing_partition) {
+    //capacities = print_cyclic_banks(out, bank_factors, bnk);
+  //} else {
+    //capacities = extents;
+  //}
 
   for (auto in : buf.get_all_ports()) {
     auto comps_raw =
