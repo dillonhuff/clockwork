@@ -677,6 +677,34 @@ void instantiate_control_fsms(ostream& out, UBuffer& buf) {
   }
 }
 
+void instantiate_variable_checks(std::ostream& out, UBuffer& buf) {
+  std::set<string> done_ctrl_vars;
+  for(auto pt: buf.get_all_ports())
+  {
+    string name = buf.container_bundle(pt);
+
+    string ctrl_vars = name + "_ctrl_vars";
+    string enable = (name.find("write") == string::npos) ? name + "_ren" : name + "_wen";
+    if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
+    {
+      continue;
+    }
+    done_ctrl_vars.insert(ctrl_vars);
+    auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
+    int dims = num_in_dims(aff);
+    string gen_ctrl_vars = ctrl_vars + "_fsm_out";
+#if SIM
+    out << tab(2) << "if(" << enable << ")begin" << endl;
+    out << tab(3) << "if(" << ctrl_vars << "!=" << gen_ctrl_vars << ") begin" << endl;
+    out << tab(4) << "$display(\"Different\");" << endl;
+    out << tab(4) << "$finish(-1);" << endl;
+    out << tab(3) << "end" << endl;
+    out << tab(2) << "end" << endl;
+#endif
+  }
+
+}
+
 void instantiate_banks(
     ostream& out,
     CodegenOptions& options,
@@ -711,8 +739,6 @@ void instantiate_banks(
     capacities = print_cyclic_banks(out, bank_factors, bnk);
   }
 
-
-
   for (auto in : buf.get_all_ports()) {
     auto comps_raw =
       generate_verilog_addr_components(in, bnk, buf);
@@ -738,30 +764,8 @@ void instantiate_banks(
   int store_latency = hwinfo.store_latency(buf.name);
   assert(store_latency <= 2);
   out << tab(1) << "always @(posedge clk) begin" << endl;
-  std::set<string> done_ctrl_vars;
-  for(auto pt: buf.get_all_ports())
-  {
-      string name = buf.container_bundle(pt);
 
-      string ctrl_vars = name + "_ctrl_vars";
-      string enable = (name.find("write") == string::npos) ? name + "_ren" : name + "_wen";
-      if(done_ctrl_vars.find(ctrl_vars) != done_ctrl_vars.end())
-      {
-          continue;
-      }
-      done_ctrl_vars.insert(ctrl_vars);
-      auto aff = get_aff(get_maps(buf.schedule.at(pt))[0]);
-      int dims = num_in_dims(aff);
-      string gen_ctrl_vars = ctrl_vars + "_fsm_out";
-#if SIM
-      out << tab(2) << "if(" << enable << ")begin" << endl;
-      out << tab(3) << "if(" << ctrl_vars << "!=" << gen_ctrl_vars << ") begin" << endl;
-      out << tab(4) << "$display(\"Different\");" << endl;
-      out << tab(4) << "$finish(-1);" << endl;
-      out << tab(3) << "end" << endl;
-      out << tab(2) << "end" << endl;
-#endif
-  }
+  instantiate_variable_checks(out, buf);
   for (auto in : buf.get_in_ports()) {
     string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
     if (has_embarassing_partition) {
@@ -772,7 +776,7 @@ void instantiate_banks(
 #if SIM
     out << tab(2) << "if (" << bundle_wen << "!=" << bundle_wen << "_fsm_out) begin" << endl;
     out << tab(4)<< "$display(" << bundle_wen << ");" << endl;
-      out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
+    out << tab(4) << "$display("<< bundle_wen << "_fsm_out);" << endl;
     out << tab(3) << "$finish(-1);" << endl;
     out << tab(2) << "end" << endl;
 #endif
@@ -793,16 +797,16 @@ void instantiate_banks(
   int counter = 0;
   for (auto outpt : buf.get_out_ports()) {
     if (done_outpt.find(outpt) == done_outpt.end()) {
-        string addr =
+      string addr =
         print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
 
-          if (has_embarassing_partition) {
-            addr =
-              print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
-          }
-        out << tab(1) << "logic [15:0] addr" << counter << ";" << endl;
-        out << tab(1) << "assign addr" << counter << "=" << addr << ";" << endl;
-        counter ++;
+      if (has_embarassing_partition) {
+        addr =
+          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
+      }
+      out << tab(1) << "logic [15:0] addr" << counter << ";" << endl;
+      out << tab(1) << "assign addr" << counter << "=" << addr << ";" << endl;
+      counter ++;
     }
   }
 
@@ -818,30 +822,28 @@ void instantiate_banks(
   counter = 0;
   for (auto outpt : buf.get_out_ports()) {
     if (done_outpt.find(outpt) == done_outpt.end()) {
-
-
-    string bundle_ren = buf.container_bundle(outpt) + "_ren";
+      string bundle_ren = buf.container_bundle(outpt) + "_ren";
 #if SIM
-    out << tab(2) << "if (" << bundle_ren << "!=" << bundle_ren << "_fsm_out) begin" << endl;
-    out << tab(4)<< "$display(" << bundle_ren << ");" << endl;
+      out << tab(2) << "if (" << bundle_ren << "!=" << bundle_ren << "_fsm_out) begin" << endl;
+      out << tab(4)<< "$display(" << bundle_ren << ");" << endl;
       out << tab(4) << "$display("<< bundle_ren << "_fsm_out);" << endl;
-    out << tab(3) << "$finish(-1);" << endl;
-    out << tab(2) << "end" << endl;
+      out << tab(3) << "$finish(-1);" << endl;
+      out << tab(2) << "end" << endl;
 #endif
-    out << tab(2) << "if (" << bundle_ren << "_fsm_out) begin" << endl;
+      out << tab(2) << "if (" << bundle_ren << "_fsm_out) begin" << endl;
 
-    out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
-    for (int b = 0; b < num_banks; b++) {
-      string source_ram = "bank_" + str(b);
-      string assign_str = load_latency == 0 ? " = " : " <= ";
-      out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << assign_str << source_ram << "[addr" << counter << "];" << endl;
-    }
-    counter ++;
+      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
+      for (int b = 0; b < num_banks; b++) {
+        string source_ram = "bank_" + str(b);
+        string assign_str = load_latency == 0 ? " = " : " <= ";
+        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << assign_str << source_ram << "[addr" << counter << "];" << endl;
+      }
+      counter ++;
 #if SIM
-    out << tab(4) << "default: $finish(-1);" << endl;
+      out << tab(4) << "default: $finish(-1);" << endl;
 #endif
-    out << tab(3) << "endcase" << endl;
-    out << tab(2) << "end" << endl;
+      out << tab(3) << "endcase" << endl;
+      out << tab(2) << "end" << endl;
     }
   }
 
