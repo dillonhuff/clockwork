@@ -15807,16 +15807,7 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
   return;
 }
 
-void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
-
-  for (auto op : prg.all_ops()) {
-    if (op->func != "") {
-      assert(contains_key(op, sched.resource_requirements));
-      assign_to_least_used_resource(op, sched);
-    }
-  }
-
-  if (is_rate_matchable(prg)) {
+void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg) {
     prg.pretty_print();
     bool single_depth = all_loop_nests_same_depth(prg);
     int max_depth = max_loop_depth(prg);
@@ -15978,8 +15969,6 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       }
     }
 
-    //assert(false);
-
     int total_latency = 0;
     for (auto op : inner_ops(prg)) {
         cout << "inner ops: " << op->name << endl;
@@ -15988,6 +15977,19 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       total_latency += op_latency(op, sched);
     }
 
+}
+
+void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
+
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      assert(contains_key(op, sched.resource_requirements));
+      assign_to_least_used_resource(op, sched);
+    }
+  }
+
+  if (is_rate_matchable(prg)) {
+    cycle_accurate_clockwork_schedule(sched, root, prg);
     adjust_schedule_forward(sched, prg, 1);
     return;
   } else {
@@ -16552,13 +16554,15 @@ vector<prog> stencil_programs() {
 vector<prog> harris_variants() {
   vector<prog> test_programs;
 
-  // coreir is wrong?
+  // 1. At least two mapper passes fail
+  // 2. Final output is wrong
   //test_programs.push_back(harris_sch1());
-  // Bank list has length 0? grad_x_unclamp
-  // stencil is never written?
+  //
+  // 1. Extract_linear_rational_approximation fails?
   //test_programs.push_back(harris_sch6());
 
-  // Verilator reports circular feedback?
+  // 1. Verilator reports circular feedback due to output -> output shift registers
+  // 2. Final output is wrong
   //test_programs.push_back(harris_sch2());
   
   // schedule takes too long
@@ -18801,14 +18805,14 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
-  {
-    prog prg = mobilenet_unrolled();
-    prg.sanity_check();
-    //compile_for_FPGA_BRAM_mem(prg);
-    vector<prog> prgs{prg};
-    test_codegen(prgs, compile_for_FPGA_BRAM_mem);
-    assert(false);
-  }
+  //{
+    //prog prg = mobilenet_unrolled();
+    //prg.sanity_check();
+    ////compile_for_FPGA_BRAM_mem(prg);
+    //vector<prog> prgs{prg};
+    //test_codegen(prgs, compile_for_FPGA_BRAM_mem);
+    //assert(false);
+  //}
 
   {
     // coreir is wrong?
@@ -18818,11 +18822,11 @@ void dhuff_playground() {
     //prog prg = harris_sch6();
 
     // Verilator reports circular feedback?
-    //prog prg = harris_sch2();
+    prog prg = harris_sch2();
 
     // schedule takes too long
     //prog prg = harris_sch4();
-    prog prg = harris_sch3();
+    //prog prg = harris_sch3();
     prg.pretty_print();
     assert(false);
   }
