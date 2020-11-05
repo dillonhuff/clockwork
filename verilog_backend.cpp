@@ -839,7 +839,7 @@ void instantiate_banks(
       if (addr == "()") {
         out << tab(1) << "assign addr" << counter << " = " << "0" << ";" << endl;
       } else {
-        out << tab(1) << "assign addr" << counter << " = " << "0" << ";" << endl;
+        out << tab(1) << "assign addr" << counter << " = " << addr << ";" << endl;
       }
 
       string bundle_wen = buf.container_bundle(outpt) + (buf.is_in_pt(outpt) ? "_wen" : "_ren");
