@@ -1942,7 +1942,7 @@ class UBuffer {
         return to_map(dot(origin_map, buf_map));
     }
 
-    map<string, std::set<string> > get_stmt2bd() {
+    map<string, std::set<string> > get_stmt2bd() const {
       map<string, std::set<string> > stmt2bd;
       for (auto it: schedule) {
         string bd = get_bundle(it.first);
@@ -1951,6 +1951,19 @@ class UBuffer {
         stmt2bd[stmt_name].insert(bd);
       }
       return stmt2bd;
+    }
+
+    bool is_update_op(string op_name) const {
+      //update stmt has 2 bundles
+      auto stmt2bd = get_stmt2bd();
+
+      //if it's not one of the buffer's op
+      if (stmt2bd.count(op_name) == 0)
+          return false;
+
+      //if it is, we still need to check the bundle numbers
+      auto bd_vec = stmt2bd.at(op_name);
+      return bd_vec.size() > 1;
     }
 
     bool is_self_loop(string pt_name) {

@@ -1031,11 +1031,19 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     //    }
     //}
     unordered_map<string, MemConnSch> data;
+
+    //this count is global to all the ubuffer sub controllers
+    unordered_map<string, int> config_cnt = {{"in2agg", 0}, {"tb2out", 0}};
     for (auto it : op2sched) {
         cout <<"\n\n\tEmit config for opname: " << it.first << str(it.second) << endl;
         auto sched = get_aff(it.second);
         string op_name = it.first;
+
         string key = split_at(op_name, "_").back();
+        if (config_cnt.count(key) == 0){
+            config_cnt[key] = 0;
+        }
+
         MemConnSch tmp;
         tmp.dimensionality = num_in_dims(sched);
         tmp.vals.merge(emit_lake_controller_config(::domain(it.second), sched));
@@ -1063,27 +1071,49 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
                             rewrite_buffer.at(consumer_buf_name), tmp, retrive_dom_map));
             }
         }
-        int cnt = 0;
-        if (read_addr_config.size() == 0) {
+        if (is_update_op(op_name)) {
+            assert(write_addr_config.size() > 0);
+            assert(read_addr_config.size() > 0);
             for (auto write_config: write_addr_config) {
-                string config_key = "in2agg_" + to_string(cnt);
+                string key = "in2agg";
+                string config_key = key + "_" + to_string(config_cnt.at(key));
                 auto cpy = tmp;
                 cpy.vals.merge(write_config);
                 data[config_key] = cpy;
-                cnt ++;
+                config_cnt.at(key) ++;
             }
-        } else if(write_addr_config.size() == 0) {
             for (auto read_config: read_addr_config) {
-                string config_key = "tb2out_" + to_string(cnt);
+                string key = "tb2out";
+                string config_key = key + "_" + to_string(config_cnt.at(key));
                 auto cpy = tmp;
                 cpy.vals.merge(read_config);
                 data[config_key] = cpy;
-                cnt ++;
+                config_cnt.at(key) ++;
+            }
+        } else if (read_addr_config.size() == 0) {
+            for (auto write_config: write_addr_config) {
+
+                string key = "in2agg";
+                string config_key = key + "_" + to_string(config_cnt.at(key));
+                auto cpy = tmp;
+                cpy.vals.merge(write_config);
+                data[config_key] = cpy;
+                config_cnt.at(key) ++;
+            }
+        } else if(write_addr_config.size() == 0) {
+            for (auto read_config: read_addr_config) {
+                string key = "tb2out";
+                string config_key = key + "_" + to_string(config_cnt.at(key));
+                auto cpy = tmp;
+                cpy.vals.merge(read_config);
+                data[config_key] = cpy;
+                config_cnt.at(key) ++;
             }
         } else {
+            //we only have 1 sram2tb agg2sram, all the other is handled by mux
             for (auto read_config: read_addr_config) {
                 for (auto write_config: write_addr_config) {
-                    string config_key = key;
+                    string config_key = key + "_" + to_string(config_cnt.at(key) ++);
                     auto cpy = tmp;
                     cpy.vals.merge(read_config);
                     cpy.vals.merge(write_config);

@@ -13220,12 +13220,12 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem() {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(resnet());
   //test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(rom());
+  test_apps.push_back(resnet());
 
   //TODO: break in the middle of vectorization
   //test_apps.push_back(down_sample());
@@ -15022,6 +15022,11 @@ void union_test() {
   isl_union_map* sched1 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 1]->[1, i0, i1,1]: 0<=i0<=7 and 0<=i1<=7}");
   auto out_sched = unn(sched0, sched1);
   cout << str(coalesce(out_sched)) << endl;
+
+  isl_union_map* hw_sched0 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, 0]->[i0]: 0<=i0<=7 }");
+  isl_union_map* hw_sched1 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1]->[i0+10*i1]: 0<=i0<=7 and 1<=i1<=7 }");
+  auto hw_sched = unn(hw_sched0, hw_sched1);
+  cout << str(coalesce(hw_sched)) << endl;
 }
 
 void dual_port_lake_test();
@@ -15039,13 +15044,14 @@ void lake_smt_tests() {
 void lake_tests() {
   //dual_port_lake_test();
   //lake_agg_sram_tb_config_test();
+  //union_test();
+  //assert(false);
   test_single_port_mem();
   assert(false);
   lake_conv33_autovec_aha_test();
   //double_buffer_test();
   //playground();
   //lake_identity_stream_autovec_test();
-  //union_test();
   lake_gaussian_autovec_test();
   //lake_dual_port_test();
   lake_cascade_autovec_test();
