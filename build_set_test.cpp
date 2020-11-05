@@ -15343,6 +15343,25 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
   }
 }
 
+void break_up_multi_channel_outputs(prog& prg) {
+  std::set<string> to_erase;
+  for (auto out : prg.outs) {
+    std::set<op*> writers = find_writers(out, prg);
+    if (writers.size() > 1) {
+      for (auto wr : writers) {
+        string replacement = prg.un(out);
+        wr->replace_writes_to(out, replacement);
+        prg.outs.insert(replacement);
+        prg.buffer_port_widths[replacement] = prg.buffer_port_width(out);
+      }
+      to_erase.insert(out);
+    }
+  }
+  for (auto e : to_erase) {
+    prg.outs.erase(e);
+  }
+}
+
 void break_up_multi_channel_inputs(prog& prg) {
   std::set<string> to_erase;
   for (auto in : prg.ins) {
@@ -16597,11 +16616,13 @@ void test_codegen(vector<prog>& test_programs, CodegenFunction& codegen) {
     prg.pretty_print();
     prg.sanity_check();
 
-    dsa_writers(prg);
+    //dsa_writers(prg);
     break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
 
     prg.pretty_print();
     prg.sanity_check();
+    //assert(false);
 
     auto cpu = unoptimized_result(prg);
 
@@ -18779,6 +18800,32 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = mobilenet_unrolled();
+    prg.sanity_check();
+    //compile_for_FPGA_BRAM_mem(prg);
+    vector<prog> prgs{prg};
+    test_codegen(prgs, compile_for_FPGA_BRAM_mem);
+    assert(false);
+  }
+
+  {
+    // coreir is wrong?
+    //prog prg = harris_sch1();
+    // Bank list has length 0? grad_x_unclamp
+    // stencil is never written?
+    //prog prg = harris_sch6();
+
+    // Verilator reports circular feedback?
+    //prog prg = harris_sch2();
+
+    // schedule takes too long
+    //prog prg = harris_sch4();
+    prog prg = harris_sch3();
+    prg.pretty_print();
+    assert(false);
+  }
+
   {
     prog prg = mobilenet_unrolled();
     dsa_writers(prg);
