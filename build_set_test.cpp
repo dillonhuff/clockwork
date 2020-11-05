@@ -15349,7 +15349,7 @@ void break_up_multi_channel_outputs(prog& prg) {
     std::set<op*> writers = find_writers(out, prg);
     if (writers.size() > 1) {
       for (auto wr : writers) {
-        string replacement = prg.un(out);
+        string replacement = prg.un(out + "_clkwrk_");
         wr->replace_writes_to(out, replacement);
         prg.outs.insert(replacement);
         prg.buffer_port_widths[replacement] = prg.buffer_port_width(out);
@@ -15368,7 +15368,7 @@ void break_up_multi_channel_inputs(prog& prg) {
     std::set<op*> readers = find_readers(in, prg);
     if (readers.size() > 1) {
       for (auto rd : readers) {
-        string replacement = prg.un(in);
+        string replacement = prg.un(in + "_clkwrk_");
         rd->replace_reads_from(in, replacement);
         prg.ins.insert(replacement);
         prg.buffer_port_widths[replacement] = prg.buffer_port_width(in);

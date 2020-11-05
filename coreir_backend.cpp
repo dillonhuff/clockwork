@@ -755,6 +755,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
         auto buf = map_find(bundle.first, buffers);
+        cout << "Looking for connection for " << buf.name << "." << bundle.second << endl;
 
         bool found = false;
         cout << "# of selects = " << halide_cu->getSelects().size() << endl;
