@@ -730,13 +730,14 @@ void instantiate_variable_checks(std::ostream& out, UBuffer& buf) {
 string delay_wire(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
   vector<string> wires{wire_in};
   for (int d = 0; d < delay; d++) {
-    string w = prg.un(wire_in);
+    //string w = prg.un(wire_in);
+    string w = prg.un("delay_wire_");
     out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
     wires.push_back(w);
   }
   assert(wires.size() == delay + 1);
   out << tab(1) << "always @(posedge clk) begin" << endl;
-  for (int d = 1; d < delay; d++) {
+  for (int d = 1; d < delay + 1; d++) {
     out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
   }
   out << tab(1) << "end" << endl;
