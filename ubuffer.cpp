@@ -800,11 +800,30 @@ ConfigMap generate_config_from_aff_expr(isl_aff* addr, bool is_read, bool is_mux
     return vals;
 }
 
-vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_read,
-        UBuffer buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
+isl_set* get_memtile_bank_range(UBuffer & buf, isl_map* map, int& project_dim, int pt_per_bank, bool is_read) {
+    isl_set* range_per_bank = isl_set_empty(get_space(range(map)));
+    auto bmap_vec = get_basic_maps(map);
+    for(int i = 0; i < pt_per_bank; i ++) {
+        range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
+    }
+    if (is_read){
+      project_dim = buf.get_consumer_bank_dim_id();
+    } else {
+      project_dim = buf.get_producer_bank_dim_id();
+    }
+    if (project_dim != -1) {
+      cout << "before project: " << str(range_per_bank) << endl;
+      range_per_bank = project_out(range_per_bank, project_dim);
 
-    vector<ConfigMap> ret;
-    cout << "Generate addr configuration for op: " << op_name << endl;
+      cout << "after project: " << str(range_per_bank) << endl;
+    }
+    return range_per_bank;
+}
+
+pair<bool, int> process_multi_port(CodegenOptions options, string op_name, bool is_read,
+        UBuffer& buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
+
+    cout << "Generate mux and project id: " << op_name << endl;
     for (auto map: get_maps(tmp)) {
         cout << "access map: " << str(map) << endl;
 
@@ -825,124 +844,175 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         } else {
             bk_num = port_width / options.mem_tile.in_port_width.at(micro_buf_name);
         }
-        cout << "basic map vector size: " << port_width << endl;
+        cout << tab(1) <<  "basic map vector size: " << port_width << endl;
         for (auto bmap: bmap_vec) {
-            cout << str(bmap) << endl;
+            cout << tab(2)<< str(bmap) << endl;
         }
-        cout << "Bank number: " << bk_num << endl;
-        cout << "mem tile component:" << micro_buf_name
+        cout << tab(1) << "Bank number: " << bk_num << endl;
+        cout << tab(1) << "mem tile component:" << micro_buf_name
             <<", Bank constraint: : " << options.mem_tile.bank_num.at(micro_buf_name)<< endl;
 
         //check if violate bank number
         assert(bk_num <= options.mem_tile.bank_num.at(micro_buf_name));
 
-        //get the reduce map for this subbuffer structure
-        isl_set* range_per_bank = isl_set_empty(get_space(range(map)));
-        for(int i = 0; i < port_width / bk_num; i ++) {
-            range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
-        }
-        //A processing pass for remove starting address in multiple bank cases
+        //A pass removing starting addr in multiple bank cases
         int project_dim;
-        if (is_read){
-          project_dim = buf.get_consumer_bank_dim_id();
-        } else {
-          project_dim = buf.get_producer_bank_dim_id();
-        }
-        if (project_dim != -1) {
-          cout << "before project: " << str(range_per_bank) << endl;
-          range_per_bank = project_out(range_per_bank, project_dim);
+        auto range_per_bank =
+            get_memtile_bank_range(buf, map, project_dim,
+                    is_read ?
+                    options.mem_tile.out_port_width.at(micro_buf_name) :
+                    options.mem_tile.in_port_width.at(micro_buf_name),
+                    is_read);
 
-          cout << "after project: " << str(range_per_bank) << endl;
-        }
+        //get the reduce map for this subbuffer structure
         auto reduce_map = linear_address_map_lake(range_per_bank);
 
-        for (int i = 0; i < bk_num; i ++)
-        {
-            //pick the corresponding basic map
-            auto bmap = bmap_vec.at(i);
-            ConfigMap vals;
-            bool need_mux = false;
-            if (is_read) {
-                need_mux = (bk_num < (buf.num_in_ports() / options.mem_tile.in_port_width.at(micro_buf_name)));
-            } else {
-                need_mux = (bk_num < (buf.num_out_ports() / options.mem_tile.out_port_width.at(micro_buf_name)));
-            }
-
-            if (need_mux) {
-                vector<int> mux_index;
-                vector<int> addr_index;
-                int bank_dim_id = buf.get_consumer_bank_dim_id();
-                //assert(bank_dim_id == num_out_dims(map) - 2);
-                cout << "Auto Select bank id: " << bank_dim_id << "Hardcode: " << num_out_dims(map) - 2 << endl;
-                for (int i = num_out_dims(map)-1; i >= 0; i--) {
-                    //FIXME: this is hardcoded
-                    if (i == bank_dim_id) {
-                        mux_index.push_back(i);
-                    } else {
-                        if ((i > bank_dim_id) && (project_dim != -1)) {
-                          addr_index.push_back(i-1);
-                        } else {
-                          addr_index.push_back(i);
-                        }
-                    }
-                }
-
-                //rewrite the address gen
-                reduce_map = linear_address_map_with_index(range_per_bank, addr_index);
-                cout << "Reduce map after mux insertion: " << str(reduce_map) << endl;
-                cout << "Range per bank: " << str(range_per_bank) << endl;
-                cout << "Range origin: " << str(range(map)) << endl;
-
-                auto mux_reduce_map = linear_address_map_with_index(range(map), mux_index);
-                auto mux_addr_expr = dot(to_map(bmap), mux_reduce_map);
-                isl_aff* addr = get_aff(mux_addr_expr);
-                cout << "mux addr aff: " << str(addr) << endl;
-                int ww = options.mem_tile.word_width.at(micro_buf_name);
-                int capacity = options.mem_tile.capacity.at(micro_buf_name);
-
-                //mux always has port width = 1
-                vals.merge(generate_config_from_aff_expr(addr, is_read, true, ww, capacity, 1));
-                //string prefix = is_read ? "mux_read" : "mux_write";
-                //cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
-                //cout << "\""+prefix+"_data_starting_addr\"," <<
-                //    to_int(const_coeff(addr))/ww  << ",0" << endl;
-                //for (int d = 0; d < num_in_dims(addr); d++) {
-                //  int ldim = num_in_dims(addr) - d - 1;
-                //  cout << "\""+prefix+"_data_stride_" << ldim << "\"," <<
-                //      to_int(get_coeff(addr, d))/ww  << ",0" << endl;
-                //}
-            }
-
-            //TODO: use word width to fix kavya's request
-            int ww = options.mem_tile.word_width.at(micro_buf_name);
-            int pw = is_read ? options.mem_tile.out_port_width.at(micro_buf_name) :
-                options.mem_tile.in_port_width.at(micro_buf_name);
-            int capacity = options.mem_tile.capacity.at(micro_buf_name);
-            //int ww = is_read ?options.mem_tile.out_port_width.at(micro_buf_name)
-            //    : options.mem_tile.in_port_width.at(micro_buf_name);
-
-            isl_map* project_access_map;
-            if (project_dim != -1) {
-              project_access_map = project_out(to_map(bmap), project_dim);
-            } else {
-              project_access_map = to_map(bmap);
-            }
-
-            cout <<tab(1) << "Reduce map:" << str(reduce_map) << endl
-                << tab(1) << "project access map" << str(project_access_map) << endl;
-            auto addr_expr_map = dot(project_access_map, reduce_map);
-            cout << str(reduce_map) << endl << str(addr_expr_map) << endl;
-            auto addr = get_aff(addr_expr_map);
-            cout << str(addr) << endl;
-            vals.merge(generate_config_from_aff_expr(addr, is_read, false, ww, capacity, pw));
-            //string prefix = is_read ? "read" : "write";
-            //cout << prefix + "_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
-            //for (int d = 0; d < num_in_dims(addr); d++) {
-            //    cout << prefix + "_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
-            //}
-            ret.push_back(vals);
+        bool need_mux = false;
+        if (is_read) {
+            need_mux = (bk_num < (buf.num_in_ports() / options.mem_tile.in_port_width.at(micro_buf_name)));
+        } else {
+            need_mux = (bk_num < (buf.num_out_ports() / options.mem_tile.out_port_width.at(micro_buf_name)));
         }
     }
+}
+
+vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_read,
+        UBuffer& buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
+
+    vector<ConfigMap> ret;
+    cout << "Generate addr configuration for op: " << op_name << endl;
+    //for (auto map: get_maps(tmp)) {
+    auto map = to_map(tmp);
+    cout << "access map: " << str(map) << endl;
+
+    //TODO: remove this in the future, this is a trick that make isl work
+    //if we did not rely on isl, we do not need this trick
+    if (retrive_dom_map.count(op_name))
+        map = retrive_map_domain_with_dim(map, retrive_dom_map.at(op_name));
+
+    string buf_name = range_name(map);
+    string micro_buf_name = split_at(buf_name, "_").back();
+    auto bmap_vec = get_basic_maps(map);
+    int port_width = bmap_vec.size();
+
+    //get pt number, take the lake information
+    int bk_num;
+    if (is_read) {
+        bk_num = port_width / options.mem_tile.out_port_width.at(micro_buf_name);
+    } else {
+        bk_num = port_width / options.mem_tile.in_port_width.at(micro_buf_name);
+    }
+    cout << tab(1) <<  "basic map vector size: " << port_width << endl;
+    for (auto bmap: bmap_vec) {
+        cout << tab(2)<< str(bmap) << endl;
+    }
+    cout << tab(1) << "Bank number: " << bk_num << endl;
+    cout << tab(1) << "mem tile component:" << micro_buf_name
+        <<", Bank constraint: : " << options.mem_tile.bank_num.at(micro_buf_name)<< endl;
+
+    //check if violate bank number
+    assert(bk_num <= options.mem_tile.bank_num.at(micro_buf_name));
+
+    //A pass removing starting addr in multiple bank cases
+    int project_dim;
+    auto range_per_bank =
+        get_memtile_bank_range(buf, map, project_dim,
+                is_read ?
+                options.mem_tile.out_port_width.at(micro_buf_name) :
+                options.mem_tile.in_port_width.at(micro_buf_name),
+                is_read);
+
+    //get the reduce map for this subbuffer structure
+    auto reduce_map = linear_address_map_lake(range_per_bank);
+
+    bool need_mux = false;
+    if (is_read) {
+        need_mux = (bk_num < (buf.num_in_ports() / options.mem_tile.in_port_width.at(micro_buf_name)));
+    } else {
+        need_mux = (bk_num < (buf.num_out_ports() / options.mem_tile.out_port_width.at(micro_buf_name)));
+    }
+
+    for (int i = 0; i < bk_num; i ++)
+    {
+        //pick the corresponding basic map
+        auto bmap = bmap_vec.at(i);
+        ConfigMap vals;
+
+        if (need_mux) {
+            vector<int> mux_index;
+            vector<int> addr_index;
+            int bank_dim_id = buf.get_consumer_bank_dim_id();
+            //assert(bank_dim_id == num_out_dims(map) - 2);
+            cout << "Auto Select bank id: " << bank_dim_id << "Hardcode: " << num_out_dims(map) - 2 << endl;
+            for (int i = num_out_dims(map)-1; i >= 0; i--) {
+                //FIXME: this is hardcoded
+                if (i == bank_dim_id) {
+                    mux_index.push_back(i);
+                } else {
+                    if ((i > bank_dim_id) && (project_dim != -1)) {
+                      addr_index.push_back(i-1);
+                    } else {
+                      addr_index.push_back(i);
+                    }
+                }
+            }
+
+            //rewrite the address gen
+            reduce_map = linear_address_map_with_index(range_per_bank, addr_index);
+            cout << "Reduce map after mux insertion: " << str(reduce_map) << endl;
+            cout << "Range per bank: " << str(range_per_bank) << endl;
+            cout << "Range origin: " << str(range(map)) << endl;
+
+            auto mux_reduce_map = linear_address_map_with_index(range(map), mux_index);
+            auto mux_addr_expr = dot(to_map(bmap), mux_reduce_map);
+            isl_aff* addr = get_aff(mux_addr_expr);
+            cout << "mux addr aff: " << str(addr) << endl;
+            int ww = options.mem_tile.word_width.at(micro_buf_name);
+            int capacity = options.mem_tile.capacity.at(micro_buf_name);
+
+            //mux always has port width = 1
+            vals.merge(generate_config_from_aff_expr(addr, is_read, true, ww, capacity, 1));
+            //string prefix = is_read ? "mux_read" : "mux_write";
+            //cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
+            //cout << "\""+prefix+"_data_starting_addr\"," <<
+            //    to_int(const_coeff(addr))/ww  << ",0" << endl;
+            //for (int d = 0; d < num_in_dims(addr); d++) {
+            //  int ldim = num_in_dims(addr) - d - 1;
+            //  cout << "\""+prefix+"_data_stride_" << ldim << "\"," <<
+            //      to_int(get_coeff(addr, d))/ww  << ",0" << endl;
+            //}
+        }
+
+        //TODO: use word width to fix kavya's request
+        int ww = options.mem_tile.word_width.at(micro_buf_name);
+        int pw = is_read ? options.mem_tile.out_port_width.at(micro_buf_name) :
+            options.mem_tile.in_port_width.at(micro_buf_name);
+        int capacity = options.mem_tile.capacity.at(micro_buf_name);
+        //int ww = is_read ?options.mem_tile.out_port_width.at(micro_buf_name)
+        //    : options.mem_tile.in_port_width.at(micro_buf_name);
+
+        isl_map* project_access_map;
+        if (project_dim != -1) {
+          project_access_map = project_out(to_map(bmap), project_dim);
+        } else {
+          project_access_map = to_map(bmap);
+        }
+
+        cout <<tab(1) << "Reduce map:" << str(reduce_map) << endl
+            << tab(1) << "project access map" << str(project_access_map) << endl;
+        auto addr_expr_map = dot(project_access_map, reduce_map);
+        cout << str(reduce_map) << endl << str(addr_expr_map) << endl;
+        auto addr = get_aff(addr_expr_map);
+        cout << str(addr) << endl;
+        vals.merge(generate_config_from_aff_expr(addr, is_read, false, ww, capacity, pw));
+        //string prefix = is_read ? "read" : "write";
+        //cout << prefix + "_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
+        //for (int d = 0; d < num_in_dims(addr); d++) {
+        //    cout << prefix + "_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
+        //}
+        ret.push_back(vals);
+    }
+
     return ret;
 }
 
@@ -5647,7 +5717,7 @@ isl_multi_aff* embarassing_partition_function(UBuffer& buf, const std::set<int>&
   return rdmultiaff(buf.ctx, bs);
 }
 
-maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo) {
+maybe<std::set<int> > embarassing_partition(UBuffer& buf) {
   vector<vector<string> > filtered_io_groups =
     overlapping_large_io_port_groups(buf, 1);
 

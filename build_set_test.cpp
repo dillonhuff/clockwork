@@ -13225,7 +13225,7 @@ void test_single_port_mem() {
   test_apps.push_back(harris());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(rom());
-  test_apps.push_back(resnet());
+  //test_apps.push_back(resnet());
 
   //TODO: break in the middle of vectorization
   //test_apps.push_back(down_sample());
@@ -16349,7 +16349,7 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
       b.second.generate_banks_and_merge(options);
       b.second.port_group2bank(options);
     } else {
-      auto partition = embarassing_partition(b.second, sched);
+      auto partition = embarassing_partition(b.second);
       assert(partition.has_value());
       cout << tab(1) << "Found partition: " << endl;
       std::set<int> partition_dim = partition.get_value();

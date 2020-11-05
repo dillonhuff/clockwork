@@ -2283,7 +2283,7 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
     umap* sched);
 
 
-maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo);
+maybe<std::set<int> > embarassing_partition(UBuffer& buf);
 vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
 
 vector<int> min_offsets_by_dimension(UBuffer& buf);

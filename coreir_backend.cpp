@@ -822,7 +822,7 @@ void generate_platonic_ubuffer(
 
 
   maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf, hwinfo);
+    embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
   //bool has_embarassing_partition = false;
 
