@@ -727,6 +727,22 @@ void instantiate_variable_checks(std::ostream& out, UBuffer& buf) {
   }
 }
 
+string delay_wire(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
+  vector<string> wires{wire_in};
+  for (int d = 0; d < delay; d++) {
+    string w = prg.un(wire_in);
+    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
+    wires.push_back(w);
+  }
+  assert(wires.size() == delay + 1);
+  out << tab(1) << "always @(posedge clk) begin" << endl;
+  for (int d = 1; d < delay; d++) {
+    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
+  }
+  out << tab(1) << "end" << endl;
+  return wires.back();
+}
+
 void instantiate_banks(
     ostream& out,
     CodegenOptions& options,
@@ -803,11 +819,25 @@ void instantiate_banks(
     string bundle_wen_fsm = bundle_wen + "_fsm_out";
     string bank_selector = buf.name + "_" + outpt + "_bank_selector.out";
 
-    port_inner_bank_offsets[outpt] = "addr" + str(counter);
-    port_bank_selectors[outpt] = bank_selector;
-    port_enables[outpt] = bundle_wen_fsm;
-    port_data[outpt] = 
-      buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
+    int delay = buf.is_out_pt(outpt) ? hwinfo.load_latency(buf.name) : hwinfo.store_latency(buf.name);
+    assert(delay >= 0);
+    if (delay == 0) {
+      port_inner_bank_offsets[outpt] = "addr" + str(counter);
+      port_bank_selectors[outpt] = bank_selector;
+      port_enables[outpt] = bundle_wen_fsm;
+      port_data[outpt] = 
+        buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
+    } else {
+      delay = delay - 1;
+      assert(delay >= 0);
+
+      port_inner_bank_offsets[outpt] = delay_wire(out, 16, "addr" + str(counter), prg, delay);
+      port_bank_selectors[outpt] = delay_wire(out, 16, bank_selector, prg, delay);
+      port_enables[outpt] = delay_wire(out, 16, bundle_wen_fsm, prg, delay);
+      port_data[outpt] = 
+        delay_wire(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
+
+    }
 
     counter ++;
   }
@@ -823,7 +853,6 @@ void instantiate_banks(
     string bank_selector = map_find(in, port_bank_selectors);
     string addr = map_find(in, port_inner_bank_offsets);
     string input_wire = map_find(in, port_data);
-      //buf.container_bundle(in) + "[" + str(buf.bundle_offset(in)) + "]";
 
     out << tab(2) << "if (" << bundle_wen_fsm << ") begin" << endl;
     out << tab(3) << "case( " << bank_selector << ")" << endl;
@@ -857,7 +886,6 @@ void instantiate_banks(
       string bank_selector = map_find(outpt, port_bank_selectors);
       string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
       string out_wire = map_find(outpt, port_data);
-      //buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
 
       out << tab(2) << "if (" << bundle_ren_fsm << ") begin" << endl;
       out << tab(3) << "case( " << bank_selector << ")" << endl;
