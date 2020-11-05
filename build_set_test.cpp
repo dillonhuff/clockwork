@@ -15990,8 +15990,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
   if (is_rate_matchable(prg)) {
     cycle_accurate_clockwork_schedule(sched, root, prg);
-    adjust_schedule_forward(sched, prg, 1);
-    return;
+    //adjust_schedule_forward(sched, prg, 1);
   } else {
     prg.pretty_print();
     cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
@@ -16030,10 +16029,8 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
 
     adjust_outer_pipeline_delays(sched, prg);
-    adjust_schedule_forward(sched, prg, 1);
-
-    return;
   }
+  adjust_schedule_forward(sched, prg, 1);
 }
 
 int buffer_store_latency(CodegenOptions& options) {
