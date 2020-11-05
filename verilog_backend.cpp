@@ -851,13 +851,16 @@ void instantiate_banks(
         delay = delay - 1;
         assert(delay >= 0);
 
-        port_inner_bank_offsets[outpt] = delay_wire(out, 16, "addr" + str(counter), prg, delay);
-        port_bank_selectors[outpt] = delay_wire(out, 16, bank_selector, prg, delay);
-        port_enables[outpt] = delay_wire(out, 16, bundle_wen_fsm, prg, delay);
         if (buf.is_in_pt(outpt)) {
+          port_inner_bank_offsets[outpt] = delay_wire(out, 16, "addr" + str(counter), prg, delay);
+          port_bank_selectors[outpt] = delay_wire(out, 16, bank_selector, prg, delay);
+          port_enables[outpt] = delay_wire(out, 16, bundle_wen_fsm, prg, delay);
           port_data[outpt] = 
             delay_wire(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
         } else {
+          port_inner_bank_offsets[outpt] = "addr" + str(counter);
+          port_bank_selectors[outpt] = bank_selector;
+          port_enables[outpt] = bundle_wen_fsm;
           port_data[outpt] = 
             end_delay_with(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
         }
