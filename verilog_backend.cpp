@@ -727,6 +727,24 @@ void instantiate_variable_checks(std::ostream& out, UBuffer& buf) {
   }
 }
 
+string end_delay_with(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
+  vector<string> wires{wire_in};
+  for (int d = 0; d < delay; d++) {
+    //string w = prg.un(wire_in);
+    string w = prg.un("end_delay_wire_");
+    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
+    wires.push_back(w);
+  }
+  assert(wires.size() == delay + 1);
+  reverse(wires);
+  out << tab(1) << "always @(posedge clk) begin" << endl;
+  for (int d = 1; d < delay + 1; d++) {
+    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
+  }
+  out << tab(1) << "end" << endl;
+  return wires.at(0);
+}
+
 string delay_wire(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
   vector<string> wires{wire_in};
   for (int d = 0; d < delay; d++) {
@@ -806,41 +824,48 @@ void instantiate_banks(
   map<string, string> port_bank_selectors;
   map<string, string> port_data;
   for (auto outpt : buf.get_all_ports()) {
-    string addr =
-      print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
+    if (shift_registered.find(outpt) == shift_registered.end()) {
+      string addr =
+        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
 
-    if (has_embarassing_partition) {
-      addr =
-        print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
-    }
-    out << tab(1) << "logic [15:0] addr" << counter << ";" << endl;
-    out << tab(1) << "assign addr" << counter << "=" << addr << ";" << endl;
+      if (has_embarassing_partition) {
+        addr =
+          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
+      }
+      out << tab(1) << "logic [15:0] addr" << counter << ";" << endl;
+      out << tab(1) << "assign addr" << counter << "=" << addr << ";" << endl;
 
-    string bundle_wen = buf.container_bundle(outpt) + (buf.is_in_pt(outpt) ? "_wen" : "_ren");
-    string bundle_wen_fsm = bundle_wen + "_fsm_out";
-    string bank_selector = buf.name + "_" + outpt + "_bank_selector.out";
+      string bundle_wen = buf.container_bundle(outpt) + (buf.is_in_pt(outpt) ? "_wen" : "_ren");
+      string bundle_wen_fsm = bundle_wen + "_fsm_out";
+      string bank_selector = buf.name + "_" + outpt + "_bank_selector.out";
 
-    int delay = buf.is_out_pt(outpt) ? hwinfo.load_latency(buf.name) : hwinfo.store_latency(buf.name);
-    assert(delay >= 0);
-    if (delay == 0) {
-      port_inner_bank_offsets[outpt] = "addr" + str(counter);
-      port_bank_selectors[outpt] = bank_selector;
-      port_enables[outpt] = bundle_wen_fsm;
-      port_data[outpt] = 
-        buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
-    } else {
-      delay = delay - 1;
+      int delay = buf.is_out_pt(outpt) ? hwinfo.load_latency(buf.name) : hwinfo.store_latency(buf.name);
       assert(delay >= 0);
+      if (delay == 0) {
+        port_inner_bank_offsets[outpt] = "addr" + str(counter);
+        port_bank_selectors[outpt] = bank_selector;
+        port_enables[outpt] = bundle_wen_fsm;
+        port_data[outpt] = 
+          buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
+      } else {
+        delay = delay - 1;
+        assert(delay >= 0);
 
-      port_inner_bank_offsets[outpt] = delay_wire(out, 16, "addr" + str(counter), prg, delay);
-      port_bank_selectors[outpt] = delay_wire(out, 16, bank_selector, prg, delay);
-      port_enables[outpt] = delay_wire(out, 16, bundle_wen_fsm, prg, delay);
-      port_data[outpt] = 
-        delay_wire(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
+        port_inner_bank_offsets[outpt] = delay_wire(out, 16, "addr" + str(counter), prg, delay);
+        port_bank_selectors[outpt] = delay_wire(out, 16, bank_selector, prg, delay);
+        port_enables[outpt] = delay_wire(out, 16, bundle_wen_fsm, prg, delay);
+        if (buf.is_in_pt(outpt)) {
+          port_data[outpt] = 
+            delay_wire(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
+        } else {
+          port_data[outpt] = 
+            end_delay_with(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
+        }
 
+      }
+
+      counter ++;
     }
-
-    counter ++;
   }
 
   int store_latency = hwinfo.store_latency(buf.name);
