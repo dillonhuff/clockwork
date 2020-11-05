@@ -835,7 +835,11 @@ void instantiate_banks(
           print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
       }
       out << tab(1) << "logic [15:0] addr" << counter << ";" << endl;
-      out << tab(1) << "assign addr" << counter << "=" << addr << ";" << endl;
+      if (addr == "()") {
+        out << tab(1) << "assign addr" << counter << " = " << "0" << ";" << endl;
+      } else {
+        out << tab(1) << "assign addr" << counter << " = " << "0" << ";" << endl;
+      }
 
       string bundle_wen = buf.container_bundle(outpt) + (buf.is_in_pt(outpt) ? "_wen" : "_ren");
       string bundle_wen_fsm = bundle_wen + "_fsm_out";
