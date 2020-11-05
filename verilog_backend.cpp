@@ -787,6 +787,7 @@ void instantiate_banks(
   map<string, string> port_inner_bank_offsets;
   map<string, string> port_enables;
   map<string, string> port_bank_selectors;
+  map<string, string> port_data;
   for (auto outpt : buf.get_all_ports()) {
     string addr =
       print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
@@ -805,6 +806,8 @@ void instantiate_banks(
     port_inner_bank_offsets[outpt] = "addr" + str(counter);
     port_bank_selectors[outpt] = bank_selector;
     port_enables[outpt] = bundle_wen_fsm;
+    port_data[outpt] = 
+      buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
 
     counter ++;
   }
@@ -819,14 +822,13 @@ void instantiate_banks(
     string bundle_wen_fsm = map_find(in, port_enables);
     string bank_selector = map_find(in, port_bank_selectors);
     string addr = map_find(in, port_inner_bank_offsets);
-    string input_wire = 
-      buf.container_bundle(in) + "[" + str(buf.bundle_offset(in)) + "]";
+    string input_wire = map_find(in, port_data);
+      //buf.container_bundle(in) + "[" + str(buf.bundle_offset(in)) + "]";
 
     out << tab(2) << "if (" << bundle_wen_fsm << ") begin" << endl;
     out << tab(3) << "case( " << bank_selector << ")" << endl;
     for (int b = 0; b < num_banks; b++) {
       string source_ram = "bank_" + str(b);
-      //out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
       out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
     }
 #if SIM
@@ -854,14 +856,14 @@ void instantiate_banks(
       string bundle_ren_fsm = map_find(outpt, port_enables);
       string bank_selector = map_find(outpt, port_bank_selectors);
       string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
-      string out_wire = buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
+      string out_wire = map_find(outpt, port_data);
+      //buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
 
       out << tab(2) << "if (" << bundle_ren_fsm << ") begin" << endl;
       out << tab(3) << "case( " << bank_selector << ")" << endl;
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
         string assign_str = load_latency == 0 ? " = " : " <= ";
-        //out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
         out << tab(4) << b << ":" << out_wire << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
       }
       counter++;
