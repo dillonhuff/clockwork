@@ -784,8 +784,10 @@ void instantiate_banks(
   out << endl;
 
   int counter = 0;
-  for (auto outpt : buf.get_out_ports()) {
-    if (shift_registered.find(outpt) == shift_registered.end()) {
+  map<string, string> port_inner_bank_offsets;
+  //for (auto outpt : buf.get_out_ports()) {
+  for (auto outpt : buf.get_all_ports()) {
+    //if (shift_registered.find(outpt) == shift_registered.end()) {
       string addr =
         print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
 
@@ -795,8 +797,9 @@ void instantiate_banks(
       }
       out << tab(1) << "logic [15:0] addr" << counter << ";" << endl;
       out << tab(1) << "assign addr" << counter << "=" << addr << ";" << endl;
+      port_inner_bank_offsets[outpt] = "addr" + str(counter);
       counter ++;
-    }
+    //}
   }
 
   int store_latency = hwinfo.store_latency(buf.name);
@@ -810,10 +813,12 @@ void instantiate_banks(
     string bundle_wen_fsm = bundle_wen + "_fsm_out";
     string bank_selector = buf.name + "_" + in + "_bank_selector.out";
 
-    string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
-    if (has_embarassing_partition) {
-      addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
-    }
+    //string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
+    //if (has_embarassing_partition) {
+      //addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
+    //}
+
+    string addr = map_find(in, port_inner_bank_offsets);
 
     out << tab(2) << "if (" << bundle_wen_fsm << ") begin" << endl;
     out << tab(3) << "case( " << bank_selector << ")" << endl;
@@ -841,10 +846,12 @@ void instantiate_banks(
   counter = 0;
   for (auto outpt : buf.get_out_ports()) {
     string bundle_ren = buf.container_bundle(outpt) + "_ren";
+
     if (shift_registered.find(outpt) == shift_registered.end()) {
       string bundle_ren_fsm = bundle_ren + "_fsm_out";
       string bank_selector = buf.name + "_" + outpt + "_bank_selector.out";
-      string inner_bank_offset = "addr" + str(counter);
+      //string inner_bank_offset = "addr" + str(counter);
+      string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
 
       out << tab(2) << "if (" << bundle_ren_fsm << ") begin" << endl;
       out << tab(3) << "case( " << bank_selector << ")" << endl;
