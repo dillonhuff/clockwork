@@ -790,13 +790,19 @@ void instantiate_banks(
   instantiate_variable_checks(out, buf);
   for (auto in : buf.get_in_ports()) {
     string bundle_wen = buf.container_bundle(in) + "_wen";
+    string bundle_wen_fsm = bundle_wen + "_fsm_out";
+    string bank_selector = buf.name + "_" + in + "_bank_selector.out";
+
     string addr = print_cyclic_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities,bank_factors);
     if (has_embarassing_partition) {
       addr = print_embarassing_banks_inner_bank_offset_func(buf,generate_verilog_addr_components(in,bnk,buf),capacities, partitioned_dimension_extents);
     }
 
-    out << tab(2) << "if (" << bundle_wen << "_fsm_out) begin" << endl;
-    out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
+    //out << tab(2) << "if (" << bundle_wen << "_fsm_out) begin" << endl;
+    //out << tab(3) << "case( " << buf.name << "_" << in << "_bank_selector.out)" << endl;
+
+    out << tab(2) << "if (" << bundle_wen_fsm << ") begin" << endl;
+    out << tab(3) << "case( " << bank_selector << ")" << endl;
     for (int b = 0; b < num_banks; b++) {
       string source_ram = "bank_" + str(b);
       out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << buf.container_bundle(in) << "[" << buf.bundle_offset(in) << "]" << ";" << endl;
@@ -838,13 +844,19 @@ void instantiate_banks(
   for (auto outpt : buf.get_out_ports()) {
     string bundle_ren = buf.container_bundle(outpt) + "_ren";
     if (done_outpt.find(outpt) == done_outpt.end()) {
-      out << tab(2) << "if (" << bundle_ren << "_fsm_out) begin" << endl;
+      string bundle_ren_fsm = bundle_ren + "_fsm_out";
+      string bank_selector = buf.name + "_" + outpt + "_bank_selector.out";
+      string inner_bank_offset = "addr" + str(counter);
+      //out << tab(2) << "if (" << bundle_ren << "_fsm_out) begin" << endl;
+      out << tab(2) << "if (" << bundle_ren_fsm << ") begin" << endl;
 
-      out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
+      //out << tab(3) << "case( " << buf.name << "_" << outpt << "_bank_selector.out)" << endl;
+      out << tab(3) << "case( " << bank_selector << ")" << endl;
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
         string assign_str = load_latency == 0 ? " = " : " <= ";
-        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << assign_str << source_ram << "[addr" << counter << "];" << endl;
+        //out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << assign_str << source_ram << "[addr" << counter << "];" << endl;
+        out << tab(4) << b << ":" << buf.container_bundle(outpt) << "[" << buf.bundle_offset(outpt) << "]" << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
       }
       counter ++;
 #if SIM
@@ -866,11 +878,6 @@ void generate_platonic_ubuffer(
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo) {
-
-  //cout << "Verilog collateral file = " << verilog_collateral_file << endl;
-
-  //ostream& out = *verilog_collateral_file;
-
 
   prg.pretty_print();
 
