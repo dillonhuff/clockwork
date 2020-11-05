@@ -2,7 +2,6 @@
 #include "lake_target.h"
 
 #ifdef COREIR
-#define SIM 1
 #include "cwlib.h"
 #include "cgralib.h"
 
