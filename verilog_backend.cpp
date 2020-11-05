@@ -776,6 +776,7 @@ void instantiate_banks(
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
   bool has_embarassing_partition = embarassing_banking.has_value();
+  //bool has_embarassing_partition = false;
 
   bank bnk = buf.compute_bank_info();
   vector<int> capacities;
@@ -956,6 +957,7 @@ void generate_platonic_ubuffer(
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
   bool has_embarassing_partition = embarassing_banking.has_value();
+  //bool has_embarassing_partition = false;
 
   int num_banks = card(bank_factors);
   vector<int> extents;
