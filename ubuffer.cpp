@@ -1211,7 +1211,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
         } else {
             in_project_dim = op2read_bank.at(op_name).second;
         }
-        //A rewrite pass if we have multi sram accessor
+
+        //Generate all the accessor config from schedule
         vector<MemConnSch> accessor_config_vec =
             emit_lake_accessor_config(options, in_project_dim, it.second);
 
