@@ -15244,6 +15244,18 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   //hwinfo.instance_latencies[op] = latency;
 }
 
+void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int dims) {
+  cout << "Computing rate matched schedule at level " << dims << endl;
+  auto levels = get_variable_levels(prg);
+  for (auto l : levels) {
+    cout << endl;
+    if (l.second == dims) {
+      prg.find_loop(l.first)->pretty_print();
+    }
+  }
+  assert(false);
+}
+
 int max_loop_depth(prog& prg) {
   int maxl = -1;
   for (auto op : prg.all_ops()) {
@@ -16026,24 +16038,14 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       if (buffer_dims.size() > 1) {
         coarse_pipeline_schedule(sched, root, prg);
       } else {
+        rate_matched_schedule(sched, root, prg, pick(buffer_dims));
         assert(false);
       }
     }
   }
 
-  //if (get_kernels(prg).size() > 1 && is_rate_matchable(prg)) {
-    //cycle_accurate_clockwork_schedule(sched, root, prg);
-  //} else {
-    //coarse_pipeline_schedule(sched, root, prg);
-  //}
-
-  cout << "About to adjust final schedule forward" << endl;
   sanity_check_iis(sched);
-
-  // Final finishing pass to make sure all times
-  // in the schedule are positive
   adjust_schedule_forward(sched, prg, 1);
-  cout << "Finishing the final schedule" << endl;
   sanity_check_iis(sched);
 }
 
@@ -16570,8 +16572,8 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch2());
   
   // schedule takes too long
-  //test_programs.push_back(harris_sch3());
-  //test_programs.push_back(harris_sch4());
+  test_programs.push_back(harris_sch3());
+  test_programs.push_back(harris_sch4());
 
   // Works
   test_programs.push_back(harris_sch5());
