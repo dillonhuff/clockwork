@@ -15807,175 +15807,187 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
   return;
 }
 
+void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
+  bool single_depth = all_loop_nests_same_depth(prg);
+  int max_depth = max_loop_depth(prg);
+  assert(max_depth >= 1);
+
+  if (!single_depth) {
+    vector<op*> old_children = prg.root->children;
+    prg.root->children = {};
+    for (auto c : old_children) {
+      if (c->is_loop()) {
+        prg.root->children.push_back(c);
+      } else {
+        op* lp = prg.root->add_loop(prg.un("pad_wrapper"), 0, 1);
+        for (int d = 1; d < max_depth - 1; d++) {
+          lp = lp->add_loop(prg.un("pad_wrapper"), 0, 1);
+        }
+        lp->children.push_back(c);
+        c->parent = lp;
+      }
+    }
+    prg.pretty_print();
+    //assert(false);
+
+    map<string, vector<int> > pad_indexes;
+    for (auto k : get_kernels(prg)) {
+      auto lp = prg.find_loop(k);
+      for (auto rep : lp->descendant_ops()) {
+        int depth_m = loop_depth(prg.find_loop(k));
+        vector<int> inds;
+        inds.push_back(0);
+        for (int p = 0; p < max_depth - depth_m; p++) {
+          inds.push_back(-1);
+        }
+        for (int d = 1; d < depth_m + 1; d++) {
+          inds.push_back(d);
+        }
+
+        pad_indexes[rep->name] = inds;
+      }
+    }
+    cout << "Pad inds..." << endl;
+    for (auto p : pad_indexes) {
+      cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+    }
+    insert_pad_loops(prg, pad_indexes);
+
+  }
+}
+
 void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg) {
-    prg.pretty_print();
-    bool single_depth = all_loop_nests_same_depth(prg);
-    int max_depth = max_loop_depth(prg);
-    assert(max_depth >= 1);
+  //prg.pretty_print();
+  //bool single_depth = all_loop_nests_same_depth(prg);
+  //int max_depth = max_loop_depth(prg);
+  //assert(max_depth >= 1);
 
-    if (!single_depth) {
-      vector<op*> old_children = prg.root->children;
-      prg.root->children = {};
-      for (auto c : old_children) {
-        if (c->is_loop()) {
-          prg.root->children.push_back(c);
-        } else {
-          op* lp = prg.root->add_loop(prg.un("pad_wrapper"), 0, 1);
-          for (int d = 1; d < max_depth - 1; d++) {
-            lp = lp->add_loop(prg.un("pad_wrapper"), 0, 1);
-          }
-          lp->children.push_back(c);
-          c->parent = lp;
-        }
-      }
-      prg.pretty_print();
-      //assert(false);
+  //if (!single_depth) {
+  pad_to_single_depth(sched, root, prg);
+  //}
 
-      map<string, vector<int> > pad_indexes;
-      for (auto k : get_kernels(prg)) {
-        auto lp = prg.find_loop(k);
-        for (auto rep : lp->descendant_ops()) {
-          int depth_m = loop_depth(prg.find_loop(k));
-          vector<int> inds;
-          inds.push_back(0);
-          for (int p = 0; p < max_depth - depth_m; p++) {
-            inds.push_back(-1);
-          }
-          for (int d = 1; d < depth_m + 1; d++) {
-            inds.push_back(d);
-          }
+  prg.pretty_print();
+  bool single_depth = all_loop_nests_same_depth(prg);
+  assert(single_depth);
 
-          pad_indexes[rep->name] = inds;
-        }
-      }
-      cout << "Pad inds..." << endl;
-      for (auto p : pad_indexes) {
-        cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
-      }
-      insert_pad_loops(prg, pad_indexes);
-    }
-    prg.pretty_print();
-    single_depth = all_loop_nests_same_depth(prg);
-    assert(single_depth);
+  prg.pretty_print();
+  //cout << prg.name << " is a stencil pipeline" << endl;
+  //assert(false);
+  auto valid = prg.validity_deps();
+  auto dom = prg.whole_iteration_domain();
+  umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+  //cout << "Clockwork schedule..." << endl;
+  //for (auto m : get_maps(clksched_map)) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+  //cout << "Domain..." << endl;
+  //for (auto d : get_sets(dom)) {
+    //cout << tab(1) << str(d) << endl;
+  //}
+  uset* sbounds = range(its(clksched_map, dom));
+  //cout << "bounds..." << str(sbounds) << endl;
+  auto bsets = get_sets(sbounds);
+  assert(bsets.size() == 1);
 
-    prg.pretty_print();
-    cout << prg.name << " is a stencil pipeline" << endl;
-    //assert(false);
-    auto valid = prg.validity_deps();
-    auto dom = prg.whole_iteration_domain();
-    umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
-    cout << "Clockwork schedule..." << endl;
-    for (auto m : get_maps(clksched_map)) {
-      cout << tab(1) << str(m) << endl;
-    }
-    cout << "Domain..." << endl;
-    for (auto d : get_sets(dom)) {
-      cout << tab(1) << str(d) << endl;
-    }
-    uset* sbounds = range(its(clksched_map, dom));
-    cout << "bounds..." << str(sbounds) << endl;
-    auto bsets = get_sets(sbounds);
-    assert(bsets.size() == 1);
+  auto bset = pick(bsets);
+  //assert(false);
+  vector<pair<int, int> > bounds;
+  vector<int> lengths;
+  for (int d = 0; d < num_dims(bset); d++) {
+    auto pr = project_all_but(bset, d);
+    int lmin = to_int(lexminval(pr));
+    int lmax = to_int(lexmaxval(pr));
+    bounds.push_back({lmin, lmax});
+    lengths.push_back(lmax - lmin + 1);
+  }
 
-    auto bset = pick(bsets);
-    //assert(false);
-    vector<pair<int, int> > bounds;
-    vector<int> lengths;
-    for (int d = 0; d < num_dims(bset); d++) {
-      auto pr = project_all_but(bset, d);
-      int lmin = to_int(lexminval(pr));
-      int lmax = to_int(lexmaxval(pr));
-      bounds.push_back({lmin, lmax});
-      lengths.push_back(lmax - lmin + 1);
-    }
+  // Reorder so that root is level 0
+  reverse(lengths);
+  lengths.push_back(1);
+  reverse(bounds);
 
-    // Reorder so that root is level 0
-    reverse(lengths);
-    lengths.push_back(1);
-    reverse(bounds);
+  vector<int> fused_level_iis;
+  fused_level_iis.resize(lengths.size());
+  fused_level_iis[fused_level_iis.size() - 1] = 1;
+  for (int l = fused_level_iis.size() - 2; l >= 0; l--) {
+    fused_level_iis[l] = fused_level_iis[l + 1] * lengths.at(l + 1);
+  }
 
-    vector<int> fused_level_iis;
-    fused_level_iis.resize(lengths.size());
-    fused_level_iis[fused_level_iis.size() - 1] = 1;
-    for (int l = fused_level_iis.size() - 2; l >= 0; l--) {
-      fused_level_iis[l] = fused_level_iis[l + 1] * lengths.at(l + 1);
-    }
+  //cout << "lengths" << endl;
+  //for (auto l : lengths) {
+    //cout << l << endl;
+  //}
 
-    cout << "lengths" << endl;
-    for (auto l : lengths) {
-      cout << l << endl;
-    }
+  fused_level_iis.pop_back();
 
-    fused_level_iis.pop_back();
+  //cout << "Fused iis" << endl;
+  //for (auto i : fused_level_iis) {
+    //cout << tab(1) << i << endl;
+  //}
 
-    cout << "Fused iis" << endl;
-    for (auto i : fused_level_iis) {
-      cout << tab(1) << i << endl;
-    }
-
-    auto cs = clockwork_schedule(dom, valid, cpy(valid));
-    for (auto s : get_sets(dom)) {
-      assert(contains_key(name(s), cs));
-    }
-    for (auto op : prg.all_ops()) {
-      assert(contains_key(op->name, cs));
-    }
-    auto levels = get_variable_levels(prg);
-    cout << "Domain..." << endl;
-    auto ops = prg.all_ops();
-    for (auto s : get_sets(dom)) {
-      cout << tab(1) << str(s) << endl;
-      bool found = false;
-      for (auto op : ops) {
-        if (op->name == name(s)) {
-          found = true;
-          break;
-        }
-      }
-      assert(found);
-    }
+  auto cs = clockwork_schedule(dom, valid, cpy(valid));
+  for (auto s : get_sets(dom)) {
+    assert(contains_key(name(s), cs));
+  }
+  for (auto op : prg.all_ops()) {
+    assert(contains_key(op->name, cs));
+  }
+  auto levels = get_variable_levels(prg);
+  cout << "Domain..." << endl;
+  auto ops = prg.all_ops();
+  for (auto s : get_sets(dom)) {
+    cout << tab(1) << str(s) << endl;
+    bool found = false;
     for (auto op : ops) {
-      bool found = false;
-      for (auto s : get_sets(dom)) {
-        if (op->name == name(s)) {
-          found = true;
-          break;
-        }
-      }
-      assert(found);
-    }
-    
-    prg.pretty_print();
-    cout << "Original Loop iis" << endl;
-    for (auto op : prg.all_ops()) {
-      vector<string> surrounding = surrounding_vars(op, prg);
-      cout << tab(1) << "OP: " << op->name << endl;
-      for (auto var : surrounding) {
-        cout << tab(2) << "Getting variable levels for: " << var << endl;
-
-        int level = map_find(var, levels);
-        auto container = prg.find_loop(var);
-
-        assert(contains_key(op->name, cs));
-
-        int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
-        int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
-        cout << tab(2) << var << " q: " << qfactor << ", d = " << delay << endl;
-        sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
-        sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
-        // TODO: Set this to the latency read from the compute units
-        //sched.instance_latencies[container] = 1;
-        cout << tab(2) << "ii = " << sched.II(container) << endl;
+      if (op->name == name(s)) {
+        found = true;
+        break;
       }
     }
-
-    int total_latency = 0;
-    for (auto op : inner_ops(prg)) {
-        cout << "inner ops: " << op->name << endl;
-      sched.op_offset_within_parent[op] = total_latency;
-      sched.instance_latencies[op] = op_latency(op, sched);
-      total_latency += op_latency(op, sched);
+    assert(found);
+  }
+  for (auto op : ops) {
+    bool found = false;
+    for (auto s : get_sets(dom)) {
+      if (op->name == name(s)) {
+        found = true;
+        break;
+      }
     }
+    assert(found);
+  }
+
+  prg.pretty_print();
+  cout << "Original Loop iis" << endl;
+  for (auto op : prg.all_ops()) {
+    vector<string> surrounding = surrounding_vars(op, prg);
+    cout << tab(1) << "OP: " << op->name << endl;
+    for (auto var : surrounding) {
+      cout << tab(2) << "Getting variable levels for: " << var << endl;
+
+      int level = map_find(var, levels);
+      auto container = prg.find_loop(var);
+
+      assert(contains_key(op->name, cs));
+
+      int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
+      int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
+      cout << tab(2) << var << " q: " << qfactor << ", d = " << delay << endl;
+      sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
+      sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+      // TODO: Set this to the latency read from the compute units
+      //sched.instance_latencies[container] = 1;
+      cout << tab(2) << "ii = " << sched.II(container) << endl;
+    }
+  }
+
+  int total_latency = 0;
+  for (auto op : inner_ops(prg)) {
+    cout << "inner ops: " << op->name << endl;
+    sched.op_offset_within_parent[op] = total_latency;
+    sched.instance_latencies[op] = op_latency(op, sched);
+    total_latency += op_latency(op, sched);
+  }
 
 }
 
@@ -15990,7 +16002,6 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 
   if (is_rate_matchable(prg)) {
     cycle_accurate_clockwork_schedule(sched, root, prg);
-    //adjust_schedule_forward(sched, prg, 1);
   } else {
     prg.pretty_print();
     cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
@@ -16023,13 +16034,14 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       cout << tab(1) << "Current II        : " << sched.II(coarse_pipeline_loop) << endl;
       sched.loop_iis[coarse_pipeline_loop->name] =
         sched.total_latency(most_compute_intensive_stage);
-
-      //assert(false);
     }
 
 
     adjust_outer_pipeline_delays(sched, prg);
   }
+
+  // Final finishing pass to make sure all times
+  // in the schedule are positive
   adjust_schedule_forward(sched, prg, 1);
 }
 
