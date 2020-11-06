@@ -15863,61 +15863,34 @@ void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
 void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg) {
   pad_to_single_depth(sched, root, prg);
 
-  prg.pretty_print();
-  //cout << prg.name << " is a stencil pipeline" << endl;
-  //assert(false);
   auto valid = prg.validity_deps();
   auto dom = prg.whole_iteration_domain();
   umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
-  //cout << "Clockwork schedule..." << endl;
-  //for (auto m : get_maps(clksched_map)) {
-    //cout << tab(1) << str(m) << endl;
-  //}
-  //cout << "Domain..." << endl;
-  //for (auto d : get_sets(dom)) {
-    //cout << tab(1) << str(d) << endl;
-  //}
   uset* sbounds = range(its(clksched_map, dom));
-  //cout << "bounds..." << str(sbounds) << endl;
   auto bsets = get_sets(sbounds);
   assert(bsets.size() == 1);
 
   auto bset = pick(bsets);
-  //assert(false);
-  //vector<pair<int, int> > bounds;
   vector<int> lengths;
   for (int d = 0; d < num_dims(bset); d++) {
     auto pr = project_all_but(bset, d);
     int lmin = to_int(lexminval(pr));
     int lmax = to_int(lexmaxval(pr));
-    //bounds.push_back({lmin, lmax});
     lengths.push_back(lmax - lmin + 1);
   }
 
-  //// Reorder so that root is level 0
+  // Reorder so that root is level 0
   reverse(lengths);
   lengths.push_back(1);
-  //reverse(bounds);
 
   vector<int> fused_level_iis;
-  //fused_level_iis.resize(num_dims(bset));
   fused_level_iis.resize(lengths.size());
   fused_level_iis[fused_level_iis.size() - 1] = 1;
   for (int l = fused_level_iis.size() - 2; l >= 0; l--) {
     fused_level_iis[l] = fused_level_iis[l + 1] * lengths.at(l + 1);
   }
 
-  //cout << "lengths" << endl;
-  //for (auto l : lengths) {
-    //cout << l << endl;
-  //}
-
   fused_level_iis.pop_back();
-
-  //cout << "Fused iis" << endl;
-  //for (auto i : fused_level_iis) {
-    //cout << tab(1) << i << endl;
-  //}
 
   auto cs = clockwork_schedule(dom, valid, cpy(valid));
   for (auto s : get_sets(dom)) {
@@ -15952,12 +15925,9 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
   }
 
   prg.pretty_print();
-  cout << "Original Loop iis" << endl;
   for (auto op : prg.all_ops()) {
     vector<string> surrounding = surrounding_vars(op, prg);
-    cout << tab(1) << "OP: " << op->name << endl;
     for (auto var : surrounding) {
-      cout << tab(2) << "Getting variable levels for: " << var << endl;
 
       int level = map_find(var, levels);
       auto container = prg.find_loop(var);
@@ -15966,15 +15936,12 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
 
       int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
       int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
-      cout << tab(2) << var << " q: " << qfactor << ", d = " << delay << endl;
       sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
       sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
-      // TODO: Set this to the latency read from the compute units
-      //sched.instance_latencies[container] = 1;
-      cout << tab(2) << "ii = " << sched.II(container) << endl;
     }
   }
 
+  // Compute the innermost fused pipeline layout
   int total_latency = 0;
   for (auto op : inner_ops(prg)) {
     cout << "inner ops: " << op->name << endl;
