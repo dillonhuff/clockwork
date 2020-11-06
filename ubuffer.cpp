@@ -758,6 +758,37 @@ void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::Modu
   generate_coreir(options, def, info, false);
 }
 
+vector<isl_set*> get_multi_bank_domain_set(isl_map* origin_map, int project_out_domain) {
+
+    vector<isl_set*> ret;
+    string name = domain_name(origin_map);
+    int dim = num_in_dims(origin_map);
+    vector<int> min_pts = parse_pt(lexminpt(::domain(origin_map)));
+    vector<int> max_pts = parse_pt(lexmaxpt(::domain(origin_map)));
+    int bank_factor = max_pts.at(project_out_domain) -
+        min_pts.at(project_out_domain) + 1;
+    for (int offset = 0; offset < bank_factor; offset ++) {
+        vector<string> dvs;
+        vector<string> addrs;
+        for (int i = 0; i < dim; i ++) {
+            if (i == project_out_domain) {
+                addrs.push_back("a_" + str(i) + "=" + str(offset));
+            }
+            dvs.push_back("a_" + str(i));
+        }
+
+        string bank_func =
+          curlies( name + bracket_list(dvs) + ":" + sep_list(addrs, "" , "", " and "));
+
+        //bank map: from address to the bank ID
+        cout << "bank func = " << bank_func << endl;
+        auto bank_set = isl_set_read_from_str(ctx(origin_map), bank_func.c_str());
+        bank_set = its(bank_set, ::domain(origin_map) );
+        ret.push_back(bank_set);
+    }
+    return ret;
+}
+
 ConfigMap emit_lake_controller_config(isl_set* write_domain, isl_aff* write_sched) {
   //cout << str(write_sched) << endl;
   int dimensionality = num_dims(write_domain);
@@ -779,6 +810,38 @@ ConfigMap emit_lake_controller_config(isl_set* write_domain, isl_aff* write_sche
   return {{"extent", extent}, {"cycle_starting_addr", start_addr}, {"cycle_stride", cycle_stride}};
 
   //return MemConnSch({dimensionality, {}, "", "", ""});
+}
+
+vector<MemConnSch> emit_lake_accessor_config(CodegenOptions& options, int in_project_dim, isl_map* sched_map) {
+    vector<MemConnSch> ret;
+    if ((in_project_dim != -1)
+            && options.mem_tile.multi_sram_accessor) {
+      cout << tab(1) << "Before schedule input projection" << str(get_aff(sched_map)) << endl;
+      auto bank_set_vec = get_multi_bank_domain_set(sched_map, in_project_dim);
+      for (auto bank_set: bank_set_vec) {
+        ConfigMap vals;
+        auto single_map = its(sched_map, bank_set);
+        cout << tab(1) << "After schedule Banking" << str(simplify(single_map)) << endl;
+        single_map = project_out_domain(single_map, in_project_dim);
+        cout << tab(1) << "After schedule input projection" << str(simplify(single_map)) << endl;
+        auto sched = get_aff(single_map);
+        cout << tab(1) << "Final schedule:" << str(sched) << endl;
+        vals.merge(emit_lake_controller_config(::domain(single_map), sched));
+        MemConnSch tmp;
+        tmp.dimensionality = num_in_dims(sched);
+        tmp.vals = vals;
+        ret.push_back(tmp);
+      }
+    } else {
+      ConfigMap vals;
+      auto sched = get_aff(sched_map);
+      vals.merge(emit_lake_controller_config(::domain(sched_map), sched));
+      MemConnSch tmp;
+      tmp.dimensionality = num_in_dims(sched);
+      tmp.vals = vals;
+      ret.push_back(tmp);
+    }
+    return ret;
 }
 
 ConfigMap generate_config_from_aff_expr(isl_aff* addr, bool is_read, bool is_mux, int word_width, int capacity, int port_width) {
@@ -889,36 +952,6 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
     return {bk_num, domain_project_dim};
 }
 
-vector<isl_set*> get_multi_bank_domain_set(isl_map* origin_map, int project_out_domain) {
-
-    vector<isl_set*> ret;
-    string name = domain_name(origin_map);
-    int dim = num_in_dims(origin_map);
-    vector<int> min_pts = parse_pt(lexminpt(::domain(origin_map)));
-    vector<int> max_pts = parse_pt(lexmaxpt(::domain(origin_map)));
-    int bank_factor = max_pts.at(project_out_domain) -
-        min_pts.at(project_out_domain) + 1;
-    for (int offset = 0; offset < bank_factor; offset ++) {
-        vector<string> dvs;
-        vector<string> addrs;
-        for (int i = 0; i < dim; i ++) {
-            if (i == project_out_domain) {
-                addrs.push_back("a_" + str(i) + "=" + str(offset));
-            }
-            dvs.push_back("a_" + str(i));
-        }
-
-        string bank_func =
-          curlies( name + bracket_list(dvs) + ":" + sep_list(addrs, "" , "", " and "));
-
-        //bank map: from address to the bank ID
-        cout << "bank func = " << bank_func << endl;
-        auto bank_set = isl_set_read_from_str(ctx(origin_map), bank_func.c_str());
-        bank_set = its(bank_set, ::domain(origin_map) );
-        ret.push_back(bank_set);
-    }
-    return ret;
-}
 
 vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_read,
         int bk_num, int in_project_dim, UBuffer& buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
@@ -1165,19 +1198,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
     unordered_map<string, int> config_cnt = {{"in2agg", 0}, {"tb2out", 0}};
     for (auto it : op2sched) {
         cout <<"\n\n\tEmit config for opname: " << it.first << str(it.second) << endl;
-        auto sched = get_aff(it.second);
         string op_name = it.first;
-
-        string key = split_at(op_name, "_").back();
-        if (config_cnt.count(key) == 0){
-            config_cnt[key] = 0;
-        }
-
         MemConnSch tmp;
-        tmp.dimensionality = num_in_dims(sched);
-        tmp.vals.merge(emit_lake_controller_config(::domain(it.second), sched));
-
-        vector<ConfigMap> read_addr_config, write_addr_config;
 
         //This is for the new memtile config, need to slice the op into multiple accessor
         if (options.mem_tile.multi_sram_accessor) {
@@ -1192,6 +1214,24 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
                 }
             }
         }
+
+        int in_project_dim;
+        if (op2write_bank.count(op_name)) {
+            in_project_dim = op2write_bank.at(op_name).second;
+        } else {
+            in_project_dim = op2read_bank.at(op_name).second;
+        }
+        //A rewrite pass if we have multi sram accessor
+        vector<MemConnSch> accessor_config_vec =
+            emit_lake_accessor_config(options, in_project_dim, it.second);
+
+        string key = split_at(op_name, "_").back();
+        if (config_cnt.count(key) == 0){
+            config_cnt[key] = 0;
+        }
+
+        vector<ConfigMap> read_addr_config, write_addr_config;
+
 
         if (op2read_map.count(op_name)) {
             auto read_map = op2read_map.at(it.first);
@@ -1222,7 +1262,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
             for (auto write_config: write_addr_config) {
                 string key = "in2agg";
                 string config_key = key + "_" + to_string(config_cnt.at(key));
-                auto cpy = tmp;
+                assert(accessor_config_vec.size() == 1);
+                auto cpy = pick(accessor_config_vec);
                 cpy.vals.merge(write_config);
                 data[config_key] = cpy;
                 config_cnt.at(key) ++;
@@ -1230,7 +1271,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
             for (auto read_config: read_addr_config) {
                 string key = "tb2out";
                 string config_key = key + "_" + to_string(config_cnt.at(key));
-                auto cpy = tmp;
+                assert(accessor_config_vec.size() == 1);
+                auto cpy = pick(accessor_config_vec);
                 cpy.vals.merge(read_config);
                 data[config_key] = cpy;
                 config_cnt.at(key) ++;
@@ -1240,7 +1282,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
 
                 string key = "in2agg";
                 string config_key = key + "_" + to_string(config_cnt.at(key));
-                auto cpy = tmp;
+                assert(accessor_config_vec.size() == 1);
+                auto cpy = pick(accessor_config_vec);
                 cpy.vals.merge(write_config);
                 data[config_key] = cpy;
                 config_cnt.at(key) ++;
@@ -1249,7 +1292,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
             for (auto read_config: read_addr_config) {
                 string key = "tb2out";
                 string config_key = key + "_" + to_string(config_cnt.at(key));
-                auto cpy = tmp;
+                assert(accessor_config_vec.size() == 1);
+                auto cpy = pick(accessor_config_vec);
                 cpy.vals.merge(read_config);
                 data[config_key] = cpy;
                 config_cnt.at(key) ++;
@@ -1257,6 +1301,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
         } else {
             //we only have 1 sram2tb agg2sram, all the other is handled by mux
             assert(read_addr_config.size() == write_addr_config.size());
+            assert(read_addr_config.size() == accessor_config_vec.size());
             int total_ctrl = read_addr_config.size();
             for (int cnt = 0; cnt < total_ctrl; cnt ++) {
             //for (auto read_config: read_addr_config) {
@@ -1266,7 +1311,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
                 string config_key = key;// + "_" + to_string(config_cnt.at(key) ++);
                 if (options.mem_tile.multi_sram_accessor)
                     config_key += "_" + to_string(config_cnt.at(key) ++);
-                auto cpy = tmp;
+                auto cpy = accessor_config_vec.at(cnt);
                 cpy.vals.merge(read_config);
                 cpy.vals.merge(write_config);
                 data[config_key] = cpy;

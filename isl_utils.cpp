@@ -2938,12 +2938,16 @@ isl_map* project_out_domain(isl_map* const dmap,
 
   string dname, rname;
     dname = domain_name(m);
+  if (isl_map_get_tuple_id(dmap, isl_dim_out) != nullptr) {
     rname = range_name(m);
+  }
 
   m = isl_map_project_out(m, isl_dim_in, d, 1);
 
     isl_map_set_tuple_id(m, isl_dim_in, id(ct, dname));
+  if (isl_map_get_tuple_id(dmap, isl_dim_out) != nullptr) {
     isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
+  }
 
   return m;
 }
@@ -2956,13 +2960,15 @@ isl_map* project_out(isl_map* const dmap,
 
   string dname, rname;
   dname = domain_name(m);
-  rname = range_name(m);
-
+  if (isl_map_get_tuple_id(dmap, isl_dim_out) != nullptr) {
+    rname = range_name(m);
+  }
   m = isl_map_project_out(m, isl_dim_out, d, 1);
 
   isl_map_set_tuple_id(m, isl_dim_in, id(ct, dname));
-  isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
-
+  if (isl_map_get_tuple_id(dmap, isl_dim_out) != nullptr) {
+    isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
+  }
   return m;
 }
 
