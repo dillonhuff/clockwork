@@ -18802,11 +18802,17 @@ void dhuff_playground() {
         //cout << tab(1) << prg.name << " is coarse-pipelinable" << endl;
       } else {
         if (is_rate_matchable(prg)) {
-          //cout << tab(1) << prg.name << " is rate-matchable" << endl;
         } else {
-          cout << tab(1) << prg.name << " is not coarse-pipelinable or rate matchable" << endl;
+          //cout << tab(1) << prg.name << " is not coarse-pipelinable or rate matchable" << endl;
+          std::set<int> buffer_dims;
           for (auto b : all_buffers(prg)) {
-            cout << tab(2) << b << " : " << logical_dimension(b, prg) << endl;
+            //cout << tab(2) << b << " : " << logical_dimension(b, prg) << endl;
+            buffer_dims.insert(logical_dimension(b, prg));
+          }
+          if (buffer_dims.size() > 1) {
+            cout << tab(2) << prg.name << " has dimension reduction" << endl;
+          } else {
+            cout << tab(2) << prg.name << " is a scan pipeline" << endl;
           }
         }
       }
