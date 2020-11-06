@@ -2,7 +2,7 @@
 
 #ifdef COREIR
 
-#include "prog.h"
+#include "verilog_backend.h"
 
 #define COREMK(ctx, v) CoreIR::Const::make((ctx), (v))
 
@@ -83,9 +83,7 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     UBuffer& buf,
     schedule_info& hwinfo);
 
-void add_cgralib(CoreIR::Context* context);
-
-CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
+//CoreIR::Namespace* CoreIRLoadLibrary_cgralib(CoreIR::Context* c);
 
 void add_raw_dual_port_sram_generator(CoreIR::Context* c);
 
@@ -122,6 +120,8 @@ void generate_platonic_ubuffer(CodegenOptions& options,
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);
+
+void generate_lake_tile_verilog(CodegenOptions& options, CoreIR::Instance* buf);
 
 CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
     CoreIR::Wireable* w,

@@ -541,15 +541,25 @@ void unoptimized_time_sharing_gauss_pyramid_tiled(HWStream<hw_uint<32> >& /* no 
   global_debug_handle = &debug_file;
 #endif //__VIVADO_SYNTH__
   gp_gray_1_buf4_cache gp_gray_1_buf4;
+
+//#pragma HLS array_partition variable=gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs cyclic factor=3 dim=1
+//#pragma HLS array_partition variable=gp_gray_1_buf4.gp_gray_1_buf4_all_inputs_to_all_outputs cyclic factor=3 dim=2
+
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   gp_gray_2_buf12_cache gp_gray_2_buf12;
+//#pragma HLS array_partition variable=gp_gray_2_buf12.gp_gray_2_buf12_all_inputs_to_all_outputs cyclic factor=3 dim=1
+//#pragma HLS array_partition variable=gp_gray_2_buf12.gp_gray_2_buf12_all_inputs_to_all_outputs cyclic factor=3 dim=2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   gray_cache gray;
+//#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs complete dim=1
+//#pragma HLS array_partition variable=gray.gray_all_inputs_to_all_outputs complete dim=2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   in_rob_cache in_rob;
+//#pragma HLS array_partition variable=in_rob.in_rob_all_inputs_to_all_outputs cyclic factor=3 dim=1
+//#pragma HLS array_partition variable=in_rob.in_rob_all_inputs_to_all_outputs cyclic factor=3 dim=2
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
@@ -595,22 +605,27 @@ void unoptimized_time_sharing_gauss_pyramid_tiled(HWStream<hw_uint<32> >& /* no 
 	{
 	  for (int c3 = 0; c3 <= 19; c3 += 1)
 	    for (int c5 = 0; c5 <= 19; c5 += 1)
+#pragma HLS pipeline II=1
 	      rob88(in /* buf name */, in_rob, 0, c3, c5);
 	  for (int c3 = 0; c3 <= 4; c3 += 1)
 	    for (int c5 = 0; c5 <= 4; c5 += 1)
 	      for (int c7 = 0; c7 <= 3; c7 += 1)
 	        for (int c9 = 0; c9 <= 3; c9 += 1)
+#pragma HLS pipeline II=1
 	          oc_load_in03(in_rob /* buf name */, gray, 0, c3, c5, c7, c9);
 	  for (int c3 = 0; c3 <= 4; c3 += 1)
 	    for (int c5 = 0; c5 <= 4; c5 += 1)
 	      for (int c7 = 0; c7 <= 1; c7 += 1)
 	        for (int c9 = 0; c9 <= 1; c9 += 1)
+#pragma HLS pipeline II=1
 	          gp_gray_16_merged74(gray /* buf name */, gp_gray_1_buf4, 0, c3, c5, c7, c9);
 	  for (int c3 = 0; c3 <= 3; c3 += 1)
 	    for (int c5 = 0; c5 <= 3; c5 += 1)
+#pragma HLS pipeline II=1
 	      gp_gray_214_merged77(gp_gray_1_buf4 /* buf name */, gp_gray_2_buf12, 0, c3, c5, 0, 0);
 	  for (int c3 = 0; c3 <= 3; c3 += 1)
 	    for (int c5 = 0; c5 <= 3; c5 += 1)
+#pragma HLS pipeline II=1
 	      pw_math_gp_gray_2_buf122023(gp_gray_2_buf12 /* buf name */, out, 0, c3, c5, 0, 0);
 	}
 	

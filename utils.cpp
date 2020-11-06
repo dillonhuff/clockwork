@@ -1,5 +1,26 @@
 #include "utils.h"
 
+vector<string> get_files(const std::string& path) {
+    vector<string> file_list;
+    DIR* dir;
+    struct dirent* diread;
+    if ((dir = opendir(path.c_str())) != nullptr) {
+        while ((diread = readdir(dir)) != nullptr) {
+            string fname = string(diread->d_name);
+            string full_path = path + "/" +string(diread->d_name);
+            cout << "\tPush file: " << fname << "into list\n";
+            if (fname != "." && fname!= "..")
+                file_list.push_back(full_path);
+        }
+        closedir(dir);
+    } else {
+        cout << "Directory path: " << path << " cannot be found!" << endl ;
+        perror("opendir");
+        assert(false);
+    }
+    return file_list;
+}
+
 int run_sw_bmp_test_harness(const std::string& app_name) {
   int res = cmd("g++ -std=c++11 " + app_name + "_sw_bmp_test_harness.cpp " + app_name + ".cpp -I . -I ./aws_collateral");
   assert(res == 0);

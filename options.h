@@ -37,16 +37,21 @@ enum TargetTile {
   TARGET_TILE_DUAL_SRAM_RAW,
   TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN,
   TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN,
-  TARGET_TILE_PLATONIC
+  TARGET_TILE_PLATONIC,
+  TARGET_TILE_GENERIC_SRAM,
+  TARGET_TILE_BRAM
 };
 
 struct RTLOptions {
   bool use_external_controllers;
   bool pack_controllers_in_memtiles;
   bool use_prebuilt_memory;
+  int max_inpt, max_outpt;
   TargetTile target_tile;
 
-  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false) {}
+  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
+    max_inpt(1), max_outpt(1),
+    target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false) {}
   //RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), use_prebuilt_memory(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
 };
 
@@ -84,6 +89,7 @@ struct CodegenOptions {
 
   //Use for garnet
   bool pass_through_valid;
+  bool emit_smt_stream;
   string dir;
 
   bool use_epochs;
@@ -108,7 +114,7 @@ struct CodegenOptions {
   use_custom_code_string(false), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
   inline_vectorization(false), iis({}),
-  pass_through_valid(false), dir(""),
+  pass_through_valid(false), emit_smt_stream(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),
   push_garbage_outputs(false),
