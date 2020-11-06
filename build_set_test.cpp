@@ -15854,21 +15854,14 @@ void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
     insert_pad_loops(prg, pad_indexes);
 
   }
+
+  prg.pretty_print();
+  single_depth = all_loop_nests_same_depth(prg);
+  assert(single_depth);
 }
 
 void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg) {
-  //prg.pretty_print();
-  //bool single_depth = all_loop_nests_same_depth(prg);
-  //int max_depth = max_loop_depth(prg);
-  //assert(max_depth >= 1);
-
-  //if (!single_depth) {
   pad_to_single_depth(sched, root, prg);
-  //}
-
-  prg.pretty_print();
-  bool single_depth = all_loop_nests_same_depth(prg);
-  assert(single_depth);
 
   prg.pretty_print();
   //cout << prg.name << " is a stencil pipeline" << endl;
@@ -15891,22 +15884,23 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
 
   auto bset = pick(bsets);
   //assert(false);
-  vector<pair<int, int> > bounds;
+  //vector<pair<int, int> > bounds;
   vector<int> lengths;
   for (int d = 0; d < num_dims(bset); d++) {
     auto pr = project_all_but(bset, d);
     int lmin = to_int(lexminval(pr));
     int lmax = to_int(lexmaxval(pr));
-    bounds.push_back({lmin, lmax});
+    //bounds.push_back({lmin, lmax});
     lengths.push_back(lmax - lmin + 1);
   }
 
-  // Reorder so that root is level 0
+  //// Reorder so that root is level 0
   reverse(lengths);
   lengths.push_back(1);
-  reverse(bounds);
+  //reverse(bounds);
 
   vector<int> fused_level_iis;
+  //fused_level_iis.resize(num_dims(bset));
   fused_level_iis.resize(lengths.size());
   fused_level_iis[fused_level_iis.size() - 1] = 1;
   for (int l = fused_level_iis.size() - 2; l >= 0; l--) {
