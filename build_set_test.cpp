@@ -18774,6 +18774,16 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = mobilenet_unrolled();
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+
+    generate_optimized_code(prg);
+    move_to_benchmarks_folder(prg.name);
+    assert(false);
+  }
+
   //{
     //prog prg = mobilenet_unrolled();
     //prg.sanity_check();
@@ -18851,14 +18861,6 @@ void dhuff_playground() {
     prg.pretty_print();
     prg.sanity_check();
     auto res = unoptimized_result(prg);
-    assert(false);
-  }
-  {
-    prog prg = mobilenet_unrolled();
-
-    generate_optimized_code(options, prg);
-    move_to_benchmarks_folder(dag.prg.name);
-
     assert(false);
   }
   {
