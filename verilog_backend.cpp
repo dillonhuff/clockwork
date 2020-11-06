@@ -828,12 +828,14 @@ void instantiate_banks(
   map<string, string> port_data;
   for (auto outpt : buf.get_all_ports()) {
     if (shift_registered.find(outpt) == shift_registered.end()) {
-      string addr =
-        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
-
+       string addr;
       if (has_embarassing_partition) {
         addr =
           print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
+      } else
+      {
+        addr =
+        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
       }
       out << tab(1) << "logic [15:0] addr" << counter << ";" << endl;
       if (addr == "()") {
