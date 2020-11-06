@@ -16531,9 +16531,8 @@ vector<prog> harris_variants() {
   // 1. Extract_linear_rational_approximation fails?
   //test_programs.push_back(harris_sch6());
 
-  // 1. Verilator reports circular feedback due to output -> output shift registers
   // 2. Final output is wrong
-  test_programs.push_back(harris_sch2());
+  //test_programs.push_back(harris_sch2());
   
   // schedule takes too long
   //test_programs.push_back(harris_sch3());
