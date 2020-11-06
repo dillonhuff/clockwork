@@ -789,7 +789,7 @@ vector<isl_set*> get_multi_bank_domain_set(isl_map* origin_map, int project_out_
     return ret;
 }
 
-ConfigMap emit_lake_controller_config(isl_set* write_domain, isl_aff* write_sched) {
+ConfigMap generate_accessor_config_from_aff_expr(isl_set* write_domain, isl_aff* write_sched) {
   //cout << str(write_sched) << endl;
   int dimensionality = num_dims(write_domain);
   cout << "\"dimensionality\"," << num_dims(write_domain) << ",0" << endl;
@@ -826,7 +826,7 @@ vector<MemConnSch> emit_lake_accessor_config(CodegenOptions& options, int in_pro
         cout << tab(1) << "After schedule input projection" << str(simplify(single_map)) << endl;
         auto sched = get_aff(single_map);
         cout << tab(1) << "Final schedule:" << str(sched) << endl;
-        vals.merge(emit_lake_controller_config(::domain(single_map), sched));
+        vals.merge(generate_accessor_config_from_aff_expr(::domain(single_map), sched));
         MemConnSch tmp;
         tmp.dimensionality = num_in_dims(sched);
         tmp.vals = vals;
@@ -835,7 +835,7 @@ vector<MemConnSch> emit_lake_accessor_config(CodegenOptions& options, int in_pro
     } else {
       ConfigMap vals;
       auto sched = get_aff(sched_map);
-      vals.merge(emit_lake_controller_config(::domain(sched_map), sched));
+      vals.merge(generate_accessor_config_from_aff_expr(::domain(sched_map), sched));
       MemConnSch tmp;
       tmp.dimensionality = num_in_dims(sched);
       tmp.vals = vals;
@@ -844,7 +844,8 @@ vector<MemConnSch> emit_lake_accessor_config(CodegenOptions& options, int in_pro
     return ret;
 }
 
-ConfigMap generate_config_from_aff_expr(isl_aff* addr, bool is_read, bool is_mux, int word_width, int capacity, int port_width) {
+ConfigMap generate_addressor_config_from_aff_expr(isl_aff* addr,
+        bool is_read, bool is_mux, int word_width, int capacity, int port_width) {
     ConfigMap vals;
 
     string prefix = is_mux ? "mux_" : "";
@@ -1027,16 +1028,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
 
             //mux always has port width = 1
             if (!options.mem_tile.multi_sram_accessor)
-              vals.merge(generate_config_from_aff_expr(addr, is_read, true, ww, capacity, 1));
-            //string prefix = is_read ? "mux_read" : "mux_write";
-            //cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
-            //cout << "\""+prefix+"_data_starting_addr\"," <<
-            //    to_int(const_coeff(addr))/ww  << ",0" << endl;
-            //for (int d = 0; d < num_in_dims(addr); d++) {
-            //  int ldim = num_in_dims(addr) - d - 1;
-            //  cout << "\""+prefix+"_data_stride_" << ldim << "\"," <<
-            //      to_int(get_coeff(addr, d))/ww  << ",0" << endl;
-            //}
+              vals.merge(generate_addressor_config_from_aff_expr(addr, is_read, true, ww, capacity, 1));
         }
 
         //TODO: use word width to fix kavya's request
@@ -1074,7 +1066,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
             auto addr = get_aff(single_map);
             cout << str(addr) << endl;
             bool is_mux = false;
-            vals.merge(generate_config_from_aff_expr(addr, is_read, is_mux, ww, capacity, pw));
+            vals.merge(generate_addressor_config_from_aff_expr(addr, is_read, is_mux, ww, capacity, pw));
             ret.push_back(vals);
           }
           break;
@@ -1083,14 +1075,8 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
           auto addr = get_aff(addr_expr_map);
           cout << str(addr) << endl;
           bool is_mux = false;
-          vals.merge(generate_config_from_aff_expr(addr, is_read, is_mux, ww, capacity, pw));
-          //string prefix = is_read ? "read" : "write";
-          //cout << prefix + "_data_starting_addr, " << to_int(const_coeff(addr))/ww << endl;
-          //for (int d = 0; d < num_in_dims(addr); d++) {
-          //    cout << prefix + "_data_stride, " << to_int(get_coeff(addr, d))/ww << endl;
-          //}
+          vals.merge(generate_addressor_config_from_aff_expr(addr, is_read, is_mux, ww, capacity, pw));
           ret.push_back(vals);
-
         }
 
     }
@@ -1139,11 +1125,15 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
 
     map<string, isl_map*>  op2sched;
     map<string, vector<umap*>> op2write_map, op2read_map;
-    map<string, pair<int, int>> op2write_bank, op2read_bank;
     map<string, string> op2write_buf, op2read_buf;
 
+    //This is for wide fetch memory, figuring out the mux config
+    map<string, pair<int, int>> op2write_bank, op2read_bank;
 
+    //get rid of retrive_dom_map
     auto retrive_dom_map = get_sets_in_map(retrive_domain_from_buffers(rewrite_buffer));
+
+    //First pass to collect the information for codegen
     for (auto m : get_maps(hardware_schedule)) {
         string op_name = domain_name(m);
         if (retrive_dom_map.count(op_name))
@@ -1231,7 +1221,6 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
         }
 
         vector<ConfigMap> read_addr_config, write_addr_config;
-
 
         if (op2read_map.count(op_name)) {
             auto read_map = op2read_map.at(it.first);
@@ -1337,7 +1326,7 @@ CoreIR::Instance* affine_controller_use_lake_tile(
     {"ID", CoreIR::Const::make(context, context->getUnique())},
     {"has_flush",  CoreIR::Const::make(context, true)}
   };
-  auto stencil_valid = emit_lake_controller_config(dom, aff);
+  auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
   //FIXME:possible bug if one ubuffer contains more than one tile
   json config_file;
   add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
@@ -1426,7 +1415,7 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options) {
   auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, false);
   cout << "Stencil Valid signal 1D: " << str(outpt_sched_1D) << endl;
   auto sched = get_aff(outpt_sched_1D);
-  auto stencil_valid = emit_lake_controller_config(::domain(outpt_sched_1D), sched);
+  auto stencil_valid = generate_accessor_config_from_aff_expr(::domain(outpt_sched_1D), sched);
   //FIXME:possible bug if one ubuffer contains more than one tile
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
 }
