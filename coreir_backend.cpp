@@ -2094,7 +2094,6 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
 }
 
 void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
-
   cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
       << buf->getModuleRef()->toString() << endl;
   string ub_ins_name = buf->toString();
@@ -2104,6 +2103,8 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   //dump the collateral file
   emit_lake_config_collateral(options, ub_ins_name, buf->getMetaData()["config"]);
 
+  if (options.config_gen_only)
+    return;
   //run the lake generation cmd
   run_lake_verilog_codegen(options, v_name, ub_ins_name);
 }

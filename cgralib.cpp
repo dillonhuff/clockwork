@@ -207,6 +207,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             for (size_t i = 0; i < num_input; i ++) {
                 recordparams.push_back({"data_in_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
+                recordparams.push_back({"chain_data_in_" + std::to_string(i),
+                        c->BitIn()->Arr(width)});
             }
             for (size_t i = 0; i < num_output; i ++) {
                 recordparams.push_back({"data_out_" + std::to_string(i),
@@ -291,6 +293,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
             for (size_t i = 0; i < num_input; i ++) {
                 recordparams.push_back({"data_in_" + std::to_string(i),
+                        c->BitIn()->Arr(width)});
+                recordparams.push_back({"chain_data_in_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
                 //recordparams.push_back({"wen_" + std::to_string(i),
                 //        c->BitIn()});
