@@ -6570,3 +6570,11 @@ void sanity_check_iis(schedule_info& sched) {
   }
 }
 
+int logical_dimension(const std::string& buf, prog& prg) {
+  if (!prg.is_input(buf)) {
+    return num_out_dims(producer_map(prg.root, buf, prg));
+  } else {
+    return num_out_dims(consumer_map(prg.root, buf, prg));
+  }
+}
+

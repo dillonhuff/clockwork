@@ -1855,3 +1855,5 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     schedule_info& hwinfo);
 
 void sanity_check_iis(schedule_info& sched);
+
+int logical_dimension(const std::string& buf, prog& prg);
