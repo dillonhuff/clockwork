@@ -15961,7 +15961,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     }
   }
 
-  if (get_kernels(prg).size() > 0 && is_rate_matchable(prg)) {
+  if (get_kernels(prg).size() > 1 && is_rate_matchable(prg)) {
     cycle_accurate_clockwork_schedule(sched, root, prg);
   } else {
     prg.pretty_print();
