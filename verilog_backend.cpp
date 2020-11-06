@@ -612,25 +612,29 @@ unordered_set<string> instantiate_shift_regs(
     ostream & out,
     UBuffer& buf,
     map<string,pair<string,int>>& shift_registered_outputs ,
-    vector<pair<string,pair<string,int>>>& shift_registered_outputs_to_outputs
-        )
+    vector<pair<string,pair<string,int>>>& shift_registered_outputs_to_outputs)
 {
-    unordered_set<string> done_outpt;
+  unordered_set<string> done_outpt;
+  //map<string, string> pt_to_pt;
   for (auto pt : shift_registered_outputs_to_outputs) {
 
-        if(done_outpt.find(pt.first)!=done_outpt.end())
-        {
-            continue;
-        } else{
-            done_outpt.insert(pt.first);
-        }
+    if(done_outpt.find(pt.second.first) != done_outpt.end()) {
+      continue;
+    }
+    if(done_outpt.find(pt.first)!=done_outpt.end())
+    {
+      continue;
+    } else{
+      done_outpt.insert(pt.first);
+    }
 
-        string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+    string dst = buf.container_bundle(pt.first) + brackets(str(buf.bundle_offset(pt.first)));
+    //pt_to_pt[pt.first] = pt.second.first;
 
     string src = buf.container_bundle(pt.second.first) + brackets(str(buf.bundle_offset(pt.second.first)));
-      out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
-
+    out << tab(2) << buf.name << "_" << pt.first << "_to_" << pt.second.first << "_sr " << pt.first << "_delay(.clk(clk), .rst_n(rst_n), .flush(flush), .in(" + src + "), .out(" + dst + "));" << endl << endl;
   }
+
   for (auto in : buf.get_in_ports()) {
     string src = buf.container_bundle(in) + brackets(str(buf.bundle_offset(in)));
     for (auto pt : shift_registered_outputs) {
@@ -646,7 +650,6 @@ unordered_set<string> instantiate_shift_regs(
       }
     }
   }
-
 
   out << endl;
   return done_outpt;
@@ -954,6 +957,9 @@ void generate_platonic_ubuffer(
     schedule_info& hwinfo) {
 
   prg.pretty_print();
+  if (buf.name == "padded16_global_wrapper_stencil") {
+    //assert(false);
+  }
 
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
