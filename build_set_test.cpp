@@ -18580,6 +18580,20 @@ void test_if_construction() {
 
 void dhuff_playground() {
   {
+    prog prg = mobilenet_unrolled();
+
+    generate_optimized_code(options, prg);
+    move_to_benchmarks_folder(dag.prg.name);
+
+    assert(false);
+  }
+  {
+    //prog prg = up_sample();
+    prog prg = pointwise();
+    prg.pretty_print();
+    assert(false);
+  }
+  {
     prog prg = resnet_coarse_pipeline_loop();
     //prog prg = resnet();
     prg.pretty_print();
