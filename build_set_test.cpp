@@ -13233,7 +13233,6 @@ void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") 
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
 
-  //TODO:need to use the new scheduler
   test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
