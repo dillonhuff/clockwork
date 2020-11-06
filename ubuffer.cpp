@@ -3681,9 +3681,12 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
       bank bnk = compute_bank_info();
       for (auto inpt : get_in_ports()) {
         for (auto outpt : get_out_ports()) {
+          cout << "Adding bank between " << inpt << " and " << outpt << endl;
           add_bank_between(inpt, outpt, bnk);
         }
       }
+
+      cout << "Done generating register-file style banks for " << name << ", bank list size = " << bank_list.size() << endl;
 
     } else if (banking.partition == "cyclic") {
       int dim = logical_dimension();
@@ -5634,3 +5637,61 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
   }
   return {};
 }
+
+int total_capacity(UBuffer& buf) {
+  bank bank = buf.compute_bank_info();
+  int capacity = 1;
+  auto dsets = get_sets(bank.rddom);
+  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
+  for (int i = 0; i < dims; i++) {
+    auto s = project_all_but(to_set(bank.rddom), i);
+    auto min = to_int(lexminval(s));
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    capacity *= length;
+  }
+  return capacity;
+}
+
+vector<int> min_offsets_by_dimension(UBuffer& buf) {
+  vector<int> min_offsets;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    min_offsets.push_back(INT_MAX);
+  }
+  for (auto pt : buf.get_all_ports()) {
+    vector<int> pts = parse_pt(lexminpt(range(buf.access_map.at(pt))));
+    for (int d = 0; d < pts.size(); d++) {
+      if (pts.at(d) < min_offsets.at(d)) {
+        min_offsets[d] = pts.at(d);
+      }
+    }
+  }
+  return min_offsets;
+}
+
+vector<int> max_offsets_by_dimension(UBuffer& buf) {
+  vector<int> min_offsets;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    min_offsets.push_back(INT_MIN);
+  }
+  for (auto pt : buf.get_all_ports()) {
+    vector<int> pts = parse_pt(lexmaxpt(range(buf.access_map.at(pt))));
+    for (int d = 0; d < pts.size(); d++) {
+      if (pts.at(d) > min_offsets.at(d)) {
+        min_offsets[d] = pts.at(d);
+      }
+    }
+  }
+  return min_offsets;
+}
+
+vector<int> extents_by_dimension(UBuffer& buf) {
+  vector<int> min_offsets = min_offsets_by_dimension(buf);
+  vector<int> max_offsets = max_offsets_by_dimension(buf);
+  vector<int> extents;
+  for (int i = 0; i < min_offsets.size(); i++) {
+    extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+  }
+  return extents;
+}
+

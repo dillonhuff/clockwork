@@ -2911,9 +2911,20 @@ void prog::sanity_check() {
     for (auto b : op->buffers_written()) {
       buffer_names.insert(b);
       if (is_input(b)) {
-        cout << "Error: " << b << " is written, but is not an input" << endl;
+        cout << "Error: " << b << " is written, but it is an input" << endl;
       }
       assert(!is_input(b));
+    }
+  }
+
+  for (auto b : all_buffers(*this)) {
+    if (!is_boundary(b)) {
+      auto readers = find_readers(b, *this);
+      auto writers = find_writers(b, *this);
+      if (readers.size() > 0 && writers.size() == 0) {
+        cout << "Error: " << b << " has " << readers.size() << " readers, but it is never written." << endl;
+        assert(false);
+      }
     }
   }
   //for (auto b : buffer_names) {
@@ -5799,13 +5810,33 @@ map<string, pair<string, int> > determine_shift_reg_map(
             intersection(write_op->buffers_read(), write_op->buffers_written()).size() == 0) {
           auto dd =
             dependence_distance_singleton(buf, inpt, outpt, sc);
-          //assert(false);
           if (dd.has_value()) {
             int dd_raw = dd.get_value();
-            if (write_op->func != "") {
-              dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+            dd_raw -= hwinfo.compute_latency(write_op);
+            if (write_op->buffers_read().size() > 0) {
+              dd_raw -= hwinfo.load_latency(pick(write_op->buffers_read()));
             }
-            dd_raw = dd_raw - 1;
+            dd_raw += hwinfo.load_latency(buf.name);
+            //if (write_op->func != "") {
+              //dd_raw =
+              //dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+            //}
+            //bool not_input_reader = false;
+            //string non_in_buffer = "";
+            //for (auto b : write_op->buffers_read()) {
+              //not_input_reader = true;
+              //non_in_buffer = b;
+              //break;
+            //}
+            //if (not_input_reader) {
+              //dd_raw -= map_find(non_in_buffer, hwinfo.buffer_load_latencies);
+            //}
+            //dd_raw += map_find(buf.name, hwinfo.buffer_load_latencies);
+
+            if (!(dd_raw >= 0)) {
+              cout << "Error: Negative dependence distance: " << dd_raw << endl;
+            }
+            assert(dd_raw >= 0);
             shift_registered_outputs[outpt] = {inpt, dd_raw};
           }
         }
@@ -6399,15 +6430,133 @@ void push_to_bottom_of_band_ignoring(const vector<loop*>& base, loop* lp, prog& 
 
 op* find_coarse_grained_pipeline_loop(op* lp) {
   assert(lp->is_loop());
-  if (lp->name != "root" && lp->children.size() == 1) {
+  if (lp->children.size() > 1) {
     return lp;
   }
-  if (lp->name == "root" && lp->children.size() > 1) {
-    return nullptr;
+  return find_coarse_grained_pipeline_loop(lp->children.back());
+  //if (lp->name != "root" && lp->children.size() == 1) {
+    //return lp;
+  //}
+  //if (lp->name == "root" && lp->children.size() > 1) {
+    //return nullptr;
+  //}
+  //if (lp->name == "root" && lp->children.size() == 1) {
+    //return lp->children.back();
+  //}
+  //return nullptr;
+}
+
+umap* prog::validity_deps() {
+  umap* naive_sched = unoptimized_schedule();
+  cout << "Naive sched: " << str(naive_sched) << endl;
+
+  auto before = lex_lt(naive_sched, naive_sched);
+
+  cout << "Getting iteration domain..."<< endl;
+
+  auto domain = whole_iteration_domain();
+
+  cout << "Got domain..." << endl;
+
+  auto writes =
+    its(producer_map(), domain);
+
+  auto reads =
+    its(consumer_map(), domain);
+
+  cout << "Got producer / consumer maps" << endl;
+  auto writers_to_readers = dot(writes, inv(reads));
+  cout << "Writers to readers: " << endl;
+  for (auto m : get_maps(writers_to_readers)) {
+    cout << tab(1) << str(m) << endl;
   }
-  if (lp->name == "root" && lp->children.size() == 1) {
-    return lp->children.back();
+  //assert(false);
+  auto validity =
+    its(writers_to_readers, before);
+    //its(dot(writes, inv(reads)), before);
+
+  return validity;
+}
+
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
+  auto sc = buf.global_schedule();
+  bool any_reduce_ops_on_buffer = false;
+  vector<pair<string, pair<string, int> >> shift_registered_outputs;
+  for (auto op : prg.all_ops()) {
+    if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
+      cout << buf.name << endl;
+
+      any_reduce_ops_on_buffer = true;
+      break;
+    }
   }
-  return nullptr;
+
+  if (!any_reduce_ops_on_buffer) {
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto outpt_src : buf.get_out_ports()) {
+
+        if(outpt == outpt_src) {
+          continue;
+        }
+
+        auto reads = buf.access_map.at(outpt);
+        auto reads_src = buf.access_map.at(outpt_src);
+        cout << "reads: " << str(reads) << endl;
+        cout << "reads_src: " << str(reads_src) << endl;
+
+        auto outpt_read_data = range(reads);
+        auto outpt_src_read_data = range(reads_src);
+        if(num_in_dims(to_map(reads)) != num_in_dims(to_map(reads_src)))
+        {
+          continue;
+        }
+
+        if(!subset(outpt_read_data,outpt_src_read_data))
+        {
+          continue;
+        }
+
+        cout << str(buf.schedule.at(outpt)) << endl;
+        cout << str(buf.schedule.at(outpt_src)) << endl;
+        isl_aff * outpt_sched = get_aff(buf.schedule.at(outpt));
+        isl_aff * outpt_src_sched = get_aff(buf.schedule.at(outpt_src));
+        outpt_sched = set_name(outpt_sched,"bump");
+        outpt_src_sched = set_name(outpt_src_sched,"bump");
+        isl_aff * diff = sub(outpt_sched,outpt_src_sched);
+        isl_aff * reads_aff = get_aff(reads);
+        isl_aff * reads_src_aff = get_aff(reads_src);
+        reads_aff = set_name(reads_aff,"bump");
+        reads_src_aff = set_name(reads_src_aff,"bump");
+        isl_aff * diff_loc = sub(reads_aff, reads_src_aff);
+
+        cout << str(diff) << endl;
+
+        if(!isl_aff_is_cst(diff) || to_int(const_coeff(diff)) < 0)
+        {
+          continue;
+        }
+
+        if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) < 0)
+        {
+          continue;
+        }
+
+        auto time_to_read_src = dot(inv(sc), (reads_src));
+        auto time_to_read = dot(inv(sc), (reads));
+
+        int dd = to_int(const_coeff(diff));
+
+        assert(dd >= 0);
+
+        shift_registered_outputs.push_back({outpt,{outpt_src, dd}});
+      }
+
+    }
+  }
+  return shift_registered_outputs;
 }
 
