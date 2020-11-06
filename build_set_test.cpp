@@ -16550,6 +16550,7 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, stencil_programs());
   concat(test_programs, harris_variants());
 
   // Too large to fit in 16 bit controller,
@@ -16568,7 +16569,7 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(mobilenet_small());
 
 
-  concat(test_programs, stencil_programs());
+
 
   return test_programs;
 }
@@ -16904,10 +16905,12 @@ void fpga_asplos_tests() {
 void cgra_flow_tests() {
   auto test_programs =
     all_cgra_programs();
-  test_platonic_codegen(test_programs);
 
   vector<prog> bram_test_programs{resnet()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+    assert(false);
+
+    test_platonic_codegen(test_programs);
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
