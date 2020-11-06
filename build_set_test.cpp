@@ -16535,17 +16535,17 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  //test_programs.push_back(harris_sch1());
+  test_programs.push_back(harris_sch1());
   //
   // 1. Extract_linear_rational_approximation fails?
-  //test_programs.push_back(harris_sch6());
+  test_programs.push_back(harris_sch6());
 
   // 2. Final output is wrong
-  //test_programs.push_back(harris_sch2());
+  test_programs.push_back(harris_sch2());
   
   // schedule takes too long
-  //test_programs.push_back(harris_sch3());
-  //test_programs.push_back(harris_sch4());
+  test_programs.push_back(harris_sch3());
+  test_programs.push_back(harris_sch4());
 
   // Works
   test_programs.push_back(harris_sch5());
@@ -18782,7 +18782,38 @@ void test_if_construction() {
   //assert(false);
 }
 
+int logical_dimension(const std::string& buf, prog& prg) {
+  if (!prg.is_input(buf)) {
+    return num_out_dims(producer_map(prg.root, buf, prg));
+  } else {
+    return num_out_dims(consumer_map(prg.root, buf, prg));
+  }
+}
+
 void dhuff_playground() {
+  {
+    vector<prog> prgs = all_cgra_programs();
+    vector<prog> not_coarse;
+    cout << "Finding coarse pipelines" << endl;
+    for (auto prg : prgs) {
+      op* pl =
+        find_coarse_grained_pipeline_loop(prg.root);
+      if (pl->name != "root") {
+        //cout << tab(1) << prg.name << " is coarse-pipelinable" << endl;
+      } else {
+        if (is_rate_matchable(prg)) {
+          //cout << tab(1) << prg.name << " is rate-matchable" << endl;
+        } else {
+          cout << tab(1) << prg.name << " is not coarse-pipelinable or rate matchable" << endl;
+          for (auto b : all_buffers(prg)) {
+            cout << tab(2) << b << " : " << logical_dimension(b, prg) << endl;
+          }
+        }
+      }
+    }
+    assert(false);
+  }
+
   {
     prog prg = harris_sch1();
     prg.pretty_print();

@@ -4721,7 +4721,6 @@ isl_map* producer_map(op* loop, const std::string& b, prog& prg) {
     int diff = base - level;
     auto r = rm;
     if (diff != 0) {
-      cout << "Projecting out " << diff << " levels from " << str(r) << endl;
       r = isl_map_project_out(r, isl_dim_in, level + 1, diff);
     }
     r = set_domain_name(r, level_name(loop->name));
@@ -4742,7 +4741,6 @@ isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
     int diff = base - level;
     auto r = rm;
     if (diff != 0) {
-      cout << "Projecting out " << diff << " levels from " << str(r) << endl;
       r = isl_map_project_out(r, isl_dim_in, level + 1, diff);
     }
     r = set_domain_name(r, level_name(loop->name));
