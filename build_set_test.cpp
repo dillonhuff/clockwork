@@ -15961,17 +15961,23 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
     }
   }
 
-  if (is_rate_matchable(prg)) {
+  if (false) {
+  //if (is_rate_matchable(prg)) {
     cycle_accurate_clockwork_schedule(sched, root, prg);
   } else {
     prg.pretty_print();
     cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
 
     sequential_schedule(sched, root, prg);
+    cout << "Computed initial sequential schedule" << endl;
+    sanity_check_iis(sched);
+
     //asap_inner_loops_schedule(sched, root, prg);
 
     adjust_inner_iis(sched, prg);
+    sanity_check_iis(sched);
     tighten_iis(sched, prg);
+    sanity_check_iis(sched);
 
     op* coarse_pipeline_loop = find_coarse_grained_pipeline_loop(prg.root);
     if (coarse_pipeline_loop != nullptr &&
@@ -15994,16 +16000,26 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       cout << "Most compute intensive stage: " << most_compute_intensive_stage->name << endl;
       cout << tab(1) << "Current II        : " << sched.II(coarse_pipeline_loop) << endl;
       sched.loop_iis[coarse_pipeline_loop->name] =
-        sched.total_latency(most_compute_intensive_stage);
+        max(sched.total_latency(most_compute_intensive_stage), 1);
     }
 
+    cout << "Adjusting outer pipeline delays" << endl;
+    sanity_check_iis(sched);
 
     adjust_outer_pipeline_delays(sched, prg);
+
+    cout << "Done Adjusting outer pipeline delays" << endl;
+    sanity_check_iis(sched);
   }
+
+  cout << "About to adjust final schedule forward" << endl;
+  sanity_check_iis(sched);
 
   // Final finishing pass to make sure all times
   // in the schedule are positive
   adjust_schedule_forward(sched, prg, 1);
+  cout << "Finishing the final schedule" << endl;
+  sanity_check_iis(sched);
 }
 
 int buffer_store_latency(CodegenOptions& options) {
@@ -16383,12 +16399,6 @@ umap* cycle_accurate_deps(schedule_info& sched, prog& prg) {
 
   release(valid);
   return final_dep;
-}
-
-void sanity_check_iis(schedule_info& sched) {
-  for (auto lii : sched.loop_iis) {
-    assert(lii.second > 0);
-  }
 }
 
 void sanity_check_negative_starts(schedule_info& sched, prog& prg) {
@@ -18774,6 +18784,18 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = harris_sch1();
+    prg.pretty_print();
+    prg.ins.insert("padded16_global_wrapper_stencil");
+    prg.ins.erase("padded16_stencil");
+    prg.root->delete_child(prg.root->children.front());
+    prg.pretty_print();
+    //assert(false);
+    vector<prog> prgs{prg};
+    test_codegen(prgs, compile_for_FPGA_BRAM_mem);
+    assert(false);
+  }
   //{
     //prog prg = mobilenet_unrolled();
     //prg.sanity_check();

@@ -6433,6 +6433,9 @@ op* find_coarse_grained_pipeline_loop(op* lp) {
   if (lp->children.size() > 1) {
     return lp;
   }
+  if (lp->children.size() == 1 && !lp->children.back()->is_loop()) {
+    return lp;
+  }
   return find_coarse_grained_pipeline_loop(lp->children.back());
   //if (lp->name != "root" && lp->children.size() == 1) {
     //return lp;
@@ -6558,5 +6561,14 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     }
   }
   return shift_registered_outputs;
+}
+
+void sanity_check_iis(schedule_info& sched) {
+  for (auto lii : sched.loop_iis) {
+    if (!(lii.second > 0)) {
+      cout << "Error ii for " << lii.first << " = " << lii.second << endl;
+    }
+    assert(lii.second > 0);
+  }
 }
 

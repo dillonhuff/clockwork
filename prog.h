@@ -1852,3 +1852,5 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
     prog& prg,
     UBuffer& buf,
     schedule_info& hwinfo);
+
+void sanity_check_iis(schedule_info& sched);
