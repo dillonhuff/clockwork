@@ -16322,6 +16322,8 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream, bool con
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
+  if (config_gen_only)
+      options.mem_tile.multi_sram_accessor = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);

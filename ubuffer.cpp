@@ -800,17 +800,36 @@ ConfigMap generate_config_from_aff_expr(isl_aff* addr, bool is_read, bool is_mux
     return vals;
 }
 
-isl_set* get_memtile_bank_range(UBuffer & buf, isl_map* map, int& project_dim, int pt_per_bank, bool is_read) {
+int get_project_dim(UBuffer & buf, bool is_read) {
+    if (is_read){
+      return buf.get_consumer_bank_dim_id();
+    } else {
+      return buf.get_producer_bank_dim_id();
+    }
+}
+
+bool check_need_mux(CodegenOptions & options, UBuffer & buf,
+        string op_name, string micro_buf_name, int bk_num, bool is_read) {
+    bool need_mux = false;
+    auto op2bd = buf.get_stmt2bd();
+    assert(op2bd.at(op_name).size() == 1);
+    string bd_name = pick(op2bd.at(op_name));
+    cout << tab(2) << "Bundle: " << bd_name << " has lane size = " << buf.lanes_in_bundle(bd_name) << endl;
+    if (is_read) {
+        need_mux = (bk_num < (buf.lanes_in_bundle(bd_name) / options.mem_tile.out_port_width.at(micro_buf_name)));
+    } else {
+        need_mux = (bk_num < (buf.lanes_in_bundle(bd_name) / options.mem_tile.in_port_width.at(micro_buf_name)));
+    }
+    return need_mux;
+}
+
+isl_set* get_memtile_bank_range(UBuffer & buf, isl_map* map, int project_dim, int pt_per_bank, bool is_read) {
     isl_set* range_per_bank = isl_set_empty(get_space(range(map)));
     auto bmap_vec = get_basic_maps(map);
     for(int i = 0; i < pt_per_bank; i ++) {
         range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
     }
-    if (is_read){
-      project_dim = buf.get_consumer_bank_dim_id();
-    } else {
-      project_dim = buf.get_producer_bank_dim_id();
-    }
+    //project_dim = get_project_dim(buf, is_read);
     if (project_dim != -1) {
       cout << "before project: " << str(range_per_bank) << endl;
       range_per_bank = project_out(range_per_bank, project_dim);
@@ -820,7 +839,7 @@ isl_set* get_memtile_bank_range(UBuffer & buf, isl_map* map, int& project_dim, i
     return range_per_bank;
 }
 
-int process_mux_info(CodegenOptions options, string op_name, bool is_read,
+pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_read,
         UBuffer& buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
 
     cout << "Generate mux and project id: " << op_name << endl;
@@ -855,11 +874,20 @@ int process_mux_info(CodegenOptions options, string op_name, bool is_read,
     //check if violate bank number
     assert(bk_num <= options.mem_tile.bank_num.at(micro_buf_name));
 
-    return bk_num;
+    //Get the iteartion domain dimension that need to be project out
+    int project_dim = get_project_dim(buf, is_read);
+    int domain_project_dim = -1;
+    if (project_dim != -1 && check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read)) {
+        cout << "acc map: " << to_map(pick(bmap_vec)) << endl;
+        cout << "project dim: : " << project_dim << endl;
+        domain_project_dim =get_involve_dim(to_map(pick(bmap_vec)), project_dim);
+
+    }
+    return {bk_num, domain_project_dim};
 }
 
 vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_name, bool is_read,
-        int bk_num, UBuffer& buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
+        int bk_num, int in_project_dim, UBuffer& buf, umap* tmp, map<string, isl_set*> & retrive_dom_map) {
 
     vector<ConfigMap> ret;
     cout << "Generate addr configuration for op: " << op_name << endl;
@@ -896,7 +924,8 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     //assert(bk_num <= options.mem_tile.bank_num.at(micro_buf_name));
 
     //A pass removing starting addr in multiple bank cases
-    int project_dim;
+    //int project_dim;
+    int project_dim = get_project_dim(buf, is_read);
     auto range_per_bank =
         get_memtile_bank_range(buf, map, project_dim,
                 is_read ?
@@ -907,12 +936,8 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     //get the reduce map for this subbuffer structure
     auto reduce_map = linear_address_map_lake(range_per_bank);
 
-    bool need_mux = false;
-    if (is_read) {
-        need_mux = (bk_num < (buf.num_in_ports() / options.mem_tile.in_port_width.at(micro_buf_name)));
-    } else {
-        need_mux = (bk_num < (buf.num_out_ports() / options.mem_tile.out_port_width.at(micro_buf_name)));
-    }
+    //get mux information
+    bool need_mux = check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read);
 
     for (int i = 0; i < bk_num; i ++)
     {
@@ -920,10 +945,10 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         auto bmap = bmap_vec.at(i);
         ConfigMap vals;
 
+        int bank_dim_id = buf.get_consumer_bank_dim_id();
         if (need_mux) {
             vector<int> mux_index;
             vector<int> addr_index;
-            int bank_dim_id = buf.get_consumer_bank_dim_id();
             //assert(bank_dim_id == num_out_dims(map) - 2);
             cout << "Auto Select bank id: " << bank_dim_id << "Hardcode: " << num_out_dims(map) - 2 << endl;
             for (int i = num_out_dims(map)-1; i >= 0; i--) {
@@ -953,7 +978,8 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
             int capacity = options.mem_tile.capacity.at(micro_buf_name);
 
             //mux always has port width = 1
-            vals.merge(generate_config_from_aff_expr(addr, is_read, true, ww, capacity, 1));
+            if (!options.mem_tile.multi_sram_accessor)
+              vals.merge(generate_config_from_aff_expr(addr, is_read, true, ww, capacity, 1));
             //string prefix = is_read ? "mux_read" : "mux_write";
             //cout << "\""+prefix+"\"," << "\"" << buf_name << "\"" << endl;
             //cout << "\""+prefix+"_data_starting_addr\"," <<
@@ -983,7 +1009,16 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         cout <<tab(1) << "Reduce map:" << str(reduce_map) << endl
             << tab(1) << "project access map" << str(project_access_map) << endl;
         auto addr_expr_map = dot(project_access_map, reduce_map);
-        cout << str(reduce_map) << endl << str(addr_expr_map) << endl;
+        //cout << str(reduce_map) << endl << str(addr_expr_map) << endl;
+
+        //Project the input dimension out
+        if (need_mux && options.mem_tile.multi_sram_accessor) {
+          cout << tab(1) << "Before input projection" << str(addr_expr_map) << endl;
+          cout << tab(1) << "map: " << str(to_map(bmap)) << "\n\tproject dim: " << bank_dim_id << endl;
+          addr_expr_map = project_out_domain(addr_expr_map, in_project_dim);
+          cout << tab(1) << "After input projection" << str(addr_expr_map) << endl;
+        }
+
         auto addr = get_aff(addr_expr_map);
         cout << str(addr) << endl;
         vals.merge(generate_config_from_aff_expr(addr, is_read, false, ww, capacity, pw));
@@ -1038,7 +1073,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
 
     map<string, isl_map*>  op2sched;
     map<string, vector<umap*>> op2write_map, op2read_map;
-    map<string, int> op2write_bank, op2read_bank;
+    map<string, pair<int, int>> op2write_bank, op2read_bank;
     map<string, string> op2write_buf, op2read_buf;
     auto retrive_dom_map = get_sets_in_map(retrive_domain_from_buffers(rewrite_buffer));
     for (auto m : get_maps(hardware_schedule)) {
@@ -1116,7 +1151,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
             for (auto tmp: read_map) {
                 concat( read_addr_config,
                         emit_lake_addrgen_config(options, op_name, true,
-                            op2read_bank.at(op_name), rewrite_buffer.at(producer_buf_name), tmp, retrive_dom_map));
+                            op2read_bank.at(op_name).first, op2read_bank.at(op_name).second,
+                            rewrite_buffer.at(producer_buf_name), tmp, retrive_dom_map));
             }
         }
 
@@ -1127,7 +1163,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
             for (auto tmp: write_map) {
                 concat( write_addr_config,
                         emit_lake_addrgen_config(options, op_name, false,
-                            op2write_bank.at(op_name), rewrite_buffer.at(consumer_buf_name), tmp, retrive_dom_map));
+                            op2write_bank.at(op_name).first, op2write_bank.at(op_name).second,
+                            rewrite_buffer.at(consumer_buf_name), tmp, retrive_dom_map));
             }
         }
         if (is_update_op(op_name)) {

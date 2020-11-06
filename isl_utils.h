@@ -572,6 +572,7 @@ isl_map* project_all_but(isl_map* const dmap, const int d);
 isl_set* project_all_but(isl_set* const dmap, const int d);
 isl_set* project_out(isl_set* const dmap, const int d);
 isl_map* project_out(isl_map* const dmap, const int d);
+isl_map* project_out_domain(isl_map* const dmap, const int d);
 
 
 vector<string> space_var_args(isl_space* s);

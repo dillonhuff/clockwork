@@ -594,7 +594,7 @@ isl_map* linear_address_map_lake(isl_set* s) {
     stride = mul(stride, extend);
   }
   std::reverse(var_names.begin(), var_names.end());
-  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + domain + sep_list(exprs, "[", "]", " + ") + " }";
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
@@ -617,7 +617,7 @@ isl_map* linear_address_map_with_index(isl_set* s, vector<int> index) {
     stride = mul(stride, extend);
   }
   std::reverse(var_names.begin(), var_names.end());
-  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + domain + sep_list(exprs, "[", "]", " + ") + " }";
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
@@ -2931,14 +2931,32 @@ uset* gist(uset* base, uset* context) {
   return isl_union_set_gist(cpy(base), cpy(context));
 }
 
+isl_map* project_out_domain(isl_map* const dmap,
+        const int d) {
+  auto m = cpy(dmap);
+  auto ct = ctx(dmap);
+
+  string dname, rname;
+    dname = domain_name(m);
+    rname = range_name(m);
+
+  m = isl_map_project_out(m, isl_dim_in, d, 1);
+
+    isl_map_set_tuple_id(m, isl_dim_in, id(ct, dname));
+    isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
+
+  return m;
+}
+
 isl_map* project_out(isl_map* const dmap,
     const int d) {
 
   auto m = cpy(dmap);
   auto ct = ctx(dmap);
 
-  string dname = domain_name(m);
-  string rname = range_name(m);
+  string dname, rname;
+  dname = domain_name(m);
+  rname = range_name(m);
 
   m = isl_map_project_out(m, isl_dim_out, d, 1);
 
