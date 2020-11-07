@@ -15247,11 +15247,38 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
   cout << "Body latency = " << body_latency << endl;
   cout << "Inner II     = " << inner_ii << endl;
   for (auto l : levels) {
-    if (l.second == dims) {
-      sched.loop_iis[l.first] = inner_ii;
-    }
+    //if (l.second == dims) {
+    sched.loop_iis[l.first] = inner_ii;
+    sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
+    sched.instance_latencies[prg.find_loop(l.first)] = 1;
+    //}
   }
+
+  cout << "Not scheduled..." << endl;
+  for (auto op : unscheduled_nodes(sched, prg)) {
+    op->pretty_print();
+    cout << endl;
+  }
+
   assert(false);
+
+  //auto dom = prg.whole_iteration_domain();
+  //auto valid = prg.validity_deps();
+  //map<string, vector<string> > hb_deps;
+  //for (int d = 0; d <= dims; d++) {
+    //vector<isl_set*> proj_doms;
+    //vector<isl_map*> proj_deps;
+    //for (auto dm : get_sets(dom)) {
+      //proj_doms.push_back(project_all_but(dm, d));
+    //}
+    //for (auto dm : get_maps(valid)) {
+      //proj_deps.push_back(project_all_but(dm, d));
+    //}
+    //auto cs = clockwork_schedule_dimension(proj_doms, proj_deps, hb_deps);
+    //for (auto m : cs) {
+      //cout << tab(1) << m.first << " -> " << str(m.second) << endl;
+    //}
+  //}
 }
 
 int max_loop_depth(prog& prg) {
@@ -15512,6 +15539,8 @@ void dsa_writers(prog& prg) {
 }
 
 void adjust_schedule_forward(schedule_info& sched, prog& prg, int offset = 1) {
+  assert(all_ops_scheduled(sched, prg));
+
   auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
   cout << "Start times..." << endl;
   cout << str(start_times) << endl;
@@ -16037,7 +16066,6 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
         coarse_pipeline_schedule(sched, root, prg);
       } else {
         rate_matched_schedule(sched, root, prg, pick(buffer_dims));
-        assert(false);
       }
     }
   }
@@ -16256,6 +16284,7 @@ bool is_cst(isl_multi_aff* diff) {
 }
 
 void sanity_check_hw_schedule(schedule_info& sched, prog& prg) {
+  assert(all_ops_scheduled(sched, prg));
   assert(all_operations_assigned_to_resources(sched, prg));
   assert(no_violated_resource_assignments(sched, prg));
   assert(no_violated_cycle_accurate_dependencies(sched, prg));
