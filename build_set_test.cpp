@@ -15260,7 +15260,7 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
     cout << endl;
   }
 
-  assert(false);
+  //assert(false);
 
   //auto dom = prg.whole_iteration_domain();
   //auto valid = prg.validity_deps();
