@@ -16610,8 +16610,8 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch2());
   
   // schedule takes too long
-  test_programs.push_back(harris_sch3());
-  test_programs.push_back(harris_sch4());
+  //test_programs.push_back(harris_sch3());
+  //test_programs.push_back(harris_sch4());
 
   // Works
   test_programs.push_back(harris_sch5());
