@@ -15244,6 +15244,7 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
     body_latency += sched.total_latency(b);
     inner_ii = max(inner_ii, sched.total_latency(b));
   }
+  inner_ii = 12;
   cout << "Body latency = " << body_latency << endl;
   cout << "Inner II     = " << inner_ii << endl;
   for (auto l : levels) {
@@ -15253,8 +15254,19 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
         sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
         sched.instance_latencies[prg.find_loop(l.first)] = 1;
       } else if (l.second == 1) {
+        auto lp = prg.find_loop(l.first);
+
+        assert(elem(lp, prg.root->children));
+
+        int pos;
+        for (pos = 0; pos < prg.root->children.size(); pos++) {
+          if (prg.root->children[pos] == lp) {
+            break;
+          }
+        }
+
         sched.loop_iis[l.first] = inner_ii*60;
-        sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
+        sched.op_offset_within_parent[prg.find_loop(l.first)] = inner_ii*60*pos;
         sched.instance_latencies[prg.find_loop(l.first)] = 1;
       } else {
         cout << l.second << endl;
@@ -16609,7 +16621,7 @@ vector<prog> harris_variants() {
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch2());
   
-  // schedule takes too long
+  // schedules take too long for 16 bit controllers
   //test_programs.push_back(harris_sch3());
   //test_programs.push_back(harris_sch4());
 
@@ -18778,270 +18790,285 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
-  {
-    vector<prog> prgs = all_cgra_programs();
-    vector<prog> not_coarse;
-    cout << "Finding coarse pipelines" << endl;
-    for (auto prg : prgs) {
-      op* pl =
-        find_coarse_grained_pipeline_loop(prg.root);
-      if (pl->name != "root") {
-        //cout << tab(1) << prg.name << " is coarse-pipelinable" << endl;
-      } else {
-        if (is_rate_matchable(prg)) {
-        } else {
-          //cout << tab(1) << prg.name << " is not coarse-pipelinable or rate matchable" << endl;
-          std::set<int> buffer_dims;
-          for (auto b : all_buffers(prg)) {
-            //cout << tab(2) << b << " : " << logical_dimension(b, prg) << endl;
-            buffer_dims.insert(logical_dimension(b, prg));
-          }
-          if (buffer_dims.size() > 1) {
-            cout << tab(2) << prg.name << " has dimension reduction" << endl;
-          } else {
-            cout << tab(2) << prg.name << " is a scan pipeline" << endl;
-          }
-        }
-      }
-    }
-    assert(false);
-  }
-
-  {
-    prog prg = harris_sch1();
-    prg.pretty_print();
-    prg.ins.insert("padded16_global_wrapper_stencil");
-    prg.ins.erase("padded16_stencil");
-    prg.root->delete_child(prg.root->children.front());
-    prg.pretty_print();
-    //assert(false);
-    vector<prog> prgs{prg};
-    test_codegen(prgs, compile_for_FPGA_BRAM_mem);
-    assert(false);
-  }
   //{
-    //prog prg = mobilenet_unrolled();
-    //prg.sanity_check();
-    ////compile_for_FPGA_BRAM_mem(prg);
+    //vector<prog> prgs = all_cgra_programs();
+    //vector<prog> not_coarse;
+    //cout << "Finding coarse pipelines" << endl;
+    //for (auto prg : prgs) {
+      //op* pl =
+        //find_coarse_grained_pipeline_loop(prg.root);
+      //if (pl->name != "root") {
+        ////cout << tab(1) << prg.name << " is coarse-pipelinable" << endl;
+      //} else {
+        //if (is_rate_matchable(prg)) {
+        //} else {
+          ////cout << tab(1) << prg.name << " is not coarse-pipelinable or rate matchable" << endl;
+          //std::set<int> buffer_dims;
+          //for (auto b : all_buffers(prg)) {
+            ////cout << tab(2) << b << " : " << logical_dimension(b, prg) << endl;
+            //buffer_dims.insert(logical_dimension(b, prg));
+          //}
+          //if (buffer_dims.size() > 1) {
+            //cout << tab(2) << prg.name << " has dimension reduction" << endl;
+          //} else {
+            //cout << tab(2) << prg.name << " is a scan pipeline" << endl;
+          //}
+        //}
+      //}
+    //}
+    //assert(false);
+  //}
+
+  //{
+    //prog prg = harris_sch1();
+    //prg.pretty_print();
+    //prg.ins.insert("padded16_global_wrapper_stencil");
+    //prg.ins.erase("padded16_stencil");
+    //prg.root->delete_child(prg.root->children.front());
+    //prg.pretty_print();
+    ////assert(false);
     //vector<prog> prgs{prg};
     //test_codegen(prgs, compile_for_FPGA_BRAM_mem);
     //assert(false);
   //}
+    //prog prg = mobilenet_unrolled();
+    //break_up_multi_channel_inputs(prg);
+    //break_up_multi_channel_outputs(prg);
 
-  {
-    // coreir is wrong?
-    //prog prg = harris_sch1();
-    // Bank list has length 0? grad_x_unclamp
-    // stencil is never written?
-    //prog prg = harris_sch6();
+    //generate_optimized_code(prg);
+    //move_to_benchmarks_folder(prg.name);
+    //assert(false);
+  //}
 
-    // Verilator reports circular feedback?
-    prog prg = harris_sch2();
+  ////{
+    ////prog prg = mobilenet_unrolled();
+    ////prg.sanity_check();
+    //////compile_for_FPGA_BRAM_mem(prg);
+    ////vector<prog> prgs{prg};
+    ////test_codegen(prgs, compile_for_FPGA_BRAM_mem);
+    ////assert(false);
+  ////}
 
-    // schedule takes too long
-    //prog prg = harris_sch4();
-    //prog prg = harris_sch3();
-    prg.pretty_print();
-    assert(false);
-  }
+  //{
+    //// coreir is wrong?
+    ////prog prg = harris_sch1();
+    //// Bank list has length 0? grad_x_unclamp
+    //// stencil is never written?
+    ////prog prg = harris_sch6();
 
-  {
-    prog prg = mobilenet_unrolled();
-    dsa_writers(prg);
-    break_up_multi_channel_inputs(prg);
+    //// Verilator reports circular feedback?
+    //prog prg = harris_sch2();
 
-    prg.pretty_print();
-    prg.sanity_check();
+    //// schedule takes too long
+    ////prog prg = harris_sch4();
+    ////prog prg = harris_sch3();
+    //prg.pretty_print();
+    //assert(false);
+  //}
 
-    auto domain = prg.whole_iteration_domain();
+  //{
+    //prog prg = mobilenet_unrolled();
+    //dsa_writers(prg);
+    //break_up_multi_channel_inputs(prg);
 
-    string target = "op_hcompute_dw_conv_stencil";
-    auto writes =
-      its(prg.producer_map(), domain);
-    for (auto m : get_maps(writes)) {
-      if (domain_name(m) == target) {
-        cout << "writes by " << target << ": " << str(m) << endl;
-        assert(false);
-      }
-    }
-
-    auto reads =
-      its(prg.consumer_map(), domain);
-
-
-    assert(false);
-
-    //auto valid = prg.validity_deps();
-    //auto dom = prg.whole_iteration_domain();
-    //cout << "Validity deps..." << endl;
-    //std::set<string> validity_doms;
-    //for (auto v : get_maps(valid)) {
-      //cout << tab(1) << str(v) << endl;
-      //validity_doms.insert(range_name(v));
-      //validity_doms.insert(domain_name(v));
-    //}
-    //cout << "Dependence checks" << endl;
-    //for (auto s : get_sets(dom)) {
-      //if (!elem(name(s), validity_doms)) {
-        //cout << tab(1) << name(s) << " is not used in any dependency" << endl;
-      //}
-    //}
-    //auto res = unoptimized_result(prg);
-    assert(false);
-  }
-
-  {
-    prog prg = harris_sch6();
-    cout << "Harris schedule variant 6" << endl;
-    prg.pretty_print();
-    prg.sanity_check();
-    auto res = unoptimized_result(prg);
-    assert(false);
-  }
-  {
-    prog prg = resnet_coarse_pipeline_loop();
-    //prog prg = resnet();
-    prg.pretty_print();
-    prg.sanity_check();
-    auto options = garnet_codegen_options(prg);
-    schedule_info sched = garnet_schedule_info(options, prg);
-    normalize_bounds(prg);
-
-    garnet_dual_port_ram_schedule(sched, prg.root, prg);
-
-    auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
-
-    //sanity_check_hw_schedule(sched, prg);
-
-    auto buffers = build_buffers(prg, hw_sched);
-
-    auto& buf = buffers["conv_stencil"];
-    string bank_func = "{ conv_stencil[c, x, y, t] -> B[c % 3, x % 1, y % 1, t % 2] }";
-    //string bank_func = "{ conv_stencil[c, x, y, t] -> B[c % 3, x % 1, y % 1, t % 1] }";
-    isl_map* bf =
-      isl_map_read_from_str(buf.ctx, bank_func.c_str());
-
-    bool bs = banking_scheme_is_legal(bf, buf);
-    cout << "Legal banking: " << bs << endl;
-
-    assert(false);
-  }
-  {
-    prog prg("mmul");
-    auto init = prg.add_nest("ii", 0, 1024, "ji", 0, 1024)->add_op("init");
-    init->add_store("C", "ii", "ji");
-    init->add_function("init_c");
-
-    auto lp = prg.add_nest("i", 0, 1024, "j", 0, 1024, "k", 0, 1024)->add_op("mop");
-    lp->add_load("C", "i", "j");
-    lp->add_load("A", "i", "k");
-    lp->add_load("B", "k", "j");
-    lp->add_store("C", "i", "j");
-    lp->add_function("mac");
-
-    prg.pretty_print();
-
-    auto outer_init_i = strip_mine(4, "ii", prg);
-    auto outer_init_j = strip_mine(4, "ji", prg);
-    push_to_bottom_of_band_ignoring({}, outer_init_i, prg);
-    push_to_bottom_of_band_ignoring({}, outer_init_j, prg);
-
-    auto outer_i = strip_mine(4, "i", prg);
-    auto outer_j = strip_mine(4, "j", prg);
-    push_to_bottom_of_band_ignoring({}, outer_i, prg);
-    push_to_bottom_of_band_ignoring({}, outer_j, prg);
-    prg.pretty_print();
-
-    vector<op*> children = {};
-    for (auto c : prg.find_loop("ji")->children) {
-      children.push_back(c);
-    }
-    concat(children, prg.find_loop("j")->children);
-    prg.find_loop("j")->children = children;
-    prg.find_loop("ji")->children = {};
-
-    prg.pretty_print();
-
-    add_reuse_buffer_no_delta("i", "A", prg);
-    add_reuse_buffer_no_delta("j", "B", prg);
-
-    prg.root->replace_variable("ii", "i");
-    prg.root->replace_variable("ji", "j");
-
-    add_reuse_buffer_no_delta("j", "C", prg);
-
-    prg.pretty_print();
-
-    assert(false);
-  }
-
-
-  test_gaussian_pyramid_shared_pes();
-
-  assert(false);
-
-  test_multi_kernel_unsharp();
-  {
-    prog prg = resnet_unrolled();
-    prg.pretty_print();
-    assert(false);
-  }
-
-  test_multi_kernel_unsharp();
-  assert(false);
-
-  test_multi_kernel_design();
-  test_time_sharing_gaussian_pyramid();
-
-  //for (auto prg : all_cgra_programs()) {
-    //cout << "====== Running CGRA test for " << prg.name << endl;
     //prg.pretty_print();
     //prg.sanity_check();
 
-    //dsa_writers(prg);
+    //auto domain = prg.whole_iteration_domain();
+
+    //string target = "op_hcompute_dw_conv_stencil";
+    //auto writes =
+      //its(prg.producer_map(), domain);
+    //for (auto m : get_maps(writes)) {
+      //if (domain_name(m) == target) {
+        //cout << "writes by " << target << ": " << str(m) << endl;
+        //assert(false);
+      //}
+    //}
+
+    //auto reads =
+      //its(prg.consumer_map(), domain);
+
+
+    //assert(false);
+
+    ////auto valid = prg.validity_deps();
+    ////auto dom = prg.whole_iteration_domain();
+    ////cout << "Validity deps..." << endl;
+    ////std::set<string> validity_doms;
+    ////for (auto v : get_maps(valid)) {
+      ////cout << tab(1) << str(v) << endl;
+      ////validity_doms.insert(range_name(v));
+      ////validity_doms.insert(domain_name(v));
+    ////}
+    ////cout << "Dependence checks" << endl;
+    ////for (auto s : get_sets(dom)) {
+      ////if (!elem(name(s), validity_doms)) {
+        ////cout << tab(1) << name(s) << " is not used in any dependency" << endl;
+      ////}
+    ////}
+    ////auto res = unoptimized_result(prg);
+    //assert(false);
+  //}
+
+  //{
+    //prog prg = harris_sch6();
+    //cout << "Harris schedule variant 6" << endl;
+    //prg.pretty_print();
+    //prg.sanity_check();
+    //auto res = unoptimized_result(prg);
+    //assert(false);
+  //}
+  //{
+    ////prog prg = up_sample();
+    //prog prg = pointwise();
+    //prg.pretty_print();
+    //assert(false);
+  //}
+  //{
+    //prog prg = resnet_coarse_pipeline_loop();
+    ////prog prg = resnet();
+    //prg.pretty_print();
+    //prg.sanity_check();
+    //auto options = garnet_codegen_options(prg);
+    //schedule_info sched = garnet_schedule_info(options, prg);
+    //normalize_bounds(prg);
+
+    //garnet_dual_port_ram_schedule(sched, prg.root, prg);
+
+    //auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+    ////sanity_check_hw_schedule(sched, prg);
+
+    //auto buffers = build_buffers(prg, hw_sched);
+
+    //auto& buf = buffers["conv_stencil"];
+    //string bank_func = "{ conv_stencil[c, x, y, t] -> B[c % 3, x % 1, y % 1, t % 2] }";
+    ////string bank_func = "{ conv_stencil[c, x, y, t] -> B[c % 3, x % 1, y % 1, t % 1] }";
+    //isl_map* bf =
+      //isl_map_read_from_str(buf.ctx, bank_func.c_str());
+
+    //bool bs = banking_scheme_is_legal(bf, buf);
+    //cout << "Legal banking: " << bs << endl;
+
+    //assert(false);
+  //}
+  //{
+    //prog prg("mmul");
+    //auto init = prg.add_nest("ii", 0, 1024, "ji", 0, 1024)->add_op("init");
+    //init->add_store("C", "ii", "ji");
+    //init->add_function("init_c");
+
+    //auto lp = prg.add_nest("i", 0, 1024, "j", 0, 1024, "k", 0, 1024)->add_op("mop");
+    //lp->add_load("C", "i", "j");
+    //lp->add_load("A", "i", "k");
+    //lp->add_load("B", "k", "j");
+    //lp->add_store("C", "i", "j");
+    //lp->add_function("mac");
+
     //prg.pretty_print();
 
-    //compile_for_garnet_platonic_mem(prg);
+    //auto outer_init_i = strip_mine(4, "ii", prg);
+    //auto outer_init_j = strip_mine(4, "ji", prg);
+    //push_to_bottom_of_band_ignoring({}, outer_init_i, prg);
+    //push_to_bottom_of_band_ignoring({}, outer_init_j, prg);
+
+    //auto outer_i = strip_mine(4, "i", prg);
+    //auto outer_j = strip_mine(4, "j", prg);
+    //push_to_bottom_of_band_ignoring({}, outer_i, prg);
+    //push_to_bottom_of_band_ignoring({}, outer_j, prg);
+    //prg.pretty_print();
+
+    //vector<op*> children = {};
+    //for (auto c : prg.find_loop("ji")->children) {
+      //children.push_back(c);
+    //}
+    //concat(children, prg.find_loop("j")->children);
+    //prg.find_loop("j")->children = children;
+    //prg.find_loop("ji")->children = {};
+
+    //prg.pretty_print();
+
+    //add_reuse_buffer_no_delta("i", "A", prg);
+    //add_reuse_buffer_no_delta("j", "B", prg);
+
+    //prg.root->replace_variable("ii", "i");
+    //prg.root->replace_variable("ji", "j");
+
+    //add_reuse_buffer_no_delta("j", "C", prg);
+
+    //prg.pretty_print();
+
+    //assert(false);
   //}
+
+
+  //test_gaussian_pyramid_shared_pes();
+
   //assert(false);
 
-  test_outer_strip_mine();
+  //test_multi_kernel_unsharp();
+  //{
+    //prog prg = resnet_unrolled();
+    //prg.pretty_print();
+    //assert(false);
+  //}
 
-  prog prg("time_sharing_pyramid_1d");
+  //test_multi_kernel_unsharp();
+  //assert(false);
 
-  prg.add_input("in");
-  prg.add_output("b2");
+  //test_multi_kernel_design();
+  //test_time_sharing_gaussian_pyramid();
 
-  {
-    auto ld = prg.add_loop("i0", 0, 1)->add_op("cpy");
-    ld->add_load("in", "i0");
-    ld->add_store("b0", "i0");
-  }
+  ////for (auto prg : all_cgra_programs()) {
+    ////cout << "====== Running CGRA test for " << prg.name << endl;
+    ////prg.pretty_print();
+    ////prg.sanity_check();
 
-  {
-    auto ld = prg.add_loop("x0", 0, 1)->add_op("ldin0");
-    ld->add_load("b0", "2*x0 + 0");
-    ld->add_load("b0", "2*x0 + 1");
-    ld->add_store("b1", "x0");
-    ld->add_function("add_2");
-  }
+    ////dsa_writers(prg);
+    ////prg.pretty_print();
 
-  {
-    auto ld = prg.add_loop("x1", 0, 1)->add_op("ldin1");
-    ld->add_load("b1", "2*x1 + 0");
-    ld->add_load("b1", "2*x1 + 1");
-    ld->add_store("b2", "x1");
-    ld->add_function("add_2");
-  }
+    ////compile_for_garnet_platonic_mem(prg);
+  ////}
+  ////assert(false);
 
-  infer_bounds("b2", {16}, prg);
-  auto unopt = unoptimized_result(prg);
-  prg.pretty_print();
+  //test_outer_strip_mine();
 
-  tile_for_time_sharing(prg);
-  prg.pretty_print();
-  auto tiled = unoptimized_result(prg);
-  compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
+  //prog prg("time_sharing_pyramid_1d");
+
+  //prg.add_input("in");
+  //prg.add_output("b2");
+
+  //{
+    //auto ld = prg.add_loop("i0", 0, 1)->add_op("cpy");
+    //ld->add_load("in", "i0");
+    //ld->add_store("b0", "i0");
+  //}
+
+  //{
+    //auto ld = prg.add_loop("x0", 0, 1)->add_op("ldin0");
+    //ld->add_load("b0", "2*x0 + 0");
+    //ld->add_load("b0", "2*x0 + 1");
+    //ld->add_store("b1", "x0");
+    //ld->add_function("add_2");
+  //}
+
+  //{
+    //auto ld = prg.add_loop("x1", 0, 1)->add_op("ldin1");
+    //ld->add_load("b1", "2*x1 + 0");
+    //ld->add_load("b1", "2*x1 + 1");
+    //ld->add_store("b2", "x1");
+    //ld->add_function("add_2");
+  //}
+
+  //infer_bounds("b2", {16}, prg);
+  //auto unopt = unoptimized_result(prg);
+  //prg.pretty_print();
+
+  //tile_for_time_sharing(prg);
+  //prg.pretty_print();
+  //auto tiled = unoptimized_result(prg);
+  //compare("time_sharing_" + prg.name + "_vs_unopt", tiled, unopt);
 
 }
 
