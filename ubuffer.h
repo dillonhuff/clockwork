@@ -792,6 +792,33 @@ struct MemConnSch {
   string read;
   string mux_write;
   string write;
+
+  MemConnSch(){}
+  MemConnSch(int dim, const unordered_map<string, vector<int>> &vals_in):
+      dimensionality(dim), vals(vals_in) {}
+
+  void remove_redundant_dim() {
+    assert(vals.count("extent"));
+    int dim = 0;
+    vector<int> remove_dims;
+    for (auto ext: vals.at("extent")) {
+        if (ext == 1) {
+            remove_dims.push_back(dim);
+        }
+        dim ++;
+    }
+    dimensionality -= remove_dims.size();
+    std::reverse(begin(remove_dims), end(remove_dims));
+    for (auto rem_dim: remove_dims) {
+        for (auto& it: vals) {
+            //skip the start address
+            if (it.second.size() == 1)
+                continue;
+            auto ptr = it.second.begin() + rem_dim;
+            it.second.erase(ptr);
+        }
+    }
+  }
 };
 
 class UBuffer {
@@ -1160,6 +1187,13 @@ class UBuffer {
         get_maps(pick(access_map).second);
       assert(maps.size() > 0);
       return num_out_dims(maps.at(0));
+    }
+
+    int dom_dims() const {
+      assert(domain.size() > 0);
+      auto dom =
+        pick(domain).second;
+      return ::num_dims(dom);
     }
 
     bool is_bank_input(const string& name) const{
@@ -1935,7 +1969,7 @@ class UBuffer {
         return to_map(dot(origin_map, buf_map));
     }
 
-    map<string, std::set<string> > get_stmt2bd() {
+    map<string, std::set<string> > get_stmt2bd() const {
       map<string, std::set<string> > stmt2bd;
       for (auto it: schedule) {
         string bd = get_bundle(it.first);
@@ -1944,6 +1978,19 @@ class UBuffer {
         stmt2bd[stmt_name].insert(bd);
       }
       return stmt2bd;
+    }
+
+    bool is_update_op(string op_name) const {
+      //update stmt has 2 bundles
+      auto stmt2bd = get_stmt2bd();
+
+      //if it's not one of the buffer's op
+      if (stmt2bd.count(op_name) == 0)
+          return false;
+
+      //if it is, we still need to check the bundle numbers
+      auto bd_vec = stmt2bd.at(op_name);
+      return bd_vec.size() > 1;
     }
 
     bool is_self_loop(string pt_name) {
@@ -2009,6 +2056,7 @@ class UBuffer {
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, int dim_id, int fetch_width);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, vector<int> iis, int fetch_width);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, vector<int> iis, int fetch_width);
 
     void print_bank_info();
@@ -2021,6 +2069,7 @@ class UBuffer {
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
 
     isl_union_set* compute_dd_hw_schedule(const string& inpt, const string& outpt);
+    isl_union_set* compute_dd_hw_schedule_decouple(const string& inpt, const string& outpt);
 
     bank compute_bank_info();
     bank compute_bank_info(uset*, isl_point*, std::set<string>, std::set<string>);
@@ -2085,7 +2134,8 @@ class UBuffer {
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
     pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);
 
-    maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt);
+    maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
+    maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
 
 
 };
@@ -2260,9 +2310,11 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
     umap* sched);
 
 
-maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo);
+maybe<std::set<int> > embarassing_partition(UBuffer& buf);
 vector<vector<string> > overlapping_large_io_port_groups(UBuffer& buf, const int ports_per_direction);
 
+int total_capacity(UBuffer& buf);
 vector<int> min_offsets_by_dimension(UBuffer& buf);
-
+vector<int> max_offsets_by_dimension(UBuffer& buf);
+vector<int> extents_by_dimension(UBuffer& buf);
 vector<int> max_offsets_by_dimension(UBuffer& buf);

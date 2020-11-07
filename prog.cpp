@@ -872,218 +872,6 @@ void generate_collector(
   out << "}" << endl << endl;
 }
 
-//void generate_xilinx_multi_channel_accel_wrapper(
-    //CodegenOptions& options,
-    //std::ostream& out,
-    //map<string, UBuffer>& buffers,
-    //prog& prg) {
-
-  //cout << "Generating accel wrapper" << endl;
-  //string driver_func = prg.name + "_accel";
-
-  //for (auto eb : edge_buffers(buffers, prg)) {
-    //string out_rep = eb.first;
-    //string out_bundle = eb.second;
-
-    //UBuffer out_buf = map_find(out_rep, buffers);
-    //string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
-
-    //generate_collector(options, out, out_buf, eb.second, prg);
-    //generate_distributor(options, out, out_buf, eb.second, prg);
-
-    //int num_pixels = -1;
-    //if (prg.is_input(out_rep)) {
-
-      //auto cmap = prg.consumer_map(out_rep);
-      //out << tab(1) << "// " << str(cmap) << endl;
-      //auto range_card = card(range(cmap));
-      //num_pixels = int_upper_bound(range_card);
-    //} else {
-      //auto cmap = prg.producer_map(out_rep);
-      //out << tab(1) << "// " << str(cmap) << endl;
-      //auto range_card = card(range(cmap));
-      //num_pixels = int_upper_bound(range_card);
-    //}
-
-    //assert(num_pixels >= 0);
-    //// TODO: Unify prg and app size computation syntax
-    //if (num_pixels < prg.buffer_size(out_rep)) {
-      //num_pixels = prg.buffer_size(out_rep);
-    //}
-
-    //int pix_per_burst =
-      //out_buf.lanes_in_bundle(out_bundle);
-    //int num_in_bursts = num_pixels / pix_per_burst;
-
-    //out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
-  //}
-  //out << endl;
-
-  //string in_rep = pick(prg.ins);
-  //UBuffer& in_buf = buffers.at(in_rep);
-  //string in_bundle = pick(in_buf.port_bundles).first;
-  //string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
-
-  //cout << "Got in bundle" << endl;
-
-  //string out_rep = pick(prg.outs);
-  //UBuffer& out_buf = buffers.at(out_rep);
-  //string out_bundle = pick(out_buf.port_bundles).first;
-  //string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
-
-  //int in_pix = prg.buffer_size(in_rep);
-  //int pix_per_in_burst =
-    //in_buf.lanes_in_bundle(in_bundle);
-  //int in_burst = in_pix / pix_per_in_burst;
-
-  //int out_pix = prg.buffer_size(out_rep);
-  //int pix_per_out_burst =
-    //out_buf.lanes_in_bundle(out_bundle);
-  //int out_burst = out_pix / pix_per_out_burst;
-
-  //out << endl;
-  //out << "extern \"C\" {" << endl << endl;
-
-  //for (auto in_bundle : in_bundles(buffers, prg)) {
-
-    //out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
-
-    //out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-    //if (options.num_input_epochs < 0) {
-      //out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
-    //} else {
-      //out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    //}
-
-    //out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    //out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    //out << tab(2) << "burst_reg = input[i];" << endl;
-    //out << tab(2) << "v.write(burst_reg);" << endl;
-    //out << tab(1) << "}" << endl;
-    //out << "}" << endl << endl;
-  //}
-
-  //for (auto out_bundle : out_bundles(buffers, prg)) {
-    //out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
-    //out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
-    //if (options.num_input_epochs < 0) {
-      //out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
-    //} else {
-      //out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-    //}
-
-    //out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
-    //out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-    //out << tab(2) << "burst_reg = v.read();" << endl;
-    //out << tab(2) << "output[i] = burst_reg;" << endl;
-    //out << tab(1) << "}" << endl;
-    //out << "}" << endl << endl;
-  //}
-
-  //cout << "Generating arg list" << endl;
-  //vector<string> ptr_args;
-  //vector<string> ptr_arg_decls;
-  //vector<string> buffer_args;
-  //for (auto in : prg.ins) {
-    //assert(contains_key(in, buffers));
-    //auto& buf = buffers.at(in);
-    //assert(buf.get_out_bundles().size() == 1);
-
-    //cout << "picking from bundle" << endl;
-    //auto bundle = pick(buf.get_out_bundles());
-    //cout << "bundle: " << bundle << endl;
-
-    //string out_bundle_tp = buf.bundle_type_string(bundle);
-    //ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
-    //ptr_args.push_back(bundle);
-    //buffer_args.push_back(bundle + "_channel");
-  //}
-
-  //for (auto out : prg.outs) {
-    //assert(contains_key(out, buffers));
-    //auto& buf = buffers.at(out);
-    //for (auto bundle : buf.get_in_bundles()) {
-      ////auto bundle = pick(buf.get_in_bundles());
-      //string in_bundle_tp = buf.bundle_type_string(bundle);
-
-      //ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
-      //ptr_args.push_back(bundle);
-      //buffer_args.push_back(bundle + "_channel");
-    //}
-  //}
-
-  //vector<string> all_arg_decls = ptr_arg_decls;
-  //all_arg_decls.push_back("const int size");
-
-  //cout << "Generating driver function" << endl;
-
-  //out << "void " << driver_func << "(" << comma_list(all_arg_decls) << ") { " << endl;
-  //out << "#pragma HLS dataflow" << endl;
-
-  //int bank_no = 0;
-  //for (auto pt : ptr_args) {
-    //out << "#pragma HLS INTERFACE m_axi port = " << pt << " offset = slave depth = 65536 bundle = gmem" << bank_no << endl;
-    //if (bank_no < 3) {
-      //bank_no++;
-    //}
-  //}
-  //out << endl;
-  //for (auto pt : ptr_args) {
-    //out << "#pragma HLS INTERFACE s_axilite port = " << pt << " bundle = control" << endl;
-  //}
-  //out << "#pragma HLS INTERFACE s_axilite port = size bundle = control" << endl;
-  //out << "#pragma HLS INTERFACE s_axilite port = return bundle = control" << endl;
-  //out << endl;
-
-  //for (auto in : prg.ins) {
-    //assert(contains_key(in, buffers));
-    //auto& buf = buffers.at(in);
-    ////assert(buf.get_in_bundles().size() == 1);
-    //auto bundle = pick(buf.get_out_bundles());
-    //string in_bundle_tp = buf.bundle_type_string(bundle);
-
-    //out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
-  //}
-
-  //for (auto in : prg.outs) {
-    //assert(contains_key(in, buffers));
-    //auto& buf = buffers.at(in);
-    ////assert(buf.get_in_bundles().size() == 1);
-    //auto bundle = pick(buf.get_in_bundles());
-    //string in_bundle_tp = buf.bundle_type_string(bundle);
-
-    //out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
-  //}
-
-  //out << endl;
-
-  //for (auto in : prg.ins) {
-    //assert(contains_key(in, buffers));
-    //auto& buf = buffers.at(in);
-    //assert(buf.get_out_bundles().size() == 1);
-    //auto bundle = pick(buf.get_out_bundles());
-
-    ////out << tab(1) << "read_input(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-    //out << tab(1) << "read_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-  //}
-
-  //out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
-
-  //for (auto in : prg.outs) {
-    //assert(contains_key(in, buffers));
-    //auto& buf = buffers.at(in);
-    //for (auto bundle : buf.get_in_bundles()) {
-      ////auto bundle = pick(buf.get_in_bundles());
-      //out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-    //}
-  //}
-
-  //out << "}" << endl << endl;
-  //out << "}" << endl;
-  //cout << "Generated accel wrapper" << endl;
-//}
-
-
 void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
   cout << "Generating accel wrapper" << endl;
@@ -2738,7 +2526,7 @@ void regression_test(CodegenOptions& options,
 std::set<std::string> get_kernels(prog& prg) {
   std::set<string> kernels;
   for (auto child : prg.root->children) {
-    if (child->is_loop) {
+    if (child->is_loop()) {
       kernels.insert(child->name);
     }
   }
@@ -3056,7 +2844,7 @@ std::set<string> buffers_written(prog& prg) {
 }
 
 std::set<string> buffers_written(op* p) {
-  assert(!p->is_loop);
+  assert(!p->is_loop());
 
   std::set<string> bufs;
   for (auto b : p->buffers_written()) {
@@ -3123,9 +2911,20 @@ void prog::sanity_check() {
     for (auto b : op->buffers_written()) {
       buffer_names.insert(b);
       if (is_input(b)) {
-        cout << "Error: " << b << " is written, but is not an input" << endl;
+        cout << "Error: " << b << " is written, but it is an input" << endl;
       }
       assert(!is_input(b));
+    }
+  }
+
+  for (auto b : all_buffers(*this)) {
+    if (!is_boundary(b)) {
+      auto readers = find_readers(b, *this);
+      auto writers = find_writers(b, *this);
+      if (readers.size() > 0 && writers.size() == 0) {
+        cout << "Error: " << b << " has " << readers.size() << " readers, but it is never written." << endl;
+        assert(false);
+      }
     }
   }
   //for (auto b : buffer_names) {
@@ -3198,7 +2997,7 @@ void ir_node::copy_fields_from(op* other){
 
 void deep_copy_child(op* dest, op* source, prog& original){
 	op* kernel_copy;
-	if(source -> is_loop){
+	if(source -> is_loop()){
 		kernel_copy = dest -> add_loop(source->name, original.start(source->name), original.end_exclusive(source->name));
 		for(auto child : original.find_loop(source->name)->children){
 			deep_copy_child(kernel_copy, child, original);
@@ -3561,7 +3360,7 @@ op* prog::merge_ops(const std::string& loop) {
   lp->children = {};
   op* merged = lp->add_op(unique_name("merged"));
   for (auto c : children_copies) {
-    assert(!c->is_loop);
+    assert(!c->is_loop());
     merged->copy_memory_operations_from(c);
   }
   merged->add_function(un(loop + "_merged_cu"));
@@ -3570,7 +3369,7 @@ op* prog::merge_ops(const std::string& loop) {
 }
 
 void ir_node::copy_memory_operations_from(op* other) {
-  assert(!other->is_loop);
+  assert(!other->is_loop());
 
   //for (auto pl : other->produce_locs) {
     //if (!elem(remove_whitespace(pl), produce_locs)) {
@@ -3726,7 +3525,7 @@ void ir_node::shift_address(const string & buf, const std::vector<int> & min_loc
 }
 
 void ir_node::replace_variable(const std::string& var, const std::string& val) {
-  if (is_loop) {
+  if (is_loop()) {
     for (auto c : children) {
       c->replace_variable(var, val);
     }
@@ -3752,7 +3551,7 @@ void ir_node::replace_variable(const std::string& var, const std::string& val) {
 }
 
 void ir_node::replace_variable(const std::string& var, const int val) {
-  if (is_loop) {
+  if (is_loop()) {
     for (auto c : children) {
       c->replace_variable(var, val);
     }
@@ -3803,7 +3602,7 @@ void unroll(prog& prg, const std::string& var) {
 
   for (auto v : indexes(p)) {
     for (auto child : children) {
-      if (!child->is_loop) {
+      if (!child->is_loop()) {
         string name = prg.unique_name(isl_sanitize(child->name + "_" + var + "_" + str(v)));
         auto val = container->add_op_after(p, prg.unique_name(child->name + "_" + var + "_" + str(v)));
         val->copy_fields_from(child);
@@ -3820,7 +3619,7 @@ void unroll(prog& prg, const std::string& var) {
 }
 
 vector<int> indexes(op* p) {
-  assert(p->is_loop);
+  assert(p->is_loop());
   vector<int> inds;
   for (int i = p->start; i < p->end_exclusive; i++) {
     inds.push_back(i);
@@ -3963,7 +3762,7 @@ void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog
     cout << "Kernel: " << next_kernel << " produces " << buf << endl;
     op* dop = nullptr;
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
-      if (!op->is_loop) {
+      if (!op->is_loop()) {
         dop = op;
         break;
       }
@@ -4136,7 +3935,7 @@ void infer_bounds(const std::string& buf, const std::vector<int>& int_bounds, pr
     cout << tab(1) << "Kernel: " << next_kernel << " produces " << buf << endl;
     op* dop = nullptr;
     for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
-      if (!op->is_loop) {
+      if (!op->is_loop()) {
         dop = op;
         break;
       }
@@ -4253,7 +4052,7 @@ isl_schedule* prog::optimized_schedule() {
 }
 
 void get_op_levels(op* node, map<string,int>& variable_map, int current_level){
-	if(!node->is_loop){
+	if(!node->is_loop()){
     variable_map[node->name] = current_level;
 	} else {
 		variable_map[node->name] = current_level;
@@ -4271,7 +4070,7 @@ map<string, int> get_op_levels(prog& prg){
 }
 
 void get_variable_levels(op* node, map<string,int>& variable_map, int current_level){
-	if(!node->is_loop){
+	if(!node->is_loop()){
 		return;
 	}else{
 		variable_map[node->name] = current_level;
@@ -4504,7 +4303,7 @@ op* strip_mine(const int factor, const std::string& loop, prog& prg) {
 }
 
 op* strip_mine(const int factor, op* loop, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
   assert(loop->trip_count() % factor == 0);
 
   cout << "strip mining loop: " << loop->name << ", start: " << loop->start << ", end exclusive: " << loop->end_exclusive << endl;
@@ -4563,7 +4362,7 @@ map<string, int> compute_unroll_factors(const std::string& buf, const int unroll
   cout << "Writers of " << buf << endl;
   for (auto w : writers) {
     cout << tab(1) << w->name << endl;
-    assert(!w->is_loop);
+    assert(!w->is_loop());
   }
   string src = pick(writers)->name;
   cout << "src = " << src << endl;
@@ -4851,7 +4650,7 @@ std::vector<op*> get_dft_nodes(prog& prg) {
 std::vector<op*> get_dft_ops(prog& prg) {
   std::vector<op*> inner;
   dft(prg, [&inner](op* node) {
-      if (!node->is_loop) {
+      if (!node->is_loop()) {
       inner.push_back(node);
       }
       });
@@ -4875,7 +4674,7 @@ std::set<op*> get_inner_loops(prog& prg) {
     string vr = lp_pair.first;
     auto v = prg.find_loop(vr);
     for (auto c : v->children) {
-      if (c->is_loop) {
+      if (c->is_loop()) {
         all_children_ops = false;
         break;
       }
@@ -4906,6 +4705,32 @@ isl_set* iteration_domain(op* loop, prog& prg) {
   return bounds;
 }
 
+isl_map* producer_map(op* loop, const std::string& b, prog& prg) {
+  auto reads = written_at(loop->name, b, prg);
+
+  if (reads == nullptr) {
+    return nullptr;
+  }
+
+  isl_map* m = nullptr;
+  auto level = map_find(loop->name, get_variable_levels(prg));
+
+  for (auto rm : get_maps(reads)) {
+    int base = num_in_dims(rm) - 1;
+    assert(base >= level);
+    int diff = base - level;
+    auto r = rm;
+    if (diff != 0) {
+      cout << "Projecting out " << diff << " levels from " << str(r) << endl;
+      r = isl_map_project_out(r, isl_dim_in, level + 1, diff);
+    }
+    r = set_domain_name(r, level_name(loop->name));
+    m = unn(m, r);
+  }
+  assert(m != nullptr);
+  return m;
+}
+
 isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
   auto reads = read_at(loop->name, b, prg);
   isl_map* m = nullptr;
@@ -4925,6 +4750,31 @@ isl_map* consumer_map(op* loop, const std::string& b, prog& prg) {
   }
   assert(m != nullptr);
   return m;
+}
+
+umap* written_at(const std::string& level, const std::string& buffer, prog& prg) {
+  auto loop = prg.find_loop(level);
+  auto read_maps = get_maps(prg.producer_map(buffer));
+
+  std::set<string> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op->name);
+    }
+  }
+
+  umap* all_reads = nullptr;
+  for (auto m : read_maps) {
+    if (elem(domain_name(m), users)) {
+      if (all_reads == nullptr) {
+        all_reads = to_umap(m);
+      } else {
+        all_reads = unn(all_reads, to_umap(m));
+      }
+    }
+  }
+
+  return all_reads;
 }
 
 umap* read_at(const std::string& level, const std::string& buffer, prog& prg) {
@@ -4972,43 +4822,16 @@ umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg) {
 isl_map* get_initial_data(const std::string& level, const std::string& buffer, prog& prg) {
 
   umap* reads = read_at(level, buffer, prg);
-  //cout << "reads = " << str(reads) << endl;
 
   auto loop = prg.find_loop(level);
   int outer_vars = surrounding_vars(loop, prg).size();
 
   umap* first_reads = first_iteration_reads(reads, level, prg);
-  //cout << "first reads = " << str(first_reads) << endl;
-
-  //cout << "Re-use " << buffer << " at" << endl;
-  //loop->pretty_print();
-
-  //auto sched = prg.unoptimized_schedule();
-  //auto earlier = lex_gt(sched, sched);
-  //cout << "earlier = " << str(earlier) << endl;
-
-  //auto read = prg.consumer_map(buffer);
-  //cout << "consumed = " << str(read) << endl;
-  //auto read_earlier = coalesce(dot(earlier, read));
-  //cout << "consumed earlier = " << str(read_earlier) << endl;
-  //auto consumed_earlier_and_now = its(read_earlier, read);
-  //cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
-  //auto consumed_first_time = diff(read, consumed_earlier_and_now);
-  //auto csf = cpy(consumed_first_time);
-  //cout << "first time read  = " << str(consumed_first_time) << endl;
-  //uset* not_first =
-  //auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
-  //cout << "not first        = " << str(not_first) << endl;
-  //consumed_first_time = its(consumed_first_time, not_first);
-  //consumed_first_time = coalesce(consumed_first_time);
-  //cout << "first time read  = " << str(consumed_first_time) << endl;
 
   isl_map* initial_data = nullptr;
   for (auto m : get_maps(first_reads)) {
-    //cout << "m = " << str(m) << endl;
     assert(outer_vars < num_in_dims(m));
     int to_remove = num_in_dims(m) - outer_vars;
-    //cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
     auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
     if (initial_data == nullptr) {
       initial_data = prj;
@@ -5438,13 +5261,13 @@ void generate_verilator_tb(prog& prg,
   }
 
 bool is_inner_loop(op* op) {
-  if (!op->is_loop) {
+  if (!op->is_loop()) {
     return false;
 
   }
 
   for (auto c : op->children) {
-    if (c->is_loop) {
+    if (c->is_loop()) {
       return false;
     }
   }
@@ -5562,7 +5385,7 @@ bool is_rate_matchable(prog& prg) {
 }
 
 int loop_depth(op* op) {
-  int d = op->is_loop;
+  int d = op->is_loop();
   int max_child_depth = 0;
   for (auto c : op->children) {
     max_child_depth = max(loop_depth(c), max_child_depth);
@@ -5584,7 +5407,7 @@ bool all_loop_nests_same_depth(prog& prg) {
 }
 
 bool is_perfect(op* loop, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
   if (is_inner_loop(loop)) {
     return true;
   }
@@ -5607,13 +5430,13 @@ bool all_perfect_loop_nests(prog& prg) {
 }
 
 void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_info& sched, prog& prg) {
-  if (!parent->is_loop) {
+  if (!parent->is_loop()) {
     return;
   }
 
   QExpr parent_sched = map_find(parent, schedule_exprs);
   for (auto c : parent->children) {
-    if (c->is_loop) {
+    if (c->is_loop()) {
       QTerm root_sched_t{{qconst(map_find(c->name, sched.loop_iis)), qvar(c->name)}};
       QExpr root_sched{{root_sched_t}};
 
@@ -5650,7 +5473,7 @@ map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg) {
     cout << tab(1) << op->name << " -> " << opl.second << endl;
     ostringstream ss;
     ss << opl.second;
-    if (!op->is_loop) {
+    if (!op->is_loop()) {
       isl_aff* aff = isl_aff_read_from_str(prg.ctx,
           curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
       schedule_affs[op] = aff;
@@ -5680,7 +5503,7 @@ map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
     cout << tab(1) << op->name << " -> " << expr << endl;
     ostringstream ss;
     ss << expr;
-    if (!op->is_loop) {
+    if (!op->is_loop()) {
       isl_aff* aff = isl_aff_read_from_str(prg.ctx,
           curlies(op->name + sep_list(surrounding_vars(op, prg), "[", "]", ", ") + " -> " + brackets(parens(ss.str()))).c_str());
       schedule_affs[op] = aff;
@@ -5829,6 +5652,28 @@ vector<op*> ops_at_level(const int level, prog& prg) {
   return at_level;
 }
 
+umap* written_at(const std::string& level, prog& prg) {
+  auto ops = prg.find_loop(level)->descendant_ops();
+  std::set<string> buffers;
+  for (auto op : ops) {
+    for (auto b : op->buffers_written()) {
+      buffers.insert(b);
+    }
+  }
+  umap* rd = nullptr;
+  for (auto b : buffers) {
+    auto rdmap = written_at(level, b, prg);
+
+    if (rd == nullptr) {
+      rd = rdmap;
+    } else {
+      rd = unn(rd, rdmap);
+      release(rdmap);
+    }
+  }
+  return rd;
+}
+
 umap* read_at(const std::string& level, prog& prg) {
   auto ops = prg.find_loop(level)->descendant_ops();
   std::set<string> buffers;
@@ -5852,7 +5697,7 @@ umap* read_at(const std::string& level, prog& prg) {
 }
 
 int schedule_info::instance_latency(op* op) {
-  if (op->is_loop) {
+  if (op->is_loop()) {
     int maxoffset = 1;
     for (auto c : op->children) {
       int delay = map_find(c, op_offset_within_parent);
@@ -5884,7 +5729,7 @@ bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
     return has_latency && has_ii;
   }
 
-  if (op->is_loop) {
+  if (op->is_loop()) {
     return has_latency && has_ii && has_offset;
   }
 
@@ -5965,13 +5810,33 @@ map<string, pair<string, int> > determine_shift_reg_map(
             intersection(write_op->buffers_read(), write_op->buffers_written()).size() == 0) {
           auto dd =
             dependence_distance_singleton(buf, inpt, outpt, sc);
-          //assert(false);
           if (dd.has_value()) {
             int dd_raw = dd.get_value();
-            if (write_op->func != "") {
-              dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+            dd_raw -= hwinfo.compute_latency(write_op);
+            if (write_op->buffers_read().size() > 0) {
+              dd_raw -= hwinfo.load_latency(pick(write_op->buffers_read()));
             }
-            dd_raw = dd_raw - 1;
+            dd_raw += hwinfo.load_latency(buf.name);
+            //if (write_op->func != "") {
+              //dd_raw =
+              //dd_raw = dd_raw - map_find(write_op->func, hwinfo.compute_unit_latencies);
+            //}
+            //bool not_input_reader = false;
+            //string non_in_buffer = "";
+            //for (auto b : write_op->buffers_read()) {
+              //not_input_reader = true;
+              //non_in_buffer = b;
+              //break;
+            //}
+            //if (not_input_reader) {
+              //dd_raw -= map_find(non_in_buffer, hwinfo.buffer_load_latencies);
+            //}
+            //dd_raw += map_find(buf.name, hwinfo.buffer_load_latencies);
+
+            if (!(dd_raw >= 0)) {
+              cout << "Error: Negative dependence distance: " << dd_raw << endl;
+            }
+            assert(dd_raw >= 0);
             shift_registered_outputs[outpt] = {inpt, dd_raw};
           }
         }
@@ -5983,7 +5848,7 @@ map<string, pair<string, int> > determine_shift_reg_map(
 
 
 void ir_node::replace_writes_to(const std::string& source_buf, const std::string& replacement) {
-  if (is_loop) {
+  if (is_loop()) {
     for (auto c : children) {
       c->replace_writes_to(source_buf, replacement);
     }
@@ -5996,7 +5861,7 @@ void ir_node::replace_writes_to(const std::string& source_buf, const std::string
 }
 
 void ir_node::replace_reads_from(const std::string& source_buf, const std::string& replacement) {
-  if (is_loop) {
+  if (is_loop()) {
     for (auto c : children) {
       c->replace_reads_from(source_buf, replacement);
     }
@@ -6026,7 +5891,7 @@ isl_map* next_iteration(isl_set* domain) {
 }
 
 void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   string buf = name(read_data);
   op* next_lp = loop;
@@ -6052,8 +5917,107 @@ void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& p
   ld->add_store(buf, comma_list(load_addrs));
 }
 
+void write_out_at_end(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(iloop->is_loop());
+
+  if (empty(read_data)) {
+    return;
+  }
+
+  op* loop = iloop;
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+
+    int ext = to_int(const_coeff(diff)) + 1;
+    isl_aff* addr =
+      set_const_coeff(min, zero(prg.ctx));
+
+    int lb = 0;
+    int ub = ext;
+    string lname = prg.unique_name(buf + "_ld");
+    if (d == 0) {
+      next_lp = next_lp->add_loop(lname, lb, ub);
+    } else {
+      next_lp = next_lp->add_loop(lname, lb, ub);
+    }
+    load_addrs.push_back(lname + " + " + codegen_c(addr));
+    store_addrs.push_back(lname + " + " + codegen_c(addr));
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("store_to_" + rb_name));
+  ld->add_store(buf, comma_list(load_addrs));
+  ld->add_load(rb_name, comma_list(store_addrs));
+}
+
+
+void read_in_at_start(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
+  assert(iloop->is_loop());
+
+  if (empty(read_data)) {
+    return;
+  }
+
+  op* loop = iloop;
+  string buf = range_name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  auto minpw =
+    isl_map_lexmin_pw_multi_aff(cpy(read_data));
+  auto maxpw =
+    isl_map_lexmax_pw_multi_aff(cpy(read_data));
+
+  auto min_ma = get_pieces(minpw).at(0).second;
+  auto max_ma = get_pieces(maxpw).at(0).second;
+
+  for (int d = 0; d < num_out_dims(read_data); d++) {
+    isl_aff* min = isl_multi_aff_get_aff(min_ma, d);
+    isl_aff* max = isl_multi_aff_get_aff(max_ma, d);
+    isl_aff* diff = sub(max, min);
+
+    cout << "Diff = " << str(diff) << endl;
+    assert(isl_aff_is_cst(diff));
+
+    int ext = to_int(const_coeff(diff)) + 1;
+    isl_aff* addr =
+      set_const_coeff(min, zero(prg.ctx));
+
+    int lb = 0;
+    int ub = ext;
+    string lname = prg.unique_name(buf + "_ld");
+    if (d == 0) {
+      next_lp = next_lp->add_loop_front(lname, lb, ub);
+    } else {
+      next_lp = next_lp->add_loop(lname, lb, ub);
+    }
+    load_addrs.push_back(lname + " + " + codegen_c(addr));
+    store_addrs.push_back(lname + " + " + codegen_c(addr));
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
+}
+
 void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, prog& prg) {
-  assert(iloop->is_loop);
+  assert(iloop->is_loop());
   string container = surrounding_vars(iloop, prg).back();
   op* loop = prg.find_loop(container);
 
@@ -6061,11 +6025,6 @@ void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, p
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  //for (auto v : surrounding_vars(loop, prg)) {
-    //store_addrs.push_back(v);
-  //}
-  //store_addrs.push_back(loop->name);
-  //store_addrs.push_back(str(iloop->start));
   auto minpw =
     isl_map_lexmin_pw_multi_aff(cpy(read_data));
   auto maxpw =
@@ -6104,18 +6063,17 @@ void read_in_before(op* iloop, isl_map* read_data, const std::string& rb_name, p
 }
 
 void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   cout << "reading in data: " << str(read_data) << " at " << loop->name << endl;
+  if (empty(read_data)) {
+    return;
+  }
 
   string buf = range_name(read_data);
   op* next_lp = loop;
   vector<string> load_addrs;
   vector<string> store_addrs;
-  //for (auto v : surrounding_vars(loop, prg)) {
-    //store_addrs.push_back(v);
-  //}
-  //store_addrs.push_back(loop->name);
   auto minpw =
     isl_map_lexmin_pw_multi_aff(cpy(read_data));
   auto maxpw =
@@ -6152,7 +6110,7 @@ void read_in_after(op* loop, isl_map* read_data, const std::string& rb_name, pro
 }
 
 void read_in_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   string buf = name(read_data);
   op* next_lp = loop;
@@ -6210,7 +6168,7 @@ isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
 
 }
 void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   string buf = name(read_data);
   op* next_lp = loop;
@@ -6269,97 +6227,44 @@ isl_map* delta_data(loop* loop, const std::string& buffer, prog& prg) {
   return diff_data;
 }
 
+void add_reuse_buffer_no_delta(const std::string& level, const std::string& buffer, prog& prg) {
+
+  isl_map* reads = consumer_map(prg.find_loop(level), buffer, prg);
+  isl_map* writes = producer_map(prg.find_loop(level), buffer, prg);
+
+  cout << "Reads from " << buffer << " at " << level << ": " << str(reads) << endl;
+  string rb_name = prg.un(buffer + "_at_" + level);
+  auto loop = prg.find_loop(level);
+  std::set<op*> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op);
+    }
+  }
+  cout << "Users..." << endl;
+  for (auto u : users) {
+    cout << tab(1) << u->name << endl;
+  }
+  for (auto rd : users) {
+    rd->replace_reads_from(buffer, rb_name);
+  }
+  for (auto rd : users) {
+    rd->replace_writes_to(buffer, rb_name);
+  }
+
+  read_in_at_start(prg.find_loop(level), reads, rb_name, prg);
+  write_out_at_end(prg.find_loop(level), writes, rb_name, prg);
+
+}
+
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
 
-  //umap* reads = read_at(level, buffer, prg);
-  //cout << "reads = " << str(reads) << endl;
-
   auto loop = prg.find_loop(level);
-  //int outer_vars = surrounding_vars(loop, prg).size();
-
-  //umap* first_reads = first_iteration_reads(reads, level, prg);
-  //cout << "first reads = " << str(first_reads) << endl;
-
-  //cout << "Re-use " << buffer << " at" << endl;
-  //loop->pretty_print();
-
-  //auto sched = prg.unoptimized_schedule();
-  //auto earlier = lex_gt(sched, sched);
-  //cout << "earlier = " << str(earlier) << endl;
-
-  //auto read = prg.consumer_map(buffer);
-  //cout << "consumed = " << str(read) << endl;
-  //for (auto m : get_maps(read)) {
-    //print_box_bounds(domain_name(m), m);
-  //}
-  //cout << endl;
-
-  //auto read_earlier = coalesce(dot(earlier, read));
-  //cout << "consumed earlier = " << str(read_earlier) << endl;
-  //for (auto m : get_maps(read_earlier)) {
-    //print_box_bounds(domain_name(m), m);
-  //}
-  //cout << endl;
-
-  //auto consumed_earlier_and_now = its(read_earlier, read);
-  //cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
-  //auto consumed_first_time = diff(read, consumed_earlier_and_now);
-  //auto csf = cpy(consumed_first_time);
-  //cout << "first time read  = " << str(consumed_first_time) << endl;
-  ////uset* not_first =
-  ////auto not_first = isl_union_set_read_from_str(prg.ctx, "{ op3[root, y, x, yi] : y > 0 }");
-  ////cout << "not first        = " << str(not_first) << endl;
-  ////consumed_first_time = its(consumed_first_time, not_first);
-  //consumed_first_time = coalesce(consumed_first_time);
-  //cout << "first time read  = " << str(consumed_first_time) << endl;
 
   isl_map* initial_data = get_initial_data(level, buffer, prg);
   cout << "initially read: " << str(initial_data) << endl;
   string rb_name = buffer + "_rb_at_" + level;
   read_in_before(loop, initial_data, rb_name, prg);
-  //{
-    //auto lmin = lexmin(initial_data);
-    //auto lmax = lexmax(initial_data);
-    //cout << "Initial data min/max" << endl;
-    //cout << tab(1) << "min              = " << str(lmin) << endl;
-    //cout << tab(1) << "max              = " << str(lmax) << endl;
-  //}
-
-  //cout << "consumed first time = " << str(consumed_first_time) << endl;
-  //isl_map* pr = nullptr;
-  //for (auto m : get_maps(consumed_first_time)) {
-    //cout << "m = " << str(m) << endl;
-    //assert(outer_vars < num_in_dims(m));
-    //int to_remove = num_in_dims(m) - outer_vars;
-    //cout << tab(1) << "removing " << to_remove << " dims at " << outer_vars << endl;
-    //auto prj = isl_map_project_out(cpy(m), isl_dim_in, outer_vars + 1, num_in_dims(m) - outer_vars - 1);
-    //if (pr == nullptr) {
-      //pr = prj;
-    //} else {
-      //pr = unn(pr, prj);
-    //}
-  //}
-
-  ////auto maps = get_maps(consumed_first_time);
-  ////assert(maps.size() == 1);
-  ////auto mpa = maps.at(0);
-  ////cout << "mpa = " << str(mpa) << endl;
-  //cout << "initial data = " << str(initial_data) << endl;
-  //////mpa = diff(mpa, initial_data);
-  //////assert(false);
-  ////auto pr = isl_map_project_out(cpy(mpa), isl_dim_in, 2, 2);
-  //cout << "pr = " << str(pr) << endl;
-  //{
-    //auto lmin = lexmin(pr);
-    //auto lmax = lexmax(pr);
-    //cout << "pre-diff pr min              = " << str(lmin) << endl;
-    //cout << "pre-diff pr max              = " << str(lmax) << endl;
-  //}
-  //pr = diff(pr, initial_data);
-  //auto lmin = lexmin(pr);
-  //auto lmax = lexmax(pr);
-  //cout << "min              = " << str(lmin) << endl;
-  //cout << "max              = " << str(lmax) << endl;
 
   auto pr = delta_data(loop, buffer, prg);
   read_in_after(loop, pr, rb_name, prg);
@@ -6386,7 +6291,7 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
 }
 
 void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
-  assert(loop->is_loop);
+  assert(loop->is_loop());
 
   string buf = name(read_data);
   op* next_lp = loop;
@@ -6408,3 +6313,250 @@ void write_out_no_dsa(op* loop, isl_set* read_data, const std::string& rb_name, 
   ld->add_store(rb_name, comma_list(store_addrs));
 
 }
+
+void ir_node::pretty_print(std::ostream& out, int level) const {
+
+  if (is_loop()) {
+    out << tab(level) << "for (int " << name << " = " << start << "; " << name << " < " << end_exclusive << "; " << name << "++) {" << endl;
+    for (auto c : children) {
+      c->pretty_print(out, level + 1);
+    }
+    out << tab(level) << "}" << endl;
+  } else if (is_if()) {
+    out << tab(level) << "if (" << condition << ") {" << endl;
+    for (auto c : children) {
+      c->pretty_print(out, level + 1);
+    }
+    out << tab(level) << "}" << endl;
+  } else {
+    assert(is_op());
+    vector<string> args;
+    out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
+  }
+}
+
+void ancestors(map<op*, vector<op*> >& ancestor_map, const std::vector<op*>& trace, op* current) {
+  if (current->is_op()) {
+    ancestor_map[current] = trace;
+  } else {
+    auto trace_cpy = trace;
+    trace_cpy.push_back(current);
+    for (auto c : current->children) {
+      ancestors(ancestor_map, trace_cpy, c);
+    }
+  }
+}
+
+map<op*, isl_set*> prog::domains() {
+  map<op*, vector<op*> > ancestor_map;
+  ancestors(ancestor_map, {}, root);
+
+  map<op*, isl_set*> domains;
+  for (auto op : ancestor_map) {
+    vector<string> vars;
+    vector<string> constraints;
+    for (auto ancestor : op.second) {
+      if (ancestor->is_loop()) {
+        vars.push_back(ancestor->name);
+        constraints.push_back(str(ancestor->start) + " <= " + ancestor->name + " < " + str(ancestor->end_exclusive));
+      } else {
+        assert(ancestor->is_if());
+        constraints.push_back(parens(ancestor->condition));
+      }
+    }
+    string dom_str =
+      curlies(op.first->name + sep_list(vars, "[", "]", ", ") + " : " + sep_list(constraints, "", "", " and "));
+    domains[op.first] = rdset(ctx, dom_str);
+  }
+  //assert(false);
+  return domains;
+
+
+  //map<op*, vector<string> > idoms;
+  //vector<string> act;
+  //root->populate_iteration_domains(idoms, act);
+
+  //map<op*, vector<string> > ivars;
+  //root->populate_iter_vars(ivars, act);
+
+  //map<op*, isl_set*> doms;
+  //for (auto op : ivars) {
+    //auto iters = map_find(op.first, ivars);
+    //auto vars = sep_list(iters, "[", "]", ", ");
+
+    //auto dom = map_find(op.first, idoms);
+    //auto ds = sep_list(dom, "", "", " and ");
+
+    //doms[op.first] =
+      //isl_set_read_from_str(ctx, string("{ " + op.first->name + vars + " : " + ds + " }").c_str());
+  //}
+  //return doms;
+}
+
+void push_below(loop* outer, loop* inner, prog& prg) {
+  assert(outer->children.size() == 1);
+  assert(pick(outer->children) == inner);
+
+  vector<op*> inner_children = inner->children;
+
+  for (auto lp : prg.all_loops()) {
+    if (elem(outer, lp->children)) {
+      lp->replace_child(outer, inner);
+    }
+  }
+
+  outer->children = inner_children;
+  inner->children = {outer};
+
+  auto old_parent = outer->parent;
+  inner->parent = old_parent;
+  outer->parent = inner;
+}
+
+void push_to_bottom_of_band_ignoring(const vector<loop*>& base, loop* lp, prog& prg) {
+  assert(lp->is_loop());
+  assert(lp->children.size() == 1);
+
+  int old_num_loops = prg.all_loops().size();
+
+  if (!is_inner_loop(lp) && !elem(pick(lp->children), base)) {
+    auto inner_lp = pick(lp->children);
+    push_below(lp, inner_lp, prg);
+    push_to_bottom_of_band_ignoring(base, lp, prg);
+  }
+
+  assert(prg.all_loops().size() == old_num_loops);
+}
+
+op* find_coarse_grained_pipeline_loop(op* lp) {
+  assert(lp->is_loop());
+  if (lp->children.size() > 1) {
+    return lp;
+  }
+  return find_coarse_grained_pipeline_loop(lp->children.back());
+  //if (lp->name != "root" && lp->children.size() == 1) {
+    //return lp;
+  //}
+  //if (lp->name == "root" && lp->children.size() > 1) {
+    //return nullptr;
+  //}
+  //if (lp->name == "root" && lp->children.size() == 1) {
+    //return lp->children.back();
+  //}
+  //return nullptr;
+}
+
+umap* prog::validity_deps() {
+  umap* naive_sched = unoptimized_schedule();
+  cout << "Naive sched: " << str(naive_sched) << endl;
+
+  auto before = lex_lt(naive_sched, naive_sched);
+
+  cout << "Getting iteration domain..."<< endl;
+
+  auto domain = whole_iteration_domain();
+
+  cout << "Got domain..." << endl;
+
+  auto writes =
+    its(producer_map(), domain);
+
+  auto reads =
+    its(consumer_map(), domain);
+
+  cout << "Got producer / consumer maps" << endl;
+  auto writers_to_readers = dot(writes, inv(reads));
+  cout << "Writers to readers: " << endl;
+  for (auto m : get_maps(writers_to_readers)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
+  auto validity =
+    its(writers_to_readers, before);
+    //its(dot(writes, inv(reads)), before);
+
+  return validity;
+}
+
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
+  auto sc = buf.global_schedule();
+  bool any_reduce_ops_on_buffer = false;
+  vector<pair<string, pair<string, int> >> shift_registered_outputs;
+  for (auto op : prg.all_ops()) {
+    if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
+      cout << buf.name << endl;
+
+      any_reduce_ops_on_buffer = true;
+      break;
+    }
+  }
+
+  if (!any_reduce_ops_on_buffer) {
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto outpt_src : buf.get_out_ports()) {
+
+        if(outpt == outpt_src) {
+          continue;
+        }
+
+        auto reads = buf.access_map.at(outpt);
+        auto reads_src = buf.access_map.at(outpt_src);
+        cout << "reads: " << str(reads) << endl;
+        cout << "reads_src: " << str(reads_src) << endl;
+
+        auto outpt_read_data = range(reads);
+        auto outpt_src_read_data = range(reads_src);
+        if(num_in_dims(to_map(reads)) != num_in_dims(to_map(reads_src)))
+        {
+          continue;
+        }
+
+        if(!subset(outpt_read_data,outpt_src_read_data))
+        {
+          continue;
+        }
+
+        cout << str(buf.schedule.at(outpt)) << endl;
+        cout << str(buf.schedule.at(outpt_src)) << endl;
+        isl_aff * outpt_sched = get_aff(buf.schedule.at(outpt));
+        isl_aff * outpt_src_sched = get_aff(buf.schedule.at(outpt_src));
+        outpt_sched = set_name(outpt_sched,"bump");
+        outpt_src_sched = set_name(outpt_src_sched,"bump");
+        isl_aff * diff = sub(outpt_sched,outpt_src_sched);
+        isl_aff * reads_aff = get_aff(reads);
+        isl_aff * reads_src_aff = get_aff(reads_src);
+        reads_aff = set_name(reads_aff,"bump");
+        reads_src_aff = set_name(reads_src_aff,"bump");
+        isl_aff * diff_loc = sub(reads_aff, reads_src_aff);
+
+        cout << str(diff) << endl;
+
+        if(!isl_aff_is_cst(diff) || to_int(const_coeff(diff)) < 0)
+        {
+          continue;
+        }
+
+        if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) < 0)
+        {
+          continue;
+        }
+
+        auto time_to_read_src = dot(inv(sc), (reads_src));
+        auto time_to_read = dot(inv(sc), (reads));
+
+        int dd = to_int(const_coeff(diff));
+
+        assert(dd >= 0);
+
+        shift_registered_outputs.push_back({outpt,{outpt_src, dd}});
+      }
+
+    }
+  }
+  return shift_registered_outputs;
+}
+

@@ -303,6 +303,9 @@ void multi_kernel_design(HWStream<hw_uint<32> >& /* no bundle get_args num ports
 #endif //__VIVADO_SYNTH__
 
   HWStream<hw_uint<32> > gray_to_gp_19;
+#ifdef __VIVADO_SYNTH__
+#pragma HLS stream variable=gray_to_gp_19.values depth=32
+#endif //__VIVADO_SYNTH__
 
 
   Extracted_oc_load_in01_(in, gray_to_gp_19);

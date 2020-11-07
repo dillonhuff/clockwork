@@ -202,6 +202,10 @@ bool empty(uset* const s) {
   return isl_union_set_is_empty(s);
 }
 
+bool empty(isl_map* const s) {
+  return isl_map_is_empty(s);
+}
+
 bool empty(umap* const s) {
   return isl_union_map_is_empty(s);
 }
@@ -594,7 +598,7 @@ isl_map* linear_address_map_lake(isl_set* s) {
     stride = mul(stride, extend);
   }
   std::reverse(var_names.begin(), var_names.end());
-  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + domain + sep_list(exprs, "[", "]", " + ") + " }";
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
@@ -617,7 +621,7 @@ isl_map* linear_address_map_with_index(isl_set* s, vector<int> index) {
     stride = mul(stride, extend);
   }
   std::reverse(var_names.begin(), var_names.end());
-  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + domain + sep_list(exprs, "[", "]", " + ") + " }";
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
@@ -1564,6 +1568,10 @@ isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m) {
 
 isl_union_set* coalesce(isl_union_set* const m0) {
   return isl_union_set_coalesce(cpy(m0));
+}
+
+isl_map* coalesce(isl_map* const m0) {
+  return isl_map_coalesce(cpy(m0));
 }
 
 isl_union_map* coalesce(isl_union_map* const m0) {
@@ -2931,20 +2939,44 @@ uset* gist(uset* base, uset* context) {
   return isl_union_set_gist(cpy(base), cpy(context));
 }
 
+isl_map* project_out_domain(isl_map* const dmap,
+        const int d) {
+  auto m = cpy(dmap);
+  auto ct = ctx(dmap);
+
+  string dname, rname;
+    dname = domain_name(m);
+  if (isl_map_get_tuple_id(dmap, isl_dim_out) != nullptr) {
+    rname = range_name(m);
+  }
+
+  m = isl_map_project_out(m, isl_dim_in, d, 1);
+
+    isl_map_set_tuple_id(m, isl_dim_in, id(ct, dname));
+  if (isl_map_get_tuple_id(dmap, isl_dim_out) != nullptr) {
+    isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
+  }
+
+  return m;
+}
+
 isl_map* project_out(isl_map* const dmap,
     const int d) {
 
   auto m = cpy(dmap);
   auto ct = ctx(dmap);
 
-  string dname = domain_name(m);
-  string rname = range_name(m);
-
+  string dname, rname;
+  dname = domain_name(m);
+  if (isl_map_get_tuple_id(dmap, isl_dim_out) != nullptr) {
+    rname = range_name(m);
+  }
   m = isl_map_project_out(m, isl_dim_out, d, 1);
 
   isl_map_set_tuple_id(m, isl_dim_in, id(ct, dname));
-  isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
-
+  if (isl_map_get_tuple_id(dmap, isl_dim_out) != nullptr) {
+    isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
+  }
   return m;
 }
 
@@ -3779,3 +3811,103 @@ isl_val* constant(isl_aff* a) {
   return isl_aff_get_constant_val(a);
 }
 
+umap* to_umap(const vector<isl_aff*>& hs) {
+  assert(hs.size() > 0);
+
+  auto ct = ctx(pick(hs));
+  umap* schedmap = rdmap(ct, "{}");
+  for (auto sp : hs) {
+    isl_aff* sched = sp;
+
+    isl_map* sm = isl_map_from_aff(sched);
+    schedmap = unn(schedmap, to_umap(sm));
+  }
+
+  return schedmap;
+}
+
+
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << "aff: " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    flat = add(flat, flt);
+    cout << "flat: " << str(flat) << endl;
+  }
+
+  return flat;
+}
+
+isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << "aff: " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(isl_aff_floor(div(sub(aff, mins.at(d)), bank_factors.at(d))), length);
+    //isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    flat = add(flat, flt);
+    cout << "flat: " << str(flat) << endl;
+  }
+
+  return flat;
+  //return isl_aff_floor(div(flat, 2));
+}
+
+
+isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors) {
+  vector<string> dvs;
+  vector<string> bank_exprs;
+  for (int i = 0; i < (int) bank_factors.size(); i++) {
+    dvs.push_back("d" + str(i));
+    bank_exprs.push_back("d" + str(i) + " % " + str(bank_factors.at(i)));
+  }
+
+  string folded_output = "Bank" + brackets(sep_list(bank_exprs, "", "", ", "));
+
+  string bank_str = curlies(name + brackets(sep_list(dvs, "", "", ", ")) + " -> " + folded_output);
+  return isl_map_read_from_str(ctx, bank_str.c_str());
+}

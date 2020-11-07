@@ -117,6 +117,7 @@ bool equal(uset* const l, uset* const r);
 bool equal(umap* const l, umap* const r);
 
 bool empty(umap* const s);
+bool empty(isl_map* const s);
 bool empty(isl_basic_set* const s);
 bool empty(uset* const s);
 bool empty(isl_set* const s);
@@ -457,6 +458,7 @@ isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 isl_union_set* coalesce(isl_union_set* const m0);
 
 isl_union_map* coalesce(isl_union_map* const m0);
+isl_map* coalesce(isl_map* const m0);
 
 isl_union_map* dot_domain(isl_union_map* const m0, isl_union_map* const m1);
 
@@ -572,6 +574,7 @@ isl_map* project_all_but(isl_map* const dmap, const int d);
 isl_set* project_all_but(isl_set* const dmap, const int d);
 isl_set* project_out(isl_set* const dmap, const int d);
 isl_map* project_out(isl_map* const dmap, const int d);
+isl_map* project_out_domain(isl_map* const dmap, const int d);
 
 
 vector<string> space_var_args(isl_space* s);
@@ -677,3 +680,11 @@ std::vector<isl_aff*> get_affs(isl_multi_aff* saff);
 std::map<int, isl_val*> constant_components(isl_multi_aff* access);
 isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str);
 isl_val* constant(isl_aff* a);
+
+umap* to_umap(const vector<isl_aff*>& hs);
+
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom);
+
+isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom);
+
+isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors);
