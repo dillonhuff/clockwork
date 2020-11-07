@@ -1382,10 +1382,6 @@
             "modref":"cgralib.BitIO",
             "modargs":{"mode":["String","out"]}
           },
-          "io1_padded16_stencil_op_hcompute_padded16_global_wrapper_stencil_read_en":{
-            "modref":"cgralib.BitIO",
-            "modargs":{"mode":["String","out"]}
-          },
           "io1in_reset":{
             "modref":"cgralib.BitIO",
             "modargs":{"mode":["String","in"]}
