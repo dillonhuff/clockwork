@@ -3011,12 +3011,12 @@ void garnet_map_module(Module* top) {
   c->runPasses({"removewires"});
   addIOs(c,top);
   c->runPasses({"cullgraph"});
-  c->addPass(new CustomFlatten);
-  c->runPasses({"customflatten"});
-  c->addPass(new MapperPasses::ConstDuplication);
-  c->runPasses({"constduplication"});
-  c->addPass(new MapperPasses::MemConst);
-  c->runPasses({"memconst"});
+  // c->addPass(new CustomFlatten);
+  // c->runPasses({"customflatten"});
+  // c->addPass(new MapperPasses::ConstDuplication);
+  // c->runPasses({"constduplication"});
+  // c->addPass(new MapperPasses::MemConst);
+  // c->runPasses({"memconst"});
   c->addPass(new MapperPasses::MemSubstitute);
   c->runPasses({"memsubstitute"});
 

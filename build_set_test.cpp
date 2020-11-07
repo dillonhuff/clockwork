@@ -15046,7 +15046,7 @@ void lake_tests() {
   //lake_agg_sram_tb_config_test();
   //union_test();
   //assert(false);
-  test_single_port_mem(false);
+  test_single_port_mem(true);
   assert(false);
   lake_conv33_autovec_aha_test();
   //double_buffer_test();
