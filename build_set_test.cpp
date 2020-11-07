@@ -15247,11 +15247,22 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
   cout << "Body latency = " << body_latency << endl;
   cout << "Inner II     = " << inner_ii << endl;
   for (auto l : levels) {
-    //if (l.second == dims) {
-    sched.loop_iis[l.first] = inner_ii;
-    sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
-    sched.instance_latencies[prg.find_loop(l.first)] = 1;
-    //}
+    if (l.second <= dims) {
+      if (l.second == dims) {
+        sched.loop_iis[l.first] = inner_ii;
+        sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
+        sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      } else if (l.second == 1) {
+        sched.loop_iis[l.first] = inner_ii*60;
+        sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
+        sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      } else {
+        cout << l.second << endl;
+        assert(l.second == 0);
+        sched.loop_iis[l.first] = 65000;
+        sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      }
+    }
   }
 
   cout << "Not scheduled..." << endl;
