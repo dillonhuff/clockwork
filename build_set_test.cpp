@@ -15249,6 +15249,7 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
   auto levels = get_variable_levels(prg);
   vector<op*> body_ops;
   int body_latency = 0;
+  int inner_ii = 1;
   for (auto l : levels) {
     cout << endl;
     if (l.second == dims) {
@@ -15261,8 +15262,10 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
   for (auto b : body_ops) {
     sequential_schedule(sched, b, prg);
     body_latency += sched.total_latency(b);
+    inner_ii = max(inner_ii, sched.total_latency(b));
   }
   cout << "Body latency = " << body_latency << endl;
+  cout << "Inner II     = " << inner_ii << endl;
   assert(false);
 }
 
