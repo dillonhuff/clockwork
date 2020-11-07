@@ -79,8 +79,9 @@ Most files in this repository are automatically generated collateral
 that can be ignored.
 
 ## Testing CGRA Memory Functionality with [Lake](https://github.com/StanfordAHA/lake) Verilog Generation.
-For AHA CGRA user, we provide a interconnect-agonstic testing to check the memory tile configuration. The test is depend on CoreIR and Lake. 
-Before running test, be sure to install CoreIR and Lake. 
+
+For AHA CGRA users, we provide interconnect-agonstic testing of memory tile configurations. The tests depend on CoreIR and Lake. 
+Before running the lake tests, be sure to install CoreIR and Lake. 
 * Command to run the verilog functionality test.
 ```
 export COREIR_PATH=/path/to/coreir

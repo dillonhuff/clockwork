@@ -3964,9 +3964,12 @@ lakeStream emit_top_address_stream(string fname, vector<int> read_cycle, vector<
       bank bnk = compute_bank_info();
       for (auto inpt : get_in_ports()) {
         for (auto outpt : get_out_ports()) {
+          cout << "Adding bank between " << inpt << " and " << outpt << endl;
           add_bank_between(inpt, outpt, bnk);
         }
       }
+
+      cout << "Done generating register-file style banks for " << name << ", bank list size = " << bank_list.size() << endl;
 
     } else if (banking.partition == "cyclic") {
       int dim = logical_dimension();
@@ -5601,18 +5604,21 @@ bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {
   auto read = range(op_reads);
   auto all_data = unn(written, read);
 
+  auto read_id = isl_union_set_identity(cpy(read));
+
   auto read_times = dot(inv(op_reads), sched);
-  auto simul_reads = dot(read_times, inv(read_times));
+  //auto simul_reads = dot(read_times, inv(read_times));
+  // Set of simultaneous reads to different locations
+  auto simul_reads = diff(dot(read_times, inv(read_times)), read_id);
 
   cout << "simul reads: " << str(simul_reads) << endl;
-  cout << tab(1) << "any simultaneous reads: " << empty(simul_reads) << endl;
+  cout << tab(1) << "any simultaneous reads: " << !empty(simul_reads) << endl;
 
   auto data_to_bank = its(to_umap(bank_func), read);
   auto same_bank = dot(data_to_bank, inv(data_to_bank));
 
   cout << "data_to_bank: " << str(data_to_bank) << endl;
 
-  auto read_id = isl_union_set_identity(cpy(read));
   auto bank_read_conflicts = diff(its(same_bank, simul_reads), read_id);
 
   cout << "bank conflicts = " << str(bank_read_conflicts) << endl;
@@ -6019,6 +6025,21 @@ maybe<int> dependence_distance_singleton(UBuffer& buf, const string& inpt, const
   return {};
 }
 
+int total_capacity(UBuffer& buf) {
+  bank bank = buf.compute_bank_info();
+  int capacity = 1;
+  auto dsets = get_sets(bank.rddom);
+  int dims = dsets.size() > 0 ? num_dims(pick(get_sets(bank.rddom))) : 0;
+  for (int i = 0; i < dims; i++) {
+    auto s = project_all_but(to_set(bank.rddom), i);
+    auto min = to_int(lexminval(s));
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    capacity *= length;
+  }
+  return capacity;
+}
+
 vector<int> min_offsets_by_dimension(UBuffer& buf) {
   vector<int> min_offsets;
   for (int d = 0; d < buf.logical_dimension(); d++) {
@@ -6050,3 +6071,14 @@ vector<int> max_offsets_by_dimension(UBuffer& buf) {
   }
   return min_offsets;
 }
+
+vector<int> extents_by_dimension(UBuffer& buf) {
+  vector<int> min_offsets = min_offsets_by_dimension(buf);
+  vector<int> max_offsets = max_offsets_by_dimension(buf);
+  vector<int> extents;
+  for (int i = 0; i < min_offsets.size(); i++) {
+    extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
+  }
+  return extents;
+}
+
