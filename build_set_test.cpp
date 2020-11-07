@@ -1251,27 +1251,6 @@ map<string, UBuffer> vectorization_from_buf_map(
 
   return ubuf_pool;
 }
-////This method does not work.
-//isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
-    //vector<isl_map*> deps_map = get_maps(deps);
-    //umap* ret = rdmap(ctx, "{}");
-    //for ( auto m : deps_map ) {
-        //auto dname = domain_name(m);
-        //auto rname = range_name(m);
-        //bool is_sram_in = dname.find("output_vec") != std::string::npos;
-        //bool is_sram_out = rname.find("output") != std::string::npos;
-        //if (is_sram_in && is_sram_out) {
-            //ret = unn(ret, to_umap(inv(m)));
-        //}
-        //else {
-            //cout << "union: " << str(m) << endl;
-            //ret = unn(ret, to_umap(m));
-        //}
-    //}
-    //return ret;
-//}
-
-
 
 isl_union_map* optimized_schedule_from_buffers_DB(const map<string, UBuffer> &buffers, const vector<string> remove_deps, umap* extra) {
     isl_ctx* ctx = pick(buffers).second.ctx;
@@ -15266,6 +15245,11 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
   }
   cout << "Body latency = " << body_latency << endl;
   cout << "Inner II     = " << inner_ii << endl;
+  for (auto l : levels) {
+    if (l.second == dims) {
+      sched.loop_iis[l.first] = inner_ii;
+    }
+  }
   assert(false);
 }
 
