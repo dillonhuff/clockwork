@@ -1857,3 +1857,15 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
 void sanity_check_iis(schedule_info& sched);
 
 int logical_dimension(const std::string& buf, prog& prg);
+
+
+vector<op*> fully_scheduled_nodes(schedule_info& sched, prog& prg);
+
+void print_partial_schedule(schedule_info& sched, prog& prg);
+
+void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg);
+
+vector<op*> unscheduled_nodes(schedule_info& sched, prog& prg);
+
+bool all_ops_scheduled(schedule_info& sched, prog& prg);
+

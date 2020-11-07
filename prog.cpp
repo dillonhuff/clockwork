@@ -6578,3 +6578,74 @@ int logical_dimension(const std::string& buf, prog& prg) {
   }
 }
 
+vector<op*> fully_scheduled_nodes(schedule_info& sched, prog& prg)  {
+  vector<op*> ops;
+  for (auto op : prg.all_nodes()) {
+    if (is_op_scheduled(op, sched, prg)) {
+      ops.push_back(op);
+    }
+  }
+  return ops;
+}
+
+void print_partial_schedule(schedule_info& sched, prog& prg) {
+  auto scheduled = fully_scheduled_nodes(sched, prg);
+  cout << "Fully scheduled ops..." << endl;
+  for (auto op : scheduled) {
+    cout << tab(1) << op->name << endl;
+  }
+  cout << endl;
+  cout << "IIs" << endl;
+  for (auto e : sched.loop_iis) {
+    cout << tab(1) << e.first << ": " << e.second << endl;
+  }
+  cout << endl;
+  cout << "Offsets in parent" << endl;
+  for (auto e : sched.op_offset_within_parent) {
+    cout << tab(1) << e.first->name << ": " << e.second << endl;
+  }
+  cout << endl;
+  //cout << "Instance latencies" << endl;
+  //for (auto e : sched.instance_latencies) {
+    //cout << tab(1) << e.first->name << ": " << e.second << endl;
+  //}
+}
+
+void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg) {
+  int delay = 0;
+  for (auto outer_loop : outer) {
+    for (auto c : outer_loop->children) {
+      sched.op_offset_within_parent[c] = delay;
+      delay += sched.total_latency(c);
+    }
+    sched.op_offset_within_parent[outer_loop] = 0;
+  }
+
+  for (auto outer_loop : outer) {
+    //sched.instance_latencies[outer_loop] = delay;
+  }
+
+  for (auto outer_loop : outer) {
+    sched.loop_iis[outer_loop->name] = delay;
+  }
+}
+
+vector<op*> unscheduled_nodes(schedule_info& sched, prog& prg) {
+  vector<op*> unscheduled;
+  for (auto op : prg.all_nodes()) {
+    if (!is_op_scheduled(op, sched, prg)) {
+      unscheduled.push_back(op);
+    }
+  }
+  return unscheduled;
+}
+
+bool all_ops_scheduled(schedule_info& sched, prog& prg) {
+  for (auto op : prg.all_ops()) {
+    if (!is_op_scheduled(op, sched, prg)) {
+      return false;
+    }
+  }
+  return true;
+}
+
