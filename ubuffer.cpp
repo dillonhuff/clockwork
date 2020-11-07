@@ -1104,8 +1104,10 @@ Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
 }
 
 void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string domain_name) {
-    jdata[domain_name]["dimensionality"] = dimensionality;
-    for (auto it: data) {
+    auto tmp = MemConnSch(dimensionality, data);
+    tmp.remove_redundant_dim();
+    jdata[domain_name]["dimensionality"] = tmp.dimensionality;
+    for (auto it: tmp.vals) {
         jdata[domain_name][it.first] = it.second;
     }
 }

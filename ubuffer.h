@@ -792,6 +792,33 @@ struct MemConnSch {
   string read;
   string mux_write;
   string write;
+
+  MemConnSch(){}
+  MemConnSch(int dim, const unordered_map<string, vector<int>> &vals_in):
+      dimensionality(dim), vals(vals_in) {}
+
+  void remove_redundant_dim() {
+    assert(vals.count("extent"));
+    int dim = 0;
+    vector<int> remove_dims;
+    for (auto ext: vals.at("extent")) {
+        if (ext == 1) {
+            remove_dims.push_back(dim);
+        }
+        dim ++;
+    }
+    dimensionality -= remove_dims.size();
+    std::reverse(begin(remove_dims), end(remove_dims));
+    for (auto rem_dim: remove_dims) {
+        for (auto& it: vals) {
+            //skip the start address
+            if (it.second.size() == 1)
+                continue;
+            auto ptr = it.second.begin() + rem_dim;
+            it.second.erase(ptr);
+        }
+    }
+  }
 };
 
 class UBuffer {
