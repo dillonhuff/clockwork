@@ -1521,9 +1521,13 @@ void getAllIOPaths(Wireable* w, IOpaths& paths) {
     }
   }
   else if (isa<BitType>(t)) {
+    if (w->getConnectedWireables().size() == 0)
+        return;
     paths.IO1.push_back(w->getSelectPath());
   }
   else if (isa<BitInType>(t)) {
+    if (w->getConnectedWireables().size() == 0)
+        return;
     paths.IO1in.push_back(w->getSelectPath());
   }
   else {
@@ -1739,8 +1743,7 @@ void MapperPasses::ConstDuplication::setVisitorInfo() {
 
 }
 
-void disconnect_input_enable(Module* top) {
-  Context* c = top->getContext();
+void disconnect_input_enable(Context* c, Module* top) {
   ModuleDef* def = top->getDef();
   for (auto it: def->sel("self")->getSelects()) {
       string port = it.first;
@@ -1763,7 +1766,7 @@ void garnet_map_module(Module* top) {
   LoadDefinition_cgralib(c);
 
   //A new pass to remove input enable signal affine controller
-  disconnect_input_enable(top);
+  disconnect_input_enable(c, top);
   c->runPasses({"deletedeadinstances"});
 
   c->runPasses({"cullgraph"});
