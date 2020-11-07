@@ -15247,12 +15247,22 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int dims) {
   cout << "Computing rate matched schedule at level " << dims << endl;
   auto levels = get_variable_levels(prg);
+  vector<op*> body_ops;
+  int body_latency = 0;
   for (auto l : levels) {
     cout << endl;
     if (l.second == dims) {
       prg.find_loop(l.first)->pretty_print();
+      for (auto c : prg.find_loop(l.first)->children) {
+        body_ops.push_back(c);
+      }
     }
   }
+  for (auto b : body_ops) {
+    sequential_schedule(sched, b, prg);
+    body_latency += sched.total_latency(b);
+  }
+  cout << "Body latency = " << body_latency << endl;
   assert(false);
 }
 
