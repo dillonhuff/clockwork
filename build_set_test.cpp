@@ -12304,7 +12304,8 @@ void emit_lake_stream(map<string, UBuffer>& buffers_opt,
     }
     lattice_schedule_buf(it.second, hardware_schedule);
   }
-  emit_lake_address_stream2file(buffers_opt, dir);
+  CodegenOptions options;
+  emit_lake_address_stream2file(options, buffers_opt, dir);
 }
 
 void check_lake_config(const vector<string> & op_name_vec, string out_dir, string gold_dir) {
@@ -13227,6 +13228,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
+  //test_apps.push_back(conv_3_3_wide());
   //test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
@@ -13485,7 +13487,7 @@ void lake_dual_port_test() {
   cmd("mkdir -p ./lake_controllers/dual_port_test/");
   //auto op_vec = emit_lake_config(buffers_opt, hsh, "./lake_controllers/dual_port_test/");
   cmd("mkdir -p ./lake_stream/dual_port_test/");
-  emit_lake_stream(buffers_opt, hsh, "./lake_stream/dual_port_test");
+  //emit_lake_stream(buffers_opt, hsh, "./lake_stream/dual_port_test");
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
