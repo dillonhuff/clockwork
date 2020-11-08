@@ -1007,6 +1007,48 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   run_lake_verilog_codegen(options, v_name, ub_ins_name);
 }
 
+Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
+  auto c = def->getContext();
+
+  isl_map* sched = nullptr;
+  for (auto s : sched_maps) {
+    if (domain_name(s) == op->name) {
+      sched = s;
+      break;
+    }
+  }
+  assert(sched != nullptr);
+
+  auto svec = isl_pw_multi_aff_from_map(sched);
+
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(svec);
+  assert(pieces.size() == 1);
+
+  auto saff = pieces.at(0).second;
+  auto dom = pieces.at(0).first;
+
+  cout << "sched = " << str(saff) << endl;
+  cout << tab(1) << "dom = " << str(dom) << endl;
+
+  // TODO: Assert multi size == 1
+  auto aff = isl_multi_aff_get_aff(saff, 0);
+  Instance* controller;
+  if (options.rtl_options.use_external_controllers) {
+    auto aff_c = affine_controller(c, dom, aff);
+    aff_c->print();
+    controller = def->addInstance(controller_name(op->name), aff_c);
+  } else {
+    controller = affine_controller_use_lake_tile(
+            def, c, dom, aff,
+            controller_name(op->name));
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, controller);
+  }
+
+  connect_op_control_wires(options, def, op, hwinfo, controller);
+  return controller;
+}
 //Add CodegenOptions, if we do not use extra control,
 //we will use lake tile to generate affine controller
 Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
@@ -1395,7 +1437,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
     if (options.rtl_options.use_external_controllers) {
-      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+      generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
     }
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
