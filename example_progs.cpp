@@ -3967,10 +3967,10 @@ prog mobilenet_unrolled() {
   return prg;
 }
 
-prog harris_sch1() {
+prog harris_sch1_onebuf() {
   prog prg;
-  prg.compute_unit_file = "harris_sch1_compute.h";
-  prg.name = "harris_sch1";
+  prg.compute_unit_file = "harris_sch1_onebuf_compute.h";
+  prg.name = "harris_sch1_onebuf";
 
 // Stencil<int16_t, 64, 64> &padded16_stencil = arg_0;
   prg.add_input("padded16_stencil");
@@ -4051,10 +4051,10 @@ prog harris_sch1() {
   return prg;
 }
 
-prog harris_sch2() {
+prog harris_sch2_fourbuf() {
   prog prg;
-  prg.compute_unit_file = "harris_sch2_compute.h";
-  prg.name = "harris_sch2";
+  prg.compute_unit_file = "harris_sch2_fourbuf_compute.h";
+  prg.name = "harris_sch2_fourbuf";
 
 // Stencil<int16_t, 64, 64> &padded16_stencil = arg_0;
   prg.add_input("padded16_stencil");
@@ -4196,10 +4196,10 @@ prog harris_sch2() {
   return prg;
 }
 
-prog harris_sch3() {
+prog harris_sch3_1pp9c() {
   prog prg;
-  prg.compute_unit_file = "harris_sch3_compute.h";
-  prg.name = "harris_sch3";
+  prg.compute_unit_file = "harris_sch3_1pp9c_compute.h";
+  prg.name = "harris_sch3_1pp9c";
 
 // Stencil<int16_t, 64, 64> &padded16_stencil = arg_0;
   prg.add_input("padded16_stencil");
@@ -4439,10 +4439,10 @@ prog harris_sch3() {
   return prg;
 }
 
-prog harris_sch4() {
+prog harris_sch4_1pp3c() {
   prog prg;
-  prg.compute_unit_file = "harris_sch4_compute.h";
-  prg.name = "harris_sch4";
+  prg.compute_unit_file = "harris_sch4_1pp3c_compute.h";
+  prg.name = "harris_sch4_1pp3c";
 
 // Stencil<int16_t, 64, 64> &padded16_stencil = arg_0;
   prg.add_input("padded16_stencil");
@@ -4689,10 +4689,10 @@ prog harris_sch4() {
   return prg;
 }
 
-prog harris_sch5() {
+prog harris_sch5_1ppc() {
   prog prg;
-  prg.compute_unit_file = "harris_sch5_compute.h";
-  prg.name = "harris_sch5";
+  prg.compute_unit_file = "harris_sch5_1ppc_compute.h";
+  prg.name = "harris_sch5_1ppc";
 
 // Stencil<int16_t, 64, 64> &padded16_stencil = arg_0;
   prg.add_input("padded16_stencil");
@@ -4946,10 +4946,10 @@ prog harris_sch5() {
   return prg;
 }
 
-prog harris_sch6() {
+prog harris_sch6_2ppc() {
   prog prg;
-  prg.compute_unit_file = "harris_sch6_compute.h";
-  prg.name = "harris_sch6";
+  prg.compute_unit_file = "harris_sch6_2ppc_compute.h";
+  prg.name = "harris_sch6_2ppc";
 
 // Stencil<int16_t, 64, 64> &padded16_stencil = arg_0;
   prg.add_input("padded16_stencil");
@@ -5265,10 +5265,10 @@ prog harris_sch6() {
   return prg;
 }
 
-prog harris_sch7() {
+prog harris_sch7_bigtile() {
   prog prg;
-  prg.compute_unit_file = "harris_sch7_compute.h";
-  prg.name = "harris_sch7";
+  prg.compute_unit_file = "harris_sch7_bigtile_compute.h";
+  prg.name = "harris_sch7_bigtile";
 
 // Stencil<int16_t, 128, 128> &padded16_stencil = arg_0;
   prg.add_input("padded16_stencil");
@@ -5522,10 +5522,10 @@ prog harris_sch7() {
   return prg;
 }
 
-prog harris_sch8() {
+prog harris_sch8_endcim() {
   prog prg;
-  prg.compute_unit_file = "harris_sch8_compute.h";
-  prg.name = "harris_sch8";
+  prg.compute_unit_file = "harris_sch8_endcim_compute.h";
+  prg.name = "harris_sch8_endcim";
 
 // Stencil<int16_t, 64, 64> &padded16_stencil = arg_0;
   prg.add_input("padded16_stencil");
