@@ -46,6 +46,8 @@ using CoreIR::RecordParams;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
+CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
 int wire_width(CoreIR::Wireable* w) {
   auto tp = w->getType();
   if (isBit(tp)) {
@@ -1036,10 +1038,11 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
   auto aff = isl_multi_aff_get_aff(saff, 0);
   Instance* controller;
   if (options.rtl_options.use_external_controllers) {
-    auto aff_c = affine_controller(c, dom, aff);
+    auto aff_c = affine_controller_def(c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
   } else {
+    assert(false);
     controller = affine_controller_use_lake_tile(
             def, c, dom, aff,
             controller_name(op->name));
@@ -1051,6 +1054,9 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
   //generate_fsm(*verilog_collateral_file, options, controller->getInstname() + c->getUnique(), "d", "valid", aff, dom);
   //generate_fsm(*verilog_collateral_file, options, controller->getInstname(), "d", "valid", aff, dom);
   generate_fsm(*verilog_collateral_file, options, controller->getModuleRef()->getName(), "d", "valid", aff, dom);
+
+  def->connect(controller->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(controller->sel("flush"), def->sel("self.flush"));
 
   connect_op_control_wires(options, def, op, hwinfo, controller);
   return controller;
@@ -2268,6 +2274,26 @@ CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom) {
   auto in_set = orList(def, bset_outs);
   def->connect(in_set, def->sel("self.valid"));
   m->setDef(def);
+  return m;
+}
+
+CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+  cout << tab(1) << "dom = " << str(dom) << endl;
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = CONTROLPATH_WIDTH;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", c->Named("coreir.clkIn")},
+      {"rst_n", c->BitIn()},
+      {"flush", c->BitIn()},
+      {"valid", c->Bit()}};
+  int dims = num_in_dims(aff);
+  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
   return m;
 }
 
