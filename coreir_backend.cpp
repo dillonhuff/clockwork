@@ -2988,7 +2988,11 @@ void pipeline_compute_units(prog& prg) {
     if (op->func != "") {
       string compute_name = op->func;
       auto mod = ns->getModule(compute_name);
-      mod->print();
+      vector<Instance*> instances;
+      for (auto inst : mod->getDef()->getInstances()) {
+        instances.push_back(inst.second);
+      }
+      cout << "# of instances: " << instances.size() << endl;
     }
   }
 
