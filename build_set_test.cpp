@@ -18790,6 +18790,13 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    prog prg = resnet();
+#ifdef COREIR
+    pipeline_compute_units(prg);
+#endif
+    assert(false);
+  }
   //{
     //vector<prog> prgs = all_cgra_programs();
     //vector<prog> not_coarse;
