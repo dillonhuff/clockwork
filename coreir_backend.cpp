@@ -1031,6 +1031,7 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
   cout << "sched = " << str(saff) << endl;
   cout << tab(1) << "dom = " << str(dom) << endl;
 
+
   // TODO: Assert multi size == 1
   auto aff = isl_multi_aff_get_aff(saff, 0);
   Instance* controller;
@@ -1045,6 +1046,9 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
     //generate verilog collateral
     generate_lake_tile_verilog(options, controller);
   }
+
+  assert(verilog_collateral_file != nullptr);
+  generate_fsm(*verilog_collateral_file, options, "my_test_ctrl", "d", "wen", aff, dom);
 
   connect_op_control_wires(options, def, op, hwinfo, controller);
   return controller;
