@@ -3003,7 +3003,6 @@ void pipeline_compute_units(prog& prg) {
       }
       cout << "# of instances: " << instances.size() << endl;
       for (auto c : mod->getDef()->getConnections()) {
-        //cout << tab(1) << c.first->toString() << " <-> " << c.second->toString() << endl;
         Wireable* base0 = base(c.first);
         Wireable* base1 = base(c.second);
         if (isa<Instance>(base0) && isa<Instance>(base1)) {
@@ -3070,9 +3069,22 @@ void pipeline_compute_units(prog& prg) {
           cout << tab(1) << l->toString() << endl;
         }
       }
+
+      auto mod_tp = mod->getType();
+      auto copy = ns->newModuleDecl(mod->getName() + "_pipelined", mod_tp);
+      auto copy_def = copy->newModuleDef();
+      map<Instance*, Instance*> instance_map;
+      for (auto inst : instances) {
+        instance_map[inst] = copy_def->addInstance(inst, inst->getInstname());
+      }
+      copy->setDef(copy_def);
     }
   }
 
+  if(!saveToFile(ns, prg.name + "_compute_pipelined.json")) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
   deleteContext(context);
 }
 
