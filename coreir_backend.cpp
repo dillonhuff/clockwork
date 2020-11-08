@@ -2993,6 +2993,9 @@ void pipeline_compute_units(prog& prg) {
         instances.push_back(inst.second);
       }
       cout << "# of instances: " << instances.size() << endl;
+      for (auto c : mod->getDef()->getConnections()) {
+        cout << tab(1) << c.first->toString() << " <-> " << c.second->toString() << endl;
+      }
     }
   }
 
