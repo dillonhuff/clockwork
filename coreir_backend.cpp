@@ -3029,6 +3029,43 @@ void pipeline_compute_units(prog& prg) {
       for (auto i : instance_connections_dst_to_src) {
         cout << tab(1) << i.first->toString() << endl;
       }
+
+      vector<std::set<Instance*> > schedule;
+      int num_scheduled = 0;
+      std::set<Instance*> unscheduled;
+      for (auto i : instances) {
+        unscheduled.insert(i);
+      }
+      while (unscheduled.size() > 0) {
+        Instance* next_sched = nullptr;
+        for (Instance* i : unscheduled) {
+          bool all_deps_scheduled = true;
+          for (auto d : instance_connections_dst_to_src[i]) {
+            if (dbhc::elem(d, unscheduled)) {
+              all_deps_scheduled = false;
+              break;
+            }
+          }
+
+          if (all_deps_scheduled) {
+            next_sched = i;
+            break;
+          }
+        }
+        assert(next_sched != nullptr);
+        unscheduled.erase(next_sched);
+        schedule.push_back({next_sched});
+        num_scheduled++;
+      }
+      assert(num_scheduled == instances.size());
+
+      cout << "Final schedule size: " << schedule.size() << endl;
+      for (auto f : schedule) {
+        cout << "Level..." << endl;
+        for (auto l : f) {
+          cout << tab(1) << l->toString() << endl;
+        }
+      }
     }
   }
 
