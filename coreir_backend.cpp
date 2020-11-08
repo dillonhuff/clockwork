@@ -2965,6 +2965,36 @@ CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
   return next_val;
 }
 
+void pipeline_compute_units(prog& prg) {
+  CoreIR::Context* context = CoreIR::newContext();
+  auto c = context;
+
+
+  bool found_compute = true;
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+    assert(false);
+  }
+  if (!loadFromFile(context, compute_file)) {
+    found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    assert(false);
+  }
+
+  auto ns = c->getNamespace("global");
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      string compute_name = op->func;
+      auto mod = ns->getModule(compute_name);
+      mod->print();
+    }
+  }
+
+  deleteContext(context);
+}
+
 #endif
 
 
