@@ -1048,7 +1048,7 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
   }
 
   assert(verilog_collateral_file != nullptr);
-  generate_fsm(*verilog_collateral_file, options, "my_test_ctrl", "d", "wen", aff, dom);
+  generate_fsm(*verilog_collateral_file, options, controller->getInstname() + c->getUnique(), "d", "valid", aff, dom);
 
   connect_op_control_wires(options, def, op, hwinfo, controller);
   return controller;
