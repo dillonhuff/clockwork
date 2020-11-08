@@ -2968,7 +2968,8 @@ CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
 
 Wireable* base(Wireable* w) {
   if (isa<Select>(w)) {
-    return static_cast<Select*>(w)->getParent();
+    //return static_cast<Select*>(w)->getParent();
+    return static_cast<Select*>(w)->getTopParent();
   }
   return w;
 }
@@ -3012,11 +3013,11 @@ void pipeline_compute_units(prog& prg) {
           cout << tab(2) << c.first->getType()->isInput() << endl;
 
           if (c.first->getType()->isInput()) {
-            dst = static_cast<Instance*>(c.first);
-            src = static_cast<Instance*>(c.second);
+            dst = static_cast<Instance*>(base0);
+            src = static_cast<Instance*>(base1);
           } else {
-            dst = static_cast<Instance*>(c.second);
-            src = static_cast<Instance*>(c.first);
+            dst = static_cast<Instance*>(base1);
+            src = static_cast<Instance*>(base0);
           }
 
           assert(src != nullptr);
@@ -3028,6 +3029,9 @@ void pipeline_compute_units(prog& prg) {
       cout << "Instance connections..." << endl;
       for (auto i : instance_connections_dst_to_src) {
         cout << tab(1) << i.first->toString() << endl;
+        for (auto c : i.second) {
+          cout << tab(2) << c->toString() << endl;
+        }
       }
 
       vector<std::set<Instance*> > schedule;
