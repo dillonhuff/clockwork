@@ -42,3 +42,4 @@ prog harris_sch6_2ppc();
 prog harris_sch7_bigtile();
 prog harris_sch8_endcim();
 prog three_level_memory_two();
+prog resnet_full_layer();
