@@ -173,10 +173,6 @@
             "genargs":{"width":["Int",16]},
             "modargs":{"mode":["String","in"]}
           },
-          "io1_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_en":{
-            "modref":"cgralib.BitIO",
-            "modargs":{"mode":["String","out"]}
-          },
           "io1_hw_output_stencil_op_hcompute_hw_output_stencil_write_valid":{
             "modref":"cgralib.BitIO",
             "modargs":{"mode":["String","out"]}

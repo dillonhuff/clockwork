@@ -1093,7 +1093,7 @@ Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
     auto data = map_pair.second;
 
     //TODO: has a trouble to remove the extra dimension, debug with tile
-    data.remove_redundant_dim();
+    //data.remove_redundant_dim();
     jdata[name]["dimensionality"] = data.dimensionality;
     if (data.read != "") { jdata[name]["read"] = data.read; }
     if (data.mux_write != "") { jdata[name]["mux_write"] = data.mux_write; }
@@ -1443,7 +1443,12 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   map<string, CoreIR::Instance*> pt2psth;
   map<string, CoreIR::Wireable*> wire2out;
   map<string, CoreIR::Wireable*> pt2wire;
+
+  vector<CoreIR::Wireable*> all_mem_tiles;
+
+  //A map save the relation between ubuffer port to hardware memory wireable
   map<string, std::vector<CoreIR::Wireable*>> outpt_bank_rd, outpt_bank_valid;
+
   map<string, CoreIR::Wireable*> reg_in;
   //define the map save valid output using customized comparator
   auto valid_out = std::map<string, CoreIR::Wireable*,
@@ -1679,6 +1684,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
       //generate verilog collateral
       generate_lake_tile_verilog(options, buf);
+      all_mem_tiles.push_back(buf);
 
     }
   }
@@ -1755,8 +1761,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     if (connect_vec.size() == 1) {
       def->connect(pick(connect_vec), pt2wire.at(outpt));
-      cout << "Parent node: " << pick(connect_vec)->getTopParent()->toString() << endl;;
-      chain_disable_tile.insert(pick(connect_vec)->getTopParent());
+      cout << "Node: " << pick(connect_vec)->toString()
+          << "Parent node: " << pick(connect_vec)->getTopParent()->toString() << endl;;
+      //chain_disable_tile.insert(pick(connect_vec)->getTopParent());
     }
     else {
       //wiring the chaining pass
@@ -1780,6 +1787,15 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
     }
   }
+  //After find chaining tile, push the non-chained tile into another set
+  for (auto memtile: all_mem_tiles) {
+      if (chain_enable_tile.count(memtile) == 0) {
+          chain_disable_tile.insert(memtile);
+      }
+  }
+
+  cout << "chain_en size: " << chain_enable_tile.size() <<endl
+      << "chain_disable size: " << chain_disable_tile.size() << endl;
 
   //wire the chain enable disable signal
   if (chain_enable_tile.size()) {
