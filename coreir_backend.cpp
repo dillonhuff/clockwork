@@ -21,6 +21,7 @@ using CoreIR::TypeGen;
 using CoreIR::Type;
 using CoreIR::Values;
 
+using CoreIR::Select;
 using CoreIR::SelectPath;
 using CoreIR::join;
 using CoreIR::BitType;
@@ -2965,6 +2966,12 @@ CoreIR::Instance* cmux(CoreIR::ModuleDef* def,
   return next_val;
 }
 
+Wireable* base(Wireable* w) {
+  if (isa<Select>(w)) {
+    return static_cast<Select*>(w)->getParent();
+  }
+  return w;
+}
 void pipeline_compute_units(prog& prg) {
   CoreIR::Context* context = CoreIR::newContext();
   auto c = context;
@@ -2989,12 +2996,38 @@ void pipeline_compute_units(prog& prg) {
       string compute_name = op->func;
       auto mod = ns->getModule(compute_name);
       vector<Instance*> instances;
+      map<Instance*, std::set<Instance*> > instance_connections_dst_to_src;
       for (auto inst : mod->getDef()->getInstances()) {
         instances.push_back(inst.second);
       }
       cout << "# of instances: " << instances.size() << endl;
       for (auto c : mod->getDef()->getConnections()) {
-        cout << tab(1) << c.first->toString() << " <-> " << c.second->toString() << endl;
+        //cout << tab(1) << c.first->toString() << " <-> " << c.second->toString() << endl;
+        Wireable* base0 = base(c.first);
+        Wireable* base1 = base(c.second);
+        if (isa<Instance>(base0) && isa<Instance>(base1)) {
+          Instance* src = nullptr;
+          Instance* dst = nullptr;
+          cout << tab(1) << "Instance connection between " << base0->toString() << " and " << base1->toString() << endl;
+          cout << tab(2) << c.first->getType()->isInput() << endl;
+
+          if (c.first->getType()->isInput()) {
+            dst = static_cast<Instance*>(c.first);
+            src = static_cast<Instance*>(c.second);
+          } else {
+            dst = static_cast<Instance*>(c.second);
+            src = static_cast<Instance*>(c.first);
+          }
+
+          assert(src != nullptr);
+          assert(dst != nullptr);
+
+          instance_connections_dst_to_src[dst].insert(src);
+        }
+      }
+      cout << "Instance connections..." << endl;
+      for (auto i : instance_connections_dst_to_src) {
+        cout << tab(1) << i.first->toString() << endl;
       }
     }
   }
