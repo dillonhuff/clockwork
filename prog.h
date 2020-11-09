@@ -1717,6 +1717,7 @@ struct schedule_info {
   map<op*, int> instance_latencies;
   map<op*, int> op_offset_within_parent;
 
+  int compute_latency(const std::string& op_name);
   int compute_latency(op* op);
 
   int store_latency(const std::string& buf) {
