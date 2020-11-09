@@ -46,10 +46,12 @@ struct RTLOptions {
   bool use_external_controllers;
   bool pack_controllers_in_memtiles;
   bool use_prebuilt_memory;
+  bool use_pipelined_compute_units;
   int max_inpt, max_outpt;
   TargetTile target_tile;
 
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
+  use_pipelined_compute_units(false),
     max_inpt(1), max_outpt(1),
     target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false) {}
   //RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), use_prebuilt_memory(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
