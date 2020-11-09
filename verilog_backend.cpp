@@ -497,6 +497,10 @@ void generate_fsm(
     isl_aff* aff,
     isl_set* dom) {
 
+  isl_point* pt = lexminpt(dom);
+  isl_val* min_time = eval(aff, pt);
+  assert(to_int(min_time) >= 0);
+
   out << "// " << str(aff) << endl;
   cout << to_int(const_coeff(aff)) << endl;
   int dims = num_in_dims(aff);
@@ -988,6 +992,7 @@ void generate_platonic_ubuffer(
 
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+
   //map<string,pair<string,int>> shift_registered_outputs;
   //vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
 
