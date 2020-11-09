@@ -1863,7 +1863,7 @@ void generate_coreir(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     schedule_info& hwinfo) {
-  //pipeline_compute_units(prg);
+  pipeline_compute_units(prg);
 
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
@@ -3003,6 +3003,12 @@ void copy_and_pipeline_connection(vector<std::set<Instance*> >& stages, map<Inst
 
 void pipeline_compute_units(prog& prg) {
   CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cgralib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  add_delay_tile_generator(context);
+  add_raw_quad_port_memtile_generator(context);
+  add_tahoe_memory_generator(context);
   auto c = context;
 
 
@@ -3011,12 +3017,14 @@ void pipeline_compute_units(prog& prg) {
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
-    assert(false);
+    return;
+    //assert(false);
   }
   if (!loadFromFile(context, compute_file)) {
     found_compute = false;
     cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    assert(false);
+    return;
+    //assert(false);
   }
 
   auto ns = c->getNamespace("global");
@@ -3120,7 +3128,7 @@ void pipeline_compute_units(prog& prg) {
     context->die();
   }
   deleteContext(context);
-  assert(false);
+  //assert(false);
 }
 
 #endif
