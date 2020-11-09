@@ -2057,7 +2057,7 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
       //}
       //assert(false);
       //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      int op_latency = map_find(writer_name + "_pipelined", hwinfo.op_compute_unit_latencies);
+      int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
       //int op_latency = hwinfo.compute_latency(write_op);
       //assert(op_latency == 0);
 
