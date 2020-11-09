@@ -16361,13 +16361,14 @@ void compile_for_generic_SRAM_mem(prog& prg) {
 
 void compile_for_FPGA_BRAM_mem(prog& prg) {
   auto options = FPGA_BRAM_codegen_options(prg);
+  options.rtl_options.use_pipelined_compute_units = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
 void compile_for_garnet_platonic_mem(prog& prg) {
   auto options = garnet_codegen_options(prg);
-  options.rtl_options.use_pipelined_compute_units = true;
+  //options.rtl_options.use_pipelined_compute_units = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   compile_cycle_accurate_hw(options, sched, prg);
 }
@@ -17005,16 +17006,15 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  vector<prog> bram_test_programs{resnet()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+
   auto test_programs =
     all_cgra_programs();
   test_platonic_codegen(test_programs);
 
-  vector<prog> bram_test_programs{resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
-
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
-  
 }
 
 void dse_flow_tests() {
