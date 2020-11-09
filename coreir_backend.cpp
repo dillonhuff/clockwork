@@ -749,8 +749,8 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       if (hwinfo.use_dse_compute) {
         halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
       } else {
-        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
-        //halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
+        //halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
       }
       assert(halide_cu != nullptr);
 
@@ -875,7 +875,9 @@ Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
 
 void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, schedule_info& hwinfo, Instance* controller) {
   cout << "Find compute" << endl;
-  int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
+  //int op_latency = map_find(op->name, hwinfo.op_compute_unit_latencies);
+  int op_latency = hwinfo.compute_latency(op);
+  //map_find(op->name, hwinfo.op_compute_unit_latencies);
   int read_latency =
     op->buffers_read().size() == 0 ? 0 :
     hwinfo.load_latency(pick(op->buffers_read()));
@@ -3189,7 +3191,9 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
       }
       copy->setDef(copy_def);
 
-      hwinfo.op_compute_unit_latencies[op->func] =
+      hwinfo.op_compute_unit_latencies[op->func + "_pipelined"] =
+        std::max(0, ((int)schedule.size()) - 1);
+      hwinfo.compute_unit_latencies[op->func + "_pipelined"] =
         std::max(0, ((int)schedule.size()) - 1);
     }
   }

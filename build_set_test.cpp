@@ -16187,6 +16187,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
     }
   }
 
+  pipeline_compute_units(prg, sched);
   return sched;
 }
 
