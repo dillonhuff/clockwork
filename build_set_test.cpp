@@ -18791,6 +18791,11 @@ void test_if_construction() {
 
 void dhuff_playground() {
   {
+    prog prg = resnet_full_layer();
+    prg.pretty_print();
+    assert(false);
+  }
+  {
     prog prg = resnet();
 #ifdef COREIR
     pipeline_compute_units(prg);
