@@ -2998,6 +2998,14 @@ void copy_and_pipeline_connection(vector<std::set<Instance*> >& stages, map<Inst
   Wireable* wc0 = copy_wireable(instance_map, w0, copy_def);
   Wireable* wc1 = copy_wireable(instance_map, w1, copy_def);
 
+  auto context = wc0->getContext();
+
+  if (wc0->getType()->isOutput()) {
+    wc0 = delay_by(copy_def, context->getUnique(), wc0, 0);
+  }
+  if (wc1->getType()->isOutput()) {
+    wc1 = delay_by(copy_def, context->getUnique(), wc1, 0);
+  }
   copy_def->connect(wc0, wc1);
 }
 
