@@ -143,7 +143,7 @@ void generate_platonic_ubuffer(
     UBuffer& buf,
     schedule_info& hwinfo);
 
-void pipeline_compute_units(prog& prg);
+void pipeline_compute_units(prog& prg, schedule_info& hwinfo);
 
 #endif
 

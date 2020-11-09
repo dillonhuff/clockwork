@@ -1864,7 +1864,7 @@ void generate_coreir(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     schedule_info& hwinfo) {
-  pipeline_compute_units(prg);
+  //pipeline_compute_units(prg);
 
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
@@ -3069,7 +3069,7 @@ void copy_and_pipeline_connection(vector<std::set<Instance*> >& stages, map<Inst
   copy_def->connect(wc0, wc1);
 }
 
-void pipeline_compute_units(prog& prg) {
+void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cgralib(context);
@@ -3188,6 +3188,9 @@ void pipeline_compute_units(prog& prg) {
         copy_and_pipeline_connection(schedule, instance_map, c.first, c.second, copy_def);
       }
       copy->setDef(copy_def);
+
+      hwinfo.op_compute_unit_latencies[op->func] =
+        std::max(0, ((int)schedule.size()) - 1);
     }
   }
 
