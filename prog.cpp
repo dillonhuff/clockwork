@@ -6655,7 +6655,11 @@ int schedule_info::compute_latency(op* op) {
   }
   assert(contains_key(op->func, compute_unit_latencies));
   return map_find(op->func, compute_unit_latencies);
+
+
   //assert(contains_key(op->func + "_pipelined", compute_unit_latencies));
-  //return map_find(op->func + "_pipelined", compute_unit_latencies);
+  //int l = map_find(op->func + "_pipelined", compute_unit_latencies);
+  //assert(l >= 0);
+  //return l;
 }
 

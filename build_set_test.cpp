@@ -16587,11 +16587,11 @@ vector<prog> stencil_programs() {
   //test_programs.push_back(rom());
 
 
+  test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(up_sample());
   test_programs.push_back(harris());
   test_programs.push_back(gaussian());
-  test_programs.push_back(pointwise());
 
   // Fails with dual port tile?
   test_programs.push_back(strided_conv());
@@ -16639,6 +16639,7 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, stencil_programs());
   concat(test_programs, harris_variants());
 
   // Too large to fit in 16 bit controller,
@@ -16657,7 +16658,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(mobilenet_small());
 
 
-  concat(test_programs, stencil_programs());
 
   return test_programs;
 }
