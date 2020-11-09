@@ -15094,7 +15094,7 @@ void infer_bounds_unrolled_test() {
 
 }
 
-int op_latency(op* op, const schedule_info& hwinfo) {
+int op_latency(op* op, schedule_info& hwinfo) {
   assert(!op->is_loop());
 
   int total_latency = 0;
@@ -15111,7 +15111,10 @@ int op_latency(op* op, const schedule_info& hwinfo) {
 
   // Then we need to wait for the compute unit to finish
   if (op->func != "") {
-    int latency = map_find(op->func, hwinfo.compute_unit_latencies);
+    //int latency = map_find(op->func, hwinfo.compute_unit_latencies);
+    int latency =
+      hwinfo.compute_latency(op);
+      //map_find(op->func, hwinfo.compute_unit_latencies);
     //assert(latency == 0);
     total_latency += latency;
   }
