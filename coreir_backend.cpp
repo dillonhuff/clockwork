@@ -3194,8 +3194,8 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
       }
       copy->setDef(copy_def);
 
-      hwinfo.op_compute_unit_latencies[op->func + "_pipelined"] =
-        std::max(0, ((int)schedule.size()) - 1);
+      //hwinfo.op_compute_unit_latencies[op->func + "_pipelined"] =
+        //std::max(0, ((int)schedule.size()) - 1);
       hwinfo.compute_unit_latencies[op->func + "_pipelined"] =
         std::max(0, ((int)schedule.size()) - 1);
     }
