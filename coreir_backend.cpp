@@ -1430,7 +1430,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
 
   bool found_compute = true;
-  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  //string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  string compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
   if (hwinfo.use_dse_compute) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
   }
@@ -1862,6 +1863,8 @@ void generate_coreir(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     schedule_info& hwinfo) {
+  pipeline_compute_units(prg);
+
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cgralib(context);
@@ -3112,11 +3115,12 @@ void pipeline_compute_units(prog& prg) {
     }
   }
 
-  if(!saveToFile(ns, prg.name + "_compute_pipelined.json")) {
+  if(!saveToFile(ns, "./coreir_compute/" + prg.name + "_compute_pipelined.json")) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }
   deleteContext(context);
+  assert(false);
 }
 
 #endif
