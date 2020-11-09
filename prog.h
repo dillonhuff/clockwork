@@ -1716,13 +1716,7 @@ struct schedule_info {
   map<op*, int> instance_latencies;
   map<op*, int> op_offset_within_parent;
 
-  int compute_latency(op* op) {
-    if (op->func == "") {
-      return 0;
-    }
-    assert(contains_key(op->func, compute_unit_latencies));
-    return map_find(op->func, compute_unit_latencies);
-  }
+  int compute_latency(op* op);
 
   int store_latency(const std::string& buf) {
     assert(contains_key(buf, buffer_store_latencies));
