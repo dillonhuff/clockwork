@@ -113,6 +113,8 @@ int dim(isl_space* const s);
 
 bool equal(isl_space* const l, isl_space* const r);
 bool equal(isl_set* const l, isl_set* const r);
+bool equal(isl_map* const l, isl_map* const r);
+bool equal(isl_aff* const l, isl_aff* const r);
 bool equal(uset* const l, uset* const r);
 bool equal(umap* const l, umap* const r);
 

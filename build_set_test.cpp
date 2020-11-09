@@ -10368,6 +10368,13 @@ void blur_and_downsample_test() {
 }
 
 void playground() {
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto acc_0 = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
+        auto acc_1 = isl_map_read_from_str(ctx,"{ output_1_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
+        cout << "is equal: " << equal(get_aff(acc_0), get_aff(acc_1)) << endl;
+        assert(false);
+    }
     //{
     //isl_ctx* ctx = isl_ctx_alloc();
     //auto access_map = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
@@ -15058,11 +15065,11 @@ void lake_tests() {
   //lake_agg_sram_tb_config_test();
   //union_test();
   //assert(false);
+  //playground();
   test_single_port_mem(false);
   assert(false);
   lake_conv33_autovec_aha_test();
   //double_buffer_test();
-  //playground();
   //lake_identity_stream_autovec_test();
   lake_gaussian_autovec_test();
   //lake_dual_port_test();
@@ -15819,7 +15826,8 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
   //}
   //assert(false);
 
-  sequential_schedule(sched, root, prg);
+  asap_inner_loops_schedule(sched, root, prg);
+  //sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);

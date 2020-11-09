@@ -631,7 +631,14 @@ void generate_vivado_tcl(UBuffer& buf) {
   generate_vivado_tcl(buf.name);
 }
 
+
 //Post processing get the ubuffer for each bank
+/*
+ * This will generate the ubuffer for vectorization,
+ * Chances are that multiple bank share the same physical tile,
+ * it will create a map from the bank name to
+ * the vectorized ubuffer data structure
+*/
 map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
   print_bank_info();
   map<string, UBuffer> buffers;
@@ -660,7 +667,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
     buf.ctx = ctx;
     buf.port_widths = port_widths;
     auto inpts = get_bank_inputs(b.name);
-    auto outpts = get_bank_outputs(b.name);
+    auto outpts = get_bank_unique_outputs(b.name);
 
     //add a sort of output make sure we have positive stride when coalesce
     vector<string> pt_vec(outpts.begin(), outpts.end());
@@ -4790,8 +4797,8 @@ vector<string> buffer_vectorization(vector<int> iis,
 
       //Input must be take care
       //need to first pad the buffer output to the multiplier of
-      target_buffer.pad_read_dom(target_buffer.dom_dims()-1, fetch_width);
-      target_buffer.pad_write_dom(target_buffer.dom_dims()-1, fetch_width);
+      target_buffer.pad_read_dom_inner_most(fetch_width);
+      target_buffer.pad_write_dom_inner_most(fetch_width);
 
       //ret is a pair of vectorized_buffer and the dependency need to be removed
       auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
@@ -5363,13 +5370,15 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     }
   }
 
-void UBuffer::pad_write_dom(int dim_id, int fetch_width) {
+void UBuffer::pad_write_dom_inner_most(int fetch_width) {
     //pad the domain for both input port and output port
     for (auto bd: get_in_bundles()) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
+            int dim_id = num_in_dims(am) - 1;
             auto sched = schedule.at(pt);
             cout << "\t original range input access map: " << str((am)) << endl;
+            cout << "\t dim id: " << dim_id << endl;
             assert(get_dim_min(::domain(am), dim_id) == 0);
             auto rem = (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
             if (rem) {
@@ -5384,10 +5393,12 @@ void UBuffer::pad_write_dom(int dim_id, int fetch_width) {
     }
 }
 
-void UBuffer::pad_read_dom(int dim_id, int fetch_width) {
+//Just pad the inner most
+void UBuffer::pad_read_dom_inner_most(int fetch_width) {
     for (auto bd: get_out_bundles()) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
+            int dim_id = num_in_dims(am) - 1;
             auto sched = schedule.at(pt);
             cout << "\t original range output access map: " << str((am)) << endl;
             assert(get_dim_min(::domain(am), dim_id) == 0);

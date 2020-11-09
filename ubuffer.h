@@ -1310,6 +1310,16 @@ class UBuffer {
       //return ret;
     }
 
+    bool can_be_broadcast(const std::string& pt0, const std::string& pt1) const {
+      auto acc_0 = range(access_map.at(pt0));
+      auto acc_1 = range(access_map.at(pt1));
+      auto sched_0 = range(schedule.at(pt0));
+      auto sched_1 = range(schedule.at(pt1));
+      bool acc_equal = equal(acc_0, acc_1);
+      bool sched_equal = equal(sched_0, sched_1);
+      return acc_equal && sched_equal;
+    }
+
     std::set<string> get_bank_outputs(const std::string& name) const {
       if (!(contains_key(name, banks_to_outputs))) {
         cout << "Error: No outputs for bank " << name << endl;
@@ -1328,6 +1338,23 @@ class UBuffer {
       //return ret;
     }
 
+
+std::set<string> get_bank_unique_outputs(const std::string& name) const {
+    auto outpts_all = get_bank_outputs(name);
+    std::set<string> unique_outpts;
+    for (auto pt: outpts_all) {
+        if (unique_outpts.empty()) {
+            unique_outpts.insert(pt);
+        } else {
+            for (auto upt: unique_outpts) {
+                if (! can_be_broadcast(pt, upt)) {
+                    unique_outpts.insert(pt);
+                }
+            }
+        }
+    }
+    return unique_outpts;
+}
 
     bool has_bank(const std::string& name) {
       for (auto& bnk : bank_list) {
@@ -2042,8 +2069,8 @@ class UBuffer {
     isl_map* pad_dom_sched(AccessPattern , isl_map* , int);
 
     //pad the read domain
-    void pad_read_dom(int dim_id, int fetch_width);
-    void pad_write_dom(int dim_id, int fetch_width);
+    void pad_read_dom_inner_most(int fetch_width);
+    void pad_write_dom_inner_most(int fetch_width);
 
 
     //change the input and output and return the agg and tb ubuffer stucture

@@ -186,6 +186,14 @@ bool equal(uset* const l, uset* const r) {
   return isl_union_set_is_equal(l, r);
 }
 
+bool equal(isl_map* const l, isl_map* const r) {
+  return isl_map_is_equal(l, r);
+}
+
+bool equal(isl_aff* const l, isl_aff* const r) {
+  return isl_aff_plain_is_equal(l, r);
+}
+
 bool equal(umap* const l, umap* const r) {
   return isl_union_map_is_equal(l, r);
 }
