@@ -16626,9 +16626,9 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch4());
 
   // Works
-  test_programs.push_back(harris_sch5());
-  test_programs.push_back(harris_sch7());
-  test_programs.push_back(harris_sch8());
+  test_programs.push_back(harris_sch5_1ppc());
+  test_programs.push_back(harris_sch7_bigtile());
+  test_programs.push_back(harris_sch8_endcim());
 
   return test_programs;
 }
