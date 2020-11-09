@@ -1940,18 +1940,23 @@ CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
 
       auto atp = static_cast<ArrayType*>(tp);
       auto elem_type = atp->getElemType();
+      cout << "Type of " << w->toString() << ": " << elem_type->toString() << endl;
+      if (isa<ArrayType>(elem_type)) {
+        assert(isa<ArrayType>(elem_type));
 
-      assert(isa<ArrayType>(elem_type));
+        cout << "Getting array..." << endl;
 
-      cout << "Getting array..." << endl;
-
-      auto elem_arr =
-        static_cast<ArrayType*>(elem_type);
-      int elem_width = elem_arr->getLen();
-      int len = atp->getLen();
-      cout << "Width = " << elem_width << endl;
-      cout << "Len   = " << len << endl;
-      return delay_array(bdef, w, elem_width, len);
+        auto elem_arr =
+          static_cast<ArrayType*>(elem_type);
+        int elem_width = elem_arr->getLen();
+        int len = atp->getLen();
+        cout << "Width = " << elem_width << endl;
+        cout << "Len   = " << len << endl;
+        return delay_array(bdef, w, elem_width, len);
+      } else {
+        return delay(bdef, bdef->getContext()->getUnique(), w, atp->getLen());
+        //assert(false);
+      }
     } else {
       cout << "Unsupported type: " << tp->toString() << endl;
       assert(false);
@@ -2994,17 +2999,71 @@ Wireable* copy_wireable(map<Instance*, Instance*>& instance_map, Wireable* w0, M
   assert(false);
 }
 
+int stage_num(vector<std::set<Instance*> >& stages,
+    Wireable* w0) {
+  if (stages.size() == 0) {
+    return 0;
+  }
+
+  if (!isa<Instance>(base(w0))) {
+    assert(isa<Interface>(base(w0)));
+    int d = w0->getType()->isOutput() ? 0 : stages.size() - 1;
+    cout << "Stage for " << w0->toString() << " = " << d << endl;
+    return d;
+  }
+  int i = 0;
+  for (auto& s : stages) {
+    if (dbhc::elem(static_cast<Instance*>(base(w0)), s)) {
+      return i;
+    }
+    i++;
+  }
+  assert(false);
+}
+
 void copy_and_pipeline_connection(vector<std::set<Instance*> >& stages, map<Instance*, Instance*>& instance_map, Wireable* w0, Wireable* w1, ModuleDef* copy_def) {
+
+  cout << "w0 = " << w0->toString() << ": " << w0->getType()->toString() << endl;
+  cout << "w1 = " << w1->toString() << ": " << w1->getType()->toString() << endl;
+
+  Wireable* src = nullptr;
+  Wireable* dst = nullptr;
+  if (w0->getType()->isOutput()) {
+    //assert(w0->getType()->isInput());
+
+    src = w0;
+    dst = w1;
+  } else {
+    //assert(w0->getType()->isInput());
+
+    src = w1;
+    dst = w0;
+  }
+  assert(src != nullptr);
+  assert(dst != nullptr);
+
+  int src_stage = stage_num(stages, src);
+  int dst_stage = stage_num(stages, dst);
+
+  cout << "Src : " << src->toString() << " at " << src_stage << endl;
+  cout << "Dst stage: " << dst->toString() << " at " << dst_stage << endl;
+
+  assert(src_stage >= 0);
+  assert(dst_stage >= 0);
+  assert(dst_stage >= src_stage);
+
+  int delay = dst_stage - src_stage;
+
   Wireable* wc0 = copy_wireable(instance_map, w0, copy_def);
   Wireable* wc1 = copy_wireable(instance_map, w1, copy_def);
 
   auto context = wc0->getContext();
 
   if (wc0->getType()->isOutput()) {
-    wc0 = delay_by(copy_def, context->getUnique(), wc0, 0);
+    wc0 = delay_by(copy_def, context->getUnique(), wc0, delay);
   }
   if (wc1->getType()->isOutput()) {
-    wc1 = delay_by(copy_def, context->getUnique(), wc1, 0);
+    wc1 = delay_by(copy_def, context->getUnique(), wc1, delay);
   }
   copy_def->connect(wc0, wc1);
 }
