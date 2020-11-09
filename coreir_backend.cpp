@@ -21,6 +21,7 @@ using CoreIR::TypeGen;
 using CoreIR::Type;
 using CoreIR::Values;
 
+using CoreIR::Interface;
 using CoreIR::Select;
 using CoreIR::SelectPath;
 using CoreIR::join;
@@ -2975,6 +2976,18 @@ Wireable* base(Wireable* w) {
 }
 
 Wireable* copy_wireable(map<Instance*, Instance*>& instance_map, Wireable* w0, ModuleDef* copy_def) {
+  if (isa<Interface>(w0)) {
+    return copy_def->sel("self");
+  }
+
+  if (isa<Instance>(w0)) {
+    return instance_map[static_cast<Instance*>(w0)];
+  }
+  if (isa<Select>(w0)) {
+    auto wc = static_cast<Select*>(w0);
+    return copy_wireable(instance_map, wc->getParent(), copy_def)->sel(wc->getSelStr());
+  }
+  cout << "Error: Cannot copy: " << w0->toString() << endl;
   assert(false);
 }
 
