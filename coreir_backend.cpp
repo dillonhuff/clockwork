@@ -750,6 +750,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
         halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
       } else {
         halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+        //halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
       }
       assert(halide_cu != nullptr);
 
@@ -1430,8 +1431,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
 
   bool found_compute = true;
-  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  //string compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+  //string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  string compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
   if (hwinfo.use_dse_compute) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
   }
