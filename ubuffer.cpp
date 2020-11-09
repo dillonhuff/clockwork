@@ -1105,7 +1105,7 @@ Json create_lake_config(unordered_map<string, MemConnSch> mem_conxs) {
     auto data = map_pair.second;
 
     //TODO: has a trouble to remove the extra dimension, debug with tile
-    //data.remove_redundant_dim();
+    data.remove_redundant_dim();
     jdata[name]["dimensionality"] = data.dimensionality;
     if (data.read != "") { jdata[name]["read"] = data.read; }
     if (data.mux_write != "") { jdata[name]["mux_write"] = data.mux_write; }
