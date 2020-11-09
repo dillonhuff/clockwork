@@ -18798,7 +18798,7 @@ void dhuff_playground() {
   {
     prog prg = resnet();
 #ifdef COREIR
-    pipeline_compute_units(prg);
+    //pipeline_compute_units(prg);
 #endif
     assert(false);
   }
