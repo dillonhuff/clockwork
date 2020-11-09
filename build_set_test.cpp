@@ -16187,7 +16187,9 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
     }
   }
 
+#ifdef COREIR
   pipeline_compute_units(prg, sched);
+#endif
   return sched;
 }
 
