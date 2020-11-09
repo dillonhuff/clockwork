@@ -16364,6 +16364,7 @@ void compile_for_FPGA_BRAM_mem(prog& prg) {
 
 void compile_for_garnet_platonic_mem(prog& prg) {
   auto options = garnet_codegen_options(prg);
+  //options.rtl_options.use_pipelined_compute_units = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   compile_cycle_accurate_hw(options, sched, prg);
 }
