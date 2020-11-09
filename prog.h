@@ -1703,7 +1703,7 @@ struct schedule_info {
   map<string, int> buffer_store_latencies;
   map<string, int> compute_unit_latencies;
   map<string, string> op_compute_unit_names;
-  map<string, int> op_compute_unit_latencies;
+  //map<string, int> op_compute_unit_latencies;
 
   // Resource constraints
   map<string, int> resource_quantities;

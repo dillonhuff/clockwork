@@ -2146,11 +2146,12 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
           cout << "DD           : " << dd << endl;
           string writer_name = domain_name(pick(get_maps(writes)));
           cout << "writer op    : " << writer_name << endl;
-          for (auto e : hwinfo.op_compute_unit_latencies) {
-            cout << tab(1) << e.first << " -> " << e.second << endl;
-          }
+          //for (auto e : hwinfo.op_compute_unit_latencies) {
+            //cout << tab(1) << e.first << " -> " << e.second << endl;
+          //}
           //assert(false);
-          int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+          //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+          int op_latency = hwinfo.compute_latency(writer_name);
           //assert(op_latency == 0);
 
           dd = dd - op_latency;
