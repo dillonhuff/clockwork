@@ -2973,6 +2973,7 @@ Wireable* base(Wireable* w) {
   }
   return w;
 }
+
 void pipeline_compute_units(prog& prg) {
   CoreIR::Context* context = CoreIR::newContext();
   auto c = context;
@@ -3076,6 +3077,30 @@ void pipeline_compute_units(prog& prg) {
       map<Instance*, Instance*> instance_map;
       for (auto inst : instances) {
         instance_map[inst] = copy_def->addInstance(inst, inst->getInstname());
+      }
+
+      for (auto c : mod->getDef()->getConnections()) {
+        Wireable* base0 = base(c.first);
+        Wireable* base1 = base(c.second);
+        //if (isa<Instance>(base0) && isa<Instance>(base1)) {
+          //Instance* src = nullptr;
+          //Instance* dst = nullptr;
+          //cout << tab(1) << "Instance connection between " << base0->toString() << " and " << base1->toString() << endl;
+          //cout << tab(2) << c.first->getType()->isInput() << endl;
+
+          //if (c.first->getType()->isInput()) {
+            //dst = static_cast<Instance*>(base0);
+            //src = static_cast<Instance*>(base1);
+          //} else {
+            //dst = static_cast<Instance*>(base1);
+            //src = static_cast<Instance*>(base0);
+          //}
+
+          //assert(src != nullptr);
+          //assert(dst != nullptr);
+
+          //instance_connections_dst_to_src[dst].insert(src);
+          //}
       }
       copy->setDef(copy_def);
     }
