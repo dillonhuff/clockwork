@@ -6649,12 +6649,21 @@ bool all_ops_scheduled(schedule_info& sched, prog& prg) {
   return true;
 }
 
+int schedule_info::compute_latency(const std::string& op_name) {
+  assert(contains_key(op_name, op_compute_unit_names));
+  string cu_name = map_find(op_name, op_compute_unit_names);
+  assert(contains_key(cu_name, compute_unit_latencies));
+  return map_find(cu_name, compute_unit_latencies);
+}
+
 int schedule_info::compute_latency(op* op) {
   if (op->func == "") {
     return 0;
   }
-  assert(contains_key(op->func, compute_unit_latencies));
-  return map_find(op->func, compute_unit_latencies);
+  assert(contains_key(op->name, op_compute_unit_names));
+  string cu_name = map_find(op->name, op_compute_unit_names);
+  assert(contains_key(cu_name, compute_unit_latencies));
+  return map_find(cu_name, compute_unit_latencies);
 
 
   //assert(contains_key(op->func + "_pipelined", compute_unit_latencies));

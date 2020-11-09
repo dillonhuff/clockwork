@@ -2057,10 +2057,12 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
       //}
       //assert(false);
       //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
       //int op_latency = hwinfo.compute_latency(write_op);
       //assert(op_latency == 0);
 
+      int op_latency = hwinfo.compute_latency(writer_name);
+      //map_find(writer_name, hwinfo.op_compute_unit_latencies);
       dd = dd - op_latency;
 
       delay_maps[inpt].push_back({outpt, dd});
