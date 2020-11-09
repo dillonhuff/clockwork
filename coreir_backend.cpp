@@ -749,8 +749,11 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       if (hwinfo.use_dse_compute) {
         halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
       } else {
-        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
-        //halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
+        if (options.rtl_options.use_pipelined_compute_units) {
+          halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
+        } else {
+          halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+        }
       }
       assert(halide_cu != nullptr);
 

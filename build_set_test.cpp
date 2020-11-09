@@ -16187,6 +16187,16 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
     }
   }
 
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      if (options.rtl_options.use_pipelined_compute_units) {
+        sched.op_compute_unit_names[op->name] = op->func + "_pipelined";
+      } else {
+        sched.op_compute_unit_names[op->name] = op->func;
+      }
+    }
+  }
+
 #ifdef COREIR
   pipeline_compute_units(prg, sched);
 #endif
