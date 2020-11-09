@@ -16636,6 +16636,7 @@ vector<prog> all_cgra_programs() {
 
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name) {
   cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg_name);
+  //cmd("mv LakeWrapper.v ./coreir_apps/coreir_apps/" + app_type +"/" + prg_name + "/");
   cmd("mv " + prg_name + ".json ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + ".v ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");

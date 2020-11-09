@@ -2161,6 +2161,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
     pair<isl_map*, isl_map*> get_shift_pt_access_with_sched(string, int);
 
+    int get_vectorized_dim(int fetch_width);
     maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
     maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
 
@@ -2228,6 +2229,11 @@ int compute_max_dd(UBuffer& buf, const string& inpt);
 
 vector<string> buffer_vectorization(vector<int> iis,
         vector<string> buf_name_vec,
+        int fetch_width,
+        map<string, UBuffer> & buffers);
+
+vector<string> buffer_vectorization(vector<int> iis,
+        vector<string> buf_name_vec,
         int dim_id, int fetch_width,
         map<string, UBuffer> & buffers);
 
@@ -2238,6 +2244,7 @@ vector<string> buffer_vectorization(vector<int> iis,
 vector<string> buffer_vectorization(string buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
 
 vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int fetch_width, map<string, UBuffer> & buffers);
+
 
 static inline
 std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
