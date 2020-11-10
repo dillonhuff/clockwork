@@ -15227,6 +15227,26 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 }
 
 void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int dims) {
+  sequential_schedule(sched, root, prg);
+
+  // Data structures for the fusion plan
+  map<int, int> level_iis;
+  map<string, int> loop_delays;
+
+  level_iis[2] = 12;
+  vector<op*> l1_loops = ops_at_level(1, prg);
+  cout << "l1 loops..." << endl;
+  for (auto l : l1_loops) {
+    cout << tab(1) << l->name << endl;
+  }
+  vector<op*> l2_loops = ops_at_level(2, prg);
+  cout << "l2 loops..." << endl;
+  for (auto l : l2_loops) {
+    cout << tab(1) << l->name << endl;
+  }
+
+  assert(false);
+
   cout << "Computing rate matched schedule at level " << dims << endl;
   auto levels = get_variable_levels(prg);
   vector<op*> body_ops;
@@ -15235,76 +15255,66 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
   for (auto l : levels) {
     cout << endl;
     if (l.second == dims) {
-      prg.find_loop(l.first)->pretty_print();
       for (auto c : prg.find_loop(l.first)->children) {
         body_ops.push_back(c);
       }
-    }
-  }
-  for (auto b : body_ops) {
-    sequential_schedule(sched, b, prg);
-    sched.op_offset_within_parent[b] = body_latency;
-    body_latency += sched.total_latency(b);
-    inner_ii = max(inner_ii, sched.total_latency(b));
-  }
-  inner_ii = 12;
-  cout << "Body latency = " << body_latency << endl;
-  cout << "Inner II     = " << inner_ii << endl;
-  for (auto l : levels) {
-    if (l.second <= dims) {
-      if (l.second == dims) {
-        sched.loop_iis[l.first] = inner_ii;
-        sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
-        sched.instance_latencies[prg.find_loop(l.first)] = 1;
-      } else if (l.second == 1) {
-        auto lp = prg.find_loop(l.first);
 
-        assert(elem(lp, prg.root->children));
-
-        int pos;
-        for (pos = 0; pos < prg.root->children.size(); pos++) {
-          if (prg.root->children[pos] == lp) {
-            break;
-          }
-        }
-
-        sched.loop_iis[l.first] = inner_ii*60;
-        sched.op_offset_within_parent[prg.find_loop(l.first)] = inner_ii*60*pos;
-        sched.instance_latencies[prg.find_loop(l.first)] = 1;
-      } else {
-        cout << l.second << endl;
-        assert(l.second == 0);
-        sched.loop_iis[l.first] = 65000;
-        sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      cout << endl;
+      prg.find_loop(l.first)->pretty_print();
+      cout << endl;
+      auto consumed = read_at(l.first, prg);
+      if (consumed != nullptr) {
+        cout << "Consumed: " << str(consumed) << endl;
       }
     }
   }
 
-  cout << "Not scheduled..." << endl;
-  for (auto op : unscheduled_nodes(sched, prg)) {
-    op->pretty_print();
-    cout << endl;
-  }
+  assert(false);
+  //for (auto b : body_ops) {
+    //sequential_schedule(sched, b, prg);
+    //sched.op_offset_within_parent[b] = body_latency;
+    //body_latency += sched.total_latency(b);
+    //inner_ii = max(inner_ii, sched.total_latency(b));
+  //}
+  //inner_ii = 12;
+  //cout << "Body latency = " << body_latency << endl;
+  //cout << "Inner II     = " << inner_ii << endl;
+  //for (auto l : levels) {
+    //if (l.second <= dims) {
+      //if (l.second == dims) {
+        //sched.loop_iis[l.first] = inner_ii;
+        //sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
+        //sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      //} else if (l.second == 1) {
+        //auto lp = prg.find_loop(l.first);
 
-  //assert(false);
+        //assert(elem(lp, prg.root->children));
 
-  //auto dom = prg.whole_iteration_domain();
-  //auto valid = prg.validity_deps();
-  //map<string, vector<string> > hb_deps;
-  //for (int d = 0; d <= dims; d++) {
-    //vector<isl_set*> proj_doms;
-    //vector<isl_map*> proj_deps;
-    //for (auto dm : get_sets(dom)) {
-      //proj_doms.push_back(project_all_but(dm, d));
-    //}
-    //for (auto dm : get_maps(valid)) {
-      //proj_deps.push_back(project_all_but(dm, d));
-    //}
-    //auto cs = clockwork_schedule_dimension(proj_doms, proj_deps, hb_deps);
-    //for (auto m : cs) {
-      //cout << tab(1) << m.first << " -> " << str(m.second) << endl;
+        //int pos;
+        //for (pos = 0; pos < prg.root->children.size(); pos++) {
+          //if (prg.root->children[pos] == lp) {
+            //break;
+          //}
+        //}
+
+        //sched.loop_iis[l.first] = inner_ii*60;
+        //sched.op_offset_within_parent[prg.find_loop(l.first)] = inner_ii*60*pos;
+        //sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      //} else {
+        //cout << l.second << endl;
+        //assert(l.second == 0);
+        //sched.loop_iis[l.first] = 65000;
+        //sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      //}
     //}
   //}
+
+  //cout << "Not scheduled..." << endl;
+  //for (auto op : unscheduled_nodes(sched, prg)) {
+    //op->pretty_print();
+    //cout << endl;
+  //}
+
 }
 
 int max_loop_depth(prog& prg) {
@@ -16640,8 +16650,8 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch2());
   
   // schedules take too long for 16 bit controllers
-  //test_programs.push_back(harris_sch3());
-  //test_programs.push_back(harris_sch4());
+  test_programs.push_back(harris_sch3_1pp9c());
+  test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
   test_programs.push_back(harris_sch5_1ppc());
@@ -16654,8 +16664,8 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  concat(test_programs, stencil_programs());
   concat(test_programs, harris_variants());
+  concat(test_programs, stencil_programs());
 
   // Too large to fit in 16 bit controller,
   // and not the schedule we want anyway

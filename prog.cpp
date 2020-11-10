@@ -5642,7 +5642,7 @@ vector<op*> ops_at_level(const int level, prog& prg) {
   vector<op*> ops = get_dft_nodes(prg);
   map<string, int> op_levels = get_op_levels(prg);
   for (auto op : ops) {
-    cout << tab(1) << op->name << " is at " << map_find(op->name, op_levels) << endl;
+    //cout << tab(1) << op->name << " is at " << map_find(op->name, op_levels) << endl;
     if (map_find(op->name, op_levels) == level) {
       at_level.push_back(op);
     }
