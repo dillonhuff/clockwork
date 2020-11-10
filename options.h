@@ -42,6 +42,12 @@ enum TargetTile {
   TARGET_TILE_BRAM
 };
 
+struct global_signals_policy {
+  bool synchronous_reset;
+
+  global_signals_policy() : synchronous_reset(false) {}
+};
+
 struct RTLOptions {
   bool use_external_controllers;
   bool pack_controllers_in_memtiles;
@@ -49,6 +55,7 @@ struct RTLOptions {
   bool use_pipelined_compute_units;
   int max_inpt, max_outpt;
   TargetTile target_tile;
+  global_signals_policy global_signals;
 
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
   use_pipelined_compute_units(false),
