@@ -15197,7 +15197,7 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
   vector<op*> l2_loops = ops_at_level(2, prg);
   level_iis[2] = -1;
   cout << "l2 loops..." << endl;
-  int pos = 0;
+  //int pos = 0;
   int max_tc = 0;
   int l2_latency = 0;
   for (auto l : l2_loops) {
@@ -15206,21 +15206,33 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
     cout << tab(2) << "total latency    : " << sched.total_latency(l) << endl;
     cout << tab(2) << "iteration latency: " << sched.instance_latency(l) << endl;
     level_iis[2] = max(sched.instance_latency(l), level_iis[2]);
-    loop_delays[l->name] = 10*pos;
+    loop_delays[l->name] = 0;
     cout << tab(2) << "iter start delay : " << loop_delays[l->name] << endl;
     max_tc = max(l->trip_count(), max_tc);
-    pos++;
+    //pos++;
   }
 
   for (auto l : l2_loops) {
     sched.loop_iis[l->name] = level_iis[2];
+    sched.op_offset_within_parent[l] = 0;
   }
 
   cout << "L2 II = " << level_iis[2] << endl;
   cout << "L2 TC = " << max_tc << endl;
 
+  int outer_ii = max_tc*level_iis[2];
+  cout << "Outer II = " << outer_ii << endl;
 
-  //vector<op*> l1_loops = ops_at_level(1, prg);
+
+  vector<op*> l1_loops = ops_at_level(1, prg);
+  int pos = 0;
+  for (auto l : l1_loops) {
+    sched.loop_iis[l->name] = outer_ii;
+    sched.op_offset_within_parent[l] = pos*outer_ii;
+    pos += 10;
+  }
+  sched.loop_iis["root"] = sched.instance_latency(prg.find_loop("root"));
+
   //cout << "l1 loops..." << endl;
   //int pos = 0;
   //for (auto l : l1_loops) {
@@ -15232,75 +15244,75 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
     //cout << tab(2) << "iter start delay : " << loop_delays[l->name] << endl;
     //pos++;
   //}
-  assert(false);
+  //assert(false);
 
-  cout << "Computing rate matched schedule at level " << dims << endl;
-  auto levels = get_variable_levels(prg);
-  vector<op*> body_ops;
-  int body_latency = 0;
-  int inner_ii = 1;
-  for (auto l : levels) {
-    cout << endl;
-    if (l.second == dims) {
-      for (auto c : prg.find_loop(l.first)->children) {
-        body_ops.push_back(c);
-      }
-
-      cout << endl;
-      prg.find_loop(l.first)->pretty_print();
-      cout << endl;
-      auto consumed = read_at(l.first, prg);
-      if (consumed != nullptr) {
-        cout << "Consumed: " << str(consumed) << endl;
-      }
-    }
-  }
-
-  assert(false);
-  //for (auto b : body_ops) {
-    //sequential_schedule(sched, b, prg);
-    //sched.op_offset_within_parent[b] = body_latency;
-    //body_latency += sched.total_latency(b);
-    //inner_ii = max(inner_ii, sched.total_latency(b));
-  //}
-  //inner_ii = 12;
-  //cout << "Body latency = " << body_latency << endl;
-  //cout << "Inner II     = " << inner_ii << endl;
+  //cout << "Computing rate matched schedule at level " << dims << endl;
+  //auto levels = get_variable_levels(prg);
+  //vector<op*> body_ops;
+  //int body_latency = 0;
+  //int inner_ii = 1;
   //for (auto l : levels) {
-    //if (l.second <= dims) {
-      //if (l.second == dims) {
-        //sched.loop_iis[l.first] = inner_ii;
-        //sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
-        //sched.instance_latencies[prg.find_loop(l.first)] = 1;
-      //} else if (l.second == 1) {
-        //auto lp = prg.find_loop(l.first);
+    //cout << endl;
+    //if (l.second == dims) {
+      //for (auto c : prg.find_loop(l.first)->children) {
+        //body_ops.push_back(c);
+      //}
 
-        //assert(elem(lp, prg.root->children));
-
-        //int pos;
-        //for (pos = 0; pos < prg.root->children.size(); pos++) {
-          //if (prg.root->children[pos] == lp) {
-            //break;
-          //}
-        //}
-
-        //sched.loop_iis[l.first] = inner_ii*60;
-        //sched.op_offset_within_parent[prg.find_loop(l.first)] = inner_ii*60*pos;
-        //sched.instance_latencies[prg.find_loop(l.first)] = 1;
-      //} else {
-        //cout << l.second << endl;
-        //assert(l.second == 0);
-        //sched.loop_iis[l.first] = 65000;
-        //sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      //cout << endl;
+      //prg.find_loop(l.first)->pretty_print();
+      //cout << endl;
+      //auto consumed = read_at(l.first, prg);
+      //if (consumed != nullptr) {
+        //cout << "Consumed: " << str(consumed) << endl;
       //}
     //}
   //}
 
-  //cout << "Not scheduled..." << endl;
-  //for (auto op : unscheduled_nodes(sched, prg)) {
-    //op->pretty_print();
-    //cout << endl;
-  //}
+  //assert(false);
+  ////for (auto b : body_ops) {
+    ////sequential_schedule(sched, b, prg);
+    ////sched.op_offset_within_parent[b] = body_latency;
+    ////body_latency += sched.total_latency(b);
+    ////inner_ii = max(inner_ii, sched.total_latency(b));
+  ////}
+  ////inner_ii = 12;
+  ////cout << "Body latency = " << body_latency << endl;
+  ////cout << "Inner II     = " << inner_ii << endl;
+  ////for (auto l : levels) {
+    ////if (l.second <= dims) {
+      ////if (l.second == dims) {
+        ////sched.loop_iis[l.first] = inner_ii;
+        ////sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
+        ////sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      ////} else if (l.second == 1) {
+        ////auto lp = prg.find_loop(l.first);
+
+        ////assert(elem(lp, prg.root->children));
+
+        ////int pos;
+        ////for (pos = 0; pos < prg.root->children.size(); pos++) {
+          ////if (prg.root->children[pos] == lp) {
+            ////break;
+          ////}
+        ////}
+
+        ////sched.loop_iis[l.first] = inner_ii*60;
+        ////sched.op_offset_within_parent[prg.find_loop(l.first)] = inner_ii*60*pos;
+        ////sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      ////} else {
+        ////cout << l.second << endl;
+        ////assert(l.second == 0);
+        ////sched.loop_iis[l.first] = 65000;
+        ////sched.instance_latencies[prg.find_loop(l.first)] = 1;
+      ////}
+    ////}
+  ////}
+
+  ////cout << "Not scheduled..." << endl;
+  ////for (auto op : unscheduled_nodes(sched, prg)) {
+    ////op->pretty_print();
+    ////cout << endl;
+  ////}
 
 }
 
@@ -16637,8 +16649,8 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch2());
   
   // schedules take too long for 16 bit controllers
-  //test_programs.push_back(harris_sch3_1pp9c());
-  //test_programs.push_back(harris_sch4_1pp3c());
+  test_programs.push_back(harris_sch3_1pp9c());
+  test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
   test_programs.push_back(harris_sch5_1ppc());
