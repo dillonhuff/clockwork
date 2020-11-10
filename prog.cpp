@@ -6739,7 +6739,8 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
         found_smaller_delay = true;
         break;
       }
-      try_delay = max(try_delay * 2, try_delay + 1000);
+      try_delay = try_delay + 1000;
+      //try_delay = max(try_delay * 2, try_delay + 1000);
       //try_delay = min(try_delay * 2, try_delay + 1000);
       //try_delay *= 2;
     }
