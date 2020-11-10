@@ -16570,7 +16570,10 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch1());
   //
   // 1. Extract_linear_rational_approximation fails?
-  test_programs.push_back(harris_sch6_2ppc());
+  //    - Update: The failure is due to running
+  //      clockwork on input loops with different
+  //      amounts of unrolling in different loops
+  //test_programs.push_back(harris_sch6_2ppc());
 
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch2());
@@ -18746,7 +18749,9 @@ void test_if_construction() {
 
 void dhuff_playground() {
   {
-    prog prg = resnet_full_layer();
+    //prog prg = resnet_full_layer();
+    //prg.pretty_print();
+    prog prg = harris_sch6_2ppc();
     prg.pretty_print();
     assert(false);
   }
