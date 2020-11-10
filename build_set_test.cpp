@@ -15094,45 +15094,6 @@ void infer_bounds_unrolled_test() {
 
 }
 
-int op_latency(op* op, schedule_info& hwinfo) {
-  assert(!op->is_loop());
-
-  int total_latency = 0;
-
-  // Account for time to load data from inputs
-  vector<int> load_latencies;
-  for (auto b : op->buffers_read()) {
-    load_latencies.push_back(map_find(b, hwinfo.buffer_load_latencies));
-  }
-  sort(begin(load_latencies), end(load_latencies));
-  if (load_latencies.size() > 0) {
-    total_latency += load_latencies.back();
-  }
-
-  // Then we need to wait for the compute unit to finish
-  if (op->func != "") {
-    //int latency = map_find(op->func, hwinfo.compute_unit_latencies);
-    int latency =
-      hwinfo.compute_latency(op);
-      //map_find(op->func, hwinfo.compute_unit_latencies);
-    //assert(latency == 0);
-    total_latency += latency;
-  }
-
-  // Then we need to wait for the data that comes out of the compute
-  // unit to be finished
-  vector<int> store_latencies;
-  for (auto b : op->buffers_written()) {
-    store_latencies.push_back(map_find(b, hwinfo.buffer_store_latencies));
-  }
-  sort(begin(store_latencies), end(store_latencies));
-  if (store_latencies.size() > 0) {
-    total_latency += store_latencies.back();
-  }
-
-  return total_latency;
-}
-
 vector<op*> inner_ops(prog& prg) {
   vector<op*> ordered_inner =
     get_ordered_inner_loops(prg);
@@ -15162,11 +15123,11 @@ void set_scheduled_loop_latency(schedule_info& hwinfo, op* op, prog& prg) {
 }
 
 void asap_inner_loops_schedule(schedule_info& hwinfo, op* op, prog& prg) {
-  cout << "scheduling: " << op->name << endl;
+  //cout << "scheduling: " << op->name << endl;
 
   if (!op->is_loop()) {
     int total_latency = op_latency(op, hwinfo);
-    hwinfo.instance_latencies[op] = total_latency;
+    //hwinfo.instance_latencies[op] = total_latency;
     return;
   }
 
@@ -15199,11 +15160,11 @@ void asap_inner_loops_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 }
 
 void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
-  cout << "scheduling: " << op->name << endl;
+  //cout << "scheduling: " << op->name << endl;
 
   if (!op->is_loop()) {
     int total_latency = op_latency(op, hwinfo);
-    hwinfo.instance_latencies[op] = total_latency;
+    //hwinfo.instance_latencies[op] = total_latency;
     return;
   }
 
@@ -15227,24 +15188,50 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 }
 
 void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int dims) {
-  sequential_schedule(sched, root, prg);
+  //sequential_schedule(sched, root, prg);
 
   // Data structures for the fusion plan
   map<int, int> level_iis;
   map<string, int> loop_delays;
 
-  level_iis[2] = 12;
-  vector<op*> l1_loops = ops_at_level(1, prg);
-  cout << "l1 loops..." << endl;
-  for (auto l : l1_loops) {
-    cout << tab(1) << l->name << endl;
-  }
   vector<op*> l2_loops = ops_at_level(2, prg);
+  level_iis[2] = -1;
   cout << "l2 loops..." << endl;
+  int pos = 0;
+  int max_tc = 0;
+  int l2_latency = 0;
   for (auto l : l2_loops) {
     cout << tab(1) << l->name << endl;
+    sequential_schedule(sched, l, prg);
+    cout << tab(2) << "total latency    : " << sched.total_latency(l) << endl;
+    cout << tab(2) << "iteration latency: " << sched.instance_latency(l) << endl;
+    level_iis[2] = max(sched.instance_latency(l), level_iis[2]);
+    loop_delays[l->name] = 10*pos;
+    cout << tab(2) << "iter start delay : " << loop_delays[l->name] << endl;
+    max_tc = max(l->trip_count(), max_tc);
+    pos++;
   }
 
+  for (auto l : l2_loops) {
+    sched.loop_iis[l->name] = level_iis[2];
+  }
+
+  cout << "L2 II = " << level_iis[2] << endl;
+  cout << "L2 TC = " << max_tc << endl;
+
+
+  //vector<op*> l1_loops = ops_at_level(1, prg);
+  //cout << "l1 loops..." << endl;
+  //int pos = 0;
+  //for (auto l : l1_loops) {
+    //cout << tab(1) << l->name << endl;
+    //cout << tab(2) << "total latency    : " << sched.total_latency(l) << endl;
+    //cout << tab(2) << "iteration latency: " << sched.instance_latency(l) << endl;
+    //level_iis[2] = max(sched.instance_latency(l), level_iis[2]);
+    //loop_delays[l->name] = 10*pos;
+    //cout << tab(2) << "iter start delay : " << loop_delays[l->name] << endl;
+    //pos++;
+  //}
   assert(false);
 
   cout << "Computing rate matched schedule at level " << dims << endl;
@@ -15840,7 +15827,7 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
         cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
         sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
         sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
-        sched.instance_latencies[container] = 1;
+        //sched.instance_latencies[container] = 1;
         cout << tab(2) << "ii = " << sched.II(container) << endl;
       }
     }
@@ -15848,7 +15835,7 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
     for (auto op : inner_ops(prg)) {
         cout << "inner ops: " << op->name << endl;
       sched.op_offset_within_parent[op] = total_latency;
-      sched.instance_latencies[op] = op_latency(op, sched);
+      //sched.instance_latencies[op] = op_latency(op, sched);
       //total_latency += op_latency(op, sched) + 2;
       total_latency += op_latency(op, sched);
     }
@@ -16021,7 +16008,7 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
   for (auto op : inner_ops(prg)) {
     cout << "inner ops: " << op->name << endl;
     sched.op_offset_within_parent[op] = total_latency;
-    sched.instance_latencies[op] = op_latency(op, sched);
+    //sched.instance_latencies[op] = op_latency(op, sched);
     total_latency += op_latency(op, sched);
   }
 

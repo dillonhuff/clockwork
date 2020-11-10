@@ -5714,24 +5714,28 @@ int schedule_info::instance_latency(op* op) {
     return maxoffset;
   }
 
-  assert(contains_key(op, instance_latencies));
-  return map_find(op, instance_latencies);
+  return op_latency(op, *this);
+  //assert(contains_key(op, instance_latencies));
+  //return map_find(op, instance_latencies);
 }
 
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
-  bool has_latency = contains_key(op, sched.instance_latencies);
+  //bool has_latency = contains_key(op, sched.instance_latencies);
   bool has_offset = contains_key(op, sched.op_offset_within_parent);
   bool has_ii = contains_key(op->name, sched.loop_iis);
 
   if (op == prg.root) {
-    return has_latency && has_ii;
+    //return has_latency && has_ii;
+    return has_ii;
   }
 
   if (op->is_loop()) {
-    return has_latency && has_ii && has_offset;
+    //return has_latency && has_ii && has_offset;
+    return has_ii && has_offset;
   }
 
-  return has_latency && has_offset;
+  //return has_latency && has_offset;
+  return has_offset;
 }
 
 bool share_resource(const std::string& op0, const std::string& op1, schedule_info& sched) {
@@ -6672,3 +6676,13 @@ int schedule_info::compute_latency(op* op) {
   //return l;
 }
 
+int schedule_info::total_latency(op* op) {
+  if (!op->is_loop()) {
+    return instance_latency(op);
+    //assert(contains_key(op, instance_latencies));
+    //return map_find(op, instance_latencies);
+  }
+  return II(op)*(op->trip_count() - 1) + instance_latency(op);
+}
+
+int op_latency(op* op, schedule_info& hwinfo);

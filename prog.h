@@ -1714,7 +1714,7 @@ struct schedule_info {
 
   // Schedule offsets
   map<string, int> loop_iis;
-  map<op*, int> instance_latencies;
+  //map<op*, int> instance_latencies;
   map<op*, int> op_offset_within_parent;
 
   int compute_latency(const std::string& op_name);
@@ -1747,13 +1747,7 @@ struct schedule_info {
     return last_delay;
   }
 
-  int total_latency(op* op) {
-    if (!op->is_loop()) {
-      assert(contains_key(op, instance_latencies));
-      return map_find(op, instance_latencies);
-    }
-    return II(op)*(op->trip_count() - 1) + instance_latency(op);
-  }
+  int total_latency(op* op);
 
   int instance_latency(op* op);
 
@@ -1865,3 +1859,4 @@ vector<op*> unscheduled_nodes(schedule_info& sched, prog& prg);
 
 bool all_ops_scheduled(schedule_info& sched, prog& prg);
 
+int op_latency(op* op, schedule_info& hwinfo);
