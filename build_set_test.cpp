@@ -16573,7 +16573,7 @@ vector<prog> harris_variants() {
   //    - Update: The failure is due to running
   //      clockwork on input loops with different
   //      amounts of unrolling in different loops
-  //test_programs.push_back(harris_sch6_2ppc());
+  test_programs.push_back(harris_sch6_2ppc());
 
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch2());
