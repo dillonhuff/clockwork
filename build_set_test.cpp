@@ -16637,8 +16637,8 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch2());
   
   // schedules take too long for 16 bit controllers
-  test_programs.push_back(harris_sch3_1pp9c());
-  test_programs.push_back(harris_sch4_1pp3c());
+  //test_programs.push_back(harris_sch3_1pp9c());
+  //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
   test_programs.push_back(harris_sch5_1ppc());

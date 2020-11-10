@@ -6685,4 +6685,42 @@ int schedule_info::total_latency(op* op) {
   return II(op)*(op->trip_count() - 1) + instance_latency(op);
 }
 
-int op_latency(op* op, schedule_info& hwinfo);
+int op_latency(op* op, schedule_info& hwinfo) {
+  assert(!op->is_loop());
+
+  int total_latency = 0;
+
+  // Account for time to load data from inputs
+  vector<int> load_latencies;
+  for (auto b : op->buffers_read()) {
+    load_latencies.push_back(map_find(b, hwinfo.buffer_load_latencies));
+  }
+  sort(begin(load_latencies), end(load_latencies));
+  if (load_latencies.size() > 0) {
+    total_latency += load_latencies.back();
+  }
+
+  // Then we need to wait for the compute unit to finish
+  if (op->func != "") {
+    //int latency = map_find(op->func, hwinfo.compute_unit_latencies);
+    int latency =
+      hwinfo.compute_latency(op);
+      //map_find(op->func, hwinfo.compute_unit_latencies);
+    //assert(latency == 0);
+    total_latency += latency;
+  }
+
+  // Then we need to wait for the data that comes out of the compute
+  // unit to be finished
+  vector<int> store_latencies;
+  for (auto b : op->buffers_written()) {
+    store_latencies.push_back(map_find(b, hwinfo.buffer_store_latencies));
+  }
+  sort(begin(store_latencies), end(store_latencies));
+  if (store_latencies.size() > 0) {
+    total_latency += store_latencies.back();
+  }
+
+  return total_latency;
+}
+
