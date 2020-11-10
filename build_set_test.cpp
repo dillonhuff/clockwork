@@ -16568,24 +16568,17 @@ vector<prog> harris_variants() {
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch1());
-  //
-  // 1. Extract_linear_rational_approximation fails?
-  //    - Update: The failure is due to running
-  //      clockwork on input loops with different
-  //      amounts of unrolling in different loops
-  test_programs.push_back(harris_sch6_2ppc());
 
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch2());
   
-  // schedules take too long for 16 bit controllers
-  // - Fixable though,
   // Now: They also have an error in the ROMs
-  // test_programs.push_back(harris_sch3_1pp9c());
-  // test_programs.push_back(harris_sch4_1pp3c());
+  //test_programs.push_back(harris_sch3_1pp9c());
+  //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
   test_programs.push_back(harris_sch5_1ppc());
+  test_programs.push_back(harris_sch6_2ppc());
   test_programs.push_back(harris_sch7_bigtile());
   test_programs.push_back(harris_sch8_endcim());
 
