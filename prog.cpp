@@ -6724,3 +6724,75 @@ int op_latency(op* op, schedule_info& hwinfo) {
   return total_latency;
 }
 
+void adjust_outer_delays(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+
+    int old_delay = map_find(lp, sched.op_offset_within_parent);
+    int try_delay = 1;
+    bool found_smaller_delay = false;
+    while (try_delay < old_delay) {
+      sched.op_offset_within_parent[lp] = try_delay;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_delay = true;
+        break;
+      }
+      try_delay = max(try_delay * 2, try_delay + 1000);
+      //try_delay = min(try_delay * 2, try_delay + 1000);
+      //try_delay *= 2;
+    }
+
+    if (!found_smaller_delay) {
+      sched.op_offset_within_parent[lp] = old_delay;
+    }
+  }
+}
+
+void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
+  for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
+
+    int old_delay = map_find(lp, sched.op_offset_within_parent);
+    int try_delay = 1;
+    bool found_smaller_delay = false;
+    while (try_delay < old_delay) {
+      sched.op_offset_within_parent[lp] = try_delay;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_delay = true;
+        break;
+      }
+      try_delay = max(try_delay * 2, try_delay + 1000);
+      //try_delay = min(try_delay * 2, try_delay + 1000);
+      //try_delay *= 2;
+    }
+
+    if (!found_smaller_delay) {
+      sched.op_offset_within_parent[lp] = old_delay;
+    }
+  }
+}
+
+void adjust_inner_iis(schedule_info& sched, prog& prg) {
+  cout << "Adjusting iis of " << prg.name << endl;
+  for (auto lp : get_inner_loops(prg)) {
+    cout << "Adjusting ii of " << lp->name << endl;
+    int old_ii = map_find(lp->name, sched.loop_iis);
+    int try_ii = 1;
+    bool found_smaller_ii = false;
+    while (try_ii < old_ii) {
+      sched.loop_iis[lp->name] = try_ii;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_ii = true;
+        break;
+      }
+      try_ii *= 2;
+    }
+
+    if (!found_smaller_ii) {
+      sched.loop_iis[lp->name] = old_ii;
+    }
+  }
+}
+

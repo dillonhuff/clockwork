@@ -1860,3 +1860,13 @@ vector<op*> unscheduled_nodes(schedule_info& sched, prog& prg);
 bool all_ops_scheduled(schedule_info& sched, prog& prg);
 
 int op_latency(op* op, schedule_info& hwinfo);
+
+void adjust_outer_delays(schedule_info& sched, prog& prg);
+
+void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg);
+
+bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
+
+bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
+
+void adjust_inner_iis(schedule_info& sched, prog& prg);
