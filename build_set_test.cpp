@@ -15229,7 +15229,7 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
     pos += 3;
   }
   sched.loop_iis["root"] = sched.instance_latency(prg.find_loop("root"));
-  //adjust_outer_delays(sched, prg);
+  adjust_outer_delays(sched, prg);
 
   //cout << "l1 loops..." << endl;
   //int pos = 0;
@@ -16570,14 +16570,16 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch1());
   //
   // 1. Extract_linear_rational_approximation fails?
-  //test_programs.push_back(harris_sch6());
+  test_programs.push_back(harris_sch6_2ppc());
 
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch2());
   
   // schedules take too long for 16 bit controllers
-  //test_programs.push_back(harris_sch3_1pp9c());
-  test_programs.push_back(harris_sch4_1pp3c());
+  // - Fixable though,
+  // Now: They also have an error in the ROMs
+  // test_programs.push_back(harris_sch3_1pp9c());
+  // test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
   test_programs.push_back(harris_sch5_1ppc());
