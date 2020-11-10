@@ -1446,7 +1446,7 @@ int UBuffer::get_vectorized_dim(int fetch_width) {
   vector<int> extent_dim =  extents_by_dimension(*this);
   cout << "Ext by dim: " << extent_dim << endl;
   for (auto it = extent_dim.rbegin(); it != extent_dim.rend(); it++) {
-    if (*it >= fetch_width)
+    if (*it > fetch_width - 1)
         return extent_dim.rend() - it - 1;
   }
   //TODO: maybe need dimension fuse in the future
@@ -4810,16 +4810,17 @@ vector<string> buffer_vectorization(vector<int> iis,
       rem_origin_ubuf.push_back(it.first);
       auto target_buffer = it.second;
 
+      //Input must be take care
+      //need to first pad the buffer output to the multiplier of
+      target_buffer.pad_read_dom_inner_most(fetch_width);
+      target_buffer.pad_write_dom_inner_most(fetch_width);
+
       int dim_id = target_buffer.get_vectorized_dim(fetch_width);
       cout << tab(1) << "buffer_vectorization Vectorizing: " << target_buffer.name << endl
           << tab(1)<< " On addr dim: " << dim_id << ", fetch_width: " << fetch_width
           << endl;
       cout << target_buffer << endl;
 
-      //Input must be take care
-      //need to first pad the buffer output to the multiplier of
-      target_buffer.pad_read_dom_inner_most(fetch_width);
-      target_buffer.pad_write_dom_inner_most(fetch_width);
 
       //ret is a pair of vectorized_buffer and the dependency need to be removed
       auto ret = target_buffer.vectorization(dim_id, fetch_width, iis);
@@ -5436,6 +5437,9 @@ void UBuffer::pad_write_dom_inner_most(int fetch_width) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
             int dim_id = num_in_dims(am) - 1;
+            while(get_dim_extent(::domain(am), dim_id) == 1){
+                dim_id --;
+            }
             auto sched = schedule.at(pt);
             cout << "\t original range input access map: " << str((am)) << endl;
             cout << "\t dim id: " << dim_id << endl;
@@ -5443,8 +5447,8 @@ void UBuffer::pad_write_dom_inner_most(int fetch_width) {
             auto rem = (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
             if (rem) {
                 //need padding
-                auto pad_am = pad_to_domain_ubuf_map(am, fetch_width - rem);
-                auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), fetch_width - rem);
+                auto pad_am = pad_to_domain_ubuf_map(am, dim_id, fetch_width - rem);
+                auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), dim_id, fetch_width - rem);
                 cout << "\tPadded access map: " << str(pad_am) << endl;
                 cout << "\tPadded schedule: " << str(pad_sched) << endl;
                 replace_pt(pt, pad_am, pad_sched);
@@ -5459,14 +5463,18 @@ void UBuffer::pad_read_dom_inner_most(int fetch_width) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
             int dim_id = num_in_dims(am) - 1;
+            while(get_dim_extent(::domain(am), dim_id) == 1){
+                dim_id --;
+            }
             auto sched = schedule.at(pt);
             cout << "\t original range output access map: " << str((am)) << endl;
+            cout << "\t dim id: " << dim_id << endl;
             assert(get_dim_min(::domain(am), dim_id) == 0);
             auto rem = (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
             if (rem) {
                 //need padding
-                auto pad_am = pad_to_domain_ubuf_map(am, fetch_width - rem);
-                auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), fetch_width - rem);
+                auto pad_am = pad_to_domain_ubuf_map(am, dim_id, fetch_width - rem);
+                auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), dim_id, fetch_width - rem);
                 cout << "\tPadded access map: " << str(pad_am) << endl;
                 cout << "\tPadded schedule: " << str(pad_sched) << endl;
                 replace_pt(pt, pad_am, pad_sched);

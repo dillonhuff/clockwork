@@ -223,6 +223,7 @@ int get_dim_min(isl_set* const m, int pos);
 
 
 int get_dim_max(isl_set* const m, int pos);
+int get_dim_extent(isl_set* const m, int pos);
 
 int get_dim_min(isl_map* const m, int pos);
 
@@ -404,7 +405,7 @@ int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 
 //some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);
-isl_map* pad_to_domain_ubuf_map(isl_map* s, int depth);
+isl_map* pad_to_domain_ubuf_map(isl_map* s, int dom_dim_id, int depth);
 isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
 isl_map* shift_range_map(isl_map* s, vector<int> shift_depth);
 isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);

@@ -812,12 +812,15 @@ int get_dim_max(isl_set* const m, int pos) {
     return max;
 }
 
+int get_dim_extent(isl_set* const s, int pos) {
+    return get_dim_max(s, pos) - get_dim_min(s, pos) + 1;
+}
+
 int get_dim_min(isl_map* const m, int pos) {
     int min;
     isl_pw_aff_foreach_piece(isl_map_dim_min(cpy(m), pos), isl_pw_aff_get_const, &min);
     return min;
 }
-
 
 int get_dim_max(isl_map* const m, int pos) {
     int max;
@@ -2297,14 +2300,13 @@ isl_map* get_shift_map(isl_map* m) {
   return isl_map_from_basic_map(b_ret);
 }
 
-isl_map* pad_to_domain_ubuf_map(isl_map* m, int depth) {
+isl_map* pad_to_domain_ubuf_map(isl_map* m, int dom_dim_id, int depth) {
 
   auto c_vec = constraints(m);
   for (auto & c: c_vec) {
 
-    size_t dom_dim = isl_constraint_dim(c, isl_dim_in);
     bool involve;
-    involve =  isl_constraint_involves_dims(c, isl_dim_in, dom_dim - 1, 1);
+    involve =  isl_constraint_involves_dims(c, isl_dim_in, dom_dim_id, 1);
 
     //shift the constraint by 1
     if (involve) {
@@ -2312,7 +2314,7 @@ isl_map* pad_to_domain_ubuf_map(isl_map* m, int depth) {
       if (isl_constraint_is_equality(c)) {
           //c = isl_constraint_set_constant_si(c, val + depth);
       } else {
-        if (isl_constraint_is_upper_bound(c, isl_dim_in, dom_dim - 1))
+        if (isl_constraint_is_upper_bound(c, isl_dim_in, dom_dim_id))
           c = isl_constraint_set_constant_si(c , val+depth);
       }
     }

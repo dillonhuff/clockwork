@@ -10384,7 +10384,7 @@ void playground() {
             max_by_dim.at(vec_dim) - min_by_dim.at(vec_dim);
         //Need to pad the map if it's exactly the multiplier of 4
         if (vectorized_dim_extent % 4) {
-            acc_0 = pad_to_domain_ubuf_map(acc_0, 1);
+            acc_0 = pad_to_domain_ubuf_map(acc_0, vec_dim, 1);
         }
         cout << "After pad: " << str(acc_0) << endl;
         auto align_trans = isl_map_read_from_str(ctx, "{data[i]->data[i - i%4]}");
