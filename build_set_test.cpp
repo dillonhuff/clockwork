@@ -15229,7 +15229,9 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
     pos += 3;
   }
   sched.loop_iis["root"] = sched.instance_latency(prg.find_loop("root"));
-  adjust_outer_delays(sched, prg);
+
+  //assert(false);
+  //adjust_outer_delays(sched, prg);
 
   //cout << "l1 loops..." << endl;
   //int pos = 0;
@@ -18744,7 +18746,7 @@ void dhuff_playground() {
   {
     //prog prg = resnet_full_layer();
     //prg.pretty_print();
-    prog prg = harris_sch6_2ppc();
+    prog prg = harris_sch4_1pp3c();
     prg.pretty_print();
     assert(false);
   }

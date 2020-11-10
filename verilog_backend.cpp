@@ -497,6 +497,7 @@ void generate_fsm(
     isl_aff* aff,
     isl_set* dom) {
 
+  cout << "Generating fsm for " << str(aff) << " over " << str(dom) << endl;
   isl_point* pt = lexminpt(dom);
   isl_val* min_time = eval(aff, pt);
   assert(to_int(min_time) >= 0);
@@ -953,6 +954,26 @@ void instantiate_banks(
   out << endl;
 }
 
+UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf) {
+  UBuffer cpy = buf;
+  return cpy;
+}
+
+void analyze_memory_demands(UBuffer& buf, prog& prg, schedule_info& hwinfo) {
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+  std::set<string> sr_ports;
+  for (auto port : shift_registered_outputs) {
+    sr_ports.insert(port.first);
+  }
+  for (auto port : shift_registered_outputs_to_outputs) {
+    sr_ports.insert(port.first);
+  }
+
+  UBuffer reduced = delete_ports(sr_ports, buf);
+  assert(false);
+}
+
 void generate_platonic_ubuffer(
     std::ostream& out,
     CodegenOptions& options,
@@ -961,9 +982,11 @@ void generate_platonic_ubuffer(
     schedule_info& hwinfo) {
 
   prg.pretty_print();
-  if (buf.name == "padded16_global_wrapper_stencil") {
-    //assert(false);
-  }
+
+  //analyze_memory_demands(buf, prg, hwinfo);
+  //if (buf.name == "padded16_global_wrapper_stencil") {
+    ////assert(false);
+  //}
 
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =

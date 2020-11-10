@@ -5465,10 +5465,10 @@ map<op*, isl_aff*> op_start_times(schedule_info& sched, prog& prg) {
   map<op*, isl_aff*> schedule_affs;
   build_schedule_exprs(root, schedule_exprs, sched, prg);
 
-  cout << "==== Schedules..." << endl;
+  //cout << "==== Schedules..." << endl;
   for (auto opl : schedule_exprs) {
     auto op = opl.first;
-    cout << tab(1) << op->name << " -> " << opl.second << endl;
+    //cout << tab(1) << op->name << " -> " << opl.second << endl;
     ostringstream ss;
     ss << opl.second;
     if (!op->is_loop()) {
@@ -5490,7 +5490,7 @@ map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
   map<op*, isl_aff*> schedule_affs;
   build_schedule_exprs(root, schedule_exprs, sched, prg);
 
-  cout << "==== Schedules..." << endl;
+  //cout << "==== Schedules..." << endl;
   for (auto opl : schedule_exprs) {
     auto op = opl.first;
     QExpr expr = opl.second;
@@ -5498,7 +5498,7 @@ map<op*, isl_aff*> op_end_times(schedule_info& sched, prog& prg) {
     QTerm offsett{{val}};
     QExpr offset{{offsett}};
     expr = expr + offset;
-    cout << tab(1) << op->name << " -> " << expr << endl;
+    //cout << tab(1) << op->name << " -> " << expr << endl;
     ostringstream ss;
     ss << expr;
     if (!op->is_loop()) {
@@ -5757,17 +5757,17 @@ bool share_resource(const std::string& op0, const std::string& op1, schedule_inf
 bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
   auto sched_exprs =
     its(op_times_map(sched, prg), prg.whole_iteration_domain());
-  cout << "Times: " << str(sched_exprs) << endl;
+  //cout << "Times: " << str(sched_exprs) << endl;
   for (auto op0 : get_maps(sched_exprs)) {
     for (auto op1 : get_maps(sched_exprs)) {
       string name0 = domain_name(op0);
       string name1 = domain_name(op1);
       if (name0 != name1 && share_resource(name0, name1, sched)) {
-        cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
+        //cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
         auto times = range(op0);
         auto times1 = range(op1);
         auto overlap = its(times, times1);
-        cout << tab(2) << "Overlap: " << str(overlap) << endl;
+        //cout << tab(2) << "Overlap: " << str(overlap) << endl;
         if (!empty(overlap)) {
           return false;
         }
@@ -5804,7 +5804,7 @@ map<string, pair<string, int> > determine_shift_reg_map(
         auto written = read_op->buffers_written();
 
         string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
-        cout << "Writer name: " << writer_name << endl;
+        //cout << "Writer name: " << writer_name << endl;
         op* write_op = prg.find_op(writer_name);
 
         // Dont shift register rolled-reduces
@@ -6726,28 +6726,54 @@ int op_latency(op* op, schedule_info& hwinfo) {
 
 void adjust_outer_delays(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
-  for (auto name : topologically_sort_kernels(prg)) {
-    auto lp = prg.find_loop(name);
+  for (auto lp : prg.root->children) {
+    string name = lp->name;
+  //for (auto name : topologically_sort_kernels(prg)) {
+    //auto lp = prg.find_loop(name);
     cout << "Adjusting delay of " << lp->name << endl;
 
-    int old_delay = map_find(lp, sched.op_offset_within_parent);
-    int try_delay = 1;
-    bool found_smaller_delay = false;
-    while (try_delay < old_delay) {
+    int earliest_possible_delay = 0;
+    int latest_legal_delay =
+      map_find(lp, sched.op_offset_within_parent);
+
+    int current_delay = latest_legal_delay;
+
+    assert(latest_legal_delay >= earliest_possible_delay);
+    while (latest_legal_delay - earliest_possible_delay > 100) {
+      assert(latest_legal_delay >= earliest_possible_delay);
+      int try_delay = (latest_legal_delay - earliest_possible_delay) / 2;
       sched.op_offset_within_parent[lp] = try_delay;
       if (no_violated_cycle_accurate_dependencies(sched, prg)) {
-        found_smaller_delay = true;
+        latest_legal_delay = try_delay;
         break;
+      } else {
+        earliest_possible_delay = try_delay;
       }
-      try_delay = try_delay + 1000;
-      //try_delay = max(try_delay * 2, try_delay + 1000);
-      //try_delay = min(try_delay * 2, try_delay + 1000);
-      //try_delay *= 2;
+      cout << "Earliest legal: " << earliest_possible_delay << endl;
+      cout << "Latest legal  : " << latest_legal_delay << endl;
     }
 
-    if (!found_smaller_delay) {
-      sched.op_offset_within_parent[lp] = old_delay;
-    }
+    sched.op_offset_within_parent[lp] = latest_legal_delay;
+
+    //int old_delay = map_find(lp, sched.op_offset_within_parent);
+
+    //int try_delay = 1;
+    //bool found_smaller_delay = false;
+    //while (try_delay < old_delay) {
+      //sched.op_offset_within_parent[lp] = try_delay;
+      //if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        //found_smaller_delay = true;
+        //break;
+      //}
+      //try_delay = try_delay + 1000;
+      ////try_delay = max(try_delay * 2, try_delay + 1000);
+      ////try_delay = min(try_delay * 2, try_delay + 1000);
+      ////try_delay *= 2;
+    //}
+
+    //if (!found_smaller_delay) {
+      //sched.op_offset_within_parent[lp] = old_delay;
+    //}
   }
 }
 
