@@ -1621,10 +1621,10 @@ void load_cgramapping(Context* c) {
 void LoadDefinition_cgralib(Context* c) {
 
   //load_mem_ext(c);
-  load_commonlib_ext(c);
-  load_opsubstitution(c);
-  load_corebit2lut(c);
-  load_cgramapping(c);
+  // load_commonlib_ext(c);
+  // load_opsubstitution(c);
+  // load_corebit2lut(c);
+  // load_cgramapping(c);
   //lad_float(c);
 }
 
@@ -1846,7 +1846,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       cout << "Found compute file for " << prg.name << endl;
       Instance* halide_cu = nullptr;
       if (hwinfo.use_dse_compute) {
-        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
+        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
       } else {
         halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
       }
@@ -3024,6 +3024,7 @@ void garnet_map_module(Module* top) {
   c->runPasses({"cullgraph"});
   c->getPassManager()->printLog();
   cout << "Trying to save" << endl;
+  cout << "test" << endl;
   c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
 
   auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));

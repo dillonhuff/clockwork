@@ -11409,7 +11409,7 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
   schedule_info hwinfo;
-  hwinfo.use_dse_compute = false;
+  hwinfo.use_dse_compute = true;
   opt.rtl_options.use_prebuilt_memory = true;
   opt.rtl_options.use_external_controllers = false;
   auto sched = global_schedule_from_buffers(buffers_opt);
@@ -11422,7 +11422,7 @@ void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, Cod
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
   //schedule_info hwinfo;
-  hwinfo.use_dse_compute = false;
+  hwinfo.use_dse_compute = true;
 
   //TODO: add lake memory tile configuration here
 
@@ -12788,7 +12788,7 @@ void lake_resnet_test() {
     CoreIRLoadLibrary_commonlib(context);
     CoreIRLoadLibrary_cwlib(context);
     schedule_info hwinfo;
-    hwinfo.use_dse_compute = false;
+    hwinfo.use_dse_compute = true;
     auto def = generate_coreir_without_ctrl(opt, context, b.second, hwinfo);
     if(!saveToFile(context->getNamespace("global"), "lake_"+b.first+".json", def)) {
       cout << "Could not save ubuffer coreir!" << endl;
@@ -13220,10 +13220,10 @@ void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") 
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
   //test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(rom());
+ //test_apps.push_back(cascade());
+  // test_apps.push_back(harris());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(rom());
   //test_apps.push_back(resnet());
 
   //TODO: break in the middle of vectorization
@@ -13233,7 +13233,7 @@ void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") 
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
 
-  test_apps.push_back(resnet());
+  //test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     prg.pretty_print();
@@ -15977,7 +15977,7 @@ int buffer_load_latency(CodegenOptions& options) {
 
 schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   schedule_info sched;
-  sched.use_dse_compute = false;
+  sched.use_dse_compute = true;
   //sched.use_dse_compute = true;
   for (auto op : prg.all_ops()) {
     if (op->func != "") {
