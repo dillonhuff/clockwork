@@ -10370,9 +10370,47 @@ void blur_and_downsample_test() {
 void playground() {
     {
         isl_ctx* ctx = isl_ctx_alloc();
-        auto acc_0 = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
-        auto acc_1 = isl_map_read_from_str(ctx,"{ output_1_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
-        cout << "is equal: " << equal(get_aff(acc_0), get_aff(acc_1)) << endl;
+        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[i0+i1]: 0<=i0<=2 and 0<=i1<=28}");
+        auto op_trans = isl_map_read_from_str(ctx, "{sram2tb[i0, i1]->sram2tb[i0, floor(i1/4)]}");
+        auto op_trans_new = isl_map_read_from_str(ctx,
+                "{sram2tb[i0, i1]->sram2tb[4*floor(i0/4), 4*floor(i1/4)];\
+                sram2tb[i0, i1]->sram2tb[4*floor(i0/4), 4*floor(i1/4)+1];\
+                sram2tb[i0, i1]->sram2tb[4*floor(i0/4), 4*floor(i1/4)+2];\
+                sram2tb[i0, i1]->sram2tb[4*floor(i0/4), 4*floor(i1/4)+3]}");
+        vector<int> min_by_dim = parse_pt(lexminpt(::domain(acc_0)));
+        vector<int> max_by_dim = parse_pt(lexmaxpt(::domain(acc_0)));
+        int vec_dim = num_in_dims(acc_0) - 1;
+        int vectorized_dim_extent =
+            max_by_dim.at(vec_dim) - min_by_dim.at(vec_dim);
+        //Need to pad the map if it's exactly the multiplier of 4
+        if (vectorized_dim_extent % 4) {
+            acc_0 = pad_to_domain_ubuf_map(acc_0, 1);
+        }
+        cout << "After pad: " << str(acc_0) << endl;
+        auto align_trans = isl_map_read_from_str(ctx, "{data[i]->data[i - i%4]}");
+        auto vectorize_trans = isl_map_read_from_str(ctx, "{data[i]->data[i]; data[i]->data[i+1]; data[i]->data[i+2]; data[i]->data[i+3]}");
+        auto acc_vec = dot(inv(op_trans), acc_0);
+        auto acc_align = dot(inv(op_trans), dot(op_trans_new, acc_0));
+        /*auto acc_align = isl_map_read_from_str(ctx,
+                "\
+                {\
+                sram2tb[i0, i1]->data[floor(i0/4) + 4*i1 + 0];\
+                sram2tb[i0, i1]->data[floor(i0/4) + 4*i1 + 1];\
+                sram2tb[i0, i1]->data[floor(i0/4) + 4*i1 + 2];\
+                sram2tb[i0, i1]->data[floor(i0/4) + 4*i1 + 3];\
+                }\
+                ");*/
+        acc_align = its(acc_align, domain(acc_0));
+
+
+        //auto acc_align = dot(dot(acc_0, align_trans), vectorize_trans);
+        cout << "get align map range: " << str(range(acc_align)) << endl;
+        cout << "get align map domain: " << str(domain(acc_align)) << endl;
+        cout << "get align map: " << str(acc_align) << endl;
+        auto pt_cnt = 0;
+        for (auto b_map: get_basic_maps(acc_align)){
+            cout << tab(2) << "Pt: " <<  pt_cnt << " => " << str(get_aff(to_map(b_map))) << endl;
+        }
         assert(false);
     }
     //{

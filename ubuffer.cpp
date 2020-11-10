@@ -902,6 +902,8 @@ bool check_need_mux(CodegenOptions & options, UBuffer & buf,
 isl_set* get_memtile_bank_range(UBuffer & buf, isl_map* map, int project_dim, int pt_per_bank, bool is_read) {
     isl_set* range_per_bank = isl_set_empty(get_space(range(map)));
     auto bmap_vec = get_basic_maps(map);
+    cout << "bmap vec size: " << bmap_vec.size() << endl;
+    cout << "pt per bank: " << pt_per_bank << endl;
     for(int i = 0; i < pt_per_bank; i ++) {
         range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
     }
@@ -970,7 +972,8 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         int bk_num, int in_project_dim, UBuffer& buf, umap* tmp){//, map<string, isl_set*> & retrive_dom_map) {
 
     vector<ConfigMap> ret;
-    cout << "Generate addr configuration for op: " << op_name << endl;
+    string note = is_read? "read" : "write";
+    cout << "Generate "<< note << " addr configuration for op: " << op_name << endl;
     ////for (auto map: get_maps(tmp)) {
     auto map = to_map(tmp);
     cout << "access map: " << str(map) << endl;
@@ -1159,6 +1162,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
         for ( auto it: rewrite_buffer) {
             auto buf = it.second;
             auto out_acc_umap = buf.producer_map();
+            //cout << "\t buf : " << buf.name << "produce map: " << str(out_acc_umap) << endl;
             for (auto out_acc_map: get_maps(out_acc_umap)) {
                 if (domain_name(out_acc_map) == op_name) {
                     op2write_buf[op_name] = it.first;
@@ -5654,7 +5658,7 @@ pair<std::map<string, UBuffer>, vector<string> >
         //    op_sched = new_sched.at(::name(new_op_domain));
         //} else {
             auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
-            //cout << "slice dim: " << str(slice_dim) << endl;
+            cout << "slice dim: " << str(slice_dim) << endl;
             //cout << "new_op_domain: " << str(new_op_domain) << endl;
             //cout << "original loop: " << str(new_sched.at(::name(new_op_domain))) << endl;
             op_sched = its(new_sched.at(::name(new_op_domain)), slice_dim);

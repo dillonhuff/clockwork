@@ -317,25 +317,25 @@ class AccessPattern {
           return to_umap(its(access_map, domain));
       }
 
-      vector<int> get_non_inner_most_reaccess_dim() {
-        vector<int> acc_map, ret;
-        int cnt = 0;
-        acc_map.push_back(0);
-        for (auto rel: rel_map) {
-          if (rel)
-            cnt ++;
-          acc_map.push_back(cnt);
-        }
-        int total = acc_map.back();
-        for (int i = 1; i < acc_map.size(); i++) {
-            if (acc_map[i] - acc_map[i-1] == 0) {
-                if (acc_map[i] != total){
-                    ret.push_back(i-1);
-                }
-            }
-        }
-        return ret;
-      }
+      //vector<int> get_non_inner_most_reaccess_dim() {
+      //  vector<int> acc_map, ret;
+      //  int cnt = 0;
+      //  acc_map.push_back(0);
+      //  for (auto rel: rel_map) {
+      //    if (rel)
+      //      cnt ++;
+      //    acc_map.push_back(cnt);
+      //  }
+      //  int total = acc_map.back();
+      //  for (int i = 1; i < acc_map.size(); i++) {
+      //      if (acc_map[i] - acc_map[i-1] == 0) {
+      //          if (acc_map[i] != total){
+      //              ret.push_back(i-1);
+      //          }
+      //      }
+      //  }
+      //  return ret;
+      //}
 
       isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id, bool rm_const=false) {
           vector<string> var_list(var_dim-1);
@@ -375,15 +375,15 @@ class AccessPattern {
                       nd_expr.push_back(std::to_string(row.front()));
               }
           }
-          auto tb_pad = get_non_inner_most_reaccess_dim();
-          cout << "tb pad dim: " << tb_pad << endl;
+          //auto tb_pad = get_non_inner_most_reaccess_dim();
+          //cout << "tb pad dim: " << tb_pad << endl;
           vector<string> nd_expr_new ;
-          for (auto cnt: tb_pad) {
-              if (cnt == 0)
-                continue;
-              auto it = nd_expr.begin();
-              nd_expr.insert(it, get_expr(1, cnt, var_list));
-          }
+          //for (auto cnt: tb_pad) {
+          //    if (cnt == 0)
+          //      continue;
+          //    auto it = nd_expr.begin();
+          //    nd_expr.insert(it, get_expr(1, cnt, var_list));
+          //}
           if (rm_const) {
             for (auto expr: nd_expr) {
               if (!is_number(expr)) {
@@ -609,7 +609,7 @@ class AccessPattern {
               if (it.first == "const")
                   continue;
               int id = it.second-1;
-              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4)) {
+              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4) && (id == inner_most)) {
                   int factor = fetch_width / stride_in_target[it.second];
                   string trans = "floor("+ it.first + "/" + to_string(factor) + ")";
                   var_list[id] = trans;
@@ -678,7 +678,7 @@ class AccessPattern {
               if (it.first == "const")
                   continue;
               int id = it.second-1;
-              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4)) {
+              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4 && (id == inner_most))) {
                   int factor = fetch_width / stride_in_target[it.second];
                   string trans = it.first + "%" + to_string(factor) + " = 0";
                   trans_constraints.push_back(trans);
