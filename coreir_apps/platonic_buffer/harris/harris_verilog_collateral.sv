@@ -906,35 +906,12 @@ cim_output_stencil_bank_selector cim_output_stencil_cim_output_stencil_op_hcompu
   logic [15:0] addr1;
   assign addr1 = (((((1*op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out[1])) - 0)>>1)*1+((((1*op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out[2])) - 0)>>1)*29);
   always @(posedge clk) begin
-    if(op_hcompute_cim_output_stencil_write_wen)begin
-      if(op_hcompute_cim_output_stencil_write_ctrl_vars!=op_hcompute_cim_output_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_cim_output_stencil_write_wen!=op_hcompute_cim_output_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_cim_output_stencil_write_wen);
-        $display(op_hcompute_cim_output_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_hw_output_stencil_read_ren)begin
-      if(op_hcompute_hw_output_stencil_read_ctrl_vars!=op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_hw_output_stencil_read_ren!=op_hcompute_hw_output_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_hw_output_stencil_read_ren);
-        $display(op_hcompute_hw_output_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_cim_output_stencil_write_wen_fsm_out) begin
       case( cim_output_stencil_cim_output_stencil_op_hcompute_cim_output_stencil_65_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_cim_output_stencil_write[0];
         1:bank_1[addr0] <= op_hcompute_cim_output_stencil_write[0];
         2:bank_2[addr0] <= op_hcompute_cim_output_stencil_write[0];
         3:bank_3[addr0] <= op_hcompute_cim_output_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -945,7 +922,6 @@ cim_output_stencil_bank_selector cim_output_stencil_cim_output_stencil_op_hcompu
         1:op_hcompute_hw_output_stencil_read[0] = bank_1[addr1];
         2:op_hcompute_hw_output_stencil_read[0] = bank_2[addr1];
         3:op_hcompute_hw_output_stencil_read[0] = bank_3[addr1];
-        default: $finish(-1);
       endcase
     end
   end
@@ -1166,35 +1142,12 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
   logic [15:0] addr9;
   assign addr9 = (((((1 + 1*op_hcompute_cim_output_stencil_read_ctrl_vars_fsm_out[1])) - -1)>>1)*1+((((1 + 1*op_hcompute_cim_output_stencil_read_ctrl_vars_fsm_out[2])) - -1)>>1)*30);
   always @(posedge clk) begin
-    if(op_hcompute_cim_stencil_write_wen)begin
-      if(op_hcompute_cim_stencil_write_ctrl_vars!=op_hcompute_cim_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_cim_stencil_write_wen!=op_hcompute_cim_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_cim_stencil_write_wen);
-        $display(op_hcompute_cim_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_cim_output_stencil_read_ren)begin
-      if(op_hcompute_cim_output_stencil_read_ctrl_vars!=op_hcompute_cim_output_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_cim_output_stencil_read_ren!=op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_cim_output_stencil_read_ren);
-        $display(op_hcompute_cim_output_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_cim_stencil_write_wen_fsm_out) begin
       case( cim_stencil_cim_stencil_op_hcompute_cim_stencil_61_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_cim_stencil_write[0];
         1:bank_1[addr0] <= op_hcompute_cim_stencil_write[0];
         2:bank_2[addr0] <= op_hcompute_cim_stencil_write[0];
         3:bank_3[addr0] <= op_hcompute_cim_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -1205,7 +1158,6 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
         1:op_hcompute_cim_output_stencil_read[0] = bank_1[addr1];
         2:op_hcompute_cim_output_stencil_read[0] = bank_2[addr1];
         3:op_hcompute_cim_output_stencil_read[0] = bank_3[addr1];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
@@ -1214,7 +1166,6 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
         1:op_hcompute_cim_output_stencil_read[1] = bank_1[addr2];
         2:op_hcompute_cim_output_stencil_read[1] = bank_2[addr2];
         3:op_hcompute_cim_output_stencil_read[1] = bank_3[addr2];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
@@ -1223,7 +1174,6 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
         1:op_hcompute_cim_output_stencil_read[2] = bank_1[addr3];
         2:op_hcompute_cim_output_stencil_read[2] = bank_2[addr3];
         3:op_hcompute_cim_output_stencil_read[2] = bank_3[addr3];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
@@ -1232,7 +1182,6 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
         1:op_hcompute_cim_output_stencil_read[3] = bank_1[addr4];
         2:op_hcompute_cim_output_stencil_read[3] = bank_2[addr4];
         3:op_hcompute_cim_output_stencil_read[3] = bank_3[addr4];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
@@ -1241,7 +1190,6 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
         1:op_hcompute_cim_output_stencil_read[4] = bank_1[addr5];
         2:op_hcompute_cim_output_stencil_read[4] = bank_2[addr5];
         3:op_hcompute_cim_output_stencil_read[4] = bank_3[addr5];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
@@ -1250,7 +1198,6 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
         1:op_hcompute_cim_output_stencil_read[5] = bank_1[addr6];
         2:op_hcompute_cim_output_stencil_read[5] = bank_2[addr6];
         3:op_hcompute_cim_output_stencil_read[5] = bank_3[addr6];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
@@ -1259,7 +1206,6 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
         1:op_hcompute_cim_output_stencil_read[6] = bank_1[addr7];
         2:op_hcompute_cim_output_stencil_read[6] = bank_2[addr7];
         3:op_hcompute_cim_output_stencil_read[6] = bank_3[addr7];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
@@ -1268,7 +1214,6 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
         1:op_hcompute_cim_output_stencil_read[7] = bank_1[addr8];
         2:op_hcompute_cim_output_stencil_read[7] = bank_2[addr8];
         3:op_hcompute_cim_output_stencil_read[7] = bank_3[addr8];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_cim_output_stencil_read_ren_fsm_out) begin
@@ -1277,7 +1222,6 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
         1:op_hcompute_cim_output_stencil_read[8] = bank_1[addr9];
         2:op_hcompute_cim_output_stencil_read[8] = bank_2[addr9];
         3:op_hcompute_cim_output_stencil_read[8] = bank_3[addr9];
-        default: $finish(-1);
       endcase
     end
   end
@@ -1528,46 +1472,12 @@ grad_x_stencil_bank_selector grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stenc
   logic [15:0] addr1;
   assign addr1 = (((((-2 + 1*op_hcompute_lxx_stencil_read_ctrl_vars_fsm_out[1])) - -2)>>1)*1+((((-2 + 1*op_hcompute_lxx_stencil_read_ctrl_vars_fsm_out[2])) - -2)>>1)*31);
   always @(posedge clk) begin
-    if(op_hcompute_grad_x_stencil_write_wen)begin
-      if(op_hcompute_grad_x_stencil_write_ctrl_vars!=op_hcompute_grad_x_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_grad_x_stencil_write_wen!=op_hcompute_grad_x_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_grad_x_stencil_write_wen);
-        $display(op_hcompute_grad_x_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lxx_stencil_read_ren)begin
-      if(op_hcompute_lxx_stencil_read_ctrl_vars!=op_hcompute_lxx_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lxx_stencil_read_ren!=op_hcompute_lxx_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_lxx_stencil_read_ren);
-        $display(op_hcompute_lxx_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lxy_stencil_read_ren)begin
-      if(op_hcompute_lxy_stencil_read_ctrl_vars!=op_hcompute_lxy_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lxy_stencil_read_ren!=op_hcompute_lxy_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_lxy_stencil_read_ren);
-        $display(op_hcompute_lxy_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_grad_x_stencil_write_wen_fsm_out) begin
       case( grad_x_stencil_grad_x_stencil_op_hcompute_grad_x_stencil_54_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_grad_x_stencil_write[0];
         1:bank_1[addr0] <= op_hcompute_grad_x_stencil_write[0];
         2:bank_2[addr0] <= op_hcompute_grad_x_stencil_write[0];
         3:bank_3[addr0] <= op_hcompute_grad_x_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -1578,7 +1488,6 @@ grad_x_stencil_bank_selector grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stenc
         1:op_hcompute_lxx_stencil_read[0] = bank_1[addr1];
         2:op_hcompute_lxx_stencil_read[0] = bank_2[addr1];
         3:op_hcompute_lxx_stencil_read[0] = bank_3[addr1];
-        default: $finish(-1);
       endcase
     end
   end
@@ -1829,46 +1738,12 @@ grad_y_stencil_bank_selector grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stenc
   logic [15:0] addr1;
   assign addr1 = (((((-2 + 1*op_hcompute_lxy_stencil_read_ctrl_vars_fsm_out[1])) - -2)>>1)*1+((((-2 + 1*op_hcompute_lxy_stencil_read_ctrl_vars_fsm_out[2])) - -2)>>1)*31);
   always @(posedge clk) begin
-    if(op_hcompute_grad_y_stencil_write_wen)begin
-      if(op_hcompute_grad_y_stencil_write_ctrl_vars!=op_hcompute_grad_y_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_grad_y_stencil_write_wen!=op_hcompute_grad_y_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_grad_y_stencil_write_wen);
-        $display(op_hcompute_grad_y_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lxy_stencil_read_ren)begin
-      if(op_hcompute_lxy_stencil_read_ctrl_vars!=op_hcompute_lxy_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lxy_stencil_read_ren!=op_hcompute_lxy_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_lxy_stencil_read_ren);
-        $display(op_hcompute_lxy_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lyy_stencil_read_ren)begin
-      if(op_hcompute_lyy_stencil_read_ctrl_vars!=op_hcompute_lyy_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lyy_stencil_read_ren!=op_hcompute_lyy_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_lyy_stencil_read_ren);
-        $display(op_hcompute_lyy_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_grad_y_stencil_write_wen_fsm_out) begin
       case( grad_y_stencil_grad_y_stencil_op_hcompute_grad_y_stencil_47_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_grad_y_stencil_write[0];
         1:bank_1[addr0] <= op_hcompute_grad_y_stencil_write[0];
         2:bank_2[addr0] <= op_hcompute_grad_y_stencil_write[0];
         3:bank_3[addr0] <= op_hcompute_grad_y_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -1879,7 +1754,6 @@ grad_y_stencil_bank_selector grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stenc
         1:op_hcompute_lxy_stencil_read[0] = bank_1[addr1];
         2:op_hcompute_lxy_stencil_read[0] = bank_2[addr1];
         3:op_hcompute_lxy_stencil_read[0] = bank_3[addr1];
-        default: $finish(-1);
       endcase
     end
   end
@@ -2178,57 +2052,12 @@ lgxx_stencil_bank_selector lgxx_stencil_lgxx_stencil_op_hcompute_lgxx_stencil_1_
   logic [15:0] addr3;
   assign addr3 = (((((-1 + 1*op_hcompute_lgxx_stencil_1_read_ctrl_vars_fsm_out[1])) - -1)>>1)*1+((((-1 + 1*op_hcompute_lgxx_stencil_1_read_ctrl_vars_fsm_out[2])) - -1)>>1)*30);
   always @(posedge clk) begin
-    if(op_hcompute_lgxx_stencil_1_write_wen)begin
-      if(op_hcompute_lgxx_stencil_1_write_ctrl_vars!=op_hcompute_lgxx_stencil_1_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgxx_stencil_1_write_wen!=op_hcompute_lgxx_stencil_1_write_wen_fsm_out) begin
-        $display(op_hcompute_lgxx_stencil_1_write_wen);
-        $display(op_hcompute_lgxx_stencil_1_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lgxx_stencil_write_wen)begin
-      if(op_hcompute_lgxx_stencil_write_ctrl_vars!=op_hcompute_lgxx_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgxx_stencil_write_wen!=op_hcompute_lgxx_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_lgxx_stencil_write_wen);
-        $display(op_hcompute_lgxx_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_cim_stencil_read_ren)begin
-      if(op_hcompute_cim_stencil_read_ctrl_vars!=op_hcompute_cim_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_cim_stencil_read_ren!=op_hcompute_cim_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_cim_stencil_read_ren);
-        $display(op_hcompute_cim_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lgxx_stencil_1_read_ren)begin
-      if(op_hcompute_lgxx_stencil_1_read_ctrl_vars!=op_hcompute_lgxx_stencil_1_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgxx_stencil_1_read_ren!=op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
-        $display(op_hcompute_lgxx_stencil_1_read_ren);
-        $display(op_hcompute_lgxx_stencil_1_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_lgxx_stencil_1_write_wen_fsm_out) begin
       case( lgxx_stencil_lgxx_stencil_op_hcompute_lgxx_stencil_1_33_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_lgxx_stencil_1_write[0];
         1:bank_1[addr0] <= op_hcompute_lgxx_stencil_1_write[0];
         2:bank_2[addr0] <= op_hcompute_lgxx_stencil_1_write[0];
         3:bank_3[addr0] <= op_hcompute_lgxx_stencil_1_write[0];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_write_wen_fsm_out) begin
@@ -2237,7 +2066,6 @@ lgxx_stencil_bank_selector lgxx_stencil_lgxx_stencil_op_hcompute_lgxx_stencil_1_
         1:bank_1[addr1] <= op_hcompute_lgxx_stencil_write[0];
         2:bank_2[addr1] <= op_hcompute_lgxx_stencil_write[0];
         3:bank_3[addr1] <= op_hcompute_lgxx_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -2248,7 +2076,6 @@ lgxx_stencil_bank_selector lgxx_stencil_lgxx_stencil_op_hcompute_lgxx_stencil_1_
         1:op_hcompute_cim_stencil_read[0] = bank_1[addr2];
         2:op_hcompute_cim_stencil_read[0] = bank_2[addr2];
         3:op_hcompute_cim_stencil_read[0] = bank_3[addr2];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
@@ -2257,7 +2084,6 @@ lgxx_stencil_bank_selector lgxx_stencil_lgxx_stencil_op_hcompute_lgxx_stencil_1_
         1:op_hcompute_lgxx_stencil_1_read[0] = bank_1[addr3];
         2:op_hcompute_lgxx_stencil_1_read[0] = bank_2[addr3];
         3:op_hcompute_lgxx_stencil_1_read[0] = bank_3[addr3];
-        default: $finish(-1);
       endcase
     end
   end
@@ -2556,57 +2382,12 @@ lgxy_stencil_bank_selector lgxy_stencil_lgxy_stencil_op_hcompute_lgxy_stencil_1_
   logic [15:0] addr3;
   assign addr3 = (((((-1 + 1*op_hcompute_lgxy_stencil_1_read_ctrl_vars_fsm_out[1])) - -1)>>1)*1+((((-1 + 1*op_hcompute_lgxy_stencil_1_read_ctrl_vars_fsm_out[2])) - -1)>>1)*30);
   always @(posedge clk) begin
-    if(op_hcompute_lgxy_stencil_1_write_wen)begin
-      if(op_hcompute_lgxy_stencil_1_write_ctrl_vars!=op_hcompute_lgxy_stencil_1_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgxy_stencil_1_write_wen!=op_hcompute_lgxy_stencil_1_write_wen_fsm_out) begin
-        $display(op_hcompute_lgxy_stencil_1_write_wen);
-        $display(op_hcompute_lgxy_stencil_1_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lgxy_stencil_write_wen)begin
-      if(op_hcompute_lgxy_stencil_write_ctrl_vars!=op_hcompute_lgxy_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgxy_stencil_write_wen!=op_hcompute_lgxy_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_lgxy_stencil_write_wen);
-        $display(op_hcompute_lgxy_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_cim_stencil_read_ren)begin
-      if(op_hcompute_cim_stencil_read_ctrl_vars!=op_hcompute_cim_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_cim_stencil_read_ren!=op_hcompute_cim_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_cim_stencil_read_ren);
-        $display(op_hcompute_cim_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lgxy_stencil_1_read_ren)begin
-      if(op_hcompute_lgxy_stencil_1_read_ctrl_vars!=op_hcompute_lgxy_stencil_1_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgxy_stencil_1_read_ren!=op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
-        $display(op_hcompute_lgxy_stencil_1_read_ren);
-        $display(op_hcompute_lgxy_stencil_1_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_lgxy_stencil_1_write_wen_fsm_out) begin
       case( lgxy_stencil_lgxy_stencil_op_hcompute_lgxy_stencil_1_21_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_lgxy_stencil_1_write[0];
         1:bank_1[addr0] <= op_hcompute_lgxy_stencil_1_write[0];
         2:bank_2[addr0] <= op_hcompute_lgxy_stencil_1_write[0];
         3:bank_3[addr0] <= op_hcompute_lgxy_stencil_1_write[0];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_write_wen_fsm_out) begin
@@ -2615,7 +2396,6 @@ lgxy_stencil_bank_selector lgxy_stencil_lgxy_stencil_op_hcompute_lgxy_stencil_1_
         1:bank_1[addr1] <= op_hcompute_lgxy_stencil_write[0];
         2:bank_2[addr1] <= op_hcompute_lgxy_stencil_write[0];
         3:bank_3[addr1] <= op_hcompute_lgxy_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -2626,7 +2406,6 @@ lgxy_stencil_bank_selector lgxy_stencil_lgxy_stencil_op_hcompute_lgxy_stencil_1_
         1:op_hcompute_cim_stencil_read[0] = bank_1[addr2];
         2:op_hcompute_cim_stencil_read[0] = bank_2[addr2];
         3:op_hcompute_cim_stencil_read[0] = bank_3[addr2];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
@@ -2635,7 +2414,6 @@ lgxy_stencil_bank_selector lgxy_stencil_lgxy_stencil_op_hcompute_lgxy_stencil_1_
         1:op_hcompute_lgxy_stencil_1_read[0] = bank_1[addr3];
         2:op_hcompute_lgxy_stencil_1_read[0] = bank_2[addr3];
         3:op_hcompute_lgxy_stencil_1_read[0] = bank_3[addr3];
-        default: $finish(-1);
       endcase
     end
   end
@@ -2934,57 +2712,12 @@ lgyy_stencil_bank_selector lgyy_stencil_lgyy_stencil_op_hcompute_lgyy_stencil_1_
   logic [15:0] addr3;
   assign addr3 = (((((-1 + 1*op_hcompute_lgyy_stencil_1_read_ctrl_vars_fsm_out[1])) - -1)>>1)*1+((((-1 + 1*op_hcompute_lgyy_stencil_1_read_ctrl_vars_fsm_out[2])) - -1)>>1)*30);
   always @(posedge clk) begin
-    if(op_hcompute_lgyy_stencil_1_write_wen)begin
-      if(op_hcompute_lgyy_stencil_1_write_ctrl_vars!=op_hcompute_lgyy_stencil_1_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgyy_stencil_1_write_wen!=op_hcompute_lgyy_stencil_1_write_wen_fsm_out) begin
-        $display(op_hcompute_lgyy_stencil_1_write_wen);
-        $display(op_hcompute_lgyy_stencil_1_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lgyy_stencil_write_wen)begin
-      if(op_hcompute_lgyy_stencil_write_ctrl_vars!=op_hcompute_lgyy_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgyy_stencil_write_wen!=op_hcompute_lgyy_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_lgyy_stencil_write_wen);
-        $display(op_hcompute_lgyy_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_cim_stencil_read_ren)begin
-      if(op_hcompute_cim_stencil_read_ctrl_vars!=op_hcompute_cim_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_cim_stencil_read_ren!=op_hcompute_cim_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_cim_stencil_read_ren);
-        $display(op_hcompute_cim_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lgyy_stencil_1_read_ren)begin
-      if(op_hcompute_lgyy_stencil_1_read_ctrl_vars!=op_hcompute_lgyy_stencil_1_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgyy_stencil_1_read_ren!=op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
-        $display(op_hcompute_lgyy_stencil_1_read_ren);
-        $display(op_hcompute_lgyy_stencil_1_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_lgyy_stencil_1_write_wen_fsm_out) begin
       case( lgyy_stencil_lgyy_stencil_op_hcompute_lgyy_stencil_1_9_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_lgyy_stencil_1_write[0];
         1:bank_1[addr0] <= op_hcompute_lgyy_stencil_1_write[0];
         2:bank_2[addr0] <= op_hcompute_lgyy_stencil_1_write[0];
         3:bank_3[addr0] <= op_hcompute_lgyy_stencil_1_write[0];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_write_wen_fsm_out) begin
@@ -2993,7 +2726,6 @@ lgyy_stencil_bank_selector lgyy_stencil_lgyy_stencil_op_hcompute_lgyy_stencil_1_
         1:bank_1[addr1] <= op_hcompute_lgyy_stencil_write[0];
         2:bank_2[addr1] <= op_hcompute_lgyy_stencil_write[0];
         3:bank_3[addr1] <= op_hcompute_lgyy_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -3004,7 +2736,6 @@ lgyy_stencil_bank_selector lgyy_stencil_lgyy_stencil_op_hcompute_lgyy_stencil_1_
         1:op_hcompute_cim_stencil_read[0] = bank_1[addr2];
         2:op_hcompute_cim_stencil_read[0] = bank_2[addr2];
         3:op_hcompute_cim_stencil_read[0] = bank_3[addr2];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
@@ -3013,7 +2744,6 @@ lgyy_stencil_bank_selector lgyy_stencil_lgyy_stencil_op_hcompute_lgyy_stencil_1_
         1:op_hcompute_lgyy_stencil_1_read[0] = bank_1[addr3];
         2:op_hcompute_lgyy_stencil_1_read[0] = bank_2[addr3];
         3:op_hcompute_lgyy_stencil_1_read[0] = bank_3[addr3];
-        default: $finish(-1);
       endcase
     end
   end
@@ -3234,35 +2964,12 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
   logic [15:0] addr9;
   assign addr9 = (((((1*op_hcompute_lgxx_stencil_1_read_ctrl_vars_fsm_out[1])) - -2)>>1)*1+((((-1 + 1*op_hcompute_lgxx_stencil_1_read_ctrl_vars_fsm_out[2])) - -2)>>1)*31);
   always @(posedge clk) begin
-    if(op_hcompute_lxx_stencil_write_wen)begin
-      if(op_hcompute_lxx_stencil_write_ctrl_vars!=op_hcompute_lxx_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lxx_stencil_write_wen!=op_hcompute_lxx_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_lxx_stencil_write_wen);
-        $display(op_hcompute_lxx_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lgxx_stencil_1_read_ren)begin
-      if(op_hcompute_lgxx_stencil_1_read_ctrl_vars!=op_hcompute_lgxx_stencil_1_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgxx_stencil_1_read_ren!=op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
-        $display(op_hcompute_lgxx_stencil_1_read_ren);
-        $display(op_hcompute_lgxx_stencil_1_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_lxx_stencil_write_wen_fsm_out) begin
       case( lxx_stencil_lxx_stencil_op_hcompute_lxx_stencil_7_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_lxx_stencil_write[0];
         1:bank_1[addr0] <= op_hcompute_lxx_stencil_write[0];
         2:bank_2[addr0] <= op_hcompute_lxx_stencil_write[0];
         3:bank_3[addr0] <= op_hcompute_lxx_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -3273,7 +2980,6 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
         1:op_hcompute_lgxx_stencil_1_read[0] = bank_1[addr1];
         2:op_hcompute_lgxx_stencil_1_read[0] = bank_2[addr1];
         3:op_hcompute_lgxx_stencil_1_read[0] = bank_3[addr1];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
@@ -3282,7 +2988,6 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
         1:op_hcompute_lgxx_stencil_1_read[1] = bank_1[addr2];
         2:op_hcompute_lgxx_stencil_1_read[1] = bank_2[addr2];
         3:op_hcompute_lgxx_stencil_1_read[1] = bank_3[addr2];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
@@ -3291,7 +2996,6 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
         1:op_hcompute_lgxx_stencil_1_read[2] = bank_1[addr3];
         2:op_hcompute_lgxx_stencil_1_read[2] = bank_2[addr3];
         3:op_hcompute_lgxx_stencil_1_read[2] = bank_3[addr3];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
@@ -3300,7 +3004,6 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
         1:op_hcompute_lgxx_stencil_1_read[3] = bank_1[addr4];
         2:op_hcompute_lgxx_stencil_1_read[3] = bank_2[addr4];
         3:op_hcompute_lgxx_stencil_1_read[3] = bank_3[addr4];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
@@ -3309,7 +3012,6 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
         1:op_hcompute_lgxx_stencil_1_read[4] = bank_1[addr5];
         2:op_hcompute_lgxx_stencil_1_read[4] = bank_2[addr5];
         3:op_hcompute_lgxx_stencil_1_read[4] = bank_3[addr5];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
@@ -3318,7 +3020,6 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
         1:op_hcompute_lgxx_stencil_1_read[5] = bank_1[addr6];
         2:op_hcompute_lgxx_stencil_1_read[5] = bank_2[addr6];
         3:op_hcompute_lgxx_stencil_1_read[5] = bank_3[addr6];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
@@ -3327,7 +3028,6 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
         1:op_hcompute_lgxx_stencil_1_read[6] = bank_1[addr7];
         2:op_hcompute_lgxx_stencil_1_read[6] = bank_2[addr7];
         3:op_hcompute_lgxx_stencil_1_read[6] = bank_3[addr7];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
@@ -3336,7 +3036,6 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
         1:op_hcompute_lgxx_stencil_1_read[7] = bank_1[addr8];
         2:op_hcompute_lgxx_stencil_1_read[7] = bank_2[addr8];
         3:op_hcompute_lgxx_stencil_1_read[7] = bank_3[addr8];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxx_stencil_1_read_ren_fsm_out) begin
@@ -3345,7 +3044,6 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
         1:op_hcompute_lgxx_stencil_1_read[8] = bank_1[addr9];
         2:op_hcompute_lgxx_stencil_1_read[8] = bank_2[addr9];
         3:op_hcompute_lgxx_stencil_1_read[8] = bank_3[addr9];
-        default: $finish(-1);
       endcase
     end
   end
@@ -3566,35 +3264,12 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
   logic [15:0] addr9;
   assign addr9 = (((((1*op_hcompute_lgxy_stencil_1_read_ctrl_vars_fsm_out[1])) - -2)>>1)*1+((((-1 + 1*op_hcompute_lgxy_stencil_1_read_ctrl_vars_fsm_out[2])) - -2)>>1)*31);
   always @(posedge clk) begin
-    if(op_hcompute_lxy_stencil_write_wen)begin
-      if(op_hcompute_lxy_stencil_write_ctrl_vars!=op_hcompute_lxy_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lxy_stencil_write_wen!=op_hcompute_lxy_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_lxy_stencil_write_wen);
-        $display(op_hcompute_lxy_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lgxy_stencil_1_read_ren)begin
-      if(op_hcompute_lgxy_stencil_1_read_ctrl_vars!=op_hcompute_lgxy_stencil_1_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgxy_stencil_1_read_ren!=op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
-        $display(op_hcompute_lgxy_stencil_1_read_ren);
-        $display(op_hcompute_lgxy_stencil_1_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_lxy_stencil_write_wen_fsm_out) begin
       case( lxy_stencil_lxy_stencil_op_hcompute_lxy_stencil_4_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_lxy_stencil_write[0];
         1:bank_1[addr0] <= op_hcompute_lxy_stencil_write[0];
         2:bank_2[addr0] <= op_hcompute_lxy_stencil_write[0];
         3:bank_3[addr0] <= op_hcompute_lxy_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -3605,7 +3280,6 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
         1:op_hcompute_lgxy_stencil_1_read[0] = bank_1[addr1];
         2:op_hcompute_lgxy_stencil_1_read[0] = bank_2[addr1];
         3:op_hcompute_lgxy_stencil_1_read[0] = bank_3[addr1];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
@@ -3614,7 +3288,6 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
         1:op_hcompute_lgxy_stencil_1_read[1] = bank_1[addr2];
         2:op_hcompute_lgxy_stencil_1_read[1] = bank_2[addr2];
         3:op_hcompute_lgxy_stencil_1_read[1] = bank_3[addr2];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
@@ -3623,7 +3296,6 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
         1:op_hcompute_lgxy_stencil_1_read[2] = bank_1[addr3];
         2:op_hcompute_lgxy_stencil_1_read[2] = bank_2[addr3];
         3:op_hcompute_lgxy_stencil_1_read[2] = bank_3[addr3];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
@@ -3632,7 +3304,6 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
         1:op_hcompute_lgxy_stencil_1_read[3] = bank_1[addr4];
         2:op_hcompute_lgxy_stencil_1_read[3] = bank_2[addr4];
         3:op_hcompute_lgxy_stencil_1_read[3] = bank_3[addr4];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
@@ -3641,7 +3312,6 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
         1:op_hcompute_lgxy_stencil_1_read[4] = bank_1[addr5];
         2:op_hcompute_lgxy_stencil_1_read[4] = bank_2[addr5];
         3:op_hcompute_lgxy_stencil_1_read[4] = bank_3[addr5];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
@@ -3650,7 +3320,6 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
         1:op_hcompute_lgxy_stencil_1_read[5] = bank_1[addr6];
         2:op_hcompute_lgxy_stencil_1_read[5] = bank_2[addr6];
         3:op_hcompute_lgxy_stencil_1_read[5] = bank_3[addr6];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
@@ -3659,7 +3328,6 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
         1:op_hcompute_lgxy_stencil_1_read[6] = bank_1[addr7];
         2:op_hcompute_lgxy_stencil_1_read[6] = bank_2[addr7];
         3:op_hcompute_lgxy_stencil_1_read[6] = bank_3[addr7];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
@@ -3668,7 +3336,6 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
         1:op_hcompute_lgxy_stencil_1_read[7] = bank_1[addr8];
         2:op_hcompute_lgxy_stencil_1_read[7] = bank_2[addr8];
         3:op_hcompute_lgxy_stencil_1_read[7] = bank_3[addr8];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgxy_stencil_1_read_ren_fsm_out) begin
@@ -3677,7 +3344,6 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
         1:op_hcompute_lgxy_stencil_1_read[8] = bank_1[addr9];
         2:op_hcompute_lgxy_stencil_1_read[8] = bank_2[addr9];
         3:op_hcompute_lgxy_stencil_1_read[8] = bank_3[addr9];
-        default: $finish(-1);
       endcase
     end
   end
@@ -3898,35 +3564,12 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
   logic [15:0] addr9;
   assign addr9 = (((((1*op_hcompute_lgyy_stencil_1_read_ctrl_vars_fsm_out[1])) - -2)>>1)*1+((((-1 + 1*op_hcompute_lgyy_stencil_1_read_ctrl_vars_fsm_out[2])) - -2)>>1)*31);
   always @(posedge clk) begin
-    if(op_hcompute_lyy_stencil_write_wen)begin
-      if(op_hcompute_lyy_stencil_write_ctrl_vars!=op_hcompute_lyy_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lyy_stencil_write_wen!=op_hcompute_lyy_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_lyy_stencil_write_wen);
-        $display(op_hcompute_lyy_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_lgyy_stencil_1_read_ren)begin
-      if(op_hcompute_lgyy_stencil_1_read_ctrl_vars!=op_hcompute_lgyy_stencil_1_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_lgyy_stencil_1_read_ren!=op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
-        $display(op_hcompute_lgyy_stencil_1_read_ren);
-        $display(op_hcompute_lgyy_stencil_1_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_lyy_stencil_write_wen_fsm_out) begin
       case( lyy_stencil_lyy_stencil_op_hcompute_lyy_stencil_2_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_lyy_stencil_write[0];
         1:bank_1[addr0] <= op_hcompute_lyy_stencil_write[0];
         2:bank_2[addr0] <= op_hcompute_lyy_stencil_write[0];
         3:bank_3[addr0] <= op_hcompute_lyy_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -3937,7 +3580,6 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
         1:op_hcompute_lgyy_stencil_1_read[0] = bank_1[addr1];
         2:op_hcompute_lgyy_stencil_1_read[0] = bank_2[addr1];
         3:op_hcompute_lgyy_stencil_1_read[0] = bank_3[addr1];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
@@ -3946,7 +3588,6 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
         1:op_hcompute_lgyy_stencil_1_read[1] = bank_1[addr2];
         2:op_hcompute_lgyy_stencil_1_read[1] = bank_2[addr2];
         3:op_hcompute_lgyy_stencil_1_read[1] = bank_3[addr2];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
@@ -3955,7 +3596,6 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
         1:op_hcompute_lgyy_stencil_1_read[2] = bank_1[addr3];
         2:op_hcompute_lgyy_stencil_1_read[2] = bank_2[addr3];
         3:op_hcompute_lgyy_stencil_1_read[2] = bank_3[addr3];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
@@ -3964,7 +3604,6 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
         1:op_hcompute_lgyy_stencil_1_read[3] = bank_1[addr4];
         2:op_hcompute_lgyy_stencil_1_read[3] = bank_2[addr4];
         3:op_hcompute_lgyy_stencil_1_read[3] = bank_3[addr4];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
@@ -3973,7 +3612,6 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
         1:op_hcompute_lgyy_stencil_1_read[4] = bank_1[addr5];
         2:op_hcompute_lgyy_stencil_1_read[4] = bank_2[addr5];
         3:op_hcompute_lgyy_stencil_1_read[4] = bank_3[addr5];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
@@ -3982,7 +3620,6 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
         1:op_hcompute_lgyy_stencil_1_read[5] = bank_1[addr6];
         2:op_hcompute_lgyy_stencil_1_read[5] = bank_2[addr6];
         3:op_hcompute_lgyy_stencil_1_read[5] = bank_3[addr6];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
@@ -3991,7 +3628,6 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
         1:op_hcompute_lgyy_stencil_1_read[6] = bank_1[addr7];
         2:op_hcompute_lgyy_stencil_1_read[6] = bank_2[addr7];
         3:op_hcompute_lgyy_stencil_1_read[6] = bank_3[addr7];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
@@ -4000,7 +3636,6 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
         1:op_hcompute_lgyy_stencil_1_read[7] = bank_1[addr8];
         2:op_hcompute_lgyy_stencil_1_read[7] = bank_2[addr8];
         3:op_hcompute_lgyy_stencil_1_read[7] = bank_3[addr8];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_lgyy_stencil_1_read_ren_fsm_out) begin
@@ -4009,7 +3644,6 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
         1:op_hcompute_lgyy_stencil_1_read[8] = bank_1[addr9];
         2:op_hcompute_lgyy_stencil_1_read[8] = bank_2[addr9];
         3:op_hcompute_lgyy_stencil_1_read[8] = bank_3[addr9];
-        default: $finish(-1);
       endcase
     end
   end
@@ -4399,46 +4033,12 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
   logic [15:0] addr8;
   assign addr8 = (((((-1 + 1*op_hcompute_grad_y_stencil_read_ctrl_vars_fsm_out[1])) - -3)>>1)*1+((((-2 + 1*op_hcompute_grad_y_stencil_read_ctrl_vars_fsm_out[2])) - -3)>>1)*32);
   always @(posedge clk) begin
-    if(op_hcompute_padded16_global_wrapper_stencil_write_wen)begin
-      if(op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars!=op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_padded16_global_wrapper_stencil_write_wen!=op_hcompute_padded16_global_wrapper_stencil_write_wen_fsm_out) begin
-        $display(op_hcompute_padded16_global_wrapper_stencil_write_wen);
-        $display(op_hcompute_padded16_global_wrapper_stencil_write_wen_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_grad_x_stencil_read_ren)begin
-      if(op_hcompute_grad_x_stencil_read_ctrl_vars!=op_hcompute_grad_x_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_grad_x_stencil_read_ren!=op_hcompute_grad_x_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_grad_x_stencil_read_ren);
-        $display(op_hcompute_grad_x_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
-    if(op_hcompute_grad_y_stencil_read_ren)begin
-      if(op_hcompute_grad_y_stencil_read_ctrl_vars!=op_hcompute_grad_y_stencil_read_ctrl_vars_fsm_out) begin
-        $display("Different");
-        $finish(-1);
-      end
-    end
-    if (op_hcompute_grad_y_stencil_read_ren!=op_hcompute_grad_y_stencil_read_ren_fsm_out) begin
-        $display(op_hcompute_grad_y_stencil_read_ren);
-        $display(op_hcompute_grad_y_stencil_read_ren_fsm_out);
-      $finish(-1);
-    end
     if (op_hcompute_padded16_global_wrapper_stencil_write_wen_fsm_out) begin
       case( padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_padded16_global_wrapper_stencil_write[0];
         1:bank_1[addr0] <= op_hcompute_padded16_global_wrapper_stencil_write[0];
         2:bank_2[addr0] <= op_hcompute_padded16_global_wrapper_stencil_write[0];
         3:bank_3[addr0] <= op_hcompute_padded16_global_wrapper_stencil_write[0];
-        default: $finish(-1);
       endcase
     end
   end
@@ -4449,7 +4049,6 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
         1:op_hcompute_grad_x_stencil_read[0] = bank_1[addr1];
         2:op_hcompute_grad_x_stencil_read[0] = bank_2[addr1];
         3:op_hcompute_grad_x_stencil_read[0] = bank_3[addr1];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_grad_x_stencil_read_ren_fsm_out) begin
@@ -4458,7 +4057,6 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
         1:op_hcompute_grad_x_stencil_read[1] = bank_1[addr2];
         2:op_hcompute_grad_x_stencil_read[1] = bank_2[addr2];
         3:op_hcompute_grad_x_stencil_read[1] = bank_3[addr2];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_grad_x_stencil_read_ren_fsm_out) begin
@@ -4467,7 +4065,6 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
         1:op_hcompute_grad_x_stencil_read[2] = bank_1[addr3];
         2:op_hcompute_grad_x_stencil_read[2] = bank_2[addr3];
         3:op_hcompute_grad_x_stencil_read[2] = bank_3[addr3];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_grad_x_stencil_read_ren_fsm_out) begin
@@ -4476,7 +4073,6 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
         1:op_hcompute_grad_x_stencil_read[3] = bank_1[addr4];
         2:op_hcompute_grad_x_stencil_read[3] = bank_2[addr4];
         3:op_hcompute_grad_x_stencil_read[3] = bank_3[addr4];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_grad_x_stencil_read_ren_fsm_out) begin
@@ -4485,7 +4081,6 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
         1:op_hcompute_grad_x_stencil_read[4] = bank_1[addr5];
         2:op_hcompute_grad_x_stencil_read[4] = bank_2[addr5];
         3:op_hcompute_grad_x_stencil_read[4] = bank_3[addr5];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_grad_x_stencil_read_ren_fsm_out) begin
@@ -4494,7 +4089,6 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
         1:op_hcompute_grad_x_stencil_read[5] = bank_1[addr6];
         2:op_hcompute_grad_x_stencil_read[5] = bank_2[addr6];
         3:op_hcompute_grad_x_stencil_read[5] = bank_3[addr6];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_grad_y_stencil_read_ren_fsm_out) begin
@@ -4503,7 +4097,6 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
         1:op_hcompute_grad_y_stencil_read[1] = bank_1[addr7];
         2:op_hcompute_grad_y_stencil_read[1] = bank_2[addr7];
         3:op_hcompute_grad_y_stencil_read[1] = bank_3[addr7];
-        default: $finish(-1);
       endcase
     end
     if (op_hcompute_grad_y_stencil_read_ren_fsm_out) begin
@@ -4512,7 +4105,6 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
         1:op_hcompute_grad_y_stencil_read[5] = bank_1[addr8];
         2:op_hcompute_grad_y_stencil_read[5] = bank_2[addr8];
         3:op_hcompute_grad_y_stencil_read[5] = bank_3[addr8];
-        default: $finish(-1);
       endcase
     end
   end

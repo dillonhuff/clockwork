@@ -1,6 +1,6 @@
 #include "verilog_backend.h"
 
-#define SIM 1
+#define SIM 0
 
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   vector<string> terms;

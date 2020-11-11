@@ -16539,7 +16539,6 @@ vector<prog> stencil_programs() {
   vector<prog> test_programs;
   //test_programs.push_back(rom());
 
-
   test_programs.push_back(harris());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
@@ -16590,8 +16589,8 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  concat(test_programs, harris_variants());
   concat(test_programs, stencil_programs());
+  concat(test_programs, harris_variants());
 
   // Too large to fit in 16 bit controller,
   // and not the schedule we want anyway
