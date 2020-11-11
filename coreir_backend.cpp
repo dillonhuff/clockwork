@@ -3223,6 +3223,7 @@ void move_to_compute_regression_folder(const std::string& app_name, const std::s
   cmd("cp hw_classes.h " + dst_folder);
   cmd("cp clockwork_standard_compute_units.h " + dst_folder);
   cmd("cp " + app_name + "_compute.h " + dst_folder);
+
   cmd("mv " + compute_name + "_compute.json " + dst_folder);
   cmd("mv " + compute_name + ".v " + dst_folder);
   cmd("mv " + compute_name + "_compute_tb.cpp " + dst_folder);
