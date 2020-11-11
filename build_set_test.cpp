@@ -16299,7 +16299,7 @@ void compile_for_generic_SRAM_mem(prog& prg) {
 
 void compile_for_FPGA_BRAM_mem(prog& prg) {
   auto options = FPGA_BRAM_codegen_options(prg);
-  options.rtl_options.use_pipelined_compute_units = true;
+  options.rtl_options.use_pipelined_compute_units = false;//true;
   schedule_info sched = garnet_schedule_info(options, prg);
   compile_cycle_accurate_hw(options, sched, prg);
 }
@@ -16540,10 +16540,12 @@ vector<prog> stencil_programs() {
   //test_programs.push_back(rom());
 
 
+
   test_programs.push_back(pointwise());
+  test_programs.push_back(harris());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(up_sample());
-  test_programs.push_back(harris());
+
   test_programs.push_back(gaussian());
 
   // Fails with dual port tile?
@@ -16592,7 +16594,6 @@ vector<prog> all_cgra_programs() {
   vector<prog> test_programs;
   concat(test_programs, stencil_programs());
   concat(test_programs, harris_variants());
-  concat(test_programs, stencil_programs());
 
   // Too large to fit in 16 bit controller,
   // and not the schedule we want anyway
