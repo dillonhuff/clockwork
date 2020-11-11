@@ -11441,10 +11441,10 @@ void generate_verilog_tb(const std::string& name) {
 }
 
 #ifdef COREIR
-void generate_garnet_verilog_top(const std::string& name) {
+void generate_garnet_verilog_top(CodegenOptions& options, const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input aha_garnet_design/" + name + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 
   //run verilator on all the generated verilog
@@ -13275,7 +13275,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(conv_3_3());
   //test_apps.push_back(resnet());
   //test_apps.push_back(conv_3_3_wide());
-  //test_apps.push_back(gaussian());
+  test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(conv_1_2());
@@ -13289,7 +13289,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
 
-  test_apps.push_back(resnet());
+  //test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     prg.pretty_print();
@@ -15105,7 +15105,8 @@ void lake_tests() {
   //union_test();
   //assert(false);
   //playground();
-  test_single_port_mem(false, true, "aha_garnet_design_new");
+  //test_single_port_mem(false, true, "aha_garnet_design_new");
+  test_single_port_mem(false, false, "aha_garnet_design");
   assert(false);
   lake_conv33_autovec_aha_test();
   //double_buffer_test();
@@ -16496,7 +16497,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
 #ifdef COREIR
   generate_garnet_coreir(buffers_opt, prg, options, sched);
   if (!options.config_gen_only) {
-    generate_garnet_verilog_top(prg.name);
+    generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
   }
 #endif
