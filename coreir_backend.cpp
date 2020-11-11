@@ -3277,6 +3277,11 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
     if (fd.second->isOutput()) {
       rgtb << tab(2) << "int coreir_result = " << "dut." << fd.first << ";" << endl;
       rgtb << tab(2) << "int cpp_result = " << compute_name << sep_list(in_args, "(", ")", ", ") << ".to_int();" << endl;
+      rgtb << tab(2) << "if (coreir_result != cpp_result) {" << endl;
+      rgtb << tab(3) << "cout << coreir_result << endl;" << endl;
+      rgtb << tab(3) << "cout << cpp_result << endl;" << endl;
+      rgtb << tab(2) << "}" << endl;
+      rgtb << tab(2) << "assert(coreir_result == cpp_result);" << endl;
     }
   }
   rgtb << tab(1) << "}" << endl << endl;
@@ -3293,6 +3298,7 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
   assert(verilator_build == 0);
 
   int verilator_run = cmd("./obj_dir/V" + top_module);
+  assert(verilator_run);
   deleteContext(context);
 }
 
