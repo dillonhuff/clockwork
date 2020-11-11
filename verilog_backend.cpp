@@ -1036,7 +1036,10 @@ void analyze_memory_demands(UBuffer& buf, prog& prg, schedule_info& hwinfo) {
   cout << reduced << endl;
 
   if (reduced.get_out_ports().size() > 0) {
-    assert(false);
+    auto eb = embarassing_partition(reduced, hwinfo);
+    if (!eb.has_value()) {
+      assert(false);
+    }
   }
   //assert(false);
 }
