@@ -808,12 +808,12 @@ void instantiate_banks(
     schedule_info& hwinfo,
     const std::unordered_set<string>& shift_registered) {
 
-  vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
-  //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  //vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  //bool has_embarassing_partition = embarassing_banking.has_value();
-  bool has_embarassing_partition = false;
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  //bool has_embarassing_partition = false;
 
   bank bnk = buf.compute_bank_info();
   vector<int> capacities;
@@ -997,12 +997,12 @@ void generate_platonic_ubuffer(
     ////assert(false);
   //}
 
-  vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
-  //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  //vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  //bool has_embarassing_partition = embarassing_banking.has_value();
-  bool has_embarassing_partition = false;
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  //bool has_embarassing_partition = false;
 
   int num_banks = card(bank_factors);
   vector<int> extents;
