@@ -18751,12 +18751,14 @@ void dhuff_playground() {
   {
 #ifdef COREIR
     //prog prg = harris_sch1_onebuf();
-    prog prg = harris_sch5_1ppc();
-    prg.pretty_print();
-    for (auto op : prg.all_ops()) {
-      if (op->func != "") {
-        cout << op->func << endl;
-        generate_compute_unit_regression_tb(op, prg);
+    //prog prg = harris_sch5_1ppc();
+    for (auto prg : harris_variants()) {
+      prg.pretty_print();
+      for (auto op : prg.all_ops()) {
+        if (op->func != "") {
+          cout << op->func << endl;
+          generate_compute_unit_regression_tb(op, prg);
+        }
       }
     }
     assert(false);
