@@ -3260,12 +3260,16 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
       assert(isa<ArrayType>(inner_tp));
       auto inner_atp = static_cast<ArrayType*>(inner_tp);
       int num_lanes = len;
+      vector<string> lanes;
       for (int l = 0; l < num_lanes; l++) {
         string name = fd.first + "_" + str(l);
         rgtb << tab(2) << "int " << name << " = rand() % 256;" << endl;
         rgtb << tab(2) << "hw_uint<16> " << name << "_hwint = hw_uint<16>(" + name + ");" << endl;
-        in_args.push_back(name + "_hwint");
+        lanes.push_back(name + "_hwint");
       }
+      string packed_arg = fd.first + "_packed";
+      pack_bv(2, rgtb, packed_arg, lanes, 16);
+      in_args.push_back(packed_arg);
     }
 
     rgtb << tab(2) << "dut.eval();" << endl;
