@@ -220,6 +220,7 @@ class AccessPattern {
 
       int var_dim;
       vector<int> in_range;
+      vector<int> in_start;
       vector<int> stride;
       map<string, int> name2idx;
 
@@ -247,6 +248,7 @@ class AccessPattern {
           buf_name = a.buf_name;
           var_dim = a.var_dim;
           in_range = a.in_range;
+          in_start = a.in_start;
           stride = a.stride;
           name2idx = a.name2idx;
 
@@ -433,6 +435,7 @@ class AccessPattern {
 
           //iniital the input var range
           in_range = vector<int>(var_dim - 1, 0);
+          in_start = vector<int>(var_dim - 1, 0);
           for (auto it = pairs.begin(); it != pairs.end(); it ++) {
               if (it->first == "const")
                   continue;
@@ -444,6 +447,7 @@ class AccessPattern {
               //assert(min == 0);
               int offset = it - pairs.begin()-1;
               in_range[offset] = max - min + 1;
+              in_start[offset] = min;
           }
 
           //initial the output addr range
@@ -596,12 +600,14 @@ class AccessPattern {
         return inner_most_address_related_dim_id;
       }
 
-      isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
+      //This is the method create the vectorized batch loop
+      pair<isl_map*, isl_set*> get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
           vector<int> & stride_in_target = access_matrix[dim_id];
           int inner_most = get_inner_most_related_dom_dim();
           cout << "trans op dim: " << inner_most << endl;
           vector<string> var_list(inner_most+1);
           vector<string> origin_var_list(var_dim-1);
+          vector<string> reaccess_dim_stmt;
           //var_list.front() = "root";
           //origin_var_list.front() = "root";
           //TODO: handle reuse pattern
@@ -616,19 +622,25 @@ class AccessPattern {
                   origin_var_list[id] = it.first;
               }
               else {
-                  if (id <= inner_most)
+                  if (id <= inner_most) {
                       var_list[id] = it.first;
+                  } else {
+                      reaccess_dim_stmt.push_back(it.first + "=" + to_string(in_start.at(id)));
+                  }
                   origin_var_list[id] = it.first;
               }
           }
           auto vars = sep_list(var_list, "[", "]", "," );
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
+          auto stmt = sep_list(reaccess_dim_stmt, "", "", " and ");
           cout <<"OP name: " << op_name << endl;
           isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name + suffix + vars + "}").c_str()));
-          return multi_map;
+          isl_set* sched_set = rdset(ctx, string("{ " + op_name + origin_vars + ": " + stmt + " }").c_str());
+          return {multi_map, sched_set};
       }
 
 
+      //This is the method create the vectorized sequential loop
       isl_map* get_op_stripmining(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
           vector<int> & stride_in_target = access_matrix[dim_id];
           int inner_most = get_inner_most_related_dom_dim();

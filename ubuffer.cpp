@@ -5342,6 +5342,14 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     string origin_pt_name = pick(rewrite_buf2op_map).first;
     for (int new_pt_cnt= 0; new_pt_cnt < fetch_width; new_pt_cnt++) {
       auto rewrite_access_map = ap_vec.at(new_pt_cnt);
+      int look_n_ahead = 1;
+
+      //TODO: loop iteration is less than the fetch_width
+      while (empty(rewrite_access_map)) {
+          rewrite_access_map = ap_vec.at(new_pt_cnt - look_n_ahead);
+          look_n_ahead ++;
+      }
+
       cout << "rewrite access map: " << str(rewrite_access_map) << endl;
       isl_set* dom = ::domain(to_map(rewrite_access_map));
       if (is_out) {
@@ -5360,8 +5368,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
         //    target_buf.retrive_domain[pt_name] = target_buf.domain.at(pt_name);
         //    target_buf.domain[pt_name] = ::domain(to_map(target_buf.access_map[pt_name]));
         //}
-      }
-      else {
+      } else {
         string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
         target_buf.port_bundles[bd_name].push_back(pt_name);
         target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), its(merge_sched, dom));
@@ -5584,11 +5591,14 @@ pair<std::map<string, UBuffer>, vector<string> >
         //if (is_self_loop(in_pt_name)) {
         //  suffix += "_in";
         //}
-        isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
+        auto trans_pair = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
+        isl_map* op_trans = trans_pair.first;
+        isl_set* sched_domain = trans_pair.second;
         std::cout << "transform rewrite: " << str(op_trans) << endl;
         cout << "IS loop: " << is_self_loop(in_pt_name) << endl;
 
         auto rewrite_buf2op = dot(inv(access_map.at(in_pt_name)), op_trans);
+        cout << "rewrite buf2op: " << str(rewrite_buf2op) << endl;
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
         cout << "rewrite buffer to op map: " << str(access_map.at(in_pt_name)) << endl;
 
@@ -5621,8 +5631,8 @@ pair<std::map<string, UBuffer>, vector<string> >
           cout << "Slice dim: " << str(slice_dim) << endl;
           cout << "original loop: " << str(new_sched.at(::name(new_op_domain))) << endl;
           sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
-          sched = dot(inv(op_trans), sched);
-          cout << "sched: " << str(sched) << endl;
+          sched = dot(inv(op_trans), its(sched, sched_domain));
+          cout << "sched: " << str(sched)  << endl;
 
        // }
 
@@ -5663,7 +5673,9 @@ pair<std::map<string, UBuffer>, vector<string> >
         //if (is_self_loop(out_pt_name)) {
         //  suffix += "_out";
         //}
-        isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
+        auto trans_pair = acc_pattern.get_op_transform(ctx, dim_id, fetch_width, suffix);
+        isl_map* op_trans = trans_pair.first;
+        isl_set* sched_domain = trans_pair.second;
         std::cout << "transform rewrite: " << str(op_trans) << endl;
 
 
@@ -5683,8 +5695,10 @@ pair<std::map<string, UBuffer>, vector<string> >
             op_sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
             //cout << "op schedule before trans: " << str(op_sched) << endl;
             //cout << "trans: " << str(op_trans) << endl;
-            op_sched = dot(inv(op_trans), op_sched);
-            cout << "op schedule: " << str(op_sched) << endl;
+            cout << "op schedule: " << str(op_sched) << ", is single: " << single_valued(op_sched) <<  endl;
+            cout << "Sched domain: " << str(sched_domain) << endl;
+            op_sched = dot(inv(op_trans), its(op_sched, sched_domain));
+            cout << "op schedule after trans: " << str(op_sched) << ", is single: " << single_valued(op_sched) <<  endl;
         //}
 
 
