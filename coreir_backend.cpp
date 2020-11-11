@@ -3238,30 +3238,31 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
   rgtb << "#include <fstream>" << endl;
   rgtb << "#include \"verilated.h\"" << endl;
   rgtb << "#include \"V" << compute_name << ".h\"" << endl << endl;
+  rgtb << "#include \"" << prg.name << "_compute" << ".h\"" << endl << endl;
 
 
   rgtb << "int main() {" << endl;
   rgtb << tab(1) << "cout << \"\\tStarting compute unit test\" << endl;" << endl;
   rgtb << tab(1) << "V" << compute_name << " dut;" << endl;
-  //rgtb << "dut.clk = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
-
-  //rgtb << "dut.reset= 1;" << endl;
-  //rgtb << "dut.clk = 1;" << endl;
-  //rgtb << "dut.eval();" << endl;
 
   rgtb << tab(1) << "srand(1);" << endl;
 
   rgtb << tab(1) << "for (int i = 0; i < 100; i++) {" << endl;
   RecordType* tp = compute_mod->getType();
+  vector<string> in_args;
   for (auto fd : tp->getRecord()) {
     if (fd.second->isInput()) {
       rgtb << tab(2) << "int " << fd.first << " = rand() % 256;" << endl;
+      rgtb << tab(2) << "hw_uint<16> " << fd.first << "_hwint = hw_uint<16>(" + fd.first + ");" << endl;
+      in_args.push_back(fd.first + "_hwint");
     }
+
+    rgtb << tab(2) << "dut.eval();" << endl;
+
     if (fd.second->isOutput()) {
-      rgtb << tab(2) << "int result = " << "dut." << fd.first << ";" << endl;
+      rgtb << tab(2) << "int coreir_result = " << "dut." << fd.first << ";" << endl;
+      rgtb << tab(2) << "int cpp_result = " << compute_name << sep_list(in_args, "(", ")", ", ") << ".to_int();" << endl;
     }
-    //rgtb << tab(1) << "cout << \"" << fd.first << "\" << endl;" << endl;
   }
   rgtb << tab(1) << "}" << endl << endl;
 
