@@ -456,6 +456,10 @@ void print_shift_registers(
       print_reset_if(options, out);
       //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
       //out << tab(2) << "if (~rst_n) begin" << endl;
+      //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+      //out << tab(2) << "if (~rst_n) begin" << endl;
+      //out << tab(1) << "always @(posedge clk) begin" << endl;
+      //out << tab(2) << "if (rst_n) begin" << endl;
       out << tab(3) << "read_addr <= 0;" << endl;
       out << tab(3) << "write_addr <= " << delay << ";" << endl;
       out << tab(2) << "end else begin" << endl;
@@ -547,6 +551,10 @@ void generate_fsm(
   print_reset_if(options, out);
   //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
   //out << tab(2) << "if (~rst_n) begin" << endl;
+  //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+  //out << tab(2) << "if (~rst_n) begin" << endl;
+ //// out << tab(1) << "always @(posedge clk) begin" << endl;
+ //// out << tab(2) << "if (rst_n) begin" << endl;
   for(int i = 0; i < dims ;i ++) {
     out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b1010101010101010;" << endl;
     out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
