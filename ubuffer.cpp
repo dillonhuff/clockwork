@@ -5671,3 +5671,38 @@ vector<int> extents_by_dimension(UBuffer& buf) {
   return extents;
 }
 
+UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf) {
+  UBuffer cpy = buf;
+  for (auto& pt : sr_ports) {
+    cpy.isIn.erase(pt);
+    cpy.retrive_domain.erase(pt);
+    cpy.dynamic_ports.erase(pt);
+    cpy.sv_map.erase(pt);
+    cpy.access_map.erase(pt);
+    cpy.schedule.erase(pt);
+
+
+  }
+
+  std::map<string, vector<string> > port_bundles;
+  for (auto bundle : cpy.port_bundles) {
+    vector<string> pts;
+    for (auto& pt : bundle.second) {
+      if (!elem(pt, sr_ports)) {
+        pts.push_back(pt);
+      }
+    }
+    if (pts.size() > 0) {
+      port_bundles[bundle.first] = pts;
+    }
+  }
+  cpy.port_bundles = port_bundles;
+  for (auto bundle : cpy.port_bundles) {
+    for (auto pt : bundle.second) {
+      assert(!elem(pt, sr_ports));
+    }
+  }
+
+  return cpy;
+}
+

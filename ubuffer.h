@@ -2268,3 +2268,4 @@ vector<int> min_offsets_by_dimension(UBuffer& buf);
 vector<int> max_offsets_by_dimension(UBuffer& buf);
 vector<int> extents_by_dimension(UBuffer& buf);
 
+UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf);

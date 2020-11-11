@@ -808,11 +808,12 @@ void instantiate_banks(
     schedule_info& hwinfo,
     const std::unordered_set<string>& shift_registered) {
 
-  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
+  //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  //bool has_embarassing_partition = false;
+  //bool has_embarassing_partition = embarassing_banking.has_value();
+  bool has_embarassing_partition = false;
 
   bank bnk = buf.compute_bank_info();
   vector<int> capacities;
@@ -982,127 +983,6 @@ void instantiate_banks(
   out << endl;
 }
 
-UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf) {
-  UBuffer cpy = buf;
-  for (auto& pt : sr_ports) {
-    cpy.isIn.erase(pt);
-    cpy.retrive_domain.erase(pt);
-    cpy.dynamic_ports.erase(pt);
-    cpy.sv_map.erase(pt);
-    cpy.access_map.erase(pt);
-    cpy.schedule.erase(pt);
-
-
-  }
-
-  std::map<string, vector<string> > port_bundles;
-  for (auto bundle : cpy.port_bundles) {
-    vector<string> pts;
-    for (auto& pt : bundle.second) {
-      if (!elem(pt, sr_ports)) {
-        pts.push_back(pt);
-      }
-    }
-    if (pts.size() > 0) {
-      port_bundles[bundle.first] = pts;
-    }
-  }
-  cpy.port_bundles = port_bundles;
-  for (auto bundle : cpy.port_bundles) {
-    for (auto pt : bundle.second) {
-      assert(!elem(pt, sr_ports));
-    }
-  }
-
-  return cpy;
-}
-
-void analyze_memory_demands(UBuffer& buf, prog& prg, schedule_info& hwinfo) {
-
-  cout << buf << endl;
-
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
-  std::set<string> sr_ports;
-  for (auto port : shift_registered_outputs) {
-    sr_ports.insert(port.first);
-  }
-  for (auto port : shift_registered_outputs_to_outputs) {
-    sr_ports.insert(port.first);
-  }
-
-  UBuffer reduced = delete_ports(sr_ports, buf);
-  cout << "Reduced..." << endl;
-  cout << reduced << endl;
-
-  if (reduced.get_out_ports().size() > 0) {
-    auto eb = embarassing_partition(reduced, hwinfo);
-    if (!eb.has_value()) {
-      auto sched = reduced.global_schedule();
-      cout << "Banking schedule..." << endl;
-      for (auto s : get_maps(sched)) {
-        cout << tab(1) << str(s) << endl;
-      }
-      auto op_writes = reduced.producer_map();
-      auto op_reads = reduced.consumer_map();
-
-      auto written = range(op_writes);
-      auto read = range(op_reads);
-      auto all_data = unn(written, read);
-
-      auto read_id = isl_union_set_identity(cpy(read));
-
-      auto read_times = dot(inv(op_reads), sched);
-      //auto simul_reads = dot(read_times, inv(read_times));
-      // Set of simultaneous reads to different locations
-      auto simul_reads_umap = 
-        diff(dot(read_times, inv(read_times)), read_id);
-      cout << "Simultaneous reads..." << str(simul_reads_umap) << endl;
-      if (empty(simul_reads_umap)) {
-        return;
-      }
-      auto simul_reads = to_map(simul_reads_umap);
-      auto diff = isl_map_deltas(cpy(simul_reads));
-      cout << tab(1) << "Deltas: " << str(diff) << endl;
-      //auto lmin = lexmin(diff);
-      auto lmax = lexmax(diff);
-      //cout << tab(1) << "LMin  : " << str(lmin) << endl;
-      cout << tab(1) << "LMax  : " << str(lmax) << endl;
-      vector<int> cycle_factors;
-      for (int d = 0; d < num_dims(diff); d++) {
-        auto pd = project_all_but(diff, d);
-        //auto lmin = lexmin(pd);
-        auto lmaxpt = lexmaxval(pd);
-        int bank_factor = to_int(lmaxpt) + 1;
-        cout << tab(2) << "Bank factor in " << d << ": " << bank_factor << endl;
-        cycle_factors.push_back(bank_factor);
-        //cout << tab(1) << "LMin " << d << " : " << str(lmin) << endl;
-        //cout << tab(1) << "LMax " << d << " : " << str(lmax) << endl;
-        //int lmax = to_int(sample(lmax));
-      }
-
-      vector<string> dvs;
-      vector<string> addrs;
-      int num_banks = 1;
-      for (int i = 0; i < num_dims(diff); i++) {
-        assert(cycle_factors.at(i) > 0);
-        dvs.push_back("a_" + str(i));
-        addrs.push_back("a_" + str(i) + " % " + str(cycle_factors.at(i)));
-        num_banks *= cycle_factors.at(i);
-      }
-
-      string bank_func =
-        curlies(reduced.name + bracket_list(dvs) + " -> " + bracket_list(addrs));
-      auto bnk = isl_map_read_from_str(reduced.ctx, bank_func.c_str());
-
-      cout << "Bank func: " << str(bnk) << endl;
-      assert(banking_scheme_is_legal(bnk, reduced));
-      //assert(false);
-    }
-  }
-  //assert(false);
-}
-
 void generate_platonic_ubuffer(
     std::ostream& out,
     CodegenOptions& options,
@@ -1112,16 +992,17 @@ void generate_platonic_ubuffer(
 
   prg.pretty_print();
 
-  analyze_memory_demands(buf, prg, hwinfo);
+  //analyze_memory_demands(buf, prg, hwinfo);
   //if (buf.name == "padded16_global_wrapper_stencil") {
     ////assert(false);
   //}
 
-  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
+  //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  //bool has_embarassing_partition = false;
+  //bool has_embarassing_partition = embarassing_banking.has_value();
+  bool has_embarassing_partition = false;
 
   int num_banks = card(bank_factors);
   vector<int> extents;

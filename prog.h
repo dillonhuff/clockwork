@@ -1878,3 +1878,5 @@ bool no_violated_cycle_accurate_dependencies(schedule_info& sched, prog& prg);
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 
 void adjust_inner_iis(schedule_info& sched, prog& prg);
+
+vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinfo);
