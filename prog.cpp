@@ -5195,7 +5195,7 @@ void generate_verilator_tb(
       "dut." + out.first + "_" + out.second;
     rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
     rgtb << tab(1) << "if (dut." << ctrl_name << ") {" << endl;
-    rgtb << tab(2) << "cout << (int) *(" << data_name << ") << endl;" << endl;
+    rgtb << tab(2) << "cout << \"Got data: \" << (int) *(" << data_name << ") << endl;" << endl;
     //rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
     rgtb << tab(2) << "hw_uint<16> val((int) *(" << data_name << "));" << endl;
     //rgtb << tab(2) << "fout << val << endl;" << endl;
@@ -6854,7 +6854,34 @@ void generate_vivado_rtl_tb(
   rgtb << tab(1) << "logic flush;" << endl;
 
   rgtb << endl << endl;
-  rgtb << prg.name << " dut();" << endl;
+  vector<string> port_decls{".clk(clk)", ".flush(flush)", ".rst_n(rst_n)"};
+
+  //for (auto b : buf.port_bundles) {
+    //int pt_width = buf.port_widths;
+    //int bd_width = buf.lanes_in_bundle(b.first);
+    //string name = b.first;
+    //string pt_rep = pick(b.second);
+    //auto acc_maps = get_maps(buf.access_map.at(pt_rep));
+    //assert(acc_maps.size() > 0);
+    //int control_dimension = num_in_dims(pick(acc_maps));
+    //if (buf.is_input_bundle(b.first)) {
+      //if (options.rtl_options.use_external_controllers) {
+        //string wen_name = name + "_wen";
+        //rgtb << tab(1) << "logic " << wen_name << ";";
+        //port_decls.push_back("." + wen_name + "(" + wen_name + ")");
+        ////ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
+        ////ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
+      //}
+      ////ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
+    //} else {
+      ////if (options.rtl_options.use_external_controllers) {
+        ////ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
+        ////ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
+      ////}
+      ////ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
+    //}
+  //}
+  rgtb << prg.name << " dut(\n\t" << sep_list(port_decls, "\n\t", "\n\t", ",\n\t") << ");" << endl;
   rgtb << "endmodule";
 
   rgtb << tab(1) << "initial begin" << endl;
@@ -6879,15 +6906,6 @@ void generate_vivado_rtl_tb(
   rgtb << tab(1) << "always @(posedge clk) begin" << endl;
   rgtb << tab(1) << "end" << endl;
     
-  //rgtb << "#include \"hw_classes.h\"" << endl;
-  //rgtb << "#include <fstream>" << endl;
-  //rgtb << "#include \"verilated.h\"" << endl;
-  //rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
-
-
-  //rgtb << "int main() {" << endl;
-  //rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << "_verilog.txt\");" << endl;
-
   //map<string, int> unroll_factor;
   //for (auto in : prg.ins) {
     //auto readers = find_readers(in, prg);
