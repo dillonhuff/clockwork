@@ -3201,6 +3201,41 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
   //assert(false);
 }
 
+void generate_compute_unit_regression_tb(op* op, prog& prg) {
+  assert(op->func != "");
+
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cgralib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  add_delay_tile_generator(context);
+
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  auto ns = context->getNamespace("global");
+  if (!loadFromFile(context, compute_file)) {
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    context->die();
+  }
+
+  Module* compute_mod = ns->getModule(op->func);
+
+  string name = prg.name;
+
+  if(!saveToFile(ns, prg.name + "_compute.json", compute_mod)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+    assert(false);
+  }
+
+  deleteContext(context);
+
+  int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input ./" + name + "_compute.json --output " + name + "_compute.v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
+  assert(compute_to_verilog_res == 0);
+
+  ofstream out(op->func + "_compute_tb.cpp");
+  out.close();
+}
+
 #endif
 
 

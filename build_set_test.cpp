@@ -16567,10 +16567,10 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  //test_programs.push_back(harris_sch1());
+  //test_programs.push_back(harris_sch1_onebuf());
 
   // 2. Final output is wrong
-  //test_programs.push_back(harris_sch2());
+  //test_programs.push_back(harris_sch2_fourbuf());
   
   // Now: They also have an error in the ROMs
   //test_programs.push_back(harris_sch3_1pp9c());
@@ -16588,6 +16588,8 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, harris_variants());
+
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(mobilenet_unrolled());
@@ -16597,7 +16599,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(mobilenet_small());
 
   concat(test_programs, stencil_programs());
-  concat(test_programs, harris_variants());
 
   // Too large to fit in 16 bit controller,
   // and not the schedule we want anyway
@@ -18747,6 +18748,20 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+#ifdef COREIR
+    prog prg = harris_sch1_onebuf();
+    prg.pretty_print();
+    for (auto op : prg.all_ops()) {
+      if (op->func != "") {
+        cout << op->func << endl;
+        generate_compute_unit_regression_tb(op, prg);
+      }
+    }
+    assert(false);
+#endif
+  }
+
   {
     //prog prg = resnet_full_layer();
     //prg.pretty_print();
