@@ -6856,31 +6856,47 @@ void generate_vivado_rtl_tb(
   rgtb << endl << endl;
   vector<string> port_decls{".clk(clk)", ".flush(flush)", ".rst_n(rst_n)"};
 
-  //for (auto b : buf.port_bundles) {
-    //int pt_width = buf.port_widths;
-    //int bd_width = buf.lanes_in_bundle(b.first);
-    //string name = b.first;
-    //string pt_rep = pick(b.second);
-    //auto acc_maps = get_maps(buf.access_map.at(pt_rep));
-    //assert(acc_maps.size() > 0);
-    //int control_dimension = num_in_dims(pick(acc_maps));
-    //if (buf.is_input_bundle(b.first)) {
-      //if (options.rtl_options.use_external_controllers) {
-        //string wen_name = name + "_wen";
-        //rgtb << tab(1) << "logic " << wen_name << ";";
-        //port_decls.push_back("." + wen_name + "(" + wen_name + ")");
-        ////ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
-        ////ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
-      //}
-      ////ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
-    //} else {
-      ////if (options.rtl_options.use_external_controllers) {
-        ////ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
-        ////ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
-      ////}
-      ////ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
-    //}
-  //}
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+
+    int pixel_width = out_buf.port_widths;
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+
+    if (prg.is_input(out_rep)) {
+      string en_name = 
+        pg(out_rep, out_bundle) + "_en";
+      string data_name = 
+        pg(out_rep, out_bundle);
+
+      rgtb << tab(1) << "logic " << en_name << ";" << endl;
+      port_decls.push_back("." + en_name + "(" + en_name + ")");
+
+      int pix_w = pixel_width;
+      rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << " [" << pix_per_burst - 1 << " :0];" << endl;
+      port_decls.push_back("." + data_name + "(" + data_name + ")");
+
+    } else {
+      string en_name = 
+        pg(out_rep, out_bundle) + "_valid";
+      string data_name = 
+        pg(out_rep, out_bundle);
+
+      rgtb << tab(1) << "logic " << en_name << ";" << endl;
+      port_decls.push_back("." + en_name + "(" + en_name + ")");
+
+      int pix_w = pixel_width;
+      rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << " [" << pix_per_burst - 1 << " :0];" << endl;
+      port_decls.push_back("." + data_name + "(" + data_name + ")");
+
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
+      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+    }
+  }
+
   rgtb << prg.name << " dut(\n\t" << sep_list(port_decls, "\n\t", "\n\t", ",\n\t") << ");" << endl;
   rgtb << "endmodule";
 

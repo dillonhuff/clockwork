@@ -471,3 +471,14 @@ void compare(const std::string& name,
 vector<string> get_files(const std::string& path);
 
 int run_sw_bmp_test_harness(const std::string& app_name);
+
+static
+std::string pg(const std::string& buf, const std::string& bundle) {
+  return buf + "_" + bundle;
+}
+
+static
+std::string pg(const pair<string, string>& b) {
+  return pg(b.first, b.second);
+}
+

@@ -556,14 +556,6 @@ std::string cu_name(const std::string& n) {
   return "cu_" + n;
 }
 
-std::string pg(const std::string& buf, const std::string& bundle) {
-  return buf + "_" + bundle;
-}
-
-std::string pg(const pair<string, string>& b) {
-  return pg(b.first, b.second);
-}
-
   CoreIR::Wireable* wire(CoreIR::ModuleDef* bdef,
       const int width,
       const std::string& name,
