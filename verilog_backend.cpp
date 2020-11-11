@@ -2,6 +2,14 @@
 
 #define SIM 0
 
+void print_always_header(CodegenOptions& options, ostream& out) {
+  out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+}
+
+void print_reset_if(CodegenOptions& options, ostream& out) {
+  out << tab(2) << "if (~rst_n) begin" << endl;
+}
+
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   vector<string> terms;
   if (!is_zero(const_coeff(aff))) {
@@ -436,8 +444,10 @@ void print_shift_registers(
       out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
       out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
 
-      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-      out << tab(2) << "if (~rst_n) begin" << endl;
+      print_always_header(options, out);
+      print_reset_if(options, out);
+      //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+      //out << tab(2) << "if (~rst_n) begin" << endl;
       out << tab(3) << "read_addr <= 0;" << endl;
       out << tab(3) << "write_addr <= " << delay << ";" << endl;
       out << tab(2) << "end else begin" << endl;
@@ -525,8 +535,10 @@ void generate_fsm(
   condition += ");";
   out << tab(1) << condition << endl;
 
-  out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-  out << tab(2) << "if (~rst_n) begin" << endl;
+  print_always_header(options, out);
+  print_reset_if(options, out);
+  //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+  //out << tab(2) << "if (~rst_n) begin" << endl;
   for(int i = 0; i < dims ;i ++) {
     out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b1010101010101010;" << endl;
     out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
