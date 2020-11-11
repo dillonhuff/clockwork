@@ -4903,21 +4903,21 @@ hcompute_conv_stencil_2_pipelined inner_compute (
 assign conv_stencil_op_hcompute_conv_stencil_2_write[0] = inner_compute_out_conv_stencil;
 endmodule
 
-module _U87_pt__U88 (
+module _U88_pt__U89 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U78_pt__U79 (
+module _U80_pt__U81 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U70_pt__U71 (
+module _U73_pt__U74 (
     input [15:0] in,
     output [15:0] out
 );
@@ -4953,7 +4953,7 @@ hcompute_conv_stencil_1_pipelined inner_compute (
 assign conv_stencil_op_hcompute_conv_stencil_1_write[0] = inner_compute_out_conv_stencil;
 endmodule
 
-module _U62_pt__U63 (
+module _U66_pt__U67 (
     input [15:0] in,
     output [15:0] out
 );
@@ -4992,6 +4992,13 @@ hcompute_hw_output_stencil_pipelined inner_compute (
     .in0_conv_stencil(inner_compute_in0_conv_stencil)
 );
 assign hw_output_stencil_op_hcompute_hw_output_stencil_write[0] = inner_compute_out_hw_output_stencil;
+endmodule
+
+module _U60_pt__U61 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
 endmodule
 
 module _U604_pt__U605 (
@@ -5036,13 +5043,6 @@ module _U565_pt__U566 (
 assign out = in;
 endmodule
 
-module _U55_pt__U56 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
 module _U559_pt__U560 (
     input [15:0] in,
     output [15:0] out
@@ -5051,6 +5051,13 @@ assign out = in;
 endmodule
 
 module _U553_pt__U554 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U54_pt__U55 (
     input [15:0] in,
     output [15:0] out
 );
@@ -5163,6 +5170,13 @@ hcompute_conv_stencil_pipelined inner_compute (
 assign conv_stencil_op_hcompute_conv_stencil_write[0] = inner_compute_out_conv_stencil;
 endmodule
 
+module _U49_pt__U50 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
 module _U499_pt__U500 (
     input [15:0] in,
     output [15:0] out
@@ -5178,13 +5192,6 @@ assign out = in;
 endmodule
 
 module _U490_pt__U491 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U48_pt__U49 (
     input [15:0] in,
     output [15:0] out
 );
@@ -5233,6 +5240,13 @@ module _U451_pt__U452 (
 assign out = in;
 endmodule
 
+module _U44_pt__U45 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
 module _U448_pt__U449 (
     input [15:0] in,
     output [15:0] out
@@ -5248,13 +5262,6 @@ assign out = in;
 endmodule
 
 module _U432_pt__U433 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U42_pt__U43 (
     input [15:0] in,
     output [15:0] out
 );
@@ -7174,14 +7181,70 @@ hcompute_conv_stencil_5_pipelined inner_compute (
 assign conv_stencil_op_hcompute_conv_stencil_5_write[0] = inner_compute_out_conv_stencil;
 endmodule
 
-module _U396_pt__U397 (
+module _U40_pt__U41 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U380_pt__U381 (
+module _U406_pt__U407 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U400_pt__U401 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U395_pt__U396 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U390_pt__U391 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U386_pt__U387 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U382_pt__U383 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U379_pt__U380 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U376_pt__U377 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U374_pt__U375 (
     input [15:0] in,
     output [15:0] out
 );
@@ -7202,14 +7265,14 @@ module _U36_pt__U37 (
 assign out = in;
 endmodule
 
-module _U364_pt__U365 (
+module _U357_pt__U358 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U357_pt__U358 (
+module _U354_pt__U355 (
     input [15:0] in,
     output [15:0] out
 );
@@ -7223,7 +7286,21 @@ module _U350_pt__U351 (
 assign out = in;
 endmodule
 
-module _U344_pt__U345 (
+module _U347_pt__U348 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U341_pt__U342 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U33_pt__U34 (
     input [15:0] in,
     output [15:0] out
 );
@@ -7237,35 +7314,14 @@ module _U338_pt__U339 (
 assign out = in;
 endmodule
 
-module _U333_pt__U334 (
+module _U330_pt__U331 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U328_pt__U329 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U324_pt__U325 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U320_pt__U321 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U31_pt__U32 (
+module _U327_pt__U328 (
     input [15:0] in,
     output [15:0] out
 );
@@ -7286,14 +7342,14 @@ module _U314_pt__U315 (
 assign out = in;
 endmodule
 
-module _U312_pt__U313 (
+module _U30_pt__U31 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U310_pt__U311 (
+module _U302_pt__U303 (
     input [15:0] in,
     output [15:0] out
 );
@@ -7334,35 +7390,35 @@ hcompute_hw_kernel_global_wrapper_stencil_pipelined inner_compute (
 assign hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_write[0] = inner_compute_out_hw_kernel_global_wrapper_stencil;
 endmodule
 
-module _U295_pt__U296 (
+module _U299_pt__U300 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U292_pt__U293 (
+module _U296_pt__U297 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U288_pt__U289 (
+module _U28_pt__U29 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U285_pt__U286 (
+module _U282_pt__U283 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U279_pt__U280 (
+module _U280_pt__U281 (
     input [15:0] in,
     output [15:0] out
 );
@@ -7376,6 +7432,13 @@ module _U276_pt__U277 (
 assign out = in;
 endmodule
 
+module _U273_pt__U274 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
 module _U26_pt__U27 (
     input [15:0] in,
     output [15:0] out
@@ -7383,63 +7446,28 @@ module _U26_pt__U27 (
 assign out = in;
 endmodule
 
-module _U268_pt__U269 (
+module _U257_pt__U258 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U265_pt__U266 (
+module _U241_pt__U242 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U255_pt__U256 (
+module _U233_pt__U234 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U252_pt__U253 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U240_pt__U241 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U237_pt__U238 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U234_pt__U235 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U22_pt__U23 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U220_pt__U221 (
+module _U225_pt__U226 (
     input [15:0] in,
     output [15:0] out
 );
@@ -7447,13 +7475,6 @@ assign out = in;
 endmodule
 
 module _U218_pt__U219 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U214_pt__U215 (
     input [15:0] in,
     output [15:0] out
 );
@@ -7480,7 +7501,11 @@ wire [15:0] _U213_in;
 wire _U213_clk;
 wire [15:0] _U213_out;
 wire [15:0] _U214_in;
+wire _U214_clk;
 wire [15:0] _U214_out;
+wire [15:0] _U215_in;
+wire _U215_clk;
+wire [15:0] _U215_out;
 wire [15:0] _U216_in;
 wire _U216_clk;
 wire [15:0] _U216_out;
@@ -7488,8 +7513,13 @@ wire [15:0] _U217_in;
 wire _U217_clk;
 wire [15:0] _U217_out;
 wire [15:0] _U218_in;
+wire [15:0] _U218_out;
 wire [15:0] _U220_in;
+wire _U220_clk;
 wire [15:0] _U220_out;
+wire [15:0] _U221_in;
+wire _U221_clk;
+wire [15:0] _U221_out;
 wire [15:0] _U222_in;
 wire _U222_clk;
 wire [15:0] _U222_out;
@@ -7500,11 +7530,7 @@ wire [15:0] _U224_in;
 wire _U224_clk;
 wire [15:0] _U224_out;
 wire [15:0] _U225_in;
-wire _U225_clk;
 wire [15:0] _U225_out;
-wire [15:0] _U226_in;
-wire _U226_clk;
-wire [15:0] _U226_out;
 wire [15:0] _U227_in;
 wire _U227_clk;
 wire [15:0] _U227_out;
@@ -7524,23 +7550,27 @@ wire [15:0] _U232_in;
 wire _U232_clk;
 wire [15:0] _U232_out;
 wire [15:0] _U233_in;
-wire _U233_clk;
 wire [15:0] _U233_out;
-wire [15:0] _U234_in;
-wire [15:0] _U234_out;
+wire [15:0] _U235_in;
+wire _U235_clk;
+wire [15:0] _U235_out;
 wire [15:0] _U236_in;
 wire _U236_clk;
 wire [15:0] _U236_out;
 wire [15:0] _U237_in;
+wire _U237_clk;
 wire [15:0] _U237_out;
+wire [15:0] _U238_in;
+wire _U238_clk;
+wire [15:0] _U238_out;
 wire [15:0] _U239_in;
 wire _U239_clk;
 wire [15:0] _U239_out;
 wire [15:0] _U240_in;
+wire _U240_clk;
 wire [15:0] _U240_out;
-wire [15:0] _U242_in;
-wire _U242_clk;
-wire [15:0] _U242_out;
+wire [15:0] _U241_in;
+wire [15:0] _U241_out;
 wire [15:0] _U243_in;
 wire _U243_clk;
 wire [15:0] _U243_out;
@@ -7569,18 +7599,22 @@ wire [15:0] _U251_in;
 wire _U251_clk;
 wire [15:0] _U251_out;
 wire [15:0] _U252_in;
+wire _U252_clk;
 wire [15:0] _U252_out;
+wire [15:0] _U253_in;
+wire _U253_clk;
+wire [15:0] _U253_out;
 wire [15:0] _U254_in;
 wire _U254_clk;
 wire [15:0] _U254_out;
 wire [15:0] _U255_in;
+wire _U255_clk;
 wire [15:0] _U255_out;
+wire [15:0] _U256_in;
+wire _U256_clk;
+wire [15:0] _U256_out;
 wire [15:0] _U257_in;
-wire _U257_clk;
 wire [15:0] _U257_out;
-wire [15:0] _U258_in;
-wire _U258_clk;
-wire [15:0] _U258_out;
 wire [15:0] _U259_in;
 wire _U259_clk;
 wire [15:0] _U259_out;
@@ -7600,12 +7634,20 @@ wire [15:0] _U264_in;
 wire _U264_clk;
 wire [15:0] _U264_out;
 wire [15:0] _U265_in;
+wire _U265_clk;
 wire [15:0] _U265_out;
+wire [15:0] _U266_in;
+wire _U266_clk;
+wire [15:0] _U266_out;
 wire [15:0] _U267_in;
 wire _U267_clk;
 wire [15:0] _U267_out;
 wire [15:0] _U268_in;
+wire _U268_clk;
 wire [15:0] _U268_out;
+wire [15:0] _U269_in;
+wire _U269_clk;
+wire [15:0] _U269_out;
 wire [15:0] _U270_in;
 wire _U270_clk;
 wire [15:0] _U270_out;
@@ -7616,11 +7658,7 @@ wire [15:0] _U272_in;
 wire _U272_clk;
 wire [15:0] _U272_out;
 wire [15:0] _U273_in;
-wire _U273_clk;
 wire [15:0] _U273_out;
-wire [15:0] _U274_in;
-wire _U274_clk;
-wire [15:0] _U274_out;
 wire [15:0] _U275_in;
 wire _U275_clk;
 wire [15:0] _U275_out;
@@ -7630,26 +7668,29 @@ wire [15:0] _U278_in;
 wire _U278_clk;
 wire [15:0] _U278_out;
 wire [15:0] _U279_in;
+wire _U279_clk;
 wire [15:0] _U279_out;
-wire [15:0] _U281_in;
-wire _U281_clk;
-wire [15:0] _U281_out;
+wire [15:0] _U280_in;
 wire [15:0] _U282_in;
-wire _U282_clk;
 wire [15:0] _U282_out;
-wire [15:0] _U283_in;
-wire _U283_clk;
-wire [15:0] _U283_out;
 wire [15:0] _U284_in;
 wire _U284_clk;
 wire [15:0] _U284_out;
 wire [15:0] _U285_in;
+wire _U285_clk;
 wire [15:0] _U285_out;
+wire [15:0] _U286_in;
+wire _U286_clk;
+wire [15:0] _U286_out;
 wire [15:0] _U287_in;
 wire _U287_clk;
 wire [15:0] _U287_out;
 wire [15:0] _U288_in;
+wire _U288_clk;
 wire [15:0] _U288_out;
+wire [15:0] _U289_in;
+wire _U289_clk;
+wire [15:0] _U289_out;
 wire [15:0] _U290_in;
 wire _U290_clk;
 wire [15:0] _U290_out;
@@ -7657,33 +7698,29 @@ wire [15:0] _U291_in;
 wire _U291_clk;
 wire [15:0] _U291_out;
 wire [15:0] _U292_in;
+wire _U292_clk;
 wire [15:0] _U292_out;
+wire [15:0] _U293_in;
+wire _U293_clk;
+wire [15:0] _U293_out;
 wire [15:0] _U294_in;
 wire _U294_clk;
 wire [15:0] _U294_out;
 wire [15:0] _U295_in;
+wire _U295_clk;
 wire [15:0] _U295_out;
-wire [15:0] _U297_in;
-wire _U297_clk;
-wire [15:0] _U297_out;
+wire [15:0] _U296_in;
+wire [15:0] _U296_out;
 wire [15:0] _U298_in;
 wire _U298_clk;
 wire [15:0] _U298_out;
 wire [15:0] _U299_in;
-wire _U299_clk;
 wire [15:0] _U299_out;
-wire [15:0] _U300_in;
-wire _U300_clk;
-wire [15:0] _U300_out;
 wire [15:0] _U301_in;
 wire _U301_clk;
 wire [15:0] _U301_out;
 wire [15:0] _U302_in;
-wire _U302_clk;
 wire [15:0] _U302_out;
-wire [15:0] _U303_in;
-wire _U303_clk;
-wire [15:0] _U303_out;
 wire [15:0] _U304_in;
 wire _U304_clk;
 wire [15:0] _U304_out;
@@ -7703,9 +7740,17 @@ wire [15:0] _U309_in;
 wire _U309_clk;
 wire [15:0] _U309_out;
 wire [15:0] _U310_in;
+wire _U310_clk;
 wire [15:0] _U310_out;
+wire [15:0] _U311_in;
+wire _U311_clk;
+wire [15:0] _U311_out;
 wire [15:0] _U312_in;
+wire _U312_clk;
 wire [15:0] _U312_out;
+wire [15:0] _U313_in;
+wire _U313_clk;
+wire [15:0] _U313_out;
 wire [15:0] _U314_in;
 wire [15:0] _U314_out;
 wire [15:0] _U316_in;
@@ -7717,7 +7762,11 @@ wire [15:0] _U319_in;
 wire _U319_clk;
 wire [15:0] _U319_out;
 wire [15:0] _U320_in;
+wire _U320_clk;
 wire [15:0] _U320_out;
+wire [15:0] _U321_in;
+wire _U321_clk;
+wire [15:0] _U321_out;
 wire [15:0] _U322_in;
 wire _U322_clk;
 wire [15:0] _U322_out;
@@ -7725,26 +7774,30 @@ wire [15:0] _U323_in;
 wire _U323_clk;
 wire [15:0] _U323_out;
 wire [15:0] _U324_in;
+wire _U324_clk;
 wire [15:0] _U324_out;
+wire [15:0] _U325_in;
+wire _U325_clk;
+wire [15:0] _U325_out;
 wire [15:0] _U326_in;
 wire _U326_clk;
 wire [15:0] _U326_out;
 wire [15:0] _U327_in;
-wire _U327_clk;
 wire [15:0] _U327_out;
-wire [15:0] _U328_in;
-wire [15:0] _U328_out;
+wire [15:0] _U329_in;
+wire _U329_clk;
+wire [15:0] _U329_out;
 wire [15:0] _U330_in;
-wire _U330_clk;
 wire [15:0] _U330_out;
-wire [15:0] _U331_in;
-wire _U331_clk;
-wire [15:0] _U331_out;
 wire [15:0] _U332_in;
 wire _U332_clk;
 wire [15:0] _U332_out;
 wire [15:0] _U333_in;
+wire _U333_clk;
 wire [15:0] _U333_out;
+wire [15:0] _U334_in;
+wire _U334_clk;
+wire [15:0] _U334_out;
 wire [15:0] _U335_in;
 wire _U335_clk;
 wire [15:0] _U335_out;
@@ -7760,25 +7813,21 @@ wire [15:0] _U340_in;
 wire _U340_clk;
 wire [15:0] _U340_out;
 wire [15:0] _U341_in;
-wire _U341_clk;
 wire [15:0] _U341_out;
-wire [15:0] _U342_in;
-wire _U342_clk;
-wire [15:0] _U342_out;
 wire [15:0] _U343_in;
 wire _U343_clk;
 wire [15:0] _U343_out;
 wire [15:0] _U344_in;
+wire _U344_clk;
 wire [15:0] _U344_out;
+wire [15:0] _U345_in;
+wire _U345_clk;
+wire [15:0] _U345_out;
 wire [15:0] _U346_in;
 wire _U346_clk;
 wire [15:0] _U346_out;
 wire [15:0] _U347_in;
-wire _U347_clk;
 wire [15:0] _U347_out;
-wire [15:0] _U348_in;
-wire _U348_clk;
-wire [15:0] _U348_out;
 wire [15:0] _U349_in;
 wire _U349_clk;
 wire [15:0] _U349_out;
@@ -7791,11 +7840,7 @@ wire [15:0] _U353_in;
 wire _U353_clk;
 wire [15:0] _U353_out;
 wire [15:0] _U354_in;
-wire _U354_clk;
 wire [15:0] _U354_out;
-wire [15:0] _U355_in;
-wire _U355_clk;
-wire [15:0] _U355_out;
 wire [15:0] _U356_in;
 wire _U356_clk;
 wire [15:0] _U356_out;
@@ -7817,7 +7862,11 @@ wire [15:0] _U363_in;
 wire _U363_clk;
 wire [15:0] _U363_out;
 wire [15:0] _U364_in;
+wire _U364_clk;
 wire [15:0] _U364_out;
+wire [15:0] _U365_in;
+wire _U365_clk;
+wire [15:0] _U365_out;
 wire [15:0] _U366_in;
 wire _U366_clk;
 wire [15:0] _U366_out;
@@ -7839,31 +7888,19 @@ wire [15:0] _U371_out;
 wire [15:0] _U372_in;
 wire [15:0] _U372_out;
 wire [15:0] _U374_in;
-wire _U374_clk;
 wire [15:0] _U374_out;
-wire [15:0] _U375_in;
-wire _U375_clk;
-wire [15:0] _U375_out;
 wire [15:0] _U376_in;
-wire _U376_clk;
 wire [15:0] _U376_out;
-wire [15:0] _U377_in;
-wire _U377_clk;
-wire [15:0] _U377_out;
 wire [15:0] _U378_in;
 wire _U378_clk;
 wire [15:0] _U378_out;
 wire [15:0] _U379_in;
-wire _U379_clk;
 wire [15:0] _U379_out;
-wire [15:0] _U380_in;
-wire [15:0] _U380_out;
+wire [15:0] _U381_in;
+wire _U381_clk;
+wire [15:0] _U381_out;
 wire [15:0] _U382_in;
-wire _U382_clk;
 wire [15:0] _U382_out;
-wire [15:0] _U383_in;
-wire _U383_clk;
-wire [15:0] _U383_out;
 wire [15:0] _U384_in;
 wire _U384_clk;
 wire [15:0] _U384_out;
@@ -7871,11 +7908,7 @@ wire [15:0] _U385_in;
 wire _U385_clk;
 wire [15:0] _U385_out;
 wire [15:0] _U386_in;
-wire _U386_clk;
 wire [15:0] _U386_out;
-wire [15:0] _U387_in;
-wire _U387_clk;
-wire [15:0] _U387_out;
 wire [15:0] _U388_in;
 wire _U388_clk;
 wire [15:0] _U388_out;
@@ -7883,11 +7916,7 @@ wire [15:0] _U389_in;
 wire _U389_clk;
 wire [15:0] _U389_out;
 wire [15:0] _U390_in;
-wire _U390_clk;
 wire [15:0] _U390_out;
-wire [15:0] _U391_in;
-wire _U391_clk;
-wire [15:0] _U391_out;
 wire [15:0] _U392_in;
 wire _U392_clk;
 wire [15:0] _U392_out;
@@ -7898,10 +7927,10 @@ wire [15:0] _U394_in;
 wire _U394_clk;
 wire [15:0] _U394_out;
 wire [15:0] _U395_in;
-wire _U395_clk;
 wire [15:0] _U395_out;
-wire [15:0] _U396_in;
-wire [15:0] _U396_out;
+wire [15:0] _U397_in;
+wire _U397_clk;
+wire [15:0] _U397_out;
 wire [15:0] _U398_in;
 wire _U398_clk;
 wire [15:0] _U398_out;
@@ -7909,11 +7938,7 @@ wire [15:0] _U399_in;
 wire _U399_clk;
 wire [15:0] _U399_out;
 wire [15:0] _U400_in;
-wire _U400_clk;
 wire [15:0] _U400_out;
-wire [15:0] _U401_in;
-wire _U401_clk;
-wire [15:0] _U401_out;
 wire [15:0] _U402_in;
 wire _U402_clk;
 wire [15:0] _U402_out;
@@ -7927,11 +7952,7 @@ wire [15:0] _U405_in;
 wire _U405_clk;
 wire [15:0] _U405_out;
 wire [15:0] _U406_in;
-wire _U406_clk;
 wire [15:0] _U406_out;
-wire [15:0] _U407_in;
-wire _U407_clk;
-wire [15:0] _U407_out;
 wire [15:0] _U408_in;
 wire _U408_clk;
 wire [15:0] _U408_out;
@@ -7944,12 +7965,12 @@ wire [15:0] _U410_out;
 wire [15:0] _U411_in;
 wire _U411_clk;
 wire [15:0] _U411_out;
-assign _U211_in = _U213_out;
+assign _U211_in = _U217_out;
 _U211_pt__U212 _U211 (
     .in(_U211_in),
     .out(_U211_out)
 );
-assign _U213_in = 16'(_U380_out * _U396_out);
+assign _U213_in = in2_hw_kernel_global_wrapper_stencil[5];
 assign _U213_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -7958,12 +7979,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U213_clk),
     .out(_U213_out)
 );
-assign _U214_in = _U217_out;
-_U214_pt__U215 _U214 (
+assign _U214_in = _U213_out;
+assign _U214_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U214 (
     .in(_U214_in),
+    .clk(_U214_clk),
     .out(_U214_out)
 );
-assign _U216_in = 16'(_U295_out + _U237_out);
+assign _U215_in = _U214_out;
+assign _U215_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U215 (
+    .in(_U215_in),
+    .clk(_U215_clk),
+    .out(_U215_out)
+);
+assign _U216_in = _U215_out;
 assign _U216_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -7981,17 +8015,30 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U217_clk),
     .out(_U217_out)
 );
-assign _U218_in = 16'(_U211_out + _U214_out);
+assign _U218_in = _U224_out;
 _U218_pt__U219 _U218 (
     .in(_U218_in),
-    .out(out_conv_stencil)
+    .out(_U218_out)
 );
-assign _U220_in = _U233_out;
-_U220_pt__U221 _U220 (
+assign _U220_in = in1_hw_input_global_wrapper_stencil[5];
+assign _U220_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U220 (
     .in(_U220_in),
+    .clk(_U220_clk),
     .out(_U220_out)
 );
-assign _U222_in = 16'(_U310_out * _U312_out);
+assign _U221_in = _U220_out;
+assign _U221_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U221 (
+    .in(_U221_in),
+    .clk(_U221_clk),
+    .out(_U221_out)
+);
+assign _U222_in = _U221_out;
 assign _U222_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8018,25 +8065,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U224_clk),
     .out(_U224_out)
 );
-assign _U225_in = _U224_out;
-assign _U225_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U225 (
+assign _U225_in = _U232_out;
+_U225_pt__U226 _U225 (
     .in(_U225_in),
-    .clk(_U225_clk),
     .out(_U225_out)
 );
-assign _U226_in = _U225_out;
-assign _U226_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U226 (
-    .in(_U226_in),
-    .clk(_U226_clk),
-    .out(_U226_out)
-);
-assign _U227_in = _U226_out;
+assign _U227_in = in2_hw_kernel_global_wrapper_stencil[6];
 assign _U227_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8090,21 +8124,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U232_clk),
     .out(_U232_out)
 );
-assign _U233_in = _U232_out;
-assign _U233_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U233 (
+assign _U233_in = _U240_out;
+_U233_pt__U234 _U233 (
     .in(_U233_in),
-    .clk(_U233_clk),
     .out(_U233_out)
 );
-assign _U234_in = _U236_out;
-_U234_pt__U235 _U234 (
-    .in(_U234_in),
-    .out(_U234_out)
+assign _U235_in = in1_hw_input_global_wrapper_stencil[6];
+assign _U235_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U235 (
+    .in(_U235_in),
+    .clk(_U235_clk),
+    .out(_U235_out)
 );
-assign _U236_in = 16'(_U240_out + _U252_out);
+assign _U236_in = _U235_out;
 assign _U236_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8113,12 +8147,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U236_clk),
     .out(_U236_out)
 );
-assign _U237_in = _U239_out;
-_U237_pt__U238 _U237 (
+assign _U237_in = _U236_out;
+assign _U237_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U237 (
     .in(_U237_in),
+    .clk(_U237_clk),
     .out(_U237_out)
 );
-assign _U239_in = 16'(_U220_out + _U234_out);
+assign _U238_in = _U237_out;
+assign _U238_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U238 (
+    .in(_U238_in),
+    .clk(_U238_clk),
+    .out(_U238_out)
+);
+assign _U239_in = _U238_out;
 assign _U239_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8127,21 +8174,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U239_clk),
     .out(_U239_out)
 );
-assign _U240_in = _U251_out;
-_U240_pt__U241 _U240 (
-    .in(_U240_in),
-    .out(_U240_out)
-);
-assign _U242_in = 16'(_U314_out * _U317_out);
-assign _U242_clk = clk;
+assign _U240_in = _U239_out;
+assign _U240_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U242 (
-    .in(_U242_in),
-    .clk(_U242_clk),
-    .out(_U242_out)
+) _U240 (
+    .in(_U240_in),
+    .clk(_U240_clk),
+    .out(_U240_out)
 );
-assign _U243_in = _U242_out;
+assign _U241_in = _U256_out;
+_U241_pt__U242 _U241 (
+    .in(_U241_in),
+    .out(_U241_out)
+);
+assign _U243_in = in2_hw_kernel_global_wrapper_stencil[7];
 assign _U243_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8222,12 +8269,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U251_clk),
     .out(_U251_out)
 );
-assign _U252_in = _U254_out;
-_U252_pt__U253 _U252 (
+assign _U252_in = _U251_out;
+assign _U252_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U252 (
     .in(_U252_in),
+    .clk(_U252_clk),
     .out(_U252_out)
 );
-assign _U254_in = 16'(_U255_out + _U265_out);
+assign _U253_in = _U252_out;
+assign _U253_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U253 (
+    .in(_U253_in),
+    .clk(_U253_clk),
+    .out(_U253_out)
+);
+assign _U254_in = _U253_out;
 assign _U254_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8236,30 +8296,30 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U254_clk),
     .out(_U254_out)
 );
-assign _U255_in = _U264_out;
-_U255_pt__U256 _U255 (
+assign _U255_in = _U254_out;
+assign _U255_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U255 (
     .in(_U255_in),
+    .clk(_U255_clk),
     .out(_U255_out)
 );
-assign _U257_in = 16'(_U320_out * _U324_out);
-assign _U257_clk = clk;
+assign _U256_in = _U255_out;
+assign _U256_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U257 (
+) _U256 (
+    .in(_U256_in),
+    .clk(_U256_clk),
+    .out(_U256_out)
+);
+assign _U257_in = _U272_out;
+_U257_pt__U258 _U257 (
     .in(_U257_in),
-    .clk(_U257_clk),
     .out(_U257_out)
 );
-assign _U258_in = _U257_out;
-assign _U258_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U258 (
-    .in(_U258_in),
-    .clk(_U258_clk),
-    .out(_U258_out)
-);
-assign _U259_in = _U258_out;
+assign _U259_in = in1_hw_input_global_wrapper_stencil[7];
 assign _U259_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8313,12 +8373,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U264_clk),
     .out(_U264_out)
 );
-assign _U265_in = _U267_out;
-_U265_pt__U266 _U265 (
+assign _U265_in = _U264_out;
+assign _U265_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U265 (
     .in(_U265_in),
+    .clk(_U265_clk),
     .out(_U265_out)
 );
-assign _U267_in = 16'(_U268_out + _U276_out);
+assign _U266_in = _U265_out;
+assign _U266_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U266 (
+    .in(_U266_in),
+    .clk(_U266_clk),
+    .out(_U266_out)
+);
+assign _U267_in = _U266_out;
 assign _U267_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8327,12 +8400,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U267_clk),
     .out(_U267_out)
 );
-assign _U268_in = _U275_out;
-_U268_pt__U269 _U268 (
+assign _U268_in = _U267_out;
+assign _U268_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U268 (
     .in(_U268_in),
+    .clk(_U268_clk),
     .out(_U268_out)
 );
-assign _U270_in = 16'(_U328_out * _U333_out);
+assign _U269_in = _U268_out;
+assign _U269_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U269 (
+    .in(_U269_in),
+    .clk(_U269_clk),
+    .out(_U269_out)
+);
+assign _U270_in = _U269_out;
 assign _U270_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8359,25 +8445,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U272_clk),
     .out(_U272_out)
 );
-assign _U273_in = _U272_out;
-assign _U273_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U273 (
+assign _U273_in = _U275_out;
+_U273_pt__U274 _U273 (
     .in(_U273_in),
-    .clk(_U273_clk),
     .out(_U273_out)
 );
-assign _U274_in = _U273_out;
-assign _U274_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U274 (
-    .in(_U274_in),
-    .clk(_U274_clk),
-    .out(_U274_out)
-);
-assign _U275_in = _U274_out;
+assign _U275_in = 16'(_U241_out * _U257_out);
 assign _U275_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8386,12 +8459,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U275_clk),
     .out(_U275_out)
 );
-assign _U276_in = _U278_out;
+assign _U276_in = _U279_out;
 _U276_pt__U277 _U276 (
     .in(_U276_in),
     .out(_U276_out)
 );
-assign _U278_in = 16'(_U279_out + _U285_out);
+assign _U278_in = 16'(_U357_out + _U299_out);
 assign _U278_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8400,39 +8473,26 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U278_clk),
     .out(_U278_out)
 );
-assign _U279_in = _U284_out;
-_U279_pt__U280 _U279 (
+assign _U279_in = _U278_out;
+assign _U279_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U279 (
     .in(_U279_in),
+    .clk(_U279_clk),
     .out(_U279_out)
 );
-assign _U281_in = 16'(_U338_out * _U344_out);
-assign _U281_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U281 (
-    .in(_U281_in),
-    .clk(_U281_clk),
-    .out(_U281_out)
+assign _U280_in = 16'(_U273_out + _U276_out);
+_U280_pt__U281 _U280 (
+    .in(_U280_in),
+    .out(out_conv_stencil)
 );
-assign _U282_in = _U281_out;
-assign _U282_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U282 (
+assign _U282_in = _U295_out;
+_U282_pt__U283 _U282 (
     .in(_U282_in),
-    .clk(_U282_clk),
     .out(_U282_out)
 );
-assign _U283_in = _U282_out;
-assign _U283_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U283 (
-    .in(_U283_in),
-    .clk(_U283_clk),
-    .out(_U283_out)
-);
-assign _U284_in = _U283_out;
+assign _U284_in = 16'(_U372_out * _U374_out);
 assign _U284_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8441,12 +8501,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U284_clk),
     .out(_U284_out)
 );
-assign _U285_in = _U287_out;
-_U285_pt__U286 _U285 (
+assign _U285_in = _U284_out;
+assign _U285_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U285 (
     .in(_U285_in),
+    .clk(_U285_clk),
     .out(_U285_out)
 );
-assign _U287_in = 16'(_U288_out + _U292_out);
+assign _U286_in = _U285_out;
+assign _U286_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U286 (
+    .in(_U286_in),
+    .clk(_U286_clk),
+    .out(_U286_out)
+);
+assign _U287_in = _U286_out;
 assign _U287_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8455,12 +8528,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U287_clk),
     .out(_U287_out)
 );
-assign _U288_in = _U291_out;
-_U288_pt__U289 _U288 (
+assign _U288_in = _U287_out;
+assign _U288_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U288 (
     .in(_U288_in),
+    .clk(_U288_clk),
     .out(_U288_out)
 );
-assign _U290_in = 16'(_U350_out * _U357_out);
+assign _U289_in = _U288_out;
+assign _U289_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U289 (
+    .in(_U289_in),
+    .clk(_U289_clk),
+    .out(_U289_out)
+);
+assign _U290_in = _U289_out;
 assign _U290_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8478,12 +8564,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U291_clk),
     .out(_U291_out)
 );
-assign _U292_in = _U294_out;
-_U292_pt__U293 _U292 (
+assign _U292_in = _U291_out;
+assign _U292_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U292 (
     .in(_U292_in),
+    .clk(_U292_clk),
     .out(_U292_out)
 );
-assign _U294_in = 16'(_U364_out * _U372_out);
+assign _U293_in = _U292_out;
+assign _U293_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U293 (
+    .in(_U293_in),
+    .clk(_U293_clk),
+    .out(_U293_out)
+);
+assign _U294_in = _U293_out;
 assign _U294_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8492,21 +8591,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U294_clk),
     .out(_U294_out)
 );
-assign _U295_in = _U309_out;
-_U295_pt__U296 _U295 (
-    .in(_U295_in),
-    .out(_U295_out)
-);
-assign _U297_in = in0_conv_stencil[0];
-assign _U297_clk = clk;
+assign _U295_in = _U294_out;
+assign _U295_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U297 (
-    .in(_U297_in),
-    .clk(_U297_clk),
-    .out(_U297_out)
+) _U295 (
+    .in(_U295_in),
+    .clk(_U295_clk),
+    .out(_U295_out)
 );
-assign _U298_in = _U297_out;
+assign _U296_in = _U298_out;
+_U296_pt__U297 _U296 (
+    .in(_U296_in),
+    .out(_U296_out)
+);
+assign _U298_in = 16'(_U302_out + _U314_out);
 assign _U298_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8515,25 +8614,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U298_clk),
     .out(_U298_out)
 );
-assign _U299_in = _U298_out;
-assign _U299_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U299 (
+assign _U299_in = _U301_out;
+_U299_pt__U300 _U299 (
     .in(_U299_in),
-    .clk(_U299_clk),
     .out(_U299_out)
 );
-assign _U300_in = _U299_out;
-assign _U300_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U300 (
-    .in(_U300_in),
-    .clk(_U300_clk),
-    .out(_U300_out)
-);
-assign _U301_in = _U300_out;
+assign _U301_in = 16'(_U282_out + _U296_out);
 assign _U301_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8542,25 +8628,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U301_clk),
     .out(_U301_out)
 );
-assign _U302_in = _U301_out;
-assign _U302_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U302 (
+assign _U302_in = _U313_out;
+_U302_pt__U303 _U302 (
     .in(_U302_in),
-    .clk(_U302_clk),
     .out(_U302_out)
 );
-assign _U303_in = _U302_out;
-assign _U303_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U303 (
-    .in(_U303_in),
-    .clk(_U303_clk),
-    .out(_U303_out)
-);
-assign _U304_in = _U303_out;
+assign _U304_in = 16'(_U376_out * _U379_out);
 assign _U304_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8614,22 +8687,48 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U309_clk),
     .out(_U309_out)
 );
-assign _U310_in = in2_hw_kernel_global_wrapper_stencil[0];
-_U310_pt__U311 _U310 (
+assign _U310_in = _U309_out;
+assign _U310_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U310 (
     .in(_U310_in),
+    .clk(_U310_clk),
     .out(_U310_out)
 );
-assign _U312_in = in1_hw_input_global_wrapper_stencil[0];
-_U312_pt__U313 _U312 (
+assign _U311_in = _U310_out;
+assign _U311_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U311 (
+    .in(_U311_in),
+    .clk(_U311_clk),
+    .out(_U311_out)
+);
+assign _U312_in = _U311_out;
+assign _U312_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U312 (
     .in(_U312_in),
+    .clk(_U312_clk),
     .out(_U312_out)
+);
+assign _U313_in = _U312_out;
+assign _U313_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U313 (
+    .in(_U313_in),
+    .clk(_U313_clk),
+    .out(_U313_out)
 );
 assign _U314_in = _U316_out;
 _U314_pt__U315 _U314 (
     .in(_U314_in),
     .out(_U314_out)
 );
-assign _U316_in = in2_hw_kernel_global_wrapper_stencil[1];
+assign _U316_in = 16'(_U317_out + _U327_out);
 assign _U316_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8638,12 +8737,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U316_clk),
     .out(_U316_out)
 );
-assign _U317_in = _U319_out;
+assign _U317_in = _U326_out;
 _U317_pt__U318 _U317 (
     .in(_U317_in),
     .out(_U317_out)
 );
-assign _U319_in = in1_hw_input_global_wrapper_stencil[1];
+assign _U319_in = 16'(_U382_out * _U386_out);
 assign _U319_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8652,12 +8751,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U319_clk),
     .out(_U319_out)
 );
-assign _U320_in = _U323_out;
-_U320_pt__U321 _U320 (
+assign _U320_in = _U319_out;
+assign _U320_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U320 (
     .in(_U320_in),
+    .clk(_U320_clk),
     .out(_U320_out)
 );
-assign _U322_in = in2_hw_kernel_global_wrapper_stencil[2];
+assign _U321_in = _U320_out;
+assign _U321_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U321 (
+    .in(_U321_in),
+    .clk(_U321_clk),
+    .out(_U321_out)
+);
+assign _U322_in = _U321_out;
 assign _U322_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8675,12 +8787,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U323_clk),
     .out(_U323_out)
 );
-assign _U324_in = _U327_out;
-_U324_pt__U325 _U324 (
+assign _U324_in = _U323_out;
+assign _U324_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U324 (
     .in(_U324_in),
+    .clk(_U324_clk),
     .out(_U324_out)
 );
-assign _U326_in = in1_hw_input_global_wrapper_stencil[2];
+assign _U325_in = _U324_out;
+assign _U325_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U325 (
+    .in(_U325_in),
+    .clk(_U325_clk),
+    .out(_U325_out)
+);
+assign _U326_in = _U325_out;
 assign _U326_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8689,39 +8814,26 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U326_clk),
     .out(_U326_out)
 );
-assign _U327_in = _U326_out;
-assign _U327_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U327 (
+assign _U327_in = _U329_out;
+_U327_pt__U328 _U327 (
     .in(_U327_in),
-    .clk(_U327_clk),
     .out(_U327_out)
 );
-assign _U328_in = _U332_out;
-_U328_pt__U329 _U328 (
-    .in(_U328_in),
-    .out(_U328_out)
-);
-assign _U330_in = in2_hw_kernel_global_wrapper_stencil[3];
-assign _U330_clk = clk;
+assign _U329_in = 16'(_U330_out + _U338_out);
+assign _U329_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U330 (
+) _U329 (
+    .in(_U329_in),
+    .clk(_U329_clk),
+    .out(_U329_out)
+);
+assign _U330_in = _U337_out;
+_U330_pt__U331 _U330 (
     .in(_U330_in),
-    .clk(_U330_clk),
     .out(_U330_out)
 );
-assign _U331_in = _U330_out;
-assign _U331_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U331 (
-    .in(_U331_in),
-    .clk(_U331_clk),
-    .out(_U331_out)
-);
-assign _U332_in = _U331_out;
+assign _U332_in = 16'(_U390_out * _U395_out);
 assign _U332_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8730,12 +8842,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U332_clk),
     .out(_U332_out)
 );
-assign _U333_in = _U337_out;
-_U333_pt__U334 _U333 (
+assign _U333_in = _U332_out;
+assign _U333_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U333 (
     .in(_U333_in),
+    .clk(_U333_clk),
     .out(_U333_out)
 );
-assign _U335_in = in1_hw_input_global_wrapper_stencil[3];
+assign _U334_in = _U333_out;
+assign _U334_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U334 (
+    .in(_U334_in),
+    .clk(_U334_clk),
+    .out(_U334_out)
+);
+assign _U335_in = _U334_out;
 assign _U335_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8762,12 +8887,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U337_clk),
     .out(_U337_out)
 );
-assign _U338_in = _U343_out;
+assign _U338_in = _U340_out;
 _U338_pt__U339 _U338 (
     .in(_U338_in),
     .out(_U338_out)
 );
-assign _U340_in = in2_hw_kernel_global_wrapper_stencil[4];
+assign _U340_in = 16'(_U341_out + _U347_out);
 assign _U340_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8776,25 +8901,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U340_clk),
     .out(_U340_out)
 );
-assign _U341_in = _U340_out;
-assign _U341_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U341 (
+assign _U341_in = _U346_out;
+_U341_pt__U342 _U341 (
     .in(_U341_in),
-    .clk(_U341_clk),
     .out(_U341_out)
 );
-assign _U342_in = _U341_out;
-assign _U342_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U342 (
-    .in(_U342_in),
-    .clk(_U342_clk),
-    .out(_U342_out)
-);
-assign _U343_in = _U342_out;
+assign _U343_in = 16'(_U400_out * _U406_out);
 assign _U343_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8803,12 +8915,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U343_clk),
     .out(_U343_out)
 );
-assign _U344_in = _U349_out;
-_U344_pt__U345 _U344 (
+assign _U344_in = _U343_out;
+assign _U344_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U344 (
     .in(_U344_in),
+    .clk(_U344_clk),
     .out(_U344_out)
 );
-assign _U346_in = in1_hw_input_global_wrapper_stencil[4];
+assign _U345_in = _U344_out;
+assign _U345_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U345 (
+    .in(_U345_in),
+    .clk(_U345_clk),
+    .out(_U345_out)
+);
+assign _U346_in = _U345_out;
 assign _U346_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8817,25 +8942,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U346_clk),
     .out(_U346_out)
 );
-assign _U347_in = _U346_out;
-assign _U347_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U347 (
+assign _U347_in = _U349_out;
+_U347_pt__U348 _U347 (
     .in(_U347_in),
-    .clk(_U347_clk),
     .out(_U347_out)
 );
-assign _U348_in = _U347_out;
-assign _U348_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U348 (
-    .in(_U348_in),
-    .clk(_U348_clk),
-    .out(_U348_out)
-);
-assign _U349_in = _U348_out;
+assign _U349_in = 16'(_U350_out + _U354_out);
 assign _U349_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8844,12 +8956,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U349_clk),
     .out(_U349_out)
 );
-assign _U350_in = _U356_out;
+assign _U350_in = _U353_out;
 _U350_pt__U351 _U350 (
     .in(_U350_in),
     .out(_U350_out)
 );
-assign _U352_in = in2_hw_kernel_global_wrapper_stencil[5];
+assign _U352_in = 16'(_U211_out * _U218_out);
 assign _U352_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8867,25 +8979,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U353_clk),
     .out(_U353_out)
 );
-assign _U354_in = _U353_out;
-assign _U354_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U354 (
+assign _U354_in = _U356_out;
+_U354_pt__U355 _U354 (
     .in(_U354_in),
-    .clk(_U354_clk),
     .out(_U354_out)
 );
-assign _U355_in = _U354_out;
-assign _U355_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U355 (
-    .in(_U355_in),
-    .clk(_U355_clk),
-    .out(_U355_out)
-);
-assign _U356_in = _U355_out;
+assign _U356_in = 16'(_U225_out * _U233_out);
 assign _U356_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8894,12 +8993,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U356_clk),
     .out(_U356_out)
 );
-assign _U357_in = _U363_out;
+assign _U357_in = _U371_out;
 _U357_pt__U358 _U357 (
     .in(_U357_in),
     .out(_U357_out)
 );
-assign _U359_in = in1_hw_input_global_wrapper_stencil[5];
+assign _U359_in = in0_conv_stencil[0];
 assign _U359_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -8944,12 +9043,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U363_clk),
     .out(_U363_out)
 );
-assign _U364_in = _U371_out;
-_U364_pt__U365 _U364 (
+assign _U364_in = _U363_out;
+assign _U364_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U364 (
     .in(_U364_in),
+    .clk(_U364_clk),
     .out(_U364_out)
 );
-assign _U366_in = in2_hw_kernel_global_wrapper_stencil[6];
+assign _U365_in = _U364_out;
+assign _U365_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U365 (
+    .in(_U365_in),
+    .clk(_U365_clk),
+    .out(_U365_out)
+);
+assign _U366_in = _U365_out;
 assign _U366_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -9003,48 +9115,22 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U371_clk),
     .out(_U371_out)
 );
-assign _U372_in = _U379_out;
+assign _U372_in = in2_hw_kernel_global_wrapper_stencil[0];
 _U372_pt__U373 _U372 (
     .in(_U372_in),
     .out(_U372_out)
 );
-assign _U374_in = in1_hw_input_global_wrapper_stencil[6];
-assign _U374_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U374 (
+assign _U374_in = in1_hw_input_global_wrapper_stencil[0];
+_U374_pt__U375 _U374 (
     .in(_U374_in),
-    .clk(_U374_clk),
     .out(_U374_out)
 );
-assign _U375_in = _U374_out;
-assign _U375_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U375 (
-    .in(_U375_in),
-    .clk(_U375_clk),
-    .out(_U375_out)
-);
-assign _U376_in = _U375_out;
-assign _U376_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U376 (
+assign _U376_in = _U378_out;
+_U376_pt__U377 _U376 (
     .in(_U376_in),
-    .clk(_U376_clk),
     .out(_U376_out)
 );
-assign _U377_in = _U376_out;
-assign _U377_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U377 (
-    .in(_U377_in),
-    .clk(_U377_clk),
-    .out(_U377_out)
-);
-assign _U378_in = _U377_out;
+assign _U378_in = in2_hw_kernel_global_wrapper_stencil[1];
 assign _U378_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -9053,39 +9139,26 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U378_clk),
     .out(_U378_out)
 );
-assign _U379_in = _U378_out;
-assign _U379_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U379 (
+assign _U379_in = _U381_out;
+_U379_pt__U380 _U379 (
     .in(_U379_in),
-    .clk(_U379_clk),
     .out(_U379_out)
 );
-assign _U380_in = _U395_out;
-_U380_pt__U381 _U380 (
-    .in(_U380_in),
-    .out(_U380_out)
-);
-assign _U382_in = in2_hw_kernel_global_wrapper_stencil[7];
-assign _U382_clk = clk;
+assign _U381_in = in1_hw_input_global_wrapper_stencil[1];
+assign _U381_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U382 (
+) _U381 (
+    .in(_U381_in),
+    .clk(_U381_clk),
+    .out(_U381_out)
+);
+assign _U382_in = _U385_out;
+_U382_pt__U383 _U382 (
     .in(_U382_in),
-    .clk(_U382_clk),
     .out(_U382_out)
 );
-assign _U383_in = _U382_out;
-assign _U383_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U383 (
-    .in(_U383_in),
-    .clk(_U383_clk),
-    .out(_U383_out)
-);
-assign _U384_in = _U383_out;
+assign _U384_in = in2_hw_kernel_global_wrapper_stencil[2];
 assign _U384_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -9103,25 +9176,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U385_clk),
     .out(_U385_out)
 );
-assign _U386_in = _U385_out;
-assign _U386_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U386 (
+assign _U386_in = _U389_out;
+_U386_pt__U387 _U386 (
     .in(_U386_in),
-    .clk(_U386_clk),
     .out(_U386_out)
 );
-assign _U387_in = _U386_out;
-assign _U387_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U387 (
-    .in(_U387_in),
-    .clk(_U387_clk),
-    .out(_U387_out)
-);
-assign _U388_in = _U387_out;
+assign _U388_in = in1_hw_input_global_wrapper_stencil[2];
 assign _U388_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -9139,25 +9199,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U389_clk),
     .out(_U389_out)
 );
-assign _U390_in = _U389_out;
-assign _U390_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U390 (
+assign _U390_in = _U394_out;
+_U390_pt__U391 _U390 (
     .in(_U390_in),
-    .clk(_U390_clk),
     .out(_U390_out)
 );
-assign _U391_in = _U390_out;
-assign _U391_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U391 (
-    .in(_U391_in),
-    .clk(_U391_clk),
-    .out(_U391_out)
-);
-assign _U392_in = _U391_out;
+assign _U392_in = in2_hw_kernel_global_wrapper_stencil[3];
 assign _U392_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -9184,21 +9231,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U394_clk),
     .out(_U394_out)
 );
-assign _U395_in = _U394_out;
-assign _U395_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U395 (
+assign _U395_in = _U399_out;
+_U395_pt__U396 _U395 (
     .in(_U395_in),
-    .clk(_U395_clk),
     .out(_U395_out)
 );
-assign _U396_in = _U411_out;
-_U396_pt__U397 _U396 (
-    .in(_U396_in),
-    .out(_U396_out)
+assign _U397_in = in1_hw_input_global_wrapper_stencil[3];
+assign _U397_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U397 (
+    .in(_U397_in),
+    .clk(_U397_clk),
+    .out(_U397_out)
 );
-assign _U398_in = in1_hw_input_global_wrapper_stencil[7];
+assign _U398_in = _U397_out;
 assign _U398_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -9216,25 +9263,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U399_clk),
     .out(_U399_out)
 );
-assign _U400_in = _U399_out;
-assign _U400_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U400 (
+assign _U400_in = _U405_out;
+_U400_pt__U401 _U400 (
     .in(_U400_in),
-    .clk(_U400_clk),
     .out(_U400_out)
 );
-assign _U401_in = _U400_out;
-assign _U401_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U401 (
-    .in(_U401_in),
-    .clk(_U401_clk),
-    .out(_U401_out)
-);
-assign _U402_in = _U401_out;
+assign _U402_in = in2_hw_kernel_global_wrapper_stencil[4];
 assign _U402_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -9270,25 +9304,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U405_clk),
     .out(_U405_out)
 );
-assign _U406_in = _U405_out;
-assign _U406_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U406 (
+assign _U406_in = _U411_out;
+_U406_pt__U407 _U406 (
     .in(_U406_in),
-    .clk(_U406_clk),
     .out(_U406_out)
 );
-assign _U407_in = _U406_out;
-assign _U407_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U407 (
-    .in(_U407_in),
-    .clk(_U407_clk),
-    .out(_U407_out)
-);
-assign _U408_in = _U407_out;
+assign _U408_in = in1_hw_input_global_wrapper_stencil[4];
 assign _U408_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -9366,77 +9387,70 @@ hcompute_conv_stencil_4_pipelined inner_compute (
 assign conv_stencil_op_hcompute_conv_stencil_4_write[0] = inner_compute_out_conv_stencil;
 endmodule
 
-module _U209_pt__U210 (
+module _U208_pt__U209 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U193_pt__U194 (
+module _U204_pt__U205 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U190_pt__U191 (
+module _U201_pt__U202 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U18_pt__U19 (
+module _U195_pt__U196 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U186_pt__U187 (
+module _U192_pt__U193 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U183_pt__U184 (
+module _U184_pt__U185 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U177_pt__U178 (
+module _U181_pt__U182 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U174_pt__U175 (
+module _U171_pt__U172 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U166_pt__U167 (
+module _U168_pt__U169 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U163_pt__U164 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U15_pt__U16 (
+module _U156_pt__U157 (
     input [15:0] in,
     output [15:0] out
 );
@@ -9457,49 +9471,28 @@ module _U150_pt__U151 (
 assign out = in;
 endmodule
 
-module _U138_pt__U139 (
+module _U136_pt__U137 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U135_pt__U136 (
+module _U134_pt__U135 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U132_pt__U133 (
+module _U131_pt__U132 (
     input [15:0] in,
     output [15:0] out
 );
 assign out = in;
 endmodule
 
-module _U12_pt__U13 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U118_pt__U119 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U116_pt__U117 (
-    input [15:0] in,
-    output [15:0] out
-);
-assign out = in;
-endmodule
-
-module _U113_pt__U114 (
+module _U114_pt__U115 (
     input [15:0] in,
     output [15:0] out
 );
@@ -9507,6 +9500,13 @@ assign out = in;
 endmodule
 
 module _U10_pt__U11 (
+    input [15:0] in,
+    output [15:0] out
+);
+assign out = in;
+endmodule
+
+module _U105_pt__U106 (
     input [15:0] in,
     output [15:0] out
 );
@@ -9538,11 +9538,7 @@ wire [15:0] _U104_in;
 wire _U104_clk;
 wire [15:0] _U104_out;
 wire [15:0] _U105_in;
-wire _U105_clk;
 wire [15:0] _U105_out;
-wire [15:0] _U106_in;
-wire _U106_clk;
-wire [15:0] _U106_out;
 wire [15:0] _U107_in;
 wire _U107_clk;
 wire [15:0] _U107_out;
@@ -9562,14 +9558,24 @@ wire [15:0] _U112_in;
 wire _U112_clk;
 wire [15:0] _U112_out;
 wire [15:0] _U113_in;
+wire _U113_clk;
 wire [15:0] _U113_out;
-wire [15:0] _U115_in;
-wire _U115_clk;
-wire [15:0] _U115_out;
+wire [15:0] _U114_in;
+wire [15:0] _U114_out;
 wire [15:0] _U116_in;
+wire _U116_clk;
+wire [15:0] _U116_out;
+wire [15:0] _U117_in;
+wire _U117_clk;
+wire [15:0] _U117_out;
 wire [15:0] _U118_in;
+wire _U118_clk;
 wire [15:0] _U118_out;
+wire [15:0] _U119_in;
+wire _U119_clk;
+wire [15:0] _U119_out;
 wire [15:0] _U12_in;
+wire _U12_clk;
 wire [15:0] _U12_out;
 wire [15:0] _U120_in;
 wire _U120_clk;
@@ -9601,24 +9607,26 @@ wire [15:0] _U128_out;
 wire [15:0] _U129_in;
 wire _U129_clk;
 wire [15:0] _U129_out;
+wire [15:0] _U13_in;
+wire _U13_clk;
+wire [15:0] _U13_out;
 wire [15:0] _U130_in;
 wire _U130_clk;
 wire [15:0] _U130_out;
 wire [15:0] _U131_in;
-wire _U131_clk;
 wire [15:0] _U131_out;
-wire [15:0] _U132_in;
-wire [15:0] _U132_out;
+wire [15:0] _U133_in;
+wire _U133_clk;
+wire [15:0] _U133_out;
 wire [15:0] _U134_in;
-wire _U134_clk;
-wire [15:0] _U134_out;
-wire [15:0] _U135_in;
-wire [15:0] _U135_out;
-wire [15:0] _U137_in;
-wire _U137_clk;
-wire [15:0] _U137_out;
+wire [15:0] _U136_in;
+wire [15:0] _U136_out;
 wire [15:0] _U138_in;
+wire _U138_clk;
 wire [15:0] _U138_out;
+wire [15:0] _U139_in;
+wire _U139_clk;
+wire [15:0] _U139_out;
 wire [15:0] _U14_in;
 wire _U14_clk;
 wire [15:0] _U14_out;
@@ -9653,6 +9661,7 @@ wire [15:0] _U149_in;
 wire _U149_clk;
 wire [15:0] _U149_out;
 wire [15:0] _U15_in;
+wire _U15_clk;
 wire [15:0] _U15_out;
 wire [15:0] _U150_in;
 wire [15:0] _U150_out;
@@ -9665,17 +9674,16 @@ wire [15:0] _U155_in;
 wire _U155_clk;
 wire [15:0] _U155_out;
 wire [15:0] _U156_in;
-wire _U156_clk;
 wire [15:0] _U156_out;
-wire [15:0] _U157_in;
-wire _U157_clk;
-wire [15:0] _U157_out;
 wire [15:0] _U158_in;
 wire _U158_clk;
 wire [15:0] _U158_out;
 wire [15:0] _U159_in;
 wire _U159_clk;
 wire [15:0] _U159_out;
+wire [15:0] _U16_in;
+wire _U16_clk;
+wire [15:0] _U16_out;
 wire [15:0] _U160_in;
 wire _U160_clk;
 wire [15:0] _U160_out;
@@ -9686,18 +9694,22 @@ wire [15:0] _U162_in;
 wire _U162_clk;
 wire [15:0] _U162_out;
 wire [15:0] _U163_in;
+wire _U163_clk;
 wire [15:0] _U163_out;
+wire [15:0] _U164_in;
+wire _U164_clk;
+wire [15:0] _U164_out;
 wire [15:0] _U165_in;
 wire _U165_clk;
 wire [15:0] _U165_out;
 wire [15:0] _U166_in;
+wire _U166_clk;
 wire [15:0] _U166_out;
+wire [15:0] _U167_in;
+wire _U167_clk;
+wire [15:0] _U167_out;
 wire [15:0] _U168_in;
-wire _U168_clk;
 wire [15:0] _U168_out;
-wire [15:0] _U169_in;
-wire _U169_clk;
-wire [15:0] _U169_out;
 wire [15:0] _U17_in;
 wire _U17_clk;
 wire [15:0] _U17_out;
@@ -9705,61 +9717,69 @@ wire [15:0] _U170_in;
 wire _U170_clk;
 wire [15:0] _U170_out;
 wire [15:0] _U171_in;
-wire _U171_clk;
 wire [15:0] _U171_out;
-wire [15:0] _U172_in;
-wire _U172_clk;
-wire [15:0] _U172_out;
 wire [15:0] _U173_in;
 wire _U173_clk;
 wire [15:0] _U173_out;
 wire [15:0] _U174_in;
+wire _U174_clk;
 wire [15:0] _U174_out;
+wire [15:0] _U175_in;
+wire _U175_clk;
+wire [15:0] _U175_out;
 wire [15:0] _U176_in;
 wire _U176_clk;
 wire [15:0] _U176_out;
 wire [15:0] _U177_in;
+wire _U177_clk;
 wire [15:0] _U177_out;
+wire [15:0] _U178_in;
+wire _U178_clk;
+wire [15:0] _U178_out;
 wire [15:0] _U179_in;
 wire _U179_clk;
 wire [15:0] _U179_out;
 wire [15:0] _U18_in;
+wire _U18_clk;
 wire [15:0] _U18_out;
 wire [15:0] _U180_in;
 wire _U180_clk;
 wire [15:0] _U180_out;
 wire [15:0] _U181_in;
-wire _U181_clk;
 wire [15:0] _U181_out;
-wire [15:0] _U182_in;
-wire _U182_clk;
-wire [15:0] _U182_out;
 wire [15:0] _U183_in;
+wire _U183_clk;
 wire [15:0] _U183_out;
-wire [15:0] _U185_in;
-wire _U185_clk;
-wire [15:0] _U185_out;
+wire [15:0] _U184_in;
+wire [15:0] _U184_out;
 wire [15:0] _U186_in;
+wire _U186_clk;
 wire [15:0] _U186_out;
+wire [15:0] _U187_in;
+wire _U187_clk;
+wire [15:0] _U187_out;
 wire [15:0] _U188_in;
 wire _U188_clk;
 wire [15:0] _U188_out;
 wire [15:0] _U189_in;
 wire _U189_clk;
 wire [15:0] _U189_out;
+wire [15:0] _U19_in;
+wire _U19_clk;
+wire [15:0] _U19_out;
 wire [15:0] _U190_in;
+wire _U190_clk;
 wire [15:0] _U190_out;
+wire [15:0] _U191_in;
+wire _U191_clk;
+wire [15:0] _U191_out;
 wire [15:0] _U192_in;
-wire _U192_clk;
 wire [15:0] _U192_out;
-wire [15:0] _U193_in;
-wire [15:0] _U193_out;
+wire [15:0] _U194_in;
+wire _U194_clk;
+wire [15:0] _U194_out;
 wire [15:0] _U195_in;
-wire _U195_clk;
 wire [15:0] _U195_out;
-wire [15:0] _U196_in;
-wire _U196_clk;
-wire [15:0] _U196_out;
 wire [15:0] _U197_in;
 wire _U197_clk;
 wire [15:0] _U197_out;
@@ -9776,20 +9796,12 @@ wire [15:0] _U200_in;
 wire _U200_clk;
 wire [15:0] _U200_out;
 wire [15:0] _U201_in;
-wire _U201_clk;
 wire [15:0] _U201_out;
-wire [15:0] _U202_in;
-wire _U202_clk;
-wire [15:0] _U202_out;
 wire [15:0] _U203_in;
 wire _U203_clk;
 wire [15:0] _U203_out;
 wire [15:0] _U204_in;
-wire _U204_clk;
 wire [15:0] _U204_out;
-wire [15:0] _U205_in;
-wire _U205_clk;
-wire [15:0] _U205_out;
 wire [15:0] _U206_in;
 wire _U206_clk;
 wire [15:0] _U206_out;
@@ -9797,15 +9809,19 @@ wire [15:0] _U207_in;
 wire _U207_clk;
 wire [15:0] _U207_out;
 wire [15:0] _U208_in;
-wire _U208_clk;
 wire [15:0] _U208_out;
-wire [15:0] _U209_in;
-wire [15:0] _U209_out;
 wire [15:0] _U21_in;
 wire _U21_clk;
 wire [15:0] _U21_out;
+wire [15:0] _U210_in;
+wire _U210_clk;
+wire [15:0] _U210_out;
 wire [15:0] _U22_in;
+wire _U22_clk;
 wire [15:0] _U22_out;
+wire [15:0] _U23_in;
+wire _U23_clk;
+wire [15:0] _U23_out;
 wire [15:0] _U24_in;
 wire _U24_clk;
 wire [15:0] _U24_out;
@@ -9815,22 +9831,14 @@ wire [15:0] _U25_out;
 wire [15:0] _U26_in;
 wire [15:0] _U26_out;
 wire [15:0] _U28_in;
-wire _U28_clk;
 wire [15:0] _U28_out;
-wire [15:0] _U29_in;
-wire _U29_clk;
-wire [15:0] _U29_out;
 wire [15:0] _U30_in;
-wire _U30_clk;
 wire [15:0] _U30_out;
-wire [15:0] _U31_in;
-wire [15:0] _U31_out;
+wire [15:0] _U32_in;
+wire _U32_clk;
+wire [15:0] _U32_out;
 wire [15:0] _U33_in;
-wire _U33_clk;
 wire [15:0] _U33_out;
-wire [15:0] _U34_in;
-wire _U34_clk;
-wire [15:0] _U34_out;
 wire [15:0] _U35_in;
 wire _U35_clk;
 wire [15:0] _U35_out;
@@ -9843,19 +9851,15 @@ wire [15:0] _U39_in;
 wire _U39_clk;
 wire [15:0] _U39_out;
 wire [15:0] _U40_in;
-wire _U40_clk;
 wire [15:0] _U40_out;
-wire [15:0] _U41_in;
-wire _U41_clk;
-wire [15:0] _U41_out;
 wire [15:0] _U42_in;
+wire _U42_clk;
 wire [15:0] _U42_out;
+wire [15:0] _U43_in;
+wire _U43_clk;
+wire [15:0] _U43_out;
 wire [15:0] _U44_in;
-wire _U44_clk;
 wire [15:0] _U44_out;
-wire [15:0] _U45_in;
-wire _U45_clk;
-wire [15:0] _U45_out;
 wire [15:0] _U46_in;
 wire _U46_clk;
 wire [15:0] _U46_out;
@@ -9863,10 +9867,10 @@ wire [15:0] _U47_in;
 wire _U47_clk;
 wire [15:0] _U47_out;
 wire [15:0] _U48_in;
+wire _U48_clk;
 wire [15:0] _U48_out;
-wire [15:0] _U50_in;
-wire _U50_clk;
-wire [15:0] _U50_out;
+wire [15:0] _U49_in;
+wire [15:0] _U49_out;
 wire [15:0] _U51_in;
 wire _U51_clk;
 wire [15:0] _U51_out;
@@ -9877,10 +9881,10 @@ wire [15:0] _U53_in;
 wire _U53_clk;
 wire [15:0] _U53_out;
 wire [15:0] _U54_in;
-wire _U54_clk;
 wire [15:0] _U54_out;
-wire [15:0] _U55_in;
-wire [15:0] _U55_out;
+wire [15:0] _U56_in;
+wire _U56_clk;
+wire [15:0] _U56_out;
 wire [15:0] _U57_in;
 wire _U57_clk;
 wire [15:0] _U57_out;
@@ -9891,13 +9895,13 @@ wire [15:0] _U59_in;
 wire _U59_clk;
 wire [15:0] _U59_out;
 wire [15:0] _U60_in;
-wire _U60_clk;
 wire [15:0] _U60_out;
-wire [15:0] _U61_in;
-wire _U61_clk;
-wire [15:0] _U61_out;
 wire [15:0] _U62_in;
+wire _U62_clk;
 wire [15:0] _U62_out;
+wire [15:0] _U63_in;
+wire _U63_clk;
+wire [15:0] _U63_out;
 wire [15:0] _U64_in;
 wire _U64_clk;
 wire [15:0] _U64_out;
@@ -9905,11 +9909,7 @@ wire [15:0] _U65_in;
 wire _U65_clk;
 wire [15:0] _U65_out;
 wire [15:0] _U66_in;
-wire _U66_clk;
 wire [15:0] _U66_out;
-wire [15:0] _U67_in;
-wire _U67_clk;
-wire [15:0] _U67_out;
 wire [15:0] _U68_in;
 wire _U68_clk;
 wire [15:0] _U68_out;
@@ -9917,16 +9917,16 @@ wire [15:0] _U69_in;
 wire _U69_clk;
 wire [15:0] _U69_out;
 wire [15:0] _U70_in;
+wire _U70_clk;
 wire [15:0] _U70_out;
+wire [15:0] _U71_in;
+wire _U71_clk;
+wire [15:0] _U71_out;
 wire [15:0] _U72_in;
 wire _U72_clk;
 wire [15:0] _U72_out;
 wire [15:0] _U73_in;
-wire _U73_clk;
 wire [15:0] _U73_out;
-wire [15:0] _U74_in;
-wire _U74_clk;
-wire [15:0] _U74_out;
 wire [15:0] _U75_in;
 wire _U75_clk;
 wire [15:0] _U75_out;
@@ -9937,13 +9937,13 @@ wire [15:0] _U77_in;
 wire _U77_clk;
 wire [15:0] _U77_out;
 wire [15:0] _U78_in;
+wire _U78_clk;
 wire [15:0] _U78_out;
+wire [15:0] _U79_in;
+wire _U79_clk;
+wire [15:0] _U79_out;
 wire [15:0] _U80_in;
-wire _U80_clk;
 wire [15:0] _U80_out;
-wire [15:0] _U81_in;
-wire _U81_clk;
-wire [15:0] _U81_out;
 wire [15:0] _U82_in;
 wire _U82_clk;
 wire [15:0] _U82_out;
@@ -9960,10 +9960,10 @@ wire [15:0] _U86_in;
 wire _U86_clk;
 wire [15:0] _U86_out;
 wire [15:0] _U87_in;
+wire _U87_clk;
 wire [15:0] _U87_out;
-wire [15:0] _U89_in;
-wire _U89_clk;
-wire [15:0] _U89_out;
+wire [15:0] _U88_in;
+wire [15:0] _U88_out;
 wire [15:0] _U90_in;
 wire _U90_clk;
 wire [15:0] _U90_out;
@@ -9990,7 +9990,7 @@ wire [15:0] _U98_out;
 wire [15:0] _U99_in;
 wire _U99_clk;
 wire [15:0] _U99_out;
-assign _U10_in = in1_hw_input_global_wrapper_stencil[0];
+assign _U10_in = _U25_out;
 _U10_pt__U11 _U10 (
     .in(_U10_in),
     .out(_U10_out)
@@ -10040,25 +10040,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U104_clk),
     .out(_U104_out)
 );
-assign _U105_in = _U104_out;
-assign _U105_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U105 (
+assign _U105_in = _U113_out;
+_U105_pt__U106 _U105 (
     .in(_U105_in),
-    .clk(_U105_clk),
     .out(_U105_out)
 );
-assign _U106_in = _U105_out;
-assign _U106_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U106 (
-    .in(_U106_in),
-    .clk(_U106_clk),
-    .out(_U106_out)
-);
-assign _U107_in = _U106_out;
+assign _U107_in = in1_hw_input_global_wrapper_stencil[7];
 assign _U107_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10112,36 +10099,66 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U112_clk),
     .out(_U112_out)
 );
-assign _U113_in = _U115_out;
-_U113_pt__U114 _U113 (
-    .in(_U113_in),
-    .out(_U113_out)
-);
-assign _U115_in = 16'(_U193_out + _U135_out);
-assign _U115_clk = clk;
+assign _U113_in = _U112_out;
+assign _U113_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U115 (
-    .in(_U115_in),
-    .clk(_U115_clk),
-    .out(_U115_out)
+) _U113 (
+    .in(_U113_in),
+    .clk(_U113_clk),
+    .out(_U113_out)
 );
-assign _U116_in = 16'(_U96_out + _U113_out);
-_U116_pt__U117 _U116 (
+assign _U114_in = _U130_out;
+_U114_pt__U115 _U114 (
+    .in(_U114_in),
+    .out(_U114_out)
+);
+assign _U116_in = 16'(_U26_out * _U28_out);
+assign _U116_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U116 (
     .in(_U116_in),
-    .out(out_conv_stencil)
+    .clk(_U116_clk),
+    .out(_U116_out)
 );
-assign _U118_in = _U131_out;
-_U118_pt__U119 _U118 (
+assign _U117_in = _U116_out;
+assign _U117_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U117 (
+    .in(_U117_in),
+    .clk(_U117_clk),
+    .out(_U117_out)
+);
+assign _U118_in = _U117_out;
+assign _U118_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U118 (
     .in(_U118_in),
+    .clk(_U118_clk),
     .out(_U118_out)
 );
-assign _U12_in = _U14_out;
-_U12_pt__U13 _U12 (
+assign _U119_in = _U118_out;
+assign _U119_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U119 (
+    .in(_U119_in),
+    .clk(_U119_clk),
+    .out(_U119_out)
+);
+assign _U12_in = in0_conv_stencil[0];
+assign _U12_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U12 (
     .in(_U12_in),
+    .clk(_U12_clk),
     .out(_U12_out)
 );
-assign _U120_in = 16'(_U12_out * _U15_out);
+assign _U120_in = _U119_out;
 assign _U120_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10231,6 +10248,15 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U129_clk),
     .out(_U129_out)
 );
+assign _U13_in = _U12_out;
+assign _U13_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U13 (
+    .in(_U13_in),
+    .clk(_U13_clk),
+    .out(_U13_out)
+);
 assign _U130_in = _U129_out;
 assign _U130_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
@@ -10240,49 +10266,49 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U130_clk),
     .out(_U130_out)
 );
-assign _U131_in = _U130_out;
-assign _U131_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U131 (
+assign _U131_in = _U133_out;
+_U131_pt__U132 _U131 (
     .in(_U131_in),
-    .clk(_U131_clk),
     .out(_U131_out)
 );
-assign _U132_in = _U134_out;
-_U132_pt__U133 _U132 (
-    .in(_U132_in),
-    .out(_U132_out)
-);
-assign _U134_in = 16'(_U138_out + _U150_out);
-assign _U134_clk = clk;
+assign _U133_in = 16'(_U10_out + _U153_out);
+assign _U133_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U134 (
+) _U133 (
+    .in(_U133_in),
+    .clk(_U133_clk),
+    .out(_U133_out)
+);
+assign _U134_in = 16'(_U114_out + _U131_out);
+_U134_pt__U135 _U134 (
     .in(_U134_in),
-    .clk(_U134_clk),
-    .out(_U134_out)
+    .out(out_conv_stencil)
 );
-assign _U135_in = _U137_out;
-_U135_pt__U136 _U135 (
-    .in(_U135_in),
-    .out(_U135_out)
+assign _U136_in = _U149_out;
+_U136_pt__U137 _U136 (
+    .in(_U136_in),
+    .out(_U136_out)
 );
-assign _U137_in = 16'(_U118_out + _U132_out);
-assign _U137_clk = clk;
+assign _U138_in = 16'(_U30_out * _U33_out);
+assign _U138_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U137 (
-    .in(_U137_in),
-    .clk(_U137_clk),
-    .out(_U137_out)
-);
-assign _U138_in = _U149_out;
-_U138_pt__U139 _U138 (
+) _U138 (
     .in(_U138_in),
+    .clk(_U138_clk),
     .out(_U138_out)
 );
-assign _U14_in = in2_hw_kernel_global_wrapper_stencil[1];
+assign _U139_in = _U138_out;
+assign _U139_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U139 (
+    .in(_U139_in),
+    .clk(_U139_clk),
+    .out(_U139_out)
+);
+assign _U14_in = _U13_out;
 assign _U14_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10291,7 +10317,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U14_clk),
     .out(_U14_out)
 );
-assign _U140_in = 16'(_U18_out * _U22_out);
+assign _U140_in = _U139_out;
 assign _U140_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10381,9 +10407,13 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U149_clk),
     .out(_U149_out)
 );
-assign _U15_in = _U17_out;
-_U15_pt__U16 _U15 (
+assign _U15_in = _U14_out;
+assign _U15_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U15 (
     .in(_U15_in),
+    .clk(_U15_clk),
     .out(_U15_out)
 );
 assign _U150_in = _U152_out;
@@ -10391,7 +10421,7 @@ _U150_pt__U151 _U150 (
     .in(_U150_in),
     .out(_U150_out)
 );
-assign _U152_in = 16'(_U153_out + _U163_out);
+assign _U152_in = 16'(_U156_out + _U168_out);
 assign _U152_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10400,12 +10430,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U152_clk),
     .out(_U152_out)
 );
-assign _U153_in = _U162_out;
+assign _U153_in = _U155_out;
 _U153_pt__U154 _U153 (
     .in(_U153_in),
     .out(_U153_out)
 );
-assign _U155_in = 16'(_U26_out * _U31_out);
+assign _U155_in = 16'(_U136_out + _U150_out);
 assign _U155_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10414,25 +10444,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U155_clk),
     .out(_U155_out)
 );
-assign _U156_in = _U155_out;
-assign _U156_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U156 (
+assign _U156_in = _U167_out;
+_U156_pt__U157 _U156 (
     .in(_U156_in),
-    .clk(_U156_clk),
     .out(_U156_out)
 );
-assign _U157_in = _U156_out;
-assign _U157_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U157 (
-    .in(_U157_in),
-    .clk(_U157_clk),
-    .out(_U157_out)
-);
-assign _U158_in = _U157_out;
+assign _U158_in = 16'(_U36_out * _U40_out);
 assign _U158_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10449,6 +10466,15 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .in(_U159_in),
     .clk(_U159_clk),
     .out(_U159_out)
+);
+assign _U16_in = _U15_out;
+assign _U16_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U16 (
+    .in(_U16_in),
+    .clk(_U16_clk),
+    .out(_U16_out)
 );
 assign _U160_in = _U159_out;
 assign _U160_clk = clk;
@@ -10477,12 +10503,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U162_clk),
     .out(_U162_out)
 );
-assign _U163_in = _U165_out;
-_U163_pt__U164 _U163 (
+assign _U163_in = _U162_out;
+assign _U163_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U163 (
     .in(_U163_in),
+    .clk(_U163_clk),
     .out(_U163_out)
 );
-assign _U165_in = 16'(_U166_out + _U174_out);
+assign _U164_in = _U163_out;
+assign _U164_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U164 (
+    .in(_U164_in),
+    .clk(_U164_clk),
+    .out(_U164_out)
+);
+assign _U165_in = _U164_out;
 assign _U165_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10491,30 +10530,30 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U165_clk),
     .out(_U165_out)
 );
-assign _U166_in = _U173_out;
-_U166_pt__U167 _U166 (
+assign _U166_in = _U165_out;
+assign _U166_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U166 (
     .in(_U166_in),
+    .clk(_U166_clk),
     .out(_U166_out)
 );
-assign _U168_in = 16'(_U36_out * _U42_out);
-assign _U168_clk = clk;
+assign _U167_in = _U166_out;
+assign _U167_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U168 (
+) _U167 (
+    .in(_U167_in),
+    .clk(_U167_clk),
+    .out(_U167_out)
+);
+assign _U168_in = _U170_out;
+_U168_pt__U169 _U168 (
     .in(_U168_in),
-    .clk(_U168_clk),
     .out(_U168_out)
 );
-assign _U169_in = _U168_out;
-assign _U169_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U169 (
-    .in(_U169_in),
-    .clk(_U169_clk),
-    .out(_U169_out)
-);
-assign _U17_in = in1_hw_input_global_wrapper_stencil[1];
+assign _U17_in = _U16_out;
 assign _U17_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10523,7 +10562,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U17_clk),
     .out(_U17_out)
 );
-assign _U170_in = _U169_out;
+assign _U170_in = 16'(_U171_out + _U181_out);
 assign _U170_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10532,25 +10571,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U170_clk),
     .out(_U170_out)
 );
-assign _U171_in = _U170_out;
-assign _U171_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U171 (
+assign _U171_in = _U180_out;
+_U171_pt__U172 _U171 (
     .in(_U171_in),
-    .clk(_U171_clk),
     .out(_U171_out)
 );
-assign _U172_in = _U171_out;
-assign _U172_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U172 (
-    .in(_U172_in),
-    .clk(_U172_clk),
-    .out(_U172_out)
-);
-assign _U173_in = _U172_out;
+assign _U173_in = 16'(_U44_out * _U49_out);
 assign _U173_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10559,12 +10585,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U173_clk),
     .out(_U173_out)
 );
-assign _U174_in = _U176_out;
-_U174_pt__U175 _U174 (
+assign _U174_in = _U173_out;
+assign _U174_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U174 (
     .in(_U174_in),
+    .clk(_U174_clk),
     .out(_U174_out)
 );
-assign _U176_in = 16'(_U177_out + _U183_out);
+assign _U175_in = _U174_out;
+assign _U175_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U175 (
+    .in(_U175_in),
+    .clk(_U175_clk),
+    .out(_U175_out)
+);
+assign _U176_in = _U175_out;
 assign _U176_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10573,12 +10612,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U176_clk),
     .out(_U176_out)
 );
-assign _U177_in = _U182_out;
-_U177_pt__U178 _U177 (
+assign _U177_in = _U176_out;
+assign _U177_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U177 (
     .in(_U177_in),
+    .clk(_U177_clk),
     .out(_U177_out)
 );
-assign _U179_in = 16'(_U48_out * _U55_out);
+assign _U178_in = _U177_out;
+assign _U178_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U178 (
+    .in(_U178_in),
+    .clk(_U178_clk),
+    .out(_U178_out)
+);
+assign _U179_in = _U178_out;
 assign _U179_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10587,9 +10639,13 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U179_clk),
     .out(_U179_out)
 );
-assign _U18_in = _U21_out;
-_U18_pt__U19 _U18 (
+assign _U18_in = _U17_out;
+assign _U18_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U18 (
     .in(_U18_in),
+    .clk(_U18_clk),
     .out(_U18_out)
 );
 assign _U180_in = _U179_out;
@@ -10601,44 +10657,44 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U180_clk),
     .out(_U180_out)
 );
-assign _U181_in = _U180_out;
-assign _U181_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U181 (
+assign _U181_in = _U183_out;
+_U181_pt__U182 _U181 (
     .in(_U181_in),
-    .clk(_U181_clk),
     .out(_U181_out)
 );
-assign _U182_in = _U181_out;
-assign _U182_clk = clk;
+assign _U183_in = 16'(_U184_out + _U192_out);
+assign _U183_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U182 (
-    .in(_U182_in),
-    .clk(_U182_clk),
-    .out(_U182_out)
-);
-assign _U183_in = _U185_out;
-_U183_pt__U184 _U183 (
+) _U183 (
     .in(_U183_in),
+    .clk(_U183_clk),
     .out(_U183_out)
 );
-assign _U185_in = 16'(_U186_out + _U190_out);
-assign _U185_clk = clk;
+assign _U184_in = _U191_out;
+_U184_pt__U185 _U184 (
+    .in(_U184_in),
+    .out(_U184_out)
+);
+assign _U186_in = 16'(_U54_out * _U60_out);
+assign _U186_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U185 (
-    .in(_U185_in),
-    .clk(_U185_clk),
-    .out(_U185_out)
-);
-assign _U186_in = _U189_out;
-_U186_pt__U187 _U186 (
+) _U186 (
     .in(_U186_in),
+    .clk(_U186_clk),
     .out(_U186_out)
 );
-assign _U188_in = 16'(_U62_out * _U70_out);
+assign _U187_in = _U186_out;
+assign _U187_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U187 (
+    .in(_U187_in),
+    .clk(_U187_clk),
+    .out(_U187_out)
+);
+assign _U188_in = _U187_out;
 assign _U188_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10656,44 +10712,53 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U189_clk),
     .out(_U189_out)
 );
-assign _U190_in = _U192_out;
-_U190_pt__U191 _U190 (
+assign _U19_in = _U18_out;
+assign _U19_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U19 (
+    .in(_U19_in),
+    .clk(_U19_clk),
+    .out(_U19_out)
+);
+assign _U190_in = _U189_out;
+assign _U190_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U190 (
     .in(_U190_in),
+    .clk(_U190_clk),
     .out(_U190_out)
 );
-assign _U192_in = 16'(_U78_out * _U87_out);
-assign _U192_clk = clk;
+assign _U191_in = _U190_out;
+assign _U191_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U192 (
+) _U191 (
+    .in(_U191_in),
+    .clk(_U191_clk),
+    .out(_U191_out)
+);
+assign _U192_in = _U194_out;
+_U192_pt__U193 _U192 (
     .in(_U192_in),
-    .clk(_U192_clk),
     .out(_U192_out)
 );
-assign _U193_in = _U208_out;
-_U193_pt__U194 _U193 (
-    .in(_U193_in),
-    .out(_U193_out)
-);
-assign _U195_in = in0_conv_stencil[0];
-assign _U195_clk = clk;
+assign _U194_in = 16'(_U195_out + _U201_out);
+assign _U194_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U195 (
+) _U194 (
+    .in(_U194_in),
+    .clk(_U194_clk),
+    .out(_U194_out)
+);
+assign _U195_in = _U200_out;
+_U195_pt__U196 _U195 (
     .in(_U195_in),
-    .clk(_U195_clk),
     .out(_U195_out)
 );
-assign _U196_in = _U195_out;
-assign _U196_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U196 (
-    .in(_U196_in),
-    .clk(_U196_clk),
-    .out(_U196_out)
-);
-assign _U197_in = _U196_out;
+assign _U197_in = 16'(_U66_out * _U73_out);
 assign _U197_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10720,7 +10785,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U199_clk),
     .out(_U199_out)
 );
-assign _U20_in = in2_hw_kernel_global_wrapper_stencil[2];
+assign _U20_in = _U19_out;
 assign _U20_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10738,25 +10803,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U200_clk),
     .out(_U200_out)
 );
-assign _U201_in = _U200_out;
-assign _U201_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U201 (
+assign _U201_in = _U203_out;
+_U201_pt__U202 _U201 (
     .in(_U201_in),
-    .clk(_U201_clk),
     .out(_U201_out)
 );
-assign _U202_in = _U201_out;
-assign _U202_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U202 (
-    .in(_U202_in),
-    .clk(_U202_clk),
-    .out(_U202_out)
-);
-assign _U203_in = _U202_out;
+assign _U203_in = 16'(_U204_out + _U208_out);
 assign _U203_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10765,25 +10817,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U203_clk),
     .out(_U203_out)
 );
-assign _U204_in = _U203_out;
-assign _U204_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U204 (
+assign _U204_in = _U207_out;
+_U204_pt__U205 _U204 (
     .in(_U204_in),
-    .clk(_U204_clk),
     .out(_U204_out)
 );
-assign _U205_in = _U204_out;
-assign _U205_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U205 (
-    .in(_U205_in),
-    .clk(_U205_clk),
-    .out(_U205_out)
-);
-assign _U206_in = _U205_out;
+assign _U206_in = 16'(_U80_out * _U88_out);
 assign _U206_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10801,19 +10840,10 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U207_clk),
     .out(_U207_out)
 );
-assign _U208_in = _U207_out;
-assign _U208_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U208 (
+assign _U208_in = _U210_out;
+_U208_pt__U209 _U208 (
     .in(_U208_in),
-    .clk(_U208_clk),
     .out(_U208_out)
-);
-assign _U209_in = in2_hw_kernel_global_wrapper_stencil[0];
-_U209_pt__U210 _U209 (
-    .in(_U209_in),
-    .out(_U209_out)
 );
 assign _U21_in = _U20_out;
 assign _U21_clk = clk;
@@ -10824,12 +10854,34 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U21_clk),
     .out(_U21_out)
 );
-assign _U22_in = _U25_out;
-_U22_pt__U23 _U22 (
+assign _U210_in = 16'(_U96_out * _U105_out);
+assign _U210_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U210 (
+    .in(_U210_in),
+    .clk(_U210_clk),
+    .out(_U210_out)
+);
+assign _U22_in = _U21_out;
+assign _U22_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U22 (
     .in(_U22_in),
+    .clk(_U22_clk),
     .out(_U22_out)
 );
-assign _U24_in = in1_hw_input_global_wrapper_stencil[2];
+assign _U23_in = _U22_out;
+assign _U23_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U23 (
+    .in(_U23_in),
+    .clk(_U23_clk),
+    .out(_U23_out)
+);
+assign _U24_in = _U23_out;
 assign _U24_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10847,62 +10899,36 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U25_clk),
     .out(_U25_out)
 );
-assign _U26_in = _U30_out;
+assign _U26_in = in2_hw_kernel_global_wrapper_stencil[0];
 _U26_pt__U27 _U26 (
     .in(_U26_in),
     .out(_U26_out)
 );
-assign _U28_in = in2_hw_kernel_global_wrapper_stencil[3];
-assign _U28_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U28 (
+assign _U28_in = in1_hw_input_global_wrapper_stencil[0];
+_U28_pt__U29 _U28 (
     .in(_U28_in),
-    .clk(_U28_clk),
     .out(_U28_out)
 );
-assign _U29_in = _U28_out;
-assign _U29_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U29 (
-    .in(_U29_in),
-    .clk(_U29_clk),
-    .out(_U29_out)
-);
-assign _U30_in = _U29_out;
-assign _U30_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U30 (
+assign _U30_in = _U32_out;
+_U30_pt__U31 _U30 (
     .in(_U30_in),
-    .clk(_U30_clk),
     .out(_U30_out)
 );
-assign _U31_in = _U35_out;
-_U31_pt__U32 _U31 (
-    .in(_U31_in),
-    .out(_U31_out)
-);
-assign _U33_in = in1_hw_input_global_wrapper_stencil[3];
-assign _U33_clk = clk;
+assign _U32_in = in2_hw_kernel_global_wrapper_stencil[1];
+assign _U32_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U33 (
+) _U32 (
+    .in(_U32_in),
+    .clk(_U32_clk),
+    .out(_U32_out)
+);
+assign _U33_in = _U35_out;
+_U33_pt__U34 _U33 (
     .in(_U33_in),
-    .clk(_U33_clk),
     .out(_U33_out)
 );
-assign _U34_in = _U33_out;
-assign _U34_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U34 (
-    .in(_U34_in),
-    .clk(_U34_clk),
-    .out(_U34_out)
-);
-assign _U35_in = _U34_out;
+assign _U35_in = in1_hw_input_global_wrapper_stencil[1];
 assign _U35_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10911,12 +10937,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U35_clk),
     .out(_U35_out)
 );
-assign _U36_in = _U41_out;
+assign _U36_in = _U39_out;
 _U36_pt__U37 _U36 (
     .in(_U36_in),
     .out(_U36_out)
 );
-assign _U38_in = in2_hw_kernel_global_wrapper_stencil[4];
+assign _U38_in = in2_hw_kernel_global_wrapper_stencil[2];
 assign _U38_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10934,48 +10960,35 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U39_clk),
     .out(_U39_out)
 );
-assign _U40_in = _U39_out;
-assign _U40_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U40 (
+assign _U40_in = _U43_out;
+_U40_pt__U41 _U40 (
     .in(_U40_in),
-    .clk(_U40_clk),
     .out(_U40_out)
 );
-assign _U41_in = _U40_out;
-assign _U41_clk = clk;
+assign _U42_in = in1_hw_input_global_wrapper_stencil[2];
+assign _U42_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U41 (
-    .in(_U41_in),
-    .clk(_U41_clk),
-    .out(_U41_out)
-);
-assign _U42_in = _U47_out;
-_U42_pt__U43 _U42 (
+) _U42 (
     .in(_U42_in),
+    .clk(_U42_clk),
     .out(_U42_out)
 );
-assign _U44_in = in1_hw_input_global_wrapper_stencil[4];
-assign _U44_clk = clk;
+assign _U43_in = _U42_out;
+assign _U43_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U44 (
+) _U43 (
+    .in(_U43_in),
+    .clk(_U43_clk),
+    .out(_U43_out)
+);
+assign _U44_in = _U48_out;
+_U44_pt__U45 _U44 (
     .in(_U44_in),
-    .clk(_U44_clk),
     .out(_U44_out)
 );
-assign _U45_in = _U44_out;
-assign _U45_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U45 (
-    .in(_U45_in),
-    .clk(_U45_clk),
-    .out(_U45_out)
-);
-assign _U46_in = _U45_out;
+assign _U46_in = in2_hw_kernel_global_wrapper_stencil[3];
 assign _U46_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -10993,21 +11006,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U47_clk),
     .out(_U47_out)
 );
-assign _U48_in = _U54_out;
-_U48_pt__U49 _U48 (
-    .in(_U48_in),
-    .out(_U48_out)
-);
-assign _U50_in = in2_hw_kernel_global_wrapper_stencil[5];
-assign _U50_clk = clk;
+assign _U48_in = _U47_out;
+assign _U48_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U50 (
-    .in(_U50_in),
-    .clk(_U50_clk),
-    .out(_U50_out)
+) _U48 (
+    .in(_U48_in),
+    .clk(_U48_clk),
+    .out(_U48_out)
 );
-assign _U51_in = _U50_out;
+assign _U49_in = _U53_out;
+_U49_pt__U50 _U49 (
+    .in(_U49_in),
+    .out(_U49_out)
+);
+assign _U51_in = in1_hw_input_global_wrapper_stencil[3];
 assign _U51_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -11034,21 +11047,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U53_clk),
     .out(_U53_out)
 );
-assign _U54_in = _U53_out;
-assign _U54_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U54 (
+assign _U54_in = _U59_out;
+_U54_pt__U55 _U54 (
     .in(_U54_in),
-    .clk(_U54_clk),
     .out(_U54_out)
 );
-assign _U55_in = _U61_out;
-_U55_pt__U56 _U55 (
-    .in(_U55_in),
-    .out(_U55_out)
+assign _U56_in = in2_hw_kernel_global_wrapper_stencil[4];
+assign _U56_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U56 (
+    .in(_U56_in),
+    .clk(_U56_clk),
+    .out(_U56_out)
 );
-assign _U57_in = in1_hw_input_global_wrapper_stencil[5];
+assign _U57_in = _U56_out;
 assign _U57_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -11075,30 +11088,30 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U59_clk),
     .out(_U59_out)
 );
-assign _U60_in = _U59_out;
-assign _U60_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U60 (
+assign _U60_in = _U65_out;
+_U60_pt__U61 _U60 (
     .in(_U60_in),
-    .clk(_U60_clk),
     .out(_U60_out)
 );
-assign _U61_in = _U60_out;
-assign _U61_clk = clk;
+assign _U62_in = in1_hw_input_global_wrapper_stencil[4];
+assign _U62_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U61 (
-    .in(_U61_in),
-    .clk(_U61_clk),
-    .out(_U61_out)
-);
-assign _U62_in = _U69_out;
-_U62_pt__U63 _U62 (
+) _U62 (
     .in(_U62_in),
+    .clk(_U62_clk),
     .out(_U62_out)
 );
-assign _U64_in = in2_hw_kernel_global_wrapper_stencil[6];
+assign _U63_in = _U62_out;
+assign _U63_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U63 (
+    .in(_U63_in),
+    .clk(_U63_clk),
+    .out(_U63_out)
+);
+assign _U64_in = _U63_out;
 assign _U64_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -11116,25 +11129,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U65_clk),
     .out(_U65_out)
 );
-assign _U66_in = _U65_out;
-assign _U66_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U66 (
+assign _U66_in = _U72_out;
+_U66_pt__U67 _U66 (
     .in(_U66_in),
-    .clk(_U66_clk),
     .out(_U66_out)
 );
-assign _U67_in = _U66_out;
-assign _U67_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U67 (
-    .in(_U67_in),
-    .clk(_U67_clk),
-    .out(_U67_out)
-);
-assign _U68_in = _U67_out;
+assign _U68_in = in2_hw_kernel_global_wrapper_stencil[5];
 assign _U68_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -11152,12 +11152,25 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U69_clk),
     .out(_U69_out)
 );
-assign _U70_in = _U77_out;
-_U70_pt__U71 _U70 (
+assign _U70_in = _U69_out;
+assign _U70_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U70 (
     .in(_U70_in),
+    .clk(_U70_clk),
     .out(_U70_out)
 );
-assign _U72_in = in1_hw_input_global_wrapper_stencil[6];
+assign _U71_in = _U70_out;
+assign _U71_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U71 (
+    .in(_U71_in),
+    .clk(_U71_clk),
+    .out(_U71_out)
+);
+assign _U72_in = _U71_out;
 assign _U72_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -11166,25 +11179,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U72_clk),
     .out(_U72_out)
 );
-assign _U73_in = _U72_out;
-assign _U73_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U73 (
+assign _U73_in = _U79_out;
+_U73_pt__U74 _U73 (
     .in(_U73_in),
-    .clk(_U73_clk),
     .out(_U73_out)
 );
-assign _U74_in = _U73_out;
-assign _U74_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U74 (
-    .in(_U74_in),
-    .clk(_U74_clk),
-    .out(_U74_out)
-);
-assign _U75_in = _U74_out;
+assign _U75_in = in1_hw_input_global_wrapper_stencil[5];
 assign _U75_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -11211,30 +11211,30 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U77_clk),
     .out(_U77_out)
 );
-assign _U78_in = _U86_out;
-_U78_pt__U79 _U78 (
+assign _U78_in = _U77_out;
+assign _U78_clk = clk;
+mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
+    .init(16'h0000)
+) _U78 (
     .in(_U78_in),
+    .clk(_U78_clk),
     .out(_U78_out)
 );
-assign _U80_in = in2_hw_kernel_global_wrapper_stencil[7];
-assign _U80_clk = clk;
+assign _U79_in = _U78_out;
+assign _U79_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U80 (
+) _U79 (
+    .in(_U79_in),
+    .clk(_U79_clk),
+    .out(_U79_out)
+);
+assign _U80_in = _U87_out;
+_U80_pt__U81 _U80 (
     .in(_U80_in),
-    .clk(_U80_clk),
     .out(_U80_out)
 );
-assign _U81_in = _U80_out;
-assign _U81_clk = clk;
-mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
-    .init(16'h0000)
-) _U81 (
-    .in(_U81_in),
-    .clk(_U81_clk),
-    .out(_U81_out)
-);
-assign _U82_in = _U81_out;
+assign _U82_in = in2_hw_kernel_global_wrapper_stencil[6];
 assign _U82_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -11279,21 +11279,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U86_clk),
     .out(_U86_out)
 );
-assign _U87_in = _U95_out;
-_U87_pt__U88 _U87 (
-    .in(_U87_in),
-    .out(_U87_out)
-);
-assign _U89_in = in1_hw_input_global_wrapper_stencil[7];
-assign _U89_clk = clk;
+assign _U87_in = _U86_out;
+assign _U87_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
-) _U89 (
-    .in(_U89_in),
-    .clk(_U89_clk),
-    .out(_U89_out)
+) _U87 (
+    .in(_U87_in),
+    .clk(_U87_clk),
+    .out(_U87_out)
 );
-assign _U90_in = _U89_out;
+assign _U88_in = _U95_out;
+_U88_pt__U89 _U88 (
+    .in(_U88_in),
+    .out(_U88_out)
+);
+assign _U90_in = in1_hw_input_global_wrapper_stencil[6];
 assign _U90_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
@@ -11347,12 +11347,12 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .clk(_U95_clk),
     .out(_U95_out)
 );
-assign _U96_in = _U112_out;
+assign _U96_in = _U104_out;
 _U96_pt__U97 _U96 (
     .in(_U96_in),
     .out(_U96_out)
 );
-assign _U98_in = 16'(_U209_out * _U10_out);
+assign _U98_in = in2_hw_kernel_global_wrapper_stencil[7];
 assign _U98_clk = clk;
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)

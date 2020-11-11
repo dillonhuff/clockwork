@@ -16588,6 +16588,14 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  test_programs.push_back(resnet_coarse_pipeline_loop());
+  test_programs.push_back(mobilenet_unrolled());
+  test_programs.push_back(resnet());
+  test_programs.push_back(unet_conv_3_3());
+  test_programs.push_back(conv_multi());
+  test_programs.push_back(conv_layer());
+  test_programs.push_back(mobilenet_small());
+
   concat(test_programs, stencil_programs());
   concat(test_programs, harris_variants());
 
@@ -16598,13 +16606,6 @@ vector<prog> all_cgra_programs() {
   // Uses a ROM which forces the code to be too small
   //test_programs.push_back(accumulation());
 
-  test_programs.push_back(mobilenet_unrolled());
-  test_programs.push_back(resnet());
-  test_programs.push_back(resnet_coarse_pipeline_loop());
-  test_programs.push_back(unet_conv_3_3());
-  test_programs.push_back(conv_multi());
-  test_programs.push_back(conv_layer());
-  test_programs.push_back(mobilenet_small());
 
 
 
@@ -16941,13 +16942,14 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  auto test_programs =
+    all_cgra_programs();
+  test_platonic_codegen(test_programs);
+
   vector<prog> bram_test_programs{pointwise(), resnet()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
   //assert(false);
 
-  auto test_programs =
-    all_cgra_programs();
-  test_platonic_codegen(test_programs);
 
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
