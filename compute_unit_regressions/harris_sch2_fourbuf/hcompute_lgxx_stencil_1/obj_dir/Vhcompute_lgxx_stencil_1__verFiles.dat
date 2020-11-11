@@ -1,0 +1,12 @@
+# DESCRIPTION: Verilator output: Timestamp data for --skip-identical.  Delete at will.
+C "-Wall --cc hcompute_lgxx_stencil_1.v --exe --build hcompute_lgxx_stencil_1_compute_tb.cpp --top-module hcompute_lgxx_stencil_1 -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME"
+S   8601824  5523766  1588557558   983916780  1588557558   983916780 "/usr/local/bin/verilator_bin"
+S      1618  9914089  1605133899   657238575  1605133898    93251267 "hcompute_lgxx_stencil_1.v"
+T      7606  9917906  1605134642    67275635  1605134642    67275635 "obj_dir/Vhcompute_lgxx_stencil_1.cpp"
+T      3007  9917903  1605134642    63275666  1605134642    63275666 "obj_dir/Vhcompute_lgxx_stencil_1.h"
+T      1951  9918449  1605134642    71275603  1605134642    71275603 "obj_dir/Vhcompute_lgxx_stencil_1.mk"
+T       629  9917896  1605134642    59275699  1605134642    59275699 "obj_dir/Vhcompute_lgxx_stencil_1__Syms.cpp"
+T       907  9917898  1605134642    59275699  1605134642    59275699 "obj_dir/Vhcompute_lgxx_stencil_1__Syms.h"
+T       364  9918450  1605134642    71275603  1605134642    71275603 "obj_dir/Vhcompute_lgxx_stencil_1__ver.d"
+T         0        0  1605134642    79275540  1605134642    79275540 "obj_dir/Vhcompute_lgxx_stencil_1__verFiles.dat"
+T      1584  9918551  1605134642    67275635  1605134642    67275635 "obj_dir/Vhcompute_lgxx_stencil_1_classes.mk"
