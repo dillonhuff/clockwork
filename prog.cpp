@@ -5071,6 +5071,28 @@ void generate_garnet_verilator_tb(prog& prg,
   rgtb.close();
 }
 
+void generate_verilator_tb_reset_sequence(CodegenOptions& options, ostream& rgtb) {
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+  rgtb << "dut.rst_n = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.rst_n = 1;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.flush = 1;" << endl;
+  rgtb << "dut.clk = 1;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+  rgtb << "dut.flush = 0;" << endl;
+  rgtb << "dut.clk = 0;" << endl;
+  rgtb << "dut.eval();" << endl;
+
+}
+
 void generate_verilator_tb(
     CodegenOptions& options,
     prog& prg,
@@ -5116,24 +5138,25 @@ void generate_verilator_tb(
       buffers);
 
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
-  rgtb << "dut.rst_n = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  generate_verilator_tb_reset_sequence(options, rgtb);
+  //rgtb << "dut.clk = 0;" << endl;
+  //rgtb << "dut.eval();" << endl;
+  //rgtb << "dut.rst_n = 0;" << endl;
+  //rgtb << "dut.eval();" << endl;
 
-  rgtb << "dut.rst_n = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  //rgtb << "dut.rst_n = 1;" << endl;
+  //rgtb << "dut.eval();" << endl;
 
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  //rgtb << "dut.clk = 0;" << endl;
+  //rgtb << "dut.eval();" << endl;
 
-  rgtb << "dut.flush = 1;" << endl;
-  rgtb << "dut.clk = 1;" << endl;
-  rgtb << "dut.eval();" << endl;
+  //rgtb << "dut.flush = 1;" << endl;
+  //rgtb << "dut.clk = 1;" << endl;
+  //rgtb << "dut.eval();" << endl;
 
-  rgtb << "dut.flush = 0;" << endl;
-  rgtb << "dut.clk = 0;" << endl;
-  rgtb << "dut.eval();" << endl;
+  //rgtb << "dut.flush = 0;" << endl;
+  //rgtb << "dut.clk = 0;" << endl;
+  //rgtb << "dut.eval();" << endl;
   for (auto out : inputs(buffers, prg)) {
     string data_name =
       out.first + "_" + out.second;
