@@ -1661,6 +1661,12 @@ vector<string> reduce_vars(prog& prg);
 
 void sanity_check_all_reads_defined(prog& prg);
 
+void generate_vivado_rtl_tb(
+    CodegenOptions& options,
+    prog& prg,
+    umap* hw_sched,
+    map<string, UBuffer>& buffers);
+
 void generate_verilator_tb(
     CodegenOptions& options,
     prog& prg,

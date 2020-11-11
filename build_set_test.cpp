@@ -16287,6 +16287,7 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
     hw_sched,
     sched);
   generate_verilator_tb(options, prg, hw_sched, buffers);
+  generate_vivado_rtl_tb(options, prg, hw_sched, buffers);
 
 #endif
 }
@@ -16540,20 +16541,11 @@ vector<prog> stencil_programs() {
   vector<prog> test_programs;
   //test_programs.push_back(rom());
 
-<<<<<<< HEAD
   test_programs.push_back(harris());
-=======
-
-
->>>>>>> origin/shift
   test_programs.push_back(pointwise());
   test_programs.push_back(harris());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(up_sample());
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/shift
   test_programs.push_back(gaussian());
 
   // Fails with dual port tile?
@@ -16563,13 +16555,9 @@ vector<prog> stencil_programs() {
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
 
-
-
   // Bounds are too long. Software simulation
   // takes forever
   //test_programs.push_back(stereo());
-
-  // Compute units gone?
 
   return test_programs;
 }
@@ -16631,6 +16619,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
   cmd("mv " + prg_name + "_compute.v ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv cycle_accurate_regression_result_" + prg_name + ".csv ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_verilog_tb.cpp ./coreir_apps/" + app_type + "/" + prg_name + "/");
+  cmd("mv " + prg_name + "_vivado_verilog_tb.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
 }
 
 template<typename CodegenFunction>
@@ -16954,6 +16943,7 @@ void fpga_asplos_tests() {
 void cgra_flow_tests() {
   vector<prog> bram_test_programs{resnet()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  assert(false);
 
   auto test_programs =
     all_cgra_programs();
