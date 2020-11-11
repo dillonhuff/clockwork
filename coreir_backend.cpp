@@ -3250,6 +3250,7 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
   rgtb << tab(1) << "for (int i = 0; i < 1000; i++) {" << endl;
   RecordType* tp = compute_mod->getType();
   vector<string> in_args;
+  vector<string> input_value_printouts;
   for (auto fd : tp->getRecord()) {
     assert(isa<ArrayType>(fd.second));
     auto atp = static_cast<ArrayType*>(fd.second);
@@ -3267,6 +3268,7 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
         rgtb << tab(2) << "hw_uint<16> " << name << "_hwint = hw_uint<16>(" + name + ");" << endl;
         lanes.push_back(name + "_hwint");
         rgtb << tab(2) << "(dut." << fd.first << ")[" << l << "] = " << name << ";" << endl;
+        input_value_printouts.push_back(tab(2) + "cout << \" + " + fd.first + "[" + str(l) + "] -> \" << " + name + " << endl;");
       }
 
       string packed_arg = fd.first + "_packed";
@@ -3281,6 +3283,9 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
       rgtb << tab(2) << "int cpp_result = " << compute_name << sep_list(in_args, "(", ")", ", ") << ".to_int();" << endl;
       rgtb << tab(2) << "if (coreir_result != cpp_result) {" << endl;
       rgtb << tab(3) << "cout << \"ERROR in compute unit: " << compute_name << "\" << endl;" << endl;
+      for (auto inp : input_value_printouts) {
+        rgtb << inp << endl;
+      }
       rgtb << tab(3) << "cout << \"\\tcoreir_result: \" << coreir_result << endl;" << endl;
       rgtb << tab(3) << "cout << \"\\tcpp_result   : \" << cpp_result << endl;" << endl;
       rgtb << tab(3) << "return -1;" << endl;
