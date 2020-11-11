@@ -6985,7 +6985,11 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
 
   vector<int> unbanked;
   for (int d = 0; d < buf.logical_dimension(); d++) {
-    unbanked.push_back(d);
+    unbanked.push_back(1);
+  }
+  for (auto f : unbanked) {
+    cout << tab(1) << f << endl;
+    assert(f > 0);
   }
 
   cout << buf << endl;
@@ -7045,7 +7049,7 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
         auto lmaxpt = lexmaxval(pd);
         int bank_factor = to_int(lmaxpt) + 1;
         cout << tab(2) << "Bank factor in " << d << ": " << bank_factor << endl;
-        cycle_factors.push_back(bank_factor);
+        cycle_factors.push_back(max(1, bank_factor));
         //cout << tab(1) << "LMin " << d << " : " << str(lmin) << endl;
         //cout << tab(1) << "LMax " << d << " : " << str(lmax) << endl;
         //int lmax = to_int(sample(lmax));
@@ -7074,9 +7078,13 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
           cycle_factors[d] = 1;
         }
       }
+      for (auto f : cycle_factors) {
+        cout << tab(1) << f << endl;
+        assert(f > 0);
+      }
       return cycle_factors;
       //assert(false);
-    //}
+      //}
   }
   return unbanked;
   //assert(false);
