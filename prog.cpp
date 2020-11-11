@@ -6854,7 +6854,7 @@ void generate_vivado_rtl_tb(
   rgtb << tab(1) << "logic flush;" << endl;
 
   rgtb << endl << endl;
-  vector<string> port_decls{".clk(clk)", ".flush(flush)", ".rst_n(rst_n)"};
+  vector<string> port_decls{".clk(clk)", ".flush(flush)", ".rst_n(rst)"};
 
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
@@ -6938,7 +6938,8 @@ void generate_vivado_rtl_tb(
 
   rgtb << endl << endl;
 
-  rgtb << tab(1) << "always @(posedge clk) begin" << endl;
+  //rgtb << tab(1) << "always @(posedge clk) begin" << endl;
+  rgtb << tab(1) << "always @(negedge clk) begin" << endl;
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
     string out_bundle = eb.second;
@@ -6967,7 +6968,7 @@ void generate_vivado_rtl_tb(
         pg(out_rep, out_bundle);
 
       rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
-      rgtb << tab(3) << "$display(\"Got data %d from " << en_name << "\", " << data_name << "[0]" << ");" << endl;
+      rgtb << tab(3) << "$display(\"Got data %d from dut." << en_name << "\", " << data_name << "[0]" << ");" << endl;
       rgtb << tab(2) << "end" << endl;
     }
   }
