@@ -407,6 +407,14 @@ int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf
   return 100000;
 }
 
+void print_always_block_header(CodegenOptions& options, std::ostream& out) {
+  out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+}
+
+void print_reset_if(CodegenOptions& options, ostream& out) {
+  out << tab(2) << "if (~rst_n) begin" << endl;
+}
+  
 template <typename T>
 void print_shift_registers(
     std::ostream& out,
@@ -437,8 +445,10 @@ void print_shift_registers(
       out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
       out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
 
+      //print_always_block_header(options, out);
       out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
       out << tab(2) << "if (~rst_n) begin" << endl;
+      //print_reset_if(options, out);
       out << tab(3) << "read_addr <= 0;" << endl;
       out << tab(3) << "write_addr <= " << delay << ";" << endl;
       out << tab(2) << "end else begin" << endl;
@@ -532,6 +542,8 @@ void generate_fsm(
   condition += ");";
   out << tab(1) << condition << endl;
 
+  //print_always_block_header(options, out);
+  //print_reset_if(options, out);
   out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
   out << tab(2) << "if (~rst_n) begin" << endl;
   for(int i = 0; i < dims ;i ++) {
