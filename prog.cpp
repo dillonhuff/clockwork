@@ -6961,6 +6961,14 @@ void generate_vivado_rtl_tb(
       rgtb << tab(2) << "end" << endl;
 
     } else {
+      string en_name = 
+        pg(out_rep, out_bundle) + "_valid";
+      string data_name = 
+        pg(out_rep, out_bundle);
+
+      rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
+      rgtb << tab(3) << "$display(\"Got data from " << en_name << "\");" << endl;
+      rgtb << tab(2) << "end" << endl;
     }
   }
 

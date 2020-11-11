@@ -48,5 +48,8 @@ end
     if (hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_en) begin
       hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_in <= hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_in + 1;
     end
+    if (hw_output_stencil_op_hcompute_hw_output_stencil_write_valid) begin
+      $display("Got data from hw_output_stencil_op_hcompute_hw_output_stencil_write_valid");
+    end
   end
 endmodule
