@@ -6878,6 +6878,7 @@ void generate_vivado_rtl_tb(
       int pix_w = pixel_width;
       rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << " [" << pix_per_burst - 1 << " :0];" << endl;
       port_decls.push_back("." + data_name + "(" + data_name + ")");
+      rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << "_in" << ";" << endl;
 
     } else {
       string en_name = 
@@ -6890,21 +6891,39 @@ void generate_vivado_rtl_tb(
 
       int pix_w = pixel_width;
       rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << " [" << pix_per_burst - 1 << " :0];" << endl;
-      port_decls.push_back("." + data_name + "(" + data_name + ")");
 
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
-      //ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+      port_decls.push_back("." + data_name + "(" + data_name + ")");
     }
   }
 
   rgtb << prg.name << " dut(\n\t" << sep_list(port_decls, "\n\t", "\n\t", ",\n\t") << ");" << endl;
-  rgtb << "endmodule";
 
   rgtb << tab(1) << "initial begin" << endl;
   rgtb << "clk = 0;" << endl;
   rgtb << "rst = 0;" << endl;
   rgtb << "flush = 0;" << endl;
-  rgtb << "counter0 = 0;" << endl;
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+
+    int pixel_width = out_buf.port_widths;
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+
+    if (prg.is_input(out_rep)) {
+      string en_name = 
+        pg(out_rep, out_bundle) + "_en";
+      string data_name = 
+        pg(out_rep, out_bundle);
+      string data_in_name = data_name + "_in";
+
+      rgtb << tab(3) << data_in_name << " = 0;" << endl;
+
+    } else {
+    }
+  }
   rgtb << tab(1) << "end" << endl;
   rgtb << tab(1) << "always #5 clk = ~clk;" << endl;
 
@@ -6920,140 +6939,34 @@ void generate_vivado_rtl_tb(
   rgtb << endl << endl;
 
   rgtb << tab(1) << "always @(posedge clk) begin" << endl;
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+
+    int pixel_width = out_buf.port_widths;
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+
+    if (prg.is_input(out_rep)) {
+      string en_name = 
+        pg(out_rep, out_bundle) + "_en";
+      string data_name = 
+        pg(out_rep, out_bundle);
+      string data_in_name = data_name + "_in";
+
+      rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
+      rgtb << tab(3) << data_in_name << " <= " << data_in_name << " + 1;" << endl;
+      rgtb << tab(2) << "end" << endl;
+
+    } else {
+    }
+  }
+
   rgtb << tab(1) << "end" << endl;
-    
-  //map<string, int> unroll_factor;
-  //for (auto in : prg.ins) {
-    //auto readers = find_readers(in, prg);
-    //int unroll = 0;
-    //for (auto reader : readers) {
-      //for (auto addr : reader->read_addrs(in)) {
-        //unroll++;
-      //}
-    //}
-    //unroll_factor[in] = unroll;
-  //}
-  //for (auto out : prg.outs) {
-    //auto readers = find_writers(out, prg);
-    //int unroll = 0;
-    //for (auto reader : readers) {
-      //for (auto addr : reader->write_addrs(out)) {
-        //unroll++;
-      //}
-    //}
-    //unroll_factor[out] = unroll;
-  //}
-
-  //generate_verilator_tb_in_streams(
-      //rgtb,
-      //prg,
-      //hw_sched,
-      //buffers);
-
-  //rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
-  //generate_verilator_tb_reset_sequence(options, rgtb);
-  ////rgtb << "dut.clk = 0;" << endl;
-  ////rgtb << "dut.eval();" << endl;
-  ////rgtb << "dut.rst_n = 0;" << endl;
-  ////rgtb << "dut.eval();" << endl;
-
-  ////rgtb << "dut.rst_n = 1;" << endl;
-  ////rgtb << "dut.eval();" << endl;
-
-  ////rgtb << "dut.clk = 0;" << endl;
-  ////rgtb << "dut.eval();" << endl;
-
-  ////rgtb << "dut.flush = 1;" << endl;
-  ////rgtb << "dut.clk = 1;" << endl;
-  ////rgtb << "dut.eval();" << endl;
-
-  ////rgtb << "dut.flush = 0;" << endl;
-  ////rgtb << "dut.clk = 0;" << endl;
-  ////rgtb << "dut.eval();" << endl;
-  //for (auto out : inputs(buffers, prg)) {
-    //string data_name =
-      //out.first + "_" + out.second;
-    //rgtb << tab(1) << "*(dut." << data_name << ") = 0;" << endl;
-  //}
-
-  //for (auto out : outputs(buffers, prg)) {
-    //string ctrl_name =
-      ////out.first + "_" + out.second + "_en";
-      //out.first + "_" + out.second + "_valid";
-    //rgtb << tab(1) << "int " << ctrl_name << "_count = 0;" << endl;
-  //}
-
-  //rgtb << tab(1) << "dut.clk = 0;" << endl;
-  //rgtb << tab(1) << "dut.eval();" << endl;
-  //rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
-  ////rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
-  ////rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
-
-  //rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
-  //for (auto out : inputs(buffers, prg)) {
-    //string ctrl_name =
-      //out.first + "_" + out.second + "_en";
-    //string data_name =
-      //"dut." + out.first + "_" + out.second;
-    //rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
-    //rgtb << tab(3) << "cout << \"send me data!\" << endl;" << endl;
-    //rgtb << tab(3) << "*(" << data_name << ") = (int) " << out.first << ".read();" << endl;
-    //rgtb << tab(2) << "}" << endl;
-  //}
-
-  //for (auto out : outputs(buffers, prg)) {
-    //string ctrl_name =
-      //out.first + "_" + out.second + "_valid";
-    //string data_name =
-      //"dut." + out.first + "_" + out.second;
-    //rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
-    //rgtb << tab(1) << "if (dut." << ctrl_name << ") {" << endl;
-    //rgtb << tab(2) << "cout << (int) *(" << data_name << ") << endl;" << endl;
-    ////rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
-    //rgtb << tab(2) << "hw_uint<16> val((int) *(" << data_name << "));" << endl;
-    ////rgtb << tab(2) << "fout << val << endl;" << endl;
-    //rgtb << tab(2) << out.first << ".write(val);" << endl;
-    //rgtb << tab(1) << "}" << endl;
-  //}
-
-  //rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;
-  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
-  //rgtb << tab(1) << tab(1) << "dut.clk = 1;" << endl;
-  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
-  //rgtb << tab(1) << "}" << endl;
-
-  //for (auto out : outputs(buffers, prg)) {
-    //string ctrl_name =
-      //out.first + "_" + out.second + "_valid";
-    //rgtb << tab(2) << "cout << " << ctrl_name << "_count << endl;" << endl;
-  //}
-
-  //for (auto in : prg.ins) {
-    //rgtb << tab(1) << "cout << \"# of elements waiting in: " << in << " = \" << " << in << ".num_waiting() << endl;" << endl;
-    //rgtb << tab(1) << "assert(" << in << ".is_empty());" << endl;
-  //}
-
-  //for (auto out : prg.outs) {
-    //auto cmap = prg.producer_map(out);
-    //auto read_map = inv(cmap);
-    //auto rng = range(read_map);
-    //auto range_card = card(rng);
-    //int num_pops = int_upper_bound(range_card);
-    //int unroll = map_find(out, unroll_factor);
-    //int lane_width = prg.buffer_port_width(out);
-    //int bundle_width = lane_width*unroll;
-
-    //rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
-    //rgtb << tab(2) << "auto actual = " << out << ".read();" << endl;
-    //vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
-    //for (auto r : results) {
-      //rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
-    //}
-    ////rgtb << tab(2) << "fout << actual << endl;" << endl;
-    //rgtb << tab(1) << "}" << endl << endl;
-  //}
-  //rgtb << tab(1) << "return 0;" << endl;
-  //rgtb << "}" << endl;
+  
+  rgtb << "endmodule";
   rgtb.close();
 
 }
