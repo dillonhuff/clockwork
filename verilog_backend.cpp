@@ -316,6 +316,10 @@ void print_embarassing_banks(std::ostream& out, const map<int, int>& partitioned
 vector<int> print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank& bnk) {
   int num_banks = card(bank_factors);
   out << tab(1) << "// # of banks: " << num_banks << endl;
+  for (auto f : bank_factors) {
+    cout << tab(1) << f << endl;
+    assert(f > 0);
+  }
 
   int capacity = 1;
   vector<int> capacities;
@@ -808,12 +812,12 @@ void instantiate_banks(
     schedule_info& hwinfo,
     const std::unordered_set<string>& shift_registered) {
 
-  //vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
-  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
+  //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  //bool has_embarassing_partition = false;
+  //bool has_embarassing_partition = embarassing_banking.has_value();
+  bool has_embarassing_partition = false;
 
   bank bnk = buf.compute_bank_info();
   vector<int> capacities;
@@ -992,17 +996,12 @@ void generate_platonic_ubuffer(
 
   prg.pretty_print();
 
-  //analyze_memory_demands(buf, prg, hwinfo);
-  //if (buf.name == "padded16_global_wrapper_stencil") {
-    ////assert(false);
-  //}
-
-  //vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
-  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
+  //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  //bool has_embarassing_partition = false;
+  //bool has_embarassing_partition = embarassing_banking.has_value();
+  bool has_embarassing_partition = false;
 
   int num_banks = card(bank_factors);
   vector<int> extents;
