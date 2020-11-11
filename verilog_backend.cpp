@@ -1034,7 +1034,11 @@ void analyze_memory_demands(UBuffer& buf, prog& prg, schedule_info& hwinfo) {
   UBuffer reduced = delete_ports(sr_ports, buf);
   cout << "Reduced..." << endl;
   cout << reduced << endl;
-  assert(false);
+
+  if (reduced.get_out_ports().size() > 0) {
+    assert(false);
+  }
+  //assert(false);
 }
 
 void generate_platonic_ubuffer(
