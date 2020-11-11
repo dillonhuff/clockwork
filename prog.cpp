@@ -6846,6 +6846,39 @@ void generate_vivado_rtl_tb(
     umap* hw_sched,
     map<string, UBuffer>& buffers) {
   ofstream rgtb(prg.name + "_vivado_verilog_tb.sv");
+
+  rgtb << "module " << prg.name << "_tb;" << endl;
+
+  rgtb << tab(1) << "logic clk;" << endl;
+  rgtb << tab(1) << "logic rst;" << endl;
+  rgtb << tab(1) << "logic flush;" << endl;
+
+  rgtb << endl << endl;
+  rgtb << prg.name << " dut();" << endl;
+  rgtb << "endmodule";
+
+  rgtb << tab(1) << "initial begin" << endl;
+  rgtb << "clk = 0;" << endl;
+  rgtb << "rst = 0;" << endl;
+  rgtb << "flush = 0;" << endl;
+  rgtb << "counter0 = 0;" << endl;
+  rgtb << tab(1) << "end" << endl;
+  rgtb << tab(1) << "always #5 clk = ~clk;" << endl;
+
+  rgtb << "initial begin" << endl;
+  rgtb << "#2;" << endl;
+  rgtb << "rst = 1;" << endl;
+  rgtb << "flush = 1;" << endl;
+  rgtb << "#10;" << endl;
+  rgtb << "flush = 0;" << endl;
+
+  rgtb << "end" << endl;
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "always @(posedge clk) begin" << endl;
+  rgtb << tab(1) << "end" << endl;
+    
   //rgtb << "#include \"hw_classes.h\"" << endl;
   //rgtb << "#include <fstream>" << endl;
   //rgtb << "#include \"verilated.h\"" << endl;
