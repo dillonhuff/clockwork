@@ -7067,6 +7067,13 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
 
       cout << "=== After Analysis the bank func is: " << str(bnk) << endl;
       assert(banking_scheme_is_legal(bnk, reduced));
+
+      // TODO: Remove this hack
+      if (cycle_factors.size() > 2) {
+        for (int d = 1; d < cycle_factors.size() - 1; d++) {
+          cycle_factors[d] = 1;
+        }
+      }
       return cycle_factors;
       //assert(false);
     //}
