@@ -16567,14 +16567,14 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  //test_programs.push_back(harris_sch1_onebuf());
+  test_programs.push_back(harris_sch1_onebuf());
 
   // 2. Final output is wrong
-  //test_programs.push_back(harris_sch2_fourbuf());
+  test_programs.push_back(harris_sch2_fourbuf());
   
   // Now: They also have an error in the ROMs
-  //test_programs.push_back(harris_sch3_1pp9c());
-  //test_programs.push_back(harris_sch4_1pp3c());
+  test_programs.push_back(harris_sch3_1pp9c());
+  test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
   test_programs.push_back(harris_sch5_1ppc());
@@ -18750,14 +18750,16 @@ void test_if_construction() {
 void dhuff_playground() {
   {
 #ifdef COREIR
-    //prog prg = harris_sch1_onebuf();
-    //prog prg = harris_sch5_1ppc();
     for (auto prg : harris_variants()) {
       prg.pretty_print();
       for (auto op : prg.all_ops()) {
         if (op->func != "") {
           cout << op->func << endl;
-          generate_compute_unit_regression_tb(op, prg);
+          int tb_res = generate_compute_unit_regression_tb(op, prg);
+          if (tb_res != 0) {
+            cout << "==== In prog: " << prg.name << " compute unit: " << op->func << " has a mismatch between C++ and coreir" << endl;
+            assert(false);
+          }
         }
       }
     }

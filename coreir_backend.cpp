@@ -3202,7 +3202,34 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
   //assert(false);
 }
 
-void generate_compute_unit_regression_tb(op* op, prog& prg) {
+void generate_script(const std::string& script_name, const std::vector<string>& cmds) {
+  ofstream out(script_name);
+  for (auto c : cmds) {
+    out << c << endl;
+  }
+  out.close();
+  cmd("chmod +x " + script_name);
+}
+
+void move_to_compute_regression_folder(const std::string& app_name, const std::string& compute_name) {
+
+  cmd("mkdir -p ./compute_unit_regressions/");
+  string app_folder = "./compute_unit_regressions/" + app_name;
+  cmd("mkdir -p " + app_folder + "/");
+  string dst_folder = app_folder + "/" + compute_name;
+  cmd("mkdir -p " + dst_folder + "/");
+
+  cmd("cp static_quad_value_bit_vector.h " + dst_folder);
+  cmd("cp hw_classes.h " + dst_folder);
+  cmd("cp clockwork_standard_compute_units.h " + dst_folder);
+  cmd("cp " + app_name + "_compute.h " + dst_folder);
+  cmd("mv " + compute_name + "_compute.json " + dst_folder);
+  cmd("mv " + compute_name + ".v " + dst_folder);
+  cmd("mv " + compute_name + "_compute_tb.cpp " + dst_folder);
+  cmd("mv run_" + compute_name + "_regression.sh " + dst_folder);
+}
+
+int generate_compute_unit_regression_tb(op* op, prog& prg) {
   assert(op->func != "");
 
   CoreIR::Context* context = CoreIR::newContext();
@@ -3308,8 +3335,17 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
   assert(verilator_build == 0);
 
   int verilator_run = cmd("./obj_dir/V" + top_module);
-  assert(verilator_run == 0);
   deleteContext(context);
+
+  vector<string> commands;
+  commands.push_back("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
+  commands.push_back("./obj_dir/V" + top_module);
+
+  generate_script("run_" + compute_name + "_regression.sh", commands);
+
+  move_to_compute_regression_folder(prg.name, compute_name);
+
+  return verilator_run;
 }
 
 #endif

@@ -145,7 +145,7 @@ void generate_platonic_ubuffer(
 
 void pipeline_compute_units(prog& prg, schedule_info& hwinfo);
 
-void generate_compute_unit_regression_tb(op* op, prog& prg);
+int generate_compute_unit_regression_tb(op* op, prog& prg);
 
 #endif
 
