@@ -1,4 +1,4 @@
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 270hw_input_global_wrapper_s0_y + 9hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
 module affine_controller__U0(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
@@ -32,7 +32,7 @@ module affine_controller__U0(input clk, input flush, input rst_n, output logic [
         counter [3] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 269) begin
+        if(counter[1] == 239) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -40,7 +40,7 @@ module affine_controller__U0(input clk, input flush, input rst_n, output logic [
           d[3]<= 0;
           d[1] <= d[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 8) begin
+        end else if(counter[2] == 7) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -63,7 +63,7 @@ module affine_controller__U0(input clk, input flush, input rst_n, output logic [
     end
   end
 endmodule
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 81hw_kernel_global_wrapper_s0_y + 27hw_kernel_global_wrapper_s0_x + 9hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module affine_controller__U7(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
@@ -101,7 +101,7 @@ module affine_controller__U7(input clk, input flush, input rst_n, output logic [
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 80) begin
+        if(counter[1] == 71) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -111,7 +111,7 @@ module affine_controller__U7(input clk, input flush, input rst_n, output logic [
           d[4]<= 0;
           d[1] <= d[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 26) begin
+        end else if(counter[2] == 23) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -120,7 +120,7 @@ module affine_controller__U7(input clk, input flush, input rst_n, output logic [
           d[4]<= 0;
           d[2] <= d[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 8) begin
+        end else if(counter[3] == 7) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -146,7 +146,7 @@ module affine_controller__U7(input clk, input flush, input rst_n, output logic [
     end
   end
 endmodule
-// { op_hcompute_conv_stencil[root, conv_s0_y, conv_s0_x] -> [(2 + 33conv_s0_y + conv_s0_x)] }
+// { op_hcompute_conv_stencil[root, conv_s0_y, conv_s0_x] -> [(2 + 30conv_s0_y + conv_s0_x)] }
 module affine_controller__U14(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
@@ -176,7 +176,7 @@ module affine_controller__U14(input clk, input flush, input rst_n, output logic 
         counter [2] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 32) begin
+        if(counter[1] == 29) begin
           counter[1]<= 0;
           counter[2]<= 0;
           d[2]<= 0;
@@ -196,8 +196,58 @@ module affine_controller__U14(input clk, input flush, input rst_n, output logic 
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_1[root, conv_s0_y, conv_s0_x] -> [(4 + 33conv_s0_y + conv_s0_x)] }
+// { op_hcompute_conv_stencil_1[root, conv_s0_y, conv_s0_x] -> [(3 + 30conv_s0_y + conv_s0_x)] }
 module affine_controller__U21(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+  logic [15:0] counter[3:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 3;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=27 && d[2]<=27);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==2) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 29) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          d[2]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { op_hcompute_conv_stencil_2[root, conv_s0_y, conv_s0_x] -> [(4 + 30conv_s0_y + conv_s0_x)] }
+module affine_controller__U28(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -226,7 +276,7 @@ module affine_controller__U21(input clk, input flush, input rst_n, output logic 
         counter [2] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 32) begin
+        if(counter[1] == 29) begin
           counter[1]<= 0;
           counter[2]<= 0;
           d[2]<= 0;
@@ -246,57 +296,7 @@ module affine_controller__U21(input clk, input flush, input rst_n, output logic 
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_2[root, conv_s0_y, conv_s0_x] -> [(6 + 33conv_s0_y + conv_s0_x)] }
-module affine_controller__U28(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
-  logic [15:0] counter[3:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 3;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=27 && d[2]<=27);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==5) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 32) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          d[2]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
-// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module affine_controller__U35(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
@@ -334,7 +334,7 @@ module affine_controller__U35(input clk, input flush, input rst_n, output logic 
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -344,7 +344,7 @@ module affine_controller__U35(input clk, input flush, input rst_n, output logic 
           d[4]<= 0;
           d[1] <= d[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -353,7 +353,7 @@ module affine_controller__U35(input clk, input flush, input rst_n, output logic 
           d[4]<= 0;
           d[2] <= d[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -379,8 +379,8 @@ module affine_controller__U35(input clk, input flush, input rst_n, output logic 
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8013 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
-module affine_controller__U74(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8010 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
+module affine_controller__U42(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -402,7 +402,7 @@ module affine_controller__U74(input clk, input flush, input rst_n, output logic 
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8012) begin
+      if(counter[0] ==8009) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -417,7 +417,7 @@ module affine_controller__U74(input clk, input flush, input rst_n, output logic 
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -427,7 +427,7 @@ module affine_controller__U74(input clk, input flush, input rst_n, output logic 
           d[4]<= 0;
           d[1] <= d[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -436,7 +436,7 @@ module affine_controller__U74(input clk, input flush, input rst_n, output logic 
           d[4]<= 0;
           d[2] <= d[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -462,8 +462,8 @@ module affine_controller__U74(input clk, input flush, input rst_n, output logic 
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8017 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
-module affine_controller__U113(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8011 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
+module affine_controller__U49(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -485,7 +485,7 @@ module affine_controller__U113(input clk, input flush, input rst_n, output logic
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8016) begin
+      if(counter[0] ==8010) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -500,7 +500,7 @@ module affine_controller__U113(input clk, input flush, input rst_n, output logic
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -510,7 +510,7 @@ module affine_controller__U113(input clk, input flush, input rst_n, output logic
           d[4]<= 0;
           d[1] <= d[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -519,7 +519,7 @@ module affine_controller__U113(input clk, input flush, input rst_n, output logic
           d[4]<= 0;
           d[2] <= d[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -545,8 +545,8 @@ module affine_controller__U113(input clk, input flush, input rst_n, output logic
     end
   end
 endmodule
-// { op_hcompute_hw_output_stencil[root, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(32033 + 812hw_output_s0_w + 29hw_output_s0_y_yi + hw_output_s0_x_xi)] }
-module affine_controller__U152(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+// { op_hcompute_hw_output_stencil[root, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(16017 + 784hw_output_s0_w + 28hw_output_s0_y_yi + hw_output_s0_x_xi)] }
+module affine_controller__U56(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -566,7 +566,7 @@ module affine_controller__U152(input clk, input flush, input rst_n, output logic
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==32032) begin
+      if(counter[0] ==16016) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -579,7 +579,7 @@ module affine_controller__U152(input clk, input flush, input rst_n, output logic
         counter [3] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 811) begin
+        if(counter[1] == 783) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -587,7 +587,7 @@ module affine_controller__U152(input clk, input flush, input rst_n, output logic
           d[3]<= 0;
           d[1] <= d[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 28) begin
+        end else if(counter[2] == 27) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -618,7 +618,7 @@ module conv_stencil_embarassing_bank_selector(input logic [16*3 - 1 :0] d, outpu
 
 endmodule
 
-// { op_hcompute_conv_stencil_1[root, conv_s0_y, conv_s0_x] -> [(4 + 33conv_s0_y + conv_s0_x)] }
+// { op_hcompute_conv_stencil_1[root, conv_s0_y, conv_s0_x] -> [(3 + 30conv_s0_y + conv_s0_x)] }
 module conv_stencil_op_hcompute_conv_stencil_1_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_1_write_ctrl_vars[2:0], output op_hcompute_conv_stencil_1_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -637,7 +637,7 @@ module conv_stencil_op_hcompute_conv_stencil_1_write_fsm(input clk, input flush,
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==3) begin
+      if(counter[0] ==2) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_1_write_ctrl_vars[0]<= 16'b0;
@@ -648,7 +648,7 @@ module conv_stencil_op_hcompute_conv_stencil_1_write_fsm(input clk, input flush,
         counter [2] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 32) begin
+        if(counter[1] == 29) begin
           counter[1]<= 0;
           counter[2]<= 0;
           op_hcompute_conv_stencil_1_write_ctrl_vars[2]<= 0;
@@ -668,7 +668,7 @@ module conv_stencil_op_hcompute_conv_stencil_1_write_fsm(input clk, input flush,
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_2[root, conv_s0_y, conv_s0_x] -> [(6 + 33conv_s0_y + conv_s0_x)] }
+// { op_hcompute_conv_stencil_2[root, conv_s0_y, conv_s0_x] -> [(4 + 30conv_s0_y + conv_s0_x)] }
 module conv_stencil_op_hcompute_conv_stencil_2_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_2_write_ctrl_vars[2:0], output op_hcompute_conv_stencil_2_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -687,7 +687,7 @@ module conv_stencil_op_hcompute_conv_stencil_2_write_fsm(input clk, input flush,
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==5) begin
+      if(counter[0] ==3) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_2_write_ctrl_vars[0]<= 16'b0;
@@ -698,7 +698,7 @@ module conv_stencil_op_hcompute_conv_stencil_2_write_fsm(input clk, input flush,
         counter [2] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 32) begin
+        if(counter[1] == 29) begin
           counter[1]<= 0;
           counter[2]<= 0;
           op_hcompute_conv_stencil_2_write_ctrl_vars[2]<= 0;
@@ -718,7 +718,7 @@ module conv_stencil_op_hcompute_conv_stencil_2_write_fsm(input clk, input flush,
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8011 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module conv_stencil_op_hcompute_conv_stencil_3_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_3_write_ctrl_vars[4:0], output op_hcompute_conv_stencil_3_write_wen );
   logic [15:0] counter[5:0];
   logic on;
@@ -741,7 +741,7 @@ module conv_stencil_op_hcompute_conv_stencil_3_write_fsm(input clk, input flush,
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8010) begin
+      if(counter[0] ==8008) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_3_write_ctrl_vars[0]<= 16'b0;
@@ -756,7 +756,7 @@ module conv_stencil_op_hcompute_conv_stencil_3_write_fsm(input clk, input flush,
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -766,7 +766,7 @@ module conv_stencil_op_hcompute_conv_stencil_3_write_fsm(input clk, input flush,
           op_hcompute_conv_stencil_3_write_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_3_write_ctrl_vars[1] <= op_hcompute_conv_stencil_3_write_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -775,7 +775,7 @@ module conv_stencil_op_hcompute_conv_stencil_3_write_fsm(input clk, input flush,
           op_hcompute_conv_stencil_3_write_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_3_write_ctrl_vars[2] <= op_hcompute_conv_stencil_3_write_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -801,7 +801,7 @@ module conv_stencil_op_hcompute_conv_stencil_3_write_fsm(input clk, input flush,
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8015 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8010 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module conv_stencil_op_hcompute_conv_stencil_4_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_4_write_ctrl_vars[4:0], output op_hcompute_conv_stencil_4_write_wen );
   logic [15:0] counter[5:0];
   logic on;
@@ -824,7 +824,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_write_fsm(input clk, input flush,
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8014) begin
+      if(counter[0] ==8009) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_4_write_ctrl_vars[0]<= 16'b0;
@@ -839,7 +839,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_write_fsm(input clk, input flush,
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -849,7 +849,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_write_fsm(input clk, input flush,
           op_hcompute_conv_stencil_4_write_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_4_write_ctrl_vars[1] <= op_hcompute_conv_stencil_4_write_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -858,7 +858,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_write_fsm(input clk, input flush,
           op_hcompute_conv_stencil_4_write_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_4_write_ctrl_vars[2] <= op_hcompute_conv_stencil_4_write_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -884,7 +884,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_write_fsm(input clk, input flush,
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8019 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8011 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module conv_stencil_op_hcompute_conv_stencil_5_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_5_write_ctrl_vars[4:0], output op_hcompute_conv_stencil_5_write_wen );
   logic [15:0] counter[5:0];
   logic on;
@@ -907,7 +907,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_write_fsm(input clk, input flush,
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8018) begin
+      if(counter[0] ==8010) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_5_write_ctrl_vars[0]<= 16'b0;
@@ -922,7 +922,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_write_fsm(input clk, input flush,
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -932,7 +932,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_write_fsm(input clk, input flush,
           op_hcompute_conv_stencil_5_write_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_5_write_ctrl_vars[1] <= op_hcompute_conv_stencil_5_write_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -941,7 +941,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_write_fsm(input clk, input flush,
           op_hcompute_conv_stencil_5_write_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_5_write_ctrl_vars[2] <= op_hcompute_conv_stencil_5_write_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -967,7 +967,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_write_fsm(input clk, input flush,
     end
   end
 endmodule
-// { op_hcompute_conv_stencil[root, conv_s0_y, conv_s0_x] -> [(2 + 33conv_s0_y + conv_s0_x)] }
+// { op_hcompute_conv_stencil[root, conv_s0_y, conv_s0_x] -> [(2 + 30conv_s0_y + conv_s0_x)] }
 module conv_stencil_op_hcompute_conv_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_write_ctrl_vars[2:0], output op_hcompute_conv_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -997,7 +997,7 @@ module conv_stencil_op_hcompute_conv_stencil_write_fsm(input clk, input flush, i
         counter [2] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 32) begin
+        if(counter[1] == 29) begin
           counter[1]<= 0;
           counter[2]<= 0;
           op_hcompute_conv_stencil_write_ctrl_vars[2]<= 0;
@@ -1017,7 +1017,7 @@ module conv_stencil_op_hcompute_conv_stencil_write_fsm(input clk, input flush, i
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module conv_stencil_op_hcompute_conv_stencil_3_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_3_read_ctrl_vars[4:0], output op_hcompute_conv_stencil_3_read_ren );
   logic [15:0] counter[5:0];
   logic on;
@@ -1055,7 +1055,7 @@ module conv_stencil_op_hcompute_conv_stencil_3_read_fsm(input clk, input flush, 
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -1065,7 +1065,7 @@ module conv_stencil_op_hcompute_conv_stencil_3_read_fsm(input clk, input flush, 
           op_hcompute_conv_stencil_3_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_3_read_ctrl_vars[1] <= op_hcompute_conv_stencil_3_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -1074,7 +1074,7 @@ module conv_stencil_op_hcompute_conv_stencil_3_read_fsm(input clk, input flush, 
           op_hcompute_conv_stencil_3_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_3_read_ctrl_vars[2] <= op_hcompute_conv_stencil_3_read_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -1100,7 +1100,7 @@ module conv_stencil_op_hcompute_conv_stencil_3_read_fsm(input clk, input flush, 
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8013 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8010 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module conv_stencil_op_hcompute_conv_stencil_4_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_4_read_ctrl_vars[4:0], output op_hcompute_conv_stencil_4_read_ren );
   logic [15:0] counter[5:0];
   logic on;
@@ -1123,7 +1123,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_read_fsm(input clk, input flush, 
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8012) begin
+      if(counter[0] ==8009) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_4_read_ctrl_vars[0]<= 16'b0;
@@ -1138,7 +1138,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_read_fsm(input clk, input flush, 
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -1148,7 +1148,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_read_fsm(input clk, input flush, 
           op_hcompute_conv_stencil_4_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_4_read_ctrl_vars[1] <= op_hcompute_conv_stencil_4_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -1157,7 +1157,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_read_fsm(input clk, input flush, 
           op_hcompute_conv_stencil_4_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_4_read_ctrl_vars[2] <= op_hcompute_conv_stencil_4_read_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -1183,7 +1183,7 @@ module conv_stencil_op_hcompute_conv_stencil_4_read_fsm(input clk, input flush, 
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8017 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8011 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module conv_stencil_op_hcompute_conv_stencil_5_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_5_read_ctrl_vars[4:0], output op_hcompute_conv_stencil_5_read_ren );
   logic [15:0] counter[5:0];
   logic on;
@@ -1206,7 +1206,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_read_fsm(input clk, input flush, 
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8016) begin
+      if(counter[0] ==8010) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_5_read_ctrl_vars[0]<= 16'b0;
@@ -1221,7 +1221,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_read_fsm(input clk, input flush, 
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -1231,7 +1231,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_read_fsm(input clk, input flush, 
           op_hcompute_conv_stencil_5_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_5_read_ctrl_vars[1] <= op_hcompute_conv_stencil_5_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -1240,7 +1240,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_read_fsm(input clk, input flush, 
           op_hcompute_conv_stencil_5_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_5_read_ctrl_vars[2] <= op_hcompute_conv_stencil_5_read_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -1266,7 +1266,7 @@ module conv_stencil_op_hcompute_conv_stencil_5_read_fsm(input clk, input flush, 
     end
   end
 endmodule
-// { op_hcompute_hw_output_stencil[root, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(32033 + 812hw_output_s0_w + 29hw_output_s0_y_yi + hw_output_s0_x_xi)] }
+// { op_hcompute_hw_output_stencil[root, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(16017 + 784hw_output_s0_w + 28hw_output_s0_y_yi + hw_output_s0_x_xi)] }
 module conv_stencil_op_hcompute_hw_output_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_hw_output_stencil_read_ctrl_vars[3:0], output op_hcompute_hw_output_stencil_read_ren );
   logic [15:0] counter[4:0];
   logic on;
@@ -1287,7 +1287,7 @@ module conv_stencil_op_hcompute_hw_output_stencil_read_fsm(input clk, input flus
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==32032) begin
+      if(counter[0] ==16016) begin
         on <=1;
         on2 <= 1;
         op_hcompute_hw_output_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -1300,7 +1300,7 @@ module conv_stencil_op_hcompute_hw_output_stencil_read_fsm(input clk, input flus
         counter [3] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 811) begin
+        if(counter[1] == 783) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -1308,7 +1308,7 @@ module conv_stencil_op_hcompute_hw_output_stencil_read_fsm(input clk, input flus
           op_hcompute_hw_output_stencil_read_ctrl_vars[3]<= 0;
           op_hcompute_hw_output_stencil_read_ctrl_vars[1] <= op_hcompute_hw_output_stencil_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 28) begin
+        end else if(counter[2] == 27) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -1475,179 +1475,143 @@ conv_stencil_embarassing_bank_selector conv_stencil_conv_stencil_op_hcompute_hw_
 
   logic [15:0] addr0;
   assign addr0 = (((((1*op_hcompute_conv_stencil_1_write_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_1_write_ctrl_vars_fsm_out[2])) - 0))*28);
-  logic [15:0] delay_wire_0;
   always @(posedge clk) begin
-    delay_wire_0 <= addr0;  end
-  logic [15:0] delay_wire_1;
+  end
   always @(posedge clk) begin
-    delay_wire_1 <= conv_stencil_conv_stencil_op_hcompute_conv_stencil_1_61_bank_selector.out;  end
-  logic [15:0] delay_wire_2;
+  end
   always @(posedge clk) begin
-    delay_wire_2 <= op_hcompute_conv_stencil_1_write_wen_fsm_out;  end
-  logic [15:0] delay_wire_3;
+  end
   always @(posedge clk) begin
-    delay_wire_3 <= op_hcompute_conv_stencil_1_write[0];  end
+  end
   logic [15:0] addr1;
   assign addr1 = (((((1*op_hcompute_conv_stencil_2_write_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_2_write_ctrl_vars_fsm_out[2])) - 0))*28);
-  logic [15:0] delay_wire_4;
   always @(posedge clk) begin
-    delay_wire_4 <= addr1;  end
-  logic [15:0] delay_wire_5;
+  end
   always @(posedge clk) begin
-    delay_wire_5 <= conv_stencil_conv_stencil_op_hcompute_conv_stencil_2_60_bank_selector.out;  end
-  logic [15:0] delay_wire_6;
+  end
   always @(posedge clk) begin
-    delay_wire_6 <= op_hcompute_conv_stencil_2_write_wen_fsm_out;  end
-  logic [15:0] delay_wire_7;
+  end
   always @(posedge clk) begin
-    delay_wire_7 <= op_hcompute_conv_stencil_2_write[0];  end
+  end
   logic [15:0] addr2;
   assign addr2 = (((((1*op_hcompute_conv_stencil_3_write_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_write_ctrl_vars_fsm_out[4])) - 0))*28);
-  logic [15:0] delay_wire_8;
   always @(posedge clk) begin
-    delay_wire_8 <= addr2;  end
-  logic [15:0] delay_wire_9;
+  end
   always @(posedge clk) begin
-    delay_wire_9 <= conv_stencil_conv_stencil_op_hcompute_conv_stencil_3_42_bank_selector.out;  end
-  logic [15:0] delay_wire_10;
+  end
   always @(posedge clk) begin
-    delay_wire_10 <= op_hcompute_conv_stencil_3_write_wen_fsm_out;  end
-  logic [15:0] delay_wire_11;
+  end
   always @(posedge clk) begin
-    delay_wire_11 <= op_hcompute_conv_stencil_3_write[0];  end
+  end
   logic [15:0] addr3;
   assign addr3 = (((((1*op_hcompute_conv_stencil_4_write_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_4_write_ctrl_vars_fsm_out[4])) - 0))*28);
-  logic [15:0] delay_wire_12;
   always @(posedge clk) begin
-    delay_wire_12 <= addr3;  end
-  logic [15:0] delay_wire_13;
+  end
   always @(posedge clk) begin
-    delay_wire_13 <= conv_stencil_conv_stencil_op_hcompute_conv_stencil_4_24_bank_selector.out;  end
-  logic [15:0] delay_wire_14;
+  end
   always @(posedge clk) begin
-    delay_wire_14 <= op_hcompute_conv_stencil_4_write_wen_fsm_out;  end
-  logic [15:0] delay_wire_15;
+  end
   always @(posedge clk) begin
-    delay_wire_15 <= op_hcompute_conv_stencil_4_write[0];  end
+  end
   logic [15:0] addr4;
   assign addr4 = (((((1*op_hcompute_conv_stencil_5_write_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_write_ctrl_vars_fsm_out[4])) - 0))*28);
-  logic [15:0] delay_wire_16;
   always @(posedge clk) begin
-    delay_wire_16 <= addr4;  end
-  logic [15:0] delay_wire_17;
+  end
   always @(posedge clk) begin
-    delay_wire_17 <= conv_stencil_conv_stencil_op_hcompute_conv_stencil_5_6_bank_selector.out;  end
-  logic [15:0] delay_wire_18;
+  end
   always @(posedge clk) begin
-    delay_wire_18 <= op_hcompute_conv_stencil_5_write_wen_fsm_out;  end
-  logic [15:0] delay_wire_19;
+  end
   always @(posedge clk) begin
-    delay_wire_19 <= op_hcompute_conv_stencil_5_write[0];  end
+  end
   logic [15:0] addr5;
   assign addr5 = (((((1*op_hcompute_conv_stencil_write_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_write_ctrl_vars_fsm_out[2])) - 0))*28);
-  logic [15:0] delay_wire_20;
   always @(posedge clk) begin
-    delay_wire_20 <= addr5;  end
-  logic [15:0] delay_wire_21;
+  end
   always @(posedge clk) begin
-    delay_wire_21 <= conv_stencil_conv_stencil_op_hcompute_conv_stencil_62_bank_selector.out;  end
-  logic [15:0] delay_wire_22;
+  end
   always @(posedge clk) begin
-    delay_wire_22 <= op_hcompute_conv_stencil_write_wen_fsm_out;  end
-  logic [15:0] delay_wire_23;
+  end
   always @(posedge clk) begin
-    delay_wire_23 <= op_hcompute_conv_stencil_write[0];  end
+  end
   logic [15:0] addr6;
   assign addr6 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*28);
-  logic [15:0] end_delay_wire_24;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[0] <= end_delay_wire_24;  end
   logic [15:0] addr7;
   assign addr7 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[4])) - 0))*28);
-  logic [15:0] end_delay_wire_25;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[0] <= end_delay_wire_25;  end
   logic [15:0] addr8;
   assign addr8 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[4])) - 0))*28);
-  logic [15:0] end_delay_wire_26;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[0] <= end_delay_wire_26;  end
   logic [15:0] addr9;
   assign addr9 = (((((1*op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out[2])) - 0))*1+((((1*op_hcompute_hw_output_stencil_read_ctrl_vars_fsm_out[3])) - 0))*28);
-  logic [15:0] end_delay_wire_27;
   always @(posedge clk) begin
-    op_hcompute_hw_output_stencil_read[0] <= end_delay_wire_27;  end
-  always @(posedge clk) begin
-    if (delay_wire_2) begin
-      case( delay_wire_1)
-        0:bank_0[delay_wire_0] <= delay_wire_3;
-        1:bank_1[delay_wire_0] <= delay_wire_3;
-        2:bank_2[delay_wire_0] <= delay_wire_3;
+    if (op_hcompute_conv_stencil_1_write_wen_fsm_out) begin
+      case( conv_stencil_conv_stencil_op_hcompute_conv_stencil_1_61_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_conv_stencil_1_write[0];
+        1:bank_1[addr0] <= op_hcompute_conv_stencil_1_write[0];
+        2:bank_2[addr0] <= op_hcompute_conv_stencil_1_write[0];
       endcase
     end
-    if (delay_wire_6) begin
-      case( delay_wire_5)
-        0:bank_0[delay_wire_4] <= delay_wire_7;
-        1:bank_1[delay_wire_4] <= delay_wire_7;
-        2:bank_2[delay_wire_4] <= delay_wire_7;
+    if (op_hcompute_conv_stencil_2_write_wen_fsm_out) begin
+      case( conv_stencil_conv_stencil_op_hcompute_conv_stencil_2_60_bank_selector.out)
+        0:bank_0[addr1] <= op_hcompute_conv_stencil_2_write[0];
+        1:bank_1[addr1] <= op_hcompute_conv_stencil_2_write[0];
+        2:bank_2[addr1] <= op_hcompute_conv_stencil_2_write[0];
       endcase
     end
-    if (delay_wire_10) begin
-      case( delay_wire_9)
-        0:bank_0[delay_wire_8] <= delay_wire_11;
-        1:bank_1[delay_wire_8] <= delay_wire_11;
-        2:bank_2[delay_wire_8] <= delay_wire_11;
+    if (op_hcompute_conv_stencil_3_write_wen_fsm_out) begin
+      case( conv_stencil_conv_stencil_op_hcompute_conv_stencil_3_42_bank_selector.out)
+        0:bank_0[addr2] <= op_hcompute_conv_stencil_3_write[0];
+        1:bank_1[addr2] <= op_hcompute_conv_stencil_3_write[0];
+        2:bank_2[addr2] <= op_hcompute_conv_stencil_3_write[0];
       endcase
     end
-    if (delay_wire_14) begin
-      case( delay_wire_13)
-        0:bank_0[delay_wire_12] <= delay_wire_15;
-        1:bank_1[delay_wire_12] <= delay_wire_15;
-        2:bank_2[delay_wire_12] <= delay_wire_15;
+    if (op_hcompute_conv_stencil_4_write_wen_fsm_out) begin
+      case( conv_stencil_conv_stencil_op_hcompute_conv_stencil_4_24_bank_selector.out)
+        0:bank_0[addr3] <= op_hcompute_conv_stencil_4_write[0];
+        1:bank_1[addr3] <= op_hcompute_conv_stencil_4_write[0];
+        2:bank_2[addr3] <= op_hcompute_conv_stencil_4_write[0];
       endcase
     end
-    if (delay_wire_18) begin
-      case( delay_wire_17)
-        0:bank_0[delay_wire_16] <= delay_wire_19;
-        1:bank_1[delay_wire_16] <= delay_wire_19;
-        2:bank_2[delay_wire_16] <= delay_wire_19;
+    if (op_hcompute_conv_stencil_5_write_wen_fsm_out) begin
+      case( conv_stencil_conv_stencil_op_hcompute_conv_stencil_5_6_bank_selector.out)
+        0:bank_0[addr4] <= op_hcompute_conv_stencil_5_write[0];
+        1:bank_1[addr4] <= op_hcompute_conv_stencil_5_write[0];
+        2:bank_2[addr4] <= op_hcompute_conv_stencil_5_write[0];
       endcase
     end
-    if (delay_wire_22) begin
-      case( delay_wire_21)
-        0:bank_0[delay_wire_20] <= delay_wire_23;
-        1:bank_1[delay_wire_20] <= delay_wire_23;
-        2:bank_2[delay_wire_20] <= delay_wire_23;
+    if (op_hcompute_conv_stencil_write_wen_fsm_out) begin
+      case( conv_stencil_conv_stencil_op_hcompute_conv_stencil_62_bank_selector.out)
+        0:bank_0[addr5] <= op_hcompute_conv_stencil_write[0];
+        1:bank_1[addr5] <= op_hcompute_conv_stencil_write[0];
+        2:bank_2[addr5] <= op_hcompute_conv_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( conv_stencil_conv_stencil_op_hcompute_conv_stencil_3_43_bank_selector.out)
-        0:end_delay_wire_24 <= bank_0[addr6];
-        1:end_delay_wire_24 <= bank_1[addr6];
-        2:end_delay_wire_24 <= bank_2[addr6];
+        0:op_hcompute_conv_stencil_3_read[0] = bank_0[addr6];
+        1:op_hcompute_conv_stencil_3_read[0] = bank_1[addr6];
+        2:op_hcompute_conv_stencil_3_read[0] = bank_2[addr6];
       endcase
     end
     if (op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
       case( conv_stencil_conv_stencil_op_hcompute_conv_stencil_4_25_bank_selector.out)
-        0:end_delay_wire_25 <= bank_0[addr7];
-        1:end_delay_wire_25 <= bank_1[addr7];
-        2:end_delay_wire_25 <= bank_2[addr7];
+        0:op_hcompute_conv_stencil_4_read[0] = bank_0[addr7];
+        1:op_hcompute_conv_stencil_4_read[0] = bank_1[addr7];
+        2:op_hcompute_conv_stencil_4_read[0] = bank_2[addr7];
       endcase
     end
     if (op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
       case( conv_stencil_conv_stencil_op_hcompute_conv_stencil_5_7_bank_selector.out)
-        0:end_delay_wire_26 <= bank_0[addr8];
-        1:end_delay_wire_26 <= bank_1[addr8];
-        2:end_delay_wire_26 <= bank_2[addr8];
+        0:op_hcompute_conv_stencil_5_read[0] = bank_0[addr8];
+        1:op_hcompute_conv_stencil_5_read[0] = bank_1[addr8];
+        2:op_hcompute_conv_stencil_5_read[0] = bank_2[addr8];
       endcase
     end
     if (op_hcompute_hw_output_stencil_read_ren_fsm_out) begin
       case( conv_stencil_conv_stencil_op_hcompute_hw_output_stencil_1_bank_selector.out)
-        0:end_delay_wire_27 <= bank_0[addr9];
-        1:end_delay_wire_27 <= bank_1[addr9];
-        2:end_delay_wire_27 <= bank_2[addr9];
+        0:op_hcompute_hw_output_stencil_read[0] = bank_0[addr9];
+        1:op_hcompute_hw_output_stencil_read[0] = bank_1[addr9];
+        2:op_hcompute_hw_output_stencil_read[0] = bank_2[addr9];
       endcase
     end
   end
@@ -1663,18 +1627,18 @@ module hw_input_global_wrapper_stencil_embarassing_bank_selector(input logic [16
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_26_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1686,18 +1650,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1709,18 +1673,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1732,18 +1696,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1755,18 +1719,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1778,18 +1742,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1801,18 +1765,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1824,18 +1788,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1847,18 +1811,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_10_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [7:0];
+  logic [15:0] storage [1:0];
 
-  reg [2:0] read_addr;
-  reg [2:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 7;
+      write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 7 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 7 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -1870,18 +1834,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_10_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1893,18 +1857,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_11_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [7:0];
+  logic [15:0] storage [1:0];
 
-  reg [2:0] read_addr;
-  reg [2:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 7;
+      write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 7 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 7 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -1916,18 +1880,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_11_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1939,18 +1903,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_12_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [7:0];
+  logic [15:0] storage [1:0];
 
-  reg [2:0] read_addr;
-  reg [2:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 7;
+      write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 7 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 7 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -1962,18 +1926,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_12_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -1985,18 +1949,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_13_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [7:0];
+  logic [15:0] storage [1:0];
 
-  reg [2:0] read_addr;
-  reg [2:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 7;
+      write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 7 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 7 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -2008,18 +1972,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_13_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -2031,18 +1995,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_14_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [7:0];
+  logic [15:0] storage [1:0];
 
-  reg [2:0] read_addr;
-  reg [2:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 7;
+      write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 7 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 7 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -2054,18 +2018,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_14_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -2077,18 +2041,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_15_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [7:0];
+  logic [15:0] storage [1:0];
 
-  reg [2:0] read_addr;
-  reg [2:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 7;
+      write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 7 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 7 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -2100,18 +2064,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_15_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -2123,18 +2087,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_8_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [7:0];
+  logic [15:0] storage [1:0];
 
-  reg [2:0] read_addr;
-  reg [2:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 7;
+      write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 7 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 7 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -2146,18 +2110,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_8_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -2169,18 +2133,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_9_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [7:0];
+  logic [15:0] storage [1:0];
 
-  reg [2:0] read_addr;
-  reg [2:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 7;
+      write_addr <= 1;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 7 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 7 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 1 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 1 ? 0 : write_addr + 1;
     end
 
   end
@@ -2192,18 +2156,18 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 endmodule
 
 module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_9_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_26_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
+  logic [15:0] storage [0:0];
 
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
+  reg [0:0] read_addr;
+  reg [0:0] write_addr;
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       read_addr <= 0;
-      write_addr <= 3;
+      write_addr <= 0;
     end else begin
       storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
+      read_addr <= read_addr == 0 ? 0 : read_addr + 1;
+      write_addr <= write_addr == 0 ? 0 : write_addr + 1;
     end
 
   end
@@ -2214,7 +2178,7 @@ module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompu
 
 endmodule
 
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 270hw_input_global_wrapper_s0_y + 9hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
 module hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[3:0], output op_hcompute_hw_input_global_wrapper_stencil_write_wen );
   logic [15:0] counter[4:0];
   logic on;
@@ -2248,7 +2212,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
         counter [3] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 269) begin
+        if(counter[1] == 239) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -2256,7 +2220,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
           op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[3]<= 0;
           op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] <= op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 8) begin
+        end else if(counter[2] == 7) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -2279,7 +2243,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_3_read_ctrl_vars[4:0], output op_hcompute_conv_stencil_3_read_ren );
   logic [15:0] counter[5:0];
   logic on;
@@ -2317,7 +2281,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(input
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -2327,7 +2291,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(input
           op_hcompute_conv_stencil_3_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_3_read_ctrl_vars[1] <= op_hcompute_conv_stencil_3_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -2336,7 +2300,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(input
           op_hcompute_conv_stencil_3_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_3_read_ctrl_vars[2] <= op_hcompute_conv_stencil_3_read_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -2362,7 +2326,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(input
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8013 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8010 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_4_read_ctrl_vars[4:0], output op_hcompute_conv_stencil_4_read_ren );
   logic [15:0] counter[5:0];
   logic on;
@@ -2385,7 +2349,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(input
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8012) begin
+      if(counter[0] ==8009) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_4_read_ctrl_vars[0]<= 16'b0;
@@ -2400,7 +2364,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(input
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -2410,7 +2374,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(input
           op_hcompute_conv_stencil_4_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_4_read_ctrl_vars[1] <= op_hcompute_conv_stencil_4_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -2419,7 +2383,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(input
           op_hcompute_conv_stencil_4_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_4_read_ctrl_vars[2] <= op_hcompute_conv_stencil_4_read_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -2445,7 +2409,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(input
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8017 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8011 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_5_read_ctrl_vars[4:0], output op_hcompute_conv_stencil_5_read_ren );
   logic [15:0] counter[5:0];
   logic on;
@@ -2468,7 +2432,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(input
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8016) begin
+      if(counter[0] ==8010) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_5_read_ctrl_vars[0]<= 16'b0;
@@ -2483,7 +2447,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(input
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -2493,7 +2457,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(input
           op_hcompute_conv_stencil_5_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_5_read_ctrl_vars[1] <= op_hcompute_conv_stencil_5_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -2502,7 +2466,7 @@ module hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(input
           op_hcompute_conv_stencil_5_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_5_read_ctrl_vars[2] <= op_hcompute_conv_stencil_5_read_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -2778,167 +2742,139 @@ hw_input_global_wrapper_stencil_embarassing_bank_selector hw_input_global_wrappe
 
   logic [15:0] addr0;
   assign addr0 = (((((1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_hw_input_global_wrapper_stencil_write_ctrl_vars_fsm_out[2])) - 0))*30);
-  logic [15:0] delay_wire_28;
   always @(posedge clk) begin
-    delay_wire_28 <= addr0;  end
-  logic [15:0] delay_wire_29;
+  end
   always @(posedge clk) begin
-    delay_wire_29 <= hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_bank_selector.out;  end
-  logic [15:0] delay_wire_30;
+  end
   always @(posedge clk) begin
-    delay_wire_30 <= op_hcompute_hw_input_global_wrapper_stencil_write_wen_fsm_out;  end
-  logic [15:0] delay_wire_31;
+  end
   always @(posedge clk) begin
-    delay_wire_31 <= op_hcompute_hw_input_global_wrapper_stencil_write[0];  end
+  end
   logic [15:0] addr1;
   assign addr1 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*30);
-  logic [15:0] end_delay_wire_32;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[0] <= end_delay_wire_32;  end
   logic [15:0] addr2;
   assign addr2 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*30);
-  logic [15:0] end_delay_wire_33;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[1] <= end_delay_wire_33;  end
   logic [15:0] addr3;
   assign addr3 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*30);
-  logic [15:0] end_delay_wire_34;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[2] <= end_delay_wire_34;  end
   logic [15:0] addr4;
   assign addr4 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*30);
-  logic [15:0] end_delay_wire_35;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[3] <= end_delay_wire_35;  end
   logic [15:0] addr5;
   assign addr5 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*30);
-  logic [15:0] end_delay_wire_36;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[4] <= end_delay_wire_36;  end
   logic [15:0] addr6;
   assign addr6 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*30);
-  logic [15:0] end_delay_wire_37;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[5] <= end_delay_wire_37;  end
   logic [15:0] addr7;
   assign addr7 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*30);
-  logic [15:0] end_delay_wire_38;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[6] <= end_delay_wire_38;  end
   logic [15:0] addr8;
   assign addr8 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[3])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2] + 1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[4])) - 0))*30);
-  logic [15:0] end_delay_wire_39;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[7] <= end_delay_wire_39;  end
-  always @(posedge clk) begin
-    if (delay_wire_30) begin
-      case( delay_wire_29)
-        0:bank_0[delay_wire_28] <= delay_wire_31;
-        1:bank_1[delay_wire_28] <= delay_wire_31;
-        2:bank_2[delay_wire_28] <= delay_wire_31;
-        3:bank_3[delay_wire_28] <= delay_wire_31;
-        4:bank_4[delay_wire_28] <= delay_wire_31;
-        5:bank_5[delay_wire_28] <= delay_wire_31;
-        6:bank_6[delay_wire_28] <= delay_wire_31;
-        7:bank_7[delay_wire_28] <= delay_wire_31;
+    if (op_hcompute_hw_input_global_wrapper_stencil_write_wen_fsm_out) begin
+      case( hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        1:bank_1[addr0] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        2:bank_2[addr0] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        3:bank_3[addr0] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        4:bank_4[addr0] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        5:bank_5[addr0] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        6:bank_6[addr0] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
+        7:bank_7[addr0] <= op_hcompute_hw_input_global_wrapper_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_bank_selector.out)
-        0:end_delay_wire_32 <= bank_0[addr1];
-        1:end_delay_wire_32 <= bank_1[addr1];
-        2:end_delay_wire_32 <= bank_2[addr1];
-        3:end_delay_wire_32 <= bank_3[addr1];
-        4:end_delay_wire_32 <= bank_4[addr1];
-        5:end_delay_wire_32 <= bank_5[addr1];
-        6:end_delay_wire_32 <= bank_6[addr1];
-        7:end_delay_wire_32 <= bank_7[addr1];
+        0:op_hcompute_conv_stencil_3_read[0] = bank_0[addr1];
+        1:op_hcompute_conv_stencil_3_read[0] = bank_1[addr1];
+        2:op_hcompute_conv_stencil_3_read[0] = bank_2[addr1];
+        3:op_hcompute_conv_stencil_3_read[0] = bank_3[addr1];
+        4:op_hcompute_conv_stencil_3_read[0] = bank_4[addr1];
+        5:op_hcompute_conv_stencil_3_read[0] = bank_5[addr1];
+        6:op_hcompute_conv_stencil_3_read[0] = bank_6[addr1];
+        7:op_hcompute_conv_stencil_3_read[0] = bank_7[addr1];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_bank_selector.out)
-        0:end_delay_wire_33 <= bank_0[addr2];
-        1:end_delay_wire_33 <= bank_1[addr2];
-        2:end_delay_wire_33 <= bank_2[addr2];
-        3:end_delay_wire_33 <= bank_3[addr2];
-        4:end_delay_wire_33 <= bank_4[addr2];
-        5:end_delay_wire_33 <= bank_5[addr2];
-        6:end_delay_wire_33 <= bank_6[addr2];
-        7:end_delay_wire_33 <= bank_7[addr2];
+        0:op_hcompute_conv_stencil_3_read[1] = bank_0[addr2];
+        1:op_hcompute_conv_stencil_3_read[1] = bank_1[addr2];
+        2:op_hcompute_conv_stencil_3_read[1] = bank_2[addr2];
+        3:op_hcompute_conv_stencil_3_read[1] = bank_3[addr2];
+        4:op_hcompute_conv_stencil_3_read[1] = bank_4[addr2];
+        5:op_hcompute_conv_stencil_3_read[1] = bank_5[addr2];
+        6:op_hcompute_conv_stencil_3_read[1] = bank_6[addr2];
+        7:op_hcompute_conv_stencil_3_read[1] = bank_7[addr2];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_bank_selector.out)
-        0:end_delay_wire_34 <= bank_0[addr3];
-        1:end_delay_wire_34 <= bank_1[addr3];
-        2:end_delay_wire_34 <= bank_2[addr3];
-        3:end_delay_wire_34 <= bank_3[addr3];
-        4:end_delay_wire_34 <= bank_4[addr3];
-        5:end_delay_wire_34 <= bank_5[addr3];
-        6:end_delay_wire_34 <= bank_6[addr3];
-        7:end_delay_wire_34 <= bank_7[addr3];
+        0:op_hcompute_conv_stencil_3_read[2] = bank_0[addr3];
+        1:op_hcompute_conv_stencil_3_read[2] = bank_1[addr3];
+        2:op_hcompute_conv_stencil_3_read[2] = bank_2[addr3];
+        3:op_hcompute_conv_stencil_3_read[2] = bank_3[addr3];
+        4:op_hcompute_conv_stencil_3_read[2] = bank_4[addr3];
+        5:op_hcompute_conv_stencil_3_read[2] = bank_5[addr3];
+        6:op_hcompute_conv_stencil_3_read[2] = bank_6[addr3];
+        7:op_hcompute_conv_stencil_3_read[2] = bank_7[addr3];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_bank_selector.out)
-        0:end_delay_wire_35 <= bank_0[addr4];
-        1:end_delay_wire_35 <= bank_1[addr4];
-        2:end_delay_wire_35 <= bank_2[addr4];
-        3:end_delay_wire_35 <= bank_3[addr4];
-        4:end_delay_wire_35 <= bank_4[addr4];
-        5:end_delay_wire_35 <= bank_5[addr4];
-        6:end_delay_wire_35 <= bank_6[addr4];
-        7:end_delay_wire_35 <= bank_7[addr4];
+        0:op_hcompute_conv_stencil_3_read[3] = bank_0[addr4];
+        1:op_hcompute_conv_stencil_3_read[3] = bank_1[addr4];
+        2:op_hcompute_conv_stencil_3_read[3] = bank_2[addr4];
+        3:op_hcompute_conv_stencil_3_read[3] = bank_3[addr4];
+        4:op_hcompute_conv_stencil_3_read[3] = bank_4[addr4];
+        5:op_hcompute_conv_stencil_3_read[3] = bank_5[addr4];
+        6:op_hcompute_conv_stencil_3_read[3] = bank_6[addr4];
+        7:op_hcompute_conv_stencil_3_read[3] = bank_7[addr4];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_bank_selector.out)
-        0:end_delay_wire_36 <= bank_0[addr5];
-        1:end_delay_wire_36 <= bank_1[addr5];
-        2:end_delay_wire_36 <= bank_2[addr5];
-        3:end_delay_wire_36 <= bank_3[addr5];
-        4:end_delay_wire_36 <= bank_4[addr5];
-        5:end_delay_wire_36 <= bank_5[addr5];
-        6:end_delay_wire_36 <= bank_6[addr5];
-        7:end_delay_wire_36 <= bank_7[addr5];
+        0:op_hcompute_conv_stencil_3_read[4] = bank_0[addr5];
+        1:op_hcompute_conv_stencil_3_read[4] = bank_1[addr5];
+        2:op_hcompute_conv_stencil_3_read[4] = bank_2[addr5];
+        3:op_hcompute_conv_stencil_3_read[4] = bank_3[addr5];
+        4:op_hcompute_conv_stencil_3_read[4] = bank_4[addr5];
+        5:op_hcompute_conv_stencil_3_read[4] = bank_5[addr5];
+        6:op_hcompute_conv_stencil_3_read[4] = bank_6[addr5];
+        7:op_hcompute_conv_stencil_3_read[4] = bank_7[addr5];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_bank_selector.out)
-        0:end_delay_wire_37 <= bank_0[addr6];
-        1:end_delay_wire_37 <= bank_1[addr6];
-        2:end_delay_wire_37 <= bank_2[addr6];
-        3:end_delay_wire_37 <= bank_3[addr6];
-        4:end_delay_wire_37 <= bank_4[addr6];
-        5:end_delay_wire_37 <= bank_5[addr6];
-        6:end_delay_wire_37 <= bank_6[addr6];
-        7:end_delay_wire_37 <= bank_7[addr6];
+        0:op_hcompute_conv_stencil_3_read[5] = bank_0[addr6];
+        1:op_hcompute_conv_stencil_3_read[5] = bank_1[addr6];
+        2:op_hcompute_conv_stencil_3_read[5] = bank_2[addr6];
+        3:op_hcompute_conv_stencil_3_read[5] = bank_3[addr6];
+        4:op_hcompute_conv_stencil_3_read[5] = bank_4[addr6];
+        5:op_hcompute_conv_stencil_3_read[5] = bank_5[addr6];
+        6:op_hcompute_conv_stencil_3_read[5] = bank_6[addr6];
+        7:op_hcompute_conv_stencil_3_read[5] = bank_7[addr6];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_bank_selector.out)
-        0:end_delay_wire_38 <= bank_0[addr7];
-        1:end_delay_wire_38 <= bank_1[addr7];
-        2:end_delay_wire_38 <= bank_2[addr7];
-        3:end_delay_wire_38 <= bank_3[addr7];
-        4:end_delay_wire_38 <= bank_4[addr7];
-        5:end_delay_wire_38 <= bank_5[addr7];
-        6:end_delay_wire_38 <= bank_6[addr7];
-        7:end_delay_wire_38 <= bank_7[addr7];
+        0:op_hcompute_conv_stencil_3_read[6] = bank_0[addr7];
+        1:op_hcompute_conv_stencil_3_read[6] = bank_1[addr7];
+        2:op_hcompute_conv_stencil_3_read[6] = bank_2[addr7];
+        3:op_hcompute_conv_stencil_3_read[6] = bank_3[addr7];
+        4:op_hcompute_conv_stencil_3_read[6] = bank_4[addr7];
+        5:op_hcompute_conv_stencil_3_read[6] = bank_5[addr7];
+        6:op_hcompute_conv_stencil_3_read[6] = bank_6[addr7];
+        7:op_hcompute_conv_stencil_3_read[6] = bank_7[addr7];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_bank_selector.out)
-        0:end_delay_wire_39 <= bank_0[addr8];
-        1:end_delay_wire_39 <= bank_1[addr8];
-        2:end_delay_wire_39 <= bank_2[addr8];
-        3:end_delay_wire_39 <= bank_3[addr8];
-        4:end_delay_wire_39 <= bank_4[addr8];
-        5:end_delay_wire_39 <= bank_5[addr8];
-        6:end_delay_wire_39 <= bank_6[addr8];
-        7:end_delay_wire_39 <= bank_7[addr8];
+        0:op_hcompute_conv_stencil_3_read[7] = bank_0[addr8];
+        1:op_hcompute_conv_stencil_3_read[7] = bank_1[addr8];
+        2:op_hcompute_conv_stencil_3_read[7] = bank_2[addr8];
+        3:op_hcompute_conv_stencil_3_read[7] = bank_3[addr8];
+        4:op_hcompute_conv_stencil_3_read[7] = bank_4[addr8];
+        5:op_hcompute_conv_stencil_3_read[7] = bank_5[addr8];
+        6:op_hcompute_conv_stencil_3_read[7] = bank_6[addr8];
+        7:op_hcompute_conv_stencil_3_read[7] = bank_7[addr8];
       endcase
     end
   end
@@ -2955,7 +2891,7 @@ module hw_kernel_global_wrapper_stencil_embarassing_bank_selector(input logic [1
 
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 81hw_kernel_global_wrapper_s0_y + 27hw_kernel_global_wrapper_s0_x + 9hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars[4:0], output op_hcompute_hw_kernel_global_wrapper_stencil_write_wen );
   logic [15:0] counter[5:0];
   logic on;
@@ -2993,7 +2929,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_ste
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 80) begin
+        if(counter[1] == 71) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -3003,7 +2939,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_ste
           op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars[4]<= 0;
           op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars[1] <= op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 26) begin
+        end else if(counter[2] == 23) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -3012,7 +2948,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_ste
           op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars[4]<= 0;
           op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars[2] <= op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 8) begin
+        end else if(counter[3] == 7) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -3038,7 +2974,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_ste
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_3_read_ctrl_vars[4:0], output op_hcompute_conv_stencil_3_read_ren );
   logic [15:0] counter[5:0];
   logic on;
@@ -3076,7 +3012,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(inpu
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -3086,7 +3022,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(inpu
           op_hcompute_conv_stencil_3_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_3_read_ctrl_vars[1] <= op_hcompute_conv_stencil_3_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -3095,7 +3031,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(inpu
           op_hcompute_conv_stencil_3_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_3_read_ctrl_vars[2] <= op_hcompute_conv_stencil_3_read_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -3121,7 +3057,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_read_fsm(inpu
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8013 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8010 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_4_read_ctrl_vars[4:0], output op_hcompute_conv_stencil_4_read_ren );
   logic [15:0] counter[5:0];
   logic on;
@@ -3144,7 +3080,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(inpu
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8012) begin
+      if(counter[0] ==8009) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_4_read_ctrl_vars[0]<= 16'b0;
@@ -3159,7 +3095,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(inpu
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -3169,7 +3105,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(inpu
           op_hcompute_conv_stencil_4_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_4_read_ctrl_vars[1] <= op_hcompute_conv_stencil_4_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -3178,7 +3114,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(inpu
           op_hcompute_conv_stencil_4_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_4_read_ctrl_vars[2] <= op_hcompute_conv_stencil_4_read_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -3204,7 +3140,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_read_fsm(inpu
     end
   end
 endmodule
-// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8017 + 3276conv_s1_r_y + 1092conv_s1_r_x + 39conv_s1_y + conv_s1_x)] }
+// { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8011 + 2520conv_s1_r_y + 840conv_s1_r_x + 30conv_s1_y + conv_s1_x)] }
 module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_5_read_ctrl_vars[4:0], output op_hcompute_conv_stencil_5_read_ren );
   logic [15:0] counter[5:0];
   logic on;
@@ -3227,7 +3163,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(inpu
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==8016) begin
+      if(counter[0] ==8010) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_5_read_ctrl_vars[0]<= 16'b0;
@@ -3242,7 +3178,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(inpu
         counter [4] <= 16'b0;
       end else begin
         counter[0] <= counter[0] + 1;
-        if(counter[1] == 3275) begin
+        if(counter[1] == 2519) begin
           counter[1]<= 0;
           counter[2]<= 0;
           counter[3]<= 0;
@@ -3252,7 +3188,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(inpu
           op_hcompute_conv_stencil_5_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_5_read_ctrl_vars[1] <= op_hcompute_conv_stencil_5_read_ctrl_vars[1] + 1;
           on2 <= 1;
-        end else if(counter[2] == 1091) begin
+        end else if(counter[2] == 839) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           counter[3] <= 0;
@@ -3261,7 +3197,7 @@ module hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_read_fsm(inpu
           op_hcompute_conv_stencil_5_read_ctrl_vars[4]<= 0;
           op_hcompute_conv_stencil_5_read_ctrl_vars[2] <= op_hcompute_conv_stencil_5_read_ctrl_vars[2] + 1;
           on2 <= 1;
-        end else if(counter[3] == 38) begin
+        end else if(counter[3] == 29) begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
           counter[3] <= 0;
@@ -3571,839 +3507,763 @@ hw_kernel_global_wrapper_stencil_embarassing_bank_selector hw_kernel_global_wrap
 
   logic [15:0] addr0;
   assign addr0 = (((((1*op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_hw_kernel_global_wrapper_stencil_write_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] delay_wire_40;
   always @(posedge clk) begin
-    delay_wire_40 <= addr0;  end
-  logic [15:0] delay_wire_41;
+  end
   always @(posedge clk) begin
-    delay_wire_41 <= hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_bank_selector.out;  end
-  logic [15:0] delay_wire_42;
+  end
   always @(posedge clk) begin
-    delay_wire_42 <= op_hcompute_hw_kernel_global_wrapper_stencil_write_wen_fsm_out;  end
-  logic [15:0] delay_wire_43;
+  end
   always @(posedge clk) begin
-    delay_wire_43 <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];  end
+  end
   logic [15:0] addr1;
   assign addr1 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_44;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[0] <= end_delay_wire_44;  end
   logic [15:0] addr2;
   assign addr2 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_45;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[1] <= end_delay_wire_45;  end
   logic [15:0] addr3;
   assign addr3 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_46;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[2] <= end_delay_wire_46;  end
   logic [15:0] addr4;
   assign addr4 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_47;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[3] <= end_delay_wire_47;  end
   logic [15:0] addr5;
   assign addr5 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_48;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[4] <= end_delay_wire_48;  end
   logic [15:0] addr6;
   assign addr6 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_49;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[5] <= end_delay_wire_49;  end
   logic [15:0] addr7;
   assign addr7 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_50;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[6] <= end_delay_wire_50;  end
   logic [15:0] addr8;
   assign addr8 = (((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_3_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_51;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_3_read[7] <= end_delay_wire_51;  end
   logic [15:0] addr9;
   assign addr9 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_52;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[0] <= end_delay_wire_52;  end
   logic [15:0] addr10;
   assign addr10 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_53;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[1] <= end_delay_wire_53;  end
   logic [15:0] addr11;
   assign addr11 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_54;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[2] <= end_delay_wire_54;  end
   logic [15:0] addr12;
   assign addr12 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_55;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[3] <= end_delay_wire_55;  end
   logic [15:0] addr13;
   assign addr13 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_56;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[4] <= end_delay_wire_56;  end
   logic [15:0] addr14;
   assign addr14 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_57;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[5] <= end_delay_wire_57;  end
   logic [15:0] addr15;
   assign addr15 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_58;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[6] <= end_delay_wire_58;  end
   logic [15:0] addr16;
   assign addr16 = (((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_4_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_59;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_4_read[7] <= end_delay_wire_59;  end
   logic [15:0] addr17;
   assign addr17 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_60;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[0] <= end_delay_wire_60;  end
   logic [15:0] addr18;
   assign addr18 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_61;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[1] <= end_delay_wire_61;  end
   logic [15:0] addr19;
   assign addr19 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_62;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[2] <= end_delay_wire_62;  end
   logic [15:0] addr20;
   assign addr20 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_63;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[3] <= end_delay_wire_63;  end
   logic [15:0] addr21;
   assign addr21 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_64;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[4] <= end_delay_wire_64;  end
   logic [15:0] addr22;
   assign addr22 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_65;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[5] <= end_delay_wire_65;  end
   logic [15:0] addr23;
   assign addr23 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_66;
-  always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[6] <= end_delay_wire_66;  end
   logic [15:0] addr24;
   assign addr24 = (((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_conv_stencil_5_read_ctrl_vars_fsm_out[2])) - 0))*3);
-  logic [15:0] end_delay_wire_67;
   always @(posedge clk) begin
-    op_hcompute_conv_stencil_5_read[7] <= end_delay_wire_67;  end
-  always @(posedge clk) begin
-    if (delay_wire_42) begin
-      case( delay_wire_41)
-        0:bank_0[delay_wire_40] <= delay_wire_43;
-        1:bank_1[delay_wire_40] <= delay_wire_43;
-        2:bank_2[delay_wire_40] <= delay_wire_43;
-        3:bank_3[delay_wire_40] <= delay_wire_43;
-        4:bank_4[delay_wire_40] <= delay_wire_43;
-        5:bank_5[delay_wire_40] <= delay_wire_43;
-        6:bank_6[delay_wire_40] <= delay_wire_43;
-        7:bank_7[delay_wire_40] <= delay_wire_43;
-        8:bank_8[delay_wire_40] <= delay_wire_43;
-        9:bank_9[delay_wire_40] <= delay_wire_43;
-        10:bank_10[delay_wire_40] <= delay_wire_43;
-        11:bank_11[delay_wire_40] <= delay_wire_43;
-        12:bank_12[delay_wire_40] <= delay_wire_43;
-        13:bank_13[delay_wire_40] <= delay_wire_43;
-        14:bank_14[delay_wire_40] <= delay_wire_43;
-        15:bank_15[delay_wire_40] <= delay_wire_43;
-        16:bank_16[delay_wire_40] <= delay_wire_43;
-        17:bank_17[delay_wire_40] <= delay_wire_43;
-        18:bank_18[delay_wire_40] <= delay_wire_43;
-        19:bank_19[delay_wire_40] <= delay_wire_43;
-        20:bank_20[delay_wire_40] <= delay_wire_43;
-        21:bank_21[delay_wire_40] <= delay_wire_43;
-        22:bank_22[delay_wire_40] <= delay_wire_43;
-        23:bank_23[delay_wire_40] <= delay_wire_43;
+    if (op_hcompute_hw_kernel_global_wrapper_stencil_write_wen_fsm_out) begin
+      case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        1:bank_1[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        2:bank_2[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        3:bank_3[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        4:bank_4[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        5:bank_5[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        6:bank_6[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        7:bank_7[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        8:bank_8[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        9:bank_9[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        10:bank_10[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        11:bank_11[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        12:bank_12[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        13:bank_13[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        14:bank_14[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        15:bank_15[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        16:bank_16[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        17:bank_17[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        18:bank_18[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        19:bank_19[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        20:bank_20[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        21:bank_21[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        22:bank_22[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
+        23:bank_23[addr0] <= op_hcompute_hw_kernel_global_wrapper_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_52_bank_selector.out)
-        0:end_delay_wire_44 <= bank_0[addr1];
-        1:end_delay_wire_44 <= bank_1[addr1];
-        2:end_delay_wire_44 <= bank_2[addr1];
-        3:end_delay_wire_44 <= bank_3[addr1];
-        4:end_delay_wire_44 <= bank_4[addr1];
-        5:end_delay_wire_44 <= bank_5[addr1];
-        6:end_delay_wire_44 <= bank_6[addr1];
-        7:end_delay_wire_44 <= bank_7[addr1];
-        8:end_delay_wire_44 <= bank_8[addr1];
-        9:end_delay_wire_44 <= bank_9[addr1];
-        10:end_delay_wire_44 <= bank_10[addr1];
-        11:end_delay_wire_44 <= bank_11[addr1];
-        12:end_delay_wire_44 <= bank_12[addr1];
-        13:end_delay_wire_44 <= bank_13[addr1];
-        14:end_delay_wire_44 <= bank_14[addr1];
-        15:end_delay_wire_44 <= bank_15[addr1];
-        16:end_delay_wire_44 <= bank_16[addr1];
-        17:end_delay_wire_44 <= bank_17[addr1];
-        18:end_delay_wire_44 <= bank_18[addr1];
-        19:end_delay_wire_44 <= bank_19[addr1];
-        20:end_delay_wire_44 <= bank_20[addr1];
-        21:end_delay_wire_44 <= bank_21[addr1];
-        22:end_delay_wire_44 <= bank_22[addr1];
-        23:end_delay_wire_44 <= bank_23[addr1];
+        0:op_hcompute_conv_stencil_3_read[0] = bank_0[addr1];
+        1:op_hcompute_conv_stencil_3_read[0] = bank_1[addr1];
+        2:op_hcompute_conv_stencil_3_read[0] = bank_2[addr1];
+        3:op_hcompute_conv_stencil_3_read[0] = bank_3[addr1];
+        4:op_hcompute_conv_stencil_3_read[0] = bank_4[addr1];
+        5:op_hcompute_conv_stencil_3_read[0] = bank_5[addr1];
+        6:op_hcompute_conv_stencil_3_read[0] = bank_6[addr1];
+        7:op_hcompute_conv_stencil_3_read[0] = bank_7[addr1];
+        8:op_hcompute_conv_stencil_3_read[0] = bank_8[addr1];
+        9:op_hcompute_conv_stencil_3_read[0] = bank_9[addr1];
+        10:op_hcompute_conv_stencil_3_read[0] = bank_10[addr1];
+        11:op_hcompute_conv_stencil_3_read[0] = bank_11[addr1];
+        12:op_hcompute_conv_stencil_3_read[0] = bank_12[addr1];
+        13:op_hcompute_conv_stencil_3_read[0] = bank_13[addr1];
+        14:op_hcompute_conv_stencil_3_read[0] = bank_14[addr1];
+        15:op_hcompute_conv_stencil_3_read[0] = bank_15[addr1];
+        16:op_hcompute_conv_stencil_3_read[0] = bank_16[addr1];
+        17:op_hcompute_conv_stencil_3_read[0] = bank_17[addr1];
+        18:op_hcompute_conv_stencil_3_read[0] = bank_18[addr1];
+        19:op_hcompute_conv_stencil_3_read[0] = bank_19[addr1];
+        20:op_hcompute_conv_stencil_3_read[0] = bank_20[addr1];
+        21:op_hcompute_conv_stencil_3_read[0] = bank_21[addr1];
+        22:op_hcompute_conv_stencil_3_read[0] = bank_22[addr1];
+        23:op_hcompute_conv_stencil_3_read[0] = bank_23[addr1];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_53_bank_selector.out)
-        0:end_delay_wire_45 <= bank_0[addr2];
-        1:end_delay_wire_45 <= bank_1[addr2];
-        2:end_delay_wire_45 <= bank_2[addr2];
-        3:end_delay_wire_45 <= bank_3[addr2];
-        4:end_delay_wire_45 <= bank_4[addr2];
-        5:end_delay_wire_45 <= bank_5[addr2];
-        6:end_delay_wire_45 <= bank_6[addr2];
-        7:end_delay_wire_45 <= bank_7[addr2];
-        8:end_delay_wire_45 <= bank_8[addr2];
-        9:end_delay_wire_45 <= bank_9[addr2];
-        10:end_delay_wire_45 <= bank_10[addr2];
-        11:end_delay_wire_45 <= bank_11[addr2];
-        12:end_delay_wire_45 <= bank_12[addr2];
-        13:end_delay_wire_45 <= bank_13[addr2];
-        14:end_delay_wire_45 <= bank_14[addr2];
-        15:end_delay_wire_45 <= bank_15[addr2];
-        16:end_delay_wire_45 <= bank_16[addr2];
-        17:end_delay_wire_45 <= bank_17[addr2];
-        18:end_delay_wire_45 <= bank_18[addr2];
-        19:end_delay_wire_45 <= bank_19[addr2];
-        20:end_delay_wire_45 <= bank_20[addr2];
-        21:end_delay_wire_45 <= bank_21[addr2];
-        22:end_delay_wire_45 <= bank_22[addr2];
-        23:end_delay_wire_45 <= bank_23[addr2];
+        0:op_hcompute_conv_stencil_3_read[1] = bank_0[addr2];
+        1:op_hcompute_conv_stencil_3_read[1] = bank_1[addr2];
+        2:op_hcompute_conv_stencil_3_read[1] = bank_2[addr2];
+        3:op_hcompute_conv_stencil_3_read[1] = bank_3[addr2];
+        4:op_hcompute_conv_stencil_3_read[1] = bank_4[addr2];
+        5:op_hcompute_conv_stencil_3_read[1] = bank_5[addr2];
+        6:op_hcompute_conv_stencil_3_read[1] = bank_6[addr2];
+        7:op_hcompute_conv_stencil_3_read[1] = bank_7[addr2];
+        8:op_hcompute_conv_stencil_3_read[1] = bank_8[addr2];
+        9:op_hcompute_conv_stencil_3_read[1] = bank_9[addr2];
+        10:op_hcompute_conv_stencil_3_read[1] = bank_10[addr2];
+        11:op_hcompute_conv_stencil_3_read[1] = bank_11[addr2];
+        12:op_hcompute_conv_stencil_3_read[1] = bank_12[addr2];
+        13:op_hcompute_conv_stencil_3_read[1] = bank_13[addr2];
+        14:op_hcompute_conv_stencil_3_read[1] = bank_14[addr2];
+        15:op_hcompute_conv_stencil_3_read[1] = bank_15[addr2];
+        16:op_hcompute_conv_stencil_3_read[1] = bank_16[addr2];
+        17:op_hcompute_conv_stencil_3_read[1] = bank_17[addr2];
+        18:op_hcompute_conv_stencil_3_read[1] = bank_18[addr2];
+        19:op_hcompute_conv_stencil_3_read[1] = bank_19[addr2];
+        20:op_hcompute_conv_stencil_3_read[1] = bank_20[addr2];
+        21:op_hcompute_conv_stencil_3_read[1] = bank_21[addr2];
+        22:op_hcompute_conv_stencil_3_read[1] = bank_22[addr2];
+        23:op_hcompute_conv_stencil_3_read[1] = bank_23[addr2];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_54_bank_selector.out)
-        0:end_delay_wire_46 <= bank_0[addr3];
-        1:end_delay_wire_46 <= bank_1[addr3];
-        2:end_delay_wire_46 <= bank_2[addr3];
-        3:end_delay_wire_46 <= bank_3[addr3];
-        4:end_delay_wire_46 <= bank_4[addr3];
-        5:end_delay_wire_46 <= bank_5[addr3];
-        6:end_delay_wire_46 <= bank_6[addr3];
-        7:end_delay_wire_46 <= bank_7[addr3];
-        8:end_delay_wire_46 <= bank_8[addr3];
-        9:end_delay_wire_46 <= bank_9[addr3];
-        10:end_delay_wire_46 <= bank_10[addr3];
-        11:end_delay_wire_46 <= bank_11[addr3];
-        12:end_delay_wire_46 <= bank_12[addr3];
-        13:end_delay_wire_46 <= bank_13[addr3];
-        14:end_delay_wire_46 <= bank_14[addr3];
-        15:end_delay_wire_46 <= bank_15[addr3];
-        16:end_delay_wire_46 <= bank_16[addr3];
-        17:end_delay_wire_46 <= bank_17[addr3];
-        18:end_delay_wire_46 <= bank_18[addr3];
-        19:end_delay_wire_46 <= bank_19[addr3];
-        20:end_delay_wire_46 <= bank_20[addr3];
-        21:end_delay_wire_46 <= bank_21[addr3];
-        22:end_delay_wire_46 <= bank_22[addr3];
-        23:end_delay_wire_46 <= bank_23[addr3];
+        0:op_hcompute_conv_stencil_3_read[2] = bank_0[addr3];
+        1:op_hcompute_conv_stencil_3_read[2] = bank_1[addr3];
+        2:op_hcompute_conv_stencil_3_read[2] = bank_2[addr3];
+        3:op_hcompute_conv_stencil_3_read[2] = bank_3[addr3];
+        4:op_hcompute_conv_stencil_3_read[2] = bank_4[addr3];
+        5:op_hcompute_conv_stencil_3_read[2] = bank_5[addr3];
+        6:op_hcompute_conv_stencil_3_read[2] = bank_6[addr3];
+        7:op_hcompute_conv_stencil_3_read[2] = bank_7[addr3];
+        8:op_hcompute_conv_stencil_3_read[2] = bank_8[addr3];
+        9:op_hcompute_conv_stencil_3_read[2] = bank_9[addr3];
+        10:op_hcompute_conv_stencil_3_read[2] = bank_10[addr3];
+        11:op_hcompute_conv_stencil_3_read[2] = bank_11[addr3];
+        12:op_hcompute_conv_stencil_3_read[2] = bank_12[addr3];
+        13:op_hcompute_conv_stencil_3_read[2] = bank_13[addr3];
+        14:op_hcompute_conv_stencil_3_read[2] = bank_14[addr3];
+        15:op_hcompute_conv_stencil_3_read[2] = bank_15[addr3];
+        16:op_hcompute_conv_stencil_3_read[2] = bank_16[addr3];
+        17:op_hcompute_conv_stencil_3_read[2] = bank_17[addr3];
+        18:op_hcompute_conv_stencil_3_read[2] = bank_18[addr3];
+        19:op_hcompute_conv_stencil_3_read[2] = bank_19[addr3];
+        20:op_hcompute_conv_stencil_3_read[2] = bank_20[addr3];
+        21:op_hcompute_conv_stencil_3_read[2] = bank_21[addr3];
+        22:op_hcompute_conv_stencil_3_read[2] = bank_22[addr3];
+        23:op_hcompute_conv_stencil_3_read[2] = bank_23[addr3];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_55_bank_selector.out)
-        0:end_delay_wire_47 <= bank_0[addr4];
-        1:end_delay_wire_47 <= bank_1[addr4];
-        2:end_delay_wire_47 <= bank_2[addr4];
-        3:end_delay_wire_47 <= bank_3[addr4];
-        4:end_delay_wire_47 <= bank_4[addr4];
-        5:end_delay_wire_47 <= bank_5[addr4];
-        6:end_delay_wire_47 <= bank_6[addr4];
-        7:end_delay_wire_47 <= bank_7[addr4];
-        8:end_delay_wire_47 <= bank_8[addr4];
-        9:end_delay_wire_47 <= bank_9[addr4];
-        10:end_delay_wire_47 <= bank_10[addr4];
-        11:end_delay_wire_47 <= bank_11[addr4];
-        12:end_delay_wire_47 <= bank_12[addr4];
-        13:end_delay_wire_47 <= bank_13[addr4];
-        14:end_delay_wire_47 <= bank_14[addr4];
-        15:end_delay_wire_47 <= bank_15[addr4];
-        16:end_delay_wire_47 <= bank_16[addr4];
-        17:end_delay_wire_47 <= bank_17[addr4];
-        18:end_delay_wire_47 <= bank_18[addr4];
-        19:end_delay_wire_47 <= bank_19[addr4];
-        20:end_delay_wire_47 <= bank_20[addr4];
-        21:end_delay_wire_47 <= bank_21[addr4];
-        22:end_delay_wire_47 <= bank_22[addr4];
-        23:end_delay_wire_47 <= bank_23[addr4];
+        0:op_hcompute_conv_stencil_3_read[3] = bank_0[addr4];
+        1:op_hcompute_conv_stencil_3_read[3] = bank_1[addr4];
+        2:op_hcompute_conv_stencil_3_read[3] = bank_2[addr4];
+        3:op_hcompute_conv_stencil_3_read[3] = bank_3[addr4];
+        4:op_hcompute_conv_stencil_3_read[3] = bank_4[addr4];
+        5:op_hcompute_conv_stencil_3_read[3] = bank_5[addr4];
+        6:op_hcompute_conv_stencil_3_read[3] = bank_6[addr4];
+        7:op_hcompute_conv_stencil_3_read[3] = bank_7[addr4];
+        8:op_hcompute_conv_stencil_3_read[3] = bank_8[addr4];
+        9:op_hcompute_conv_stencil_3_read[3] = bank_9[addr4];
+        10:op_hcompute_conv_stencil_3_read[3] = bank_10[addr4];
+        11:op_hcompute_conv_stencil_3_read[3] = bank_11[addr4];
+        12:op_hcompute_conv_stencil_3_read[3] = bank_12[addr4];
+        13:op_hcompute_conv_stencil_3_read[3] = bank_13[addr4];
+        14:op_hcompute_conv_stencil_3_read[3] = bank_14[addr4];
+        15:op_hcompute_conv_stencil_3_read[3] = bank_15[addr4];
+        16:op_hcompute_conv_stencil_3_read[3] = bank_16[addr4];
+        17:op_hcompute_conv_stencil_3_read[3] = bank_17[addr4];
+        18:op_hcompute_conv_stencil_3_read[3] = bank_18[addr4];
+        19:op_hcompute_conv_stencil_3_read[3] = bank_19[addr4];
+        20:op_hcompute_conv_stencil_3_read[3] = bank_20[addr4];
+        21:op_hcompute_conv_stencil_3_read[3] = bank_21[addr4];
+        22:op_hcompute_conv_stencil_3_read[3] = bank_22[addr4];
+        23:op_hcompute_conv_stencil_3_read[3] = bank_23[addr4];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_56_bank_selector.out)
-        0:end_delay_wire_48 <= bank_0[addr5];
-        1:end_delay_wire_48 <= bank_1[addr5];
-        2:end_delay_wire_48 <= bank_2[addr5];
-        3:end_delay_wire_48 <= bank_3[addr5];
-        4:end_delay_wire_48 <= bank_4[addr5];
-        5:end_delay_wire_48 <= bank_5[addr5];
-        6:end_delay_wire_48 <= bank_6[addr5];
-        7:end_delay_wire_48 <= bank_7[addr5];
-        8:end_delay_wire_48 <= bank_8[addr5];
-        9:end_delay_wire_48 <= bank_9[addr5];
-        10:end_delay_wire_48 <= bank_10[addr5];
-        11:end_delay_wire_48 <= bank_11[addr5];
-        12:end_delay_wire_48 <= bank_12[addr5];
-        13:end_delay_wire_48 <= bank_13[addr5];
-        14:end_delay_wire_48 <= bank_14[addr5];
-        15:end_delay_wire_48 <= bank_15[addr5];
-        16:end_delay_wire_48 <= bank_16[addr5];
-        17:end_delay_wire_48 <= bank_17[addr5];
-        18:end_delay_wire_48 <= bank_18[addr5];
-        19:end_delay_wire_48 <= bank_19[addr5];
-        20:end_delay_wire_48 <= bank_20[addr5];
-        21:end_delay_wire_48 <= bank_21[addr5];
-        22:end_delay_wire_48 <= bank_22[addr5];
-        23:end_delay_wire_48 <= bank_23[addr5];
+        0:op_hcompute_conv_stencil_3_read[4] = bank_0[addr5];
+        1:op_hcompute_conv_stencil_3_read[4] = bank_1[addr5];
+        2:op_hcompute_conv_stencil_3_read[4] = bank_2[addr5];
+        3:op_hcompute_conv_stencil_3_read[4] = bank_3[addr5];
+        4:op_hcompute_conv_stencil_3_read[4] = bank_4[addr5];
+        5:op_hcompute_conv_stencil_3_read[4] = bank_5[addr5];
+        6:op_hcompute_conv_stencil_3_read[4] = bank_6[addr5];
+        7:op_hcompute_conv_stencil_3_read[4] = bank_7[addr5];
+        8:op_hcompute_conv_stencil_3_read[4] = bank_8[addr5];
+        9:op_hcompute_conv_stencil_3_read[4] = bank_9[addr5];
+        10:op_hcompute_conv_stencil_3_read[4] = bank_10[addr5];
+        11:op_hcompute_conv_stencil_3_read[4] = bank_11[addr5];
+        12:op_hcompute_conv_stencil_3_read[4] = bank_12[addr5];
+        13:op_hcompute_conv_stencil_3_read[4] = bank_13[addr5];
+        14:op_hcompute_conv_stencil_3_read[4] = bank_14[addr5];
+        15:op_hcompute_conv_stencil_3_read[4] = bank_15[addr5];
+        16:op_hcompute_conv_stencil_3_read[4] = bank_16[addr5];
+        17:op_hcompute_conv_stencil_3_read[4] = bank_17[addr5];
+        18:op_hcompute_conv_stencil_3_read[4] = bank_18[addr5];
+        19:op_hcompute_conv_stencil_3_read[4] = bank_19[addr5];
+        20:op_hcompute_conv_stencil_3_read[4] = bank_20[addr5];
+        21:op_hcompute_conv_stencil_3_read[4] = bank_21[addr5];
+        22:op_hcompute_conv_stencil_3_read[4] = bank_22[addr5];
+        23:op_hcompute_conv_stencil_3_read[4] = bank_23[addr5];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_57_bank_selector.out)
-        0:end_delay_wire_49 <= bank_0[addr6];
-        1:end_delay_wire_49 <= bank_1[addr6];
-        2:end_delay_wire_49 <= bank_2[addr6];
-        3:end_delay_wire_49 <= bank_3[addr6];
-        4:end_delay_wire_49 <= bank_4[addr6];
-        5:end_delay_wire_49 <= bank_5[addr6];
-        6:end_delay_wire_49 <= bank_6[addr6];
-        7:end_delay_wire_49 <= bank_7[addr6];
-        8:end_delay_wire_49 <= bank_8[addr6];
-        9:end_delay_wire_49 <= bank_9[addr6];
-        10:end_delay_wire_49 <= bank_10[addr6];
-        11:end_delay_wire_49 <= bank_11[addr6];
-        12:end_delay_wire_49 <= bank_12[addr6];
-        13:end_delay_wire_49 <= bank_13[addr6];
-        14:end_delay_wire_49 <= bank_14[addr6];
-        15:end_delay_wire_49 <= bank_15[addr6];
-        16:end_delay_wire_49 <= bank_16[addr6];
-        17:end_delay_wire_49 <= bank_17[addr6];
-        18:end_delay_wire_49 <= bank_18[addr6];
-        19:end_delay_wire_49 <= bank_19[addr6];
-        20:end_delay_wire_49 <= bank_20[addr6];
-        21:end_delay_wire_49 <= bank_21[addr6];
-        22:end_delay_wire_49 <= bank_22[addr6];
-        23:end_delay_wire_49 <= bank_23[addr6];
+        0:op_hcompute_conv_stencil_3_read[5] = bank_0[addr6];
+        1:op_hcompute_conv_stencil_3_read[5] = bank_1[addr6];
+        2:op_hcompute_conv_stencil_3_read[5] = bank_2[addr6];
+        3:op_hcompute_conv_stencil_3_read[5] = bank_3[addr6];
+        4:op_hcompute_conv_stencil_3_read[5] = bank_4[addr6];
+        5:op_hcompute_conv_stencil_3_read[5] = bank_5[addr6];
+        6:op_hcompute_conv_stencil_3_read[5] = bank_6[addr6];
+        7:op_hcompute_conv_stencil_3_read[5] = bank_7[addr6];
+        8:op_hcompute_conv_stencil_3_read[5] = bank_8[addr6];
+        9:op_hcompute_conv_stencil_3_read[5] = bank_9[addr6];
+        10:op_hcompute_conv_stencil_3_read[5] = bank_10[addr6];
+        11:op_hcompute_conv_stencil_3_read[5] = bank_11[addr6];
+        12:op_hcompute_conv_stencil_3_read[5] = bank_12[addr6];
+        13:op_hcompute_conv_stencil_3_read[5] = bank_13[addr6];
+        14:op_hcompute_conv_stencil_3_read[5] = bank_14[addr6];
+        15:op_hcompute_conv_stencil_3_read[5] = bank_15[addr6];
+        16:op_hcompute_conv_stencil_3_read[5] = bank_16[addr6];
+        17:op_hcompute_conv_stencil_3_read[5] = bank_17[addr6];
+        18:op_hcompute_conv_stencil_3_read[5] = bank_18[addr6];
+        19:op_hcompute_conv_stencil_3_read[5] = bank_19[addr6];
+        20:op_hcompute_conv_stencil_3_read[5] = bank_20[addr6];
+        21:op_hcompute_conv_stencil_3_read[5] = bank_21[addr6];
+        22:op_hcompute_conv_stencil_3_read[5] = bank_22[addr6];
+        23:op_hcompute_conv_stencil_3_read[5] = bank_23[addr6];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_58_bank_selector.out)
-        0:end_delay_wire_50 <= bank_0[addr7];
-        1:end_delay_wire_50 <= bank_1[addr7];
-        2:end_delay_wire_50 <= bank_2[addr7];
-        3:end_delay_wire_50 <= bank_3[addr7];
-        4:end_delay_wire_50 <= bank_4[addr7];
-        5:end_delay_wire_50 <= bank_5[addr7];
-        6:end_delay_wire_50 <= bank_6[addr7];
-        7:end_delay_wire_50 <= bank_7[addr7];
-        8:end_delay_wire_50 <= bank_8[addr7];
-        9:end_delay_wire_50 <= bank_9[addr7];
-        10:end_delay_wire_50 <= bank_10[addr7];
-        11:end_delay_wire_50 <= bank_11[addr7];
-        12:end_delay_wire_50 <= bank_12[addr7];
-        13:end_delay_wire_50 <= bank_13[addr7];
-        14:end_delay_wire_50 <= bank_14[addr7];
-        15:end_delay_wire_50 <= bank_15[addr7];
-        16:end_delay_wire_50 <= bank_16[addr7];
-        17:end_delay_wire_50 <= bank_17[addr7];
-        18:end_delay_wire_50 <= bank_18[addr7];
-        19:end_delay_wire_50 <= bank_19[addr7];
-        20:end_delay_wire_50 <= bank_20[addr7];
-        21:end_delay_wire_50 <= bank_21[addr7];
-        22:end_delay_wire_50 <= bank_22[addr7];
-        23:end_delay_wire_50 <= bank_23[addr7];
+        0:op_hcompute_conv_stencil_3_read[6] = bank_0[addr7];
+        1:op_hcompute_conv_stencil_3_read[6] = bank_1[addr7];
+        2:op_hcompute_conv_stencil_3_read[6] = bank_2[addr7];
+        3:op_hcompute_conv_stencil_3_read[6] = bank_3[addr7];
+        4:op_hcompute_conv_stencil_3_read[6] = bank_4[addr7];
+        5:op_hcompute_conv_stencil_3_read[6] = bank_5[addr7];
+        6:op_hcompute_conv_stencil_3_read[6] = bank_6[addr7];
+        7:op_hcompute_conv_stencil_3_read[6] = bank_7[addr7];
+        8:op_hcompute_conv_stencil_3_read[6] = bank_8[addr7];
+        9:op_hcompute_conv_stencil_3_read[6] = bank_9[addr7];
+        10:op_hcompute_conv_stencil_3_read[6] = bank_10[addr7];
+        11:op_hcompute_conv_stencil_3_read[6] = bank_11[addr7];
+        12:op_hcompute_conv_stencil_3_read[6] = bank_12[addr7];
+        13:op_hcompute_conv_stencil_3_read[6] = bank_13[addr7];
+        14:op_hcompute_conv_stencil_3_read[6] = bank_14[addr7];
+        15:op_hcompute_conv_stencil_3_read[6] = bank_15[addr7];
+        16:op_hcompute_conv_stencil_3_read[6] = bank_16[addr7];
+        17:op_hcompute_conv_stencil_3_read[6] = bank_17[addr7];
+        18:op_hcompute_conv_stencil_3_read[6] = bank_18[addr7];
+        19:op_hcompute_conv_stencil_3_read[6] = bank_19[addr7];
+        20:op_hcompute_conv_stencil_3_read[6] = bank_20[addr7];
+        21:op_hcompute_conv_stencil_3_read[6] = bank_21[addr7];
+        22:op_hcompute_conv_stencil_3_read[6] = bank_22[addr7];
+        23:op_hcompute_conv_stencil_3_read[6] = bank_23[addr7];
       endcase
     end
     if (op_hcompute_conv_stencil_3_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_59_bank_selector.out)
-        0:end_delay_wire_51 <= bank_0[addr8];
-        1:end_delay_wire_51 <= bank_1[addr8];
-        2:end_delay_wire_51 <= bank_2[addr8];
-        3:end_delay_wire_51 <= bank_3[addr8];
-        4:end_delay_wire_51 <= bank_4[addr8];
-        5:end_delay_wire_51 <= bank_5[addr8];
-        6:end_delay_wire_51 <= bank_6[addr8];
-        7:end_delay_wire_51 <= bank_7[addr8];
-        8:end_delay_wire_51 <= bank_8[addr8];
-        9:end_delay_wire_51 <= bank_9[addr8];
-        10:end_delay_wire_51 <= bank_10[addr8];
-        11:end_delay_wire_51 <= bank_11[addr8];
-        12:end_delay_wire_51 <= bank_12[addr8];
-        13:end_delay_wire_51 <= bank_13[addr8];
-        14:end_delay_wire_51 <= bank_14[addr8];
-        15:end_delay_wire_51 <= bank_15[addr8];
-        16:end_delay_wire_51 <= bank_16[addr8];
-        17:end_delay_wire_51 <= bank_17[addr8];
-        18:end_delay_wire_51 <= bank_18[addr8];
-        19:end_delay_wire_51 <= bank_19[addr8];
-        20:end_delay_wire_51 <= bank_20[addr8];
-        21:end_delay_wire_51 <= bank_21[addr8];
-        22:end_delay_wire_51 <= bank_22[addr8];
-        23:end_delay_wire_51 <= bank_23[addr8];
+        0:op_hcompute_conv_stencil_3_read[7] = bank_0[addr8];
+        1:op_hcompute_conv_stencil_3_read[7] = bank_1[addr8];
+        2:op_hcompute_conv_stencil_3_read[7] = bank_2[addr8];
+        3:op_hcompute_conv_stencil_3_read[7] = bank_3[addr8];
+        4:op_hcompute_conv_stencil_3_read[7] = bank_4[addr8];
+        5:op_hcompute_conv_stencil_3_read[7] = bank_5[addr8];
+        6:op_hcompute_conv_stencil_3_read[7] = bank_6[addr8];
+        7:op_hcompute_conv_stencil_3_read[7] = bank_7[addr8];
+        8:op_hcompute_conv_stencil_3_read[7] = bank_8[addr8];
+        9:op_hcompute_conv_stencil_3_read[7] = bank_9[addr8];
+        10:op_hcompute_conv_stencil_3_read[7] = bank_10[addr8];
+        11:op_hcompute_conv_stencil_3_read[7] = bank_11[addr8];
+        12:op_hcompute_conv_stencil_3_read[7] = bank_12[addr8];
+        13:op_hcompute_conv_stencil_3_read[7] = bank_13[addr8];
+        14:op_hcompute_conv_stencil_3_read[7] = bank_14[addr8];
+        15:op_hcompute_conv_stencil_3_read[7] = bank_15[addr8];
+        16:op_hcompute_conv_stencil_3_read[7] = bank_16[addr8];
+        17:op_hcompute_conv_stencil_3_read[7] = bank_17[addr8];
+        18:op_hcompute_conv_stencil_3_read[7] = bank_18[addr8];
+        19:op_hcompute_conv_stencil_3_read[7] = bank_19[addr8];
+        20:op_hcompute_conv_stencil_3_read[7] = bank_20[addr8];
+        21:op_hcompute_conv_stencil_3_read[7] = bank_21[addr8];
+        22:op_hcompute_conv_stencil_3_read[7] = bank_22[addr8];
+        23:op_hcompute_conv_stencil_3_read[7] = bank_23[addr8];
       endcase
     end
     if (op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_bank_selector.out)
-        0:end_delay_wire_52 <= bank_0[addr9];
-        1:end_delay_wire_52 <= bank_1[addr9];
-        2:end_delay_wire_52 <= bank_2[addr9];
-        3:end_delay_wire_52 <= bank_3[addr9];
-        4:end_delay_wire_52 <= bank_4[addr9];
-        5:end_delay_wire_52 <= bank_5[addr9];
-        6:end_delay_wire_52 <= bank_6[addr9];
-        7:end_delay_wire_52 <= bank_7[addr9];
-        8:end_delay_wire_52 <= bank_8[addr9];
-        9:end_delay_wire_52 <= bank_9[addr9];
-        10:end_delay_wire_52 <= bank_10[addr9];
-        11:end_delay_wire_52 <= bank_11[addr9];
-        12:end_delay_wire_52 <= bank_12[addr9];
-        13:end_delay_wire_52 <= bank_13[addr9];
-        14:end_delay_wire_52 <= bank_14[addr9];
-        15:end_delay_wire_52 <= bank_15[addr9];
-        16:end_delay_wire_52 <= bank_16[addr9];
-        17:end_delay_wire_52 <= bank_17[addr9];
-        18:end_delay_wire_52 <= bank_18[addr9];
-        19:end_delay_wire_52 <= bank_19[addr9];
-        20:end_delay_wire_52 <= bank_20[addr9];
-        21:end_delay_wire_52 <= bank_21[addr9];
-        22:end_delay_wire_52 <= bank_22[addr9];
-        23:end_delay_wire_52 <= bank_23[addr9];
+        0:op_hcompute_conv_stencil_4_read[0] = bank_0[addr9];
+        1:op_hcompute_conv_stencil_4_read[0] = bank_1[addr9];
+        2:op_hcompute_conv_stencil_4_read[0] = bank_2[addr9];
+        3:op_hcompute_conv_stencil_4_read[0] = bank_3[addr9];
+        4:op_hcompute_conv_stencil_4_read[0] = bank_4[addr9];
+        5:op_hcompute_conv_stencil_4_read[0] = bank_5[addr9];
+        6:op_hcompute_conv_stencil_4_read[0] = bank_6[addr9];
+        7:op_hcompute_conv_stencil_4_read[0] = bank_7[addr9];
+        8:op_hcompute_conv_stencil_4_read[0] = bank_8[addr9];
+        9:op_hcompute_conv_stencil_4_read[0] = bank_9[addr9];
+        10:op_hcompute_conv_stencil_4_read[0] = bank_10[addr9];
+        11:op_hcompute_conv_stencil_4_read[0] = bank_11[addr9];
+        12:op_hcompute_conv_stencil_4_read[0] = bank_12[addr9];
+        13:op_hcompute_conv_stencil_4_read[0] = bank_13[addr9];
+        14:op_hcompute_conv_stencil_4_read[0] = bank_14[addr9];
+        15:op_hcompute_conv_stencil_4_read[0] = bank_15[addr9];
+        16:op_hcompute_conv_stencil_4_read[0] = bank_16[addr9];
+        17:op_hcompute_conv_stencil_4_read[0] = bank_17[addr9];
+        18:op_hcompute_conv_stencil_4_read[0] = bank_18[addr9];
+        19:op_hcompute_conv_stencil_4_read[0] = bank_19[addr9];
+        20:op_hcompute_conv_stencil_4_read[0] = bank_20[addr9];
+        21:op_hcompute_conv_stencil_4_read[0] = bank_21[addr9];
+        22:op_hcompute_conv_stencil_4_read[0] = bank_22[addr9];
+        23:op_hcompute_conv_stencil_4_read[0] = bank_23[addr9];
       endcase
     end
     if (op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_bank_selector.out)
-        0:end_delay_wire_53 <= bank_0[addr10];
-        1:end_delay_wire_53 <= bank_1[addr10];
-        2:end_delay_wire_53 <= bank_2[addr10];
-        3:end_delay_wire_53 <= bank_3[addr10];
-        4:end_delay_wire_53 <= bank_4[addr10];
-        5:end_delay_wire_53 <= bank_5[addr10];
-        6:end_delay_wire_53 <= bank_6[addr10];
-        7:end_delay_wire_53 <= bank_7[addr10];
-        8:end_delay_wire_53 <= bank_8[addr10];
-        9:end_delay_wire_53 <= bank_9[addr10];
-        10:end_delay_wire_53 <= bank_10[addr10];
-        11:end_delay_wire_53 <= bank_11[addr10];
-        12:end_delay_wire_53 <= bank_12[addr10];
-        13:end_delay_wire_53 <= bank_13[addr10];
-        14:end_delay_wire_53 <= bank_14[addr10];
-        15:end_delay_wire_53 <= bank_15[addr10];
-        16:end_delay_wire_53 <= bank_16[addr10];
-        17:end_delay_wire_53 <= bank_17[addr10];
-        18:end_delay_wire_53 <= bank_18[addr10];
-        19:end_delay_wire_53 <= bank_19[addr10];
-        20:end_delay_wire_53 <= bank_20[addr10];
-        21:end_delay_wire_53 <= bank_21[addr10];
-        22:end_delay_wire_53 <= bank_22[addr10];
-        23:end_delay_wire_53 <= bank_23[addr10];
+        0:op_hcompute_conv_stencil_4_read[1] = bank_0[addr10];
+        1:op_hcompute_conv_stencil_4_read[1] = bank_1[addr10];
+        2:op_hcompute_conv_stencil_4_read[1] = bank_2[addr10];
+        3:op_hcompute_conv_stencil_4_read[1] = bank_3[addr10];
+        4:op_hcompute_conv_stencil_4_read[1] = bank_4[addr10];
+        5:op_hcompute_conv_stencil_4_read[1] = bank_5[addr10];
+        6:op_hcompute_conv_stencil_4_read[1] = bank_6[addr10];
+        7:op_hcompute_conv_stencil_4_read[1] = bank_7[addr10];
+        8:op_hcompute_conv_stencil_4_read[1] = bank_8[addr10];
+        9:op_hcompute_conv_stencil_4_read[1] = bank_9[addr10];
+        10:op_hcompute_conv_stencil_4_read[1] = bank_10[addr10];
+        11:op_hcompute_conv_stencil_4_read[1] = bank_11[addr10];
+        12:op_hcompute_conv_stencil_4_read[1] = bank_12[addr10];
+        13:op_hcompute_conv_stencil_4_read[1] = bank_13[addr10];
+        14:op_hcompute_conv_stencil_4_read[1] = bank_14[addr10];
+        15:op_hcompute_conv_stencil_4_read[1] = bank_15[addr10];
+        16:op_hcompute_conv_stencil_4_read[1] = bank_16[addr10];
+        17:op_hcompute_conv_stencil_4_read[1] = bank_17[addr10];
+        18:op_hcompute_conv_stencil_4_read[1] = bank_18[addr10];
+        19:op_hcompute_conv_stencil_4_read[1] = bank_19[addr10];
+        20:op_hcompute_conv_stencil_4_read[1] = bank_20[addr10];
+        21:op_hcompute_conv_stencil_4_read[1] = bank_21[addr10];
+        22:op_hcompute_conv_stencil_4_read[1] = bank_22[addr10];
+        23:op_hcompute_conv_stencil_4_read[1] = bank_23[addr10];
       endcase
     end
     if (op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_bank_selector.out)
-        0:end_delay_wire_54 <= bank_0[addr11];
-        1:end_delay_wire_54 <= bank_1[addr11];
-        2:end_delay_wire_54 <= bank_2[addr11];
-        3:end_delay_wire_54 <= bank_3[addr11];
-        4:end_delay_wire_54 <= bank_4[addr11];
-        5:end_delay_wire_54 <= bank_5[addr11];
-        6:end_delay_wire_54 <= bank_6[addr11];
-        7:end_delay_wire_54 <= bank_7[addr11];
-        8:end_delay_wire_54 <= bank_8[addr11];
-        9:end_delay_wire_54 <= bank_9[addr11];
-        10:end_delay_wire_54 <= bank_10[addr11];
-        11:end_delay_wire_54 <= bank_11[addr11];
-        12:end_delay_wire_54 <= bank_12[addr11];
-        13:end_delay_wire_54 <= bank_13[addr11];
-        14:end_delay_wire_54 <= bank_14[addr11];
-        15:end_delay_wire_54 <= bank_15[addr11];
-        16:end_delay_wire_54 <= bank_16[addr11];
-        17:end_delay_wire_54 <= bank_17[addr11];
-        18:end_delay_wire_54 <= bank_18[addr11];
-        19:end_delay_wire_54 <= bank_19[addr11];
-        20:end_delay_wire_54 <= bank_20[addr11];
-        21:end_delay_wire_54 <= bank_21[addr11];
-        22:end_delay_wire_54 <= bank_22[addr11];
-        23:end_delay_wire_54 <= bank_23[addr11];
+        0:op_hcompute_conv_stencil_4_read[2] = bank_0[addr11];
+        1:op_hcompute_conv_stencil_4_read[2] = bank_1[addr11];
+        2:op_hcompute_conv_stencil_4_read[2] = bank_2[addr11];
+        3:op_hcompute_conv_stencil_4_read[2] = bank_3[addr11];
+        4:op_hcompute_conv_stencil_4_read[2] = bank_4[addr11];
+        5:op_hcompute_conv_stencil_4_read[2] = bank_5[addr11];
+        6:op_hcompute_conv_stencil_4_read[2] = bank_6[addr11];
+        7:op_hcompute_conv_stencil_4_read[2] = bank_7[addr11];
+        8:op_hcompute_conv_stencil_4_read[2] = bank_8[addr11];
+        9:op_hcompute_conv_stencil_4_read[2] = bank_9[addr11];
+        10:op_hcompute_conv_stencil_4_read[2] = bank_10[addr11];
+        11:op_hcompute_conv_stencil_4_read[2] = bank_11[addr11];
+        12:op_hcompute_conv_stencil_4_read[2] = bank_12[addr11];
+        13:op_hcompute_conv_stencil_4_read[2] = bank_13[addr11];
+        14:op_hcompute_conv_stencil_4_read[2] = bank_14[addr11];
+        15:op_hcompute_conv_stencil_4_read[2] = bank_15[addr11];
+        16:op_hcompute_conv_stencil_4_read[2] = bank_16[addr11];
+        17:op_hcompute_conv_stencil_4_read[2] = bank_17[addr11];
+        18:op_hcompute_conv_stencil_4_read[2] = bank_18[addr11];
+        19:op_hcompute_conv_stencil_4_read[2] = bank_19[addr11];
+        20:op_hcompute_conv_stencil_4_read[2] = bank_20[addr11];
+        21:op_hcompute_conv_stencil_4_read[2] = bank_21[addr11];
+        22:op_hcompute_conv_stencil_4_read[2] = bank_22[addr11];
+        23:op_hcompute_conv_stencil_4_read[2] = bank_23[addr11];
       endcase
     end
     if (op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_bank_selector.out)
-        0:end_delay_wire_55 <= bank_0[addr12];
-        1:end_delay_wire_55 <= bank_1[addr12];
-        2:end_delay_wire_55 <= bank_2[addr12];
-        3:end_delay_wire_55 <= bank_3[addr12];
-        4:end_delay_wire_55 <= bank_4[addr12];
-        5:end_delay_wire_55 <= bank_5[addr12];
-        6:end_delay_wire_55 <= bank_6[addr12];
-        7:end_delay_wire_55 <= bank_7[addr12];
-        8:end_delay_wire_55 <= bank_8[addr12];
-        9:end_delay_wire_55 <= bank_9[addr12];
-        10:end_delay_wire_55 <= bank_10[addr12];
-        11:end_delay_wire_55 <= bank_11[addr12];
-        12:end_delay_wire_55 <= bank_12[addr12];
-        13:end_delay_wire_55 <= bank_13[addr12];
-        14:end_delay_wire_55 <= bank_14[addr12];
-        15:end_delay_wire_55 <= bank_15[addr12];
-        16:end_delay_wire_55 <= bank_16[addr12];
-        17:end_delay_wire_55 <= bank_17[addr12];
-        18:end_delay_wire_55 <= bank_18[addr12];
-        19:end_delay_wire_55 <= bank_19[addr12];
-        20:end_delay_wire_55 <= bank_20[addr12];
-        21:end_delay_wire_55 <= bank_21[addr12];
-        22:end_delay_wire_55 <= bank_22[addr12];
-        23:end_delay_wire_55 <= bank_23[addr12];
+        0:op_hcompute_conv_stencil_4_read[3] = bank_0[addr12];
+        1:op_hcompute_conv_stencil_4_read[3] = bank_1[addr12];
+        2:op_hcompute_conv_stencil_4_read[3] = bank_2[addr12];
+        3:op_hcompute_conv_stencil_4_read[3] = bank_3[addr12];
+        4:op_hcompute_conv_stencil_4_read[3] = bank_4[addr12];
+        5:op_hcompute_conv_stencil_4_read[3] = bank_5[addr12];
+        6:op_hcompute_conv_stencil_4_read[3] = bank_6[addr12];
+        7:op_hcompute_conv_stencil_4_read[3] = bank_7[addr12];
+        8:op_hcompute_conv_stencil_4_read[3] = bank_8[addr12];
+        9:op_hcompute_conv_stencil_4_read[3] = bank_9[addr12];
+        10:op_hcompute_conv_stencil_4_read[3] = bank_10[addr12];
+        11:op_hcompute_conv_stencil_4_read[3] = bank_11[addr12];
+        12:op_hcompute_conv_stencil_4_read[3] = bank_12[addr12];
+        13:op_hcompute_conv_stencil_4_read[3] = bank_13[addr12];
+        14:op_hcompute_conv_stencil_4_read[3] = bank_14[addr12];
+        15:op_hcompute_conv_stencil_4_read[3] = bank_15[addr12];
+        16:op_hcompute_conv_stencil_4_read[3] = bank_16[addr12];
+        17:op_hcompute_conv_stencil_4_read[3] = bank_17[addr12];
+        18:op_hcompute_conv_stencil_4_read[3] = bank_18[addr12];
+        19:op_hcompute_conv_stencil_4_read[3] = bank_19[addr12];
+        20:op_hcompute_conv_stencil_4_read[3] = bank_20[addr12];
+        21:op_hcompute_conv_stencil_4_read[3] = bank_21[addr12];
+        22:op_hcompute_conv_stencil_4_read[3] = bank_22[addr12];
+        23:op_hcompute_conv_stencil_4_read[3] = bank_23[addr12];
       endcase
     end
     if (op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_bank_selector.out)
-        0:end_delay_wire_56 <= bank_0[addr13];
-        1:end_delay_wire_56 <= bank_1[addr13];
-        2:end_delay_wire_56 <= bank_2[addr13];
-        3:end_delay_wire_56 <= bank_3[addr13];
-        4:end_delay_wire_56 <= bank_4[addr13];
-        5:end_delay_wire_56 <= bank_5[addr13];
-        6:end_delay_wire_56 <= bank_6[addr13];
-        7:end_delay_wire_56 <= bank_7[addr13];
-        8:end_delay_wire_56 <= bank_8[addr13];
-        9:end_delay_wire_56 <= bank_9[addr13];
-        10:end_delay_wire_56 <= bank_10[addr13];
-        11:end_delay_wire_56 <= bank_11[addr13];
-        12:end_delay_wire_56 <= bank_12[addr13];
-        13:end_delay_wire_56 <= bank_13[addr13];
-        14:end_delay_wire_56 <= bank_14[addr13];
-        15:end_delay_wire_56 <= bank_15[addr13];
-        16:end_delay_wire_56 <= bank_16[addr13];
-        17:end_delay_wire_56 <= bank_17[addr13];
-        18:end_delay_wire_56 <= bank_18[addr13];
-        19:end_delay_wire_56 <= bank_19[addr13];
-        20:end_delay_wire_56 <= bank_20[addr13];
-        21:end_delay_wire_56 <= bank_21[addr13];
-        22:end_delay_wire_56 <= bank_22[addr13];
-        23:end_delay_wire_56 <= bank_23[addr13];
+        0:op_hcompute_conv_stencil_4_read[4] = bank_0[addr13];
+        1:op_hcompute_conv_stencil_4_read[4] = bank_1[addr13];
+        2:op_hcompute_conv_stencil_4_read[4] = bank_2[addr13];
+        3:op_hcompute_conv_stencil_4_read[4] = bank_3[addr13];
+        4:op_hcompute_conv_stencil_4_read[4] = bank_4[addr13];
+        5:op_hcompute_conv_stencil_4_read[4] = bank_5[addr13];
+        6:op_hcompute_conv_stencil_4_read[4] = bank_6[addr13];
+        7:op_hcompute_conv_stencil_4_read[4] = bank_7[addr13];
+        8:op_hcompute_conv_stencil_4_read[4] = bank_8[addr13];
+        9:op_hcompute_conv_stencil_4_read[4] = bank_9[addr13];
+        10:op_hcompute_conv_stencil_4_read[4] = bank_10[addr13];
+        11:op_hcompute_conv_stencil_4_read[4] = bank_11[addr13];
+        12:op_hcompute_conv_stencil_4_read[4] = bank_12[addr13];
+        13:op_hcompute_conv_stencil_4_read[4] = bank_13[addr13];
+        14:op_hcompute_conv_stencil_4_read[4] = bank_14[addr13];
+        15:op_hcompute_conv_stencil_4_read[4] = bank_15[addr13];
+        16:op_hcompute_conv_stencil_4_read[4] = bank_16[addr13];
+        17:op_hcompute_conv_stencil_4_read[4] = bank_17[addr13];
+        18:op_hcompute_conv_stencil_4_read[4] = bank_18[addr13];
+        19:op_hcompute_conv_stencil_4_read[4] = bank_19[addr13];
+        20:op_hcompute_conv_stencil_4_read[4] = bank_20[addr13];
+        21:op_hcompute_conv_stencil_4_read[4] = bank_21[addr13];
+        22:op_hcompute_conv_stencil_4_read[4] = bank_22[addr13];
+        23:op_hcompute_conv_stencil_4_read[4] = bank_23[addr13];
       endcase
     end
     if (op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_bank_selector.out)
-        0:end_delay_wire_57 <= bank_0[addr14];
-        1:end_delay_wire_57 <= bank_1[addr14];
-        2:end_delay_wire_57 <= bank_2[addr14];
-        3:end_delay_wire_57 <= bank_3[addr14];
-        4:end_delay_wire_57 <= bank_4[addr14];
-        5:end_delay_wire_57 <= bank_5[addr14];
-        6:end_delay_wire_57 <= bank_6[addr14];
-        7:end_delay_wire_57 <= bank_7[addr14];
-        8:end_delay_wire_57 <= bank_8[addr14];
-        9:end_delay_wire_57 <= bank_9[addr14];
-        10:end_delay_wire_57 <= bank_10[addr14];
-        11:end_delay_wire_57 <= bank_11[addr14];
-        12:end_delay_wire_57 <= bank_12[addr14];
-        13:end_delay_wire_57 <= bank_13[addr14];
-        14:end_delay_wire_57 <= bank_14[addr14];
-        15:end_delay_wire_57 <= bank_15[addr14];
-        16:end_delay_wire_57 <= bank_16[addr14];
-        17:end_delay_wire_57 <= bank_17[addr14];
-        18:end_delay_wire_57 <= bank_18[addr14];
-        19:end_delay_wire_57 <= bank_19[addr14];
-        20:end_delay_wire_57 <= bank_20[addr14];
-        21:end_delay_wire_57 <= bank_21[addr14];
-        22:end_delay_wire_57 <= bank_22[addr14];
-        23:end_delay_wire_57 <= bank_23[addr14];
+        0:op_hcompute_conv_stencil_4_read[5] = bank_0[addr14];
+        1:op_hcompute_conv_stencil_4_read[5] = bank_1[addr14];
+        2:op_hcompute_conv_stencil_4_read[5] = bank_2[addr14];
+        3:op_hcompute_conv_stencil_4_read[5] = bank_3[addr14];
+        4:op_hcompute_conv_stencil_4_read[5] = bank_4[addr14];
+        5:op_hcompute_conv_stencil_4_read[5] = bank_5[addr14];
+        6:op_hcompute_conv_stencil_4_read[5] = bank_6[addr14];
+        7:op_hcompute_conv_stencil_4_read[5] = bank_7[addr14];
+        8:op_hcompute_conv_stencil_4_read[5] = bank_8[addr14];
+        9:op_hcompute_conv_stencil_4_read[5] = bank_9[addr14];
+        10:op_hcompute_conv_stencil_4_read[5] = bank_10[addr14];
+        11:op_hcompute_conv_stencil_4_read[5] = bank_11[addr14];
+        12:op_hcompute_conv_stencil_4_read[5] = bank_12[addr14];
+        13:op_hcompute_conv_stencil_4_read[5] = bank_13[addr14];
+        14:op_hcompute_conv_stencil_4_read[5] = bank_14[addr14];
+        15:op_hcompute_conv_stencil_4_read[5] = bank_15[addr14];
+        16:op_hcompute_conv_stencil_4_read[5] = bank_16[addr14];
+        17:op_hcompute_conv_stencil_4_read[5] = bank_17[addr14];
+        18:op_hcompute_conv_stencil_4_read[5] = bank_18[addr14];
+        19:op_hcompute_conv_stencil_4_read[5] = bank_19[addr14];
+        20:op_hcompute_conv_stencil_4_read[5] = bank_20[addr14];
+        21:op_hcompute_conv_stencil_4_read[5] = bank_21[addr14];
+        22:op_hcompute_conv_stencil_4_read[5] = bank_22[addr14];
+        23:op_hcompute_conv_stencil_4_read[5] = bank_23[addr14];
       endcase
     end
     if (op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_bank_selector.out)
-        0:end_delay_wire_58 <= bank_0[addr15];
-        1:end_delay_wire_58 <= bank_1[addr15];
-        2:end_delay_wire_58 <= bank_2[addr15];
-        3:end_delay_wire_58 <= bank_3[addr15];
-        4:end_delay_wire_58 <= bank_4[addr15];
-        5:end_delay_wire_58 <= bank_5[addr15];
-        6:end_delay_wire_58 <= bank_6[addr15];
-        7:end_delay_wire_58 <= bank_7[addr15];
-        8:end_delay_wire_58 <= bank_8[addr15];
-        9:end_delay_wire_58 <= bank_9[addr15];
-        10:end_delay_wire_58 <= bank_10[addr15];
-        11:end_delay_wire_58 <= bank_11[addr15];
-        12:end_delay_wire_58 <= bank_12[addr15];
-        13:end_delay_wire_58 <= bank_13[addr15];
-        14:end_delay_wire_58 <= bank_14[addr15];
-        15:end_delay_wire_58 <= bank_15[addr15];
-        16:end_delay_wire_58 <= bank_16[addr15];
-        17:end_delay_wire_58 <= bank_17[addr15];
-        18:end_delay_wire_58 <= bank_18[addr15];
-        19:end_delay_wire_58 <= bank_19[addr15];
-        20:end_delay_wire_58 <= bank_20[addr15];
-        21:end_delay_wire_58 <= bank_21[addr15];
-        22:end_delay_wire_58 <= bank_22[addr15];
-        23:end_delay_wire_58 <= bank_23[addr15];
+        0:op_hcompute_conv_stencil_4_read[6] = bank_0[addr15];
+        1:op_hcompute_conv_stencil_4_read[6] = bank_1[addr15];
+        2:op_hcompute_conv_stencil_4_read[6] = bank_2[addr15];
+        3:op_hcompute_conv_stencil_4_read[6] = bank_3[addr15];
+        4:op_hcompute_conv_stencil_4_read[6] = bank_4[addr15];
+        5:op_hcompute_conv_stencil_4_read[6] = bank_5[addr15];
+        6:op_hcompute_conv_stencil_4_read[6] = bank_6[addr15];
+        7:op_hcompute_conv_stencil_4_read[6] = bank_7[addr15];
+        8:op_hcompute_conv_stencil_4_read[6] = bank_8[addr15];
+        9:op_hcompute_conv_stencil_4_read[6] = bank_9[addr15];
+        10:op_hcompute_conv_stencil_4_read[6] = bank_10[addr15];
+        11:op_hcompute_conv_stencil_4_read[6] = bank_11[addr15];
+        12:op_hcompute_conv_stencil_4_read[6] = bank_12[addr15];
+        13:op_hcompute_conv_stencil_4_read[6] = bank_13[addr15];
+        14:op_hcompute_conv_stencil_4_read[6] = bank_14[addr15];
+        15:op_hcompute_conv_stencil_4_read[6] = bank_15[addr15];
+        16:op_hcompute_conv_stencil_4_read[6] = bank_16[addr15];
+        17:op_hcompute_conv_stencil_4_read[6] = bank_17[addr15];
+        18:op_hcompute_conv_stencil_4_read[6] = bank_18[addr15];
+        19:op_hcompute_conv_stencil_4_read[6] = bank_19[addr15];
+        20:op_hcompute_conv_stencil_4_read[6] = bank_20[addr15];
+        21:op_hcompute_conv_stencil_4_read[6] = bank_21[addr15];
+        22:op_hcompute_conv_stencil_4_read[6] = bank_22[addr15];
+        23:op_hcompute_conv_stencil_4_read[6] = bank_23[addr15];
       endcase
     end
     if (op_hcompute_conv_stencil_4_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41_bank_selector.out)
-        0:end_delay_wire_59 <= bank_0[addr16];
-        1:end_delay_wire_59 <= bank_1[addr16];
-        2:end_delay_wire_59 <= bank_2[addr16];
-        3:end_delay_wire_59 <= bank_3[addr16];
-        4:end_delay_wire_59 <= bank_4[addr16];
-        5:end_delay_wire_59 <= bank_5[addr16];
-        6:end_delay_wire_59 <= bank_6[addr16];
-        7:end_delay_wire_59 <= bank_7[addr16];
-        8:end_delay_wire_59 <= bank_8[addr16];
-        9:end_delay_wire_59 <= bank_9[addr16];
-        10:end_delay_wire_59 <= bank_10[addr16];
-        11:end_delay_wire_59 <= bank_11[addr16];
-        12:end_delay_wire_59 <= bank_12[addr16];
-        13:end_delay_wire_59 <= bank_13[addr16];
-        14:end_delay_wire_59 <= bank_14[addr16];
-        15:end_delay_wire_59 <= bank_15[addr16];
-        16:end_delay_wire_59 <= bank_16[addr16];
-        17:end_delay_wire_59 <= bank_17[addr16];
-        18:end_delay_wire_59 <= bank_18[addr16];
-        19:end_delay_wire_59 <= bank_19[addr16];
-        20:end_delay_wire_59 <= bank_20[addr16];
-        21:end_delay_wire_59 <= bank_21[addr16];
-        22:end_delay_wire_59 <= bank_22[addr16];
-        23:end_delay_wire_59 <= bank_23[addr16];
+        0:op_hcompute_conv_stencil_4_read[7] = bank_0[addr16];
+        1:op_hcompute_conv_stencil_4_read[7] = bank_1[addr16];
+        2:op_hcompute_conv_stencil_4_read[7] = bank_2[addr16];
+        3:op_hcompute_conv_stencil_4_read[7] = bank_3[addr16];
+        4:op_hcompute_conv_stencil_4_read[7] = bank_4[addr16];
+        5:op_hcompute_conv_stencil_4_read[7] = bank_5[addr16];
+        6:op_hcompute_conv_stencil_4_read[7] = bank_6[addr16];
+        7:op_hcompute_conv_stencil_4_read[7] = bank_7[addr16];
+        8:op_hcompute_conv_stencil_4_read[7] = bank_8[addr16];
+        9:op_hcompute_conv_stencil_4_read[7] = bank_9[addr16];
+        10:op_hcompute_conv_stencil_4_read[7] = bank_10[addr16];
+        11:op_hcompute_conv_stencil_4_read[7] = bank_11[addr16];
+        12:op_hcompute_conv_stencil_4_read[7] = bank_12[addr16];
+        13:op_hcompute_conv_stencil_4_read[7] = bank_13[addr16];
+        14:op_hcompute_conv_stencil_4_read[7] = bank_14[addr16];
+        15:op_hcompute_conv_stencil_4_read[7] = bank_15[addr16];
+        16:op_hcompute_conv_stencil_4_read[7] = bank_16[addr16];
+        17:op_hcompute_conv_stencil_4_read[7] = bank_17[addr16];
+        18:op_hcompute_conv_stencil_4_read[7] = bank_18[addr16];
+        19:op_hcompute_conv_stencil_4_read[7] = bank_19[addr16];
+        20:op_hcompute_conv_stencil_4_read[7] = bank_20[addr16];
+        21:op_hcompute_conv_stencil_4_read[7] = bank_21[addr16];
+        22:op_hcompute_conv_stencil_4_read[7] = bank_22[addr16];
+        23:op_hcompute_conv_stencil_4_read[7] = bank_23[addr16];
       endcase
     end
     if (op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_16_bank_selector.out)
-        0:end_delay_wire_60 <= bank_0[addr17];
-        1:end_delay_wire_60 <= bank_1[addr17];
-        2:end_delay_wire_60 <= bank_2[addr17];
-        3:end_delay_wire_60 <= bank_3[addr17];
-        4:end_delay_wire_60 <= bank_4[addr17];
-        5:end_delay_wire_60 <= bank_5[addr17];
-        6:end_delay_wire_60 <= bank_6[addr17];
-        7:end_delay_wire_60 <= bank_7[addr17];
-        8:end_delay_wire_60 <= bank_8[addr17];
-        9:end_delay_wire_60 <= bank_9[addr17];
-        10:end_delay_wire_60 <= bank_10[addr17];
-        11:end_delay_wire_60 <= bank_11[addr17];
-        12:end_delay_wire_60 <= bank_12[addr17];
-        13:end_delay_wire_60 <= bank_13[addr17];
-        14:end_delay_wire_60 <= bank_14[addr17];
-        15:end_delay_wire_60 <= bank_15[addr17];
-        16:end_delay_wire_60 <= bank_16[addr17];
-        17:end_delay_wire_60 <= bank_17[addr17];
-        18:end_delay_wire_60 <= bank_18[addr17];
-        19:end_delay_wire_60 <= bank_19[addr17];
-        20:end_delay_wire_60 <= bank_20[addr17];
-        21:end_delay_wire_60 <= bank_21[addr17];
-        22:end_delay_wire_60 <= bank_22[addr17];
-        23:end_delay_wire_60 <= bank_23[addr17];
+        0:op_hcompute_conv_stencil_5_read[0] = bank_0[addr17];
+        1:op_hcompute_conv_stencil_5_read[0] = bank_1[addr17];
+        2:op_hcompute_conv_stencil_5_read[0] = bank_2[addr17];
+        3:op_hcompute_conv_stencil_5_read[0] = bank_3[addr17];
+        4:op_hcompute_conv_stencil_5_read[0] = bank_4[addr17];
+        5:op_hcompute_conv_stencil_5_read[0] = bank_5[addr17];
+        6:op_hcompute_conv_stencil_5_read[0] = bank_6[addr17];
+        7:op_hcompute_conv_stencil_5_read[0] = bank_7[addr17];
+        8:op_hcompute_conv_stencil_5_read[0] = bank_8[addr17];
+        9:op_hcompute_conv_stencil_5_read[0] = bank_9[addr17];
+        10:op_hcompute_conv_stencil_5_read[0] = bank_10[addr17];
+        11:op_hcompute_conv_stencil_5_read[0] = bank_11[addr17];
+        12:op_hcompute_conv_stencil_5_read[0] = bank_12[addr17];
+        13:op_hcompute_conv_stencil_5_read[0] = bank_13[addr17];
+        14:op_hcompute_conv_stencil_5_read[0] = bank_14[addr17];
+        15:op_hcompute_conv_stencil_5_read[0] = bank_15[addr17];
+        16:op_hcompute_conv_stencil_5_read[0] = bank_16[addr17];
+        17:op_hcompute_conv_stencil_5_read[0] = bank_17[addr17];
+        18:op_hcompute_conv_stencil_5_read[0] = bank_18[addr17];
+        19:op_hcompute_conv_stencil_5_read[0] = bank_19[addr17];
+        20:op_hcompute_conv_stencil_5_read[0] = bank_20[addr17];
+        21:op_hcompute_conv_stencil_5_read[0] = bank_21[addr17];
+        22:op_hcompute_conv_stencil_5_read[0] = bank_22[addr17];
+        23:op_hcompute_conv_stencil_5_read[0] = bank_23[addr17];
       endcase
     end
     if (op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_17_bank_selector.out)
-        0:end_delay_wire_61 <= bank_0[addr18];
-        1:end_delay_wire_61 <= bank_1[addr18];
-        2:end_delay_wire_61 <= bank_2[addr18];
-        3:end_delay_wire_61 <= bank_3[addr18];
-        4:end_delay_wire_61 <= bank_4[addr18];
-        5:end_delay_wire_61 <= bank_5[addr18];
-        6:end_delay_wire_61 <= bank_6[addr18];
-        7:end_delay_wire_61 <= bank_7[addr18];
-        8:end_delay_wire_61 <= bank_8[addr18];
-        9:end_delay_wire_61 <= bank_9[addr18];
-        10:end_delay_wire_61 <= bank_10[addr18];
-        11:end_delay_wire_61 <= bank_11[addr18];
-        12:end_delay_wire_61 <= bank_12[addr18];
-        13:end_delay_wire_61 <= bank_13[addr18];
-        14:end_delay_wire_61 <= bank_14[addr18];
-        15:end_delay_wire_61 <= bank_15[addr18];
-        16:end_delay_wire_61 <= bank_16[addr18];
-        17:end_delay_wire_61 <= bank_17[addr18];
-        18:end_delay_wire_61 <= bank_18[addr18];
-        19:end_delay_wire_61 <= bank_19[addr18];
-        20:end_delay_wire_61 <= bank_20[addr18];
-        21:end_delay_wire_61 <= bank_21[addr18];
-        22:end_delay_wire_61 <= bank_22[addr18];
-        23:end_delay_wire_61 <= bank_23[addr18];
+        0:op_hcompute_conv_stencil_5_read[1] = bank_0[addr18];
+        1:op_hcompute_conv_stencil_5_read[1] = bank_1[addr18];
+        2:op_hcompute_conv_stencil_5_read[1] = bank_2[addr18];
+        3:op_hcompute_conv_stencil_5_read[1] = bank_3[addr18];
+        4:op_hcompute_conv_stencil_5_read[1] = bank_4[addr18];
+        5:op_hcompute_conv_stencil_5_read[1] = bank_5[addr18];
+        6:op_hcompute_conv_stencil_5_read[1] = bank_6[addr18];
+        7:op_hcompute_conv_stencil_5_read[1] = bank_7[addr18];
+        8:op_hcompute_conv_stencil_5_read[1] = bank_8[addr18];
+        9:op_hcompute_conv_stencil_5_read[1] = bank_9[addr18];
+        10:op_hcompute_conv_stencil_5_read[1] = bank_10[addr18];
+        11:op_hcompute_conv_stencil_5_read[1] = bank_11[addr18];
+        12:op_hcompute_conv_stencil_5_read[1] = bank_12[addr18];
+        13:op_hcompute_conv_stencil_5_read[1] = bank_13[addr18];
+        14:op_hcompute_conv_stencil_5_read[1] = bank_14[addr18];
+        15:op_hcompute_conv_stencil_5_read[1] = bank_15[addr18];
+        16:op_hcompute_conv_stencil_5_read[1] = bank_16[addr18];
+        17:op_hcompute_conv_stencil_5_read[1] = bank_17[addr18];
+        18:op_hcompute_conv_stencil_5_read[1] = bank_18[addr18];
+        19:op_hcompute_conv_stencil_5_read[1] = bank_19[addr18];
+        20:op_hcompute_conv_stencil_5_read[1] = bank_20[addr18];
+        21:op_hcompute_conv_stencil_5_read[1] = bank_21[addr18];
+        22:op_hcompute_conv_stencil_5_read[1] = bank_22[addr18];
+        23:op_hcompute_conv_stencil_5_read[1] = bank_23[addr18];
       endcase
     end
     if (op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_18_bank_selector.out)
-        0:end_delay_wire_62 <= bank_0[addr19];
-        1:end_delay_wire_62 <= bank_1[addr19];
-        2:end_delay_wire_62 <= bank_2[addr19];
-        3:end_delay_wire_62 <= bank_3[addr19];
-        4:end_delay_wire_62 <= bank_4[addr19];
-        5:end_delay_wire_62 <= bank_5[addr19];
-        6:end_delay_wire_62 <= bank_6[addr19];
-        7:end_delay_wire_62 <= bank_7[addr19];
-        8:end_delay_wire_62 <= bank_8[addr19];
-        9:end_delay_wire_62 <= bank_9[addr19];
-        10:end_delay_wire_62 <= bank_10[addr19];
-        11:end_delay_wire_62 <= bank_11[addr19];
-        12:end_delay_wire_62 <= bank_12[addr19];
-        13:end_delay_wire_62 <= bank_13[addr19];
-        14:end_delay_wire_62 <= bank_14[addr19];
-        15:end_delay_wire_62 <= bank_15[addr19];
-        16:end_delay_wire_62 <= bank_16[addr19];
-        17:end_delay_wire_62 <= bank_17[addr19];
-        18:end_delay_wire_62 <= bank_18[addr19];
-        19:end_delay_wire_62 <= bank_19[addr19];
-        20:end_delay_wire_62 <= bank_20[addr19];
-        21:end_delay_wire_62 <= bank_21[addr19];
-        22:end_delay_wire_62 <= bank_22[addr19];
-        23:end_delay_wire_62 <= bank_23[addr19];
+        0:op_hcompute_conv_stencil_5_read[2] = bank_0[addr19];
+        1:op_hcompute_conv_stencil_5_read[2] = bank_1[addr19];
+        2:op_hcompute_conv_stencil_5_read[2] = bank_2[addr19];
+        3:op_hcompute_conv_stencil_5_read[2] = bank_3[addr19];
+        4:op_hcompute_conv_stencil_5_read[2] = bank_4[addr19];
+        5:op_hcompute_conv_stencil_5_read[2] = bank_5[addr19];
+        6:op_hcompute_conv_stencil_5_read[2] = bank_6[addr19];
+        7:op_hcompute_conv_stencil_5_read[2] = bank_7[addr19];
+        8:op_hcompute_conv_stencil_5_read[2] = bank_8[addr19];
+        9:op_hcompute_conv_stencil_5_read[2] = bank_9[addr19];
+        10:op_hcompute_conv_stencil_5_read[2] = bank_10[addr19];
+        11:op_hcompute_conv_stencil_5_read[2] = bank_11[addr19];
+        12:op_hcompute_conv_stencil_5_read[2] = bank_12[addr19];
+        13:op_hcompute_conv_stencil_5_read[2] = bank_13[addr19];
+        14:op_hcompute_conv_stencil_5_read[2] = bank_14[addr19];
+        15:op_hcompute_conv_stencil_5_read[2] = bank_15[addr19];
+        16:op_hcompute_conv_stencil_5_read[2] = bank_16[addr19];
+        17:op_hcompute_conv_stencil_5_read[2] = bank_17[addr19];
+        18:op_hcompute_conv_stencil_5_read[2] = bank_18[addr19];
+        19:op_hcompute_conv_stencil_5_read[2] = bank_19[addr19];
+        20:op_hcompute_conv_stencil_5_read[2] = bank_20[addr19];
+        21:op_hcompute_conv_stencil_5_read[2] = bank_21[addr19];
+        22:op_hcompute_conv_stencil_5_read[2] = bank_22[addr19];
+        23:op_hcompute_conv_stencil_5_read[2] = bank_23[addr19];
       endcase
     end
     if (op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_19_bank_selector.out)
-        0:end_delay_wire_63 <= bank_0[addr20];
-        1:end_delay_wire_63 <= bank_1[addr20];
-        2:end_delay_wire_63 <= bank_2[addr20];
-        3:end_delay_wire_63 <= bank_3[addr20];
-        4:end_delay_wire_63 <= bank_4[addr20];
-        5:end_delay_wire_63 <= bank_5[addr20];
-        6:end_delay_wire_63 <= bank_6[addr20];
-        7:end_delay_wire_63 <= bank_7[addr20];
-        8:end_delay_wire_63 <= bank_8[addr20];
-        9:end_delay_wire_63 <= bank_9[addr20];
-        10:end_delay_wire_63 <= bank_10[addr20];
-        11:end_delay_wire_63 <= bank_11[addr20];
-        12:end_delay_wire_63 <= bank_12[addr20];
-        13:end_delay_wire_63 <= bank_13[addr20];
-        14:end_delay_wire_63 <= bank_14[addr20];
-        15:end_delay_wire_63 <= bank_15[addr20];
-        16:end_delay_wire_63 <= bank_16[addr20];
-        17:end_delay_wire_63 <= bank_17[addr20];
-        18:end_delay_wire_63 <= bank_18[addr20];
-        19:end_delay_wire_63 <= bank_19[addr20];
-        20:end_delay_wire_63 <= bank_20[addr20];
-        21:end_delay_wire_63 <= bank_21[addr20];
-        22:end_delay_wire_63 <= bank_22[addr20];
-        23:end_delay_wire_63 <= bank_23[addr20];
+        0:op_hcompute_conv_stencil_5_read[3] = bank_0[addr20];
+        1:op_hcompute_conv_stencil_5_read[3] = bank_1[addr20];
+        2:op_hcompute_conv_stencil_5_read[3] = bank_2[addr20];
+        3:op_hcompute_conv_stencil_5_read[3] = bank_3[addr20];
+        4:op_hcompute_conv_stencil_5_read[3] = bank_4[addr20];
+        5:op_hcompute_conv_stencil_5_read[3] = bank_5[addr20];
+        6:op_hcompute_conv_stencil_5_read[3] = bank_6[addr20];
+        7:op_hcompute_conv_stencil_5_read[3] = bank_7[addr20];
+        8:op_hcompute_conv_stencil_5_read[3] = bank_8[addr20];
+        9:op_hcompute_conv_stencil_5_read[3] = bank_9[addr20];
+        10:op_hcompute_conv_stencil_5_read[3] = bank_10[addr20];
+        11:op_hcompute_conv_stencil_5_read[3] = bank_11[addr20];
+        12:op_hcompute_conv_stencil_5_read[3] = bank_12[addr20];
+        13:op_hcompute_conv_stencil_5_read[3] = bank_13[addr20];
+        14:op_hcompute_conv_stencil_5_read[3] = bank_14[addr20];
+        15:op_hcompute_conv_stencil_5_read[3] = bank_15[addr20];
+        16:op_hcompute_conv_stencil_5_read[3] = bank_16[addr20];
+        17:op_hcompute_conv_stencil_5_read[3] = bank_17[addr20];
+        18:op_hcompute_conv_stencil_5_read[3] = bank_18[addr20];
+        19:op_hcompute_conv_stencil_5_read[3] = bank_19[addr20];
+        20:op_hcompute_conv_stencil_5_read[3] = bank_20[addr20];
+        21:op_hcompute_conv_stencil_5_read[3] = bank_21[addr20];
+        22:op_hcompute_conv_stencil_5_read[3] = bank_22[addr20];
+        23:op_hcompute_conv_stencil_5_read[3] = bank_23[addr20];
       endcase
     end
     if (op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_20_bank_selector.out)
-        0:end_delay_wire_64 <= bank_0[addr21];
-        1:end_delay_wire_64 <= bank_1[addr21];
-        2:end_delay_wire_64 <= bank_2[addr21];
-        3:end_delay_wire_64 <= bank_3[addr21];
-        4:end_delay_wire_64 <= bank_4[addr21];
-        5:end_delay_wire_64 <= bank_5[addr21];
-        6:end_delay_wire_64 <= bank_6[addr21];
-        7:end_delay_wire_64 <= bank_7[addr21];
-        8:end_delay_wire_64 <= bank_8[addr21];
-        9:end_delay_wire_64 <= bank_9[addr21];
-        10:end_delay_wire_64 <= bank_10[addr21];
-        11:end_delay_wire_64 <= bank_11[addr21];
-        12:end_delay_wire_64 <= bank_12[addr21];
-        13:end_delay_wire_64 <= bank_13[addr21];
-        14:end_delay_wire_64 <= bank_14[addr21];
-        15:end_delay_wire_64 <= bank_15[addr21];
-        16:end_delay_wire_64 <= bank_16[addr21];
-        17:end_delay_wire_64 <= bank_17[addr21];
-        18:end_delay_wire_64 <= bank_18[addr21];
-        19:end_delay_wire_64 <= bank_19[addr21];
-        20:end_delay_wire_64 <= bank_20[addr21];
-        21:end_delay_wire_64 <= bank_21[addr21];
-        22:end_delay_wire_64 <= bank_22[addr21];
-        23:end_delay_wire_64 <= bank_23[addr21];
+        0:op_hcompute_conv_stencil_5_read[4] = bank_0[addr21];
+        1:op_hcompute_conv_stencil_5_read[4] = bank_1[addr21];
+        2:op_hcompute_conv_stencil_5_read[4] = bank_2[addr21];
+        3:op_hcompute_conv_stencil_5_read[4] = bank_3[addr21];
+        4:op_hcompute_conv_stencil_5_read[4] = bank_4[addr21];
+        5:op_hcompute_conv_stencil_5_read[4] = bank_5[addr21];
+        6:op_hcompute_conv_stencil_5_read[4] = bank_6[addr21];
+        7:op_hcompute_conv_stencil_5_read[4] = bank_7[addr21];
+        8:op_hcompute_conv_stencil_5_read[4] = bank_8[addr21];
+        9:op_hcompute_conv_stencil_5_read[4] = bank_9[addr21];
+        10:op_hcompute_conv_stencil_5_read[4] = bank_10[addr21];
+        11:op_hcompute_conv_stencil_5_read[4] = bank_11[addr21];
+        12:op_hcompute_conv_stencil_5_read[4] = bank_12[addr21];
+        13:op_hcompute_conv_stencil_5_read[4] = bank_13[addr21];
+        14:op_hcompute_conv_stencil_5_read[4] = bank_14[addr21];
+        15:op_hcompute_conv_stencil_5_read[4] = bank_15[addr21];
+        16:op_hcompute_conv_stencil_5_read[4] = bank_16[addr21];
+        17:op_hcompute_conv_stencil_5_read[4] = bank_17[addr21];
+        18:op_hcompute_conv_stencil_5_read[4] = bank_18[addr21];
+        19:op_hcompute_conv_stencil_5_read[4] = bank_19[addr21];
+        20:op_hcompute_conv_stencil_5_read[4] = bank_20[addr21];
+        21:op_hcompute_conv_stencil_5_read[4] = bank_21[addr21];
+        22:op_hcompute_conv_stencil_5_read[4] = bank_22[addr21];
+        23:op_hcompute_conv_stencil_5_read[4] = bank_23[addr21];
       endcase
     end
     if (op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_21_bank_selector.out)
-        0:end_delay_wire_65 <= bank_0[addr22];
-        1:end_delay_wire_65 <= bank_1[addr22];
-        2:end_delay_wire_65 <= bank_2[addr22];
-        3:end_delay_wire_65 <= bank_3[addr22];
-        4:end_delay_wire_65 <= bank_4[addr22];
-        5:end_delay_wire_65 <= bank_5[addr22];
-        6:end_delay_wire_65 <= bank_6[addr22];
-        7:end_delay_wire_65 <= bank_7[addr22];
-        8:end_delay_wire_65 <= bank_8[addr22];
-        9:end_delay_wire_65 <= bank_9[addr22];
-        10:end_delay_wire_65 <= bank_10[addr22];
-        11:end_delay_wire_65 <= bank_11[addr22];
-        12:end_delay_wire_65 <= bank_12[addr22];
-        13:end_delay_wire_65 <= bank_13[addr22];
-        14:end_delay_wire_65 <= bank_14[addr22];
-        15:end_delay_wire_65 <= bank_15[addr22];
-        16:end_delay_wire_65 <= bank_16[addr22];
-        17:end_delay_wire_65 <= bank_17[addr22];
-        18:end_delay_wire_65 <= bank_18[addr22];
-        19:end_delay_wire_65 <= bank_19[addr22];
-        20:end_delay_wire_65 <= bank_20[addr22];
-        21:end_delay_wire_65 <= bank_21[addr22];
-        22:end_delay_wire_65 <= bank_22[addr22];
-        23:end_delay_wire_65 <= bank_23[addr22];
+        0:op_hcompute_conv_stencil_5_read[5] = bank_0[addr22];
+        1:op_hcompute_conv_stencil_5_read[5] = bank_1[addr22];
+        2:op_hcompute_conv_stencil_5_read[5] = bank_2[addr22];
+        3:op_hcompute_conv_stencil_5_read[5] = bank_3[addr22];
+        4:op_hcompute_conv_stencil_5_read[5] = bank_4[addr22];
+        5:op_hcompute_conv_stencil_5_read[5] = bank_5[addr22];
+        6:op_hcompute_conv_stencil_5_read[5] = bank_6[addr22];
+        7:op_hcompute_conv_stencil_5_read[5] = bank_7[addr22];
+        8:op_hcompute_conv_stencil_5_read[5] = bank_8[addr22];
+        9:op_hcompute_conv_stencil_5_read[5] = bank_9[addr22];
+        10:op_hcompute_conv_stencil_5_read[5] = bank_10[addr22];
+        11:op_hcompute_conv_stencil_5_read[5] = bank_11[addr22];
+        12:op_hcompute_conv_stencil_5_read[5] = bank_12[addr22];
+        13:op_hcompute_conv_stencil_5_read[5] = bank_13[addr22];
+        14:op_hcompute_conv_stencil_5_read[5] = bank_14[addr22];
+        15:op_hcompute_conv_stencil_5_read[5] = bank_15[addr22];
+        16:op_hcompute_conv_stencil_5_read[5] = bank_16[addr22];
+        17:op_hcompute_conv_stencil_5_read[5] = bank_17[addr22];
+        18:op_hcompute_conv_stencil_5_read[5] = bank_18[addr22];
+        19:op_hcompute_conv_stencil_5_read[5] = bank_19[addr22];
+        20:op_hcompute_conv_stencil_5_read[5] = bank_20[addr22];
+        21:op_hcompute_conv_stencil_5_read[5] = bank_21[addr22];
+        22:op_hcompute_conv_stencil_5_read[5] = bank_22[addr22];
+        23:op_hcompute_conv_stencil_5_read[5] = bank_23[addr22];
       endcase
     end
     if (op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_22_bank_selector.out)
-        0:end_delay_wire_66 <= bank_0[addr23];
-        1:end_delay_wire_66 <= bank_1[addr23];
-        2:end_delay_wire_66 <= bank_2[addr23];
-        3:end_delay_wire_66 <= bank_3[addr23];
-        4:end_delay_wire_66 <= bank_4[addr23];
-        5:end_delay_wire_66 <= bank_5[addr23];
-        6:end_delay_wire_66 <= bank_6[addr23];
-        7:end_delay_wire_66 <= bank_7[addr23];
-        8:end_delay_wire_66 <= bank_8[addr23];
-        9:end_delay_wire_66 <= bank_9[addr23];
-        10:end_delay_wire_66 <= bank_10[addr23];
-        11:end_delay_wire_66 <= bank_11[addr23];
-        12:end_delay_wire_66 <= bank_12[addr23];
-        13:end_delay_wire_66 <= bank_13[addr23];
-        14:end_delay_wire_66 <= bank_14[addr23];
-        15:end_delay_wire_66 <= bank_15[addr23];
-        16:end_delay_wire_66 <= bank_16[addr23];
-        17:end_delay_wire_66 <= bank_17[addr23];
-        18:end_delay_wire_66 <= bank_18[addr23];
-        19:end_delay_wire_66 <= bank_19[addr23];
-        20:end_delay_wire_66 <= bank_20[addr23];
-        21:end_delay_wire_66 <= bank_21[addr23];
-        22:end_delay_wire_66 <= bank_22[addr23];
-        23:end_delay_wire_66 <= bank_23[addr23];
+        0:op_hcompute_conv_stencil_5_read[6] = bank_0[addr23];
+        1:op_hcompute_conv_stencil_5_read[6] = bank_1[addr23];
+        2:op_hcompute_conv_stencil_5_read[6] = bank_2[addr23];
+        3:op_hcompute_conv_stencil_5_read[6] = bank_3[addr23];
+        4:op_hcompute_conv_stencil_5_read[6] = bank_4[addr23];
+        5:op_hcompute_conv_stencil_5_read[6] = bank_5[addr23];
+        6:op_hcompute_conv_stencil_5_read[6] = bank_6[addr23];
+        7:op_hcompute_conv_stencil_5_read[6] = bank_7[addr23];
+        8:op_hcompute_conv_stencil_5_read[6] = bank_8[addr23];
+        9:op_hcompute_conv_stencil_5_read[6] = bank_9[addr23];
+        10:op_hcompute_conv_stencil_5_read[6] = bank_10[addr23];
+        11:op_hcompute_conv_stencil_5_read[6] = bank_11[addr23];
+        12:op_hcompute_conv_stencil_5_read[6] = bank_12[addr23];
+        13:op_hcompute_conv_stencil_5_read[6] = bank_13[addr23];
+        14:op_hcompute_conv_stencil_5_read[6] = bank_14[addr23];
+        15:op_hcompute_conv_stencil_5_read[6] = bank_15[addr23];
+        16:op_hcompute_conv_stencil_5_read[6] = bank_16[addr23];
+        17:op_hcompute_conv_stencil_5_read[6] = bank_17[addr23];
+        18:op_hcompute_conv_stencil_5_read[6] = bank_18[addr23];
+        19:op_hcompute_conv_stencil_5_read[6] = bank_19[addr23];
+        20:op_hcompute_conv_stencil_5_read[6] = bank_20[addr23];
+        21:op_hcompute_conv_stencil_5_read[6] = bank_21[addr23];
+        22:op_hcompute_conv_stencil_5_read[6] = bank_22[addr23];
+        23:op_hcompute_conv_stencil_5_read[6] = bank_23[addr23];
       endcase
     end
     if (op_hcompute_conv_stencil_5_read_ren_fsm_out) begin
       case( hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_23_bank_selector.out)
-        0:end_delay_wire_67 <= bank_0[addr24];
-        1:end_delay_wire_67 <= bank_1[addr24];
-        2:end_delay_wire_67 <= bank_2[addr24];
-        3:end_delay_wire_67 <= bank_3[addr24];
-        4:end_delay_wire_67 <= bank_4[addr24];
-        5:end_delay_wire_67 <= bank_5[addr24];
-        6:end_delay_wire_67 <= bank_6[addr24];
-        7:end_delay_wire_67 <= bank_7[addr24];
-        8:end_delay_wire_67 <= bank_8[addr24];
-        9:end_delay_wire_67 <= bank_9[addr24];
-        10:end_delay_wire_67 <= bank_10[addr24];
-        11:end_delay_wire_67 <= bank_11[addr24];
-        12:end_delay_wire_67 <= bank_12[addr24];
-        13:end_delay_wire_67 <= bank_13[addr24];
-        14:end_delay_wire_67 <= bank_14[addr24];
-        15:end_delay_wire_67 <= bank_15[addr24];
-        16:end_delay_wire_67 <= bank_16[addr24];
-        17:end_delay_wire_67 <= bank_17[addr24];
-        18:end_delay_wire_67 <= bank_18[addr24];
-        19:end_delay_wire_67 <= bank_19[addr24];
-        20:end_delay_wire_67 <= bank_20[addr24];
-        21:end_delay_wire_67 <= bank_21[addr24];
-        22:end_delay_wire_67 <= bank_22[addr24];
-        23:end_delay_wire_67 <= bank_23[addr24];
+        0:op_hcompute_conv_stencil_5_read[7] = bank_0[addr24];
+        1:op_hcompute_conv_stencil_5_read[7] = bank_1[addr24];
+        2:op_hcompute_conv_stencil_5_read[7] = bank_2[addr24];
+        3:op_hcompute_conv_stencil_5_read[7] = bank_3[addr24];
+        4:op_hcompute_conv_stencil_5_read[7] = bank_4[addr24];
+        5:op_hcompute_conv_stencil_5_read[7] = bank_5[addr24];
+        6:op_hcompute_conv_stencil_5_read[7] = bank_6[addr24];
+        7:op_hcompute_conv_stencil_5_read[7] = bank_7[addr24];
+        8:op_hcompute_conv_stencil_5_read[7] = bank_8[addr24];
+        9:op_hcompute_conv_stencil_5_read[7] = bank_9[addr24];
+        10:op_hcompute_conv_stencil_5_read[7] = bank_10[addr24];
+        11:op_hcompute_conv_stencil_5_read[7] = bank_11[addr24];
+        12:op_hcompute_conv_stencil_5_read[7] = bank_12[addr24];
+        13:op_hcompute_conv_stencil_5_read[7] = bank_13[addr24];
+        14:op_hcompute_conv_stencil_5_read[7] = bank_14[addr24];
+        15:op_hcompute_conv_stencil_5_read[7] = bank_15[addr24];
+        16:op_hcompute_conv_stencil_5_read[7] = bank_16[addr24];
+        17:op_hcompute_conv_stencil_5_read[7] = bank_17[addr24];
+        18:op_hcompute_conv_stencil_5_read[7] = bank_18[addr24];
+        19:op_hcompute_conv_stencil_5_read[7] = bank_19[addr24];
+        20:op_hcompute_conv_stencil_5_read[7] = bank_20[addr24];
+        21:op_hcompute_conv_stencil_5_read[7] = bank_21[addr24];
+        22:op_hcompute_conv_stencil_5_read[7] = bank_22[addr24];
+        23:op_hcompute_conv_stencil_5_read[7] = bank_23[addr24];
       endcase
     end
   end

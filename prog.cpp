@@ -6878,7 +6878,7 @@ void generate_vivado_rtl_tb(
       int pix_w = pixel_width;
       rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << " [" << pix_per_burst - 1 << " :0];" << endl;
       port_decls.push_back("." + data_name + "(" + data_name + ")");
-      rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << "_in" << ";" << endl;
+      //rgtb << tab(1) << "logic [" << pixel_width - 1 << ":0] " << data_name << "_in" << ";" << endl;
 
     } else {
       string en_name = 
@@ -6917,9 +6917,9 @@ void generate_vivado_rtl_tb(
         pg(out_rep, out_bundle) + "_en";
       string data_name = 
         pg(out_rep, out_bundle);
-      string data_in_name = data_name + "_in";
+      //string data_in_name = data_name + "_in";
 
-      rgtb << tab(3) << data_in_name << " = 0;" << endl;
+      rgtb << tab(3) << data_name << " = 0;" << endl;
 
     } else {
     }
@@ -6954,7 +6954,7 @@ void generate_vivado_rtl_tb(
         pg(out_rep, out_bundle) + "_en";
       string data_name = 
         pg(out_rep, out_bundle);
-      string data_in_name = data_name + "_in";
+      string data_in_name = data_name;
 
       rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
       rgtb << tab(3) << data_in_name << " <= " << data_in_name << " + 1;" << endl;
