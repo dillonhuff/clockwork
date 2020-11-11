@@ -645,7 +645,7 @@ class AccessPattern {
           vector<int> & stride_in_target = access_matrix[dim_id];
           int inner_most = get_inner_most_related_dom_dim();
           cout << "trans op dim: " << inner_most << endl;
-          vector<string> var_list(inner_most+1);
+          vector<string> var_list(var_dim-1);
           vector<string> origin_var_list(var_dim-1);
           //var_list.front() = "root";
           //origin_var_list.front() = "root";
@@ -654,7 +654,9 @@ class AccessPattern {
               if (it.first == "const")
                   continue;
               int id = it.second-1;
-              if (stride_in_target[it.second] != 0 && (stride_in_target[it.second] < 4)) {
+              if (stride_in_target[it.second] != 0
+                      && (stride_in_target[it.second] < fetch_width)
+                      && in_range.at(id) >= fetch_width) {
                   int factor = fetch_width / stride_in_target[it.second];
                   string trans = "floor("+ it.first + "/" + to_string(factor) + ")";
                   string rems = it.first + "%" + to_string(factor);
@@ -663,8 +665,8 @@ class AccessPattern {
                   origin_var_list[id] = it.first;
               }
               else {
-                  if (id <= inner_most)
-                      var_list[id] = it.first;
+                  //if (id <= inner_most)
+                  var_list[id] = it.first;
                   origin_var_list[id] = it.first;
               }
           }
@@ -1599,7 +1601,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     }
 
     //For lake codegen banking chaining
-    int get_consumer_bank_dim_id() {
+    maybe<vector<int>>get_consumer_bank_dim_id() {
       vector<int> id_candidate;
       auto outpt_map = access_map.at(pick(get_out_ports()));
       auto rng = to_set(range(outpt_map));
@@ -1610,12 +1612,14 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         }
       }
       if (id_candidate.size() == 0)
-          return -1;
-      assert(id_candidate.size() == 1);
-      return pick(id_candidate);
+          return {};
+      //assert(id_candidate.size() == 1);
+      //put into the reverse order, easier to remove the diemnsion
+      std::reverse(begin(id_candidate), end(id_candidate));
+      return {id_candidate};
     }
 
-    int get_producer_bank_dim_id() {
+    maybe<vector<int>> get_producer_bank_dim_id() {
       vector<int> id_candidate;
       auto inpt_map = access_map.at(pick(get_in_ports()));
       auto rng = to_set(range(inpt_map));
@@ -1626,9 +1630,10 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         }
       }
       if (id_candidate.size() == 0)
-          return -1;
-      assert(id_candidate.size() == 1);
-      return pick(id_candidate);
+          return {};
+      //assert(id_candidate.size() == 1);
+      std::reverse(begin(id_candidate), end(id_candidate));
+      return {id_candidate};
     }
 
     int lanes_in_bundle(const std::string& bn) {

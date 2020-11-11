@@ -876,7 +876,7 @@ ConfigMap generate_addressor_config_from_aff_expr(isl_aff* addr,
     return vals;
 }
 
-int get_project_dim(UBuffer & buf, bool is_read) {
+maybe<vector<int>> get_project_dim(UBuffer & buf, bool is_read) {
     if (is_read){
       return buf.get_consumer_bank_dim_id();
     } else {
@@ -899,19 +899,19 @@ bool check_need_mux(CodegenOptions & options, UBuffer & buf,
     return need_mux;
 }
 
-isl_set* get_memtile_bank_range(UBuffer & buf, isl_map* map, int project_dim, int pt_per_bank, bool is_read) {
+isl_set* get_memtile_bank_range(UBuffer & buf, isl_map* map, maybe<vector<int>> project_dim, int pt_per_bank, bool is_read) {
     isl_set* range_per_bank = isl_set_empty(get_space(range(map)));
     auto bmap_vec = get_basic_maps(map);
     cout << "bmap vec size: " << bmap_vec.size() << endl;
     cout << "pt per bank: " << pt_per_bank << endl;
-    for(int i = 0; i < pt_per_bank; i ++) {
+    for(int i = 0; i < bmap_vec.size(); i ++) {
         range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
     }
     //project_dim = get_project_dim(buf, is_read);
-    if (project_dim != -1) {
+    if (project_dim.has_value()) {
       cout << "before project: " << str(range_per_bank) << endl;
-      range_per_bank = project_out(range_per_bank, project_dim);
-
+      for (int proj_dim : project_dim.get_value())
+        range_per_bank = project_out(range_per_bank, proj_dim);
       cout << "after project: " << str(range_per_bank) << endl;
     }
     return range_per_bank;
@@ -957,15 +957,18 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
     assert(bk_num <= options.mem_tile.bank_num.at(micro_buf_name));
 
     //Get the iteartion domain dimension that need to be project out
-    int project_dim = get_project_dim(buf, !is_read);
+    auto project_dim = get_project_dim(buf, !is_read);
+
     int domain_project_dim = -1;
     if ((micro_buf_name == "agg") || (micro_buf_name == "tb")) {
-      cout << "\t project dim: " << project_dim << endl;
+      //cout << "\t project dim: " << project_dim << endl;
       cout << "\t need mux: " << check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read) << endl;
-      if (project_dim != -1 && check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read)) {
+      if (project_dim.has_value() && check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read)) {
           cout << "acc map: " << to_map(pick(bmap_vec)) << endl;
-          cout << "project dim: : " << project_dim << endl;
-          domain_project_dim = get_involve_dim(to_map(pick(bmap_vec)), project_dim);
+          cout << "project dim: : " << project_dim.get_value() << endl;
+          vector<int> project_dim_val = project_dim.get_value();
+          assert(project_dim_val.size() == 1);
+          domain_project_dim = get_involve_dim(to_map(pick(bmap_vec)), pick(project_dim_val));
       }
     }
     return {bk_num, domain_project_dim};
@@ -994,7 +997,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
 
     //A pass removing starting addr in multiple bank cases
     //int project_dim;
-    int project_dim = get_project_dim(buf, is_read);
+    auto project_dim = get_project_dim(buf, is_read);
     auto range_per_bank =
         get_memtile_bank_range(buf, map, project_dim,
                 is_read ?
@@ -1014,18 +1017,22 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         auto bmap = bmap_vec.at(i);
         ConfigMap vals;
 
-        int bank_dim_id = buf.get_consumer_bank_dim_id();
+        auto bank_dim_id = buf.get_consumer_bank_dim_id();
         if (need_mux) {
             vector<int> mux_index;
             vector<int> addr_index;
             //assert(bank_dim_id == num_out_dims(map) - 2);
-            cout << "Auto Select bank id: " << bank_dim_id << "Hardcode: " << num_out_dims(map) - 2 << endl;
+            assert(bank_dim_id.has_value());
+            auto bank_dims = bank_dim_id.get_value();
+            assert(bank_dims.size() == 1);
+            int bank_dim = pick(bank_dims);
+            cout << "Auto Select bank id: " << bank_dim << "Hardcode: " << num_out_dims(map) - 2 << endl;
             for (int i = num_out_dims(map)-1; i >= 0; i--) {
                 //FIXME: this is hardcoded
-                if (i == bank_dim_id) {
+                if (i == bank_dim) {
                     mux_index.push_back(i);
                 } else {
-                    if ((i > bank_dim_id) && (project_dim != -1)) {
+                    if ((i > bank_dim) && (project_dim.has_value())) {
                       addr_index.push_back(i-1);
                     } else {
                       addr_index.push_back(i);
@@ -1060,8 +1067,10 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         //    : options.mem_tile.in_port_width.at(micro_buf_name);
 
         isl_map* project_access_map;
-        if (project_dim != -1) {
-          project_access_map = project_out(to_map(bmap), project_dim);
+        if (project_dim.has_value()) {
+          project_access_map = to_map(bmap);
+          for (auto proj_dim: project_dim.get_value())
+            project_access_map = project_out(project_access_map, proj_dim);
         } else {
           project_access_map = to_map(bmap);
         }
@@ -5726,7 +5735,7 @@ pair<std::map<string, UBuffer>, vector<string> >
         }
         outpt_acc_map = add_range_suffix(outpt_acc_map, "_" + to_string(bd_cnt) + "_tb");
 
-        //Stripmining the output loop
+        //Strip mining the output loop
         {
             isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
             std::cout << "transform stripmining: " << str(op_stripmining) << endl;
@@ -5737,6 +5746,7 @@ pair<std::map<string, UBuffer>, vector<string> >
             auto sm_sched = dot(inv(op_stripmining), new_sched.at(acc_pattern.op_name));
             cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
             tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
+            //tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
             tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
         }
       }
