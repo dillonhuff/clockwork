@@ -3251,10 +3251,21 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
   RecordType* tp = compute_mod->getType();
   vector<string> in_args;
   for (auto fd : tp->getRecord()) {
+    assert(isa<ArrayType>(fd.second));
+    auto atp = static_cast<ArrayType*>(fd.second);
+    int len = atp->getLen();
+    auto inner_tp = atp->getElemType();
+
     if (fd.second->isInput()) {
-      rgtb << tab(2) << "int " << fd.first << " = rand() % 256;" << endl;
-      rgtb << tab(2) << "hw_uint<16> " << fd.first << "_hwint = hw_uint<16>(" + fd.first + ");" << endl;
-      in_args.push_back(fd.first + "_hwint");
+      assert(isa<ArrayType>(inner_tp));
+      auto inner_atp = static_cast<ArrayType*>(inner_tp);
+      int num_lanes = len;
+      for (int l = 0; l < num_lanes; l++) {
+        string name = fd.first + "_" + str(l);
+        rgtb << tab(2) << "int " << name << " = rand() % 256;" << endl;
+        rgtb << tab(2) << "hw_uint<16> " << name << "_hwint = hw_uint<16>(" + name + ");" << endl;
+        in_args.push_back(name + "_hwint");
+      }
     }
 
     rgtb << tab(2) << "dut.eval();" << endl;
