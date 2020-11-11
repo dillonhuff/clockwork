@@ -3232,8 +3232,144 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
   int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input ./" + name + "_compute.json --output " + name + "_compute.v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
   assert(compute_to_verilog_res == 0);
 
-  ofstream out(op->func + "_compute_tb.cpp");
-  out.close();
+  ofstream rgtb(op->func + "_compute_tb.cpp");
+  rgtb << "#include \"hw_classes.h\"" << endl;
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include \"verilated.h\"" << endl;
+  rgtb << "#include \"V" << prg.name << ".h\"" << endl << endl;
+
+
+  rgtb << "int main() {" << endl;
+  //rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << "_verilog.txt\");" << endl;
+
+  //map<string, int> unroll_factor;
+  //for (auto in : prg.ins) {
+    //auto readers = find_readers(in, prg);
+    //int unroll = 0;
+    //for (auto reader : readers) {
+      //for (auto addr : reader->read_addrs(in)) {
+        //unroll++;
+      //}
+    //}
+    //unroll_factor[in] = unroll;
+  //}
+  //for (auto out : prg.outs) {
+    //auto readers = find_writers(out, prg);
+    //int unroll = 0;
+    //for (auto reader : readers) {
+      //for (auto addr : reader->write_addrs(out)) {
+        //unroll++;
+      //}
+    //}
+    //unroll_factor[out] = unroll;
+  //}
+
+
+  ////Use rst input enable, match the garnet test
+  //generate_verilator_tb_in_streams(
+      //rgtb,
+      //prg,
+      //hw_sched,
+      //buffers);
+
+  //rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
+  //rgtb << "dut.clk = 0;" << endl;
+  //rgtb << "dut.eval();" << endl;
+
+  //rgtb << "dut.reset= 1;" << endl;
+  //rgtb << "dut.clk = 1;" << endl;
+  //rgtb << "dut.eval();" << endl;
+
+  //rgtb << "dut.reset= 0;" << endl;
+  //rgtb << "dut.clk = 0;" << endl;
+  //rgtb << "dut.eval();" << endl;
+  //for (auto out : inputs(buffers, prg)) {
+    //string data_name =
+      //out.first + "_" + out.second;
+    //rgtb << tab(1) << "*(dut." << data_name << ") = 0;" << endl;
+  //}
+
+  //for (auto out : outputs(buffers, prg)) {
+    //string ctrl_name =
+      ////out.first + "_" + out.second + "_en";
+      //out.first + "_" + out.second + "_valid";
+    //rgtb << tab(1) << "int " << ctrl_name << "_count = 0;" << endl;
+  //}
+
+  //rgtb << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
+  ////rgtb << tab(1) << "for (int t = 0; t < 30000; t++) {" << endl;
+  ////rgtb << tab(1) << "for (int t = 0; t < 300; t++) {" << endl;
+
+  //rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
+  //for (auto out : inputs(buffers, prg)) {
+    //string ctrl_name =
+      //out.first + "_" + out.second + "_en";
+    //string data_name =
+      //"dut." + out.first + "_" + out.second;
+    ////rgtb << tab(2) << "if (!" << out.first << ".is_empty()) {" << endl;
+    //rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
+    //rgtb << tab(3) << "cout << \"send me data!\" << endl;" << endl;
+    //rgtb << tab(3) << "*(" << data_name << ") = (int) " << out.first << ".read();" << endl;
+    //rgtb << tab(2) << "}" << endl;
+  //}
+
+  //rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+
+  //for (auto out : outputs(buffers, prg)) {
+    //string ctrl_name =
+      //out.first + "_" + out.second + "_valid";
+    //string data_name =
+      //"dut." + out.first + "_" + out.second;
+    //rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
+    //rgtb << tab(1) << "if (dut." << ctrl_name << ") {" << endl;
+    //rgtb << tab(2) << "cout << (int) *(" << data_name << ") << endl;" << endl;
+    //rgtb << tab(2) << "cout << t << \"Get output val:\" << (int) *(" << data_name << ") << endl << endl;" << endl;
+    //rgtb << tab(2) << "hw_uint<16> val((int) *(" << data_name << "));" << endl;
+    ////rgtb << tab(2) << "fout << val << endl;" << endl;
+    //rgtb << tab(2) << out.first << ".write(val);" << endl;
+    //rgtb << tab(1) << "}" << endl;
+  //}
+
+  //rgtb << tab(1) << tab(1) << "dut.clk = 1;" << endl;
+  //rgtb << tab(1) << tab(1) << "dut.eval();" << endl;
+  //rgtb << tab(1) << "}" << endl;
+
+  //for (auto out : outputs(buffers, prg)) {
+    //string ctrl_name =
+      //out.first + "_" + out.second + "_valid";
+    //rgtb << tab(2) << "cout << " << ctrl_name << "_count << endl;" << endl;
+  //}
+
+  //for (auto in : prg.ins) {
+    //rgtb << tab(1) << "cout << \"# of elements waiting in: " << in << " = \" << " << in << ".num_waiting() << endl;" << endl;
+    //rgtb << tab(1) << "assert(" << in << ".is_empty());" << endl;
+  //}
+
+  //for (auto out : prg.outs) {
+    //auto cmap = prg.producer_map(out);
+    //auto read_map = inv(cmap);
+    //auto rng = range(read_map);
+    //auto range_card = card(rng);
+    //int num_pops = int_upper_bound(range_card);
+    //int unroll = map_find(out, unroll_factor);
+    //int lane_width = prg.buffer_port_width(out);
+    //int bundle_width = lane_width*unroll;
+
+    //rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    //rgtb << tab(2) << "auto actual = " << out << ".read();" << endl;
+    //vector<string> results = split_bv(2, rgtb, "actual", lane_width, unroll);
+    //for (auto r : results) {
+      //rgtb << tab(2) << "fout << " << r << " << endl;" << endl;
+    //}
+    ////rgtb << tab(2) << "fout << actual << endl;" << endl;
+    //rgtb << tab(1) << "}" << endl << endl;
+  //}
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
 }
 
 #endif
