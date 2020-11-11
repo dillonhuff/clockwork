@@ -3247,7 +3247,7 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
 
   rgtb << tab(1) << "srand(1);" << endl;
 
-  rgtb << tab(1) << "for (int i = 0; i < 100; i++) {" << endl;
+  rgtb << tab(1) << "for (int i = 0; i < 1000; i++) {" << endl;
   RecordType* tp = compute_mod->getType();
   vector<string> in_args;
   for (auto fd : tp->getRecord()) {
@@ -3260,7 +3260,6 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
       assert(isa<ArrayType>(inner_tp));
       auto inner_atp = static_cast<ArrayType*>(inner_tp);
       int num_lanes = len;
-      //vector<string> dut_lanes;
       vector<string> lanes;
       for (int l = 0; l < num_lanes; l++) {
         string name = fd.first + "_" + str(l);
@@ -3281,8 +3280,9 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
       rgtb << tab(2) << "int coreir_result = " << "dut." << fd.first << ";" << endl;
       rgtb << tab(2) << "int cpp_result = " << compute_name << sep_list(in_args, "(", ")", ", ") << ".to_int();" << endl;
       rgtb << tab(2) << "if (coreir_result != cpp_result) {" << endl;
-      rgtb << tab(3) << "cout << coreir_result << endl;" << endl;
-      rgtb << tab(3) << "cout << cpp_result << endl;" << endl;
+      rgtb << tab(3) << "cout << \"ERROR in compute unit: " << compute_name << "\" << endl;" << endl;
+      rgtb << tab(3) << "cout << \"\\tcoreir_result: \" << coreir_result << endl;" << endl;
+      rgtb << tab(3) << "cout << \"\\tcpp_result   : \" << cpp_result << endl;" << endl;
       rgtb << tab(3) << "return -1;" << endl;
       rgtb << tab(2) << "}" << endl;
       rgtb << tab(2) << "assert(coreir_result == cpp_result);" << endl;
