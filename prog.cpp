@@ -4974,14 +4974,6 @@ void generate_garnet_verilator_tb(prog& prg,
   rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
   rgtb << "dut.clk = 0;" << endl;
   rgtb << "dut.eval();" << endl;
-  //rgtb << "dut.rst_n = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
-
-  //rgtb << "dut.rst_n = 1;" << endl;
-  //rgtb << "dut.eval();" << endl;
-
-  //rgtb << "dut.clk = 0;" << endl;
-  //rgtb << "dut.eval();" << endl;
 
   rgtb << "dut.reset= 1;" << endl;
   rgtb << "dut.clk = 1;" << endl;
@@ -5079,7 +5071,9 @@ void generate_garnet_verilator_tb(prog& prg,
   rgtb.close();
 }
 
-void generate_verilator_tb(prog& prg,
+void generate_verilator_tb(
+    CodegenOptions& options,
+    prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers) {
 

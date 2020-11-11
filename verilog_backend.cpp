@@ -3,11 +3,19 @@
 #define SIM 0
 
 void print_always_header(CodegenOptions& options, ostream& out) {
-  out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+  if (options.rtl_options.global_signals.synchronous_reset) {
+    out << tab(1) << "always @(posedge clk) begin" << endl;
+  } else {
+    out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+  }
 }
 
 void print_reset_if(CodegenOptions& options, ostream& out) {
-  out << tab(2) << "if (~rst_n) begin" << endl;
+  if (options.rtl_options.global_signals.synchronous_reset) {
+    out << tab(2) << "if (rst_n) begin" << endl;
+  } else {
+    out << tab(2) << "if (~rst_n) begin" << endl;
+  }
 }
 
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
