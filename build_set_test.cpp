@@ -16540,10 +16540,10 @@ vector<prog> stencil_programs() {
   //test_programs.push_back(rom());
 
 
+  test_programs.push_back(harris());
   test_programs.push_back(pointwise());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(up_sample());
-  test_programs.push_back(harris());
   test_programs.push_back(gaussian());
 
   // Fails with dual port tile?
