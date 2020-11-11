@@ -3260,13 +3260,16 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
       assert(isa<ArrayType>(inner_tp));
       auto inner_atp = static_cast<ArrayType*>(inner_tp);
       int num_lanes = len;
+      //vector<string> dut_lanes;
       vector<string> lanes;
       for (int l = 0; l < num_lanes; l++) {
         string name = fd.first + "_" + str(l);
         rgtb << tab(2) << "int " << name << " = rand() % 256;" << endl;
         rgtb << tab(2) << "hw_uint<16> " << name << "_hwint = hw_uint<16>(" + name + ");" << endl;
         lanes.push_back(name + "_hwint");
+        rgtb << tab(2) << "(dut." << fd.first << ")[" << l << "] = " << name << ";" << endl;
       }
+
       string packed_arg = fd.first + "_packed";
       pack_bv(2, rgtb, packed_arg, lanes, 16);
       in_args.push_back(packed_arg);
@@ -3280,6 +3283,7 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
       rgtb << tab(2) << "if (coreir_result != cpp_result) {" << endl;
       rgtb << tab(3) << "cout << coreir_result << endl;" << endl;
       rgtb << tab(3) << "cout << cpp_result << endl;" << endl;
+      rgtb << tab(3) << "return -1;" << endl;
       rgtb << tab(2) << "}" << endl;
       rgtb << tab(2) << "assert(coreir_result == cpp_result);" << endl;
     }
@@ -3298,7 +3302,7 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
   assert(verilator_build == 0);
 
   int verilator_run = cmd("./obj_dir/V" + top_module);
-  assert(verilator_run);
+  assert(verilator_run == 0);
   deleteContext(context);
 }
 
