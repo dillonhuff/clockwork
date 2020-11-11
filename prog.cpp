@@ -6847,6 +6847,7 @@ void generate_vivado_rtl_tb(
     map<string, UBuffer>& buffers) {
   ofstream rgtb(prg.name + "_vivado_verilog_tb.sv");
 
+  rgtb << "`timescale 1ns / 1ps" << endl;
   rgtb << "module " << prg.name << "_tb;" << endl;
 
   rgtb << tab(1) << "logic clk;" << endl;
@@ -6917,9 +6918,8 @@ void generate_vivado_rtl_tb(
         pg(out_rep, out_bundle) + "_en";
       string data_name = 
         pg(out_rep, out_bundle);
-      //string data_in_name = data_name + "_in";
 
-      rgtb << tab(3) << data_name << " = 0;" << endl;
+      rgtb << tab(3) << data_name << "[0] = 0;" << endl;
 
     } else {
     }
@@ -6958,7 +6958,7 @@ void generate_vivado_rtl_tb(
       string data_in_name = data_name;
 
       rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
-      rgtb << tab(3) << data_in_name << " <= " << data_in_name << " + 1;" << endl;
+      rgtb << tab(3) << data_in_name << "[0] <= " << data_in_name << "[0] + 1;" << endl;
       rgtb << tab(2) << "end" << endl;
 
     } else {

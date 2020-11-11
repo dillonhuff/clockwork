@@ -16541,8 +16541,8 @@ vector<prog> stencil_programs() {
   vector<prog> test_programs;
   //test_programs.push_back(rom());
 
-  test_programs.push_back(harris());
   test_programs.push_back(pointwise());
+  test_programs.push_back(harris());
   test_programs.push_back(harris());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(up_sample());
