@@ -984,10 +984,43 @@ void instantiate_banks(
 
 UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf) {
   UBuffer cpy = buf;
+  for (auto& pt : sr_ports) {
+    cpy.isIn.erase(pt);
+    cpy.retrive_domain.erase(pt);
+    cpy.dynamic_ports.erase(pt);
+    cpy.sv_map.erase(pt);
+    cpy.access_map.erase(pt);
+    cpy.schedule.erase(pt);
+
+
+  }
+
+  std::map<string, vector<string> > port_bundles;
+  for (auto bundle : cpy.port_bundles) {
+    vector<string> pts;
+    for (auto& pt : bundle.second) {
+      if (!elem(pt, sr_ports)) {
+        pts.push_back(pt);
+      }
+    }
+    if (pts.size() > 0) {
+      port_bundles[bundle.first] = pts;
+    }
+  }
+  cpy.port_bundles = port_bundles;
+  for (auto bundle : cpy.port_bundles) {
+    for (auto pt : bundle.second) {
+      assert(!elem(pt, sr_ports));
+    }
+  }
+
   return cpy;
 }
 
 void analyze_memory_demands(UBuffer& buf, prog& prg, schedule_info& hwinfo) {
+
+  cout << buf << endl;
+
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
   std::set<string> sr_ports;
@@ -999,6 +1032,8 @@ void analyze_memory_demands(UBuffer& buf, prog& prg, schedule_info& hwinfo) {
   }
 
   UBuffer reduced = delete_ports(sr_ports, buf);
+  cout << "Reduced..." << endl;
+  cout << reduced << endl;
   assert(false);
 }
 
@@ -1011,7 +1046,7 @@ void generate_platonic_ubuffer(
 
   prg.pretty_print();
 
-  //analyze_memory_demands(buf, prg, hwinfo);
+  analyze_memory_demands(buf, prg, hwinfo);
   //if (buf.name == "padded16_global_wrapper_stencil") {
     ////assert(false);
   //}
