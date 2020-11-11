@@ -6967,7 +6967,7 @@ void generate_vivado_rtl_tb(
         pg(out_rep, out_bundle);
 
       rgtb << tab(2) << "if (" << en_name << ") begin" << endl;
-      rgtb << tab(3) << "$display(\"Got data from " << en_name << "\");" << endl;
+      rgtb << tab(3) << "$display(\"Got data %d from " << en_name << "\", " << data_name << "[0]" << ");" << endl;
       rgtb << tab(2) << "end" << endl;
     }
   }
