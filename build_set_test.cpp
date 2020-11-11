@@ -13267,13 +13267,13 @@ void lake_conv33_recipe_test() {
 void dsa_writers(prog& prg);
 void dsa_readers(prog& prg);
 
-void compile_for_garnet_single_port_mem(prog & prg, bool gen_smt_stream, bool gen_config_only, string dir);
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor );
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
-void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") {
+void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet());
   //test_apps.push_back(conv_3_3_wide());
   //test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
@@ -13300,7 +13300,7 @@ void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") 
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, false, gen_config_only, dir);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
@@ -13309,7 +13309,7 @@ void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") 
     //run verilator on all the generated verilog
     if (!gen_config_only) {
       string name = prg.name;
-      auto verilog_files = get_files("./aha_garnet_design/"+name+"/verilog/");
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
       verilog_files.push_back(name + ".v");
       verilog_files.push_back("LakeWrapper.v");
       bool extra_flag_for_lake = true;
@@ -13329,9 +13329,10 @@ void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") 
 void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  test_apps.push_back(resnet());
   //test_apps.push_back(conv_1_2());
   //test_apps.push_back(rom());
 
@@ -15104,7 +15105,7 @@ void lake_tests() {
   //union_test();
   //assert(false);
   //playground();
-  test_single_port_mem(false);
+  test_single_port_mem(false, true, "aha_garnet_design_new");
   assert(false);
   lake_conv33_autovec_aha_test();
   //double_buffer_test();
@@ -16378,13 +16379,45 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
     cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
-    b.second.generate_banks_and_merge(options);
-    b.second.port_group2bank(options);
+    if (is_rate_matchable(prg)) {
+      b.second.generate_banks_and_merge(options);
+      b.second.port_group2bank(options);
+
+    } else {
+
+      auto partition = embarassing_partition(b.second);
+      assert(partition.has_value());
+      cout << tab(1) << "Found partition: " << endl;
+      std::set<int> partition_dim = partition.get_value();
+      vector<int> cyclic_partition_factor;
+      vector<int> min_addr, max_addr;
+      min_addr = min_offsets_by_dimension(b.second);
+      max_addr = max_offsets_by_dimension(b.second);
+      for (int d = 0; d < b.second.logical_dimension(); d ++) {
+          if (elem(d, partition_dim)) {
+            cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          } else {
+            cyclic_partition_factor.push_back(1);
+            //cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          }
+      }
+      for (auto dim : partition_dim) {
+          cout << tab(2) << "Partition: " << dim << endl;
+      }
+      cout << "number of banks = " << card(cyclic_partition_factor) << endl;
+      options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
+      b.second.generate_banks_and_merge(options);
+      b.second.port_group2bank(options);
+    }
   }
   generate_smt_stream(options, buffers_opt, prg);
 }
 
-void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream, bool config_gen_only, string dir) {
+void compile_for_garnet_single_port_mem(prog& prg,
+        string dir,
+        bool gen_smt_stream,
+        bool config_gen_only,
+        bool multi_sram) {
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -16402,7 +16435,7 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream, bool con
   CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
-  if (config_gen_only)
+  if (multi_sram)
       options.mem_tile.multi_sram_accessor = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
@@ -16433,6 +16466,7 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream, bool con
       b.second.generate_banks_and_merge(options);
       b.second.port_group2bank(options);
     } else {
+      //TODO: put this into a method
       auto partition = embarassing_partition(b.second);
       assert(partition.has_value());
       cout << tab(1) << "Found partition: " << endl;
@@ -19217,7 +19251,9 @@ int main(int argc, char** argv) {
     }
 
     if (cmd == "lake-exp") {
-      test_single_port_mem(true, "aha_garnet_design_new");
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = true;
+      test_single_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
       return 0;
     }
 

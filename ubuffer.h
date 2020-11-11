@@ -2177,6 +2177,22 @@ struct lakeStream {
     int in_width;
     int out_width;
 
+    int get_in_size() {
+        return data_in.size();
+    }
+
+    int get_out_size() {
+        return data_out.size();
+    }
+
+    bool input_valid_at(int pos) {
+        return valid_in.at(pos);
+    }
+
+    bool output_valid_at(int pos) {
+        return valid_out.at(pos);
+    }
+
     void append_data(const vector<int> & in, const vector<int> & out, bool v_in, bool v_out) {
         data_in.push_back(sep_list(in, "[", "]", " "));
         data_out.push_back(sep_list(out, "[", "]", " "));

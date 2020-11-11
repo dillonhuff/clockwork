@@ -1573,6 +1573,19 @@ umap* simplify(umap* const m) {
   return to_umap(isl_map_from_pw_multi_aff(isl_pw_multi_aff_from_map(to_map(cpy(m)))));
 }
 
+bool single_valued(isl_map* const m0) {
+  return isl_map_plain_is_single_valued(cpy(m0));
+}
+
+isl_map* coalesce_if_single_valued(isl_map* const m0) {
+  auto coa_map = coalesce(m0);
+  if (single_valued(coa_map) && ! single_valued(m0)){
+    return coa_map;
+  } else {
+    return m0;
+  }
+}
+
 isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m) {
   return isl_union_pw_qpolynomial_coalesce(cpy(m));
 }

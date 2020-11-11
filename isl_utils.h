@@ -449,6 +449,11 @@ isl_map* dot(isl_map* const m0, isl_map* const m1);
 
 isl_set* simplify(isl_set* const m);
 isl_union_set* simplify(uset* const m);
+
+bool single_valued(isl_map* const m0);
+
+isl_map* coalesce_if_single_valued(isl_map* const m0);
+
 isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 
 isl_map* simplify(isl_map* const m);

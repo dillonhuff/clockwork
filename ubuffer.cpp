@@ -929,6 +929,10 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
     //if (retrive_dom_map.count(op_name))
     //    map = retrive_map_domain_with_dim(map, retrive_dom_map.at(op_name));
 
+
+    //map can contains multiple identical basic map
+    map = coalesce_if_single_valued(map);
+
     string buf_name = range_name(map);
     string micro_buf_name = split_at(buf_name, "_").back();
     auto bmap_vec = get_basic_maps(map);
@@ -974,6 +978,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     vector<ConfigMap> ret;
     string note = is_read? "read" : "write";
     cout << "Generate "<< note << " addr configuration for op: " << op_name << endl;
+    cout << "Bank number : " << bk_num << endl;
     ////for (auto map: get_maps(tmp)) {
     auto map = to_map(tmp);
     cout << "access map: " << str(map) << endl;
@@ -1271,6 +1276,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
             assert(write_addr_config.size() > 0);
             assert(read_addr_config.size() > 0);
             for (auto write_config: write_addr_config) {
+                cout << "Add in2agg_" << config_cnt.at("in2agg") << " for  op :" << str(it.second) << endl;
                 string key = "in2agg";
                 string config_key = key + "_" + to_string(config_cnt.at(key));
                 assert(accessor_config_vec.size() == 1);
@@ -1291,6 +1297,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
         } else if (read_addr_config.size() == 0) {
             for (auto write_config: write_addr_config) {
 
+                cout << "Add in2agg_" << config_cnt.at("in2agg") << " for  op :" << str(it.second) << endl;
                 string key = "in2agg";
                 string config_key = key + "_" + to_string(config_cnt.at(key));
                 assert(accessor_config_vec.size() == 1);
@@ -2655,16 +2662,19 @@ void UBuffer::generate_smt_stream(CodegenOptions& options) {
     } else {
       string ub_ins_name = "ub_"+bk.name;
 
+      map<string, UBuffer> vec_buf = {{bk.name + "_ubuf", rewrite_buffer.at(bk.name + "_ubuf")}};
+
       //vectorization pass for lake tile
       if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
         buffer_vectorization(options.iis, {bk.name + "_ubuf"},
                 options.mem_tile.fetch_width,
-                rewrite_buffer);
+                vec_buf);
+                //rewrite_buffer);
         //config_file = generate_ubuf_args(options, rewrite_buffer);
       }
       //Generate SMT stream if needed
       if (options.emit_smt_stream) {
-        generate_lake_stream(options, rewrite_buffer, global_schedule_from_buffers(rewrite_buffer));
+        generate_lake_stream(options, vec_buf, global_schedule_from_buffers(vec_buf));
       }
     }
   }
@@ -2767,6 +2777,7 @@ void emit_lake_address_stream2file(CodegenOptions &options,
   map<string, pair<lakeStream, lakeStream> > top_stream;
   for (auto it: buffers_opt) {
     string buf_name = it.first;
+    cout << "generate SMT stream for buffer: " << buf_name << endl;
     UBuffer buf = it.second;
     if (buf.get_in_ports().size() == 0 || buf.get_out_ports().size() == 0) {
       continue;
