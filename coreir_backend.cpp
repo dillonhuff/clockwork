@@ -3255,9 +3255,14 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
   rgtb << tab(1) << "for (int i = 0; i < 100; i++) {" << endl;
   RecordType* tp = compute_mod->getType();
   for (auto fd : tp->getRecord()) {
-    rgtb << tab(1) << "cout << \"" << fd.first << "\" << endl;" << endl;
+    if (fd.second->isInput()) {
+      rgtb << tab(2) << "int " << fd.first << " = rand() % 256;" << endl;
+    }
+    if (fd.second->isOutput()) {
+      rgtb << tab(2) << "int result = " << "dut." << fd.first << ";" << endl;
+    }
+    //rgtb << tab(1) << "cout << \"" << fd.first << "\" << endl;" << endl;
   }
-  rgtb << tab(1) << "int in = rand() % 256;" << endl;
   rgtb << tab(1) << "}" << endl << endl;
 
 
