@@ -44,6 +44,7 @@ using CoreIR::Generator;
 using CoreIR::ModuleDef;
 using CoreIR::Module;
 using CoreIR::RecordParams;
+using CoreIR::RecordType;
 
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
@@ -3228,7 +3229,6 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
     assert(false);
   }
 
-  deleteContext(context);
 
   int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input ./" + name + "_compute.json --output " + compute_name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
   assert(compute_to_verilog_res == 0);
@@ -3242,6 +3242,25 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
 
   rgtb << "int main() {" << endl;
   rgtb << tab(1) << "cout << \"\\tStarting compute unit test\" << endl;" << endl;
+  rgtb << tab(1) << "V" << compute_name << " dut;" << endl;
+  //rgtb << "dut.clk = 0;" << endl;
+  //rgtb << "dut.eval();" << endl;
+
+  //rgtb << "dut.reset= 1;" << endl;
+  //rgtb << "dut.clk = 1;" << endl;
+  //rgtb << "dut.eval();" << endl;
+
+  rgtb << tab(1) << "srand(1);" << endl;
+
+  rgtb << tab(1) << "for (int i = 0; i < 100; i++) {" << endl;
+  RecordType* tp = compute_mod->getType();
+  for (auto fd : tp->getRecord()) {
+    rgtb << tab(1) << "cout << \"" << fd.first << "\" << endl;" << endl;
+  }
+  rgtb << tab(1) << "int in = rand() % 256;" << endl;
+  rgtb << tab(1) << "}" << endl << endl;
+
+
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();
@@ -3252,10 +3271,8 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
   int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
   assert(verilator_build == 0);
 
-  //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
-  //assert(verilator_d == 0);
-
   int verilator_run = cmd("./obj_dir/V" + top_module);
+  deleteContext(context);
 }
 
 #endif
