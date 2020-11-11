@@ -3268,7 +3268,8 @@ void generate_compute_unit_regression_tb(op* op, prog& prg) {
         rgtb << tab(2) << "hw_uint<16> " << name << "_hwint = hw_uint<16>(" + name + ");" << endl;
         lanes.push_back(name + "_hwint");
         rgtb << tab(2) << "(dut." << fd.first << ")[" << l << "] = " << name << ";" << endl;
-        input_value_printouts.push_back(tab(2) + "cout << \" + " + fd.first + "[" + str(l) + "] -> \" << " + name + " << endl;");
+        input_value_printouts.push_back(tab(2) + "cout << \"" + fd.first + "[" + str(l) + "] -> \" << " + name + " << endl;");
+        input_value_printouts.push_back(tab(2) + "cout << \"" + fd.first + "[" + str(l) + "] -> \" << " + name + "_hwint << endl;");
       }
 
       string packed_arg = fd.first + "_packed";
