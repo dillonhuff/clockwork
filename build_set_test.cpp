@@ -18750,7 +18750,8 @@ void test_if_construction() {
 void dhuff_playground() {
   {
 #ifdef COREIR
-    prog prg = harris_sch1_onebuf();
+    //prog prg = harris_sch1_onebuf();
+    prog prg = harris_sch5_1ppc();
     prg.pretty_print();
     for (auto op : prg.all_ops()) {
       if (op->func != "") {
