@@ -1638,36 +1638,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       return bcm;
   }
 
-  //CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
-    //cout << "Buffer..." << endl;
-    //cout << buf << endl;
-
-    //auto c = def->getContext();
-
-    //auto sched = buf.schedule.at(inpt);
-    //cout << "sched = " << str(sched) << endl;
-    //auto sms = get_maps(sched);
-    //assert(sms.size() == 1);
-
-    //auto svec = isl_pw_multi_aff_from_map(sms.at(0));
-
-    //vector<pair<isl_set*, isl_multi_aff*> > pieces =
-      //get_pieces(svec);
-    //assert(pieces.size() == 1);
-
-    //auto saff = pieces.at(0).second;
-    //auto dom = pieces.at(0).first;
-
-    //cout << "sched = " << str(saff) << endl;
-    //cout << tab(1) << "dom = " << str(dom) << endl;
-
-    //// TODO: Assert multi size == 1
-    //auto aff = isl_multi_aff_get_aff(saff, 0);
-    //auto aff_c = affine_controller(c, dom, aff);
-
-    //aff_c->print();
-    //return def->addInstance(controller_name(inpt), aff_c);
-  //}
 
   CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
     //return def->sel(controller_name(reader))->sel("d");

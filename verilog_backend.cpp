@@ -1055,36 +1055,49 @@ void analyze_memory_demands(UBuffer& buf, prog& prg, schedule_info& hwinfo) {
       auto read_times = dot(inv(op_reads), sched);
       //auto simul_reads = dot(read_times, inv(read_times));
       // Set of simultaneous reads to different locations
-      auto simul_reads = to_map(diff(dot(read_times, inv(read_times)), read_id));
-      cout << "Simultaneous reads..." << str(simul_reads) << endl;
+      auto simul_reads_umap = 
+        diff(dot(read_times, inv(read_times)), read_id);
+      cout << "Simultaneous reads..." << str(simul_reads_umap) << endl;
+      if (empty(simul_reads_umap)) {
+        return;
+      }
+      auto simul_reads = to_map(simul_reads_umap);
       auto diff = isl_map_deltas(cpy(simul_reads));
       cout << tab(1) << "Deltas: " << str(diff) << endl;
-      auto lmin = lexmin(diff);
+      //auto lmin = lexmin(diff);
       auto lmax = lexmax(diff);
-      cout << tab(1) << "LMin  : " << str(lmin) << endl;
+      //cout << tab(1) << "LMin  : " << str(lmin) << endl;
       cout << tab(1) << "LMax  : " << str(lmax) << endl;
+      vector<int> cycle_factors;
       for (int d = 0; d < num_dims(diff); d++) {
         auto pd = project_all_but(diff, d);
-        auto lmin = lexmin(pd);
-        auto lmax = lexmax(pd);
-        cout << tab(1) << "LMin " << d << " : " << str(lmin) << endl;
-        cout << tab(1) << "LMax " << d << " : " << str(lmax) << endl;
-
+        //auto lmin = lexmin(pd);
+        auto lmaxpt = lexmaxval(pd);
+        int bank_factor = to_int(lmaxpt) + 1;
+        cout << tab(2) << "Bank factor in " << d << ": " << bank_factor << endl;
+        cycle_factors.push_back(bank_factor);
+        //cout << tab(1) << "LMin " << d << " : " << str(lmin) << endl;
+        //cout << tab(1) << "LMax " << d << " : " << str(lmax) << endl;
+        //int lmax = to_int(sample(lmax));
       }
 
-      //cout << "simul reads: " << str(simul_reads) << endl;
-      //cout << tab(1) << "any simultaneous reads: " << !empty(simul_reads) << endl;
+      vector<string> dvs;
+      vector<string> addrs;
+      int num_banks = 1;
+      for (int i = 0; i < num_dims(diff); i++) {
+        assert(cycle_factors.at(i) > 0);
+        dvs.push_back("a_" + str(i));
+        addrs.push_back("a_" + str(i) + " % " + str(cycle_factors.at(i)));
+        num_banks *= cycle_factors.at(i);
+      }
 
-      //auto data_to_bank = its(to_umap(bank_func), read);
-      //auto same_bank = dot(data_to_bank, inv(data_to_bank));
+      string bank_func =
+        curlies(reduced.name + bracket_list(dvs) + " -> " + bracket_list(addrs));
+      auto bnk = isl_map_read_from_str(reduced.ctx, bank_func.c_str());
 
-      //cout << "data_to_bank: " << str(data_to_bank) << endl;
-
-      //auto bank_read_conflicts = diff(its(same_bank, simul_reads), read_id);
-
-      //cout << "bank conflicts = " << str(bank_read_conflicts) << endl;
-      //return empty(bank_read_conflicts);
-      assert(false);
+      cout << "Bank func: " << str(bnk) << endl;
+      assert(banking_scheme_is_legal(bnk, reduced));
+      //assert(false);
     }
   }
   //assert(false);
