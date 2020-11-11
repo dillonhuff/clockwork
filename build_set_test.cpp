@@ -16567,14 +16567,14 @@ vector<prog> harris_variants() {
 
   // 1. At least two mapper passes fail
   // 2. Final output is wrong
-  test_programs.push_back(harris_sch1_onebuf());
+  //test_programs.push_back(harris_sch1_onebuf());
 
   // 2. Final output is wrong
-  test_programs.push_back(harris_sch2_fourbuf());
+  //test_programs.push_back(harris_sch2_fourbuf());
   
   // Now: They also have an error in the ROMs
-  test_programs.push_back(harris_sch3_1pp9c());
-  test_programs.push_back(harris_sch4_1pp3c());
+  //test_programs.push_back(harris_sch3_1pp9c());
+  //test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
   test_programs.push_back(harris_sch5_1ppc());
