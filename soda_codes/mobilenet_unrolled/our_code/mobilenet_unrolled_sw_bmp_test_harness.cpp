@@ -17,8 +17,8 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_channel;
   HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_channel;
   HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_channel;
-  HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_channel;
   HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_read_channel;
+  HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_channel;
   HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_channel;
   HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_channel;
   HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_channel;

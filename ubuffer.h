@@ -2069,7 +2069,9 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     int capacity(string inpt) {
         int m = 0;
         for (auto outpt: get_out_ports()){
-            int depth = compute_dd_bound(outpt, inpt, true);
+            auto dd = dependence_distance_max(outpt, inpt);
+            assert(dd.has_value());
+            int depth = -dd.get_value();
             std::cout << "Got depth: " << depth << endl;
             m = std::max(m, depth);
         }

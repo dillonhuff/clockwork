@@ -80,18 +80,18 @@ int main(int argc, char **argv) {
 
   total_size_bytes += op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_size_bytes;
   total_size_bytes_read += op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_size_bytes;
-  const int op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_DATA_SIZE = num_epochs*0;
-  const int op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_BYTES_PER_PIXEL = 16 / 8;
-  size_t op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_size_bytes = op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_BYTES_PER_PIXEL * op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_DATA_SIZE;
-
-  total_size_bytes += op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_size_bytes;
-  total_size_bytes_read += op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_size_bytes;
   const int op_hcompute_hw_filter_pw_global_wrapper_stencil_read_DATA_SIZE = num_epochs*0;
   const int op_hcompute_hw_filter_pw_global_wrapper_stencil_read_BYTES_PER_PIXEL = 16 / 8;
   size_t op_hcompute_hw_filter_pw_global_wrapper_stencil_read_size_bytes = op_hcompute_hw_filter_pw_global_wrapper_stencil_read_BYTES_PER_PIXEL * op_hcompute_hw_filter_pw_global_wrapper_stencil_read_DATA_SIZE;
 
   total_size_bytes += op_hcompute_hw_filter_pw_global_wrapper_stencil_read_size_bytes;
   total_size_bytes_read += op_hcompute_hw_filter_pw_global_wrapper_stencil_read_size_bytes;
+  const int op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_DATA_SIZE = num_epochs*0;
+  const int op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_BYTES_PER_PIXEL = 16 / 8;
+  size_t op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_size_bytes = op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_BYTES_PER_PIXEL * op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_DATA_SIZE;
+
+  total_size_bytes += op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_size_bytes;
+  total_size_bytes_read += op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_size_bytes;
   const int op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_DATA_SIZE = num_epochs*0;
   const int op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_BYTES_PER_PIXEL = 16 / 8;
   size_t op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_size_bytes = op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_BYTES_PER_PIXEL * op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_DATA_SIZE;
@@ -268,14 +268,6 @@ int main(int argc, char **argv) {
   }
 
   input_op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read.close();
-  std::ofstream input_op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read("op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read.csv");
-  for (int i = 0; i < op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_DATA_SIZE; i++) {
-    uint16_t val = (rand() % 256);
-    input_op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read << val << std::endl;
-    ((uint16_t*) (op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read.data()))[i] = val;
-  }
-
-  input_op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read.close();
   std::ofstream input_op_hcompute_hw_filter_pw_global_wrapper_stencil_read("op_hcompute_hw_filter_pw_global_wrapper_stencil_read.csv");
   for (int i = 0; i < op_hcompute_hw_filter_pw_global_wrapper_stencil_read_DATA_SIZE; i++) {
     uint16_t val = (rand() % 256);
@@ -284,6 +276,14 @@ int main(int argc, char **argv) {
   }
 
   input_op_hcompute_hw_filter_pw_global_wrapper_stencil_read.close();
+  std::ofstream input_op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read("op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read.csv");
+  for (int i = 0; i < op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_DATA_SIZE; i++) {
+    uint16_t val = (rand() % 256);
+    input_op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read << val << std::endl;
+    ((uint16_t*) (op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read.data()))[i] = val;
+  }
+
+  input_op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read.close();
   std::ofstream input_op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read("op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read.csv");
   for (int i = 0; i < op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_DATA_SIZE; i++) {
     uint16_t val = (rand() % 256);

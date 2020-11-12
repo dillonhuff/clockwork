@@ -707,6 +707,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
     }
     buffers[bname] = buf;
     cout << "\t\tNeed for vectorization: \n" << buf << endl;
+    cout << "\t\tTotal capacity: " << buf.capacity() << endl;
   }
   return buffers;
 }
@@ -964,7 +965,7 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
       //cout << "\t project dim: " << project_dim << endl;
       cout << "\t need mux: " << check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read) << endl;
       if (project_dim.has_value() && check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read)) {
-          cout << "acc map: " << to_map(pick(bmap_vec)) << endl;
+          cout << "acc map: " << str(to_map(pick(bmap_vec))) << endl;
           cout << "project dim: : " << project_dim.get_value() << endl;
           vector<int> project_dim_val = project_dim.get_value();
           assert(project_dim_val.size() == 1);

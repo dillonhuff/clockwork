@@ -10370,6 +10370,43 @@ void blur_and_downsample_test() {
 void playground() {
     {
         isl_ctx* ctx = isl_ctx_alloc();
+        auto sched_0 = isl_map_read_from_str(ctx,  "{sram2tb[i0, i1]->[123 + 64*i0 + i1]: 0<=i0<=63 and 0<=i1<=63}");
+        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[64*i0 + i1]: 0<=i0<=63 and 0<=i1<=63}");
+        //auto domain_trans = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> sram2tb[floor(i0/2), i1]}");
+        for ( int bk_num = 0; bk_num < 2; bk_num ++ ) {
+          auto bank_func_0 = isl_set_read_from_str(ctx, string("{ data[i0]: floor((i0%128) / 64) = "+ str(bk_num) + "}").c_str());
+          auto bank_0_acc_map = its_range(acc_0, bank_func_0);
+          auto dom_0 = simplify(domain(bank_0_acc_map));
+          cout << "domain " << bk_num <<": " << str(dom_0) << endl;
+          vector<string> origin_var, new_var;
+          for (int i = 0; i < num_dims(dom_0); i ++) {
+              string name = dim_name(dom_0, i);
+              origin_var.push_back(name);
+              isl_val* res;
+              isl_val* mod;
+              isl_set_dim_residue_class_val(dom_0, i, &mod, &res);
+              cout << "residual: " << isl_val_get_num_si(res) << endl;
+              cout << "modulo: " << isl_val_get_num_si(mod) << endl;
+              auto info = isl_set_get_stride_info(dom_0, i);
+              auto aff = isl_stride_info_get_offset(info);
+              int offset = -to_int(const_coeff(aff));
+              cout << str(aff) << endl;
+              cout << "tile " << bk_num << " dom stride " << i << " = " << stride_in_dim(dom_0, i) << endl;
+              new_var.push_back(name + "*" + str(stride_in_dim(dom_0, i)) + "+" + str(offset));
+          }
+          string d_name = ::name(dom_0);
+          string str_map = "{" + d_name + sep_list(origin_var, "[", "]", ",") + "->"
+                  + d_name + sep_list(new_var, "[", "]", ",") + "}";
+          auto op_trans = isl_map_read_from_str(ctx, str_map.c_str());
+          cout << "Tile " << bk_num << " schedule: " << str(simplify(dot(op_trans, sched_0))) << endl;
+          cout << "Tile " << bk_num << " acc_map : " << str(simplify(dot(op_trans, bank_0_acc_map))) << endl;
+
+        }
+
+        assert(false);
+    }
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
         auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[i0+i1]: 0<=i0<=2 and 0<=i1<=28}");
         auto op_trans = isl_map_read_from_str(ctx, "{sram2tb[i0, i1]->sram2tb[i0, floor(i1/4)]}");
         auto op_trans_new = isl_map_read_from_str(ctx,
@@ -13275,12 +13312,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(conv_3_3());
   //test_apps.push_back(resnet());
   //test_apps.push_back(conv_3_3_wide());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(rom());
-  test_apps.push_back(resnet());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(resnet());
 
   //TODO: break in the middle of vectorization
   //test_apps.push_back(down_sample());
@@ -19312,6 +19349,11 @@ int main(int argc, char** argv) {
 
     if (cmd == "dhuff-playground") {
       dhuff_playground();
+      return 0;
+    }
+
+    if (cmd == "jliu-playground") {
+      playground();
       return 0;
     }
 
