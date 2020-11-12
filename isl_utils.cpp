@@ -2274,6 +2274,17 @@ vector<bool> relation_map(isl_map* m) {
   return rel;
 }
 
+vector<int> out_involve_dim(isl_map* m, int in_dim){
+    vector<int> ret;
+    auto aff_vec = get_aff_vec(m);
+    for (int i = 0; i < aff_vec.size(); i ++) {
+        if(isl_aff_involves_dims(aff_vec.at(i), isl_dim_in, in_dim, 1)) {
+            ret.push_back(i);
+        }
+    }
+    return ret;
+}
+
 int get_involve_dim(isl_map* m, int out_dim) {
   size_t dom_dim = num_in_dims(m);
   auto aff = get_aff_vec(m).at(out_dim);

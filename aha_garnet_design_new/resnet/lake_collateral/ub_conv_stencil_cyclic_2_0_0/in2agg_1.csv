@@ -1,9 +1,9 @@
-"cycle_starting_addr",8008,0
+"cycle_starting_addr",30004,0
 "cycle_stride_0",1,0
 "cycle_stride_1",4,0
-"cycle_stride_2",28,0
-"cycle_stride_3",784,0
-"cycle_stride_4",2352,0
+"cycle_stride_2",32,0
+"cycle_stride_3",896,0
+"cycle_stride_4",2688,0
 "dimensionality",5,0
 "extent_0",4,0
 "extent_1",7,0
