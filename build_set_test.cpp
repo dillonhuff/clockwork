@@ -15185,6 +15185,8 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 }
 
 void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int dims) {
+  pad_top_level_ops_with_loops(prg);
+
   //sequential_schedule(sched, root, prg);
 
   // Data structures for the fusion plan
@@ -15232,97 +15234,6 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
 
   //assert(false);
   //adjust_outer_delays(sched, prg);
-
-  //cout << "l1 loops..." << endl;
-  //int pos = 0;
-  //for (auto l : l1_loops) {
-    //cout << tab(1) << l->name << endl;
-    //cout << tab(2) << "total latency    : " << sched.total_latency(l) << endl;
-    //cout << tab(2) << "iteration latency: " << sched.instance_latency(l) << endl;
-    //level_iis[2] = max(sched.instance_latency(l), level_iis[2]);
-    //loop_delays[l->name] = 10*pos;
-    //cout << tab(2) << "iter start delay : " << loop_delays[l->name] << endl;
-    //pos++;
-  //}
-  //assert(false);
-
-  //cout << "Computing rate matched schedule at level " << dims << endl;
-  //auto levels = get_variable_levels(prg);
-  //vector<op*> body_ops;
-  //int body_latency = 0;
-  //int inner_ii = 1;
-  //for (auto l : levels) {
-    //cout << endl;
-    //if (l.second == dims) {
-      //for (auto c : prg.find_loop(l.first)->children) {
-        //body_ops.push_back(c);
-      //}
-
-      //cout << endl;
-      //prg.find_loop(l.first)->pretty_print();
-      //cout << endl;
-      //auto consumed = read_at(l.first, prg);
-      //if (consumed != nullptr) {
-        //cout << "Consumed: " << str(consumed) << endl;
-      //}
-    //}
-  //}
-
-  //assert(false);
-  ////for (auto b : body_ops) {
-    ////sequential_schedule(sched, b, prg);
-    ////sched.op_offset_within_parent[b] = body_latency;
-    ////body_latency += sched.total_latency(b);
-    ////inner_ii = max(inner_ii, sched.total_latency(b));
-  ////}
-  ////inner_ii = 12;
-  ////cout << "Body latency = " << body_latency << endl;
-  ////cout << "Inner II     = " << inner_ii << endl;
-  ////for (auto l : levels) {
-    ////if (l.second <= dims) {
-      ////if (l.second == dims) {
-        ////sched.loop_iis[l.first] = inner_ii;
-        ////sched.op_offset_within_parent[prg.find_loop(l.first)] = 0;
-        ////sched.instance_latencies[prg.find_loop(l.first)] = 1;
-      ////} else if (l.second == 1) {
-        ////auto lp = prg.find_loop(l.first);
-
-        ////assert(elem(lp, prg.root->children));
-
-        ////int pos;
-        ////for (pos = 0; pos < prg.root->children.size(); pos++) {
-          ////if (prg.root->children[pos] == lp) {
-            ////break;
-          ////}
-        ////}
-
-        ////sched.loop_iis[l.first] = inner_ii*60;
-        ////sched.op_offset_within_parent[prg.find_loop(l.first)] = inner_ii*60*pos;
-        ////sched.instance_latencies[prg.find_loop(l.first)] = 1;
-      ////} else {
-        ////cout << l.second << endl;
-        ////assert(l.second == 0);
-        ////sched.loop_iis[l.first] = 65000;
-        ////sched.instance_latencies[prg.find_loop(l.first)] = 1;
-      ////}
-    ////}
-  ////}
-
-  ////cout << "Not scheduled..." << endl;
-  ////for (auto op : unscheduled_nodes(sched, prg)) {
-    ////op->pretty_print();
-    ////cout << endl;
-  ////}
-
-}
-
-int max_loop_depth(prog& prg) {
-  int maxl = -1;
-  for (auto op : prg.all_ops()) {
-    int l = surrounding_vars(op, prg).size();
-    maxl = max(l, maxl);
-  }
-  return maxl;
 }
 
 void tighten_iis(schedule_info& sched, prog& prg) {
@@ -15816,21 +15727,22 @@ void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
   assert(max_depth >= 1);
 
   if (!single_depth) {
-    vector<op*> old_children = prg.root->children;
-    prg.root->children = {};
-    for (auto c : old_children) {
-      if (c->is_loop()) {
-        prg.root->children.push_back(c);
-      } else {
-        op* lp = prg.root->add_loop(prg.un("pad_wrapper"), 0, 1);
-        for (int d = 1; d < max_depth - 1; d++) {
-          lp = lp->add_loop(prg.un("pad_wrapper"), 0, 1);
-        }
-        lp->children.push_back(c);
-        c->parent = lp;
-      }
-    }
-    prg.pretty_print();
+    pad_top_level_ops_with_loops(prg);
+    //vector<op*> old_children = prg.root->children;
+    //prg.root->children = {};
+    //for (auto c : old_children) {
+      //if (c->is_loop()) {
+        //prg.root->children.push_back(c);
+      //} else {
+        //op* lp = prg.root->add_loop(prg.un("pad_wrapper"), 0, 1);
+        //for (int d = 1; d < max_depth - 1; d++) {
+          //lp = lp->add_loop(prg.un("pad_wrapper"), 0, 1);
+        //}
+        //lp->children.push_back(c);
+        //c->parent = lp;
+      //}
+    //}
+    //prg.pretty_print();
     //assert(false);
 
     map<string, vector<int> > pad_indexes;
@@ -16574,7 +16486,7 @@ vector<prog> harris_variants() {
   
   // Now: They also have an error in the ROMs
   //test_programs.push_back(harris_sch3_1pp9c());
-  //test_programs.push_back(harris_sch4_1pp3c());
+  test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
   test_programs.push_back(harris_sch5_1ppc());
@@ -16631,25 +16543,21 @@ void test_codegen(vector<prog>& test_programs, CodegenFunction& codegen) {
     prg.pretty_print();
     prg.sanity_check();
 
-    //dsa_writers(prg);
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
 
     prg.pretty_print();
     prg.sanity_check();
-    //assert(false);
 
     auto cpu = unoptimized_result(prg);
 
     codegen(prg);
-    //compile_for_garnet_platonic_mem(prg);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
     run_verilator_tb(prg.name);
     auto verilator_res = verilator_results(prg.name);
     compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    //string app_type = "dualwithaddr";
     string app_type = "platonic_buffer";
     cpy_app_to_folder(app_type, prg.name);
   }

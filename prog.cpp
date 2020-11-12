@@ -7090,3 +7090,31 @@ vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinf
   //assert(false);
 }
 
+void pad_top_level_ops_with_loops(prog& prg) {
+  int max_depth = max_loop_depth(prg);
+  vector<op*> old_children = prg.root->children;
+  prg.root->children = {};
+  for (auto c : old_children) {
+    if (c->is_loop()) {
+      prg.root->children.push_back(c);
+    } else {
+      op* lp = prg.root->add_loop(prg.un("pad_wrapper"), 0, 1);
+      for (int d = 1; d < max_depth - 1; d++) {
+        lp = lp->add_loop(prg.un("pad_wrapper"), 0, 1);
+      }
+      lp->children.push_back(c);
+      c->parent = lp;
+    }
+  }
+
+}
+
+int max_loop_depth(prog& prg) {
+  int maxl = -1;
+  for (auto op : prg.all_ops()) {
+    int l = surrounding_vars(op, prg).size();
+    maxl = max(l, maxl);
+  }
+  return maxl;
+}
+

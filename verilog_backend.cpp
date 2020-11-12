@@ -536,6 +536,7 @@ void generate_fsm(
     cout << str(get_coeff(aff,i)) << endl;
   }
 
+
   out << "module " << module_name << "(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
   out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
   out << tab(1) << "logic on;" << endl;
@@ -544,22 +545,18 @@ void generate_fsm(
   out << tab(1) << "integer dims = " << dims << ";" << endl;
 
   string condition = "assign " + enable + " =(on && on2 && " + ctrl_vars + brackets(str(0)) + "==0";
-  for(int i =1; i< dims; i ++)
-  {
+  cout << "And condition" << endl;
+  for(int i = 1; i < dims; i ++) {
+    cout << tab(1) << "i = " << i << endl;
     condition += " && " + ctrl_vars + brackets(str(i)) + "<=" + str(get_dim_max(dom,i));
   }
   condition += ");";
+  cout << "Got condition" << endl;
   out << tab(1) << condition << endl;
 
   print_always_header(options, out);
   print_reset_if(options, out);
-  //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-  //out << tab(2) << "if (~rst_n) begin" << endl;
-  //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-  //out << tab(2) << "if (~rst_n) begin" << endl;
- //// out << tab(1) << "always @(posedge clk) begin" << endl;
- //// out << tab(2) << "if (rst_n) begin" << endl;
-  for(int i = 0; i < dims ;i ++) {
+  for(int i = 0; i < dims; i++) {
     out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b1010101010101010;" << endl;
     out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
   }

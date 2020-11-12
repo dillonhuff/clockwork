@@ -1880,3 +1880,7 @@ bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& 
 void adjust_inner_iis(schedule_info& sched, prog& prg);
 
 vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+void pad_top_level_ops_with_loops(prog& prg);
+
+int max_loop_depth(prog& prg);

@@ -3115,6 +3115,7 @@ isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max) {
 }
 
 int to_int(isl_val* a) {
+  assert(a != nullptr);
   assert(isl_val_is_int(a));
   return stoi(str(a));
 }
