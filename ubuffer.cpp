@@ -1009,7 +1009,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         get_memtile_bank_range(options, buf, map, project_dim, is_read);
 
     //get the reduce map for this subbuffer structure
-    auto reduce_map = linear_address_map_lake(range_per_bank);
+    auto reduce_map = linear_address_map_lake(range_per_bank, options.mem_tile.fetch_width);
 
     //get mux information
     bool need_mux = check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read);
@@ -1044,12 +1044,12 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
             }
 
             //rewrite the address gen
-            reduce_map = linear_address_map_with_index(range_per_bank, addr_index);
+            reduce_map = linear_address_map_with_index(range_per_bank, addr_index, options.mem_tile.fetch_width);
             cout << "Reduce map after mux insertion: " << str(reduce_map) << endl;
             cout << "Range per bank: " << str(range_per_bank) << endl;
             cout << "Range origin: " << str(range(map)) << endl;
 
-            auto mux_reduce_map = linear_address_map_with_index(range(map), mux_index);
+            auto mux_reduce_map = linear_address_map_with_index(range(map), mux_index, options.mem_tile.fetch_width);
             auto mux_addr_expr = dot(to_map(bmap), mux_reduce_map);
             isl_aff* addr = get_aff(mux_addr_expr);
             cout << "mux addr aff: " << str(addr) << endl;
@@ -5476,7 +5476,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     return (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
   }
 
-void UBuffer::merge_small_dim(int fetch_width) {
+bool UBuffer::merge_small_dim(int fetch_width) {
     //pad the domain for both input port and output port
     std::set<int> merge_dim;
     for (auto bd: get_in_bundles()) {
@@ -5511,8 +5511,10 @@ void UBuffer::merge_small_dim(int fetch_width) {
             auto trans = flatten_set_trans_with_dim_set(rng, merge_dim);
             it.second = simplify(dot(map, trans));
         }
+        return true;
+    } else {
+        return false;
     }
-    cout << *this << endl;
 }
 
 void UBuffer::pad_write_dom_inner_most(int fetch_width) {

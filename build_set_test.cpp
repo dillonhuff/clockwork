@@ -12296,7 +12296,7 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
       for(auto single_access_map: get_basic_maps(access_map)) {
           cout << "single access bmap : " << str(single_access_map) << endl;
         string buf_name = range_name(access_map);
-        auto reduce_map = linear_address_map_lake(range(access_map));
+        auto reduce_map = linear_address_map_lake(range(access_map), 4);
         auto ubuf = buffers_opt.at(buf_name);
         bool is_rd = ubuf.is_read_op(op_name);
 
@@ -12324,9 +12324,9 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
             }
             //rewrite the original addr_reduce map
             if (contains(buf_name, "tb"))
-              reduce_map = linear_address_map_with_index(range(access_map), addr_index);
+              reduce_map = linear_address_map_with_index(range(access_map), addr_index, 4);
             if (need_mux) {
-                auto mux_reduce_map = linear_address_map_with_index(range(access_map), mux_index);
+                auto mux_reduce_map = linear_address_map_with_index(range(access_map), mux_index, 4);
                 auto mux_addr_expr = dot(access_map, mux_reduce_map);
                 cout << str(mux_addr_expr) << endl;
                 isl_aff* addr = get_aff(mux_addr_expr);
@@ -13309,14 +13309,14 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(resnet());
   //test_apps.push_back(conv_3_3_wide());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(rom());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(rom());
   //test_apps.push_back(resnet());
 
   //TODO: break in the middle of vectorization

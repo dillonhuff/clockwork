@@ -2105,7 +2105,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void pad_write_dom_inner_most(int fetch_width);
 
     //solve the weight buffer
-    void merge_small_dim(int fetch_width);
+    bool merge_small_dim(int fetch_width);
 
 
     //change the input and output and return the agg and tb ubuffer stucture

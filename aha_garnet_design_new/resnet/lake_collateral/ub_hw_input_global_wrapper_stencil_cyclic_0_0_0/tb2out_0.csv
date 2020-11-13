@@ -13,6 +13,6 @@
 "read_data_starting_addr",0,0
 "read_data_stride_0",1,0
 "read_data_stride_1",4,0
-"read_data_stride_2",14,0
+"read_data_stride_2",0,0
 "read_data_stride_3",1,0
-"read_data_stride_4",8,0
+"read_data_stride_4",0,0

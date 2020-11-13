@@ -590,7 +590,7 @@ std::string str(isl_multi_union_pw_aff* const mupa) {
   return r;
 }
 
-isl_map* linear_address_map_lake(isl_set* s) {
+isl_map* linear_address_map_lake(isl_set* s, int fetch_width) {
   string domain = name(s);
   int dim = num_dims(s);
   vector<string> var_names;
@@ -604,13 +604,17 @@ isl_map* linear_address_map_lake(isl_set* s) {
     auto interval = project_all_but(s, i);
     isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
     stride = mul(stride, extend);
+    if (to_int(stride) % fetch_width != 0) {
+        stride = isl_val_int_from_si(ctx(s),
+                to_int(stride) + fetch_width - to_int(stride) % fetch_width);
+    }
   }
   std::reverse(var_names.begin(), var_names.end());
   string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + domain + sep_list(exprs, "[", "]", " + ") + " }";
   return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
-isl_map* linear_address_map_with_index(isl_set* s, vector<int> index) {
+isl_map* linear_address_map_with_index(isl_set* s, vector<int> index, int fetch_width) {
   string domain = name(s);
   int dim = num_dims(s);
   vector<string> var_names;
@@ -627,6 +631,10 @@ isl_map* linear_address_map_with_index(isl_set* s, vector<int> index) {
     auto interval = project_all_but(s, i);
     isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
     stride = mul(stride, extend);
+    if (to_int(stride) % fetch_width != 0) {
+        stride = isl_val_int_from_si(ctx(s),
+                to_int(stride) + fetch_width - to_int(stride) % fetch_width);
+    }
   }
   std::reverse(var_names.begin(), var_names.end());
   string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + domain + sep_list(exprs, "[", "]", " + ") + " }";

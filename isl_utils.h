@@ -185,8 +185,8 @@ std::string str(isl_union_pw_multi_aff* const pma);
 std::string str(isl_multi_union_pw_aff* const pma);
 
 isl_map* linear_address_map(isl_set* s);
-isl_map* linear_address_map_lake(isl_set* s);
-isl_map* linear_address_map_with_index(isl_set* s, vector<int> index);
+isl_map* linear_address_map_lake(isl_set* s, int fetch_width);
+isl_map* linear_address_map_with_index(isl_set* s, vector<int> index, int fetch_width);
 
 vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
 
