@@ -15888,11 +15888,11 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
   prg.pretty_print();
   cout << prg.name << " is not a rate matchable pipeline... searching for outer loop parallelism" << endl;
 
-  sequential_schedule(sched, root, prg);
+  //sequential_schedule(sched, root, prg);
+  asap_inner_loops_schedule(sched, root, prg);
   cout << "Computed initial sequential schedule" << endl;
   sanity_check_iis(sched);
 
-  //asap_inner_loops_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
   sanity_check_iis(sched);
@@ -16872,16 +16872,13 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  auto test_programs =
-    all_cgra_programs();
-  test_platonic_codegen(test_programs);
-
   vector<prog> bram_test_programs{pointwise(), resnet()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
   assert(false);
 
-
-
+  auto test_programs =
+    all_cgra_programs();
+  test_platonic_codegen(test_programs);
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);

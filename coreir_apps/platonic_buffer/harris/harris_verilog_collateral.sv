@@ -1285,26 +1285,13 @@ module grad_x_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [1
 endmodule
 
 module grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stencil_5_to_grad_x_stencil_op_hcompute_lxx_stencil_8_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_0;
+  logic [15:0] delay_wire_1;
+  logic [15:0] delay_wire_2;
+  logic [15:0] delay_wire_3;
+  always @(posedge clk) begin
+    delay_wire_0 <= in;    delay_wire_1 <= delay_wire_0;    delay_wire_2 <= delay_wire_1;    delay_wire_3 <= delay_wire_2;  end
+    assign out = delay_wire_3;
 endmodule
 
 // { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(132 + 64grad_x_s0_y + grad_x_s0_x)] }
@@ -1542,26 +1529,12 @@ module grad_y_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [1
 endmodule
 
 module grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stencil_3_to_grad_y_stencil_op_hcompute_lxy_stencil_6_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [2:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 2;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_4;
+  logic [15:0] delay_wire_5;
+  logic [15:0] delay_wire_6;
+  always @(posedge clk) begin
+    delay_wire_4 <= in;    delay_wire_5 <= delay_wire_4;    delay_wire_6 <= delay_wire_5;  end
+    assign out = delay_wire_6;
 endmodule
 
 // { op_hcompute_grad_y_stencil[root, grad_y_s0_y, grad_y_s0_x] -> [(136 + 64grad_y_s0_y + grad_y_s0_x)] }
@@ -4399,95 +4372,43 @@ module padded16_global_wrapper_stencil_bank_selector(input logic [16*2 - 1 :0] d
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_48_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_58_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_7;
+  logic [15:0] delay_wire_8;
+  logic [15:0] delay_wire_9;
+  logic [15:0] delay_wire_10;
+  always @(posedge clk) begin
+    delay_wire_7 <= in;    delay_wire_8 <= delay_wire_7;    delay_wire_9 <= delay_wire_8;    delay_wire_10 <= delay_wire_9;  end
+    assign out = delay_wire_10;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_50_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_11;
+  logic [15:0] delay_wire_12;
+  logic [15:0] delay_wire_13;
+  logic [15:0] delay_wire_14;
+  always @(posedge clk) begin
+    delay_wire_11 <= in;    delay_wire_12 <= delay_wire_11;    delay_wire_13 <= delay_wire_12;    delay_wire_14 <= delay_wire_13;  end
+    assign out = delay_wire_14;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_51_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_60_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_15;
+  logic [15:0] delay_wire_16;
+  logic [15:0] delay_wire_17;
+  logic [15:0] delay_wire_18;
+  always @(posedge clk) begin
+    delay_wire_15 <= in;    delay_wire_16 <= delay_wire_15;    delay_wire_17 <= delay_wire_16;    delay_wire_18 <= delay_wire_17;  end
+    assign out = delay_wire_18;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_52_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_56_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_19;
+  logic [15:0] delay_wire_20;
+  logic [15:0] delay_wire_21;
+  logic [15:0] delay_wire_22;
+  always @(posedge clk) begin
+    delay_wire_19 <= in;    delay_wire_20 <= delay_wire_19;    delay_wire_21 <= delay_wire_20;    delay_wire_22 <= delay_wire_21;  end
+    assign out = delay_wire_22;
 endmodule
 
 // { op_hcompute_padded16_global_wrapper_stencil[root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x] -> [(1 + 64padded16_global_wrapper_s0_y + padded16_global_wrapper_s0_x)] }

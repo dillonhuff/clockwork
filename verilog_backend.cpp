@@ -2,6 +2,41 @@
 
 #define SIM 0
 
+string end_delay_with(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
+  vector<string> wires{wire_in};
+  for (int d = 0; d < delay; d++) {
+    //string w = prg.un(wire_in);
+    string w = prg.un("end_delay_wire_");
+    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
+    wires.push_back(w);
+  }
+  assert(wires.size() == delay + 1);
+  reverse(wires);
+  out << tab(1) << "always @(posedge clk) begin" << endl;
+  for (int d = 1; d < delay + 1; d++) {
+    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
+  }
+  out << tab(1) << "end" << endl;
+  return wires.at(0);
+}
+
+string delay_wire(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
+  vector<string> wires{wire_in};
+  for (int d = 0; d < delay; d++) {
+    //string w = prg.un(wire_in);
+    string w = prg.un("delay_wire_");
+    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
+    wires.push_back(w);
+  }
+  assert(wires.size() == delay + 1);
+  out << tab(1) << "always @(posedge clk) begin" << endl;
+  for (int d = 1; d < delay + 1; d++) {
+    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
+  }
+  out << tab(1) << "end" << endl;
+  return wires.back();
+}
+
 void print_always_header(CodegenOptions& options, ostream& out) {
   if (options.rtl_options.global_signals.synchronous_reset) {
     out << tab(1) << "always @(posedge clk) begin" << endl;
@@ -449,34 +484,31 @@ void print_shift_registers(
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
     if (delay >= 0) {
-      int addrwidth = ceil(log2(delay + 1));
+      //int addrwidth = ceil(log2(delay + 1));
 
-      out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
+      //out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
-      out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
-      out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
+      //out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
+      //out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
 
-      print_always_header(options, out);
-      print_reset_if(options, out);
-      //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-      //out << tab(2) << "if (~rst_n) begin" << endl;
-      //out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-      //out << tab(2) << "if (~rst_n) begin" << endl;
-      //out << tab(1) << "always @(posedge clk) begin" << endl;
-      //out << tab(2) << "if (rst_n) begin" << endl;
-      out << tab(3) << "read_addr <= 0;" << endl;
-      out << tab(3) << "write_addr <= " << delay << ";" << endl;
-      out << tab(2) << "end else begin" << endl;
-      out << tab(3) << "storage[write_addr] <= in;" << endl;
-      out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
-      out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
+      //print_always_header(options, out);
+      //print_reset_if(options, out);
+      //out << tab(3) << "read_addr <= 0;" << endl;
+      //out << tab(3) << "write_addr <= " << delay << ";" << endl;
+      //out << tab(2) << "end else begin" << endl;
+      //out << tab(3) << "storage[write_addr] <= in;" << endl;
+      //out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
+      //out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
 
-      out << tab(2) << "end" << endl << endl;
-      out << tab(1) << "end" << endl << endl;
+      //out << tab(2) << "end" << endl << endl;
+      //out << tab(1) << "end" << endl << endl;
 
-      out << tab(1) << "always @(*) begin" << endl;
-      out << tab(2) << "out = storage[read_addr];" << endl;
-      out << tab(1) << "end" << endl << endl;
+      //out << tab(1) << "always @(*) begin" << endl;
+      //out << tab(2) << "out = storage[read_addr];" << endl;
+      //out << tab(1) << "end" << endl << endl;
+
+      string out_reg = delay_wire(out, 16, "in", prg, delay+1);
+      out << tab(2) << "assign out = " << out_reg << ";" << endl;
     } else {
       out << tab(1) << "assign out = in;" << endl;
     }
@@ -764,41 +796,6 @@ void instantiate_variable_checks(std::ostream& out, UBuffer& buf) {
 #endif
     }
   }
-}
-
-string end_delay_with(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
-  vector<string> wires{wire_in};
-  for (int d = 0; d < delay; d++) {
-    //string w = prg.un(wire_in);
-    string w = prg.un("end_delay_wire_");
-    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
-    wires.push_back(w);
-  }
-  assert(wires.size() == delay + 1);
-  reverse(wires);
-  out << tab(1) << "always @(posedge clk) begin" << endl;
-  for (int d = 1; d < delay + 1; d++) {
-    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
-  }
-  out << tab(1) << "end" << endl;
-  return wires.at(0);
-}
-
-string delay_wire(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
-  vector<string> wires{wire_in};
-  for (int d = 0; d < delay; d++) {
-    //string w = prg.un(wire_in);
-    string w = prg.un("delay_wire_");
-    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
-    wires.push_back(w);
-  }
-  assert(wires.size() == delay + 1);
-  out << tab(1) << "always @(posedge clk) begin" << endl;
-  for (int d = 1; d < delay + 1; d++) {
-    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
-  }
-  out << tab(1) << "end" << endl;
-  return wires.back();
 }
 
 void instantiate_banks(
