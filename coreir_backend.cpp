@@ -3276,7 +3276,9 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
 
   rgtb << tab(1) << "srand(1);" << endl;
 
-  rgtb << tab(1) << "for (int i = 0; i < 1000; i++) {" << endl;
+  int num_trials = 10000;
+  int upper_bound = 256*256;
+  rgtb << tab(1) << "for (int i = 0; i < " << num_trials << "; i++) {" << endl;
   RecordType* tp = compute_mod->getType();
   vector<string> in_args;
   vector<string> input_value_printouts;
@@ -3293,7 +3295,7 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
       vector<string> lanes;
       for (int l = 0; l < num_lanes; l++) {
         string name = fd.first + "_" + str(l);
-        rgtb << tab(2) << "int " << name << " = rand() % 256;" << endl;
+        rgtb << tab(2) << "int " << name << " = rand() % " << upper_bound << ";" << endl;
         rgtb << tab(2) << "hw_uint<16> " << name << "_hwint = hw_uint<16>(" + name + ");" << endl;
         lanes.push_back(name + "_hwint");
         rgtb << tab(2) << "(dut." << fd.first << ")[" << l << "] = " << name << ";" << endl;
