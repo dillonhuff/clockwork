@@ -4860,7 +4860,9 @@ void sanity_check_all_reads_defined(prog& prg) {
   }
 }
 
-void generate_verilator_tb_in_streams(std::ostream& rgtb,
+void generate_verilator_tb_in_streams(
+    CodegenOptions& options,
+    std::ostream& rgtb,
     prog& prg,
     umap* hw_sched,
     map<string, UBuffer>& buffers) {
@@ -4965,7 +4967,9 @@ void generate_garnet_verilator_tb(prog& prg,
 
 
   //Use rst input enable, match the garnet test
+  CodegenOptions options;
   generate_verilator_tb_in_streams(
+      options,
       rgtb,
       prg,
       hw_sched,
@@ -5132,6 +5136,7 @@ void generate_verilator_tb(
   }
 
   generate_verilator_tb_in_streams(
+      options,
       rgtb,
       prg,
       hw_sched,
