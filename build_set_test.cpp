@@ -18677,6 +18677,11 @@ void test_if_construction() {
 
 void dhuff_playground() {
   {
+    prog prg = resnet();
+    generate_unoptimized_code(prg);
+    assert(false);
+  }
+  {
 #ifdef COREIR
     for (auto prg : harris_variants()) {
       prg.pretty_print();

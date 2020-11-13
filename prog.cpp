@@ -2203,7 +2203,14 @@ void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
   cout << codegen_c(prg.unoptimized_schedule());
 
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+  for (auto& buf : buffers) {
+    schedule_info hwinfo;
+    maybe<std::set<int> > part = embarassing_partition(buf.second, hwinfo);
 
+    if (part.has_value()) {
+      assert(false);
+    }
+  }
   generate_app_code(options, buffers, prg, sched);
 
   prg.name = old_name;
