@@ -16503,7 +16503,7 @@ vector<prog> harris_variants() {
   //test_programs.push_back(harris_sch2_fourbuf());
   
   // Now: They also have an error in the ROMs
-  test_programs.push_back(harris_sch3_1pp9c());
+  //test_programs.push_back(harris_sch3_1pp9c());
   test_programs.push_back(harris_sch4_1pp3c());
 
   // Works
