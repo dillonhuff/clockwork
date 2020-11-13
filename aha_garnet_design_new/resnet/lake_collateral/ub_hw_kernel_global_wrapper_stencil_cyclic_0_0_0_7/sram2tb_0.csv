@@ -5,4 +5,4 @@
 "read_data_starting_addr",0,0
 "read_data_stride",1,0
 "write_data_starting_addr",0,0
-"write_data_stride",0,0
+"write_data_stride",1,0

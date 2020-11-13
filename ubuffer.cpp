@@ -4835,6 +4835,7 @@ vector<string> buffer_vectorization(vector<int> iis,
 
       //Input must be take care
       //need to first pad the buffer output to the multiplier of
+      target_buffer.merge_small_dim(fetch_width);
       target_buffer.pad_read_dom_inner_most(fetch_width);
       target_buffer.pad_write_dom_inner_most(fetch_width);
 
@@ -5474,6 +5475,45 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
   int get_pad_remainder(isl_map* am, int dim_id, int fetch_width) {
     return (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
   }
+
+void UBuffer::merge_small_dim(int fetch_width) {
+    //pad the domain for both input port and output port
+    std::set<int> merge_dim;
+    for (auto bd: get_in_bundles()) {
+        for (auto pt: port_bundles.at(bd)) {
+            auto am = to_map(access_map.at(pt));
+            auto dom = domain.at(pt);
+            auto sched = schedule.at(pt);
+            int dim_id = get_inner_most_dom_pad_dim(am);
+            if (get_dim_extent(dom, dim_id) < fetch_width) {
+                //This dimension is smaller than fetch_width
+                //try to merge with the upper one
+                assert(dim_id > 0);
+                auto involve_vec = out_involve_dim(am, dim_id - 1);
+                concat(involve_vec, out_involve_dim(am, dim_id));
+                for (auto inv: involve_vec) {
+                    merge_dim.insert(inv);
+                }
+                auto trans = flatten_set_trans_with_dim_set(dom, {dim_id - 1, dim_id});
+                auto flatten_am = to_map(simplify(dot(inv(trans), access_map.at(pt))));
+                auto flatten_sched = to_map(simplify(dot(inv(trans), sched)));
+                cout << "Map after flatten: " << str(flatten_am) << endl;
+                cout << "sched after flatten: " << str(flatten_sched) << endl;
+                replace_pt(pt, flatten_am, flatten_sched);
+            }
+        }
+    }
+
+    if (merge_dim.size()) {
+        for (auto& it: access_map) {
+            auto map = it.second;
+            auto rng = to_set(range(map));
+            auto trans = flatten_set_trans_with_dim_set(rng, merge_dim);
+            it.second = simplify(dot(map, trans));
+        }
+    }
+    cout << *this << endl;
+}
 
 void UBuffer::pad_write_dom_inner_most(int fetch_width) {
     //pad the domain for both input port and output port

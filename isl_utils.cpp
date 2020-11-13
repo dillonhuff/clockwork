@@ -1846,6 +1846,54 @@ umap* flatten_set_trans(isl_set* s, int ii) {
 }
 
 
+umap* flatten_set_trans_with_dim_set(isl_set* dom, std::set<int> dim_id) {
+    vector<int> dom_range;
+    for (auto id: dim_id){
+        dom_range.push_back(get_dim_max(dom, id)+1);
+    }
+    vector<int> rolling_dim;
+    for (size_t i = 0; i < dom_range.size(); i ++) {
+        int dim = std::accumulate(dom_range.rbegin(),
+                dom_range.rbegin() + i,
+                1, std::multiplies<int>());
+        rolling_dim.push_back(dim);
+    }
+    std::reverse(rolling_dim.begin(), rolling_dim.end());
+    auto ctx = isl_set_get_ctx(dom);
+    umap* trans = isl_union_map_read_from_str(ctx, "{}");
+
+    vector<string> origin_var_list, expr_list;
+    for (size_t i = 0; i < get_dim(dom); i ++) {
+        auto var_name = "i" + to_string(i);
+        origin_var_list.push_back(string(var_name));
+    }
+    int i = 0;
+    for (auto id : dim_id) {
+        auto var_name = "i" + to_string(id);
+        expr_list.push_back(string(var_name) + "*" + to_string(rolling_dim.at(i)));
+        i ++;
+    }
+    vector<string> var_list;
+    for (size_t i = 0; i < get_dim(dom); i ++) {
+        if (dim_id.count(i) == 0) {
+            var_list.push_back("i" + to_string(i));
+        }
+    }
+
+    var_list.insert(
+            var_list.begin() + *std::min_element(begin(dim_id), end(dim_id)),
+            sep_list(expr_list, "", "", "+"));
+    string origin_var = sep_list(origin_var_list, "[", "]", ",");
+    string var = sep_list(var_list, "[", "]", ",");
+    string dom_name = name(dom);
+    string map_str = "{" + dom_name + origin_var + "->" + dom_name + var +"}";
+    cout << map_str << endl;
+    isl_map* flatten_trans = isl_map_read_from_str(ctx, map_str.c_str());
+    trans = unn(to_umap(flatten_trans), trans);
+
+    return trans;
+}
+
 umap* flatten_set_trans_with_dim(isl_set* dom, int dim_from_inner) {
     vector<int> dom_range;
     for (size_t i = 0; i < get_dim(dom); i ++) {
@@ -1879,6 +1927,7 @@ umap* flatten_set_trans_with_dim(isl_set* dom, int dim_from_inner) {
     string var = sep_list(var_list, "[", "]", ",");
     string dom_name = name(dom);
     string map_str = "{" + dom_name + origin_var + "->" + dom_name + var +"}";
+    cout << map_str << endl;
     isl_map* flatten_trans = isl_map_read_from_str(ctx, map_str.c_str());
     trans = unn(to_umap(flatten_trans), trans);
 

@@ -13309,14 +13309,14 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(resnet());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(resnet());
   //test_apps.push_back(conv_3_3_wide());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(rom());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(rom());
   //test_apps.push_back(resnet());
 
   //TODO: break in the middle of vectorization
@@ -15381,6 +15381,34 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   }
 }
 
+void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map) {
+
+    //always vectorize the inner most loop
+    for (auto rd_map: get_maps(read_map)) {
+      cout << tab(4) << str(rd_map) << endl;
+      auto b_map = to_map(pick(get_basic_maps(rd_map)));
+      auto read_addr_involve_dim = out_involve_dim(b_map, num_in_dims(b_map) - 1);
+      cout << tab(4) << "addr involve dim: " << read_addr_involve_dim << endl;
+      if (read_addr_involve_dim.size()) {
+        assert(read_addr_involve_dim.size() == 1);
+        int packed_addr_dim = pick(read_addr_involve_dim);
+        auto reads = range(b_map);
+        int ext = to_int(lexmaxval(
+                    project_all_but(reads, packed_addr_dim)
+                    )) + 1;
+        cout << tab(4) << "packed dim extent: " << ext << endl;
+        //TODO change 4 into codegen options,fetch_width
+        if (ext > loop->trip_count()) {
+            cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
+            cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+            sched.op_offset_within_parent.at(loop) =
+                (4 + loop->trip_count()) % 4 + 4;
+            cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
+        }
+      }
+    }
+}
+
 void relax_iis_for_vectorization(schedule_info& sched, prog& prg) {
     //for (auto b: all_buffers(prg)) {
     //  map<op*, isl_map*> cons = prg.consumer_maps(b);
@@ -15409,34 +15437,12 @@ void relax_iis_for_vectorization(schedule_info& sched, prog& prg) {
           //cout << "Read map: " << str(prg.read_map(op)) << endl;
         }
         auto write_map = written_at(loop->name, prg);
-        cout << tab(2) << str(write_map) << endl;
+        //cout << tab(2) << "Relax for write op: \n\t"<< str(write_map) << endl;
+        //relax_inner_iis(sched, loop, write_map);
         auto read_map = read_at(loop->name, prg);
         if(read_map != nullptr) {
-
-          //always vectorize the inner most loop
-          for (auto rd_map: get_maps(read_map)) {
-            cout << tab(4) << str(rd_map) << endl;
-            auto b_map = to_map(pick(get_basic_maps(rd_map)));
-            auto read_addr_involve_dim = out_involve_dim(b_map, num_in_dims(b_map) - 1);
-            cout << tab(4) << "read addr involve dim: " << read_addr_involve_dim << endl;
-            if (read_addr_involve_dim.size()) {
-              assert(read_addr_involve_dim.size() == 1);
-              int packed_addr_dim = pick(read_addr_involve_dim);
-              auto reads = range(b_map);
-              int ext = to_int(lexmaxval(
-                          project_all_but(reads, packed_addr_dim)
-                          )) + 1;
-              cout << tab(4) << "packed dim extent: " << ext << endl;
-              //TODO change 4 into codegen options,fetch_width
-              if (ext > loop->trip_count()) {
-                  cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
-                  cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
-                  sched.op_offset_within_parent.at(loop) =
-                      (4 + loop->trip_count()) % 4 + 4;
-                  cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
-              }
-            }
-          }
+          cout << tab(2) << "Relax for read op: \n\t"<< str(read_map) << endl;
+          relax_inner_iis(sched, loop, read_map);
         }
       }
     }
