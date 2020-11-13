@@ -1,205 +1,5 @@
-// { op_hcompute_padded16_global_wrapper_stencil[root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x] -> [(1 + 64padded16_global_wrapper_s0_y + padded16_global_wrapper_s0_x)] }
-module affine_controller__U0(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
-  logic [15:0] counter[3:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 3;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=63 && d[2]<=63);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==0) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 63) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          d[2]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
-// { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(132 + 64grad_x_s0_y + grad_x_s0_x)] }
-module affine_controller__U7(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
-  logic [15:0] counter[3:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 3;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=61 && d[2]<=61);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==131) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 63) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          d[2]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
-// { op_hcompute_lxx_stencil[root, lxx_s0_y, lxx_s0_x] -> [(133 + 64lxx_s0_y + lxx_s0_x)] }
-module affine_controller__U14(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
-  logic [15:0] counter[3:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 3;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=61 && d[2]<=61);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==132) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 63) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          d[2]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
-// { op_hcompute_lgxx_stencil[root, lgxx_s0_y, lgxx_s0_x] -> [(264 + 64lgxx_s0_y + lgxx_s0_x)] }
-module affine_controller__U21(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
-  logic [15:0] counter[3:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 3;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=59 && d[2]<=59);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==263) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 63) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          d[2]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
 // { op_hcompute_lgxx_stencil_1[root, lgxx_s1_y, lgxx_s1_x] -> [(265 + 64lgxx_s1_y + lgxx_s1_x)] }
-module affine_controller__U28(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+module affine_controller__U0(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -248,158 +48,8 @@ module affine_controller__U28(input clk, input flush, input rst_n, output logic 
     end
   end
 endmodule
-// { op_hcompute_grad_y_stencil[root, grad_y_s0_y, grad_y_s0_x] -> [(136 + 64grad_y_s0_y + grad_y_s0_x)] }
-module affine_controller__U35(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
-  logic [15:0] counter[3:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 3;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=61 && d[2]<=61);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==135) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 63) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          d[2]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
-// { op_hcompute_lxy_stencil[root, lxy_s0_y, lxy_s0_x] -> [(137 + 64lxy_s0_y + lxy_s0_x)] }
-module affine_controller__U42(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
-  logic [15:0] counter[3:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 3;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=61 && d[2]<=61);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==136) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 63) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          d[2]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
-// { op_hcompute_lgxy_stencil[root, lgxy_s0_y, lgxy_s0_x] -> [(268 + 64lgxy_s0_y + lgxy_s0_x)] }
-module affine_controller__U49(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
-  logic [15:0] counter[3:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 3;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=59 && d[2]<=59);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==267) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 63) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          d[2]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
 // { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(269 + 64lgxy_s1_y + lgxy_s1_x)] }
-module affine_controller__U56(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+module affine_controller__U7(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -449,7 +99,7 @@ module affine_controller__U56(input clk, input flush, input rst_n, output logic 
   end
 endmodule
 // { op_hcompute_lyy_stencil[root, lyy_s0_y, lyy_s0_x] -> [(140 + 64lyy_s0_y + lyy_s0_x)] }
-module affine_controller__U63(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+module affine_controller__U14(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -498,8 +148,258 @@ module affine_controller__U63(input clk, input flush, input rst_n, output logic 
     end
   end
 endmodule
+// { op_hcompute_lxy_stencil[root, lxy_s0_y, lxy_s0_x] -> [(137 + 64lxy_s0_y + lxy_s0_x)] }
+module affine_controller__U21(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+  logic [15:0] counter[3:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 3;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=61 && d[2]<=61);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==136) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 63) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          d[2]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { op_hcompute_lgxy_stencil[root, lgxy_s0_y, lgxy_s0_x] -> [(268 + 64lgxy_s0_y + lgxy_s0_x)] }
+module affine_controller__U28(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+  logic [15:0] counter[3:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 3;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=59 && d[2]<=59);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==267) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 63) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          d[2]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { op_hcompute_lxx_stencil[root, lxx_s0_y, lxx_s0_x] -> [(133 + 64lxx_s0_y + lxx_s0_x)] }
+module affine_controller__U35(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+  logic [15:0] counter[3:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 3;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=61 && d[2]<=61);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==132) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 63) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          d[2]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { op_hcompute_lgxx_stencil[root, lgxx_s0_y, lgxx_s0_x] -> [(264 + 64lgxx_s0_y + lgxx_s0_x)] }
+module affine_controller__U42(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+  logic [15:0] counter[3:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 3;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=59 && d[2]<=59);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==263) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 63) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          d[2]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { op_hcompute_hw_output_stencil[root, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(405 + 64hw_output_s0_y_yi + hw_output_s0_x_xi)] }
+module affine_controller__U49(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+  logic [15:0] counter[3:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 3;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=57 && d[2]<=57);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==404) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 63) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          d[2]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
 // { op_hcompute_lgyy_stencil[root, lgyy_s0_y, lgyy_s0_x] -> [(271 + 64lgyy_s0_y + lgyy_s0_x)] }
-module affine_controller__U70(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+module affine_controller__U56(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -549,7 +449,7 @@ module affine_controller__U70(input clk, input flush, input rst_n, output logic 
   end
 endmodule
 // { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(272 + 64lgyy_s1_y + lgyy_s1_x)] }
-module affine_controller__U77(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+module affine_controller__U63(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -598,8 +498,158 @@ module affine_controller__U77(input clk, input flush, input rst_n, output logic 
     end
   end
 endmodule
-// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(273 + 64cim_s0_y + cim_s0_x)] }
+// { op_hcompute_grad_y_stencil[root, grad_y_s0_y, grad_y_s0_x] -> [(136 + 64grad_y_s0_y + grad_y_s0_x)] }
+module affine_controller__U70(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+  logic [15:0] counter[3:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 3;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=61 && d[2]<=61);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==135) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 63) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          d[2]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { op_hcompute_padded16_global_wrapper_stencil[root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x] -> [(1 + 64padded16_global_wrapper_s0_y + padded16_global_wrapper_s0_x)] }
+module affine_controller__U77(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+  logic [15:0] counter[3:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 3;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=63 && d[2]<=63);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 63) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          d[2]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(132 + 64grad_x_s0_y + grad_x_s0_x)] }
 module affine_controller__U84(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+  logic [15:0] counter[3:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 3;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=61 && d[2]<=61);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      d[2]<= 16'b1010101010101010;
+      counter[2] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==131) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+        d[2]<= 16'b0;
+        counter [2] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 63) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          d[2]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(273 + 64cim_s0_y + cim_s0_x)] }
+module affine_controller__U91(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -649,56 +699,6 @@ module affine_controller__U84(input clk, input flush, input rst_n, output logic 
   end
 endmodule
 // { op_hcompute_cim_output_stencil[root, cim_output_s0_y, cim_output_s0_x] -> [(404 + 64cim_output_s0_y + cim_output_s0_x)] }
-module affine_controller__U91(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
-  logic [15:0] counter[3:0];
-  logic on;
-  logic on2;
-  integer i;
-  integer dims = 3;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=57 && d[2]<=57);
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      d[0]<= 16'b1010101010101010;
-      counter[0] <= 16'b0;
-      d[1]<= 16'b1010101010101010;
-      counter[1] <= 16'b0;
-      d[2]<= 16'b1010101010101010;
-      counter[2] <= 16'b0;
-      on <=0;
-      on2 <= 0;
-    end else begin
-      if(counter[0] ==403) begin
-        on <=1;
-        on2 <= 1;
-        d[0]<= 16'b0;
-        counter[0] <= counter[0]+1;
-        d[1]<= 16'b0;
-        counter [1] <= 16'b0;
-        d[2]<= 16'b0;
-        counter [2] <= 16'b0;
-      end else begin
-        counter[0] <= counter[0] + 1;
-        if(counter[1] == 63) begin
-          counter[1]<= 0;
-          counter[2]<= 0;
-          d[2]<= 0;
-          d[1] <= d[1] + 1;
-          on2 <= 1;
-        end else if(counter[2] == 0) begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= 0;
-          d[2] <= d[2] + 1;
-          on2 <= 1;
-        end else begin
-          counter[1] <= counter[1] + 1;
-          counter[2] <= counter[2] + 1;
-          on2 <= 0;
-        end
-      end
-    end
-  end
-endmodule
-// { op_hcompute_hw_output_stencil[root, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(405 + 64hw_output_s0_y_yi + hw_output_s0_x_xi)] }
 module affine_controller__U98(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
@@ -717,7 +717,7 @@ module affine_controller__U98(input clk, input flush, input rst_n, output logic 
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==404) begin
+      if(counter[0] ==403) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -1285,26 +1285,13 @@ module grad_x_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [1
 endmodule
 
 module grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stencil_5_to_grad_x_stencil_op_hcompute_lxx_stencil_8_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_0;
+  logic [15:0] delay_wire_1;
+  logic [15:0] delay_wire_2;
+  logic [15:0] delay_wire_3;
+  always @(posedge clk) begin
+    delay_wire_0 <= in;    delay_wire_1 <= delay_wire_0;    delay_wire_2 <= delay_wire_1;    delay_wire_3 <= delay_wire_2;  end
+  assign out = delay_wire_3;
 endmodule
 
 // { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(132 + 64grad_x_s0_y + grad_x_s0_x)] }
@@ -1542,26 +1529,12 @@ module grad_y_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [1
 endmodule
 
 module grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stencil_3_to_grad_y_stencil_op_hcompute_lxy_stencil_6_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [2:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 2;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 2 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 2 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_4;
+  logic [15:0] delay_wire_5;
+  logic [15:0] delay_wire_6;
+  always @(posedge clk) begin
+    delay_wire_4 <= in;    delay_wire_5 <= delay_wire_4;    delay_wire_6 <= delay_wire_5;  end
+  assign out = delay_wire_6;
 endmodule
 
 // { op_hcompute_grad_y_stencil[root, grad_y_s0_y, grad_y_s0_x] -> [(136 + 64grad_y_s0_y + grad_y_s0_x)] }
@@ -4399,95 +4372,43 @@ module padded16_global_wrapper_stencil_bank_selector(input logic [16*2 - 1 :0] d
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_48_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_58_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_7;
+  logic [15:0] delay_wire_8;
+  logic [15:0] delay_wire_9;
+  logic [15:0] delay_wire_10;
+  always @(posedge clk) begin
+    delay_wire_7 <= in;    delay_wire_8 <= delay_wire_7;    delay_wire_9 <= delay_wire_8;    delay_wire_10 <= delay_wire_9;  end
+  assign out = delay_wire_10;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_50_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_11;
+  logic [15:0] delay_wire_12;
+  logic [15:0] delay_wire_13;
+  logic [15:0] delay_wire_14;
+  always @(posedge clk) begin
+    delay_wire_11 <= in;    delay_wire_12 <= delay_wire_11;    delay_wire_13 <= delay_wire_12;    delay_wire_14 <= delay_wire_13;  end
+  assign out = delay_wire_14;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_51_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_60_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_15;
+  logic [15:0] delay_wire_16;
+  logic [15:0] delay_wire_17;
+  logic [15:0] delay_wire_18;
+  always @(posedge clk) begin
+    delay_wire_15 <= in;    delay_wire_16 <= delay_wire_15;    delay_wire_17 <= delay_wire_16;    delay_wire_18 <= delay_wire_17;  end
+  assign out = delay_wire_18;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_52_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_56_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] storage [3:0];
-
-  reg [1:0] read_addr;
-  reg [1:0] write_addr;
-  always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-      read_addr <= 0;
-      write_addr <= 3;
-    end else begin
-      storage[write_addr] <= in;
-      read_addr <= read_addr == 3 ? 0 : read_addr + 1;
-      write_addr <= write_addr == 3 ? 0 : write_addr + 1;
-    end
-
-  end
-
-  always @(*) begin
-    out = storage[read_addr];
-  end
-
+  logic [15:0] delay_wire_19;
+  logic [15:0] delay_wire_20;
+  logic [15:0] delay_wire_21;
+  logic [15:0] delay_wire_22;
+  always @(posedge clk) begin
+    delay_wire_19 <= in;    delay_wire_20 <= delay_wire_19;    delay_wire_21 <= delay_wire_20;    delay_wire_22 <= delay_wire_21;  end
+  assign out = delay_wire_22;
 endmodule
 
 // { op_hcompute_padded16_global_wrapper_stencil[root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x] -> [(1 + 64padded16_global_wrapper_s0_y + padded16_global_wrapper_s0_x)] }

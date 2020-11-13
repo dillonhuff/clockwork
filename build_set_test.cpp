@@ -16871,12 +16871,12 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  vector<prog> bram_test_programs{pointwise(), resnet()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+
   auto test_programs =
     all_cgra_programs();
   test_platonic_codegen(test_programs);
-
-  vector<prog> bram_test_programs{pointwise(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);
