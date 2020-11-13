@@ -8,8 +8,23 @@
 
 using namespace std;
 
+enum test_data_input_stream_type {
+  TEST_DATA_INPUT_STREAM_TYPE_CONSTANT,
+  TEST_DATA_INPUT_STREAM_TYPE_RANDOM,
+  TEST_DATA_INPUT_STREAM_TYPE_INCREMENTING,
+};
+
+struct test_data_input_stream {
+  test_data_input_stream_type tp;
+  int seed;
+  int value;
+
+  test_data_input_stream() : tp(TEST_DATA_INPUT_STREAM_TYPE_RANDOM), seed(1), value(0) {}
+};
+
 struct DebugOptions {
   bool expect_all_linebuffers;
+  test_data_input_stream test_inputs;
 
   DebugOptions() : expect_all_linebuffers(false) {}
 };
