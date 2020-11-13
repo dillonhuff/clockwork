@@ -2503,16 +2503,23 @@ for (int c1 = -3; c1 <= 60; c1 += 1)
 	  for (int c2 = -3; c2 <= 60; c2 += 1) {
 #pragma HLS pipeline II=1
 	    op_hcompute_padded16_global_wrapper_stencil(padded16_stencil /* buf name */, padded16_global_wrapper_stencil, 0, c1, c2);
-			//if (c1 >= -1 && c2 >= -1) {
-	      op_hcompute_grad_x_stencil(padded16_global_wrapper_stencil /* buf name */, grad_x_stencil, 0, c1 - 1, c2 - 1);
-	      op_hcompute_lxx_stencil(grad_x_stencil /* buf name */, lxx_stencil, 0, c1 - 1, c2 - 1);
-	      if (c1 >= 1 && c2 >= 1) {
-	        op_hcompute_lgxx_stencil(lgxx_stencil_clkwrk_dsa0, 0, c1 - 2, c2 - 2);
-	        op_hcompute_lgxx_stencil_1(lgxx_stencil_clkwrk_dsa0 /* buf name */, lxx_stencil /* buf name */, lgxx_stencil, 0, c1 - 2, c2 - 2);
-	      }
-	      op_hcompute_grad_y_stencil(padded16_global_wrapper_stencil /* buf name */, grad_y_stencil, 0, c1 - 1, c2 - 1);
-	      op_hcompute_lxy_stencil(grad_x_stencil /* buf name */, grad_y_stencil /* buf name */, lxy_stencil, 0, c1 - 1, c2 - 1);
-	      if (c1 >= 1 && c2 >= 1) {
+      if (c1 >= -1 && c2 >= -1) {
+        op_hcompute_grad_x_stencil(padded16_global_wrapper_stencil /* buf name */, grad_x_stencil, 0, c1 - 1, c2 - 1);
+      }
+      if (c1 >= -1 && c2 >= -1) {
+        op_hcompute_lxx_stencil(grad_x_stencil /* buf name */, lxx_stencil, 0, c1 - 1, c2 - 1);
+      }
+      if (
+          (c1 >= -1 && c2 >= -1) &&
+          c1 >= 1 && c2 >= 1) {
+        op_hcompute_lgxx_stencil(lgxx_stencil_clkwrk_dsa0, 0, c1 - 2, c2 - 2);
+        op_hcompute_lgxx_stencil_1(lgxx_stencil_clkwrk_dsa0 /* buf name */, lxx_stencil /* buf name */, lgxx_stencil, 0, c1 - 2, c2 - 2);
+      }
+      op_hcompute_grad_y_stencil(padded16_global_wrapper_stencil /* buf name */, grad_y_stencil, 0, c1 - 1, c2 - 1);
+      op_hcompute_lxy_stencil(grad_x_stencil /* buf name */, grad_y_stencil /* buf name */, lxy_stencil, 0, c1 - 1, c2 - 1);
+      if (
+          (c1 >= -1 && c2 >= -1) &&
+          c1 >= 1 && c2 >= 1) {
 	        op_hcompute_lgxy_stencil(lgxy_stencil_clkwrk_dsa1, 0, c1 - 2, c2 - 2);
 	        op_hcompute_lgxy_stencil_1(lgxy_stencil_clkwrk_dsa1 /* buf name */, lxy_stencil /* buf name */, lgxy_stencil, 0, c1 - 2, c2 - 2);
 	      }
