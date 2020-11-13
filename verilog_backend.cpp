@@ -2,57 +2,6 @@
 
 #define SIM 0
 
-string end_delay_with(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
-  vector<string> wires{wire_in};
-  for (int d = 0; d < delay; d++) {
-    //string w = prg.un(wire_in);
-    string w = prg.un("end_delay_wire_");
-    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
-    wires.push_back(w);
-  }
-  assert(wires.size() == delay + 1);
-  reverse(wires);
-  out << tab(1) << "always @(posedge clk) begin" << endl;
-  for (int d = 1; d < delay + 1; d++) {
-    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
-  }
-  out << tab(1) << "end" << endl;
-  return wires.at(0);
-}
-
-string delay_wire(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
-  vector<string> wires{wire_in};
-  for (int d = 0; d < delay; d++) {
-    //string w = prg.un(wire_in);
-    string w = prg.un("delay_wire_");
-    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
-    wires.push_back(w);
-  }
-  assert(wires.size() == delay + 1);
-  out << tab(1) << "always @(posedge clk) begin" << endl;
-  for (int d = 1; d < delay + 1; d++) {
-    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
-  }
-  out << tab(1) << "end" << endl;
-  return wires.back();
-}
-
-void print_always_header(CodegenOptions& options, ostream& out) {
-  if (options.rtl_options.global_signals.synchronous_reset) {
-    out << tab(1) << "always @(posedge clk) begin" << endl;
-  } else {
-    out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
-  }
-}
-
-void print_reset_if(CodegenOptions& options, ostream& out) {
-  if (options.rtl_options.global_signals.synchronous_reset) {
-    out << tab(2) << "if (rst_n) begin" << endl;
-  } else {
-    out << tab(2) << "if (~rst_n) begin" << endl;
-  }
-}
-
 std::string codegen_verilog(const std::string& ctrl_vars, isl_aff* const aff) {
   vector<string> terms;
   if (!is_zero(const_coeff(aff))) {
@@ -344,17 +293,13 @@ void print_embarassing_banks(std::ostream& out, const map<int, int>& partitioned
   }
 
   for (int i = 0; i < num_banks; i++) {
-    out << tab(1) << "logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << " bank_" << i << " [" << capacity << "];" << endl;
+    out << tab(1) << "(* ram_style = \"block\" *) logic [" << CONTROLPATH_WIDTH - 1 << ":0] " << " bank_" << i << " [" << capacity << "];" << endl;
   }
 }
 
 vector<int> print_cyclic_banks(std::ostream& out, const vector<int>& bank_factors, bank& bnk) {
   int num_banks = card(bank_factors);
   out << tab(1) << "// # of banks: " << num_banks << endl;
-  for (auto f : bank_factors) {
-    cout << tab(1) << f << endl;
-    assert(f > 0);
-  }
 
   int capacity = 1;
   vector<int> capacities;
@@ -462,6 +407,14 @@ int bank_folding_factor(const vector<int>& bank_factors, prog& prg, UBuffer& buf
   return 100000;
 }
 
+void print_always_block_header(CodegenOptions& options, std::ostream& out) {
+  out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+}
+
+void print_reset_if(CodegenOptions& options, ostream& out) {
+  out << tab(2) << "if (~rst_n) begin" << endl;
+}
+  
 template <typename T>
 void print_shift_registers(
     std::ostream& out,
@@ -483,33 +436,39 @@ void print_shift_registers(
     vector<string> port_decls{"input clk", "input flush", "input rst_n", "input logic [" + str(DATAPATH_WIDTH - 1) + ":0] in", "output logic [" + str(DATAPATH_WIDTH - 1) + ":0] out"};
     out << "module " << buf.name << "_" << sr.first << "_to_" << sr.second.first << "_sr(" << comma_list(port_decls) << ");" << endl;
 
-    if (delay >= 0) {
-      //int addrwidth = ceil(log2(delay + 1));
+    if (delay >= 1) {
+        delay -=1;
+      int addrwidth = ceil(log2(delay + 1));
 
-      //out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
+      out << tab(1) << "logic [15:0] storage [" << delay << ":0];" << endl << endl;
 
-      //out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
-      //out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
+      out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] read_addr;" << endl;
+      out << tab(1) << "reg [" + str(max(addrwidth - 1, 0)) + ":0] write_addr;" << endl;
 
-      //print_always_header(options, out);
+      //print_always_block_header(options, out);
+      out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+      out << tab(2) << "if (~rst_n) begin" << endl;
       //print_reset_if(options, out);
-      //out << tab(3) << "read_addr <= 0;" << endl;
-      //out << tab(3) << "write_addr <= " << delay << ";" << endl;
-      //out << tab(2) << "end else begin" << endl;
-      //out << tab(3) << "storage[write_addr] <= in;" << endl;
-      //out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
-      //out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
+      out << tab(3) << "read_addr <= 0;" << endl;
+      out << tab(3) << "write_addr <= " << delay << ";" << endl;
+      out << tab(2) << "end else begin" << endl;
+      out << tab(3) << "storage[write_addr] <= in;" << endl;
+      out << tab(3) << "read_addr <= read_addr == " << delay << " ? 0 : read_addr + 1;" << endl;
+      out << tab(3) << "write_addr <= write_addr == " << delay << " ? 0 : write_addr + 1;" << endl;
 
-      //out << tab(2) << "end" << endl << endl;
-      //out << tab(1) << "end" << endl << endl;
+      out << tab(2) << "end" << endl << endl;
+      out << tab(1) << "end" << endl << endl;
 
-      //out << tab(1) << "always @(*) begin" << endl;
-      //out << tab(2) << "out = storage[read_addr];" << endl;
-      //out << tab(1) << "end" << endl << endl;
-
-      string out_reg = delay_wire(out, 16, "in", prg, delay+1);
-      out << tab(2) << "assign out = " << out_reg << ";" << endl;
-    } else {
+      out << tab(1) << "always @(posedge clk) begin" << endl;
+      out << tab(2) << "out <= storage[read_addr];" << endl;
+      out << tab(1) << "end" << endl << endl;
+    }
+    else if(delay == 0){
+        out << tab(1) << "always @(posedge clk) begin" << endl;
+        out << tab(2) << "out <= in;" << endl;
+        out << tab(1) << "end" << endl << endl;
+    }
+    else {
       out << tab(1) << "assign out = in;" << endl;
     }
 
@@ -568,7 +527,6 @@ void generate_fsm(
     cout << str(get_coeff(aff,i)) << endl;
   }
 
-
   out << "module " << module_name << "(input clk, input flush, input rst_n, output logic [15:0] " << ctrl_vars << "[" << dims-1 << ":0], output " << enable << " );" << endl;
   out << tab(1) << "logic [15:0] counter[" << dims << ":0];" << endl;
   out << tab(1) << "logic on;" << endl;
@@ -577,18 +535,18 @@ void generate_fsm(
   out << tab(1) << "integer dims = " << dims << ";" << endl;
 
   string condition = "assign " + enable + " =(on && on2 && " + ctrl_vars + brackets(str(0)) + "==0";
-  cout << "And condition" << endl;
-  for(int i = 1; i < dims; i ++) {
-    cout << tab(1) << "i = " << i << endl;
+  for(int i =1; i< dims; i ++)
+  {
     condition += " && " + ctrl_vars + brackets(str(i)) + "<=" + str(get_dim_max(dom,i));
   }
   condition += ");";
-  cout << "Got condition" << endl;
   out << tab(1) << condition << endl;
 
-  print_always_header(options, out);
-  print_reset_if(options, out);
-  for(int i = 0; i < dims; i++) {
+  //print_always_block_header(options, out);
+  //print_reset_if(options, out);
+  out << tab(1) << "always @(posedge clk or negedge rst_n) begin" << endl;
+  out << tab(2) << "if (~rst_n) begin" << endl;
+  for(int i = 0; i < dims ;i ++) {
     out << tab(3) <<  ctrl_vars << brackets(str(i)) << "<= 16'b1010101010101010;" << endl;
     out << tab(3) <<  "counter" << brackets(str(i)) << " <= 16'b0;" << endl;
   }
@@ -798,6 +756,41 @@ void instantiate_variable_checks(std::ostream& out, UBuffer& buf) {
   }
 }
 
+string end_delay_with(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
+  vector<string> wires{wire_in};
+  for (int d = 0; d < delay; d++) {
+    //string w = prg.un(wire_in);
+    string w = prg.un("end_delay_wire_");
+    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
+    wires.push_back(w);
+  }
+  assert(wires.size() == delay + 1);
+  reverse(wires);
+  out << tab(1) << "always @(posedge clk) begin" << endl;
+  for (int d = 1; d < delay + 1; d++) {
+    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
+  }
+  out << tab(1) << "end" << endl;
+  return wires.at(0);
+}
+
+string delay_wire(ostream& out, const int width, const std::string& wire_in, prog& prg, const int delay) {
+  vector<string> wires{wire_in};
+  for (int d = 0; d < delay; d++) {
+    //string w = prg.un(wire_in);
+    string w = prg.un("delay_wire_");
+    out << tab(1) << "logic [" << (width - 1) << ":0] " << w << ";" << endl;
+    wires.push_back(w);
+  }
+  assert(wires.size() == delay + 1);
+  out << tab(1) << "always @(posedge clk) begin" << endl;
+  for (int d = 1; d < delay + 1; d++) {
+    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
+  }
+  out << tab(1) << "end" << endl;
+  return wires.back();
+}
+
 void instantiate_banks(
     ostream& out,
     CodegenOptions& options,
@@ -806,139 +799,153 @@ void instantiate_banks(
     schedule_info& hwinfo,
     const std::unordered_set<string>& shift_registered) {
 
-  vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
-  //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
-  maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf, hwinfo);
-  //bool has_embarassing_partition = embarassing_banking.has_value();
-  bool has_embarassing_partition = false;
+    vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+    maybe<std::set < int> > embarassing_banking =
+            embarassing_partition(buf, hwinfo);
+    bool has_embarassing_partition = embarassing_banking.has_value();
+    //bool has_embarassing_partition = false;
 
-  bank bnk = buf.compute_bank_info();
-  vector<int> capacities;
-  int num_banks = card(bank_factors);
-  vector<int> extents;
-  map<int, int> partitioned_dimension_extents;
-  if (has_embarassing_partition)  {
-    std::set<int> partition_dims = embarassing_banking.get_value();
-    extents = extents_by_dimension(buf);
-    for (auto d : partition_dims) {
-      partitioned_dimension_extents[d] = extents.at(d);
-    }
-    num_banks = 1;
-    for (auto ent : partitioned_dimension_extents) {
-      num_banks *= ent.second;
-    }
-    capacities = extents;
-    print_embarassing_banks(out, partitioned_dimension_extents, buf);
-  } else {
-    capacities = print_cyclic_banks(out, bank_factors, bnk);
-  }
-
-  for (auto in : buf.get_all_ports()) {
-    auto comps_raw =
-      generate_verilog_addr_components(in, bnk, buf);
-
-    vector<string> comps;
-    int i = 0;
-    for (auto c : comps_raw) {
-      out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
-      out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
-      comps.push_back(buf.name + "_" + in + "_" + str(i));
-      i++;
-    }
-    reverse(comps);
+    bank bnk = buf.compute_bank_info();
+    vector<int> capacities;
+    int num_banks = card(bank_factors);
+    vector<int> extents;
+    map<int, int> partitioned_dimension_extents;
     if (has_embarassing_partition) {
-      out << buf.name << "_embarassing_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
-    } else {
-      out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d(" << sep_list(comps, "{", "}", ",") << "));" << endl;
-    }
-  }
-
-  out << endl;
-
-  int counter = 0;
-  map<string, string> port_inner_bank_offsets;
-  map<string, string> port_enables;
-  map<string, string> port_bank_selectors;
-  map<string, string> port_data;
-  for (auto outpt : buf.get_all_ports()) {
-    if (shift_registered.find(outpt) == shift_registered.end()) {
-       string addr;
-      if (has_embarassing_partition) {
-        addr =
-          print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, partitioned_dimension_extents);
-      } else
-      {
-        addr =
-        print_cyclic_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk, buf), capacities, bank_factors);
-      }
-      out << tab(1) << "logic [15:0] addr" << counter << ";" << endl;
-      if (addr == "()") {
-        out << tab(1) << "assign addr" << counter << " = " << "0" << ";" << endl;
-      } else {
-        out << tab(1) << "assign addr" << counter << " = " << addr << ";" << endl;
-      }
-
-      string bundle_wen = buf.container_bundle(outpt) + (buf.is_in_pt(outpt) ? "_wen" : "_ren");
-      string bundle_wen_fsm = bundle_wen + "_fsm_out";
-      string bank_selector = buf.name + "_" + outpt + "_bank_selector.out";
-
-      int delay = buf.is_out_pt(outpt) ? hwinfo.load_latency(buf.name) : hwinfo.store_latency(buf.name);
-      assert(delay >= 0);
-      if (delay == 0) {
-        port_inner_bank_offsets[outpt] = "addr" + str(counter);
-        port_bank_selectors[outpt] = bank_selector;
-        port_enables[outpt] = bundle_wen_fsm;
-        port_data[outpt] = 
-          buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
-      } else {
-        delay = delay - 1;
-        assert(delay >= 0);
-
-        if (buf.is_in_pt(outpt)) {
-          port_inner_bank_offsets[outpt] = delay_wire(out, 16, "addr" + str(counter), prg, delay);
-          port_bank_selectors[outpt] = delay_wire(out, 16, bank_selector, prg, delay);
-          port_enables[outpt] = delay_wire(out, 16, bundle_wen_fsm, prg, delay);
-          port_data[outpt] = 
-            delay_wire(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
-        } else {
-          port_inner_bank_offsets[outpt] = "addr" + str(counter);
-          port_bank_selectors[outpt] = bank_selector;
-          port_enables[outpt] = bundle_wen_fsm;
-          port_data[outpt] = 
-            end_delay_with(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
+        std::set<int> partition_dims = embarassing_banking.get_value();
+        extents = extents_by_dimension(buf);
+        for (auto d : partition_dims) {
+            partitioned_dimension_extents[d] = extents.at(d);
         }
-
-      }
-
-      counter ++;
+        num_banks = 1;
+        for (auto ent : partitioned_dimension_extents) {
+            num_banks *= ent.second;
+        }
+        capacities = extents;
+        print_embarassing_banks(out, partitioned_dimension_extents, buf);
+    } else {
+        capacities = print_cyclic_banks(out, bank_factors, bnk);
     }
-  }
 
-  int store_latency = hwinfo.store_latency(buf.name);
-  assert(store_latency <= 2);
-  out << tab(1) << "always @(posedge clk) begin" << endl;
+    for (auto in : buf.get_all_ports()) {
+        auto comps_raw =
+                generate_verilog_addr_components(in, bnk, buf);
 
-  instantiate_variable_checks(out, buf);
+        vector <string> comps;
+        int i = 0;
+        for (auto c : comps_raw) {
+            out << tab(1) << "logic [15:0] " << buf.name << "_" << in << "_" << i << ";" << endl;
+            out << tab(1) << "assign " << buf.name << "_" << in << "_" << i << " = " << c << ";" << endl;
+            comps.push_back(buf.name + "_" + in + "_" + str(i));
+            i++;
+        }
+        reverse(comps);
+        if (has_embarassing_partition) {
+            out << buf.name << "_embarassing_bank_selector " << buf.name << "_" << in << "_bank_selector(.d("
+                << sep_list(comps, "{", "}", ",") << "));" << endl;
+        } else {
+            out << buf.name << "_bank_selector " << buf.name << "_" << in << "_bank_selector(.d("
+                << sep_list(comps, "{", "}", ",") << "));" << endl;
+        }
+    }
 
-  for (auto in : buf.get_in_ports()) {
-    string bundle_wen_fsm = map_find(in, port_enables);
-    string bank_selector = map_find(in, port_bank_selectors);
-    string addr = map_find(in, port_inner_bank_offsets);
-    string input_wire = map_find(in, port_data);
+    out << endl;
 
-    out << tab(2) << "if (" << bundle_wen_fsm << ") begin" << endl;
-    out << tab(3) << "case( " << bank_selector << ")" << endl;
+    int counter = 0;
+    map <string, string> port_inner_bank_offsets;
+    map <string, string> port_enables;
+    map <string, string> port_bank_selectors;
+    map <string, string> port_data;
+    for (auto outpt : buf.get_all_ports()) {
+        if (shift_registered.find(outpt) == shift_registered.end()) {
+            string addr;
+            if (has_embarassing_partition) {
+                addr =
+                        print_embarassing_banks_inner_bank_offset_func(buf, generate_verilog_addr_components(outpt, bnk,
+                                                                                                             buf),
+                                                                       capacities, partitioned_dimension_extents);
+            } else {
+                addr =
+                        print_cyclic_banks_inner_bank_offset_func(buf,
+                                                                  generate_verilog_addr_components(outpt, bnk, buf),
+                                                                  capacities, bank_factors);
+            }
+            out << tab(1) << "logic [15:0] addr" << counter << ";" << endl;
+            if (addr == "()") {
+                out << tab(1) << "assign addr" << counter << " = " << "0" << ";" << endl;
+            } else {
+                out << tab(1) << "assign addr" << counter << " = " << addr << ";" << endl;
+            }
+
+            string bundle_wen = buf.container_bundle(outpt) + (buf.is_in_pt(outpt) ? "_wen" : "_ren");
+            string bundle_wen_fsm = bundle_wen + "_fsm_out";
+            string bank_selector = buf.name + "_" + outpt + "_bank_selector.out";
+
+            int delay = buf.is_out_pt(outpt) ? hwinfo.load_latency(buf.name) : hwinfo.store_latency(buf.name);
+            assert(delay >= 0);
+            if (delay == 0) {
+                port_inner_bank_offsets[outpt] = "addr" + str(counter);
+                port_bank_selectors[outpt] = bank_selector;
+                port_enables[outpt] = bundle_wen_fsm;
+                port_data[outpt] =
+                        buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
+            } else {
+                delay = delay - 1;
+                assert(delay >= 0);
+
+                if (buf.is_in_pt(outpt)) {
+                    port_inner_bank_offsets[outpt] = delay_wire(out, 16, "addr" + str(counter), prg, delay);
+                    port_bank_selectors[outpt] = delay_wire(out, 16, bank_selector, prg, delay);
+                    port_enables[outpt] = delay_wire(out, 16, bundle_wen_fsm, prg, delay);
+                    port_data[outpt] =
+                            delay_wire(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]",
+                                       prg, delay);
+                } else {
+                    if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
+                        assert(delay == 1);
+                        port_inner_bank_offsets[outpt] = delay_wire(out, 16, "addr" + str(counter), prg, delay);
+                        port_bank_selectors[outpt] = delay_wire(out, 16, bank_selector, prg, delay);
+                        port_enables[outpt] = delay_wire(out, 16, bundle_wen_fsm, prg, delay);
+                        port_data[outpt] =
+                                buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
+                    } else {
+                        port_inner_bank_offsets[outpt] = "addr" + str(counter);
+                        port_bank_selectors[outpt] = bank_selector;
+                        port_enables[outpt] = bundle_wen_fsm;
+                        port_data[outpt] =
+                                end_delay_with(out, 16,
+                                               buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]",
+                                               prg, delay);
+                    }
+                }
+
+            }
+
+            counter++;
+        }
+    }
+
+    int store_latency = hwinfo.store_latency(buf.name);
+    assert(store_latency <= 2);
+    out << tab(1) << "always @(posedge clk) begin" << endl;
+
+    instantiate_variable_checks(out, buf);
     for (int b = 0; b < num_banks; b++) {
-      string source_ram = "bank_" + str(b);
-      out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
+        int counter_ports = 0;
+        for (auto in : buf.get_in_ports()) {
+            string bundle_wen_fsm = map_find(in, port_enables);
+            string bank_selector = map_find(in, port_bank_selectors);
+            string addr = map_find(in, port_inner_bank_offsets);
+            string input_wire = map_find(in, port_data);
+
+            out << tab(2) << (counter_ports == 0 ? "if (" : "else if (") << bundle_wen_fsm << " &&" << bank_selector << "==" << b << ") begin" << endl;
+            string source_ram = "bank_" + str(b);
+            out << tab(4) << source_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
+
+            out << tab(2) << "end" << endl;
+            counter_ports ++;
+
+        }
     }
-#if SIM
-    out << tab(4) << "default: $finish(-1);" << endl;
-#endif
-    out << tab(3) << "endcase" << endl;
-    out << tab(2) << "end" << endl;
-  }
   out << tab(1) << "end" << endl;
 
   int load_latency = hwinfo.load_latency(buf.name);
@@ -951,34 +958,52 @@ void instantiate_banks(
     out << tab(1) << "always @(posedge clk) begin" << endl;
   }
   counter = 0;
-  for (auto outpt : buf.get_out_ports()) {
-    string bundle_ren = buf.container_bundle(outpt) + "_ren";
+    for (int b = 0; b < num_banks; b++) {
+        int counter_ports = 0;
+        for (auto outpt : buf.get_out_ports()) {
+        string bundle_ren = buf.container_bundle(outpt) + "_ren";
 
-    if (shift_registered.find(outpt) == shift_registered.end()) {
-      string bundle_ren_fsm = map_find(outpt, port_enables);
-      string bank_selector = map_find(outpt, port_bank_selectors);
-      string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
-      string out_wire = map_find(outpt, port_data);
+        if (shift_registered.find(outpt) == shift_registered.end()) {
+          string bundle_ren_fsm = map_find(outpt, port_enables);
+          string bank_selector = map_find(outpt, port_bank_selectors);
+          string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
+          string out_wire = map_find(outpt, port_data);
+            out << tab(2) << (counter_ports == 0 ? "if (" : "else if (") << bundle_ren_fsm << " &&" << bank_selector << "==" << b << ") begin" << endl;
 
-      out << tab(2) << "if (" << bundle_ren_fsm << ") begin" << endl;
-      out << tab(3) << "case( " << bank_selector << ")" << endl;
-      for (int b = 0; b < num_banks; b++) {
-        string source_ram = "bank_" + str(b);
-        string assign_str = load_latency == 0 ? " = " : " <= ";
-        out << tab(4) << b << ":" << out_wire << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
-      }
-      counter++;
-#if SIM
-      out << tab(4) << "default: $finish(-1);" << endl;
-#endif
-      out << tab(3) << "endcase" << endl;
-      out << tab(2) << "end" << endl;
-    }
+            string source_ram = "bank_" + str(b);
+            string assign_str = load_latency == 0 ? " = " : " <= ";
+            out << tab(4) << out_wire << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
+            counter_ports ++;
+            out << tab(2) << "end" << endl;
+        }
+          counter++;
+
+        }
   }
 
   out << tab(1) << "end" << endl;
 
   out << endl;
+}
+
+UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf) {
+  UBuffer cpy = buf;
+  return cpy;
+}
+
+void analyze_memory_demands(UBuffer& buf, prog& prg, schedule_info& hwinfo) {
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+  std::set<string> sr_ports;
+  for (auto port : shift_registered_outputs) {
+    sr_ports.insert(port.first);
+  }
+  for (auto port : shift_registered_outputs_to_outputs) {
+    sr_ports.insert(port.first);
+  }
+
+  UBuffer reduced = delete_ports(sr_ports, buf);
+  assert(false);
 }
 
 void generate_platonic_ubuffer(
@@ -990,12 +1015,16 @@ void generate_platonic_ubuffer(
 
   prg.pretty_print();
 
-  vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
-  //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
+  //analyze_memory_demands(buf, prg, hwinfo);
+  //if (buf.name == "padded16_global_wrapper_stencil") {
+    ////assert(false);
+  //}
+
+  vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
-  //bool has_embarassing_partition = embarassing_banking.has_value();
-  bool has_embarassing_partition = false;
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  //bool has_embarassing_partition = false;
 
   int num_banks = card(bank_factors);
   vector<int> extents;
