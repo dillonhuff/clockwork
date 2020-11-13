@@ -407,6 +407,7 @@ for (int c1 = 0; c1 <= 3; c1 += 1)
 	for (int c1 = 0; c1 <= 3; c1 += 1)
 	  for (int c2 = 0; c2 <= 63; c2 += 1)
 	    for (int c3 = 0; c3 <= 63; c3 += 1) {
+#pragma HLS pipeline II=1
 	      op_hcompute_hw_input_stencil(input_copy_stencil /* buf name */, hw_input_stencil, 0, c1, c2, c3);
 	      if ((c2 + 1) % 2 == 0 && (c3 + 1) % 2 == 0) {
 	        op_hcompute_avg_pool_stencil(avg_pool_stencil_clkwrk_dsa0, 0, c1, (c2 - 1) / 2, (c3 - 1) / 2);
