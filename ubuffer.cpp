@@ -1638,8 +1638,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       }
 
       //create the tile instance
+      auto targe_buf = rewrite_buffer.at(bk.name + "_ubuf");
       CoreIR::Instance* buf = generate_lake_tile_instance(def, options, ub_ins_name,
-        banks_to_inputs.at(bk.name).size(), banks_to_outputs.at(bk.name).size(),
+        targe_buf.num_in_ports(), targe_buf.num_out_ports(),
         has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
 
       //Wire stencil valid
@@ -1686,9 +1687,10 @@ void UBuffer::generate_coreir(CodegenOptions& options,
               auto r_start = lexminpt(range(access_map.at(r)));
               return lex_lt_pt(l_start, r_start);
               });
-        for (auto outpt: pt_vec) {
+        for (auto outpt_it = pt_vec.begin(); outpt_it < pt_vec.end(); outpt_it ++) {
           //need a second pass push all wire into a list
           //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
+          auto outpt = *(outpt_it);
           CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
           CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
 
@@ -1701,7 +1703,11 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             CoreIR::map_insert(outpt_bank_valid, outpt,
                   (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
           }
-          outpt_cnt++;
+          //Broadcast do not need to increment port
+          auto next_pt = std::min(outpt_it + 1, pt_vec.end() - 1);
+          if (bk.delay_map.at(outpt) != bk.delay_map.at(*next_pt)){
+            outpt_cnt++;
+          }
         }
       } else {
         //Wiring the multi input case
@@ -1723,7 +1729,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             CoreIR::map_insert(outpt_bank_valid, outpt,
                   (CoreIR::Wireable*)buf->sel("valid_" + to_string(outpt_cnt)));
           }
-          //TODO: need a way to figure out the ren drive in this buffer
           outpt_cnt++;
         }
       }
@@ -3640,8 +3645,6 @@ lakeStream emit_top_address_stream(string fname,
     auto rddom = isl_union_set_empty(
             get_space(range(access_map.at(inpt_name))));
 
-    //initial the delay map
-    map<string, int> delay_map = {};
     for (auto inpt : inpt_set) {
       for (auto outpt: outpt_set) {
         //get the rddom for the supper bank
@@ -3649,17 +3652,33 @@ lakeStream emit_top_address_stream(string fname,
         rddom = unn(rddom, local_rddom);
 
         int delay = 0;
-        if (isIn.at(inpt)) {
-          delay = compute_dd_bound(outpt, inpt, true);
-        } else {
-          //TODO: possible bug
-          string original_inpt = pick(get_in_ports());
-          delay = compute_dd_bound(outpt, original_inpt, true) -
-            compute_dd_bound(inpt, original_inpt, true);
-        }
-        read_delays.push_back(delay);
-        maxdelay = std::max(maxdelay, delay);
+        //if (isIn.at(inpt)) {
+        //  delay = compute_dd_bound(outpt, inpt, true);
+        //} else {
+        //  //TODO: possible bug
+        //  string original_inpt = pick(get_in_ports());
+        //  delay = compute_dd_bound(outpt, original_inpt, true) -
+        //    compute_dd_bound(inpt, original_inpt, true);
+        //}
+        //read_delays.push_back(delay);
+        //maxdelay = std::max(maxdelay, delay);
         //delay_map.insert({outpt, delay});
+      }
+    }
+
+    map<string, int> delay_map;
+    for (auto inpt: inpt_set) {
+      if (isIn.at(inpt)){
+      for (auto outpt: outpt_set) {
+        auto delay_info =
+            dependence_distance_max(inpt, outpt);
+        if (delay_info.has_value()) {
+          maxdelay = std::max(delay_info.get_value(), maxdelay);
+          delay_map[outpt] = delay_info.get_value();
+          read_delays.push_back(delay_info.get_value());
+          cout << "Compute max delay : " << maxdelay << endl;
+        }
+      }
       }
     }
     //cout << "compute max delay for super bank =  " << maxdelay << endl;

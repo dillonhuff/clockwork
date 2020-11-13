@@ -956,7 +956,7 @@ void emit_lake_config2csv(json data, ofstream& out) {
           int cnt = 0;
           for (auto data_it : data_domain) {
             //cout << tab(2) << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
-            if (data_domain.size() == 1)
+            if (data_domain.size() == 1 && contains(key, "starting_addr" ))
               out << "\""+key+"\"," << data_it << ",0"<< endl;
             else
               out << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
