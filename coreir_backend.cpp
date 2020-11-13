@@ -1621,10 +1621,10 @@ void load_cgramapping(Context* c) {
 void LoadDefinition_cgralib(Context* c) {
 
   //load_mem_ext(c);
-  // load_commonlib_ext(c);
-  // load_opsubstitution(c);
-  // load_corebit2lut(c);
-  // load_cgramapping(c);
+  //load_commonlib_ext(c);
+  //load_opsubstitution(c);
+  //load_corebit2lut(c);
+  //load_cgramapping(c);
   //lad_float(c);
 }
 
@@ -1846,7 +1846,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       cout << "Found compute file for " << prg.name << endl;
       Instance* halide_cu = nullptr;
       if (hwinfo.use_dse_compute) {
-        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_mapped"));
       } else {
         halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
       }
@@ -3009,7 +3009,7 @@ void garnet_map_module(Module* top) {
 
   c->runPasses({"cullgraph"});
   c->runPasses({"removewires"});
-  addIOs(c,top);
+  //addIOs(c,top);
   c->runPasses({"cullgraph"});
   // c->addPass(new CustomFlatten);
   // c->runPasses({"customflatten"});
@@ -3020,12 +3020,20 @@ void garnet_map_module(Module* top) {
   c->addPass(new MapperPasses::MemSubstitute);
   c->runPasses({"memsubstitute"});
 
-  //c->runPasses({"flatten"});
-  c->runPasses({"cullgraph"});
+  if (c->getGlobal()->hasModule("WrappedPE")) {
+    auto pe_mod = c->getGlobal()->getModules()["WrappedPE"];
+    pe_mod->print();
+    pe_mod->unlinkDef();
+    cout << "Unlinked!" << endl;
+    cout << "Flattening!" << endl;
+    c->runPasses({"flatten"});
+  }
+  //c->runPassesOnAll({"cullgraph"});
   c->getPassManager()->printLog();
   cout << "Trying to save" << endl;
   cout << "test" << endl;
-  c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+  //c->runPasses({"coreirjson"},{"global","commonlib","mantle"});
+  c->runPasses({"coreirjson"},{"global"});
 
   auto jpass = static_cast<CoreIR::Passes::CoreIRJson*>(c->getPassManager()->getAnalysisPass("coreirjson"));
   string postmap = "after_mapping_" + top->getName() + ".json";
@@ -3062,6 +3070,7 @@ void generate_coreir(CodegenOptions& options,
   auto c = context;
 
   CoreIR::Module* prg_mod;
+  std::cout << "prebuilt: " <<  options.rtl_options.use_prebuilt_memory << std::endl;
   if (options.rtl_options.use_prebuilt_memory) {
     prg_mod = generate_coreir_without_ctrl(options, buffers, prg, schedmap, context, hwinfo);
   } else {

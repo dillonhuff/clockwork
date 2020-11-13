@@ -13,6 +13,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   CoreIR::Namespace* cgralib = c->newNamespace("cgralib");
 
 
+  /*
   //PE declaration
   CoreIR::Params PEGenParams = {{"op_kind",c->String()},{"width",c->Int()},{"numbitports",c->Int()},{"numdataports",c->Int()}};
 
@@ -74,6 +75,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   Generator* PE = cgralib->newGeneratorDecl("PE",cgralib->getTypeGen("PEType"),PEGenParams);
   PE->addDefaultGenArgs({{"width",Const::make(c,16)},{"numdataports",Const::make(c,2)},{"numbitports",Const::make(c,3)}});
   PE->setModParamsGen(PEModParamFun);
+  */
 
   //Unary op declaration
   Params widthParams = {{"width",c->Int()}};
