@@ -18,1256 +18,1256 @@ module hcompute_hw_output_stencil (
     output [15:0] out_hw_output_stencil,
     input [15:0] in0_padded16_global_wrapper_stencil [48:0]
 );
-wire [15:0] add_1247_1343_1374_out;
-wire [15:0] add_1436_1493_1516_out;
-wire [15:0] add_1539_1558_1573_out;
-wire [15:0] add_1617_1654_1673_out;
-wire [15:0] add_1697_1716_1731_out;
-wire [15:0] add_1755_1774_1789_out;
-wire [15:0] add_1831_1870_1889_out;
-wire [15:0] add_1912_1931_1946_out;
-wire [15:0] add_1970_1989_2004_out;
-wire [15:0] ashr_1150_1151_1152_out;
-wire [15:0] ashr_1172_1151_1173_out;
-wire [15:0] ashr_1183_1151_1184_out;
-wire [15:0] ashr_1194_1151_1195_out;
-wire [15:0] ashr_1204_1151_1205_out;
-wire [15:0] ashr_1215_1151_1216_out;
-wire [15:0] ashr_1225_1151_1226_out;
-wire [15:0] ashr_1236_1151_1237_out;
-wire [15:0] ashr_1245_1246_1247_out;
-wire [15:0] ashr_1256_1151_1257_out;
-wire [15:0] ashr_1276_1151_1277_out;
-wire [15:0] ashr_1285_1151_1286_out;
-wire [15:0] ashr_1294_1151_1295_out;
-wire [15:0] ashr_1303_1151_1304_out;
-wire [15:0] ashr_1313_1151_1314_out;
-wire [15:0] ashr_1323_1151_1324_out;
-wire [15:0] ashr_1333_1151_1334_out;
-wire [15:0] ashr_1342_1246_1343_out;
-wire [15:0] ashr_1345_1151_1346_out;
-wire [15:0] ashr_1349_1151_1350_out;
-wire [15:0] ashr_1351_1151_1352_out;
-wire [15:0] ashr_1353_1151_1354_out;
-wire [15:0] ashr_1355_1151_1356_out;
-wire [15:0] ashr_1357_1151_1358_out;
-wire [15:0] ashr_1359_1151_1360_out;
-wire [15:0] ashr_1361_1151_1362_out;
-wire [15:0] ashr_1370_1246_1371_out;
-wire [15:0] ashr_1387_1151_1388_out;
-wire [15:0] ashr_1397_1151_1398_out;
-wire [15:0] ashr_1406_1151_1407_out;
-wire [15:0] ashr_1416_1151_1417_out;
-wire [15:0] ashr_1426_1151_1427_out;
-wire [15:0] ashr_1435_1246_1436_out;
-wire [15:0] ashr_1444_1151_1445_out;
-wire [15:0] ashr_1453_1151_1454_out;
-wire [15:0] ashr_1463_1151_1464_out;
-wire [15:0] ashr_1473_1151_1474_out;
-wire [15:0] ashr_1483_1151_1484_out;
-wire [15:0] ashr_1492_1246_1493_out;
-wire [15:0] ashr_1495_1151_1496_out;
-wire [15:0] ashr_1497_1151_1498_out;
-wire [15:0] ashr_1499_1151_1500_out;
-wire [15:0] ashr_1501_1151_1502_out;
-wire [15:0] ashr_1503_1151_1504_out;
-wire [15:0] ashr_1512_1246_1513_out;
-wire [15:0] ashr_1529_1151_1530_out;
-wire [15:0] ashr_1538_1246_1539_out;
-wire [15:0] ashr_1548_1151_1549_out;
-wire [15:0] ashr_1557_1246_1558_out;
-wire [15:0] ashr_1560_1151_1561_out;
-wire [15:0] ashr_1569_1246_1570_out;
-wire [15:0] ashr_1597_1151_1598_out;
-wire [15:0] ashr_1607_1151_1608_out;
-wire [15:0] ashr_1616_1246_1617_out;
-wire [15:0] ashr_1635_1151_1636_out;
-wire [15:0] ashr_1644_1151_1645_out;
-wire [15:0] ashr_1653_1246_1654_out;
-wire [15:0] ashr_1658_1151_1659_out;
-wire [15:0] ashr_1660_1151_1661_out;
-wire [15:0] ashr_1669_1246_1670_out;
-wire [15:0] ashr_1687_1151_1688_out;
-wire [15:0] ashr_1696_1246_1697_out;
-wire [15:0] ashr_1706_1151_1707_out;
-wire [15:0] ashr_1715_1246_1716_out;
-wire [15:0] ashr_1718_1151_1719_out;
-wire [15:0] ashr_1727_1246_1728_out;
-wire [15:0] ashr_1745_1151_1746_out;
-wire [15:0] ashr_1754_1246_1755_out;
-wire [15:0] ashr_1764_1151_1765_out;
-wire [15:0] ashr_1773_1246_1774_out;
-wire [15:0] ashr_1776_1151_1777_out;
-wire [15:0] ashr_1785_1246_1786_out;
-wire [15:0] ashr_1812_1151_1813_out;
-wire [15:0] ashr_1821_1151_1822_out;
-wire [15:0] ashr_1830_1246_1831_out;
-wire [15:0] ashr_1850_1151_1851_out;
-wire [15:0] ashr_1860_1151_1861_out;
-wire [15:0] ashr_1869_1246_1870_out;
-wire [15:0] ashr_1874_1151_1875_out;
-wire [15:0] ashr_1876_1151_1877_out;
-wire [15:0] ashr_1885_1246_1886_out;
-wire [15:0] ashr_1902_1151_1903_out;
-wire [15:0] ashr_1911_1246_1912_out;
-wire [15:0] ashr_1921_1151_1922_out;
-wire [15:0] ashr_1930_1246_1931_out;
-wire [15:0] ashr_1933_1151_1934_out;
-wire [15:0] ashr_1942_1246_1943_out;
-wire [15:0] ashr_1969_1246_1970_out;
-wire [15:0] ashr_1988_1246_1989_out;
-wire [15:0] ashr_2000_1246_2001_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_14_1138_1196_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_15_1138_1164_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_16_1138_1206_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_18_1138_1227_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_19_1138_1231_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_20_1138_1217_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_21_1138_1325_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_23_1138_1418_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_24_1138_1315_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_25_1138_1305_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_26_1138_1521_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_27_1138_1389_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_28_1138_1379_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_29_1138_1408_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_2_1138_1185_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_30_1138_1475_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_31_1138_1698_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_32_1138_1756_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_33_1138_1465_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_34_1138_1455_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_3_1138_1139_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_5_1138_1143_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_6_1138_1189_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_8_1138_1174_out;
-wire [15:0] mul_padded16_global_wrapper_stencil_9_1138_1153_out;
-wire [15:0] smax_1147_1148_1149_in0;
-wire [15:0] smax_1147_1148_1149_in1;
-wire [15:0] smax_1147_1148_1149_out;
-wire [15:0] smax_1160_1148_1161_in0;
-wire [15:0] smax_1160_1148_1161_in1;
-wire [15:0] smax_1160_1148_1161_out;
-wire [15:0] smax_1170_1148_1171_in0;
-wire [15:0] smax_1170_1148_1171_in1;
-wire [15:0] smax_1170_1148_1171_out;
-wire [15:0] smax_1181_1148_1182_in0;
-wire [15:0] smax_1181_1148_1182_in1;
-wire [15:0] smax_1181_1148_1182_out;
-wire [15:0] smax_1192_1148_1193_in0;
-wire [15:0] smax_1192_1148_1193_in1;
-wire [15:0] smax_1192_1148_1193_out;
-wire [15:0] smax_1202_1148_1203_in0;
-wire [15:0] smax_1202_1148_1203_in1;
-wire [15:0] smax_1202_1148_1203_out;
-wire [15:0] smax_1213_1148_1214_in0;
-wire [15:0] smax_1213_1148_1214_in1;
-wire [15:0] smax_1213_1148_1214_out;
-wire [15:0] smax_1223_1148_1224_in0;
-wire [15:0] smax_1223_1148_1224_in1;
-wire [15:0] smax_1223_1148_1224_out;
-wire [15:0] smax_1234_1148_1235_in0;
-wire [15:0] smax_1234_1148_1235_in1;
-wire [15:0] smax_1234_1148_1235_out;
-wire [15:0] smax_1254_1148_1255_in0;
-wire [15:0] smax_1254_1148_1255_in1;
-wire [15:0] smax_1254_1148_1255_out;
-wire [15:0] smax_1264_1148_1265_in0;
-wire [15:0] smax_1264_1148_1265_in1;
-wire [15:0] smax_1264_1148_1265_out;
-wire [15:0] smax_1274_1148_1275_in0;
-wire [15:0] smax_1274_1148_1275_in1;
-wire [15:0] smax_1274_1148_1275_out;
-wire [15:0] smax_1283_1148_1284_in0;
-wire [15:0] smax_1283_1148_1284_in1;
-wire [15:0] smax_1283_1148_1284_out;
-wire [15:0] smax_1292_1148_1293_in0;
-wire [15:0] smax_1292_1148_1293_in1;
-wire [15:0] smax_1292_1148_1293_out;
-wire [15:0] smax_1301_1148_1302_in0;
-wire [15:0] smax_1301_1148_1302_in1;
-wire [15:0] smax_1301_1148_1302_out;
-wire [15:0] smax_1311_1148_1312_in0;
-wire [15:0] smax_1311_1148_1312_in1;
-wire [15:0] smax_1311_1148_1312_out;
-wire [15:0] smax_1321_1148_1322_in0;
-wire [15:0] smax_1321_1148_1322_in1;
-wire [15:0] smax_1321_1148_1322_out;
-wire [15:0] smax_1331_1148_1332_in0;
-wire [15:0] smax_1331_1148_1332_in1;
-wire [15:0] smax_1331_1148_1332_out;
-wire [15:0] smax_1385_1148_1386_in0;
-wire [15:0] smax_1385_1148_1386_in1;
-wire [15:0] smax_1385_1148_1386_out;
-wire [15:0] smax_1395_1148_1396_in0;
-wire [15:0] smax_1395_1148_1396_in1;
-wire [15:0] smax_1395_1148_1396_out;
-wire [15:0] smax_1404_1148_1405_in0;
-wire [15:0] smax_1404_1148_1405_in1;
-wire [15:0] smax_1404_1148_1405_out;
-wire [15:0] smax_1414_1148_1415_in0;
-wire [15:0] smax_1414_1148_1415_in1;
-wire [15:0] smax_1414_1148_1415_out;
-wire [15:0] smax_1424_1148_1425_in0;
-wire [15:0] smax_1424_1148_1425_in1;
-wire [15:0] smax_1424_1148_1425_out;
-wire [15:0] smax_1442_1148_1443_in0;
-wire [15:0] smax_1442_1148_1443_in1;
-wire [15:0] smax_1442_1148_1443_out;
-wire [15:0] smax_1451_1148_1452_in0;
-wire [15:0] smax_1451_1148_1452_in1;
-wire [15:0] smax_1451_1148_1452_out;
-wire [15:0] smax_1461_1148_1462_in0;
-wire [15:0] smax_1461_1148_1462_in1;
-wire [15:0] smax_1461_1148_1462_out;
-wire [15:0] smax_1471_1148_1472_in0;
-wire [15:0] smax_1471_1148_1472_in1;
-wire [15:0] smax_1471_1148_1472_out;
-wire [15:0] smax_1481_1148_1482_in0;
-wire [15:0] smax_1481_1148_1482_in1;
-wire [15:0] smax_1481_1148_1482_out;
-wire [15:0] smax_1527_1148_1528_in0;
-wire [15:0] smax_1527_1148_1528_in1;
-wire [15:0] smax_1527_1148_1528_out;
-wire [15:0] smax_1546_1148_1547_in0;
-wire [15:0] smax_1546_1148_1547_in1;
-wire [15:0] smax_1546_1148_1547_out;
-wire [15:0] smax_1585_1148_1586_in0;
-wire [15:0] smax_1585_1148_1586_in1;
-wire [15:0] smax_1585_1148_1586_out;
-wire [15:0] smax_1595_1148_1596_in0;
-wire [15:0] smax_1595_1148_1596_in1;
-wire [15:0] smax_1595_1148_1596_out;
-wire [15:0] smax_1605_1148_1606_in0;
-wire [15:0] smax_1605_1148_1606_in1;
-wire [15:0] smax_1605_1148_1606_out;
-wire [15:0] smax_1624_1148_1625_in0;
-wire [15:0] smax_1624_1148_1625_in1;
-wire [15:0] smax_1624_1148_1625_out;
-wire [15:0] smax_1633_1148_1634_in0;
-wire [15:0] smax_1633_1148_1634_in1;
-wire [15:0] smax_1633_1148_1634_out;
-wire [15:0] smax_1642_1148_1643_in0;
-wire [15:0] smax_1642_1148_1643_in1;
-wire [15:0] smax_1642_1148_1643_out;
-wire [15:0] smax_1685_1148_1686_in0;
-wire [15:0] smax_1685_1148_1686_in1;
-wire [15:0] smax_1685_1148_1686_out;
-wire [15:0] smax_1704_1148_1705_in0;
-wire [15:0] smax_1704_1148_1705_in1;
-wire [15:0] smax_1704_1148_1705_out;
-wire [15:0] smax_1743_1148_1744_in0;
-wire [15:0] smax_1743_1148_1744_in1;
-wire [15:0] smax_1743_1148_1744_out;
-wire [15:0] smax_1762_1148_1763_in0;
-wire [15:0] smax_1762_1148_1763_in1;
-wire [15:0] smax_1762_1148_1763_out;
-wire [15:0] smax_1801_1148_1802_in0;
-wire [15:0] smax_1801_1148_1802_in1;
-wire [15:0] smax_1801_1148_1802_out;
-wire [15:0] smax_1810_1148_1811_in0;
-wire [15:0] smax_1810_1148_1811_in1;
-wire [15:0] smax_1810_1148_1811_out;
-wire [15:0] smax_1819_1148_1820_in0;
-wire [15:0] smax_1819_1148_1820_in1;
-wire [15:0] smax_1819_1148_1820_out;
-wire [15:0] smax_1838_1148_1839_in0;
-wire [15:0] smax_1838_1148_1839_in1;
-wire [15:0] smax_1838_1148_1839_out;
-wire [15:0] smax_1848_1148_1849_in0;
-wire [15:0] smax_1848_1148_1849_in1;
-wire [15:0] smax_1848_1148_1849_out;
-wire [15:0] smax_1858_1148_1859_in0;
-wire [15:0] smax_1858_1148_1859_in1;
-wire [15:0] smax_1858_1148_1859_out;
-wire [15:0] smax_1900_1148_1901_in0;
-wire [15:0] smax_1900_1148_1901_in1;
-wire [15:0] smax_1900_1148_1901_out;
-wire [15:0] smax_1919_1148_1920_in0;
-wire [15:0] smax_1919_1148_1920_in1;
-wire [15:0] smax_1919_1148_1920_out;
-wire [15:0] smax_1958_1148_1959_in0;
-wire [15:0] smax_1958_1148_1959_in1;
-wire [15:0] smax_1958_1148_1959_out;
-wire [15:0] smax_1977_1148_1978_in0;
-wire [15:0] smax_1977_1148_1978_in1;
-wire [15:0] smax_1977_1148_1978_out;
-wire [15:0] smin_1145_1146_1147_in0;
-wire [15:0] smin_1145_1146_1147_in1;
-wire [15:0] smin_1145_1146_1147_out;
-wire [15:0] smin_1159_1146_1160_in0;
-wire [15:0] smin_1159_1146_1160_in1;
-wire [15:0] smin_1159_1146_1160_out;
-wire [15:0] smin_1169_1146_1170_in0;
-wire [15:0] smin_1169_1146_1170_in1;
-wire [15:0] smin_1169_1146_1170_out;
-wire [15:0] smin_1180_1146_1181_in0;
-wire [15:0] smin_1180_1146_1181_in1;
-wire [15:0] smin_1180_1146_1181_out;
-wire [15:0] smin_1191_1146_1192_in0;
-wire [15:0] smin_1191_1146_1192_in1;
-wire [15:0] smin_1191_1146_1192_out;
-wire [15:0] smin_1201_1146_1202_in0;
-wire [15:0] smin_1201_1146_1202_in1;
-wire [15:0] smin_1201_1146_1202_out;
-wire [15:0] smin_1212_1146_1213_in0;
-wire [15:0] smin_1212_1146_1213_in1;
-wire [15:0] smin_1212_1146_1213_out;
-wire [15:0] smin_1222_1146_1223_in0;
-wire [15:0] smin_1222_1146_1223_in1;
-wire [15:0] smin_1222_1146_1223_out;
-wire [15:0] smin_1233_1146_1234_in0;
-wire [15:0] smin_1233_1146_1234_in1;
-wire [15:0] smin_1233_1146_1234_out;
-wire [15:0] smin_1253_1146_1254_in0;
-wire [15:0] smin_1253_1146_1254_in1;
-wire [15:0] smin_1253_1146_1254_out;
-wire [15:0] smin_1263_1146_1264_in0;
-wire [15:0] smin_1263_1146_1264_in1;
-wire [15:0] smin_1263_1146_1264_out;
-wire [15:0] smin_1273_1146_1274_in0;
-wire [15:0] smin_1273_1146_1274_in1;
-wire [15:0] smin_1273_1146_1274_out;
-wire [15:0] smin_1282_1146_1283_in0;
-wire [15:0] smin_1282_1146_1283_in1;
-wire [15:0] smin_1282_1146_1283_out;
-wire [15:0] smin_1291_1146_1292_in0;
-wire [15:0] smin_1291_1146_1292_in1;
-wire [15:0] smin_1291_1146_1292_out;
-wire [15:0] smin_1300_1146_1301_in0;
-wire [15:0] smin_1300_1146_1301_in1;
-wire [15:0] smin_1300_1146_1301_out;
-wire [15:0] smin_1310_1146_1311_in0;
-wire [15:0] smin_1310_1146_1311_in1;
-wire [15:0] smin_1310_1146_1311_out;
-wire [15:0] smin_1320_1146_1321_in0;
-wire [15:0] smin_1320_1146_1321_in1;
-wire [15:0] smin_1320_1146_1321_out;
-wire [15:0] smin_1330_1146_1331_in0;
-wire [15:0] smin_1330_1146_1331_in1;
-wire [15:0] smin_1330_1146_1331_out;
-wire [15:0] smin_1384_1146_1385_in0;
-wire [15:0] smin_1384_1146_1385_in1;
-wire [15:0] smin_1384_1146_1385_out;
-wire [15:0] smin_1394_1146_1395_in0;
-wire [15:0] smin_1394_1146_1395_in1;
-wire [15:0] smin_1394_1146_1395_out;
-wire [15:0] smin_1403_1146_1404_in0;
-wire [15:0] smin_1403_1146_1404_in1;
-wire [15:0] smin_1403_1146_1404_out;
-wire [15:0] smin_1413_1146_1414_in0;
-wire [15:0] smin_1413_1146_1414_in1;
-wire [15:0] smin_1413_1146_1414_out;
-wire [15:0] smin_1423_1146_1424_in0;
-wire [15:0] smin_1423_1146_1424_in1;
-wire [15:0] smin_1423_1146_1424_out;
-wire [15:0] smin_1441_1146_1442_in0;
-wire [15:0] smin_1441_1146_1442_in1;
-wire [15:0] smin_1441_1146_1442_out;
-wire [15:0] smin_1450_1146_1451_in0;
-wire [15:0] smin_1450_1146_1451_in1;
-wire [15:0] smin_1450_1146_1451_out;
-wire [15:0] smin_1460_1146_1461_in0;
-wire [15:0] smin_1460_1146_1461_in1;
-wire [15:0] smin_1460_1146_1461_out;
-wire [15:0] smin_1470_1146_1471_in0;
-wire [15:0] smin_1470_1146_1471_in1;
-wire [15:0] smin_1470_1146_1471_out;
-wire [15:0] smin_1480_1146_1481_in0;
-wire [15:0] smin_1480_1146_1481_in1;
-wire [15:0] smin_1480_1146_1481_out;
-wire [15:0] smin_1526_1146_1527_in0;
-wire [15:0] smin_1526_1146_1527_in1;
-wire [15:0] smin_1526_1146_1527_out;
-wire [15:0] smin_1545_1146_1546_in0;
-wire [15:0] smin_1545_1146_1546_in1;
-wire [15:0] smin_1545_1146_1546_out;
-wire [15:0] smin_1584_1146_1585_in0;
-wire [15:0] smin_1584_1146_1585_in1;
-wire [15:0] smin_1584_1146_1585_out;
-wire [15:0] smin_1594_1146_1595_in0;
-wire [15:0] smin_1594_1146_1595_in1;
-wire [15:0] smin_1594_1146_1595_out;
-wire [15:0] smin_1604_1146_1605_in0;
-wire [15:0] smin_1604_1146_1605_in1;
-wire [15:0] smin_1604_1146_1605_out;
-wire [15:0] smin_1623_1146_1624_in0;
-wire [15:0] smin_1623_1146_1624_in1;
-wire [15:0] smin_1623_1146_1624_out;
-wire [15:0] smin_1632_1146_1633_in0;
-wire [15:0] smin_1632_1146_1633_in1;
-wire [15:0] smin_1632_1146_1633_out;
-wire [15:0] smin_1641_1146_1642_in0;
-wire [15:0] smin_1641_1146_1642_in1;
-wire [15:0] smin_1641_1146_1642_out;
-wire [15:0] smin_1684_1146_1685_in0;
-wire [15:0] smin_1684_1146_1685_in1;
-wire [15:0] smin_1684_1146_1685_out;
-wire [15:0] smin_1703_1146_1704_in0;
-wire [15:0] smin_1703_1146_1704_in1;
-wire [15:0] smin_1703_1146_1704_out;
-wire [15:0] smin_1742_1146_1743_in0;
-wire [15:0] smin_1742_1146_1743_in1;
-wire [15:0] smin_1742_1146_1743_out;
-wire [15:0] smin_1761_1146_1762_in0;
-wire [15:0] smin_1761_1146_1762_in1;
-wire [15:0] smin_1761_1146_1762_out;
-wire [15:0] smin_1800_1146_1801_in0;
-wire [15:0] smin_1800_1146_1801_in1;
-wire [15:0] smin_1800_1146_1801_out;
-wire [15:0] smin_1809_1146_1810_in0;
-wire [15:0] smin_1809_1146_1810_in1;
-wire [15:0] smin_1809_1146_1810_out;
-wire [15:0] smin_1818_1146_1819_in0;
-wire [15:0] smin_1818_1146_1819_in1;
-wire [15:0] smin_1818_1146_1819_out;
-wire [15:0] smin_1837_1146_1838_in0;
-wire [15:0] smin_1837_1146_1838_in1;
-wire [15:0] smin_1837_1146_1838_out;
-wire [15:0] smin_1847_1146_1848_in0;
-wire [15:0] smin_1847_1146_1848_in1;
-wire [15:0] smin_1847_1146_1848_out;
-wire [15:0] smin_1857_1146_1858_in0;
-wire [15:0] smin_1857_1146_1858_in1;
-wire [15:0] smin_1857_1146_1858_out;
-wire [15:0] smin_1899_1146_1900_in0;
-wire [15:0] smin_1899_1146_1900_in1;
-wire [15:0] smin_1899_1146_1900_out;
-wire [15:0] smin_1918_1146_1919_in0;
-wire [15:0] smin_1918_1146_1919_in1;
-wire [15:0] smin_1918_1146_1919_out;
-wire [15:0] smin_1957_1146_1958_in0;
-wire [15:0] smin_1957_1146_1958_in1;
-wire [15:0] smin_1957_1146_1958_out;
-wire [15:0] smin_1976_1146_1977_in0;
-wire [15:0] smin_1976_1146_1977_in1;
-wire [15:0] smin_1976_1146_1977_out;
-wire [15:0] sub_1515_1518_1519_out;
-assign add_1247_1343_1374_out = 16'(ashr_1245_1246_1247_out + ashr_1342_1246_1343_out);
-assign add_1436_1493_1516_out = 16'(ashr_1435_1246_1436_out + ashr_1492_1246_1493_out);
-assign add_1539_1558_1573_out = 16'(ashr_1538_1246_1539_out + ashr_1557_1246_1558_out);
-assign add_1617_1654_1673_out = 16'(ashr_1616_1246_1617_out + ashr_1653_1246_1654_out);
-assign add_1697_1716_1731_out = 16'(ashr_1696_1246_1697_out + ashr_1715_1246_1716_out);
-assign add_1755_1774_1789_out = 16'(ashr_1754_1246_1755_out + ashr_1773_1246_1774_out);
-assign add_1831_1870_1889_out = 16'(ashr_1830_1246_1831_out + ashr_1869_1246_1870_out);
-assign add_1912_1931_1946_out = 16'(ashr_1911_1246_1912_out + ashr_1930_1246_1931_out);
-assign add_1970_1989_2004_out = 16'(ashr_1969_1246_1970_out + ashr_1988_1246_1989_out);
-assign ashr_1150_1151_1152_out = ($signed(16'(smax_1147_1148_1149_out * smax_1147_1148_1149_out))) >>> 16'h0007;
-assign ashr_1172_1151_1173_out = ($signed(16'(smax_1170_1148_1171_out * smax_1170_1148_1171_out))) >>> 16'h0007;
-assign ashr_1183_1151_1184_out = ($signed(16'(smax_1181_1148_1182_out * smax_1181_1148_1182_out))) >>> 16'h0007;
-assign ashr_1194_1151_1195_out = ($signed(16'(smax_1192_1148_1193_out * smax_1192_1148_1193_out))) >>> 16'h0007;
-assign ashr_1204_1151_1205_out = ($signed(16'(smax_1202_1148_1203_out * smax_1202_1148_1203_out))) >>> 16'h0007;
-assign ashr_1215_1151_1216_out = ($signed(16'(smax_1213_1148_1214_out * smax_1213_1148_1214_out))) >>> 16'h0007;
-assign ashr_1225_1151_1226_out = ($signed(16'(smax_1223_1148_1224_out * smax_1223_1148_1224_out))) >>> 16'h0007;
-assign ashr_1236_1151_1237_out = ($signed(16'(smax_1234_1148_1235_out * smax_1234_1148_1235_out))) >>> 16'h0007;
-assign ashr_1245_1246_1247_out = ($signed(16'(ashr_1150_1151_1152_out + (16'((($signed(16'(smax_1160_1148_1161_out * smax_1160_1148_1161_out))) >>> 16'h0007) + (16'(ashr_1172_1151_1173_out + (16'(ashr_1183_1151_1184_out + (16'(ashr_1194_1151_1195_out + (16'(ashr_1204_1151_1205_out + (16'(ashr_1215_1151_1216_out + (16'(ashr_1225_1151_1226_out + ashr_1236_1151_1237_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1256_1151_1257_out = ($signed(16'(smax_1254_1148_1255_out * smax_1254_1148_1255_out))) >>> 16'h0007;
-assign ashr_1276_1151_1277_out = ($signed(16'(smax_1274_1148_1275_out * smax_1274_1148_1275_out))) >>> 16'h0007;
-assign ashr_1285_1151_1286_out = ($signed(16'(smax_1283_1148_1284_out * smax_1283_1148_1284_out))) >>> 16'h0007;
-assign ashr_1294_1151_1295_out = ($signed(16'(smax_1292_1148_1293_out * smax_1292_1148_1293_out))) >>> 16'h0007;
-assign ashr_1303_1151_1304_out = ($signed(16'(smax_1301_1148_1302_out * smax_1301_1148_1302_out))) >>> 16'h0007;
-assign ashr_1313_1151_1314_out = ($signed(16'(smax_1311_1148_1312_out * smax_1311_1148_1312_out))) >>> 16'h0007;
-assign ashr_1323_1151_1324_out = ($signed(16'(smax_1321_1148_1322_out * smax_1321_1148_1322_out))) >>> 16'h0007;
-assign ashr_1333_1151_1334_out = ($signed(16'(smax_1331_1148_1332_out * smax_1331_1148_1332_out))) >>> 16'h0007;
-assign ashr_1342_1246_1343_out = ($signed(16'(ashr_1256_1151_1257_out + (16'((($signed(16'(smax_1264_1148_1265_out * smax_1264_1148_1265_out))) >>> 16'h0007) + (16'(ashr_1276_1151_1277_out + (16'(ashr_1285_1151_1286_out + (16'(ashr_1294_1151_1295_out + (16'(ashr_1303_1151_1304_out + (16'(ashr_1313_1151_1314_out + (16'(ashr_1323_1151_1324_out + ashr_1333_1151_1334_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1345_1151_1346_out = ($signed(16'(smax_1147_1148_1149_out * smax_1254_1148_1255_out))) >>> 16'h0007;
-assign ashr_1349_1151_1350_out = ($signed(16'(smax_1170_1148_1171_out * smax_1274_1148_1275_out))) >>> 16'h0007;
-assign ashr_1351_1151_1352_out = ($signed(16'(smax_1181_1148_1182_out * smax_1283_1148_1284_out))) >>> 16'h0007;
-assign ashr_1353_1151_1354_out = ($signed(16'(smax_1192_1148_1193_out * smax_1292_1148_1293_out))) >>> 16'h0007;
-assign ashr_1355_1151_1356_out = ($signed(16'(smax_1202_1148_1203_out * smax_1301_1148_1302_out))) >>> 16'h0007;
-assign ashr_1357_1151_1358_out = ($signed(16'(smax_1213_1148_1214_out * smax_1311_1148_1312_out))) >>> 16'h0007;
-assign ashr_1359_1151_1360_out = ($signed(16'(smax_1223_1148_1224_out * smax_1321_1148_1322_out))) >>> 16'h0007;
-assign ashr_1361_1151_1362_out = ($signed(16'(smax_1234_1148_1235_out * smax_1331_1148_1332_out))) >>> 16'h0007;
-assign ashr_1370_1246_1371_out = ($signed(16'(ashr_1345_1151_1346_out + (16'((($signed(16'(smax_1160_1148_1161_out * smax_1264_1148_1265_out))) >>> 16'h0007) + (16'(ashr_1349_1151_1350_out + (16'(ashr_1351_1151_1352_out + (16'(ashr_1353_1151_1354_out + (16'(ashr_1355_1151_1356_out + (16'(ashr_1357_1151_1358_out + (16'(ashr_1359_1151_1360_out + ashr_1361_1151_1362_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1387_1151_1388_out = ($signed(16'(smax_1385_1148_1386_out * smax_1385_1148_1386_out))) >>> 16'h0007;
-assign ashr_1397_1151_1398_out = ($signed(16'(smax_1395_1148_1396_out * smax_1395_1148_1396_out))) >>> 16'h0007;
-assign ashr_1406_1151_1407_out = ($signed(16'(smax_1404_1148_1405_out * smax_1404_1148_1405_out))) >>> 16'h0007;
-assign ashr_1416_1151_1417_out = ($signed(16'(smax_1414_1148_1415_out * smax_1414_1148_1415_out))) >>> 16'h0007;
-assign ashr_1426_1151_1427_out = ($signed(16'(smax_1424_1148_1425_out * smax_1424_1148_1425_out))) >>> 16'h0007;
-assign ashr_1435_1246_1436_out = ($signed(16'(ashr_1204_1151_1205_out + (16'(ashr_1194_1151_1195_out + (16'(ashr_1387_1151_1388_out + (16'(ashr_1236_1151_1237_out + (16'(ashr_1225_1151_1226_out + (16'(ashr_1397_1151_1398_out + (16'(ashr_1406_1151_1407_out + (16'(ashr_1416_1151_1417_out + ashr_1426_1151_1427_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1444_1151_1445_out = ($signed(16'(smax_1442_1148_1443_out * smax_1442_1148_1443_out))) >>> 16'h0007;
-assign ashr_1453_1151_1454_out = ($signed(16'(smax_1451_1148_1452_out * smax_1451_1148_1452_out))) >>> 16'h0007;
-assign ashr_1463_1151_1464_out = ($signed(16'(smax_1461_1148_1462_out * smax_1461_1148_1462_out))) >>> 16'h0007;
-assign ashr_1473_1151_1474_out = ($signed(16'(smax_1471_1148_1472_out * smax_1471_1148_1472_out))) >>> 16'h0007;
-assign ashr_1483_1151_1484_out = ($signed(16'(smax_1481_1148_1482_out * smax_1481_1148_1482_out))) >>> 16'h0007;
-assign ashr_1492_1246_1493_out = ($signed(16'(ashr_1303_1151_1304_out + (16'(ashr_1294_1151_1295_out + (16'(ashr_1444_1151_1445_out + (16'(ashr_1333_1151_1334_out + (16'(ashr_1323_1151_1324_out + (16'(ashr_1453_1151_1454_out + (16'(ashr_1463_1151_1464_out + (16'(ashr_1473_1151_1474_out + ashr_1483_1151_1484_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1495_1151_1496_out = ($signed(16'(smax_1385_1148_1386_out * smax_1442_1148_1443_out))) >>> 16'h0007;
-assign ashr_1497_1151_1498_out = ($signed(16'(smax_1395_1148_1396_out * smax_1451_1148_1452_out))) >>> 16'h0007;
-assign ashr_1499_1151_1500_out = ($signed(16'(smax_1404_1148_1405_out * smax_1461_1148_1462_out))) >>> 16'h0007;
-assign ashr_1501_1151_1502_out = ($signed(16'(smax_1414_1148_1415_out * smax_1471_1148_1472_out))) >>> 16'h0007;
-assign ashr_1503_1151_1504_out = ($signed(16'(smax_1424_1148_1425_out * smax_1481_1148_1482_out))) >>> 16'h0007;
-assign ashr_1512_1246_1513_out = ($signed(16'(ashr_1355_1151_1356_out + (16'(ashr_1353_1151_1354_out + (16'(ashr_1495_1151_1496_out + (16'(ashr_1361_1151_1362_out + (16'(ashr_1359_1151_1360_out + (16'(ashr_1497_1151_1498_out + (16'(ashr_1499_1151_1500_out + (16'(ashr_1501_1151_1502_out + ashr_1503_1151_1504_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1529_1151_1530_out = ($signed(16'(smax_1527_1148_1528_out * smax_1527_1148_1528_out))) >>> 16'h0007;
-assign ashr_1538_1246_1539_out = ($signed(16'(ashr_1172_1151_1173_out + (16'(ashr_1150_1151_1152_out + (16'(ashr_1529_1151_1530_out + (16'(ashr_1194_1151_1195_out + (16'(ashr_1204_1151_1205_out + (16'(ashr_1387_1151_1388_out + (16'(ashr_1236_1151_1237_out + (16'(ashr_1397_1151_1398_out + ashr_1225_1151_1226_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1548_1151_1549_out = ($signed(16'(smax_1546_1148_1547_out * smax_1546_1148_1547_out))) >>> 16'h0007;
-assign ashr_1557_1246_1558_out = ($signed(16'(ashr_1276_1151_1277_out + (16'(ashr_1256_1151_1257_out + (16'(ashr_1548_1151_1549_out + (16'(ashr_1294_1151_1295_out + (16'(ashr_1303_1151_1304_out + (16'(ashr_1444_1151_1445_out + (16'(ashr_1333_1151_1334_out + (16'(ashr_1453_1151_1454_out + ashr_1323_1151_1324_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1560_1151_1561_out = ($signed(16'(smax_1527_1148_1528_out * smax_1546_1148_1547_out))) >>> 16'h0007;
-assign ashr_1569_1246_1570_out = ($signed(16'(ashr_1349_1151_1350_out + (16'(ashr_1345_1151_1346_out + (16'(ashr_1560_1151_1561_out + (16'(ashr_1353_1151_1354_out + (16'(ashr_1355_1151_1356_out + (16'(ashr_1495_1151_1496_out + (16'(ashr_1361_1151_1362_out + (16'(ashr_1497_1151_1498_out + ashr_1359_1151_1360_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1597_1151_1598_out = ($signed(16'(smax_1595_1148_1596_out * smax_1595_1148_1596_out))) >>> 16'h0007;
-assign ashr_1607_1151_1608_out = ($signed(16'(smax_1605_1148_1606_out * smax_1605_1148_1606_out))) >>> 16'h0007;
-assign ashr_1616_1246_1617_out = ($signed(16'(ashr_1529_1151_1530_out + (16'(ashr_1172_1151_1173_out + (16'((($signed(16'(smax_1585_1148_1586_out * smax_1585_1148_1586_out))) >>> 16'h0007) + (16'(ashr_1204_1151_1205_out + (16'(ashr_1387_1151_1388_out + (16'(ashr_1597_1151_1598_out + (16'(ashr_1225_1151_1226_out + (16'(ashr_1607_1151_1608_out + ashr_1397_1151_1398_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1635_1151_1636_out = ($signed(16'(smax_1633_1148_1634_out * smax_1633_1148_1634_out))) >>> 16'h0007;
-assign ashr_1644_1151_1645_out = ($signed(16'(smax_1642_1148_1643_out * smax_1642_1148_1643_out))) >>> 16'h0007;
-assign ashr_1653_1246_1654_out = ($signed(16'(ashr_1548_1151_1549_out + (16'(ashr_1276_1151_1277_out + (16'((($signed(16'(smax_1624_1148_1625_out * smax_1624_1148_1625_out))) >>> 16'h0007) + (16'(ashr_1303_1151_1304_out + (16'(ashr_1444_1151_1445_out + (16'(ashr_1635_1151_1636_out + (16'(ashr_1323_1151_1324_out + (16'(ashr_1644_1151_1645_out + ashr_1453_1151_1454_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1658_1151_1659_out = ($signed(16'(smax_1595_1148_1596_out * smax_1633_1148_1634_out))) >>> 16'h0007;
-assign ashr_1660_1151_1661_out = ($signed(16'(smax_1605_1148_1606_out * smax_1642_1148_1643_out))) >>> 16'h0007;
-assign ashr_1669_1246_1670_out = ($signed(16'(ashr_1560_1151_1561_out + (16'(ashr_1349_1151_1350_out + (16'((($signed(16'(smax_1585_1148_1586_out * smax_1624_1148_1625_out))) >>> 16'h0007) + (16'(ashr_1355_1151_1356_out + (16'(ashr_1495_1151_1496_out + (16'(ashr_1658_1151_1659_out + (16'(ashr_1359_1151_1360_out + (16'(ashr_1660_1151_1661_out + ashr_1497_1151_1498_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1687_1151_1688_out = ($signed(16'(smax_1685_1148_1686_out * smax_1685_1148_1686_out))) >>> 16'h0007;
-assign ashr_1696_1246_1697_out = ($signed(16'(ashr_1194_1151_1195_out + (16'(ashr_1183_1151_1184_out + (16'(ashr_1204_1151_1205_out + (16'(ashr_1215_1151_1216_out + (16'(ashr_1236_1151_1237_out + (16'(ashr_1225_1151_1226_out + (16'(ashr_1687_1151_1688_out + (16'(ashr_1426_1151_1427_out + ashr_1406_1151_1407_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1706_1151_1707_out = ($signed(16'(smax_1704_1148_1705_out * smax_1704_1148_1705_out))) >>> 16'h0007;
-assign ashr_1715_1246_1716_out = ($signed(16'(ashr_1294_1151_1295_out + (16'(ashr_1285_1151_1286_out + (16'(ashr_1303_1151_1304_out + (16'(ashr_1313_1151_1314_out + (16'(ashr_1333_1151_1334_out + (16'(ashr_1323_1151_1324_out + (16'(ashr_1706_1151_1707_out + (16'(ashr_1483_1151_1484_out + ashr_1463_1151_1464_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1718_1151_1719_out = ($signed(16'(smax_1685_1148_1686_out * smax_1704_1148_1705_out))) >>> 16'h0007;
-assign ashr_1727_1246_1728_out = ($signed(16'(ashr_1353_1151_1354_out + (16'(ashr_1351_1151_1352_out + (16'(ashr_1355_1151_1356_out + (16'(ashr_1357_1151_1358_out + (16'(ashr_1361_1151_1362_out + (16'(ashr_1359_1151_1360_out + (16'(ashr_1718_1151_1719_out + (16'(ashr_1503_1151_1504_out + ashr_1499_1151_1500_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1745_1151_1746_out = ($signed(16'(smax_1743_1148_1744_out * smax_1743_1148_1744_out))) >>> 16'h0007;
-assign ashr_1754_1246_1755_out = ($signed(16'(ashr_1387_1151_1388_out + (16'(ashr_1204_1151_1205_out + (16'(ashr_1597_1151_1598_out + (16'(ashr_1225_1151_1226_out + (16'(ashr_1397_1151_1398_out + (16'(ashr_1607_1151_1608_out + (16'(ashr_1426_1151_1427_out + (16'(ashr_1745_1151_1746_out + ashr_1416_1151_1417_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1764_1151_1765_out = ($signed(16'(smax_1762_1148_1763_out * smax_1762_1148_1763_out))) >>> 16'h0007;
-assign ashr_1773_1246_1774_out = ($signed(16'(ashr_1444_1151_1445_out + (16'(ashr_1303_1151_1304_out + (16'(ashr_1635_1151_1636_out + (16'(ashr_1323_1151_1324_out + (16'(ashr_1453_1151_1454_out + (16'(ashr_1644_1151_1645_out + (16'(ashr_1483_1151_1484_out + (16'(ashr_1764_1151_1765_out + ashr_1473_1151_1474_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1776_1151_1777_out = ($signed(16'(smax_1743_1148_1744_out * smax_1762_1148_1763_out))) >>> 16'h0007;
-assign ashr_1785_1246_1786_out = ($signed(16'(ashr_1495_1151_1496_out + (16'(ashr_1355_1151_1356_out + (16'(ashr_1658_1151_1659_out + (16'(ashr_1359_1151_1360_out + (16'(ashr_1497_1151_1498_out + (16'(ashr_1660_1151_1661_out + (16'(ashr_1503_1151_1504_out + (16'(ashr_1776_1151_1777_out + ashr_1501_1151_1502_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1812_1151_1813_out = ($signed(16'(smax_1810_1148_1811_out * smax_1810_1148_1811_out))) >>> 16'h0007;
-assign ashr_1821_1151_1822_out = ($signed(16'(smax_1819_1148_1820_out * smax_1819_1148_1820_out))) >>> 16'h0007;
-assign ashr_1830_1246_1831_out = ($signed(16'(ashr_1236_1151_1237_out + (16'(ashr_1215_1151_1216_out + (16'(ashr_1225_1151_1226_out + (16'(ashr_1687_1151_1688_out + (16'(ashr_1406_1151_1407_out + (16'(ashr_1426_1151_1427_out + (16'((($signed(16'(smax_1801_1148_1802_out * smax_1801_1148_1802_out))) >>> 16'h0007) + (16'(ashr_1812_1151_1813_out + ashr_1821_1151_1822_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1850_1151_1851_out = ($signed(16'(smax_1848_1148_1849_out * smax_1848_1148_1849_out))) >>> 16'h0007;
-assign ashr_1860_1151_1861_out = ($signed(16'(smax_1858_1148_1859_out * smax_1858_1148_1859_out))) >>> 16'h0007;
-assign ashr_1869_1246_1870_out = ($signed(16'(ashr_1333_1151_1334_out + (16'(ashr_1313_1151_1314_out + (16'(ashr_1323_1151_1324_out + (16'(ashr_1706_1151_1707_out + (16'(ashr_1463_1151_1464_out + (16'(ashr_1483_1151_1484_out + (16'((($signed(16'(smax_1838_1148_1839_out * smax_1838_1148_1839_out))) >>> 16'h0007) + (16'(ashr_1850_1151_1851_out + ashr_1860_1151_1861_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1874_1151_1875_out = ($signed(16'(smax_1810_1148_1811_out * smax_1848_1148_1849_out))) >>> 16'h0007;
-assign ashr_1876_1151_1877_out = ($signed(16'(smax_1819_1148_1820_out * smax_1858_1148_1859_out))) >>> 16'h0007;
-assign ashr_1885_1246_1886_out = ($signed(16'(ashr_1361_1151_1362_out + (16'(ashr_1357_1151_1358_out + (16'(ashr_1359_1151_1360_out + (16'(ashr_1718_1151_1719_out + (16'(ashr_1499_1151_1500_out + (16'(ashr_1503_1151_1504_out + (16'((($signed(16'(smax_1801_1148_1802_out * smax_1838_1148_1839_out))) >>> 16'h0007) + (16'(ashr_1874_1151_1875_out + ashr_1876_1151_1877_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1902_1151_1903_out = ($signed(16'(smax_1900_1148_1901_out * smax_1900_1148_1901_out))) >>> 16'h0007;
-assign ashr_1911_1246_1912_out = ($signed(16'(ashr_1225_1151_1226_out + (16'(ashr_1236_1151_1237_out + (16'(ashr_1397_1151_1398_out + (16'(ashr_1406_1151_1407_out + (16'(ashr_1426_1151_1427_out + (16'(ashr_1416_1151_1417_out + (16'(ashr_1821_1151_1822_out + (16'(ashr_1902_1151_1903_out + ashr_1812_1151_1813_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1921_1151_1922_out = ($signed(16'(smax_1919_1148_1920_out * smax_1919_1148_1920_out))) >>> 16'h0007;
-assign ashr_1930_1246_1931_out = ($signed(16'(ashr_1323_1151_1324_out + (16'(ashr_1333_1151_1334_out + (16'(ashr_1453_1151_1454_out + (16'(ashr_1463_1151_1464_out + (16'(ashr_1483_1151_1484_out + (16'(ashr_1473_1151_1474_out + (16'(ashr_1860_1151_1861_out + (16'(ashr_1921_1151_1922_out + ashr_1850_1151_1851_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1933_1151_1934_out = ($signed(16'(smax_1900_1148_1901_out * smax_1919_1148_1920_out))) >>> 16'h0007;
-assign ashr_1942_1246_1943_out = ($signed(16'(ashr_1359_1151_1360_out + (16'(ashr_1361_1151_1362_out + (16'(ashr_1497_1151_1498_out + (16'(ashr_1499_1151_1500_out + (16'(ashr_1503_1151_1504_out + (16'(ashr_1501_1151_1502_out + (16'(ashr_1876_1151_1877_out + (16'(ashr_1933_1151_1934_out + ashr_1874_1151_1875_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1969_1246_1970_out = ($signed(16'(ashr_1397_1151_1398_out + (16'(ashr_1225_1151_1226_out + (16'(ashr_1607_1151_1608_out + (16'(ashr_1426_1151_1427_out + (16'(ashr_1416_1151_1417_out + (16'(ashr_1745_1151_1746_out + (16'(ashr_1812_1151_1813_out + (16'((($signed(16'(smax_1958_1148_1959_out * smax_1958_1148_1959_out))) >>> 16'h0007) + ashr_1902_1151_1903_out))))))))))))))))) >>> 16'h0006;
-assign ashr_1988_1246_1989_out = ($signed(16'(ashr_1453_1151_1454_out + (16'(ashr_1323_1151_1324_out + (16'(ashr_1644_1151_1645_out + (16'(ashr_1483_1151_1484_out + (16'(ashr_1473_1151_1474_out + (16'(ashr_1764_1151_1765_out + (16'(ashr_1850_1151_1851_out + (16'((($signed(16'(smax_1977_1148_1978_out * smax_1977_1148_1978_out))) >>> 16'h0007) + ashr_1921_1151_1922_out))))))))))))))))) >>> 16'h0006;
-assign ashr_2000_1246_2001_out = ($signed(16'(ashr_1497_1151_1498_out + (16'(ashr_1359_1151_1360_out + (16'(ashr_1660_1151_1661_out + (16'(ashr_1503_1151_1504_out + (16'(ashr_1501_1151_1502_out + (16'(ashr_1776_1151_1777_out + (16'(ashr_1874_1151_1875_out + (16'((($signed(16'(smax_1958_1148_1959_out * smax_1977_1148_1978_out))) >>> 16'h0007) + ashr_1933_1151_1934_out))))))))))))))))) >>> 16'h0006;
-assign mul_padded16_global_wrapper_stencil_14_1138_1196_out = 16'(in0_padded16_global_wrapper_stencil[5] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_15_1138_1164_out = 16'(in0_padded16_global_wrapper_stencil[6] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_16_1138_1206_out = 16'(in0_padded16_global_wrapper_stencil[7] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_18_1138_1227_out = 16'(in0_padded16_global_wrapper_stencil[9] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_19_1138_1231_out = 16'(in0_padded16_global_wrapper_stencil[10] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_20_1138_1217_out = 16'(in0_padded16_global_wrapper_stencil[12] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_21_1138_1325_out = 16'(in0_padded16_global_wrapper_stencil[13] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_23_1138_1418_out = 16'(in0_padded16_global_wrapper_stencil[15] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_24_1138_1315_out = 16'(in0_padded16_global_wrapper_stencil[16] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_25_1138_1305_out = 16'(in0_padded16_global_wrapper_stencil[17] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_26_1138_1521_out = 16'(in0_padded16_global_wrapper_stencil[18] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_27_1138_1389_out = 16'(in0_padded16_global_wrapper_stencil[19] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_28_1138_1379_out = 16'(in0_padded16_global_wrapper_stencil[20] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_29_1138_1408_out = 16'(in0_padded16_global_wrapper_stencil[21] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_2_1138_1185_out = 16'(in0_padded16_global_wrapper_stencil[11] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_30_1138_1475_out = 16'(in0_padded16_global_wrapper_stencil[23] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_31_1138_1698_out = 16'(in0_padded16_global_wrapper_stencil[24] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_32_1138_1756_out = 16'(in0_padded16_global_wrapper_stencil[25] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_33_1138_1465_out = 16'(in0_padded16_global_wrapper_stencil[26] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_34_1138_1455_out = 16'(in0_padded16_global_wrapper_stencil[27] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_3_1138_1139_out = 16'(in0_padded16_global_wrapper_stencil[22] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_5_1138_1143_out = 16'(in0_padded16_global_wrapper_stencil[44] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_6_1138_1189_out = 16'(in0_padded16_global_wrapper_stencil[45] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_8_1138_1174_out = 16'(in0_padded16_global_wrapper_stencil[47] * 16'h0002);
-assign mul_padded16_global_wrapper_stencil_9_1138_1153_out = 16'(in0_padded16_global_wrapper_stencil[48] * 16'h0002);
-assign smax_1147_1148_1149_in0 = smin_1145_1146_1147_out;
-assign smax_1147_1148_1149_in1 = 16'hff01;
-commonlib_smax__width16 smax_1147_1148_1149 (
-    .in0(smax_1147_1148_1149_in0),
-    .in1(smax_1147_1148_1149_in1),
-    .out(smax_1147_1148_1149_out)
-);
-assign smax_1160_1148_1161_in0 = smin_1159_1146_1160_out;
-assign smax_1160_1148_1161_in1 = 16'hff01;
-commonlib_smax__width16 smax_1160_1148_1161 (
-    .in0(smax_1160_1148_1161_in0),
-    .in1(smax_1160_1148_1161_in1),
-    .out(smax_1160_1148_1161_out)
-);
-assign smax_1170_1148_1171_in0 = smin_1169_1146_1170_out;
-assign smax_1170_1148_1171_in1 = 16'hff01;
-commonlib_smax__width16 smax_1170_1148_1171 (
-    .in0(smax_1170_1148_1171_in0),
-    .in1(smax_1170_1148_1171_in1),
-    .out(smax_1170_1148_1171_out)
-);
-assign smax_1181_1148_1182_in0 = smin_1180_1146_1181_out;
-assign smax_1181_1148_1182_in1 = 16'hff01;
-commonlib_smax__width16 smax_1181_1148_1182 (
-    .in0(smax_1181_1148_1182_in0),
-    .in1(smax_1181_1148_1182_in1),
-    .out(smax_1181_1148_1182_out)
-);
-assign smax_1192_1148_1193_in0 = smin_1191_1146_1192_out;
-assign smax_1192_1148_1193_in1 = 16'hff01;
-commonlib_smax__width16 smax_1192_1148_1193 (
-    .in0(smax_1192_1148_1193_in0),
-    .in1(smax_1192_1148_1193_in1),
-    .out(smax_1192_1148_1193_out)
-);
-assign smax_1202_1148_1203_in0 = smin_1201_1146_1202_out;
-assign smax_1202_1148_1203_in1 = 16'hff01;
-commonlib_smax__width16 smax_1202_1148_1203 (
-    .in0(smax_1202_1148_1203_in0),
-    .in1(smax_1202_1148_1203_in1),
-    .out(smax_1202_1148_1203_out)
-);
-assign smax_1213_1148_1214_in0 = smin_1212_1146_1213_out;
-assign smax_1213_1148_1214_in1 = 16'hff01;
-commonlib_smax__width16 smax_1213_1148_1214 (
-    .in0(smax_1213_1148_1214_in0),
-    .in1(smax_1213_1148_1214_in1),
-    .out(smax_1213_1148_1214_out)
-);
-assign smax_1223_1148_1224_in0 = smin_1222_1146_1223_out;
-assign smax_1223_1148_1224_in1 = 16'hff01;
-commonlib_smax__width16 smax_1223_1148_1224 (
-    .in0(smax_1223_1148_1224_in0),
-    .in1(smax_1223_1148_1224_in1),
-    .out(smax_1223_1148_1224_out)
-);
-assign smax_1234_1148_1235_in0 = smin_1233_1146_1234_out;
-assign smax_1234_1148_1235_in1 = 16'hff01;
-commonlib_smax__width16 smax_1234_1148_1235 (
-    .in0(smax_1234_1148_1235_in0),
-    .in1(smax_1234_1148_1235_in1),
-    .out(smax_1234_1148_1235_out)
-);
-assign smax_1254_1148_1255_in0 = smin_1253_1146_1254_out;
-assign smax_1254_1148_1255_in1 = 16'hff01;
-commonlib_smax__width16 smax_1254_1148_1255 (
-    .in0(smax_1254_1148_1255_in0),
-    .in1(smax_1254_1148_1255_in1),
-    .out(smax_1254_1148_1255_out)
-);
-assign smax_1264_1148_1265_in0 = smin_1263_1146_1264_out;
-assign smax_1264_1148_1265_in1 = 16'hff01;
-commonlib_smax__width16 smax_1264_1148_1265 (
-    .in0(smax_1264_1148_1265_in0),
-    .in1(smax_1264_1148_1265_in1),
-    .out(smax_1264_1148_1265_out)
-);
-assign smax_1274_1148_1275_in0 = smin_1273_1146_1274_out;
-assign smax_1274_1148_1275_in1 = 16'hff01;
-commonlib_smax__width16 smax_1274_1148_1275 (
-    .in0(smax_1274_1148_1275_in0),
-    .in1(smax_1274_1148_1275_in1),
-    .out(smax_1274_1148_1275_out)
-);
-assign smax_1283_1148_1284_in0 = smin_1282_1146_1283_out;
-assign smax_1283_1148_1284_in1 = 16'hff01;
-commonlib_smax__width16 smax_1283_1148_1284 (
-    .in0(smax_1283_1148_1284_in0),
-    .in1(smax_1283_1148_1284_in1),
-    .out(smax_1283_1148_1284_out)
-);
-assign smax_1292_1148_1293_in0 = smin_1291_1146_1292_out;
-assign smax_1292_1148_1293_in1 = 16'hff01;
-commonlib_smax__width16 smax_1292_1148_1293 (
-    .in0(smax_1292_1148_1293_in0),
-    .in1(smax_1292_1148_1293_in1),
-    .out(smax_1292_1148_1293_out)
-);
-assign smax_1301_1148_1302_in0 = smin_1300_1146_1301_out;
-assign smax_1301_1148_1302_in1 = 16'hff01;
-commonlib_smax__width16 smax_1301_1148_1302 (
-    .in0(smax_1301_1148_1302_in0),
-    .in1(smax_1301_1148_1302_in1),
-    .out(smax_1301_1148_1302_out)
-);
-assign smax_1311_1148_1312_in0 = smin_1310_1146_1311_out;
-assign smax_1311_1148_1312_in1 = 16'hff01;
-commonlib_smax__width16 smax_1311_1148_1312 (
-    .in0(smax_1311_1148_1312_in0),
-    .in1(smax_1311_1148_1312_in1),
-    .out(smax_1311_1148_1312_out)
-);
-assign smax_1321_1148_1322_in0 = smin_1320_1146_1321_out;
-assign smax_1321_1148_1322_in1 = 16'hff01;
-commonlib_smax__width16 smax_1321_1148_1322 (
-    .in0(smax_1321_1148_1322_in0),
-    .in1(smax_1321_1148_1322_in1),
-    .out(smax_1321_1148_1322_out)
-);
-assign smax_1331_1148_1332_in0 = smin_1330_1146_1331_out;
-assign smax_1331_1148_1332_in1 = 16'hff01;
-commonlib_smax__width16 smax_1331_1148_1332 (
-    .in0(smax_1331_1148_1332_in0),
-    .in1(smax_1331_1148_1332_in1),
-    .out(smax_1331_1148_1332_out)
-);
-assign smax_1385_1148_1386_in0 = smin_1384_1146_1385_out;
-assign smax_1385_1148_1386_in1 = 16'hff01;
-commonlib_smax__width16 smax_1385_1148_1386 (
-    .in0(smax_1385_1148_1386_in0),
-    .in1(smax_1385_1148_1386_in1),
-    .out(smax_1385_1148_1386_out)
-);
-assign smax_1395_1148_1396_in0 = smin_1394_1146_1395_out;
-assign smax_1395_1148_1396_in1 = 16'hff01;
-commonlib_smax__width16 smax_1395_1148_1396 (
-    .in0(smax_1395_1148_1396_in0),
-    .in1(smax_1395_1148_1396_in1),
-    .out(smax_1395_1148_1396_out)
-);
-assign smax_1404_1148_1405_in0 = smin_1403_1146_1404_out;
-assign smax_1404_1148_1405_in1 = 16'hff01;
-commonlib_smax__width16 smax_1404_1148_1405 (
-    .in0(smax_1404_1148_1405_in0),
-    .in1(smax_1404_1148_1405_in1),
-    .out(smax_1404_1148_1405_out)
-);
-assign smax_1414_1148_1415_in0 = smin_1413_1146_1414_out;
-assign smax_1414_1148_1415_in1 = 16'hff01;
-commonlib_smax__width16 smax_1414_1148_1415 (
-    .in0(smax_1414_1148_1415_in0),
-    .in1(smax_1414_1148_1415_in1),
-    .out(smax_1414_1148_1415_out)
-);
-assign smax_1424_1148_1425_in0 = smin_1423_1146_1424_out;
-assign smax_1424_1148_1425_in1 = 16'hff01;
-commonlib_smax__width16 smax_1424_1148_1425 (
-    .in0(smax_1424_1148_1425_in0),
-    .in1(smax_1424_1148_1425_in1),
-    .out(smax_1424_1148_1425_out)
-);
-assign smax_1442_1148_1443_in0 = smin_1441_1146_1442_out;
-assign smax_1442_1148_1443_in1 = 16'hff01;
-commonlib_smax__width16 smax_1442_1148_1443 (
-    .in0(smax_1442_1148_1443_in0),
-    .in1(smax_1442_1148_1443_in1),
-    .out(smax_1442_1148_1443_out)
-);
-assign smax_1451_1148_1452_in0 = smin_1450_1146_1451_out;
-assign smax_1451_1148_1452_in1 = 16'hff01;
-commonlib_smax__width16 smax_1451_1148_1452 (
-    .in0(smax_1451_1148_1452_in0),
-    .in1(smax_1451_1148_1452_in1),
-    .out(smax_1451_1148_1452_out)
-);
-assign smax_1461_1148_1462_in0 = smin_1460_1146_1461_out;
-assign smax_1461_1148_1462_in1 = 16'hff01;
-commonlib_smax__width16 smax_1461_1148_1462 (
-    .in0(smax_1461_1148_1462_in0),
-    .in1(smax_1461_1148_1462_in1),
-    .out(smax_1461_1148_1462_out)
-);
-assign smax_1471_1148_1472_in0 = smin_1470_1146_1471_out;
-assign smax_1471_1148_1472_in1 = 16'hff01;
-commonlib_smax__width16 smax_1471_1148_1472 (
-    .in0(smax_1471_1148_1472_in0),
-    .in1(smax_1471_1148_1472_in1),
-    .out(smax_1471_1148_1472_out)
-);
-assign smax_1481_1148_1482_in0 = smin_1480_1146_1481_out;
-assign smax_1481_1148_1482_in1 = 16'hff01;
-commonlib_smax__width16 smax_1481_1148_1482 (
-    .in0(smax_1481_1148_1482_in0),
-    .in1(smax_1481_1148_1482_in1),
-    .out(smax_1481_1148_1482_out)
-);
-assign smax_1527_1148_1528_in0 = smin_1526_1146_1527_out;
-assign smax_1527_1148_1528_in1 = 16'hff01;
-commonlib_smax__width16 smax_1527_1148_1528 (
-    .in0(smax_1527_1148_1528_in0),
-    .in1(smax_1527_1148_1528_in1),
-    .out(smax_1527_1148_1528_out)
-);
-assign smax_1546_1148_1547_in0 = smin_1545_1146_1546_out;
-assign smax_1546_1148_1547_in1 = 16'hff01;
-commonlib_smax__width16 smax_1546_1148_1547 (
-    .in0(smax_1546_1148_1547_in0),
-    .in1(smax_1546_1148_1547_in1),
-    .out(smax_1546_1148_1547_out)
-);
-assign smax_1585_1148_1586_in0 = smin_1584_1146_1585_out;
-assign smax_1585_1148_1586_in1 = 16'hff01;
-commonlib_smax__width16 smax_1585_1148_1586 (
-    .in0(smax_1585_1148_1586_in0),
-    .in1(smax_1585_1148_1586_in1),
-    .out(smax_1585_1148_1586_out)
-);
-assign smax_1595_1148_1596_in0 = smin_1594_1146_1595_out;
-assign smax_1595_1148_1596_in1 = 16'hff01;
-commonlib_smax__width16 smax_1595_1148_1596 (
-    .in0(smax_1595_1148_1596_in0),
-    .in1(smax_1595_1148_1596_in1),
-    .out(smax_1595_1148_1596_out)
-);
-assign smax_1605_1148_1606_in0 = smin_1604_1146_1605_out;
-assign smax_1605_1148_1606_in1 = 16'hff01;
-commonlib_smax__width16 smax_1605_1148_1606 (
-    .in0(smax_1605_1148_1606_in0),
-    .in1(smax_1605_1148_1606_in1),
-    .out(smax_1605_1148_1606_out)
-);
-assign smax_1624_1148_1625_in0 = smin_1623_1146_1624_out;
-assign smax_1624_1148_1625_in1 = 16'hff01;
-commonlib_smax__width16 smax_1624_1148_1625 (
-    .in0(smax_1624_1148_1625_in0),
-    .in1(smax_1624_1148_1625_in1),
-    .out(smax_1624_1148_1625_out)
-);
-assign smax_1633_1148_1634_in0 = smin_1632_1146_1633_out;
-assign smax_1633_1148_1634_in1 = 16'hff01;
-commonlib_smax__width16 smax_1633_1148_1634 (
-    .in0(smax_1633_1148_1634_in0),
-    .in1(smax_1633_1148_1634_in1),
-    .out(smax_1633_1148_1634_out)
-);
-assign smax_1642_1148_1643_in0 = smin_1641_1146_1642_out;
-assign smax_1642_1148_1643_in1 = 16'hff01;
-commonlib_smax__width16 smax_1642_1148_1643 (
-    .in0(smax_1642_1148_1643_in0),
-    .in1(smax_1642_1148_1643_in1),
-    .out(smax_1642_1148_1643_out)
-);
-assign smax_1685_1148_1686_in0 = smin_1684_1146_1685_out;
-assign smax_1685_1148_1686_in1 = 16'hff01;
-commonlib_smax__width16 smax_1685_1148_1686 (
-    .in0(smax_1685_1148_1686_in0),
-    .in1(smax_1685_1148_1686_in1),
-    .out(smax_1685_1148_1686_out)
-);
-assign smax_1704_1148_1705_in0 = smin_1703_1146_1704_out;
-assign smax_1704_1148_1705_in1 = 16'hff01;
-commonlib_smax__width16 smax_1704_1148_1705 (
-    .in0(smax_1704_1148_1705_in0),
-    .in1(smax_1704_1148_1705_in1),
-    .out(smax_1704_1148_1705_out)
-);
-assign smax_1743_1148_1744_in0 = smin_1742_1146_1743_out;
-assign smax_1743_1148_1744_in1 = 16'hff01;
-commonlib_smax__width16 smax_1743_1148_1744 (
-    .in0(smax_1743_1148_1744_in0),
-    .in1(smax_1743_1148_1744_in1),
-    .out(smax_1743_1148_1744_out)
-);
-assign smax_1762_1148_1763_in0 = smin_1761_1146_1762_out;
-assign smax_1762_1148_1763_in1 = 16'hff01;
-commonlib_smax__width16 smax_1762_1148_1763 (
-    .in0(smax_1762_1148_1763_in0),
-    .in1(smax_1762_1148_1763_in1),
-    .out(smax_1762_1148_1763_out)
-);
-assign smax_1801_1148_1802_in0 = smin_1800_1146_1801_out;
-assign smax_1801_1148_1802_in1 = 16'hff01;
-commonlib_smax__width16 smax_1801_1148_1802 (
-    .in0(smax_1801_1148_1802_in0),
-    .in1(smax_1801_1148_1802_in1),
-    .out(smax_1801_1148_1802_out)
-);
-assign smax_1810_1148_1811_in0 = smin_1809_1146_1810_out;
-assign smax_1810_1148_1811_in1 = 16'hff01;
-commonlib_smax__width16 smax_1810_1148_1811 (
-    .in0(smax_1810_1148_1811_in0),
-    .in1(smax_1810_1148_1811_in1),
-    .out(smax_1810_1148_1811_out)
-);
-assign smax_1819_1148_1820_in0 = smin_1818_1146_1819_out;
-assign smax_1819_1148_1820_in1 = 16'hff01;
-commonlib_smax__width16 smax_1819_1148_1820 (
-    .in0(smax_1819_1148_1820_in0),
-    .in1(smax_1819_1148_1820_in1),
-    .out(smax_1819_1148_1820_out)
-);
-assign smax_1838_1148_1839_in0 = smin_1837_1146_1838_out;
-assign smax_1838_1148_1839_in1 = 16'hff01;
-commonlib_smax__width16 smax_1838_1148_1839 (
-    .in0(smax_1838_1148_1839_in0),
-    .in1(smax_1838_1148_1839_in1),
-    .out(smax_1838_1148_1839_out)
-);
-assign smax_1848_1148_1849_in0 = smin_1847_1146_1848_out;
-assign smax_1848_1148_1849_in1 = 16'hff01;
-commonlib_smax__width16 smax_1848_1148_1849 (
-    .in0(smax_1848_1148_1849_in0),
-    .in1(smax_1848_1148_1849_in1),
-    .out(smax_1848_1148_1849_out)
-);
-assign smax_1858_1148_1859_in0 = smin_1857_1146_1858_out;
-assign smax_1858_1148_1859_in1 = 16'hff01;
-commonlib_smax__width16 smax_1858_1148_1859 (
-    .in0(smax_1858_1148_1859_in0),
-    .in1(smax_1858_1148_1859_in1),
-    .out(smax_1858_1148_1859_out)
-);
-assign smax_1900_1148_1901_in0 = smin_1899_1146_1900_out;
-assign smax_1900_1148_1901_in1 = 16'hff01;
-commonlib_smax__width16 smax_1900_1148_1901 (
-    .in0(smax_1900_1148_1901_in0),
-    .in1(smax_1900_1148_1901_in1),
-    .out(smax_1900_1148_1901_out)
-);
-assign smax_1919_1148_1920_in0 = smin_1918_1146_1919_out;
-assign smax_1919_1148_1920_in1 = 16'hff01;
-commonlib_smax__width16 smax_1919_1148_1920 (
-    .in0(smax_1919_1148_1920_in0),
-    .in1(smax_1919_1148_1920_in1),
-    .out(smax_1919_1148_1920_out)
-);
-assign smax_1958_1148_1959_in0 = smin_1957_1146_1958_out;
-assign smax_1958_1148_1959_in1 = 16'hff01;
-commonlib_smax__width16 smax_1958_1148_1959 (
-    .in0(smax_1958_1148_1959_in0),
-    .in1(smax_1958_1148_1959_in1),
-    .out(smax_1958_1148_1959_out)
-);
-assign smax_1977_1148_1978_in0 = smin_1976_1146_1977_out;
-assign smax_1977_1148_1978_in1 = 16'hff01;
-commonlib_smax__width16 smax_1977_1148_1978 (
-    .in0(smax_1977_1148_1978_in0),
-    .in1(smax_1977_1148_1978_in1),
-    .out(smax_1977_1148_1978_out)
-);
-assign smin_1145_1146_1147_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[0] + (16'(in0_padded16_global_wrapper_stencil[11] + mul_padded16_global_wrapper_stencil_3_1138_1139_out)))) - in0_padded16_global_wrapper_stencil[33])) - mul_padded16_global_wrapper_stencil_5_1138_1143_out)) - in0_padded16_global_wrapper_stencil[45]);
-assign smin_1145_1146_1147_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1145_1146_1147 (
-    .in0(smin_1145_1146_1147_in0),
-    .in1(smin_1145_1146_1147_in1),
-    .out(smin_1145_1146_1147_out)
-);
-assign smin_1159_1146_1160_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[46] + (16'(in0_padded16_global_wrapper_stencil[47] + mul_padded16_global_wrapper_stencil_9_1138_1153_out)))) - in0_padded16_global_wrapper_stencil[1])) - (16'(in0_padded16_global_wrapper_stencil[2] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[3]);
-assign smin_1159_1146_1160_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1159_1146_1160 (
-    .in0(smin_1159_1146_1160_in0),
-    .in1(smin_1159_1146_1160_in1),
-    .out(smin_1159_1146_1160_out)
-);
-assign smin_1169_1146_1170_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[4] + (16'(in0_padded16_global_wrapper_stencil[5] + mul_padded16_global_wrapper_stencil_15_1138_1164_out)))) - in0_padded16_global_wrapper_stencil[46])) - mul_padded16_global_wrapper_stencil_9_1138_1153_out)) - in0_padded16_global_wrapper_stencil[47]);
-assign smin_1169_1146_1170_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1169_1146_1170 (
-    .in0(smin_1169_1146_1170_in0),
-    .in1(smin_1169_1146_1170_in1),
-    .out(smin_1169_1146_1170_out)
-);
-assign smin_1180_1146_1181_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[48] + (16'(in0_padded16_global_wrapper_stencil[7] + mul_padded16_global_wrapper_stencil_8_1138_1174_out)))) - in0_padded16_global_wrapper_stencil[2])) - (16'(in0_padded16_global_wrapper_stencil[3] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[8]);
-assign smin_1180_1146_1181_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1180_1146_1181 (
-    .in0(smin_1180_1146_1181_in0),
-    .in1(smin_1180_1146_1181_in1),
-    .out(smin_1180_1146_1181_out)
-);
-assign smin_1191_1146_1192_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[22] + (16'(in0_padded16_global_wrapper_stencil[9] + mul_padded16_global_wrapper_stencil_2_1138_1185_out)))) - in0_padded16_global_wrapper_stencil[44])) - mul_padded16_global_wrapper_stencil_6_1138_1189_out)) - in0_padded16_global_wrapper_stencil[10]);
-assign smin_1191_1146_1192_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1191_1146_1192 (
-    .in0(smin_1191_1146_1192_in0),
-    .in1(smin_1191_1146_1192_in1),
-    .out(smin_1191_1146_1192_out)
-);
-assign smin_1201_1146_1202_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[6] + (16'(in0_padded16_global_wrapper_stencil[12] + mul_padded16_global_wrapper_stencil_14_1138_1196_out)))) - in0_padded16_global_wrapper_stencil[48])) - mul_padded16_global_wrapper_stencil_8_1138_1174_out)) - in0_padded16_global_wrapper_stencil[7]);
-assign smin_1201_1146_1202_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1201_1146_1202 (
-    .in0(smin_1201_1146_1202_in0),
-    .in1(smin_1201_1146_1202_in1),
-    .out(smin_1201_1146_1202_out)
-);
-assign smin_1212_1146_1213_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[47] + (16'(in0_padded16_global_wrapper_stencil[13] + mul_padded16_global_wrapper_stencil_16_1138_1206_out)))) - in0_padded16_global_wrapper_stencil[3])) - (16'(in0_padded16_global_wrapper_stencil[8] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[14]);
-assign smin_1212_1146_1213_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1212_1146_1213 (
-    .in0(smin_1212_1146_1213_in0),
-    .in1(smin_1212_1146_1213_in1),
-    .out(smin_1212_1146_1213_out)
-);
-assign smin_1222_1146_1223_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[5] + (16'(in0_padded16_global_wrapper_stencil[15] + mul_padded16_global_wrapper_stencil_20_1138_1217_out)))) - in0_padded16_global_wrapper_stencil[47])) - mul_padded16_global_wrapper_stencil_16_1138_1206_out)) - in0_padded16_global_wrapper_stencil[13]);
-assign smin_1222_1146_1223_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1222_1146_1223 (
-    .in0(smin_1222_1146_1223_in0),
-    .in1(smin_1222_1146_1223_in1),
-    .out(smin_1222_1146_1223_out)
-);
-assign smin_1233_1146_1234_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[11] + (16'(in0_padded16_global_wrapper_stencil[16] + mul_padded16_global_wrapper_stencil_18_1138_1227_out)))) - in0_padded16_global_wrapper_stencil[45])) - mul_padded16_global_wrapper_stencil_19_1138_1231_out)) - in0_padded16_global_wrapper_stencil[17]);
-assign smin_1233_1146_1234_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1233_1146_1234 (
-    .in0(smin_1233_1146_1234_in0),
-    .in1(smin_1233_1146_1234_in1),
-    .out(smin_1233_1146_1234_out)
-);
-assign smin_1253_1146_1254_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[45] + (16'(in0_padded16_global_wrapper_stencil[11] + mul_padded16_global_wrapper_stencil_8_1138_1174_out)))) - in0_padded16_global_wrapper_stencil[33])) - (16'(in0_padded16_global_wrapper_stencil[46] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[0]);
-assign smin_1253_1146_1254_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1253_1146_1254 (
-    .in0(smin_1253_1146_1254_in0),
-    .in1(smin_1253_1146_1254_in1),
-    .out(smin_1253_1146_1254_out)
-);
-assign smin_1263_1146_1264_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[3] + (16'(in0_padded16_global_wrapper_stencil[47] + mul_padded16_global_wrapper_stencil_6_1138_1189_out)))) - in0_padded16_global_wrapper_stencil[1])) - (16'(in0_padded16_global_wrapper_stencil[33] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[46]);
-assign smin_1263_1146_1264_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1263_1146_1264 (
-    .in0(smin_1263_1146_1264_in0),
-    .in1(smin_1263_1146_1264_in1),
-    .out(smin_1263_1146_1264_out)
-);
-assign smin_1273_1146_1274_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[47] + (16'(in0_padded16_global_wrapper_stencil[5] + mul_padded16_global_wrapper_stencil_2_1138_1185_out)))) - in0_padded16_global_wrapper_stencil[46])) - (16'(in0_padded16_global_wrapper_stencil[0] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[4]);
-assign smin_1273_1146_1274_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1273_1146_1274 (
-    .in0(smin_1273_1146_1274_in0),
-    .in1(smin_1273_1146_1274_in1),
-    .out(smin_1273_1146_1274_out)
-);
-assign smin_1282_1146_1283_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[8] + (16'(in0_padded16_global_wrapper_stencil[7] + mul_padded16_global_wrapper_stencil_19_1138_1231_out)))) - in0_padded16_global_wrapper_stencil[2])) - mul_padded16_global_wrapper_stencil_5_1138_1143_out)) - in0_padded16_global_wrapper_stencil[48]);
-assign smin_1282_1146_1283_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1282_1146_1283 (
-    .in0(smin_1282_1146_1283_in0),
-    .in1(smin_1282_1146_1283_in1),
-    .out(smin_1282_1146_1283_out)
-);
-assign smin_1291_1146_1292_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[10] + (16'(in0_padded16_global_wrapper_stencil[9] + mul_padded16_global_wrapper_stencil_16_1138_1206_out)))) - in0_padded16_global_wrapper_stencil[44])) - mul_padded16_global_wrapper_stencil_9_1138_1153_out)) - in0_padded16_global_wrapper_stencil[22]);
-assign smin_1291_1146_1292_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1291_1146_1292 (
-    .in0(smin_1291_1146_1292_in0),
-    .in1(smin_1291_1146_1292_in1),
-    .out(smin_1291_1146_1292_out)
-);
-assign smin_1300_1146_1301_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[7] + (16'(in0_padded16_global_wrapper_stencil[12] + mul_padded16_global_wrapper_stencil_18_1138_1227_out)))) - in0_padded16_global_wrapper_stencil[48])) - mul_padded16_global_wrapper_stencil_3_1138_1139_out)) - in0_padded16_global_wrapper_stencil[6]);
-assign smin_1300_1146_1301_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1300_1146_1301 (
-    .in0(smin_1300_1146_1301_in0),
-    .in1(smin_1300_1146_1301_in1),
-    .out(smin_1300_1146_1301_out)
-);
-assign smin_1310_1146_1311_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[14] + (16'(in0_padded16_global_wrapper_stencil[13] + mul_padded16_global_wrapper_stencil_25_1138_1305_out)))) - in0_padded16_global_wrapper_stencil[3])) - mul_padded16_global_wrapper_stencil_6_1138_1189_out)) - in0_padded16_global_wrapper_stencil[47]);
-assign smin_1310_1146_1311_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1310_1146_1311 (
-    .in0(smin_1310_1146_1311_in0),
-    .in1(smin_1310_1146_1311_in1),
-    .out(smin_1310_1146_1311_out)
-);
-assign smin_1320_1146_1321_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[13] + (16'(in0_padded16_global_wrapper_stencil[15] + mul_padded16_global_wrapper_stencil_24_1138_1315_out)))) - in0_padded16_global_wrapper_stencil[47])) - mul_padded16_global_wrapper_stencil_2_1138_1185_out)) - in0_padded16_global_wrapper_stencil[5]);
-assign smin_1320_1146_1321_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1320_1146_1321 (
-    .in0(smin_1320_1146_1321_in0),
-    .in1(smin_1320_1146_1321_in1),
-    .out(smin_1320_1146_1321_out)
-);
-assign smin_1330_1146_1331_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[17] + (16'(in0_padded16_global_wrapper_stencil[16] + mul_padded16_global_wrapper_stencil_21_1138_1325_out)))) - in0_padded16_global_wrapper_stencil[45])) - mul_padded16_global_wrapper_stencil_8_1138_1174_out)) - in0_padded16_global_wrapper_stencil[11]);
-assign smin_1330_1146_1331_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1330_1146_1331 (
-    .in0(smin_1330_1146_1331_in0),
-    .in1(smin_1330_1146_1331_in1),
-    .out(smin_1330_1146_1331_out)
-);
-assign smin_1384_1146_1385_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[18] + (16'(in0_padded16_global_wrapper_stencil[19] + mul_padded16_global_wrapper_stencil_28_1138_1379_out)))) - in0_padded16_global_wrapper_stencil[22])) - mul_padded16_global_wrapper_stencil_2_1138_1185_out)) - in0_padded16_global_wrapper_stencil[9]);
-assign smin_1384_1146_1385_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1384_1146_1385 (
-    .in0(smin_1384_1146_1385_in0),
-    .in1(smin_1384_1146_1385_in1),
-    .out(smin_1384_1146_1385_out)
-);
-assign smin_1394_1146_1395_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[20] + (16'(in0_padded16_global_wrapper_stencil[21] + mul_padded16_global_wrapper_stencil_27_1138_1389_out)))) - in0_padded16_global_wrapper_stencil[11])) - mul_padded16_global_wrapper_stencil_18_1138_1227_out)) - in0_padded16_global_wrapper_stencil[16]);
-assign smin_1394_1146_1395_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1394_1146_1395 (
-    .in0(smin_1394_1146_1395_in0),
-    .in1(smin_1394_1146_1395_in1),
-    .out(smin_1394_1146_1395_out)
-);
-assign smin_1403_1146_1404_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[9] + (16'(in0_padded16_global_wrapper_stencil[23] + mul_padded16_global_wrapper_stencil_24_1138_1315_out)))) - in0_padded16_global_wrapper_stencil[10])) - mul_padded16_global_wrapper_stencil_25_1138_1305_out)) - in0_padded16_global_wrapper_stencil[24]);
-assign smin_1403_1146_1404_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1403_1146_1404 (
-    .in0(smin_1403_1146_1404_in0),
-    .in1(smin_1403_1146_1404_in1),
-    .out(smin_1403_1146_1404_out)
-);
-assign smin_1413_1146_1414_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[19] + (16'(in0_padded16_global_wrapper_stencil[25] + mul_padded16_global_wrapper_stencil_29_1138_1408_out)))) - in0_padded16_global_wrapper_stencil[9])) - mul_padded16_global_wrapper_stencil_24_1138_1315_out)) - in0_padded16_global_wrapper_stencil[23]);
-assign smin_1413_1146_1414_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1413_1146_1414 (
-    .in0(smin_1413_1146_1414_in0),
-    .in1(smin_1413_1146_1414_in1),
-    .out(smin_1413_1146_1414_out)
-);
-assign smin_1423_1146_1424_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[12] + (16'(in0_padded16_global_wrapper_stencil[26] + mul_padded16_global_wrapper_stencil_23_1138_1418_out)))) - in0_padded16_global_wrapper_stencil[7])) - mul_padded16_global_wrapper_stencil_21_1138_1325_out)) - in0_padded16_global_wrapper_stencil[27]);
-assign smin_1423_1146_1424_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1423_1146_1424 (
-    .in0(smin_1423_1146_1424_in0),
-    .in1(smin_1423_1146_1424_in1),
-    .out(smin_1423_1146_1424_out)
-);
-assign smin_1441_1146_1442_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[9] + (16'(in0_padded16_global_wrapper_stencil[19] + mul_padded16_global_wrapper_stencil_20_1138_1217_out)))) - in0_padded16_global_wrapper_stencil[22])) - mul_padded16_global_wrapper_stencil_15_1138_1164_out)) - in0_padded16_global_wrapper_stencil[18]);
-assign smin_1441_1146_1442_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1441_1146_1442 (
-    .in0(smin_1441_1146_1442_in0),
-    .in1(smin_1441_1146_1442_in1),
-    .out(smin_1441_1146_1442_out)
-);
-assign smin_1450_1146_1451_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[16] + (16'(in0_padded16_global_wrapper_stencil[21] + mul_padded16_global_wrapper_stencil_23_1138_1418_out)))) - in0_padded16_global_wrapper_stencil[11])) - mul_padded16_global_wrapper_stencil_14_1138_1196_out)) - in0_padded16_global_wrapper_stencil[20]);
-assign smin_1450_1146_1451_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1450_1146_1451 (
-    .in0(smin_1450_1146_1451_in0),
-    .in1(smin_1450_1146_1451_in1),
-    .out(smin_1450_1146_1451_out)
-);
-assign smin_1460_1146_1461_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[24] + (16'(in0_padded16_global_wrapper_stencil[23] + mul_padded16_global_wrapper_stencil_34_1138_1455_out)))) - in0_padded16_global_wrapper_stencil[10])) - mul_padded16_global_wrapper_stencil_16_1138_1206_out)) - in0_padded16_global_wrapper_stencil[9]);
-assign smin_1460_1146_1461_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1460_1146_1461 (
-    .in0(smin_1460_1146_1461_in0),
-    .in1(smin_1460_1146_1461_in1),
-    .out(smin_1460_1146_1461_out)
-);
-assign smin_1470_1146_1471_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[23] + (16'(in0_padded16_global_wrapper_stencil[25] + mul_padded16_global_wrapper_stencil_33_1138_1465_out)))) - in0_padded16_global_wrapper_stencil[9])) - mul_padded16_global_wrapper_stencil_20_1138_1217_out)) - in0_padded16_global_wrapper_stencil[19]);
-assign smin_1470_1146_1471_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1470_1146_1471 (
-    .in0(smin_1470_1146_1471_in0),
-    .in1(smin_1470_1146_1471_in1),
-    .out(smin_1470_1146_1471_out)
-);
-assign smin_1480_1146_1481_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[27] + (16'(in0_padded16_global_wrapper_stencil[26] + mul_padded16_global_wrapper_stencil_30_1138_1475_out)))) - in0_padded16_global_wrapper_stencil[7])) - mul_padded16_global_wrapper_stencil_18_1138_1227_out)) - in0_padded16_global_wrapper_stencil[12]);
-assign smin_1480_1146_1481_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1480_1146_1481 (
-    .in0(smin_1480_1146_1481_in0),
-    .in1(smin_1480_1146_1481_in1),
-    .out(smin_1480_1146_1481_out)
-);
-assign smin_1526_1146_1527_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[28] + (16'(in0_padded16_global_wrapper_stencil[20] + mul_padded16_global_wrapper_stencil_26_1138_1521_out)))) - in0_padded16_global_wrapper_stencil[0])) - mul_padded16_global_wrapper_stencil_3_1138_1139_out)) - in0_padded16_global_wrapper_stencil[11]);
-assign smin_1526_1146_1527_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1526_1146_1527 (
-    .in0(smin_1526_1146_1527_in0),
-    .in1(smin_1526_1146_1527_in1),
-    .out(smin_1526_1146_1527_out)
-);
-assign smin_1545_1146_1546_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[11] + (16'(in0_padded16_global_wrapper_stencil[20] + mul_padded16_global_wrapper_stencil_14_1138_1196_out)))) - in0_padded16_global_wrapper_stencil[0])) - (16'(in0_padded16_global_wrapper_stencil[4] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[28]);
-assign smin_1545_1146_1546_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1545_1146_1546 (
-    .in0(smin_1545_1146_1546_in0),
-    .in1(smin_1545_1146_1546_in1),
-    .out(smin_1545_1146_1546_out)
-);
-assign smin_1584_1146_1585_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[29] + (16'(in0_padded16_global_wrapper_stencil[30] + (16'(in0_padded16_global_wrapper_stencil[31] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[4])) - mul_padded16_global_wrapper_stencil_15_1138_1164_out)) - in0_padded16_global_wrapper_stencil[5]);
-assign smin_1584_1146_1585_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1584_1146_1585 (
-    .in0(smin_1584_1146_1585_in0),
-    .in1(smin_1584_1146_1585_in1),
-    .out(smin_1584_1146_1585_out)
-);
-assign smin_1594_1146_1595_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[31] + (16'(in0_padded16_global_wrapper_stencil[32] + (16'(in0_padded16_global_wrapper_stencil[30] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[6])) - mul_padded16_global_wrapper_stencil_14_1138_1196_out)) - in0_padded16_global_wrapper_stencil[12]);
-assign smin_1594_1146_1595_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1594_1146_1595 (
-    .in0(smin_1594_1146_1595_in0),
-    .in1(smin_1594_1146_1595_in1),
-    .out(smin_1594_1146_1595_out)
-);
-assign smin_1604_1146_1605_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[30] + (16'(in0_padded16_global_wrapper_stencil[34] + (16'(in0_padded16_global_wrapper_stencil[32] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[5])) - mul_padded16_global_wrapper_stencil_20_1138_1217_out)) - in0_padded16_global_wrapper_stencil[15]);
-assign smin_1604_1146_1605_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1604_1146_1605 (
-    .in0(smin_1604_1146_1605_in0),
-    .in1(smin_1604_1146_1605_in1),
-    .out(smin_1604_1146_1605_out)
-);
-assign smin_1623_1146_1624_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[5] + (16'(in0_padded16_global_wrapper_stencil[30] + mul_padded16_global_wrapper_stencil_28_1138_1379_out)))) - in0_padded16_global_wrapper_stencil[4])) - (16'(in0_padded16_global_wrapper_stencil[28] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[29]);
-assign smin_1623_1146_1624_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1623_1146_1624 (
-    .in0(smin_1623_1146_1624_in0),
-    .in1(smin_1623_1146_1624_in1),
-    .out(smin_1623_1146_1624_out)
-);
-assign smin_1632_1146_1633_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[12] + (16'(in0_padded16_global_wrapper_stencil[32] + mul_padded16_global_wrapper_stencil_27_1138_1389_out)))) - in0_padded16_global_wrapper_stencil[6])) - mul_padded16_global_wrapper_stencil_26_1138_1521_out)) - in0_padded16_global_wrapper_stencil[31]);
-assign smin_1632_1146_1633_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1632_1146_1633 (
-    .in0(smin_1632_1146_1633_in0),
-    .in1(smin_1632_1146_1633_in1),
-    .out(smin_1632_1146_1633_out)
-);
-assign smin_1641_1146_1642_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[15] + (16'(in0_padded16_global_wrapper_stencil[34] + mul_padded16_global_wrapper_stencil_29_1138_1408_out)))) - in0_padded16_global_wrapper_stencil[5])) - mul_padded16_global_wrapper_stencil_28_1138_1379_out)) - in0_padded16_global_wrapper_stencil[30]);
-assign smin_1641_1146_1642_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1641_1146_1642 (
-    .in0(smin_1641_1146_1642_in0),
-    .in1(smin_1641_1146_1642_in1),
-    .out(smin_1641_1146_1642_out)
-);
-assign smin_1684_1146_1685_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[7] + (16'(in0_padded16_global_wrapper_stencil[27] + mul_padded16_global_wrapper_stencil_21_1138_1325_out)))) - in0_padded16_global_wrapper_stencil[8])) - (16'(in0_padded16_global_wrapper_stencil[14] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[35]);
-assign smin_1684_1146_1685_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1684_1146_1685 (
-    .in0(smin_1684_1146_1685_in0),
-    .in1(smin_1684_1146_1685_in1),
-    .out(smin_1684_1146_1685_out)
-);
-assign smin_1703_1146_1704_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[35] + (16'(in0_padded16_global_wrapper_stencil[27] + mul_padded16_global_wrapper_stencil_31_1138_1698_out)))) - in0_padded16_global_wrapper_stencil[8])) - mul_padded16_global_wrapper_stencil_19_1138_1231_out)) - in0_padded16_global_wrapper_stencil[7]);
-assign smin_1703_1146_1704_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1703_1146_1704 (
-    .in0(smin_1703_1146_1704_in0),
-    .in1(smin_1703_1146_1704_in1),
-    .out(smin_1703_1146_1704_out)
-);
-assign smin_1742_1146_1743_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[32] + (16'(in0_padded16_global_wrapper_stencil[36] + (16'(in0_padded16_global_wrapper_stencil[34] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[12])) - mul_padded16_global_wrapper_stencil_23_1138_1418_out)) - in0_padded16_global_wrapper_stencil[26]);
-assign smin_1742_1146_1743_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1742_1146_1743 (
-    .in0(smin_1742_1146_1743_in0),
-    .in1(smin_1742_1146_1743_in1),
-    .out(smin_1742_1146_1743_out)
-);
-assign smin_1761_1146_1762_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[26] + (16'(in0_padded16_global_wrapper_stencil[36] + mul_padded16_global_wrapper_stencil_32_1138_1756_out)))) - in0_padded16_global_wrapper_stencil[12])) - mul_padded16_global_wrapper_stencil_27_1138_1389_out)) - in0_padded16_global_wrapper_stencil[32]);
-assign smin_1761_1146_1762_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1761_1146_1762 (
-    .in0(smin_1761_1146_1762_in0),
-    .in1(smin_1761_1146_1762_in1),
-    .out(smin_1761_1146_1762_out)
-);
-assign smin_1800_1146_1801_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[13] + (16'(in0_padded16_global_wrapper_stencil[37] + mul_padded16_global_wrapper_stencil_34_1138_1455_out)))) - in0_padded16_global_wrapper_stencil[14])) - (16'(in0_padded16_global_wrapper_stencil[35] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[38]);
-assign smin_1800_1146_1801_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1800_1146_1801 (
-    .in0(smin_1800_1146_1801_in0),
-    .in1(smin_1800_1146_1801_in1),
-    .out(smin_1800_1146_1801_out)
-);
-assign smin_1809_1146_1810_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[15] + (16'(in0_padded16_global_wrapper_stencil[39] + mul_padded16_global_wrapper_stencil_33_1138_1465_out)))) - in0_padded16_global_wrapper_stencil[13])) - mul_padded16_global_wrapper_stencil_34_1138_1455_out)) - in0_padded16_global_wrapper_stencil[37]);
-assign smin_1809_1146_1810_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1809_1146_1810 (
-    .in0(smin_1809_1146_1810_in0),
-    .in1(smin_1809_1146_1810_in1),
-    .out(smin_1809_1146_1810_out)
-);
-assign smin_1818_1146_1819_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[16] + (16'(in0_padded16_global_wrapper_stencil[40] + mul_padded16_global_wrapper_stencil_30_1138_1475_out)))) - in0_padded16_global_wrapper_stencil[17])) - mul_padded16_global_wrapper_stencil_31_1138_1698_out)) - in0_padded16_global_wrapper_stencil[41]);
-assign smin_1818_1146_1819_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1818_1146_1819 (
-    .in0(smin_1818_1146_1819_in0),
-    .in1(smin_1818_1146_1819_in1),
-    .out(smin_1818_1146_1819_out)
-);
-assign smin_1837_1146_1838_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[38] + (16'(in0_padded16_global_wrapper_stencil[37] + (16'(in0_padded16_global_wrapper_stencil[41] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[14])) - mul_padded16_global_wrapper_stencil_25_1138_1305_out)) - in0_padded16_global_wrapper_stencil[13]);
-assign smin_1837_1146_1838_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1837_1146_1838 (
-    .in0(smin_1837_1146_1838_in0),
-    .in1(smin_1837_1146_1838_in1),
-    .out(smin_1837_1146_1838_out)
-);
-assign smin_1847_1146_1848_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[37] + (16'(in0_padded16_global_wrapper_stencil[39] + (16'(in0_padded16_global_wrapper_stencil[40] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[13])) - mul_padded16_global_wrapper_stencil_24_1138_1315_out)) - in0_padded16_global_wrapper_stencil[15]);
-assign smin_1847_1146_1848_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1847_1146_1848 (
-    .in0(smin_1847_1146_1848_in0),
-    .in1(smin_1847_1146_1848_in1),
-    .out(smin_1847_1146_1848_out)
-);
-assign smin_1857_1146_1858_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[41] + (16'(in0_padded16_global_wrapper_stencil[40] + (16'(in0_padded16_global_wrapper_stencil[37] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[17])) - mul_padded16_global_wrapper_stencil_21_1138_1325_out)) - in0_padded16_global_wrapper_stencil[16]);
-assign smin_1857_1146_1858_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1857_1146_1858 (
-    .in0(smin_1857_1146_1858_in0),
-    .in1(smin_1857_1146_1858_in1),
-    .out(smin_1857_1146_1858_out)
-);
-assign smin_1899_1146_1900_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[21] + (16'(in0_padded16_global_wrapper_stencil[42] + mul_padded16_global_wrapper_stencil_32_1138_1756_out)))) - in0_padded16_global_wrapper_stencil[16])) - mul_padded16_global_wrapper_stencil_30_1138_1475_out)) - in0_padded16_global_wrapper_stencil[40]);
-assign smin_1899_1146_1900_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1899_1146_1900 (
-    .in0(smin_1899_1146_1900_in0),
-    .in1(smin_1899_1146_1900_in1),
-    .out(smin_1899_1146_1900_out)
-);
-assign smin_1918_1146_1919_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[40] + (16'(in0_padded16_global_wrapper_stencil[42] + (16'(in0_padded16_global_wrapper_stencil[39] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[16])) - mul_padded16_global_wrapper_stencil_23_1138_1418_out)) - in0_padded16_global_wrapper_stencil[21]);
-assign smin_1918_1146_1919_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1918_1146_1919 (
-    .in0(smin_1918_1146_1919_in0),
-    .in1(smin_1918_1146_1919_in1),
-    .out(smin_1918_1146_1919_out)
-);
-assign smin_1957_1146_1958_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[34] + (16'(in0_padded16_global_wrapper_stencil[43] + (16'(in0_padded16_global_wrapper_stencil[36] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[15])) - mul_padded16_global_wrapper_stencil_33_1138_1465_out)) - in0_padded16_global_wrapper_stencil[39]);
-assign smin_1957_1146_1958_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1957_1146_1958 (
-    .in0(smin_1957_1146_1958_in0),
-    .in1(smin_1957_1146_1958_in1),
-    .out(smin_1957_1146_1958_out)
-);
-assign smin_1976_1146_1977_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[39] + (16'(in0_padded16_global_wrapper_stencil[43] + (16'(in0_padded16_global_wrapper_stencil[42] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[15])) - mul_padded16_global_wrapper_stencil_29_1138_1408_out)) - in0_padded16_global_wrapper_stencil[34]);
-assign smin_1976_1146_1977_in1 = 16'h00ff;
-commonlib_smin__width16 smin_1976_1146_1977 (
-    .in0(smin_1976_1146_1977_in0),
-    .in1(smin_1976_1146_1977_in1),
-    .out(smin_1976_1146_1977_out)
-);
-assign sub_1515_1518_1519_out = 16'((16'((16'(ashr_1435_1246_1436_out * ashr_1492_1246_1493_out)) - (16'(ashr_1512_1246_1513_out * ashr_1512_1246_1513_out)))) - (($signed(16'(add_1436_1493_1516_out * add_1436_1493_1516_out))) >>> 16'h0004));
-assign out_hw_output_stencil = ((((((((($signed(16'((16'((16'(ashr_1245_1246_1247_out * ashr_1342_1246_1343_out)) - (16'(ashr_1370_1246_1371_out * ashr_1370_1246_1371_out)))) - (($signed(16'(add_1247_1343_1374_out * add_1247_1343_1374_out))) >>> 16'h0004)))) < ($signed(sub_1515_1518_1519_out))) & (($signed(16'((16'((16'(ashr_1538_1246_1539_out * ashr_1557_1246_1558_out)) - (16'(ashr_1569_1246_1570_out * ashr_1569_1246_1570_out)))) - (($signed(16'(add_1539_1558_1573_out * add_1539_1558_1573_out))) >>> 16'h0004)))) < ($signed(sub_1515_1518_1519_out)))) & (($signed(16'((16'((16'(ashr_1616_1246_1617_out * ashr_1653_1246_1654_out)) - (16'(ashr_1669_1246_1670_out * ashr_1669_1246_1670_out)))) - (($signed(16'(add_1617_1654_1673_out * add_1617_1654_1673_out))) >>> 16'h0004)))) < ($signed(sub_1515_1518_1519_out)))) & (($signed(16'((16'((16'(ashr_1696_1246_1697_out * ashr_1715_1246_1716_out)) - (16'(ashr_1727_1246_1728_out * ashr_1727_1246_1728_out)))) - (($signed(16'(add_1697_1716_1731_out * add_1697_1716_1731_out))) >>> 16'h0004)))) < ($signed(sub_1515_1518_1519_out)))) & (($signed(16'((16'((16'(ashr_1754_1246_1755_out * ashr_1773_1246_1774_out)) - (16'(ashr_1785_1246_1786_out * ashr_1785_1246_1786_out)))) - (($signed(16'(add_1755_1774_1789_out * add_1755_1774_1789_out))) >>> 16'h0004)))) < ($signed(sub_1515_1518_1519_out)))) & (($signed(16'((16'((16'(ashr_1830_1246_1831_out * ashr_1869_1246_1870_out)) - (16'(ashr_1885_1246_1886_out * ashr_1885_1246_1886_out)))) - (($signed(16'(add_1831_1870_1889_out * add_1831_1870_1889_out))) >>> 16'h0004)))) < ($signed(sub_1515_1518_1519_out)))) & (($signed(16'((16'((16'(ashr_1911_1246_1912_out * ashr_1930_1246_1931_out)) - (16'(ashr_1942_1246_1943_out * ashr_1942_1246_1943_out)))) - (($signed(16'(add_1912_1931_1946_out * add_1912_1931_1946_out))) >>> 16'h0004)))) < ($signed(sub_1515_1518_1519_out)))) & (($signed(16'((16'((16'(ashr_1969_1246_1970_out * ashr_1988_1246_1989_out)) - (16'(ashr_2000_1246_2001_out * ashr_2000_1246_2001_out)))) - (($signed(16'(add_1970_1989_2004_out * add_1970_1989_2004_out))) >>> 16'h0004)))) < ($signed(sub_1515_1518_1519_out)))) & (($signed(16'h0001)) <= ($signed(sub_1515_1518_1519_out))) ? 16'h00ff : 16'h0000;
+wire [15:0] add_1245_1341_1372_out;
+wire [15:0] add_1434_1491_1514_out;
+wire [15:0] add_1537_1556_1571_out;
+wire [15:0] add_1615_1652_1671_out;
+wire [15:0] add_1695_1714_1729_out;
+wire [15:0] add_1753_1772_1787_out;
+wire [15:0] add_1829_1868_1887_out;
+wire [15:0] add_1910_1929_1944_out;
+wire [15:0] add_1968_1987_2002_out;
+wire [15:0] ashr_1149_1150_1151_out;
+wire [15:0] ashr_1171_1150_1172_out;
+wire [15:0] ashr_1182_1150_1183_out;
+wire [15:0] ashr_1193_1150_1194_out;
+wire [15:0] ashr_1203_1150_1204_out;
+wire [15:0] ashr_1214_1150_1215_out;
+wire [15:0] ashr_1224_1150_1225_out;
+wire [15:0] ashr_1235_1150_1236_out;
+wire [15:0] ashr_1244_1150_1245_out;
+wire [15:0] ashr_1254_1150_1255_out;
+wire [15:0] ashr_1274_1150_1275_out;
+wire [15:0] ashr_1283_1150_1284_out;
+wire [15:0] ashr_1292_1150_1293_out;
+wire [15:0] ashr_1301_1150_1302_out;
+wire [15:0] ashr_1311_1150_1312_out;
+wire [15:0] ashr_1321_1150_1322_out;
+wire [15:0] ashr_1331_1150_1332_out;
+wire [15:0] ashr_1340_1150_1341_out;
+wire [15:0] ashr_1343_1150_1344_out;
+wire [15:0] ashr_1347_1150_1348_out;
+wire [15:0] ashr_1349_1150_1350_out;
+wire [15:0] ashr_1351_1150_1352_out;
+wire [15:0] ashr_1353_1150_1354_out;
+wire [15:0] ashr_1355_1150_1356_out;
+wire [15:0] ashr_1357_1150_1358_out;
+wire [15:0] ashr_1359_1150_1360_out;
+wire [15:0] ashr_1368_1150_1369_out;
+wire [15:0] ashr_1385_1150_1386_out;
+wire [15:0] ashr_1395_1150_1396_out;
+wire [15:0] ashr_1404_1150_1405_out;
+wire [15:0] ashr_1414_1150_1415_out;
+wire [15:0] ashr_1424_1150_1425_out;
+wire [15:0] ashr_1433_1150_1434_out;
+wire [15:0] ashr_1442_1150_1443_out;
+wire [15:0] ashr_1451_1150_1452_out;
+wire [15:0] ashr_1461_1150_1462_out;
+wire [15:0] ashr_1471_1150_1472_out;
+wire [15:0] ashr_1481_1150_1482_out;
+wire [15:0] ashr_1490_1150_1491_out;
+wire [15:0] ashr_1493_1150_1494_out;
+wire [15:0] ashr_1495_1150_1496_out;
+wire [15:0] ashr_1497_1150_1498_out;
+wire [15:0] ashr_1499_1150_1500_out;
+wire [15:0] ashr_1501_1150_1502_out;
+wire [15:0] ashr_1510_1150_1511_out;
+wire [15:0] ashr_1527_1150_1528_out;
+wire [15:0] ashr_1536_1150_1537_out;
+wire [15:0] ashr_1546_1150_1547_out;
+wire [15:0] ashr_1555_1150_1556_out;
+wire [15:0] ashr_1558_1150_1559_out;
+wire [15:0] ashr_1567_1150_1568_out;
+wire [15:0] ashr_1595_1150_1596_out;
+wire [15:0] ashr_1605_1150_1606_out;
+wire [15:0] ashr_1614_1150_1615_out;
+wire [15:0] ashr_1633_1150_1634_out;
+wire [15:0] ashr_1642_1150_1643_out;
+wire [15:0] ashr_1651_1150_1652_out;
+wire [15:0] ashr_1656_1150_1657_out;
+wire [15:0] ashr_1658_1150_1659_out;
+wire [15:0] ashr_1667_1150_1668_out;
+wire [15:0] ashr_1685_1150_1686_out;
+wire [15:0] ashr_1694_1150_1695_out;
+wire [15:0] ashr_1704_1150_1705_out;
+wire [15:0] ashr_1713_1150_1714_out;
+wire [15:0] ashr_1716_1150_1717_out;
+wire [15:0] ashr_1725_1150_1726_out;
+wire [15:0] ashr_1743_1150_1744_out;
+wire [15:0] ashr_1752_1150_1753_out;
+wire [15:0] ashr_1762_1150_1763_out;
+wire [15:0] ashr_1771_1150_1772_out;
+wire [15:0] ashr_1774_1150_1775_out;
+wire [15:0] ashr_1783_1150_1784_out;
+wire [15:0] ashr_1810_1150_1811_out;
+wire [15:0] ashr_1819_1150_1820_out;
+wire [15:0] ashr_1828_1150_1829_out;
+wire [15:0] ashr_1848_1150_1849_out;
+wire [15:0] ashr_1858_1150_1859_out;
+wire [15:0] ashr_1867_1150_1868_out;
+wire [15:0] ashr_1872_1150_1873_out;
+wire [15:0] ashr_1874_1150_1875_out;
+wire [15:0] ashr_1883_1150_1884_out;
+wire [15:0] ashr_1900_1150_1901_out;
+wire [15:0] ashr_1909_1150_1910_out;
+wire [15:0] ashr_1919_1150_1920_out;
+wire [15:0] ashr_1928_1150_1929_out;
+wire [15:0] ashr_1931_1150_1932_out;
+wire [15:0] ashr_1940_1150_1941_out;
+wire [15:0] ashr_1967_1150_1968_out;
+wire [15:0] ashr_1986_1150_1987_out;
+wire [15:0] ashr_1998_1150_1999_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_14_1137_1195_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_15_1137_1163_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_16_1137_1205_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_18_1137_1226_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_19_1137_1230_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_20_1137_1216_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_21_1137_1323_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_23_1137_1416_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_24_1137_1313_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_25_1137_1303_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_26_1137_1519_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_27_1137_1387_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_28_1137_1377_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_29_1137_1406_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_2_1137_1184_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_30_1137_1473_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_31_1137_1696_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_32_1137_1754_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_33_1137_1463_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_34_1137_1453_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_3_1137_1138_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_5_1137_1142_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_6_1137_1188_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_8_1137_1173_out;
+wire [15:0] mul_padded16_global_wrapper_stencil_9_1137_1152_out;
+wire [15:0] smax_1146_1147_1148_in0;
+wire [15:0] smax_1146_1147_1148_in1;
+wire [15:0] smax_1146_1147_1148_out;
+wire [15:0] smax_1159_1147_1160_in0;
+wire [15:0] smax_1159_1147_1160_in1;
+wire [15:0] smax_1159_1147_1160_out;
+wire [15:0] smax_1169_1147_1170_in0;
+wire [15:0] smax_1169_1147_1170_in1;
+wire [15:0] smax_1169_1147_1170_out;
+wire [15:0] smax_1180_1147_1181_in0;
+wire [15:0] smax_1180_1147_1181_in1;
+wire [15:0] smax_1180_1147_1181_out;
+wire [15:0] smax_1191_1147_1192_in0;
+wire [15:0] smax_1191_1147_1192_in1;
+wire [15:0] smax_1191_1147_1192_out;
+wire [15:0] smax_1201_1147_1202_in0;
+wire [15:0] smax_1201_1147_1202_in1;
+wire [15:0] smax_1201_1147_1202_out;
+wire [15:0] smax_1212_1147_1213_in0;
+wire [15:0] smax_1212_1147_1213_in1;
+wire [15:0] smax_1212_1147_1213_out;
+wire [15:0] smax_1222_1147_1223_in0;
+wire [15:0] smax_1222_1147_1223_in1;
+wire [15:0] smax_1222_1147_1223_out;
+wire [15:0] smax_1233_1147_1234_in0;
+wire [15:0] smax_1233_1147_1234_in1;
+wire [15:0] smax_1233_1147_1234_out;
+wire [15:0] smax_1252_1147_1253_in0;
+wire [15:0] smax_1252_1147_1253_in1;
+wire [15:0] smax_1252_1147_1253_out;
+wire [15:0] smax_1262_1147_1263_in0;
+wire [15:0] smax_1262_1147_1263_in1;
+wire [15:0] smax_1262_1147_1263_out;
+wire [15:0] smax_1272_1147_1273_in0;
+wire [15:0] smax_1272_1147_1273_in1;
+wire [15:0] smax_1272_1147_1273_out;
+wire [15:0] smax_1281_1147_1282_in0;
+wire [15:0] smax_1281_1147_1282_in1;
+wire [15:0] smax_1281_1147_1282_out;
+wire [15:0] smax_1290_1147_1291_in0;
+wire [15:0] smax_1290_1147_1291_in1;
+wire [15:0] smax_1290_1147_1291_out;
+wire [15:0] smax_1299_1147_1300_in0;
+wire [15:0] smax_1299_1147_1300_in1;
+wire [15:0] smax_1299_1147_1300_out;
+wire [15:0] smax_1309_1147_1310_in0;
+wire [15:0] smax_1309_1147_1310_in1;
+wire [15:0] smax_1309_1147_1310_out;
+wire [15:0] smax_1319_1147_1320_in0;
+wire [15:0] smax_1319_1147_1320_in1;
+wire [15:0] smax_1319_1147_1320_out;
+wire [15:0] smax_1329_1147_1330_in0;
+wire [15:0] smax_1329_1147_1330_in1;
+wire [15:0] smax_1329_1147_1330_out;
+wire [15:0] smax_1383_1147_1384_in0;
+wire [15:0] smax_1383_1147_1384_in1;
+wire [15:0] smax_1383_1147_1384_out;
+wire [15:0] smax_1393_1147_1394_in0;
+wire [15:0] smax_1393_1147_1394_in1;
+wire [15:0] smax_1393_1147_1394_out;
+wire [15:0] smax_1402_1147_1403_in0;
+wire [15:0] smax_1402_1147_1403_in1;
+wire [15:0] smax_1402_1147_1403_out;
+wire [15:0] smax_1412_1147_1413_in0;
+wire [15:0] smax_1412_1147_1413_in1;
+wire [15:0] smax_1412_1147_1413_out;
+wire [15:0] smax_1422_1147_1423_in0;
+wire [15:0] smax_1422_1147_1423_in1;
+wire [15:0] smax_1422_1147_1423_out;
+wire [15:0] smax_1440_1147_1441_in0;
+wire [15:0] smax_1440_1147_1441_in1;
+wire [15:0] smax_1440_1147_1441_out;
+wire [15:0] smax_1449_1147_1450_in0;
+wire [15:0] smax_1449_1147_1450_in1;
+wire [15:0] smax_1449_1147_1450_out;
+wire [15:0] smax_1459_1147_1460_in0;
+wire [15:0] smax_1459_1147_1460_in1;
+wire [15:0] smax_1459_1147_1460_out;
+wire [15:0] smax_1469_1147_1470_in0;
+wire [15:0] smax_1469_1147_1470_in1;
+wire [15:0] smax_1469_1147_1470_out;
+wire [15:0] smax_1479_1147_1480_in0;
+wire [15:0] smax_1479_1147_1480_in1;
+wire [15:0] smax_1479_1147_1480_out;
+wire [15:0] smax_1525_1147_1526_in0;
+wire [15:0] smax_1525_1147_1526_in1;
+wire [15:0] smax_1525_1147_1526_out;
+wire [15:0] smax_1544_1147_1545_in0;
+wire [15:0] smax_1544_1147_1545_in1;
+wire [15:0] smax_1544_1147_1545_out;
+wire [15:0] smax_1583_1147_1584_in0;
+wire [15:0] smax_1583_1147_1584_in1;
+wire [15:0] smax_1583_1147_1584_out;
+wire [15:0] smax_1593_1147_1594_in0;
+wire [15:0] smax_1593_1147_1594_in1;
+wire [15:0] smax_1593_1147_1594_out;
+wire [15:0] smax_1603_1147_1604_in0;
+wire [15:0] smax_1603_1147_1604_in1;
+wire [15:0] smax_1603_1147_1604_out;
+wire [15:0] smax_1622_1147_1623_in0;
+wire [15:0] smax_1622_1147_1623_in1;
+wire [15:0] smax_1622_1147_1623_out;
+wire [15:0] smax_1631_1147_1632_in0;
+wire [15:0] smax_1631_1147_1632_in1;
+wire [15:0] smax_1631_1147_1632_out;
+wire [15:0] smax_1640_1147_1641_in0;
+wire [15:0] smax_1640_1147_1641_in1;
+wire [15:0] smax_1640_1147_1641_out;
+wire [15:0] smax_1683_1147_1684_in0;
+wire [15:0] smax_1683_1147_1684_in1;
+wire [15:0] smax_1683_1147_1684_out;
+wire [15:0] smax_1702_1147_1703_in0;
+wire [15:0] smax_1702_1147_1703_in1;
+wire [15:0] smax_1702_1147_1703_out;
+wire [15:0] smax_1741_1147_1742_in0;
+wire [15:0] smax_1741_1147_1742_in1;
+wire [15:0] smax_1741_1147_1742_out;
+wire [15:0] smax_1760_1147_1761_in0;
+wire [15:0] smax_1760_1147_1761_in1;
+wire [15:0] smax_1760_1147_1761_out;
+wire [15:0] smax_1799_1147_1800_in0;
+wire [15:0] smax_1799_1147_1800_in1;
+wire [15:0] smax_1799_1147_1800_out;
+wire [15:0] smax_1808_1147_1809_in0;
+wire [15:0] smax_1808_1147_1809_in1;
+wire [15:0] smax_1808_1147_1809_out;
+wire [15:0] smax_1817_1147_1818_in0;
+wire [15:0] smax_1817_1147_1818_in1;
+wire [15:0] smax_1817_1147_1818_out;
+wire [15:0] smax_1836_1147_1837_in0;
+wire [15:0] smax_1836_1147_1837_in1;
+wire [15:0] smax_1836_1147_1837_out;
+wire [15:0] smax_1846_1147_1847_in0;
+wire [15:0] smax_1846_1147_1847_in1;
+wire [15:0] smax_1846_1147_1847_out;
+wire [15:0] smax_1856_1147_1857_in0;
+wire [15:0] smax_1856_1147_1857_in1;
+wire [15:0] smax_1856_1147_1857_out;
+wire [15:0] smax_1898_1147_1899_in0;
+wire [15:0] smax_1898_1147_1899_in1;
+wire [15:0] smax_1898_1147_1899_out;
+wire [15:0] smax_1917_1147_1918_in0;
+wire [15:0] smax_1917_1147_1918_in1;
+wire [15:0] smax_1917_1147_1918_out;
+wire [15:0] smax_1956_1147_1957_in0;
+wire [15:0] smax_1956_1147_1957_in1;
+wire [15:0] smax_1956_1147_1957_out;
+wire [15:0] smax_1975_1147_1976_in0;
+wire [15:0] smax_1975_1147_1976_in1;
+wire [15:0] smax_1975_1147_1976_out;
+wire [15:0] smin_1144_1145_1146_in0;
+wire [15:0] smin_1144_1145_1146_in1;
+wire [15:0] smin_1144_1145_1146_out;
+wire [15:0] smin_1158_1145_1159_in0;
+wire [15:0] smin_1158_1145_1159_in1;
+wire [15:0] smin_1158_1145_1159_out;
+wire [15:0] smin_1168_1145_1169_in0;
+wire [15:0] smin_1168_1145_1169_in1;
+wire [15:0] smin_1168_1145_1169_out;
+wire [15:0] smin_1179_1145_1180_in0;
+wire [15:0] smin_1179_1145_1180_in1;
+wire [15:0] smin_1179_1145_1180_out;
+wire [15:0] smin_1190_1145_1191_in0;
+wire [15:0] smin_1190_1145_1191_in1;
+wire [15:0] smin_1190_1145_1191_out;
+wire [15:0] smin_1200_1145_1201_in0;
+wire [15:0] smin_1200_1145_1201_in1;
+wire [15:0] smin_1200_1145_1201_out;
+wire [15:0] smin_1211_1145_1212_in0;
+wire [15:0] smin_1211_1145_1212_in1;
+wire [15:0] smin_1211_1145_1212_out;
+wire [15:0] smin_1221_1145_1222_in0;
+wire [15:0] smin_1221_1145_1222_in1;
+wire [15:0] smin_1221_1145_1222_out;
+wire [15:0] smin_1232_1145_1233_in0;
+wire [15:0] smin_1232_1145_1233_in1;
+wire [15:0] smin_1232_1145_1233_out;
+wire [15:0] smin_1251_1145_1252_in0;
+wire [15:0] smin_1251_1145_1252_in1;
+wire [15:0] smin_1251_1145_1252_out;
+wire [15:0] smin_1261_1145_1262_in0;
+wire [15:0] smin_1261_1145_1262_in1;
+wire [15:0] smin_1261_1145_1262_out;
+wire [15:0] smin_1271_1145_1272_in0;
+wire [15:0] smin_1271_1145_1272_in1;
+wire [15:0] smin_1271_1145_1272_out;
+wire [15:0] smin_1280_1145_1281_in0;
+wire [15:0] smin_1280_1145_1281_in1;
+wire [15:0] smin_1280_1145_1281_out;
+wire [15:0] smin_1289_1145_1290_in0;
+wire [15:0] smin_1289_1145_1290_in1;
+wire [15:0] smin_1289_1145_1290_out;
+wire [15:0] smin_1298_1145_1299_in0;
+wire [15:0] smin_1298_1145_1299_in1;
+wire [15:0] smin_1298_1145_1299_out;
+wire [15:0] smin_1308_1145_1309_in0;
+wire [15:0] smin_1308_1145_1309_in1;
+wire [15:0] smin_1308_1145_1309_out;
+wire [15:0] smin_1318_1145_1319_in0;
+wire [15:0] smin_1318_1145_1319_in1;
+wire [15:0] smin_1318_1145_1319_out;
+wire [15:0] smin_1328_1145_1329_in0;
+wire [15:0] smin_1328_1145_1329_in1;
+wire [15:0] smin_1328_1145_1329_out;
+wire [15:0] smin_1382_1145_1383_in0;
+wire [15:0] smin_1382_1145_1383_in1;
+wire [15:0] smin_1382_1145_1383_out;
+wire [15:0] smin_1392_1145_1393_in0;
+wire [15:0] smin_1392_1145_1393_in1;
+wire [15:0] smin_1392_1145_1393_out;
+wire [15:0] smin_1401_1145_1402_in0;
+wire [15:0] smin_1401_1145_1402_in1;
+wire [15:0] smin_1401_1145_1402_out;
+wire [15:0] smin_1411_1145_1412_in0;
+wire [15:0] smin_1411_1145_1412_in1;
+wire [15:0] smin_1411_1145_1412_out;
+wire [15:0] smin_1421_1145_1422_in0;
+wire [15:0] smin_1421_1145_1422_in1;
+wire [15:0] smin_1421_1145_1422_out;
+wire [15:0] smin_1439_1145_1440_in0;
+wire [15:0] smin_1439_1145_1440_in1;
+wire [15:0] smin_1439_1145_1440_out;
+wire [15:0] smin_1448_1145_1449_in0;
+wire [15:0] smin_1448_1145_1449_in1;
+wire [15:0] smin_1448_1145_1449_out;
+wire [15:0] smin_1458_1145_1459_in0;
+wire [15:0] smin_1458_1145_1459_in1;
+wire [15:0] smin_1458_1145_1459_out;
+wire [15:0] smin_1468_1145_1469_in0;
+wire [15:0] smin_1468_1145_1469_in1;
+wire [15:0] smin_1468_1145_1469_out;
+wire [15:0] smin_1478_1145_1479_in0;
+wire [15:0] smin_1478_1145_1479_in1;
+wire [15:0] smin_1478_1145_1479_out;
+wire [15:0] smin_1524_1145_1525_in0;
+wire [15:0] smin_1524_1145_1525_in1;
+wire [15:0] smin_1524_1145_1525_out;
+wire [15:0] smin_1543_1145_1544_in0;
+wire [15:0] smin_1543_1145_1544_in1;
+wire [15:0] smin_1543_1145_1544_out;
+wire [15:0] smin_1582_1145_1583_in0;
+wire [15:0] smin_1582_1145_1583_in1;
+wire [15:0] smin_1582_1145_1583_out;
+wire [15:0] smin_1592_1145_1593_in0;
+wire [15:0] smin_1592_1145_1593_in1;
+wire [15:0] smin_1592_1145_1593_out;
+wire [15:0] smin_1602_1145_1603_in0;
+wire [15:0] smin_1602_1145_1603_in1;
+wire [15:0] smin_1602_1145_1603_out;
+wire [15:0] smin_1621_1145_1622_in0;
+wire [15:0] smin_1621_1145_1622_in1;
+wire [15:0] smin_1621_1145_1622_out;
+wire [15:0] smin_1630_1145_1631_in0;
+wire [15:0] smin_1630_1145_1631_in1;
+wire [15:0] smin_1630_1145_1631_out;
+wire [15:0] smin_1639_1145_1640_in0;
+wire [15:0] smin_1639_1145_1640_in1;
+wire [15:0] smin_1639_1145_1640_out;
+wire [15:0] smin_1682_1145_1683_in0;
+wire [15:0] smin_1682_1145_1683_in1;
+wire [15:0] smin_1682_1145_1683_out;
+wire [15:0] smin_1701_1145_1702_in0;
+wire [15:0] smin_1701_1145_1702_in1;
+wire [15:0] smin_1701_1145_1702_out;
+wire [15:0] smin_1740_1145_1741_in0;
+wire [15:0] smin_1740_1145_1741_in1;
+wire [15:0] smin_1740_1145_1741_out;
+wire [15:0] smin_1759_1145_1760_in0;
+wire [15:0] smin_1759_1145_1760_in1;
+wire [15:0] smin_1759_1145_1760_out;
+wire [15:0] smin_1798_1145_1799_in0;
+wire [15:0] smin_1798_1145_1799_in1;
+wire [15:0] smin_1798_1145_1799_out;
+wire [15:0] smin_1807_1145_1808_in0;
+wire [15:0] smin_1807_1145_1808_in1;
+wire [15:0] smin_1807_1145_1808_out;
+wire [15:0] smin_1816_1145_1817_in0;
+wire [15:0] smin_1816_1145_1817_in1;
+wire [15:0] smin_1816_1145_1817_out;
+wire [15:0] smin_1835_1145_1836_in0;
+wire [15:0] smin_1835_1145_1836_in1;
+wire [15:0] smin_1835_1145_1836_out;
+wire [15:0] smin_1845_1145_1846_in0;
+wire [15:0] smin_1845_1145_1846_in1;
+wire [15:0] smin_1845_1145_1846_out;
+wire [15:0] smin_1855_1145_1856_in0;
+wire [15:0] smin_1855_1145_1856_in1;
+wire [15:0] smin_1855_1145_1856_out;
+wire [15:0] smin_1897_1145_1898_in0;
+wire [15:0] smin_1897_1145_1898_in1;
+wire [15:0] smin_1897_1145_1898_out;
+wire [15:0] smin_1916_1145_1917_in0;
+wire [15:0] smin_1916_1145_1917_in1;
+wire [15:0] smin_1916_1145_1917_out;
+wire [15:0] smin_1955_1145_1956_in0;
+wire [15:0] smin_1955_1145_1956_in1;
+wire [15:0] smin_1955_1145_1956_out;
+wire [15:0] smin_1974_1145_1975_in0;
+wire [15:0] smin_1974_1145_1975_in1;
+wire [15:0] smin_1974_1145_1975_out;
+wire [15:0] sub_1513_1516_1517_out;
+assign add_1245_1341_1372_out = 16'(ashr_1244_1150_1245_out + ashr_1340_1150_1341_out);
+assign add_1434_1491_1514_out = 16'(ashr_1433_1150_1434_out + ashr_1490_1150_1491_out);
+assign add_1537_1556_1571_out = 16'(ashr_1536_1150_1537_out + ashr_1555_1150_1556_out);
+assign add_1615_1652_1671_out = 16'(ashr_1614_1150_1615_out + ashr_1651_1150_1652_out);
+assign add_1695_1714_1729_out = 16'(ashr_1694_1150_1695_out + ashr_1713_1150_1714_out);
+assign add_1753_1772_1787_out = 16'(ashr_1752_1150_1753_out + ashr_1771_1150_1772_out);
+assign add_1829_1868_1887_out = 16'(ashr_1828_1150_1829_out + ashr_1867_1150_1868_out);
+assign add_1910_1929_1944_out = 16'(ashr_1909_1150_1910_out + ashr_1928_1150_1929_out);
+assign add_1968_1987_2002_out = 16'(ashr_1967_1150_1968_out + ashr_1986_1150_1987_out);
+assign ashr_1149_1150_1151_out = ($signed(16'(smax_1146_1147_1148_out * smax_1146_1147_1148_out))) >>> 16'h0006;
+assign ashr_1171_1150_1172_out = ($signed(16'(smax_1169_1147_1170_out * smax_1169_1147_1170_out))) >>> 16'h0006;
+assign ashr_1182_1150_1183_out = ($signed(16'(smax_1180_1147_1181_out * smax_1180_1147_1181_out))) >>> 16'h0006;
+assign ashr_1193_1150_1194_out = ($signed(16'(smax_1191_1147_1192_out * smax_1191_1147_1192_out))) >>> 16'h0006;
+assign ashr_1203_1150_1204_out = ($signed(16'(smax_1201_1147_1202_out * smax_1201_1147_1202_out))) >>> 16'h0006;
+assign ashr_1214_1150_1215_out = ($signed(16'(smax_1212_1147_1213_out * smax_1212_1147_1213_out))) >>> 16'h0006;
+assign ashr_1224_1150_1225_out = ($signed(16'(smax_1222_1147_1223_out * smax_1222_1147_1223_out))) >>> 16'h0006;
+assign ashr_1235_1150_1236_out = ($signed(16'(smax_1233_1147_1234_out * smax_1233_1147_1234_out))) >>> 16'h0006;
+assign ashr_1244_1150_1245_out = ($signed(16'(ashr_1149_1150_1151_out + (16'((($signed(16'(smax_1159_1147_1160_out * smax_1159_1147_1160_out))) >>> 16'h0006) + (16'(ashr_1171_1150_1172_out + (16'(ashr_1182_1150_1183_out + (16'(ashr_1193_1150_1194_out + (16'(ashr_1203_1150_1204_out + (16'(ashr_1214_1150_1215_out + (16'(ashr_1224_1150_1225_out + ashr_1235_1150_1236_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1254_1150_1255_out = ($signed(16'(smax_1252_1147_1253_out * smax_1252_1147_1253_out))) >>> 16'h0006;
+assign ashr_1274_1150_1275_out = ($signed(16'(smax_1272_1147_1273_out * smax_1272_1147_1273_out))) >>> 16'h0006;
+assign ashr_1283_1150_1284_out = ($signed(16'(smax_1281_1147_1282_out * smax_1281_1147_1282_out))) >>> 16'h0006;
+assign ashr_1292_1150_1293_out = ($signed(16'(smax_1290_1147_1291_out * smax_1290_1147_1291_out))) >>> 16'h0006;
+assign ashr_1301_1150_1302_out = ($signed(16'(smax_1299_1147_1300_out * smax_1299_1147_1300_out))) >>> 16'h0006;
+assign ashr_1311_1150_1312_out = ($signed(16'(smax_1309_1147_1310_out * smax_1309_1147_1310_out))) >>> 16'h0006;
+assign ashr_1321_1150_1322_out = ($signed(16'(smax_1319_1147_1320_out * smax_1319_1147_1320_out))) >>> 16'h0006;
+assign ashr_1331_1150_1332_out = ($signed(16'(smax_1329_1147_1330_out * smax_1329_1147_1330_out))) >>> 16'h0006;
+assign ashr_1340_1150_1341_out = ($signed(16'(ashr_1254_1150_1255_out + (16'((($signed(16'(smax_1262_1147_1263_out * smax_1262_1147_1263_out))) >>> 16'h0006) + (16'(ashr_1274_1150_1275_out + (16'(ashr_1283_1150_1284_out + (16'(ashr_1292_1150_1293_out + (16'(ashr_1301_1150_1302_out + (16'(ashr_1311_1150_1312_out + (16'(ashr_1321_1150_1322_out + ashr_1331_1150_1332_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1343_1150_1344_out = ($signed(16'(smax_1146_1147_1148_out * smax_1252_1147_1253_out))) >>> 16'h0006;
+assign ashr_1347_1150_1348_out = ($signed(16'(smax_1169_1147_1170_out * smax_1272_1147_1273_out))) >>> 16'h0006;
+assign ashr_1349_1150_1350_out = ($signed(16'(smax_1180_1147_1181_out * smax_1281_1147_1282_out))) >>> 16'h0006;
+assign ashr_1351_1150_1352_out = ($signed(16'(smax_1191_1147_1192_out * smax_1290_1147_1291_out))) >>> 16'h0006;
+assign ashr_1353_1150_1354_out = ($signed(16'(smax_1201_1147_1202_out * smax_1299_1147_1300_out))) >>> 16'h0006;
+assign ashr_1355_1150_1356_out = ($signed(16'(smax_1212_1147_1213_out * smax_1309_1147_1310_out))) >>> 16'h0006;
+assign ashr_1357_1150_1358_out = ($signed(16'(smax_1222_1147_1223_out * smax_1319_1147_1320_out))) >>> 16'h0006;
+assign ashr_1359_1150_1360_out = ($signed(16'(smax_1233_1147_1234_out * smax_1329_1147_1330_out))) >>> 16'h0006;
+assign ashr_1368_1150_1369_out = ($signed(16'(ashr_1343_1150_1344_out + (16'((($signed(16'(smax_1159_1147_1160_out * smax_1262_1147_1263_out))) >>> 16'h0006) + (16'(ashr_1347_1150_1348_out + (16'(ashr_1349_1150_1350_out + (16'(ashr_1351_1150_1352_out + (16'(ashr_1353_1150_1354_out + (16'(ashr_1355_1150_1356_out + (16'(ashr_1357_1150_1358_out + ashr_1359_1150_1360_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1385_1150_1386_out = ($signed(16'(smax_1383_1147_1384_out * smax_1383_1147_1384_out))) >>> 16'h0006;
+assign ashr_1395_1150_1396_out = ($signed(16'(smax_1393_1147_1394_out * smax_1393_1147_1394_out))) >>> 16'h0006;
+assign ashr_1404_1150_1405_out = ($signed(16'(smax_1402_1147_1403_out * smax_1402_1147_1403_out))) >>> 16'h0006;
+assign ashr_1414_1150_1415_out = ($signed(16'(smax_1412_1147_1413_out * smax_1412_1147_1413_out))) >>> 16'h0006;
+assign ashr_1424_1150_1425_out = ($signed(16'(smax_1422_1147_1423_out * smax_1422_1147_1423_out))) >>> 16'h0006;
+assign ashr_1433_1150_1434_out = ($signed(16'(ashr_1203_1150_1204_out + (16'(ashr_1193_1150_1194_out + (16'(ashr_1385_1150_1386_out + (16'(ashr_1235_1150_1236_out + (16'(ashr_1224_1150_1225_out + (16'(ashr_1395_1150_1396_out + (16'(ashr_1404_1150_1405_out + (16'(ashr_1414_1150_1415_out + ashr_1424_1150_1425_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1442_1150_1443_out = ($signed(16'(smax_1440_1147_1441_out * smax_1440_1147_1441_out))) >>> 16'h0006;
+assign ashr_1451_1150_1452_out = ($signed(16'(smax_1449_1147_1450_out * smax_1449_1147_1450_out))) >>> 16'h0006;
+assign ashr_1461_1150_1462_out = ($signed(16'(smax_1459_1147_1460_out * smax_1459_1147_1460_out))) >>> 16'h0006;
+assign ashr_1471_1150_1472_out = ($signed(16'(smax_1469_1147_1470_out * smax_1469_1147_1470_out))) >>> 16'h0006;
+assign ashr_1481_1150_1482_out = ($signed(16'(smax_1479_1147_1480_out * smax_1479_1147_1480_out))) >>> 16'h0006;
+assign ashr_1490_1150_1491_out = ($signed(16'(ashr_1301_1150_1302_out + (16'(ashr_1292_1150_1293_out + (16'(ashr_1442_1150_1443_out + (16'(ashr_1331_1150_1332_out + (16'(ashr_1321_1150_1322_out + (16'(ashr_1451_1150_1452_out + (16'(ashr_1461_1150_1462_out + (16'(ashr_1471_1150_1472_out + ashr_1481_1150_1482_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1493_1150_1494_out = ($signed(16'(smax_1383_1147_1384_out * smax_1440_1147_1441_out))) >>> 16'h0006;
+assign ashr_1495_1150_1496_out = ($signed(16'(smax_1393_1147_1394_out * smax_1449_1147_1450_out))) >>> 16'h0006;
+assign ashr_1497_1150_1498_out = ($signed(16'(smax_1402_1147_1403_out * smax_1459_1147_1460_out))) >>> 16'h0006;
+assign ashr_1499_1150_1500_out = ($signed(16'(smax_1412_1147_1413_out * smax_1469_1147_1470_out))) >>> 16'h0006;
+assign ashr_1501_1150_1502_out = ($signed(16'(smax_1422_1147_1423_out * smax_1479_1147_1480_out))) >>> 16'h0006;
+assign ashr_1510_1150_1511_out = ($signed(16'(ashr_1353_1150_1354_out + (16'(ashr_1351_1150_1352_out + (16'(ashr_1493_1150_1494_out + (16'(ashr_1359_1150_1360_out + (16'(ashr_1357_1150_1358_out + (16'(ashr_1495_1150_1496_out + (16'(ashr_1497_1150_1498_out + (16'(ashr_1499_1150_1500_out + ashr_1501_1150_1502_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1527_1150_1528_out = ($signed(16'(smax_1525_1147_1526_out * smax_1525_1147_1526_out))) >>> 16'h0006;
+assign ashr_1536_1150_1537_out = ($signed(16'(ashr_1171_1150_1172_out + (16'(ashr_1149_1150_1151_out + (16'(ashr_1527_1150_1528_out + (16'(ashr_1193_1150_1194_out + (16'(ashr_1203_1150_1204_out + (16'(ashr_1385_1150_1386_out + (16'(ashr_1235_1150_1236_out + (16'(ashr_1395_1150_1396_out + ashr_1224_1150_1225_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1546_1150_1547_out = ($signed(16'(smax_1544_1147_1545_out * smax_1544_1147_1545_out))) >>> 16'h0006;
+assign ashr_1555_1150_1556_out = ($signed(16'(ashr_1274_1150_1275_out + (16'(ashr_1254_1150_1255_out + (16'(ashr_1546_1150_1547_out + (16'(ashr_1292_1150_1293_out + (16'(ashr_1301_1150_1302_out + (16'(ashr_1442_1150_1443_out + (16'(ashr_1331_1150_1332_out + (16'(ashr_1451_1150_1452_out + ashr_1321_1150_1322_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1558_1150_1559_out = ($signed(16'(smax_1525_1147_1526_out * smax_1544_1147_1545_out))) >>> 16'h0006;
+assign ashr_1567_1150_1568_out = ($signed(16'(ashr_1347_1150_1348_out + (16'(ashr_1343_1150_1344_out + (16'(ashr_1558_1150_1559_out + (16'(ashr_1351_1150_1352_out + (16'(ashr_1353_1150_1354_out + (16'(ashr_1493_1150_1494_out + (16'(ashr_1359_1150_1360_out + (16'(ashr_1495_1150_1496_out + ashr_1357_1150_1358_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1595_1150_1596_out = ($signed(16'(smax_1593_1147_1594_out * smax_1593_1147_1594_out))) >>> 16'h0006;
+assign ashr_1605_1150_1606_out = ($signed(16'(smax_1603_1147_1604_out * smax_1603_1147_1604_out))) >>> 16'h0006;
+assign ashr_1614_1150_1615_out = ($signed(16'(ashr_1527_1150_1528_out + (16'(ashr_1171_1150_1172_out + (16'((($signed(16'(smax_1583_1147_1584_out * smax_1583_1147_1584_out))) >>> 16'h0006) + (16'(ashr_1203_1150_1204_out + (16'(ashr_1385_1150_1386_out + (16'(ashr_1595_1150_1596_out + (16'(ashr_1224_1150_1225_out + (16'(ashr_1605_1150_1606_out + ashr_1395_1150_1396_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1633_1150_1634_out = ($signed(16'(smax_1631_1147_1632_out * smax_1631_1147_1632_out))) >>> 16'h0006;
+assign ashr_1642_1150_1643_out = ($signed(16'(smax_1640_1147_1641_out * smax_1640_1147_1641_out))) >>> 16'h0006;
+assign ashr_1651_1150_1652_out = ($signed(16'(ashr_1546_1150_1547_out + (16'(ashr_1274_1150_1275_out + (16'((($signed(16'(smax_1622_1147_1623_out * smax_1622_1147_1623_out))) >>> 16'h0006) + (16'(ashr_1301_1150_1302_out + (16'(ashr_1442_1150_1443_out + (16'(ashr_1633_1150_1634_out + (16'(ashr_1321_1150_1322_out + (16'(ashr_1642_1150_1643_out + ashr_1451_1150_1452_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1656_1150_1657_out = ($signed(16'(smax_1593_1147_1594_out * smax_1631_1147_1632_out))) >>> 16'h0006;
+assign ashr_1658_1150_1659_out = ($signed(16'(smax_1603_1147_1604_out * smax_1640_1147_1641_out))) >>> 16'h0006;
+assign ashr_1667_1150_1668_out = ($signed(16'(ashr_1558_1150_1559_out + (16'(ashr_1347_1150_1348_out + (16'((($signed(16'(smax_1583_1147_1584_out * smax_1622_1147_1623_out))) >>> 16'h0006) + (16'(ashr_1353_1150_1354_out + (16'(ashr_1493_1150_1494_out + (16'(ashr_1656_1150_1657_out + (16'(ashr_1357_1150_1358_out + (16'(ashr_1658_1150_1659_out + ashr_1495_1150_1496_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1685_1150_1686_out = ($signed(16'(smax_1683_1147_1684_out * smax_1683_1147_1684_out))) >>> 16'h0006;
+assign ashr_1694_1150_1695_out = ($signed(16'(ashr_1193_1150_1194_out + (16'(ashr_1182_1150_1183_out + (16'(ashr_1203_1150_1204_out + (16'(ashr_1214_1150_1215_out + (16'(ashr_1235_1150_1236_out + (16'(ashr_1224_1150_1225_out + (16'(ashr_1685_1150_1686_out + (16'(ashr_1424_1150_1425_out + ashr_1404_1150_1405_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1704_1150_1705_out = ($signed(16'(smax_1702_1147_1703_out * smax_1702_1147_1703_out))) >>> 16'h0006;
+assign ashr_1713_1150_1714_out = ($signed(16'(ashr_1292_1150_1293_out + (16'(ashr_1283_1150_1284_out + (16'(ashr_1301_1150_1302_out + (16'(ashr_1311_1150_1312_out + (16'(ashr_1331_1150_1332_out + (16'(ashr_1321_1150_1322_out + (16'(ashr_1704_1150_1705_out + (16'(ashr_1481_1150_1482_out + ashr_1461_1150_1462_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1716_1150_1717_out = ($signed(16'(smax_1683_1147_1684_out * smax_1702_1147_1703_out))) >>> 16'h0006;
+assign ashr_1725_1150_1726_out = ($signed(16'(ashr_1351_1150_1352_out + (16'(ashr_1349_1150_1350_out + (16'(ashr_1353_1150_1354_out + (16'(ashr_1355_1150_1356_out + (16'(ashr_1359_1150_1360_out + (16'(ashr_1357_1150_1358_out + (16'(ashr_1716_1150_1717_out + (16'(ashr_1501_1150_1502_out + ashr_1497_1150_1498_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1743_1150_1744_out = ($signed(16'(smax_1741_1147_1742_out * smax_1741_1147_1742_out))) >>> 16'h0006;
+assign ashr_1752_1150_1753_out = ($signed(16'(ashr_1385_1150_1386_out + (16'(ashr_1203_1150_1204_out + (16'(ashr_1595_1150_1596_out + (16'(ashr_1224_1150_1225_out + (16'(ashr_1395_1150_1396_out + (16'(ashr_1605_1150_1606_out + (16'(ashr_1424_1150_1425_out + (16'(ashr_1743_1150_1744_out + ashr_1414_1150_1415_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1762_1150_1763_out = ($signed(16'(smax_1760_1147_1761_out * smax_1760_1147_1761_out))) >>> 16'h0006;
+assign ashr_1771_1150_1772_out = ($signed(16'(ashr_1442_1150_1443_out + (16'(ashr_1301_1150_1302_out + (16'(ashr_1633_1150_1634_out + (16'(ashr_1321_1150_1322_out + (16'(ashr_1451_1150_1452_out + (16'(ashr_1642_1150_1643_out + (16'(ashr_1481_1150_1482_out + (16'(ashr_1762_1150_1763_out + ashr_1471_1150_1472_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1774_1150_1775_out = ($signed(16'(smax_1741_1147_1742_out * smax_1760_1147_1761_out))) >>> 16'h0006;
+assign ashr_1783_1150_1784_out = ($signed(16'(ashr_1493_1150_1494_out + (16'(ashr_1353_1150_1354_out + (16'(ashr_1656_1150_1657_out + (16'(ashr_1357_1150_1358_out + (16'(ashr_1495_1150_1496_out + (16'(ashr_1658_1150_1659_out + (16'(ashr_1501_1150_1502_out + (16'(ashr_1774_1150_1775_out + ashr_1499_1150_1500_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1810_1150_1811_out = ($signed(16'(smax_1808_1147_1809_out * smax_1808_1147_1809_out))) >>> 16'h0006;
+assign ashr_1819_1150_1820_out = ($signed(16'(smax_1817_1147_1818_out * smax_1817_1147_1818_out))) >>> 16'h0006;
+assign ashr_1828_1150_1829_out = ($signed(16'(ashr_1235_1150_1236_out + (16'(ashr_1214_1150_1215_out + (16'(ashr_1224_1150_1225_out + (16'(ashr_1685_1150_1686_out + (16'(ashr_1404_1150_1405_out + (16'(ashr_1424_1150_1425_out + (16'((($signed(16'(smax_1799_1147_1800_out * smax_1799_1147_1800_out))) >>> 16'h0006) + (16'(ashr_1810_1150_1811_out + ashr_1819_1150_1820_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1848_1150_1849_out = ($signed(16'(smax_1846_1147_1847_out * smax_1846_1147_1847_out))) >>> 16'h0006;
+assign ashr_1858_1150_1859_out = ($signed(16'(smax_1856_1147_1857_out * smax_1856_1147_1857_out))) >>> 16'h0006;
+assign ashr_1867_1150_1868_out = ($signed(16'(ashr_1331_1150_1332_out + (16'(ashr_1311_1150_1312_out + (16'(ashr_1321_1150_1322_out + (16'(ashr_1704_1150_1705_out + (16'(ashr_1461_1150_1462_out + (16'(ashr_1481_1150_1482_out + (16'((($signed(16'(smax_1836_1147_1837_out * smax_1836_1147_1837_out))) >>> 16'h0006) + (16'(ashr_1848_1150_1849_out + ashr_1858_1150_1859_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1872_1150_1873_out = ($signed(16'(smax_1808_1147_1809_out * smax_1846_1147_1847_out))) >>> 16'h0006;
+assign ashr_1874_1150_1875_out = ($signed(16'(smax_1817_1147_1818_out * smax_1856_1147_1857_out))) >>> 16'h0006;
+assign ashr_1883_1150_1884_out = ($signed(16'(ashr_1359_1150_1360_out + (16'(ashr_1355_1150_1356_out + (16'(ashr_1357_1150_1358_out + (16'(ashr_1716_1150_1717_out + (16'(ashr_1497_1150_1498_out + (16'(ashr_1501_1150_1502_out + (16'((($signed(16'(smax_1799_1147_1800_out * smax_1836_1147_1837_out))) >>> 16'h0006) + (16'(ashr_1872_1150_1873_out + ashr_1874_1150_1875_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1900_1150_1901_out = ($signed(16'(smax_1898_1147_1899_out * smax_1898_1147_1899_out))) >>> 16'h0006;
+assign ashr_1909_1150_1910_out = ($signed(16'(ashr_1224_1150_1225_out + (16'(ashr_1235_1150_1236_out + (16'(ashr_1395_1150_1396_out + (16'(ashr_1404_1150_1405_out + (16'(ashr_1424_1150_1425_out + (16'(ashr_1414_1150_1415_out + (16'(ashr_1819_1150_1820_out + (16'(ashr_1900_1150_1901_out + ashr_1810_1150_1811_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1919_1150_1920_out = ($signed(16'(smax_1917_1147_1918_out * smax_1917_1147_1918_out))) >>> 16'h0006;
+assign ashr_1928_1150_1929_out = ($signed(16'(ashr_1321_1150_1322_out + (16'(ashr_1331_1150_1332_out + (16'(ashr_1451_1150_1452_out + (16'(ashr_1461_1150_1462_out + (16'(ashr_1481_1150_1482_out + (16'(ashr_1471_1150_1472_out + (16'(ashr_1858_1150_1859_out + (16'(ashr_1919_1150_1920_out + ashr_1848_1150_1849_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1931_1150_1932_out = ($signed(16'(smax_1898_1147_1899_out * smax_1917_1147_1918_out))) >>> 16'h0006;
+assign ashr_1940_1150_1941_out = ($signed(16'(ashr_1357_1150_1358_out + (16'(ashr_1359_1150_1360_out + (16'(ashr_1495_1150_1496_out + (16'(ashr_1497_1150_1498_out + (16'(ashr_1501_1150_1502_out + (16'(ashr_1499_1150_1500_out + (16'(ashr_1874_1150_1875_out + (16'(ashr_1931_1150_1932_out + ashr_1872_1150_1873_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1967_1150_1968_out = ($signed(16'(ashr_1395_1150_1396_out + (16'(ashr_1224_1150_1225_out + (16'(ashr_1605_1150_1606_out + (16'(ashr_1424_1150_1425_out + (16'(ashr_1414_1150_1415_out + (16'(ashr_1743_1150_1744_out + (16'(ashr_1810_1150_1811_out + (16'((($signed(16'(smax_1956_1147_1957_out * smax_1956_1147_1957_out))) >>> 16'h0006) + ashr_1900_1150_1901_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1986_1150_1987_out = ($signed(16'(ashr_1451_1150_1452_out + (16'(ashr_1321_1150_1322_out + (16'(ashr_1642_1150_1643_out + (16'(ashr_1481_1150_1482_out + (16'(ashr_1471_1150_1472_out + (16'(ashr_1762_1150_1763_out + (16'(ashr_1848_1150_1849_out + (16'((($signed(16'(smax_1975_1147_1976_out * smax_1975_1147_1976_out))) >>> 16'h0006) + ashr_1919_1150_1920_out))))))))))))))))) >>> 16'h0006;
+assign ashr_1998_1150_1999_out = ($signed(16'(ashr_1495_1150_1496_out + (16'(ashr_1357_1150_1358_out + (16'(ashr_1658_1150_1659_out + (16'(ashr_1501_1150_1502_out + (16'(ashr_1499_1150_1500_out + (16'(ashr_1774_1150_1775_out + (16'(ashr_1872_1150_1873_out + (16'((($signed(16'(smax_1956_1147_1957_out * smax_1975_1147_1976_out))) >>> 16'h0006) + ashr_1931_1150_1932_out))))))))))))))))) >>> 16'h0006;
+assign mul_padded16_global_wrapper_stencil_14_1137_1195_out = 16'(in0_padded16_global_wrapper_stencil[5] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_15_1137_1163_out = 16'(in0_padded16_global_wrapper_stencil[6] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_16_1137_1205_out = 16'(in0_padded16_global_wrapper_stencil[7] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_18_1137_1226_out = 16'(in0_padded16_global_wrapper_stencil[9] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_19_1137_1230_out = 16'(in0_padded16_global_wrapper_stencil[10] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_20_1137_1216_out = 16'(in0_padded16_global_wrapper_stencil[12] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_21_1137_1323_out = 16'(in0_padded16_global_wrapper_stencil[13] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_23_1137_1416_out = 16'(in0_padded16_global_wrapper_stencil[15] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_24_1137_1313_out = 16'(in0_padded16_global_wrapper_stencil[16] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_25_1137_1303_out = 16'(in0_padded16_global_wrapper_stencil[17] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_26_1137_1519_out = 16'(in0_padded16_global_wrapper_stencil[18] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_27_1137_1387_out = 16'(in0_padded16_global_wrapper_stencil[19] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_28_1137_1377_out = 16'(in0_padded16_global_wrapper_stencil[20] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_29_1137_1406_out = 16'(in0_padded16_global_wrapper_stencil[21] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_2_1137_1184_out = 16'(in0_padded16_global_wrapper_stencil[11] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_30_1137_1473_out = 16'(in0_padded16_global_wrapper_stencil[23] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_31_1137_1696_out = 16'(in0_padded16_global_wrapper_stencil[24] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_32_1137_1754_out = 16'(in0_padded16_global_wrapper_stencil[25] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_33_1137_1463_out = 16'(in0_padded16_global_wrapper_stencil[26] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_34_1137_1453_out = 16'(in0_padded16_global_wrapper_stencil[27] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_3_1137_1138_out = 16'(in0_padded16_global_wrapper_stencil[22] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_5_1137_1142_out = 16'(in0_padded16_global_wrapper_stencil[44] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_6_1137_1188_out = 16'(in0_padded16_global_wrapper_stencil[45] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_8_1137_1173_out = 16'(in0_padded16_global_wrapper_stencil[47] * 16'h0002);
+assign mul_padded16_global_wrapper_stencil_9_1137_1152_out = 16'(in0_padded16_global_wrapper_stencil[48] * 16'h0002);
+assign smax_1146_1147_1148_in0 = smin_1144_1145_1146_out;
+assign smax_1146_1147_1148_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1146_1147_1148 (
+    .in0(smax_1146_1147_1148_in0),
+    .in1(smax_1146_1147_1148_in1),
+    .out(smax_1146_1147_1148_out)
+);
+assign smax_1159_1147_1160_in0 = smin_1158_1145_1159_out;
+assign smax_1159_1147_1160_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1159_1147_1160 (
+    .in0(smax_1159_1147_1160_in0),
+    .in1(smax_1159_1147_1160_in1),
+    .out(smax_1159_1147_1160_out)
+);
+assign smax_1169_1147_1170_in0 = smin_1168_1145_1169_out;
+assign smax_1169_1147_1170_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1169_1147_1170 (
+    .in0(smax_1169_1147_1170_in0),
+    .in1(smax_1169_1147_1170_in1),
+    .out(smax_1169_1147_1170_out)
+);
+assign smax_1180_1147_1181_in0 = smin_1179_1145_1180_out;
+assign smax_1180_1147_1181_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1180_1147_1181 (
+    .in0(smax_1180_1147_1181_in0),
+    .in1(smax_1180_1147_1181_in1),
+    .out(smax_1180_1147_1181_out)
+);
+assign smax_1191_1147_1192_in0 = smin_1190_1145_1191_out;
+assign smax_1191_1147_1192_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1191_1147_1192 (
+    .in0(smax_1191_1147_1192_in0),
+    .in1(smax_1191_1147_1192_in1),
+    .out(smax_1191_1147_1192_out)
+);
+assign smax_1201_1147_1202_in0 = smin_1200_1145_1201_out;
+assign smax_1201_1147_1202_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1201_1147_1202 (
+    .in0(smax_1201_1147_1202_in0),
+    .in1(smax_1201_1147_1202_in1),
+    .out(smax_1201_1147_1202_out)
+);
+assign smax_1212_1147_1213_in0 = smin_1211_1145_1212_out;
+assign smax_1212_1147_1213_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1212_1147_1213 (
+    .in0(smax_1212_1147_1213_in0),
+    .in1(smax_1212_1147_1213_in1),
+    .out(smax_1212_1147_1213_out)
+);
+assign smax_1222_1147_1223_in0 = smin_1221_1145_1222_out;
+assign smax_1222_1147_1223_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1222_1147_1223 (
+    .in0(smax_1222_1147_1223_in0),
+    .in1(smax_1222_1147_1223_in1),
+    .out(smax_1222_1147_1223_out)
+);
+assign smax_1233_1147_1234_in0 = smin_1232_1145_1233_out;
+assign smax_1233_1147_1234_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1233_1147_1234 (
+    .in0(smax_1233_1147_1234_in0),
+    .in1(smax_1233_1147_1234_in1),
+    .out(smax_1233_1147_1234_out)
+);
+assign smax_1252_1147_1253_in0 = smin_1251_1145_1252_out;
+assign smax_1252_1147_1253_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1252_1147_1253 (
+    .in0(smax_1252_1147_1253_in0),
+    .in1(smax_1252_1147_1253_in1),
+    .out(smax_1252_1147_1253_out)
+);
+assign smax_1262_1147_1263_in0 = smin_1261_1145_1262_out;
+assign smax_1262_1147_1263_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1262_1147_1263 (
+    .in0(smax_1262_1147_1263_in0),
+    .in1(smax_1262_1147_1263_in1),
+    .out(smax_1262_1147_1263_out)
+);
+assign smax_1272_1147_1273_in0 = smin_1271_1145_1272_out;
+assign smax_1272_1147_1273_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1272_1147_1273 (
+    .in0(smax_1272_1147_1273_in0),
+    .in1(smax_1272_1147_1273_in1),
+    .out(smax_1272_1147_1273_out)
+);
+assign smax_1281_1147_1282_in0 = smin_1280_1145_1281_out;
+assign smax_1281_1147_1282_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1281_1147_1282 (
+    .in0(smax_1281_1147_1282_in0),
+    .in1(smax_1281_1147_1282_in1),
+    .out(smax_1281_1147_1282_out)
+);
+assign smax_1290_1147_1291_in0 = smin_1289_1145_1290_out;
+assign smax_1290_1147_1291_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1290_1147_1291 (
+    .in0(smax_1290_1147_1291_in0),
+    .in1(smax_1290_1147_1291_in1),
+    .out(smax_1290_1147_1291_out)
+);
+assign smax_1299_1147_1300_in0 = smin_1298_1145_1299_out;
+assign smax_1299_1147_1300_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1299_1147_1300 (
+    .in0(smax_1299_1147_1300_in0),
+    .in1(smax_1299_1147_1300_in1),
+    .out(smax_1299_1147_1300_out)
+);
+assign smax_1309_1147_1310_in0 = smin_1308_1145_1309_out;
+assign smax_1309_1147_1310_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1309_1147_1310 (
+    .in0(smax_1309_1147_1310_in0),
+    .in1(smax_1309_1147_1310_in1),
+    .out(smax_1309_1147_1310_out)
+);
+assign smax_1319_1147_1320_in0 = smin_1318_1145_1319_out;
+assign smax_1319_1147_1320_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1319_1147_1320 (
+    .in0(smax_1319_1147_1320_in0),
+    .in1(smax_1319_1147_1320_in1),
+    .out(smax_1319_1147_1320_out)
+);
+assign smax_1329_1147_1330_in0 = smin_1328_1145_1329_out;
+assign smax_1329_1147_1330_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1329_1147_1330 (
+    .in0(smax_1329_1147_1330_in0),
+    .in1(smax_1329_1147_1330_in1),
+    .out(smax_1329_1147_1330_out)
+);
+assign smax_1383_1147_1384_in0 = smin_1382_1145_1383_out;
+assign smax_1383_1147_1384_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1383_1147_1384 (
+    .in0(smax_1383_1147_1384_in0),
+    .in1(smax_1383_1147_1384_in1),
+    .out(smax_1383_1147_1384_out)
+);
+assign smax_1393_1147_1394_in0 = smin_1392_1145_1393_out;
+assign smax_1393_1147_1394_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1393_1147_1394 (
+    .in0(smax_1393_1147_1394_in0),
+    .in1(smax_1393_1147_1394_in1),
+    .out(smax_1393_1147_1394_out)
+);
+assign smax_1402_1147_1403_in0 = smin_1401_1145_1402_out;
+assign smax_1402_1147_1403_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1402_1147_1403 (
+    .in0(smax_1402_1147_1403_in0),
+    .in1(smax_1402_1147_1403_in1),
+    .out(smax_1402_1147_1403_out)
+);
+assign smax_1412_1147_1413_in0 = smin_1411_1145_1412_out;
+assign smax_1412_1147_1413_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1412_1147_1413 (
+    .in0(smax_1412_1147_1413_in0),
+    .in1(smax_1412_1147_1413_in1),
+    .out(smax_1412_1147_1413_out)
+);
+assign smax_1422_1147_1423_in0 = smin_1421_1145_1422_out;
+assign smax_1422_1147_1423_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1422_1147_1423 (
+    .in0(smax_1422_1147_1423_in0),
+    .in1(smax_1422_1147_1423_in1),
+    .out(smax_1422_1147_1423_out)
+);
+assign smax_1440_1147_1441_in0 = smin_1439_1145_1440_out;
+assign smax_1440_1147_1441_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1440_1147_1441 (
+    .in0(smax_1440_1147_1441_in0),
+    .in1(smax_1440_1147_1441_in1),
+    .out(smax_1440_1147_1441_out)
+);
+assign smax_1449_1147_1450_in0 = smin_1448_1145_1449_out;
+assign smax_1449_1147_1450_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1449_1147_1450 (
+    .in0(smax_1449_1147_1450_in0),
+    .in1(smax_1449_1147_1450_in1),
+    .out(smax_1449_1147_1450_out)
+);
+assign smax_1459_1147_1460_in0 = smin_1458_1145_1459_out;
+assign smax_1459_1147_1460_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1459_1147_1460 (
+    .in0(smax_1459_1147_1460_in0),
+    .in1(smax_1459_1147_1460_in1),
+    .out(smax_1459_1147_1460_out)
+);
+assign smax_1469_1147_1470_in0 = smin_1468_1145_1469_out;
+assign smax_1469_1147_1470_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1469_1147_1470 (
+    .in0(smax_1469_1147_1470_in0),
+    .in1(smax_1469_1147_1470_in1),
+    .out(smax_1469_1147_1470_out)
+);
+assign smax_1479_1147_1480_in0 = smin_1478_1145_1479_out;
+assign smax_1479_1147_1480_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1479_1147_1480 (
+    .in0(smax_1479_1147_1480_in0),
+    .in1(smax_1479_1147_1480_in1),
+    .out(smax_1479_1147_1480_out)
+);
+assign smax_1525_1147_1526_in0 = smin_1524_1145_1525_out;
+assign smax_1525_1147_1526_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1525_1147_1526 (
+    .in0(smax_1525_1147_1526_in0),
+    .in1(smax_1525_1147_1526_in1),
+    .out(smax_1525_1147_1526_out)
+);
+assign smax_1544_1147_1545_in0 = smin_1543_1145_1544_out;
+assign smax_1544_1147_1545_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1544_1147_1545 (
+    .in0(smax_1544_1147_1545_in0),
+    .in1(smax_1544_1147_1545_in1),
+    .out(smax_1544_1147_1545_out)
+);
+assign smax_1583_1147_1584_in0 = smin_1582_1145_1583_out;
+assign smax_1583_1147_1584_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1583_1147_1584 (
+    .in0(smax_1583_1147_1584_in0),
+    .in1(smax_1583_1147_1584_in1),
+    .out(smax_1583_1147_1584_out)
+);
+assign smax_1593_1147_1594_in0 = smin_1592_1145_1593_out;
+assign smax_1593_1147_1594_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1593_1147_1594 (
+    .in0(smax_1593_1147_1594_in0),
+    .in1(smax_1593_1147_1594_in1),
+    .out(smax_1593_1147_1594_out)
+);
+assign smax_1603_1147_1604_in0 = smin_1602_1145_1603_out;
+assign smax_1603_1147_1604_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1603_1147_1604 (
+    .in0(smax_1603_1147_1604_in0),
+    .in1(smax_1603_1147_1604_in1),
+    .out(smax_1603_1147_1604_out)
+);
+assign smax_1622_1147_1623_in0 = smin_1621_1145_1622_out;
+assign smax_1622_1147_1623_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1622_1147_1623 (
+    .in0(smax_1622_1147_1623_in0),
+    .in1(smax_1622_1147_1623_in1),
+    .out(smax_1622_1147_1623_out)
+);
+assign smax_1631_1147_1632_in0 = smin_1630_1145_1631_out;
+assign smax_1631_1147_1632_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1631_1147_1632 (
+    .in0(smax_1631_1147_1632_in0),
+    .in1(smax_1631_1147_1632_in1),
+    .out(smax_1631_1147_1632_out)
+);
+assign smax_1640_1147_1641_in0 = smin_1639_1145_1640_out;
+assign smax_1640_1147_1641_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1640_1147_1641 (
+    .in0(smax_1640_1147_1641_in0),
+    .in1(smax_1640_1147_1641_in1),
+    .out(smax_1640_1147_1641_out)
+);
+assign smax_1683_1147_1684_in0 = smin_1682_1145_1683_out;
+assign smax_1683_1147_1684_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1683_1147_1684 (
+    .in0(smax_1683_1147_1684_in0),
+    .in1(smax_1683_1147_1684_in1),
+    .out(smax_1683_1147_1684_out)
+);
+assign smax_1702_1147_1703_in0 = smin_1701_1145_1702_out;
+assign smax_1702_1147_1703_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1702_1147_1703 (
+    .in0(smax_1702_1147_1703_in0),
+    .in1(smax_1702_1147_1703_in1),
+    .out(smax_1702_1147_1703_out)
+);
+assign smax_1741_1147_1742_in0 = smin_1740_1145_1741_out;
+assign smax_1741_1147_1742_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1741_1147_1742 (
+    .in0(smax_1741_1147_1742_in0),
+    .in1(smax_1741_1147_1742_in1),
+    .out(smax_1741_1147_1742_out)
+);
+assign smax_1760_1147_1761_in0 = smin_1759_1145_1760_out;
+assign smax_1760_1147_1761_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1760_1147_1761 (
+    .in0(smax_1760_1147_1761_in0),
+    .in1(smax_1760_1147_1761_in1),
+    .out(smax_1760_1147_1761_out)
+);
+assign smax_1799_1147_1800_in0 = smin_1798_1145_1799_out;
+assign smax_1799_1147_1800_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1799_1147_1800 (
+    .in0(smax_1799_1147_1800_in0),
+    .in1(smax_1799_1147_1800_in1),
+    .out(smax_1799_1147_1800_out)
+);
+assign smax_1808_1147_1809_in0 = smin_1807_1145_1808_out;
+assign smax_1808_1147_1809_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1808_1147_1809 (
+    .in0(smax_1808_1147_1809_in0),
+    .in1(smax_1808_1147_1809_in1),
+    .out(smax_1808_1147_1809_out)
+);
+assign smax_1817_1147_1818_in0 = smin_1816_1145_1817_out;
+assign smax_1817_1147_1818_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1817_1147_1818 (
+    .in0(smax_1817_1147_1818_in0),
+    .in1(smax_1817_1147_1818_in1),
+    .out(smax_1817_1147_1818_out)
+);
+assign smax_1836_1147_1837_in0 = smin_1835_1145_1836_out;
+assign smax_1836_1147_1837_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1836_1147_1837 (
+    .in0(smax_1836_1147_1837_in0),
+    .in1(smax_1836_1147_1837_in1),
+    .out(smax_1836_1147_1837_out)
+);
+assign smax_1846_1147_1847_in0 = smin_1845_1145_1846_out;
+assign smax_1846_1147_1847_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1846_1147_1847 (
+    .in0(smax_1846_1147_1847_in0),
+    .in1(smax_1846_1147_1847_in1),
+    .out(smax_1846_1147_1847_out)
+);
+assign smax_1856_1147_1857_in0 = smin_1855_1145_1856_out;
+assign smax_1856_1147_1857_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1856_1147_1857 (
+    .in0(smax_1856_1147_1857_in0),
+    .in1(smax_1856_1147_1857_in1),
+    .out(smax_1856_1147_1857_out)
+);
+assign smax_1898_1147_1899_in0 = smin_1897_1145_1898_out;
+assign smax_1898_1147_1899_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1898_1147_1899 (
+    .in0(smax_1898_1147_1899_in0),
+    .in1(smax_1898_1147_1899_in1),
+    .out(smax_1898_1147_1899_out)
+);
+assign smax_1917_1147_1918_in0 = smin_1916_1145_1917_out;
+assign smax_1917_1147_1918_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1917_1147_1918 (
+    .in0(smax_1917_1147_1918_in0),
+    .in1(smax_1917_1147_1918_in1),
+    .out(smax_1917_1147_1918_out)
+);
+assign smax_1956_1147_1957_in0 = smin_1955_1145_1956_out;
+assign smax_1956_1147_1957_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1956_1147_1957 (
+    .in0(smax_1956_1147_1957_in0),
+    .in1(smax_1956_1147_1957_in1),
+    .out(smax_1956_1147_1957_out)
+);
+assign smax_1975_1147_1976_in0 = smin_1974_1145_1975_out;
+assign smax_1975_1147_1976_in1 = 16'hff4c;
+commonlib_smax__width16 smax_1975_1147_1976 (
+    .in0(smax_1975_1147_1976_in0),
+    .in1(smax_1975_1147_1976_in1),
+    .out(smax_1975_1147_1976_out)
+);
+assign smin_1144_1145_1146_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[0] + (16'(in0_padded16_global_wrapper_stencil[11] + mul_padded16_global_wrapper_stencil_3_1137_1138_out)))) - in0_padded16_global_wrapper_stencil[33])) - mul_padded16_global_wrapper_stencil_5_1137_1142_out)) - in0_padded16_global_wrapper_stencil[45]);
+assign smin_1144_1145_1146_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1144_1145_1146 (
+    .in0(smin_1144_1145_1146_in0),
+    .in1(smin_1144_1145_1146_in1),
+    .out(smin_1144_1145_1146_out)
+);
+assign smin_1158_1145_1159_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[46] + (16'(in0_padded16_global_wrapper_stencil[47] + mul_padded16_global_wrapper_stencil_9_1137_1152_out)))) - in0_padded16_global_wrapper_stencil[1])) - (16'(in0_padded16_global_wrapper_stencil[2] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[3]);
+assign smin_1158_1145_1159_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1158_1145_1159 (
+    .in0(smin_1158_1145_1159_in0),
+    .in1(smin_1158_1145_1159_in1),
+    .out(smin_1158_1145_1159_out)
+);
+assign smin_1168_1145_1169_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[4] + (16'(in0_padded16_global_wrapper_stencil[5] + mul_padded16_global_wrapper_stencil_15_1137_1163_out)))) - in0_padded16_global_wrapper_stencil[46])) - mul_padded16_global_wrapper_stencil_9_1137_1152_out)) - in0_padded16_global_wrapper_stencil[47]);
+assign smin_1168_1145_1169_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1168_1145_1169 (
+    .in0(smin_1168_1145_1169_in0),
+    .in1(smin_1168_1145_1169_in1),
+    .out(smin_1168_1145_1169_out)
+);
+assign smin_1179_1145_1180_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[48] + (16'(in0_padded16_global_wrapper_stencil[7] + mul_padded16_global_wrapper_stencil_8_1137_1173_out)))) - in0_padded16_global_wrapper_stencil[2])) - (16'(in0_padded16_global_wrapper_stencil[3] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[8]);
+assign smin_1179_1145_1180_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1179_1145_1180 (
+    .in0(smin_1179_1145_1180_in0),
+    .in1(smin_1179_1145_1180_in1),
+    .out(smin_1179_1145_1180_out)
+);
+assign smin_1190_1145_1191_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[22] + (16'(in0_padded16_global_wrapper_stencil[9] + mul_padded16_global_wrapper_stencil_2_1137_1184_out)))) - in0_padded16_global_wrapper_stencil[44])) - mul_padded16_global_wrapper_stencil_6_1137_1188_out)) - in0_padded16_global_wrapper_stencil[10]);
+assign smin_1190_1145_1191_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1190_1145_1191 (
+    .in0(smin_1190_1145_1191_in0),
+    .in1(smin_1190_1145_1191_in1),
+    .out(smin_1190_1145_1191_out)
+);
+assign smin_1200_1145_1201_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[6] + (16'(in0_padded16_global_wrapper_stencil[12] + mul_padded16_global_wrapper_stencil_14_1137_1195_out)))) - in0_padded16_global_wrapper_stencil[48])) - mul_padded16_global_wrapper_stencil_8_1137_1173_out)) - in0_padded16_global_wrapper_stencil[7]);
+assign smin_1200_1145_1201_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1200_1145_1201 (
+    .in0(smin_1200_1145_1201_in0),
+    .in1(smin_1200_1145_1201_in1),
+    .out(smin_1200_1145_1201_out)
+);
+assign smin_1211_1145_1212_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[47] + (16'(in0_padded16_global_wrapper_stencil[13] + mul_padded16_global_wrapper_stencil_16_1137_1205_out)))) - in0_padded16_global_wrapper_stencil[3])) - (16'(in0_padded16_global_wrapper_stencil[8] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[14]);
+assign smin_1211_1145_1212_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1211_1145_1212 (
+    .in0(smin_1211_1145_1212_in0),
+    .in1(smin_1211_1145_1212_in1),
+    .out(smin_1211_1145_1212_out)
+);
+assign smin_1221_1145_1222_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[5] + (16'(in0_padded16_global_wrapper_stencil[15] + mul_padded16_global_wrapper_stencil_20_1137_1216_out)))) - in0_padded16_global_wrapper_stencil[47])) - mul_padded16_global_wrapper_stencil_16_1137_1205_out)) - in0_padded16_global_wrapper_stencil[13]);
+assign smin_1221_1145_1222_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1221_1145_1222 (
+    .in0(smin_1221_1145_1222_in0),
+    .in1(smin_1221_1145_1222_in1),
+    .out(smin_1221_1145_1222_out)
+);
+assign smin_1232_1145_1233_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[11] + (16'(in0_padded16_global_wrapper_stencil[16] + mul_padded16_global_wrapper_stencil_18_1137_1226_out)))) - in0_padded16_global_wrapper_stencil[45])) - mul_padded16_global_wrapper_stencil_19_1137_1230_out)) - in0_padded16_global_wrapper_stencil[17]);
+assign smin_1232_1145_1233_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1232_1145_1233 (
+    .in0(smin_1232_1145_1233_in0),
+    .in1(smin_1232_1145_1233_in1),
+    .out(smin_1232_1145_1233_out)
+);
+assign smin_1251_1145_1252_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[45] + (16'(in0_padded16_global_wrapper_stencil[11] + mul_padded16_global_wrapper_stencil_8_1137_1173_out)))) - in0_padded16_global_wrapper_stencil[33])) - (16'(in0_padded16_global_wrapper_stencil[46] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[0]);
+assign smin_1251_1145_1252_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1251_1145_1252 (
+    .in0(smin_1251_1145_1252_in0),
+    .in1(smin_1251_1145_1252_in1),
+    .out(smin_1251_1145_1252_out)
+);
+assign smin_1261_1145_1262_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[3] + (16'(in0_padded16_global_wrapper_stencil[47] + mul_padded16_global_wrapper_stencil_6_1137_1188_out)))) - in0_padded16_global_wrapper_stencil[1])) - (16'(in0_padded16_global_wrapper_stencil[33] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[46]);
+assign smin_1261_1145_1262_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1261_1145_1262 (
+    .in0(smin_1261_1145_1262_in0),
+    .in1(smin_1261_1145_1262_in1),
+    .out(smin_1261_1145_1262_out)
+);
+assign smin_1271_1145_1272_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[47] + (16'(in0_padded16_global_wrapper_stencil[5] + mul_padded16_global_wrapper_stencil_2_1137_1184_out)))) - in0_padded16_global_wrapper_stencil[46])) - (16'(in0_padded16_global_wrapper_stencil[0] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[4]);
+assign smin_1271_1145_1272_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1271_1145_1272 (
+    .in0(smin_1271_1145_1272_in0),
+    .in1(smin_1271_1145_1272_in1),
+    .out(smin_1271_1145_1272_out)
+);
+assign smin_1280_1145_1281_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[8] + (16'(in0_padded16_global_wrapper_stencil[7] + mul_padded16_global_wrapper_stencil_19_1137_1230_out)))) - in0_padded16_global_wrapper_stencil[2])) - mul_padded16_global_wrapper_stencil_5_1137_1142_out)) - in0_padded16_global_wrapper_stencil[48]);
+assign smin_1280_1145_1281_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1280_1145_1281 (
+    .in0(smin_1280_1145_1281_in0),
+    .in1(smin_1280_1145_1281_in1),
+    .out(smin_1280_1145_1281_out)
+);
+assign smin_1289_1145_1290_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[10] + (16'(in0_padded16_global_wrapper_stencil[9] + mul_padded16_global_wrapper_stencil_16_1137_1205_out)))) - in0_padded16_global_wrapper_stencil[44])) - mul_padded16_global_wrapper_stencil_9_1137_1152_out)) - in0_padded16_global_wrapper_stencil[22]);
+assign smin_1289_1145_1290_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1289_1145_1290 (
+    .in0(smin_1289_1145_1290_in0),
+    .in1(smin_1289_1145_1290_in1),
+    .out(smin_1289_1145_1290_out)
+);
+assign smin_1298_1145_1299_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[7] + (16'(in0_padded16_global_wrapper_stencil[12] + mul_padded16_global_wrapper_stencil_18_1137_1226_out)))) - in0_padded16_global_wrapper_stencil[48])) - mul_padded16_global_wrapper_stencil_3_1137_1138_out)) - in0_padded16_global_wrapper_stencil[6]);
+assign smin_1298_1145_1299_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1298_1145_1299 (
+    .in0(smin_1298_1145_1299_in0),
+    .in1(smin_1298_1145_1299_in1),
+    .out(smin_1298_1145_1299_out)
+);
+assign smin_1308_1145_1309_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[14] + (16'(in0_padded16_global_wrapper_stencil[13] + mul_padded16_global_wrapper_stencil_25_1137_1303_out)))) - in0_padded16_global_wrapper_stencil[3])) - mul_padded16_global_wrapper_stencil_6_1137_1188_out)) - in0_padded16_global_wrapper_stencil[47]);
+assign smin_1308_1145_1309_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1308_1145_1309 (
+    .in0(smin_1308_1145_1309_in0),
+    .in1(smin_1308_1145_1309_in1),
+    .out(smin_1308_1145_1309_out)
+);
+assign smin_1318_1145_1319_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[13] + (16'(in0_padded16_global_wrapper_stencil[15] + mul_padded16_global_wrapper_stencil_24_1137_1313_out)))) - in0_padded16_global_wrapper_stencil[47])) - mul_padded16_global_wrapper_stencil_2_1137_1184_out)) - in0_padded16_global_wrapper_stencil[5]);
+assign smin_1318_1145_1319_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1318_1145_1319 (
+    .in0(smin_1318_1145_1319_in0),
+    .in1(smin_1318_1145_1319_in1),
+    .out(smin_1318_1145_1319_out)
+);
+assign smin_1328_1145_1329_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[17] + (16'(in0_padded16_global_wrapper_stencil[16] + mul_padded16_global_wrapper_stencil_21_1137_1323_out)))) - in0_padded16_global_wrapper_stencil[45])) - mul_padded16_global_wrapper_stencil_8_1137_1173_out)) - in0_padded16_global_wrapper_stencil[11]);
+assign smin_1328_1145_1329_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1328_1145_1329 (
+    .in0(smin_1328_1145_1329_in0),
+    .in1(smin_1328_1145_1329_in1),
+    .out(smin_1328_1145_1329_out)
+);
+assign smin_1382_1145_1383_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[18] + (16'(in0_padded16_global_wrapper_stencil[19] + mul_padded16_global_wrapper_stencil_28_1137_1377_out)))) - in0_padded16_global_wrapper_stencil[22])) - mul_padded16_global_wrapper_stencil_2_1137_1184_out)) - in0_padded16_global_wrapper_stencil[9]);
+assign smin_1382_1145_1383_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1382_1145_1383 (
+    .in0(smin_1382_1145_1383_in0),
+    .in1(smin_1382_1145_1383_in1),
+    .out(smin_1382_1145_1383_out)
+);
+assign smin_1392_1145_1393_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[20] + (16'(in0_padded16_global_wrapper_stencil[21] + mul_padded16_global_wrapper_stencil_27_1137_1387_out)))) - in0_padded16_global_wrapper_stencil[11])) - mul_padded16_global_wrapper_stencil_18_1137_1226_out)) - in0_padded16_global_wrapper_stencil[16]);
+assign smin_1392_1145_1393_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1392_1145_1393 (
+    .in0(smin_1392_1145_1393_in0),
+    .in1(smin_1392_1145_1393_in1),
+    .out(smin_1392_1145_1393_out)
+);
+assign smin_1401_1145_1402_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[9] + (16'(in0_padded16_global_wrapper_stencil[23] + mul_padded16_global_wrapper_stencil_24_1137_1313_out)))) - in0_padded16_global_wrapper_stencil[10])) - mul_padded16_global_wrapper_stencil_25_1137_1303_out)) - in0_padded16_global_wrapper_stencil[24]);
+assign smin_1401_1145_1402_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1401_1145_1402 (
+    .in0(smin_1401_1145_1402_in0),
+    .in1(smin_1401_1145_1402_in1),
+    .out(smin_1401_1145_1402_out)
+);
+assign smin_1411_1145_1412_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[19] + (16'(in0_padded16_global_wrapper_stencil[25] + mul_padded16_global_wrapper_stencil_29_1137_1406_out)))) - in0_padded16_global_wrapper_stencil[9])) - mul_padded16_global_wrapper_stencil_24_1137_1313_out)) - in0_padded16_global_wrapper_stencil[23]);
+assign smin_1411_1145_1412_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1411_1145_1412 (
+    .in0(smin_1411_1145_1412_in0),
+    .in1(smin_1411_1145_1412_in1),
+    .out(smin_1411_1145_1412_out)
+);
+assign smin_1421_1145_1422_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[12] + (16'(in0_padded16_global_wrapper_stencil[26] + mul_padded16_global_wrapper_stencil_23_1137_1416_out)))) - in0_padded16_global_wrapper_stencil[7])) - mul_padded16_global_wrapper_stencil_21_1137_1323_out)) - in0_padded16_global_wrapper_stencil[27]);
+assign smin_1421_1145_1422_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1421_1145_1422 (
+    .in0(smin_1421_1145_1422_in0),
+    .in1(smin_1421_1145_1422_in1),
+    .out(smin_1421_1145_1422_out)
+);
+assign smin_1439_1145_1440_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[9] + (16'(in0_padded16_global_wrapper_stencil[19] + mul_padded16_global_wrapper_stencil_20_1137_1216_out)))) - in0_padded16_global_wrapper_stencil[22])) - mul_padded16_global_wrapper_stencil_15_1137_1163_out)) - in0_padded16_global_wrapper_stencil[18]);
+assign smin_1439_1145_1440_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1439_1145_1440 (
+    .in0(smin_1439_1145_1440_in0),
+    .in1(smin_1439_1145_1440_in1),
+    .out(smin_1439_1145_1440_out)
+);
+assign smin_1448_1145_1449_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[16] + (16'(in0_padded16_global_wrapper_stencil[21] + mul_padded16_global_wrapper_stencil_23_1137_1416_out)))) - in0_padded16_global_wrapper_stencil[11])) - mul_padded16_global_wrapper_stencil_14_1137_1195_out)) - in0_padded16_global_wrapper_stencil[20]);
+assign smin_1448_1145_1449_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1448_1145_1449 (
+    .in0(smin_1448_1145_1449_in0),
+    .in1(smin_1448_1145_1449_in1),
+    .out(smin_1448_1145_1449_out)
+);
+assign smin_1458_1145_1459_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[24] + (16'(in0_padded16_global_wrapper_stencil[23] + mul_padded16_global_wrapper_stencil_34_1137_1453_out)))) - in0_padded16_global_wrapper_stencil[10])) - mul_padded16_global_wrapper_stencil_16_1137_1205_out)) - in0_padded16_global_wrapper_stencil[9]);
+assign smin_1458_1145_1459_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1458_1145_1459 (
+    .in0(smin_1458_1145_1459_in0),
+    .in1(smin_1458_1145_1459_in1),
+    .out(smin_1458_1145_1459_out)
+);
+assign smin_1468_1145_1469_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[23] + (16'(in0_padded16_global_wrapper_stencil[25] + mul_padded16_global_wrapper_stencil_33_1137_1463_out)))) - in0_padded16_global_wrapper_stencil[9])) - mul_padded16_global_wrapper_stencil_20_1137_1216_out)) - in0_padded16_global_wrapper_stencil[19]);
+assign smin_1468_1145_1469_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1468_1145_1469 (
+    .in0(smin_1468_1145_1469_in0),
+    .in1(smin_1468_1145_1469_in1),
+    .out(smin_1468_1145_1469_out)
+);
+assign smin_1478_1145_1479_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[27] + (16'(in0_padded16_global_wrapper_stencil[26] + mul_padded16_global_wrapper_stencil_30_1137_1473_out)))) - in0_padded16_global_wrapper_stencil[7])) - mul_padded16_global_wrapper_stencil_18_1137_1226_out)) - in0_padded16_global_wrapper_stencil[12]);
+assign smin_1478_1145_1479_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1478_1145_1479 (
+    .in0(smin_1478_1145_1479_in0),
+    .in1(smin_1478_1145_1479_in1),
+    .out(smin_1478_1145_1479_out)
+);
+assign smin_1524_1145_1525_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[28] + (16'(in0_padded16_global_wrapper_stencil[20] + mul_padded16_global_wrapper_stencil_26_1137_1519_out)))) - in0_padded16_global_wrapper_stencil[0])) - mul_padded16_global_wrapper_stencil_3_1137_1138_out)) - in0_padded16_global_wrapper_stencil[11]);
+assign smin_1524_1145_1525_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1524_1145_1525 (
+    .in0(smin_1524_1145_1525_in0),
+    .in1(smin_1524_1145_1525_in1),
+    .out(smin_1524_1145_1525_out)
+);
+assign smin_1543_1145_1544_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[11] + (16'(in0_padded16_global_wrapper_stencil[20] + mul_padded16_global_wrapper_stencil_14_1137_1195_out)))) - in0_padded16_global_wrapper_stencil[0])) - (16'(in0_padded16_global_wrapper_stencil[4] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[28]);
+assign smin_1543_1145_1544_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1543_1145_1544 (
+    .in0(smin_1543_1145_1544_in0),
+    .in1(smin_1543_1145_1544_in1),
+    .out(smin_1543_1145_1544_out)
+);
+assign smin_1582_1145_1583_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[29] + (16'(in0_padded16_global_wrapper_stencil[30] + (16'(in0_padded16_global_wrapper_stencil[31] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[4])) - mul_padded16_global_wrapper_stencil_15_1137_1163_out)) - in0_padded16_global_wrapper_stencil[5]);
+assign smin_1582_1145_1583_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1582_1145_1583 (
+    .in0(smin_1582_1145_1583_in0),
+    .in1(smin_1582_1145_1583_in1),
+    .out(smin_1582_1145_1583_out)
+);
+assign smin_1592_1145_1593_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[31] + (16'(in0_padded16_global_wrapper_stencil[32] + (16'(in0_padded16_global_wrapper_stencil[30] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[6])) - mul_padded16_global_wrapper_stencil_14_1137_1195_out)) - in0_padded16_global_wrapper_stencil[12]);
+assign smin_1592_1145_1593_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1592_1145_1593 (
+    .in0(smin_1592_1145_1593_in0),
+    .in1(smin_1592_1145_1593_in1),
+    .out(smin_1592_1145_1593_out)
+);
+assign smin_1602_1145_1603_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[30] + (16'(in0_padded16_global_wrapper_stencil[34] + (16'(in0_padded16_global_wrapper_stencil[32] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[5])) - mul_padded16_global_wrapper_stencil_20_1137_1216_out)) - in0_padded16_global_wrapper_stencil[15]);
+assign smin_1602_1145_1603_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1602_1145_1603 (
+    .in0(smin_1602_1145_1603_in0),
+    .in1(smin_1602_1145_1603_in1),
+    .out(smin_1602_1145_1603_out)
+);
+assign smin_1621_1145_1622_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[5] + (16'(in0_padded16_global_wrapper_stencil[30] + mul_padded16_global_wrapper_stencil_28_1137_1377_out)))) - in0_padded16_global_wrapper_stencil[4])) - (16'(in0_padded16_global_wrapper_stencil[28] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[29]);
+assign smin_1621_1145_1622_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1621_1145_1622 (
+    .in0(smin_1621_1145_1622_in0),
+    .in1(smin_1621_1145_1622_in1),
+    .out(smin_1621_1145_1622_out)
+);
+assign smin_1630_1145_1631_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[12] + (16'(in0_padded16_global_wrapper_stencil[32] + mul_padded16_global_wrapper_stencil_27_1137_1387_out)))) - in0_padded16_global_wrapper_stencil[6])) - mul_padded16_global_wrapper_stencil_26_1137_1519_out)) - in0_padded16_global_wrapper_stencil[31]);
+assign smin_1630_1145_1631_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1630_1145_1631 (
+    .in0(smin_1630_1145_1631_in0),
+    .in1(smin_1630_1145_1631_in1),
+    .out(smin_1630_1145_1631_out)
+);
+assign smin_1639_1145_1640_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[15] + (16'(in0_padded16_global_wrapper_stencil[34] + mul_padded16_global_wrapper_stencil_29_1137_1406_out)))) - in0_padded16_global_wrapper_stencil[5])) - mul_padded16_global_wrapper_stencil_28_1137_1377_out)) - in0_padded16_global_wrapper_stencil[30]);
+assign smin_1639_1145_1640_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1639_1145_1640 (
+    .in0(smin_1639_1145_1640_in0),
+    .in1(smin_1639_1145_1640_in1),
+    .out(smin_1639_1145_1640_out)
+);
+assign smin_1682_1145_1683_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[7] + (16'(in0_padded16_global_wrapper_stencil[27] + mul_padded16_global_wrapper_stencil_21_1137_1323_out)))) - in0_padded16_global_wrapper_stencil[8])) - (16'(in0_padded16_global_wrapper_stencil[14] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[35]);
+assign smin_1682_1145_1683_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1682_1145_1683 (
+    .in0(smin_1682_1145_1683_in0),
+    .in1(smin_1682_1145_1683_in1),
+    .out(smin_1682_1145_1683_out)
+);
+assign smin_1701_1145_1702_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[35] + (16'(in0_padded16_global_wrapper_stencil[27] + mul_padded16_global_wrapper_stencil_31_1137_1696_out)))) - in0_padded16_global_wrapper_stencil[8])) - mul_padded16_global_wrapper_stencil_19_1137_1230_out)) - in0_padded16_global_wrapper_stencil[7]);
+assign smin_1701_1145_1702_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1701_1145_1702 (
+    .in0(smin_1701_1145_1702_in0),
+    .in1(smin_1701_1145_1702_in1),
+    .out(smin_1701_1145_1702_out)
+);
+assign smin_1740_1145_1741_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[32] + (16'(in0_padded16_global_wrapper_stencil[36] + (16'(in0_padded16_global_wrapper_stencil[34] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[12])) - mul_padded16_global_wrapper_stencil_23_1137_1416_out)) - in0_padded16_global_wrapper_stencil[26]);
+assign smin_1740_1145_1741_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1740_1145_1741 (
+    .in0(smin_1740_1145_1741_in0),
+    .in1(smin_1740_1145_1741_in1),
+    .out(smin_1740_1145_1741_out)
+);
+assign smin_1759_1145_1760_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[26] + (16'(in0_padded16_global_wrapper_stencil[36] + mul_padded16_global_wrapper_stencil_32_1137_1754_out)))) - in0_padded16_global_wrapper_stencil[12])) - mul_padded16_global_wrapper_stencil_27_1137_1387_out)) - in0_padded16_global_wrapper_stencil[32]);
+assign smin_1759_1145_1760_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1759_1145_1760 (
+    .in0(smin_1759_1145_1760_in0),
+    .in1(smin_1759_1145_1760_in1),
+    .out(smin_1759_1145_1760_out)
+);
+assign smin_1798_1145_1799_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[13] + (16'(in0_padded16_global_wrapper_stencil[37] + mul_padded16_global_wrapper_stencil_34_1137_1453_out)))) - in0_padded16_global_wrapper_stencil[14])) - (16'(in0_padded16_global_wrapper_stencil[35] * 16'h0002)))) - in0_padded16_global_wrapper_stencil[38]);
+assign smin_1798_1145_1799_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1798_1145_1799 (
+    .in0(smin_1798_1145_1799_in0),
+    .in1(smin_1798_1145_1799_in1),
+    .out(smin_1798_1145_1799_out)
+);
+assign smin_1807_1145_1808_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[15] + (16'(in0_padded16_global_wrapper_stencil[39] + mul_padded16_global_wrapper_stencil_33_1137_1463_out)))) - in0_padded16_global_wrapper_stencil[13])) - mul_padded16_global_wrapper_stencil_34_1137_1453_out)) - in0_padded16_global_wrapper_stencil[37]);
+assign smin_1807_1145_1808_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1807_1145_1808 (
+    .in0(smin_1807_1145_1808_in0),
+    .in1(smin_1807_1145_1808_in1),
+    .out(smin_1807_1145_1808_out)
+);
+assign smin_1816_1145_1817_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[16] + (16'(in0_padded16_global_wrapper_stencil[40] + mul_padded16_global_wrapper_stencil_30_1137_1473_out)))) - in0_padded16_global_wrapper_stencil[17])) - mul_padded16_global_wrapper_stencil_31_1137_1696_out)) - in0_padded16_global_wrapper_stencil[41]);
+assign smin_1816_1145_1817_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1816_1145_1817 (
+    .in0(smin_1816_1145_1817_in0),
+    .in1(smin_1816_1145_1817_in1),
+    .out(smin_1816_1145_1817_out)
+);
+assign smin_1835_1145_1836_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[38] + (16'(in0_padded16_global_wrapper_stencil[37] + (16'(in0_padded16_global_wrapper_stencil[41] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[14])) - mul_padded16_global_wrapper_stencil_25_1137_1303_out)) - in0_padded16_global_wrapper_stencil[13]);
+assign smin_1835_1145_1836_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1835_1145_1836 (
+    .in0(smin_1835_1145_1836_in0),
+    .in1(smin_1835_1145_1836_in1),
+    .out(smin_1835_1145_1836_out)
+);
+assign smin_1845_1145_1846_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[37] + (16'(in0_padded16_global_wrapper_stencil[39] + (16'(in0_padded16_global_wrapper_stencil[40] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[13])) - mul_padded16_global_wrapper_stencil_24_1137_1313_out)) - in0_padded16_global_wrapper_stencil[15]);
+assign smin_1845_1145_1846_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1845_1145_1846 (
+    .in0(smin_1845_1145_1846_in0),
+    .in1(smin_1845_1145_1846_in1),
+    .out(smin_1845_1145_1846_out)
+);
+assign smin_1855_1145_1856_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[41] + (16'(in0_padded16_global_wrapper_stencil[40] + (16'(in0_padded16_global_wrapper_stencil[37] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[17])) - mul_padded16_global_wrapper_stencil_21_1137_1323_out)) - in0_padded16_global_wrapper_stencil[16]);
+assign smin_1855_1145_1856_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1855_1145_1856 (
+    .in0(smin_1855_1145_1856_in0),
+    .in1(smin_1855_1145_1856_in1),
+    .out(smin_1855_1145_1856_out)
+);
+assign smin_1897_1145_1898_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[21] + (16'(in0_padded16_global_wrapper_stencil[42] + mul_padded16_global_wrapper_stencil_32_1137_1754_out)))) - in0_padded16_global_wrapper_stencil[16])) - mul_padded16_global_wrapper_stencil_30_1137_1473_out)) - in0_padded16_global_wrapper_stencil[40]);
+assign smin_1897_1145_1898_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1897_1145_1898 (
+    .in0(smin_1897_1145_1898_in0),
+    .in1(smin_1897_1145_1898_in1),
+    .out(smin_1897_1145_1898_out)
+);
+assign smin_1916_1145_1917_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[40] + (16'(in0_padded16_global_wrapper_stencil[42] + (16'(in0_padded16_global_wrapper_stencil[39] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[16])) - mul_padded16_global_wrapper_stencil_23_1137_1416_out)) - in0_padded16_global_wrapper_stencil[21]);
+assign smin_1916_1145_1917_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1916_1145_1917 (
+    .in0(smin_1916_1145_1917_in0),
+    .in1(smin_1916_1145_1917_in1),
+    .out(smin_1916_1145_1917_out)
+);
+assign smin_1955_1145_1956_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[34] + (16'(in0_padded16_global_wrapper_stencil[43] + (16'(in0_padded16_global_wrapper_stencil[36] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[15])) - mul_padded16_global_wrapper_stencil_33_1137_1463_out)) - in0_padded16_global_wrapper_stencil[39]);
+assign smin_1955_1145_1956_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1955_1145_1956 (
+    .in0(smin_1955_1145_1956_in0),
+    .in1(smin_1955_1145_1956_in1),
+    .out(smin_1955_1145_1956_out)
+);
+assign smin_1974_1145_1975_in0 = 16'((16'((16'((16'(in0_padded16_global_wrapper_stencil[39] + (16'(in0_padded16_global_wrapper_stencil[43] + (16'(in0_padded16_global_wrapper_stencil[42] * 16'h0002)))))) - in0_padded16_global_wrapper_stencil[15])) - mul_padded16_global_wrapper_stencil_29_1137_1406_out)) - in0_padded16_global_wrapper_stencil[34]);
+assign smin_1974_1145_1975_in1 = 16'h00b4;
+commonlib_smin__width16 smin_1974_1145_1975 (
+    .in0(smin_1974_1145_1975_in0),
+    .in1(smin_1974_1145_1975_in1),
+    .out(smin_1974_1145_1975_out)
+);
+assign sub_1513_1516_1517_out = 16'((16'((16'(ashr_1433_1150_1434_out * ashr_1490_1150_1491_out)) - (16'(ashr_1510_1150_1511_out * ashr_1510_1150_1511_out)))) - (($signed(16'(add_1434_1491_1514_out * add_1434_1491_1514_out))) >>> 16'h0004));
+assign out_hw_output_stencil = ((((((((($signed(16'((16'((16'(ashr_1244_1150_1245_out * ashr_1340_1150_1341_out)) - (16'(ashr_1368_1150_1369_out * ashr_1368_1150_1369_out)))) - (($signed(16'(add_1245_1341_1372_out * add_1245_1341_1372_out))) >>> 16'h0004)))) < ($signed(sub_1513_1516_1517_out))) & (($signed(16'((16'((16'(ashr_1536_1150_1537_out * ashr_1555_1150_1556_out)) - (16'(ashr_1567_1150_1568_out * ashr_1567_1150_1568_out)))) - (($signed(16'(add_1537_1556_1571_out * add_1537_1556_1571_out))) >>> 16'h0004)))) < ($signed(sub_1513_1516_1517_out)))) & (($signed(16'((16'((16'(ashr_1614_1150_1615_out * ashr_1651_1150_1652_out)) - (16'(ashr_1667_1150_1668_out * ashr_1667_1150_1668_out)))) - (($signed(16'(add_1615_1652_1671_out * add_1615_1652_1671_out))) >>> 16'h0004)))) < ($signed(sub_1513_1516_1517_out)))) & (($signed(16'((16'((16'(ashr_1694_1150_1695_out * ashr_1713_1150_1714_out)) - (16'(ashr_1725_1150_1726_out * ashr_1725_1150_1726_out)))) - (($signed(16'(add_1695_1714_1729_out * add_1695_1714_1729_out))) >>> 16'h0004)))) < ($signed(sub_1513_1516_1517_out)))) & (($signed(16'((16'((16'(ashr_1752_1150_1753_out * ashr_1771_1150_1772_out)) - (16'(ashr_1783_1150_1784_out * ashr_1783_1150_1784_out)))) - (($signed(16'(add_1753_1772_1787_out * add_1753_1772_1787_out))) >>> 16'h0004)))) < ($signed(sub_1513_1516_1517_out)))) & (($signed(16'((16'((16'(ashr_1828_1150_1829_out * ashr_1867_1150_1868_out)) - (16'(ashr_1883_1150_1884_out * ashr_1883_1150_1884_out)))) - (($signed(16'(add_1829_1868_1887_out * add_1829_1868_1887_out))) >>> 16'h0004)))) < ($signed(sub_1513_1516_1517_out)))) & (($signed(16'((16'((16'(ashr_1909_1150_1910_out * ashr_1928_1150_1929_out)) - (16'(ashr_1940_1150_1941_out * ashr_1940_1150_1941_out)))) - (($signed(16'(add_1910_1929_1944_out * add_1910_1929_1944_out))) >>> 16'h0004)))) < ($signed(sub_1513_1516_1517_out)))) & (($signed(16'((16'((16'(ashr_1967_1150_1968_out * ashr_1986_1150_1987_out)) - (16'(ashr_1998_1150_1999_out * ashr_1998_1150_1999_out)))) - (($signed(16'(add_1968_1987_2002_out * add_1968_1987_2002_out))) >>> 16'h0004)))) < ($signed(sub_1513_1516_1517_out)))) & (($signed(16'h0001)) <= ($signed(sub_1513_1516_1517_out))) ? 16'h00ff : 16'h0000;
 endmodule
 
