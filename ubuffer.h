@@ -53,6 +53,7 @@ struct HWconstraints {
     size_t capacity = 512;
     bool raw_same_cycle = false;
     bool war_same_cycle = false;
+    maybe<int> vectorization_dim;
 };
 
 struct TileConstraints{
@@ -1606,6 +1607,12 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       auto outpt_map = access_map.at(pick(get_out_ports()));
       auto rng = to_set(range(outpt_map));
       for(int i = 0; i < ::num_dims(rng); i ++) {
+          //cannot bank on the vectorization dimension
+          if (hardware.vectorization_dim.has_value()){
+              if (hardware.vectorization_dim.get_value() == i){
+                  continue;
+              }
+          }
         auto s = project_all_but(rng, i);
         if (to_int(lexminval(s)) == to_int(lexmaxval(s))) {
           id_candidate.push_back(i);
@@ -1624,6 +1631,12 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       auto inpt_map = access_map.at(pick(get_in_ports()));
       auto rng = to_set(range(inpt_map));
       for(int i = 0; i < ::num_dims(rng); i ++) {
+          //cannot bank on the vectorization dimension
+          if (hardware.vectorization_dim.has_value()){
+              if (hardware.vectorization_dim.get_value() == i){
+                  continue;
+              }
+          }
         auto s = project_all_but(rng, i);
         if (to_int(lexminval(s)) == to_int(lexmaxval(s))) {
           id_candidate.push_back(i);

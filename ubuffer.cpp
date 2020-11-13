@@ -892,6 +892,7 @@ bool check_need_mux(CodegenOptions & options, UBuffer & buf,
     assert(op2bd.at(op_name).size() == 1);
     string bd_name = pick(op2bd.at(op_name));
     cout << tab(2) << "Bundle: " << bd_name << " has lane size = " << buf.lanes_in_bundle(bd_name) << endl;
+    cout << tab(2) << "BK number: " << bk_num << ", num port: " << buf.num_out_ports() << endl;
     if (is_read) {
         need_mux = (bk_num < (buf.num_in_ports() / options.mem_tile.in_port_width.at(micro_buf_name)));
     } else {
@@ -900,19 +901,23 @@ bool check_need_mux(CodegenOptions & options, UBuffer & buf,
     return need_mux;
 }
 
-isl_set* get_memtile_bank_range(UBuffer & buf, isl_map* map, maybe<vector<int>> project_dim, int pt_per_bank, bool is_read) {
+isl_set* get_memtile_bank_range(CodegenOptions& options, UBuffer & buf, isl_map* map, maybe<vector<int>> project_dim, bool is_read) {
+    string buf_name = range_name(map);
+    string micro_buf_name = split_at(buf_name, "_").back();
     isl_set* range_per_bank = isl_set_empty(get_space(range(map)));
     auto bmap_vec = get_basic_maps(map);
     cout << "bmap vec size: " << bmap_vec.size() << endl;
-    cout << "pt per bank: " << pt_per_bank << endl;
+    //cout << "pt per bank: " << pt_per_bank << endl;
     for(int i = 0; i < bmap_vec.size(); i ++) {
         range_per_bank = unn(range_per_bank, range(to_map(bmap_vec.at(i))));
     }
     //project_dim = get_project_dim(buf, is_read);
     if (project_dim.has_value()) {
       cout << "before project: " << str(range_per_bank) << endl;
-      for (int proj_dim : project_dim.get_value())
+      for (int proj_dim : project_dim.get_value()) {
+        cout << "project out dim : " << proj_dim << endl;
         range_per_bank = project_out(range_per_bank, proj_dim);
+      }
       cout << "after project: " << str(range_per_bank) << endl;
     }
     return range_per_bank;
@@ -942,9 +947,9 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
     //get pt number, take the lake information
     int bk_num;
     if (is_read) {
-        bk_num = port_width / options.mem_tile.out_port_width.at(micro_buf_name);
+        bk_num = max(port_width / options.mem_tile.out_port_width.at(micro_buf_name), 1);
     } else {
-        bk_num = port_width / options.mem_tile.in_port_width.at(micro_buf_name);
+        bk_num = max(port_width / options.mem_tile.in_port_width.at(micro_buf_name), 1);
     }
     cout << tab(1) <<  "basic map vector size: " << port_width << endl;
     for (auto bmap: bmap_vec) {
@@ -963,8 +968,9 @@ pair<int, int> process_mux_info(CodegenOptions options, string op_name, bool is_
     int domain_project_dim = -1;
     if ((micro_buf_name == "agg") || (micro_buf_name == "tb")) {
       //cout << "\t project dim: " << project_dim << endl;
-      cout << "\t need mux: " << check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read) << endl;
-      if (project_dim.has_value() && check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read)) {
+      bool need_mux = check_need_mux(options, buf, op_name, micro_buf_name, bk_num, is_read);
+      cout << "\t need mux: " << need_mux << endl;
+      if (project_dim.has_value() && need_mux) {
           cout << "acc map: " << str(to_map(pick(bmap_vec))) << endl;
           cout << "project dim: : " << project_dim.get_value() << endl;
           vector<int> project_dim_val = project_dim.get_value();
@@ -1000,11 +1006,7 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     //int project_dim;
     auto project_dim = get_project_dim(buf, is_read);
     auto range_per_bank =
-        get_memtile_bank_range(buf, map, project_dim,
-                is_read ?
-                options.mem_tile.out_port_width.at(micro_buf_name) :
-                options.mem_tile.in_port_width.at(micro_buf_name),
-                is_read);
+        get_memtile_bank_range(options, buf, map, project_dim, is_read);
 
     //get the reduce map for this subbuffer structure
     auto reduce_map = linear_address_map_lake(range_per_bank);
@@ -5459,20 +5461,28 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     }
   }
 
+  int get_inner_most_dom_pad_dim(isl_map* m) {
+     int dim_id = num_in_dims(m) - 1;
+     while(get_dim_extent(::domain(m), dim_id) == 1){
+         dim_id --;
+     }
+     cout << "\t original range input access map: " << str(m) << endl;
+     cout << "\t dim id: " << dim_id << endl;
+     return dim_id;
+  }
+
+  int get_pad_reminder(isl_map* am, int dim_id, int fetch_width) {
+    return (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
+  }
+
 void UBuffer::pad_write_dom_inner_most(int fetch_width) {
     //pad the domain for both input port and output port
     for (auto bd: get_in_bundles()) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
-            int dim_id = num_in_dims(am) - 1;
-            while(get_dim_extent(::domain(am), dim_id) == 1){
-                dim_id --;
-            }
             auto sched = schedule.at(pt);
-            cout << "\t original range input access map: " << str((am)) << endl;
-            cout << "\t dim id: " << dim_id << endl;
-            assert(get_dim_min(::domain(am), dim_id) == 0);
-            auto rem = (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
+            int dim_id = get_inner_most_dom_pad_dim(am);
+            int rem = get_pad_reminder(am, dim_id, fetch_width);
             if (rem) {
                 //need padding
                 auto pad_am = pad_to_domain_ubuf_map(am, dim_id, fetch_width - rem);
@@ -5490,15 +5500,9 @@ void UBuffer::pad_read_dom_inner_most(int fetch_width) {
     for (auto bd: get_out_bundles()) {
         for (auto pt: port_bundles.at(bd)) {
             auto am = to_map(access_map.at(pt));
-            int dim_id = num_in_dims(am) - 1;
-            while(get_dim_extent(::domain(am), dim_id) == 1){
-                dim_id --;
-            }
             auto sched = schedule.at(pt);
-            cout << "\t original range output access map: " << str((am)) << endl;
-            cout << "\t dim id: " << dim_id << endl;
-            assert(get_dim_min(::domain(am), dim_id) == 0);
-            auto rem = (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
+            int dim_id = get_inner_most_dom_pad_dim(am);
+            int rem = get_pad_reminder(am, dim_id, fetch_width);
             if (rem) {
                 //need padding
                 auto pad_am = pad_to_domain_ubuf_map(am, dim_id, fetch_width - rem);
@@ -5524,6 +5528,7 @@ pair<std::map<string, UBuffer>, vector<string> >
     sram.port_widths = port_widths;
     sram.hardware.in_port_width = fetch_width;
     sram.hardware.out_port_width = fetch_width;
+    sram.hardware.vectorization_dim = maybe(dim_id);
     vector<string> in_bundle = get_in_bundles();
     vector<string> out_bundle = get_out_bundles();
 
