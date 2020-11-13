@@ -5471,7 +5471,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
      return dim_id;
   }
 
-  int get_pad_reminder(isl_map* am, int dim_id, int fetch_width) {
+  int get_pad_remainder(isl_map* am, int dim_id, int fetch_width) {
     return (get_dim_max(::domain(am), dim_id) + 1) % fetch_width;
   }
 
@@ -5482,7 +5482,7 @@ void UBuffer::pad_write_dom_inner_most(int fetch_width) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
             int dim_id = get_inner_most_dom_pad_dim(am);
-            int rem = get_pad_reminder(am, dim_id, fetch_width);
+            int rem = get_pad_remainder(am, dim_id, fetch_width);
             if (rem) {
                 //need padding
                 auto pad_am = pad_to_domain_ubuf_map(am, dim_id, fetch_width - rem);
@@ -5502,7 +5502,7 @@ void UBuffer::pad_read_dom_inner_most(int fetch_width) {
             auto am = to_map(access_map.at(pt));
             auto sched = schedule.at(pt);
             int dim_id = get_inner_most_dom_pad_dim(am);
-            int rem = get_pad_reminder(am, dim_id, fetch_width);
+            int rem = get_pad_remainder(am, dim_id, fetch_width);
             if (rem) {
                 //need padding
                 auto pad_am = pad_to_domain_ubuf_map(am, dim_id, fetch_width - rem);
@@ -5612,7 +5612,16 @@ pair<std::map<string, UBuffer>, vector<string> >
         std::cout << "transform rewrite: " << str(op_trans) << endl;
         cout << "IS loop: " << is_self_loop(in_pt_name) << endl;
 
-        auto rewrite_buf2op = dot(inv(access_map.at(in_pt_name)), op_trans);
+        //  Before create rewrite buffer to the batched vectorized op, we need to pad the range access map,
+        //  make sure the dim_id is the multiplier of 4.
+        auto buf2op = to_map(inv(access_map.at(in_pt_name)));
+        int rem = get_pad_remainder(buf2op, dim_id, fetch_width);
+        umap* padded_buf2op;
+        if (rem == 0)
+            padded_buf2op = to_umap(buf2op);
+        else
+            padded_buf2op = to_umap(pad_to_domain_ubuf_map(buf2op, dim_id, fetch_width - rem));
+        auto rewrite_buf2op = dot(padded_buf2op, op_trans);
         cout << "rewrite buf2op: " << str(rewrite_buf2op) << endl;
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
         cout << "rewrite buffer to op map: " << str(access_map.at(in_pt_name)) << endl;
@@ -5694,11 +5703,21 @@ pair<std::map<string, UBuffer>, vector<string> >
         std::cout << "transform rewrite: " << str(op_trans) << endl;
 
 
-        auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
+        auto buf2op = to_map(inv(access_map.at(out_pt_name)));
+        int rem = get_pad_remainder(buf2op, dim_id, fetch_width);
+        umap* padded_buf2op;
+        if (rem == 0)
+            padded_buf2op = to_umap(buf2op);
+        else
+            padded_buf2op = to_umap(pad_to_domain_ubuf_map(buf2op, dim_id, fetch_width - rem));
+        auto rewrite_buf2op = dot(padded_buf2op, op_trans);
+        //auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
         cout << str(inv(access_map.at(out_pt_name))) << endl << str(rewrite_buf2op) << endl;
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
 
-        //potential not work for accumulation buffers
+        //Slice the iteration domain for the last step,
+        //also need to mask the reaccess by its sched domain
+
         isl_map* op_sched;
         //if (is_self_loop(out_pt_name)) {
         //    op_sched = new_sched.at(::name(new_op_domain));
