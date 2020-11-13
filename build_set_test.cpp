@@ -16873,6 +16873,7 @@ void fpga_asplos_tests() {
 void cgra_flow_tests() {
   vector<prog> bram_test_programs{pointwise(), resnet()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  assert(false);
 
   auto test_programs =
     all_cgra_programs();
