@@ -16518,16 +16518,18 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  concat(test_programs, harris_variants());
-  concat(test_programs, stencil_programs());
-
-  test_programs.push_back(unet_conv_3_3());
-  test_programs.push_back(resnet_coarse_pipeline_loop());
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
   test_programs.push_back(conv_multi());
   test_programs.push_back(conv_layer());
+
   test_programs.push_back(mobilenet_small());
+  test_programs.push_back(unet_conv_3_3());
+  test_programs.push_back(resnet_coarse_pipeline_loop());
+
+  concat(test_programs, harris_variants());
+  concat(test_programs, stencil_programs());
+
 
 
 
@@ -16871,13 +16873,13 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  vector<prog> bram_test_programs{pointwise(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
-  //assert(false);
-
   auto test_programs =
     all_cgra_programs();
   test_platonic_codegen(test_programs);
+
+  vector<prog> bram_test_programs{pointwise(), resnet()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  //assert(false);
 
   vector<prog> sram_test_programs{pointwise(), camera_pipeline(), resnet()};
   test_codegen(sram_test_programs, compile_for_generic_SRAM_mem);

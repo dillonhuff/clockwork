@@ -922,71 +922,71 @@ void instantiate_banks(
     }
   }
 
-  if (!has_embarassing_partition) {
-  int store_latency = hwinfo.store_latency(buf.name);
-  assert(store_latency <= 2);
-  out << tab(1) << "always @(posedge clk) begin" << endl;
-
-  instantiate_variable_checks(out, buf);
-
-  for (auto in : buf.get_in_ports()) {
-    string bundle_wen_fsm = map_find(in, port_enables);
-    string bank_selector = map_find(in, port_bank_selectors);
-    string addr = map_find(in, port_inner_bank_offsets);
-    string input_wire = map_find(in, port_data);
-
-    out << tab(2) << "if (" << bundle_wen_fsm << ") begin" << endl;
-    out << tab(3) << "case( " << bank_selector << ")" << endl;
-    for (int b = 0; b < num_banks; b++) {
-      string source_ram = "bank_" + str(b);
-      out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
-    }
-#if SIM
-    out << tab(4) << "default: $finish(-1);" << endl;
-#endif
-    out << tab(3) << "endcase" << endl;
-    out << tab(2) << "end" << endl;
-  }
-  out << tab(1) << "end" << endl;
-
-  int load_latency = hwinfo.load_latency(buf.name);
-  assert(load_latency >= 0);
-  assert(load_latency <= 2);
-
-  if (load_latency == 0) {
-    out << tab(1) << "always @(*) begin" << endl;
-  } else {
+  if (!has_embarassing_partition || (prg.name != "resnet")) {
+    int store_latency = hwinfo.store_latency(buf.name);
+    assert(store_latency <= 2);
     out << tab(1) << "always @(posedge clk) begin" << endl;
-  }
-  counter = 0;
-  for (auto outpt : buf.get_out_ports()) {
-    string bundle_ren = buf.container_bundle(outpt) + "_ren";
 
-    if (shift_registered.find(outpt) == shift_registered.end()) {
-      string bundle_ren_fsm = map_find(outpt, port_enables);
-      string bank_selector = map_find(outpt, port_bank_selectors);
-      string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
-      string out_wire = map_find(outpt, port_data);
+    instantiate_variable_checks(out, buf);
 
-      out << tab(2) << "if (" << bundle_ren_fsm << ") begin" << endl;
+    for (auto in : buf.get_in_ports()) {
+      string bundle_wen_fsm = map_find(in, port_enables);
+      string bank_selector = map_find(in, port_bank_selectors);
+      string addr = map_find(in, port_inner_bank_offsets);
+      string input_wire = map_find(in, port_data);
+
+      out << tab(2) << "if (" << bundle_wen_fsm << ") begin" << endl;
       out << tab(3) << "case( " << bank_selector << ")" << endl;
       for (int b = 0; b < num_banks; b++) {
         string source_ram = "bank_" + str(b);
-        string assign_str = load_latency == 0 ? " = " : " <= ";
-        out << tab(4) << b << ":" << out_wire << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
+        out << tab(4) << b << ":" << source_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
       }
-      counter++;
 #if SIM
       out << tab(4) << "default: $finish(-1);" << endl;
 #endif
       out << tab(3) << "endcase" << endl;
       out << tab(2) << "end" << endl;
     }
-  }
+    out << tab(1) << "end" << endl;
 
-  out << tab(1) << "end" << endl;
+    int load_latency = hwinfo.load_latency(buf.name);
+    assert(load_latency >= 0);
+    assert(load_latency <= 2);
 
-  out << endl;
+    if (load_latency == 0) {
+      out << tab(1) << "always @(*) begin" << endl;
+    } else {
+      out << tab(1) << "always @(posedge clk) begin" << endl;
+    }
+    counter = 0;
+    for (auto outpt : buf.get_out_ports()) {
+      string bundle_ren = buf.container_bundle(outpt) + "_ren";
+
+      if (shift_registered.find(outpt) == shift_registered.end()) {
+        string bundle_ren_fsm = map_find(outpt, port_enables);
+        string bank_selector = map_find(outpt, port_bank_selectors);
+        string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
+        string out_wire = map_find(outpt, port_data);
+
+        out << tab(2) << "if (" << bundle_ren_fsm << ") begin" << endl;
+        out << tab(3) << "case( " << bank_selector << ")" << endl;
+        for (int b = 0; b < num_banks; b++) {
+          string source_ram = "bank_" + str(b);
+          string assign_str = load_latency == 0 ? " = " : " <= ";
+          out << tab(4) << b << ":" << out_wire << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
+        }
+        counter++;
+#if SIM
+        out << tab(4) << "default: $finish(-1);" << endl;
+#endif
+        out << tab(3) << "endcase" << endl;
+        out << tab(2) << "end" << endl;
+      }
+    }
+
+    out << tab(1) << "end" << endl;
+
+    out << endl;
   } else {
     int store_latency = hwinfo.store_latency(buf.name);
     assert(store_latency <= 2);
@@ -994,37 +994,37 @@ void instantiate_banks(
 
     instantiate_variable_checks(out, buf);
     for (int b = 0; b < num_banks; b++) {
-        int counter_ports = 0;
-        for (auto in : buf.get_in_ports()) {
-            string bundle_wen_fsm = map_find(in, port_enables);
-            string bank_selector = map_find(in, port_bank_selectors);
-            string addr = map_find(in, port_inner_bank_offsets);
-            string input_wire = map_find(in, port_data);
+      int counter_ports = 0;
+      for (auto in : buf.get_in_ports()) {
+        string bundle_wen_fsm = map_find(in, port_enables);
+        string bank_selector = map_find(in, port_bank_selectors);
+        string addr = map_find(in, port_inner_bank_offsets);
+        string input_wire = map_find(in, port_data);
 
-            out << tab(2) << (counter_ports == 0 ? "if (" : "else if (") << bundle_wen_fsm << " &&" << bank_selector << "==" << b << ") begin" << endl;
-            string source_ram = "bank_" + str(b);
-            out << tab(4) << source_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
+        out << tab(2) << (counter_ports == 0 ? "if (" : "else if (") << bundle_wen_fsm << " &&" << bank_selector << "==" << b << ") begin" << endl;
+        string source_ram = "bank_" + str(b);
+        out << tab(4) << source_ram << "[" << addr << "]" << " <= " << input_wire << ";" << endl;
 
-            out << tab(2) << "end" << endl;
-            counter_ports ++;
+        out << tab(2) << "end" << endl;
+        counter_ports ++;
 
-        }
+      }
     }
-  out << tab(1) << "end" << endl;
+    out << tab(1) << "end" << endl;
 
-  int load_latency = hwinfo.load_latency(buf.name);
-  assert(load_latency >= 0);
-  assert(load_latency <= 2);
+    int load_latency = hwinfo.load_latency(buf.name);
+    assert(load_latency >= 0);
+    assert(load_latency <= 2);
 
-  if (load_latency == 0) {
-    out << tab(1) << "always @(*) begin" << endl;
-  } else {
-    out << tab(1) << "always @(posedge clk) begin" << endl;
-  }
-  counter = 0;
+    if (load_latency == 0) {
+      out << tab(1) << "always @(*) begin" << endl;
+    } else {
+      out << tab(1) << "always @(posedge clk) begin" << endl;
+    }
+    counter = 0;
     for (int b = 0; b < num_banks; b++) {
-        int counter_ports = 0;
-        for (auto outpt : buf.get_out_ports()) {
+      int counter_ports = 0;
+      for (auto outpt : buf.get_out_ports()) {
         string bundle_ren = buf.container_bundle(outpt) + "_ren";
 
         if (shift_registered.find(outpt) == shift_registered.end()) {
@@ -1032,13 +1032,13 @@ void instantiate_banks(
           string bank_selector = map_find(outpt, port_bank_selectors);
           string inner_bank_offset = map_find(outpt, port_inner_bank_offsets);
           string out_wire = map_find(outpt, port_data);
-            out << tab(2) << (counter_ports == 0 ? "if (" : "else if (") << bundle_ren_fsm << " &&" << bank_selector << "==" << b << ") begin" << endl;
+          out << tab(2) << (counter_ports == 0 ? "if (" : "else if (") << bundle_ren_fsm << " &&" << bank_selector << "==" << b << ") begin" << endl;
 
-            string source_ram = "bank_" + str(b);
-            string assign_str = load_latency == 0 ? " = " : " <= ";
-            out << tab(4) << out_wire << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
-            counter_ports ++;
-            out << tab(2) << "end" << endl;
+          string source_ram = "bank_" + str(b);
+          string assign_str = load_latency == 0 ? " = " : " <= ";
+          out << tab(4) << out_wire << assign_str << source_ram << "[" << inner_bank_offset << "];" << endl;
+          counter_ports ++;
+          out << tab(2) << "end" << endl;
         }
           counter++;
 
