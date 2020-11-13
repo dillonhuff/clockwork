@@ -5729,6 +5729,27 @@ pair<std::map<string, UBuffer>, vector<string> >
       int port_width_per_bd = port_bundles.at(bd_name).size();
       for (auto out_pt_name : port_bundles.at(bd_name) ) {
         cout << "\tVectorize output port: " << out_pt_name << endl;
+
+        auto am = to_map(access_map.at(out_pt_name));
+        //FIX the sliding window cross fetch_width boundary
+        bool pad_schedule = false;
+        if (in_involve_dim(am, dim_id).size() > 1) {
+            auto proj_map = isl_map_project_out(am, isl_dim_in, 0, num_in_dims(am)-1);
+            auto domain_pt = to_set(sample(::domain(proj_map)));
+            auto proj_map_sample = its(proj_map, domain_pt);
+            int whole_width = get_dim_extent(range(proj_map), dim_id);
+            int sw_width = get_dim_extent(range(proj_map_sample), dim_id);
+            cout << "Proj map: " << str(proj_map) << endl;
+            cout << "Proj map: " << str(proj_map_sample) << endl;
+            //If slide across boundary
+            if ((whole_width / fetch_width) !=
+                    (whole_width + sw_width - 1)/fetch_width ) {
+                access_map.at(out_pt_name) =
+                    to_umap(pad_to_domain_ubuf_map(am, num_in_dims(am) - 1, 1));
+                pad_schedule = true;
+            }
+        }
+
         auto acc_pattern = AccessPattern(
             to_map(access_map.at(out_pt_name)), ctx);
 
@@ -5745,7 +5766,9 @@ pair<std::map<string, UBuffer>, vector<string> >
         std::cout << "transform rewrite: " << str(op_trans) << endl;
 
 
-        auto buf2op = to_map(inv(access_map.at(out_pt_name)));
+        isl_map* buf2op = to_map(inv(access_map.at(out_pt_name)));
+
+        //Also need to pad the range for vectorization
         int rem = get_pad_remainder(buf2op, dim_id, fetch_width);
         umap* padded_buf2op;
         if (rem == 0)
@@ -5754,7 +5777,8 @@ pair<std::map<string, UBuffer>, vector<string> >
             padded_buf2op = to_umap(pad_to_domain_ubuf_map(buf2op, dim_id, fetch_width - rem));
         auto rewrite_buf2op = dot(padded_buf2op, op_trans);
         //auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
-        cout << str(inv(access_map.at(out_pt_name))) << endl << str(rewrite_buf2op) << endl;
+        cout << "\t\toriginal buf2out: "<< str(inv(access_map.at(out_pt_name))) << endl
+            << "\t\tpadded and batched buf2out : "<< str(rewrite_buf2op) << endl;
         auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
 
         //Slice the iteration domain for the last step,
@@ -5768,7 +5792,15 @@ pair<std::map<string, UBuffer>, vector<string> >
             cout << "slice dim: " << str(slice_dim) << endl;
             //cout << "new_op_domain: " << str(new_op_domain) << endl;
             //cout << "original loop: " << str(new_sched.at(::name(new_op_domain))) << endl;
-            op_sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
+
+            //pad schedule for cross boundary cases
+            if (pad_schedule) {
+                auto padded_sched = new_sched.at(::name(new_op_domain));
+                padded_sched = pad_to_domain_ubuf_map(padded_sched, num_in_dims(padded_sched)-1, 1);
+                op_sched = its(padded_sched, slice_dim);
+            } else {
+                op_sched = its(new_sched.at(::name(new_op_domain)), slice_dim);
+            }
             //cout << "op schedule before trans: " << str(op_sched) << endl;
             //cout << "trans: " << str(op_trans) << endl;
             cout << "op schedule: " << str(op_sched) << ", is single: " << single_valued(op_sched) <<  endl;

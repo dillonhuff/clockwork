@@ -2342,6 +2342,18 @@ vector<int> out_involve_dim(isl_map* m, int in_dim){
     return ret;
 }
 
+vector<int> in_involve_dim(isl_map* m, int out_dim){
+    vector<int> ret;
+    size_t dom_dim = num_in_dims(m);
+    auto aff = get_aff_vec(m).at(out_dim);
+    for (int i = 0; i < dom_dim; i ++) {
+        if(isl_aff_involves_dims(aff, isl_dim_in, i, 1)) {
+            ret.push_back(i);
+        }
+    }
+    return ret;
+}
+
 int get_involve_dim(isl_map* m, int out_dim) {
   size_t dom_dim = num_in_dims(m);
   auto aff = get_aff_vec(m).at(out_dim);

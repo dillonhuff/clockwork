@@ -403,6 +403,7 @@ isl_map* delay_schedule_domain_dim(isl_map* s, int dom_dim, int delay);
 vector<bool> relation_map(isl_map* m);
 int get_involve_dim(isl_map* m, int out_dim);
 vector<int> out_involve_dim(isl_map* m, int in_dim);
+vector<int> in_involve_dim(isl_map* m, int in_dim);
 isl_map* peel_schedule_domain_dim(isl_map* m, int dom_dim, int delay);
 int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 
