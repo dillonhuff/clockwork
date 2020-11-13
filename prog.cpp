@@ -4901,7 +4901,7 @@ void generate_verilator_tb_in_streams(
   rgtb << endl << endl;
 
   rgtb << tab(1) << "// Loading input data" << endl;
-  rgtb << tab(1) << "srand(1);" << endl;
+  rgtb << tab(1) << "srand(" << options.debug_options.test_inputs.seed << ");" << endl;
   for (auto in : prg.ins) {
     auto cmap = prg.consumer_map(in);
     auto read_map = inv(cmap);
@@ -4920,8 +4920,12 @@ void generate_verilator_tb_in_streams(
     rgtb << tab(1) << "for (int i = 0; i < " << num_transfers << "; i++) {" << endl;
     vector<string> inds;
     for (int i = 0; i < unroll; i++) {
-      inds.push_back("rand() % 256");
-      //inds.push_back(str(unroll) + "*i + " + str(i));
+      if (options.debug_options.test_inputs.tp == TEST_DATA_INPUT_STREAM_TYPE_RANDOM) {
+        inds.push_back("rand() % 256");
+      } else {
+        assert(options.debug_options.test_inputs.tp == TEST_DATA_INPUT_STREAM_TYPE_INCREMENTING);
+        inds.push_back(str(unroll) + "*i + " + str(i));
+      }
     }
     pack_bv(2, rgtb, "value", inds, lane_width);
     rgtb << tab(2) << in << ".write(value);" << endl;
