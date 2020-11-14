@@ -1650,6 +1650,11 @@ int stride_in_dim(isl_set* const s, size_t dim) {
     return isl_val_get_num_si(isl_set_get_stride(cpy(s), dim));
 }
 
+int stride_in_dim(isl_map* const m, size_t dim) {
+    auto aff = get_aff(m);
+    return to_int(get_coeff(aff, dim));
+}
+
 
 isl_set* domain(isl_map* const m) {
   return isl_map_domain(cpy(m));

@@ -5105,6 +5105,19 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     return new_sched;
   }
 
+  //helper function for getting the vector fetch delay
+  int get_vector_fetch_loop_ii(umap* in_sched) {
+    auto in_rel_map = relation_map(to_map(in_sched));
+    cout << "\trel map: " << in_rel_map << endl;
+    vector<bool> t_l = {true};
+    int it_in = in_rel_map.rend() - 1
+        - std::find_first_of(in_rel_map.rbegin(), in_rel_map.rend(), t_l.begin(), t_l.end());
+    cout << "\trel dim: " << it_in << endl;
+    int ii = stride_in_dim(to_map(in_sched), it_in);
+    cout << "\trel dim stride: " << ii << endl;
+    return ii;
+  }
+
   //new mechod using the recipe
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, vector<int> iis, int fetch_width) {
     /*
@@ -5120,15 +5133,17 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     //auto in_sched_vec = collect_sched_vec(in_sched);
     //auto out_sched_vec = collect_sched_vec(out_sched);
     cout << "\tin_sched: " << str(in_sched) << "\t\nout_sched: " << str(out_sched) << endl;
+    int in_fetch_ii = get_vector_fetch_loop_ii(in_sched);
+    int out_fetch_ii = get_vector_fetch_loop_ii(out_sched);
     auto in_sched_new = linear_schedule(to_map(in_sched), iis, 0, false);
     //hardcode this recipe
-    auto in_sched_vec = linear_schedule(to_map(in_sched), iis, fetch_width, false);
+    auto in_sched_vec = linear_schedule(to_map(in_sched), iis, in_fetch_ii*fetch_width, false);
     //auto in_sched_vec = gen_hw_sched_from_sched_vec(ctx,
     //        {expr + "+" + to_string(fetch_width)}, var_list, op_name);
     //in_sched_vec = pad_one_more_dim_to_sched_map_innermost(in_sched_vec, 0);
 
     auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, false);
-    auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -(fetch_width+1), false);
+    auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -(out_fetch_ii * fetch_width+1), false);
     out_sched_vec = pad_one_more_dim_to_sched_map_innermost(out_sched_vec, 0);
     //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
 
@@ -5170,14 +5185,18 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
     string update_op = domain_name(to_map(access_map.at(update_name)));
     auto update_sched = schedule.at(update_name);
 
+    int in_fetch_ii = get_vector_fetch_loop_ii(in_sched);
+    int out_fetch_ii = get_vector_fetch_loop_ii(out_sched);
+    int update_fetch_ii = get_vector_fetch_loop_ii(update_sched);
+
     auto in_sched_new = linear_schedule(to_map(in_sched), iis, 0, false);
-    auto in_sched_vec = linear_schedule(to_map(in_sched), iis, fetch_width, false);
+    auto in_sched_vec = linear_schedule(to_map(in_sched), iis, in_fetch_ii*fetch_width, false);
 
     auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, false);
-    auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -fetch_width - 1, false);
+    auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -out_fetch_ii*fetch_width - 1, false);
 
-    auto update_sched_vec_out = linear_schedule(to_map(update_sched), iis, -fetch_width - 1, false);
-    auto update_sched_vec_in = linear_schedule(to_map(update_sched), iis, fetch_width, false);
+    auto update_sched_vec_out = linear_schedule(to_map(update_sched), iis, -update_fetch_ii*fetch_width - 1, false);
+    auto update_sched_vec_in = linear_schedule(to_map(update_sched), iis, update_fetch_ii*fetch_width, false);
     auto update_sched_new = to_map(update_sched);
 
     map<string, isl_map*> new_sched;
