@@ -695,6 +695,11 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 
     for (auto outpt: pt_vec) {
       auto acc_map = to_map(access_map.at(outpt));
+      if (banking.partition == "cyclic") {
+        cout << "\tread domain: " << str(b.rddom) << endl;
+        cout << "\tread map: " << str(acc_map) << endl;
+        acc_map = its_range(acc_map, to_set(b.rddom));
+      }
       acc_map = set_range_name(acc_map, bname);
       auto dom = domain.at(outpt);
       string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
