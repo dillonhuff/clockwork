@@ -66,6 +66,28 @@ int wire_width(CoreIR::Wireable* w) {
 }
 
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf, hwinfo);
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  assert(has_embarassing_partition);
+
+  vector<int> extents;
+  map<int, int> partitioned_dimension_extents;
+  std::set<int> partition_dims = embarassing_banking.get_value();
+  extents = extents_by_dimension(buf);
+  for (auto d : partition_dims) {
+    partitioned_dimension_extents[d] = extents.at(d);
+  }
+
+  int num_banks = 1;
+  for (auto ent : partitioned_dimension_extents) {
+    num_banks *= ent.second;
+  }
+
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
