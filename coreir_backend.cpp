@@ -130,6 +130,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     map<int, std::set<string> > bank_readers;
     map<int, std::set<string> > bank_writers;
+    
+    //map<std::set<string> > bank_readers;
+    //map<int, std::set<string> > bank_writers;
     for (auto pt : buf.get_all_ports()) {
       for (int b = 0; b < num_banks; b++) {
         isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());

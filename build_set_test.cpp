@@ -16901,6 +16901,8 @@ void fpga_asplos_tests() {
 void cgra_flow_tests() {
 
   vector<prog> M3_test_programs{resnet()};
+  resnet().pretty_print();
+  assert(false);
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
 
   auto test_programs =
