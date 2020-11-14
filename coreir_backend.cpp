@@ -1672,13 +1672,40 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
 }
 
+void instantiate_controllers(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::ModuleDef* def,
+    schedule_info& hwinfo) {
+  auto sched_maps = get_maps(schedmap);
+  if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+    for (auto op : prg.all_ops()) {
+      bool needs_controller = false;
+      for (auto b : op->buffers_referenced()) {
+        if (prg.is_boundary(b) || op->index_variables_needed_by_compute.size() > 0) {
+          needs_controller = true;
+          break;
+        }
+      }
+      if (needs_controller) {
+        generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
+      }
+    }
+  } else if (options.rtl_options.use_external_controllers) {
+    for (auto op : prg.all_ops()) {
+      generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
+    }
+  }
+
+}
+
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
-
 
   ofstream verilog_collateral(prg.name + "_verilog_collateral.sv");
   verilog_collateral_file = &verilog_collateral;
@@ -1690,16 +1717,16 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
   auto def = ub->newModuleDef();
 
-  auto sched_maps = get_maps(schedmap);
-  if (options.rtl_options.use_external_controllers) {
-    for (auto op : prg.all_ops()) {
-      generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
-    }
-  }
-
   for (auto op : prg.all_ops()) {
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
+
+  instantiate_controllers(options,
+      buffers,
+      prg,
+      schedmap,
+      def,
+      hwinfo);
 
   for (auto& buf : buffers) {
     if (!prg.is_boundary(buf.first)) {
@@ -1769,15 +1796,15 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_en";
         auto input_bus = "self." + pg(buf_name, bundle_name);
 
-        def->connect(def->sel(input_bus),
-            def->sel(op->name + "." + pg(buf_name, bundle_name)));
-
         if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(output_valid),
               read_start_wire(def, op->name));
         }
+
+        def->connect(def->sel(input_bus),
+            def->sel(op->name + "." + pg(buf_name, bundle_name)));
+
       } else {
-        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         if (options.rtl_options.target_tile == TARGET_TILE_M3) {
         } else if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
@@ -1785,6 +1812,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
           def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
               read_start_control_vars(def, op->name));
         }
+
+        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
       }
     }
   }
