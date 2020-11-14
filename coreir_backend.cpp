@@ -100,6 +100,28 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       num_banks *= ent.second;
     }
 
+    // Creating a map from bank numbers to values that read them
+    int bank_stride = 1;
+    vector<string> dvs;
+    vector<string> coeffs;
+    for (int d = 0; d < buf.logical_dimension(); d++) {
+      dvs.push_back("d" + str(d));
+      if (elem(d, partition_dims)) {
+        coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+        bank_stride *= map_find(d, partitioned_dimension_extents);
+        //bank_factors.push_back(map_find(d, partitioned_dimension_extents));
+      } else {
+        //bank_factors.push_back(0);
+      }
+    }
+
+    string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
+
+    cout << "Bank map: " << bank_func << endl;
+    isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
+    cout << "Bank map: " << str(m) << endl;
+    assert(false);
+
     vector<int> banks;
     for (int b = 0; b < num_banks; b++) {
         //{"width", c->Int()}, // for m3 16
