@@ -16421,9 +16421,6 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
-  concat(test_programs, stencil_programs());
-
-  concat(test_programs, harris_variants());
 
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
@@ -16435,6 +16432,9 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(resnet_coarse_pipeline_loop());
 
 
+  concat(test_programs, stencil_programs());
+
+  concat(test_programs, harris_variants());
 
 
 
@@ -16472,6 +16472,7 @@ void test_codegen(vector<prog>& test_programs, CodegenFunction& codegen) {
 
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
 
     prg.pretty_print();
     prg.sanity_check();
@@ -18588,7 +18589,7 @@ void test_if_construction() {
 
 void dhuff_playground() {
   {
-    prog prg = resnet();
+    prog prg = harris();
     prg.pretty_print();
     assert(false);
     generate_unoptimized_code(prg);
