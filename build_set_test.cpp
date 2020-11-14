@@ -16781,8 +16781,8 @@ void fpga_asplos_tests() {
 void cgra_flow_tests() {
 
   vector<prog> M3_test_programs{pointwise(), camera_pipeline(), harris()};
-  //, resnet()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
+  assert(false);
 
   auto test_programs =
     all_cgra_programs();
