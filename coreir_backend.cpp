@@ -73,10 +73,14 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
     string dst = pt.first;
     string src = pt.second.first;
     int delay = pt.second.second;
+    auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+    Wireable* delayed_src =
+      delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
 
     def->connect(
         def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
-        def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src))));
+        delayed_src);
+        //def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src))));
   }
 
   std::set<string> done_outpt;
