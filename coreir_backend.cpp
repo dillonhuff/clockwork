@@ -86,9 +86,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, orig_buf, hwinfo);
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
-  if (done_outpt.size() < buf.num_out_ports()) {
-    // If the entire buffer cannot be reduced to a single
-    // shift register
+  if (buf.num_out_ports() > 0) {
+    // If the entire buffer cannot be reduced to
+    // shift registers
     maybe<std::set<int> > embarassing_banking =
       embarassing_partition(buf, hwinfo);
     bool has_embarassing_partition = embarassing_banking.has_value();
@@ -130,6 +130,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     map<int, std::set<string> > bank_readers;
     map<int, std::set<string> > bank_writers;
+    map<string, std::set<int>> outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank;
     
     //map<std::set<string> > bank_readers;
     //map<int, std::set<string> > bank_writers;
@@ -143,12 +145,15 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         if (!empty(accesses_to_bank)) {
           if (buf.is_out_pt(pt)) {
             bank_readers[b].insert(pt);
+	    outpt_to_bank[pt].insert(b);
           } else {
             bank_writers[b].insert(pt);
+	    inpt_to_bank[pt].insert(b);
           }
         }
       }
     }
+
 
     const int NUM_IN_PORTS_PER_BANK = 2;
     const int NUM_OUT_PORTS_PER_BANK = 2;
@@ -175,9 +180,26 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
     }
-    assert(false);
+
+
+    string chain_pt = "";
+    for (auto pt: outpt_to_bank)
+    {
+	    if(pt.second.size() > 1) {
+		    assert(chain_pt == "");
+	    	    chain_pt = pt.first;
+		    cout << pt.first << " needs chaining" << endl;  
+	    }
+    }
+    for (auto pt: inpt_to_bank)
+    {
+	    if(pt.second.size() > 1) {
+	    	cout << pt.first << " needs broadcast" << endl;  
+	    }
+    }
 
     vector<int> banks;
+	    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     for (int b = 0; b < num_banks; b++) {
         //{"width", c->Int()}, // for m3 16
         //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
@@ -188,12 +210,72 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         //{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
         //{"has_reset", c->Bool()}
 
+
       Values tile_params{{"width", COREMK(c, 16)},
-        {"ID", COREMK(c, str(b))}};
-      def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+        {"ID", COREMK(c, str(b))},
+	{"num_inputs",COREMK(c,bank_writers[b].size())},
+        {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
+      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+      assert(verilog_collateral_file != nullptr);
+      
+      vector<string> port_decls = {};
+      port_decls.push_back("input clk");
+      port_decls.push_back("input rst_n");
+      port_decls.push_back("input clk_en");
+      port_decls.push_back("input chain_chain_en");
+      for(int i = 0; i < bank_writers[b].size(); i++)
+      {
+	      port_decls.push_back("input [15:0] data_in_" + str(i));
+      }
+      for(int i = 0; i < bank_readers[b].size(); i++)
+      {
+	      port_decls.push_back("input [15:0] data_out_" + str(i));
+      }
+      port_decls.push_back("input [15:0] chain_data_in");
+      port_decls.push_back("output [15:0] chain_data_out");
+
+      *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+      *verilog_collateral_file << "endmodule" <<endl;
+      if(b == 0 && chain_pt != "") {
+      	def->connect(currbank->sel("data_out_1"),def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
+      }
+	def->connect(currbank->sel("clk_en"),one);
+
+
+
+      int count = 0;
+      for(auto pt : bank_readers[b])
+      {
+	      if(pt != chain_pt)
+	      {
+		      def->connect(currbank->sel("data_out_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+		      def->connect(currbank->sel("chain_chain_en"),one);
+	      	      count++;
+	      }
+      }
+      count = 0;
+      for(auto pt : bank_writers[b])
+      {
+	      def->connect(currbank->sel("data_in_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+	      count++;
+      }
+      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
+
+
     }
     //assert(false);
+    for (int b = 0; b < num_banks; b++) {
+  
+      if(b != num_banks - 1){
+        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
+      
+      } else
+      {
+        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+      }
+    }
   }
+
 
 }
 
