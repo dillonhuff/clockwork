@@ -18711,6 +18711,8 @@ void test_if_construction() {
 void dhuff_playground() {
   {
     prog prg = resnet();
+    prg.pretty_print();
+    assert(false);
     generate_unoptimized_code(prg);
     assert(false);
   }
