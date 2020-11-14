@@ -1466,6 +1466,33 @@ bool app_contains_memory_tiles(map<string, UBuffer> &buffers) {
   return false;
 }
 
+bool load_compute_file(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    CoreIR::Context* context,
+    schedule_info& hwinfo) {
+  bool found_compute = true;
+  //string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  string compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+  if (hwinfo.use_dse_compute) {
+    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
+  }
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+  }
+  if (!loadFromFile(context, compute_file)) {
+    found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    if (hwinfo.use_dse_compute) {
+      assert(false);
+    }
+  }
+
+  return found_compute;
+}
+
 CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1657,24 +1684,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
 
-  bool found_compute = true;
-  //string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  string compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
-  if (hwinfo.use_dse_compute) {
-    compute_file = "./dse_compute/" + prg.name + "_mapped.json";
-  }
-  ifstream cfile(compute_file);
-  if (!cfile.good()) {
-    cout << "No compute unit file: " << compute_file << endl;
-  }
-  if (!loadFromFile(context, compute_file)) {
-    found_compute = false;
-    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
-    if (hwinfo.use_dse_compute) {
-      assert(false);
-    }
-  }
-
+  bool found_compute = load_compute_file(options, buffers, prg, schedmap, context, hwinfo);
   auto def = ub->newModuleDef();
 
   auto sched_maps = get_maps(schedmap);
