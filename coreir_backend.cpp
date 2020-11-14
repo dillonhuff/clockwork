@@ -136,7 +136,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         assert(!empty(bnk));
 
         isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
-        //cout << tab(1) << "bnk_map: " << str(bnk_map) << endl;
         isl_set* accesses_to_bank = its(range(bnk_map), bnk);
         if (!empty(accesses_to_bank)) {
           if (buf.is_out_pt(pt)) {
@@ -145,10 +144,11 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             bank_writers[b].insert(pt);
           }
         }
-
-        //isl_set* overlap = it(dot(range(to_map(buf.access_map.at(pt))
       }
     }
+
+    const int NUM_IN_PORTS_PER_BANK = 2;
+    const int NUM_OUT_PORTS_PER_BANK = 2;
 
     cout << "Buffer = " << buf.name << endl;
     cout << "Bank readers..." << endl;
@@ -158,6 +158,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         cout << rd << ", ";
       }
       cout << endl;
+
+      assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
     }
 
     cout << "Bank writers..." << endl;
@@ -167,6 +169,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         cout << rd << ", ";
       }
       cout << endl;
+
+      assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
     }
     assert(false);
 
