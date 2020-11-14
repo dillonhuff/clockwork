@@ -5848,7 +5848,8 @@ map<string, pair<string, int> > determine_shift_reg_map(
   bool any_reduce_ops_on_buffer = false;
   map<string, pair<string, int> > shift_registered_outputs;
   for (auto op : prg.all_ops()) {
-    if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
+    if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
+    //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
       any_reduce_ops_on_buffer = true;
       break;
     }

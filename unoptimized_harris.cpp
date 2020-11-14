@@ -1377,84 +1377,6 @@ inline void op_hcompute_grad_x_stencil(padded16_global_wrapper_stencil_cache& pa
 
 }
 
-inline void op_hcompute_lxy_stencil(grad_x_stencil_cache& grad_x_stencil, grad_y_stencil_cache& grad_y_stencil, lxy_stencil_cache& lxy_stencil, int root, int lxy_s0_y, int lxy_s0_x) {
-  // Dynamic address computation
-
-	// Consume: grad_x_stencil
-	auto grad_x_stencil_lxy_s0_y_c__lxy_s0_x_value = grad_x_stencil_op_hcompute_lxy_stencil_read_bundle_read(grad_x_stencil/* source_delay */, root, lxy_s0_y, lxy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: grad_y_stencil
-	auto grad_y_stencil_lxy_s0_y_c__lxy_s0_x_value = grad_y_stencil_op_hcompute_lxy_stencil_read_bundle_read(grad_y_stencil/* source_delay */, root, lxy_s0_y, lxy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_lxy_stencil(grad_x_stencil_lxy_s0_y_c__lxy_s0_x_value, grad_y_stencil_lxy_s0_y_c__lxy_s0_x_value);
-	// Produce: lxy_stencil
-	lxy_stencil_op_hcompute_lxy_stencil_write_bundle_write(/* arg names */compute_result, lxy_stencil, root, lxy_s0_y, lxy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_lgxy_stencil(lgxy_stencil_cache& lgxy_stencil, int root, int lgxy_s0_y, int lgxy_s0_x) {
-  // Dynamic address computation
-
-	auto compute_result = hcompute_lgxy_stencil();
-	// Produce: lgxy_stencil
-	lgxy_stencil_op_hcompute_lgxy_stencil_write_bundle_write(/* arg names */compute_result, lgxy_stencil, root, lgxy_s0_y, lgxy_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_grad_y_stencil(padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, grad_y_stencil_cache& grad_y_stencil, int root, int grad_y_s0_y, int grad_y_s0_x) {
-  // Dynamic address computation
-
-	// Consume: padded16_global_wrapper_stencil
-	auto padded16_global_wrapper_stencil__lp_grad_y_s0_y__p___m_1_rp__c___lp_grad_y_s0_x__p___m_1_rp__value = padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_read_bundle_read(padded16_global_wrapper_stencil/* source_delay */, root, grad_y_s0_y, grad_y_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_grad_y_stencil(padded16_global_wrapper_stencil__lp_grad_y_s0_y__p___m_1_rp__c___lp_grad_y_s0_x__p___m_1_rp__value);
-	// Produce: grad_y_stencil
-	grad_y_stencil_op_hcompute_grad_y_stencil_write_bundle_write(/* arg names */compute_result, grad_y_stencil, root, grad_y_s0_y, grad_y_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void op_hcompute_lgxy_stencil_1(lgxy_stencil_cache& lgxy_stencil, lxy_stencil_cache& lxy_stencil, int root, int lgxy_s1_y, int lgxy_s1_x) {
-  // Dynamic address computation
-
-	// Consume: lgxy_stencil
-	auto lgxy_stencil_lgxy_s1_y_c__lgxy_s1_x_value = lgxy_stencil_op_hcompute_lgxy_stencil_1_read_bundle_read(lgxy_stencil/* source_delay */, root, lgxy_s1_y, lgxy_s1_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: lxy_stencil
-	auto lxy_stencil__lp_lgxy_s1_y__p___m_1_rp__c___lp_lgxy_s1_x__p___m_1_rp__value = lxy_stencil_op_hcompute_lgxy_stencil_1_read_bundle_read(lxy_stencil/* source_delay */, root, lgxy_s1_y, lgxy_s1_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_lgxy_stencil_1(lgxy_stencil_lgxy_s1_y_c__lgxy_s1_x_value, lxy_stencil__lp_lgxy_s1_y__p___m_1_rp__c___lp_lgxy_s1_x__p___m_1_rp__value);
-	// Produce: lgxy_stencil
-	lgxy_stencil_op_hcompute_lgxy_stencil_1_write_bundle_write(/* arg names */compute_result, lgxy_stencil, root, lgxy_s1_y, lgxy_s1_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void op_hcompute_lxx_stencil(grad_x_stencil_cache& grad_x_stencil, lxx_stencil_cache& lxx_stencil, int root, int lxx_s0_y, int lxx_s0_x) {
   // Dynamic address computation
 
@@ -1503,6 +1425,84 @@ inline void op_hcompute_lgxx_stencil_1(lgxx_stencil_cache& lgxx_stencil, lxx_ste
 	auto compute_result = hcompute_lgxx_stencil_1(lgxx_stencil_lgxx_s1_y_c__lgxx_s1_x_value, lxx_stencil__lp_lgxx_s1_y__p___m_1_rp__c___lp_lgxx_s1_x__p___m_1_rp__value);
 	// Produce: lgxx_stencil
 	lgxx_stencil_op_hcompute_lgxx_stencil_1_write_bundle_write(/* arg names */compute_result, lgxx_stencil, root, lgxx_s1_y, lgxx_s1_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_grad_y_stencil(padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, grad_y_stencil_cache& grad_y_stencil, int root, int grad_y_s0_y, int grad_y_s0_x) {
+  // Dynamic address computation
+
+	// Consume: padded16_global_wrapper_stencil
+	auto padded16_global_wrapper_stencil__lp_grad_y_s0_y__p___m_1_rp__c___lp_grad_y_s0_x__p___m_1_rp__value = padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_read_bundle_read(padded16_global_wrapper_stencil/* source_delay */, root, grad_y_s0_y, grad_y_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_grad_y_stencil(padded16_global_wrapper_stencil__lp_grad_y_s0_y__p___m_1_rp__c___lp_grad_y_s0_x__p___m_1_rp__value);
+	// Produce: grad_y_stencil
+	grad_y_stencil_op_hcompute_grad_y_stencil_write_bundle_write(/* arg names */compute_result, grad_y_stencil, root, grad_y_s0_y, grad_y_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_lxy_stencil(grad_x_stencil_cache& grad_x_stencil, grad_y_stencil_cache& grad_y_stencil, lxy_stencil_cache& lxy_stencil, int root, int lxy_s0_y, int lxy_s0_x) {
+  // Dynamic address computation
+
+	// Consume: grad_x_stencil
+	auto grad_x_stencil_lxy_s0_y_c__lxy_s0_x_value = grad_x_stencil_op_hcompute_lxy_stencil_read_bundle_read(grad_x_stencil/* source_delay */, root, lxy_s0_y, lxy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: grad_y_stencil
+	auto grad_y_stencil_lxy_s0_y_c__lxy_s0_x_value = grad_y_stencil_op_hcompute_lxy_stencil_read_bundle_read(grad_y_stencil/* source_delay */, root, lxy_s0_y, lxy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_lxy_stencil(grad_x_stencil_lxy_s0_y_c__lxy_s0_x_value, grad_y_stencil_lxy_s0_y_c__lxy_s0_x_value);
+	// Produce: lxy_stencil
+	lxy_stencil_op_hcompute_lxy_stencil_write_bundle_write(/* arg names */compute_result, lxy_stencil, root, lxy_s0_y, lxy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_lgxy_stencil(lgxy_stencil_cache& lgxy_stencil, int root, int lgxy_s0_y, int lgxy_s0_x) {
+  // Dynamic address computation
+
+	auto compute_result = hcompute_lgxy_stencil();
+	// Produce: lgxy_stencil
+	lgxy_stencil_op_hcompute_lgxy_stencil_write_bundle_write(/* arg names */compute_result, lgxy_stencil, root, lgxy_s0_y, lgxy_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_lgxy_stencil_1(lgxy_stencil_cache& lgxy_stencil, lxy_stencil_cache& lxy_stencil, int root, int lgxy_s1_y, int lgxy_s1_x) {
+  // Dynamic address computation
+
+	// Consume: lgxy_stencil
+	auto lgxy_stencil_lgxy_s1_y_c__lgxy_s1_x_value = lgxy_stencil_op_hcompute_lgxy_stencil_1_read_bundle_read(lgxy_stencil/* source_delay */, root, lgxy_s1_y, lgxy_s1_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: lxy_stencil
+	auto lxy_stencil__lp_lgxy_s1_y__p___m_1_rp__c___lp_lgxy_s1_x__p___m_1_rp__value = lxy_stencil_op_hcompute_lgxy_stencil_1_read_bundle_read(lxy_stencil/* source_delay */, root, lgxy_s1_y, lgxy_s1_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_lgxy_stencil_1(lgxy_stencil_lgxy_s1_y_c__lgxy_s1_x_value, lxy_stencil__lp_lgxy_s1_y__p___m_1_rp__c___lp_lgxy_s1_x__p___m_1_rp__value);
+	// Produce: lgxy_stencil
+	lgxy_stencil_op_hcompute_lgxy_stencil_1_write_bundle_write(/* arg names */compute_result, lgxy_stencil, root, lgxy_s1_y, lgxy_s1_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

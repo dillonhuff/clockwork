@@ -31,7 +31,7 @@ string delay_wire(ostream& out, const int width, const std::string& wire_in, pro
   assert(wires.size() == delay + 1);
   out << tab(1) << "always @(posedge clk) begin" << endl;
   for (int d = 1; d < delay + 1; d++) {
-    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";";
+    out << tab(2) << wires.at(d) << " <= " << wires.at(d - 1) << ";" << endl;
   }
   out << tab(1) << "end" << endl;
   return wires.back();

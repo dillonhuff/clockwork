@@ -16421,6 +16421,10 @@ vector<prog> harris_variants() {
 vector<prog> all_cgra_programs() {
 
   vector<prog> test_programs;
+  concat(test_programs, stencil_programs());
+
+  concat(test_programs, harris_variants());
+
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
   test_programs.push_back(conv_multi());
@@ -16430,8 +16434,6 @@ vector<prog> all_cgra_programs() {
   test_programs.push_back(unet_conv_3_3());
   test_programs.push_back(resnet_coarse_pipeline_loop());
 
-  concat(test_programs, harris_variants());
-  concat(test_programs, stencil_programs());
 
 
 
