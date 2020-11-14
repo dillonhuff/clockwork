@@ -395,24 +395,6 @@ inline void op_hcompute_blur_unnormalized_stencil_1(blur_unnormalized_stencil_cl
 
 }
 
-inline void op_hcompute_blur_stencil(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, blur_stencil_cache& blur_stencil, int root, int blur_s0_y, int blur_s0_x) {
-  // Dynamic address computation
-
-	// Consume: blur_unnormalized_stencil
-	auto blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value = blur_unnormalized_stencil_op_hcompute_blur_stencil_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hcompute_blur_stencil(blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value);
-	// Produce: blur_stencil
-	blur_stencil_op_hcompute_blur_stencil_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void op_hcompute_hw_output_stencil(blur_stencil_cache& blur_stencil, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_output_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi) {
   // Dynamic address computation
 
@@ -425,6 +407,24 @@ inline void op_hcompute_hw_output_stencil(blur_stencil_cache& blur_stencil, HWSt
 	auto compute_result = hcompute_hw_output_stencil(blur_stencil_hw_output_s0_y_yi_c__hw_output_s0_x_xi_value);
 	// Produce: hw_output_stencil
 	hw_output_stencil.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_blur_stencil(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, blur_stencil_cache& blur_stencil, int root, int blur_s0_y, int blur_s0_x) {
+  // Dynamic address computation
+
+	// Consume: blur_unnormalized_stencil
+	auto blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value = blur_unnormalized_stencil_op_hcompute_blur_stencil_read_bundle_read(blur_unnormalized_stencil/* source_delay */, root, blur_s0_y, blur_s0_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hcompute_blur_stencil(blur_unnormalized_stencil_blur_s0_y_c__blur_s0_x_value);
+	// Produce: blur_stencil
+	blur_stencil_op_hcompute_blur_stencil_write_bundle_write(/* arg names */compute_result, blur_stencil, root, blur_s0_y, blur_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
