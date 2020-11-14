@@ -7212,8 +7212,8 @@ void dsa_writers(prog& prg) {
     }
 
     cout << "Multi-write buffers" << endl;
-    map<string, op*> initializers;
-    map<string, op*> updaters;
+    map<string, std::set<op*> >initializers;
+    map<string, std::set<op*> > updaters;
     for (auto b : multi_write_buffers) {
       cout << tab(1) << b << endl;
       auto writers = find_writers(b, prg);
@@ -7221,16 +7221,25 @@ void dsa_writers(prog& prg) {
       for (auto w : writers) {
         ws.push_back(w);
       }
-      op* w0 = ws.at(0);
-      op* w1 = ws.at(1);
 
-      if (w0->read_addrs().size() == 0) {
-        initializers[b] = w0;
-        updaters[b] = w1;
-      } else {
-        initializers[b] = w1;
-        updaters[b] = w0;
+      for (auto w : ws) {
+        if (w->read_addrs().size() == 0) {
+          initializers[b].insert(w);
+        } else {
+          updaters[b].insert(w);
+        }
+
       }
+      //op* w0 = ws.at(0);
+      //op* w1 = ws.at(1);
+
+      //if (w0->read_addrs().size() == 0) {
+        //initializers[b] = w0;
+        //updaters[b] = w1;
+      //} else {
+        //initializers[b] = w1;
+        //updaters[b] = w0;
+      //}
     }
 
     cout << "Built initializer / update maps" << endl;
@@ -7238,14 +7247,20 @@ void dsa_writers(prog& prg) {
     //assert(false);
     for (auto b : multi_write_buffers) {
       string init_buffer = prg.un(b + "_clkwrk_dsa");
-      auto init = initializers[b];
-      assert(init != 0);
-      auto updated = updaters[b];
-      assert(updated != 0);
-      cout << "Replacing writes" << endl;
-      init->replace_writes_to(b, init_buffer);
-      cout << "Replacing reads from " << b << " in " << updated->name << endl;
-      updated->replace_reads_from(b, init_buffer);
+      for (auto init : initializers[b]) {
+        init->replace_writes_to(b, init_buffer);
+      }
+      for (auto updated : updaters[b]) {
+        updated->replace_reads_from(b, init_buffer);
+      }
+      //auto init = initializers[b];
+      //assert(init != 0);
+      //auto updated = updaters[b];
+      //assert(updated != 0);
+      //cout << "Replacing writes" << endl;
+      //init->replace_writes_to(b, init_buffer);
+      //cout << "Replacing reads from " << b << " in " << updated->name << endl;
+      //updated->replace_reads_from(b, init_buffer);
       prg.buffer_port_widths[init_buffer] = prg.buffer_port_width(b);
     }
 
