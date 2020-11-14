@@ -70,15 +70,22 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
 
   std::set<string> done_outpt;
+  for (auto port : shift_registered_outputs) {
+    done_outpt.insert(port.first);
+  }
+  for (auto port : shift_registered_outputs_to_outputs) {
+    done_outpt.insert(port.first);
+  }
   return done_outpt;
 }
 
-void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
 
   CoreIR::Context* c = def->getContext();
 
-  std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, buf, hwinfo);
+  std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, orig_buf, hwinfo);
 
+  UBuffer buf = delete_ports(done_outpt, orig_buf);
   if (done_outpt.size() < buf.num_out_ports()) {
     // If the entire buffer cannot be reduced to a single
     // shift register
@@ -120,6 +127,47 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     cout << "Bank map: " << bank_func << endl;
     isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
     cout << "Bank map: " << str(m) << endl;
+
+    map<int, std::set<string> > bank_readers;
+    map<int, std::set<string> > bank_writers;
+    for (auto pt : buf.get_all_ports()) {
+      for (int b = 0; b < num_banks; b++) {
+        isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
+        assert(!empty(bnk));
+
+        isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
+        //cout << tab(1) << "bnk_map: " << str(bnk_map) << endl;
+        isl_set* accesses_to_bank = its(range(bnk_map), bnk);
+        if (!empty(accesses_to_bank)) {
+          if (buf.is_out_pt(pt)) {
+            bank_readers[b].insert(pt);
+          } else {
+            bank_writers[b].insert(pt);
+          }
+        }
+
+        //isl_set* overlap = it(dot(range(to_map(buf.access_map.at(pt))
+      }
+    }
+
+    cout << "Buffer = " << buf.name << endl;
+    cout << "Bank readers..." << endl;
+    for (auto b : bank_readers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+    }
+
+    cout << "Bank writers..." << endl;
+    for (auto b : bank_writers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+    }
     assert(false);
 
     vector<int> banks;
