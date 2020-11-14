@@ -70,6 +70,7 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
 
   auto c = def->getContext();
+  std::set<string> done_outpt;
   for (auto pt : shift_registered_outputs) {
     string dst = pt.first;
     string src = pt.second.first;
@@ -81,13 +82,9 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
     def->connect(
         def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
         delayed_src);
-        //def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src))));
+    done_outpt.insert(pt.first);
   }
 
-  std::set<string> done_outpt;
-  for (auto port : shift_registered_outputs) {
-    done_outpt.insert(port.first);
-  }
   for (auto port : shift_registered_outputs_to_outputs) {
     done_outpt.insert(port.first);
   }
