@@ -65,6 +65,9 @@ int wire_width(CoreIR::Wireable* w) {
   assert(false);
 }
 
+void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+}
+
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   auto ns = context->getNamespace("global");
 
@@ -108,7 +111,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     generate_platonic_ubuffer(*verilog_collateral_file, options, prg, buf, hwinfo);
   } else if (options.rtl_options.target_tile == TARGET_TILE_M3) {
     cout << "M3 codegen is not implemented!" << endl;
-    assert(false);
+    generate_M3_coreir(options, def, prg, buf, hwinfo);
   } else {
     generate_synthesizable_functional_model(options, buf, def, hwinfo);
   }
