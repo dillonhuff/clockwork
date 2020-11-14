@@ -15989,6 +15989,10 @@ int buffer_store_latency(CodegenOptions& options) {
   if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
     return 2;
   }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+    return 1;
+  }
   assert(false);
 }
 
@@ -16012,6 +16016,10 @@ int buffer_load_latency(CodegenOptions& options) {
 
   if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
     return 2;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+    return 1;
   }
   assert(false);
 }
@@ -16152,6 +16160,16 @@ CodegenOptions FPGA_BRAM_codegen_options(prog& prg) {
   return options;
 }
 
+CodegenOptions CGRA_M3_codegen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_M3;
+  all_unbanked(prg, options);
+
+  return options;
+}
+
 CodegenOptions garnet_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
@@ -16223,6 +16241,14 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 
 void compile_for_generic_SRAM_mem(prog& prg) {
   auto options = generic_SRAM_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  compile_cycle_accurate_hw(options, sched, prg);
+}
+
+void compile_for_CGRA_M3_mem(prog& prg) {
+  auto options = CGRA_M3_codegen_options(prg);
+  //options.rtl_options.use_pipelined_compute_units = true;
+  //options.rtl_options.global_signals.synchronous_reset = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   compile_cycle_accurate_hw(options, sched, prg);
 }
@@ -16873,8 +16899,12 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+
   auto test_programs =
     all_cgra_programs();
+
+  test_codegen(test_programs, compile_for_CGRA_M3_mem);
+
   test_platonic_codegen(test_programs);
 
   vector<prog> bram_test_programs{pointwise(), resnet()};

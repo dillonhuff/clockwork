@@ -177,9 +177,9 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
   // cgralib.Mem_amber
   Params cgralibmemamberparams = Params({
-        {"width", c->Int()},
-        {"num_inputs", c->Int()},
-        {"num_outputs", c->Int()},
+        {"width", c->Int()}, // for m3 16
+        {"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
+        {"num_outputs", c->Int()}, // ''
         //{"config", c->Json()},
         {"has_valid", c->Bool()},
         {"has_stencil_valid", c->Bool()},
