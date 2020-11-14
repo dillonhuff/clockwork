@@ -316,7 +316,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-        ub_field.push_back(make_pair(name + "_valid", context->BitIn()));
+        //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
       } else if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
@@ -1726,7 +1726,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
       def->connect(def->sel(op->name)->sel(var), var_wire);
     }
+  }
 
+  for (auto op : prg.all_ops()) {
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
@@ -1741,15 +1743,18 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
           def->connect(def->sel(output_en),
               write_start_wire(def, op->name));
         }
+
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
       } else {
-        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        if (options.rtl_options.use_external_controllers) {
+        if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        } else if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
               write_start_wire(def, op->name));
           def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
               write_start_control_vars(def, op->name));
         }
+
+        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
       }
     }
 
@@ -1773,7 +1778,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        if (options.rtl_options.use_external_controllers) {
+        if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        } else if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
               read_start_wire(def, op->name));
           def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
