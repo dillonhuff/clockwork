@@ -16780,7 +16780,7 @@ void fpga_asplos_tests() {
 
 void cgra_flow_tests() {
 
-  vector<prog> M3_test_programs{harris(), pointwise()};
+  vector<prog> M3_test_programs{pointwise(), harris()};
   //, resnet()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
 
