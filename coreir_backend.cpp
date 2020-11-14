@@ -65,10 +65,17 @@ int wire_width(CoreIR::Wireable* w) {
   assert(false);
 }
 
-void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-
+std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+
+  std::set<string> done_outpt;
+  return done_outpt;
+}
+
+void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  std::set<string> done_output = generate_M3_shift_registers(options, def, prg, buf, hwinfo);
 
   maybe<std::set<int> > embarassing_banking =
     embarassing_partition(buf, hwinfo);
