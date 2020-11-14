@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
   HWStream<hw_uint<16> > gp_fpga_2_update_0_write_channel;
   // In lanes = 2
   for (int r = 0; r < 1087; r++) {
-    for (int cl = 0; cl < 1928 / 2; cl++) {
+    for (int cl = 0; cl < 1930 / 2; cl++) {
       hw_uint<32> packed;
       {
       int c = 2*cl + 0;

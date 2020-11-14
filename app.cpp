@@ -789,6 +789,8 @@ extract_div_free_linear_rational_approximation(isl_aff* aff_bound) {
 
 pair<isl_val*, isl_val*>
 extract_linear_rational_approximation(isl_aff* aff_bound) {
+  cout << "Extracting linear rational approximation: " << str(aff_bound) << endl;
+
   int in_dims = num_in_dims(aff_bound);
   int out_dims = num_out_dims(aff_bound);
   int div_dims = num_div_dims(aff_bound);
@@ -799,7 +801,7 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
 
   assert(in_dims == 1);
   assert(out_dims == 1);
-  cout << "div dims = " << div_dims << endl;
+  //cout << "div dims = " << div_dims << endl;
 
   if (div_dims == 0) {
     auto dkb = extract_div_free_linear_rational_approximation(aff_bound);
@@ -810,11 +812,11 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
 
     return {k, b};
   } else {
-    cout << "Getting div bound for: " << str(aff_bound) << endl;
-    cout << "Div exprs..." << endl;
+    //cout << "Getting div bound for: " << str(aff_bound) << endl;
+    //cout << "Div exprs..." << endl;
     for (int i = 0; i < div_dims; i++) {
       auto dexpr = isl_aff_get_div(aff_bound, i);
-      cout << tab(1) << str(dexpr) << endl;
+      //cout << tab(1) << str(dexpr) << endl;
     }
     assert(div_dims == 1);
 
@@ -858,31 +860,31 @@ map<string, isl_val*> simplify(const vector<pair<string, isl_val*> >& terms) {
 }
 
 map<isl_map*, vector<pair<isl_val*, isl_val*> > >
-extract_schedule_params(vector<isl_map*>& deps) {
+extract_schedule_params(const vector<isl_map*>& deps) {
 
   vector<isl_map*> consumed_data;
   for (auto d : deps) {
-    cout << tab(1) << str(d) << endl;
+    //cout << tab(1) << str(d) << endl;
     consumed_data.push_back(inv(d));
   }
 
-  cout << "Consumed data..." << endl;
+  //cout << "Consumed data..." << endl;
   map<isl_map*, vector<pair<isl_val*, isl_val*> > > schedule_params;
   for (auto c : consumed_data) {
     auto lm = isl_map_lexmax_pw_multi_aff(cpy(c));
-    cout << tab(1) << str(c) << endl;
-    cout << tab(2) << "lexmax: " << str(lm) << endl;
+    //cout << tab(1) << str(c) << endl;
+    //cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
     //assert(pieces.size() <= 1);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
-      cout << "bound: " << str(bound) << endl;
+      //cout << "bound: " << str(bound) << endl;
       assert(get_size(bound) == 1);
       isl_aff* aff_bound =
         isl_multi_aff_get_aff(bound, 0);
-      cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
-      cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
+      //cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
+      //cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
       pair<isl_val*, isl_val*> kb =
         extract_linear_rational_approximation(aff_bound);
       schedule_params[c].push_back(kb);
@@ -949,7 +951,7 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
 }
 
 map<string, isl_val*>
-compute_qfactors(vector<isl_map*>& deps) {
+compute_qfactors(const vector<isl_map*>& deps) {
   auto schedule_params =
     extract_schedule_params(deps);
 
@@ -973,30 +975,19 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps) {
-  //cout << "Domains..." << endl;
-  //for (auto d : domains) {
-    //cout << tab(1) << str(d) << endl;
-  //}
-  //cout << endl;
-  //cout << "Deps..." << endl;
-  //for (auto d : deps) {
-    //cout << tab(1) << str(d) << endl;
-  //}
-  //ofstream sd("schedule_debug.txt", ios::app);
-  //sd << "--- Scheduling dimension" << endl;
-  //sd << tab(1) << "=== Domains..." << endl;
-  //for (auto d : domains) {
-    //sd << tab(2) << str(d) << endl;
-  //}
-  //sd << endl;
-  //sd << tab(1) << "=== Dependencies..." << endl;
-  //for (auto d : deps) {
-    //sd << tab(2) << str(d) << endl;
-    //sd << tab(3) << str(card(d)) << endl;
-  //}
-  //sd << endl;
 
-
+  std::set<string> dep_names;
+  for (auto d : deps) {
+    dep_names.insert(domain_name(d));
+    dep_names.insert(range_name(d));
+  }
+  std::set<string> dom_names;
+  for (auto d : domains) {
+    if (!elem(name(d), dep_names)) {
+      cout << tab(1) << name(d) << " is not a producer or consumer of any dependency" << endl;
+      assert(false);
+    }
+  }
   //cout << "Deps..." << endl;
   assert(deps.size() > 0);
   isl_ctx* ct = ctx(deps.at(0));
@@ -1007,15 +998,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   map<string, isl_val*> qfactors =
     compute_qfactors(schedule_params);
 
-  //cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
-  //sd << "=== Schedule params" << endl;
-  //for (auto s : schedule_params) {
-    //sd << tab(1) << str(s.first) << endl;
-    //for (auto k : s.second) {
-      //sd << tab(2) << str(k.first) << "*x + " << str(k.second) << endl;
-    //}
-  //}
 
   std::set<string> consumed;
   std::set<string> outputs;
@@ -1039,54 +1022,16 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     //cout << tab(1) << out << endl;
     pipeline_delay[delay_var_name(out)] = one(ct);
   }
-  //assert(outputs.size() == 1);
-
-  // Add shift register constraints
-  //for (auto s : schedule_params) {
-
-    //string consumer = domain_name(s.first);
-    //string producer = range_name(s.first);
-
-    //isl_val* qp = map_find(sched_var_name(producer), qfactors);
-
-    //string dc = delay_var_name(consumer);
-    //string dp = delay_var_name(producer);
-
-    ////if (contains_key(consumer, high_bandwidth_deps) &&
-        ////elem(producer, map_find(consumer, high_bandwidth_deps))) {
-      ////assert(s.second.size() == 1);
-      //for (auto sv : s.second) {
-        //auto b = sv.second;
-        //auto neg_qpb = neg(mul(qp, b));
-        ////delay_problem.add_eq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
-      //}
-    ////}
-  //}
   std::set<string> operation_names;
 
   vector<pair<string, isl_val*> > linebuffer_obj_terms;
 
   vector<map<string, isl_val*> > lb_objs;
 
-  //for (auto b : high_bandwidth_deps) {
-    //string consumer_delay = delay_var_name(b.first);
-    //for (auto producer_name : b.second) {
-      //string producer_delay = delay_var_name(producer_name);
-      //vector<pair<string, isl_val*> > ts;
-      //ts.push_back({consumer_delay, one(ct)});
-      //ts.push_back({producer_delay, negone(ct)});
-
-      ////lb_objs.push_back(simplify(ts));
-
-      ////linebuffer_obj_terms.push_back({consumer_delay, one(ct)});
-      ////linebuffer_obj_terms.push_back({producer_delay, negone(ct)});
-    //}
-  //}
-
-  //auto linebuffer_obj = simplify(linebuffer_obj_terms);
-
   // Add delay legality constraints
+  cout << "Schedule params..." << endl;
   for (auto s : schedule_params) {
+    cout << tab(1) << str(s.first) << endl;
     string consumer = domain_name(s.first);
     string producer = range_name(s.first);
 
@@ -1110,6 +1055,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     }
   }
 
+  assert(operation_names.size() == domains.size());
+
   vector<pair<string, isl_val*> > diffs;
   map<string, isl_val*> delay_obj;
   for (auto s : schedule_params) {
@@ -1123,12 +1070,6 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     isl_set* cset = find_set(consumer, domains);
     //isl_val* min = lexminval(cset);
     isl_val* lc = lexmaxval(cset);
-
-    //cout << consumer << endl;
-    //cout << tab(1) << "consumer min point = " << str(min) << endl;
-    //cout << tab(1) << "consumer max point = " << str(max) << endl;
-    //cout << endl;
-    //isl_set* pset = find_set(consumer, domains);
 
     isl_val* qc = map_find(sched_var_name(producer), qfactors);
     isl_val* qp = map_find(sched_var_name(producer), qfactors);
@@ -1166,7 +1107,6 @@ map<string, isl_aff*> clockwork_schedule_dimension(
 
   vector<map<string, isl_val*> > objectives;
   objectives.push_back(pipeline_delay);
-  //concat(objectives, lb_objs);
   objectives.push_back(delay_obj);
   auto opt_delay = delay_problem.lex_minimize(objectives);
 
@@ -1183,13 +1123,11 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     auto sf = map_find(f, schedule_functions);
     auto minpt = lexmin(dom);
     auto maxpt = lexmax(dom);
-    //sd << tab(1) << f << ": " << str(sf) << endl;
-    //sd << tab(2) << "min pt: " << str(minpt) << endl;
-    //sd << tab(2) << "max pt: " << str(maxpt) << endl;
-    //sd << endl;
   }
-  //sd.close();
 
+  for (auto s : domains) {
+    assert(contains_key(name(s), schedule_functions));
+  }
   cout << "Done with schedule" << endl;
   return schedule_functions;
 }
@@ -1942,11 +1880,20 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
     }
 
     auto schedules = clockwork_schedule_dimension(projected_domains, projected_deps, high_bandwidth_deps);
+    for (auto s : get_sets(domain)) {
+      assert(contains_key(name(s), schedules));
+      release(s);
+    }
     cout << "Clockwork schedules..." << endl;
     for (auto s : schedules) {
       cout << tab(1) << s.first << ": " << str(s.second) << endl;
       scheds[s.first].push_back(s.second);
     }
+  }
+
+  for (auto s : get_sets(domain)) {
+    assert(contains_key(name(s), scheds));
+    release(s);
   }
 
   return scheds;
@@ -2245,5 +2192,5 @@ void mathlog_problem(ilp_builder& builder, const map<string, isl_val*>& obj) {
   }
   out << "end;" << endl;
   out.close();
-  cout << "Done writing out problem to mod file" << endl;
+  //cout << "Done writing out problem to mod file" << endl;
 }

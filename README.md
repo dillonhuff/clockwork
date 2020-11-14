@@ -73,10 +73,23 @@ A simple example of how to generate and compile clockwork programs can be found 
     `export COREIR_PATH=/path/to/coreir`
     
     `make -j COREIR=1`
-
+    
 The file `build_set_test.cpp` is the main driver for all tests.
 Most files in this repository are automatically generated collateral
 that can be ignored.
+
+## Testing CGRA Memory Functionality with [Lake](https://github.com/StanfordAHA/lake) Verilog Generation.
+
+For AHA CGRA users, we provide interconnect-agonstic testing of memory tile configurations. The tests depend on CoreIR and Lake. 
+Before running the lake tests, be sure to install CoreIR and Lake. 
+* Command to run the verilog functionality test.
+```
+export COREIR_PATH=/path/to/coreir
+export LAKE_PATH=/path/to/lake
+export LAKE_CONTROLLERS=$PWD
+make -j COREIR=1
+./clockwork lake-tests
+```
 
 ## Beware of AP\_INT\_MAX\_W
 

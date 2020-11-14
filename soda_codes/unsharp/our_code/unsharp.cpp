@@ -11,7 +11,7 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_35_cache {
+struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_1_cache {
 	// RAM Box: {[0, 59], [0, 59]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -35,49 +35,49 @@ struct blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_to_bl
 
 struct blur_unnormalized_stencil_cache {
   // # of banks: 1
-  blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_35_cache blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_35;
+  blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_1_cache blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_1;
 };
 
 
 
-inline void blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_write(hw_uint<16>& blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7, blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-  blur_unnormalized_stencil.blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_35.push(blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7);
+inline void blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12_write(hw_uint<16>& blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12, blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
+  blur_unnormalized_stencil.blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_1.push(blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12);
 }
 
-inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_ratio_stencil_35_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int pad_root_to_ratio_s0_y, int pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, int ratio_s0_y, int ratio_s0_x, int dynamic_address) {
+inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_ratio_stencil_1_select(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int pad_root_to_ratio_s0_y, int pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, int ratio_s0_y, int ratio_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // blur_unnormalized_stencil_op_hcompute_ratio_stencil_35 read pattern: { op_hcompute_ratio_stencil[root = 0, pad_root_to_ratio_s0_y = 0, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y = 0, ratio_s0_y, ratio_s0_x] -> blur_unnormalized_stencil[ratio_s0_y, ratio_s0_x] : 0 <= ratio_s0_y <= 59 and 0 <= ratio_s0_x <= 59 }
+  // blur_unnormalized_stencil_op_hcompute_ratio_stencil_1 read pattern: { op_hcompute_ratio_stencil[root = 0, pad_root_to_ratio_s0_y = 0, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y = 0, ratio_s0_y, ratio_s0_x] -> blur_unnormalized_stencil[ratio_s0_y, ratio_s0_x] : 0 <= ratio_s0_y <= 59 and 0 <= ratio_s0_x <= 59 }
   // Read schedule : { op_hcompute_ratio_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 4] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
-  auto value_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7 = blur_unnormalized_stencil.blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_35.peek(/* one reader or all rams */ 0);
-  return value_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7;
+  auto value_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12 = blur_unnormalized_stencil.blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12_to_blur_unnormalized_stencil_op_hcompute_ratio_stencil_1.peek(/* one reader or all rams */ 0);
+  return value_blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_blur_unnormalized_stencil_1_write
-//	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7
+//	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12
 inline void blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_write_bundle_write(hw_uint<16>& op_hcompute_blur_unnormalized_stencil_1_write, blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-	hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_res = op_hcompute_blur_unnormalized_stencil_1_write.extract<0, 15>();
-	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_write(blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_7_res, blur_unnormalized_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
+	hw_uint<16> blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12_res = op_hcompute_blur_unnormalized_stencil_1_write.extract<0, 15>();
+	blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12_write(blur_unnormalized_stencil_op_hcompute_blur_unnormalized_stencil_1_12_res, blur_unnormalized_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
 }
 
 // op_hcompute_ratio_stencil_read
-//	blur_unnormalized_stencil_op_hcompute_ratio_stencil_35
+//	blur_unnormalized_stencil_op_hcompute_ratio_stencil_1
 inline hw_uint<16> blur_unnormalized_stencil_op_hcompute_ratio_stencil_read_bundle_read(blur_unnormalized_stencil_cache& blur_unnormalized_stencil, int root, int pad_root_to_ratio_s0_y, int pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, int ratio_s0_y, int ratio_s0_x, int dynamic_address) {
   // # of ports in bundle: 1
-    // blur_unnormalized_stencil_op_hcompute_ratio_stencil_35
+    // blur_unnormalized_stencil_op_hcompute_ratio_stencil_1
 
 	hw_uint<16> result;
-	hw_uint<16> blur_unnormalized_stencil_op_hcompute_ratio_stencil_35_res = blur_unnormalized_stencil_op_hcompute_ratio_stencil_35_select(blur_unnormalized_stencil, root, pad_root_to_ratio_s0_y, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, ratio_s0_y, ratio_s0_x, dynamic_address);
-	set_at<0, 16>(result, blur_unnormalized_stencil_op_hcompute_ratio_stencil_35_res);
+	hw_uint<16> blur_unnormalized_stencil_op_hcompute_ratio_stencil_1_res = blur_unnormalized_stencil_op_hcompute_ratio_stencil_1_select(blur_unnormalized_stencil, root, pad_root_to_ratio_s0_y, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, ratio_s0_y, ratio_s0_x, dynamic_address);
+	set_at<0, 16>(result, blur_unnormalized_stencil_op_hcompute_ratio_stencil_1_res);
 	return result;
 }
 
 #include "hw_classes.h"
 
-struct blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8_cache {
+struct blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13_cache {
 	// RAM Box: {[0, 59], [0, 59]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -101,49 +101,49 @@ struct blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stenc
 
 struct blur_unnormalized_stencil_clkwrk_dsa0_cache {
   // # of banks: 1
-  blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8_cache blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8;
+  blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13_cache blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13;
 };
 
 
 
-inline void blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6_write(hw_uint<16>& blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6, blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int pad_root_to_blur_unnormalized_s0_y, int pad_pad_root_to_blur_unnormalized_s0_y_to_blur_unnormalized_s0_y, int blur_unnormalized_s0_y, int blur_unnormalized_s0_x, int dynamic_address) {
-  blur_unnormalized_stencil_clkwrk_dsa0.blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8.push(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6);
+inline void blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39_write(hw_uint<16>& blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39, blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int pad_root_to_blur_unnormalized_s0_y, int pad_pad_root_to_blur_unnormalized_s0_y_to_blur_unnormalized_s0_y, int blur_unnormalized_s0_y, int blur_unnormalized_s0_x, int dynamic_address) {
+  blur_unnormalized_stencil_clkwrk_dsa0.blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13.push(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39);
 }
 
-inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8_select(blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
+inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13_select(blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> blur_unnormalized_stencil_clkwrk_dsa0[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> blur_unnormalized_stencil_clkwrk_dsa0[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_blur_unnormalized_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 2] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
-  auto value_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6 = blur_unnormalized_stencil_clkwrk_dsa0.blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8.peek(/* one reader or all rams */ 0);
-  return value_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6;
+  auto value_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39 = blur_unnormalized_stencil_clkwrk_dsa0.blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39_to_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13.peek(/* one reader or all rams */ 0);
+  return value_blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_blur_unnormalized_stencil_1_read
-//	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8
+//	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13
 inline hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_read_bundle_read(blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
   // # of ports in bundle: 1
-    // blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8
+    // blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13
 
 	hw_uint<16> result;
-	hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8_res = blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8_select(blur_unnormalized_stencil_clkwrk_dsa0, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<0, 16>(result, blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_8_res);
+	hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13_res = blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13_select(blur_unnormalized_stencil_clkwrk_dsa0, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
+	set_at<0, 16>(result, blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_1_13_res);
 	return result;
 }
 
 // op_hcompute_blur_unnormalized_stencil_write
-//	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6
+//	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39
 inline void blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_write_bundle_write(hw_uint<16>& op_hcompute_blur_unnormalized_stencil_write, blur_unnormalized_stencil_clkwrk_dsa0_cache& blur_unnormalized_stencil_clkwrk_dsa0, int root, int pad_root_to_blur_unnormalized_s0_y, int pad_pad_root_to_blur_unnormalized_s0_y_to_blur_unnormalized_s0_y, int blur_unnormalized_s0_y, int blur_unnormalized_s0_x, int dynamic_address) {
-	hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6_res = op_hcompute_blur_unnormalized_stencil_write.extract<0, 15>();
-	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6_write(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_6_res, blur_unnormalized_stencil_clkwrk_dsa0, root, pad_root_to_blur_unnormalized_s0_y, pad_pad_root_to_blur_unnormalized_s0_y_to_blur_unnormalized_s0_y, blur_unnormalized_s0_y, blur_unnormalized_s0_x, dynamic_address);
+	hw_uint<16> blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39_res = op_hcompute_blur_unnormalized_stencil_write.extract<0, 15>();
+	blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39_write(blur_unnormalized_stencil_clkwrk_dsa0_op_hcompute_blur_unnormalized_stencil_39_res, blur_unnormalized_stencil_clkwrk_dsa0, root, pad_root_to_blur_unnormalized_s0_y, pad_pad_root_to_blur_unnormalized_s0_y_to_blur_unnormalized_s0_y, blur_unnormalized_s0_y, blur_unnormalized_s0_x, dynamic_address);
 }
 
 #include "hw_classes.h"
 
-struct gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27_cache {
+struct gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27_cache {
 	// RAM Box: {[0, 63], [0, 63]}
 	// Capacity: 261
 	// # of read delays: 25
@@ -426,319 +426,314 @@ struct gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27_cache {
 
 struct gray_stencil_cache {
   // # of banks: 1
-  gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27_cache gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27;
+  gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27_cache gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27;
 };
 
 
 
-inline void gray_stencil_op_hcompute_gray_stencil_2_write(hw_uint<16>& gray_stencil_op_hcompute_gray_stencil_2, gray_stencil_cache& gray_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
-  gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.push(gray_stencil_op_hcompute_gray_stencil_2);
-}
-
-inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_10_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_10 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
-  // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
-  // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_192();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_11_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_11 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
-  // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
-  // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_132();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_12_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_12 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
-  // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
-  // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_131();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_13_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_13 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
-  // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
-  // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_130();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
-  return 0;
+inline void gray_stencil_op_hcompute_gray_stencil_8_write(hw_uint<16>& gray_stencil_op_hcompute_gray_stencil_8, gray_stencil_cache& gray_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
+  gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.push(gray_stencil_op_hcompute_gray_stencil_8);
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_14_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_14 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_14 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_129();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_260();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_15_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_15 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_15 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_128();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_192();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_16_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_16 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_16 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_68();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_132();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_17_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_17 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_17 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_67();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_131();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_18_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_18 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_18 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_66();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_130();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_19_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_19 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_19 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_65();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_129();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_20_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_20 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_20 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[2 + blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_259();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_128();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_21_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_21 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_21 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_64();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_68();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_22_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_22 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_22 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_4();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_67();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_23_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_23 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_23 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_2();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_66();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_24_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_24 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_24 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_0();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_65();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_25_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_25 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_25 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_1();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_259();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[3 + blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_3();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_64();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_27_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_27 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_27 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_258();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_4();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_28_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_28 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_28 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_257();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_2();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_29_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_29 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_29 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_256();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_0();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_30_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_30 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_30 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_196();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_1();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_31_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_31 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_31 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[4 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_195();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_3();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_194();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_258();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_33_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_33 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_33 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_193();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_257();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_9_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
+inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_34_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_9 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_34 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[blur_unnormalized_s1_y, 4 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
   // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_260();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_256();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> gray_stencil_op_hcompute_hw_output_stencil_38_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_hw_output_s0_y_yi, int pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
+inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_35_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_hw_output_stencil_38 read pattern: { op_hcompute_hw_output_stencil[root = 0, pad_root_to_hw_output_s0_y_yi = 0, pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> gray_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 59 and 0 <= hw_output_s0_x_xi <= 59 }
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_35 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
+  // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_196();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_36_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_36 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, 1 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
+  // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_195();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_37_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_37 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, 2 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
+  // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_194();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_38_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_38 read pattern: { op_hcompute_blur_unnormalized_stencil_1[root = 0, pad_root_to_blur_unnormalized_s1_y = 0, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y = 0, blur_unnormalized_s1_y, blur_unnormalized_s1_x] -> gray_stencil[1 + blur_unnormalized_s1_y, 3 + blur_unnormalized_s1_x] : 0 <= blur_unnormalized_s1_y <= 59 and 0 <= blur_unnormalized_s1_x <= 59 }
+  // Read schedule : { op_hcompute_blur_unnormalized_stencil_1[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 3] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
+  // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_193();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> gray_stencil_op_hcompute_hw_output_stencil_4_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_hw_output_s0_y_yi, int pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // gray_stencil_op_hcompute_hw_output_stencil_4 read pattern: { op_hcompute_hw_output_stencil[root = 0, pad_root_to_hw_output_s0_y_yi = 0, pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> gray_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 59 and 0 <= hw_output_s0_x_xi <= 59 }
   // Read schedule : { op_hcompute_hw_output_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 5] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_260();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_260();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> gray_stencil_op_hcompute_ratio_stencil_36_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_ratio_s0_y, int pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, int ratio_s0_y, int ratio_s0_x, int dynamic_address) {
+inline hw_uint<16> gray_stencil_op_hcompute_ratio_stencil_2_select(gray_stencil_cache& gray_stencil, int root, int pad_root_to_ratio_s0_y, int pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, int ratio_s0_y, int ratio_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // gray_stencil_op_hcompute_ratio_stencil_36 read pattern: { op_hcompute_ratio_stencil[root = 0, pad_root_to_ratio_s0_y = 0, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y = 0, ratio_s0_y, ratio_s0_x] -> gray_stencil[ratio_s0_y, ratio_s0_x] : 0 <= ratio_s0_y <= 59 and 0 <= ratio_s0_x <= 59 }
+  // gray_stencil_op_hcompute_ratio_stencil_2 read pattern: { op_hcompute_ratio_stencil[root = 0, pad_root_to_ratio_s0_y = 0, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y = 0, ratio_s0_y, ratio_s0_x] -> gray_stencil[ratio_s0_y, ratio_s0_x] : 0 <= ratio_s0_y <= 59 and 0 <= ratio_s0_x <= 59 }
   // Read schedule : { op_hcompute_ratio_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 4] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_gray_stencil_op_hcompute_gray_stencil_2 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_2_merged_banks_27.peek_260();
-  return value_gray_stencil_op_hcompute_gray_stencil_2;
+  auto value_gray_stencil_op_hcompute_gray_stencil_8 = gray_stencil.gray_stencil_op_hcompute_gray_stencil_8_merged_banks_27.peek_260();
+  return value_gray_stencil_op_hcompute_gray_stencil_8;
   return 0;
 }
 
 // # of bundles = 4
 // op_hcompute_blur_unnormalized_stencil_1_read
-//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_9
-//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_10
-//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_11
-//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_12
-//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_13
 //	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_14
 //	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_15
 //	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_16
@@ -759,13 +754,13 @@ inline hw_uint<16> gray_stencil_op_hcompute_ratio_stencil_36_select(gray_stencil
 //	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_31
 //	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32
 //	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_33
+//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_34
+//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_35
+//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_36
+//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_37
+//	gray_stencil_op_hcompute_blur_unnormalized_stencil_1_38
 inline hw_uint<400> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_read_bundle_read(gray_stencil_cache& gray_stencil, int root, int pad_root_to_blur_unnormalized_s1_y, int pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, int blur_unnormalized_s1_y, int blur_unnormalized_s1_x, int dynamic_address) {
   // # of ports in bundle: 25
-    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_9
-    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_10
-    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_11
-    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_12
-    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_13
     // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_14
     // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_15
     // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_16
@@ -786,95 +781,100 @@ inline hw_uint<400> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_read_bu
     // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_31
     // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32
     // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_33
+    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_34
+    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_35
+    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_36
+    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_37
+    // gray_stencil_op_hcompute_blur_unnormalized_stencil_1_38
 
 	hw_uint<400> result;
-	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_9_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_9_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<0, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_9_res);
-	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_10_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_10_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<16, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_10_res);
-	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_11_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_11_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<32, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_11_res);
-	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_12_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_12_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<48, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_12_res);
-	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_13_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_13_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<64, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_13_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_14_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_14_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<80, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_14_res);
+	set_at<0, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_14_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_15_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_15_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<96, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_15_res);
+	set_at<16, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_15_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_16_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_16_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<112, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_16_res);
+	set_at<32, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_16_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_17_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_17_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<128, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_17_res);
+	set_at<48, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_17_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_18_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_18_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<144, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_18_res);
+	set_at<64, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_18_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_19_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_19_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<160, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_19_res);
+	set_at<80, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_19_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_20_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_20_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<176, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_20_res);
+	set_at<96, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_20_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_21_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_21_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<192, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_21_res);
+	set_at<112, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_21_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_22_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_22_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<208, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_22_res);
+	set_at<128, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_22_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_23_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_23_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<224, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_23_res);
+	set_at<144, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_23_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_24_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_24_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<240, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_24_res);
+	set_at<160, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_24_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_25_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_25_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<256, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_25_res);
+	set_at<176, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_25_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<272, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_res);
+	set_at<192, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_26_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_27_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_27_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<288, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_27_res);
+	set_at<208, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_27_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_28_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_28_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<304, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_28_res);
+	set_at<224, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_28_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_29_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_29_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<320, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_29_res);
+	set_at<240, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_29_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_30_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_30_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<336, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_30_res);
+	set_at<256, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_30_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_31_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_31_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<352, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_31_res);
+	set_at<272, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_31_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<368, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_res);
+	set_at<288, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_32_res);
 	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_33_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_33_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
-	set_at<384, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_33_res);
+	set_at<304, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_33_res);
+	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_34_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_34_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
+	set_at<320, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_34_res);
+	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_35_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_35_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
+	set_at<336, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_35_res);
+	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_36_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_36_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
+	set_at<352, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_36_res);
+	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_37_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_37_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
+	set_at<368, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_37_res);
+	hw_uint<16> gray_stencil_op_hcompute_blur_unnormalized_stencil_1_38_res = gray_stencil_op_hcompute_blur_unnormalized_stencil_1_38_select(gray_stencil, root, pad_root_to_blur_unnormalized_s1_y, pad_pad_root_to_blur_unnormalized_s1_y_to_blur_unnormalized_s1_y, blur_unnormalized_s1_y, blur_unnormalized_s1_x, dynamic_address);
+	set_at<384, 400>(result, gray_stencil_op_hcompute_blur_unnormalized_stencil_1_38_res);
 	return result;
 }
 
 // op_hcompute_gray_stencil_write
-//	gray_stencil_op_hcompute_gray_stencil_2
+//	gray_stencil_op_hcompute_gray_stencil_8
 inline void gray_stencil_op_hcompute_gray_stencil_write_bundle_write(hw_uint<16>& op_hcompute_gray_stencil_write, gray_stencil_cache& gray_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
-	hw_uint<16> gray_stencil_op_hcompute_gray_stencil_2_res = op_hcompute_gray_stencil_write.extract<0, 15>();
-	gray_stencil_op_hcompute_gray_stencil_2_write(gray_stencil_op_hcompute_gray_stencil_2_res, gray_stencil, root, pad_root_to_gray_s0_y, pad_pad_root_to_gray_s0_y_to_gray_s0_y, gray_s0_y, gray_s0_x, dynamic_address);
+	hw_uint<16> gray_stencil_op_hcompute_gray_stencil_8_res = op_hcompute_gray_stencil_write.extract<0, 15>();
+	gray_stencil_op_hcompute_gray_stencil_8_write(gray_stencil_op_hcompute_gray_stencil_8_res, gray_stencil, root, pad_root_to_gray_s0_y, pad_pad_root_to_gray_s0_y_to_gray_s0_y, gray_s0_y, gray_s0_x, dynamic_address);
 }
 
 // op_hcompute_hw_output_stencil_read
-//	gray_stencil_op_hcompute_hw_output_stencil_38
+//	gray_stencil_op_hcompute_hw_output_stencil_4
 inline hw_uint<16> gray_stencil_op_hcompute_hw_output_stencil_read_bundle_read(gray_stencil_cache& gray_stencil, int root, int pad_root_to_hw_output_s0_y_yi, int pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
   // # of ports in bundle: 1
-    // gray_stencil_op_hcompute_hw_output_stencil_38
+    // gray_stencil_op_hcompute_hw_output_stencil_4
 
 	hw_uint<16> result;
-	hw_uint<16> gray_stencil_op_hcompute_hw_output_stencil_38_res = gray_stencil_op_hcompute_hw_output_stencil_38_select(gray_stencil, root, pad_root_to_hw_output_s0_y_yi, pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
-	set_at<0, 16>(result, gray_stencil_op_hcompute_hw_output_stencil_38_res);
+	hw_uint<16> gray_stencil_op_hcompute_hw_output_stencil_4_res = gray_stencil_op_hcompute_hw_output_stencil_4_select(gray_stencil, root, pad_root_to_hw_output_s0_y_yi, pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
+	set_at<0, 16>(result, gray_stencil_op_hcompute_hw_output_stencil_4_res);
 	return result;
 }
 
 // op_hcompute_ratio_stencil_read
-//	gray_stencil_op_hcompute_ratio_stencil_36
+//	gray_stencil_op_hcompute_ratio_stencil_2
 inline hw_uint<16> gray_stencil_op_hcompute_ratio_stencil_read_bundle_read(gray_stencil_cache& gray_stencil, int root, int pad_root_to_ratio_s0_y, int pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, int ratio_s0_y, int ratio_s0_x, int dynamic_address) {
   // # of ports in bundle: 1
-    // gray_stencil_op_hcompute_ratio_stencil_36
+    // gray_stencil_op_hcompute_ratio_stencil_2
 
 	hw_uint<16> result;
-	hw_uint<16> gray_stencil_op_hcompute_ratio_stencil_36_res = gray_stencil_op_hcompute_ratio_stencil_36_select(gray_stencil, root, pad_root_to_ratio_s0_y, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, ratio_s0_y, ratio_s0_x, dynamic_address);
-	set_at<0, 16>(result, gray_stencil_op_hcompute_ratio_stencil_36_res);
+	hw_uint<16> gray_stencil_op_hcompute_ratio_stencil_2_res = gray_stencil_op_hcompute_ratio_stencil_2_select(gray_stencil, root, pad_root_to_ratio_s0_y, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, ratio_s0_y, ratio_s0_x, dynamic_address);
+	set_at<0, 16>(result, gray_stencil_op_hcompute_ratio_stencil_2_res);
 	return result;
 }
 
 #include "hw_classes.h"
 
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_3_cache {
+struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_3_cache {
 	// RAM Box: {[0, 2], [0, 63], [0, 63]}
 	// Capacity: 8193
 	// # of read delays: 3
@@ -937,79 +937,79 @@ struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
 
 struct hw_input_global_wrapper_stencil_cache {
   // # of banks: 1
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_3_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_3;
+  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_3_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_3;
 };
 
 
 
-inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_hw_input_global_wrapper_s0_c, int hw_input_global_wrapper_s0_c, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_3.push(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0);
+inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_hw_input_global_wrapper_s0_c, int hw_input_global_wrapper_s0_c, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
+  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_3.push(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6);
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_3_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_10_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_3 read pattern: { op_hcompute_gray_stencil[root = 0, pad_root_to_gray_s0_y = 0, pad_pad_root_to_gray_s0_y_to_gray_s0_y = 0, gray_s0_y, gray_s0_x] -> hw_input_global_wrapper_stencil[1, gray_s0_y, gray_s0_x] : 0 <= gray_s0_y <= 63 and 0 <= gray_s0_x <= 63 }
+  // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_10 read pattern: { op_hcompute_gray_stencil[root = 0, pad_root_to_gray_s0_y = 0, pad_pad_root_to_gray_s0_y_to_gray_s0_y = 0, gray_s0_y, gray_s0_x] -> hw_input_global_wrapper_stencil[2, gray_s0_y, gray_s0_x] : 0 <= gray_s0_y <= 63 and 0 <= gray_s0_x <= 63 }
   // Read schedule : { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1 = 0, d2, d3, d4] -> [0, 0, d2, d3, d4, 0] : 0 <= d2 <= 2 and 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_3.peek_4096();
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_3.peek_0();
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_4_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_11_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_4 read pattern: { op_hcompute_gray_stencil[root = 0, pad_root_to_gray_s0_y = 0, pad_pad_root_to_gray_s0_y_to_gray_s0_y = 0, gray_s0_y, gray_s0_x] -> hw_input_global_wrapper_stencil[2, gray_s0_y, gray_s0_x] : 0 <= gray_s0_y <= 63 and 0 <= gray_s0_x <= 63 }
+  // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_11 read pattern: { op_hcompute_gray_stencil[root = 0, pad_root_to_gray_s0_y = 0, pad_pad_root_to_gray_s0_y_to_gray_s0_y = 0, gray_s0_y, gray_s0_x] -> hw_input_global_wrapper_stencil[0, gray_s0_y, gray_s0_x] : 0 <= gray_s0_y <= 63 and 0 <= gray_s0_x <= 63 }
   // Read schedule : { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1 = 0, d2, d3, d4] -> [0, 0, d2, d3, d4, 0] : 0 <= d2 <= 2 and 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_3.peek_0();
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_3.peek_8192();
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_5_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_9_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_5 read pattern: { op_hcompute_gray_stencil[root = 0, pad_root_to_gray_s0_y = 0, pad_pad_root_to_gray_s0_y_to_gray_s0_y = 0, gray_s0_y, gray_s0_x] -> hw_input_global_wrapper_stencil[0, gray_s0_y, gray_s0_x] : 0 <= gray_s0_y <= 63 and 0 <= gray_s0_x <= 63 }
+  // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_9 read pattern: { op_hcompute_gray_stencil[root = 0, pad_root_to_gray_s0_y = 0, pad_pad_root_to_gray_s0_y_to_gray_s0_y = 0, gray_s0_y, gray_s0_x] -> hw_input_global_wrapper_stencil[1, gray_s0_y, gray_s0_x] : 0 <= gray_s0_y <= 63 and 0 <= gray_s0_x <= 63 }
   // Read schedule : { op_hcompute_gray_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, d3, d4, 1] : 0 <= d3 <= 63 and 0 <= d4 <= 63 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1 = 0, d2, d3, d4] -> [0, 0, d2, d3, d4, 0] : 0 <= d2 <= 2 and 0 <= d3 <= 63 and 0 <= d4 <= 63 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_3.peek_8192();
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_3.peek_4096();
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_gray_stencil_read
-//	hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_3
-//	hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_4
-//	hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_5
+//	hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_9
+//	hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_10
+//	hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_11
 inline hw_uint<48> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_read_bundle_read(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_gray_s0_y, int pad_pad_root_to_gray_s0_y_to_gray_s0_y, int gray_s0_y, int gray_s0_x, int dynamic_address) {
   // # of ports in bundle: 3
-    // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_3
-    // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_4
-    // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_5
+    // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_9
+    // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_10
+    // hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_11
 
 	hw_uint<48> result;
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_3_res = hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_3_select(hw_input_global_wrapper_stencil, root, pad_root_to_gray_s0_y, pad_pad_root_to_gray_s0_y_to_gray_s0_y, gray_s0_y, gray_s0_x, dynamic_address);
-	set_at<0, 48>(result, hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_3_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_4_res = hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_4_select(hw_input_global_wrapper_stencil, root, pad_root_to_gray_s0_y, pad_pad_root_to_gray_s0_y_to_gray_s0_y, gray_s0_y, gray_s0_x, dynamic_address);
-	set_at<16, 48>(result, hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_4_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_5_res = hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_5_select(hw_input_global_wrapper_stencil, root, pad_root_to_gray_s0_y, pad_pad_root_to_gray_s0_y_to_gray_s0_y, gray_s0_y, gray_s0_x, dynamic_address);
-	set_at<32, 48>(result, hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_5_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_9_res = hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_9_select(hw_input_global_wrapper_stencil, root, pad_root_to_gray_s0_y, pad_pad_root_to_gray_s0_y_to_gray_s0_y, gray_s0_y, gray_s0_x, dynamic_address);
+	set_at<0, 48>(result, hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_9_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_10_res = hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_10_select(hw_input_global_wrapper_stencil, root, pad_root_to_gray_s0_y, pad_pad_root_to_gray_s0_y_to_gray_s0_y, gray_s0_y, gray_s0_x, dynamic_address);
+	set_at<16, 48>(result, hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_10_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_11_res = hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_11_select(hw_input_global_wrapper_stencil, root, pad_root_to_gray_s0_y, pad_pad_root_to_gray_s0_y_to_gray_s0_y, gray_s0_y, gray_s0_x, dynamic_address);
+	set_at<32, 48>(result, hw_input_global_wrapper_stencil_op_hcompute_gray_stencil_11_res);
 	return result;
 }
 
 // op_hcompute_hw_input_global_wrapper_stencil_write
-//	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0
+//	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6
 inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_bundle_write(hw_uint<16>& op_hcompute_hw_input_global_wrapper_stencil_write, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int pad_root_to_hw_input_global_wrapper_s0_c, int hw_input_global_wrapper_s0_c, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_res = op_hcompute_hw_input_global_wrapper_stencil_write.extract<0, 15>();
-	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_res, hw_input_global_wrapper_stencil, root, pad_root_to_hw_input_global_wrapper_s0_c, hw_input_global_wrapper_s0_c, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, dynamic_address);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_res = op_hcompute_hw_input_global_wrapper_stencil_write.extract<0, 15>();
+	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_res, hw_input_global_wrapper_stencil, root, pad_root_to_hw_input_global_wrapper_s0_c, hw_input_global_wrapper_s0_c, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, dynamic_address);
 }
 
 #include "hw_classes.h"
 
-struct ratio_stencil_op_hcompute_ratio_stencil_34_to_ratio_stencil_op_hcompute_hw_output_stencil_39_cache {
+struct ratio_stencil_op_hcompute_ratio_stencil_0_to_ratio_stencil_op_hcompute_hw_output_stencil_5_cache {
 	// RAM Box: {[0, 59], [0, 59]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -1033,44 +1033,44 @@ struct ratio_stencil_op_hcompute_ratio_stencil_34_to_ratio_stencil_op_hcompute_h
 
 struct ratio_stencil_cache {
   // # of banks: 1
-  ratio_stencil_op_hcompute_ratio_stencil_34_to_ratio_stencil_op_hcompute_hw_output_stencil_39_cache ratio_stencil_op_hcompute_ratio_stencil_34_to_ratio_stencil_op_hcompute_hw_output_stencil_39;
+  ratio_stencil_op_hcompute_ratio_stencil_0_to_ratio_stencil_op_hcompute_hw_output_stencil_5_cache ratio_stencil_op_hcompute_ratio_stencil_0_to_ratio_stencil_op_hcompute_hw_output_stencil_5;
 };
 
 
 
-inline void ratio_stencil_op_hcompute_ratio_stencil_34_write(hw_uint<16>& ratio_stencil_op_hcompute_ratio_stencil_34, ratio_stencil_cache& ratio_stencil, int root, int pad_root_to_ratio_s0_y, int pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, int ratio_s0_y, int ratio_s0_x, int dynamic_address) {
-  ratio_stencil.ratio_stencil_op_hcompute_ratio_stencil_34_to_ratio_stencil_op_hcompute_hw_output_stencil_39.push(ratio_stencil_op_hcompute_ratio_stencil_34);
+inline void ratio_stencil_op_hcompute_ratio_stencil_0_write(hw_uint<16>& ratio_stencil_op_hcompute_ratio_stencil_0, ratio_stencil_cache& ratio_stencil, int root, int pad_root_to_ratio_s0_y, int pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, int ratio_s0_y, int ratio_s0_x, int dynamic_address) {
+  ratio_stencil.ratio_stencil_op_hcompute_ratio_stencil_0_to_ratio_stencil_op_hcompute_hw_output_stencil_5.push(ratio_stencil_op_hcompute_ratio_stencil_0);
 }
 
-inline hw_uint<16> ratio_stencil_op_hcompute_hw_output_stencil_39_select(ratio_stencil_cache& ratio_stencil, int root, int pad_root_to_hw_output_s0_y_yi, int pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
+inline hw_uint<16> ratio_stencil_op_hcompute_hw_output_stencil_5_select(ratio_stencil_cache& ratio_stencil, int root, int pad_root_to_hw_output_s0_y_yi, int pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // ratio_stencil_op_hcompute_hw_output_stencil_39 read pattern: { op_hcompute_hw_output_stencil[root = 0, pad_root_to_hw_output_s0_y_yi = 0, pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> ratio_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 59 and 0 <= hw_output_s0_x_xi <= 59 }
+  // ratio_stencil_op_hcompute_hw_output_stencil_5 read pattern: { op_hcompute_hw_output_stencil[root = 0, pad_root_to_hw_output_s0_y_yi = 0, pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> ratio_stencil[hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 59 and 0 <= hw_output_s0_x_xi <= 59 }
   // Read schedule : { op_hcompute_hw_output_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 5] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
   // Write schedule: { op_hcompute_ratio_stencil[d0 = 0, d1 = 0, d2 = 0, d3, d4] -> [0, 0, 2, 4 + d3, 4 + d4, 4] : 0 <= d3 <= 59 and 0 <= d4 <= 59 }
-  auto value_ratio_stencil_op_hcompute_ratio_stencil_34 = ratio_stencil.ratio_stencil_op_hcompute_ratio_stencil_34_to_ratio_stencil_op_hcompute_hw_output_stencil_39.peek(/* one reader or all rams */ 0);
-  return value_ratio_stencil_op_hcompute_ratio_stencil_34;
+  auto value_ratio_stencil_op_hcompute_ratio_stencil_0 = ratio_stencil.ratio_stencil_op_hcompute_ratio_stencil_0_to_ratio_stencil_op_hcompute_hw_output_stencil_5.peek(/* one reader or all rams */ 0);
+  return value_ratio_stencil_op_hcompute_ratio_stencil_0;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_hw_output_stencil_read
-//	ratio_stencil_op_hcompute_hw_output_stencil_39
+//	ratio_stencil_op_hcompute_hw_output_stencil_5
 inline hw_uint<16> ratio_stencil_op_hcompute_hw_output_stencil_read_bundle_read(ratio_stencil_cache& ratio_stencil, int root, int pad_root_to_hw_output_s0_y_yi, int pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
   // # of ports in bundle: 1
-    // ratio_stencil_op_hcompute_hw_output_stencil_39
+    // ratio_stencil_op_hcompute_hw_output_stencil_5
 
 	hw_uint<16> result;
-	hw_uint<16> ratio_stencil_op_hcompute_hw_output_stencil_39_res = ratio_stencil_op_hcompute_hw_output_stencil_39_select(ratio_stencil, root, pad_root_to_hw_output_s0_y_yi, pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
-	set_at<0, 16>(result, ratio_stencil_op_hcompute_hw_output_stencil_39_res);
+	hw_uint<16> ratio_stencil_op_hcompute_hw_output_stencil_5_res = ratio_stencil_op_hcompute_hw_output_stencil_5_select(ratio_stencil, root, pad_root_to_hw_output_s0_y_yi, pad_pad_root_to_hw_output_s0_y_yi_to_hw_output_s0_y_yi, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
+	set_at<0, 16>(result, ratio_stencil_op_hcompute_hw_output_stencil_5_res);
 	return result;
 }
 
 // op_hcompute_ratio_stencil_write
-//	ratio_stencil_op_hcompute_ratio_stencil_34
+//	ratio_stencil_op_hcompute_ratio_stencil_0
 inline void ratio_stencil_op_hcompute_ratio_stencil_write_bundle_write(hw_uint<16>& op_hcompute_ratio_stencil_write, ratio_stencil_cache& ratio_stencil, int root, int pad_root_to_ratio_s0_y, int pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, int ratio_s0_y, int ratio_s0_x, int dynamic_address) {
-	hw_uint<16> ratio_stencil_op_hcompute_ratio_stencil_34_res = op_hcompute_ratio_stencil_write.extract<0, 15>();
-	ratio_stencil_op_hcompute_ratio_stencil_34_write(ratio_stencil_op_hcompute_ratio_stencil_34_res, ratio_stencil, root, pad_root_to_ratio_s0_y, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, ratio_s0_y, ratio_s0_x, dynamic_address);
+	hw_uint<16> ratio_stencil_op_hcompute_ratio_stencil_0_res = op_hcompute_ratio_stencil_write.extract<0, 15>();
+	ratio_stencil_op_hcompute_ratio_stencil_0_write(ratio_stencil_op_hcompute_ratio_stencil_0_res, ratio_stencil, root, pad_root_to_ratio_s0_y, pad_pad_root_to_ratio_s0_y_to_ratio_s0_y, ratio_s0_y, ratio_s0_x, dynamic_address);
 }
 
 // Total re-use buffer capacity: 135232 bits
@@ -1253,7 +1253,6 @@ for (int c2 = 0; c2 <= 2; c2 += 1)
 	for (int c2 = 0; c2 <= 2; c2 += 1)
 	  for (int c3 = 0; c3 <= 63; c3 += 1)
 	    for (int c4 = 0; c4 <= 63; c4 += 1) {
-#pragma HLS pipeline II=1
 	      op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, 0, 0, c2, c3, c4);
 	      if (c2 == 2) {
 	        op_hcompute_gray_stencil(hw_input_global_wrapper_stencil /* buf name */, gray_stencil, 0, 0, 0, c3, c4);

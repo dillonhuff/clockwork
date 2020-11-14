@@ -186,6 +186,10 @@ bool equal(uset* const l, uset* const r) {
   return isl_union_set_is_equal(l, r);
 }
 
+bool equal(umap* const l, umap* const r) {
+  return isl_union_map_is_equal(l, r);
+}
+
 bool empty(isl_basic_set* const s) {
   return isl_basic_set_is_empty(s);
 }
@@ -196,6 +200,10 @@ bool empty(isl_set* const s) {
 
 bool empty(uset* const s) {
   return isl_union_set_is_empty(s);
+}
+
+bool empty(isl_map* const s) {
+  return isl_map_is_empty(s);
 }
 
 bool empty(umap* const s) {
@@ -332,6 +340,18 @@ isl_map* set_range_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
 }
 
+isl_multi_aff* set_in_name(isl_multi_aff* const m, string new_name) {
+    return isl_multi_aff_set_tuple_id(m, isl_dim_in, id(ctx(m), new_name));
+}
+
+isl_multi_aff* set_name(isl_multi_aff* const m, string new_name) {
+    return isl_multi_aff_set_tuple_id(m, isl_dim_out, id(ctx(m), new_name));
+}
+
+isl_aff* set_name(isl_aff* const m, string new_name) {
+    return isl_aff_set_tuple_id(m, isl_dim_out, id(ctx(m), new_name));
+}
+
 isl_set* set_name(isl_set* const m, string new_name) {
     return isl_set_set_tuple_name(m, new_name.c_str());
 }
@@ -344,6 +364,18 @@ isl_map* add_range_suffix(isl_map* const m, string suffix) {
     string origin_name = range_name(m);
     string new_name = origin_name + suffix;
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
+}
+
+isl_map* add_domain_suffix(isl_map* const m, string suffix) {
+    string origin_name = domain_name(m);
+    string new_name = origin_name + suffix;
+    return isl_map_set_tuple_name(m, isl_dim_in, new_name.c_str());
+}
+
+isl_set* add_suffix(isl_set* const m, string suffix) {
+    string origin_name = name(m);
+    string new_name = origin_name + suffix;
+    return isl_set_set_tuple_name(m, new_name.c_str());
 }
 
 isl_set* to_set(isl_union_set* const m) {
@@ -1395,6 +1427,18 @@ isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
 }
 
+isl_set* unn(const std::vector<isl_set*>& sets) {
+  isl_set* res = nullptr;
+  for (auto s : sets) {
+    if (res == nullptr) {
+      res = cpy(s);
+    } else {
+      res = unn(res, s);
+    }
+  }
+  return res;
+}
+
 isl_set* unn(isl_set* const m0, isl_set* const m1) {
   return isl_set_union(cpy(m0), cpy(m1));
 }
@@ -1524,6 +1568,10 @@ isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m) {
 
 isl_union_set* coalesce(isl_union_set* const m0) {
   return isl_union_set_coalesce(cpy(m0));
+}
+
+isl_map* coalesce(isl_map* const m0) {
+  return isl_map_coalesce(cpy(m0));
 }
 
 isl_union_map* coalesce(isl_union_map* const m0) {
@@ -1857,14 +1905,14 @@ umap* flatten_map_domain_trans(isl_map* s, int ii) {
 
 isl_map* retrive_map_domain_dim(isl_map* flat_map, isl_set* dom) {
     auto trans = flatten_set_trans(dom, 1);
-    auto new_sched = dot(trans, to_umap(flat_map));
+    auto new_sched = its(dot(trans, to_umap(flat_map)), dom);
     return to_map(new_sched);
 }
 
 isl_map* retrive_map_domain_with_dim(isl_map* flat_map, isl_set* dom) {
     int dim_from_inner = get_dim(dom) - get_in_dim(flat_map) + 1;
     auto trans = flatten_set_trans_with_dim(dom, dim_from_inner);
-    auto new_sched = dot(trans, to_umap(flat_map));
+    auto new_sched = its(dot(trans, to_umap(flat_map)), dom);
     return to_map(new_sched);
 }
 
@@ -1947,6 +1995,14 @@ isl_set* rdset(isl_ctx* ctx, const std::string& str) {
   return res;
 }
 
+isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str) {
+  auto res = isl_multi_aff_read_from_str(ctx, str.c_str());
+  if (res == nullptr) {
+    cout << "Error: Bad string for isl_aff: " << str << endl;
+    assert(false);
+  }
+  return res;
+}
 isl_aff* rdaff(isl_ctx* ctx, const std::string& str) {
   auto res = isl_aff_read_from_str(ctx, str.c_str());
   if (res == nullptr) {
@@ -2101,6 +2157,7 @@ isl_map* delay_schedule_inner_most(isl_map* m, int delay) {
       auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
       //This is the schedule vector you need to increment
       c = isl_constraint_set_constant_si(c, val - delay);
+      cout << "Delayed Constraints: " << str(c) << endl;
     }
   }
   auto b_ret = isl_basic_map_universe(get_space(m));
@@ -2279,6 +2336,81 @@ isl_map* pad_to_domain_map(isl_map* m, int depth) {
           c = isl_constraint_set_constant_si(c , val+depth);
       }
     }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
+//method to transform the domain to positive integer
+isl_map* shift_domain_map(isl_map* m, vector<int> shift_depth) {
+
+  auto c_vec = constraints(m);
+  assert(shift_depth.size() == get_in_dim(m));
+  for (int dim = 0; dim < get_in_dim(m); dim ++) {
+  auto depth = shift_depth.at(dim);
+
+  //no need to pad for the dimension with positive bound
+  if (depth == 0)
+    continue;
+
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_in, dim, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_equality(c)) {
+          c = isl_constraint_set_constant_si(c, val + depth);
+      } else {
+        if (isl_constraint_is_upper_bound(c, isl_dim_in, dim))
+          c = isl_constraint_set_constant_si(c , val+depth);
+        else
+          c = isl_constraint_set_constant_si(c , val-depth);
+      }
+    }
+  }
+
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
+//method to transform the range to positive integer
+isl_map* shift_range_map(isl_map* m, vector<int> shift_depth) {
+
+  auto c_vec = constraints(m);
+  assert(get_out_dim(m) == shift_depth.size());
+  for (int dim = 0; dim < get_out_dim(m); dim ++) {
+  auto depth = shift_depth.at(dim);
+
+  //no need to pad for the dimension with positive bound
+  if (depth == 0)
+    continue;
+
+  for (auto & c: c_vec) {
+
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_out, dim, 1);
+
+    //shift the constraint by 1
+    if (involve) {
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_equality(c)) {
+          c = isl_constraint_set_constant_si(c, val - depth);
+      }
+    }
+
+  }
   }
   auto b_ret = isl_basic_map_universe(get_space(m));
   for (auto c: c_vec) {
@@ -2514,6 +2646,33 @@ isl_constraint* pad_dim_to_constraint(isl_constraint* c) {
   }
   //cout << "rewrite constraits: " << str(cons) << endl;
   return cons;
+}
+
+isl_map* pad_one_more_dim_to_sched_map_innermost(isl_map* const um, int pad_val) {
+    auto sched_map = um;
+    auto c_vec = constraints(sched_map);
+    vector<isl_constraint*> new_c;
+
+    //pad the space for the original constraints
+    for (auto c : c_vec) {
+        auto tmp = pad_dim_to_constraint(c);
+        new_c.push_back(tmp);
+    }
+
+    auto sp = get_space(pick(new_c));
+    auto cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+    int out_dim = isl_constraint_dim(cons, isl_dim_out);
+    cons = isl_constraint_set_constant_si(cons, -pad_val);
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_out, out_dim - 1, 1);
+    new_c.push_back(cons);
+
+    auto ret = isl_basic_map_universe(sp);
+    for (auto c : new_c) {
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    return ret_m;
 }
 
 umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val) {
@@ -2780,6 +2939,43 @@ uset* gist(uset* base, uset* context) {
   return isl_union_set_gist(cpy(base), cpy(context));
 }
 
+isl_map* project_out(isl_map* const dmap,
+    const int d) {
+
+  auto m = cpy(dmap);
+  auto ct = ctx(dmap);
+
+  string dname = domain_name(m);
+  string rname = range_name(m);
+
+  m = isl_map_project_out(m, isl_dim_out, d, 1);
+
+  isl_map_set_tuple_id(m, isl_dim_in, id(ct, dname));
+  isl_map_set_tuple_id(m, isl_dim_out, id(ct, rname));
+
+  return m;
+}
+
+isl_set* project_out(isl_set* const dmap,
+    const int d) {
+
+  auto m = cpy(dmap);
+  auto ct = ctx(dmap);
+
+  string dname = "";
+  if (isl_set_get_tuple_id(dmap) != nullptr) {
+    dname = name(m);
+  }
+
+  m = isl_set_project_out(m, isl_dim_set, d, 1);
+
+  if (isl_set_get_tuple_id(dmap) != nullptr) {
+    isl_set_set_tuple_id(m, id(ct, dname));
+  }
+
+  return m;
+}
+
 isl_set* project_all_but(isl_set* const dmap,
     const int d) {
 
@@ -2919,6 +3115,7 @@ isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max) {
 }
 
 int to_int(isl_val* a) {
+  assert(a != nullptr);
   assert(isl_val_is_int(a));
   return stoi(str(a));
 }
@@ -3267,8 +3464,8 @@ isl_multi_aff* get_multi_aff(isl_union_map* m) {
 
 isl_multi_aff* get_multi_aff(isl_map* m) {
   auto lm = isl_pw_multi_aff_from_map(cpy(m));
-  cout << tab(1) << str(m) << endl;
-  cout << tab(2) << "lexmax: " << str(lm) << endl;
+  //cout << tab(1) << str(m) << endl;
+  //cout << tab(2) << "lexmax: " << str(lm) << endl;
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(lm);
   assert(pieces.size() == 1);
@@ -3288,6 +3485,15 @@ isl_aff* get_aff(isl_map* m) {
   auto saff = pieces.at(0).second;
   auto aff = isl_multi_aff_get_aff(saff, 0);
   return aff;
+}
+
+std::vector<isl_aff*> get_affs(isl_multi_aff* saff) {
+  vector<isl_aff*> ret;
+  for (int i = 0; i < get_size(saff); i ++) {
+    auto aff = isl_multi_aff_get_aff(saff, i);
+    ret.push_back(aff);
+  }
+  return ret;
 }
 
 std::vector<isl_aff*> get_aff_vec(isl_map* m) {
@@ -3449,8 +3655,16 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
   return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
 }
 
+isl_multi_aff* sub(isl_multi_aff* a, isl_multi_aff* b) {
+  return isl_multi_aff_sub(cpy(a), cpy(b));
+}
+
 isl_aff* sub(isl_aff* a, isl_aff* b) {
   return isl_aff_sub(cpy(a), cpy(b));
+}
+
+void release(isl_aff* s) {
+  isl_aff_free(s);
 }
 
 void release(isl_set* s) {
@@ -3473,6 +3687,26 @@ void release(isl_union_pw_qpolynomial* m) {
   isl_union_pw_qpolynomial_free(m);
 }
 
+isl_map* linear_schedule(isl_map* in_sched, vector<int> iis, int offset, bool ignore_innermost) {
+    cout << "iis: " << iis << endl;
+  auto sched_aff_vec = get_aff_vec(in_sched);
+  if (ignore_innermost)
+    sched_aff_vec.pop_back();
+  vector<string> expr_list;
+  for (size_t i = 0; i < sched_aff_vec.size(); i ++) {
+    auto sched_aff = sched_aff_vec.at(i);
+    string expr = take_btw(str(sched_aff), "[(", ")]");
+    expr_list.push_back("(" + expr + ")*" + to_string(iis.at(i)));
+  }
+  string expr = sep_list(expr_list, "", "", "+");
+  auto var_list = get_map_in_dim_id(in_sched);
+  string op_name = domain_name(in_sched);
+  expr = expr + "+" + to_string(offset);
+  auto in_sched_new = gen_hw_sched_from_sched_vec(ctx(in_sched), {expr}, var_list, op_name);
+  return its(in_sched_new, domain(in_sched));
+}
+
+
 isl_map* linear_address_map(isl_set* s) {
   assert(s != nullptr);
 
@@ -3492,6 +3726,10 @@ isl_map* linear_address_map(isl_set* s) {
   }
   string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
   return isl_map_read_from_str(ctx(s), map_str.c_str());
+}
+
+isl_map* to_map(isl_multi_aff* s) {
+  return isl_map_from_multi_aff(cpy(s));
 }
 
 isl_map* to_map(isl_aff* s) {
@@ -3532,4 +3770,121 @@ isl_aff* mul(isl_aff* start_time_aff, const int compute_latency) {
 
 isl_aff* div(isl_aff* start_time_aff, const int compute_latency) {
   return div(start_time_aff, constant_aff(start_time_aff, compute_latency));
+}
+
+std::map<int, isl_val*> constant_components(isl_multi_aff* access) {
+  map<int, isl_val*> ret;
+  int d = 0;
+  for (auto aff : get_affs(access)) {
+    if (isl_aff_is_cst(aff)) {
+      ret[d] = const_coeff(aff);
+    }
+    d++;
+  }
+  return ret;
+}
+
+isl_val* constant(isl_aff* a) {
+  return isl_aff_get_constant_val(a);
+}
+
+umap* to_umap(const vector<isl_aff*>& hs) {
+  assert(hs.size() > 0);
+
+  auto ct = ctx(pick(hs));
+  umap* schedmap = rdmap(ct, "{}");
+  for (auto sp : hs) {
+    isl_aff* sched = sp;
+
+    isl_map* sm = isl_map_from_aff(sched);
+    schedmap = unn(schedmap, to_umap(sm));
+  }
+
+  return schedmap;
+}
+
+
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << "aff: " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    flat = add(flat, flt);
+    cout << "flat: " << str(flat) << endl;
+  }
+
+  return flat;
+}
+
+isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < num_dims(dom); i++) {
+    auto s = project_all_but(dom, i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  assert(isl_multi_aff_dim(ma, isl_dim_set) == num_dims(dom));
+
+  vector<isl_aff*> addr_vec;
+  isl_aff* flat = constant_aff(
+      isl_multi_aff_get_aff(ma, 0),
+      0);
+
+  for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+    isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+    cout << tab(1) << "aff: " << str(aff) << endl;
+    int length = 1;
+    for (int i = 0; i < d; i++) {
+      length *= lengths.at(i);
+    }
+    isl_aff* flt = mul(isl_aff_floor(div(sub(aff, mins.at(d)), bank_factors.at(d))), length);
+    //isl_aff* flt = mul(sub(aff, mins.at(d)), length);
+    flat = add(flat, flt);
+    cout << "flat: " << str(flat) << endl;
+  }
+
+  return flat;
+  //return isl_aff_floor(div(flat, 2));
+}
+
+
+isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors) {
+  vector<string> dvs;
+  vector<string> bank_exprs;
+  for (int i = 0; i < (int) bank_factors.size(); i++) {
+    dvs.push_back("d" + str(i));
+    bank_exprs.push_back("d" + str(i) + " % " + str(bank_factors.at(i)));
+  }
+
+  string folded_output = "Bank" + brackets(sep_list(bank_exprs, "", "", ", "));
+
+  string bank_str = curlies(name + brackets(sep_list(dvs, "", "", ", ")) + " -> " + folded_output);
+  return isl_map_read_from_str(ctx, bank_str.c_str());
 }

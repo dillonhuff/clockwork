@@ -1,0 +1,112 @@
+#-----------------------------------------------------------
+# Vivado v2019.2 (64-bit)
+# SW Build 2708876 on Wed Nov  6 21:39:14 MST 2019
+# IP Build 2700528 on Thu Nov  7 00:09:20 MST 2019
+# Start of session at: Mon Oct 26 19:53:21 2020
+# Process ID: 9561
+# Current directory: /home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet
+# Command line: vivado -mode batch -source synth_script.tcl
+# Log file: /home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/vivado.log
+# Journal file: /home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/vivado.jou
+#-----------------------------------------------------------
+source synth_script.tcl
+# read_verilog resnet.v resnet_verilog_collateral.sv
+read_verilog: Time (s): cpu = 00:00:03 ; elapsed = 00:00:08 . Memory (MB): peak = 1489.395 ; gain = 50.016 ; free physical = 44675 ; free virtual = 174688
+# synth_design -top resnet -part xc7k160tfbg484-2 -flatten_hierarchy rebuilt
+Command: synth_design -top resnet -part xc7k160tfbg484-2 -flatten_hierarchy rebuilt
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7k160t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k160t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 9636 
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:12]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:13]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:29]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:30]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:46]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:47]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:63]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:64]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:81]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:82]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:99]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:100]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:117]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:118]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:134]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:135]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:151]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:152]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:168]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:169]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:184]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:185]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:200]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:201]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:216]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:217]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:234]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:235]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:252]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:253]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:270]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:271]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:288]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:289]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:306]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:307]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:324]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:325]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:342]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:343]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:360]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:361]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:378]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:379]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:394]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:395]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:410]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:411]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:426]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:427]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:442]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:443]
+WARNING: [Synth 8-2539] port in must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:458]
+WARNING: [Synth 8-2539] port out must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:459]
+WARNING: [Synth 8-2539] port in0_conv_stencil must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:468]
+WARNING: [Synth 8-2539] port in0_hw_kernel_stencil must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:475]
+WARNING: [Synth 8-2539] port in0_hw_input_stencil must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:482]
+WARNING: [Synth 8-2539] port conv_stencil_op_hcompute_hw_output_stencil_read must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:489]
+WARNING: [Synth 8-2539] port hw_output_stencil_op_hcompute_hw_output_stencil_write must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:490]
+ERROR: [Synth 8-1717] cannot access memory inner_compute_in0_conv_stencil directly [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:497]
+INFO: [Synth 8-2350] module cu_op_hcompute_hw_output_stencil ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:487]
+WARNING: [Synth 8-2539] port hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:504]
+WARNING: [Synth 8-2539] port hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_write must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:505]
+ERROR: [Synth 8-1717] cannot access memory inner_compute_in0_hw_kernel_stencil directly [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:512]
+INFO: [Synth 8-2350] module cu_op_hcompute_hw_kernel_global_wrapper_stencil ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:502]
+WARNING: [Synth 8-2539] port hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:519]
+WARNING: [Synth 8-2539] port hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:520]
+ERROR: [Synth 8-1717] cannot access memory inner_compute_in0_hw_input_stencil directly [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:527]
+INFO: [Synth 8-2350] module cu_op_hcompute_hw_input_global_wrapper_stencil ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:517]
+INFO: [Synth 8-2350] module coreir_reg ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:532]
+INFO: [Synth 8-2350] module mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:550]
+INFO: [Synth 8-2350] module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:572]
+INFO: [Synth 8-2350] module hcompute_conv_stencil_2 ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:595]
+WARNING: [Synth 8-2539] port conv_stencil_op_hcompute_conv_stencil_2_write must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:603]
+INFO: [Synth 8-2350] module cu_op_hcompute_conv_stencil_2 ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:601]
+INFO: [Synth 8-2350] module hcompute_conv_stencil_1 ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:612]
+WARNING: [Synth 8-2539] port conv_stencil_op_hcompute_conv_stencil_1_write must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:620]
+INFO: [Synth 8-2350] module cu_op_hcompute_conv_stencil_1 ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:618]
+INFO: [Synth 8-2350] module hcompute_conv_stencil ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:629]
+WARNING: [Synth 8-2539] port conv_stencil_op_hcompute_conv_stencil_write must not be declared to be an array [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:637]
+INFO: [Synth 8-2350] module cu_op_hcompute_conv_stencil ignored due to previous errors [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:635]
+ERROR: [Synth 8-2715] syntax error near ' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:652]
+ERROR: [Synth 8-2715] syntax error near ' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:652]
+ERROR: [Synth 8-2715] syntax error near ' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:652]
+ERROR: [Synth 8-2715] syntax error near ' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:652]
+Failed to read verilog '/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v'
+INFO: [Common 17-83] Releasing license: Synthesis
+14 Infos, 66 Warnings, 0 Critical Warnings and 8 Errors encountered.
+synth_design failed
+ERROR: [Common 17-69] Command failed: Vivado Synthesis failed
+INFO: [Common 17-206] Exiting Vivado at Mon Oct 26 19:54:01 2020...

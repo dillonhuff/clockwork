@@ -1,0 +1,1766 @@
+#-----------------------------------------------------------
+# Vivado v2019.2 (64-bit)
+# SW Build 2708876 on Wed Nov  6 21:39:14 MST 2019
+# IP Build 2700528 on Thu Nov  7 00:09:20 MST 2019
+# Start of session at: Mon Oct 26 19:54:53 2020
+# Process ID: 9922
+# Current directory: /home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet
+# Command line: vivado -mode batch -source synth_script.tcl
+# Log file: /home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/vivado.log
+# Journal file: /home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/vivado.jou
+#-----------------------------------------------------------
+source synth_script.tcl
+# read_verilog -sv resnet.v resnet_verilog_collateral.sv
+# synth_design -top resnet -part xc7k160tfbg484-2 -flatten_hierarchy rebuilt
+Command: synth_design -top resnet -part xc7k160tfbg484-2 -flatten_hierarchy rebuilt
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7k160t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k160t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 9989 
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:04 ; elapsed = 00:00:07 . Memory (MB): peak = 1730.227 ; gain = 216.414 ; free physical = 44347 ; free virtual = 174374
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'resnet' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1784]
+INFO: [Synth 8-6157] synthesizing module 'conv_stencil_ub' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:21]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:72]
+INFO: [Synth 8-6157] synthesizing module 'conv_stencil_embarassing_bank_selector' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:2]
+INFO: [Synth 8-6155] done synthesizing module 'conv_stencil_embarassing_bank_selector' (1#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:2]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_conv_stencil_1_61_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:72]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:79]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_conv_stencil_2_60_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:79]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:86]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_conv_stencil_3_42_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:86]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:93]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_conv_stencil_4_24_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:93]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:100]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_conv_stencil_5_6_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:100]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:107]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_conv_stencil_62_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:107]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:114]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_conv_stencil_3_43_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:114]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:121]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_conv_stencil_4_25_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:121]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:128]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_conv_stencil_5_7_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:128]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:135]
+WARNING: [Synth 8-7023] instance 'conv_stencil_conv_stencil_op_hcompute_hw_output_stencil_1_bank_selector' of module 'conv_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:135]
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+
+Warning: Trying to implement RAM in registers. Block RAM or DRAM implementation is not possible for one or more of the following reasons :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM dissolved into registers
+WARNING: [Synth 8-4767] Trying to implement RAM 'bank_0_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM "bank_0_reg" dissolved into registers
+WARNING: [Synth 8-4767] Trying to implement RAM 'bank_1_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM "bank_1_reg" dissolved into registers
+WARNING: [Synth 8-4767] Trying to implement RAM 'bank_2_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: Invalid write to RAM. 
+	2: Unable to determine number of words or word size in RAM. 
+	3: No valid read/write found for RAM. 
+RAM "bank_2_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'conv_stencil_ub' (2#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:21]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_ub' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:789]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:827]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:218]
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' (3#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:218]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:827]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:834]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:834]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:841]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:841]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:848]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:848]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:855]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:855]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:862]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:862]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:869]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:869]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:876]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:876]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:883]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:883]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:890]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_26_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:890]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:897]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:897]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:904]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:904]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:911]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:911]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:918]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:918]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:925]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:925]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:932]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:932]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:939]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:939]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:946]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_10_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:946]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:953]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_11_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:953]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:960]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_12_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:960]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:967]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_13_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:967]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:974]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_14_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:974]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:981]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_15_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:981]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:988]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_8_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:988]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:995]
+WARNING: [Synth 8-7023] instance 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_9_bank_selector' of module 'hw_input_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:995]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_26_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:237]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_26_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+	2: Only 1 word in RAM 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_26_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr' (4#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:237]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:260]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+	2: Only 1 word in RAM 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr' (5#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:260]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:283]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+	2: Only 1 word in RAM 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr' (6#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:283]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:306]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+	2: Only 1 word in RAM 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr' (7#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:306]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:329]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+	2: Only 1 word in RAM 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr' (8#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:329]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:352]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+	2: Only 1 word in RAM 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr' (9#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:352]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:375]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+	2: Only 1 word in RAM 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr' (10#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:375]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:398]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+	2: Only 1 word in RAM 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr' (11#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:398]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_10_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:421]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_10_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_10_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr' (12#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:421]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_11_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:467]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_11_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_11_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr' (13#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:467]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_12_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:513]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_12_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_12_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr' (14#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:513]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_13_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:559]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_13_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_13_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr' (15#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:559]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_14_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:605]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_14_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_14_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr' (16#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:605]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_15_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:651]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_15_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_15_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr' (17#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:651]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_8_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:697]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_8_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_8_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr' (18#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:697]
+INFO: [Synth 8-6157] synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_9_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:743]
+WARNING: [Synth 8-5788] Register storage_reg in module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_9_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code 
+WARNING: [Synth 8-4767] Trying to implement RAM 'storage_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons.
+Reason is one or more of the following :
+	1: RAM is sensitive to asynchronous reset signal. this RTL style is not supported. 
+RAM "storage_reg" dissolved into registers
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_9_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr' (19#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:743]
+INFO: [Synth 8-6155] done synthesizing module 'hw_input_global_wrapper_stencil_ub' (20#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:789]
+INFO: [Synth 8-6157] synthesizing module 'hw_kernel_global_wrapper_stencil_ub' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1162]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1219]
+INFO: [Synth 8-6157] synthesizing module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1139]
+INFO: [Synth 8-6155] done synthesizing module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' (21#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1139]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1219]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1228]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_52_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1228]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1237]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_53_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1237]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1246]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_54_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1246]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1255]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_55_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1255]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1264]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_56_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1264]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1273]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_57_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1273]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1282]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_58_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1282]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1291]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_59_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1291]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1300]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1300]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1309]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1309]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1318]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1318]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1327]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1327]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1336]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1336]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1345]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1345]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1354]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1354]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1363]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1363]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1372]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_16_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1372]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1381]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_17_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1381]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1390]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_18_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1390]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1399]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_19_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1399]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1408]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_20_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1408]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1417]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_21_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1417]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1426]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_22_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1426]
+WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1435]
+WARNING: [Synth 8-7023] instance 'hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_23_bank_selector' of module 'hw_kernel_global_wrapper_stencil_embarassing_bank_selector' has 2 connections declared, but only 1 given [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1435]
+INFO: [Synth 8-6155] done synthesizing module 'hw_kernel_global_wrapper_stencil_ub' (22#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1162]
+INFO: [Synth 8-6157] synthesizing module 'cu_op_hcompute_conv_stencil' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:635]
+INFO: [Synth 8-6157] synthesizing module 'hcompute_conv_stencil' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:629]
+INFO: [Synth 8-6155] done synthesizing module 'hcompute_conv_stencil' (23#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:629]
+INFO: [Synth 8-6155] done synthesizing module 'cu_op_hcompute_conv_stencil' (24#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:635]
+INFO: [Synth 8-6157] synthesizing module 'cu_op_hcompute_conv_stencil_1' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:618]
+INFO: [Synth 8-6157] synthesizing module 'hcompute_conv_stencil_1' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:612]
+INFO: [Synth 8-6155] done synthesizing module 'hcompute_conv_stencil_1' (25#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:612]
+INFO: [Synth 8-6155] done synthesizing module 'cu_op_hcompute_conv_stencil_1' (26#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:618]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_1_exe_start_pt__U107' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:450]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_1_exe_start_pt__U107' (27#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:450]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_1_exe_start_control_vars_pt__U108' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:457]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_1_exe_start_control_vars_pt__U108' (28#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:457]
+INFO: [Synth 8-6157] synthesizing module 'affine_controller__U88' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:791]
+INFO: [Synth 8-6157] synthesizing module 'aff__U89' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:784]
+INFO: [Synth 8-6155] done synthesizing module 'aff__U89' (29#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:784]
+INFO: [Synth 8-6157] synthesizing module 'mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:550]
+	Parameter init bound to: 16'b0000000000000000 
+INFO: [Synth 8-6157] synthesizing module 'coreir_reg' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:532]
+	Parameter width bound to: 16 - type: integer 
+	Parameter clk_posedge bound to: 1'b1 
+	Parameter init bound to: 16'b0000000000000000 
+INFO: [Synth 8-6155] done synthesizing module 'coreir_reg' (30#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:532]
+INFO: [Synth 8-6155] done synthesizing module 'mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16' (31#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:550]
+INFO: [Synth 8-6157] synthesizing module 'mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:572]
+	Parameter init bound to: 16'b0000000000000000 
+INFO: [Synth 8-6155] done synthesizing module 'mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16' (32#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:572]
+INFO: [Synth 8-6155] done synthesizing module 'affine_controller__U88' (33#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:791]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_1_read_start_pt__U105' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:434]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_1_read_start_pt__U105' (34#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:434]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_1_read_start_control_vars_pt__U106' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:441]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_1_read_start_control_vars_pt__U106' (35#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:441]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_1_write_start_pt__U109' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:418]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_1_write_start_pt__U109' (36#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:418]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_1_write_start_control_vars_pt__U110' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:425]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_1_write_start_control_vars_pt__U110' (37#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:425]
+INFO: [Synth 8-6157] synthesizing module 'cu_op_hcompute_conv_stencil_2' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:601]
+INFO: [Synth 8-6157] synthesizing module 'hcompute_conv_stencil_2' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:595]
+INFO: [Synth 8-6155] done synthesizing module 'hcompute_conv_stencil_2' (38#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:595]
+INFO: [Synth 8-6155] done synthesizing module 'cu_op_hcompute_conv_stencil_2' (39#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:601]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_2_exe_start_pt__U130' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:402]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_2_exe_start_pt__U130' (40#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:402]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_2_exe_start_control_vars_pt__U131' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:409]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_2_exe_start_control_vars_pt__U131' (41#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:409]
+INFO: [Synth 8-6157] synthesizing module 'affine_controller__U111' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1592]
+INFO: [Synth 8-6157] synthesizing module 'aff__U112' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1585]
+INFO: [Synth 8-6155] done synthesizing module 'aff__U112' (42#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1585]
+INFO: [Synth 8-6155] done synthesizing module 'affine_controller__U111' (43#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1592]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_2_read_start_pt__U128' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:386]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_2_read_start_pt__U128' (44#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:386]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_2_read_start_control_vars_pt__U129' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:393]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_2_read_start_control_vars_pt__U129' (45#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:393]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_2_write_start_pt__U132' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:370]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_2_write_start_pt__U132' (46#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:370]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_2_write_start_control_vars_pt__U133' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:377]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_2_write_start_control_vars_pt__U133' (47#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:377]
+INFO: [Synth 8-6157] synthesizing module 'cu_op_hcompute_conv_stencil_3' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:747]
+INFO: [Synth 8-6157] synthesizing module 'hcompute_conv_stencil_3' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:738]
+INFO: [Synth 8-6155] done synthesizing module 'hcompute_conv_stencil_3' (48#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:738]
+INFO: [Synth 8-6155] done synthesizing module 'cu_op_hcompute_conv_stencil_3' (49#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:747]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_3_exe_start_pt__U166' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:352]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_3_exe_start_pt__U166' (50#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:352]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_3_exe_start_control_vars_pt__U167' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:359]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_3_exe_start_control_vars_pt__U167' (51#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:359]
+INFO: [Synth 8-6157] synthesizing module 'affine_controller__U134' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1464]
+INFO: [Synth 8-6157] synthesizing module 'aff__U135' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1457]
+INFO: [Synth 8-6155] done synthesizing module 'aff__U135' (52#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1457]
+INFO: [Synth 8-6155] done synthesizing module 'affine_controller__U134' (53#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1464]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_3_read_start_pt__U164' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:334]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_3_read_start_pt__U164' (54#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:334]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_3_read_start_control_vars_pt__U165' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:341]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_3_read_start_control_vars_pt__U165' (55#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:341]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_3_write_start_pt__U168' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:316]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_3_write_start_pt__U168' (56#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:316]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_3_write_start_control_vars_pt__U169' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:323]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_3_write_start_control_vars_pt__U169' (57#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:323]
+INFO: [Synth 8-6157] synthesizing module 'cu_op_hcompute_conv_stencil_4' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:701]
+INFO: [Synth 8-6157] synthesizing module 'hcompute_conv_stencil_4' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:692]
+INFO: [Synth 8-6155] done synthesizing module 'hcompute_conv_stencil_4' (58#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:692]
+INFO: [Synth 8-6155] done synthesizing module 'cu_op_hcompute_conv_stencil_4' (59#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:701]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_4_exe_start_pt__U202' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:298]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_4_exe_start_pt__U202' (60#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:298]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_4_exe_start_control_vars_pt__U203' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:305]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_4_exe_start_control_vars_pt__U203' (61#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:305]
+INFO: [Synth 8-6157] synthesizing module 'affine_controller__U170' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1336]
+INFO: [Synth 8-6157] synthesizing module 'aff__U171' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1329]
+INFO: [Synth 8-6155] done synthesizing module 'aff__U171' (62#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1329]
+INFO: [Synth 8-6155] done synthesizing module 'affine_controller__U170' (63#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1336]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_4_read_start_pt__U200' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:280]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_4_read_start_pt__U200' (64#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:280]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_4_read_start_control_vars_pt__U201' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:287]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_4_read_start_control_vars_pt__U201' (65#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:287]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_4_write_start_pt__U204' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:262]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_4_write_start_pt__U204' (66#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:262]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_4_write_start_control_vars_pt__U205' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:269]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_4_write_start_control_vars_pt__U205' (67#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:269]
+INFO: [Synth 8-6157] synthesizing module 'cu_op_hcompute_conv_stencil_5' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:655]
+INFO: [Synth 8-6157] synthesizing module 'hcompute_conv_stencil_5' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:646]
+INFO: [Synth 8-6155] done synthesizing module 'hcompute_conv_stencil_5' (68#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:646]
+INFO: [Synth 8-6155] done synthesizing module 'cu_op_hcompute_conv_stencil_5' (69#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:655]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_5_exe_start_pt__U238' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:244]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_5_exe_start_pt__U238' (70#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:244]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_5_exe_start_control_vars_pt__U239' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:251]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_5_exe_start_control_vars_pt__U239' (71#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:251]
+INFO: [Synth 8-6157] synthesizing module 'affine_controller__U206' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1208]
+INFO: [Synth 8-6157] synthesizing module 'aff__U207' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1201]
+INFO: [Synth 8-6155] done synthesizing module 'aff__U207' (72#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1201]
+INFO: [Synth 8-6155] done synthesizing module 'affine_controller__U206' (73#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1208]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_5_read_start_pt__U236' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:226]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_5_read_start_pt__U236' (74#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:226]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_5_read_start_control_vars_pt__U237' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:233]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_5_read_start_control_vars_pt__U237' (75#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:233]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_5_write_start_pt__U240' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:208]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_5_write_start_pt__U240' (76#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:208]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_5_write_start_control_vars_pt__U241' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:215]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_5_write_start_control_vars_pt__U241' (77#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:215]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_exe_start_pt__U84' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:192]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_exe_start_pt__U84' (78#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:192]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_exe_start_control_vars_pt__U85' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:199]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_exe_start_control_vars_pt__U85' (79#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:199]
+INFO: [Synth 8-6157] synthesizing module 'affine_controller__U65' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:881]
+INFO: [Synth 8-6157] synthesizing module 'aff__U66' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:874]
+INFO: [Synth 8-6155] done synthesizing module 'aff__U66' (80#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:874]
+INFO: [Synth 8-6155] done synthesizing module 'affine_controller__U65' (81#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:881]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_read_start_pt__U82' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:176]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_read_start_pt__U82' (82#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:176]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_read_start_control_vars_pt__U83' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:183]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_read_start_control_vars_pt__U83' (83#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:183]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_write_start_pt__U86' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:160]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_write_start_pt__U86' (84#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:160]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_conv_stencil_write_start_control_vars_pt__U87' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:167]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_conv_stencil_write_start_control_vars_pt__U87' (85#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:167]
+INFO: [Synth 8-6157] synthesizing module 'cu_op_hcompute_hw_input_global_wrapper_stencil' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:517]
+INFO: [Synth 8-6157] synthesizing module 'hcompute_hw_input_global_wrapper_stencil' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:480]
+INFO: [Synth 8-6155] done synthesizing module 'hcompute_hw_input_global_wrapper_stencil' (86#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:480]
+INFO: [Synth 8-6155] done synthesizing module 'cu_op_hcompute_hw_input_global_wrapper_stencil' (87#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:517]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U25' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:143]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U25' (88#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:143]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_pt__U26' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:150]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_pt__U26' (89#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:150]
+INFO: [Synth 8-6157] synthesizing module 'affine_controller__U0' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1682]
+INFO: [Synth 8-6157] synthesizing module 'aff__U1' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1675]
+INFO: [Synth 8-6155] done synthesizing module 'aff__U1' (90#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1675]
+INFO: [Synth 8-6155] done synthesizing module 'affine_controller__U0' (91#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:1682]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U23' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:126]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U23' (92#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:126]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_pt__U24' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:133]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_pt__U24' (93#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:133]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U27' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:109]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U27' (94#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:109]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_pt__U28' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:116]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_pt__U28' (95#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:116]
+INFO: [Synth 8-6157] synthesizing module 'cu_op_hcompute_hw_kernel_global_wrapper_stencil' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:502]
+INFO: [Synth 8-6157] synthesizing module 'hcompute_hw_kernel_global_wrapper_stencil' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:473]
+INFO: [Synth 8-6155] done synthesizing module 'hcompute_hw_kernel_global_wrapper_stencil' (96#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:473]
+INFO: [Synth 8-6155] done synthesizing module 'cu_op_hcompute_hw_kernel_global_wrapper_stencil' (97#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:502]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_pt__U61' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:91]
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_pt__U61' (98#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:91]
+INFO: [Synth 8-6157] synthesizing module 'op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_pt__U62' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:98]
+INFO: [Common 17-14] Message 'Synth 8-6157' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-6155] done synthesizing module 'op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_pt__U62' (99#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:98]
+INFO: [Synth 8-6155] done synthesizing module 'aff__U30' (100#1) [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet.v:964]
+INFO: [Common 17-14] Message 'Synth 8-6155' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][15]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][14]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][13]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][12]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][11]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][10]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][9]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][8]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][7]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][6]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][5]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][4]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][3]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][2]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][1]
+WARNING: [Synth 8-3331] design aff__U243 has unconnected port d[0][0]
+WARNING: [Synth 8-3331] design cu_op_hcompute_hw_output_stencil has unconnected port clk
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][15]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][14]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][13]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][12]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][11]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][10]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][9]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][8]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][7]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][6]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][5]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][4]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][3]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][2]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][1]
+WARNING: [Synth 8-3331] design aff__U30 has unconnected port d[0][0]
+WARNING: [Synth 8-3331] design cu_op_hcompute_hw_kernel_global_wrapper_stencil has unconnected port clk
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][15]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][14]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][13]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][12]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][11]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][10]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][9]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][8]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][7]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][6]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][5]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][4]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][3]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][2]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][1]
+WARNING: [Synth 8-3331] design aff__U1 has unconnected port d[0][0]
+WARNING: [Synth 8-3331] design cu_op_hcompute_hw_input_global_wrapper_stencil has unconnected port clk
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][15]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][14]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][13]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][12]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][11]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][10]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][9]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][8]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][7]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][6]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][5]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][4]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][3]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][2]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][1]
+WARNING: [Synth 8-3331] design aff__U66 has unconnected port d[0][0]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][15]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][14]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][13]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][12]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][11]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][10]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][9]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][8]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][7]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][6]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][5]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][4]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][3]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][2]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][1]
+WARNING: [Synth 8-3331] design aff__U207 has unconnected port d[0][0]
+WARNING: [Synth 8-3331] design cu_op_hcompute_conv_stencil_5 has unconnected port clk
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][15]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][14]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][13]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][12]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][11]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][10]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][9]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][8]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][7]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][6]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][5]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][4]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][3]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][2]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][1]
+WARNING: [Synth 8-3331] design aff__U171 has unconnected port d[0][0]
+INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:24 ; elapsed = 00:00:34 . Memory (MB): peak = 2451.055 ; gain = 937.242 ; free physical = 43860 ; free virtual = 173899
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:30 ; elapsed = 00:00:40 . Memory (MB): peak = 2465.898 ; gain = 952.086 ; free physical = 43942 ; free virtual = 173981
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7k160tfbg484-2
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7k160tfbg484-2
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:30 ; elapsed = 00:00:41 . Memory (MB): peak = 2473.902 ; gain = 960.090 ; free physical = 43941 ; free virtual = 173980
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5546] ROM "bank_0" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_1" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_2" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_3" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_4" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_5" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_6" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_7" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_8" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_9" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_10" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_11" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_12" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_13" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_14" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_15" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_16" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_17" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_18" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_19" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_20" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_21" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_22" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "bank_23" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_3_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_3_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_3_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_3_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_3_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_3_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_3_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_3_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_4_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_4_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_4_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_4_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_4_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_4_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_4_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_4_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_5_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_5_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_5_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_5_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_5_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_5_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_5_read" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "op_hcompute_conv_stencil_5_read" won't be mapped to RAM because it is too sparse
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[0]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:190]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_4_read_reg[0]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:196]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_5_read_reg[0]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:202]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_hw_output_stencil_read_reg[0]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:208]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[7]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:997]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[6]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:997]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[5]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:997]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[4]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:997]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[3]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:997]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[2]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:997]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[1]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:997]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[0]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:997]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[7]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1471]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[6]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1471]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[5]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1471]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[4]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1471]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[3]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1471]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[2]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1471]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[1]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1471]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_3_read_reg[0]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1471]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_4_read_reg[7]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1687]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_4_read_reg[6]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1687]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_4_read_reg[5]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1687]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_4_read_reg[4]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1687]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_4_read_reg[3]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1687]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_4_read_reg[2]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1687]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_4_read_reg[1]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1687]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_4_read_reg[0]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1687]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_5_read_reg[7]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1903]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_5_read_reg[6]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1903]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_5_read_reg[5]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1903]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_5_read_reg[4]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1903]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_5_read_reg[3]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1903]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_5_read_reg[2]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1903]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_5_read_reg[1]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1903]
+WARNING: [Synth 8-327] inferring latch for variable 'op_hcompute_conv_stencil_5_read_reg[0]' [/home/dhuff/clockwork/coreir_apps/platonic_buffer/resnet/resnet_verilog_collateral.sv:1903]
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:05:05 ; elapsed = 00:06:33 . Memory (MB): peak = 4520.793 ; gain = 3006.980 ; free physical = 41736 ; free virtual = 171798
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++------+---------------------+------------+----------+
+|      |RTL Partition        |Replication |Instances |
++------+---------------------+------------+----------+
+|1     |conv_stencil_ub__GB0 |           1|   4341963|
+|2     |resnet__GC0          |           1|     20424|
++------+---------------------+------------+----------+
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 52    
+	   2 Input     10 Bit       Adders := 2     
+	   2 Input      1 Bit       Adders := 24    
++---Registers : 
+	               16 Bit    Registers := 2422  
+	                1 Bit    Registers := 24    
++---RAMs : 
+	              14K Bit         RAMs := 8     
+	              144 Bit         RAMs := 24    
++---Muxes : 
+	   5 Input  12544 Bit        Muxes := 15    
+	   2 Input  12544 Bit        Muxes := 6     
+	   4 Input  12544 Bit        Muxes := 3     
+	   2 Input     16 Bit        Muxes := 14213 
+	   4 Input     16 Bit        Muxes := 4     
+	   2 Input      1 Bit        Muxes := 92    
+	   4 Input      1 Bit        Muxes := 4     
+	   8 Input      1 Bit        Muxes := 16    
+	  25 Input      1 Bit        Muxes := 48    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module conv_stencil_ub 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 2352  
++---Muxes : 
+	   5 Input  12544 Bit        Muxes := 15    
+	   2 Input  12544 Bit        Muxes := 6     
+	   4 Input  12544 Bit        Muxes := 3     
+	   2 Input     16 Bit        Muxes := 14112 
+	   4 Input     16 Bit        Muxes := 4     
+	   2 Input      1 Bit        Muxes := 4     
+	   4 Input      1 Bit        Muxes := 4     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_26_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_10_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 2     
++---Registers : 
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_11_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 2     
++---Registers : 
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_12_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 2     
++---Registers : 
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_13_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 2     
++---Registers : 
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_14_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 2     
++---Registers : 
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_15_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 2     
++---Registers : 
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_8_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 2     
++---Registers : 
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_5_9_to_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_sr 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      1 Bit       Adders := 2     
++---Registers : 
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module hw_input_global_wrapper_stencil_ub 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 6     
+	   2 Input     10 Bit       Adders := 2     
++---RAMs : 
+	              14K Bit         RAMs := 8     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 16    
+	   8 Input      1 Bit        Muxes := 16    
+Module hw_kernel_global_wrapper_stencil_ub 
+Detailed RTL Component Info : 
++---RAMs : 
+	              144 Bit         RAMs := 24    
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 48    
+	  25 Input      1 Bit        Muxes := 48    
+Module coreir_reg 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module coreir_reg__36 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__35 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__37 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__36 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__1 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module affine_controller__U88 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 4     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 4     
+Module coreir_reg__45 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module coreir_reg__33 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__32 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__34 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__33 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__35 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__34 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module affine_controller__U111 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 4     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 4     
+Module coreir_reg__44 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module coreir_reg__28 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__27 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__29 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__28 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__30 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__29 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__31 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__30 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__32 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__31 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module affine_controller__U134 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 6     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 8     
+Module coreir_reg__43 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module coreir_reg__23 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__22 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__24 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__23 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__25 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__24 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__26 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__25 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__27 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__26 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module affine_controller__U170 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 6     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 8     
+Module coreir_reg__42 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module coreir_reg__18 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__17 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__19 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__18 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__20 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__19 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__21 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__20 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__22 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__21 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module affine_controller__U206 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 6     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 8     
+Module coreir_reg__41 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module coreir_reg__15 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__14 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__16 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__15 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__17 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__16 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module affine_controller__U65 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 4     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 4     
+Module coreir_reg__40 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module coreir_reg__11 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__10 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__12 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__11 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__13 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__12 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__14 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__13 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module affine_controller__U0 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 5     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 6     
+Module coreir_reg__39 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module coreir_reg__6 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__5 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__7 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__6 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__8 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__7 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__9 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__8 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__10 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__9 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module affine_controller__U29 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 6     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 8     
+Module coreir_reg__38 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module coreir_reg__2 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__1 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__3 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__2 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__4 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__3 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module coreir_reg__5 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module mantle_reg__has_clrFalse__has_enTrue__has_rstFalse__width16__4 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module affine_controller__U242 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 5     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 6     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 600 (col length:100)
+BRAMs: 650 (col length: RAMB18 100 RAMB36 50)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+Warning: Parallel synthesis criteria is not met 
+DSP Report: Generating DSP p_19_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_19_out is absorbed into DSP p_19_out.
+DSP Report: operator p_18_in is absorbed into DSP p_19_out.
+DSP Report: Generating DSP p_17_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_17_out is absorbed into DSP p_17_out.
+DSP Report: operator p_16_in is absorbed into DSP p_17_out.
+DSP Report: Generating DSP p_15_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_15_out is absorbed into DSP p_15_out.
+DSP Report: operator p_14_in is absorbed into DSP p_15_out.
+DSP Report: Generating DSP p_13_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_13_out is absorbed into DSP p_13_out.
+DSP Report: operator p_12_in is absorbed into DSP p_13_out.
+DSP Report: Generating DSP p_11_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_11_out is absorbed into DSP p_11_out.
+DSP Report: operator p_10_in is absorbed into DSP p_11_out.
+DSP Report: Generating DSP p_9_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_9_out is absorbed into DSP p_9_out.
+DSP Report: operator p_8_in is absorbed into DSP p_9_out.
+DSP Report: Generating DSP p_7_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_7_out is absorbed into DSP p_7_out.
+DSP Report: operator p_6_in is absorbed into DSP p_7_out.
+DSP Report: Generating DSP p_5_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_5_out is absorbed into DSP p_5_out.
+DSP Report: operator p_4_in is absorbed into DSP p_5_out.
+DSP Report: Generating DSP p_3_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_3_out is absorbed into DSP p_3_out.
+DSP Report: operator p_2_in is absorbed into DSP p_3_out.
+DSP Report: Generating DSP p_1_out, operation Mode is: C+A*(B:0x1c).
+DSP Report: operator p_1_out is absorbed into DSP p_1_out.
+DSP Report: operator p_0_in is absorbed into DSP p_1_out.
+DSP Report: Generating DSP p_1_in, operation Mode is: C+A*(B:0x1e).
+DSP Report: operator p_1_in is absorbed into DSP p_1_in.
+DSP Report: operator p_5_in is absorbed into DSP p_1_in.
+DSP Report: Generating DSP p_2_in, operation Mode is: C+A*(B:0x1e).
+DSP Report: operator p_2_in is absorbed into DSP p_2_in.
+DSP Report: operator p_2_in is absorbed into DSP p_2_in.
+DSP Report: Generating DSP affine_func/out1, operation Mode is: A2*(B:0x1e).
+DSP Report: register d_1_reg/reg0/outReg_reg is absorbed into DSP affine_func/out1.
+DSP Report: operator affine_func/out1 is absorbed into DSP affine_func/out1.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+(A:0x0):B2+(C:0x1cfa).
+DSP Report: register d_2_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out1, operation Mode is: A2*(B:0x1e).
+DSP Report: register d_1_reg/reg0/outReg_reg is absorbed into DSP affine_func/out1.
+DSP Report: operator affine_func/out1 is absorbed into DSP affine_func/out1.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+(A:0x0):B2+(C:0x1cfb).
+DSP Report: register d_2_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out2, operation Mode is: A2*(B:0x1e).
+DSP Report: register d_3_reg/reg0/outReg_reg is absorbed into DSP affine_func/out2.
+DSP Report: operator affine_func/out2 is absorbed into DSP affine_func/out2.
+DSP Report: Generating DSP affine_func/out, operation Mode is: C+A2*(B:0x9d8).
+DSP Report: register d_1_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out3 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+A2*(B:0x348).
+DSP Report: register d_2_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out3 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+(A:0x0):B2+(C:0x2629).
+DSP Report: register d_4_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out2, operation Mode is: A2*(B:0x1e).
+DSP Report: register d_3_reg/reg0/outReg_reg is absorbed into DSP affine_func/out2.
+DSP Report: operator affine_func/out2 is absorbed into DSP affine_func/out2.
+DSP Report: Generating DSP affine_func/out, operation Mode is: C+A2*(B:0x9d8).
+DSP Report: register d_1_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out3 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+A2*(B:0x348).
+DSP Report: register d_2_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out3 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+(A:0x0):B2+(C:0x262a).
+DSP Report: register d_4_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out2, operation Mode is: A2*(B:0x1e).
+DSP Report: register d_3_reg/reg0/outReg_reg is absorbed into DSP affine_func/out2.
+DSP Report: operator affine_func/out2 is absorbed into DSP affine_func/out2.
+DSP Report: Generating DSP affine_func/out, operation Mode is: C+A2*(B:0x9d8).
+DSP Report: register d_1_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out3 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+A2*(B:0x348).
+DSP Report: register d_2_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out3 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+(A:0x0):B2+(C:0x262b).
+DSP Report: register d_4_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out1, operation Mode is: A2*(B:0x1e).
+DSP Report: register d_1_reg/reg0/outReg_reg is absorbed into DSP affine_func/out1.
+DSP Report: operator affine_func/out1 is absorbed into DSP affine_func/out1.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+(A:0x0):B2+(C:0x1cf9).
+DSP Report: register d_2_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: C'+A2*(B:0xf0).
+DSP Report: register d_1_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: register d_2_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out2 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+(A:0x0):B2+(C:0x1).
+DSP Report: register d_3_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: C'+A2*(B:0x48).
+DSP Report: register d_1_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: register d_3_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out3 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+A2*(B:0x18).
+DSP Report: register d_2_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out3 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+(A:0x0):B2+(C:0x1c21).
+DSP Report: register d_4_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out2, operation Mode is: A2*(B:0x1c).
+DSP Report: register d_2_reg/reg0/outReg_reg is absorbed into DSP affine_func/out2.
+DSP Report: operator affine_func/out2 is absorbed into DSP affine_func/out2.
+DSP Report: Generating DSP affine_func/out, operation Mode is: C+A2*(B:0x310).
+DSP Report: register d_1_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out2 is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP affine_func/out, operation Mode is: PCIN+(A:0x0):B2+(C:0x78d9).
+DSP Report: register d_3_reg/reg0/outReg_reg is absorbed into DSP affine_func/out.
+DSP Report: operator affine_func/out is absorbed into DSP affine_func/out.
+DSP Report: Generating DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil2, operation Mode is: A*B.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil2 is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil2.
+DSP Report: Generating DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil, operation Mode is: C+A*B.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil0 is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil3 is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil4 is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil5 is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil6 is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil7 is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil7 is absorbed into DSP op_hcompute_conv_stencil_3/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil2, operation Mode is: A*B.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil2 is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil2.
+DSP Report: Generating DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil, operation Mode is: C+A*B.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil0 is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil3 is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil4 is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil5 is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil6 is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil7 is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil7 is absorbed into DSP op_hcompute_conv_stencil_4/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil2, operation Mode is: A*B.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil2 is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil2.
+DSP Report: Generating DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil, operation Mode is: C+A*B.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil0 is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil3 is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil4 is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil5 is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil6 is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil7 is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: Generating DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil, operation Mode is: PCIN+A*B.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+DSP Report: operator op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil7 is absorbed into DSP op_hcompute_conv_stencil_5/inner_compute/out_conv_stencil.
+INFO: [Synth 8-3886] merging instance 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_26_delay/write_addr_reg[0]' (FDC) to 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_delay/write_addr_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_33_delay/write_addr_reg[0]' (FDC) to 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_delay/write_addr_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_27_delay/write_addr_reg[0]' (FDC) to 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_delay/write_addr_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_28_delay/write_addr_reg[0]' (FDC) to 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_delay/write_addr_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_29_delay/write_addr_reg[0]' (FDC) to 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_delay/write_addr_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_30_delay/write_addr_reg[0]' (FDC) to 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_delay/write_addr_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_31_delay/write_addr_reg[0]' (FDC) to 'i_0/hw_input_global_wrapper_stencil/hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_delay/write_addr_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (hw_input_global_wrapper_stencil/\hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_4_32_delay/write_addr_reg[0] )
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:27:27 ; elapsed = 00:31:49 . Memory (MB): peak = 7062.848 ; gain = 5549.035 ; free physical = 41331 ; free virtual = 172173
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Distributed RAM: Preliminary Mapping	Report (see note below)
++---------------------------------+-------------+-----------+----------------------+----------------------------+
+|Module Name                      | RTL Object  | Inference | Size (Depth x Width) | Primitives                 | 
++---------------------------------+-------------+-----------+----------------------+----------------------------+
+|hw_input_global_wrapper_stencil  | bank_0_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_1_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_2_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_3_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_4_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_5_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_6_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_7_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_kernel_global_wrapper_stencil | bank_0_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_1_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_2_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_3_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_4_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_5_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_6_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_7_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_8_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_9_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_10_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_11_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_12_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_13_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_14_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_15_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_16_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_17_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_18_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_19_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_20_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_21_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_22_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_23_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
++---------------------------------+-------------+-----------+----------------------+----------------------------+
+
+Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
+
+DSP: Preliminary Mapping	Report (see note below)
++-----------------------------------+----------------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name                        | DSP Mapping                | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++-----------------------------------+----------------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|conv_stencil_ub                    | C+A*(B:0x1c)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|hw_input_global_wrapper_stencil_ub | C+A*(B:0x1e)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|hw_input_global_wrapper_stencil_ub | C+A*(B:0x1e)               | 10     | 5      | 10     | -      | 10     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U88             | A2*(B:0x1e)                | 16     | 5      | -      | -      | 21     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U88             | PCIN+(A:0x0):B2+(C:0x1cfa) | 30     | 16     | 13     | -      | -1     | 0    | 1    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U111            | A2*(B:0x1e)                | 16     | 5      | -      | -      | 21     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U111            | PCIN+(A:0x0):B2+(C:0x1cfb) | 30     | 16     | 13     | -      | -1     | 0    | 1    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U134            | A2*(B:0x1e)                | 16     | 5      | -      | -      | 21     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U134            | C+A2*(B:0x9d8)             | 16     | 12     | 16     | -      | 16     | 1    | 0    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U134            | PCIN+A2*(B:0x348)          | 16     | 10     | -      | -      | 16     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U134            | PCIN+(A:0x0):B2+(C:0x2629) | 30     | 16     | 14     | -      | -1     | 0    | 1    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U170            | A2*(B:0x1e)                | 16     | 5      | -      | -      | 21     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U170            | C+A2*(B:0x9d8)             | 16     | 12     | 16     | -      | 16     | 1    | 0    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U170            | PCIN+A2*(B:0x348)          | 16     | 10     | -      | -      | 16     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U170            | PCIN+(A:0x0):B2+(C:0x262a) | 30     | 16     | 14     | -      | -1     | 0    | 1    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U206            | A2*(B:0x1e)                | 16     | 5      | -      | -      | 21     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U206            | C+A2*(B:0x9d8)             | 16     | 12     | 16     | -      | 16     | 1    | 0    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U206            | PCIN+A2*(B:0x348)          | 16     | 10     | -      | -      | 16     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U206            | PCIN+(A:0x0):B2+(C:0x262b) | 30     | 16     | 14     | -      | -1     | 0    | 1    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U65             | A2*(B:0x1e)                | 16     | 5      | -      | -      | 21     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U65             | PCIN+(A:0x0):B2+(C:0x1cf9) | 30     | 16     | 13     | -      | -1     | 0    | 1    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U0              | C'+A2*(B:0xf0)             | 16     | 8      | 16     | -      | 16     | 1    | 0    | 1    | -    | -     | 0    | 0    | 
+|affine_controller__U0              | PCIN+(A:0x0):B2+(C:0x1)    | 30     | 16     | 1      | -      | -1     | 0    | 1    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U29             | C'+A2*(B:0x48)             | 16     | 7      | 16     | -      | 16     | 1    | 0    | 1    | -    | -     | 0    | 0    | 
+|affine_controller__U29             | PCIN+A2*(B:0x18)           | 16     | 5      | -      | -      | 16     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U29             | PCIN+(A:0x0):B2+(C:0x1c21) | 30     | 16     | 13     | -      | -1     | 0    | 1    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U242            | A2*(B:0x1c)                | 16     | 5      | -      | -      | 21     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|affine_controller__U242            | C+A2*(B:0x310)             | 16     | 10     | 16     | -      | 16     | 1    | 0    | 0    | -    | -     | 0    | 0    | 
+|affine_controller__U242            | PCIN+(A:0x0):B2+(C:0x78d9) | 30     | 16     | 15     | -      | -1     | 0    | 1    | 0    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_3            | A*B                        | 16     | 16     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_3            | C+A*B                      | 16     | 16     | 16     | -      | 16     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_3            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_3            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_3            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_3            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_3            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_3            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_4            | A*B                        | 16     | 16     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_4            | C+A*B                      | 16     | 16     | 16     | -      | 16     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_4            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_4            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_4            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_4            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_4            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_4            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_5            | A*B                        | 16     | 16     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_5            | C+A*B                      | 16     | 16     | 16     | -      | 16     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_5            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_5            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_5            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_5            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_5            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|hcompute_conv_stencil_5            | PCIN+A*B                   | 16     | 16     | -      | -      | 16     | 0    | 0    | -    | -    | -     | 0    | 0    | 
++-----------------------------------+----------------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++------+---------------------+------------+----------+
+|      |RTL Partition        |Replication |Instances |
++------+---------------------+------------+----------+
+|1     |conv_stencil_ub__GB0 |           1|   4116216|
+|2     |resnet__GC0          |           1|     17929|
++------+---------------------+------------+----------+
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:27:49 ; elapsed = 00:32:11 . Memory (MB): peak = 7062.848 ; gain = 5549.035 ; free physical = 41331 ; free virtual = 172173
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Distributed RAM: Final Mapping	Report
++---------------------------------+-------------+-----------+----------------------+----------------------------+
+|Module Name                      | RTL Object  | Inference | Size (Depth x Width) | Primitives                 | 
++---------------------------------+-------------+-----------+----------------------+----------------------------+
+|hw_input_global_wrapper_stencil  | bank_0_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_1_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_2_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_3_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_4_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_5_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_6_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_input_global_wrapper_stencil  | bank_7_reg  | Implied   | 1 K x 16             | RAM64X1D x 15	RAM64M x 75	 | 
+|hw_kernel_global_wrapper_stencil | bank_0_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_1_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_2_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_3_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_4_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_5_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_6_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_7_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_8_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_9_reg  | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_10_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_11_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_12_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_13_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_14_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_15_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_16_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_17_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_18_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_19_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_20_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_21_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_22_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
+|hw_kernel_global_wrapper_stencil | bank_23_reg | Implied   | 16 x 16              | RAM32M x 9	                | 
++---------------------------------+-------------+-----------+----------------------+----------------------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++------+---------------------+------------+----------+
+|      |RTL Partition        |Replication |Instances |
++------+---------------------+------------+----------+
+|1     |conv_stencil_ub__GB0 |           1|   4116216|
+|2     |resnet__GC0          |           1|     17929|
++------+---------------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Common 17-41] Interrupt caught. Command should exit soon.

@@ -11,7 +11,7 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_to_avg_pool_stencil_op_hcompute_hw_output_stencil_10_cache {
+struct avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_to_avg_pool_stencil_op_hcompute_hw_output_stencil_1_cache {
 	// RAM Box: {[0, 31], [0, 31], [0, 3]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -35,49 +35,49 @@ struct avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_to_avg_pool_stencil_op_
 
 struct avg_pool_stencil_cache {
   // # of banks: 1
-  avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_to_avg_pool_stencil_op_hcompute_hw_output_stencil_10_cache avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_to_avg_pool_stencil_op_hcompute_hw_output_stencil_10;
+  avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_to_avg_pool_stencil_op_hcompute_hw_output_stencil_1_cache avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_to_avg_pool_stencil_op_hcompute_hw_output_stencil_1;
 };
 
 
 
-inline void avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_write(hw_uint<16>& avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3, avg_pool_stencil_cache& avg_pool_stencil, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
-  avg_pool_stencil.avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_to_avg_pool_stencil_op_hcompute_hw_output_stencil_10.push(avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3);
+inline void avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_write(hw_uint<16>& avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4, avg_pool_stencil_cache& avg_pool_stencil, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
+  avg_pool_stencil.avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_to_avg_pool_stencil_op_hcompute_hw_output_stencil_1.push(avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4);
 }
 
-inline hw_uint<16> avg_pool_stencil_op_hcompute_hw_output_stencil_10_select(avg_pool_stencil_cache& avg_pool_stencil, int root, int hw_output_s0_z, int hw_output_s0_y_xo, int hw_output_s0_x_yi, int dynamic_address) {
+inline hw_uint<16> avg_pool_stencil_op_hcompute_hw_output_stencil_1_select(avg_pool_stencil_cache& avg_pool_stencil, int root, int hw_output_s0_z, int hw_output_s0_y_xo, int hw_output_s0_x_yi, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // avg_pool_stencil_op_hcompute_hw_output_stencil_10 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_z, hw_output_s0_y_xo, hw_output_s0_x_yi] -> avg_pool_stencil[hw_output_s0_x_yi, hw_output_s0_y_xo, hw_output_s0_z] : 0 <= hw_output_s0_z <= 3 and 0 <= hw_output_s0_y_xo <= 31 and 0 <= hw_output_s0_x_yi <= 31 }
+  // avg_pool_stencil_op_hcompute_hw_output_stencil_1 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_z, hw_output_s0_y_xo, hw_output_s0_x_yi] -> avg_pool_stencil[hw_output_s0_x_yi, hw_output_s0_y_xo, hw_output_s0_z] : 0 <= hw_output_s0_z <= 3 and 0 <= hw_output_s0_y_xo <= 31 and 0 <= hw_output_s0_x_yi <= 31 }
   // Read schedule : { op_hcompute_hw_output_stencil[d0 = 0, d1, d2, d3] -> [0, d1, 1 + 2d2, 1 + 2d3, 3] : 0 <= d1 <= 3 and 0 <= d2 <= 31 and 0 <= d3 <= 31 }
   // Write schedule: { op_hcompute_avg_pool_stencil_1[d0 = 0, d1, d2, d3] -> [0, d1, 1 + 2d2, 1 + 2d3, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 31 and 0 <= d3 <= 31 }
-  auto value_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3 = avg_pool_stencil.avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_to_avg_pool_stencil_op_hcompute_hw_output_stencil_10.peek(/* one reader or all rams */ 0);
-  return value_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3;
+  auto value_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4 = avg_pool_stencil.avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_to_avg_pool_stencil_op_hcompute_hw_output_stencil_1.peek(/* one reader or all rams */ 0);
+  return value_avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_avg_pool_stencil_1_write
-//	avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3
+//	avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4
 inline void avg_pool_stencil_op_hcompute_avg_pool_stencil_1_write_bundle_write(hw_uint<16>& op_hcompute_avg_pool_stencil_1_write, avg_pool_stencil_cache& avg_pool_stencil, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
-	hw_uint<16> avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_res = op_hcompute_avg_pool_stencil_1_write.extract<0, 15>();
-	avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_write(avg_pool_stencil_op_hcompute_avg_pool_stencil_1_3_res, avg_pool_stencil, root, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x, dynamic_address);
+	hw_uint<16> avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_res = op_hcompute_avg_pool_stencil_1_write.extract<0, 15>();
+	avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_write(avg_pool_stencil_op_hcompute_avg_pool_stencil_1_4_res, avg_pool_stencil, root, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x, dynamic_address);
 }
 
 // op_hcompute_hw_output_stencil_read
-//	avg_pool_stencil_op_hcompute_hw_output_stencil_10
+//	avg_pool_stencil_op_hcompute_hw_output_stencil_1
 inline hw_uint<16> avg_pool_stencil_op_hcompute_hw_output_stencil_read_bundle_read(avg_pool_stencil_cache& avg_pool_stencil, int root, int hw_output_s0_z, int hw_output_s0_y_xo, int hw_output_s0_x_yi, int dynamic_address) {
   // # of ports in bundle: 1
-    // avg_pool_stencil_op_hcompute_hw_output_stencil_10
+    // avg_pool_stencil_op_hcompute_hw_output_stencil_1
 
 	hw_uint<16> result;
-	hw_uint<16> avg_pool_stencil_op_hcompute_hw_output_stencil_10_res = avg_pool_stencil_op_hcompute_hw_output_stencil_10_select(avg_pool_stencil, root, hw_output_s0_z, hw_output_s0_y_xo, hw_output_s0_x_yi, dynamic_address);
-	set_at<0, 16>(result, avg_pool_stencil_op_hcompute_hw_output_stencil_10_res);
+	hw_uint<16> avg_pool_stencil_op_hcompute_hw_output_stencil_1_res = avg_pool_stencil_op_hcompute_hw_output_stencil_1_select(avg_pool_stencil, root, hw_output_s0_z, hw_output_s0_y_xo, hw_output_s0_x_yi, dynamic_address);
+	set_at<0, 16>(result, avg_pool_stencil_op_hcompute_hw_output_stencil_1_res);
 	return result;
 }
 
 #include "hw_classes.h"
 
-struct avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4_cache {
+struct avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_cache {
 	// RAM Box: {[0, 31], [0, 31], [0, 3]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -101,49 +101,49 @@ struct avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_to_avg_pool_s
 
 struct avg_pool_stencil_clkwrk_dsa0_cache {
   // # of banks: 1
-  avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4_cache avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4;
+  avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_cache avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5;
 };
 
 
 
-inline void avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_write(hw_uint<16>& avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2, avg_pool_stencil_clkwrk_dsa0_cache& avg_pool_stencil_clkwrk_dsa0, int root, int avg_pool_s0_z, int avg_pool_s0_y, int avg_pool_s0_x, int dynamic_address) {
-  avg_pool_stencil_clkwrk_dsa0.avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4.push(avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2);
+inline void avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_write(hw_uint<16>& avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10, avg_pool_stencil_clkwrk_dsa0_cache& avg_pool_stencil_clkwrk_dsa0, int root, int avg_pool_s0_z, int avg_pool_s0_y, int avg_pool_s0_x, int dynamic_address) {
+  avg_pool_stencil_clkwrk_dsa0.avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5.push(avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10);
 }
 
-inline hw_uint<16> avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4_select(avg_pool_stencil_clkwrk_dsa0_cache& avg_pool_stencil_clkwrk_dsa0, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
+inline hw_uint<16> avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_select(avg_pool_stencil_clkwrk_dsa0_cache& avg_pool_stencil_clkwrk_dsa0, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> avg_pool_stencil_clkwrk_dsa0[avg_pool_s1_x, avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
+  // avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> avg_pool_stencil_clkwrk_dsa0[avg_pool_s1_x, avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
   // Read schedule : { op_hcompute_avg_pool_stencil_1[d0 = 0, d1, d2, d3] -> [0, d1, 1 + 2d2, 1 + 2d3, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 31 and 0 <= d3 <= 31 }
   // Write schedule: { op_hcompute_avg_pool_stencil[d0 = 0, d1, d2, d3] -> [0, d1, 1 + 2d2, 1 + 2d3, 1] : 0 <= d1 <= 3 and 0 <= d2 <= 31 and 0 <= d3 <= 31 }
-  auto value_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2 = avg_pool_stencil_clkwrk_dsa0.avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4.peek(/* one reader or all rams */ 0);
-  return value_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2;
+  auto value_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10 = avg_pool_stencil_clkwrk_dsa0.avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_to_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5.peek(/* one reader or all rams */ 0);
+  return value_avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_avg_pool_stencil_1_read
-//	avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4
+//	avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5
 inline hw_uint<16> avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_read_bundle_read(avg_pool_stencil_clkwrk_dsa0_cache& avg_pool_stencil_clkwrk_dsa0, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
   // # of ports in bundle: 1
-    // avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4
+    // avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5
 
 	hw_uint<16> result;
-	hw_uint<16> avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4_res = avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4_select(avg_pool_stencil_clkwrk_dsa0, root, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x, dynamic_address);
-	set_at<0, 16>(result, avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_4_res);
+	hw_uint<16> avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_res = avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_select(avg_pool_stencil_clkwrk_dsa0, root, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x, dynamic_address);
+	set_at<0, 16>(result, avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_1_5_res);
 	return result;
 }
 
 // op_hcompute_avg_pool_stencil_write
-//	avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2
+//	avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10
 inline void avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_write_bundle_write(hw_uint<16>& op_hcompute_avg_pool_stencil_write, avg_pool_stencil_clkwrk_dsa0_cache& avg_pool_stencil_clkwrk_dsa0, int root, int avg_pool_s0_z, int avg_pool_s0_y, int avg_pool_s0_x, int dynamic_address) {
-	hw_uint<16> avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_res = op_hcompute_avg_pool_stencil_write.extract<0, 15>();
-	avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_write(avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_2_res, avg_pool_stencil_clkwrk_dsa0, root, avg_pool_s0_z, avg_pool_s0_y, avg_pool_s0_x, dynamic_address);
+	hw_uint<16> avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_res = op_hcompute_avg_pool_stencil_write.extract<0, 15>();
+	avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_write(avg_pool_stencil_clkwrk_dsa0_op_hcompute_avg_pool_stencil_10_res, avg_pool_stencil_clkwrk_dsa0, root, avg_pool_s0_z, avg_pool_s0_y, avg_pool_s0_x, dynamic_address);
 }
 
 #include "hw_classes.h"
 
-struct hw_input_stencil_op_hcompute_hw_input_stencil_0_merged_banks_4_cache {
+struct hw_input_stencil_op_hcompute_hw_input_stencil_2_merged_banks_4_cache {
 	// RAM Box: {[0, 63], [0, 63], [0, 3]}
 	// Capacity: 66
 	// # of read delays: 4
@@ -204,89 +204,89 @@ struct hw_input_stencil_op_hcompute_hw_input_stencil_0_merged_banks_4_cache {
 
 struct hw_input_stencil_cache {
   // # of banks: 1
-  hw_input_stencil_op_hcompute_hw_input_stencil_0_merged_banks_4_cache hw_input_stencil_op_hcompute_hw_input_stencil_0_merged_banks_4;
+  hw_input_stencil_op_hcompute_hw_input_stencil_2_merged_banks_4_cache hw_input_stencil_op_hcompute_hw_input_stencil_2_merged_banks_4;
 };
 
 
 
-inline void hw_input_stencil_op_hcompute_hw_input_stencil_0_write(hw_uint<16>& hw_input_stencil_op_hcompute_hw_input_stencil_0, hw_input_stencil_cache& hw_input_stencil, int root, int hw_input_s0_z, int hw_input_s0_y, int hw_input_s0_x, int dynamic_address) {
-  hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_0_merged_banks_4.push(hw_input_stencil_op_hcompute_hw_input_stencil_0);
-}
-
-inline hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_5_select(hw_input_stencil_cache& hw_input_stencil, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // hw_input_stencil_op_hcompute_avg_pool_stencil_1_5 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> hw_input_stencil[2avg_pool_s1_x, 2avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
-  // Read schedule : { op_hcompute_avg_pool_stencil_1[d0 = 0, d1, d2, d3] -> [0, d1, 1 + 2d2, 1 + 2d3, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 31 and 0 <= d3 <= 31 }
-  // Write schedule: { op_hcompute_hw_input_stencil[d0 = 0, d1, d2, d3] -> [0, d1, d2, d3, 0] : 0 <= d1 <= 3 and 0 <= d2 <= 63 and 0 <= d3 <= 63 }
-  auto value_hw_input_stencil_op_hcompute_hw_input_stencil_0 = hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_0_merged_banks_4.peek_65();
-  return value_hw_input_stencil_op_hcompute_hw_input_stencil_0;
-  return 0;
+inline void hw_input_stencil_op_hcompute_hw_input_stencil_2_write(hw_uint<16>& hw_input_stencil_op_hcompute_hw_input_stencil_2, hw_input_stencil_cache& hw_input_stencil, int root, int hw_input_s0_z, int hw_input_s0_y, int hw_input_s0_x, int dynamic_address) {
+  hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_2_merged_banks_4.push(hw_input_stencil_op_hcompute_hw_input_stencil_2);
 }
 
 inline hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_select(hw_input_stencil_cache& hw_input_stencil, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_stencil_op_hcompute_avg_pool_stencil_1_6 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> hw_input_stencil[1 + 2avg_pool_s1_x, 2avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
+  // hw_input_stencil_op_hcompute_avg_pool_stencil_1_6 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> hw_input_stencil[2avg_pool_s1_x, 2avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
   // Read schedule : { op_hcompute_avg_pool_stencil_1[d0 = 0, d1, d2, d3] -> [0, d1, 1 + 2d2, 1 + 2d3, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 31 and 0 <= d3 <= 31 }
   // Write schedule: { op_hcompute_hw_input_stencil[d0 = 0, d1, d2, d3] -> [0, d1, d2, d3, 0] : 0 <= d1 <= 3 and 0 <= d2 <= 63 and 0 <= d3 <= 63 }
-  auto value_hw_input_stencil_op_hcompute_hw_input_stencil_0 = hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_0_merged_banks_4.peek_64();
-  return value_hw_input_stencil_op_hcompute_hw_input_stencil_0;
+  auto value_hw_input_stencil_op_hcompute_hw_input_stencil_2 = hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_2_merged_banks_4.peek_65();
+  return value_hw_input_stencil_op_hcompute_hw_input_stencil_2;
   return 0;
 }
 
 inline hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_select(hw_input_stencil_cache& hw_input_stencil, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_stencil_op_hcompute_avg_pool_stencil_1_7 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> hw_input_stencil[1 + 2avg_pool_s1_x, 1 + 2avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
+  // hw_input_stencil_op_hcompute_avg_pool_stencil_1_7 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> hw_input_stencil[1 + 2avg_pool_s1_x, 2avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
   // Read schedule : { op_hcompute_avg_pool_stencil_1[d0 = 0, d1, d2, d3] -> [0, d1, 1 + 2d2, 1 + 2d3, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 31 and 0 <= d3 <= 31 }
   // Write schedule: { op_hcompute_hw_input_stencil[d0 = 0, d1, d2, d3] -> [0, d1, d2, d3, 0] : 0 <= d1 <= 3 and 0 <= d2 <= 63 and 0 <= d3 <= 63 }
-  auto value_hw_input_stencil_op_hcompute_hw_input_stencil_0 = hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_0_merged_banks_4.peek_0();
-  return value_hw_input_stencil_op_hcompute_hw_input_stencil_0;
+  auto value_hw_input_stencil_op_hcompute_hw_input_stencil_2 = hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_2_merged_banks_4.peek_64();
+  return value_hw_input_stencil_op_hcompute_hw_input_stencil_2;
   return 0;
 }
 
 inline hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_select(hw_input_stencil_cache& hw_input_stencil, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_stencil_op_hcompute_avg_pool_stencil_1_8 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> hw_input_stencil[2avg_pool_s1_x, 1 + 2avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
+  // hw_input_stencil_op_hcompute_avg_pool_stencil_1_8 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> hw_input_stencil[1 + 2avg_pool_s1_x, 1 + 2avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
   // Read schedule : { op_hcompute_avg_pool_stencil_1[d0 = 0, d1, d2, d3] -> [0, d1, 1 + 2d2, 1 + 2d3, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 31 and 0 <= d3 <= 31 }
   // Write schedule: { op_hcompute_hw_input_stencil[d0 = 0, d1, d2, d3] -> [0, d1, d2, d3, 0] : 0 <= d1 <= 3 and 0 <= d2 <= 63 and 0 <= d3 <= 63 }
-  auto value_hw_input_stencil_op_hcompute_hw_input_stencil_0 = hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_0_merged_banks_4.peek_1();
-  return value_hw_input_stencil_op_hcompute_hw_input_stencil_0;
+  auto value_hw_input_stencil_op_hcompute_hw_input_stencil_2 = hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_2_merged_banks_4.peek_0();
+  return value_hw_input_stencil_op_hcompute_hw_input_stencil_2;
+  return 0;
+}
+
+inline hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_select(hw_input_stencil_cache& hw_input_stencil, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // hw_input_stencil_op_hcompute_avg_pool_stencil_1_9 read pattern: { op_hcompute_avg_pool_stencil_1[root = 0, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x] -> hw_input_stencil[2avg_pool_s1_x, 1 + 2avg_pool_s1_y, avg_pool_s1_z] : 0 <= avg_pool_s1_z <= 3 and 0 <= avg_pool_s1_y <= 31 and 0 <= avg_pool_s1_x <= 31 }
+  // Read schedule : { op_hcompute_avg_pool_stencil_1[d0 = 0, d1, d2, d3] -> [0, d1, 1 + 2d2, 1 + 2d3, 2] : 0 <= d1 <= 3 and 0 <= d2 <= 31 and 0 <= d3 <= 31 }
+  // Write schedule: { op_hcompute_hw_input_stencil[d0 = 0, d1, d2, d3] -> [0, d1, d2, d3, 0] : 0 <= d1 <= 3 and 0 <= d2 <= 63 and 0 <= d3 <= 63 }
+  auto value_hw_input_stencil_op_hcompute_hw_input_stencil_2 = hw_input_stencil.hw_input_stencil_op_hcompute_hw_input_stencil_2_merged_banks_4.peek_1();
+  return value_hw_input_stencil_op_hcompute_hw_input_stencil_2;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_avg_pool_stencil_1_read
-//	hw_input_stencil_op_hcompute_avg_pool_stencil_1_5
 //	hw_input_stencil_op_hcompute_avg_pool_stencil_1_6
 //	hw_input_stencil_op_hcompute_avg_pool_stencil_1_7
 //	hw_input_stencil_op_hcompute_avg_pool_stencil_1_8
+//	hw_input_stencil_op_hcompute_avg_pool_stencil_1_9
 inline hw_uint<64> hw_input_stencil_op_hcompute_avg_pool_stencil_1_read_bundle_read(hw_input_stencil_cache& hw_input_stencil, int root, int avg_pool_s1_z, int avg_pool_s1_y, int avg_pool_s1_x, int dynamic_address) {
   // # of ports in bundle: 4
-    // hw_input_stencil_op_hcompute_avg_pool_stencil_1_5
     // hw_input_stencil_op_hcompute_avg_pool_stencil_1_6
     // hw_input_stencil_op_hcompute_avg_pool_stencil_1_7
     // hw_input_stencil_op_hcompute_avg_pool_stencil_1_8
+    // hw_input_stencil_op_hcompute_avg_pool_stencil_1_9
 
 	hw_uint<64> result;
-	hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_5_res = hw_input_stencil_op_hcompute_avg_pool_stencil_1_5_select(hw_input_stencil, root, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x, dynamic_address);
-	set_at<0, 64>(result, hw_input_stencil_op_hcompute_avg_pool_stencil_1_5_res);
 	hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_res = hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_select(hw_input_stencil, root, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x, dynamic_address);
-	set_at<16, 64>(result, hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_res);
+	set_at<0, 64>(result, hw_input_stencil_op_hcompute_avg_pool_stencil_1_6_res);
 	hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_res = hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_select(hw_input_stencil, root, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x, dynamic_address);
-	set_at<32, 64>(result, hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_res);
+	set_at<16, 64>(result, hw_input_stencil_op_hcompute_avg_pool_stencil_1_7_res);
 	hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_res = hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_select(hw_input_stencil, root, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x, dynamic_address);
-	set_at<48, 64>(result, hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_res);
+	set_at<32, 64>(result, hw_input_stencil_op_hcompute_avg_pool_stencil_1_8_res);
+	hw_uint<16> hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_res = hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_select(hw_input_stencil, root, avg_pool_s1_z, avg_pool_s1_y, avg_pool_s1_x, dynamic_address);
+	set_at<48, 64>(result, hw_input_stencil_op_hcompute_avg_pool_stencil_1_9_res);
 	return result;
 }
 
 // op_hcompute_hw_input_stencil_write
-//	hw_input_stencil_op_hcompute_hw_input_stencil_0
+//	hw_input_stencil_op_hcompute_hw_input_stencil_2
 inline void hw_input_stencil_op_hcompute_hw_input_stencil_write_bundle_write(hw_uint<16>& op_hcompute_hw_input_stencil_write, hw_input_stencil_cache& hw_input_stencil, int root, int hw_input_s0_z, int hw_input_s0_y, int hw_input_s0_x, int dynamic_address) {
-	hw_uint<16> hw_input_stencil_op_hcompute_hw_input_stencil_0_res = op_hcompute_hw_input_stencil_write.extract<0, 15>();
-	hw_input_stencil_op_hcompute_hw_input_stencil_0_write(hw_input_stencil_op_hcompute_hw_input_stencil_0_res, hw_input_stencil, root, hw_input_s0_z, hw_input_s0_y, hw_input_s0_x, dynamic_address);
+	hw_uint<16> hw_input_stencil_op_hcompute_hw_input_stencil_2_res = op_hcompute_hw_input_stencil_write.extract<0, 15>();
+	hw_input_stencil_op_hcompute_hw_input_stencil_2_write(hw_input_stencil_op_hcompute_hw_input_stencil_2_res, hw_input_stencil, root, hw_input_s0_z, hw_input_s0_y, hw_input_s0_x, dynamic_address);
 }
 
 // Total re-use buffer capacity: 1040 bits
@@ -407,6 +407,7 @@ for (int c1 = 0; c1 <= 3; c1 += 1)
 	for (int c1 = 0; c1 <= 3; c1 += 1)
 	  for (int c2 = 0; c2 <= 63; c2 += 1)
 	    for (int c3 = 0; c3 <= 63; c3 += 1) {
+#pragma HLS pipeline II=1
 	      op_hcompute_hw_input_stencil(input_copy_stencil /* buf name */, hw_input_stencil, 0, c1, c2, c3);
 	      if ((c2 + 1) % 2 == 0 && (c3 + 1) % 2 == 0) {
 	        op_hcompute_avg_pool_stencil(avg_pool_stencil_clkwrk_dsa0, 0, c1, (c2 - 1) / 2, (c3 - 1) / 2);

@@ -114,8 +114,10 @@ int dim(isl_space* const s);
 bool equal(isl_space* const l, isl_space* const r);
 bool equal(isl_set* const l, isl_set* const r);
 bool equal(uset* const l, uset* const r);
+bool equal(umap* const l, umap* const r);
 
 bool empty(umap* const s);
+bool empty(isl_map* const s);
 bool empty(isl_basic_set* const s);
 bool empty(uset* const s);
 bool empty(isl_set* const s);
@@ -149,6 +151,8 @@ isl_map* set_range_name(isl_map* const m, string new_name);
 isl_map* set_domain_name(isl_map* const m, string new_name);
 
 isl_map* add_range_suffix(isl_map* const m, string suffix);
+isl_map* add_domain_suffix(isl_map* const m, string suffix);
+isl_set* add_suffix(isl_set* const m, string suffix);
 
 
 isl_union_set* to_uset(isl_set* const m);
@@ -273,6 +277,7 @@ vector<string> collect_sched_vec(isl_union_map* const um);
 
 umap* pad_one_more_dim_to_sched_map(isl_ctx* ctx, umap* const um, string pad_val);
 umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val);
+isl_map* pad_one_more_dim_to_sched_map_innermost(isl_map* const um, int pad_val);
 umap* pad_one_more_dim_to_sched_map_with_id(umap* const um, int dim_id, int pad_val);
 
 std::string codegen_c(isl_set* const bset);
@@ -363,6 +368,7 @@ isl_map* lexmax(isl_map* const m0);
 isl_map* inv(isl_map* const m0);
 
 isl_set* unn(isl_set* const m0, isl_set* const m1);
+isl_set* unn(const std::vector<isl_set*>& sets);
 
 isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1);
 
@@ -397,6 +403,8 @@ int get_peel_schedule_domain_dim(isl_map* m, int dom_dim);
 //some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);
 isl_map* pad_to_domain_ubuf_map(isl_map* s, int depth);
+isl_map* shift_domain_map(isl_map* s, vector<int> shift_depth);
+isl_map* shift_range_map(isl_map* s, vector<int> shift_depth);
 isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
 isl_map* delay_sched_map(isl_map* s, isl_map* write_sched);
 
@@ -450,6 +458,7 @@ isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 isl_union_set* coalesce(isl_union_set* const m0);
 
 isl_union_map* coalesce(isl_union_map* const m0);
+isl_map* coalesce(isl_map* const m0);
 
 isl_union_map* dot_domain(isl_union_map* const m0, isl_union_map* const m1);
 
@@ -563,6 +572,8 @@ isl_point* form_pt(vector<int> const_vec);
 uset* gist(uset* base, uset* context);
 isl_map* project_all_but(isl_map* const dmap, const int d);
 isl_set* project_all_but(isl_set* const dmap, const int d);
+isl_set* project_out(isl_set* const dmap, const int d);
+isl_map* project_out(isl_map* const dmap, const int d);
 
 
 vector<string> space_var_args(isl_space* s);
@@ -578,6 +589,8 @@ isl_val* neg(isl_val* a);
 
 isl_aff* sub(isl_aff* a, isl_aff* b);
 int to_int(isl_val* a);
+
+isl_multi_aff* sub(isl_multi_aff* a, isl_multi_aff* b);
 
 isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v);
 isl_aff* set_const_coeff(isl_aff* const a, isl_val* v);
@@ -635,18 +648,25 @@ isl_basic_set* zero(isl_basic_set* fs, const int var);
 
 std::string codegen_c(isl_aff* const bset);
 isl_set* set_name(isl_set* const m, string new_name);
+isl_aff* set_name(isl_aff* const m, string new_name);
+isl_multi_aff* set_name(isl_multi_aff* const m, string new_name);
+isl_multi_aff* set_in_name(isl_multi_aff* const m, string new_name);
 
 void release(isl_set* s);
 void release(isl_map* m);
 void release(isl_union_set* s);
 void release(isl_union_map* m);
 void release(isl_union_pw_qpolynomial* m);
+void release(isl_aff* s);
+
 isl_multi_aff* get_multi_aff(isl_union_map* m);
 isl_multi_aff* get_multi_aff(isl_map* m);
 
 
 isl_map* linear_address_map(isl_set* s);
+isl_map* linear_schedule(isl_map* sched, vector<int> iis, int offset, bool ignore);
 isl_map* to_map(isl_aff* s);
+isl_map* to_map(isl_multi_aff* s);
 bool no_divs(isl_aff* a);
 isl_aff* constant_aff(isl_aff* src, const int val);
 
@@ -655,3 +675,15 @@ isl_aff* sub(isl_aff* start_time_aff, const int compute_latency);
 isl_aff* mul(isl_aff* start_time_aff, const int compute_latency);
 isl_aff* div(isl_aff* start_time_aff, const int compute_latency);
 
+std::vector<isl_aff*> get_affs(isl_multi_aff* saff);
+std::map<int, isl_val*> constant_components(isl_multi_aff* access);
+isl_multi_aff* rdmultiaff(isl_ctx* ctx, const std::string& str);
+isl_val* constant(isl_aff* a);
+
+umap* to_umap(const vector<isl_aff*>& hs);
+
+isl_aff* flatten(isl_multi_aff* ma, isl_set* dom);
+
+isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom);
+
+isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors);

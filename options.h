@@ -3,12 +3,28 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <set>
 
 using namespace std;
 
+enum test_data_input_stream_type {
+  TEST_DATA_INPUT_STREAM_TYPE_CONSTANT,
+  TEST_DATA_INPUT_STREAM_TYPE_RANDOM,
+  TEST_DATA_INPUT_STREAM_TYPE_INCREMENTING,
+};
+
+struct test_data_input_stream {
+  test_data_input_stream_type tp;
+  int seed;
+  int value;
+
+  test_data_input_stream() : tp(TEST_DATA_INPUT_STREAM_TYPE_RANDOM), seed(1), value(0) {}
+};
+
 struct DebugOptions {
   bool expect_all_linebuffers;
+  test_data_input_stream test_inputs;
 
   DebugOptions() : expect_all_linebuffers(false) {}
 };
@@ -36,16 +52,47 @@ enum TargetTile {
   TARGET_TILE_DUAL_SRAM_RAW,
   TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN,
   TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN,
-  TARGET_TILE_PLATONIC
+  TARGET_TILE_PLATONIC,
+  TARGET_TILE_GENERIC_SRAM,
+  TARGET_TILE_BRAM,
+  TARGET_TILE_M3
+};
+
+struct global_signals_policy {
+  bool synchronous_reset;
+
+  global_signals_policy() : synchronous_reset(false) {}
 };
 
 struct RTLOptions {
   bool use_external_controllers;
   bool pack_controllers_in_memtiles;
   bool use_prebuilt_memory;
+  bool use_pipelined_compute_units;
+  int max_inpt, max_outpt;
   TargetTile target_tile;
+  global_signals_policy global_signals;
 
-  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false) {}
+  RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
+  use_pipelined_compute_units(false),
+    max_inpt(1), max_outpt(1),
+    target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false) {}
+  //RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), use_prebuilt_memory(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}
+};
+
+struct LakeCollateral {
+    std::unordered_map<string, int> word_width;
+    std::unordered_map<string, int> bank_num;
+    std::unordered_map<string, int> capacity;
+    std::unordered_map<string, int> in_port_width;
+    std::unordered_map<string, int> out_port_width;
+
+    LakeCollateral():
+        word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
+        in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
+        out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
+        bank_num({{"agg", 2}, {"sram", 1}, {"tb", 2}}),
+        capacity({{"agg", 4}, {"sram", 512}, {"tb", 16}}) {}
 };
 
 struct CodegenOptions {
@@ -60,6 +107,15 @@ struct CodegenOptions {
   //TODO:for merge banks, we should separate codegen from rewrite
   bool conditional_merge;
   size_t merge_threshold;
+
+  //Use for create hardware schedule
+  bool inline_vectorization;
+  vector<int> iis;
+
+  //Use for garnet
+  bool pass_through_valid;
+  bool emit_smt_stream;
+  string dir;
 
   bool use_epochs;
   int num_input_epochs;
@@ -77,10 +133,13 @@ struct CodegenOptions {
   RTLOptions rtl_options;
 
   DebugOptions debug_options;
+  LakeCollateral mem_tile;
 
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
   use_custom_code_string(false), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
+  inline_vectorization(false), iis({}),
+  pass_through_valid(false), emit_smt_stream(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),
   push_garbage_outputs(false),

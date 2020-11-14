@@ -1063,7 +1063,7 @@ string compute_unit_string(const num_type tp,
 }
 
 map<string, isl_val*>
-compute_qfactors(vector<isl_map*>& deps);
+compute_qfactors(const vector<isl_map*>& deps);
 
 map<string, vector<int> >
 pad_insertion_indexes(uset* domain, umap* validity);
@@ -1338,3 +1338,9 @@ umap* to_umap(uset* domain, const map<string, isl_aff*>& hs);
 umap* to_umap(const map<string, isl_aff*>& hs);
 umap* qschedule_to_map_final_sort(isl_ctx* ctx, map<string, vector<QExpr> >& schedules);
 umap* qschedule_to_map_final_sort(isl_ctx* ctx, map<string, vector<QExpr> >& schedules, map<string, int>& order);
+
+
+map<string, isl_aff*> clockwork_schedule_dimension(
+    vector<isl_set*> domains,
+    vector<isl_map*> deps,
+    map<string, vector<string> >& high_bandwidth_deps);

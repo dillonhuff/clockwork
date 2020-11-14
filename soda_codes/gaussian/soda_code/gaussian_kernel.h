@@ -2,5 +2,5 @@
 
 extern "C" {
 
-void gaussian_kernel(ap_uint<16>* hw_output_stencil, ap_uint<16>* input_copy_stencil, uint64_t coalesced_data_num);
+void gaussian_kernel(ap_uint<16>* hw_output_stencil, ap_uint<16>* hw_input_stencil, uint64_t coalesced_data_num);
 }

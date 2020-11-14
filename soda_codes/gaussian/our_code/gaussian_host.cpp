@@ -18,23 +18,23 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
+  const int op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_DATA_SIZE = num_epochs*4096;
+  const int op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
+  size_t op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_size_bytes = op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_BYTES_PER_PIXEL * op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_DATA_SIZE;
+
+  total_size_bytes += op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_size_bytes;
   const int op_hcompute_hw_output_stencil_write_pipe0_DATA_SIZE = num_epochs*3844;
   const int op_hcompute_hw_output_stencil_write_pipe0_BYTES_PER_PIXEL = 16 / 8;
   size_t op_hcompute_hw_output_stencil_write_pipe0_size_bytes = op_hcompute_hw_output_stencil_write_pipe0_BYTES_PER_PIXEL * op_hcompute_hw_output_stencil_write_pipe0_DATA_SIZE;
 
   total_size_bytes += op_hcompute_hw_output_stencil_write_pipe0_size_bytes;
-  const int op_hcompute_hw_input_stencil_read_pipe0_DATA_SIZE = num_epochs*4096;
-  const int op_hcompute_hw_input_stencil_read_pipe0_BYTES_PER_PIXEL = 16 / 8;
-  size_t op_hcompute_hw_input_stencil_read_pipe0_size_bytes = op_hcompute_hw_input_stencil_read_pipe0_BYTES_PER_PIXEL * op_hcompute_hw_input_stencil_read_pipe0_DATA_SIZE;
-
-  total_size_bytes += op_hcompute_hw_input_stencil_read_pipe0_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > op_hcompute_hw_input_stencil_read_pipe0(op_hcompute_hw_input_stencil_read_pipe0_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > op_hcompute_hw_input_global_wrapper_stencil_read_pipe0(op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > op_hcompute_hw_output_stencil_write_pipe0(op_hcompute_hw_output_stencil_write_pipe0_size_bytes);
 
   // TODO: POPULATE BUFFERS FOR EACH PIPELINE
@@ -67,8 +67,8 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer op_hcompute_hw_input_stencil_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, op_hcompute_hw_input_stencil_read_pipe0_size_bytes, op_hcompute_hw_input_stencil_read_pipe0.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, op_hcompute_hw_input_stencil_read_pipe0_ocl_buf));
+  OCL_CHECK(err, cl::Buffer op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_size_bytes, op_hcompute_hw_input_global_wrapper_stencil_read_pipe0.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_ocl_buf));
 
   OCL_CHECK(err, cl::Buffer op_hcompute_hw_output_stencil_write_pipe0_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, op_hcompute_hw_output_stencil_write_pipe0_size_bytes, op_hcompute_hw_output_stencil_write_pipe0.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, op_hcompute_hw_output_stencil_write_pipe0_ocl_buf));
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({op_hcompute_hw_input_stencil_read_pipe0_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_ocl_buf}, 0));
 
 unsigned long start, end, nsduration;
 cl::Event event;
