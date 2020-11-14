@@ -317,6 +317,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
       if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
+      } else if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        ub_field.push_back(make_pair(name + "_valid", context->BitIn()));
       }
       ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
     }
