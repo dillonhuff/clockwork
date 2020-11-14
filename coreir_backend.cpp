@@ -75,24 +75,47 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
 
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
 
-  std::set<string> done_output = generate_M3_shift_registers(options, def, prg, buf, hwinfo);
+  CoreIR::Context* c = def->getContext();
 
-  maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf, hwinfo);
-  bool has_embarassing_partition = embarassing_banking.has_value();
-  assert(has_embarassing_partition);
+  std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, buf, hwinfo);
 
-  vector<int> extents;
-  map<int, int> partitioned_dimension_extents;
-  std::set<int> partition_dims = embarassing_banking.get_value();
-  extents = extents_by_dimension(buf);
-  for (auto d : partition_dims) {
-    partitioned_dimension_extents[d] = extents.at(d);
-  }
+  if (done_outpt.size() < buf.num_out_ports()) {
+    // If the entire buffer cannot be reduced to a single
+    // shift register
+    maybe<std::set<int> > embarassing_banking =
+      embarassing_partition(buf, hwinfo);
+    bool has_embarassing_partition = embarassing_banking.has_value();
+    assert(has_embarassing_partition);
 
-  int num_banks = 1;
-  for (auto ent : partitioned_dimension_extents) {
-    num_banks *= ent.second;
+    vector<int> extents;
+    map<int, int> partitioned_dimension_extents;
+    std::set<int> partition_dims = embarassing_banking.get_value();
+    extents = extents_by_dimension(buf);
+    for (auto d : partition_dims) {
+      partitioned_dimension_extents[d] = extents.at(d);
+    }
+
+    int num_banks = 1;
+    for (auto ent : partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+
+    vector<int> banks;
+    for (int b = 0; b < num_banks; b++) {
+        //{"width", c->Int()}, // for m3 16
+        //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
+        //{"num_outputs", c->Int()}, // ''
+        //{"has_valid", c->Bool()},
+        //{"has_stencil_valid", c->Bool()},
+        //{"has_flush", c->Bool()},
+        //{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
+        //{"has_reset", c->Bool()}
+
+      Values tile_params{{"width", COREMK(c, 16)},
+        {"ID", COREMK(c, str(b))}};
+      def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+    }
+    //assert(false);
   }
 
 }

@@ -16900,10 +16900,11 @@ void fpga_asplos_tests() {
 
 void cgra_flow_tests() {
 
+  vector<prog> M3_test_programs{resnet()};
+  test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
+
   auto test_programs =
     all_cgra_programs();
-
-  test_codegen(test_programs, compile_for_CGRA_M3_mem);
 
   test_platonic_codegen(test_programs);
 
