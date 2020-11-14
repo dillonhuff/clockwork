@@ -1682,16 +1682,19 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   assert(verilog_collateral_file != nullptr);
 
-  Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
-
   bool found_compute = load_compute_file(options, buffers, prg, schedmap, context, hwinfo);
+
+  Module* ub = coreir_moduledef(options, buffers, prg, schedmap, context, hwinfo);
   auto def = ub->newModuleDef();
 
   auto sched_maps = get_maps(schedmap);
-  for (auto op : prg.all_ops()) {
-    if (options.rtl_options.use_external_controllers) {
+  if (options.rtl_options.use_external_controllers) {
+    for (auto op : prg.all_ops()) {
       generate_coreir_op_controller_verilog(options, def, op, sched_maps, hwinfo);
     }
+  }
+
+  for (auto op : prg.all_ops()) {
     generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
   }
 
@@ -1707,8 +1710,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   }
 
   auto levels = get_variable_levels(prg);
+
   // Connect compute units to buffers
   for (auto op : prg.all_ops()) {
+
+    // Demosaic (and other?) applications need control
+    // variable values. Wire them up here
     vector<string> surrounding = surrounding_vars(op, prg);
     for (auto var : op->index_variables_needed_by_compute) {
       assert(options.rtl_options.use_external_controllers);
@@ -1778,7 +1785,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   ub->print();
 
   connect_signal("reset", ub);
-  //connect_signal("rst_n", ub);
   context->runPasses({"rungenerators", "wireclocks-clk"});
 
   verilog_collateral.close();
@@ -1786,11 +1792,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   return ub;
 }
-
-//void add_cgralib(CoreIR::Context* context) {
-//
-//}
-
 
 typedef struct {
   vector<SelectPath> IO16;
