@@ -1818,6 +1818,37 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       assert(false);
     }
 
+    std::set<string> get_read_ops() const {
+        std::set<string> ret;
+        for (auto it: schedule) {
+            string op_name = domain_name(it.second);
+            if (is_out_pt(it.first)) {
+                ret.insert(op_name);
+            }
+        }
+        return ret;
+    }
+
+    std::set<string> get_write_ops() const {
+        std::set<string> ret;
+        for (auto it: schedule) {
+            string op_name = domain_name(it.second);
+            if (!is_out_pt(it.first)) {
+                ret.insert(op_name);
+            }
+        }
+        return ret;
+    }
+
+    std::set<string> get_ops() const {
+        std::set<string> ret;
+        for (auto it: schedule) {
+            string op_name = domain_name(it.second);
+            ret.insert(op_name);
+        }
+        return ret;
+    }
+
     bool is_in_pt(const std::string& name) const {
       assert(contains_key(name, isIn));
       return isIn.at(name);

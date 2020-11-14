@@ -1229,127 +1229,136 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> r
 
     //this count is global to all the ubuffer sub controllers
     unordered_map<string, int> config_cnt = {{"in2agg", 0}, {"tb2out", 0}};
-    for (auto it : op2sched) {
-        cout <<"\n\n\tEmit config for opname: " << it.first << str(it.second) << endl;
-        string op_name = it.first;
-        MemConnSch tmp;
+    std::set<string> op_has_visited;
+    for (auto it_buf: rewrite_buffer) {
+        if (contains(it_buf.first, "sram")) {
+            continue;
+        }
+        std::set<string> ops = it_buf.second.get_ops();
+        for (auto op_name : ops) {
+            if (op_has_visited.count(op_name) == 0) {
+                op_has_visited.insert(op_name);
+                auto sched = op2sched.at(op_name);
+                cout <<"\n\n\tEmit config for opname: " << op_name << endl
+                    <<"Schedule: " <<  str(sched) << endl;
+                MemConnSch tmp;
 
-        //This is for the new memtile config, need to slice the op into multiple accessor
-        if (options.mem_tile.multi_sram_accessor) {
-            if (op2read_bank.count(op_name) &&
-                    op2write_bank.count(op_name)) {
-                if (op2read_bank.at(op_name).second != -1) {
-                    op2write_bank.at(op_name).second =
-                        op2read_bank.at(op_name).second;
-                } else if (op2write_bank.at(op_name).second != -1) {
-                    op2read_bank.at(op_name).second =
-                        op2write_bank.at(op_name).second;
+                //This is for the new memtile config, need to slice the op into multiple accessor
+                if (options.mem_tile.multi_sram_accessor) {
+                    if (op2read_bank.count(op_name) &&
+                            op2write_bank.count(op_name)) {
+                        if (op2read_bank.at(op_name).second != -1) {
+                            op2write_bank.at(op_name).second =
+                                op2read_bank.at(op_name).second;
+                        } else if (op2write_bank.at(op_name).second != -1) {
+                            op2read_bank.at(op_name).second =
+                                op2write_bank.at(op_name).second;
+                        }
+                    }
                 }
-            }
-        }
 
-        int in_project_dim;
-        if (op2write_bank.count(op_name)) {
-            in_project_dim = op2write_bank.at(op_name).second;
-        } else {
-            in_project_dim = op2read_bank.at(op_name).second;
-        }
+                int in_project_dim;
+                if (op2write_bank.count(op_name)) {
+                    in_project_dim = op2write_bank.at(op_name).second;
+                } else {
+                    in_project_dim = op2read_bank.at(op_name).second;
+                }
 
-        //Generate all the accessor config from schedule
-        vector<MemConnSch> accessor_config_vec =
-            emit_lake_accessor_config(options, in_project_dim, it.second);
+                //Generate all the accessor config from schedule
+                vector<MemConnSch> accessor_config_vec =
+                    emit_lake_accessor_config(options, in_project_dim, sched);
 
-        string key = split_at(op_name, "_").back();
-        if (config_cnt.count(key) == 0){
-            config_cnt[key] = 0;
-        }
+                string key = split_at(op_name, "_").back();
+                if (config_cnt.count(key) == 0){
+                    config_cnt[key] = 0;
+                }
 
-        vector<ConfigMap> read_addr_config, write_addr_config;
+                vector<ConfigMap> read_addr_config, write_addr_config;
 
-        if (op2read_map.count(op_name)) {
-            auto read_map = op2read_map.at(it.first);
-            string producer_buf_name = op2read_buf.at(it.first);
-            //tmp.read = producer_buf_name;
-            for (auto tmp: read_map) {
-                concat( read_addr_config,
-                        emit_lake_addrgen_config(options, op_name, true,
-                            op2read_bank.at(op_name).first, op2read_bank.at(op_name).second,
-                            rewrite_buffer.at(producer_buf_name), tmp));
-            }
-        }
+                if (op2read_map.count(op_name)) {
+                    auto read_map = op2read_map.at(op_name);
+                    string producer_buf_name = op2read_buf.at(op_name);
+                    //tmp.read = producer_buf_name;
+                    for (auto tmp: read_map) {
+                        concat( read_addr_config,
+                                emit_lake_addrgen_config(options, op_name, true,
+                                    op2read_bank.at(op_name).first, op2read_bank.at(op_name).second,
+                                    rewrite_buffer.at(producer_buf_name), tmp));
+                    }
+                }
 
-        if (op2write_map.count(op_name)) {
-            auto write_map = op2write_map.at(it.first);
-            string consumer_buf_name = op2write_buf.at(it.first);
-            //tmp.write = consumer_buf_name;
-            for (auto tmp: write_map) {
-                concat( write_addr_config,
-                        emit_lake_addrgen_config(options, op_name, false,
-                            op2write_bank.at(op_name).first, op2write_bank.at(op_name).second,
-                            rewrite_buffer.at(consumer_buf_name), tmp));
-            }
-        }
-        if (is_update_op(op_name)) {
-            assert(write_addr_config.size() > 0);
-            assert(read_addr_config.size() > 0);
-            for (auto write_config: write_addr_config) {
-                cout << "Add in2agg_" << config_cnt.at("in2agg") << " for  op :" << str(it.second) << endl;
-                string key = "in2agg";
-                string config_key = key + "_" + to_string(config_cnt.at(key));
-                assert(accessor_config_vec.size() == 1);
-                auto cpy = pick(accessor_config_vec);
-                cpy.vals.merge(write_config);
-                data[config_key] = cpy;
-                config_cnt.at(key) ++;
-            }
-            for (auto read_config: read_addr_config) {
-                string key = "tb2out";
-                string config_key = key + "_" + to_string(config_cnt.at(key));
-                assert(accessor_config_vec.size() == 1);
-                auto cpy = pick(accessor_config_vec);
-                cpy.vals.merge(read_config);
-                data[config_key] = cpy;
-                config_cnt.at(key) ++;
-            }
-        } else if (read_addr_config.size() == 0) {
-            for (auto write_config: write_addr_config) {
+                if (op2write_map.count(op_name)) {
+                    auto write_map = op2write_map.at(op_name);
+                    string consumer_buf_name = op2write_buf.at(op_name);
+                    //tmp.write = consumer_buf_name;
+                    for (auto tmp: write_map) {
+                        concat( write_addr_config,
+                                emit_lake_addrgen_config(options, op_name, false,
+                                    op2write_bank.at(op_name).first, op2write_bank.at(op_name).second,
+                                    rewrite_buffer.at(consumer_buf_name), tmp));
+                    }
+                }
+                if (is_update_op(op_name)) {
+                    assert(write_addr_config.size() > 0);
+                    assert(read_addr_config.size() > 0);
+                    for (auto write_config: write_addr_config) {
+                        cout << "Add in2agg_" << config_cnt.at("in2agg") << " for  op :" << str(sched) << endl;
+                        string key = "in2agg";
+                        string config_key = key + "_" + to_string(config_cnt.at(key));
+                        assert(accessor_config_vec.size() == 1);
+                        auto cpy = pick(accessor_config_vec);
+                        cpy.vals.merge(write_config);
+                        data[config_key] = cpy;
+                        config_cnt.at(key) ++;
+                    }
+                    for (auto read_config: read_addr_config) {
+                        string key = "tb2out";
+                        string config_key = key + "_" + to_string(config_cnt.at(key));
+                        assert(accessor_config_vec.size() == 1);
+                        auto cpy = pick(accessor_config_vec);
+                        cpy.vals.merge(read_config);
+                        data[config_key] = cpy;
+                        config_cnt.at(key) ++;
+                    }
+                } else if (read_addr_config.size() == 0) {
+                    for (auto write_config: write_addr_config) {
 
-                cout << "Add in2agg_" << config_cnt.at("in2agg") << " for  op :" << str(it.second) << endl;
-                string key = "in2agg";
-                string config_key = key + "_" + to_string(config_cnt.at(key));
-                assert(accessor_config_vec.size() == 1);
-                auto cpy = pick(accessor_config_vec);
-                cpy.vals.merge(write_config);
-                data[config_key] = cpy;
-                config_cnt.at(key) ++;
-            }
-        } else if(write_addr_config.size() == 0) {
-            for (auto read_config: read_addr_config) {
-                string key = "tb2out";
-                string config_key = key + "_" + to_string(config_cnt.at(key));
-                assert(accessor_config_vec.size() == 1);
-                auto cpy = pick(accessor_config_vec);
-                cpy.vals.merge(read_config);
-                data[config_key] = cpy;
-                config_cnt.at(key) ++;
-            }
-        } else {
-            //we only have 1 sram2tb agg2sram, all the other is handled by mux
-            assert(read_addr_config.size() == write_addr_config.size());
-            assert(read_addr_config.size() == accessor_config_vec.size());
-            int total_ctrl = read_addr_config.size();
-            for (int cnt = 0; cnt < total_ctrl; cnt ++) {
-            //for (auto read_config: read_addr_config) {
-            //for (auto write_config: write_addr_config) {
-                auto read_config = read_addr_config.at(cnt);
-                auto write_config = write_addr_config.at(cnt);
-                string config_key = key;// + "_" + to_string(config_cnt.at(key) ++);
-                if (options.mem_tile.multi_sram_accessor)
-                    config_key += "_" + to_string(config_cnt.at(key) ++);
-                auto cpy = accessor_config_vec.at(cnt);
-                cpy.vals.merge(read_config);
-                cpy.vals.merge(write_config);
-                data[config_key] = cpy;
+                        cout << "Add in2agg_" << config_cnt.at("in2agg") << " for  op :" << str(sched) << endl;
+                        string key = "in2agg";
+                        string config_key = key + "_" + to_string(config_cnt.at(key));
+                        assert(accessor_config_vec.size() == 1);
+                        auto cpy = pick(accessor_config_vec);
+                        cpy.vals.merge(write_config);
+                        data[config_key] = cpy;
+                        config_cnt.at(key) ++;
+                    }
+                } else if(write_addr_config.size() == 0) {
+                    for (auto read_config: read_addr_config) {
+                        string key = "tb2out";
+                        string config_key = key + "_" + to_string(config_cnt.at(key));
+                        assert(accessor_config_vec.size() == 1);
+                        auto cpy = pick(accessor_config_vec);
+                        cpy.vals.merge(read_config);
+                        data[config_key] = cpy;
+                        config_cnt.at(key) ++;
+                    }
+                } else {
+                    //we only have 1 sram2tb agg2sram, all the other is handled by mux
+                    assert(read_addr_config.size() == write_addr_config.size());
+                    assert(read_addr_config.size() == accessor_config_vec.size());
+                    int total_ctrl = read_addr_config.size();
+                    for (int cnt = 0; cnt < total_ctrl; cnt ++) {
+                        auto read_config = read_addr_config.at(cnt);
+                        auto write_config = write_addr_config.at(cnt);
+                        string config_key = key;// + "_" + to_string(config_cnt.at(key) ++);
+                        if (options.mem_tile.multi_sram_accessor)
+                            config_key += "_" + to_string(config_cnt.at(key) ++);
+                        auto cpy = accessor_config_vec.at(cnt);
+                        cpy.vals.merge(read_config);
+                        cpy.vals.merge(write_config);
+                        data[config_key] = cpy;
+                    }
+                }
             }
         }
     }
