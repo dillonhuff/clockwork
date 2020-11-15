@@ -701,10 +701,10 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
         acc_map = its_range(acc_map, to_set(b.rddom));
       }
       acc_map = set_range_name(acc_map, bname);
-      auto dom = domain.at(outpt);
+      auto dom = ::domain(acc_map);
       string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
       buf.port_bundles[::name(dom) + "_read"].push_back(pt_name);
-      buf.add_out_pt(pt_name, dom, acc_map, schedule.at(outpt));
+      buf.add_out_pt(pt_name, dom, acc_map, its(schedule.at(outpt), dom));
       if (sv_map.count(outpt)) {
         buf.sv_map[pt_name] = sv_map.at(outpt);
       }
