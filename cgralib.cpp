@@ -185,6 +185,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"has_stencil_valid", c->Bool()},
         {"has_flush", c->Bool()},
         {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
+        {"has_external_addrgen", c->Bool()},
         {"has_reset", c->Bool()}
     });
 
@@ -206,15 +207,38 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                 {"clk", c->Named("coreir.clkIn")}
             };
 
+            //for (size_t i = 0; i < num_input; i ++) {
+                //recordparams.push_back({"data_in_" + std::to_string(i),
+                        //c->BitIn()->Arr(width)});
+            //}
+            //for (size_t i = 0; i < num_output; i ++) {
+                //recordparams.push_back({"data_out_" + std::to_string(i),
+                        //c->Bit()->Arr(width)});
+            //}
+
+            bool has_external_addrgen = genargs.at("has_external_addrgen")->get<bool>();
             for (size_t i = 0; i < num_input; i ++) {
                 recordparams.push_back({"data_in_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
+
+                if (has_external_addrgen) {
+                  recordparams.push_back({"write_addr_" + std::to_string(i),
+                      c->BitIn()->Arr(16)});
+                  recordparams.push_back({"wen_" + std::to_string(i),
+                      c->BitIn()});
+                }
             }
             for (size_t i = 0; i < num_output; i ++) {
                 recordparams.push_back({"data_out_" + std::to_string(i),
                         c->Bit()->Arr(width)});
-            }
 
+                if (has_external_addrgen) {
+                  recordparams.push_back({"read_addr_" + std::to_string(i),
+                      c->BitIn()->Arr(16)});
+                  recordparams.push_back({"ren_" + std::to_string(i),
+                      c->BitIn()});
+                }
+            }
             bool has_valid = genargs.at("has_valid")->get<bool>();
             bool has_stencil_valid = genargs.at("has_stencil_valid")->get<bool>();
             bool has_flush = genargs.at("has_flush")->get<bool>();
@@ -246,6 +270,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_flush", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_reset", Const::make(c, false)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"has_external_addrgen", Const::make(c, false)}});
 
 
   auto CGRALibMemAmberModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
@@ -272,7 +297,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"has_stencil_valid", c->Bool()},
         {"has_flush", c->Bool()},
         {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
-        {"has_reset", c->Bool()}
+        {"has_reset", c->Bool()},
+        {"has_external_addrgen", c->Bool()}
     });
 
   cgralib->newTypeGen(
@@ -291,19 +317,28 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                 {"clk", c->Named("coreir.clkIn")}
             };
 
+            bool has_external_addrgen = genargs.at("has_external_addrgen")->get<bool>();
             for (size_t i = 0; i < num_input; i ++) {
                 recordparams.push_back({"data_in_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
-                //recordparams.push_back({"wen_" + std::to_string(i),
-                //        c->BitIn()});
+
+                if (has_external_addrgen) {
+                  recordparams.push_back({"write_addr_" + std::to_string(i),
+                      c->BitIn()->Arr(16)});
+                  recordparams.push_back({"wen_" + std::to_string(i),
+                      c->BitIn()});
+                }
             }
             for (size_t i = 0; i < num_output; i ++) {
                 recordparams.push_back({"data_out_" + std::to_string(i),
                         c->Bit()->Arr(width)});
-                //recordparams.push_back({"valid_" + std::to_string(i),
-                //        c->Bit()});
-                //recordparams.push_back({"ren_" + std::to_string(i),
-                //        c->BitIn()});
+
+                if (has_external_addrgen) {
+                  recordparams.push_back({"read_addr_" + std::to_string(i),
+                      c->BitIn()->Arr(16)});
+                  recordparams.push_back({"ren_" + std::to_string(i),
+                      c->BitIn()});
+                }
             }
 
             bool has_valid = genargs.at("has_valid")->get<bool>();
