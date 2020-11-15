@@ -106,6 +106,10 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     bool has_embarassing_partition = embarassing_banking.has_value();
     assert(has_embarassing_partition);
 
+    if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+      cout << buf.name << " is really a register file" << endl;
+    }
+
     vector<int> extents;
     map<int, int> partitioned_dimension_extents;
     std::set<int> partition_dims = embarassing_banking.get_value();
