@@ -87,8 +87,6 @@ ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
 
   impl.partition_dims = embarassing_banking.get_value();
   vector<int> extents;
-  //map<int, int> partitioned_dimension_extents;
-  //std::set<int> partition_dims = embarassing_banking.get_value();
   extents = extents_by_dimension(buf);
   for (auto d : impl.partition_dims) {
     impl.partitioned_dimension_extents[d] = extents.at(d);
@@ -111,9 +109,11 @@ ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
     }
   }
 
+  coeffs.push_back("0");
   string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
 
   cout << "Bank map: " << bank_func << endl;
+  //assert(false);
   isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
   for (auto pt : buf.get_all_ports()) {
     for (int b = 0; b < num_banks; b++) {
@@ -286,6 +286,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     vector<int> banks;
 	    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+	    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
     for (int b = 0; b < num_banks; b++) {
         //{"width", c->Int()}, // for m3 16
         //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
@@ -302,6 +303,11 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 	{"num_inputs",COREMK(c,bank_writers[b].size())},
         {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+      if (chain_pt != "") {
+        def->connect(currbank->sel("chain_chain_en"),one);
+      } else {
+        def->connect(currbank->sel("chain_chain_en"),zero);
+      }
       assert(verilog_collateral_file != nullptr);
       
       vector<string> port_decls = {};
@@ -335,8 +341,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 	      if(pt != chain_pt)
 	      {
 		      def->connect(currbank->sel("data_out_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
-		      def->connect(currbank->sel("chain_chain_en"),one);
-	      	      count++;
+          count++;
 	      }
       }
       count = 0;
@@ -3278,6 +3283,8 @@ void mini_sram_garnet_test() {
   auto addr_zero = mkConst(def, 16, 0);
   auto one =
     def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}})->sel("out");
+  auto zero =
+    def->addInstance("c1","corebit.const",{{"value",Const::make(c,false)}})->sel("out");
   //auto zero =
     //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
 
@@ -3817,8 +3824,8 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
   }
 
-  std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
-  //std::set<string> done_outpt = {};
+  //std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+  std::set<string> done_outpt = {};
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
@@ -3861,7 +3868,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
     }
 
-
     string chain_pt = "";
     for (auto pt: outpt_to_bank)
     {
@@ -3880,6 +3886,8 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     vector<int> banks;
     Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+
     for (int b = 0; b < num_banks; b++) {
       Values tile_params{{"width", COREMK(c, 16)},
         {"ID", COREMK(c, buf.name + "_" + str(b))},
@@ -3888,6 +3896,12 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         {"num_outputs",COREMK(c,bank_readers[b].size())}};
         //{"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+
+      if (chain_pt != "") {
+        def->connect(currbank->sel("chain_chain_en"),one);
+      } else {
+        def->connect(currbank->sel("chain_chain_en"),zero);
+      }
       assert(verilog_collateral_file != nullptr);
 
       vector<string> port_decls = {};
@@ -3945,7 +3959,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
               currbank->sel("data_out_" + str(count)),
               def->sel(pt + "_net.in"));
 
-          def->connect(currbank->sel("chain_chain_en"),one);
           count++;
         }
       }

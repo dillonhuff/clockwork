@@ -5442,7 +5442,8 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf, schedule_info& hwinfo)
     overlapping_large_io_port_groups(buf, 1);
 
   if (filtered_io_groups.size() == 0) {
-    return {};
+    std::set<int> empty;
+    return maybe<std::set<int> >(empty);
   }
 
   std::set<int> dims;
