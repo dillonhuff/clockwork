@@ -7347,3 +7347,32 @@ int buffer_load_latency(CodegenOptions& options) {
   assert(false);
 }
 
+UBuffer write_latency_adjusted_buffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo) {
+  UBuffer cpy = buf;
+  cout << "Adjusted latencies" << endl;
+  for (auto l : hwinfo.compute_unit_latencies) {
+    cout << tab(1) << l.first << " -> " << l.second << endl;
+  }
+  for (auto pt : buf.get_in_ports()) {
+    string op_name = domain_name(pick(get_maps(buf.access_map.at(pt))));
+    cout << "latency adjustment for op name = " << op_name << endl;
+    op* op = prg.find_op(op_name);
+    int write_start = hwinfo.compute_latency(op);
+
+    if (op->buffers_read().size() > 0) {
+      write_start += hwinfo.load_latency(pick(op->buffers_read()));
+    }
+
+    isl_aff* adjusted =
+      add(get_aff(buf.schedule.at(pt)), (int)write_start);
+    cpy.schedule[pt] =
+      its(to_umap(to_map(adjusted)),buf.domain.at(pt));
+  }
+
+  return cpy;
+}
+

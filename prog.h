@@ -1891,3 +1891,10 @@ void dsa_readers(prog& prg);
 
 int buffer_store_latency(CodegenOptions& options);
 int buffer_load_latency(CodegenOptions& options);
+
+
+UBuffer write_latency_adjusted_buffer(
+    CodegenOptions& options,
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo);

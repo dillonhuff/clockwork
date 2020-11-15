@@ -147,5 +147,11 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo);
 
 int generate_compute_unit_regression_tb(op* op, prog& prg);
 
+CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def);
+
+CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
+
+CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
+
 #endif
 

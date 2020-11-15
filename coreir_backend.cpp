@@ -3880,16 +3880,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     vector<int> banks;
     Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     for (int b = 0; b < num_banks; b++) {
-      //{"width", c->Int()}, // for m3 16
-      //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
-      //{"num_outputs", c->Int()}, // ''
-      //{"has_valid", c->Bool()},
-      //{"has_stencil_valid", c->Bool()},
-      //{"has_flush", c->Bool()},
-      //{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
-      //{"has_reset", c->Bool()}
-
-
       Values tile_params{{"width", COREMK(c, 16)},
         {"ID", COREMK(c, buf.name + "_" + str(b))},
         {"has_external_addrgen", COREMK(c, true)},
@@ -3928,7 +3918,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(
             currbank->sel("data_out_1"),
             def->sel(chain_pt + "_net.in"));
-        //def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
       }
       def->connect(currbank->sel("clk_en"),one);
 
@@ -3942,7 +3931,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
           def->connect(
               currbank->sel("data_out_" + str(count)),
               def->sel(pt + "_net.in"));
-          //def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
 
           def->connect(currbank->sel("chain_chain_en"),one);
           count++;
@@ -3951,6 +3939,11 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       count = 0;
       for(auto pt : bank_writers[b])
       {
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        auto agen = build_addrgen(pt, adjusted_buf, def);
+        def->connect(agen->sel("d"),
+          control_vars(def, pt, adjusted_buf));
+        def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
         def->connect(
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
@@ -3975,6 +3968,46 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
 }
 
+  CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
+    auto c = def->getContext();
+
+    cout << "Building addrgen for " << reader << endl;
+    isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
+    for (auto inpt : buf.get_in_ports()) {
+      rddom = unn(rddom, range(buf.access_map.at(inpt)));
+    }
+    for (auto inpt : buf.get_out_ports()) {
+      rddom = unn(rddom, range(buf.access_map.at(inpt)));
+    }
+    auto acc_map = to_map(buf.access_map.at(reader));
+    cout << tab(1) << "=== acc_map = " << str(acc_map) << endl;
+    auto acc_aff = get_aff(acc_map);
+    cout << tab(2) << "=== acc aff = " << str(acc_aff) << endl;
+    auto reduce_map = linear_address_map(to_set(rddom));
+    auto addr_expr = dot(acc_map, reduce_map);
+    auto addr_expr_aff = get_aff(addr_expr);
+    cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
+
+    auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+    auto agen = def->addInstance("addrgen_" + reader + c->getUnique(), aff_gen_mod);
+    return agen;
+  }
+
+  CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+    //return def->sel(controller_name(reader))->sel("d");
+    string bundle = buf.container_bundle(reader);
+    return def->sel("self." + bundle + "_ctrl_vars");
+  }
+
+  CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+    string bundle = buf.container_bundle(reader);
+    if (buf.is_in_pt(reader)) {
+      return def->sel("self." + bundle + "_wen");
+    } else {
+      return def->sel("self." + bundle + "_ren");
+    }
+    //return def->sel(controller_name(reader))->sel("valid");
+  }
 #endif
 
 
