@@ -3779,50 +3779,56 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
   cout << "SRC shift registers" << endl;
   cout << shift_registers << endl;
-  if (dg.nodes.size() > 0) {
-    assert(false);
-  }
-
+  //if (dg.nodes.size() > 0) {
+    //assert(false);
+  //}
   auto c = def->getContext();
   std::set<string> done_outpt;
-  for (auto pt : shift_registered_outputs) {
-    string dst = pt.first;
-    string src = pt.second.first;
-    int delay = pt.second.second;
-    auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
-    Wireable* delayed_src =
-      delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
-
-    def->connect(
-        def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
-        delayed_src);
-    done_outpt.insert(pt.first);
-  }
-
-  cout << "# of in to out shift registers..." << done_outpt.size() << endl;
-  for (auto pt : shift_registered_outputs_to_outputs) {
-    done_outpt.insert(pt.first);
-    if(done_outpt.find(pt.second.first) != done_outpt.end()) {
-      //continue;
-    }
-    if(done_outpt.find(pt.first)!=done_outpt.end())
-    {
-      //continue;
-    } else{
-      //string dst = pt.first;
-      //string src = pt.second.first;
-      //int delay = pt.second.second;
-      //auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
-      //Wireable* delayed_src =
-        //delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
-
-      //def->connect(
-          //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
-          //delayed_src);
-      //done_outpt.insert(pt.first);
-    }
+  for (auto w : shift_registers.weights) {
+    done_outpt.insert(w.first.second);
   }
   return done_outpt;
+
+  //auto c = def->getContext();
+  //std::set<string> done_outpt;
+  //for (auto pt : shift_registered_outputs) {
+    //string dst = pt.first;
+    //string src = pt.second.first;
+    //int delay = pt.second.second;
+    //auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+    //Wireable* delayed_src =
+      //delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+
+    //def->connect(
+        //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
+        //delayed_src);
+    //done_outpt.insert(pt.first);
+  //}
+
+  //cout << "# of in to out shift registers..." << done_outpt.size() << endl;
+  //for (auto pt : shift_registered_outputs_to_outputs) {
+    //done_outpt.insert(pt.first);
+    //if(done_outpt.find(pt.second.first) != done_outpt.end()) {
+      ////continue;
+    //}
+    //if(done_outpt.find(pt.first)!=done_outpt.end())
+    //{
+      ////continue;
+    //} else{
+      ////string dst = pt.first;
+      ////string src = pt.second.first;
+      ////int delay = pt.second.second;
+      ////auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+      ////Wireable* delayed_src =
+        ////delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+
+      ////def->connect(
+          ////def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
+          ////delayed_src);
+      ////done_outpt.insert(pt.first);
+    //}
+  //}
+  //return done_outpt;
 }
 
 void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
@@ -3835,7 +3841,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     def->connect(
         w->sel("out"),
         def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
-
   }
 
   std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
