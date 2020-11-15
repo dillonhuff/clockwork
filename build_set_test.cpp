@@ -15845,62 +15845,6 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   sanity_check_iis(sched);
 }
 
-int buffer_store_latency(CodegenOptions& options) {
-  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
-      options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
-    return 1;
-  }
-
-  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
-    return 1;
-  }
-
-  if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
-    return 0;
-  }
-
-  if (options.rtl_options.target_tile == TARGET_TILE_GENERIC_SRAM) {
-    return 1;
-  }
-
-  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
-    return 2;
-  }
-
-  if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-    return 1;
-  }
-  assert(false);
-}
-
-int buffer_load_latency(CodegenOptions& options) {
-  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
-      options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN
-      ) {
-    return 0;
-  } else if(options.rtl_options.target_tile == TARGET_TILE_PLATONIC)
-  {
-      return 0;
-  }
-
-  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
-    return 1;
-  }
-
-  if (options.rtl_options.target_tile == TARGET_TILE_GENERIC_SRAM) {
-    return 1;
-  }
-
-  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
-    return 2;
-  }
-
-  if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-    return 1;
-  }
-  assert(false);
-}
-
 schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   schedule_info sched;
   sched.use_dse_compute = false;
@@ -16781,8 +16725,8 @@ void fpga_asplos_tests() {
 void cgra_flow_tests() {
 
   //vector<prog> M3_test_programs{resnet(), pointwise(), camera_pipeline(), harris()};
-  //vector<prog> M3_test_programs{pointwise(), camera_pipeline(), harris()};
-  vector<prog> M3_test_programs{mobilenet_unrolled(), pointwise()};
+  vector<prog> M3_test_programs{pointwise(), camera_pipeline(), harris()};
+  //vector<prog> M3_test_programs{mobilenet_unrolled(), pointwise()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
 

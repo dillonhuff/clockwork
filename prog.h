@@ -1888,3 +1888,6 @@ int max_loop_depth(prog& prg);
 void dsa_writers(prog& prg);
 void dsa_readers(prog& prg);
 
+
+int buffer_store_latency(CodegenOptions& options);
+int buffer_load_latency(CodegenOptions& options);

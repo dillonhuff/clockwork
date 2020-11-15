@@ -203,10 +203,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   if (buf.num_out_ports() > 0) {
     ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
 
-    //if (impl.partition_dims.size() == buf.logical_dimension()) {
     if (is_register_file(buf, impl)) {
       cout << buf.name << " is really a register file" << endl;
-      assert(false);
     }
 
     int num_banks = 1;
