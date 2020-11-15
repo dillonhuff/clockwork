@@ -151,6 +151,8 @@ int wire_width(CoreIR::Wireable* w) {
   assert(false);
 }
 
+void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo);
+
 std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
 
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
@@ -172,10 +174,20 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
     done_outpt.insert(pt.first);
   }
 
+  cout << "# of in to out shift registers..." << done_outpt.size() << endl;
   for (auto pt : shift_registered_outputs_to_outputs) {
-    string dst = pt.first;
-    string src = pt.second.first;
-    if (!elem(dst, done_outpt)) {
+    if(done_outpt.find(pt.second.first) != done_outpt.end()) {
+      continue;
+    }
+    if(done_outpt.find(pt.first)!=done_outpt.end())
+    {
+      continue;
+    } else{
+      done_outpt.insert(pt.first);
+    }
+    //string dst = pt.first;
+    //string src = pt.second.first;
+    //if (!elem(dst, done_outpt)) {
       //int delay = pt.second.second;
       //auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
       //Wireable* delayed_src =
@@ -184,8 +196,8 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
       //def->connect(
           //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
           //delayed_src);
-      done_outpt.insert(pt.first);
-    }
+      //done_outpt.insert(pt.first);
+    //}
   }
   return done_outpt;
 }
@@ -388,6 +400,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   } else if (options.rtl_options.target_tile == TARGET_TILE_M3) {
     cout << "M3 codegen is not implemented!" << endl;
     generate_M3_coreir(options, def, prg, buf, hwinfo);
+  } else if (options.rtl_options.target_tile == TARGET_TILE_M1) {
+    cout << "M1 codegen is not implemented!" << endl;
+    generate_M1_coreir(options, def, prg, buf, hwinfo);
+    //assert(false);
   } else {
     generate_synthesizable_functional_model(options, buf, def, hwinfo);
   }
@@ -3690,6 +3706,159 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
   move_to_compute_regression_folder(prg.name, compute_name);
 
   return verilator_run;
+}
+
+void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
+
+  CoreIR::Context* c = def->getContext();
+
+  std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, orig_buf, hwinfo);
+
+  UBuffer buf = delete_ports(done_outpt, orig_buf);
+
+  if (buf.num_out_ports() == 0) {
+    cout << buf.name << " is all shift registers" << endl;
+    assert(false);
+  }
+
+  if (buf.num_out_ports() > 0) {
+    ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+
+    if (is_register_file(buf, impl)) {
+      cout << buf.name << " is really a register file" << endl;
+    }
+
+    int num_banks = 1;
+    for (auto ent : impl.partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+
+    map<int, std::set<string> > bank_readers = impl.bank_readers;
+    map<int, std::set<string> > bank_writers = impl.bank_writers;
+    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
+    
+    const int NUM_IN_PORTS_PER_BANK = 2;
+    const int NUM_OUT_PORTS_PER_BANK = 2;
+
+    cout << "Buffer = " << buf.name << endl;
+    cout << "Bank readers..." << endl;
+    for (auto b : bank_readers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
+    }
+
+    cout << "Bank writers..." << endl;
+    for (auto b : bank_writers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
+    }
+
+
+    string chain_pt = "";
+    for (auto pt: outpt_to_bank)
+    {
+	    if(pt.second.size() > 1) {
+		    assert(chain_pt == "");
+	    	    chain_pt = pt.first;
+		    cout << pt.first << " needs chaining" << endl;  
+	    }
+    }
+    for (auto pt: inpt_to_bank)
+    {
+	    if(pt.second.size() > 1) {
+	    	cout << pt.first << " needs broadcast" << endl;  
+	    }
+    }
+
+    vector<int> banks;
+	    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    for (int b = 0; b < num_banks; b++) {
+        //{"width", c->Int()}, // for m3 16
+        //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
+        //{"num_outputs", c->Int()}, // ''
+        //{"has_valid", c->Bool()},
+        //{"has_stencil_valid", c->Bool()},
+        //{"has_flush", c->Bool()},
+        //{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
+        //{"has_reset", c->Bool()}
+
+
+      Values tile_params{{"width", COREMK(c, 16)},
+        {"ID", COREMK(c, str(b))},
+	{"num_inputs",COREMK(c,bank_writers[b].size())},
+        {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
+      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+      assert(verilog_collateral_file != nullptr);
+      
+      vector<string> port_decls = {};
+      port_decls.push_back("input clk");
+      port_decls.push_back("input rst_n");
+      port_decls.push_back("input clk_en");
+      port_decls.push_back("input chain_chain_en");
+      for(int i = 0; i < bank_writers[b].size(); i++)
+      {
+	      port_decls.push_back("input [15:0] data_in_" + str(i));
+      }
+      for(int i = 0; i < bank_readers[b].size(); i++)
+      {
+	      port_decls.push_back("input [15:0] data_out_" + str(i));
+      }
+      port_decls.push_back("input [15:0] chain_data_in");
+      port_decls.push_back("output [15:0] chain_data_out");
+
+      *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+      *verilog_collateral_file << "endmodule" <<endl;
+      if(b == 0 && chain_pt != "") {
+      	def->connect(currbank->sel("data_out_1"),def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
+      }
+	def->connect(currbank->sel("clk_en"),one);
+
+
+
+      int count = 0;
+      for(auto pt : bank_readers[b])
+      {
+	      if(pt != chain_pt)
+	      {
+		      def->connect(currbank->sel("data_out_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+		      def->connect(currbank->sel("chain_chain_en"),one);
+	      	      count++;
+	      }
+      }
+      count = 0;
+      for(auto pt : bank_writers[b])
+      {
+	      def->connect(currbank->sel("data_in_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+	      count++;
+      }
+      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
+
+
+    }
+    //assert(false);
+    for (int b = 0; b < num_banks; b++) {
+  
+      if(b != num_banks - 1){
+        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
+      
+      } else {
+        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+      }
+    }
+  }
+
+
 }
 
 #endif
