@@ -3740,7 +3740,7 @@ struct dgraph {
 std::ostream& operator<<(std::ostream& out, dgraph& dg) {
   for (auto e : dg.out_edges) {
     for (auto dst : e.second) {
-      out << tab(1) << e.first << " -> (" << dg.weight(e.first, dst) << ")" << dst << endl;
+      out << tab(1) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
     }
   }
   return out;
