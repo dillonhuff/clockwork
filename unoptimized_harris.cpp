@@ -1420,20 +1420,6 @@ inline void padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_
 
 
 // Operation logic
-inline void op_hcompute_padded16_global_wrapper_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */padded16_stencil, padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, int root, int padded16_global_wrapper_s0_y, int padded16_global_wrapper_s0_x) {
-  // Dynamic address computation
-
-	// Consume: padded16_stencil
-	auto padded16_stencil_padded16_global_wrapper_s0_y_c__padded16_global_wrapper_s0_x_value = padded16_stencil.read();
-	auto compute_result = hcompute_padded16_global_wrapper_stencil(padded16_stencil_padded16_global_wrapper_s0_y_c__padded16_global_wrapper_s0_x_value);
-	// Produce: padded16_global_wrapper_stencil
-	padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, padded16_global_wrapper_stencil, root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void op_hcompute_grad_x_stencil(padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, grad_x_stencil_cache& grad_x_stencil, int root, int grad_x_s0_y, int grad_x_s0_x) {
   // Dynamic address computation
 
@@ -1578,6 +1564,20 @@ inline void op_hcompute_lgxy_stencil_1(lgxy_stencil_clkwrk_dsa1_cache& lgxy_sten
 	auto compute_result = hcompute_lgxy_stencil_1(lgxy_stencil_clkwrk_dsa1_lgxy_s1_y_c__lgxy_s1_x_value, lxy_stencil__lp_lgxy_s1_y__p___m_1_rp__c___lp_lgxy_s1_x__p___m_1_rp__value);
 	// Produce: lgxy_stencil
 	lgxy_stencil_op_hcompute_lgxy_stencil_1_write_bundle_write(/* arg names */compute_result, lgxy_stencil, root, lgxy_s1_y, lgxy_s1_x, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void op_hcompute_padded16_global_wrapper_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */padded16_stencil, padded16_global_wrapper_stencil_cache& padded16_global_wrapper_stencil, int root, int padded16_global_wrapper_s0_y, int padded16_global_wrapper_s0_x) {
+  // Dynamic address computation
+
+	// Consume: padded16_stencil
+	auto padded16_stencil_padded16_global_wrapper_s0_y_c__padded16_global_wrapper_s0_x_value = padded16_stencil.read();
+	auto compute_result = hcompute_padded16_global_wrapper_stencil(padded16_stencil_padded16_global_wrapper_s0_y_c__padded16_global_wrapper_s0_x_value);
+	// Produce: padded16_global_wrapper_stencil
+	padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, padded16_global_wrapper_stencil, root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
