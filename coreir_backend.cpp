@@ -176,12 +176,13 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
 
   cout << "# of in to out shift registers..." << done_outpt.size() << endl;
   for (auto pt : shift_registered_outputs_to_outputs) {
+    done_outpt.insert(pt.first);
     if(done_outpt.find(pt.second.first) != done_outpt.end()) {
-      continue;
+      //continue;
     }
     if(done_outpt.find(pt.first)!=done_outpt.end())
     {
-      continue;
+      //continue;
     } else{
       //string dst = pt.first;
       //string src = pt.second.first;
@@ -3724,7 +3725,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
   if (buf.num_out_ports() == 0) {
     cout << buf.name << " is all shift registers" << endl;
-    assert(false);
+    //assert(false);
   }
 
   if (buf.num_out_ports() > 0) {
