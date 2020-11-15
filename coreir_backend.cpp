@@ -64,6 +64,14 @@ struct ubuffer_impl {
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
 };
 
+bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
+  if (impl.partition_dims.size() < buf.logical_dimension()) {
+    return false;
+  }
+  assert(impl.partition_dims.size() == buf.logical_dimension());
+  return true;
+}
+
 ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   cout << "Building implementation of " << buf.name << endl;
   ubuffer_impl impl;
@@ -77,6 +85,7 @@ ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
     cout << buf.name << " is really a register file" << endl;
   }
 
+  impl.partition_dims = embarassing_banking.get_value();
   vector<int> extents;
   //map<int, int> partitioned_dimension_extents;
   //std::set<int> partition_dims = embarassing_banking.get_value();
@@ -181,6 +190,8 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
   return done_outpt;
 }
 
+
+
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
 
   CoreIR::Context* c = def->getContext();
@@ -191,76 +202,23 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
   if (buf.num_out_ports() > 0) {
     ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
-    // If the entire buffer cannot be reduced to
-    // shift registers
-    //maybe<std::set<int> > embarassing_banking =
-      //embarassing_partition(buf, hwinfo);
-    //bool has_embarassing_partition = embarassing_banking.has_value();
-    //assert(has_embarassing_partition);
 
-    if (impl.partition_dims.size() == buf.logical_dimension()) {
+    //if (impl.partition_dims.size() == buf.logical_dimension()) {
+    if (is_register_file(buf, impl)) {
       cout << buf.name << " is really a register file" << endl;
+      assert(false);
     }
-
-    //vector<int> extents;
-    //map<int, int> partitioned_dimension_extents;
-    //std::set<int> partition_dims = embarassing_banking.get_value();
-    //extents = extents_by_dimension(buf);
-    //for (auto d : partition_dims) {
-      //partitioned_dimension_extents[d] = extents.at(d);
-    //}
 
     int num_banks = 1;
     for (auto ent : impl.partitioned_dimension_extents) {
       num_banks *= ent.second;
     }
 
-    //// Creating a map from bank numbers to values that read them
-    //int bank_stride = 1;
-    //vector<string> dvs;
-    //vector<string> coeffs;
-    //for (int d = 0; d < buf.logical_dimension(); d++) {
-      //dvs.push_back("d" + str(d));
-      //if (elem(d, partition_dims)) {
-        //coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
-        //bank_stride *= map_find(d, partitioned_dimension_extents);
-        ////bank_factors.push_back(map_find(d, partitioned_dimension_extents));
-      //} else {
-        ////bank_factors.push_back(0);
-      //}
-    //}
-
-    //string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
-
-    //cout << "Bank map: " << bank_func << endl;
-    //isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
-    //cout << "Bank map: " << str(m) << endl;
-
     map<int, std::set<string> > bank_readers = impl.bank_readers;
     map<int, std::set<string> > bank_writers = impl.bank_writers;
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
     
-    //for (auto pt : buf.get_all_ports()) {
-      //for (int b = 0; b < num_banks; b++) {
-        //isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
-        //assert(!empty(bnk));
-
-        //isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
-        //isl_set* accesses_to_bank = its(range(bnk_map), bnk);
-        //if (!empty(accesses_to_bank)) {
-          //if (buf.is_out_pt(pt)) {
-            //bank_readers[b].insert(pt);
-			//outpt_to_bank[pt].insert(b);
-          //} else {
-            //bank_writers[b].insert(pt);
-			//inpt_to_bank[pt].insert(b);
-          //}
-        //}
-      //}
-    //}
-
-
     const int NUM_IN_PORTS_PER_BANK = 2;
     const int NUM_OUT_PORTS_PER_BANK = 2;
 
