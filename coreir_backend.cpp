@@ -51,6 +51,82 @@ static int not_fully_optimizable = 0;
 
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
+struct ubuffer_impl {
+    map<int, std::set<string> > bank_readers;
+    map<int, std::set<string> > bank_writers;
+    map<string, std::set<int>> outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank;
+
+    map<string,pair<string,int>> shift_registered_outputs;
+    vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+};
+
+ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  ubuffer_impl impl;
+
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf, hwinfo);
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  assert(has_embarassing_partition);
+
+  if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+    cout << buf.name << " is really a register file" << endl;
+  }
+
+  vector<int> extents;
+  map<int, int> partitioned_dimension_extents;
+  std::set<int> partition_dims = embarassing_banking.get_value();
+  extents = extents_by_dimension(buf);
+  for (auto d : partition_dims) {
+    partitioned_dimension_extents[d] = extents.at(d);
+  }
+
+  int num_banks = 1;
+  for (auto ent : partitioned_dimension_extents) {
+    num_banks *= ent.second;
+  }
+
+  // Creating a map from bank numbers to values that read them
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (elem(d, partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= map_find(d, partitioned_dimension_extents);
+      //bank_factors.push_back(map_find(d, partitioned_dimension_extents));
+    } else {
+      //bank_factors.push_back(0);
+    }
+  }
+
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
+
+  cout << "Bank map: " << bank_func << endl;
+  isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
+  for (auto pt : buf.get_all_ports()) {
+    for (int b = 0; b < num_banks; b++) {
+      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
+      assert(!empty(bnk));
+
+      isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
+      isl_set* accesses_to_bank = its(range(bnk_map), bnk);
+      if (!empty(accesses_to_bank)) {
+        if (buf.is_out_pt(pt)) {
+          impl.bank_readers[b].insert(pt);
+          impl.outpt_to_bank[pt].insert(b);
+        } else {
+          impl.bank_writers[b].insert(pt);
+          impl.inpt_to_bank[pt].insert(b);
+        }
+      }
+    }
+  }
+
+  return impl;
+}
+
 int wire_width(CoreIR::Wireable* w) {
   auto tp = w->getType();
   if (isBit(tp)) {
@@ -66,6 +142,7 @@ int wire_width(CoreIR::Wireable* w) {
 }
 
 std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
 
@@ -161,8 +238,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::set<int>> outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank;
     
-    //map<std::set<string> > bank_readers;
-    //map<int, std::set<string> > bank_writers;
     for (auto pt : buf.get_all_ports()) {
       for (int b = 0; b < num_banks; b++) {
         isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
