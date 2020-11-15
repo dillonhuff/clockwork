@@ -3926,8 +3926,15 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       int count = 0;
       for(auto pt : bank_readers[b])
       {
+        auto agen = build_addrgen(pt, buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, buf));
+        def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        def->connect(currbank->sel("ren_" + str(count)),
+            control_en(def, pt, buf));
         if(pt != chain_pt)
         {
+
           def->connect(
               currbank->sel("data_out_" + str(count)),
               def->sel(pt + "_net.in"));
