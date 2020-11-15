@@ -3818,6 +3818,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   }
 
   std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+  //std::set<string> done_outpt = {};
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
