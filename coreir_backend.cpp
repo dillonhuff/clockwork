@@ -183,11 +183,8 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
     {
       continue;
     } else{
-      done_outpt.insert(pt.first);
-    }
-    //string dst = pt.first;
-    //string src = pt.second.first;
-    //if (!elem(dst, done_outpt)) {
+      //string dst = pt.first;
+      //string src = pt.second.first;
       //int delay = pt.second.second;
       //auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
       //Wireable* delayed_src =
@@ -197,7 +194,7 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
           //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
           //delayed_src);
       //done_outpt.insert(pt.first);
-    //}
+    }
   }
   return done_outpt;
 }
@@ -3710,7 +3707,16 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
 
 void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
 
+
+
   CoreIR::Context* c = def->getContext();
+  for (auto out : orig_buf.get_out_ports()) {
+    auto w = def->addInstance(out + "_net", "coreir.wire", {{"width", COREMK(c, 16)}});
+    def->connect(
+        w->sel("out"),
+        def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
+
+  }
 
   std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, orig_buf, hwinfo);
 
@@ -3818,9 +3824,12 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       port_decls.push_back("output [15:0] chain_data_out");
 
       *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-      *verilog_collateral_file << "endmodule" <<endl;
+      *verilog_collateral_file << "endmodule" << endl;
       if(b == 0 && chain_pt != "") {
-      	def->connect(currbank->sel("data_out_1"),def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
+      	def->connect(
+            currbank->sel("data_out_1"),
+            def->sel(chain_pt + "_net.in"));
+            //def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
       }
 	def->connect(currbank->sel("clk_en"),one);
 
@@ -3831,7 +3840,11 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       {
 	      if(pt != chain_pt)
 	      {
-		      def->connect(currbank->sel("data_out_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+		      def->connect(
+              currbank->sel("data_out_" + str(count)),
+              def->sel(pt + "_net.in"));
+              //def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+
 		      def->connect(currbank->sel("chain_chain_en"),one);
 	      	      count++;
 	      }
@@ -3839,7 +3852,9 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       count = 0;
       for(auto pt : bank_writers[b])
       {
-	      def->connect(currbank->sel("data_in_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+	      def->connect(
+            currbank->sel("data_in_" + str(count)),
+            def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
 	      count++;
       }
       def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
