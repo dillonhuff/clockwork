@@ -3926,6 +3926,10 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       port_decls.push_back("output [15:0] chain_data_out");
 
       *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+      *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [511:0];" << endl;
+      *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+      *verilog_collateral_file << tab(2) << "chain_data_out <= chain_data_in;" << endl;
+      *verilog_collateral_file << tab(1) << "end" << endl;
       *verilog_collateral_file << "endmodule" << endl;
       if(b == 0 && chain_pt != "") {
       	def->connect(
