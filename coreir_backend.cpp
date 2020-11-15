@@ -1294,6 +1294,11 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
     tile_config["coeff_" + str(d)] = to_int(get_coeff(aff, d));
   }
   tile_config["const"] = to_int(const_coeff(aff));
+  int d = 0;
+  for (auto e : extents(dom)) {
+    tile_config["extent_" + str(d)] = e;
+    d++;
+  }
   controller->getMetaData()["config"] =
     tile_config;
 
