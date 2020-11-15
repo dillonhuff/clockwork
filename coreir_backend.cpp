@@ -3928,8 +3928,12 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [511:0];" << endl;
       *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
       for (int i = 0; i < bank_readers[b].size(); i++) {
-        *verilog_collateral_file << "data_out_" << str(i) << " <= 234;" << endl;
-
+        *verilog_collateral_file << tab(2) << "data_out_" << str(i) << " <= SRAM[read_addr_" << i << "];" << endl;
+      }
+      for (int i = 0; i < bank_writers[b].size(); i++) {
+        *verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
+        *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
+        *verilog_collateral_file << tab(2) << "end" << endl;
       }
       *verilog_collateral_file << tab(1) << "end" << endl;
       *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_data_in;" << endl;
