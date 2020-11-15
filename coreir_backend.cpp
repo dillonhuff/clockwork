@@ -3944,6 +3944,9 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(agen->sel("d"),
           control_vars(def, pt, adjusted_buf));
         def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
+        def->connect(currbank->sel("wen_" + str(count)),
+            control_en(def, pt, adjusted_buf));
+
         def->connect(
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
