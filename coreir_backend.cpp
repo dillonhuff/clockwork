@@ -51,6 +51,92 @@ static int not_fully_optimizable = 0;
 
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
+struct ubuffer_impl {
+  map<int, int> partitioned_dimension_extents;
+  std::set<int> partition_dims;
+
+  map<int, std::set<string> > bank_readers;
+  map<int, std::set<string> > bank_writers;
+  map<string, std::set<int>> outpt_to_bank;
+  map<string, std::set<int>> inpt_to_bank;
+
+  map<string,pair<string,int>> shift_registered_outputs;
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+};
+
+bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
+  if (impl.partition_dims.size() < buf.logical_dimension()) {
+    return false;
+  }
+  assert(impl.partition_dims.size() == buf.logical_dimension());
+  return true;
+}
+
+ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  cout << "Building implementation of " << buf.name << endl;
+  ubuffer_impl impl;
+
+  maybe<std::set<int> > embarassing_banking =
+    embarassing_partition(buf, hwinfo);
+  bool has_embarassing_partition = embarassing_banking.has_value();
+  assert(has_embarassing_partition);
+
+  if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+    cout << buf.name << " is really a register file" << endl;
+  }
+
+  impl.partition_dims = embarassing_banking.get_value();
+  vector<int> extents;
+  //map<int, int> partitioned_dimension_extents;
+  //std::set<int> partition_dims = embarassing_banking.get_value();
+  extents = extents_by_dimension(buf);
+  for (auto d : impl.partition_dims) {
+    impl.partitioned_dimension_extents[d] = extents.at(d);
+  }
+
+  int num_banks = 1;
+  for (auto ent : impl.partitioned_dimension_extents) {
+    num_banks *= ent.second;
+  }
+
+  // Creating a map from bank numbers to values that read them
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
+    }
+  }
+
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
+
+  cout << "Bank map: " << bank_func << endl;
+  isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
+  for (auto pt : buf.get_all_ports()) {
+    for (int b = 0; b < num_banks; b++) {
+      isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
+      assert(!empty(bnk));
+
+      isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
+      isl_set* accesses_to_bank = its(range(bnk_map), bnk);
+      if (!empty(accesses_to_bank)) {
+        if (buf.is_out_pt(pt)) {
+          impl.bank_readers[b].insert(pt);
+          impl.outpt_to_bank[pt].insert(b);
+        } else {
+          impl.bank_writers[b].insert(pt);
+          impl.inpt_to_bank[pt].insert(b);
+        }
+      }
+    }
+  }
+
+  return impl;
+}
+
 int wire_width(CoreIR::Wireable* w) {
   auto tp = w->getType();
   if (isBit(tp)) {
@@ -65,9 +151,12 @@ int wire_width(CoreIR::Wireable* w) {
   assert(false);
 }
 
+void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo);
+
 std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
 
   auto c = def->getContext();
   std::set<string> done_outpt;
@@ -85,11 +174,33 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
     done_outpt.insert(pt.first);
   }
 
-  for (auto port : shift_registered_outputs_to_outputs) {
-    done_outpt.insert(port.first);
+  cout << "# of in to out shift registers..." << done_outpt.size() << endl;
+  for (auto pt : shift_registered_outputs_to_outputs) {
+    done_outpt.insert(pt.first);
+    if(done_outpt.find(pt.second.first) != done_outpt.end()) {
+      //continue;
+    }
+    if(done_outpt.find(pt.first)!=done_outpt.end())
+    {
+      //continue;
+    } else{
+      //string dst = pt.first;
+      //string src = pt.second.first;
+      //int delay = pt.second.second;
+      //auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
+      //Wireable* delayed_src =
+        //delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+
+      //def->connect(
+          //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
+          //delayed_src);
+      //done_outpt.insert(pt.first);
+    }
   }
   return done_outpt;
 }
+
+
 
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
 
@@ -98,75 +209,24 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, orig_buf, hwinfo);
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
-  if (buf.num_out_ports() > 0) {
-    // If the entire buffer cannot be reduced to
-    // shift registers
-    maybe<std::set<int> > embarassing_banking =
-      embarassing_partition(buf, hwinfo);
-    bool has_embarassing_partition = embarassing_banking.has_value();
-    assert(has_embarassing_partition);
 
-    vector<int> extents;
-    map<int, int> partitioned_dimension_extents;
-    std::set<int> partition_dims = embarassing_banking.get_value();
-    extents = extents_by_dimension(buf);
-    for (auto d : partition_dims) {
-      partitioned_dimension_extents[d] = extents.at(d);
+  if (buf.num_out_ports() > 0) {
+    ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+
+    if (is_register_file(buf, impl)) {
+      cout << buf.name << " is really a register file" << endl;
     }
 
     int num_banks = 1;
-    for (auto ent : partitioned_dimension_extents) {
+    for (auto ent : impl.partitioned_dimension_extents) {
       num_banks *= ent.second;
     }
 
-    // Creating a map from bank numbers to values that read them
-    int bank_stride = 1;
-    vector<string> dvs;
-    vector<string> coeffs;
-    for (int d = 0; d < buf.logical_dimension(); d++) {
-      dvs.push_back("d" + str(d));
-      if (elem(d, partition_dims)) {
-        coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
-        bank_stride *= map_find(d, partitioned_dimension_extents);
-        //bank_factors.push_back(map_find(d, partitioned_dimension_extents));
-      } else {
-        //bank_factors.push_back(0);
-      }
-    }
-
-    string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
-
-    cout << "Bank map: " << bank_func << endl;
-    isl_map* m = isl_map_read_from_str(prg.ctx, bank_func.c_str());
-    cout << "Bank map: " << str(m) << endl;
-
-    map<int, std::set<string> > bank_readers;
-    map<int, std::set<string> > bank_writers;
-    map<string, std::set<int>> outpt_to_bank;
-    map<string, std::set<int>> inpt_to_bank;
+    map<int, std::set<string> > bank_readers = impl.bank_readers;
+    map<int, std::set<string> > bank_writers = impl.bank_writers;
+    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
     
-    //map<std::set<string> > bank_readers;
-    //map<int, std::set<string> > bank_writers;
-    for (auto pt : buf.get_all_ports()) {
-      for (int b = 0; b < num_banks; b++) {
-        isl_set* bnk = isl_set_read_from_str(prg.ctx, curlies("Bank[" + str(b) + "]").c_str());
-        assert(!empty(bnk));
-
-        isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
-        isl_set* accesses_to_bank = its(range(bnk_map), bnk);
-        if (!empty(accesses_to_bank)) {
-          if (buf.is_out_pt(pt)) {
-            bank_readers[b].insert(pt);
-	    outpt_to_bank[pt].insert(b);
-          } else {
-            bank_writers[b].insert(pt);
-	    inpt_to_bank[pt].insert(b);
-          }
-        }
-      }
-    }
-
-
     const int NUM_IN_PORTS_PER_BANK = 2;
     const int NUM_OUT_PORTS_PER_BANK = 2;
 
@@ -338,6 +398,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   } else if (options.rtl_options.target_tile == TARGET_TILE_M3) {
     cout << "M3 codegen is not implemented!" << endl;
     generate_M3_coreir(options, def, prg, buf, hwinfo);
+  } else if (options.rtl_options.target_tile == TARGET_TILE_M1) {
+    cout << "M1 codegen is not implemented!" << endl;
+    generate_M1_coreir(options, def, prg, buf, hwinfo);
+    //assert(false);
   } else {
     generate_synthesizable_functional_model(options, buf, def, hwinfo);
   }
@@ -1284,16 +1348,28 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
   }
 
   assert(verilog_collateral_file != nullptr);
-  //generate_fsm(*verilog_collateral_file, options, controller->getInstname() + c->getUnique(), "d", "valid", aff, dom);
-  //generate_fsm(*verilog_collateral_file, options, controller->getInstname(), "d", "valid", aff, dom);
   generate_fsm(*verilog_collateral_file, options, controller->getModuleRef()->getName(), "d", "valid", aff, dom);
 
   def->connect(controller->sel("rst_n"), def->sel("self.rst_n"));
   def->connect(controller->sel("flush"), def->sel("self.flush"));
 
+  json tile_config;
+  for (int d = 0; d < num_in_dims(aff); d++) {
+    tile_config["coeff_" + str(d)] = to_int(get_coeff(aff, d));
+  }
+  tile_config["const"] = to_int(const_coeff(aff));
+  int d = 0;
+  for (auto e : extents(dom)) {
+    tile_config["extent_" + str(d)] = e;
+    d++;
+  }
+  controller->getMetaData()["config"] =
+    tile_config;
+
   connect_op_control_wires(options, def, op, hwinfo, controller);
   return controller;
 }
+
 //Add CodegenOptions, if we do not use extra control,
 //we will use lake tile to generate affine controller
 Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
@@ -3628,6 +3704,177 @@ int generate_compute_unit_regression_tb(op* op, prog& prg) {
   move_to_compute_regression_folder(prg.name, compute_name);
 
   return verilator_run;
+}
+
+void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
+
+
+
+  CoreIR::Context* c = def->getContext();
+  for (auto out : orig_buf.get_out_ports()) {
+    auto w = def->addInstance(out + "_net", "coreir.wire", {{"width", COREMK(c, 16)}});
+    def->connect(
+        w->sel("out"),
+        def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
+
+  }
+
+  std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, orig_buf, hwinfo);
+
+  UBuffer buf = delete_ports(done_outpt, orig_buf);
+
+  if (buf.num_out_ports() == 0) {
+    cout << buf.name << " is all shift registers" << endl;
+    //assert(false);
+  }
+
+  if (buf.num_out_ports() > 0) {
+    ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+
+    if (is_register_file(buf, impl)) {
+      cout << buf.name << " is really a register file" << endl;
+    }
+
+    int num_banks = 1;
+    for (auto ent : impl.partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+
+    map<int, std::set<string> > bank_readers = impl.bank_readers;
+    map<int, std::set<string> > bank_writers = impl.bank_writers;
+    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
+    
+    const int NUM_IN_PORTS_PER_BANK = 2;
+    const int NUM_OUT_PORTS_PER_BANK = 2;
+
+    cout << "Buffer = " << buf.name << endl;
+    cout << "Bank readers..." << endl;
+    for (auto b : bank_readers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
+    }
+
+    cout << "Bank writers..." << endl;
+    for (auto b : bank_writers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
+    }
+
+
+    string chain_pt = "";
+    for (auto pt: outpt_to_bank)
+    {
+	    if(pt.second.size() > 1) {
+		    assert(chain_pt == "");
+	    	    chain_pt = pt.first;
+		    cout << pt.first << " needs chaining" << endl;  
+	    }
+    }
+    for (auto pt: inpt_to_bank)
+    {
+	    if(pt.second.size() > 1) {
+	    	cout << pt.first << " needs broadcast" << endl;  
+	    }
+    }
+
+    vector<int> banks;
+	    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    for (int b = 0; b < num_banks; b++) {
+        //{"width", c->Int()}, // for m3 16
+        //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
+        //{"num_outputs", c->Int()}, // ''
+        //{"has_valid", c->Bool()},
+        //{"has_stencil_valid", c->Bool()},
+        //{"has_flush", c->Bool()},
+        //{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
+        //{"has_reset", c->Bool()}
+
+
+      Values tile_params{{"width", COREMK(c, 16)},
+        {"ID", COREMK(c, str(b))},
+	{"num_inputs",COREMK(c,bank_writers[b].size())},
+        {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
+      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+      assert(verilog_collateral_file != nullptr);
+      
+      vector<string> port_decls = {};
+      port_decls.push_back("input clk");
+      port_decls.push_back("input rst_n");
+      port_decls.push_back("input clk_en");
+      port_decls.push_back("input chain_chain_en");
+      for(int i = 0; i < bank_writers[b].size(); i++)
+      {
+	      port_decls.push_back("input [15:0] data_in_" + str(i));
+      }
+      for(int i = 0; i < bank_readers[b].size(); i++)
+      {
+	      port_decls.push_back("input [15:0] data_out_" + str(i));
+      }
+      port_decls.push_back("input [15:0] chain_data_in");
+      port_decls.push_back("output [15:0] chain_data_out");
+
+      *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+      *verilog_collateral_file << "endmodule" << endl;
+      if(b == 0 && chain_pt != "") {
+      	def->connect(
+            currbank->sel("data_out_1"),
+            def->sel(chain_pt + "_net.in"));
+            //def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
+      }
+	def->connect(currbank->sel("clk_en"),one);
+
+
+
+      int count = 0;
+      for(auto pt : bank_readers[b])
+      {
+	      if(pt != chain_pt)
+	      {
+		      def->connect(
+              currbank->sel("data_out_" + str(count)),
+              def->sel(pt + "_net.in"));
+              //def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+
+		      def->connect(currbank->sel("chain_chain_en"),one);
+	      	      count++;
+	      }
+      }
+      count = 0;
+      for(auto pt : bank_writers[b])
+      {
+	      def->connect(
+            currbank->sel("data_in_" + str(count)),
+            def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+	      count++;
+      }
+      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
+
+
+    }
+    //assert(false);
+    for (int b = 0; b < num_banks; b++) {
+  
+      if(b != num_banks - 1){
+        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
+      
+      } else {
+        def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+      }
+    }
+  }
+
+
 }
 
 #endif

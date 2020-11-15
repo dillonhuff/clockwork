@@ -7289,3 +7289,61 @@ void dsa_writers(prog& prg) {
   }
 }
 
+int buffer_store_latency(CodegenOptions& options) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
+      options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
+    return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+    return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
+    return 0;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_GENERIC_SRAM) {
+    return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
+    return 2;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_M3 ||
+      options.rtl_options.target_tile == TARGET_TILE_M1) {
+    return 1;
+  }
+  assert(false);
+}
+
+int buffer_load_latency(CodegenOptions& options) {
+  if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
+      options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN
+      ) {
+    return 0;
+  } else if(options.rtl_options.target_tile == TARGET_TILE_PLATONIC)
+  {
+      return 0;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {
+    return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_GENERIC_SRAM) {
+    return 1;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_BRAM) {
+    return 2;
+  }
+
+  if (options.rtl_options.target_tile == TARGET_TILE_M3 ||
+      options.rtl_options.target_tile == TARGET_TILE_M1) {
+    return 1;
+  }
+  assert(false);
+}
+

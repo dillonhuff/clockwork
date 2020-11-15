@@ -55,7 +55,8 @@ enum TargetTile {
   TARGET_TILE_PLATONIC,
   TARGET_TILE_GENERIC_SRAM,
   TARGET_TILE_BRAM,
-  TARGET_TILE_M3
+  TARGET_TILE_M3,
+  TARGET_TILE_M1
 };
 
 struct global_signals_policy {
