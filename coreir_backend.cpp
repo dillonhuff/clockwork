@@ -1284,16 +1284,23 @@ Instance* generate_coreir_op_controller_verilog(CodegenOptions& options, ModuleD
   }
 
   assert(verilog_collateral_file != nullptr);
-  //generate_fsm(*verilog_collateral_file, options, controller->getInstname() + c->getUnique(), "d", "valid", aff, dom);
-  //generate_fsm(*verilog_collateral_file, options, controller->getInstname(), "d", "valid", aff, dom);
   generate_fsm(*verilog_collateral_file, options, controller->getModuleRef()->getName(), "d", "valid", aff, dom);
 
   def->connect(controller->sel("rst_n"), def->sel("self.rst_n"));
   def->connect(controller->sel("flush"), def->sel("self.flush"));
 
+  json tile_config;
+  for (int d = 0; d < num_in_dims(aff); d++) {
+    tile_config["coeff_" + str(d)] = to_int(get_coeff(aff, d));
+  }
+  tile_config["const"] = to_int(const_coeff(aff));
+  controller->getMetaData()["config"] =
+    tile_config;
+
   connect_op_control_wires(options, def, op, hwinfo, controller);
   return controller;
 }
+
 //Add CodegenOptions, if we do not use extra control,
 //we will use lake tile to generate affine controller
 Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def, op* op, vector<isl_map*>& sched_maps, schedule_info& hwinfo) {
