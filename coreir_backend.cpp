@@ -3920,7 +3920,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
       for(int i = 0; i < bank_readers[b].size(); i++)
       {
-        port_decls.push_back("input [15:0] data_out_" + str(i));
+        port_decls.push_back("output logic [15:0] data_out_" + str(i));
       }
       port_decls.push_back("input [15:0] chain_data_in");
       port_decls.push_back("output [15:0] chain_data_out");
@@ -3928,6 +3928,10 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
       *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [511:0];" << endl;
       *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+      for (int i = 0; i < bank_readers[b].size(); i++) {
+        *verilog_collateral_file << "data_out_" << str(i) << " <= 234;" << endl;
+
+      }
       //*verilog_collateral_file << tab(2) << "chain_data_out <= chain_data_in;" << endl;
       *verilog_collateral_file << tab(1) << "end" << endl;
       *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_data_in;" << endl;
