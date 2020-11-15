@@ -52,13 +52,16 @@ static int not_fully_optimizable = 0;
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
 struct ubuffer_impl {
-    map<int, std::set<string> > bank_readers;
-    map<int, std::set<string> > bank_writers;
-    map<string, std::set<int>> outpt_to_bank;
-    map<string, std::set<int>> inpt_to_bank;
+  map<int, int> partitioned_dimension_extents;
+  std::set<int> partition_dims;
 
-    map<string,pair<string,int>> shift_registered_outputs;
-    vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+  map<int, std::set<string> > bank_readers;
+  map<int, std::set<string> > bank_writers;
+  map<string, std::set<int>> outpt_to_bank;
+  map<string, std::set<int>> inpt_to_bank;
+
+  map<string,pair<string,int>> shift_registered_outputs;
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
 };
 
 ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
@@ -74,15 +77,15 @@ ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   }
 
   vector<int> extents;
-  map<int, int> partitioned_dimension_extents;
-  std::set<int> partition_dims = embarassing_banking.get_value();
+  //map<int, int> partitioned_dimension_extents;
+  //std::set<int> partition_dims = embarassing_banking.get_value();
   extents = extents_by_dimension(buf);
-  for (auto d : partition_dims) {
-    partitioned_dimension_extents[d] = extents.at(d);
+  for (auto d : impl.partition_dims) {
+    impl.partitioned_dimension_extents[d] = extents.at(d);
   }
 
   int num_banks = 1;
-  for (auto ent : partitioned_dimension_extents) {
+  for (auto ent : impl.partitioned_dimension_extents) {
     num_banks *= ent.second;
   }
 
@@ -92,12 +95,9 @@ ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   vector<string> coeffs;
   for (int d = 0; d < buf.logical_dimension(); d++) {
     dvs.push_back("d" + str(d));
-    if (elem(d, partition_dims)) {
+    if (elem(d, impl.partition_dims)) {
       coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
-      bank_stride *= map_find(d, partitioned_dimension_extents);
-      //bank_factors.push_back(map_find(d, partitioned_dimension_extents));
-    } else {
-      //bank_factors.push_back(0);
+      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
     }
   }
 
