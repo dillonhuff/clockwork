@@ -13310,20 +13310,20 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(resnet());
+  //test_apps.push_back(resnet());
   //test_apps.push_back(conv_3_3_wide());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(rom());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(rom());
   //test_apps.push_back(resnet());
 
   //TODO: break in the middle of vectorization
   //test_apps.push_back(down_sample());
   //test_apps.push_back(up_sample());
 
-  //test_apps.push_back(camera_pipeline());
+  test_apps.push_back(camera_pipeline());
   //test_apps.push_back(unsharp());
   //test_apps.push_back(mobilenet_unrolled());
   //TODO:has issue  with multiple input
@@ -13355,7 +13355,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
       bool extra_flag_for_lake = true;
       int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
       assert(res == 0);
-      //cmd("rm LakeWrapper.v");
+      cmd("rm LakeWrapper.v");
 
       auto verilator_res = verilator_results(prg.name);
       compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);

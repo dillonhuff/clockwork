@@ -368,6 +368,10 @@ isl_map* set_domain_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_in, new_name.c_str());
 }
 
+umap* set_domain_name(umap* const m, string new_name) {
+    return to_umap(isl_map_set_tuple_name(to_map(m), isl_dim_in, new_name.c_str()));
+}
+
 isl_map* add_range_suffix(isl_map* const m, string suffix) {
     string origin_name = range_name(m);
     string new_name = origin_name + suffix;

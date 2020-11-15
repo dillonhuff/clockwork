@@ -2940,9 +2940,9 @@
           }
         },
         "connections":[
-          ["conv_stencil$ub_conv_stencil_cyclic_2_0_0_garnet.chain_chain_en","conv_stencil$chain_en_const_U3.out"],
-          ["conv_stencil$ub_conv_stencil_cyclic_0_0_0_garnet.chain_chain_en","conv_stencil$chain_en_const_U31.out"],
-          ["conv_stencil$ub_conv_stencil_cyclic_1_0_0_garnet.chain_chain_en","conv_stencil$chain_en_const_U32.out"],
+          ["conv_stencil$ub_conv_stencil_cyclic_0_0_0_garnet.chain_chain_en","conv_stencil$chain_en_const_U3.out"],
+          ["conv_stencil$ub_conv_stencil_cyclic_1_0_0_garnet.chain_chain_en","conv_stencil$chain_en_const_U31.out"],
+          ["conv_stencil$ub_conv_stencil_cyclic_2_0_0_garnet.chain_chain_en","conv_stencil$chain_en_const_U32.out"],
           ["conv_stencil$ub_conv_stencil_cyclic_0_0_0_garnet.rst_n","conv_stencil$ub_conv_stencil_cyclic_0_0_0_clk_en_const.out"],
           ["conv_stencil$ub_conv_stencil_cyclic_0_0_0_garnet.clk_en","conv_stencil$ub_conv_stencil_cyclic_0_0_0_clk_en_const1.out"],
           ["op_hcompute_conv_stencil_3$inner_compute$add_691_705_706$binop.data.out","conv_stencil$ub_conv_stencil_cyclic_0_0_0_garnet.data_in_0"],

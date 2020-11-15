@@ -2105,14 +2105,28 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
       //if it is, we still need to check the bundle numbers
       auto bd_vec = stmt2bd.at(op_name);
-      return bd_vec.size() > 1;
+      int in_bd = 0, out_bd = 0;
+      for (auto bd: bd_vec) {
+        if (is_input_bundle(bd))
+          in_bd ++;
+        else
+          out_bd ++;
+      }
+      return in_bd && out_bd;
     }
 
     bool is_self_loop(string pt_name) {
       auto stmt2bd = get_stmt2bd();
       auto op_name = domain_name(access_map.at(pt_name));
       auto bd_vec = stmt2bd.at(op_name);
-      return bd_vec.size() > 1;
+      int in_bd = 0, out_bd = 0;
+      for (auto bd: bd_vec) {
+        if (is_input_bundle(bd))
+          in_bd ++;
+        else
+          out_bd ++;
+      }
+      return in_bd && out_bd;
     }
 
     bool is_self_loop_in(string pt_name) {
@@ -2164,6 +2178,7 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
 
     //solve the weight buffer
     bool merge_small_dim(int fetch_width);
+    void merge_out_bundle();
 
 
     //change the input and output and return the agg and tb ubuffer stucture
@@ -2171,13 +2186,13 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
         vectorization(int dim_id, int fetch_width, vector<int> iis);
 
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
-    int add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe);
+    int add_vectorized_pt_to_ubuf(UBuffer & target_buf, vector<pair<string, umap*>> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, int dim_id);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, int dim_id, int fetch_width);
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, string acc_pt, vector<int> iis, int fetch_width);
-    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt, vector<int> iis, int fetch_width);
+    map<string, isl_map*> produce_vectorized_schedule(vector<string> in_pt, vector<string> out_pt, vector<int> iis, int fetch_width);
 
     void print_bank_info();
 

@@ -151,6 +151,7 @@ std::string range_name(isl_map* const m);
 isl_map* set_range_name(isl_map* const m, string new_name);
 
 isl_map* set_domain_name(isl_map* const m, string new_name);
+umap* set_domain_name(umap* const m, string new_name);
 
 isl_map* add_range_suffix(isl_map* const m, string suffix);
 isl_map* add_domain_suffix(isl_map* const m, string suffix);

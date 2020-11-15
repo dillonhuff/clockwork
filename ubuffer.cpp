@@ -631,6 +631,26 @@ void generate_vivado_tcl(UBuffer& buf) {
   generate_vivado_tcl(buf.name);
 }
 
+//FIXME: a hack for multi bundle cases
+//void UBuffer::merge_out_bundle() {
+//    auto out_bd = get_out_bundles();
+//    assert(out_bd.size() <= 2);
+//    if (out_bd.size() == 2) {
+//        string pt_0 = pick(port_bundles.at(out_bd.at(0)));
+//        string pt_1 = pick(port_bundles.at(out_bd.at(1)));
+//        if (equal(get_space(schedule.at(pt_0)), get_space(schedule.at(pt_0)))) {
+//            cout << *this << endl;
+//            cout << "Can be merged" << endl;
+//            string domain_name = ::domain_name(to_map(access_map.at(pt_0)));
+//            access_map.at(pt_1) = set_domain_name(access_map.at(pt_1), domain_name);
+//            schedule.at(pt_1) = set_domain_name(schedule.at(pt_1), domain_name);
+//            domain.at(pt_1) = set_name(domain.at(pt_1), domain_name);
+//            auto & bd_0 = port_bundles.at(out_bd.at(0));
+//            bd_0.push_back(pt_1);
+//            port_bundles.erase(out_bd.at(1));
+//        }
+//    }
+//}
 
 //Post processing get the ubuffer for each bank
 /*
@@ -694,6 +714,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
       usuffix ++;
     }
 
+    //Check if we could merge them into same bundle
     for (auto outpt: pt_vec) {
       auto acc_map = to_map(access_map.at(outpt));
       if (banking.partition == "cyclic") {
@@ -712,6 +733,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
       }
       usuffix ++;
     }
+    //buf.merge_out_bundle();
     buffers[bname] = buf;
     cout << "\t\tNeed for vectorization: \n" << buf << endl;
     cout << "\t\tTotal capacity: " << buf.capacity() << endl;
@@ -1028,11 +1050,10 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
         ConfigMap vals;
 
         auto bank_dim_id = buf.get_consumer_bank_dim_id();
-        if (need_mux) {
+        if (need_mux && bank_dim_id.has_value()) {
             vector<int> mux_index;
             vector<int> addr_index;
             //assert(bank_dim_id == num_out_dims(map) - 2);
-            assert(bank_dim_id.has_value());
             auto bank_dims = bank_dim_id.get_value();
             assert(bank_dims.size() == 1);
             int bank_dim = pick(bank_dims);
@@ -5144,55 +5165,44 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
   }
 
   //new mechod using the recipe
-  map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name, vector<int> iis, int fetch_width) {
+  map<string, isl_map*> UBuffer::produce_vectorized_schedule(vector<string> in_bd_vec, vector<string> out_bd_vec, vector<int> iis, int fetch_width) {
     /*
      * Previously we have two ops, input and output.In order to do the vectorization
      * we need to create 2 other ops, input_vec and output_vec
      * */
-    string in_pt_name = pick(port_bundles.at(in_bd_name));
-    string out_pt_name = pick(port_bundles.at(out_bd_name));
-    string in_op = domain_name(to_map(access_map.at(in_pt_name)));
-    string out_op = domain_name(to_map(access_map.at(out_pt_name)));
-    auto in_sched = schedule.at(in_pt_name);
-    auto out_sched = schedule.at(out_pt_name);
-    //auto in_sched_vec = collect_sched_vec(in_sched);
-    //auto out_sched_vec = collect_sched_vec(out_sched);
-    cout << "\tin_sched: " << str(in_sched) << "\t\nout_sched: " << str(out_sched) << endl;
-    int in_fetch_ii = get_vector_fetch_loop_ii(in_sched);
-    int out_fetch_ii = get_vector_fetch_loop_ii(out_sched);
-    auto in_sched_new = linear_schedule(to_map(in_sched), iis, 0, false);
-    //hardcode this recipe
-    auto in_sched_vec = linear_schedule(to_map(in_sched), iis, in_fetch_ii*fetch_width, false);
-    //auto in_sched_vec = gen_hw_sched_from_sched_vec(ctx,
-    //        {expr + "+" + to_string(fetch_width)}, var_list, op_name);
-    //in_sched_vec = pad_one_more_dim_to_sched_map_innermost(in_sched_vec, 0);
-
-    auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, false);
-    auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -(out_fetch_ii * fetch_width+1), false);
-    out_sched_vec = pad_one_more_dim_to_sched_map_innermost(out_sched_vec, 0);
-    //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
-
-
-    //auto in_access_map = access_map.at(in_pt_name);
-    //int vectorized_dim = get_involve_dim(to_map(in_access_map), dim_id) - 1;
-    //cout << "vectorized_dim: " << vectorized_dim << endl;
-    //auto in_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 0));
-    //auto in_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(in_sched, vectorized_dim, 1));
-    //in_vec_sched = set_domain_name(in_vec_sched, domain_name(in_vec_sched) );
-    //auto out_vec_sched = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 2));
-    //out_vec_sched = set_domain_name(out_vec_sched, domain_name(out_vec_sched) );
-    //auto out_sched_new = to_map(pad_one_more_dim_to_sched_map_with_id(out_sched, vectorized_dim, 3));
-
     map<string, isl_map*> new_sched;
-    new_sched.insert(make_pair(in_op, in_sched_new));
-    new_sched.insert(make_pair(out_op, out_sched_new));
-    new_sched.insert(make_pair(in_op + "_agg2sram", in_sched_vec));
-    new_sched.insert(make_pair(out_op + "_sram2tb", out_sched_vec));
+    for (auto in_bd_name : in_bd_vec) {
+      string in_pt_name = pick(port_bundles.at(in_bd_name));
+      string in_op = domain_name(to_map(access_map.at(in_pt_name)));
+      auto in_sched = schedule.at(in_pt_name);
+      cout << "\tin_sched: " << str(in_sched)  << endl;
+      int in_fetch_ii = get_vector_fetch_loop_ii(in_sched);
+      auto in_sched_new = linear_schedule(to_map(in_sched), iis, 0, false);
+      auto in_sched_vec = linear_schedule(to_map(in_sched), iis, in_fetch_ii*fetch_width, false);
+      new_sched.insert(make_pair(in_op, in_sched_new));
+      new_sched.insert(make_pair(in_op + "_agg2sram", in_sched_vec));
+    }
 
-    cout << "\tnew in map: " << str(in_sched_new)
-    << "\n\tvec in map: " << str(in_sched_vec)
-    << "\n\tnew out map: " << str(out_sched_new)
-    << "\n\tvec out map: " << str(out_sched_vec) << endl;
+    for ( auto out_bd_name: out_bd_vec) {
+      string out_pt_name = pick(port_bundles.at(out_bd_name));
+      string out_op = domain_name(to_map(access_map.at(out_pt_name)));
+      auto out_sched = schedule.at(out_pt_name);
+      //auto in_sched_vec = collect_sched_vec(in_sched);
+      //auto out_sched_vec = collect_sched_vec(out_sched);
+      cout << "\t\nout_sched: " << str(out_sched) << endl;
+      int out_fetch_ii = get_vector_fetch_loop_ii(out_sched);
+      auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, false);
+      auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -(out_fetch_ii * fetch_width+1), false);
+      out_sched_vec = pad_one_more_dim_to_sched_map_innermost(out_sched_vec, 0);
+      //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
+      new_sched.insert(make_pair(out_op, out_sched_new));
+      new_sched.insert(make_pair(out_op + "_sram2tb", out_sched_vec));
+    }
+
+
+    for (auto it : new_sched) {
+        cout << "\tvectorized sched ule for op: " << it.first << endl << str(it.second);
+    }
 
     return new_sched;
   }
@@ -5346,7 +5356,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
   }
 
 
-  int UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, map<string, umap*> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe) {
+  int UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, vector<pair<string, umap*>> rewrite_buf2op_map, map<string, isl_map*> sched_map, string bd_name, int dim_id, int fetch_width, bool is_out, bool use_recipe) {
 
     //first round check how many port we need to have, do we need to coalesce scheduel
     vector<int> access_cnt_per_port(fetch_width, 0);
@@ -5649,9 +5659,9 @@ pair<std::map<string, UBuffer>, vector<string> >
 
     //produce naive schedule for the rewritten buffer
     map<string, isl_map*> new_sched;
-    if (in_bundle.size() == 1 && out_bundle.size() == 1) {
+    if (in_bundle.size() == 1) {
       if (iis.size()) {
-        new_sched = produce_vectorized_schedule(pick(in_bundle), pick(out_bundle), iis, fetch_width);
+        new_sched = produce_vectorized_schedule(in_bundle, out_bundle, iis, fetch_width);
       } else {
         new_sched = produce_vectorized_schedule(pick(in_bundle), pick(out_bundle), dim_id);
       }
@@ -5792,7 +5802,7 @@ pair<std::map<string, UBuffer>, vector<string> >
 
 
       cout << "Vectorize output port bundle: " << bd_name << endl;
-      map<string, umap*> rewrite_buf2op_map;
+      vector<pair<string, umap*> > rewrite_buf2op_vec;
       map<string, isl_map*> op_sched_map;
       int port_width_per_bd = port_bundles.at(bd_name).size();
       for (auto out_pt_name : port_bundles.at(bd_name) ) {
@@ -5879,12 +5889,19 @@ pair<std::map<string, UBuffer>, vector<string> >
 
 
         op_sched_map[out_pt_name] = op_sched;
-        rewrite_buf2op_map[out_pt_name] = rewrite_buf2op;
+        rewrite_buf2op_vec.push_back({out_pt_name, rewrite_buf2op});
 
       }
+      sort(rewrite_buf2op_vec.begin(), rewrite_buf2op_vec.end(),
+            [this](const pair<string, umap*>& l, const pair<string, umap*> r) {
+               auto l_start = lexminpt(range(access_map.at(l.first)));
+               auto r_start = lexminpt(range(access_map.at(r.first)));
+               return lex_lt_pt(l_start, r_start);
+            }
+        );
 
-      add_vectorized_pt_to_ubuf(tb, rewrite_buf2op_map, op_sched_map, bd_name+"_tb_in", dim_id, fetch_width, false, iis.size());
-      auto output_cnt = add_vectorized_pt_to_ubuf(sram, rewrite_buf2op_map, op_sched_map ,bd_name, dim_id, fetch_width, true, iis.size());
+      add_vectorized_pt_to_ubuf(tb, rewrite_buf2op_vec, op_sched_map, bd_name+"_tb_in", dim_id, fetch_width, false, iis.size());
+      auto output_cnt = add_vectorized_pt_to_ubuf(sram, rewrite_buf2op_vec, op_sched_map ,bd_name, dim_id, fetch_width, true, iis.size());
 
       //Add another pass to build the access pattern on the tb output,
       //whether decouple the address
