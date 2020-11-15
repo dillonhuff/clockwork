@@ -3845,7 +3845,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<int, std::set<string> > bank_writers = impl.bank_writers;
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
-    
+
     const int NUM_IN_PORTS_PER_BANK = 2;
     const int NUM_OUT_PORTS_PER_BANK = 2;
 
@@ -3876,39 +3876,39 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     string chain_pt = "";
     for (auto pt: outpt_to_bank)
     {
-	    if(pt.second.size() > 1) {
-		    assert(chain_pt == "");
-	    	    chain_pt = pt.first;
-		    cout << pt.first << " needs chaining" << endl;  
-	    }
+      if(pt.second.size() > 1) {
+        assert(chain_pt == "");
+        chain_pt = pt.first;
+        cout << pt.first << " needs chaining" << endl;  
+      }
     }
     for (auto pt: inpt_to_bank)
     {
-	    if(pt.second.size() > 1) {
-	    	cout << pt.first << " needs broadcast" << endl;  
-	    }
+      if(pt.second.size() > 1) {
+        cout << pt.first << " needs broadcast" << endl;  
+      }
     }
 
     vector<int> banks;
-	    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     for (int b = 0; b < num_banks; b++) {
-        //{"width", c->Int()}, // for m3 16
-        //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
-        //{"num_outputs", c->Int()}, // ''
-        //{"has_valid", c->Bool()},
-        //{"has_stencil_valid", c->Bool()},
-        //{"has_flush", c->Bool()},
-        //{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
-        //{"has_reset", c->Bool()}
+      //{"width", c->Int()}, // for m3 16
+      //{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
+      //{"num_outputs", c->Int()}, // ''
+      //{"has_valid", c->Bool()},
+      //{"has_stencil_valid", c->Bool()},
+      //{"has_flush", c->Bool()},
+      //{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
+      //{"has_reset", c->Bool()}
 
 
       Values tile_params{{"width", COREMK(c, 16)},
         {"ID", COREMK(c, str(b))},
-	{"num_inputs",COREMK(c,bank_writers[b].size())},
+        {"num_inputs",COREMK(c,bank_writers[b].size())},
         {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
       assert(verilog_collateral_file != nullptr);
-      
+
       vector<string> port_decls = {};
       port_decls.push_back("input clk");
       port_decls.push_back("input rst_n");
@@ -3916,11 +3916,11 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       port_decls.push_back("input chain_chain_en");
       for(int i = 0; i < bank_writers[b].size(); i++)
       {
-	      port_decls.push_back("input [15:0] data_in_" + str(i));
+        port_decls.push_back("input [15:0] data_in_" + str(i));
       }
       for(int i = 0; i < bank_readers[b].size(); i++)
       {
-	      port_decls.push_back("input [15:0] data_out_" + str(i));
+        port_decls.push_back("input [15:0] data_out_" + str(i));
       }
       port_decls.push_back("input [15:0] chain_data_in");
       port_decls.push_back("output [15:0] chain_data_out");
@@ -3928,40 +3928,41 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
       *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [511:0];" << endl;
       *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-      *verilog_collateral_file << tab(2) << "chain_data_out <= chain_data_in;" << endl;
+      //*verilog_collateral_file << tab(2) << "chain_data_out <= chain_data_in;" << endl;
       *verilog_collateral_file << tab(1) << "end" << endl;
+      *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_data_in;" << endl;
       *verilog_collateral_file << "endmodule" << endl;
       if(b == 0 && chain_pt != "") {
-      	def->connect(
+        def->connect(
             currbank->sel("data_out_1"),
             def->sel(chain_pt + "_net.in"));
-            //def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
+        //def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
       }
-	def->connect(currbank->sel("clk_en"),one);
+      def->connect(currbank->sel("clk_en"),one);
 
 
 
       int count = 0;
       for(auto pt : bank_readers[b])
       {
-	      if(pt != chain_pt)
-	      {
-		      def->connect(
+        if(pt != chain_pt)
+        {
+          def->connect(
               currbank->sel("data_out_" + str(count)),
               def->sel(pt + "_net.in"));
-              //def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+          //def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
 
-		      def->connect(currbank->sel("chain_chain_en"),one);
-	      	      count++;
-	      }
+          def->connect(currbank->sel("chain_chain_en"),one);
+          count++;
+        }
       }
       count = 0;
       for(auto pt : bank_writers[b])
       {
-	      def->connect(
+        def->connect(
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
-	      count++;
+        count++;
       }
       def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
 
@@ -3969,10 +3970,10 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     }
     //assert(false);
     for (int b = 0; b < num_banks; b++) {
-  
+
       if(b != num_banks - 1){
         def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
-      
+
       } else {
         def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
       }
