@@ -1408,7 +1408,7 @@ CoreIR::Instance* affine_controller_use_lake_tile(
 CoreIR::Instance* UBuffer::generate_lake_tile_instance(
         ModuleDef* def,
         CodegenOptions options,
-        string ub_ins_name,
+        string ub_ins_name, string bank_name,
         size_t input_num, size_t output_num,
         bool has_stencil_valid, bool has_flush) {
 
@@ -1426,7 +1426,8 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     {"mode", CoreIR::Const::make(context, "lake")}
   };
   if (has_stencil_valid) {
-    generate_stencil_valid_config(options);
+    cout << "Generate stencil valid signal" << endl;
+    generate_stencil_valid_config(options, bank_name);
   }
   cout << "Add ub node with input_num = " << input_num
       << ", output_num = " << output_num << endl;
@@ -1462,8 +1463,8 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
   return buf;
 }
 
-void UBuffer::generate_stencil_valid_config(CodegenOptions& options) {
-  auto outpt_sched = get_stencil_valid_sched(pick(bank_list).name);
+void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank_name) {
+  auto outpt_sched = get_stencil_valid_sched(bank_name);
   cout << "original outpt schedule: " << str(get_outpt_sched()) << endl;
   assert(isl_union_map_is_single_valued(outpt_sched));
 
@@ -1471,7 +1472,6 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options) {
   cout << "Stencil Valid signal 1D: " << str(outpt_sched_1D) << endl;
   auto sched = get_aff(outpt_sched_1D);
   auto stencil_valid = generate_accessor_config_from_aff_expr(::domain(outpt_sched_1D), sched);
-  //FIXME:possible bug if one ubuffer contains more than one tile
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
 }
 
@@ -1562,6 +1562,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     cout << "ubuffer global schedule: " << str(global_schedule()) << endl;
     cout << "ubuffer output schedule: " << str(get_outpt_sched()) << endl;
     if (!equal(global_outpt_sched(), get_outpt_sched())) {
+      cout << "Set stencil valid to be true!" << endl;
       has_stencil_valid = true;
       use_memtile_gen_stencil_valid = false;
     }
@@ -1631,6 +1632,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       //generate a memory for this ubuffer
       contain_memory_tile = true;
 
+      //if we has memory tile we will generate stencil valid
+      has_stencil_valid = true;
+
       string ub_ins_name = "ub_"+bk.name;
       map<string, UBuffer> vectorized_buf;
       vectorized_buf.insert(
@@ -1653,15 +1657,22 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
       //create the tile instance
       auto targe_buf = rewrite_buffer.at(bk.name + "_ubuf");
-      CoreIR::Instance* buf = generate_lake_tile_instance(def, options, ub_ins_name,
+      CoreIR::Instance* buf = generate_lake_tile_instance(def, options,
+        ub_ins_name, bk.name,
         targe_buf.num_in_ports(), targe_buf.num_out_ports(),
         has_stencil_valid & (!use_memtile_gen_stencil_valid), true);
 
       //Wire stencil valid
       if (options.pass_through_valid) {
         if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
-          def->connect(buf->sel("stencil_valid"), def->sel("self."+get_bundle(pick(outpts)) + "_extra_ctrl"));
-          use_memtile_gen_stencil_valid = true;
+          auto ctrl_wire = def->sel("self." + get_bundle(get_lastest_outpt(bk.name)) + "_extra_ctrl");
+
+          //Chances are there are multiple bank output port connect to the control wire,
+          //Just pick the first one
+          if (ctrl_wire->getSelects().size() == 0) {
+            def->connect(buf->sel("stencil_valid"), ctrl_wire);
+            use_memtile_gen_stencil_valid = true;
+          }
         }
       }
 
@@ -1756,8 +1767,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
   //This is the situation that stencil valid is needed but do not have memtile in ubufub_ins_namefer
   if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
+    cout << "Bank size: " << bank_list.size() << endl;
     CoreIR::Instance* buf = generate_lake_tile_instance(def, options,
-            this->name + "_stencil_valid_gen", 0, 0, true, true);
+            this->name + "_stencil_valid_gen", pick(bank_list).name, 0, 0, true, true);
     auto out_bds = get_out_bundles();
 
     //Only consider one output bundle now

@@ -1241,19 +1241,46 @@ class UBuffer {
       return bnks;
     }
 
-    isl_union_map* get_stencil_valid_sched(string bk_name) {
-      auto outpts = get_bank_outputs(bk_name);
-      //only consider the shift register condition now
-      string outpt = pick(outpts);
-      if (!is_bank_input(outpt)) {
-        return schedule.at(outpt);
+    string get_lastest_outpt(string bk_name) {
+      auto outpts_set = get_bank_outputs(bk_name);
+      vector<string> outpts(outpts_set.begin(), outpts_set.end());
+
+      //Sort the output ports and get the latest output schedule
+      sort(outpts.begin(), outpts.end(),
+              [this](const string& l, const string & r) {
+                auto l_start_time_stamp = lexminpt(range(schedule.at(l)));
+                auto r_start_time_stamp = lexminpt(range(schedule.at(r)));
+                return lex_lt_pt(l_start_time_stamp, r_start_time_stamp);
+              });
+      //last pt is the latests access
+      auto outpt = outpts.back();
+      //Check if this is the shift register input
+      //DFS for the leaf port
+      if(!is_bank_input(outpt)) {
+          return outpt;
       } else {
-        auto ret = isl_union_map_read_from_str(ctx, "{}");
-        for (auto bk: receiver_banks(outpt)) {
-          ret = unn(ret, get_stencil_valid_sched(bk.name));
+        for (auto bk: receiver_banks(outpt)){
+          return get_lastest_outpt(bk.name);
         }
-        return ret;
       }
+
+    }
+
+    isl_union_map* get_stencil_valid_sched(string bk_name) {
+      string outpt = get_lastest_outpt(bk_name);
+      return schedule.at(outpt);
+
+      //only consider the shift register condition now
+      //string outpt = pick(outpts);
+      //if (!is_bank_input(outpt)) {
+      //  return schedule.at(outpt);
+      //} else {
+      //  auto ret = isl_union_map_read_from_str(ctx, "{}");
+      //  for (auto bk: receiver_banks(outpt)) {
+      //    ret = unn(ret, get_stencil_valid_sched(bk.name));
+      //  }
+      //  return ret;
+      //}
     }
 
     isl_union_map* get_outpt_sched() const {
@@ -2193,11 +2220,11 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
     void generate_coreir_without_ctrl(CodegenOptions& options, CoreIR::ModuleDef* def);
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> rewrite_buffer);
 
-    void generate_stencil_valid_config(CodegenOptions& options);
+    void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
     CoreIR::Instance* generate_lake_tile_instance(
         CoreIR::ModuleDef* def,
         CodegenOptions options,
-        string ub_ins_name,
+        string ub_ins_name, string bk_name,
         size_t input_num, size_t output_num,
         bool has_stencil_valid, bool has_flush);
 
