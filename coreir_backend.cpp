@@ -158,6 +158,20 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
 
+  //map<string, std::set<string> > broadcast_groups;
+  //for (auto pt : shift_registered_outputs_to_outputs) {
+    //bool already_broadcast = false;
+    //for (auto other : broadcast_groups) {
+      //if (elem(pt, other.second)) {
+        //already_broadcast = true;
+        //break;
+      //}
+    //}
+    //if (!alread_broadcast) {
+
+    //}
+  //}
+
   auto c = def->getContext();
   std::set<string> done_outpt;
   for (auto pt : shift_registered_outputs) {
