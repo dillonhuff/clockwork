@@ -3738,6 +3738,8 @@ struct dgraph {
 };
 
 std::ostream& operator<<(std::ostream& out, dgraph& dg) {
+  out << "# nodes: " << dg.nodes.size() << endl;
+  out << "# edges: " << dg.weights.size() << endl;
   for (auto e : dg.out_edges) {
     for (auto dst : e.second) {
       out << tab(1) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
@@ -3764,6 +3766,19 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
   cout << "DG: ..." << endl;
   cout << dg << endl;
+
+  dgraph shift_registers;
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    for (auto dst : e.second) {
+      if (!elem(dst, shift_registers.nodes)) {
+        shift_registers.add_edge(src, dst, dg.weight(src, dst));
+      }
+    }
+  }
+
+  cout << "SRC shift registers" << endl;
+  cout << shift_registers << endl;
   if (dg.nodes.size() > 0) {
     assert(false);
   }
