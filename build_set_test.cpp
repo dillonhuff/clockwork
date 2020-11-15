@@ -16780,10 +16780,11 @@ void fpga_asplos_tests() {
 
 void cgra_flow_tests() {
 
-  //vector<prog> M3_test_programs{pointwise(), camera_pipeline(), harris()};
-  vector<prog> M3_test_programs{mobilenet_unrolled(), pointwise()};
+  //vector<prog> M3_test_programs{resnet(), pointwise(), camera_pipeline(), harris()};
+  vector<prog> M3_test_programs{pointwise(), camera_pipeline(), harris()};
+  //vector<prog> M3_test_programs{mobilenet_unrolled(), pointwise()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  assert(false);
+  //assert(false);
 
   auto test_programs =
     all_cgra_programs();
