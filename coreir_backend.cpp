@@ -3903,7 +3903,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
 
       Values tile_params{{"width", COREMK(c, 16)},
-        {"ID", COREMK(c, str(b))},
+        {"ID", COREMK(c, buf.name + "_" + str(b))},
         {"num_inputs",COREMK(c,bank_writers[b].size())},
         {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
