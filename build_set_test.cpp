@@ -15981,6 +15981,15 @@ CodegenOptions FPGA_BRAM_codegen_options(prog& prg) {
   return options;
 }
 
+CodegenOptions CGRA_M1_codegen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_M1;
+  all_unbanked(prg, options);
+  return options;
+}
+
 CodegenOptions CGRA_M3_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
@@ -16066,10 +16075,14 @@ void compile_for_generic_SRAM_mem(prog& prg) {
   compile_cycle_accurate_hw(options, sched, prg);
 }
 
+void compile_for_CGRA_M1_mem(prog& prg) {
+  auto options = CGRA_M1_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  compile_cycle_accurate_hw(options, sched, prg);
+}
+
 void compile_for_CGRA_M3_mem(prog& prg) {
   auto options = CGRA_M3_codegen_options(prg);
-  //options.rtl_options.use_pipelined_compute_units = true;
-  //options.rtl_options.global_signals.synchronous_reset = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   compile_cycle_accurate_hw(options, sched, prg);
 }
@@ -16723,6 +16736,8 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  vector<prog> M1_test_programs{resnet()};
+  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
   //vector<prog> M3_test_programs{resnet(), pointwise(), camera_pipeline(), harris()};
   vector<prog> M3_test_programs{pointwise(), camera_pipeline(), harris()};
