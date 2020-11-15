@@ -3885,7 +3885,8 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         {"ID", COREMK(c, buf.name + "_" + str(b))},
         {"has_external_addrgen", COREMK(c, true)},
         {"num_inputs",COREMK(c,bank_writers[b].size())},
-        {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
+        {"num_outputs",COREMK(c,bank_readers[b].size())}};
+        //{"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
       assert(verilog_collateral_file != nullptr);
 
