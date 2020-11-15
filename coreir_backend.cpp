@@ -3898,10 +3898,14 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       for(int i = 0; i < bank_writers[b].size(); i++)
       {
         port_decls.push_back("input [15:0] data_in_" + str(i));
+        port_decls.push_back("input [15:0] write_addr_" + str(i));
+        port_decls.push_back("input wen_" + str(i));
       }
       for(int i = 0; i < bank_readers[b].size(); i++)
       {
         port_decls.push_back("output logic [15:0] data_out_" + str(i));
+        port_decls.push_back("input [15:0] read_addr_" + str(i));
+        port_decls.push_back("input ren_" + str(i));
       }
       port_decls.push_back("input [15:0] chain_data_in");
       port_decls.push_back("output [15:0] chain_data_out");
