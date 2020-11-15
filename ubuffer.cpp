@@ -688,6 +688,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
       acc_map = set_range_name(acc_map, bname);
       auto dom = ::domain(acc_map);
       string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      //string pt_name = inpt;
       buf.port_bundles[::name(dom) + "_write"].push_back(pt_name);
       buf.add_in_pt(pt_name, dom, acc_map, its(schedule.at(inpt), dom));
       usuffix ++;
@@ -703,6 +704,7 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
       acc_map = set_range_name(acc_map, bname);
       auto dom = ::domain(acc_map);
       string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      //string pt_name = outpt;
       buf.port_bundles[::name(dom) + "_read"].push_back(pt_name);
       buf.add_out_pt(pt_name, dom, acc_map, its(schedule.at(outpt), dom));
       if (sv_map.count(outpt)) {
@@ -1736,12 +1738,14 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         }
       } else {
         //Wiring the multi input case
+        auto this_buf = rewrite_buffer.at(bk.name + "_ubuf");
         for (auto inpt: inpts) {
-          def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), pt2wire.at(inpt));
-          if (with_ctrl) {
-            def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
-          }
-          inpt_cnt ++;
+            cout << "\t\tvisit port: " << inpt << endl;
+            def->connect(buf->sel("data_in_" + to_string(inpt_cnt)), pt2wire.at(inpt));
+            if (with_ctrl) {
+              def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+            }
+            inpt_cnt ++;
         }
         for (auto outpt: outpts) {
           //need a second pass push all wire into a list
