@@ -3824,17 +3824,8 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
-  if (buf.num_out_ports() == 0) {
-    cout << buf.name << " is all shift registers" << endl;
-    //assert(false);
-  }
-
   if (buf.num_out_ports() > 0) {
     ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
-
-    if (is_register_file(buf, impl)) {
-      cout << buf.name << " is really a register file" << endl;
-    }
 
     int num_banks = 1;
     for (auto ent : impl.partitioned_dimension_extents) {
@@ -3932,7 +3923,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         *verilog_collateral_file << "data_out_" << str(i) << " <= 234;" << endl;
 
       }
-      //*verilog_collateral_file << tab(2) << "chain_data_out <= chain_data_in;" << endl;
       *verilog_collateral_file << tab(1) << "end" << endl;
       *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_data_in;" << endl;
       *verilog_collateral_file << "endmodule" << endl;

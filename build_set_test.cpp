@@ -16736,7 +16736,7 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  vector<prog> M1_test_programs{resnet()};
+  vector<prog> M1_test_programs{pointwise(), resnet()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
   //vector<prog> M3_test_programs{resnet(), pointwise(), camera_pipeline(), harris()};
