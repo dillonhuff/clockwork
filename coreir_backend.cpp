@@ -4033,26 +4033,20 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires;
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
-      if(b == 0 && chain_pt != "") {
-        ubuffer_ports_to_bank_wires[chain_pt].push_back(currbank->sel("data_out_1"));
-        //def->connect(
-            //currbank->sel("data_out_1"),
-            //def->sel(chain_pt + "_net.in"));
-      }
+      //if(b == 0 && chain_pt != "") {
+        //ubuffer_ports_to_bank_wires[chain_pt].push_back(currbank->sel("data_out_1"));
+      //}
 
       for(auto pt : bank_readers[b])
       {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        if(pt != chain_pt)
-        {
+        //if(pt != chain_pt)
+        //{
           ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
-
-          //def->connect(
-              //currbank->sel("data_out_" + str(count)),
-              //def->sel(pt + "_net.in"));
-        }
+        //}
       }
     }
+
     for (auto conn : ubuffer_ports_to_bank_wires) {
       assert(conn.second.size() == 1);
       def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
