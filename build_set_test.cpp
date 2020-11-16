@@ -16736,14 +16736,15 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+  //vector<prog> M1_test_programs{pointwise(), resnet()};
+  //vector<prog> M1_test_programs{pointwise()};
+  vector<prog> M1_test_programs{mobilenet_unrolled(), resnet()};
+  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
+  assert(false);
+
   auto test_programs =
     all_cgra_programs();
   test_platonic_codegen(test_programs);
-
-  //vector<prog> M1_test_programs{pointwise(), resnet()};
-  //vector<prog> M1_test_programs{pointwise()};
-  vector<prog> M1_test_programs{resnet()};
-  test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
 
   //vector<prog> M3_test_programs{resnet(), pointwise(), camera_pipeline(), harris()};
   vector<prog> M3_test_programs{pointwise(), camera_pipeline(), harris()};
