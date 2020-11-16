@@ -2257,13 +2257,16 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
-  //garnet_map_module(prg_mod);
-  context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
+  //Garnet pass
+  if (options.use_prebuilt_memory) {
+    garnet_map_module(prg_mod);
+    context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
-  auto ns_new = context->getNamespace("global");
-  if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
-    cout << "Could not save ubuffer coreir" << endl;
-    context->die();
+    auto ns_new = context->getNamespace("global");
+    if(!saveToFile(ns_new,  options.dir + prg.name+ "_garnet.json", prg_mod)) {
+      cout << "Could not save ubuffer coreir" << endl;
+      context->die();
+    }
   }
 
   //garnet_map_module(prg_mod);
