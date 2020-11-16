@@ -389,7 +389,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
         if (impl.outpt_to_bank[pt].size() > 1) {
-          ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
+          Wireable* select_bank_pt = eqConst(def, ubuffer_port_bank_selectors[pt], b);
+          //ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(select_bank_pt);
         } else {
           ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
         }
