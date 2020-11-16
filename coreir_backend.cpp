@@ -79,7 +79,8 @@ Instance* generate_controller_verilog(CodegenOptions& options, ModuleDef* def, c
 
 CoreIR::Wireable* inner_control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
   string bundle = buf.container_bundle(reader);
-  return def->sel("self." + bundle + "_ctrl_vars");
+  //return def->sel("self." + bundle + "_ctrl_vars");
+  return def->sel(bundle + "_ctrl.d");
 }
 
 CoreIR::Wireable* inner_control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
