@@ -49,6 +49,20 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
+CoreIR::Wireable* inner_control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+  string bundle = buf.container_bundle(reader);
+  return def->sel("self." + bundle + "_ctrl_vars");
+}
+
+CoreIR::Wireable* inner_control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+  string bundle = buf.container_bundle(reader);
+  if (buf.is_in_pt(reader)) {
+    return def->sel("self." + bundle + "_wen");
+  } else {
+    return def->sel("self." + bundle + "_ren");
+  }
+}
+
 Wireable* eqConst(ModuleDef* def, Wireable* val, const int b) {
   auto c = def->getContext();
   auto eq = def->addInstance("eq_const" + c->getUnique(), "coreir.eq", {{"width", COREMK(c, 16)}});
@@ -275,11 +289,11 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        control_vars_for_ubuffer_ports[pt] = control_vars(def, pt, adjusted_buf);
-        en_vars_for_ubuffer_ports[pt] = control_en(def, pt, adjusted_buf);
+        control_vars_for_ubuffer_ports[pt] = inner_control_vars(def, pt, adjusted_buf);
+        en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, adjusted_buf);
       } else {
-        control_vars_for_ubuffer_ports[pt] = control_vars(def, pt, buf);
-        en_vars_for_ubuffer_ports[pt] = control_en(def, pt, buf);
+        control_vars_for_ubuffer_ports[pt] = inner_control_vars(def, pt, buf);
+        en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, buf);
       }
     }
 
