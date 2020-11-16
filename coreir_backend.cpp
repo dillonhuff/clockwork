@@ -3787,7 +3787,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
 
     Wireable* src_wire = nullptr;
     if (buf.is_out_pt(src)) {
-      src_wire = def->sel(dst + "_net.out");
+      src_wire = def->sel(src + "_net.out");
     } else {
       assert(buf.is_in_pt(src));
       src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
@@ -3802,6 +3802,10 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
         def->sel(dst + "_net.in"),
         delayed_src);
     done_outpt.insert(dst);
+  }
+
+  if (buf.name == "hw_input_global_wrapper_stencil") {
+    //assert(false);
   }
 
   return done_outpt;
