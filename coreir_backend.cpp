@@ -339,10 +339,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto en = controller->sel("valid");
         auto ctrl = controller->sel("d");
 
-        //auto en = inner_control_en(def, pt, buf);
-        //auto ctrl = 
-            //inner_control_vars(def, pt, adjusted_buf);
-
         auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
             ctrl);
@@ -388,10 +384,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
         auto en = controller->sel("valid");
         auto ctrl = controller->sel("d");
-
-        //auto en = inner_control_en(def, pt, buf);
-        //auto ctrl =
-            //inner_control_vars(def, pt, buf);
 
         auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
