@@ -4031,6 +4031,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     }
 
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires;
+    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
       //if(b == 0 && chain_pt != "") {
@@ -4043,13 +4044,45 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         //if(pt != chain_pt)
         //{
           ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
+          if (b == 0) {
+            ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
+          } else {
+            ubuffer_ports_to_bank_condition_wires[pt].push_back(zero);
+          }
         //}
       }
     }
 
     for (auto conn : ubuffer_ports_to_bank_wires) {
-      assert(conn.second.size() == 1);
-      def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
+      vector<Wireable*> conds = ubuffer_ports_to_bank_condition_wires[conn.first];
+      vector<Wireable*> vals = conn.second;
+      assert(conds.size() == vals.size());
+
+      if (conds.size() == 1) {
+        def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
+      } else {
+        assert(conds.size() == 3);
+        Wireable* out = def->sel(conn.first + "_net.in");
+
+        auto snd_mux =
+          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        def->connect(snd_mux->sel("in0"), vals[1]);
+        def->connect(snd_mux->sel("in1"), vals[2]);
+        def->connect(snd_mux->sel("sel"), conds[2]);
+
+        auto last_mux =
+          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
+        def->connect(last_mux->sel("in1"), vals[0]);
+        def->connect(last_mux->sel("sel"), conds[0]);
+
+        def->connect(last_mux->sel("out"), out);
+        //auto ztrue = conds[0];
+        //auto ztrue = conds[0];
+
+        //assert(false);
+      }
+      //assert(conn.second.size() == 1);
     }
 
     for (int b = 0; b < num_banks; b++) {
