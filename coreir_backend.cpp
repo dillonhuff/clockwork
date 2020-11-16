@@ -50,10 +50,14 @@ static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
 void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf, prog& prg,
-  map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port,
-  schedule_info& hwinfo) {
+    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port,
+    schedule_info& hwinfo) {
+
+
 
   assert(verilog_collateral_file != nullptr);
+
+  std::ostream& out = *verilog_collateral_file;
 
   for(auto pt : impl.bank_writers[b]) {
     string bundle_name = "bank_" + str(b) + "_" + pt;
@@ -73,125 +77,141 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
         "valid",
         sched_aff,
         dom);
-    //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-    //auto en = controller->sel("valid");
-    //auto ctrl = controller->sel("d");
 
     //auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
     //def->connect(agen->sel("d"),
-        //ctrl);
+    //ctrl);
 
     //auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
     //def->connect(bank_sel->sel("d"),
-        //ctrl);
+    //ctrl);
 
     //auto ubuffer_port_bank_selector  = delay_by(def, bank_sel->sel("out"), 0);
     //bank_and_port_input_addrgen[{b, count}] = agen;
     //bank_and_port_input_data_valid[{b, count}] =
-      //eqConst(def, ubuffer_port_bank_selector, b);
+    //eqConst(def, ubuffer_port_bank_selector, b);
     //bank_and_port_to_agen[{b, count}] = agen->sel("out");
 
     //Wireable* enable = nullptr;
     //if (inpt_to_bank[pt].size() > 1) {
-      //Wireable* bank_is_selected =
-        //bank_and_port_input_data_valid[{b, count}];
+    //Wireable* bank_is_selected =
+    //bank_and_port_input_data_valid[{b, count}];
 
-      //enable =
-        //andList(def,
-            //{
-            //en,
-            //bank_is_selected});
+    //enable =
+    //andList(def,
+    //{
+    //en,
+    //bank_is_selected});
     //} else {
-      //enable = en;
+    //enable = en;
     //}
     //assert(enable != nullptr);
     //bank_and_port_to_enable[{b, count}] = enable;
   }
 
   for(auto pt : impl.bank_readers[b]) {
-    int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
-    string bundle_name = "bank_" + str(b) + "_" + str(count) + "_ctrl";
-    string port_rep = pt;
-    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-    op* rep = prg.find_op(op_rep_name);
-    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+    //int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
+    //string bundle_name = "bank_" + str(b) + "_" + str(count) + "_ctrl";
+    //string port_rep = pt;
+    //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    //op* rep = prg.find_op(op_rep_name);
+    //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
 
-    isl_aff* sched_aff =
-      get_aff(buf.schedule.at(pt));
+    //isl_aff* sched_aff =
+    //get_aff(buf.schedule.at(pt));
     //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
     //auto en = controller->sel("valid");
     //auto ctrl = controller->sel("d");
 
     //auto agen = build_inner_bank_offset(pt, buf, impl, def);
     //def->connect(agen->sel("d"),
-        //ctrl);
+    //ctrl);
 
     //auto bank_sel = build_bank_selector(pt, buf, impl, def);
     //def->connect(bank_sel->sel("d"),
-        //ctrl);
+    //ctrl);
 
     //const int READ_LATENCY = 1;
     //auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
     //bank_and_port_output_addrgen[{b, count}] = agen;
     //bank_and_port_output_data_valid[{b, count}] =
-      //eqConst(def, ubuffer_port_bank_selector, b);
+    //eqConst(def, ubuffer_port_bank_selector, b);
 
     //bank_and_port_to_read_enable[{b, count}] = en;
     //bank_and_port_to_read_agen[{b, count}] =
-      //agen->sel("out");
+    //agen->sel("out");
   }
 
   vector<string> port_decls = {};
   port_decls.push_back("input clk");
-    port_decls.push_back("input rst_n");
-    port_decls.push_back("input clk_en");
-    port_decls.push_back("input chain_chain_en");
-    for(int i = 0; i < impl.bank_writers[b].size(); i++)
-    {
-      port_decls.push_back("input [15:0] data_in_" + str(i));
-      port_decls.push_back("input [15:0] write_addr_" + str(i));
-      port_decls.push_back("input wen_" + str(i));
-    }
-    for(int i = 0; i < impl.bank_readers[b].size(); i++)
-    {
-      port_decls.push_back("output logic [15:0] data_out_" + str(i));
-      port_decls.push_back("input [15:0] read_addr_" + str(i));
-      port_decls.push_back("input ren_" + str(i));
-    }
-    port_decls.push_back("input [15:0] chain_data_in");
-    port_decls.push_back("output [15:0] chain_data_out");
+  port_decls.push_back("input rst_n");
+  port_decls.push_back("input clk_en");
+  port_decls.push_back("input chain_chain_en");
+  for(int i = 0; i < impl.bank_writers[b].size(); i++)
+  {
+    port_decls.push_back("input [15:0] data_in_" + str(i));
+    port_decls.push_back("input [15:0] write_addr_" + str(i));
+    port_decls.push_back("input wen_" + str(i));
+  }
+  for(int i = 0; i < impl.bank_readers[b].size(); i++)
+  {
+    port_decls.push_back("output logic [15:0] data_out_" + str(i));
+    port_decls.push_back("input [15:0] read_addr_" + str(i));
+    port_decls.push_back("input ren_" + str(i));
+  }
+  port_decls.push_back("input [15:0] chain_data_in");
+  port_decls.push_back("output [15:0] chain_data_out");
 
-    *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-    *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
-    *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
-    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
-      *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
-    }
+  *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+  for(auto pt : impl.bank_writers[b]) {
+    string bundle_name = "bank_" + str(b) + "_" + pt;
+    string port_rep = pt;
+    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    op* rep = prg.find_op(op_rep_name);
+    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
-    *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-    *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
-    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
-      *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+
+    auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+
+    isl_aff* sched_aff =
+      get_aff(adjusted_buf.schedule.at(pt));
+
+    out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
+  }
+
+  *verilog_collateral_file << endl;
+
+  *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
+  *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
+  for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+    *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
+  }
+
+  *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+  *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
+  for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+    *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+  }
+  for (int i = 0; i < impl.bank_writers[b].size(); i++) {
+    *verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
+    //string bundle_name = "bank_" + str(b) + "_" + str(i) + "_ctrl";
+    //*verilog_collateral_file << tab(2) << "if (" << bundle_name << ".valid" << ") begin" << endl;
+    *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
+    *verilog_collateral_file << tab(2) << "end" << endl;
+  }
+  *verilog_collateral_file << tab(1) << "end" << endl;
+  //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
+  *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
+  for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+    if (i == impl.bank_readers[b].size() - 1) {
+      *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
+    } else {
+      *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
     }
-    for (int i = 0; i < impl.bank_writers[b].size(); i++) {
-      //*verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
-      string bundle_name = "bank_" + str(b) + "_" + str(i) + "_ctrl";
-      *verilog_collateral_file << tab(2) << "if (" << bundle_name << ".valid" << ") begin" << endl;
-      *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
-      *verilog_collateral_file << tab(2) << "end" << endl;
-    }
-    *verilog_collateral_file << tab(1) << "end" << endl;
-    //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
-    *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
-    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
-      if (i == impl.bank_readers[b].size() - 1) {
-        *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
-      } else {
-        *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
-      }
-    }
-    *verilog_collateral_file << "endmodule" << endl << endl;
+  }
+  *verilog_collateral_file << "endmodule" << endl << endl;
 }
 Instance* generate_controller_verilog(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
   auto c = def->getContext();
