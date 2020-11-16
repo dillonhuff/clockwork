@@ -240,11 +240,29 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
   }
 
+
   std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
   if (buf.num_out_ports() > 0) {
+    for (auto bundle : buf.port_bundles) {
+      string bundle_name = bundle.first;
+      string port_rep = pick(bundle.second);
+      string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+      op* rep = prg.find_op(op_rep_name);
+
+      isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+      if (buf.is_in_pt(port_rep)) {
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        isl_aff* sched_aff =
+          get_aff(adjusted_buf.schedule.at(port_rep));
+      } else {
+        isl_aff* sched_aff =
+          get_aff(buf.schedule.at(port_rep));
+      }
+    }
+
     auto implm = build_buffer_impl(prg, buf, hwinfo);
     ubuffer_impl impl = implm.first;
 
