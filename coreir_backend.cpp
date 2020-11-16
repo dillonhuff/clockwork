@@ -3925,10 +3925,16 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     port_decls.push_back("output [15:0] chain_data_out");
 
     *verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-    *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [511:0];" << endl;
-    *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+    *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [50000:0];" << endl;
+    *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
     for (int i = 0; i < bank_readers[b].size(); i++) {
-      *verilog_collateral_file << tab(2) << "data_out_" << str(i) << " <= SRAM[read_addr_" << i << "];" << endl;
+      *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
+    }
+
+    *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+    *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << bank_readers[b].size() - 1 << ";" << endl;
+    for (int i = 0; i < bank_readers[b].size(); i++) {
+      *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
     }
     for (int i = 0; i < bank_writers[b].size(); i++) {
       *verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
@@ -3936,8 +3942,17 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       *verilog_collateral_file << tab(2) << "end" << endl;
     }
     *verilog_collateral_file << tab(1) << "end" << endl;
-    *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_data_in;" << endl;
+    *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
+    for (int i = 0; i < bank_readers[b].size(); i++) {
+      if (i == bank_readers[b].size() - 1) {
+        *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
+      } else {
+        *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
+      }
+    }
     *verilog_collateral_file << "endmodule" << endl << endl;
+
+
     if(b == 0 && chain_pt != "") {
       def->connect(
           currbank->sel("data_out_1"),
@@ -3986,7 +4001,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
 
   }
-  //assert(false);
   for (int b = 0; b < num_banks; b++) {
 
     if(b != num_banks - 1){
