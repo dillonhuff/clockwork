@@ -296,16 +296,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
 
-    //string chain_pt = "";
-    //for (auto pt: outpt_to_bank)
-    //{
-      //if(pt.second.size() > 1) {
-        //assert(chain_pt == "");
-        //chain_pt = pt.first;
-        //cout << pt.first << " needs chaining" << endl;
-      //}
-    //}
-
     Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
 
@@ -318,12 +308,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         {"num_outputs",COREMK(c,bank_readers[b].size())}};
 
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
-
-      //if (chain_pt != "") {
-        //def->connect(currbank->sel("chain_chain_en"),one);
-      //} else {
-        def->connect(currbank->sel("chain_chain_en"),zero);
-      //}
+      def->connect(currbank->sel("chain_chain_en"),zero);
 
       instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
       bank_map[b] = currbank;
@@ -417,12 +402,12 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       def->connect(out, mkOneHot(def, conds, vals));
     }
 
+    //map<pair<string, int>, Wireable*> ubuffer_port_and_bank
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
-      int count = 0;
-      for(auto pt : bank_writers[b])
-      {
-
+      //int count = 0;
+      for(auto pt : bank_writers[b]) {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto agen = ubuffer_port_agens[pt];
 
@@ -446,7 +431,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
-        count++;
+        //count++;
       }
     }
 
