@@ -3956,16 +3956,11 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         cout << pt.first << " needs chaining" << endl;  
       }
     }
-    //for (auto pt: inpt_to_bank)
-    //{
-      //if(pt.second.size() > 1) {
-        //cout << pt.first << " needs broadcast" << endl;  
-      //}
-    //}
 
     Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
 
+    map<int, Instance*> bank_map;
     for (int b = 0; b < num_banks; b++) {
       Values tile_params{{"width", COREMK(c, 16)},
         {"ID", COREMK(c, buf.name + "_" + str(b))},
@@ -3982,13 +3977,19 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
 
       instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
+      bank_map[b] = currbank;
+      def->connect(currbank->sel("clk_en"),one);
+      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
+      def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+    }
 
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
       if(b == 0 && chain_pt != "") {
         def->connect(
             currbank->sel("data_out_1"),
             def->sel(chain_pt + "_net.in"));
       }
-      def->connect(currbank->sel("clk_en"),one);
 
       int count = 0;
       for(auto pt : bank_readers[b])
@@ -4025,12 +4026,10 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
         count++;
       }
-      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
     }
 
-    for (int b = 0; b < num_banks; b++) {
-      def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
-    }
+    //for (int b = 0; b < num_banks; b++) {
+    //}
   }
 
 
