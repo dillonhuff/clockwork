@@ -335,9 +335,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         control_vars_for_ubuffer_ports[pt] = inner_control_vars(def, pt, buf);
         en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, buf);
       }
-    }
+    //}
 
-    for (auto pt : buf.get_all_ports()) {
+    //for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
