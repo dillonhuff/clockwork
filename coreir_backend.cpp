@@ -312,27 +312,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
 
-    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
-    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
-
-    map<int, Instance*> bank_map;
-    for (int b = 0; b < num_banks; b++) {
-      Values tile_params{{"width", COREMK(c, 16)},
-        {"ID", COREMK(c, buf.name + "_" + str(b))},
-        {"has_external_addrgen", COREMK(c, true)},
-        {"num_inputs",COREMK(c,bank_writers[b].size())},
-        {"num_outputs",COREMK(c,bank_readers[b].size())}};
-
-      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
-      def->connect(currbank->sel("chain_chain_en"),zero);
-
-      instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
-      bank_map[b] = currbank;
-      def->connect(currbank->sel("clk_en"),one);
-      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
-      def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
-    }
-
     map<string, Wireable*> control_vars_for_ubuffer_ports;
     map<string, Wireable*> en_vars_for_ubuffer_ports;
     for (auto pt : buf.get_all_ports()) {
@@ -346,19 +325,24 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
-    //map<string, Instance*> ubuffer_port_agens;
     map<pair<int, int>, Instance*> bank_and_port_output_addrgen;
     map<pair<int, int>, Instance*> bank_and_port_input_addrgen;
 
     map<pair<int, int>, Wireable*> bank_and_port_output_data_valid;
     map<pair<int, int>, Wireable*> bank_and_port_input_data_valid;
+
+    map<pair<int, int>, Wireable*> bank_and_port_to_enable;
+    map<pair<int, int>, Wireable*> bank_and_port_to_agen;
+
+    map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
+    map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
+
     for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
-        //ubuffer_port_agens[pt] = agen;
 
         auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
         def->connect(bank_sel->sel("d"),
@@ -374,7 +358,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
-        //ubuffer_port_agens[pt] = agen;
 
         auto bank_sel = build_bank_selector(pt, buf, impl, def);
         def->connect(bank_sel->sel("d"),
@@ -390,16 +373,10 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
-    map<pair<int, int>, Wireable*> bank_and_port_to_enable;
-    map<pair<int, int>, Wireable*> bank_and_port_to_agen;
-
-    map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
-    map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
     for (int b = 0; b < num_banks; b++) {
       for(auto pt : bank_writers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        //auto agen = ubuffer_port_agens[pt];
         auto agen = bank_and_port_input_addrgen[{b, count}];
         bank_and_port_to_agen[{b, count}] = agen->sel("out");
 
@@ -423,9 +400,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       for(auto pt : bank_readers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        //auto agen = ubuffer_port_agens[pt];
         auto agen = bank_and_port_output_addrgen[{b, count}];
-    //map<pair<int, int>, Instance*> bank_and_port_output_addrgen;
         bank_and_port_to_read_enable[{b, count}] = 
             en_vars_for_ubuffer_ports[pt];
         bank_and_port_to_read_agen[{b, count}] =
@@ -433,6 +408,27 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
+
+    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+
+    map<int, Instance*> bank_map;
+    for (int b = 0; b < num_banks; b++) {
+      Values tile_params{{"width", COREMK(c, 16)},
+        {"ID", COREMK(c, buf.name + "_" + str(b))},
+        {"has_external_addrgen", COREMK(c, true)},
+        {"num_inputs",COREMK(c,bank_writers[b].size())},
+        {"num_outputs",COREMK(c,bank_readers[b].size())}};
+
+      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+      def->connect(currbank->sel("chain_chain_en"),zero);
+
+      instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
+      bank_map[b] = currbank;
+      def->connect(currbank->sel("clk_en"),one);
+      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
+      def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+    }
 
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
@@ -451,7 +447,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       for(auto pt : bank_readers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        //auto agen = ubuffer_port_agens[pt];
         auto agen = bank_and_port_output_addrgen[{b, count}];
         def->connect(
             bank_and_port_to_read_agen[{b, count}],
