@@ -3812,6 +3812,57 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
   return done_outpt;
 }
 
+void M1_sanity_check_port_counts(ubuffer_impl& impl) {
+
+    map<int, std::set<string> > bank_readers = impl.bank_readers;
+    map<int, std::set<string> > bank_writers = impl.bank_writers;
+    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
+
+
+    const int NUM_IN_PORTS_PER_BANK = 2;
+    const int NUM_OUT_PORTS_PER_BANK = 2;
+
+    //cout << "Buffer = " << buf.name << endl;
+    cout << "Bank readers..." << endl;
+    for (auto b : bank_readers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
+    }
+
+    cout << "Bank writers..." << endl;
+    for (auto b : bank_writers) {
+      cout << tab(1) << b.first << " -> ";
+      for (auto rd : b.second) {
+        cout << rd << ", ";
+      }
+      cout << endl;
+
+      assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
+    }
+
+    string chain_pt = "";
+    for (auto pt: outpt_to_bank)
+    {
+      if(pt.second.size() > 1) {
+        assert(chain_pt == "");
+        chain_pt = pt.first;
+        cout << pt.first << " needs chaining" << endl;  
+      }
+    }
+    for (auto pt: inpt_to_bank)
+    {
+      if(pt.second.size() > 1) {
+        cout << pt.first << " needs broadcast" << endl;  
+      }
+    }
+}
+
 void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
 
 
@@ -3837,36 +3888,39 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       num_banks *= ent.second;
     }
 
+    M1_sanity_check_port_counts(impl);
+
     map<int, std::set<string> > bank_readers = impl.bank_readers;
     map<int, std::set<string> > bank_writers = impl.bank_writers;
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
 
-    const int NUM_IN_PORTS_PER_BANK = 2;
-    const int NUM_OUT_PORTS_PER_BANK = 2;
 
-    cout << "Buffer = " << buf.name << endl;
-    cout << "Bank readers..." << endl;
-    for (auto b : bank_readers) {
-      cout << tab(1) << b.first << " -> ";
-      for (auto rd : b.second) {
-        cout << rd << ", ";
-      }
-      cout << endl;
+    //const int NUM_IN_PORTS_PER_BANK = 2;
+    //const int NUM_OUT_PORTS_PER_BANK = 2;
 
-      assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
-    }
+    //cout << "Buffer = " << buf.name << endl;
+    //cout << "Bank readers..." << endl;
+    //for (auto b : bank_readers) {
+      //cout << tab(1) << b.first << " -> ";
+      //for (auto rd : b.second) {
+        //cout << rd << ", ";
+      //}
+      //cout << endl;
 
-    cout << "Bank writers..." << endl;
-    for (auto b : bank_writers) {
-      cout << tab(1) << b.first << " -> ";
-      for (auto rd : b.second) {
-        cout << rd << ", ";
-      }
-      cout << endl;
+      //assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
+    //}
 
-      assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
-    }
+    //cout << "Bank writers..." << endl;
+    //for (auto b : bank_writers) {
+      //cout << tab(1) << b.first << " -> ";
+      //for (auto rd : b.second) {
+        //cout << rd << ", ";
+      //}
+      //cout << endl;
+
+      //assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
+    //}
 
     string chain_pt = "";
     for (auto pt: outpt_to_bank)
