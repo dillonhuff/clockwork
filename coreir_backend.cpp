@@ -49,6 +49,14 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
+Wireable* eqConst(ModuleDef* def, Wireable* val, const int b) {
+  auto c = def->getContext();
+  auto eq = def->addInstance("eq_const" + c->getUnique(), "coreir.eq", {{"width", COREMK(c, 16)}});
+  def->connect(eq->sel("in0"), val);
+  def->connect(eq->sel("in1"), mkConst(def, 16, b));
+  return eq->sel("out");
+}
+
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
 bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
@@ -4041,10 +4049,12 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         //if(pt != chain_pt)
         //{
           ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
-          ubuffer_ports_to_bank_condition_wires[pt] =
-            eqConst(ubuffer_port_bank_selectors[pt], b);
+          if (impl.outpt_to_bank[pt].size() > 1) {
+            ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
+          } else {
+            ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
+          }
           //if (b == 0) {
-            //ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
           //} else {
             //ubuffer_ports_to_bank_condition_wires[pt].push_back(zero);
           //}
