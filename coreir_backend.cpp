@@ -3824,8 +3824,8 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
   }
 
-  std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
-  //std::set<string> done_outpt = {};
+  //std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+  std::set<string> done_outpt = {};
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
