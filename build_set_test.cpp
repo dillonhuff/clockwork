@@ -17107,6 +17107,11 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
+
+  vector<prog> M3_test_programs{resnet()};
+  test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
+  assert(false);
+
   //vector<prog> M1_test_programs{pointwise(), resnet()};
   //vector<prog> M1_test_programs{pointwise()};
   //vector<prog> M1_test_programs{up_sample(), resnet(), mobilenet_unrolled()};
@@ -17117,9 +17122,6 @@ void cgra_flow_tests() {
     all_cgra_programs();
   test_platonic_codegen(test_programs);
 
-  vector<prog> M3_test_programs{resnet()};
-  test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  //assert(false);
 
   vector<prog> bram_test_programs{pointwise(), resnet()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
