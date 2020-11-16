@@ -3942,13 +3942,14 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       *verilog_collateral_file << tab(2) << "end" << endl;
     }
     *verilog_collateral_file << tab(1) << "end" << endl;
-    *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
+    //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
+    *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
     for (int i = 0; i < bank_readers[b].size(); i++) {
-      //if (i == bank_readers[b].size() - 1) {
-        //*verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
-      //} else {
+      if (i == bank_readers[b].size() - 1) {
+        *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
+      } else {
         *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
-      //}
+      }
     }
     *verilog_collateral_file << "endmodule" << endl << endl;
 
