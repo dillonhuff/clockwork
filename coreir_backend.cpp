@@ -3948,14 +3948,14 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
 
     string chain_pt = "";
-    //for (auto pt: outpt_to_bank)
-    //{
-      //if(pt.second.size() > 1) {
-        //assert(chain_pt == "");
-        //chain_pt = pt.first;
-        //cout << pt.first << " needs chaining" << endl;  
-      //}
-    //}
+    for (auto pt: outpt_to_bank)
+    {
+      if(pt.second.size() > 1) {
+        assert(chain_pt == "");
+        chain_pt = pt.first;
+        cout << pt.first << " needs chaining" << endl;  
+      }
+    }
     //for (auto pt: inpt_to_bank)
     //{
       //if(pt.second.size() > 1) {
@@ -3983,11 +3983,11 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
 
-      //if(b == 0 && chain_pt != "") {
-        //def->connect(
-            //currbank->sel("data_out_1"),
-            //def->sel(chain_pt + "_net.in"));
-      //}
+      if(b == 0 && chain_pt != "") {
+        def->connect(
+            currbank->sel("data_out_1"),
+            def->sel(chain_pt + "_net.in"));
+      }
       def->connect(currbank->sel("clk_en"),one);
 
       int count = 0;
@@ -3999,15 +3999,15 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
         def->connect(currbank->sel("ren_" + str(count)),
             control_en(def, pt, buf));
-        //if(pt != chain_pt)
-        //{
+        if(pt != chain_pt)
+        {
 
           def->connect(
               currbank->sel("data_out_" + str(count)),
               def->sel(pt + "_net.in"));
 
           count++;
-        //}
+        }
       }
       count = 0;
       for(auto pt : bank_writers[b])
