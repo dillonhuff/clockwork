@@ -384,26 +384,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
-
-    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires;
-    //map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
-    //for (int b = 0; b < num_banks; b++) {
-      //auto currbank = bank_map[b];
-
-      //for(auto pt : bank_readers[b])
-      //{
-        //int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        //ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
-        //if (impl.outpt_to_bank[pt].size() > 1) {
-          //Wireable* select_bank_pt = eqConst(def, ubuffer_port_bank_selectors[pt], b);
-          ////ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
-          //ubuffer_ports_to_bank_condition_wires[pt].push_back(select_bank_pt);
-        //} else {
-          //ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
-        //}
-      //}
-    //}
-
     map<pair<int, int>, Wireable*> bank_and_port_to_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_agen;
 
@@ -418,11 +398,15 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
         Wireable* enable = nullptr;
         if (inpt_to_bank[pt].size() > 1) {
+          Wireable* bank_is_selected =
+            eqConst(def, ubuffer_port_bank_selectors[pt], b);
+
           enable =
             andList(def,
                 {
                 en_vars_for_ubuffer_ports[pt],
-                eqConst(def, ubuffer_port_bank_selectors[pt], b)});
+                bank_is_selected});
+                //eqConst(def, ubuffer_port_bank_selectors[pt], b)});
         } else {
           enable =
             en_vars_for_ubuffer_ports[pt];
@@ -469,7 +453,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
-            //bank_and_port_output_data_valid[{b, count}] =
     for (auto pt : buf.get_out_ports()) {
       auto src_banks = impl.outpt_to_bank[pt];
       vector<Wireable*> conds;
