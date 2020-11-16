@@ -17117,9 +17117,7 @@ void cgra_flow_tests() {
     all_cgra_programs();
   test_platonic_codegen(test_programs);
 
-  //vector<prog> M3_test_programs{resnet(), pointwise(), camera_pipeline(), harris()};
-  vector<prog> M3_test_programs{pointwise(), camera_pipeline(), harris()};
-  //vector<prog> M3_test_programs{mobilenet_unrolled(), pointwise()};
+  vector<prog> M3_test_programs{resnet()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
 
