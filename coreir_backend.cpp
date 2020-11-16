@@ -4017,29 +4017,18 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       assert(bp.second <= 2);
     }
 
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
 
-    //for (auto pt_srcs : impl.outpt_to_bank) {
-      //string pt = pt_srcs.first;
-      //vector<Wireable*> bank_outputs;
-      //vector<Wireable*> bank_valids;
-      //for (int b : pt_srcs.second) {
-        //int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        //if (b == 0) {
-          //bank_valids.push_back(one);
-        //} else {
-          //bank_valids.push_back(zero);
-        //}
-
-        //auto currbank = bank_map[b];
-        //def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
-        //def->connect(currbank->sel("ren_" + str(count)),
-            //control_en(def, pt, buf));
-
-          //def->connect(
-              //currbank->sel("data_out_" + str(count)),
-              //def->sel(pt + "_net.in"));
-      //}
-    //}
+      for(auto pt : bank_readers[b])
+      {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        auto agen = ubuffer_port_agens[pt];
+        def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        def->connect(currbank->sel("ren_" + str(count)),
+            control_en(def, pt, buf));
+      }
+    }
 
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
@@ -4049,22 +4038,19 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             def->sel(chain_pt + "_net.in"));
       }
 
-      //int count = 0;
       for(auto pt : bank_readers[b])
       {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        auto agen = ubuffer_port_agens[pt];
-        def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
-        def->connect(currbank->sel("ren_" + str(count)),
-            control_en(def, pt, buf));
+        //auto agen = ubuffer_port_agens[pt];
+        //def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        //def->connect(currbank->sel("ren_" + str(count)),
+            //control_en(def, pt, buf));
         if(pt != chain_pt)
         {
 
           def->connect(
               currbank->sel("data_out_" + str(count)),
               def->sel(pt + "_net.in"));
-
-          //count++;
         }
       }
     }
