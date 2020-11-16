@@ -66,6 +66,13 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
     isl_aff* sched_aff =
       get_aff(adjusted_buf.schedule.at(pt));
+    generate_fsm(*verilog_collateral_file,
+        options,
+        bundle_name + "_ctrl",
+        "d",
+        "valid",
+        sched_aff,
+        dom);
     //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
     //auto en = controller->sel("valid");
     //auto ctrl = controller->sel("d");
