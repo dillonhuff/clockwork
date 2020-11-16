@@ -1188,7 +1188,7 @@ void connect_op_control_wires(CodegenOptions& options, ModuleDef* def, op* op, s
     cout << "Done Finding compute , op Latency : " << op_latency
         << ", read Latency: " << read_latency << endl;
 
-  if (options.rtl_options.use_external_controllers) {
+  if (options.rtl_options.use_external_controllers || op->index_variables_needed_by_compute.size()) {
     Wireable* op_start_wire = controller->sel("valid");
     Wireable* op_start_loop_vars = controller->sel("d");
 
@@ -1414,7 +1414,10 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   // TODO: Assert multi size == 1
   auto aff = isl_multi_aff_get_aff(saff, 0);
   Instance* controller;
-  if (options.rtl_options.use_external_controllers) {
+
+  //For those op need loop index we need this controller
+  bool need_index = op->index_variables_needed_by_compute.size() > 0;
+  if (options.rtl_options.use_external_controllers || need_index) {
     auto aff_c = affine_controller(c, dom, aff);
     aff_c->print();
     controller = def->addInstance(controller_name(op->name), aff_c);
@@ -1647,10 +1650,12 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   for (auto op : ops_dft) {
     cout << "Visit op: " << op->name << endl;
     vector<string> surrounding = surrounding_vars(op, prg);
+    //Genertea op controller for the op need index varibale
+    if (op->index_variables_needed_by_compute.size() > 0) {
+      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+    }
     for (auto var : op->index_variables_needed_by_compute) {
       int level = map_find(var, levels);
-      //Genertea op controller for the op need index varibale
-      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
       def->connect(def->sel(op->name)->sel(var), var_wire);
     }
