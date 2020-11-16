@@ -3999,8 +3999,25 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
-    //for (auto pt_srcs : impl.outpt_to_bank) {
-      //string pt = pt_srcs.first;
+    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
+    map<int, int> bank_to_next_available_out_port;
+    for (int b = 0; b < num_banks; b++) {
+      bank_to_next_available_out_port[b] = 0;
+    }
+    for (auto pt_srcs : impl.outpt_to_bank) {
+      string pt = pt_srcs.first;
+      for (int b : pt_srcs.second) {
+        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          map_find(b, bank_to_next_available_out_port);
+        bank_to_next_available_out_port[b]++;
+      }
+    }
+    for (auto bp : bank_to_next_available_out_port) {
+      cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      assert(bp.second <= 2);
+    }
+    //assert(false);
+
       //auto agen = ubuffer_port_agens[pt];
 
       //vector<Wireable*> bank_outputs;
