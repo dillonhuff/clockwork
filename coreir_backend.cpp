@@ -3983,6 +3983,22 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
     }
 
+    map<string, Instance*> ubuffer_port_agens;
+    for (auto pt : buf.get_all_ports()) {
+      if (buf.is_in_pt(pt)) {
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        auto agen = build_addrgen(pt, adjusted_buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, adjusted_buf));
+        ubuffer_port_agens[pt] = agen;
+      } else {
+        auto agen = build_addrgen(pt, buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, buf));
+        ubuffer_port_agens[pt] = agen;
+      }
+    }
+
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
       if(b == 0 && chain_pt != "") {
@@ -3994,9 +4010,10 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       int count = 0;
       for(auto pt : bank_readers[b])
       {
-        auto agen = build_addrgen(pt, buf, def);
-        def->connect(agen->sel("d"),
-            control_vars(def, pt, buf));
+        auto agen = ubuffer_port_agens[pt];
+        //auto agen = build_addrgen(pt, buf, def);
+        //def->connect(agen->sel("d"),
+            //control_vars(def, pt, buf));
         def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
         def->connect(currbank->sel("ren_" + str(count)),
             control_en(def, pt, buf));
@@ -4014,9 +4031,10 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       for(auto pt : bank_writers[b])
       {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        auto agen = build_addrgen(pt, adjusted_buf, def);
-        def->connect(agen->sel("d"),
-            control_vars(def, pt, adjusted_buf));
+        auto agen = ubuffer_port_agens[pt];
+        //auto agen = build_addrgen(pt, adjusted_buf, def);
+        //def->connect(agen->sel("d"),
+            //control_vars(def, pt, adjusted_buf));
         def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
         def->connect(currbank->sel("wen_" + str(count)),
             control_en(def, pt, adjusted_buf));
@@ -4028,8 +4046,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
-    //for (int b = 0; b < num_banks; b++) {
-    //}
   }
 
 
