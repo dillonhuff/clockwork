@@ -478,14 +478,29 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
-    for (auto conn : ubuffer_ports_to_bank_wires) {
-      vector<Wireable*> conds = ubuffer_ports_to_bank_condition_wires[conn.first];
-      vector<Wireable*> vals = conn.second;
-      assert(conds.size() == vals.size());
+            //bank_and_port_output_data_valid[{b, count}] =
+    for (auto pt : buf.get_out_ports()) {
+      auto src_banks = impl.outpt_to_bank[pt];
+      vector<Wireable*> conds;
+      vector<Wireable*> values;
+      for (auto b : src_banks) {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        conds.push_back(bank_and_port_output_data_valid[{b, count}]);
+        values.push_back(def->sel("bank_" + str(b) + ".data_out_" + str(count)));
+      }
 
-      Wireable* out = def->sel(conn.first + "_net.in");
-      def->connect(out, mkOneHot(def, conds, vals));
+      assert(conds.size() == values.size());
+      Wireable* out = def->sel(pt + "_net.in");
+      def->connect(out, mkOneHot(def, conds, values));
     }
+    //for (auto conn : ubuffer_ports_to_bank_wires) {
+      //vector<Wireable*> conds = ubuffer_ports_to_bank_condition_wires[conn.first];
+      //vector<Wireable*> vals = conn.second;
+      //assert(conds.size() == vals.size());
+
+      //Wireable* out = def->sel(conn.first + "_net.in");
+      //def->connect(out, mkOneHot(def, conds, vals));
+    //}
   }
 }
 
