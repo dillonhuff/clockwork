@@ -11,7 +11,7 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct corrected_stencil_op_hcompute_corrected_stencil_1_36_to_corrected_stencil_op_hcompute_curved_stencil_1_47_cache {
+struct corrected_stencil_op_hcompute_corrected_stencil_1_48_to_corrected_stencil_op_hcompute_curved_stencil_1_41_cache {
 	// RAM Box: {[1, 1], [0, 57], [0, 57]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -33,7 +33,7 @@ struct corrected_stencil_op_hcompute_corrected_stencil_1_36_to_corrected_stencil
 
 };
 
-struct corrected_stencil_op_hcompute_corrected_stencil_2_40_to_corrected_stencil_op_hcompute_curved_stencil_2_49_cache {
+struct corrected_stencil_op_hcompute_corrected_stencil_2_44_to_corrected_stencil_op_hcompute_curved_stencil_2_39_cache {
 	// RAM Box: {[2, 2], [0, 57], [0, 57]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -55,7 +55,7 @@ struct corrected_stencil_op_hcompute_corrected_stencil_2_40_to_corrected_stencil
 
 };
 
-struct corrected_stencil_op_hcompute_corrected_stencil_32_to_corrected_stencil_op_hcompute_curved_stencil_45_cache {
+struct corrected_stencil_op_hcompute_corrected_stencil_52_to_corrected_stencil_op_hcompute_curved_stencil_43_cache {
 	// RAM Box: {[0, 0], [0, 57], [0, 57]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -79,119 +79,119 @@ struct corrected_stencil_op_hcompute_corrected_stencil_32_to_corrected_stencil_o
 
 struct corrected_stencil_cache {
   // # of banks: 3
-  corrected_stencil_op_hcompute_corrected_stencil_1_36_to_corrected_stencil_op_hcompute_curved_stencil_1_47_cache corrected_stencil_op_hcompute_corrected_stencil_1_36_to_corrected_stencil_op_hcompute_curved_stencil_1_47;
-  corrected_stencil_op_hcompute_corrected_stencil_2_40_to_corrected_stencil_op_hcompute_curved_stencil_2_49_cache corrected_stencil_op_hcompute_corrected_stencil_2_40_to_corrected_stencil_op_hcompute_curved_stencil_2_49;
-  corrected_stencil_op_hcompute_corrected_stencil_32_to_corrected_stencil_op_hcompute_curved_stencil_45_cache corrected_stencil_op_hcompute_corrected_stencil_32_to_corrected_stencil_op_hcompute_curved_stencil_45;
+  corrected_stencil_op_hcompute_corrected_stencil_1_48_to_corrected_stencil_op_hcompute_curved_stencil_1_41_cache corrected_stencil_op_hcompute_corrected_stencil_1_48_to_corrected_stencil_op_hcompute_curved_stencil_1_41;
+  corrected_stencil_op_hcompute_corrected_stencil_2_44_to_corrected_stencil_op_hcompute_curved_stencil_2_39_cache corrected_stencil_op_hcompute_corrected_stencil_2_44_to_corrected_stencil_op_hcompute_curved_stencil_2_39;
+  corrected_stencil_op_hcompute_corrected_stencil_52_to_corrected_stencil_op_hcompute_curved_stencil_43_cache corrected_stencil_op_hcompute_corrected_stencil_52_to_corrected_stencil_op_hcompute_curved_stencil_43;
 };
 
 
 
-inline void corrected_stencil_op_hcompute_corrected_stencil_1_36_write(hw_uint<16>& corrected_stencil_op_hcompute_corrected_stencil_1_36, corrected_stencil_cache& corrected_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
-  corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_1_36_to_corrected_stencil_op_hcompute_curved_stencil_1_47.push(corrected_stencil_op_hcompute_corrected_stencil_1_36);
+inline void corrected_stencil_op_hcompute_corrected_stencil_1_48_write(hw_uint<16>& corrected_stencil_op_hcompute_corrected_stencil_1_48, corrected_stencil_cache& corrected_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
+  corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_1_48_to_corrected_stencil_op_hcompute_curved_stencil_1_41.push(corrected_stencil_op_hcompute_corrected_stencil_1_48);
 }
 
-inline void corrected_stencil_op_hcompute_corrected_stencil_2_40_write(hw_uint<16>& corrected_stencil_op_hcompute_corrected_stencil_2_40, corrected_stencil_cache& corrected_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
-  corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_2_40_to_corrected_stencil_op_hcompute_curved_stencil_2_49.push(corrected_stencil_op_hcompute_corrected_stencil_2_40);
+inline void corrected_stencil_op_hcompute_corrected_stencil_2_44_write(hw_uint<16>& corrected_stencil_op_hcompute_corrected_stencil_2_44, corrected_stencil_cache& corrected_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
+  corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_2_44_to_corrected_stencil_op_hcompute_curved_stencil_2_39.push(corrected_stencil_op_hcompute_corrected_stencil_2_44);
 }
 
-inline void corrected_stencil_op_hcompute_corrected_stencil_32_write(hw_uint<16>& corrected_stencil_op_hcompute_corrected_stencil_32, corrected_stencil_cache& corrected_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
-  corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_32_to_corrected_stencil_op_hcompute_curved_stencil_45.push(corrected_stencil_op_hcompute_corrected_stencil_32);
+inline void corrected_stencil_op_hcompute_corrected_stencil_52_write(hw_uint<16>& corrected_stencil_op_hcompute_corrected_stencil_52, corrected_stencil_cache& corrected_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
+  corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_52_to_corrected_stencil_op_hcompute_curved_stencil_43.push(corrected_stencil_op_hcompute_corrected_stencil_52);
 }
 
-inline hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_1_47_select(corrected_stencil_cache& corrected_stencil, int root, int curved_s0_y_1, int curved_s0_x_1, int dynamic_address) {
+inline hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_1_41_select(corrected_stencil_cache& corrected_stencil, int root, int curved_s0_y_1, int curved_s0_x_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // corrected_stencil_op_hcompute_curved_stencil_1_47 read pattern: { op_hcompute_curved_stencil_1[root = 0, curved_s0_y_1, curved_s0_x_1] -> corrected_stencil[1, curved_s0_y_1, curved_s0_x_1] : 0 <= curved_s0_y_1 <= 57 and 0 <= curved_s0_x_1 <= 57 }
+  // corrected_stencil_op_hcompute_curved_stencil_1_41 read pattern: { op_hcompute_curved_stencil_1[root = 0, curved_s0_y_1, curved_s0_x_1] -> corrected_stencil[1, curved_s0_y_1, curved_s0_x_1] : 0 <= curved_s0_y_1 <= 57 and 0 <= curved_s0_x_1 <= 57 }
   // Read schedule : { op_hcompute_curved_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 9] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_corrected_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 6] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_corrected_stencil_op_hcompute_corrected_stencil_1_36 = corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_1_36_to_corrected_stencil_op_hcompute_curved_stencil_1_47.peek(/* one reader or all rams */ 0);
-  return value_corrected_stencil_op_hcompute_corrected_stencil_1_36;
+  auto value_corrected_stencil_op_hcompute_corrected_stencil_1_48 = corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_1_48_to_corrected_stencil_op_hcompute_curved_stencil_1_41.peek(/* one reader or all rams */ 0);
+  return value_corrected_stencil_op_hcompute_corrected_stencil_1_48;
   return 0;
 }
 
-inline hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_2_49_select(corrected_stencil_cache& corrected_stencil, int root, int curved_s0_y_2, int curved_s0_x_2, int dynamic_address) {
+inline hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_2_39_select(corrected_stencil_cache& corrected_stencil, int root, int curved_s0_y_2, int curved_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // corrected_stencil_op_hcompute_curved_stencil_2_49 read pattern: { op_hcompute_curved_stencil_2[root = 0, curved_s0_y_2, curved_s0_x_2] -> corrected_stencil[2, curved_s0_y_2, curved_s0_x_2] : 0 <= curved_s0_y_2 <= 57 and 0 <= curved_s0_x_2 <= 57 }
+  // corrected_stencil_op_hcompute_curved_stencil_2_39 read pattern: { op_hcompute_curved_stencil_2[root = 0, curved_s0_y_2, curved_s0_x_2] -> corrected_stencil[2, curved_s0_y_2, curved_s0_x_2] : 0 <= curved_s0_y_2 <= 57 and 0 <= curved_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_curved_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 10] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_corrected_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 7] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_corrected_stencil_op_hcompute_corrected_stencil_2_40 = corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_2_40_to_corrected_stencil_op_hcompute_curved_stencil_2_49.peek(/* one reader or all rams */ 0);
-  return value_corrected_stencil_op_hcompute_corrected_stencil_2_40;
+  auto value_corrected_stencil_op_hcompute_corrected_stencil_2_44 = corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_2_44_to_corrected_stencil_op_hcompute_curved_stencil_2_39.peek(/* one reader or all rams */ 0);
+  return value_corrected_stencil_op_hcompute_corrected_stencil_2_44;
   return 0;
 }
 
-inline hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_45_select(corrected_stencil_cache& corrected_stencil, int root, int curved_s0_y, int curved_s0_x, int dynamic_address) {
+inline hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_43_select(corrected_stencil_cache& corrected_stencil, int root, int curved_s0_y, int curved_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // corrected_stencil_op_hcompute_curved_stencil_45 read pattern: { op_hcompute_curved_stencil[root = 0, curved_s0_y, curved_s0_x] -> corrected_stencil[0, curved_s0_y, curved_s0_x] : 0 <= curved_s0_y <= 57 and 0 <= curved_s0_x <= 57 }
+  // corrected_stencil_op_hcompute_curved_stencil_43 read pattern: { op_hcompute_curved_stencil[root = 0, curved_s0_y, curved_s0_x] -> corrected_stencil[0, curved_s0_y, curved_s0_x] : 0 <= curved_s0_y <= 57 and 0 <= curved_s0_x <= 57 }
   // Read schedule : { op_hcompute_curved_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 8] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_corrected_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 5] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_corrected_stencil_op_hcompute_corrected_stencil_32 = corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_32_to_corrected_stencil_op_hcompute_curved_stencil_45.peek(/* one reader or all rams */ 0);
-  return value_corrected_stencil_op_hcompute_corrected_stencil_32;
+  auto value_corrected_stencil_op_hcompute_corrected_stencil_52 = corrected_stencil.corrected_stencil_op_hcompute_corrected_stencil_52_to_corrected_stencil_op_hcompute_curved_stencil_43.peek(/* one reader or all rams */ 0);
+  return value_corrected_stencil_op_hcompute_corrected_stencil_52;
   return 0;
 }
 
 // # of bundles = 6
 // op_hcompute_corrected_stencil_1_write
-//	corrected_stencil_op_hcompute_corrected_stencil_1_36
+//	corrected_stencil_op_hcompute_corrected_stencil_1_48
 inline void corrected_stencil_op_hcompute_corrected_stencil_1_write_bundle_write(hw_uint<16>& op_hcompute_corrected_stencil_1_write, corrected_stencil_cache& corrected_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
-	hw_uint<16> corrected_stencil_op_hcompute_corrected_stencil_1_36_res = op_hcompute_corrected_stencil_1_write.extract<0, 15>();
-	corrected_stencil_op_hcompute_corrected_stencil_1_36_write(corrected_stencil_op_hcompute_corrected_stencil_1_36_res, corrected_stencil, root, corrected_s0_y_1, corrected_s0_x_1, dynamic_address);
+	hw_uint<16> corrected_stencil_op_hcompute_corrected_stencil_1_48_res = op_hcompute_corrected_stencil_1_write.extract<0, 15>();
+	corrected_stencil_op_hcompute_corrected_stencil_1_48_write(corrected_stencil_op_hcompute_corrected_stencil_1_48_res, corrected_stencil, root, corrected_s0_y_1, corrected_s0_x_1, dynamic_address);
 }
 
 // op_hcompute_corrected_stencil_2_write
-//	corrected_stencil_op_hcompute_corrected_stencil_2_40
+//	corrected_stencil_op_hcompute_corrected_stencil_2_44
 inline void corrected_stencil_op_hcompute_corrected_stencil_2_write_bundle_write(hw_uint<16>& op_hcompute_corrected_stencil_2_write, corrected_stencil_cache& corrected_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
-	hw_uint<16> corrected_stencil_op_hcompute_corrected_stencil_2_40_res = op_hcompute_corrected_stencil_2_write.extract<0, 15>();
-	corrected_stencil_op_hcompute_corrected_stencil_2_40_write(corrected_stencil_op_hcompute_corrected_stencil_2_40_res, corrected_stencil, root, corrected_s0_y_2, corrected_s0_x_2, dynamic_address);
+	hw_uint<16> corrected_stencil_op_hcompute_corrected_stencil_2_44_res = op_hcompute_corrected_stencil_2_write.extract<0, 15>();
+	corrected_stencil_op_hcompute_corrected_stencil_2_44_write(corrected_stencil_op_hcompute_corrected_stencil_2_44_res, corrected_stencil, root, corrected_s0_y_2, corrected_s0_x_2, dynamic_address);
 }
 
 // op_hcompute_corrected_stencil_write
-//	corrected_stencil_op_hcompute_corrected_stencil_32
+//	corrected_stencil_op_hcompute_corrected_stencil_52
 inline void corrected_stencil_op_hcompute_corrected_stencil_write_bundle_write(hw_uint<16>& op_hcompute_corrected_stencil_write, corrected_stencil_cache& corrected_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
-	hw_uint<16> corrected_stencil_op_hcompute_corrected_stencil_32_res = op_hcompute_corrected_stencil_write.extract<0, 15>();
-	corrected_stencil_op_hcompute_corrected_stencil_32_write(corrected_stencil_op_hcompute_corrected_stencil_32_res, corrected_stencil, root, corrected_s0_y, corrected_s0_x, dynamic_address);
+	hw_uint<16> corrected_stencil_op_hcompute_corrected_stencil_52_res = op_hcompute_corrected_stencil_write.extract<0, 15>();
+	corrected_stencil_op_hcompute_corrected_stencil_52_write(corrected_stencil_op_hcompute_corrected_stencil_52_res, corrected_stencil, root, corrected_s0_y, corrected_s0_x, dynamic_address);
 }
 
 // op_hcompute_curved_stencil_1_read
-//	corrected_stencil_op_hcompute_curved_stencil_1_47
+//	corrected_stencil_op_hcompute_curved_stencil_1_41
 inline hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_1_read_bundle_read(corrected_stencil_cache& corrected_stencil, int root, int curved_s0_y_1, int curved_s0_x_1, int dynamic_address) {
   // # of ports in bundle: 1
-    // corrected_stencil_op_hcompute_curved_stencil_1_47
+    // corrected_stencil_op_hcompute_curved_stencil_1_41
 
 	hw_uint<16> result;
-	hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_1_47_res = corrected_stencil_op_hcompute_curved_stencil_1_47_select(corrected_stencil, root, curved_s0_y_1, curved_s0_x_1, dynamic_address);
-	set_at<0, 16>(result, corrected_stencil_op_hcompute_curved_stencil_1_47_res);
+	hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_1_41_res = corrected_stencil_op_hcompute_curved_stencil_1_41_select(corrected_stencil, root, curved_s0_y_1, curved_s0_x_1, dynamic_address);
+	set_at<0, 16>(result, corrected_stencil_op_hcompute_curved_stencil_1_41_res);
 	return result;
 }
 
 // op_hcompute_curved_stencil_2_read
-//	corrected_stencil_op_hcompute_curved_stencil_2_49
+//	corrected_stencil_op_hcompute_curved_stencil_2_39
 inline hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_2_read_bundle_read(corrected_stencil_cache& corrected_stencil, int root, int curved_s0_y_2, int curved_s0_x_2, int dynamic_address) {
   // # of ports in bundle: 1
-    // corrected_stencil_op_hcompute_curved_stencil_2_49
+    // corrected_stencil_op_hcompute_curved_stencil_2_39
 
 	hw_uint<16> result;
-	hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_2_49_res = corrected_stencil_op_hcompute_curved_stencil_2_49_select(corrected_stencil, root, curved_s0_y_2, curved_s0_x_2, dynamic_address);
-	set_at<0, 16>(result, corrected_stencil_op_hcompute_curved_stencil_2_49_res);
+	hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_2_39_res = corrected_stencil_op_hcompute_curved_stencil_2_39_select(corrected_stencil, root, curved_s0_y_2, curved_s0_x_2, dynamic_address);
+	set_at<0, 16>(result, corrected_stencil_op_hcompute_curved_stencil_2_39_res);
 	return result;
 }
 
 // op_hcompute_curved_stencil_read
-//	corrected_stencil_op_hcompute_curved_stencil_45
+//	corrected_stencil_op_hcompute_curved_stencil_43
 inline hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_read_bundle_read(corrected_stencil_cache& corrected_stencil, int root, int curved_s0_y, int curved_s0_x, int dynamic_address) {
   // # of ports in bundle: 1
-    // corrected_stencil_op_hcompute_curved_stencil_45
+    // corrected_stencil_op_hcompute_curved_stencil_43
 
 	hw_uint<16> result;
-	hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_45_res = corrected_stencil_op_hcompute_curved_stencil_45_select(corrected_stencil, root, curved_s0_y, curved_s0_x, dynamic_address);
-	set_at<0, 16>(result, corrected_stencil_op_hcompute_curved_stencil_45_res);
+	hw_uint<16> corrected_stencil_op_hcompute_curved_stencil_43_res = corrected_stencil_op_hcompute_curved_stencil_43_select(corrected_stencil, root, curved_s0_y, curved_s0_x, dynamic_address);
+	set_at<0, 16>(result, corrected_stencil_op_hcompute_curved_stencil_43_res);
 	return result;
 }
 
 #include "hw_classes.h"
 
-struct curved_stencil_op_hcompute_curved_stencil_1_46_to_curved_stencil_op_hcompute_hw_output_stencil_1_53_cache {
+struct curved_stencil_op_hcompute_curved_stencil_1_40_to_curved_stencil_op_hcompute_hw_output_stencil_1_3_cache {
 	// RAM Box: {[1, 1], [0, 57], [0, 57]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -213,7 +213,7 @@ struct curved_stencil_op_hcompute_curved_stencil_1_46_to_curved_stencil_op_hcomp
 
 };
 
-struct curved_stencil_op_hcompute_curved_stencil_2_48_to_curved_stencil_op_hcompute_hw_output_stencil_2_55_cache {
+struct curved_stencil_op_hcompute_curved_stencil_2_38_to_curved_stencil_op_hcompute_hw_output_stencil_2_1_cache {
 	// RAM Box: {[2, 2], [0, 57], [0, 57]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -235,7 +235,7 @@ struct curved_stencil_op_hcompute_curved_stencil_2_48_to_curved_stencil_op_hcomp
 
 };
 
-struct curved_stencil_op_hcompute_curved_stencil_44_to_curved_stencil_op_hcompute_hw_output_stencil_51_cache {
+struct curved_stencil_op_hcompute_curved_stencil_42_to_curved_stencil_op_hcompute_hw_output_stencil_5_cache {
 	// RAM Box: {[0, 0], [0, 57], [0, 57]}
 	// Capacity: 1
 	// # of read delays: 2
@@ -259,119 +259,119 @@ struct curved_stencil_op_hcompute_curved_stencil_44_to_curved_stencil_op_hcomput
 
 struct curved_stencil_cache {
   // # of banks: 3
-  curved_stencil_op_hcompute_curved_stencil_1_46_to_curved_stencil_op_hcompute_hw_output_stencil_1_53_cache curved_stencil_op_hcompute_curved_stencil_1_46_to_curved_stencil_op_hcompute_hw_output_stencil_1_53;
-  curved_stencil_op_hcompute_curved_stencil_2_48_to_curved_stencil_op_hcompute_hw_output_stencil_2_55_cache curved_stencil_op_hcompute_curved_stencil_2_48_to_curved_stencil_op_hcompute_hw_output_stencil_2_55;
-  curved_stencil_op_hcompute_curved_stencil_44_to_curved_stencil_op_hcompute_hw_output_stencil_51_cache curved_stencil_op_hcompute_curved_stencil_44_to_curved_stencil_op_hcompute_hw_output_stencil_51;
+  curved_stencil_op_hcompute_curved_stencil_1_40_to_curved_stencil_op_hcompute_hw_output_stencil_1_3_cache curved_stencil_op_hcompute_curved_stencil_1_40_to_curved_stencil_op_hcompute_hw_output_stencil_1_3;
+  curved_stencil_op_hcompute_curved_stencil_2_38_to_curved_stencil_op_hcompute_hw_output_stencil_2_1_cache curved_stencil_op_hcompute_curved_stencil_2_38_to_curved_stencil_op_hcompute_hw_output_stencil_2_1;
+  curved_stencil_op_hcompute_curved_stencil_42_to_curved_stencil_op_hcompute_hw_output_stencil_5_cache curved_stencil_op_hcompute_curved_stencil_42_to_curved_stencil_op_hcompute_hw_output_stencil_5;
 };
 
 
 
-inline void curved_stencil_op_hcompute_curved_stencil_1_46_write(hw_uint<16>& curved_stencil_op_hcompute_curved_stencil_1_46, curved_stencil_cache& curved_stencil, int root, int curved_s0_y_1, int curved_s0_x_1, int dynamic_address) {
-  curved_stencil.curved_stencil_op_hcompute_curved_stencil_1_46_to_curved_stencil_op_hcompute_hw_output_stencil_1_53.push(curved_stencil_op_hcompute_curved_stencil_1_46);
+inline void curved_stencil_op_hcompute_curved_stencil_1_40_write(hw_uint<16>& curved_stencil_op_hcompute_curved_stencil_1_40, curved_stencil_cache& curved_stencil, int root, int curved_s0_y_1, int curved_s0_x_1, int dynamic_address) {
+  curved_stencil.curved_stencil_op_hcompute_curved_stencil_1_40_to_curved_stencil_op_hcompute_hw_output_stencil_1_3.push(curved_stencil_op_hcompute_curved_stencil_1_40);
 }
 
-inline void curved_stencil_op_hcompute_curved_stencil_2_48_write(hw_uint<16>& curved_stencil_op_hcompute_curved_stencil_2_48, curved_stencil_cache& curved_stencil, int root, int curved_s0_y_2, int curved_s0_x_2, int dynamic_address) {
-  curved_stencil.curved_stencil_op_hcompute_curved_stencil_2_48_to_curved_stencil_op_hcompute_hw_output_stencil_2_55.push(curved_stencil_op_hcompute_curved_stencil_2_48);
+inline void curved_stencil_op_hcompute_curved_stencil_2_38_write(hw_uint<16>& curved_stencil_op_hcompute_curved_stencil_2_38, curved_stencil_cache& curved_stencil, int root, int curved_s0_y_2, int curved_s0_x_2, int dynamic_address) {
+  curved_stencil.curved_stencil_op_hcompute_curved_stencil_2_38_to_curved_stencil_op_hcompute_hw_output_stencil_2_1.push(curved_stencil_op_hcompute_curved_stencil_2_38);
 }
 
-inline void curved_stencil_op_hcompute_curved_stencil_44_write(hw_uint<16>& curved_stencil_op_hcompute_curved_stencil_44, curved_stencil_cache& curved_stencil, int root, int curved_s0_y, int curved_s0_x, int dynamic_address) {
-  curved_stencil.curved_stencil_op_hcompute_curved_stencil_44_to_curved_stencil_op_hcompute_hw_output_stencil_51.push(curved_stencil_op_hcompute_curved_stencil_44);
+inline void curved_stencil_op_hcompute_curved_stencil_42_write(hw_uint<16>& curved_stencil_op_hcompute_curved_stencil_42, curved_stencil_cache& curved_stencil, int root, int curved_s0_y, int curved_s0_x, int dynamic_address) {
+  curved_stencil.curved_stencil_op_hcompute_curved_stencil_42_to_curved_stencil_op_hcompute_hw_output_stencil_5.push(curved_stencil_op_hcompute_curved_stencil_42);
 }
 
-inline hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_1_53_select(curved_stencil_cache& curved_stencil, int root, int hw_output_s0_y_yi_1, int hw_output_s0_x_xi_1, int dynamic_address) {
+inline hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_1_3_select(curved_stencil_cache& curved_stencil, int root, int hw_output_s0_y_yi_1, int hw_output_s0_x_xi_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // curved_stencil_op_hcompute_hw_output_stencil_1_53 read pattern: { op_hcompute_hw_output_stencil_1[root = 0, hw_output_s0_y_yi_1, hw_output_s0_x_xi_1] -> curved_stencil[1, hw_output_s0_y_yi_1, hw_output_s0_x_xi_1] : 0 <= hw_output_s0_y_yi_1 <= 57 and 0 <= hw_output_s0_x_xi_1 <= 57 }
+  // curved_stencil_op_hcompute_hw_output_stencil_1_3 read pattern: { op_hcompute_hw_output_stencil_1[root = 0, hw_output_s0_y_yi_1, hw_output_s0_x_xi_1] -> curved_stencil[1, hw_output_s0_y_yi_1, hw_output_s0_x_xi_1] : 0 <= hw_output_s0_y_yi_1 <= 57 and 0 <= hw_output_s0_x_xi_1 <= 57 }
   // Read schedule : { op_hcompute_hw_output_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 12] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_curved_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 9] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_curved_stencil_op_hcompute_curved_stencil_1_46 = curved_stencil.curved_stencil_op_hcompute_curved_stencil_1_46_to_curved_stencil_op_hcompute_hw_output_stencil_1_53.peek(/* one reader or all rams */ 0);
-  return value_curved_stencil_op_hcompute_curved_stencil_1_46;
+  auto value_curved_stencil_op_hcompute_curved_stencil_1_40 = curved_stencil.curved_stencil_op_hcompute_curved_stencil_1_40_to_curved_stencil_op_hcompute_hw_output_stencil_1_3.peek(/* one reader or all rams */ 0);
+  return value_curved_stencil_op_hcompute_curved_stencil_1_40;
   return 0;
 }
 
-inline hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_2_55_select(curved_stencil_cache& curved_stencil, int root, int hw_output_s0_y_yi_2, int hw_output_s0_x_xi_2, int dynamic_address) {
+inline hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_2_1_select(curved_stencil_cache& curved_stencil, int root, int hw_output_s0_y_yi_2, int hw_output_s0_x_xi_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // curved_stencil_op_hcompute_hw_output_stencil_2_55 read pattern: { op_hcompute_hw_output_stencil_2[root = 0, hw_output_s0_y_yi_2, hw_output_s0_x_xi_2] -> curved_stencil[2, hw_output_s0_y_yi_2, hw_output_s0_x_xi_2] : 0 <= hw_output_s0_y_yi_2 <= 57 and 0 <= hw_output_s0_x_xi_2 <= 57 }
+  // curved_stencil_op_hcompute_hw_output_stencil_2_1 read pattern: { op_hcompute_hw_output_stencil_2[root = 0, hw_output_s0_y_yi_2, hw_output_s0_x_xi_2] -> curved_stencil[2, hw_output_s0_y_yi_2, hw_output_s0_x_xi_2] : 0 <= hw_output_s0_y_yi_2 <= 57 and 0 <= hw_output_s0_x_xi_2 <= 57 }
   // Read schedule : { op_hcompute_hw_output_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 13] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_curved_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 10] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_curved_stencil_op_hcompute_curved_stencil_2_48 = curved_stencil.curved_stencil_op_hcompute_curved_stencil_2_48_to_curved_stencil_op_hcompute_hw_output_stencil_2_55.peek(/* one reader or all rams */ 0);
-  return value_curved_stencil_op_hcompute_curved_stencil_2_48;
+  auto value_curved_stencil_op_hcompute_curved_stencil_2_38 = curved_stencil.curved_stencil_op_hcompute_curved_stencil_2_38_to_curved_stencil_op_hcompute_hw_output_stencil_2_1.peek(/* one reader or all rams */ 0);
+  return value_curved_stencil_op_hcompute_curved_stencil_2_38;
   return 0;
 }
 
-inline hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_51_select(curved_stencil_cache& curved_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
+inline hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_5_select(curved_stencil_cache& curved_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // curved_stencil_op_hcompute_hw_output_stencil_51 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> curved_stencil[0, hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 57 and 0 <= hw_output_s0_x_xi <= 57 }
+  // curved_stencil_op_hcompute_hw_output_stencil_5 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yi, hw_output_s0_x_xi] -> curved_stencil[0, hw_output_s0_y_yi, hw_output_s0_x_xi] : 0 <= hw_output_s0_y_yi <= 57 and 0 <= hw_output_s0_x_xi <= 57 }
   // Read schedule : { op_hcompute_hw_output_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 11] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_curved_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 8] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_curved_stencil_op_hcompute_curved_stencil_44 = curved_stencil.curved_stencil_op_hcompute_curved_stencil_44_to_curved_stencil_op_hcompute_hw_output_stencil_51.peek(/* one reader or all rams */ 0);
-  return value_curved_stencil_op_hcompute_curved_stencil_44;
+  auto value_curved_stencil_op_hcompute_curved_stencil_42 = curved_stencil.curved_stencil_op_hcompute_curved_stencil_42_to_curved_stencil_op_hcompute_hw_output_stencil_5.peek(/* one reader or all rams */ 0);
+  return value_curved_stencil_op_hcompute_curved_stencil_42;
   return 0;
 }
 
 // # of bundles = 6
 // op_hcompute_curved_stencil_1_write
-//	curved_stencil_op_hcompute_curved_stencil_1_46
+//	curved_stencil_op_hcompute_curved_stencil_1_40
 inline void curved_stencil_op_hcompute_curved_stencil_1_write_bundle_write(hw_uint<16>& op_hcompute_curved_stencil_1_write, curved_stencil_cache& curved_stencil, int root, int curved_s0_y_1, int curved_s0_x_1, int dynamic_address) {
-	hw_uint<16> curved_stencil_op_hcompute_curved_stencil_1_46_res = op_hcompute_curved_stencil_1_write.extract<0, 15>();
-	curved_stencil_op_hcompute_curved_stencil_1_46_write(curved_stencil_op_hcompute_curved_stencil_1_46_res, curved_stencil, root, curved_s0_y_1, curved_s0_x_1, dynamic_address);
+	hw_uint<16> curved_stencil_op_hcompute_curved_stencil_1_40_res = op_hcompute_curved_stencil_1_write.extract<0, 15>();
+	curved_stencil_op_hcompute_curved_stencil_1_40_write(curved_stencil_op_hcompute_curved_stencil_1_40_res, curved_stencil, root, curved_s0_y_1, curved_s0_x_1, dynamic_address);
 }
 
 // op_hcompute_curved_stencil_2_write
-//	curved_stencil_op_hcompute_curved_stencil_2_48
+//	curved_stencil_op_hcompute_curved_stencil_2_38
 inline void curved_stencil_op_hcompute_curved_stencil_2_write_bundle_write(hw_uint<16>& op_hcompute_curved_stencil_2_write, curved_stencil_cache& curved_stencil, int root, int curved_s0_y_2, int curved_s0_x_2, int dynamic_address) {
-	hw_uint<16> curved_stencil_op_hcompute_curved_stencil_2_48_res = op_hcompute_curved_stencil_2_write.extract<0, 15>();
-	curved_stencil_op_hcompute_curved_stencil_2_48_write(curved_stencil_op_hcompute_curved_stencil_2_48_res, curved_stencil, root, curved_s0_y_2, curved_s0_x_2, dynamic_address);
+	hw_uint<16> curved_stencil_op_hcompute_curved_stencil_2_38_res = op_hcompute_curved_stencil_2_write.extract<0, 15>();
+	curved_stencil_op_hcompute_curved_stencil_2_38_write(curved_stencil_op_hcompute_curved_stencil_2_38_res, curved_stencil, root, curved_s0_y_2, curved_s0_x_2, dynamic_address);
 }
 
 // op_hcompute_curved_stencil_write
-//	curved_stencil_op_hcompute_curved_stencil_44
+//	curved_stencil_op_hcompute_curved_stencil_42
 inline void curved_stencil_op_hcompute_curved_stencil_write_bundle_write(hw_uint<16>& op_hcompute_curved_stencil_write, curved_stencil_cache& curved_stencil, int root, int curved_s0_y, int curved_s0_x, int dynamic_address) {
-	hw_uint<16> curved_stencil_op_hcompute_curved_stencil_44_res = op_hcompute_curved_stencil_write.extract<0, 15>();
-	curved_stencil_op_hcompute_curved_stencil_44_write(curved_stencil_op_hcompute_curved_stencil_44_res, curved_stencil, root, curved_s0_y, curved_s0_x, dynamic_address);
+	hw_uint<16> curved_stencil_op_hcompute_curved_stencil_42_res = op_hcompute_curved_stencil_write.extract<0, 15>();
+	curved_stencil_op_hcompute_curved_stencil_42_write(curved_stencil_op_hcompute_curved_stencil_42_res, curved_stencil, root, curved_s0_y, curved_s0_x, dynamic_address);
 }
 
 // op_hcompute_hw_output_stencil_1_read
-//	curved_stencil_op_hcompute_hw_output_stencil_1_53
+//	curved_stencil_op_hcompute_hw_output_stencil_1_3
 inline hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_1_read_bundle_read(curved_stencil_cache& curved_stencil, int root, int hw_output_s0_y_yi_1, int hw_output_s0_x_xi_1, int dynamic_address) {
   // # of ports in bundle: 1
-    // curved_stencil_op_hcompute_hw_output_stencil_1_53
+    // curved_stencil_op_hcompute_hw_output_stencil_1_3
 
 	hw_uint<16> result;
-	hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_1_53_res = curved_stencil_op_hcompute_hw_output_stencil_1_53_select(curved_stencil, root, hw_output_s0_y_yi_1, hw_output_s0_x_xi_1, dynamic_address);
-	set_at<0, 16>(result, curved_stencil_op_hcompute_hw_output_stencil_1_53_res);
+	hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_1_3_res = curved_stencil_op_hcompute_hw_output_stencil_1_3_select(curved_stencil, root, hw_output_s0_y_yi_1, hw_output_s0_x_xi_1, dynamic_address);
+	set_at<0, 16>(result, curved_stencil_op_hcompute_hw_output_stencil_1_3_res);
 	return result;
 }
 
 // op_hcompute_hw_output_stencil_2_read
-//	curved_stencil_op_hcompute_hw_output_stencil_2_55
+//	curved_stencil_op_hcompute_hw_output_stencil_2_1
 inline hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_2_read_bundle_read(curved_stencil_cache& curved_stencil, int root, int hw_output_s0_y_yi_2, int hw_output_s0_x_xi_2, int dynamic_address) {
   // # of ports in bundle: 1
-    // curved_stencil_op_hcompute_hw_output_stencil_2_55
+    // curved_stencil_op_hcompute_hw_output_stencil_2_1
 
 	hw_uint<16> result;
-	hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_2_55_res = curved_stencil_op_hcompute_hw_output_stencil_2_55_select(curved_stencil, root, hw_output_s0_y_yi_2, hw_output_s0_x_xi_2, dynamic_address);
-	set_at<0, 16>(result, curved_stencil_op_hcompute_hw_output_stencil_2_55_res);
+	hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_2_1_res = curved_stencil_op_hcompute_hw_output_stencil_2_1_select(curved_stencil, root, hw_output_s0_y_yi_2, hw_output_s0_x_xi_2, dynamic_address);
+	set_at<0, 16>(result, curved_stencil_op_hcompute_hw_output_stencil_2_1_res);
 	return result;
 }
 
 // op_hcompute_hw_output_stencil_read
-//	curved_stencil_op_hcompute_hw_output_stencil_51
+//	curved_stencil_op_hcompute_hw_output_stencil_5
 inline hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_read_bundle_read(curved_stencil_cache& curved_stencil, int root, int hw_output_s0_y_yi, int hw_output_s0_x_xi, int dynamic_address) {
   // # of ports in bundle: 1
-    // curved_stencil_op_hcompute_hw_output_stencil_51
+    // curved_stencil_op_hcompute_hw_output_stencil_5
 
 	hw_uint<16> result;
-	hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_51_res = curved_stencil_op_hcompute_hw_output_stencil_51_select(curved_stencil, root, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
-	set_at<0, 16>(result, curved_stencil_op_hcompute_hw_output_stencil_51_res);
+	hw_uint<16> curved_stencil_op_hcompute_hw_output_stencil_5_res = curved_stencil_op_hcompute_hw_output_stencil_5_select(curved_stencil, root, hw_output_s0_y_yi, hw_output_s0_x_xi, dynamic_address);
+	set_at<0, 16>(result, curved_stencil_op_hcompute_hw_output_stencil_5_res);
 	return result;
 }
 
 #include "hw_classes.h"
 
-struct demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_merged_banks_3_cache {
+struct demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_merged_banks_3_cache {
 	// RAM Box: {[1, 1], [0, 57], [0, 57]}
 	// Capacity: 1
 	// # of read delays: 1
@@ -392,8 +392,8 @@ struct demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_merged_banks
 
 };
 
-struct demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_merged_banks_3_cache {
-	// RAM Box: {[2, 2], [0, 57], [0, 57]}
+struct demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_merged_banks_3_cache {
+	// RAM Box: {[0, 0], [0, 57], [0, 57]}
 	// Capacity: 1
 	// # of read delays: 1
   // 0
@@ -413,8 +413,8 @@ struct demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_merged_banks
 
 };
 
-struct demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_merged_banks_3_cache {
-	// RAM Box: {[0, 0], [0, 57], [0, 57]}
+struct demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_merged_banks_3_cache {
+	// RAM Box: {[2, 2], [0, 57], [0, 57]}
 	// Capacity: 1
 	// # of read delays: 1
   // 0
@@ -436,209 +436,209 @@ struct demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_merged_banks_3_
 
 struct demosaicked_1_stencil_cache {
   // # of banks: 3
-  demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_merged_banks_3_cache demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_merged_banks_3;
-  demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_merged_banks_3_cache demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_merged_banks_3;
-  demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_merged_banks_3_cache demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_merged_banks_3;
+  demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_merged_banks_3_cache demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_merged_banks_3;
+  demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_merged_banks_3_cache demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_merged_banks_3;
+  demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_merged_banks_3_cache demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_merged_banks_3;
 };
 
 
 
-inline void demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_write(hw_uint<16>& demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17, demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
-  demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_merged_banks_3.push(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17);
+inline void demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_write(hw_uint<16>& demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23, demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
+  demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_merged_banks_3.push(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23);
 }
 
-inline void demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_write(hw_uint<16>& demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23, demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
-  demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_merged_banks_3.push(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23);
+inline void demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_write(hw_uint<16>& demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29, demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+  demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_merged_banks_3.push(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29);
 }
 
-inline void demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_write(hw_uint<16>& demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8, demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
-  demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_merged_banks_3.push(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8);
+inline void demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_write(hw_uint<16>& demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14, demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
+  demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_merged_banks_3.push(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14);
 }
 
-inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_37_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
+inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_37 read pattern: { op_hcompute_corrected_stencil_1[root = 0, corrected_s0_y_1, corrected_s0_x_1] -> demosaicked_1_stencil[1, corrected_s0_y_1, corrected_s0_x_1] : 0 <= corrected_s0_y_1 <= 57 and 0 <= corrected_s0_x_1 <= 57 }
+  // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49 read pattern: { op_hcompute_corrected_stencil_1[root = 0, corrected_s0_y_1, corrected_s0_x_1] -> demosaicked_1_stencil[1, corrected_s0_y_1, corrected_s0_x_1] : 0 <= corrected_s0_y_1 <= 57 and 0 <= corrected_s0_x_1 <= 57 }
   // Read schedule : { op_hcompute_corrected_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 6] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_demosaicked_1_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 3] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_merged_banks_3.peek_0();
-  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17;
+  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_merged_banks_3.peek_0();
+  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23;
   return 0;
 }
 
-inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_38_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
+inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_38 read pattern: { op_hcompute_corrected_stencil_1[root = 0, corrected_s0_y_1, corrected_s0_x_1] -> demosaicked_1_stencil[0, corrected_s0_y_1, corrected_s0_x_1] : 0 <= corrected_s0_y_1 <= 57 and 0 <= corrected_s0_x_1 <= 57 }
+  // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50 read pattern: { op_hcompute_corrected_stencil_1[root = 0, corrected_s0_y_1, corrected_s0_x_1] -> demosaicked_1_stencil[0, corrected_s0_y_1, corrected_s0_x_1] : 0 <= corrected_s0_y_1 <= 57 and 0 <= corrected_s0_x_1 <= 57 }
   // Read schedule : { op_hcompute_corrected_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 6] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_merged_banks_3.peek_0();
-  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8;
+  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_merged_banks_3.peek_0();
+  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29;
   return 0;
 }
 
-inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_39_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
+inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_39 read pattern: { op_hcompute_corrected_stencil_1[root = 0, corrected_s0_y_1, corrected_s0_x_1] -> demosaicked_1_stencil[2, corrected_s0_y_1, corrected_s0_x_1] : 0 <= corrected_s0_y_1 <= 57 and 0 <= corrected_s0_x_1 <= 57 }
+  // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51 read pattern: { op_hcompute_corrected_stencil_1[root = 0, corrected_s0_y_1, corrected_s0_x_1] -> demosaicked_1_stencil[2, corrected_s0_y_1, corrected_s0_x_1] : 0 <= corrected_s0_y_1 <= 57 and 0 <= corrected_s0_x_1 <= 57 }
   // Read schedule : { op_hcompute_corrected_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 6] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_merged_banks_3.peek_0();
-  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23;
+  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_merged_banks_3.peek_0();
+  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14;
   return 0;
 }
 
-inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_41_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
+inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_41 read pattern: { op_hcompute_corrected_stencil_2[root = 0, corrected_s0_y_2, corrected_s0_x_2] -> demosaicked_1_stencil[2, corrected_s0_y_2, corrected_s0_x_2] : 0 <= corrected_s0_y_2 <= 57 and 0 <= corrected_s0_x_2 <= 57 }
+  // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45 read pattern: { op_hcompute_corrected_stencil_2[root = 0, corrected_s0_y_2, corrected_s0_x_2] -> demosaicked_1_stencil[2, corrected_s0_y_2, corrected_s0_x_2] : 0 <= corrected_s0_y_2 <= 57 and 0 <= corrected_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_corrected_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 7] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_merged_banks_3.peek_0();
-  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23;
+  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_merged_banks_3.peek_0();
+  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14;
   return 0;
 }
 
-inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_42_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
+inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_42 read pattern: { op_hcompute_corrected_stencil_2[root = 0, corrected_s0_y_2, corrected_s0_x_2] -> demosaicked_1_stencil[1, corrected_s0_y_2, corrected_s0_x_2] : 0 <= corrected_s0_y_2 <= 57 and 0 <= corrected_s0_x_2 <= 57 }
+  // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46 read pattern: { op_hcompute_corrected_stencil_2[root = 0, corrected_s0_y_2, corrected_s0_x_2] -> demosaicked_1_stencil[1, corrected_s0_y_2, corrected_s0_x_2] : 0 <= corrected_s0_y_2 <= 57 and 0 <= corrected_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_corrected_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 7] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_demosaicked_1_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 3] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_merged_banks_3.peek_0();
-  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17;
+  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_merged_banks_3.peek_0();
+  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23;
   return 0;
 }
 
-inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_43_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
+inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_43 read pattern: { op_hcompute_corrected_stencil_2[root = 0, corrected_s0_y_2, corrected_s0_x_2] -> demosaicked_1_stencil[0, corrected_s0_y_2, corrected_s0_x_2] : 0 <= corrected_s0_y_2 <= 57 and 0 <= corrected_s0_x_2 <= 57 }
+  // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47 read pattern: { op_hcompute_corrected_stencil_2[root = 0, corrected_s0_y_2, corrected_s0_x_2] -> demosaicked_1_stencil[0, corrected_s0_y_2, corrected_s0_x_2] : 0 <= corrected_s0_y_2 <= 57 and 0 <= corrected_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_corrected_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 7] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_merged_banks_3.peek_0();
-  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8;
+  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_merged_banks_3.peek_0();
+  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29;
   return 0;
 }
 
-inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_33_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
+inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_53_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // demosaicked_1_stencil_op_hcompute_corrected_stencil_33 read pattern: { op_hcompute_corrected_stencil[root = 0, corrected_s0_y, corrected_s0_x] -> demosaicked_1_stencil[0, corrected_s0_y, corrected_s0_x] : 0 <= corrected_s0_y <= 57 and 0 <= corrected_s0_x <= 57 }
+  // demosaicked_1_stencil_op_hcompute_corrected_stencil_53 read pattern: { op_hcompute_corrected_stencil[root = 0, corrected_s0_y, corrected_s0_x] -> demosaicked_1_stencil[0, corrected_s0_y, corrected_s0_x] : 0 <= corrected_s0_y <= 57 and 0 <= corrected_s0_x <= 57 }
   // Read schedule : { op_hcompute_corrected_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 5] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_merged_banks_3.peek_0();
-  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8;
+  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_merged_banks_3.peek_0();
+  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29;
   return 0;
 }
 
-inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_34_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
+inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_54_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // demosaicked_1_stencil_op_hcompute_corrected_stencil_34 read pattern: { op_hcompute_corrected_stencil[root = 0, corrected_s0_y, corrected_s0_x] -> demosaicked_1_stencil[2, corrected_s0_y, corrected_s0_x] : 0 <= corrected_s0_y <= 57 and 0 <= corrected_s0_x <= 57 }
+  // demosaicked_1_stencil_op_hcompute_corrected_stencil_54 read pattern: { op_hcompute_corrected_stencil[root = 0, corrected_s0_y, corrected_s0_x] -> demosaicked_1_stencil[2, corrected_s0_y, corrected_s0_x] : 0 <= corrected_s0_y <= 57 and 0 <= corrected_s0_x <= 57 }
   // Read schedule : { op_hcompute_corrected_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 5] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_merged_banks_3.peek_0();
-  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23;
+  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_merged_banks_3.peek_0();
+  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14;
   return 0;
 }
 
-inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_35_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
+inline hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_55_select(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // demosaicked_1_stencil_op_hcompute_corrected_stencil_35 read pattern: { op_hcompute_corrected_stencil[root = 0, corrected_s0_y, corrected_s0_x] -> demosaicked_1_stencil[1, corrected_s0_y, corrected_s0_x] : 0 <= corrected_s0_y <= 57 and 0 <= corrected_s0_x <= 57 }
+  // demosaicked_1_stencil_op_hcompute_corrected_stencil_55 read pattern: { op_hcompute_corrected_stencil[root = 0, corrected_s0_y, corrected_s0_x] -> demosaicked_1_stencil[1, corrected_s0_y, corrected_s0_x] : 0 <= corrected_s0_y <= 57 and 0 <= corrected_s0_x <= 57 }
   // Read schedule : { op_hcompute_corrected_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 5] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_demosaicked_1_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 3] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_merged_banks_3.peek_0();
-  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17;
+  auto value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23 = demosaicked_1_stencil.demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_merged_banks_3.peek_0();
+  return value_demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23;
   return 0;
 }
 
 // # of bundles = 6
 // op_hcompute_corrected_stencil_1_read
-//	demosaicked_1_stencil_op_hcompute_corrected_stencil_1_37
-//	demosaicked_1_stencil_op_hcompute_corrected_stencil_1_38
-//	demosaicked_1_stencil_op_hcompute_corrected_stencil_1_39
+//	demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49
+//	demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50
+//	demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51
 inline hw_uint<48> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_read_bundle_read(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_1, int corrected_s0_x_1, int dynamic_address) {
   // # of ports in bundle: 3
-    // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_37
-    // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_38
-    // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_39
+    // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49
+    // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50
+    // demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51
 
 	hw_uint<48> result;
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_37_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_1_37_select(demosaicked_1_stencil, root, corrected_s0_y_1, corrected_s0_x_1, dynamic_address);
-	set_at<0, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_1_37_res);
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_38_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_1_38_select(demosaicked_1_stencil, root, corrected_s0_y_1, corrected_s0_x_1, dynamic_address);
-	set_at<16, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_1_38_res);
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_39_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_1_39_select(demosaicked_1_stencil, root, corrected_s0_y_1, corrected_s0_x_1, dynamic_address);
-	set_at<32, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_1_39_res);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_select(demosaicked_1_stencil, root, corrected_s0_y_1, corrected_s0_x_1, dynamic_address);
+	set_at<0, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_1_49_res);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_select(demosaicked_1_stencil, root, corrected_s0_y_1, corrected_s0_x_1, dynamic_address);
+	set_at<16, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_1_50_res);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_select(demosaicked_1_stencil, root, corrected_s0_y_1, corrected_s0_x_1, dynamic_address);
+	set_at<32, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_1_51_res);
 	return result;
 }
 
 // op_hcompute_corrected_stencil_2_read
-//	demosaicked_1_stencil_op_hcompute_corrected_stencil_2_41
-//	demosaicked_1_stencil_op_hcompute_corrected_stencil_2_42
-//	demosaicked_1_stencil_op_hcompute_corrected_stencil_2_43
+//	demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45
+//	demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46
+//	demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47
 inline hw_uint<48> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_read_bundle_read(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y_2, int corrected_s0_x_2, int dynamic_address) {
   // # of ports in bundle: 3
-    // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_41
-    // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_42
-    // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_43
+    // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45
+    // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46
+    // demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47
 
 	hw_uint<48> result;
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_41_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_2_41_select(demosaicked_1_stencil, root, corrected_s0_y_2, corrected_s0_x_2, dynamic_address);
-	set_at<0, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_2_41_res);
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_42_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_2_42_select(demosaicked_1_stencil, root, corrected_s0_y_2, corrected_s0_x_2, dynamic_address);
-	set_at<16, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_2_42_res);
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_43_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_2_43_select(demosaicked_1_stencil, root, corrected_s0_y_2, corrected_s0_x_2, dynamic_address);
-	set_at<32, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_2_43_res);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_select(demosaicked_1_stencil, root, corrected_s0_y_2, corrected_s0_x_2, dynamic_address);
+	set_at<0, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_2_45_res);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_select(demosaicked_1_stencil, root, corrected_s0_y_2, corrected_s0_x_2, dynamic_address);
+	set_at<16, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_2_46_res);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_select(demosaicked_1_stencil, root, corrected_s0_y_2, corrected_s0_x_2, dynamic_address);
+	set_at<32, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_2_47_res);
 	return result;
 }
 
 // op_hcompute_corrected_stencil_read
-//	demosaicked_1_stencil_op_hcompute_corrected_stencil_33
-//	demosaicked_1_stencil_op_hcompute_corrected_stencil_34
-//	demosaicked_1_stencil_op_hcompute_corrected_stencil_35
+//	demosaicked_1_stencil_op_hcompute_corrected_stencil_53
+//	demosaicked_1_stencil_op_hcompute_corrected_stencil_54
+//	demosaicked_1_stencil_op_hcompute_corrected_stencil_55
 inline hw_uint<48> demosaicked_1_stencil_op_hcompute_corrected_stencil_read_bundle_read(demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int corrected_s0_y, int corrected_s0_x, int dynamic_address) {
   // # of ports in bundle: 3
-    // demosaicked_1_stencil_op_hcompute_corrected_stencil_33
-    // demosaicked_1_stencil_op_hcompute_corrected_stencil_34
-    // demosaicked_1_stencil_op_hcompute_corrected_stencil_35
+    // demosaicked_1_stencil_op_hcompute_corrected_stencil_53
+    // demosaicked_1_stencil_op_hcompute_corrected_stencil_54
+    // demosaicked_1_stencil_op_hcompute_corrected_stencil_55
 
 	hw_uint<48> result;
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_33_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_33_select(demosaicked_1_stencil, root, corrected_s0_y, corrected_s0_x, dynamic_address);
-	set_at<0, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_33_res);
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_34_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_34_select(demosaicked_1_stencil, root, corrected_s0_y, corrected_s0_x, dynamic_address);
-	set_at<16, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_34_res);
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_35_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_35_select(demosaicked_1_stencil, root, corrected_s0_y, corrected_s0_x, dynamic_address);
-	set_at<32, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_35_res);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_53_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_53_select(demosaicked_1_stencil, root, corrected_s0_y, corrected_s0_x, dynamic_address);
+	set_at<0, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_53_res);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_54_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_54_select(demosaicked_1_stencil, root, corrected_s0_y, corrected_s0_x, dynamic_address);
+	set_at<16, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_54_res);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_corrected_stencil_55_res = demosaicked_1_stencil_op_hcompute_corrected_stencil_55_select(demosaicked_1_stencil, root, corrected_s0_y, corrected_s0_x, dynamic_address);
+	set_at<32, 48>(result, demosaicked_1_stencil_op_hcompute_corrected_stencil_55_res);
 	return result;
 }
 
 // op_hcompute_demosaicked_1_stencil_1_write
-//	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17
+//	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23
 inline void demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_write_bundle_write(hw_uint<16>& op_hcompute_demosaicked_1_stencil_1_write, demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_res = op_hcompute_demosaicked_1_stencil_1_write.extract<0, 15>();
-	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_write(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_17_res, demosaicked_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_res = op_hcompute_demosaicked_1_stencil_1_write.extract<0, 15>();
+	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_write(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_1_23_res, demosaicked_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
 }
 
 // op_hcompute_demosaicked_1_stencil_2_write
-//	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23
+//	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14
 inline void demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_write_bundle_write(hw_uint<16>& op_hcompute_demosaicked_1_stencil_2_write, demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_res = op_hcompute_demosaicked_1_stencil_2_write.extract<0, 15>();
-	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_write(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_23_res, demosaicked_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_res = op_hcompute_demosaicked_1_stencil_2_write.extract<0, 15>();
+	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_write(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_2_14_res, demosaicked_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
 }
 
 // op_hcompute_demosaicked_1_stencil_write
-//	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8
+//	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29
 inline void demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_write_bundle_write(hw_uint<16>& op_hcompute_demosaicked_1_stencil_write, demosaicked_1_stencil_cache& demosaicked_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
-	hw_uint<16> demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_res = op_hcompute_demosaicked_1_stencil_write.extract<0, 15>();
-	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_write(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_8_res, demosaicked_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
+	hw_uint<16> demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_res = op_hcompute_demosaicked_1_stencil_write.extract<0, 15>();
+	demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_write(demosaicked_1_stencil_op_hcompute_demosaicked_1_stencil_29_res, demosaicked_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
 }
 
 #include "hw_classes.h"
 
-struct denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21_cache {
+struct denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21_cache {
 	// RAM Box: {[-1, 58], [-1, 58]}
 	// Capacity: 123
 	// # of read delays: 9
@@ -755,366 +755,366 @@ struct denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21_cache
 
 struct denoised_1_stencil_cache {
   // # of banks: 1
-  denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21_cache denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21;
+  denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21_cache denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21;
 };
 
 
 
-inline void denoised_1_stencil_op_hcompute_denoised_1_stencil_2_write(hw_uint<16>& denoised_1_stencil_op_hcompute_denoised_1_stencil_2, denoised_1_stencil_cache& denoised_1_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
-  denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.push(denoised_1_stencil_op_hcompute_denoised_1_stencil_2);
+inline void denoised_1_stencil_op_hcompute_denoised_1_stencil_8_write(hw_uint<16>& denoised_1_stencil_op_hcompute_denoised_1_stencil_8, denoised_1_stencil_cache& denoised_1_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
+  denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.push(denoised_1_stencil_op_hcompute_denoised_1_stencil_8);
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_10_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_10 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[demosaicked_1_s0_y, 1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
-  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_60();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_11_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_11 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[1 + demosaicked_1_s0_y, 1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
-  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_0();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_12_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_12 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[demosaicked_1_s0_y, -1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
-  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_62();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_13_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_13 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[1 + demosaicked_1_s0_y, demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
-  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_1();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_14_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_14 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[-1 + demosaicked_1_s0_y, 1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
-  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_120();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_15_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_15 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[-1 + demosaicked_1_s0_y, demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
-  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_121();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_16_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_16 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[-1 + demosaicked_1_s0_y, -1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
-  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
-  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_122();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
-  return 0;
-}
-
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_18_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_18 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[demosaicked_1_s0_y_1, -1 + demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[demosaicked_1_s0_y_1, -1 + demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 3] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_62();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_62();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_19_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_19 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[1 + demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[1 + demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 3] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_1();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_1();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_20_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_20 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[demosaicked_1_s0_y_1, 1 + demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[demosaicked_1_s0_y_1, 1 + demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 3] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_60();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_60();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_21_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_21 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[-1 + demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[-1 + demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 3] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_121();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_121();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_22_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_22 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28 read pattern: { op_hcompute_demosaicked_1_stencil_1[root = 0, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] -> denoised_1_stencil[demosaicked_1_s0_y_1, demosaicked_1_s0_x_1] : 0 <= demosaicked_1_s0_y_1 <= 57 and 0 <= demosaicked_1_s0_x_1 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_1[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 3] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_61();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_61();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_24_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_24 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_61();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_61();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_25_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_25 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[1 + demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[1 + demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_1();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_1();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_26_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_26 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[1 + demosaicked_1_s0_y_2, 1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[1 + demosaicked_1_s0_y_2, 1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_0();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_0();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_27_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_27 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[demosaicked_1_s0_y_2, 1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[demosaicked_1_s0_y_2, 1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_60();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_60();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_28_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_28 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[-1 + demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[-1 + demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_121();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_121();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_29_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_29 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[1 + demosaicked_1_s0_y_2, -1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[1 + demosaicked_1_s0_y_2, -1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_2();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_2();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_30_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_30 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[demosaicked_1_s0_y_2, -1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[demosaicked_1_s0_y_2, -1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_62();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_62();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_31_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_31 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[-1 + demosaicked_1_s0_y_2, -1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22 read pattern: { op_hcompute_demosaicked_1_stencil_2[root = 0, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2] -> denoised_1_stencil[-1 + demosaicked_1_s0_y_2, -1 + demosaicked_1_s0_x_2] : 0 <= demosaicked_1_s0_y_2 <= 57 and 0 <= demosaicked_1_s0_x_2 <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil_2[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 4] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_122();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_122();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
-inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_9_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_9 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[demosaicked_1_s0_y, demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[demosaicked_1_s0_y, demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
   // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
   // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
-  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_2_merged_banks_21.peek_61();
-  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_2;
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_61();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[demosaicked_1_s0_y, 1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
+  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
+  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_60();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[1 + demosaicked_1_s0_y, 1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
+  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
+  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_0();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[demosaicked_1_s0_y, -1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
+  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
+  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_62();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[1 + demosaicked_1_s0_y, demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
+  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
+  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_1();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[-1 + demosaicked_1_s0_y, 1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
+  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
+  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_120();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[-1 + demosaicked_1_s0_y, demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
+  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
+  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_121();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
+  return 0;
+}
+
+inline hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_select(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37 read pattern: { op_hcompute_demosaicked_1_stencil[root = 0, demosaicked_1_s0_y, demosaicked_1_s0_x] -> denoised_1_stencil[-1 + demosaicked_1_s0_y, -1 + demosaicked_1_s0_x] : 0 <= demosaicked_1_s0_y <= 57 and 0 <= demosaicked_1_s0_x <= 57 }
+  // Read schedule : { op_hcompute_demosaicked_1_stencil[d0 = 0, d1, d2] -> [0, 3 + d1, 3 + d2, 2] : 0 <= d1 <= 57 and 0 <= d2 <= 57 }
+  // Write schedule: { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
+  auto value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8 = denoised_1_stencil.denoised_1_stencil_op_hcompute_denoised_1_stencil_8_merged_banks_21.peek_122();
+  return value_denoised_1_stencil_op_hcompute_denoised_1_stencil_8;
   return 0;
 }
 
 // # of bundles = 4
 // op_hcompute_demosaicked_1_stencil_1_read
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_18
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_19
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_20
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_21
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_22
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28
 inline hw_uint<80> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_read_bundle_read(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_1, int demosaicked_1_s0_x_1, int dynamic_address) {
   // # of ports in bundle: 5
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_18
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_19
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_20
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_21
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_22
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28
 
 	hw_uint<80> result;
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_18_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_18_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
-	set_at<0, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_18_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_19_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_19_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
-	set_at<16, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_19_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_20_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_20_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
-	set_at<32, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_20_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_21_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_21_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
-	set_at<48, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_21_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_22_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_22_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
-	set_at<64, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_22_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
+	set_at<0, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_24_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
+	set_at<16, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_25_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
+	set_at<32, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
+	set_at<48, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_27_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_select(denoised_1_stencil, root, demosaicked_1_s0_y_1, demosaicked_1_s0_x_1, dynamic_address);
+	set_at<64, 80>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_28_res);
 	return result;
 }
 
 // op_hcompute_demosaicked_1_stencil_2_read
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_24
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_25
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_26
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_27
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_28
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_29
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_30
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_31
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22
 inline hw_uint<128> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_read_bundle_read(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y_2, int demosaicked_1_s0_x_2, int dynamic_address) {
   // # of ports in bundle: 8
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_24
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_25
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_26
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_27
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_28
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_29
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_30
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_31
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22
 
 	hw_uint<128> result;
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_24_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_24_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
-	set_at<0, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_24_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_25_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_25_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
-	set_at<16, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_25_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_26_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_26_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
-	set_at<32, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_26_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_27_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_27_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
-	set_at<48, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_27_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_28_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_28_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
-	set_at<64, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_28_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_29_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_29_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
-	set_at<80, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_29_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_30_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_30_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
-	set_at<96, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_30_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_31_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_31_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
-	set_at<112, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_31_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
+	set_at<0, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_15_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
+	set_at<16, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_16_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
+	set_at<32, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_17_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
+	set_at<48, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_18_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
+	set_at<64, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_19_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
+	set_at<80, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_20_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
+	set_at<96, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_21_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_select(denoised_1_stencil, root, demosaicked_1_s0_y_2, demosaicked_1_s0_x_2, dynamic_address);
+	set_at<112, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_2_22_res);
 	return result;
 }
 
 // op_hcompute_demosaicked_1_stencil_read
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_9
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_10
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_11
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_12
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_13
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_14
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_15
-//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_16
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36
+//	denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37
 inline hw_uint<128> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_read_bundle_read(denoised_1_stencil_cache& denoised_1_stencil, int root, int demosaicked_1_s0_y, int demosaicked_1_s0_x, int dynamic_address) {
   // # of ports in bundle: 8
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_9
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_10
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_11
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_12
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_13
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_14
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_15
-    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_16
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36
+    // denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37
 
 	hw_uint<128> result;
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_9_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_9_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
-	set_at<0, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_9_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_10_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_10_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
-	set_at<16, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_10_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_11_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_11_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
-	set_at<32, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_11_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_12_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_12_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
-	set_at<48, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_12_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_13_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_13_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
-	set_at<64, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_13_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_14_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_14_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
-	set_at<80, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_14_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_15_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_15_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
-	set_at<96, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_15_res);
-	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_16_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_16_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
-	set_at<112, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_16_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
+	set_at<0, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_30_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
+	set_at<16, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_31_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
+	set_at<32, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_32_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
+	set_at<48, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_33_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
+	set_at<64, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_34_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
+	set_at<80, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_35_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
+	set_at<96, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_36_res);
+	hw_uint<16> denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_res = denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_select(denoised_1_stencil, root, demosaicked_1_s0_y, demosaicked_1_s0_x, dynamic_address);
+	set_at<112, 128>(result, denoised_1_stencil_op_hcompute_demosaicked_1_stencil_37_res);
 	return result;
 }
 
 // op_hcompute_denoised_1_stencil_write
-//	denoised_1_stencil_op_hcompute_denoised_1_stencil_2
+//	denoised_1_stencil_op_hcompute_denoised_1_stencil_8
 inline void denoised_1_stencil_op_hcompute_denoised_1_stencil_write_bundle_write(hw_uint<16>& op_hcompute_denoised_1_stencil_write, denoised_1_stencil_cache& denoised_1_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
-	hw_uint<16> denoised_1_stencil_op_hcompute_denoised_1_stencil_2_res = op_hcompute_denoised_1_stencil_write.extract<0, 15>();
-	denoised_1_stencil_op_hcompute_denoised_1_stencil_2_write(denoised_1_stencil_op_hcompute_denoised_1_stencil_2_res, denoised_1_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
+	hw_uint<16> denoised_1_stencil_op_hcompute_denoised_1_stencil_8_res = op_hcompute_denoised_1_stencil_write.extract<0, 15>();
+	denoised_1_stencil_op_hcompute_denoised_1_stencil_8_write(denoised_1_stencil_op_hcompute_denoised_1_stencil_8_res, denoised_1_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
 }
 
 #include "hw_classes.h"
 
-struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_5_cache {
-	// RAM Box: {[-3, 60], [-3, 60]}
+struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_5_cache {
+	// RAM Box: {[-3, 60], [-1, 58]}
 	// Capacity: 259
 	// # of read delays: 6
   // 0, 2, 128, 130, 132, 258
@@ -1230,104 +1230,104 @@ struct hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stenc
 
 struct hw_input_global_wrapper_stencil_cache {
   // # of banks: 1
-  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_5_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_5;
+  hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_5_cache hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_5;
 };
 
 
 
-inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
-  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_5.push(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0);
+inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_write(hw_uint<16>& hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
+  hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_5.push(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6);
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_3_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_3 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[denoised_1_s0_y, denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
+  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[2 + denoised_1_s0_y, denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
   // Read schedule : { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : -3 <= d1 <= 60 and -3 <= d2 <= 60 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_5.peek_130();
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_5.peek_2();
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_4_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_4 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[2 + denoised_1_s0_y, denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
+  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[-2 + denoised_1_s0_y, denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
   // Read schedule : { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : -3 <= d1 <= 60 and -3 <= d2 <= 60 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_5.peek_2();
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_5.peek_258();
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_5_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_5 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[-2 + denoised_1_s0_y, denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
+  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[denoised_1_s0_y, -2 + denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
   // Read schedule : { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : -3 <= d1 <= 60 and -3 <= d2 <= 60 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_5.peek_258();
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_5.peek_132();
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_6_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_6 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[denoised_1_s0_y, -2 + denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
+  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[denoised_1_s0_y, 2 + denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
   // Read schedule : { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : -3 <= d1 <= 60 and -3 <= d2 <= 60 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_5.peek_132();
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_5.peek_128();
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6;
   return 0;
 }
 
-inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_7_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
+inline hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_select(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_7 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[denoised_1_s0_y, 2 + denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
+  // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9 read pattern: { op_hcompute_denoised_1_stencil[root = 0, denoised_1_s0_y, denoised_1_s0_x] -> hw_input_global_wrapper_stencil[denoised_1_s0_y, denoised_1_s0_x] : -1 <= denoised_1_s0_y <= 58 and -1 <= denoised_1_s0_x <= 58 }
   // Read schedule : { op_hcompute_denoised_1_stencil[d0 = 0, d1, d2] -> [0, 2 + d1, 2 + d2, 1] : -1 <= d1 <= 58 and -1 <= d2 <= 58 }
   // Write schedule: { op_hcompute_hw_input_global_wrapper_stencil[d0 = 0, d1, d2] -> [0, d1, d2, 0] : -3 <= d1 <= 60 and -3 <= d2 <= 60 }
-  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_merged_banks_5.peek_128();
-  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0;
+  auto value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6 = hw_input_global_wrapper_stencil.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_merged_banks_5.peek_130();
+  return value_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6;
   return 0;
 }
 
 // # of bundles = 2
 // op_hcompute_denoised_1_stencil_read
-//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_3
-//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_4
-//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_5
-//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_6
-//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_7
+//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9
+//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10
+//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11
+//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12
+//	hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13
 inline hw_uint<80> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_read_bundle_read(hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int denoised_1_s0_y, int denoised_1_s0_x, int dynamic_address) {
   // # of ports in bundle: 5
-    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_3
-    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_4
-    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_5
-    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_6
-    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_7
+    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9
+    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10
+    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11
+    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12
+    // hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13
 
 	hw_uint<80> result;
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_3_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_3_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
-	set_at<0, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_3_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_4_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_4_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
-	set_at<16, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_4_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_5_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_5_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
-	set_at<32, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_5_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_6_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_6_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
-	set_at<48, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_6_res);
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_7_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_7_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
-	set_at<64, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_7_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
+	set_at<0, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_9_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
+	set_at<16, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_10_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
+	set_at<32, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_11_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
+	set_at<48, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_12_res);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_res = hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_select(hw_input_global_wrapper_stencil, root, denoised_1_s0_y, denoised_1_s0_x, dynamic_address);
+	set_at<64, 80>(result, hw_input_global_wrapper_stencil_op_hcompute_denoised_1_stencil_13_res);
 	return result;
 }
 
 // op_hcompute_hw_input_global_wrapper_stencil_write
-//	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0
+//	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6
 inline void hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write_bundle_write(hw_uint<16>& op_hcompute_hw_input_global_wrapper_stencil_write, hw_input_global_wrapper_stencil_cache& hw_input_global_wrapper_stencil, int root, int hw_input_global_wrapper_s0_y, int hw_input_global_wrapper_s0_x, int dynamic_address) {
-	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_res = op_hcompute_hw_input_global_wrapper_stencil_write.extract<0, 15>();
-	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_0_res, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, dynamic_address);
+	hw_uint<16> hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_res = op_hcompute_hw_input_global_wrapper_stencil_write.extract<0, 15>();
+	hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_write(hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_6_res, hw_input_global_wrapper_stencil, root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, dynamic_address);
 }
 
 // Total re-use buffer capacity: 6080 bits
@@ -1664,7 +1664,6 @@ for (int c1 = -3; c1 <= 60; c1 += 1)
   */
 	for (int c1 = -3; c1 <= 60; c1 += 1)
 	  for (int c2 = -3; c2 <= 60; c2 += 1) {
-#pragma HLS pipeline II=1
 	    op_hcompute_hw_input_global_wrapper_stencil(hw_input_stencil /* buf name */, hw_input_global_wrapper_stencil, 0, c1, c2);
 	    if (c1 >= 1 && c2 >= 1) {
 	      op_hcompute_denoised_1_stencil(hw_input_global_wrapper_stencil /* buf name */, denoised_1_stencil, 0, c1 - 2, c2 - 2);

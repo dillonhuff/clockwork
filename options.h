@@ -8,8 +8,23 @@
 
 using namespace std;
 
+enum test_data_input_stream_type {
+  TEST_DATA_INPUT_STREAM_TYPE_CONSTANT,
+  TEST_DATA_INPUT_STREAM_TYPE_RANDOM,
+  TEST_DATA_INPUT_STREAM_TYPE_INCREMENTING,
+};
+
+struct test_data_input_stream {
+  test_data_input_stream_type tp;
+  int seed;
+  int value;
+
+  test_data_input_stream() : tp(TEST_DATA_INPUT_STREAM_TYPE_RANDOM), seed(1), value(0) {}
+};
+
 struct DebugOptions {
   bool expect_all_linebuffers;
+  test_data_input_stream test_inputs;
 
   DebugOptions() : expect_all_linebuffers(false) {}
 };
@@ -39,17 +54,28 @@ enum TargetTile {
   TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN,
   TARGET_TILE_PLATONIC,
   TARGET_TILE_GENERIC_SRAM,
-  TARGET_TILE_BRAM
+  TARGET_TILE_BRAM,
+  TARGET_TILE_M3,
+  TARGET_TILE_M1
+};
+
+struct global_signals_policy {
+  bool synchronous_reset;
+
+  global_signals_policy() : synchronous_reset(false) {}
 };
 
 struct RTLOptions {
   bool use_external_controllers;
   bool pack_controllers_in_memtiles;
   bool use_prebuilt_memory;
+  bool use_pipelined_compute_units;
   int max_inpt, max_outpt;
   TargetTile target_tile;
+  global_signals_policy global_signals;
 
   RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false),
+  use_pipelined_compute_units(false),
     max_inpt(1), max_outpt(1),
     target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN), use_prebuilt_memory(false) {}
   //RTLOptions() : use_external_controllers(true), pack_controllers_in_memtiles(false), use_prebuilt_memory(false), target_tile(TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN) {}

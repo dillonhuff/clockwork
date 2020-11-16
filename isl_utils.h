@@ -703,3 +703,5 @@ isl_aff* flatten(isl_multi_aff* ma, isl_set* dom);
 isl_aff* flatten(const std::vector<int>& bank_factors, isl_multi_aff* ma, isl_set* dom);
 
 isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vector<int>& bank_factors);
+
+vector<int> extents(isl_set* s);

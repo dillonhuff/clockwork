@@ -3251,6 +3251,7 @@ isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max) {
 }
 
 int to_int(isl_val* a) {
+  assert(a != nullptr);
   assert(isl_val_is_int(a));
   return stoi(str(a));
 }
@@ -4022,4 +4023,13 @@ isl_map* cyclic_function(isl_ctx* ctx, const std::string& name, const std::vecto
 
   string bank_str = curlies(name + brackets(sep_list(dvs, "", "", ", ")) + " -> " + folded_output);
   return isl_map_read_from_str(ctx, bank_str.c_str());
+}
+
+vector<int> extents(isl_set* s) {
+  vector<int> exts;
+  for (int d = 0; d < num_dims(s); d++) {
+    auto pr = project_all_but(s, d);
+    exts.push_back(to_int(lexmaxval(pr)) - to_int(lexminval(pr)) + 1);
+  }
+  return exts;
 }

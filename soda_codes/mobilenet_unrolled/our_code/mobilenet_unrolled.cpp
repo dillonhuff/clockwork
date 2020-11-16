@@ -4449,6 +4449,7 @@ for (int c0 = 0; c0 <= 29; c0 += 1) {
   */
 	for (int c0 = 0; c0 <= 29; c0 += 1) {
 	  for (int c2 = 0; c2 <= 29; c2 += 1) {
+#pragma HLS pipeline II=1
 	    op_hcompute_hw_input_global_wrapper_stencil_1(hw_input_stencil_clkwrk_17 /* buf name */, hw_input_global_wrapper_stencil, 0, c0, c2);
 	    if (c0 <= 2 && c2 <= 2)
 	      op_hcompute_hw_filter_dw_global_wrapper_stencil_1(hw_filter_dw_stencil_clkwrk_1 /* buf name */, hw_filter_dw_global_wrapper_stencil, 0, c0, c2);
@@ -4479,16 +4480,20 @@ for (int c0 = 0; c0 <= 29; c0 += 1) {
 	  }
 	  if (c0 <= 27) {
 	    for (int c2 = 0; c2 <= 27; c2 += 1)
+#pragma HLS pipeline II=1
 	      op_hcompute_dw_conv_stencil_2(dw_conv_stencil, 0, c0, c2);
 	    for (int c2 = 0; c2 <= 27; c2 += 1)
+#pragma HLS pipeline II=1
 	      op_hcompute_pw_conv_reduction_stencil_1(pw_conv_reduction_stencil, 0, c0, c2);
 	    if (c0 == 0)
 	      op_hcompute_hw_filter_pw_global_wrapper_stencil_1(hw_filter_pw_stencil_clkwrk_5 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);
 	    for (int c2 = 0; c2 <= 27; c2 += 1)
+#pragma HLS pipeline II=1
 	      op_hcompute_pw_conv_reduction_stencil(pw_conv_reduction_stencil, 0, c0, c2);
 	    if (c0 == 0)
 	      op_hcompute_hw_filter_pw_global_wrapper_stencil_5(hw_filter_pw_stencil_clkwrk_9 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);
 	    for (int c2 = 0; c2 <= 27; c2 += 1)
+#pragma HLS pipeline II=1
 	      op_hcompute_dw_conv_stencil_3(dw_conv_stencil, 0, c0, c2);
 	    if (c0 == 0) {
 	      op_hcompute_hw_filter_pw_global_wrapper_stencil_4(hw_filter_pw_stencil_clkwrk_8 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);
@@ -4500,12 +4505,15 @@ for (int c0 = 0; c0 <= 29; c0 += 1) {
 	      op_hcompute_hw_filter_pw_global_wrapper_stencil_11(hw_filter_pw_stencil_clkwrk_15 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);
 	    }
 	    for (int c2 = 0; c2 <= 27; c2 += 1)
+#pragma HLS pipeline II=1
 	      op_hcompute_dw_conv_stencil_1(dw_conv_stencil, 0, c0, c2);
 	    for (int c2 = 0; c2 <= 27; c2 += 1)
+#pragma HLS pipeline II=1
 	      op_hcompute_pw_conv_reduction_stencil_2(pw_conv_reduction_stencil, 0, c0, c2);
 	    if (c0 == 0)
 	      op_hcompute_hw_filter_pw_global_wrapper_stencil(hw_filter_pw_stencil_clkwrk_4 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);
 	    for (int c2 = 0; c2 <= 27; c2 += 1)
+#pragma HLS pipeline II=1
 	      op_hcompute_dw_conv_stencil(dw_conv_stencil, 0, c0, c2);
 	    if (c0 == 0) {
 	      op_hcompute_hw_filter_pw_global_wrapper_stencil_3(hw_filter_pw_stencil_clkwrk_7 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);

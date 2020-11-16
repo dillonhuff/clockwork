@@ -2006,52 +2006,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       return bcm;
   }
 
-  //CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
-    //cout << "Buffer..." << endl;
-    //cout << buf << endl;
 
-    //auto c = def->getContext();
-
-    //auto sched = buf.schedule.at(inpt);
-    //cout << "sched = " << str(sched) << endl;
-    //auto sms = get_maps(sched);
-    //assert(sms.size() == 1);
-
-    //auto svec = isl_pw_multi_aff_from_map(sms.at(0));
-
-    //vector<pair<isl_set*, isl_multi_aff*> > pieces =
-      //get_pieces(svec);
-    //assert(pieces.size() == 1);
-
-    //auto saff = pieces.at(0).second;
-    //auto dom = pieces.at(0).first;
-
-    //cout << "sched = " << str(saff) << endl;
-    //cout << tab(1) << "dom = " << str(dom) << endl;
-
-    //// TODO: Assert multi size == 1
-    //auto aff = isl_multi_aff_get_aff(saff, 0);
-    //auto aff_c = affine_controller(c, dom, aff);
-
-    //aff_c->print();
-    //return def->addInstance(controller_name(inpt), aff_c);
-  //}
-
-  CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
-    //return def->sel(controller_name(reader))->sel("d");
-    string bundle = buf.container_bundle(reader);
-    return def->sel("self." + bundle + "_ctrl_vars");
-  }
-
-  CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
-    string bundle = buf.container_bundle(reader);
-    if (buf.is_in_pt(reader)) {
-      return def->sel("self." + bundle + "_wen");
-    } else {
-      return def->sel("self." + bundle + "_ren");
-    }
-    //return def->sel(controller_name(reader))->sel("valid");
-  }
 
   CoreIR::Module* coreir_broadcast(CoreIR::Context* c, const std::string& inpt, UBuffer& buf) {
     int width = buf.port_widths;
@@ -2097,31 +2052,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
     }
     assert(false);
-  }
-
-  CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
-    auto c = def->getContext();
-
-    cout << "Building addrgen for " << reader << endl;
-    isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
-    for (auto inpt : buf.get_in_ports()) {
-      rddom = unn(rddom, range(buf.access_map.at(inpt)));
-    }
-    for (auto inpt : buf.get_out_ports()) {
-      rddom = unn(rddom, range(buf.access_map.at(inpt)));
-    }
-    auto acc_map = to_map(buf.access_map.at(reader));
-    cout << tab(1) << "=== acc_map = " << str(acc_map) << endl;
-    auto acc_aff = get_aff(acc_map);
-    cout << tab(2) << "=== acc aff = " << str(acc_aff) << endl;
-    auto reduce_map = linear_address_map(to_set(rddom));
-    auto addr_expr = dot(acc_map, reduce_map);
-    auto addr_expr_aff = get_aff(addr_expr);
-    cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
-
-    auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
-    auto agen = def->addInstance("addrgen_" + reader + c->getUnique(), aff_gen_mod);
-    return agen;
   }
 
   void generate_banks(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
@@ -2418,14 +2348,19 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
       int dd = to_int(lexminval(ddc));
       cout << "DD           : " << dd << endl;
       string writer_name = domain_name(pick(get_maps(writes)));
-      cout << "writer op    : " << writer_name << endl;
-      for (auto e : hwinfo.op_compute_unit_latencies) {
-        cout << tab(1) << e.first << " -> " << e.second << endl;
-      }
+      //auto write_op = prg.find_op(writer_name);
+      //cout << "writer op    : " << writer_name << endl;
+      //for (auto e : hwinfo.op_compute_unit_latencies) {
+        //cout << tab(1) << e.first << " -> " << e.second << endl;
+      //}
       //assert(false);
-      int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = hwinfo.compute_latency(write_op);
       //assert(op_latency == 0);
 
+      int op_latency = hwinfo.compute_latency(writer_name);
+      //map_find(writer_name, hwinfo.op_compute_unit_latencies);
       dd = dd - op_latency;
 
       delay_maps[inpt].push_back({outpt, dd});
@@ -2509,11 +2444,12 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
           cout << "DD           : " << dd << endl;
           string writer_name = domain_name(pick(get_maps(writes)));
           cout << "writer op    : " << writer_name << endl;
-          for (auto e : hwinfo.op_compute_unit_latencies) {
-            cout << tab(1) << e.first << " -> " << e.second << endl;
-          }
+          //for (auto e : hwinfo.op_compute_unit_latencies) {
+            //cout << tab(1) << e.first << " -> " << e.second << endl;
+          //}
           //assert(false);
-          int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+          //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+          int op_latency = hwinfo.compute_latency(writer_name);
           //assert(op_latency == 0);
 
           dd = dd - op_latency;
@@ -6209,7 +6145,8 @@ maybe<std::set<int> > embarassing_partition(UBuffer& buf) {
     overlapping_large_io_port_groups(buf, 1);
 
   if (filtered_io_groups.size() == 0) {
-    return {};
+    std::set<int> empty;
+    return maybe<std::set<int> >(empty);
   }
 
   std::set<int> dims;
@@ -6445,5 +6382,40 @@ vector<int> extents_by_dimension(UBuffer& buf) {
     extents.push_back(max_offsets.at(i) - min_offsets.at(i) + 1);
   }
   return extents;
+}
+
+UBuffer delete_ports(std::set<string>& sr_ports, UBuffer& buf) {
+  UBuffer cpy = buf;
+  for (auto& pt : sr_ports) {
+    cpy.isIn.erase(pt);
+    cpy.retrive_domain.erase(pt);
+    cpy.dynamic_ports.erase(pt);
+    cpy.sv_map.erase(pt);
+    cpy.access_map.erase(pt);
+    cpy.schedule.erase(pt);
+
+
+  }
+
+  std::map<string, vector<string> > port_bundles;
+  for (auto bundle : cpy.port_bundles) {
+    vector<string> pts;
+    for (auto& pt : bundle.second) {
+      if (!elem(pt, sr_ports)) {
+        pts.push_back(pt);
+      }
+    }
+    if (pts.size() > 0) {
+      port_bundles[bundle.first] = pts;
+    }
+  }
+  cpy.port_bundles = port_bundles;
+  for (auto bundle : cpy.port_bundles) {
+    for (auto pt : bundle.second) {
+      assert(!elem(pt, sr_ports));
+    }
+  }
+
+  return cpy;
 }
 

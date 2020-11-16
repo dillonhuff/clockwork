@@ -18,16 +18,20 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
+  size_t total_size_bytes_read = 0;
+  size_t total_size_bytes_written = 0;
   const int store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_write_DATA_SIZE = num_epochs*1024;
   const int store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_write_BYTES_PER_PIXEL = 32 / 8;
   size_t store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_write_size_bytes = store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_write_BYTES_PER_PIXEL * store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_write_DATA_SIZE;
 
   total_size_bytes += store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_write_size_bytes;
+  total_size_bytes_written += store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_write_size_bytes;
   const int store_I_from_in_read_DATA_SIZE = num_epochs*1024;
   const int store_I_from_in_read_BYTES_PER_PIXEL = 32 / 8;
   size_t store_I_from_in_read_size_bytes = store_I_from_in_read_BYTES_PER_PIXEL * store_I_from_in_read_DATA_SIZE;
 
   total_size_bytes += store_I_from_in_read_size_bytes;
+  total_size_bytes_read += store_I_from_in_read_size_bytes;
 
   cl_int err;
   cl::Context context;
