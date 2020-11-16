@@ -51,19 +51,6 @@ static int not_fully_optimizable = 0;
 
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
-struct ubuffer_impl {
-  map<int, int> partitioned_dimension_extents;
-  std::set<int> partition_dims;
-
-  map<int, std::set<string> > bank_readers;
-  map<int, std::set<string> > bank_writers;
-  map<string, std::set<int>> outpt_to_bank;
-  map<string, std::set<int>> inpt_to_bank;
-
-  map<string,pair<string,int>> shift_registered_outputs;
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
-};
-
 bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
   if (impl.partition_dims.size() < buf.logical_dimension()) {
     return false;
@@ -3984,6 +3971,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     }
 
     map<string, Instance*> ubuffer_port_agens;
+    map<string, Wireable*> ubuffer_port_bank_selectors;
     for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
@@ -3996,6 +3984,15 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(agen->sel("d"),
             control_vars(def, pt, buf));
         ubuffer_port_agens[pt] = agen;
+
+        if (impl.outpt_to_bank[pt].size() > 1) {
+          auto bank_sel = build_bank_selector(pt, buf, impl, def);
+          def->connect(bank_sel->sel("d"),
+              control_vars(def, pt, buf));
+          const int READ_LATENCY = 1;
+          ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
+          //assert(false);
+        }
       }
     }
 
@@ -4077,12 +4074,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(last_mux->sel("sel"), conds[0]);
 
         def->connect(last_mux->sel("out"), out);
-        //auto ztrue = conds[0];
-        //auto ztrue = conds[0];
-
-        //assert(false);
       }
-      //assert(conn.second.size() == 1);
     }
 
     for (int b = 0; b < num_banks; b++) {
@@ -4108,6 +4100,30 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
 }
 
+CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
+  auto c = def->getContext();
+
+  cout << "Building addrgen for " << reader << endl;
+  isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
+  for (auto inpt : buf.get_in_ports()) {
+    rddom = unn(rddom, range(buf.access_map.at(inpt)));
+  }
+  for (auto inpt : buf.get_out_ports()) {
+    rddom = unn(rddom, range(buf.access_map.at(inpt)));
+  }
+  auto acc_map = to_map(buf.access_map.at(reader));
+  cout << tab(1) << "=== acc_map = " << str(acc_map) << endl;
+  auto acc_aff = get_aff(acc_map);
+  cout << tab(2) << "=== acc aff = " << str(acc_aff) << endl;
+  auto reduce_map = linear_address_map(to_set(rddom));
+  auto addr_expr = dot(acc_map, reduce_map);
+  auto addr_expr_aff = get_aff(addr_expr);
+  cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
+
+  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+  auto agen = def->addInstance("addrgen_" + reader + c->getUnique(), aff_gen_mod);
+  return agen;
+}
 CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
   auto c = def->getContext();
 
