@@ -2258,7 +2258,7 @@ void generate_coreir(CodegenOptions& options,
   }
 
   //Garnet pass
-  if (options.use_prebuilt_memory) {
+  if (options.rtl_options.use_prebuilt_memory) {
     garnet_map_module(prg_mod);
     context->runPasses({"rungenerators", "flatten", "removewires", "cullgraph"});
 
