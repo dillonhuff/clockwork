@@ -1905,6 +1905,8 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             {{"value", CoreIR::Const::make(context, true)}});
     for (auto t: chain_enable_tile) {
       def->connect(t->sel("chain_chain_en"), chain_en_const->sel("out"));
+      //Add the chainenable config
+      t->getMetaData()["config"]["chain_en"] = 1;
     }
   }
 
