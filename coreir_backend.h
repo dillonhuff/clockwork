@@ -176,5 +176,7 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_i
 
 void M1_sanity_check_port_counts(ubuffer_impl& impl);
 
+CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
 #endif
 

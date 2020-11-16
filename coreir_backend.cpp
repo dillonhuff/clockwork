@@ -49,6 +49,34 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
+Instance* generate_controller_verilog(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
+  auto c = def->getContext();
+  Instance* controller;
+  auto aff_c = affine_controller_def(c, dom, aff);
+  aff_c->print();
+  controller = def->addInstance(name, aff_c);
+
+  assert(verilog_collateral_file != nullptr);
+  generate_fsm(*verilog_collateral_file, options, controller->getModuleRef()->getName(), "d", "valid", aff, dom);
+
+  def->connect(controller->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(controller->sel("flush"), def->sel("self.flush"));
+
+  json tile_config;
+  for (int d = 0; d < num_in_dims(aff); d++) {
+    tile_config["coeff_" + str(d)] = to_int(get_coeff(aff, d));
+  }
+  tile_config["const"] = to_int(const_coeff(aff));
+  int d = 0;
+  for (auto e : extents(dom)) {
+    tile_config["extent_" + str(d)] = e;
+    d++;
+  }
+  controller->getMetaData()["config"] =
+    tile_config;
+  return controller;
+}
+
 CoreIR::Wireable* inner_control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
   string bundle = buf.container_bundle(reader);
   return def->sel("self." + bundle + "_ctrl_vars");
@@ -70,8 +98,6 @@ Wireable* eqConst(ModuleDef* def, Wireable* val, const int b) {
   def->connect(eq->sel("in1"), mkConst(def, 16, b));
   return eq->sel("out");
 }
-
-CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
 bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
   if (impl.partition_dims.size() < buf.logical_dimension()) {
@@ -257,9 +283,11 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         isl_aff* sched_aff =
           get_aff(adjusted_buf.schedule.at(port_rep));
+        generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
       } else {
         isl_aff* sched_aff =
           get_aff(buf.schedule.at(port_rep));
+        generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
       }
     }
 
