@@ -49,6 +49,59 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
+void instantiate_M3_verilog(const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf) {
+    assert(verilog_collateral_file != nullptr);
+
+    vector<string> port_decls = {};
+    port_decls.push_back("input clk");
+    port_decls.push_back("input rst_n");
+    port_decls.push_back("input clk_en");
+    port_decls.push_back("input chain_chain_en");
+    for(int i = 0; i < impl.bank_writers[b].size(); i++)
+    {
+      port_decls.push_back("input [15:0] data_in_" + str(i));
+      port_decls.push_back("input [15:0] write_addr_" + str(i));
+      port_decls.push_back("input wen_" + str(i));
+    }
+    for(int i = 0; i < impl.bank_readers[b].size(); i++)
+    {
+      port_decls.push_back("output logic [15:0] data_out_" + str(i));
+      port_decls.push_back("input [15:0] read_addr_" + str(i));
+      port_decls.push_back("input ren_" + str(i));
+    }
+    port_decls.push_back("input [15:0] chain_data_in");
+    port_decls.push_back("output [15:0] chain_data_out");
+
+    //*verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+    *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+    *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
+    *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
+    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+      *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
+    }
+
+    *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+    *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
+    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+      *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+    }
+    for (int i = 0; i < impl.bank_writers[b].size(); i++) {
+      *verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
+      *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
+      *verilog_collateral_file << tab(2) << "end" << endl;
+    }
+    *verilog_collateral_file << tab(1) << "end" << endl;
+    //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
+    *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
+    for (int i = 0; i < impl.bank_readers[b].size(); i++) {
+      if (i == impl.bank_readers[b].size() - 1) {
+        *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
+      } else {
+        *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
+      }
+    }
+    *verilog_collateral_file << "endmodule" << endl << endl;
+}
 Instance* generate_controller_verilog(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
   auto c = def->getContext();
   Instance* controller;
@@ -274,25 +327,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
   if (buf.num_out_ports() > 0) {
-    //for (auto bundle : buf.port_bundles) {
-      //string bundle_name = bundle.first;
-      //string port_rep = pick(bundle.second);
-      //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-      //op* rep = prg.find_op(op_rep_name);
-
-      //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
-      //if (buf.is_in_pt(port_rep)) {
-        //auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        //isl_aff* sched_aff =
-          //get_aff(adjusted_buf.schedule.at(port_rep));
-        //generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-      //} else {
-        //isl_aff* sched_aff =
-          //get_aff(buf.schedule.at(port_rep));
-        //generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-      //}
-    //}
-
     auto implm = build_buffer_impl(prg, buf, hwinfo);
     ubuffer_impl impl = implm.first;
 
@@ -420,7 +454,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
       def->connect(currbank->sel("chain_chain_en"),zero);
 
-      instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
+      instantiate_M3_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
       bank_map[b] = currbank;
       def->connect(currbank->sel("clk_en"),one);
       def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
