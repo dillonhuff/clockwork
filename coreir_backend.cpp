@@ -1396,7 +1396,10 @@ Instance* generate_coreir_op_controller(CodegenOptions& options, ModuleDef* def,
   }
   assert(sched != nullptr);
 
+  cout << "Schedule to generate affine controller: " << str(sched) << endl;
+
   auto svec = isl_pw_multi_aff_from_map(sched);
+  cout << "pma: " << str(svec) << endl;
 
   vector<pair<isl_set*, isl_multi_aff*> > pieces =
     get_pieces(svec);
@@ -1646,6 +1649,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     vector<string> surrounding = surrounding_vars(op, prg);
     for (auto var : op->index_variables_needed_by_compute) {
       int level = map_find(var, levels);
+      //Genertea op controller for the op need index varibale
+      generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
       def->connect(def->sel(op->name)->sel(var), var_wire);
     }

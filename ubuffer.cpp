@@ -4282,8 +4282,8 @@ lakeStream emit_top_address_stream(string fname,
     auto ret_sched = pad_to_domain_map(sched, depth);
     string dom_name = domain_name(ret);
     if (depth > 0) {
-      ret = set_domain_name(ret, dom_name + "_" + to_string(depth));
-      ret_sched = set_domain_name(ret_sched, dom_name + "_" + to_string(depth));
+      ret = set_domain_name(ret, dom_name + "_S" + to_string(depth));
+      ret_sched = set_domain_name(ret_sched, dom_name + "_S" + to_string(depth));
     }
     cout << "Rewrited output port map: " << str(ret) << endl;
     cout << "Rewrited output port sched: " << str(ret_sched) << endl;
@@ -4332,10 +4332,10 @@ lakeStream emit_top_address_stream(string fname,
       //TODO: we could move the shift register optimization pass here
       if (options.conditional_merge) {
         if (bk.maxdelay <= options.merge_threshold) {
-            if (get_bank_outputs(bk.name).size() == 1){
-              bank_pool.pop();
-              continue;
-            }
+          if (get_bank_outputs(bk.name).size() == 1){
+            bank_pool.pop();
+            continue;
+          }
         }
       }
 
