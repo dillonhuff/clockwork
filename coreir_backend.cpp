@@ -289,6 +289,19 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
     }
 
+    map<string, Wireable*> control_vars_for_ubuffer_ports;
+    map<string, Wireable*> en_vars_for_ubuffer_ports;
+    for (auto pt : buf.get_all_ports()) {
+      if (buf.is_in_pt(pt)) {
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        control_vars_for_ubuffer_ports[pt] = control_vars(def, pt, adjusted_buf);
+        en_vars_for_ubuffer_ports[pt] = control_en(def, pt, adjusted_buf);
+      } else {
+        control_vars_for_ubuffer_ports[pt] = control_vars(def, pt, buf);
+        en_vars_for_ubuffer_ports[pt] = control_en(def, pt, buf);
+      }
+    }
+
     map<string, Instance*> ubuffer_port_agens;
     map<string, Wireable*> ubuffer_port_bank_selectors;
     for (auto pt : buf.get_all_ports()) {
@@ -390,27 +403,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       Wireable* out = def->sel(conn.first + "_net.in");
       def->connect(out, mkOneHot(def, conds, vals));
-
-      //if (conds.size() == 1) {
-        //def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
-      //} else {
-        //assert(conds.size() == 3);
-        //Wireable* out = def->sel(conn.first + "_net.in");
-
-        //auto snd_mux =
-          //def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
-        //def->connect(snd_mux->sel("in0"), vals[1]);
-        //def->connect(snd_mux->sel("in1"), vals[2]);
-        //def->connect(snd_mux->sel("sel"), conds[2]);
-
-        //auto last_mux =
-          //def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
-        //def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
-        //def->connect(last_mux->sel("in1"), vals[0]);
-        //def->connect(last_mux->sel("sel"), conds[0]);
-
-        //def->connect(last_mux->sel("out"), out);
-      //}
     }
 
     for (int b = 0; b < num_banks; b++) {
@@ -447,194 +439,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
 
   //generate_M1_coreir(options, def, prg, orig_buf, hwinfo);
-
-  //CoreIR::Context* c = def->getContext();
-
-  //std::set<string> done_outpt = generate_M3_shift_registers(options, def, prg, orig_buf, hwinfo);
-
-  //UBuffer buf = delete_ports(done_outpt, orig_buf);
-
-  //if (buf.num_out_ports() > 0) {
-    //pair<ubuffer_impl,isl_map*> x = build_buffer_impl(prg, buf, hwinfo);
-
-    //auto impl = x.first;
-    //auto m = x.second;
-    //if (is_register_file(buf, impl)) {
-      //cout << buf.name << " is really a register file" << endl;
-    //}
-
-    //int num_banks = 1;
-    //for (auto ent : impl.partitioned_dimension_extents) {
-      //num_banks *= ent.second;
-    //}
-
-    //map<int, std::set<string> > bank_readers = impl.bank_readers;
-    //map<int, std::set<string> > bank_writers = impl.bank_writers;
-    //map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
-    //map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
-
-    //const int NUM_IN_PORTS_PER_BANK = 2;
-    //const int NUM_OUT_PORTS_PER_BANK = 2;
-
-    //cout << "Buffer = " << buf.name << endl;
-    //cout << "Bank readers..." << endl;
-    //for (auto b : bank_readers) {
-      //cout << tab(1) << b.first << " -> ";
-      //for (auto rd : b.second) {
-        //cout << rd << ", ";
-      //}
-      //cout << endl;
-
-      //assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
-    //}
-
-    //cout << "Bank writers..." << endl;
-    //for (auto b : bank_writers) {
-      //cout << tab(1) << b.first << " -> ";
-      //for (auto rd : b.second) {
-        //cout << rd << ", ";
-      //}
-      //cout << endl;
-
-      //assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
-    //}
-
-
-    //string chain_pt = "";
-    //for (auto pt: outpt_to_bank)
-    //{
-			//if(pt.second.size() > 1) {
-				//assert(chain_pt == "");
-						//chain_pt = pt.first;
-				//cout << pt.first << " needs chaining" << endl;
-			//}
-    //}
-    //for (auto pt: inpt_to_bank)
-    //{
-			//if(pt.second.size() > 1) {
-				//cout << pt.first << " needs broadcast" << endl;
-			//}
-    //}
-
-    //vector<int> banks;
-			//Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
-			//Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
-    //for (int b = 0; b < num_banks; b++) {
-        ////{"width", c->Int()}, // for m3 16
-        ////{"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
-        ////{"num_outputs", c->Int()}, // ''
-        ////{"has_valid", c->Bool()},
-        ////{"has_stencil_valid", c->Bool()},
-        ////{"has_flush", c->Bool()},
-        ////{"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
-        ////{"has_reset", c->Bool()}
-
-
-      //Values tile_params{{"width", COREMK(c, 16)},
-        //{"ID", COREMK(c, str(b))},
-        //{"num_inputs",COREMK(c,bank_writers[b].size())},
-        //{"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
-      //CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
-      //if (chain_pt != "") {
-        //def->connect(currbank->sel("chain_chain_en"),one);
-      //} else {
-        //def->connect(currbank->sel("chain_chain_en"),zero);
-      //}
-      //assert(verilog_collateral_file != nullptr);
-
-      //vector<string> port_decls = {};
-      //port_decls.push_back("input clk");
-      //port_decls.push_back("input rst_n");
-      //port_decls.push_back("input clk_en");
-      //port_decls.push_back("input chain_chain_en");
-      //int i = 0;
-      //for(auto pt: bank_writers[b])
-      //{
-          ////isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
-				//port_decls.push_back("input [15:0] data_in_" + str(i));
-              //i ++;
-
-//// figure out what aff to use. 
-              ///[>verilog_collateral_file << "// schedule " << str(get_aff(get_maps(buf.schedule.at(pt))[0])) << endl;;
-				///[>verilog_collateral_file << "// access map " << str(to_map(buf.access_map.at(pt))) << endl;
-				///[>verilog_collateral_file << "// m " << str(m) << endl;
-				//auto sched = get_maps(buf.schedule.at(pt))[0];
-				//auto aff = get_aff(sched);
-				//auto name = buf.name + "_bank" + str(b) + "_" + buf.container_bundle(pt) + "_" + str(buf.bundle_offset(pt)) + "_fsm";
-				//auto dom = domain(sched);
-
-				//*verilog_collateral_file << "// fsm for " << buf.name << "  bank " << b << " port " << pt << endl;
-				//generate_fsm(*verilog_collateral_file, options, name, "d", "valid", aff, dom);
-
-      //}
-      //i = 0;
-      //for(auto pt: bank_readers[b])
-      //{
-				//port_decls.push_back("input [15:0] data_out_" + str(i));
-              //i ++;
-				//auto sched = get_maps(buf.schedule.at(pt))[0];
-				//auto aff = get_aff(sched);
-				//auto name = buf.name + "_bank" + str(b) + "_" + buf.container_bundle(pt) + "_" + str(buf.bundle_offset(pt)) + "_fsm";
-				//auto dom = domain(sched);
-	//if(pt != chain_pt)
-	//{
-				//*verilog_collateral_file << "// fsm for " << buf.name << " bank " << b << " port " << pt << endl;
-				//generate_fsm(*verilog_collateral_file, options, name, "d", "valid", aff, dom);
-	//} else
-	//{
-				//*verilog_collateral_file << "// fsm for " << buf.name << " bank " << b << " port " << pt << endl;
-		//auto new_dom = isl_set_fix_si(cpy(dom), isl_dim_set, 0, b);
-				//generate_fsm(*verilog_collateral_file, options, name, "d", "valid", aff, new_dom);
-
-	//}	
-
-
-      //}
-      //port_decls.push_back("input [15:0] chain_data_in");
-      //port_decls.push_back("output [15:0] chain_data_out");
-
-      //*verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-      //*verilog_collateral_file << "endmodule" <<endl;
-      //if(b == 0 && chain_pt != "") {
-        //def->connect(currbank->sel("data_out_1"),def->sel("self." + buf.container_bundle(chain_pt) + "." + str(buf.bundle_offset(chain_pt))));
-      //}
-	//def->connect(currbank->sel("clk_en"),one);
-
-
-
-      //int count = 0;
-      //for(auto pt : bank_readers[b])
-      //{
-				//if(pt != chain_pt)
-				//{
-					//def->connect(currbank->sel("data_out_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
-          //count++;
-				//}
-      //}
-      //count = 0;
-      //for(auto pt : bank_writers[b])
-      //{
-				//def->connect(currbank->sel("data_in_" + str(count)),def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
-				//count++;
-      //}
-      //def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
-
-
-    //}
-    ////assert(false);
-    //for (int b = 0; b < num_banks; b++) {
-
-      //if(b != num_banks - 1){
-        //def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
-
-      //} else
-      //{
-        //def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
-      //}
-    //}
-  //}
-
-
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
