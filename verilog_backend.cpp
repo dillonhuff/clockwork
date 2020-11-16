@@ -235,7 +235,7 @@ void print_embarassing_banks_selector(std::ostream& out, const map<int, int>& pa
     stride *= p.second;
   }
 
-  vector<string> terms;
+  vector<string> terms{"0"};
   for (auto p : partitioned_dimension_sizes) {
     int i = p.first;
     string var = "d[" + str((i + 1)*CONTROLPATH_WIDTH - 1) + ":" + str(i*CONTROLPATH_WIDTH) + "]";
