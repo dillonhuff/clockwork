@@ -2266,12 +2266,14 @@ void generate_coreir(CodegenOptions& options,
     context->die();
   }
 
-  //garnet_map_module(prg_mod);
-  //if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
-    //cout << "Could not save ubuffer coreir" << endl;
-    //context->die();
+  //if (options.rtl_options.target_tile == TARGET_TILE_M1) {
+    //garnet_map_module(prg_mod);
+    //if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
+      //cout << "Could not save ubuffer coreir" << endl;
+      //context->die();
+    //}
+    //assert(false);
   //}
-
   //prg_mod->print();
   //assert(false);
 
