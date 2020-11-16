@@ -346,7 +346,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
-    map<string, Instance*> ubuffer_port_agens;
+    //map<string, Instance*> ubuffer_port_agens;
     map<pair<int, int>, Instance*> bank_and_port_output_addrgen;
     map<pair<int, int>, Instance*> bank_and_port_input_addrgen;
 
@@ -358,7 +358,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
-        ubuffer_port_agens[pt] = agen;
+        //ubuffer_port_agens[pt] = agen;
 
         auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
         def->connect(bank_sel->sel("d"),
@@ -374,7 +374,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
-        ubuffer_port_agens[pt] = agen;
+        //ubuffer_port_agens[pt] = agen;
 
         auto bank_sel = build_bank_selector(pt, buf, impl, def);
         def->connect(bank_sel->sel("d"),
