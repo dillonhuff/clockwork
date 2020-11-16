@@ -72,7 +72,7 @@ bool is_register_file(UBuffer& buf, ubuffer_impl& impl) {
   return true;
 }
 
-ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+pair<ubuffer_impl,isl_map*> build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   cout << "Building implementation of " << buf.name << endl;
   ubuffer_impl impl;
 
@@ -134,7 +134,7 @@ ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
     }
   }
 
-  return impl;
+  return {impl,m};
 }
 
 int wire_width(CoreIR::Wireable* w) {
@@ -211,8 +211,10 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
   if (buf.num_out_ports() > 0) {
-    ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+    pair<ubuffer_impl,isl_map*> x = build_buffer_impl(prg, buf, hwinfo);
 
+    auto impl = x.first;
+    auto m = x.second;
     if (is_register_file(buf, impl)) {
       cout << buf.name << " is really a register file" << endl;
     }
@@ -295,13 +297,48 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       port_decls.push_back("input rst_n");
       port_decls.push_back("input clk_en");
       port_decls.push_back("input chain_chain_en");
-      for(int i = 0; i < bank_writers[b].size(); i++)
+      int i = 0;
+      for(auto pt: bank_writers[b])
       {
+      		//isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
 	      port_decls.push_back("input [15:0] data_in_" + str(i));
+              i ++;
+
+// figure out what aff to use. 
+              //*verilog_collateral_file << "// schedule " << str(get_aff(get_maps(buf.schedule.at(pt))[0])) << endl;;
+	      //*verilog_collateral_file << "// access map " << str(to_map(buf.access_map.at(pt))) << endl;
+	      //*verilog_collateral_file << "// m " << str(m) << endl;
+	      auto sched = get_maps(buf.schedule.at(pt))[0];
+	      auto aff = get_aff(sched);
+	      auto name = buf.name + "_bank" + str(b) + "_" + buf.container_bundle(pt) + "_" + str(buf.bundle_offset(pt)) + "_fsm";
+	      auto dom = domain(sched);
+
+	      *verilog_collateral_file << "// fsm for " << buf.name << "  bank " << b << " port " << pt << endl;
+	      generate_fsm(*verilog_collateral_file, options, name, "d", "valid", aff, dom);
+
       }
-      for(int i = 0; i < bank_readers[b].size(); i++)
+      i = 0;
+      for(auto pt: bank_readers[b])
       {
 	      port_decls.push_back("input [15:0] data_out_" + str(i));
+              i ++;
+	      auto sched = get_maps(buf.schedule.at(pt))[0];
+	      auto aff = get_aff(sched);
+	      auto name = buf.name + "_bank" + str(b) + "_" + buf.container_bundle(pt) + "_" + str(buf.bundle_offset(pt)) + "_fsm";
+	      auto dom = domain(sched);
+	if(pt != chain_pt)
+	{
+	      *verilog_collateral_file << "// fsm for " << buf.name << " bank " << b << " port " << pt << endl;
+	      generate_fsm(*verilog_collateral_file, options, name, "d", "valid", aff, dom);
+	} else
+	{
+	      *verilog_collateral_file << "// fsm for " << buf.name << " bank " << b << " port " << pt << endl;
+		auto new_dom = isl_set_fix_si(cpy(dom), isl_dim_set, 0, b);
+	      generate_fsm(*verilog_collateral_file, options, name, "d", "valid", aff, new_dom);
+
+	}	
+
+
       }
       port_decls.push_back("input [15:0] chain_data_in");
       port_decls.push_back("output [15:0] chain_data_out");
@@ -3729,8 +3766,9 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   }
 
   if (buf.num_out_ports() > 0) {
-    ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+    pair< ubuffer_impl,isl_map*> x = build_buffer_impl(prg, buf, hwinfo);
 
+    auto impl = x.first;
     if (is_register_file(buf, impl)) {
       cout << buf.name << " is really a register file" << endl;
     }
