@@ -3999,6 +3999,30 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
+    //for (auto pt_srcs : impl.outpt_to_bank) {
+      //string pt = pt_srcs.first;
+      //auto agen = ubuffer_port_agens[pt];
+
+      //vector<Wireable*> bank_outputs;
+      //vector<Wireable*> bank_valids;
+      //for (int b : pt_srcs.second) {
+        //if (b == 0) {
+          //bank_valids.push_back(one);
+        //} else {
+          //bank_valids.push_back(zero);
+        //}
+
+        //auto currbank = bank_map[b];
+        //def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        //def->connect(currbank->sel("ren_" + str(count)),
+            //control_en(def, pt, buf));
+
+          //def->connect(
+              //currbank->sel("data_out_" + str(count)),
+              //def->sel(pt + "_net.in"));
+      //}
+    //}
+
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
       if(b == 0 && chain_pt != "") {
