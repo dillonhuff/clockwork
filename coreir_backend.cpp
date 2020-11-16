@@ -309,25 +309,29 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
-            control_vars(def, pt, adjusted_buf));
+            control_vars_for_ubuffer_ports[pt]);
+            //control_vars(def, pt, adjusted_buf));
         ubuffer_port_agens[pt] = agen;
 
         if (impl.inpt_to_bank[pt].size() > 1) {
           auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
           def->connect(bank_sel->sel("d"),
-              control_vars(def, pt, adjusted_buf));
+            control_vars_for_ubuffer_ports[pt]);
+              //control_vars(def, pt, adjusted_buf));
           ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), 0);
         }
       } else {
         auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
-            control_vars(def, pt, buf));
+            control_vars_for_ubuffer_ports[pt]);
+            //control_vars(def, pt, buf));
         ubuffer_port_agens[pt] = agen;
 
         if (impl.outpt_to_bank[pt].size() > 1) {
           auto bank_sel = build_bank_selector(pt, buf, impl, def);
           def->connect(bank_sel->sel("d"),
-              control_vars(def, pt, buf));
+            control_vars_for_ubuffer_ports[pt]);
+              //control_vars(def, pt, buf));
           const int READ_LATENCY = 1;
           ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
         }
@@ -376,7 +380,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
         def->connect(currbank->sel("ren_" + str(count)),
             en_vars_for_ubuffer_ports[pt]);
-            //control_en(def, pt, buf));
       }
     }
 
@@ -421,12 +424,10 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             andList(def,
                 {
                 en_vars_for_ubuffer_ports[pt],
-                //control_en(def, pt, adjusted_buf),
                 eqConst(def, ubuffer_port_bank_selectors[pt], b)});
         } else {
           enable =
             en_vars_for_ubuffer_ports[pt];
-            //control_en(def, pt, adjusted_buf);
         }
         assert(enable != nullptr);
 
