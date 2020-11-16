@@ -399,7 +399,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       for(auto pt : bank_writers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        auto agen = ubuffer_port_agens[pt];
+        //auto agen = ubuffer_port_agens[pt];
+        auto agen = bank_and_port_input_addrgen[{b, count}];
         bank_and_port_to_agen[{b, count}] = agen->sel("out");
 
         Wireable* enable = nullptr;
