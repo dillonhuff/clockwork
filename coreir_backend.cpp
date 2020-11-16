@@ -375,33 +375,14 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             en_vars_for_ubuffer_ports[pt];
         bank_and_port_to_read_agen[{b, count}] =
           agen->sel("out");
-        //def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
-        //def->connect(currbank->sel("ren_" + str(count)),
-            //en_vars_for_ubuffer_ports[pt]);
       }
     }
 
 
-    for (int b = 0; b < num_banks; b++) {
-      auto currbank = bank_map[b];
+    //for (int b = 0; b < num_banks; b++) {
+      //auto currbank = bank_map[b];
 
-      for(auto pt : bank_readers[b])
-      {
-        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        auto agen = ubuffer_port_agens[pt];
-        def->connect(
-            //agen->sel("out"),
-            bank_and_port_to_read_agen[{b, count}],
-            currbank->sel("read_addr_" + str(count)));
-
-        def->connect(currbank->sel("ren_" + str(count)),
-            bank_and_port_to_read_enable[{b, count}]);
-
-        //def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
-        //def->connect(currbank->sel("ren_" + str(count)),
-            //en_vars_for_ubuffer_ports[pt]);
-      }
-    }
+    //}
 
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
@@ -413,10 +394,21 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             currbank->sel("write_addr_" + str(count)));
         def->connect(currbank->sel("wen_" + str(count)),
             enable);
-
         def->connect(
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+      }
+
+      for(auto pt : bank_readers[b]) {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        auto agen = ubuffer_port_agens[pt];
+        def->connect(
+            //agen->sel("out"),
+            bank_and_port_to_read_agen[{b, count}],
+            currbank->sel("read_addr_" + str(count)));
+
+        def->connect(currbank->sel("ren_" + str(count)),
+            bank_and_port_to_read_enable[{b, count}]);
       }
     }
 
