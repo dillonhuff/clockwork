@@ -405,7 +405,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         Wireable* enable = nullptr;
         if (inpt_to_bank[pt].size() > 1) {
           Wireable* bank_is_selected =
-            eqConst(def, ubuffer_port_bank_selectors[pt], b);
+            bank_and_port_input_data_valid[{b, count}];
+            //eqConst(def, ubuffer_port_bank_selectors[pt], b);
 
           enable =
             andList(def,
