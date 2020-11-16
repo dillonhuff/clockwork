@@ -224,6 +224,46 @@ Wireable* mkOneHot(ModuleDef* def, vector<Wireable*>& conds, vector<Wireable*>& 
   }
 }
 
+map<pair<string, int>, int>
+build_ubuffer_to_bank_binding(ubuffer_impl& impl) {
+    int num_banks = 1;
+    for (auto ent : impl.partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+  map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
+  map<int, int> bank_to_next_available_out_port;
+  map<int, int> bank_to_next_available_in_port;
+  for (int b = 0; b < num_banks; b++) {
+    bank_to_next_available_out_port[b] = 0;
+    bank_to_next_available_in_port[b] = 0;
+  }
+  for (auto pt_srcs : impl.inpt_to_bank) {
+    string pt = pt_srcs.first;
+    for (int b : pt_srcs.second) {
+      ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+        map_find(b, bank_to_next_available_in_port);
+      bank_to_next_available_in_port[b]++;
+    }
+  }
+  for (auto bp : bank_to_next_available_in_port) {
+    cout << tab(1) << bp.first << " -> " << bp.second << endl;
+    assert(bp.second <= 2);
+  }
+  for (auto pt_srcs : impl.outpt_to_bank) {
+    string pt = pt_srcs.first;
+    for (int b : pt_srcs.second) {
+      ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+        map_find(b, bank_to_next_available_out_port);
+      bank_to_next_available_out_port[b]++;
+    }
+  }
+  for (auto bp : bank_to_next_available_out_port) {
+    cout << tab(1) << bp.first << " -> " << bp.second << endl;
+    assert(bp.second <= 2);
+  }
+  return ubuffer_port_and_bank_to_bank_port;
+}
+
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
   CoreIR::Context* c = def->getContext();
   for (auto out : orig_buf.get_out_ports()) {
@@ -310,65 +350,61 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
-            //control_vars(def, pt, adjusted_buf));
         ubuffer_port_agens[pt] = agen;
 
         if (impl.inpt_to_bank[pt].size() > 1) {
           auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
           def->connect(bank_sel->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
-              //control_vars(def, pt, adjusted_buf));
           ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), 0);
         }
       } else {
         auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
-            //control_vars(def, pt, buf));
         ubuffer_port_agens[pt] = agen;
 
         if (impl.outpt_to_bank[pt].size() > 1) {
           auto bank_sel = build_bank_selector(pt, buf, impl, def);
           def->connect(bank_sel->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
-              //control_vars(def, pt, buf));
           const int READ_LATENCY = 1;
           ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
         }
       }
     }
 
-    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
-    map<int, int> bank_to_next_available_out_port;
-    map<int, int> bank_to_next_available_in_port;
-    for (int b = 0; b < num_banks; b++) {
-      bank_to_next_available_out_port[b] = 0;
-      bank_to_next_available_in_port[b] = 0;
-    }
-    for (auto pt_srcs : impl.inpt_to_bank) {
-      string pt = pt_srcs.first;
-      for (int b : pt_srcs.second) {
-        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
-          map_find(b, bank_to_next_available_in_port);
-        bank_to_next_available_in_port[b]++;
-      }
-    }
-    for (auto bp : bank_to_next_available_in_port) {
-      cout << tab(1) << bp.first << " -> " << bp.second << endl;
-      assert(bp.second <= 2);
-    }
-    for (auto pt_srcs : impl.outpt_to_bank) {
-      string pt = pt_srcs.first;
-      for (int b : pt_srcs.second) {
-        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
-          map_find(b, bank_to_next_available_out_port);
-        bank_to_next_available_out_port[b]++;
-      }
-    }
-    for (auto bp : bank_to_next_available_out_port) {
-      cout << tab(1) << bp.first << " -> " << bp.second << endl;
-      assert(bp.second <= 2);
-    }
+    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port = build_ubuffer_to_bank_binding(impl);
+    //map<int, int> bank_to_next_available_out_port;
+    //map<int, int> bank_to_next_available_in_port;
+    //for (int b = 0; b < num_banks; b++) {
+      //bank_to_next_available_out_port[b] = 0;
+      //bank_to_next_available_in_port[b] = 0;
+    //}
+    //for (auto pt_srcs : impl.inpt_to_bank) {
+      //string pt = pt_srcs.first;
+      //for (int b : pt_srcs.second) {
+        //ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          //map_find(b, bank_to_next_available_in_port);
+        //bank_to_next_available_in_port[b]++;
+      //}
+    //}
+    //for (auto bp : bank_to_next_available_in_port) {
+      //cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      //assert(bp.second <= 2);
+    //}
+    //for (auto pt_srcs : impl.outpt_to_bank) {
+      //string pt = pt_srcs.first;
+      //for (int b : pt_srcs.second) {
+        //ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          //map_find(b, bank_to_next_available_out_port);
+        //bank_to_next_available_out_port[b]++;
+      //}
+    //}
+    //for (auto bp : bank_to_next_available_out_port) {
+      //cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      //assert(bp.second <= 2);
+    //}
 
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
