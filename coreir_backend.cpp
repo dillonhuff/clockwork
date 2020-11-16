@@ -420,7 +420,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       for(auto pt : bank_readers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        auto agen = ubuffer_port_agens[pt];
+        //auto agen = ubuffer_port_agens[pt];
+        auto agen = bank_and_port_output_addrgen[{b, count}];
+    //map<pair<int, int>, Instance*> bank_and_port_output_addrgen;
         bank_and_port_to_read_enable[{b, count}] = 
             en_vars_for_ubuffer_ports[pt];
         bank_and_port_to_read_agen[{b, count}] =
