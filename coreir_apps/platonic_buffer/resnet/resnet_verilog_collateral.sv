@@ -991,7 +991,7 @@ module cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushF
 endmodule
 
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U365(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U428(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1074,7 +1074,7 @@ module affine_controller__U365(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module affine_controller__U366(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module affine_controller__U429(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -1267,7 +1267,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addr
 endmodule
 
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U573(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U804(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1350,7 +1350,7 @@ module affine_controller__U573(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U574(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U805(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1433,7 +1433,7 @@ module affine_controller__U574(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U575(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U806(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1516,7 +1516,7 @@ module affine_controller__U575(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U576(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U807(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;

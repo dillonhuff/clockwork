@@ -375,7 +375,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             control_vars_for_ubuffer_ports[pt]);
         ubuffer_port_agens[pt] = agen;
 
-        if (impl.outpt_to_bank[pt].size() > 1) {
+        //if (impl.outpt_to_bank[pt].size() > 1) {
           auto bank_sel = build_bank_selector(pt, buf, impl, def);
           def->connect(bank_sel->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
@@ -386,7 +386,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             bank_and_port_output_data_valid[{b, count}] =
               eqConst(def, ubuffer_port_bank_selector, b);
           }
-        }
+        //}
       }
     }
 
