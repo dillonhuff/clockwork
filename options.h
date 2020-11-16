@@ -87,13 +87,17 @@ struct LakeCollateral {
     std::unordered_map<string, int> capacity;
     std::unordered_map<string, int> in_port_width;
     std::unordered_map<string, int> out_port_width;
+    int fetch_width;
+    bool multi_sram_accessor;
 
     LakeCollateral():
+        fetch_width(4),
+        multi_sram_accessor(false),
         word_width({{"agg", 1}, {"sram", 4}, {"tb", 1}}),
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
         out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
         bank_num({{"agg", 2}, {"sram", 1}, {"tb", 2}}),
-        capacity({{"agg", 4}, {"sram", 512}, {"tb", 16}}) {}
+        capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {}
 };
 
 struct CodegenOptions {
@@ -116,6 +120,7 @@ struct CodegenOptions {
   //Use for garnet
   bool pass_through_valid;
   bool emit_smt_stream;
+  bool config_gen_only;
   string dir;
 
   bool use_epochs;
@@ -140,7 +145,7 @@ struct CodegenOptions {
   use_custom_code_string(false), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
   inline_vectorization(false), iis({}),
-  pass_through_valid(false), emit_smt_stream(false), dir(""),
+  pass_through_valid(false), emit_smt_stream(false), config_gen_only(false), dir(""),
   use_epochs(true),
   num_input_epochs(-1),
   push_garbage_outputs(false),

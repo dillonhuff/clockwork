@@ -10344,6 +10344,88 @@ void blur_and_downsample_test() {
 }
 
 void playground() {
+    /*{
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto sched_0 = isl_map_read_from_str(ctx,  "{sram2tb[i0, i1]->[123 + 64*i0 + i1]: 0<=i0<=63 and 0<=i1<=63}");
+        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[64*i0 + i1]: 0<=i0<=63 and 0<=i1<=63}");
+        //auto domain_trans = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> sram2tb[floor(i0/2), i1]}");
+        for ( int bk_num = 0; bk_num < 2; bk_num ++ ) {
+          auto bank_func_0 = isl_set_read_from_str(ctx, string("{ data[i0]: floor((i0%128) / 64) = "+ str(bk_num) + "}").c_str());
+          auto bank_0_acc_map = its_range(acc_0, bank_func_0);
+          auto dom_0 = simplify(domain(bank_0_acc_map));
+          cout << "domain " << bk_num <<": " << str(dom_0) << endl;
+          vector<string> origin_var, new_var;
+          for (int i = 0; i < num_dims(dom_0); i ++) {
+              string name = dim_name(dom_0, i);
+              origin_var.push_back(name);
+              isl_val* res;
+              isl_val* mod;
+              isl_set_dim_residue_class_val(dom_0, i, &mod, &res);
+              cout << "residual: " << isl_val_get_num_si(res) << endl;
+              cout << "modulo: " << isl_val_get_num_si(mod) << endl;
+              auto info = isl_set_get_stride_info(dom_0, i);
+              auto aff = isl_stride_info_get_offset(info);
+              int offset = -to_int(const_coeff(aff));
+              cout << str(aff) << endl;
+              cout << "tile " << bk_num << " dom stride " << i << " = " << stride_in_dim(dom_0, i) << endl;
+              new_var.push_back(name + "*" + str(stride_in_dim(dom_0, i)) + "+" + str(offset));
+          }
+          string d_name = ::name(dom_0);
+          string str_map = "{" + d_name + sep_list(origin_var, "[", "]", ",") + "->"
+                  + d_name + sep_list(new_var, "[", "]", ",") + "}";
+          auto op_trans = isl_map_read_from_str(ctx, str_map.c_str());
+          cout << "Tile " << bk_num << " schedule: " << str(simplify(dot(op_trans, sched_0))) << endl;
+          cout << "Tile " << bk_num << " acc_map : " << str(simplify(dot(op_trans, bank_0_acc_map))) << endl;
+
+        }
+
+        assert(false);
+    }*/
+    {
+        isl_ctx* ctx = isl_ctx_alloc();
+        auto acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[i0, i1]-> data[i0+i1]: 0<=i0<=2 and 0<=i1<=28}");
+        auto op_trans = isl_map_read_from_str(ctx, "{sram2tb[i0, i1]->sram2tb[i0, floor(i1/4)]}");
+        auto op_trans_new = isl_map_read_from_str(ctx,
+                "{sram2tb[i0, i1]->sram2tb[4*floor(i0/4), 4*floor(i1/4)];\
+                sram2tb[i0, i1]->sram2tb[4*floor(i0/4), 4*floor(i1/4)+1];\
+                sram2tb[i0, i1]->sram2tb[4*floor(i0/4), 4*floor(i1/4)+2];\
+                sram2tb[i0, i1]->sram2tb[4*floor(i0/4), 4*floor(i1/4)+3]}");
+        vector<int> min_by_dim = parse_pt(lexminpt(::domain(acc_0)));
+        vector<int> max_by_dim = parse_pt(lexmaxpt(::domain(acc_0)));
+        int vec_dim = num_in_dims(acc_0) - 1;
+        int vectorized_dim_extent =
+            max_by_dim.at(vec_dim) - min_by_dim.at(vec_dim);
+        //Need to pad the map if it's exactly the multiplier of 4
+        if (vectorized_dim_extent % 4) {
+            acc_0 = pad_to_domain_ubuf_map(acc_0, vec_dim, 1);
+        }
+        cout << "After pad: " << str(acc_0) << endl;
+        auto align_trans = isl_map_read_from_str(ctx, "{data[i]->data[i - i%4]}");
+        auto vectorize_trans = isl_map_read_from_str(ctx, "{data[i]->data[i]; data[i]->data[i+1]; data[i]->data[i+2]; data[i]->data[i+3]}");
+        auto acc_vec = dot(inv(op_trans), acc_0);
+        auto acc_align = dot(inv(op_trans), dot(op_trans_new, acc_0));
+        /*auto acc_align = isl_map_read_from_str(ctx,
+                "\
+                {\
+                sram2tb[i0, i1]->data[floor(i0/4) + 4*i1 + 0];\
+                sram2tb[i0, i1]->data[floor(i0/4) + 4*i1 + 1];\
+                sram2tb[i0, i1]->data[floor(i0/4) + 4*i1 + 2];\
+                sram2tb[i0, i1]->data[floor(i0/4) + 4*i1 + 3];\
+                }\
+                ");*/
+        acc_align = its(acc_align, domain(acc_0));
+
+
+        //auto acc_align = dot(dot(acc_0, align_trans), vectorize_trans);
+        cout << "get align map range: " << str(range(acc_align)) << endl;
+        cout << "get align map domain: " << str(domain(acc_align)) << endl;
+        cout << "get align map: " << str(acc_align) << endl;
+        auto pt_cnt = 0;
+        for (auto b_map: get_basic_maps(acc_align)){
+            cout << tab(2) << "Pt: " <<  pt_cnt << " => " << str(get_aff(to_map(b_map))) << endl;
+        }
+        assert(false);
+    }
     //{
     //isl_ctx* ctx = isl_ctx_alloc();
     //auto access_map = isl_map_read_from_str(ctx,"{ output_2_sram2tb[i0, i1, i2, i3] -> data[2 + 16i1 + 4i2 + 4i3 - 4*floor((1 + i3)/2)]: 0<=i3<=1}");
@@ -11313,18 +11395,25 @@ std::vector<string> verilator_results(const std::string& name) {
 
 int run_verilator_on(const std::string& top_module,
     const std::string& tb_file,
-    const std::vector<string>& verilog_files) {
+    const std::vector<string>& verilog_files,
+    bool extra_flag = false) {
 
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
-  int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
-  assert(verilator_build == 0);
+  int verilator_build = 0;
+  if (extra_flag) {
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT");
+  } else {
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
+  }
 
+  assert(verilator_build == 0);
   //int verilator_d = cmd("make -C ./obj_dir/ V" + top_module);
   //assert(verilator_d == 0);
 
   int verilator_run = cmd("./obj_dir/V" + top_module);
   return verilator_run;
 }
+
 
 void run_verilator_verilog_tb(const std::string& name) {
   int compute_to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input ./coreir_compute/" + name + "_compute.json --output " + name + "_compute.v -p \"rungenerators; wireclocks-arst; wireclocks-clk\"");
@@ -11365,10 +11454,10 @@ void generate_verilog_tb(const std::string& name) {
 }
 
 #ifdef COREIR
-void generate_garnet_verilog_top(const std::string& name) {
+void generate_garnet_verilog_top(CodegenOptions& options, const std::string& name) {
 
     cmd("echo $LD_LIBRARY_PATH");
-  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input aha_garnet_design/" + name + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cwlib,cgralib --input " + options.dir  + "/"+name +".json --output " + name + ".v -p \"rungenerators; wireclocks-clk; deletedeadinstances; add-dummy-inputs\"");
   assert(to_verilog_res == 0);
 
   //run verilator on all the generated verilog
@@ -11393,7 +11482,7 @@ void generate_cgra_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOp
   generate_verilog_tb(prg.name);
 }
 
-void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo) {
+void generate_garnet_coreir(std::map<string, UBuffer> buffers_opt, prog prg, CodegenOptions& opt, schedule_info& hwinfo) {
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
@@ -11404,7 +11493,6 @@ void generate_garnet_tb(std::map<string, UBuffer> buffers_opt, prog prg, Codegen
 
   auto sched = global_schedule_from_buffers(buffers_opt);
   generate_coreir(opt, buffers_opt, prg, sched, hwinfo);
-  generate_garnet_verilog_top(prg.name);
 
   //cmd("mv " + prg.name + ".v " + opt.dir + "verilog");
 }
@@ -12184,7 +12272,7 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
       for(auto single_access_map: get_basic_maps(access_map)) {
           cout << "single access bmap : " << str(single_access_map) << endl;
         string buf_name = range_name(access_map);
-        auto reduce_map = linear_address_map_lake(range(access_map));
+        auto reduce_map = linear_address_map_lake(range(access_map), 4);
         auto ubuf = buffers_opt.at(buf_name);
         bool is_rd = ubuf.is_read_op(op_name);
 
@@ -12212,9 +12300,9 @@ void emit_lake_addrgen_config(std::ostream& out, map<string, UBuffer>& buffers_o
             }
             //rewrite the original addr_reduce map
             if (contains(buf_name, "tb"))
-              reduce_map = linear_address_map_with_index(range(access_map), addr_index);
+              reduce_map = linear_address_map_with_index(range(access_map), addr_index, 4);
             if (need_mux) {
-                auto mux_reduce_map = linear_address_map_with_index(range(access_map), mux_index);
+                auto mux_reduce_map = linear_address_map_with_index(range(access_map), mux_index, 4);
                 auto mux_addr_expr = dot(access_map, mux_reduce_map);
                 cout << str(mux_addr_expr) << endl;
                 isl_aff* addr = get_aff(mux_addr_expr);
@@ -12274,7 +12362,8 @@ void emit_lake_stream(map<string, UBuffer>& buffers_opt,
     }
     lattice_schedule_buf(it.second, hardware_schedule);
   }
-  emit_lake_address_stream2file(buffers_opt, dir);
+  CodegenOptions options;
+  emit_lake_address_stream2file(options, buffers_opt, dir);
 }
 
 void check_lake_config(const vector<string> & op_name_vec, string out_dir, string gold_dir) {
@@ -13188,22 +13277,34 @@ void lake_conv33_recipe_test() {
   //auto op_vec = emit_lake_config(ubuf_pool, hsh, "./lake_controllers/conv_3_3_recipe/");
 }
 
-void compile_for_garnet_single_port_mem(prog & prg, bool gen_smt_stream);
+void dsa_writers(prog& prg);
+void dsa_readers(prog& prg);
+
+void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_accessor );
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 
-void test_single_port_mem() {
+void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  //test_apps.push_back(gaussian());
+  test_apps.push_back(resnet());
+  test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(rom());
+  //test_apps.push_back(resnet());
 
-  //TODO:has issue with high dimensional schedule with multiple input
+  //test_apps.push_back(conv_3_3_wide());
+  //TODO: break in the middle of vectorization
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(up_sample());
+
+  //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(mobilenet_unrolled());
+  //TODO:has issue  with multiple input
   //test_apps.push_back(demosaic_complex());
 
-  //TODO:need to use the new scheduler
   //test_apps.push_back(resnet());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
@@ -13215,35 +13316,39 @@ void test_single_port_mem() {
     auto cpu = unoptimized_result(prg);
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, false);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, multi_accessor);
     generate_regression_testbench(prg);
 
     cout << "Output name: " << prg.name << endl;
     //run_verilator_tb(prg.name);
     //TODO: move to a function
     //run verilator on all the generated verilog
-    string name = prg.name;
-    auto verilog_files = get_files("./aha_garnet_design/"+name+"/verilog/");
-    verilog_files.push_back(name + ".v");
-    verilog_files.push_back("LakeWrapper.v");
-    int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files);
-    assert(res == 0);
-    cmd("rm LakeWrapper.v");
+    if (!gen_config_only) {
+      string name = prg.name;
+      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back(name + ".v");
+      verilog_files.push_back("LakeWrapper.v");
+      bool extra_flag_for_lake = true;
+      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
+      assert(res == 0);
+      cmd("rm LakeWrapper.v");
 
-    auto verilator_res = verilator_results(prg.name);
-    compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-    //string app_type = "dualwithaddr";
-    string app_type = "single_port_buffer";
-    cpy_app_to_folder(app_type, prg.name);
+      auto verilator_res = verilator_results(prg.name);
+      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+      //string app_type = "dualwithaddr";
+      string app_type = "single_port_buffer";
+      cpy_app_to_folder(app_type, prg.name);
+    }
   }
 }
 
 void generate_smt_stream_for_garnet_single_port_mem(prog& prg);
 void test_single_port_mem_smt_stream() {
   vector<prog> test_apps;
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  test_apps.push_back(resnet());
   //test_apps.push_back(conv_1_2());
   //test_apps.push_back(rom());
 
@@ -13445,7 +13550,7 @@ void lake_dual_port_test() {
   cmd("mkdir -p ./lake_controllers/dual_port_test/");
   //auto op_vec = emit_lake_config(buffers_opt, hsh, "./lake_controllers/dual_port_test/");
   cmd("mkdir -p ./lake_stream/dual_port_test/");
-  emit_lake_stream(buffers_opt, hsh, "./lake_stream/dual_port_test");
+  //emit_lake_stream(buffers_opt, hsh, "./lake_stream/dual_port_test");
   //check_lake_config(op_vec, "./lake_controllers/identity_stream/", "./lake_gold/identity_stream/");
   //cmd("mkdir -p ./lake_stream/identity_stream/");
   //emit_lake_stream(buffers_opt, hsh, "./lake_stream/identity_stream/");
@@ -14991,6 +15096,11 @@ void union_test() {
   isl_union_map* sched1 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1, 1]->[1, i0, i1,1]: 0<=i0<=7 and 0<=i1<=7}");
   auto out_sched = unn(sched0, sched1);
   cout << str(coalesce(out_sched)) << endl;
+
+  isl_union_map* hw_sched0 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, 0]->[i0]: 0<=i0<=7 }");
+  isl_union_map* hw_sched1 = isl_union_map_read_from_str(ctx, "{input[root=0, i0, i1]->[i0+10*i1]: 0<=i0<=7 and 1<=i1<=7 }");
+  auto hw_sched = unn(hw_sched0, hw_sched1);
+  cout << str(coalesce(hw_sched)) << endl;
 }
 
 void dual_port_lake_test();
@@ -15008,13 +15118,15 @@ void lake_smt_tests() {
 void lake_tests() {
   //dual_port_lake_test();
   //lake_agg_sram_tb_config_test();
-  test_single_port_mem();
+  //union_test();
+  //assert(false);
+  //playground();
+  test_single_port_mem(false, true, "aha_garnet_design_new");
+  //test_single_port_mem(false, false, "aha_garnet_design");
   assert(false);
   lake_conv33_autovec_aha_test();
   //double_buffer_test();
-  //playground();
   //lake_identity_stream_autovec_test();
-  //union_test();
   lake_gaussian_autovec_test();
   //lake_dual_port_test();
   lake_cascade_autovec_test();
@@ -15269,6 +15381,191 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   }
 }
 
+void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map) {
+
+    //always vectorize the inner most loop
+    for (auto rd_map: get_maps(read_map)) {
+      cout << tab(4) << str(rd_map) << endl;
+      auto b_map = to_map(pick(get_basic_maps(rd_map)));
+      auto read_addr_involve_dim = out_involve_dim(b_map, num_in_dims(b_map) - 1);
+      cout << tab(4) << "addr involve dim: " << read_addr_involve_dim << endl;
+      if (read_addr_involve_dim.size()) {
+        assert(read_addr_involve_dim.size() == 1);
+        int packed_addr_dim = pick(read_addr_involve_dim);
+        auto reads = range(b_map);
+        int ext = to_int(lexmaxval(
+                    project_all_but(reads, packed_addr_dim)
+                    )) + 1;
+        cout << tab(4) << "packed dim extent: " << ext << endl;
+        //TODO change 4 into codegen options,fetch_width
+        if (ext > loop->trip_count()) {
+            cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
+            cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+            sched.op_offset_within_parent.at(loop) =
+                (4 + loop->trip_count()) % 4 + 4;
+            cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
+        }
+      }
+    }
+}
+
+void relax_iis_for_vectorization(schedule_info& sched, prog& prg) {
+    //for (auto b: all_buffers(prg)) {
+    //  map<op*, isl_map*> cons = prg.consumer_maps(b);
+    //  for (auto opm: cons) {
+    //    op* op = opm.first;
+    //    if (opm.second != nullptr) {
+    //      auto read_map = opm.second;
+    //      cout << "Get Read Map: " << str(read_map) << endl;
+    //    }
+    //  }
+    //}
+      /* TODO
+       * If loop is the inner most check all buffer in the program if this op
+       * get the read range from that dimension and if the extent (max-min+1)
+       * is not the multiplier of your fetch width pad that to the multiplier of fetch width
+       */
+    for (auto loop : prg.all_loops()) {
+      int ii = sched.II(loop);
+      if (is_inner_loop(loop)) {
+        cout << tab(2) << "<" << loop->name << " >II after tight: " << ii << endl;
+        for (auto op: loop->descendant_ops()) {
+          cout << tab(2) << op->name << endl;
+          for ( auto prods: op->buffers_read() ) {
+              cout << tab(2) << "consume buffer: " << prods << endl;
+          }
+          //cout << "Read map: " << str(prg.read_map(op)) << endl;
+        }
+        auto write_map = written_at(loop->name, prg);
+        //cout << tab(2) << "Relax for write op: \n\t"<< str(write_map) << endl;
+        //relax_inner_iis(sched, loop, write_map);
+        auto read_map = read_at(loop->name, prg);
+        if(read_map != nullptr) {
+          cout << tab(2) << "Relax for read op: \n\t"<< str(read_map) << endl;
+          relax_inner_iis(sched, loop, read_map);
+        }
+      }
+    }
+  bool relaxed = true;
+  while (relaxed) {
+    relaxed  = false;
+    for (auto loop : prg.all_loops()) {
+      int ii = sched.II(loop);
+      if (ii != 1) {
+        int L = sched.last_update_delay(loop);
+        if (ii < L) {
+          cout << "Relax ii " << loop->name << " from " << ii << " to " << L << endl;
+          sched.loop_iis[loop->name] = max(L, 1);
+          relaxed = true;
+          break;
+        }
+      }
+    }
+  }
+}
+
+void relax_delays_after_vectorization(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
+  int d = 0;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+    if (get_producers(name, prg).size())
+        d ++;
+
+    sched.op_offset_within_parent[lp] = 10000 * d;
+    //int old_delay = map_find(lp, sched.op_offset_within_parent);
+    //int try_delay = 1;
+    //bool found_smaller_delay = false;
+    //while (try_delay < old_delay) {
+    //  sched.op_offset_within_parent[lp] = try_delay;
+    //  if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+    //    found_smaller_delay = true;
+    //    break;
+    //  }
+    //  try_delay = max(try_delay * 2, try_delay + 1000);
+    //  //try_delay = min(try_delay * 2, try_delay + 1000);
+    //  //try_delay *= 2;
+    //}
+
+    //if (!found_smaller_delay) {
+    //  sched.op_offset_within_parent[lp] = old_delay;
+    //}
+  }
+}
+
+void adjust_outer_delays(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
+  for (auto name : topologically_sort_kernels(prg)) {
+    auto lp = prg.find_loop(name);
+    cout << "Adjusting delay of " << lp->name << endl;
+
+    int old_delay = map_find(lp, sched.op_offset_within_parent);
+    int try_delay = 1;
+    bool found_smaller_delay = false;
+    while (try_delay < old_delay) {
+      sched.op_offset_within_parent[lp] = try_delay;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_delay = true;
+        break;
+      }
+      try_delay = max(try_delay * 2, try_delay + 1000);
+      //try_delay = min(try_delay * 2, try_delay + 1000);
+      //try_delay *= 2;
+    }
+
+    if (!found_smaller_delay) {
+      sched.op_offset_within_parent[lp] = old_delay;
+    }
+  }
+}
+
+void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
+  cout << "Adjusting delays of " << prg.name << endl;
+  for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
+
+    int old_delay = map_find(lp, sched.op_offset_within_parent);
+    int try_delay = 1;
+    bool found_smaller_delay = false;
+    while (try_delay < old_delay) {
+      sched.op_offset_within_parent[lp] = try_delay;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_delay = true;
+        break;
+      }
+      try_delay = max(try_delay * 2, try_delay + 1000);
+      //try_delay = min(try_delay * 2, try_delay + 1000);
+      //try_delay *= 2;
+    }
+
+    if (!found_smaller_delay) {
+      sched.op_offset_within_parent[lp] = old_delay;
+    }
+  }
+}
+
+void adjust_inner_iis(schedule_info& sched, prog& prg) {
+  cout << "Adjusting iis of " << prg.name << endl;
+  for (auto lp : get_inner_loops(prg)) {
+    cout << "Adjusting ii of " << lp->name << endl;
+    int old_ii = map_find(lp->name, sched.loop_iis);
+    int try_ii = 1;
+    bool found_smaller_ii = false;
+    while (try_ii < old_ii) {
+      sched.loop_iis[lp->name] = try_ii;
+      if (no_violated_cycle_accurate_dependencies(sched, prg)) {
+        found_smaller_ii = true;
+        break;
+      }
+      try_ii *= 2;
+    }
+
+    if (!found_smaller_ii) {
+      sched.loop_iis[lp->name] = old_ii;
+    }
+  }
+}
+
 void break_up_multi_channel_outputs(prog& prg) {
   std::set<string> to_erase;
   for (auto out : prg.outs) {
@@ -15469,6 +15766,7 @@ vector<int> garnet_fuse_ii_level(prog& prg) {
     return fused_level_iis;
 }
 
+void sanity_check_hw_schedule(schedule_info& sched, prog& prg);
 void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
   if (is_rate_matchable(prg)) {
     prg.pretty_print();
@@ -15605,11 +15903,18 @@ void garnet_single_port_ram_schedule(schedule_info& sched, op* root, prog& prg) 
   //}
   //assert(false);
 
-  sequential_schedule(sched, root, prg);
+  asap_inner_loops_schedule(sched, root, prg);
+  //sequential_schedule(sched, root, prg);
 
   adjust_inner_iis(sched, prg);
   tighten_iis(sched, prg);
   adjust_outer_delays(sched, prg);
+
+  relax_iis_for_vectorization(sched, prg);
+  relax_delays_after_vectorization(sched, prg);
+  sanity_check_hw_schedule(sched, prg);
+  //assert(false);
+  //adjust_outer_delays(sched, prg);
 
   adjust_schedule_forward(sched, prg, 0);
   return;
@@ -15902,7 +16207,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg) {
   return sched;
 }
 
-CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg) {
+CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string dir) {
   CodegenOptions options;
   options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
   options.conditional_merge = true;
@@ -15917,7 +16222,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg) {
   options.rtl_options.use_external_controllers = false;
   options.inline_vectorization = true;
   options.pass_through_valid= true;
-  options.dir = "aha_garnet_design/"+prg.name+"/";
+  options.dir = dir + "/" + prg.name + "/";
 
   if (!is_rate_matchable(prg)) {
     options.inner_bank_offset_mode =
@@ -16039,8 +16344,8 @@ bool is_cst(isl_multi_aff* diff) {
 
 void sanity_check_hw_schedule(schedule_info& sched, prog& prg) {
   assert(all_ops_scheduled(sched, prg));
-  assert(all_operations_assigned_to_resources(sched, prg));
-  assert(no_violated_resource_assignments(sched, prg));
+  //assert(all_operations_assigned_to_resources(sched, prg));
+  //assert(no_violated_resource_assignments(sched, prg));
   assert(no_violated_cycle_accurate_dependencies(sched, prg));
   assert(schedule_bounds_fit_controller_bitwidth(16, sched, prg));
 }
@@ -16123,7 +16428,7 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
-  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg);
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, "aha_garnet_design");
   options.emit_smt_stream = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
@@ -16150,13 +16455,45 @@ void generate_smt_stream_for_garnet_single_port_mem(prog& prg) {
     cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
-    b.second.generate_banks_and_merge(options);
-    b.second.port_group2bank(options);
+    if (is_rate_matchable(prg)) {
+      b.second.generate_banks_and_merge(options);
+      b.second.port_group2bank(options);
+
+    } else {
+
+      auto partition = embarassing_partition(b.second);
+      assert(partition.has_value());
+      cout << tab(1) << "Found partition: " << endl;
+      std::set<int> partition_dim = partition.get_value();
+      vector<int> cyclic_partition_factor;
+      vector<int> min_addr, max_addr;
+      min_addr = min_offsets_by_dimension(b.second);
+      max_addr = max_offsets_by_dimension(b.second);
+      for (int d = 0; d < b.second.logical_dimension(); d ++) {
+          if (elem(d, partition_dim)) {
+            cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          } else {
+            cyclic_partition_factor.push_back(1);
+            //cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          }
+      }
+      for (auto dim : partition_dim) {
+          cout << tab(2) << "Partition: " << dim << endl;
+      }
+      cout << "number of banks = " << card(cyclic_partition_factor) << endl;
+      options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
+      b.second.generate_banks_and_merge(options);
+      b.second.port_group2bank(options);
+    }
   }
   generate_smt_stream(options, buffers_opt, prg);
 }
 
-void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
+void compile_for_garnet_single_port_mem(prog& prg,
+        string dir,
+        bool gen_smt_stream,
+        bool config_gen_only,
+        bool multi_sram) {
 
   //make sure the loop bound and address is positive
   normalize_bounds(prg);
@@ -16166,13 +16503,16 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
 
 
   //optimized schedule
-  cmd("mkdir -p aha_garnet_design/" + prg.name);
+  cmd("mkdir -p " + dir + "/" + prg.name);
 
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
 
-  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg);
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
   options.emit_smt_stream = gen_smt_stream;
+  options.config_gen_only = config_gen_only;
+  if (multi_sram)
+      options.mem_tile.multi_sram_accessor = true;
   schedule_info sched = garnet_schedule_info(options, prg);
   garnet_single_port_ram_schedule(sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
@@ -16198,13 +16538,43 @@ void compile_for_garnet_single_port_mem(prog& prg, bool gen_smt_stream) {
     cout << "\tGenerate bank for buffer: " << b.first << endl << b.second << endl;
     if (b.second.num_in_ports() == 0 || b.second.num_out_ports() == 0)
         continue;
-    b.second.generate_banks_and_merge(options);
-    b.second.port_group2bank(options);
+    if (is_rate_matchable(prg)) {
+      b.second.generate_banks_and_merge(options);
+      b.second.port_group2bank(options);
+    } else {
+      //TODO: put this into a method
+      auto partition = embarassing_partition(b.second);
+      assert(partition.has_value());
+      cout << tab(1) << "Found partition: " << endl;
+      std::set<int> partition_dim = partition.get_value();
+      vector<int> cyclic_partition_factor;
+      vector<int> min_addr, max_addr;
+      min_addr = min_offsets_by_dimension(b.second);
+      max_addr = max_offsets_by_dimension(b.second);
+      for (int d = 0; d < b.second.logical_dimension(); d ++) {
+          if (elem(d, partition_dim)) {
+            cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          } else {
+            cyclic_partition_factor.push_back(1);
+            //cyclic_partition_factor.push_back(max_addr.at(d) - min_addr.at(d) + 1);
+          }
+      }
+      for (auto dim : partition_dim) {
+          cout << tab(2) << "Partition: " << dim << endl;
+      }
+      cout << "number of banks = " << card(cyclic_partition_factor) << endl;
+      options.banking_strategies[b.first] = {"cyclic", cyclic_partition_factor};
+      b.second.generate_banks_and_merge(options);
+      b.second.port_group2bank(options);
+    }
   }
 
 #ifdef COREIR
-  generate_garnet_tb(buffers_opt, prg, options, sched);
-  generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
+  generate_garnet_coreir(buffers_opt, prg, options, sched);
+  if (!options.config_gen_only) {
+    generate_garnet_verilog_top(options, prg.name);
+    generate_garnet_verilator_tb(prg, hw_sched, buffers_opt);
+  }
 #endif
 }
 
@@ -16361,7 +16731,7 @@ vector<prog> harris_variants() {
 
   // 2. Final output is wrong
   //test_programs.push_back(harris_sch2_fourbuf());
-  
+
   // Now: They also have an error in the ROMs
   //test_programs.push_back(harris_sch3_1pp9c());
   //test_programs.push_back(harris_sch4_1pp3c());
@@ -16411,6 +16781,7 @@ vector<prog> all_cgra_programs() {
 
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name) {
   cmd("mkdir -p ./coreir_apps/" + app_type + "/" + prg_name);
+  //cmd("mv LakeWrapper.v ./coreir_apps/coreir_apps/" + app_type +"/" + prg_name + "/");
   cmd("mv " + prg_name + ".json ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + ".v ./coreir_apps/" + app_type + "/" + prg_name + "/");
   cmd("mv " + prg_name + "_verilog_collateral.sv ./coreir_apps/" + app_type + "/" + prg_name + "/");
@@ -18399,7 +18770,7 @@ void test_multi_kernel_unsharp() {
       cout << "========= " << b << endl;
       cout << tab(1) << str(r) << endl;
       cout << tab(1) << str(w) << endl;
-      
+
       auto write_times = lexmin(dot(inv(w), sched));
       auto read_times = lexmin(dot(inv(r), sched));
 
@@ -18922,6 +19293,11 @@ int main(int argc, char** argv) {
       return 0;
     }
 
+    if (cmd == "jliu-playground") {
+      playground();
+      return 0;
+    }
+
     if (cmd == "fpga-asplos-flow") {
       fpga_asplos_tests();
       return 0;
@@ -18969,6 +19345,13 @@ int main(int argc, char** argv) {
 
     if (cmd == "lake-tests") {
       lake_tests();
+      return 0;
+    }
+
+    if (cmd == "lake-exp") {
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = true;
+      test_single_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
       return 0;
     }
 

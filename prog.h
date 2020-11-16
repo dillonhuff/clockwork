@@ -1649,6 +1649,7 @@ umap* read_at(const std::string& level, const std::string& buffer, prog& prg);
 umap* read_at(const std::string& level, prog& prg);
 
 umap* written_at(const std::string& level, const std::string& buffer, prog& prg);
+umap* written_at(const std::string& level, prog& prg);
 
 umap* first_iteration_reads(umap* reads, const std::string& level, prog& prg);
 isl_map* get_initial_data(const std::string& level, const std::string& buffer, prog& prg);

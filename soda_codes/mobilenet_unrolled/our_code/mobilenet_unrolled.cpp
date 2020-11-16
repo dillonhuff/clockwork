@@ -3928,28 +3928,28 @@ inline void op_hcompute_dw_conv_stencil_7(dw_conv_stencil_cache& dw_conv_stencil
 
 }
 
-inline void op_hcompute_hw_filter_pw_global_wrapper_stencil_1(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_filter_pw_stencil_clkwrk_4, hw_filter_pw_global_wrapper_stencil_cache& hw_filter_pw_global_wrapper_stencil, int root) {
+inline void op_hcompute_hw_filter_pw_global_wrapper_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_filter_pw_stencil_clkwrk_4, hw_filter_pw_global_wrapper_stencil_cache& hw_filter_pw_global_wrapper_stencil, int root) {
   // Dynamic address computation
 
 	// Consume: hw_filter_pw_stencil_clkwrk_4
-	auto hw_filter_pw_stencil_clkwrk_4_0_c__1_value = hw_filter_pw_stencil_clkwrk_4.read();
-	auto compute_result = hcompute_hw_filter_pw_global_wrapper_stencil_1(hw_filter_pw_stencil_clkwrk_4_0_c__1_value);
+	auto hw_filter_pw_stencil_clkwrk_4_0_c__0_value = hw_filter_pw_stencil_clkwrk_4.read();
+	auto compute_result = hcompute_hw_filter_pw_global_wrapper_stencil(hw_filter_pw_stencil_clkwrk_4_0_c__0_value);
 	// Produce: hw_filter_pw_global_wrapper_stencil
-	hw_filter_pw_global_wrapper_stencil_op_hcompute_hw_filter_pw_global_wrapper_stencil_1_write_bundle_write(/* arg names */compute_result, hw_filter_pw_global_wrapper_stencil, root, 0);
+	hw_filter_pw_global_wrapper_stencil_op_hcompute_hw_filter_pw_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, hw_filter_pw_global_wrapper_stencil, root, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
 
-inline void op_hcompute_hw_filter_pw_global_wrapper_stencil(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_filter_pw_stencil_clkwrk_5, hw_filter_pw_global_wrapper_stencil_cache& hw_filter_pw_global_wrapper_stencil, int root) {
+inline void op_hcompute_hw_filter_pw_global_wrapper_stencil_1(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */hw_filter_pw_stencil_clkwrk_5, hw_filter_pw_global_wrapper_stencil_cache& hw_filter_pw_global_wrapper_stencil, int root) {
   // Dynamic address computation
 
 	// Consume: hw_filter_pw_stencil_clkwrk_5
-	auto hw_filter_pw_stencil_clkwrk_5_0_c__0_value = hw_filter_pw_stencil_clkwrk_5.read();
-	auto compute_result = hcompute_hw_filter_pw_global_wrapper_stencil(hw_filter_pw_stencil_clkwrk_5_0_c__0_value);
+	auto hw_filter_pw_stencil_clkwrk_5_0_c__1_value = hw_filter_pw_stencil_clkwrk_5.read();
+	auto compute_result = hcompute_hw_filter_pw_global_wrapper_stencil_1(hw_filter_pw_stencil_clkwrk_5_0_c__1_value);
 	// Produce: hw_filter_pw_global_wrapper_stencil
-	hw_filter_pw_global_wrapper_stencil_op_hcompute_hw_filter_pw_global_wrapper_stencil_write_bundle_write(/* arg names */compute_result, hw_filter_pw_global_wrapper_stencil, root, 0);
+	hw_filter_pw_global_wrapper_stencil_op_hcompute_hw_filter_pw_global_wrapper_stencil_1_write_bundle_write(/* arg names */compute_result, hw_filter_pw_global_wrapper_stencil, root, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -4486,7 +4486,7 @@ for (int c0 = 0; c0 <= 29; c0 += 1) {
 #pragma HLS pipeline II=1
 	      op_hcompute_pw_conv_reduction_stencil_1(pw_conv_reduction_stencil, 0, c0, c2);
 	    if (c0 == 0)
-	      op_hcompute_hw_filter_pw_global_wrapper_stencil_1(hw_filter_pw_stencil_clkwrk_4 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);
+	      op_hcompute_hw_filter_pw_global_wrapper_stencil_1(hw_filter_pw_stencil_clkwrk_5 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);
 	    for (int c2 = 0; c2 <= 27; c2 += 1)
 #pragma HLS pipeline II=1
 	      op_hcompute_pw_conv_reduction_stencil(pw_conv_reduction_stencil, 0, c0, c2);
@@ -4511,7 +4511,7 @@ for (int c0 = 0; c0 <= 29; c0 += 1) {
 #pragma HLS pipeline II=1
 	      op_hcompute_pw_conv_reduction_stencil_2(pw_conv_reduction_stencil, 0, c0, c2);
 	    if (c0 == 0)
-	      op_hcompute_hw_filter_pw_global_wrapper_stencil(hw_filter_pw_stencil_clkwrk_5 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);
+	      op_hcompute_hw_filter_pw_global_wrapper_stencil(hw_filter_pw_stencil_clkwrk_4 /* buf name */, hw_filter_pw_global_wrapper_stencil, 0);
 	    for (int c2 = 0; c2 <= 27; c2 += 1)
 #pragma HLS pipeline II=1
 	      op_hcompute_dw_conv_stencil(dw_conv_stencil, 0, c0, c2);
@@ -4554,10 +4554,10 @@ const int op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0_num_trans
 const int op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0_num_transfers = 1;
   // { op_hcompute_hw_filter_pw_global_wrapper_stencil_11[root = 0] -> hw_filter_pw_stencil_clkwrk_15[3, 2] }
 const int op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0_num_transfers = 1;
-  // { op_hcompute_hw_filter_pw_global_wrapper_stencil_1[root = 0] -> hw_filter_pw_stencil_clkwrk_4[0, 1] }
-const int op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_num_transfers = 1;
-  // { op_hcompute_hw_filter_pw_global_wrapper_stencil[root = 0] -> hw_filter_pw_stencil_clkwrk_5[0, 0] }
+  // { op_hcompute_hw_filter_pw_global_wrapper_stencil[root = 0] -> hw_filter_pw_stencil_clkwrk_4[0, 0] }
 const int op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0_num_transfers = 1;
+  // { op_hcompute_hw_filter_pw_global_wrapper_stencil_1[root = 0] -> hw_filter_pw_stencil_clkwrk_5[0, 1] }
+const int op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_num_transfers = 1;
   // { op_hcompute_hw_filter_pw_global_wrapper_stencil_2[root = 0] -> hw_filter_pw_stencil_clkwrk_6[0, 2] }
 const int op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0_num_transfers = 1;
   // { op_hcompute_hw_filter_pw_global_wrapper_stencil_3[root = 0] -> hw_filter_pw_stencil_clkwrk_7[1, 0] }
@@ -4584,7 +4584,7 @@ const int op_hcompute_hw_output_stencil_2_write_pipe0_num_transfers = 784;
 
 extern "C" {
 
-void mobilenet_unrolled_accel(hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapper_stencil_2_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_6_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_7_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_8_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_5_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_stencil_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_stencil_1_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0, hw_uint<16>* op_hcompute_hw_output_stencil_write_pipe0, hw_uint<16>* op_hcompute_hw_output_stencil_1_write_pipe0, hw_uint<16>* op_hcompute_hw_output_stencil_2_write_pipe0, const int size) { 
+void mobilenet_unrolled_accel(hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapper_stencil_2_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_6_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_7_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_8_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0, hw_uint<16>* op_hcompute_hw_filter_pw_global_wrapper_stencil_5_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_stencil_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_stencil_1_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0, hw_uint<16>* op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0, hw_uint<16>* op_hcompute_hw_output_stencil_write_pipe0, hw_uint<16>* op_hcompute_hw_output_stencil_1_write_pipe0, hw_uint<16>* op_hcompute_hw_output_stencil_2_write_pipe0, const int size) { 
 #pragma HLS dataflow
 #pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0 offset = slave depth = 65536 bundle = gmem0
 #pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0 offset = slave depth = 65536 bundle = gmem1
@@ -4596,8 +4596,8 @@ void mobilenet_unrolled_accel(hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapp
 #pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0 offset = slave depth = 65536 bundle = gmem3
 #pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0 offset = slave depth = 65536 bundle = gmem3
 #pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0 offset = slave depth = 65536 bundle = gmem3
-#pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0 offset = slave depth = 65536 bundle = gmem3
 #pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0 offset = slave depth = 65536 bundle = gmem3
+#pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0 offset = slave depth = 65536 bundle = gmem3
 #pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0 offset = slave depth = 65536 bundle = gmem3
 #pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0 offset = slave depth = 65536 bundle = gmem3
 #pragma HLS INTERFACE m_axi port = op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0 offset = slave depth = 65536 bundle = gmem3
@@ -4620,8 +4620,8 @@ void mobilenet_unrolled_accel(hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapp
 #pragma HLS INTERFACE s_axilite port = op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0 bundle = control
-#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0 bundle = control
+#pragma HLS INTERFACE s_axilite port = op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0 bundle = control
 #pragma HLS INTERFACE s_axilite port = op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0 bundle = control
@@ -4648,8 +4648,8 @@ void mobilenet_unrolled_accel(hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapp
   static HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0_channel;
   static HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0_channel;
   static HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0_channel;
-  static HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_channel;
   static HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0_channel;
+  static HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_channel;
   static HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0_channel;
   static HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0_channel;
   static HWStream<hw_uint<16> > op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0_channel;
@@ -4672,8 +4672,8 @@ void mobilenet_unrolled_accel(hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapp
   burst_read<16>(op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0_num_transfers*size);
   burst_read<16>(op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0_num_transfers*size);
   burst_read<16>(op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0_num_transfers*size);
-  burst_read<16>(op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_num_transfers*size);
   burst_read<16>(op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0_num_transfers*size);
+  burst_read<16>(op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_num_transfers*size);
   burst_read<16>(op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0_num_transfers*size);
   burst_read<16>(op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0_num_transfers*size);
   burst_read<16>(op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0_num_transfers*size);
@@ -4683,7 +4683,7 @@ void mobilenet_unrolled_accel(hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapp
   burst_read<16>(op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0_num_transfers*size);
   burst_read<16>(op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0_num_transfers*size);
 
-  mobilenet_unrolled_wrapper(op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0_channel, op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0_channel, op_hcompute_hw_filter_dw_global_wrapper_stencil_2_read_pipe0_channel, op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_6_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_7_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_8_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_5_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_1_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0_channel, op_hcompute_hw_output_stencil_write_pipe0_channel, op_hcompute_hw_output_stencil_1_write_pipe0_channel, op_hcompute_hw_output_stencil_2_write_pipe0_channel, size);
+  mobilenet_unrolled_wrapper(op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0_channel, op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0_channel, op_hcompute_hw_filter_dw_global_wrapper_stencil_2_read_pipe0_channel, op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_6_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_7_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_8_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0_channel, op_hcompute_hw_filter_pw_global_wrapper_stencil_5_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_1_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0_channel, op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0_channel, op_hcompute_hw_output_stencil_write_pipe0_channel, op_hcompute_hw_output_stencil_1_write_pipe0_channel, op_hcompute_hw_output_stencil_2_write_pipe0_channel, size);
 
   burst_write<16>(op_hcompute_hw_output_stencil_write_pipe0, op_hcompute_hw_output_stencil_write_pipe0_channel, op_hcompute_hw_output_stencil_write_pipe0_num_transfers*size);
   burst_write<16>(op_hcompute_hw_output_stencil_1_write_pipe0, op_hcompute_hw_output_stencil_1_write_pipe0_channel, op_hcompute_hw_output_stencil_1_write_pipe0_num_transfers*size);
@@ -4693,7 +4693,7 @@ void mobilenet_unrolled_accel(hw_uint<16>* op_hcompute_hw_filter_dw_global_wrapp
 }
 extern "C" {
 
-void mobilenet_unrolled_rdai(HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_global_wrapper_stencil_2_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_6_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_7_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_8_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_5_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_stencil_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_stencil_1_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_stencil_write_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_stencil_1_write_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_stencil_2_write_pipe0) { 
+void mobilenet_unrolled_rdai(HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_global_wrapper_stencil_2_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_6_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_7_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_8_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_filter_pw_global_wrapper_stencil_5_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_stencil_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_stencil_1_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0, HWStream<hw_uint<16> >& op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_stencil_write_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_stencil_1_write_pipe0, HWStream<hw_uint<16> >&  op_hcompute_hw_output_stencil_2_write_pipe0) { 
 #pragma HLS dataflow
 #pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0
 #pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0
@@ -4705,8 +4705,8 @@ void mobilenet_unrolled_rdai(HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_gl
 #pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0
 #pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0
 #pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0
-#pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0
 #pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0
+#pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0
 #pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0
 #pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0
 #pragma HLS INTERFACE axis register port = op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0
@@ -4724,7 +4724,7 @@ void mobilenet_unrolled_rdai(HWStream<hw_uint<16> >& op_hcompute_hw_filter_dw_gl
 
   // Pipeline # 0
 
-  mobilenet_unrolled(op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0, op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0, op_hcompute_hw_filter_dw_global_wrapper_stencil_2_read_pipe0, op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_6_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_7_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_8_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_5_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_1_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0, op_hcompute_hw_output_stencil_write_pipe0, op_hcompute_hw_output_stencil_1_write_pipe0, op_hcompute_hw_output_stencil_2_write_pipe0);
+  mobilenet_unrolled(op_hcompute_hw_filter_dw_global_wrapper_stencil_read_pipe0, op_hcompute_hw_filter_dw_global_wrapper_stencil_1_read_pipe0, op_hcompute_hw_filter_dw_global_wrapper_stencil_2_read_pipe0, op_hcompute_hw_filter_dw_global_wrapper_stencil_3_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_6_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_7_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_8_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_9_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_10_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_11_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_1_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_2_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_3_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_4_read_pipe0, op_hcompute_hw_filter_pw_global_wrapper_stencil_5_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_1_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_2_read_pipe0, op_hcompute_hw_input_global_wrapper_stencil_3_read_pipe0, op_hcompute_hw_output_stencil_write_pipe0, op_hcompute_hw_output_stencil_1_write_pipe0, op_hcompute_hw_output_stencil_2_write_pipe0);
 
 }
 

@@ -21,6 +21,11 @@ T pop(deque<T>& d) {
 string isl_sanitize(const std::string& str);
 
 static inline
+int round_up_to_multiple_of(int in, int factor) {
+    return (in + factor - 1) / factor * factor;
+}
+
+static inline
 string c_sanitize(const std::string& str) {
   string res = "";
   for (auto c : str) {

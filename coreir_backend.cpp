@@ -72,7 +72,7 @@ ubuffer_impl build_buffer_impl(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   ubuffer_impl impl;
 
   maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf, hwinfo);
+    embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
   assert(has_embarassing_partition);
 
@@ -235,7 +235,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<int, std::set<string> > bank_writers = impl.bank_writers;
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
-    
+
     const int NUM_IN_PORTS_PER_BANK = 2;
     const int NUM_OUT_PORTS_PER_BANK = 2;
 
@@ -269,13 +269,13 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 	    if(pt.second.size() > 1) {
 		    assert(chain_pt == "");
 	    	    chain_pt = pt.first;
-		    cout << pt.first << " needs chaining" << endl;  
+		    cout << pt.first << " needs chaining" << endl;
 	    }
     }
     for (auto pt: inpt_to_bank)
     {
 	    if(pt.second.size() > 1) {
-	    	cout << pt.first << " needs broadcast" << endl;  
+	    	cout << pt.first << " needs broadcast" << endl;
 	    }
     }
 
@@ -295,7 +295,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       Values tile_params{{"width", COREMK(c, 16)},
         {"ID", COREMK(c, str(b))},
-	{"num_inputs",COREMK(c,bank_writers[b].size())},
+        {"num_inputs",COREMK(c,bank_writers[b].size())},
         {"num_outputs",COREMK(c,bank_readers[b].size() -  (b != 0 && chain_pt!=""))}};
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
       if (chain_pt != "") {
@@ -304,7 +304,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(currbank->sel("chain_chain_en"),zero);
       }
       assert(verilog_collateral_file != nullptr);
-      
+
       vector<string> port_decls = {};
       port_decls.push_back("input clk");
       port_decls.push_back("input rst_n");
@@ -351,10 +351,10 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     }
     //assert(false);
     for (int b = 0; b < num_banks; b++) {
-  
+
       if(b != num_banks - 1){
         def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
-      
+
       } else
       {
         def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
@@ -1266,7 +1266,7 @@ void emit_lake_config2csv(json data, ofstream& out) {
           int cnt = 0;
           for (auto data_it : data_domain) {
             //cout << tab(2) << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
-            if (data_domain.size() == 1)
+            if (data_domain.size() == 1 && contains(key, "starting_addr" ))
               out << "\""+key+"\"," << data_it << ",0"<< endl;
             else
               out << "\""+key+"_"+to_string(cnt)+"\"," << data_it << ",0"<< endl;
@@ -1303,7 +1303,6 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
 }
 
 void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
-
   cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
       << buf->getModuleRef()->toString() << endl;
   string ub_ins_name = buf->toString();
@@ -1313,6 +1312,8 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   //dump the collateral file
   emit_lake_config_collateral(options, ub_ins_name, buf->getMetaData()["config"]);
 
+  if (options.config_gen_only)
+    return;
   //run the lake generation cmd
   run_lake_verilog_codegen(options, v_name, ub_ins_name);
 }
@@ -1941,9 +1942,13 @@ void getAllIOPaths(Wireable* w, IOpaths& paths) {
     }
   }
   else if (isa<BitType>(t)) {
+    if (w->getConnectedWireables().size() == 0)
+        return;
     paths.IO1.push_back(w->getSelectPath());
   }
   else if (isa<BitInType>(t)) {
+    if (w->getConnectedWireables().size() == 0)
+        return;
     paths.IO1in.push_back(w->getSelectPath());
   }
   else {
@@ -2159,8 +2164,7 @@ void MapperPasses::ConstDuplication::setVisitorInfo() {
 
 }
 
-void disconnect_input_enable(Module* top) {
-  Context* c = top->getContext();
+void disconnect_input_enable(Context* c, Module* top) {
   ModuleDef* def = top->getDef();
   for (auto it: def->sel("self")->getSelects()) {
       string port = it.first;
@@ -2183,7 +2187,7 @@ void garnet_map_module(Module* top) {
   LoadDefinition_cgralib(c);
 
   //A new pass to remove input enable signal affine controller
-  disconnect_input_enable(top);
+  disconnect_input_enable(c, top);
   c->runPasses({"deletedeadinstances"});
 
   c->runPasses({"cullgraph"});
@@ -3854,13 +3858,13 @@ void M1_sanity_check_port_counts(ubuffer_impl& impl) {
       if(pt.second.size() > 1) {
         assert(chain_pt == "");
         chain_pt = pt.first;
-        cout << pt.first << " needs chaining" << endl;  
+        cout << pt.first << " needs chaining" << endl;
       }
     }
     for (auto pt: inpt_to_bank)
     {
       if(pt.second.size() > 1) {
-        cout << pt.first << " needs broadcast" << endl;  
+        cout << pt.first << " needs broadcast" << endl;
       }
     }
 }
@@ -3955,7 +3959,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       if(pt.second.size() > 1) {
         assert(chain_pt == "");
         chain_pt = pt.first;
-        cout << pt.first << " needs chaining" << endl;  
+        cout << pt.first << " needs chaining" << endl;
       }
     }
 

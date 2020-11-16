@@ -787,7 +787,7 @@ void instantiate_banks(
   vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
   //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf, hwinfo);
+    embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
   //bool has_embarassing_partition = false;
 
@@ -867,7 +867,7 @@ void instantiate_banks(
         port_inner_bank_offsets[outpt] = "addr" + str(counter);
         port_bank_selectors[outpt] = bank_selector;
         port_enables[outpt] = bundle_wen_fsm;
-        port_data[outpt] = 
+        port_data[outpt] =
           buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]";
       } else {
         delay = delay - 1;
@@ -877,13 +877,13 @@ void instantiate_banks(
           port_inner_bank_offsets[outpt] = delay_wire(out, 16, "addr" + str(counter), prg, delay);
           port_bank_selectors[outpt] = delay_wire(out, 16, bank_selector, prg, delay);
           port_enables[outpt] = delay_wire(out, 16, bundle_wen_fsm, prg, delay);
-          port_data[outpt] = 
+          port_data[outpt] =
             delay_wire(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
         } else {
           port_inner_bank_offsets[outpt] = "addr" + str(counter);
           port_bank_selectors[outpt] = bank_selector;
           port_enables[outpt] = bundle_wen_fsm;
-          port_data[outpt] = 
+          port_data[outpt] =
             end_delay_with(out, 16, buf.container_bundle(outpt) + "[" + str(buf.bundle_offset(outpt)) + "]", prg, delay);
         }
 
@@ -1035,7 +1035,7 @@ void generate_platonic_ubuffer(
   vector<int> bank_factors = analyze_memory_demands(prg, buf, hwinfo);
   //vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
   maybe<std::set<int> > embarassing_banking =
-    embarassing_partition(buf, hwinfo);
+    embarassing_partition(buf);
   bool has_embarassing_partition = embarassing_banking.has_value();
   //bool has_embarassing_partition = false;
 
