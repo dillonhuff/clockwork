@@ -3987,13 +3987,18 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        //auto agen = build_addrgen(pt, adjusted_buf, def);
         auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars(def, pt, adjusted_buf));
         ubuffer_port_agens[pt] = agen;
+
+        if (impl.inpt_to_bank[pt].size() > 1) {
+          auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
+          def->connect(bank_sel->sel("d"),
+              control_vars(def, pt, adjusted_buf));
+          ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), 0);
+        }
       } else {
-        //auto agen = build_addrgen(pt, buf, def);
         auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars(def, pt, buf));
@@ -4005,15 +4010,28 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
               control_vars(def, pt, buf));
           const int READ_LATENCY = 1;
           ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
-          //assert(false);
         }
       }
     }
 
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
     map<int, int> bank_to_next_available_out_port;
+    map<int, int> bank_to_next_available_in_port;
     for (int b = 0; b < num_banks; b++) {
       bank_to_next_available_out_port[b] = 0;
+      bank_to_next_available_in_port[b] = 0;
+    }
+    for (auto pt_srcs : impl.inpt_to_bank) {
+      string pt = pt_srcs.first;
+      for (int b : pt_srcs.second) {
+        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          map_find(b, bank_to_next_available_in_port);
+        bank_to_next_available_in_port[b]++;
+      }
+    }
+    for (auto bp : bank_to_next_available_in_port) {
+      cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      assert(bp.second <= 2);
     }
     for (auto pt_srcs : impl.outpt_to_bank) {
       string pt = pt_srcs.first;
@@ -4090,11 +4108,24 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       int count = 0;
       for(auto pt : bank_writers[b])
       {
+
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto agen = ubuffer_port_agens[pt];
+
+        Wireable* enable = nullptr;
+        if (inpt_to_bank[pt].size() > 1) {
+          enable =
+            andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], b)});
+        } else {
+          enable =
+            control_en(def, pt, adjusted_buf);
+        }
+        assert(enable != nullptr);
+
         def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
         def->connect(currbank->sel("wen_" + str(count)),
-            control_en(def, pt, adjusted_buf));
+            enable);
+            //control_en(def, pt, adjusted_buf));
 
         def->connect(
             currbank->sel("data_in_" + str(count)),
