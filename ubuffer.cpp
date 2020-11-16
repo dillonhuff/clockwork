@@ -1402,7 +1402,8 @@ CoreIR::Instance* affine_controller_use_lake_tile(
     {"num_outputs", CoreIR::Const::make(context, 0)},
     {"has_stencil_valid", CoreIR::Const::make(context, true)},
     {"ID", CoreIR::Const::make(context, context->getUnique())},
-    {"has_flush",  CoreIR::Const::make(context, true)}
+    {"has_flush",  CoreIR::Const::make(context, true)},
+    {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
   };
   auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
   //FIXME:possible bug if one ubuffer contains more than one tile
@@ -1443,7 +1444,8 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     {"num_outputs", CoreIR::Const::make(context, output_num)},
     {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
     {"ID", CoreIR::Const::make(context, context->getUnique())},
-    {"has_flush",  CoreIR::Const::make(context, has_flush)}
+    {"has_flush",  CoreIR::Const::make(context, has_flush)},
+    {"use_prebuilt_mem", CoreIR::Const::make(context, options.rtl_options.use_prebuilt_memory)}
   };
   CoreIR::Values modargs = {
     {"mode", CoreIR::Const::make(context, "lake")}
