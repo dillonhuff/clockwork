@@ -312,6 +312,18 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
 
+    map<pair<int, int>, Instance*> bank_and_port_output_addrgen;
+    map<pair<int, int>, Instance*> bank_and_port_input_addrgen;
+
+    map<pair<int, int>, Wireable*> bank_and_port_output_data_valid;
+    map<pair<int, int>, Wireable*> bank_and_port_input_data_valid;
+
+    map<pair<int, int>, Wireable*> bank_and_port_to_enable;
+    map<pair<int, int>, Wireable*> bank_and_port_to_agen;
+
+    map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
+    map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
+
     map<string, Wireable*> control_vars_for_ubuffer_ports;
     map<string, Wireable*> en_vars_for_ubuffer_ports;
     for (auto pt : buf.get_all_ports()) {
@@ -324,18 +336,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, buf);
       }
     }
-
-    map<pair<int, int>, Instance*> bank_and_port_output_addrgen;
-    map<pair<int, int>, Instance*> bank_and_port_input_addrgen;
-
-    map<pair<int, int>, Wireable*> bank_and_port_output_data_valid;
-    map<pair<int, int>, Wireable*> bank_and_port_input_data_valid;
-
-    map<pair<int, int>, Wireable*> bank_and_port_to_enable;
-    map<pair<int, int>, Wireable*> bank_and_port_to_agen;
-
-    map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
-    map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
 
     for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
