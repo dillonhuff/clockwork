@@ -4172,10 +4172,10 @@ CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& bu
   vector<string> coeffs;
   for (int d = 0; d < buf.logical_dimension(); d++) {
     dvs.push_back("d" + str(d));
-    //if (!elem(d, impl.partition_dims)) {
+    if (!elem(d, impl.partition_dims)) {
       coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
       bank_stride *= extents.at(d);
-    //}
+    }
   }
 
   coeffs.push_back("0");
