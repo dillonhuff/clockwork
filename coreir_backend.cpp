@@ -86,9 +86,11 @@ CoreIR::Wireable* inner_control_vars(CoreIR::ModuleDef* def, const std::string& 
 CoreIR::Wireable* inner_control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
   string bundle = buf.container_bundle(reader);
   if (buf.is_in_pt(reader)) {
-    return def->sel("self." + bundle + "_wen");
+    //return def->sel("self." + bundle + "_wen");
+    return def->sel(bundle + "_ctrl.valid");
   } else {
-    return def->sel("self." + bundle + "_ren");
+    //return def->sel("self." + bundle + "_ren");
+    return def->sel(bundle + "_ctrl.valid");
   }
 }
 
