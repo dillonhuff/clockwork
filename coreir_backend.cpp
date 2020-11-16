@@ -4041,11 +4041,13 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         //if(pt != chain_pt)
         //{
           ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
-          if (b == 0) {
-            ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
-          } else {
-            ubuffer_ports_to_bank_condition_wires[pt].push_back(zero);
-          }
+          ubuffer_ports_to_bank_condition_wires[pt] =
+            eqConst(ubuffer_port_bank_selectors[pt], b);
+          //if (b == 0) {
+            //ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
+          //} else {
+            //ubuffer_ports_to_bank_condition_wires[pt].push_back(zero);
+          //}
         //}
       }
     }
