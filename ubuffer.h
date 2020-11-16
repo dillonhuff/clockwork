@@ -641,6 +641,28 @@ class AccessPattern {
       }
 
 
+      bool can_stripmining(isl_ctx* ctx, int dim_id, int fetch_width) {
+          vector<int> & stride_in_target = access_matrix[dim_id];
+          vector<string> var_list(var_dim-1);
+          vector<string> origin_var_list(var_dim-1);
+          //var_list.front() = "root";
+          //origin_var_list.front() = "root";
+          //TODO: handle reuse pattern
+          for (auto it: name2idx) {
+              if (it.first == "const")
+                  continue;
+              int id = it.second-1;
+              if (stride_in_target[it.second] != 0
+                      && (stride_in_target[it.second] < fetch_width)
+                      && in_range.at(id) >= fetch_width) {
+                  int factor = fetch_width / stride_in_target[it.second];
+                  if (in_range.at(id) % fetch_width)
+                      return false;
+              }
+          }
+          return true;
+      }
+
       //This is the method create the vectorized sequential loop
       isl_map* get_op_stripmining(isl_ctx* ctx, int dim_id, int fetch_width, string suffix="_vec") {
           vector<int> & stride_in_target = access_matrix[dim_id];

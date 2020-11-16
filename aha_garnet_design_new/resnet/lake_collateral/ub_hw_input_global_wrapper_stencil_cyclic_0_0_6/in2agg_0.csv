@@ -1,12 +1,9 @@
 "cycle_starting_addr",10006,0
 "cycle_stride_0",8,0
-"cycle_stride_1",32,0
-"cycle_stride_2",240,0
-"dimensionality",3,0
-"extent_0",4,0
-"extent_1",8,0
-"extent_2",30,0
+"cycle_stride_1",240,0
+"dimensionality",2,0
+"extent_0",30,0
+"extent_1",30,0
 "write_data_starting_addr",0,0
 "write_data_stride_0",1,0
 "write_data_stride_1",0,0
-"write_data_stride_2",0,0

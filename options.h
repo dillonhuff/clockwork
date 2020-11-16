@@ -71,7 +71,7 @@ struct LakeCollateral {
         in_port_width({{"agg", 1}, {"sram", 4}, {"tb", 4}}),
         out_port_width({{"agg", 4}, {"sram", 4}, {"tb", 1}}),
         bank_num({{"agg", 2}, {"sram", 1}, {"tb", 2}}),
-        capacity({{"agg", 4}, {"sram", 512}, {"tb", 16}}) {}
+        capacity({{"agg", 16}, {"sram", 512}, {"tb", 16}}) {}
 };
 
 struct CodegenOptions {

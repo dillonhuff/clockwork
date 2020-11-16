@@ -5607,9 +5607,11 @@ void UBuffer::pad_write_dom_inner_most(int fetch_width) {
                 //need padding
                 auto pad_am = pad_to_domain_ubuf_map(am, dim_id, fetch_width - rem);
                 auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), dim_id, fetch_width - rem);
-                cout << "\tPadded access map: " << str(pad_am) << endl;
-                cout << "\tPadded schedule: " << str(pad_sched) << endl;
-                replace_pt(pt, pad_am, pad_sched);
+                if (isl_map_is_injective(pad_sched)) {
+                    cout << "\tPadded access map: " << str(pad_am) << endl;
+                    cout << "\tPadded schedule: " << str(pad_sched) << endl;
+                    replace_pt(pt, pad_am, pad_sched);
+                }
             }
         }
     }
@@ -5627,9 +5629,11 @@ void UBuffer::pad_read_dom_inner_most(int fetch_width) {
                 //need padding
                 auto pad_am = pad_to_domain_ubuf_map(am, dim_id, fetch_width - rem);
                 auto pad_sched = pad_to_domain_ubuf_map(to_map(sched), dim_id, fetch_width - rem);
-                cout << "\tPadded access map: " << str(pad_am) << endl;
-                cout << "\tPadded schedule: " << str(pad_sched) << endl;
-                replace_pt(pt, pad_am, pad_sched);
+                if (isl_map_is_injective(pad_sched)) {
+                    cout << "\tPadded access map: " << str(pad_am) << endl;
+                    cout << "\tPadded schedule: " << str(pad_sched) << endl;
+                    replace_pt(pt, pad_am, pad_sched);
+                }
             }
         }
     }
@@ -5754,16 +5758,21 @@ pair<std::map<string, UBuffer>, vector<string> >
         }
         //Strip mining the agg input
         {
-            isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
-            std::cout << "transform stripmining: " << str(op_stripmining) << endl;
-            isl_set* sm_domain = range(its(op_stripmining, domain.at(in_pt_name)));
-            //agg_buf.retrive_domain[in_pt_name] = sm_domain;
-            std::cout << "domain stripmining: " << str(sm_domain) << endl;
-            auto sm_access_map = dot(inv(op_stripmining), inpt_acc_map);
-            auto sm_sched = dot(inv(op_stripmining), new_sched.at(acc_pattern.op_name));
-            //agg_buf.add_in_pt(in_pt_name+"_in", domain.at(in_pt_name), inpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(in_pt_name)));
-            cout << "Access map add to agg_in: " << str(sm_access_map) << endl;
-            agg_buf.add_in_pt(in_pt_name+"_in", sm_domain, sm_access_map, its(sm_sched, sm_domain));
+            if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+
+                isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
+                std::cout << "transform stripmining: " << str(op_stripmining) << endl;
+                isl_set* sm_domain = range(its(op_stripmining, domain.at(in_pt_name)));
+                //agg_buf.retrive_domain[in_pt_name] = sm_domain;
+                std::cout << "domain stripmining: " << str(sm_domain) << endl;
+                auto sm_access_map = dot(inv(op_stripmining), inpt_acc_map);
+                auto sm_sched = dot(inv(op_stripmining), new_sched.at(acc_pattern.op_name));
+                cout << "Access map add to agg_in: " << str(sm_access_map) << endl;
+                agg_buf.add_in_pt(in_pt_name+"_in", sm_domain, sm_access_map, its(sm_sched, sm_domain));
+
+            } else {
+                agg_buf.add_in_pt(in_pt_name+"_in", domain.at(in_pt_name), inpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(in_pt_name)));
+            }
             agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
         }
 
