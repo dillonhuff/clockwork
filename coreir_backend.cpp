@@ -348,6 +348,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     map<string, Instance*> ubuffer_port_agens;
     map<pair<int, int>, Instance*> bank_and_port_output_addrgen;
+    map<pair<int, int>, Instance*> bank_and_port_input_addrgen;
 
     map<pair<int, int>, Wireable*> bank_and_port_output_data_valid;
     map<pair<int, int>, Wireable*> bank_and_port_input_data_valid;
@@ -365,6 +366,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto ubuffer_port_bank_selector  = delay_by(def, bank_sel->sel("out"), 0);
         for (auto b : impl.inpt_to_bank[pt]) {
           int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
+          bank_and_port_input_addrgen[{b, count}] = agen;
           bank_and_port_input_data_valid[{b, count}] =
             eqConst(def, ubuffer_port_bank_selector, b);
         }
