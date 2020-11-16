@@ -195,6 +195,35 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
   return done_outpt;
 }
 
+Wireable* mkOneHot(ModuleDef* def, vector<Wireable*>& conds, vector<Wireable*>& vals) {
+  assert(vals.size() == conds.size());
+
+  auto c = def->getContext();
+
+  if (conds.size() == 1) {
+    //def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
+    return vals.at(0);
+  } else {
+    assert(conds.size() == 3);
+    //Wireable* out = def->sel(conn.first + "_net.in");
+
+    auto snd_mux =
+      def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+    def->connect(snd_mux->sel("in0"), vals[1]);
+    def->connect(snd_mux->sel("in1"), vals[2]);
+    def->connect(snd_mux->sel("sel"), conds[2]);
+
+    auto last_mux =
+      def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+    def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
+    def->connect(last_mux->sel("in1"), vals[0]);
+    def->connect(last_mux->sel("sel"), conds[0]);
+
+    return last_mux->sel("out");
+    //def->connect(last_mux->sel("out"), out);
+  }
+}
+
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
   CoreIR::Context* c = def->getContext();
   for (auto out : orig_buf.get_out_ports()) {
@@ -205,12 +234,10 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
   }
 
   std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
-  //std::set<string> done_outpt = {};
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
 
   if (buf.num_out_ports() > 0) {
-    //ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
     auto implm = build_buffer_impl(prg, buf, hwinfo);
     ubuffer_impl impl = implm.first;
 
@@ -361,26 +388,29 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       vector<Wireable*> vals = conn.second;
       assert(conds.size() == vals.size());
 
-      if (conds.size() == 1) {
-        def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
-      } else {
-        assert(conds.size() == 3);
-        Wireable* out = def->sel(conn.first + "_net.in");
+      Wireable* out = def->sel(conn.first + "_net.in");
+      def->connect(out, mkOneHot(def, conds, vals));
 
-        auto snd_mux =
-          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
-        def->connect(snd_mux->sel("in0"), vals[1]);
-        def->connect(snd_mux->sel("in1"), vals[2]);
-        def->connect(snd_mux->sel("sel"), conds[2]);
+      //if (conds.size() == 1) {
+        //def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
+      //} else {
+        //assert(conds.size() == 3);
+        //Wireable* out = def->sel(conn.first + "_net.in");
 
-        auto last_mux =
-          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
-        def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
-        def->connect(last_mux->sel("in1"), vals[0]);
-        def->connect(last_mux->sel("sel"), conds[0]);
+        //auto snd_mux =
+          //def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        //def->connect(snd_mux->sel("in0"), vals[1]);
+        //def->connect(snd_mux->sel("in1"), vals[2]);
+        //def->connect(snd_mux->sel("sel"), conds[2]);
 
-        def->connect(last_mux->sel("out"), out);
-      }
+        //auto last_mux =
+          //def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        //def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
+        //def->connect(last_mux->sel("in1"), vals[0]);
+        //def->connect(last_mux->sel("sel"), conds[0]);
+
+        //def->connect(last_mux->sel("out"), out);
+      //}
     }
 
     for (int b = 0; b < num_banks; b++) {
@@ -405,7 +435,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
         def->connect(currbank->sel("wen_" + str(count)),
             enable);
-            //control_en(def, pt, adjusted_buf));
 
         def->connect(
             currbank->sel("data_in_" + str(count)),
