@@ -344,8 +344,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     map<pair<int, int>, Wireable*> bank_and_port_to_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_agen;
+    map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
+    map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
     for (int b = 0; b < num_banks; b++) {
-      //auto currbank = bank_map[b];
       for(auto pt : bank_writers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
@@ -366,6 +367,18 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         assert(enable != nullptr);
         bank_and_port_to_enable[{b, count}] = enable;
       }
+
+      for(auto pt : bank_readers[b]) {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        auto agen = ubuffer_port_agens[pt];
+        bank_and_port_to_read_enable[{b, count}] = 
+            en_vars_for_ubuffer_ports[pt];
+        bank_and_port_to_read_agen[{b, count}] =
+          agen->sel("out");
+        //def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        //def->connect(currbank->sel("ren_" + str(count)),
+            //en_vars_for_ubuffer_ports[pt]);
+      }
     }
 
 
@@ -376,9 +389,17 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto agen = ubuffer_port_agens[pt];
-        def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        def->connect(
+            //agen->sel("out"),
+            bank_and_port_to_read_agen[{b, count}],
+            currbank->sel("read_addr_" + str(count)));
+
         def->connect(currbank->sel("ren_" + str(count)),
-            en_vars_for_ubuffer_ports[pt]);
+            bank_and_port_to_read_enable[{b, count}]);
+
+        //def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        //def->connect(currbank->sel("ren_" + str(count)),
+            //en_vars_for_ubuffer_ports[pt]);
       }
     }
 
