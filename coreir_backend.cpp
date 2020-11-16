@@ -344,6 +344,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     map<pair<int, int>, Wireable*> bank_and_port_to_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_agen;
+
     map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
     for (int b = 0; b < num_banks; b++) {
@@ -379,11 +380,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     }
 
 
-    //for (int b = 0; b < num_banks; b++) {
-      //auto currbank = bank_map[b];
-
-    //}
-
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
       for(auto pt : bank_writers[b]) {
@@ -403,7 +399,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto agen = ubuffer_port_agens[pt];
         def->connect(
-            //agen->sel("out"),
             bank_and_port_to_read_agen[{b, count}],
             currbank->sel("read_addr_" + str(count)));
 
