@@ -4016,13 +4016,14 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       cout << tab(1) << bp.first << " -> " << bp.second << endl;
       assert(bp.second <= 2);
     }
-    //assert(false);
 
-      //auto agen = ubuffer_port_agens[pt];
 
+    //for (auto pt_srcs : impl.outpt_to_bank) {
+      //string pt = pt_srcs.first;
       //vector<Wireable*> bank_outputs;
       //vector<Wireable*> bank_valids;
       //for (int b : pt_srcs.second) {
+        //int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         //if (b == 0) {
           //bank_valids.push_back(one);
         //} else {
@@ -4048,9 +4049,10 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             def->sel(chain_pt + "_net.in"));
       }
 
-      int count = 0;
+      //int count = 0;
       for(auto pt : bank_readers[b])
       {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto agen = ubuffer_port_agens[pt];
         def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
         def->connect(currbank->sel("ren_" + str(count)),
@@ -4062,7 +4064,7 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
               currbank->sel("data_out_" + str(count)),
               def->sel(pt + "_net.in"));
 
-          count++;
+          //count++;
         }
       }
     }
