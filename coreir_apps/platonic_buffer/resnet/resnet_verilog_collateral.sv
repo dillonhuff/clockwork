@@ -1267,7 +1267,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addr
 endmodule
 
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U471(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U487(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1350,7 +1350,7 @@ module affine_controller__U471(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U472(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U488(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1433,7 +1433,7 @@ module affine_controller__U472(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U473(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U489(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1516,7 +1516,7 @@ module affine_controller__U473(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U474(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U490(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
