@@ -3895,33 +3895,6 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
 
-
-    //const int NUM_IN_PORTS_PER_BANK = 2;
-    //const int NUM_OUT_PORTS_PER_BANK = 2;
-
-    //cout << "Buffer = " << buf.name << endl;
-    //cout << "Bank readers..." << endl;
-    //for (auto b : bank_readers) {
-      //cout << tab(1) << b.first << " -> ";
-      //for (auto rd : b.second) {
-        //cout << rd << ", ";
-      //}
-      //cout << endl;
-
-      //assert(b.second.size() <= NUM_IN_PORTS_PER_BANK);
-    //}
-
-    //cout << "Bank writers..." << endl;
-    //for (auto b : bank_writers) {
-      //cout << tab(1) << b.first << " -> ";
-      //for (auto rd : b.second) {
-        //cout << rd << ", ";
-      //}
-      //cout << endl;
-
-      //assert(b.second.size() <= NUM_OUT_PORTS_PER_BANK);
-    //}
-
     string chain_pt = "";
     for (auto pt: outpt_to_bank)
     {
