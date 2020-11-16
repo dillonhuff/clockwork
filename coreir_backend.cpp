@@ -323,20 +323,16 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_read_agen;
 
-    //map<string, Wireable*> control_vars_for_ubuffer_ports;
-    map<string, Wireable*> en_vars_for_ubuffer_ports;
+    //map<string, Wireable*> en_vars_for_ubuffer_ports;
     for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
-        //control_vars_for_ubuffer_ports[pt] =
-          //inner_control_vars(def, pt, adjusted_buf);
-        en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, adjusted_buf);
+        //en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, adjusted_buf);
 
         auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
             inner_control_vars(def, pt, adjusted_buf));
-            //control_vars_for_ubuffer_ports[pt]);
 
         auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
         def->connect(bank_sel->sel("d"),
@@ -350,17 +346,15 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             eqConst(def, ubuffer_port_bank_selector, b);
         }
       } else {
-        //control_vars_for_ubuffer_ports[pt] = inner_control_vars(def, pt, buf);
-        en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, buf);
+        //en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, buf);
         auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
             inner_control_vars(def, pt, buf));
-            //control_vars_for_ubuffer_ports[pt]);
 
         auto bank_sel = build_bank_selector(pt, buf, impl, def);
         def->connect(bank_sel->sel("d"),
             inner_control_vars(def, pt, buf));
-            //control_vars_for_ubuffer_ports[pt]);
+
         const int READ_LATENCY = 1;
         auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
         for (auto b : impl.outpt_to_bank[pt]) {
@@ -387,11 +381,13 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
           enable =
             andList(def,
                 {
-                en_vars_for_ubuffer_ports[pt],
+                inner_control_en(def, pt, buf),
+                //en_vars_for_ubuffer_ports[pt],
                 bank_is_selected});
         } else {
           enable =
-            en_vars_for_ubuffer_ports[pt];
+            inner_control_en(def, pt, buf);
+            //en_vars_for_ubuffer_ports[pt];
         }
         assert(enable != nullptr);
         bank_and_port_to_enable[{b, count}] = enable;
@@ -401,7 +397,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto agen = bank_and_port_output_addrgen[{b, count}];
         bank_and_port_to_read_enable[{b, count}] = 
-            en_vars_for_ubuffer_ports[pt];
+            inner_control_en(def, pt, buf);
+            //en_vars_for_ubuffer_ports[pt];
         bank_and_port_to_read_agen[{b, count}] =
           agen->sel("out");
       }
