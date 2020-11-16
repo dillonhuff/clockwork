@@ -3887,7 +3887,7 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_i
 
     //*verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
     *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-    *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [50000:0];" << endl;
+    *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
     *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
     for (int i = 0; i < impl.bank_readers[b].size(); i++) {
       *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;

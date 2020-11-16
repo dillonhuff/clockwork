@@ -611,7 +611,7 @@ module affine_controller__U104(input clk, input flush, input rst_n, output logic
   end
 endmodule
 module cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,input [15:0] data_in_1,input [15:0] write_addr_1,input wen_1,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,output logic [15:0] data_out_1,input [15:0] read_addr_1,input ren_1,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -633,7 +633,7 @@ module cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushF
 endmodule
 
 module cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,input [15:0] data_in_1,input [15:0] write_addr_1,input wen_1,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,output logic [15:0] data_out_1,input [15:0] read_addr_1,input ren_1,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -655,7 +655,7 @@ module cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushF
 endmodule
 
 module cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,input [15:0] data_in_1,input [15:0] write_addr_1,input wen_1,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,output logic [15:0] data_out_1,input [15:0] read_addr_1,input ren_1,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -677,7 +677,7 @@ module cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushF
 endmodule
 
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -693,7 +693,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addr
 endmodule
 
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -709,7 +709,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addr
 endmodule
 
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -725,7 +725,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addr
 endmodule
 
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -741,7 +741,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addr
 endmodule
 
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -757,7 +757,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addr
 endmodule
 
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -773,7 +773,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addr
 endmodule
 
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -789,7 +789,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addr
 endmodule
 
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -805,7 +805,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addr
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -821,7 +821,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -837,7 +837,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -853,7 +853,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -869,7 +869,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -885,7 +885,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -901,7 +901,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -917,7 +917,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -933,7 +933,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -949,7 +949,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -965,7 +965,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_add
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -981,7 +981,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -997,7 +997,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1013,7 +1013,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1029,7 +1029,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1045,7 +1045,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1061,7 +1061,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1077,7 +1077,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1093,7 +1093,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1109,7 +1109,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1125,7 +1125,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1141,7 +1141,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1157,7 +1157,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
@@ -1173,7 +1173,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_ad
 endmodule
 
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_23__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  logic [15:0] SRAM [50000:0];
+  logic [15:0] SRAM [1023:0];
   logic chain_ren;
 
   logic [15:0] data_out_0_tmp;
