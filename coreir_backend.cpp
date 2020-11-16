@@ -269,7 +269,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
   }
 
-
   std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
 
   UBuffer buf = delete_ports(done_outpt, orig_buf);
@@ -327,19 +326,21 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, Wireable*> control_vars_for_ubuffer_ports;
     map<string, Wireable*> en_vars_for_ubuffer_ports;
     for (auto pt : buf.get_all_ports()) {
+      //if (buf.is_in_pt(pt)) {
+        //auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        //control_vars_for_ubuffer_ports[pt] = inner_control_vars(def, pt, adjusted_buf);
+        //en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, adjusted_buf);
+      //} else {
+        //control_vars_for_ubuffer_ports[pt] = inner_control_vars(def, pt, buf);
+        //en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, buf);
+      //}
+
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+
         control_vars_for_ubuffer_ports[pt] = inner_control_vars(def, pt, adjusted_buf);
         en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, adjusted_buf);
-      } else {
-        control_vars_for_ubuffer_ports[pt] = inner_control_vars(def, pt, buf);
-        en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, buf);
-      }
-    //}
 
-    //for (auto pt : buf.get_all_ports()) {
-      if (buf.is_in_pt(pt)) {
-        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
         auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
@@ -355,6 +356,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             eqConst(def, ubuffer_port_bank_selector, b);
         }
       } else {
+        control_vars_for_ubuffer_ports[pt] = inner_control_vars(def, pt, buf);
+        en_vars_for_ubuffer_ports[pt] = inner_control_en(def, pt, buf);
         auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars_for_ubuffer_ports[pt]);
