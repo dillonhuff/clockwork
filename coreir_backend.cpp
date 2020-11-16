@@ -375,7 +375,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         auto agen = ubuffer_port_agens[pt];
         def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
         def->connect(currbank->sel("ren_" + str(count)),
-            control_en(def, pt, buf));
+            en_vars_for_ubuffer_ports[pt]);
+            //control_en(def, pt, buf));
       }
     }
 
@@ -417,7 +418,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         Wireable* enable = nullptr;
         if (inpt_to_bank[pt].size() > 1) {
           enable =
-            andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], b)});
+            andList(def,
+                {control_en(def, pt, adjusted_buf),
+                eqConst(def, ubuffer_port_bank_selectors[pt], b)});
         } else {
           enable =
             control_en(def, pt, adjusted_buf);
@@ -436,9 +439,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     }
 
   }
-
-
-  //generate_M1_coreir(options, def, prg, orig_buf, hwinfo);
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
