@@ -13310,13 +13310,13 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   test_apps.push_back(conv_3_3());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(rom());
-  test_apps.push_back(resnet());
+  //test_apps.push_back(resnet());
 
   //test_apps.push_back(conv_3_3_wide());
   //TODO: break in the middle of vectorization
@@ -15470,9 +15470,10 @@ void relax_delays_after_vectorization(schedule_info& sched, prog& prg) {
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
     cout << "Adjusting delay of " << lp->name << endl;
+    if (get_producers(name, prg).size())
+        d ++;
 
     sched.op_offset_within_parent[lp] = 10000 * d;
-    d ++;
     //int old_delay = map_find(lp, sched.op_offset_within_parent);
     //int try_delay = 1;
     //bool found_smaller_delay = false;
