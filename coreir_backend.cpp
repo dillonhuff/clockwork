@@ -316,19 +316,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     }
 
 
-    for (int b = 0; b < num_banks; b++) {
-      auto currbank = bank_map[b];
-
-      for(auto pt : bank_readers[b])
-      {
-        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        auto agen = ubuffer_port_agens[pt];
-        def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
-        def->connect(currbank->sel("ren_" + str(count)),
-            en_vars_for_ubuffer_ports[pt]);
-      }
-    }
-
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires;
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
     for (int b = 0; b < num_banks; b++) {
@@ -358,7 +345,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<pair<int, int>, Wireable*> bank_and_port_to_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_agen;
     for (int b = 0; b < num_banks; b++) {
-      auto currbank = bank_map[b];
+      //auto currbank = bank_map[b];
       for(auto pt : bank_writers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
@@ -384,13 +371,23 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
+
+      for(auto pt : bank_readers[b])
+      {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        auto agen = ubuffer_port_agens[pt];
+        def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        def->connect(currbank->sel("ren_" + str(count)),
+            en_vars_for_ubuffer_ports[pt]);
+      }
+    }
+
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
       for(auto pt : bank_writers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         Wireable* enable = bank_and_port_to_enable[{b, count}];
         Wireable* addr = bank_and_port_to_agen[{b, count}];
-        //auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        //auto agen = ubuffer_port_agens[pt];
-        //def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
         def->connect(addr,
             currbank->sel("write_addr_" + str(count)));
         def->connect(currbank->sel("wen_" + str(count)),
