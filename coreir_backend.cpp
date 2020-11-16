@@ -366,9 +366,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             eqConst(def, ubuffer_port_bank_selector, b);
         //}
       }
-    }
+    //}
 
-    for (int b = 0; b < num_banks; b++) {
+    //for (int b = 0; b < num_banks; b++) {
       for(auto pt : bank_writers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
