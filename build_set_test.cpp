@@ -16738,9 +16738,9 @@ void fpga_asplos_tests() {
 void cgra_flow_tests() {
   //vector<prog> M1_test_programs{pointwise(), resnet()};
   //vector<prog> M1_test_programs{pointwise()};
-  vector<prog> M1_test_programs{resnet(), mobilenet_unrolled()};
+  vector<prog> M1_test_programs{up_sample(), resnet(), mobilenet_unrolled()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  //assert(false);
+  assert(false);
 
   auto test_programs =
     all_cgra_programs();
