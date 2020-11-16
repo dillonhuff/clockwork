@@ -60,13 +60,13 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   std::ostream& out = *verilog_collateral_file;
 
   for(auto pt : impl.bank_writers[b]) {
-    string bundle_name = "bank_" + str(b) + "_" + pt;
+    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
     string port_rep = pt;
     string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
     op* rep = prg.find_op(op_rep_name);
     isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
-    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
     isl_aff* sched_aff =
       get_aff(adjusted_buf.schedule.at(pt));
@@ -165,13 +165,13 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
   *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
   for(auto pt : impl.bank_writers[b]) {
-    string bundle_name = "bank_" + str(b) + "_" + pt;
+    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
     string port_rep = pt;
     string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
     op* rep = prg.find_op(op_rep_name);
     isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
-    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
 
     auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
@@ -195,9 +195,9 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
   }
   for (int i = 0; i < impl.bank_writers[b].size(); i++) {
-    *verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
-    //string bundle_name = "bank_" + str(b) + "_" + str(i) + "_ctrl";
-    //*verilog_collateral_file << tab(2) << "if (" << bundle_name << ".valid" << ") begin" << endl;
+    //*verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
+    string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(i) + ".valid";
+    *verilog_collateral_file << tab(2) << "if (wen_" << i << " && " << bundle_name << ") begin" << endl;
     *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
     *verilog_collateral_file << tab(2) << "end" << endl;
   }

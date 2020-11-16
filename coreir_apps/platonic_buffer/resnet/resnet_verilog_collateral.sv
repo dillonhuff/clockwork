@@ -1055,7 +1055,7 @@ module affine_controller__U421(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8010 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module bank_0_conv_stencil_op_hcompute_conv_stencil_3_42_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module conv_stencil_bank_0_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1138,7 +1138,7 @@ module bank_0_conv_stencil_op_hcompute_conv_stencil_3_42_ctrl(input clk, input f
   end
 endmodule
 // { op_hcompute_conv_stencil[root, conv_s0_y, conv_s0_x] -> [(2 + 28conv_s0_y + conv_s0_x)] }
-module bank_0_conv_stencil_op_hcompute_conv_stencil_62_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+module conv_stencil_bank_0_1_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -1188,8 +1188,8 @@ module bank_0_conv_stencil_op_hcompute_conv_stencil_62_ctrl(input clk, input flu
   end
 endmodule
 module cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,input [15:0] data_in_1,input [15:0] write_addr_1,input wen_1,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,output logic [15:0] data_out_1,input [15:0] read_addr_1,input ren_1,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_0_conv_stencil_op_hcompute_conv_stencil_3_42_ctrl bank_0_conv_stencil_op_hcompute_conv_stencil_3_42(.clk(clk), .rst_n(rst_n));
-  bank_0_conv_stencil_op_hcompute_conv_stencil_62_ctrl bank_0_conv_stencil_op_hcompute_conv_stencil_62(.clk(clk), .rst_n(rst_n));
+  conv_stencil_bank_0_0_ctrl conv_stencil_bank_0_0(.clk(clk), .rst_n(rst_n));
+  conv_stencil_bank_0_1_ctrl conv_stencil_bank_0_1(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -1200,10 +1200,10 @@ module cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushF
     chain_ren <= ren_1;
     data_out_0_tmp <= SRAM[read_addr_0];
     data_out_1_tmp <= SRAM[read_addr_1];
-    if (wen_0) begin
+    if (wen_0 && conv_stencil_bank_0_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
-    if (wen_1) begin
+    if (wen_1 && conv_stencil_bank_0_1.valid) begin
       SRAM[write_addr_1] <= data_in_1;
     end
   end
@@ -1213,7 +1213,7 @@ module cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushF
 endmodule
 
 // { op_hcompute_conv_stencil_1[root, conv_s0_y, conv_s0_x] -> [(2 + 28conv_s0_y + conv_s0_x)] }
-module bank_1_conv_stencil_op_hcompute_conv_stencil_1_61_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+module conv_stencil_bank_1_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -1263,7 +1263,7 @@ module bank_1_conv_stencil_op_hcompute_conv_stencil_1_61_ctrl(input clk, input f
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8010 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module bank_1_conv_stencil_op_hcompute_conv_stencil_4_24_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module conv_stencil_bank_1_1_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1346,8 +1346,8 @@ module bank_1_conv_stencil_op_hcompute_conv_stencil_4_24_ctrl(input clk, input f
   end
 endmodule
 module cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,input [15:0] data_in_1,input [15:0] write_addr_1,input wen_1,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,output logic [15:0] data_out_1,input [15:0] read_addr_1,input ren_1,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_1_conv_stencil_op_hcompute_conv_stencil_1_61_ctrl bank_1_conv_stencil_op_hcompute_conv_stencil_1_61(.clk(clk), .rst_n(rst_n));
-  bank_1_conv_stencil_op_hcompute_conv_stencil_4_24_ctrl bank_1_conv_stencil_op_hcompute_conv_stencil_4_24(.clk(clk), .rst_n(rst_n));
+  conv_stencil_bank_1_0_ctrl conv_stencil_bank_1_0(.clk(clk), .rst_n(rst_n));
+  conv_stencil_bank_1_1_ctrl conv_stencil_bank_1_1(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -1358,10 +1358,10 @@ module cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushF
     chain_ren <= ren_1;
     data_out_0_tmp <= SRAM[read_addr_0];
     data_out_1_tmp <= SRAM[read_addr_1];
-    if (wen_0) begin
+    if (wen_0 && conv_stencil_bank_1_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
-    if (wen_1) begin
+    if (wen_1 && conv_stencil_bank_1_1.valid) begin
       SRAM[write_addr_1] <= data_in_1;
     end
   end
@@ -1371,7 +1371,7 @@ module cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushF
 endmodule
 
 // { op_hcompute_conv_stencil_2[root, conv_s0_y, conv_s0_x] -> [(2 + 28conv_s0_y + conv_s0_x)] }
-module bank_2_conv_stencil_op_hcompute_conv_stencil_2_60_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+module conv_stencil_bank_2_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -1421,7 +1421,7 @@ module bank_2_conv_stencil_op_hcompute_conv_stencil_2_60_ctrl(input clk, input f
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8010 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module bank_2_conv_stencil_op_hcompute_conv_stencil_5_6_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module conv_stencil_bank_2_1_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -1504,8 +1504,8 @@ module bank_2_conv_stencil_op_hcompute_conv_stencil_5_6_ctrl(input clk, input fl
   end
 endmodule
 module cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,input [15:0] data_in_1,input [15:0] write_addr_1,input wen_1,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,output logic [15:0] data_out_1,input [15:0] read_addr_1,input ren_1,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_2_conv_stencil_op_hcompute_conv_stencil_2_60_ctrl bank_2_conv_stencil_op_hcompute_conv_stencil_2_60(.clk(clk), .rst_n(rst_n));
-  bank_2_conv_stencil_op_hcompute_conv_stencil_5_6_ctrl bank_2_conv_stencil_op_hcompute_conv_stencil_5_6(.clk(clk), .rst_n(rst_n));
+  conv_stencil_bank_2_0_ctrl conv_stencil_bank_2_0(.clk(clk), .rst_n(rst_n));
+  conv_stencil_bank_2_1_ctrl conv_stencil_bank_2_1(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -1516,10 +1516,10 @@ module cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushF
     chain_ren <= ren_1;
     data_out_0_tmp <= SRAM[read_addr_0];
     data_out_1_tmp <= SRAM[read_addr_1];
-    if (wen_0) begin
+    if (wen_0 && conv_stencil_bank_2_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
-    if (wen_1) begin
+    if (wen_1 && conv_stencil_bank_2_1.valid) begin
       SRAM[write_addr_1] <= data_in_1;
     end
   end
@@ -2713,7 +2713,7 @@ module affine_controller__U1044(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module bank_0_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module hw_input_global_wrapper_stencil_bank_0_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -2778,7 +2778,7 @@ module bank_0_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrappe
   end
 endmodule
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_0_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl bank_0_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4(.clk(clk), .rst_n(rst_n));
+  hw_input_global_wrapper_stencil_bank_0_0_ctrl hw_input_global_wrapper_stencil_bank_0_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -2787,7 +2787,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_input_global_wrapper_stencil_bank_0_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -2796,7 +2796,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addr
 endmodule
 
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module bank_1_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module hw_input_global_wrapper_stencil_bank_1_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -2861,7 +2861,7 @@ module bank_1_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrappe
   end
 endmodule
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_1_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl bank_1_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4(.clk(clk), .rst_n(rst_n));
+  hw_input_global_wrapper_stencil_bank_1_0_ctrl hw_input_global_wrapper_stencil_bank_1_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -2870,7 +2870,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_input_global_wrapper_stencil_bank_1_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -2879,7 +2879,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addr
 endmodule
 
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module bank_2_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module hw_input_global_wrapper_stencil_bank_2_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -2944,7 +2944,7 @@ module bank_2_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrappe
   end
 endmodule
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_2_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl bank_2_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4(.clk(clk), .rst_n(rst_n));
+  hw_input_global_wrapper_stencil_bank_2_0_ctrl hw_input_global_wrapper_stencil_bank_2_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -2953,7 +2953,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_input_global_wrapper_stencil_bank_2_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -2962,7 +2962,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addr
 endmodule
 
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module bank_3_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module hw_input_global_wrapper_stencil_bank_3_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -3027,7 +3027,7 @@ module bank_3_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrappe
   end
 endmodule
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_3_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl bank_3_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4(.clk(clk), .rst_n(rst_n));
+  hw_input_global_wrapper_stencil_bank_3_0_ctrl hw_input_global_wrapper_stencil_bank_3_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -3036,7 +3036,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_input_global_wrapper_stencil_bank_3_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -3045,7 +3045,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addr
 endmodule
 
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module bank_4_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module hw_input_global_wrapper_stencil_bank_4_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -3110,7 +3110,7 @@ module bank_4_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrappe
   end
 endmodule
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_4_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl bank_4_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4(.clk(clk), .rst_n(rst_n));
+  hw_input_global_wrapper_stencil_bank_4_0_ctrl hw_input_global_wrapper_stencil_bank_4_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -3119,7 +3119,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_input_global_wrapper_stencil_bank_4_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -3128,7 +3128,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addr
 endmodule
 
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module bank_5_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module hw_input_global_wrapper_stencil_bank_5_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -3193,7 +3193,7 @@ module bank_5_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrappe
   end
 endmodule
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_5_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl bank_5_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4(.clk(clk), .rst_n(rst_n));
+  hw_input_global_wrapper_stencil_bank_5_0_ctrl hw_input_global_wrapper_stencil_bank_5_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -3202,7 +3202,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_input_global_wrapper_stencil_bank_5_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -3211,7 +3211,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addr
 endmodule
 
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module bank_6_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module hw_input_global_wrapper_stencil_bank_6_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -3276,7 +3276,7 @@ module bank_6_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrappe
   end
 endmodule
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_6_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl bank_6_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4(.clk(clk), .rst_n(rst_n));
+  hw_input_global_wrapper_stencil_bank_6_0_ctrl hw_input_global_wrapper_stencil_bank_6_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -3285,7 +3285,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_input_global_wrapper_stencil_bank_6_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -3294,7 +3294,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addr
 endmodule
 
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module bank_7_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module hw_input_global_wrapper_stencil_bank_7_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -3359,7 +3359,7 @@ module bank_7_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrappe
   end
 endmodule
 module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_7_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl bank_7_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4(.clk(clk), .rst_n(rst_n));
+  hw_input_global_wrapper_stencil_bank_7_0_ctrl hw_input_global_wrapper_stencil_bank_7_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -3368,7 +3368,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_input_global_wrapper_stencil_bank_7_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7361,7 +7361,7 @@ module affine_controller__U2972(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_0_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_0_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7444,7 +7444,7 @@ module bank_0_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_0_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_0_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_0_0_ctrl hw_kernel_global_wrapper_stencil_bank_0_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -7453,7 +7453,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_0_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7462,7 +7462,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_1_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_1_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7545,7 +7545,7 @@ module bank_1_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_1_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_1_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_1_0_ctrl hw_kernel_global_wrapper_stencil_bank_1_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -7554,7 +7554,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_1_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7563,7 +7563,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_2_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_2_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7646,7 +7646,7 @@ module bank_2_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_2_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_2_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_2_0_ctrl hw_kernel_global_wrapper_stencil_bank_2_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -7655,7 +7655,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_2_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7664,7 +7664,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_3_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_3_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7747,7 +7747,7 @@ module bank_3_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_3_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_3_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_3_0_ctrl hw_kernel_global_wrapper_stencil_bank_3_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -7756,7 +7756,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_3_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7765,7 +7765,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_4_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_4_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7848,7 +7848,7 @@ module bank_4_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_4_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_4_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_4_0_ctrl hw_kernel_global_wrapper_stencil_bank_4_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -7857,7 +7857,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_4_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7866,7 +7866,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_5_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_5_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7949,7 +7949,7 @@ module bank_5_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_5_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_5_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_5_0_ctrl hw_kernel_global_wrapper_stencil_bank_5_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -7958,7 +7958,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_5_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7967,7 +7967,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_6_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_6_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8050,7 +8050,7 @@ module bank_6_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_6_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_6_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_6_0_ctrl hw_kernel_global_wrapper_stencil_bank_6_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8059,7 +8059,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_6_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8068,7 +8068,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_7_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_7_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8151,7 +8151,7 @@ module bank_7_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_7_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_7_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_7_0_ctrl hw_kernel_global_wrapper_stencil_bank_7_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8160,7 +8160,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_7_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8169,7 +8169,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_8_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_8_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8252,7 +8252,7 @@ module bank_8_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_8_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_8_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_8_0_ctrl hw_kernel_global_wrapper_stencil_bank_8_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8261,7 +8261,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_8_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8270,7 +8270,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_9_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_9_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8353,7 +8353,7 @@ module bank_9_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrap
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_9_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_9_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_9_0_ctrl hw_kernel_global_wrapper_stencil_bank_9_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8362,7 +8362,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_9_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8371,7 +8371,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_add
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_10_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_10_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8454,7 +8454,7 @@ module bank_10_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_10_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_10_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_10_0_ctrl hw_kernel_global_wrapper_stencil_bank_10_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8463,7 +8463,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_10_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8472,7 +8472,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_11_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_11_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8555,7 +8555,7 @@ module bank_11_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_11_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_11_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_11_0_ctrl hw_kernel_global_wrapper_stencil_bank_11_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8564,7 +8564,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_11_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8573,7 +8573,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_12_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_12_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8656,7 +8656,7 @@ module bank_12_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_12_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_12_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_12_0_ctrl hw_kernel_global_wrapper_stencil_bank_12_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8665,7 +8665,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_12_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8674,7 +8674,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_13_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_13_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8757,7 +8757,7 @@ module bank_13_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_13_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_13_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_13_0_ctrl hw_kernel_global_wrapper_stencil_bank_13_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8766,7 +8766,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_13_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8775,7 +8775,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_14_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_14_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8858,7 +8858,7 @@ module bank_14_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_14_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_14_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_14_0_ctrl hw_kernel_global_wrapper_stencil_bank_14_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8867,7 +8867,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_14_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8876,7 +8876,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_15_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_15_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8959,7 +8959,7 @@ module bank_15_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_15_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_15_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_15_0_ctrl hw_kernel_global_wrapper_stencil_bank_15_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -8968,7 +8968,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_15_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8977,7 +8977,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_16_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_16_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -9060,7 +9060,7 @@ module bank_16_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_16_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_16_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_16_0_ctrl hw_kernel_global_wrapper_stencil_bank_16_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -9069,7 +9069,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_16_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9078,7 +9078,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_17_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_17_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -9161,7 +9161,7 @@ module bank_17_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_17_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_17_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_17_0_ctrl hw_kernel_global_wrapper_stencil_bank_17_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -9170,7 +9170,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_17_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9179,7 +9179,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_18_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_18_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -9262,7 +9262,7 @@ module bank_18_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_18_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_18_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_18_0_ctrl hw_kernel_global_wrapper_stencil_bank_18_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -9271,7 +9271,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_18_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9280,7 +9280,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_19_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_19_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -9363,7 +9363,7 @@ module bank_19_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_19_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_19_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_19_0_ctrl hw_kernel_global_wrapper_stencil_bank_19_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -9372,7 +9372,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_19_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9381,7 +9381,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_20_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_20_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -9464,7 +9464,7 @@ module bank_20_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_20_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_20_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_20_0_ctrl hw_kernel_global_wrapper_stencil_bank_20_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -9473,7 +9473,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_20_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9482,7 +9482,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_21_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_21_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -9565,7 +9565,7 @@ module bank_21_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_21_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_21_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_21_0_ctrl hw_kernel_global_wrapper_stencil_bank_21_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -9574,7 +9574,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_21_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9583,7 +9583,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_22_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_22_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -9666,7 +9666,7 @@ module bank_22_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_22_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_22_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_22_0_ctrl hw_kernel_global_wrapper_stencil_bank_22_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -9675,7 +9675,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_22_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9684,7 +9684,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_ad
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module bank_23_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module hw_kernel_global_wrapper_stencil_bank_23_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -9767,7 +9767,7 @@ module bank_23_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wra
   end
 endmodule
 module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_23__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,input [15:0] chain_data_in,output [15:0] chain_data_out); 
-  bank_23_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl bank_23_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2(.clk(clk), .rst_n(rst_n));
+  hw_kernel_global_wrapper_stencil_bank_23_0_ctrl hw_kernel_global_wrapper_stencil_bank_23_0(.clk(clk), .rst_n(rst_n));
 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
@@ -9776,7 +9776,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_23__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0) begin
+    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_23_0.valid) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
