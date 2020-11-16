@@ -338,15 +338,11 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         def->connect(bank_sel->sel("d"),
             inner_control_vars(def, pt, adjusted_buf));
         auto ubuffer_port_bank_selector  = delay_by(def, bank_sel->sel("out"), 0);
-        //for (auto b : impl.inpt_to_bank[pt]) {
-          //int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
           bank_and_port_input_addrgen[{b, count}] = agen;
           bank_and_port_input_data_valid[{b, count}] =
             eqConst(def, ubuffer_port_bank_selector, b);
-        //}
       }
 
-      //} else {
 
       for(auto pt : bank_readers[b]) {
         int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
@@ -360,15 +356,11 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
         const int READ_LATENCY = 1;
         auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
-        //for (auto b : impl.outpt_to_bank[pt]) {
           bank_and_port_output_addrgen[{b, count}] = agen;
           bank_and_port_output_data_valid[{b, count}] =
             eqConst(def, ubuffer_port_bank_selector, b);
-        //}
       }
-    //}
 
-    //for (int b = 0; b < num_banks; b++) {
       for(auto pt : bank_writers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
