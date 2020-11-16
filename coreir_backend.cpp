@@ -3987,12 +3987,14 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     for (auto pt : buf.get_all_ports()) {
       if (buf.is_in_pt(pt)) {
         auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        auto agen = build_addrgen(pt, adjusted_buf, def);
+        //auto agen = build_addrgen(pt, adjusted_buf, def);
+        auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars(def, pt, adjusted_buf));
         ubuffer_port_agens[pt] = agen;
       } else {
-        auto agen = build_addrgen(pt, buf, def);
+        //auto agen = build_addrgen(pt, buf, def);
+        auto agen = build_inner_bank_offset(pt, buf, impl, def);
         def->connect(agen->sel("d"),
             control_vars(def, pt, buf));
         ubuffer_port_agens[pt] = agen;
@@ -4043,26 +4045,16 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
-      //if(b == 0 && chain_pt != "") {
-        //ubuffer_ports_to_bank_wires[chain_pt].push_back(currbank->sel("data_out_1"));
-      //}
 
       for(auto pt : bank_readers[b])
       {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        //if(pt != chain_pt)
-        //{
-          ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
-          if (impl.outpt_to_bank[pt].size() > 1) {
-            ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
-          } else {
-            ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
-          }
-          //if (b == 0) {
-          //} else {
-            //ubuffer_ports_to_bank_condition_wires[pt].push_back(zero);
-          //}
-        //}
+        ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
+        if (impl.outpt_to_bank[pt].size() > 1) {
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
+        } else {
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
+        }
       }
     }
 
@@ -4157,6 +4149,30 @@ CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, u
   return agen;
 }
 
+CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
+  auto c = def->getContext();
+
+  cout << "Building addrgen for " << reader << endl;
+  isl_union_set* rddom = isl_union_set_read_from_str(buf.ctx, "{}");
+  for (auto inpt : buf.get_in_ports()) {
+    rddom = unn(rddom, range(buf.access_map.at(inpt)));
+  }
+  for (auto inpt : buf.get_out_ports()) {
+    rddom = unn(rddom, range(buf.access_map.at(inpt)));
+  }
+  auto acc_map = to_map(buf.access_map.at(reader));
+  cout << tab(1) << "=== acc_map = " << str(acc_map) << endl;
+  auto acc_aff = get_aff(acc_map);
+  cout << tab(2) << "=== acc aff = " << str(acc_aff) << endl;
+  auto reduce_map = linear_address_map(to_set(rddom));
+  auto addr_expr = dot(acc_map, reduce_map);
+  auto addr_expr_aff = get_aff(addr_expr);
+  cout << tab(3) << "==== addr expr aff: " << str(addr_expr_aff) << endl;
+
+  auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+  auto agen = def->addInstance("addrgen_" + reader + c->getUnique(), aff_gen_mod);
+  return agen;
+}
 CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def) {
   auto c = def->getContext();
 

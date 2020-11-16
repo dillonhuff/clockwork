@@ -168,5 +168,6 @@ CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, 
 
 CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def);
 
+CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def);
 #endif
 
