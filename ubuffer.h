@@ -1285,7 +1285,8 @@ class UBuffer {
           return get_lastest_outpt(bk.name);
         }
       }
-
+      assert(false);
+      return "";
     }
 
     isl_union_map* get_stencil_valid_sched(string bk_name) {
