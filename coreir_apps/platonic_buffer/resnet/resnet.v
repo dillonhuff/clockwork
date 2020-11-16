@@ -2519,7 +2519,7 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .out(_U302_out)
 );
 assign bank_0_rst_n = rst_n;
-assign bank_0_chain_chain_en = 1'b1;
+assign bank_0_chain_chain_en = 1'b0;
 assign bank_0_clk_en = 1'b1;
 assign bank_0_clk = clk;
 assign bank_0_chain_data_in = 16'h0000;
@@ -2554,7 +2554,7 @@ cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushFalse__h
     .ren_1(bank_0_ren_1)
 );
 assign bank_1_rst_n = rst_n;
-assign bank_1_chain_chain_en = 1'b1;
+assign bank_1_chain_chain_en = 1'b0;
 assign bank_1_clk_en = 1'b1;
 assign bank_1_clk = clk;
 assign bank_1_chain_data_in = 16'h0000;
@@ -2589,7 +2589,7 @@ cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushFalse__h
     .ren_1(bank_1_ren_1)
 );
 assign bank_2_rst_n = rst_n;
-assign bank_2_chain_chain_en = 1'b1;
+assign bank_2_chain_chain_en = 1'b0;
 assign bank_2_clk_en = 1'b1;
 assign bank_2_clk = clk;
 assign bank_2_chain_data_in = 16'h0000;

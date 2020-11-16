@@ -281,6 +281,9 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     auto implm = build_buffer_impl(prg, buf, hwinfo);
     ubuffer_impl impl = implm.first;
 
+    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port =
+      build_ubuffer_to_bank_binding(impl);
+
     int num_banks = 1;
     for (auto ent : impl.partitioned_dimension_extents) {
       num_banks *= ent.second;
@@ -293,15 +296,15 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
     map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
 
-    string chain_pt = "";
-    for (auto pt: outpt_to_bank)
-    {
-      if(pt.second.size() > 1) {
-        assert(chain_pt == "");
-        chain_pt = pt.first;
-        cout << pt.first << " needs chaining" << endl;
-      }
-    }
+    //string chain_pt = "";
+    //for (auto pt: outpt_to_bank)
+    //{
+      //if(pt.second.size() > 1) {
+        //assert(chain_pt == "");
+        //chain_pt = pt.first;
+        //cout << pt.first << " needs chaining" << endl;
+      //}
+    //}
 
     Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
     Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
@@ -316,11 +319,11 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
 
-      if (chain_pt != "") {
-        def->connect(currbank->sel("chain_chain_en"),one);
-      } else {
+      //if (chain_pt != "") {
+        //def->connect(currbank->sel("chain_chain_en"),one);
+      //} else {
         def->connect(currbank->sel("chain_chain_en"),zero);
-      }
+      //}
 
       instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
       bank_map[b] = currbank;
@@ -374,37 +377,6 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
     }
 
-    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port = build_ubuffer_to_bank_binding(impl);
-    //map<int, int> bank_to_next_available_out_port;
-    //map<int, int> bank_to_next_available_in_port;
-    //for (int b = 0; b < num_banks; b++) {
-      //bank_to_next_available_out_port[b] = 0;
-      //bank_to_next_available_in_port[b] = 0;
-    //}
-    //for (auto pt_srcs : impl.inpt_to_bank) {
-      //string pt = pt_srcs.first;
-      //for (int b : pt_srcs.second) {
-        //ubuffer_port_and_bank_to_bank_port[{pt, b}] =
-          //map_find(b, bank_to_next_available_in_port);
-        //bank_to_next_available_in_port[b]++;
-      //}
-    //}
-    //for (auto bp : bank_to_next_available_in_port) {
-      //cout << tab(1) << bp.first << " -> " << bp.second << endl;
-      //assert(bp.second <= 2);
-    //}
-    //for (auto pt_srcs : impl.outpt_to_bank) {
-      //string pt = pt_srcs.first;
-      //for (int b : pt_srcs.second) {
-        //ubuffer_port_and_bank_to_bank_port[{pt, b}] =
-          //map_find(b, bank_to_next_available_out_port);
-        //bank_to_next_available_out_port[b]++;
-      //}
-    //}
-    //for (auto bp : bank_to_next_available_out_port) {
-      //cout << tab(1) << bp.first << " -> " << bp.second << endl;
-      //assert(bp.second <= 2);
-    //}
 
     for (int b = 0; b < num_banks; b++) {
       auto currbank = bank_map[b];
