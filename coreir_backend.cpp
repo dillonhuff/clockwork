@@ -148,53 +148,6 @@ int wire_width(CoreIR::Wireable* w) {
 
 void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo);
 
-std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
-
-  map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
-
-  auto c = def->getContext();
-  std::set<string> done_outpt;
-  for (auto pt : shift_registered_outputs) {
-    string dst = pt.first;
-    string src = pt.second.first;
-    int delay = pt.second.second;
-    auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
-    Wireable* delayed_src =
-      delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
-
-    def->connect(
-        def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
-        delayed_src);
-    done_outpt.insert(pt.first);
-  }
-
-  cout << "# of in to out shift registers..." << done_outpt.size() << endl;
-  for (auto pt : shift_registered_outputs_to_outputs) {
-    done_outpt.insert(pt.first);
-    if(done_outpt.find(pt.second.first) != done_outpt.end()) {
-      //continue;
-    }
-    if(done_outpt.find(pt.first)!=done_outpt.end())
-    {
-      //continue;
-    } else{
-      //string dst = pt.first;
-      //string src = pt.second.first;
-      //int delay = pt.second.second;
-      //auto src_wire = def->sel("self." + buf.container_bundle(src) + "." + str(buf.bundle_offset(src)));
-      //Wireable* delayed_src =
-        //delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
-
-      //def->connect(
-          //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
-          //delayed_src);
-      //done_outpt.insert(pt.first);
-    }
-  }
-  return done_outpt;
-}
-
 Wireable* mkOneHot(ModuleDef* def, vector<Wireable*>& conds, vector<Wireable*>& vals) {
   assert(vals.size() == conds.size());
 
