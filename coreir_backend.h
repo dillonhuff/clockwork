@@ -169,5 +169,12 @@ CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, 
 CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def);
 
 CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def);
+
+std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf);
+
+void M1_sanity_check_port_counts(ubuffer_impl& impl);
+
 #endif
 

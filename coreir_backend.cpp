@@ -196,8 +196,228 @@ std::set<string> generate_M3_shift_registers(CodegenOptions& options, CoreIR::Mo
 }
 
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
+  CoreIR::Context* c = def->getContext();
+  for (auto out : orig_buf.get_out_ports()) {
+    auto w = def->addInstance(out + "_net", "coreir.wire", {{"width", COREMK(c, 16)}});
+    def->connect(
+        w->sel("out"),
+        def->sel("self." + orig_buf.container_bundle(out) + "." + str(orig_buf.bundle_offset(out))));
+  }
 
-  generate_M1_coreir(options, def, prg, orig_buf, hwinfo);
+  std::set<string> done_outpt = generate_M1_shift_registers(options, def, prg, orig_buf, hwinfo);
+  //std::set<string> done_outpt = {};
+
+  UBuffer buf = delete_ports(done_outpt, orig_buf);
+
+  if (buf.num_out_ports() > 0) {
+    //ubuffer_impl impl = build_buffer_impl(prg, buf, hwinfo);
+    auto implm = build_buffer_impl(prg, buf, hwinfo);
+    ubuffer_impl impl = implm.first;
+
+    int num_banks = 1;
+    for (auto ent : impl.partitioned_dimension_extents) {
+      num_banks *= ent.second;
+    }
+
+    M1_sanity_check_port_counts(impl);
+
+    map<int, std::set<string> > bank_readers = impl.bank_readers;
+    map<int, std::set<string> > bank_writers = impl.bank_writers;
+    map<string, std::set<int>> outpt_to_bank = impl.outpt_to_bank;
+    map<string, std::set<int>> inpt_to_bank = impl.inpt_to_bank;
+
+    string chain_pt = "";
+    for (auto pt: outpt_to_bank)
+    {
+      if(pt.second.size() > 1) {
+        assert(chain_pt == "");
+        chain_pt = pt.first;
+        cout << pt.first << " needs chaining" << endl;
+      }
+    }
+
+    Select* one = def->addInstance("one_cst", "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    Select* zero = def->addInstance("zero_cst", "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
+
+    map<int, Instance*> bank_map;
+    for (int b = 0; b < num_banks; b++) {
+      Values tile_params{{"width", COREMK(c, 16)},
+        {"ID", COREMK(c, buf.name + "_" + str(b))},
+        {"has_external_addrgen", COREMK(c, true)},
+        {"num_inputs",COREMK(c,bank_writers[b].size())},
+        {"num_outputs",COREMK(c,bank_readers[b].size())}};
+
+      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+
+      if (chain_pt != "") {
+        def->connect(currbank->sel("chain_chain_en"),one);
+      } else {
+        def->connect(currbank->sel("chain_chain_en"),zero);
+      }
+
+      instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
+      bank_map[b] = currbank;
+      def->connect(currbank->sel("clk_en"),one);
+      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
+      def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+    }
+
+    map<string, Instance*> ubuffer_port_agens;
+    map<string, Wireable*> ubuffer_port_bank_selectors;
+    for (auto pt : buf.get_all_ports()) {
+      if (buf.is_in_pt(pt)) {
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, adjusted_buf));
+        ubuffer_port_agens[pt] = agen;
+
+        if (impl.inpt_to_bank[pt].size() > 1) {
+          auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
+          def->connect(bank_sel->sel("d"),
+              control_vars(def, pt, adjusted_buf));
+          ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), 0);
+        }
+      } else {
+        auto agen = build_inner_bank_offset(pt, buf, impl, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, buf));
+        ubuffer_port_agens[pt] = agen;
+
+        if (impl.outpt_to_bank[pt].size() > 1) {
+          auto bank_sel = build_bank_selector(pt, buf, impl, def);
+          def->connect(bank_sel->sel("d"),
+              control_vars(def, pt, buf));
+          const int READ_LATENCY = 1;
+          ubuffer_port_bank_selectors[pt] = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
+        }
+      }
+    }
+
+    map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port;
+    map<int, int> bank_to_next_available_out_port;
+    map<int, int> bank_to_next_available_in_port;
+    for (int b = 0; b < num_banks; b++) {
+      bank_to_next_available_out_port[b] = 0;
+      bank_to_next_available_in_port[b] = 0;
+    }
+    for (auto pt_srcs : impl.inpt_to_bank) {
+      string pt = pt_srcs.first;
+      for (int b : pt_srcs.second) {
+        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          map_find(b, bank_to_next_available_in_port);
+        bank_to_next_available_in_port[b]++;
+      }
+    }
+    for (auto bp : bank_to_next_available_in_port) {
+      cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      assert(bp.second <= 2);
+    }
+    for (auto pt_srcs : impl.outpt_to_bank) {
+      string pt = pt_srcs.first;
+      for (int b : pt_srcs.second) {
+        ubuffer_port_and_bank_to_bank_port[{pt, b}] =
+          map_find(b, bank_to_next_available_out_port);
+        bank_to_next_available_out_port[b]++;
+      }
+    }
+    for (auto bp : bank_to_next_available_out_port) {
+      cout << tab(1) << bp.first << " -> " << bp.second << endl;
+      assert(bp.second <= 2);
+    }
+
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
+
+      for(auto pt : bank_readers[b])
+      {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        auto agen = ubuffer_port_agens[pt];
+        def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        def->connect(currbank->sel("ren_" + str(count)),
+            control_en(def, pt, buf));
+      }
+    }
+
+    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_wires;
+    map<string, std::vector<Wireable*> > ubuffer_ports_to_bank_condition_wires;
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
+
+      for(auto pt : bank_readers[b])
+      {
+        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        ubuffer_ports_to_bank_wires[pt].push_back(currbank->sel("data_out_" + str(count)));
+        if (impl.outpt_to_bank[pt].size() > 1) {
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(eqConst(def, ubuffer_port_bank_selectors[pt], b));
+        } else {
+          ubuffer_ports_to_bank_condition_wires[pt].push_back(one);
+        }
+      }
+    }
+
+    for (auto conn : ubuffer_ports_to_bank_wires) {
+      vector<Wireable*> conds = ubuffer_ports_to_bank_condition_wires[conn.first];
+      vector<Wireable*> vals = conn.second;
+      assert(conds.size() == vals.size());
+
+      if (conds.size() == 1) {
+        def->connect(def->sel(conn.first + "_net.in"), pick(conn.second));
+      } else {
+        assert(conds.size() == 3);
+        Wireable* out = def->sel(conn.first + "_net.in");
+
+        auto snd_mux =
+          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        def->connect(snd_mux->sel("in0"), vals[1]);
+        def->connect(snd_mux->sel("in1"), vals[2]);
+        def->connect(snd_mux->sel("sel"), conds[2]);
+
+        auto last_mux =
+          def->addInstance("chain_mux" + c->getUnique(), "coreir.mux", {{"width", CoreIR::Const::make(c, 16)}});
+        def->connect(last_mux->sel("in0"), snd_mux->sel("out"));
+        def->connect(last_mux->sel("in1"), vals[0]);
+        def->connect(last_mux->sel("sel"), conds[0]);
+
+        def->connect(last_mux->sel("out"), out);
+      }
+    }
+
+    for (int b = 0; b < num_banks; b++) {
+      auto currbank = bank_map[b];
+      int count = 0;
+      for(auto pt : bank_writers[b])
+      {
+
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        auto agen = ubuffer_port_agens[pt];
+
+        Wireable* enable = nullptr;
+        if (inpt_to_bank[pt].size() > 1) {
+          enable =
+            andList(def, {control_en(def, pt, adjusted_buf), eqConst(def, ubuffer_port_bank_selectors[pt], b)});
+        } else {
+          enable =
+            control_en(def, pt, adjusted_buf);
+        }
+        assert(enable != nullptr);
+
+        def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
+        def->connect(currbank->sel("wen_" + str(count)),
+            enable);
+            //control_en(def, pt, adjusted_buf));
+
+        def->connect(
+            currbank->sel("data_in_" + str(count)),
+            def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
+        count++;
+      }
+    }
+
+  }
+
+
+  //generate_M1_coreir(options, def, prg, orig_buf, hwinfo);
 
   //CoreIR::Context* c = def->getContext();
 
