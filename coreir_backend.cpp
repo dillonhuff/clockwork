@@ -49,7 +49,7 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
-void instantiate_M3_verilog(const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf) {
+void instantiate_M3_verilog(const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf, prog& prg) {
     assert(verilog_collateral_file != nullptr);
 
     vector<string> port_decls = {};
@@ -454,7 +454,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
       def->connect(currbank->sel("chain_chain_en"),zero);
 
-      instantiate_M3_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
+      instantiate_M3_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf, prg);
       bank_map[b] = currbank;
       def->connect(currbank->sel("clk_en"),one);
       def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
