@@ -3919,8 +3919,6 @@ void instantiate_M1_verilog(const std::string& long_name, const int b, ubuffer_i
 
 void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
 
-
-
   CoreIR::Context* c = def->getContext();
   for (auto out : orig_buf.get_out_ports()) {
     auto w = def->addInstance(out + "_net", "coreir.wire", {{"width", COREMK(c, 16)}});
@@ -3976,126 +3974,76 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         {"num_inputs",COREMK(c,bank_writers[b].size())},
         {"num_outputs",COREMK(c,bank_readers[b].size())}};
 
-    CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
+      CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
 
-    if (chain_pt != "") {
-      def->connect(currbank->sel("chain_chain_en"),one);
-    } else {
-      def->connect(currbank->sel("chain_chain_en"),zero);
-    }
+      if (chain_pt != "") {
+        def->connect(currbank->sel("chain_chain_en"),one);
+      } else {
+        def->connect(currbank->sel("chain_chain_en"),zero);
+      }
 
-    //*verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-    instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
-    assert(verilog_collateral_file != nullptr);
+      instantiate_M1_verilog(currbank->getModuleRef()->getLongName(), b, impl, buf);
+      assert(verilog_collateral_file != nullptr);
 
-    //vector<string> port_decls = {};
-    //port_decls.push_back("input clk");
-    //port_decls.push_back("input rst_n");
-    //port_decls.push_back("input clk_en");
-    //port_decls.push_back("input chain_chain_en");
-    //for(int i = 0; i < bank_writers[b].size(); i++)
-    //{
-      //port_decls.push_back("input [15:0] data_in_" + str(i));
-      //port_decls.push_back("input [15:0] write_addr_" + str(i));
-      //port_decls.push_back("input wen_" + str(i));
-    //}
-    //for(int i = 0; i < bank_readers[b].size(); i++)
-    //{
-      //port_decls.push_back("output logic [15:0] data_out_" + str(i));
-      //port_decls.push_back("input [15:0] read_addr_" + str(i));
-      //port_decls.push_back("input ren_" + str(i));
-    //}
-    //port_decls.push_back("input [15:0] chain_data_in");
-    //port_decls.push_back("output [15:0] chain_data_out");
-
-    //*verilog_collateral_file << "module " << currbank->getModuleRef()->getLongName() <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
-    //*verilog_collateral_file << tab(1) << "logic [15:0] SRAM [50000:0];" << endl;
-    //*verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
-    //for (int i = 0; i < bank_readers[b].size(); i++) {
-      //*verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
-    //}
-
-    //*verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-    //*verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << bank_readers[b].size() - 1 << ";" << endl;
-    //for (int i = 0; i < bank_readers[b].size(); i++) {
-      //*verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
-    //}
-    //for (int i = 0; i < bank_writers[b].size(); i++) {
-      //*verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
-      //*verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
-      //*verilog_collateral_file << tab(2) << "end" << endl;
-    //}
-    //*verilog_collateral_file << tab(1) << "end" << endl;
-    ///[>verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
-    //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
-    //for (int i = 0; i < bank_readers[b].size(); i++) {
-      //if (i == bank_readers[b].size() - 1) {
-        //*verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
-      //} else {
-        //*verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
-      //}
-    //}
-    //*verilog_collateral_file << "endmodule" << endl << endl;
-
-
-    if(b == 0 && chain_pt != "") {
-      def->connect(
-          currbank->sel("data_out_1"),
-          def->sel(chain_pt + "_net.in"));
-    }
-    def->connect(currbank->sel("clk_en"),one);
+      if(b == 0 && chain_pt != "") {
+        def->connect(
+            currbank->sel("data_out_1"),
+            def->sel(chain_pt + "_net.in"));
+      }
+      def->connect(currbank->sel("clk_en"),one);
 
 
 
-    int count = 0;
-    for(auto pt : bank_readers[b])
-    {
-      auto agen = build_addrgen(pt, buf, def);
-      def->connect(agen->sel("d"),
-          control_vars(def, pt, buf));
-      def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
-      def->connect(currbank->sel("ren_" + str(count)),
-          control_en(def, pt, buf));
-      if(pt != chain_pt)
+      int count = 0;
+      for(auto pt : bank_readers[b])
       {
+        auto agen = build_addrgen(pt, buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, buf));
+        def->connect(agen->sel("out"), currbank->sel("read_addr_" + str(count)));
+        def->connect(currbank->sel("ren_" + str(count)),
+            control_en(def, pt, buf));
+        if(pt != chain_pt)
+        {
+
+          def->connect(
+              currbank->sel("data_out_" + str(count)),
+              def->sel(pt + "_net.in"));
+
+          count++;
+        }
+      }
+      count = 0;
+      for(auto pt : bank_writers[b])
+      {
+        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        auto agen = build_addrgen(pt, adjusted_buf, def);
+        def->connect(agen->sel("d"),
+            control_vars(def, pt, adjusted_buf));
+        def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
+        def->connect(currbank->sel("wen_" + str(count)),
+            control_en(def, pt, adjusted_buf));
 
         def->connect(
-            currbank->sel("data_out_" + str(count)),
-            def->sel(pt + "_net.in"));
-
+            currbank->sel("data_in_" + str(count)),
+            def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
         count++;
       }
+      def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
+
+
     }
-    count = 0;
-    for(auto pt : bank_writers[b])
-    {
-      auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-      auto agen = build_addrgen(pt, adjusted_buf, def);
-      def->connect(agen->sel("d"),
-          control_vars(def, pt, adjusted_buf));
-      def->connect(agen->sel("out"), currbank->sel("write_addr_" + str(count)));
-      def->connect(currbank->sel("wen_" + str(count)),
-          control_en(def, pt, adjusted_buf));
 
-      def->connect(
-          currbank->sel("data_in_" + str(count)),
-          def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
-      count++;
-    }
-    def->connect(currbank->sel("rst_n"),def->sel("self.rst_n"));
-
-
-  }
-  for (int b = 0; b < num_banks; b++) {
-
-    if(b != num_banks - 1){
-      def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
-
-    } else {
+    for (int b = 0; b < num_banks; b++) {
       def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+      //if(b != num_banks - 1){
+        //def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), def->sel("bank_" + str(b + 1) + ".chain_data_out"));
+
+      //} else {
+        //def->connect(def->sel("bank_" + str(b) + ".chain_data_in"), mkConst(def,16,0));
+      //}
     }
   }
-}
 
 
 }
