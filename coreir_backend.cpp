@@ -490,16 +490,16 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     assert(acc_maps.size() > 0);
     int control_dimension = num_in_dims(pick(acc_maps));
     if (buf.is_input_bundle(b.first)) {
-      //if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-      if (false) {
+      if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+      //if (false) {
       } else if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(CONTROLPATH_WIDTH)->Arr(control_dimension)));
       }
       ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
-      //if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-      if (false) {
+      if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+      //if (false) {
         //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
       } else if (options.rtl_options.use_external_controllers) {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
@@ -1877,8 +1877,8 @@ void instantiate_controllers(CodegenOptions& options,
     CoreIR::ModuleDef* def,
     schedule_info& hwinfo) {
   auto sched_maps = get_maps(schedmap);
-  //if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-  if (false) {
+  if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+  //if (false) {
     for (auto op : prg.all_ops()) {
       bool needs_controller = false;
       for (auto b : op->buffers_referenced()) {
@@ -1972,8 +1972,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
       } else {
-        //if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-        if (false) {
+        if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        //if (false) {
         } else if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
               write_start_wire(def, op->name));
@@ -2005,8 +2005,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
             def->sel(op->name + "." + pg(buf_name, bundle_name)));
 
       } else {
-        //if (options.rtl_options.target_tile == TARGET_TILE_M3) {
-        if (false) {
+        if (options.rtl_options.target_tile == TARGET_TILE_M3) {
+        //if (false) {
         } else if (options.rtl_options.use_external_controllers) {
           def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
               read_start_wire(def, op->name));
