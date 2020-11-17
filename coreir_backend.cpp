@@ -165,14 +165,14 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   for(int i = 0; i < impl.bank_writers[b].size(); i++)
   {
     port_decls.push_back("input [15:0] data_in_" + str(i));
-    port_decls.push_back("input [15:0] write_addr_" + str(i));
-    port_decls.push_back("input wen_" + str(i));
+    //port_decls.push_back("input [15:0] write_addr_" + str(i));
+    //port_decls.push_back("input wen_" + str(i));
   }
   for(int i = 0; i < impl.bank_readers[b].size(); i++)
   {
     port_decls.push_back("output logic [15:0] data_out_" + str(i));
-    port_decls.push_back("input [15:0] read_addr_" + str(i));
-    port_decls.push_back("input ren_" + str(i));
+    //port_decls.push_back("input [15:0] read_addr_" + str(i));
+    //port_decls.push_back("input ren_" + str(i));
     port_decls.push_back("output data_out_" + str(i) + "_valid");
   }
   port_decls.push_back("input [15:0] chain_data_in");
@@ -239,13 +239,13 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   *verilog_collateral_file << endl;
 
   *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
-  *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
+  //*verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
     *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
   }
 
   *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-  *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
+  //*verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
     string bn = buf.name + "_bank_rd_" + str(b) + "_" + str(i);
     string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
@@ -274,7 +274,8 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   }
   *verilog_collateral_file << tab(1) << "end" << endl;
   //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
-  *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
+  //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
+  *verilog_collateral_file << tab(1) << "assign chain_data_out = " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp;" << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
     //if (i == impl.bank_readers[b].size() - 1) {
       //*verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
