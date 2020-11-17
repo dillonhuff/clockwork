@@ -108,6 +108,22 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   }
 
   for(auto pt : impl.bank_readers[b]) {
+    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
+    string port_rep = pt;
+    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    op* rep = prg.find_op(op_rep_name);
+    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+
+    isl_aff* sched_aff =
+      get_aff(buf.schedule.at(pt));
+    generate_fsm(*verilog_collateral_file,
+        options,
+        bundle_name + "_ctrl",
+        "d",
+        "valid",
+        sched_aff,
+        dom);
     //int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
     //string bundle_name = "bank_" + str(b) + "_" + str(count) + "_ctrl";
     //string port_rep = pt;
@@ -162,6 +178,34 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   port_decls.push_back("output [15:0] chain_data_out");
 
   *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+  for(auto pt : impl.bank_readers[b]) {
+    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
+    string port_rep = pt;
+    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    op* rep = prg.find_op(op_rep_name);
+    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+
+
+    auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+
+    isl_aff* sched_aff =
+      get_aff(adjusted_buf.schedule.at(pt));
+
+    out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
+
+    isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
+    isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
+
+    out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
+    out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
+
+    std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
+    std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
+
+    out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
+    out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
+  }
   for(auto pt : impl.bank_writers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
