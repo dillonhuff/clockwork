@@ -211,8 +211,8 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     //*verilog_collateral_file << tab(2) << "if (wen_" << i << " && " << bundle_name << ") begin" << endl;
     *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-    //*verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
-    *verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
+    *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
+    //*verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
     *verilog_collateral_file << tab(2) << "end" << endl;
   }
   *verilog_collateral_file << tab(1) << "end" << endl;
