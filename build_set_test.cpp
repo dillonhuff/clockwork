@@ -17132,7 +17132,7 @@ void cgra_flow_tests() {
   //vector<prog> M1_test_programs{up_sample(), resnet(), mobilenet_unrolled()};
   //vector<prog> M1_test_programs{resnet(), up_sample(), mobilenet_unrolled()};
   
-  vector<prog> M3_test_programs{resnet()};
+  vector<prog> M3_test_programs = isca_programs();
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   assert(false);
 
