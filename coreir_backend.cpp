@@ -3901,10 +3901,13 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
 std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
 
 
+
   dgraph shift_registers = build_shift_registers(options, def, prg, buf, hwinfo);
   cout << "SRC shift registers" << endl;
   cout << shift_registers << endl;
   auto c = def->getContext();
+    Select* one = def->addInstance("one_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, true)}})->sel("out");
+    Select* zero = def->addInstance("zero_" + c->getUnique(), "corebit.const", {{"value", COREMK(c, false)}})->sel("out");
   std::set<string> done_outpt;
   for (auto w : shift_registers.weights) {
     string src = w.first.first;
@@ -3920,9 +3923,45 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     }
     assert(src_wire != nullptr);
 
-    Wireable* delayed_src =
-      delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+    Wireable* delayed_src = nullptr;
+    //  delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
 
+    const int SREG_SRAM_THRES = 10;
+
+
+    if(delay > SREG_SRAM_THRES) {
+      Values tile_params{{"width", COREMK(c, 16)},
+        {"ID", COREMK(c, "sreg_" + c->getUnique())},
+        {"has_external_addrgen", COREMK(c, true)},
+        {"num_inputs",COREMK(c,1)},
+        {"num_outputs",COREMK(c,1)}};
+      CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+      def->connect(sreg->sel("clk"),def->sel("self.clk"));
+      def->connect(sreg->sel("clk_en"),one);
+      def->connect(sreg->sel("chain_chain_en"),zero);
+      def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+      def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+      def->connect(sreg->sel("data_in_0"),src_wire);
+      delayed_src = sreg->sel("data_out_0");
+      isl_aff * identity = rdaff(buf.ctx,"{[root,t] -> [( root + t )]}");
+      isl_aff * shifted_identity = rdaff(buf.ctx, "{[root,t] -> [(root+t + " + str(delay - 1) + ")]}"); 
+      isl_set * domain = rdset(buf.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
+      Instance* write_fsm = generate_controller_verilog(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
+      Instance* read_fsm = generate_controller_verilog(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
+      def->connect(write_fsm->sel("d")->sel(0),sreg->sel("write_addr_0"));
+      def->connect(read_fsm->sel("d")->sel(0),sreg->sel("read_addr_0"));
+      def->connect(write_fsm->sel("valid"),sreg->sel("wen_0"));
+      def->connect(read_fsm->sel("valid"),sreg->sel("ren_0"));
+      ubuffer_impl impl;
+      impl.bank_readers[0] = {"test"};
+      impl.bank_writers[0] = {"test_writer"};
+      instantiate_M1_verilog(sreg->getModuleRef()->getLongName(), 0, impl, buf);
+    }
+    else{
+       delayed_src = delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
+    }
+
+    assert(delayed_src != nullptr);
     def->connect(
         //def->sel("self." + buf.container_bundle(dst) + "." + str(buf.bundle_offset(dst))),
         def->sel(dst + "_net.in"),
