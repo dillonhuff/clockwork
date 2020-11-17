@@ -30,3 +30,4 @@ prog histogram();
 prog mobilenet();
 prog mobilenet_small();
 prog three_level_memory();
+prog resnet_layer_gen();

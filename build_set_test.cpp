@@ -13219,7 +13219,7 @@ void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name)
 void test_single_port_mem(bool gen_config_only, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   //test_apps.push_back(conv_3_3());
-  test_apps.push_back(gaussian());
+  test_apps.push_back(resnet_layer_gen());
   //test_apps.push_back(cascade());
   // test_apps.push_back(harris());
   //test_apps.push_back(conv_1_2());
@@ -15046,7 +15046,7 @@ void lake_tests() {
   //lake_agg_sram_tb_config_test();
   //union_test();
   //assert(false);
-  test_single_port_mem(true);
+  test_single_port_mem(false);
   assert(false);
   lake_conv33_autovec_aha_test();
   //double_buffer_test();
