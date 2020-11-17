@@ -211,8 +211,16 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     //*verilog_collateral_file << tab(2) << "if (wen_" << i << " && " << bundle_name << ") begin" << endl;
     *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-    *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
-    //*verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
+    out << tab(3) << "if (!wen_" << i << ") begin" << endl;
+    out << tab(4) << "$finish(-1);" << endl;
+    out << tab(3) << "end" << endl;
+
+    out << tab(3) << "if (write_addr_" << i << " !== " << bn << "_ibo) begin" << endl;
+    out << tab(4) << "$display(\"Error addresses do not match, external addr = %d, ibo = %d\", write_addr_" << i << ", " << bn << "_ibo);" << endl;
+    out << tab(4) << "$finish(-1);" << endl;
+    out << tab(3) << "end" << endl;
+    //*verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
+    *verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
     *verilog_collateral_file << tab(2) << "end" << endl;
   }
   *verilog_collateral_file << tab(1) << "end" << endl;
@@ -227,6 +235,7 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   }
   *verilog_collateral_file << "endmodule" << endl << endl;
 }
+
 Instance* generate_controller_verilog(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
   auto c = def->getContext();
   Instance* controller;
@@ -4500,7 +4509,11 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_
   string bank_func = curlies(buf.name + bracket_list(dvs) + " -> InnerBank[" + sep_list(coeffs, "", "", " + ") + "]");
   auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
   cout << "bank map for " << reader << ": " << str(bank_map) << endl;
-  return get_aff(bank_map);
+  auto acc_map = to_map(buf.access_map.at(reader));
+
+  auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
+  return addr_expr_aff;
+  //return get_aff(bank_map);
 }
 
     //isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
