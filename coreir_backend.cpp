@@ -182,7 +182,13 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
-    out << tab(1) << "logic [15:0] " << bundle_name << "_bank_offset;" << endl;
+    out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
+
+    std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
+    std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
+
+    out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
+    out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
   }
 
   *verilog_collateral_file << endl;
@@ -199,8 +205,10 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
   }
   for (int i = 0; i < impl.bank_writers[b].size(); i++) {
+    string bn = buf.name + "_bank_" + str(b) + "_" + str(i);
     //*verilog_collateral_file << tab(2) << "if (wen_" << i << ") begin" << endl;
-    string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(i) + ".valid";
+    string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
+
     *verilog_collateral_file << tab(2) << "if (wen_" << i << " && " << bundle_name << ") begin" << endl;
     *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
     *verilog_collateral_file << tab(2) << "end" << endl;
