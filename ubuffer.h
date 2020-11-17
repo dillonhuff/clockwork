@@ -1263,10 +1263,36 @@ class UBuffer {
       return bnks;
     }
 
-    string get_lastest_outpt(string bk_name) {
+    vector<string> get_all_outpts(string bk_name) {
       auto outpts_set = get_bank_outputs(bk_name);
       vector<string> outpts(outpts_set.begin(), outpts_set.end());
+      vector<string> all_outpt_in_tree;
 
+      //Sort the output ports and get the latest output schedule
+      //sort(outpts.begin(), outpts.end(),
+      //        [this](const string& l, const string & r) {
+      //          auto l_start_time_stamp = lexminpt(range(schedule.at(l)));
+      //          auto r_start_time_stamp = lexminpt(range(schedule.at(r)));
+      //          return lex_lt_pt(l_start_time_stamp, r_start_time_stamp);
+      //        });
+      //last pt is the latests access
+      //auto outpt = outpts.back();
+      //Check if this is the shift register input
+      //DFS for the leaf port
+      for (auto outpt: outpts) {
+        if(!is_bank_input(outpt)) {
+            all_outpt_in_tree.push_back(outpt);
+        } else {
+          for (auto bk: receiver_banks(outpt)){
+            concat(all_outpt_in_tree, get_all_outpts(bk.name));
+          }
+        }
+      }
+      return all_outpt_in_tree;
+    }
+
+    isl_union_map* get_stencil_valid_sched(string bk_name) {
+      auto outpts = get_all_outpts(bk_name);
       //Sort the output ports and get the latest output schedule
       sort(outpts.begin(), outpts.end(),
               [this](const string& l, const string & r) {
@@ -1274,23 +1300,7 @@ class UBuffer {
                 auto r_start_time_stamp = lexminpt(range(schedule.at(r)));
                 return lex_lt_pt(l_start_time_stamp, r_start_time_stamp);
               });
-      //last pt is the latests access
-      auto outpt = outpts.back();
-      //Check if this is the shift register input
-      //DFS for the leaf port
-      if(!is_bank_input(outpt)) {
-          return outpt;
-      } else {
-        for (auto bk: receiver_banks(outpt)){
-          return get_lastest_outpt(bk.name);
-        }
-      }
-
-    }
-
-    isl_union_map* get_stencil_valid_sched(string bk_name) {
-      string outpt = get_lastest_outpt(bk_name);
-      return schedule.at(outpt);
+      return schedule.at(outpts.back());
 
       //only consider the shift register condition now
       //string outpt = pick(outpts);

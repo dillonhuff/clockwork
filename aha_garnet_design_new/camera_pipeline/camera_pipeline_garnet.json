@@ -1697,7 +1697,7 @@
           "denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet":{
             "genref":"cgralib.Mem",
             "genargs":{"ID":["String","_U15"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",2], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
-            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[264],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,60],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,15]},"in2agg_0":{"cycle_starting_addr":[260],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,60],"write_data_starting_addr":[0],"write_data_stride":[1,4,12]},"sram2tb_0":{"cycle_starting_addr":[383],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,58],"read_data_starting_addr":[15],"read_data_stride":[1,15],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"sram2tb_1":{"cycle_starting_addr":[385],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,58],"read_data_starting_addr":[0],"read_data_stride":[1,15],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"stencil_valid":{"cycle_starting_addr":[389],"cycle_stride":[1,64],"dimensionality":2,"extent":[59,58]},"tb2out_0":{"cycle_starting_addr":[388],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,58],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]},"tb2out_1":{"cycle_starting_addr":[388],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,58],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "mode":["String","lake"]}
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[264],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,60],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,15]},"in2agg_0":{"cycle_starting_addr":[260],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,60],"write_data_starting_addr":[0],"write_data_stride":[1,4,12]},"sram2tb_0":{"cycle_starting_addr":[383],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,58],"read_data_starting_addr":[15],"read_data_stride":[1,15],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"sram2tb_1":{"cycle_starting_addr":[385],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,58],"read_data_starting_addr":[0],"read_data_stride":[1,15],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"stencil_valid":{"cycle_starting_addr":[390],"cycle_stride":[1,64],"dimensionality":2,"extent":[58,58]},"tb2out_0":{"cycle_starting_addr":[388],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,58],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]},"tb2out_1":{"cycle_starting_addr":[388],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,58],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "mode":["String","lake"]}
           },
           "hw_input_global_wrapper_stencil$chain_disen_const_U30":{
             "modref":"corebit.const",
@@ -5123,8 +5123,8 @@
           ["op_hcompute_demosaicked_1_stencil_2$inner_compute$add_denoised_1_stencil_19_denoised_1_stencil_14_988$binop.data.in.0","denoised_1_stencil$d_reg__U21$reg0.out"],
           ["op_hcompute_demosaicked_1_stencil_2$inner_compute$add_denoised_1_stencil_19_denoised_1_stencil_15_1002$binop.data.in.0","denoised_1_stencil$d_reg__U21$reg0.out"],
           ["op_hcompute_demosaicked_1_stencil_2$inner_compute$add_denoised_1_stencil_19_denoised_1_stencil_20_1005$binop.data.in.0","denoised_1_stencil$d_reg__U21$reg0.out"],
-          ["denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.rst_n","denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_clk_en_const.out"],
-          ["denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.clk_en","denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_clk_en_const1.out"],
+          ["denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.clk_en","denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_clk_en_const.out"],
+          ["denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.rst_n","denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_clk_en_const1.out"],
           ["op_hcompute_denoised_1_stencil$inner_compute$umax_333_336_337$max_mux$mux.data.out","denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.data_in_0"],
           ["op_hcompute_demosaicked_1_stencil$inner_compute$absd_denoised_1_stencil_1_denoised_1_stencil_2_519$sub$binop.data.in.1","denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.data_out_0"],
           ["op_hcompute_demosaicked_1_stencil$inner_compute$absd_denoised_1_stencil_2_denoised_1_stencil_1_491$sub$binop.data.in.0","denoised_1_stencil$ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.data_out_0"],
@@ -5219,8 +5219,8 @@
           ["op_hcompute_demosaicked_1_stencil$inner_compute$mux_483_512_562$mux.data.out","op_hcompute_corrected_stencil_2$inner_compute$mul_1299_1300_1301$binop.data.in.0"],
           ["op_hcompute_corrected_stencil_2$inner_compute$sub_1298_1301_1302$binop.data.in.1","op_hcompute_corrected_stencil_2$inner_compute$mul_1299_1300_1301$binop.data.out"],
           ["op_hcompute_corrected_stencil_2$inner_compute$sub_1298_1301_1302$binop.data.in.0","op_hcompute_corrected_stencil_2$inner_compute$sub_1294_1297_1298$binop.data.out"],
-          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__1842.out"],
-          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__18421.out"],
+          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__1842.out"],
+          ["op_hcompute_curved_stencil$inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","op_hcompute_curved_stencil$inner_compute$const_p255__18421.out"],
           ["op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$raddr_slice.out","op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$mem.raddr"],
           ["op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$readreg$enMux$mux.data.in.0","op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$mem.rdata"],
           ["op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$waddr0.out","op_hcompute_curved_stencil$inner_compute$rom_curvea0$1$mem.waddr"],
@@ -6359,8 +6359,8 @@
           }
         },
         "connections":[
-          ["inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","inner_compute$const_p255__1842.out"],
-          ["inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","inner_compute$const_p255__18421.out"],
+          ["inner_compute$umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","inner_compute$const_p255__1842.out"],
+          ["inner_compute$umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","inner_compute$const_p255__18421.out"],
           ["self.clk","inner_compute$rom_curvea0$1$mem.clk"],
           ["inner_compute$rom_curvea0$1$raddr_slice.out","inner_compute$rom_curvea0$1$mem.raddr"],
           ["inner_compute$rom_curvea0$1$readreg$enMux$mux.data.in.0","inner_compute$rom_curvea0$1$mem.rdata"],
@@ -9645,7 +9645,7 @@
           "ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet":{
             "genref":"cgralib.Mem",
             "genargs":{"ID":["String","_U15"], "has_external_addrgen":["Bool",false], "has_flush":["Bool",true], "has_reset":["Bool",false], "has_stencil_valid":["Bool",true], "has_valid":["Bool",false], "num_inputs":["Int",1], "num_outputs":["Int",2], "use_prebuilt_mem":["Bool",true], "width":["Int",16]},
-            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[264],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,60],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,15]},"in2agg_0":{"cycle_starting_addr":[260],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,60],"write_data_starting_addr":[0],"write_data_stride":[1,4,12]},"sram2tb_0":{"cycle_starting_addr":[383],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,58],"read_data_starting_addr":[15],"read_data_stride":[1,15],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"sram2tb_1":{"cycle_starting_addr":[385],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,58],"read_data_starting_addr":[0],"read_data_stride":[1,15],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"stencil_valid":{"cycle_starting_addr":[389],"cycle_stride":[1,64],"dimensionality":2,"extent":[59,58]},"tb2out_0":{"cycle_starting_addr":[388],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,58],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]},"tb2out_1":{"cycle_starting_addr":[388],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,58],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "mode":["String","lake"]}
+            "modargs":{"config":["Json",{"agg2sram_0":{"cycle_starting_addr":[264],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,60],"read_data_starting_addr":[0],"read_data_stride":[1,3],"write_data_starting_addr":[0],"write_data_stride":[1,15]},"in2agg_0":{"cycle_starting_addr":[260],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,60],"write_data_starting_addr":[0],"write_data_stride":[1,4,12]},"sram2tb_0":{"cycle_starting_addr":[383],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,58],"read_data_starting_addr":[15],"read_data_stride":[1,15],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"sram2tb_1":{"cycle_starting_addr":[385],"cycle_stride":[4,64],"dimensionality":2,"extent":[15,58],"read_data_starting_addr":[0],"read_data_stride":[1,15],"write_data_starting_addr":[0],"write_data_stride":[1,3]},"stencil_valid":{"cycle_starting_addr":[390],"cycle_stride":[1,64],"dimensionality":2,"extent":[58,58]},"tb2out_0":{"cycle_starting_addr":[388],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,58],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]},"tb2out_1":{"cycle_starting_addr":[388],"cycle_stride":[1,4,64],"dimensionality":3,"extent":[4,15,58],"read_data_starting_addr":[0],"read_data_stride":[1,4,12]}}], "mode":["String","lake"]}
           }
         },
         "connections":[
@@ -9689,8 +9689,8 @@
           ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.stencil_valid","self.op_hcompute_demosaicked_1_stencil_read_extra_ctrl"],
           ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.data_in_0","self.op_hcompute_denoised_1_stencil_write.0"],
           ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.flush","self.reset"],
-          ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.clk_en","ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_clk_en_const.out"],
-          ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.rst_n","ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_clk_en_const1.out"]
+          ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.rst_n","ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_clk_en_const.out"],
+          ["ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_garnet.clk_en","ub_denoised_1_stencil_op_hcompute_denoised_1_stencil_8_to_denoised_1_stencil_op_hcompute_demosaicked_1_stencil_1_26_clk_en_const1.out"]
         ]
       },
       "hcompute_corrected_stencil":{
@@ -10010,8 +10010,8 @@
           }
         },
         "connections":[
-          ["umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","const_p255__1842.out"],
-          ["umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","const_p255__18421.out"],
+          ["umin_corrected_stencil_1_1842_1843$ucomp$compop.data.in.1","const_p255__1842.out"],
+          ["umin_corrected_stencil_1_1842_1843$min_mux$mux.data.in.1","const_p255__18421.out"],
           ["self.clk","rom_curvea0$1$mem.clk"],
           ["rom_curvea0$1$raddr_slice.out","rom_curvea0$1$mem.raddr"],
           ["rom_curvea0$1$readreg$enMux$mux.data.in.0","rom_curvea0$1$mem.rdata"],

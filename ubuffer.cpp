@@ -1490,7 +1490,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
 
 void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank_name) {
   auto outpt_sched = get_stencil_valid_sched(bank_name);
-  cout << "original outpt schedule: " << str(get_outpt_sched()) << endl;
+  cout << "original outpt schedule: " << str(outpt_sched) << endl;
   assert(isl_union_map_is_single_valued(outpt_sched));
 
   auto outpt_sched_1D = linear_schedule(to_map(outpt_sched), options.iis, 0, false);
