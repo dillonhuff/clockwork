@@ -1928,6 +1928,7 @@ wire [15:0] bank_0_data_in_0;
 wire [15:0] bank_0_write_addr_0;
 wire bank_0_wen_0;
 wire [15:0] bank_0_data_out_0;
+wire bank_0_data_out_0_valid;
 wire [15:0] bank_0_read_addr_0;
 wire bank_0_ren_0;
 wire bank_0_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_52_ctrl_clk;
@@ -1950,6 +1951,7 @@ wire [15:0] bank_1_data_in_0;
 wire [15:0] bank_1_write_addr_0;
 wire bank_1_wen_0;
 wire [15:0] bank_1_data_out_0;
+wire bank_1_data_out_0_valid;
 wire [15:0] bank_1_read_addr_0;
 wire bank_1_ren_0;
 wire bank_10_rst_n;
@@ -1962,6 +1964,7 @@ wire [15:0] bank_10_data_in_0;
 wire [15:0] bank_10_write_addr_0;
 wire bank_10_wen_0;
 wire [15:0] bank_10_data_out_0;
+wire bank_10_data_out_0_valid;
 wire [15:0] bank_10_read_addr_0;
 wire bank_10_ren_0;
 wire bank_10_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_ctrl_clk;
@@ -1984,6 +1987,7 @@ wire [15:0] bank_11_data_in_0;
 wire [15:0] bank_11_write_addr_0;
 wire bank_11_wen_0;
 wire [15:0] bank_11_data_out_0;
+wire bank_11_data_out_0_valid;
 wire [15:0] bank_11_read_addr_0;
 wire bank_11_ren_0;
 wire bank_11_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_19_ctrl_clk;
@@ -2006,6 +2010,7 @@ wire [15:0] bank_12_data_in_0;
 wire [15:0] bank_12_write_addr_0;
 wire bank_12_wen_0;
 wire [15:0] bank_12_data_out_0;
+wire bank_12_data_out_0_valid;
 wire [15:0] bank_12_read_addr_0;
 wire bank_12_ren_0;
 wire bank_12_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_56_ctrl_clk;
@@ -2028,6 +2033,7 @@ wire [15:0] bank_13_data_in_0;
 wire [15:0] bank_13_write_addr_0;
 wire bank_13_wen_0;
 wire [15:0] bank_13_data_out_0;
+wire bank_13_data_out_0_valid;
 wire [15:0] bank_13_read_addr_0;
 wire bank_13_ren_0;
 wire bank_13_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_ctrl_clk;
@@ -2050,6 +2056,7 @@ wire [15:0] bank_14_data_in_0;
 wire [15:0] bank_14_write_addr_0;
 wire bank_14_wen_0;
 wire [15:0] bank_14_data_out_0;
+wire bank_14_data_out_0_valid;
 wire [15:0] bank_14_read_addr_0;
 wire bank_14_ren_0;
 wire bank_14_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_20_ctrl_clk;
@@ -2072,6 +2079,7 @@ wire [15:0] bank_15_data_in_0;
 wire [15:0] bank_15_write_addr_0;
 wire bank_15_wen_0;
 wire [15:0] bank_15_data_out_0;
+wire bank_15_data_out_0_valid;
 wire [15:0] bank_15_read_addr_0;
 wire bank_15_ren_0;
 wire bank_15_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_57_ctrl_clk;
@@ -2094,6 +2102,7 @@ wire [15:0] bank_16_data_in_0;
 wire [15:0] bank_16_write_addr_0;
 wire bank_16_wen_0;
 wire [15:0] bank_16_data_out_0;
+wire bank_16_data_out_0_valid;
 wire [15:0] bank_16_read_addr_0;
 wire bank_16_ren_0;
 wire bank_16_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_ctrl_clk;
@@ -2116,6 +2125,7 @@ wire [15:0] bank_17_data_in_0;
 wire [15:0] bank_17_write_addr_0;
 wire bank_17_wen_0;
 wire [15:0] bank_17_data_out_0;
+wire bank_17_data_out_0_valid;
 wire [15:0] bank_17_read_addr_0;
 wire bank_17_ren_0;
 wire bank_17_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_21_ctrl_clk;
@@ -2138,6 +2148,7 @@ wire [15:0] bank_18_data_in_0;
 wire [15:0] bank_18_write_addr_0;
 wire bank_18_wen_0;
 wire [15:0] bank_18_data_out_0;
+wire bank_18_data_out_0_valid;
 wire [15:0] bank_18_read_addr_0;
 wire bank_18_ren_0;
 wire bank_18_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_59_ctrl_clk;
@@ -2160,6 +2171,7 @@ wire [15:0] bank_19_data_in_0;
 wire [15:0] bank_19_write_addr_0;
 wire bank_19_wen_0;
 wire [15:0] bank_19_data_out_0;
+wire bank_19_data_out_0_valid;
 wire [15:0] bank_19_read_addr_0;
 wire bank_19_ren_0;
 wire bank_19_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_ctrl_clk;
@@ -2192,6 +2204,7 @@ wire [15:0] bank_2_data_in_0;
 wire [15:0] bank_2_write_addr_0;
 wire bank_2_wen_0;
 wire [15:0] bank_2_data_out_0;
+wire bank_2_data_out_0_valid;
 wire [15:0] bank_2_read_addr_0;
 wire bank_2_ren_0;
 wire bank_20_rst_n;
@@ -2204,6 +2217,7 @@ wire [15:0] bank_20_data_in_0;
 wire [15:0] bank_20_write_addr_0;
 wire bank_20_wen_0;
 wire [15:0] bank_20_data_out_0;
+wire bank_20_data_out_0_valid;
 wire [15:0] bank_20_read_addr_0;
 wire bank_20_ren_0;
 wire bank_20_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_23_ctrl_clk;
@@ -2226,6 +2240,7 @@ wire [15:0] bank_21_data_in_0;
 wire [15:0] bank_21_write_addr_0;
 wire bank_21_wen_0;
 wire [15:0] bank_21_data_out_0;
+wire bank_21_data_out_0_valid;
 wire [15:0] bank_21_read_addr_0;
 wire bank_21_ren_0;
 wire bank_21_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_58_ctrl_clk;
@@ -2248,6 +2263,7 @@ wire [15:0] bank_22_data_in_0;
 wire [15:0] bank_22_write_addr_0;
 wire bank_22_wen_0;
 wire [15:0] bank_22_data_out_0;
+wire bank_22_data_out_0_valid;
 wire [15:0] bank_22_read_addr_0;
 wire bank_22_ren_0;
 wire bank_22_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_ctrl_clk;
@@ -2270,6 +2286,7 @@ wire [15:0] bank_23_data_in_0;
 wire [15:0] bank_23_write_addr_0;
 wire bank_23_wen_0;
 wire [15:0] bank_23_data_out_0;
+wire bank_23_data_out_0_valid;
 wire [15:0] bank_23_read_addr_0;
 wire bank_23_ren_0;
 wire bank_23_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_22_ctrl_clk;
@@ -2302,6 +2319,7 @@ wire [15:0] bank_3_data_in_0;
 wire [15:0] bank_3_write_addr_0;
 wire bank_3_wen_0;
 wire [15:0] bank_3_data_out_0;
+wire bank_3_data_out_0_valid;
 wire [15:0] bank_3_read_addr_0;
 wire bank_3_ren_0;
 wire bank_3_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_53_ctrl_clk;
@@ -2324,6 +2342,7 @@ wire [15:0] bank_4_data_in_0;
 wire [15:0] bank_4_write_addr_0;
 wire bank_4_wen_0;
 wire [15:0] bank_4_data_out_0;
+wire bank_4_data_out_0_valid;
 wire [15:0] bank_4_read_addr_0;
 wire bank_4_ren_0;
 wire bank_4_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_ctrl_clk;
@@ -2346,6 +2365,7 @@ wire [15:0] bank_5_data_in_0;
 wire [15:0] bank_5_write_addr_0;
 wire bank_5_wen_0;
 wire [15:0] bank_5_data_out_0;
+wire bank_5_data_out_0_valid;
 wire [15:0] bank_5_read_addr_0;
 wire bank_5_ren_0;
 wire bank_5_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_17_ctrl_clk;
@@ -2368,6 +2388,7 @@ wire [15:0] bank_6_data_in_0;
 wire [15:0] bank_6_write_addr_0;
 wire bank_6_wen_0;
 wire [15:0] bank_6_data_out_0;
+wire bank_6_data_out_0_valid;
 wire [15:0] bank_6_read_addr_0;
 wire bank_6_ren_0;
 wire bank_6_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_54_ctrl_clk;
@@ -2390,6 +2411,7 @@ wire [15:0] bank_7_data_in_0;
 wire [15:0] bank_7_write_addr_0;
 wire bank_7_wen_0;
 wire [15:0] bank_7_data_out_0;
+wire bank_7_data_out_0_valid;
 wire [15:0] bank_7_read_addr_0;
 wire bank_7_ren_0;
 wire bank_7_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_ctrl_clk;
@@ -2412,6 +2434,7 @@ wire [15:0] bank_8_data_in_0;
 wire [15:0] bank_8_write_addr_0;
 wire bank_8_wen_0;
 wire [15:0] bank_8_data_out_0;
+wire bank_8_data_out_0_valid;
 wire [15:0] bank_8_read_addr_0;
 wire bank_8_ren_0;
 wire bank_8_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_18_ctrl_clk;
@@ -2434,6 +2457,7 @@ wire [15:0] bank_9_data_in_0;
 wire [15:0] bank_9_write_addr_0;
 wire bank_9_wen_0;
 wire [15:0] bank_9_data_out_0;
+wire bank_9_data_out_0_valid;
 wire [15:0] bank_9_read_addr_0;
 wire bank_9_ren_0;
 wire bank_9_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_55_ctrl_clk;
@@ -2912,7 +2936,7 @@ assign bank_0_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_0_wen_0 = bank_0_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1128_out == 16'h0000);
 assign bank_0_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_52_U1150_out;
 assign bank_0_ren_0 = bank_0_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_52_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_0 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_0 (
     .rst_n(bank_0_rst_n),
     .chain_chain_en(bank_0_chain_chain_en),
     .clk_en(bank_0_clk_en),
@@ -2923,6 +2947,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_addrgenTru
     .write_addr_0(bank_0_write_addr_0),
     .wen_0(bank_0_wen_0),
     .data_out_0(bank_0_data_out_0),
+    .data_out_0_valid(bank_0_data_out_0_valid),
     .read_addr_0(bank_0_read_addr_0),
     .ren_0(bank_0_ren_0)
 );
@@ -2956,7 +2981,7 @@ assign bank_1_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_1_wen_0 = bank_1_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1208_out == 16'h0001);
 assign bank_1_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41_U1230_out;
 assign bank_1_ren_0 = bank_1_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_41_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_1 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_1 (
     .rst_n(bank_1_rst_n),
     .chain_chain_en(bank_1_chain_chain_en),
     .clk_en(bank_1_clk_en),
@@ -2967,6 +2992,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_addrgenTru
     .write_addr_0(bank_1_write_addr_0),
     .wen_0(bank_1_wen_0),
     .data_out_0(bank_1_data_out_0),
+    .data_out_0_valid(bank_1_data_out_0_valid),
     .read_addr_0(bank_1_read_addr_0),
     .ren_0(bank_1_ren_0)
 );
@@ -2980,7 +3006,7 @@ assign bank_10_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_10_wen_0 = bank_10_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1928_out == 16'h000a);
 assign bank_10_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_U1950_out;
 assign bank_10_ren_0 = bank_10_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_36_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_10 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_10 (
     .rst_n(bank_10_rst_n),
     .chain_chain_en(bank_10_chain_chain_en),
     .clk_en(bank_10_clk_en),
@@ -2991,6 +3017,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_addrgenTr
     .write_addr_0(bank_10_write_addr_0),
     .wen_0(bank_10_wen_0),
     .data_out_0(bank_10_data_out_0),
+    .data_out_0_valid(bank_10_data_out_0_valid),
     .read_addr_0(bank_10_read_addr_0),
     .ren_0(bank_10_ren_0)
 );
@@ -3024,7 +3051,7 @@ assign bank_11_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_11_wen_0 = bank_11_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2008_out == 16'h000b);
 assign bank_11_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_19_U2030_out;
 assign bank_11_ren_0 = bank_11_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_19_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_11 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_11 (
     .rst_n(bank_11_rst_n),
     .chain_chain_en(bank_11_chain_chain_en),
     .clk_en(bank_11_clk_en),
@@ -3035,6 +3062,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_addrgenTr
     .write_addr_0(bank_11_write_addr_0),
     .wen_0(bank_11_wen_0),
     .data_out_0(bank_11_data_out_0),
+    .data_out_0_valid(bank_11_data_out_0_valid),
     .read_addr_0(bank_11_read_addr_0),
     .ren_0(bank_11_ren_0)
 );
@@ -3068,7 +3096,7 @@ assign bank_12_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_12_wen_0 = bank_12_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2088_out == 16'h000c);
 assign bank_12_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_56_U2110_out;
 assign bank_12_ren_0 = bank_12_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_56_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_12 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_12 (
     .rst_n(bank_12_rst_n),
     .chain_chain_en(bank_12_chain_chain_en),
     .clk_en(bank_12_clk_en),
@@ -3079,6 +3107,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_addrgenTr
     .write_addr_0(bank_12_write_addr_0),
     .wen_0(bank_12_wen_0),
     .data_out_0(bank_12_data_out_0),
+    .data_out_0_valid(bank_12_data_out_0_valid),
     .read_addr_0(bank_12_read_addr_0),
     .ren_0(bank_12_ren_0)
 );
@@ -3112,7 +3141,7 @@ assign bank_13_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_13_wen_0 = bank_13_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2168_out == 16'h000d);
 assign bank_13_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_U2190_out;
 assign bank_13_ren_0 = bank_13_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_37_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_13 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_13 (
     .rst_n(bank_13_rst_n),
     .chain_chain_en(bank_13_chain_chain_en),
     .clk_en(bank_13_clk_en),
@@ -3123,6 +3152,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_addrgenTr
     .write_addr_0(bank_13_write_addr_0),
     .wen_0(bank_13_wen_0),
     .data_out_0(bank_13_data_out_0),
+    .data_out_0_valid(bank_13_data_out_0_valid),
     .read_addr_0(bank_13_read_addr_0),
     .ren_0(bank_13_ren_0)
 );
@@ -3156,7 +3186,7 @@ assign bank_14_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_14_wen_0 = bank_14_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2248_out == 16'h000e);
 assign bank_14_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_20_U2270_out;
 assign bank_14_ren_0 = bank_14_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_20_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_14 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_14 (
     .rst_n(bank_14_rst_n),
     .chain_chain_en(bank_14_chain_chain_en),
     .clk_en(bank_14_clk_en),
@@ -3167,6 +3197,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_addrgenTr
     .write_addr_0(bank_14_write_addr_0),
     .wen_0(bank_14_wen_0),
     .data_out_0(bank_14_data_out_0),
+    .data_out_0_valid(bank_14_data_out_0_valid),
     .read_addr_0(bank_14_read_addr_0),
     .ren_0(bank_14_ren_0)
 );
@@ -3200,7 +3231,7 @@ assign bank_15_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_15_wen_0 = bank_15_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2328_out == 16'h000f);
 assign bank_15_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_57_U2350_out;
 assign bank_15_ren_0 = bank_15_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_57_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_15 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_15 (
     .rst_n(bank_15_rst_n),
     .chain_chain_en(bank_15_chain_chain_en),
     .clk_en(bank_15_clk_en),
@@ -3211,6 +3242,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_addrgenTr
     .write_addr_0(bank_15_write_addr_0),
     .wen_0(bank_15_wen_0),
     .data_out_0(bank_15_data_out_0),
+    .data_out_0_valid(bank_15_data_out_0_valid),
     .read_addr_0(bank_15_read_addr_0),
     .ren_0(bank_15_ren_0)
 );
@@ -3244,7 +3276,7 @@ assign bank_16_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_16_wen_0 = bank_16_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2408_out == 16'h0010);
 assign bank_16_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_U2430_out;
 assign bank_16_ren_0 = bank_16_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_38_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_16 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_16 (
     .rst_n(bank_16_rst_n),
     .chain_chain_en(bank_16_chain_chain_en),
     .clk_en(bank_16_clk_en),
@@ -3255,6 +3287,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_addrgenTr
     .write_addr_0(bank_16_write_addr_0),
     .wen_0(bank_16_wen_0),
     .data_out_0(bank_16_data_out_0),
+    .data_out_0_valid(bank_16_data_out_0_valid),
     .read_addr_0(bank_16_read_addr_0),
     .ren_0(bank_16_ren_0)
 );
@@ -3288,7 +3321,7 @@ assign bank_17_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_17_wen_0 = bank_17_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2488_out == 16'h0011);
 assign bank_17_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_21_U2510_out;
 assign bank_17_ren_0 = bank_17_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_21_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_17 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_17 (
     .rst_n(bank_17_rst_n),
     .chain_chain_en(bank_17_chain_chain_en),
     .clk_en(bank_17_clk_en),
@@ -3299,6 +3332,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_addrgenTr
     .write_addr_0(bank_17_write_addr_0),
     .wen_0(bank_17_wen_0),
     .data_out_0(bank_17_data_out_0),
+    .data_out_0_valid(bank_17_data_out_0_valid),
     .read_addr_0(bank_17_read_addr_0),
     .ren_0(bank_17_ren_0)
 );
@@ -3332,7 +3366,7 @@ assign bank_18_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_18_wen_0 = bank_18_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2568_out == 16'h0012);
 assign bank_18_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_59_U2590_out;
 assign bank_18_ren_0 = bank_18_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_59_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_18 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_18 (
     .rst_n(bank_18_rst_n),
     .chain_chain_en(bank_18_chain_chain_en),
     .clk_en(bank_18_clk_en),
@@ -3343,6 +3377,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_addrgenTr
     .write_addr_0(bank_18_write_addr_0),
     .wen_0(bank_18_wen_0),
     .data_out_0(bank_18_data_out_0),
+    .data_out_0_valid(bank_18_data_out_0_valid),
     .read_addr_0(bank_18_read_addr_0),
     .ren_0(bank_18_ren_0)
 );
@@ -3376,7 +3411,7 @@ assign bank_19_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_19_wen_0 = bank_19_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2648_out == 16'h0013);
 assign bank_19_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_U2670_out;
 assign bank_19_ren_0 = bank_19_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_40_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_19 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_19 (
     .rst_n(bank_19_rst_n),
     .chain_chain_en(bank_19_chain_chain_en),
     .clk_en(bank_19_clk_en),
@@ -3387,6 +3422,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_addrgenTr
     .write_addr_0(bank_19_write_addr_0),
     .wen_0(bank_19_wen_0),
     .data_out_0(bank_19_data_out_0),
+    .data_out_0_valid(bank_19_data_out_0_valid),
     .read_addr_0(bank_19_read_addr_0),
     .ren_0(bank_19_ren_0)
 );
@@ -3440,7 +3476,7 @@ assign bank_2_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_2_wen_0 = bank_2_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1288_out == 16'h0002);
 assign bank_2_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_16_U1310_out;
 assign bank_2_ren_0 = bank_2_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_16_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_2 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_2 (
     .rst_n(bank_2_rst_n),
     .chain_chain_en(bank_2_chain_chain_en),
     .clk_en(bank_2_clk_en),
@@ -3451,6 +3487,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_addrgenTru
     .write_addr_0(bank_2_write_addr_0),
     .wen_0(bank_2_wen_0),
     .data_out_0(bank_2_data_out_0),
+    .data_out_0_valid(bank_2_data_out_0_valid),
     .read_addr_0(bank_2_read_addr_0),
     .ren_0(bank_2_ren_0)
 );
@@ -3464,7 +3501,7 @@ assign bank_20_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_20_wen_0 = bank_20_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2728_out == 16'h0014);
 assign bank_20_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_23_U2750_out;
 assign bank_20_ren_0 = bank_20_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_23_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_20 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_20 (
     .rst_n(bank_20_rst_n),
     .chain_chain_en(bank_20_chain_chain_en),
     .clk_en(bank_20_clk_en),
@@ -3475,6 +3512,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_addrgenTr
     .write_addr_0(bank_20_write_addr_0),
     .wen_0(bank_20_wen_0),
     .data_out_0(bank_20_data_out_0),
+    .data_out_0_valid(bank_20_data_out_0_valid),
     .read_addr_0(bank_20_read_addr_0),
     .ren_0(bank_20_ren_0)
 );
@@ -3508,7 +3546,7 @@ assign bank_21_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_21_wen_0 = bank_21_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2808_out == 16'h0015);
 assign bank_21_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_58_U2830_out;
 assign bank_21_ren_0 = bank_21_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_58_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_21 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_21 (
     .rst_n(bank_21_rst_n),
     .chain_chain_en(bank_21_chain_chain_en),
     .clk_en(bank_21_clk_en),
@@ -3519,6 +3557,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_addrgenTr
     .write_addr_0(bank_21_write_addr_0),
     .wen_0(bank_21_wen_0),
     .data_out_0(bank_21_data_out_0),
+    .data_out_0_valid(bank_21_data_out_0_valid),
     .read_addr_0(bank_21_read_addr_0),
     .ren_0(bank_21_ren_0)
 );
@@ -3552,7 +3591,7 @@ assign bank_22_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_22_wen_0 = bank_22_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2888_out == 16'h0016);
 assign bank_22_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_U2910_out;
 assign bank_22_ren_0 = bank_22_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_39_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_22 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_22 (
     .rst_n(bank_22_rst_n),
     .chain_chain_en(bank_22_chain_chain_en),
     .clk_en(bank_22_clk_en),
@@ -3563,6 +3602,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_addrgenTr
     .write_addr_0(bank_22_write_addr_0),
     .wen_0(bank_22_wen_0),
     .data_out_0(bank_22_data_out_0),
+    .data_out_0_valid(bank_22_data_out_0_valid),
     .read_addr_0(bank_22_read_addr_0),
     .ren_0(bank_22_ren_0)
 );
@@ -3596,7 +3636,7 @@ assign bank_23_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_
 assign bank_23_wen_0 = bank_23_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U2968_out == 16'h0017);
 assign bank_23_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_22_U2990_out;
 assign bank_23_ren_0 = bank_23_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_22_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_23__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_23 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_23__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_23 (
     .rst_n(bank_23_rst_n),
     .chain_chain_en(bank_23_chain_chain_en),
     .clk_en(bank_23_clk_en),
@@ -3607,6 +3647,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_23__has_external_addrgenTr
     .write_addr_0(bank_23_write_addr_0),
     .wen_0(bank_23_wen_0),
     .data_out_0(bank_23_data_out_0),
+    .data_out_0_valid(bank_23_data_out_0_valid),
     .read_addr_0(bank_23_read_addr_0),
     .ren_0(bank_23_ren_0)
 );
@@ -3660,7 +3701,7 @@ assign bank_3_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_3_wen_0 = bank_3_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1368_out == 16'h0003);
 assign bank_3_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_53_U1390_out;
 assign bank_3_ren_0 = bank_3_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_53_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_3 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_3 (
     .rst_n(bank_3_rst_n),
     .chain_chain_en(bank_3_chain_chain_en),
     .clk_en(bank_3_clk_en),
@@ -3671,6 +3712,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_addrgenTru
     .write_addr_0(bank_3_write_addr_0),
     .wen_0(bank_3_wen_0),
     .data_out_0(bank_3_data_out_0),
+    .data_out_0_valid(bank_3_data_out_0_valid),
     .read_addr_0(bank_3_read_addr_0),
     .ren_0(bank_3_ren_0)
 );
@@ -3704,7 +3746,7 @@ assign bank_4_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_4_wen_0 = bank_4_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1448_out == 16'h0004);
 assign bank_4_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_U1470_out;
 assign bank_4_ren_0 = bank_4_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_34_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_4 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_4 (
     .rst_n(bank_4_rst_n),
     .chain_chain_en(bank_4_chain_chain_en),
     .clk_en(bank_4_clk_en),
@@ -3715,6 +3757,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_addrgenTru
     .write_addr_0(bank_4_write_addr_0),
     .wen_0(bank_4_wen_0),
     .data_out_0(bank_4_data_out_0),
+    .data_out_0_valid(bank_4_data_out_0_valid),
     .read_addr_0(bank_4_read_addr_0),
     .ren_0(bank_4_ren_0)
 );
@@ -3748,7 +3791,7 @@ assign bank_5_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_5_wen_0 = bank_5_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1528_out == 16'h0005);
 assign bank_5_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_17_U1550_out;
 assign bank_5_ren_0 = bank_5_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_17_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_5 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_5 (
     .rst_n(bank_5_rst_n),
     .chain_chain_en(bank_5_chain_chain_en),
     .clk_en(bank_5_clk_en),
@@ -3759,6 +3802,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_addrgenTru
     .write_addr_0(bank_5_write_addr_0),
     .wen_0(bank_5_wen_0),
     .data_out_0(bank_5_data_out_0),
+    .data_out_0_valid(bank_5_data_out_0_valid),
     .read_addr_0(bank_5_read_addr_0),
     .ren_0(bank_5_ren_0)
 );
@@ -3792,7 +3836,7 @@ assign bank_6_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_6_wen_0 = bank_6_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1608_out == 16'h0006);
 assign bank_6_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_54_U1630_out;
 assign bank_6_ren_0 = bank_6_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_54_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_6 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_6 (
     .rst_n(bank_6_rst_n),
     .chain_chain_en(bank_6_chain_chain_en),
     .clk_en(bank_6_clk_en),
@@ -3803,6 +3847,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_addrgenTru
     .write_addr_0(bank_6_write_addr_0),
     .wen_0(bank_6_wen_0),
     .data_out_0(bank_6_data_out_0),
+    .data_out_0_valid(bank_6_data_out_0_valid),
     .read_addr_0(bank_6_read_addr_0),
     .ren_0(bank_6_ren_0)
 );
@@ -3836,7 +3881,7 @@ assign bank_7_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_7_wen_0 = bank_7_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1688_out == 16'h0007);
 assign bank_7_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_U1710_out;
 assign bank_7_ren_0 = bank_7_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_4_35_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_7 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_7 (
     .rst_n(bank_7_rst_n),
     .chain_chain_en(bank_7_chain_chain_en),
     .clk_en(bank_7_clk_en),
@@ -3847,6 +3892,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_addrgenTru
     .write_addr_0(bank_7_write_addr_0),
     .wen_0(bank_7_wen_0),
     .data_out_0(bank_7_data_out_0),
+    .data_out_0_valid(bank_7_data_out_0_valid),
     .read_addr_0(bank_7_read_addr_0),
     .ren_0(bank_7_ren_0)
 );
@@ -3880,7 +3926,7 @@ assign bank_8_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_8_wen_0 = bank_8_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1768_out == 16'h0008);
 assign bank_8_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_18_U1790_out;
 assign bank_8_ren_0 = bank_8_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_5_18_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_8 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_8 (
     .rst_n(bank_8_rst_n),
     .chain_chain_en(bank_8_chain_chain_en),
     .clk_en(bank_8_clk_en),
@@ -3891,6 +3937,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_addrgenTru
     .write_addr_0(bank_8_write_addr_0),
     .wen_0(bank_8_wen_0),
     .data_out_0(bank_8_data_out_0),
+    .data_out_0_valid(bank_8_data_out_0_valid),
     .read_addr_0(bank_8_read_addr_0),
     .ren_0(bank_8_ren_0)
 );
@@ -3924,7 +3971,7 @@ assign bank_9_write_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_o
 assign bank_9_wen_0 = bank_9_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_ctrl_valid & (bank_selector_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_2_U1848_out == 16'h0009);
 assign bank_9_read_addr_0 = inner_bank_offsethw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_55_U1870_out;
 assign bank_9_ren_0 = bank_9_hw_kernel_global_wrapper_stencil_op_hcompute_conv_stencil_3_55_ctrl_valid;
-cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_9 (
+cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_9 (
     .rst_n(bank_9_rst_n),
     .chain_chain_en(bank_9_chain_chain_en),
     .clk_en(bank_9_clk_en),
@@ -3935,6 +3982,7 @@ cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_addrgenTru
     .write_addr_0(bank_9_write_addr_0),
     .wen_0(bank_9_wen_0),
     .data_out_0(bank_9_data_out_0),
+    .data_out_0_valid(bank_9_data_out_0_valid),
     .read_addr_0(bank_9_read_addr_0),
     .ren_0(bank_9_ren_0)
 );
@@ -4970,9 +5018,11 @@ wire [15:0] bank_0_data_in_1;
 wire [15:0] bank_0_write_addr_1;
 wire bank_0_wen_1;
 wire [15:0] bank_0_data_out_0;
+wire bank_0_data_out_0_valid;
 wire [15:0] bank_0_read_addr_0;
 wire bank_0_ren_0;
 wire [15:0] bank_0_data_out_1;
+wire bank_0_data_out_1_valid;
 wire [15:0] bank_0_read_addr_1;
 wire bank_0_ren_1;
 wire bank_0_conv_stencil_op_hcompute_conv_stencil_3_42_ctrl_clk;
@@ -5008,9 +5058,11 @@ wire [15:0] bank_1_data_in_1;
 wire [15:0] bank_1_write_addr_1;
 wire bank_1_wen_1;
 wire [15:0] bank_1_data_out_0;
+wire bank_1_data_out_0_valid;
 wire [15:0] bank_1_read_addr_0;
 wire bank_1_ren_0;
 wire [15:0] bank_1_data_out_1;
+wire bank_1_data_out_1_valid;
 wire [15:0] bank_1_read_addr_1;
 wire bank_1_ren_1;
 wire bank_1_conv_stencil_op_hcompute_conv_stencil_1_61_ctrl_clk;
@@ -5046,9 +5098,11 @@ wire [15:0] bank_2_data_in_1;
 wire [15:0] bank_2_write_addr_1;
 wire bank_2_wen_1;
 wire [15:0] bank_2_data_out_0;
+wire bank_2_data_out_0_valid;
 wire [15:0] bank_2_read_addr_0;
 wire bank_2_ren_0;
 wire [15:0] bank_2_data_out_1;
+wire bank_2_data_out_1_valid;
 wire [15:0] bank_2_read_addr_1;
 wire bank_2_ren_1;
 wire bank_2_conv_stencil_op_hcompute_conv_stencil_2_60_ctrl_clk;
@@ -5100,6 +5154,7 @@ wire [15:0] conv_stencil_op_hcompute_conv_stencil_4_25_net;
 wire [15:0] conv_stencil_op_hcompute_conv_stencil_5_7_net;
 wire [15:0] conv_stencil_op_hcompute_hw_output_stencil_1_net;
 wire eq_const_U139_out;
+wire eq_const_U173_out;
 wire eq_const_U200_out;
 wire eq_const_U239_out;
 wire eq_const_U279_out;
@@ -5107,6 +5162,7 @@ wire eq_const_U313_out;
 wire eq_const_U340_out;
 wire eq_const_U379_out;
 wire eq_const_U419_out;
+wire eq_const_U453_out;
 wire eq_const_U72_out;
 wire eq_const_U99_out;
 wire [15:0] inner_bank_offsetconv_stencil_op_hcompute_conv_stencil_1_61_U187_out;
@@ -5202,7 +5258,7 @@ assign bank_0_read_addr_0 = inner_bank_offsetconv_stencil_op_hcompute_conv_stenc
 assign bank_0_ren_0 = bank_0_conv_stencil_op_hcompute_conv_stencil_3_43_ctrl_valid;
 assign bank_0_read_addr_1 = inner_bank_offsetconv_stencil_op_hcompute_hw_output_stencil_1_U156_out;
 assign bank_0_ren_1 = bank_0_conv_stencil_op_hcompute_hw_output_stencil_1_ctrl_valid;
-cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 bank_0 (
+cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 bank_0 (
     .rst_n(bank_0_rst_n),
     .chain_chain_en(bank_0_chain_chain_en),
     .clk_en(bank_0_clk_en),
@@ -5216,9 +5272,11 @@ cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushFalse__h
     .write_addr_1(bank_0_write_addr_1),
     .wen_1(bank_0_wen_1),
     .data_out_0(bank_0_data_out_0),
+    .data_out_0_valid(bank_0_data_out_0_valid),
     .read_addr_0(bank_0_read_addr_0),
     .ren_0(bank_0_ren_0),
     .data_out_1(bank_0_data_out_1),
+    .data_out_1_valid(bank_0_data_out_1_valid),
     .read_addr_1(bank_0_read_addr_1),
     .ren_1(bank_0_ren_1)
 );
@@ -5277,7 +5335,7 @@ assign bank_1_read_addr_0 = inner_bank_offsetconv_stencil_op_hcompute_conv_stenc
 assign bank_1_ren_0 = bank_1_conv_stencil_op_hcompute_conv_stencil_4_25_ctrl_valid;
 assign bank_1_read_addr_1 = inner_bank_offsetconv_stencil_op_hcompute_hw_output_stencil_1_U296_out;
 assign bank_1_ren_1 = bank_1_conv_stencil_op_hcompute_hw_output_stencil_1_ctrl_valid;
-cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 bank_1 (
+cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 bank_1 (
     .rst_n(bank_1_rst_n),
     .chain_chain_en(bank_1_chain_chain_en),
     .clk_en(bank_1_clk_en),
@@ -5291,9 +5349,11 @@ cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushFalse__h
     .write_addr_1(bank_1_write_addr_1),
     .wen_1(bank_1_wen_1),
     .data_out_0(bank_1_data_out_0),
+    .data_out_0_valid(bank_1_data_out_0_valid),
     .read_addr_0(bank_1_read_addr_0),
     .ren_0(bank_1_ren_0),
     .data_out_1(bank_1_data_out_1),
+    .data_out_1_valid(bank_1_data_out_1_valid),
     .read_addr_1(bank_1_read_addr_1),
     .ren_1(bank_1_ren_1)
 );
@@ -5352,7 +5412,7 @@ assign bank_2_read_addr_0 = inner_bank_offsetconv_stencil_op_hcompute_conv_stenc
 assign bank_2_ren_0 = bank_2_conv_stencil_op_hcompute_conv_stencil_5_7_ctrl_valid;
 assign bank_2_read_addr_1 = inner_bank_offsetconv_stencil_op_hcompute_hw_output_stencil_1_U436_out;
 assign bank_2_ren_1 = bank_2_conv_stencil_op_hcompute_hw_output_stencil_1_ctrl_valid;
-cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 bank_2 (
+cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 bank_2 (
     .rst_n(bank_2_rst_n),
     .chain_chain_en(bank_2_chain_chain_en),
     .clk_en(bank_2_clk_en),
@@ -5366,9 +5426,11 @@ cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushFalse__h
     .write_addr_1(bank_2_write_addr_1),
     .wen_1(bank_2_wen_1),
     .data_out_0(bank_2_data_out_0),
+    .data_out_0_valid(bank_2_data_out_0_valid),
     .read_addr_0(bank_2_read_addr_0),
     .ren_0(bank_2_ren_0),
     .data_out_1(bank_2_data_out_1),
+    .data_out_1_valid(bank_2_data_out_1_valid),
     .read_addr_1(bank_2_read_addr_1),
     .ren_1(bank_2_ren_1)
 );
@@ -5514,8 +5576,9 @@ aff__U437 bank_selector_conv_stencil_op_hcompute_hw_output_stencil_1_U451 (
 assign conv_stencil_op_hcompute_conv_stencil_3_43_net = bank_0_data_out_0;
 assign conv_stencil_op_hcompute_conv_stencil_4_25_net = bank_1_data_out_0;
 assign conv_stencil_op_hcompute_conv_stencil_5_7_net = bank_2_data_out_0;
-assign conv_stencil_op_hcompute_hw_output_stencil_1_net = _U172_out == 16'h0000 ? bank_0_data_out_1 : _U452_out == 16'h0002 ? bank_2_data_out_1 : bank_1_data_out_1;
+assign conv_stencil_op_hcompute_hw_output_stencil_1_net = bank_0_data_out_1_valid ? bank_0_data_out_1 : bank_2_data_out_1_valid ? bank_2_data_out_1 : bank_1_data_out_1;
 assign eq_const_U139_out = _U138_out == 16'h0000;
+assign eq_const_U173_out = _U172_out == 16'h0000;
 assign eq_const_U200_out = bank_selector_conv_stencil_op_hcompute_conv_stencil_1_61_U199_out == 16'h0001;
 assign eq_const_U239_out = bank_selector_conv_stencil_op_hcompute_conv_stencil_4_24_U238_out == 16'h0001;
 assign eq_const_U279_out = _U278_out == 16'h0001;
@@ -5523,6 +5586,7 @@ assign eq_const_U313_out = _U312_out == 16'h0001;
 assign eq_const_U340_out = bank_selector_conv_stencil_op_hcompute_conv_stencil_2_60_U339_out == 16'h0002;
 assign eq_const_U379_out = bank_selector_conv_stencil_op_hcompute_conv_stencil_5_6_U378_out == 16'h0002;
 assign eq_const_U419_out = _U418_out == 16'h0002;
+assign eq_const_U453_out = _U452_out == 16'h0002;
 assign eq_const_U72_out = bank_selector_conv_stencil_op_hcompute_conv_stencil_3_42_U71_out == 16'h0000;
 assign eq_const_U99_out = bank_selector_conv_stencil_op_hcompute_conv_stencil_62_U98_out == 16'h0000;
 assign inner_bank_offsetconv_stencil_op_hcompute_conv_stencil_1_61_U187_d[2] = bank_1_conv_stencil_op_hcompute_conv_stencil_1_61_ctrl_d[2];
@@ -5680,6 +5744,7 @@ wire [15:0] bank_0_data_in_0;
 wire [15:0] bank_0_write_addr_0;
 wire bank_0_wen_0;
 wire [15:0] bank_0_data_out_0;
+wire bank_0_data_out_0_valid;
 wire [15:0] bank_0_read_addr_0;
 wire bank_0_ren_0;
 wire bank_0_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_ctrl_clk;
@@ -5702,6 +5767,7 @@ wire [15:0] bank_1_data_in_0;
 wire [15:0] bank_1_write_addr_0;
 wire bank_1_wen_0;
 wire [15:0] bank_1_data_out_0;
+wire bank_1_data_out_0_valid;
 wire [15:0] bank_1_read_addr_0;
 wire bank_1_ren_0;
 wire bank_1_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_ctrl_clk;
@@ -5724,6 +5790,7 @@ wire [15:0] bank_2_data_in_0;
 wire [15:0] bank_2_write_addr_0;
 wire bank_2_wen_0;
 wire [15:0] bank_2_data_out_0;
+wire bank_2_data_out_0_valid;
 wire [15:0] bank_2_read_addr_0;
 wire bank_2_ren_0;
 wire bank_2_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_ctrl_clk;
@@ -5746,6 +5813,7 @@ wire [15:0] bank_3_data_in_0;
 wire [15:0] bank_3_write_addr_0;
 wire bank_3_wen_0;
 wire [15:0] bank_3_data_out_0;
+wire bank_3_data_out_0_valid;
 wire [15:0] bank_3_read_addr_0;
 wire bank_3_ren_0;
 wire bank_3_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_ctrl_clk;
@@ -5768,6 +5836,7 @@ wire [15:0] bank_4_data_in_0;
 wire [15:0] bank_4_write_addr_0;
 wire bank_4_wen_0;
 wire [15:0] bank_4_data_out_0;
+wire bank_4_data_out_0_valid;
 wire [15:0] bank_4_read_addr_0;
 wire bank_4_ren_0;
 wire bank_4_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_ctrl_clk;
@@ -5790,6 +5859,7 @@ wire [15:0] bank_5_data_in_0;
 wire [15:0] bank_5_write_addr_0;
 wire bank_5_wen_0;
 wire [15:0] bank_5_data_out_0;
+wire bank_5_data_out_0_valid;
 wire [15:0] bank_5_read_addr_0;
 wire bank_5_ren_0;
 wire bank_5_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_ctrl_clk;
@@ -5812,6 +5882,7 @@ wire [15:0] bank_6_data_in_0;
 wire [15:0] bank_6_write_addr_0;
 wire bank_6_wen_0;
 wire [15:0] bank_6_data_out_0;
+wire bank_6_data_out_0_valid;
 wire [15:0] bank_6_read_addr_0;
 wire bank_6_ren_0;
 wire bank_6_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_ctrl_clk;
@@ -5834,6 +5905,7 @@ wire [15:0] bank_7_data_in_0;
 wire [15:0] bank_7_write_addr_0;
 wire bank_7_wen_0;
 wire [15:0] bank_7_data_out_0;
+wire bank_7_data_out_0_valid;
 wire [15:0] bank_7_read_addr_0;
 wire bank_7_ren_0;
 wire bank_7_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_ctrl_clk;
@@ -6056,7 +6128,7 @@ assign bank_0_write_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op
 assign bank_0_wen_0 = bank_0_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl_valid & (bank_selector_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_U522_out == 16'h0000);
 assign bank_0_read_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_U544_out;
 assign bank_0_ren_0 = bank_0_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_44_ctrl_valid;
-cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_0 (
+cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_0 (
     .rst_n(bank_0_rst_n),
     .chain_chain_en(bank_0_chain_chain_en),
     .clk_en(bank_0_clk_en),
@@ -6067,6 +6139,7 @@ cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addrgenTrue
     .write_addr_0(bank_0_write_addr_0),
     .wen_0(bank_0_wen_0),
     .data_out_0(bank_0_data_out_0),
+    .data_out_0_valid(bank_0_data_out_0_valid),
     .read_addr_0(bank_0_read_addr_0),
     .ren_0(bank_0_ren_0)
 );
@@ -6100,7 +6173,7 @@ assign bank_1_write_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op
 assign bank_1_wen_0 = bank_1_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl_valid & (bank_selector_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_U596_out == 16'h0001);
 assign bank_1_read_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_U618_out;
 assign bank_1_ren_0 = bank_1_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_45_ctrl_valid;
-cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_1 (
+cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_1 (
     .rst_n(bank_1_rst_n),
     .chain_chain_en(bank_1_chain_chain_en),
     .clk_en(bank_1_clk_en),
@@ -6111,6 +6184,7 @@ cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addrgenTrue
     .write_addr_0(bank_1_write_addr_0),
     .wen_0(bank_1_wen_0),
     .data_out_0(bank_1_data_out_0),
+    .data_out_0_valid(bank_1_data_out_0_valid),
     .read_addr_0(bank_1_read_addr_0),
     .ren_0(bank_1_ren_0)
 );
@@ -6144,7 +6218,7 @@ assign bank_2_write_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op
 assign bank_2_wen_0 = bank_2_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl_valid & (bank_selector_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_U670_out == 16'h0002);
 assign bank_2_read_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_U692_out;
 assign bank_2_ren_0 = bank_2_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_46_ctrl_valid;
-cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_2 (
+cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_2 (
     .rst_n(bank_2_rst_n),
     .chain_chain_en(bank_2_chain_chain_en),
     .clk_en(bank_2_clk_en),
@@ -6155,6 +6229,7 @@ cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addrgenTrue
     .write_addr_0(bank_2_write_addr_0),
     .wen_0(bank_2_wen_0),
     .data_out_0(bank_2_data_out_0),
+    .data_out_0_valid(bank_2_data_out_0_valid),
     .read_addr_0(bank_2_read_addr_0),
     .ren_0(bank_2_ren_0)
 );
@@ -6188,7 +6263,7 @@ assign bank_3_write_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op
 assign bank_3_wen_0 = bank_3_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl_valid & (bank_selector_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_U744_out == 16'h0003);
 assign bank_3_read_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_U766_out;
 assign bank_3_ren_0 = bank_3_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_47_ctrl_valid;
-cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_3 (
+cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_3 (
     .rst_n(bank_3_rst_n),
     .chain_chain_en(bank_3_chain_chain_en),
     .clk_en(bank_3_clk_en),
@@ -6199,6 +6274,7 @@ cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addrgenTrue
     .write_addr_0(bank_3_write_addr_0),
     .wen_0(bank_3_wen_0),
     .data_out_0(bank_3_data_out_0),
+    .data_out_0_valid(bank_3_data_out_0_valid),
     .read_addr_0(bank_3_read_addr_0),
     .ren_0(bank_3_ren_0)
 );
@@ -6232,7 +6308,7 @@ assign bank_4_write_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op
 assign bank_4_wen_0 = bank_4_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl_valid & (bank_selector_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_U818_out == 16'h0004);
 assign bank_4_read_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_U840_out;
 assign bank_4_ren_0 = bank_4_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_48_ctrl_valid;
-cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_4 (
+cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_4 (
     .rst_n(bank_4_rst_n),
     .chain_chain_en(bank_4_chain_chain_en),
     .clk_en(bank_4_clk_en),
@@ -6243,6 +6319,7 @@ cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addrgenTrue
     .write_addr_0(bank_4_write_addr_0),
     .wen_0(bank_4_wen_0),
     .data_out_0(bank_4_data_out_0),
+    .data_out_0_valid(bank_4_data_out_0_valid),
     .read_addr_0(bank_4_read_addr_0),
     .ren_0(bank_4_ren_0)
 );
@@ -6276,7 +6353,7 @@ assign bank_5_write_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op
 assign bank_5_wen_0 = bank_5_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl_valid & (bank_selector_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_U892_out == 16'h0005);
 assign bank_5_read_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_U914_out;
 assign bank_5_ren_0 = bank_5_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_49_ctrl_valid;
-cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_5 (
+cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_5 (
     .rst_n(bank_5_rst_n),
     .chain_chain_en(bank_5_chain_chain_en),
     .clk_en(bank_5_clk_en),
@@ -6287,6 +6364,7 @@ cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addrgenTrue
     .write_addr_0(bank_5_write_addr_0),
     .wen_0(bank_5_wen_0),
     .data_out_0(bank_5_data_out_0),
+    .data_out_0_valid(bank_5_data_out_0_valid),
     .read_addr_0(bank_5_read_addr_0),
     .ren_0(bank_5_ren_0)
 );
@@ -6320,7 +6398,7 @@ assign bank_6_write_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op
 assign bank_6_wen_0 = bank_6_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl_valid & (bank_selector_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_U966_out == 16'h0006);
 assign bank_6_read_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_U988_out;
 assign bank_6_ren_0 = bank_6_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_51_ctrl_valid;
-cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_6 (
+cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_6 (
     .rst_n(bank_6_rst_n),
     .chain_chain_en(bank_6_chain_chain_en),
     .clk_en(bank_6_clk_en),
@@ -6331,6 +6409,7 @@ cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addrgenTrue
     .write_addr_0(bank_6_write_addr_0),
     .wen_0(bank_6_wen_0),
     .data_out_0(bank_6_data_out_0),
+    .data_out_0_valid(bank_6_data_out_0_valid),
     .read_addr_0(bank_6_read_addr_0),
     .ren_0(bank_6_ren_0)
 );
@@ -6364,7 +6443,7 @@ assign bank_7_write_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op
 assign bank_7_wen_0 = bank_7_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_ctrl_valid & (bank_selector_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_4_U1040_out == 16'h0007);
 assign bank_7_read_addr_0 = inner_bank_offsethw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_U1062_out;
 assign bank_7_ren_0 = bank_7_hw_input_global_wrapper_stencil_op_hcompute_conv_stencil_3_50_ctrl_valid;
-cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addrgenTrue__has_flushFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_7 (
+cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addrgenTrue__has_flushFalse__has_read_validTrue__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 bank_7 (
     .rst_n(bank_7_rst_n),
     .chain_chain_en(bank_7_chain_chain_en),
     .clk_en(bank_7_clk_en),
@@ -6375,6 +6454,7 @@ cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addrgenTrue
     .write_addr_0(bank_7_write_addr_0),
     .wen_0(bank_7_wen_0),
     .data_out_0(bank_7_data_out_0),
+    .data_out_0_valid(bank_7_data_out_0_valid),
     .read_addr_0(bank_7_read_addr_0),
     .ren_0(bank_7_ren_0)
 );

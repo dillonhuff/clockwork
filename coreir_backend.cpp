@@ -173,6 +173,7 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     port_decls.push_back("output logic [15:0] data_out_" + str(i));
     port_decls.push_back("input [15:0] read_addr_" + str(i));
     port_decls.push_back("input ren_" + str(i));
+    port_decls.push_back("output data_out_" + str(i) + "_valid");
   }
   port_decls.push_back("input [15:0] chain_data_in");
   port_decls.push_back("output [15:0] chain_data_out");
@@ -247,8 +248,10 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
     string bn = buf.name + "_bank_rd_" + str(b) + "_" + str(i);
+    string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
     //*verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
     *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[" << bn << "_ibo" << "];" << endl;
+    out << tab(2) << "data_out_" + str(i) + "_valid <= " << bundle_name << ";" << endl;
   }
   for (int i = 0; i < impl.bank_writers[b].size(); i++) {
     string bn = buf.name + "_bank_" + str(b) + "_" + str(i);
@@ -629,7 +632,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         {"ID", COREMK(c, buf.name + "_" + str(b))},
         {"has_external_addrgen", COREMK(c, true)},
         {"num_inputs",COREMK(c,bank_writers[b].size())},
-        {"num_outputs",COREMK(c,bank_readers[b].size())}};
+        {"num_outputs",COREMK(c,bank_readers[b].size())},
+        {"has_read_valid", COREMK(c, true)}};
 
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
       def->connect(currbank->sel("chain_chain_en"),zero);
@@ -675,7 +679,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       vector<Wireable*> values;
       for (auto b : src_banks) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        conds.push_back(bank_and_port_output_data_valid[{b, count}]);
+        conds.push_back(bank_map[b]->sel("data_out_" + str(count) + "_valid"));
+        //conds.push_back(bank_and_port_output_data_valid[{b, count}]);
         values.push_back(def->sel("bank_" + str(b) + ".data_out_" + str(count)));
       }
 
