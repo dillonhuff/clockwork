@@ -178,5 +178,9 @@ void M1_sanity_check_port_counts(ubuffer_impl& impl);
 
 CoreIR::Module* affine_controller_def(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
+isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl);
+
+isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl);
+
 #endif
 
