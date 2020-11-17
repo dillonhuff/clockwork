@@ -4028,6 +4028,15 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
   cout << dg << endl;
 
   dgraph shift_registers;
+  // First make sure all in -> out srs are included
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    for (auto dst : e.second) {
+      if (buf.is_in_pt(src) && !elem(dst, shift_registers.nodes)) {
+        shift_registers.add_edge(src, dst, dg.weight(src, dst));
+      }
+    }
+  }
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {

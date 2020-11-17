@@ -16747,13 +16747,13 @@ vector<prog> harris_variants() {
 
 vector<prog> isca_programs() {
   vector<prog> test_programs;
+  // Results wrong
+  test_programs.push_back(unsharp());
 
   // Does not partition 
-  //test_programs.push_back(harris());
-  //test_programs.push_back(camera_pipeline());
+  test_programs.push_back(harris());
+  test_programs.push_back(camera_pipeline());
  
-  // Results wrong
-  //test_programs.push_back(unsharp());
   
   test_programs.push_back(down_sample());
   test_programs.push_back(cascade());
