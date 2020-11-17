@@ -571,21 +571,21 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
             eqConst(def, ubuffer_port_bank_selector, b);
         bank_and_port_to_agen[{b, count}] = agen->sel("out");
 
-        Wireable* enable = nullptr;
-        if (inpt_to_bank[pt].size() > 1) {
-          Wireable* bank_is_selected =
-            bank_and_port_input_data_valid[{b, count}];
+        //Wireable* enable = nullptr;
+        //if (inpt_to_bank[pt].size() > 1) {
+          //Wireable* bank_is_selected =
+            //bank_and_port_input_data_valid[{b, count}];
 
-          enable =
-            andList(def,
-                {
-                en,
-                bank_is_selected});
-        } else {
-          enable = en;
-        }
-        assert(enable != nullptr);
-        bank_and_port_to_enable[{b, count}] = enable;
+          //enable =
+            //andList(def,
+                //{
+                //en,
+                //bank_is_selected});
+        //} else {
+          //enable = en;
+        //}
+        //assert(enable != nullptr);
+        //bank_and_port_to_enable[{b, count}] = enable;
       }
 
       for(auto pt : bank_readers[b]) {

@@ -2089,7 +2089,7 @@ module affine_controller__U492(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U526(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U525(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -2172,7 +2172,7 @@ module affine_controller__U526(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module affine_controller__U566(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module affine_controller__U565(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -2237,7 +2237,7 @@ module affine_controller__U566(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U600(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U598(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -2320,7 +2320,7 @@ module affine_controller__U600(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module affine_controller__U640(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module affine_controller__U638(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -2385,7 +2385,7 @@ module affine_controller__U640(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U674(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U671(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -2468,7 +2468,7 @@ module affine_controller__U674(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module affine_controller__U714(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module affine_controller__U711(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -2533,7 +2533,7 @@ module affine_controller__U714(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U748(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U744(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -2616,7 +2616,7 @@ module affine_controller__U748(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module affine_controller__U788(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module affine_controller__U784(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -2681,7 +2681,7 @@ module affine_controller__U788(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U822(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U817(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -2764,7 +2764,7 @@ module affine_controller__U822(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module affine_controller__U862(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module affine_controller__U857(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -2829,7 +2829,7 @@ module affine_controller__U862(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U896(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U890(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -2912,7 +2912,7 @@ module affine_controller__U896(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module affine_controller__U936(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module affine_controller__U930(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -2977,7 +2977,7 @@ module affine_controller__U936(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U970(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U963(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -3060,7 +3060,7 @@ module affine_controller__U970(input clk, input flush, input rst_n, output logic
   end
 endmodule
 // { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
-module affine_controller__U1010(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+module affine_controller__U1003(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
@@ -3125,7 +3125,7 @@ module affine_controller__U1010(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1044(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1036(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -4592,7 +4592,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addr
 endmodule
 
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1092(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1084(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -4675,7 +4675,7 @@ module affine_controller__U1092(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1132(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1123(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -4758,7 +4758,7 @@ module affine_controller__U1132(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1172(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1163(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -4841,7 +4841,7 @@ module affine_controller__U1172(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1212(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1202(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -4924,7 +4924,7 @@ module affine_controller__U1212(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1252(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1242(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5007,7 +5007,7 @@ module affine_controller__U1252(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1292(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1281(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5090,7 +5090,7 @@ module affine_controller__U1292(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1332(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1321(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5173,7 +5173,7 @@ module affine_controller__U1332(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1372(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1360(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5256,7 +5256,7 @@ module affine_controller__U1372(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1412(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1400(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5339,7 +5339,7 @@ module affine_controller__U1412(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1452(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1439(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5422,7 +5422,7 @@ module affine_controller__U1452(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1492(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1479(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5505,7 +5505,7 @@ module affine_controller__U1492(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1532(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1518(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5588,7 +5588,7 @@ module affine_controller__U1532(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1572(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1558(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5671,7 +5671,7 @@ module affine_controller__U1572(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1612(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1597(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5754,7 +5754,7 @@ module affine_controller__U1612(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1652(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1637(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5837,7 +5837,7 @@ module affine_controller__U1652(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1692(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1676(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -5920,7 +5920,7 @@ module affine_controller__U1692(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1732(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1716(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6003,7 +6003,7 @@ module affine_controller__U1732(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1772(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1755(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6086,7 +6086,7 @@ module affine_controller__U1772(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1812(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1795(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6169,7 +6169,7 @@ module affine_controller__U1812(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1852(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1834(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6252,7 +6252,7 @@ module affine_controller__U1852(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1892(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1874(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6335,7 +6335,7 @@ module affine_controller__U1892(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U1932(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1913(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6418,7 +6418,7 @@ module affine_controller__U1932(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U1972(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1953(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6501,7 +6501,7 @@ module affine_controller__U1972(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2012(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U1992(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6584,7 +6584,7 @@ module affine_controller__U2012(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2052(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2032(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6667,7 +6667,7 @@ module affine_controller__U2052(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2092(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2071(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6750,7 +6750,7 @@ module affine_controller__U2092(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2132(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2111(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6833,7 +6833,7 @@ module affine_controller__U2132(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2172(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2150(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6916,7 +6916,7 @@ module affine_controller__U2172(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2212(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2190(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -6999,7 +6999,7 @@ module affine_controller__U2212(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2252(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2229(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7082,7 +7082,7 @@ module affine_controller__U2252(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2292(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2269(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7165,7 +7165,7 @@ module affine_controller__U2292(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2332(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2308(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7248,7 +7248,7 @@ module affine_controller__U2332(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2372(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2348(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7331,7 +7331,7 @@ module affine_controller__U2372(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2412(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2387(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7414,7 +7414,7 @@ module affine_controller__U2412(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2452(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2427(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7497,7 +7497,7 @@ module affine_controller__U2452(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2492(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2466(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7580,7 +7580,7 @@ module affine_controller__U2492(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2532(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2506(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7663,7 +7663,7 @@ module affine_controller__U2532(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2572(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2545(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7746,7 +7746,7 @@ module affine_controller__U2572(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2612(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2585(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7829,7 +7829,7 @@ module affine_controller__U2612(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2652(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2624(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7912,7 +7912,7 @@ module affine_controller__U2652(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2692(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2664(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -7995,7 +7995,7 @@ module affine_controller__U2692(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2732(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2703(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8078,7 +8078,7 @@ module affine_controller__U2732(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2772(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2743(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8161,7 +8161,7 @@ module affine_controller__U2772(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_3[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2812(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2782(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8244,7 +8244,7 @@ module affine_controller__U2812(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2852(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2822(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8327,7 +8327,7 @@ module affine_controller__U2852(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_4[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2892(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2861(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8410,7 +8410,7 @@ module affine_controller__U2892(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
-module affine_controller__U2932(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2901(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
@@ -8493,7 +8493,7 @@ module affine_controller__U2932(input clk, input flush, input rst_n, output logi
   end
 endmodule
 // { op_hcompute_conv_stencil_5[root, conv_s1_r_y, conv_s1_r_x, conv_s1_y, conv_s1_x] -> [(8009 + 2436conv_s1_r_y + 812conv_s1_r_x + 29conv_s1_y + conv_s1_x)] }
-module affine_controller__U2972(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+module affine_controller__U2940(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
