@@ -48,7 +48,11 @@ module affine_controller__U0(input clk, input flush, input rst_n, output logic [
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(132 + 64grad_x_s0_y + grad_x_s0_x)] }
+=======
+// { op_hcompute_hw_output_stencil[root, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(415 + 64hw_output_s0_y_yi + hw_output_s0_x_xi)] }
+>>>>>>> ba30db3f2a0fc3b0e32be3b94f38cdf5c18fa281
 module affine_controller__U7(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
   logic on;
@@ -98,6 +102,7 @@ module affine_controller__U7(input clk, input flush, input rst_n, output logic [
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_lxx_stencil[root, lxx_s0_y, lxx_s0_x] -> [(134 + 64lxx_s0_y + lxx_s0_x)] }
 module affine_controller__U26(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
   logic [15:0] counter[3:0];
@@ -2312,3 +2317,5 @@ module cgralib_Mem_amber__IDsreg__U1504__has_external_addrgenTrue__has_flushFals
   assign data_out_0 = chain_data_out;
 endmodule
 
+=======
+>>>>>>> ba30db3f2a0fc3b0e32be3b94f38cdf5c18fa281

@@ -108,6 +108,22 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   }
 
   for(auto pt : impl.bank_readers[b]) {
+    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
+    string port_rep = pt;
+    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    op* rep = prg.find_op(op_rep_name);
+    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+
+    isl_aff* sched_aff =
+      get_aff(buf.schedule.at(pt));
+    generate_fsm(*verilog_collateral_file,
+        options,
+        bundle_name + "_ctrl",
+        "d",
+        "valid",
+        sched_aff,
+        dom);
     //int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
     //string bundle_name = "bank_" + str(b) + "_" + str(count) + "_ctrl";
     //string port_rep = pt;
@@ -149,19 +165,48 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   for(int i = 0; i < impl.bank_writers[b].size(); i++)
   {
     port_decls.push_back("input [15:0] data_in_" + str(i));
-    port_decls.push_back("input [15:0] write_addr_" + str(i));
-    port_decls.push_back("input wen_" + str(i));
+    //port_decls.push_back("input [15:0] write_addr_" + str(i));
+    //port_decls.push_back("input wen_" + str(i));
   }
   for(int i = 0; i < impl.bank_readers[b].size(); i++)
   {
     port_decls.push_back("output logic [15:0] data_out_" + str(i));
-    port_decls.push_back("input [15:0] read_addr_" + str(i));
-    port_decls.push_back("input ren_" + str(i));
+    //port_decls.push_back("input [15:0] read_addr_" + str(i));
+    //port_decls.push_back("input ren_" + str(i));
+    port_decls.push_back("output data_out_" + str(i) + "_valid");
   }
   port_decls.push_back("input [15:0] chain_data_in");
   port_decls.push_back("output [15:0] chain_data_out");
 
   *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+  for(auto pt : impl.bank_readers[b]) {
+    int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+    string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
+    string port_rep = pt;
+    string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+    op* rep = prg.find_op(op_rep_name);
+    isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+
+
+    auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+
+    isl_aff* sched_aff =
+      get_aff(adjusted_buf.schedule.at(pt));
+
+    out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
+
+    isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
+    isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
+
+    out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
+    out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
+
+    std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
+    std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
+
+    out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
+    out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
+  }
   for(auto pt : impl.bank_writers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
@@ -194,15 +239,19 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   *verilog_collateral_file << endl;
 
   *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
-  *verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
+  //*verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
     *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
   }
 
   *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-  *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
+  //*verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
-    *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+    string bn = buf.name + "_bank_rd_" + str(b) + "_" + str(i);
+    string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
+    //*verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+    *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[" << bn << "_ibo" << "];" << endl;
+    out << tab(2) << "data_out_" + str(i) + "_valid <= " << bundle_name << ";" << endl;
   }
   for (int i = 0; i < impl.bank_writers[b].size(); i++) {
     string bn = buf.name + "_bank_" + str(b) + "_" + str(i);
@@ -211,22 +260,32 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     //*verilog_collateral_file << tab(2) << "if (wen_" << i << " && " << bundle_name << ") begin" << endl;
     *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-    *verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
-    //*verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
+    //out << tab(3) << "if (!wen_" << i << ") begin" << endl;
+    //out << tab(4) << "$finish(-1);" << endl;
+    //out << tab(3) << "end" << endl;
+
+    //out << tab(3) << "if (write_addr_" << i << " !== " << bn << "_ibo) begin" << endl;
+    //out << tab(4) << "$display(\"Error addresses do not match, external addr = %d, ibo = %d\", write_addr_" << i << ", " << bn << "_ibo);" << endl;
+    //out << tab(4) << "$finish(-1);" << endl;
+    //out << tab(3) << "end" << endl;
+    //*verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
+    *verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
     *verilog_collateral_file << tab(2) << "end" << endl;
   }
   *verilog_collateral_file << tab(1) << "end" << endl;
   //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
-  *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
+  //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
+  *verilog_collateral_file << tab(1) << "assign chain_data_out = " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp;" << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
-    if (i == impl.bank_readers[b].size() - 1) {
-      *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
-    } else {
+    //if (i == impl.bank_readers[b].size() - 1) {
+      //*verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
+    //} else {
       *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
-    }
+    //}
   }
   *verilog_collateral_file << "endmodule" << endl << endl;
 }
+
 Instance* generate_controller_verilog(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
   auto c = def->getContext();
   Instance* controller;
@@ -476,7 +535,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     map<pair<int, int>, Wireable*> bank_and_port_output_data_valid;
     map<pair<int, int>, Wireable*> bank_and_port_input_data_valid;
 
-    map<pair<int, int>, Wireable*> bank_and_port_to_enable;
+    //map<pair<int, int>, Wireable*> bank_and_port_to_enable;
     map<pair<int, int>, Wireable*> bank_and_port_to_agen;
 
     map<pair<int, int>, Wireable*> bank_and_port_to_read_enable;
@@ -484,83 +543,83 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     for (int b = 0; b < num_banks; b++) {
       for(auto pt : bank_writers[b]) {
-        string bundle_name = "bank_" + str(b) + "_" + pt;
-        string port_rep = pt;
-        string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-        op* rep = prg.find_op(op_rep_name);
-        isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+        //string bundle_name = "bank_" + str(b) + "_" + pt;
+        //string port_rep = pt;
+        //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+        //op* rep = prg.find_op(op_rep_name);
+        //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
-        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        isl_aff* sched_aff =
-          get_aff(adjusted_buf.schedule.at(pt));
-        auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-        auto en = controller->sel("valid");
-        auto ctrl = controller->sel("d");
+        //int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        //auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        //isl_aff* sched_aff =
+          //get_aff(adjusted_buf.schedule.at(pt));
+        //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
+        //auto en = controller->sel("valid");
+        //auto ctrl = controller->sel("d");
 
-        auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
-        def->connect(agen->sel("d"),
-            ctrl);
+        //auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
+        //def->connect(agen->sel("d"),
+            //ctrl);
 
-        auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
-        def->connect(bank_sel->sel("d"),
-            ctrl);
+        //auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
+        //def->connect(bank_sel->sel("d"),
+            //ctrl);
 
-        auto ubuffer_port_bank_selector  = delay_by(def, bank_sel->sel("out"), 0);
-          bank_and_port_input_addrgen[{b, count}] = agen;
-          bank_and_port_input_data_valid[{b, count}] =
-            eqConst(def, ubuffer_port_bank_selector, b);
-        bank_and_port_to_agen[{b, count}] = agen->sel("out");
+        //auto ubuffer_port_bank_selector  = delay_by(def, bank_sel->sel("out"), 0);
+          //bank_and_port_input_addrgen[{b, count}] = agen;
+          //bank_and_port_input_data_valid[{b, count}] =
+            //eqConst(def, ubuffer_port_bank_selector, b);
+        //bank_and_port_to_agen[{b, count}] = agen->sel("out");
 
-        Wireable* enable = nullptr;
-        if (inpt_to_bank[pt].size() > 1) {
-          Wireable* bank_is_selected =
-            bank_and_port_input_data_valid[{b, count}];
+        //Wireable* enable = nullptr;
+        //if (inpt_to_bank[pt].size() > 1) {
+          //Wireable* bank_is_selected =
+            //bank_and_port_input_data_valid[{b, count}];
 
-          enable =
-            andList(def,
-                {
-                en,
-                bank_is_selected});
-        } else {
-          enable = en;
-        }
-        assert(enable != nullptr);
-        bank_and_port_to_enable[{b, count}] = enable;
+          //enable =
+            //andList(def,
+                //{
+                //en,
+                //bank_is_selected});
+        //} else {
+          //enable = en;
+        //}
+        //assert(enable != nullptr);
+        //bank_and_port_to_enable[{b, count}] = enable;
       }
 
       for(auto pt : bank_readers[b]) {
-        string bundle_name = "bank_" + str(b) + "_" + pt;
-        string port_rep = pt;
-        string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-        op* rep = prg.find_op(op_rep_name);
-        isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+        //string bundle_name = "bank_" + str(b) + "_" + pt;
+        //string port_rep = pt;
+        //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+        //op* rep = prg.find_op(op_rep_name);
+        //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
-        int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
+        //int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
 
-        isl_aff* sched_aff =
-          get_aff(buf.schedule.at(pt));
-        auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-        auto en = controller->sel("valid");
-        auto ctrl = controller->sel("d");
+        //isl_aff* sched_aff =
+          //get_aff(buf.schedule.at(pt));
+        //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
+        //auto en = controller->sel("valid");
+        //auto ctrl = controller->sel("d");
 
-        auto agen = build_inner_bank_offset(pt, buf, impl, def);
-        def->connect(agen->sel("d"),
-            ctrl);
+        //auto agen = build_inner_bank_offset(pt, buf, impl, def);
+        //def->connect(agen->sel("d"),
+            //ctrl);
 
-        auto bank_sel = build_bank_selector(pt, buf, impl, def);
-        def->connect(bank_sel->sel("d"),
-            ctrl);
+        //auto bank_sel = build_bank_selector(pt, buf, impl, def);
+        //def->connect(bank_sel->sel("d"),
+            //ctrl);
 
-        const int READ_LATENCY = 1;
-        auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
-          bank_and_port_output_addrgen[{b, count}] = agen;
-          bank_and_port_output_data_valid[{b, count}] =
-            eqConst(def, ubuffer_port_bank_selector, b);
+        //const int READ_LATENCY = 1;
+        //auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
+          //bank_and_port_output_addrgen[{b, count}] = agen;
+          //bank_and_port_output_data_valid[{b, count}] =
+            //eqConst(def, ubuffer_port_bank_selector, b);
 
-        bank_and_port_to_read_enable[{b, count}] = en;
-        bank_and_port_to_read_agen[{b, count}] =
-          agen->sel("out");
+        //bank_and_port_to_read_enable[{b, count}] = en;
+        //bank_and_port_to_read_agen[{b, count}] =
+          //agen->sel("out");
       }
     }
 
@@ -572,9 +631,10 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     for (int b = 0; b < num_banks; b++) {
       Values tile_params{{"width", COREMK(c, 16)},
         {"ID", COREMK(c, buf.name + "_" + str(b))},
-        {"has_external_addrgen", COREMK(c, true)},
+        {"has_external_addrgen", COREMK(c, false)},
         {"num_inputs",COREMK(c,bank_writers[b].size())},
-        {"num_outputs",COREMK(c,bank_readers[b].size())}};
+        {"num_outputs",COREMK(c,bank_readers[b].size())},
+        {"has_read_valid", COREMK(c, true)}};
 
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
       def->connect(currbank->sel("chain_chain_en"),zero);
@@ -591,12 +651,12 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       auto currbank = bank_map[b];
       for(auto pt : bank_writers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        Wireable* enable = bank_and_port_to_enable[{b, count}];
-        Wireable* addr = bank_and_port_to_agen[{b, count}];
-        def->connect(addr,
-            currbank->sel("write_addr_" + str(count)));
-        def->connect(currbank->sel("wen_" + str(count)),
-            enable);
+        //Wireable* enable = bank_and_port_to_enable[{b, count}];
+        //Wireable* addr = bank_and_port_to_agen[{b, count}];
+        //def->connect(addr,
+            //currbank->sel("write_addr_" + str(count)));
+        //def->connect(currbank->sel("wen_" + str(count)),
+            //enable);
         def->connect(
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
@@ -604,13 +664,13 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       for(auto pt : bank_readers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        auto agen = bank_and_port_output_addrgen[{b, count}];
-        def->connect(
-            bank_and_port_to_read_agen[{b, count}],
-            currbank->sel("read_addr_" + str(count)));
+        //auto agen = bank_and_port_output_addrgen[{b, count}];
+        //def->connect(
+            //bank_and_port_to_read_agen[{b, count}],
+            //currbank->sel("read_addr_" + str(count)));
 
-        def->connect(currbank->sel("ren_" + str(count)),
-            bank_and_port_to_read_enable[{b, count}]);
+        //def->connect(currbank->sel("ren_" + str(count)),
+            //bank_and_port_to_read_enable[{b, count}]);
       }
     }
 
@@ -620,7 +680,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       vector<Wireable*> values;
       for (auto b : src_banks) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        conds.push_back(bank_and_port_output_data_valid[{b, count}]);
+        conds.push_back(bank_map[b]->sel("data_out_" + str(count) + "_valid"));
+        //conds.push_back(bank_and_port_output_data_valid[{b, count}]);
         values.push_back(def->sel("bank_" + str(b) + ".data_out_" + str(count)));
       }
 
@@ -1832,11 +1893,16 @@ bool load_compute_file(CodegenOptions& options,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
   bool found_compute = true;
-  //string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  string compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+  string compute_file = "";
+  if (options.rtl_options.use_pipelined_compute_units) {
+    compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+  } else {
+    compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  }
   if (hwinfo.use_dse_compute) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
   }
+  assert(compute_file != "");
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
@@ -4541,7 +4607,11 @@ isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_
   string bank_func = curlies(buf.name + bracket_list(dvs) + " -> InnerBank[" + sep_list(coeffs, "", "", " + ") + "]");
   auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
   cout << "bank map for " << reader << ": " << str(bank_map) << endl;
-  return get_aff(bank_map);
+  auto acc_map = to_map(buf.access_map.at(reader));
+
+  auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
+  return addr_expr_aff;
+  //return get_aff(bank_map);
 }
 
     //isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
