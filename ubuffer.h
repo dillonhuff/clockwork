@@ -2016,6 +2016,22 @@ std::set<string> get_bank_unique_outputs(const std::string& name) const {
       return "";
     }
 
+    std::set<string> get_bank_out_bundles(const std::string& bk_name) {
+      std::set<string> ret;
+      auto outpts = get_bank_outputs(bk_name);
+      for (auto outpt: outpts) {
+        ret.insert(get_bundle(outpt));
+        //dfs for all related bundles
+        if(is_bank_input(outpt)) {
+          for (auto bk: receiver_banks(outpt)){
+            auto sub_bundles = get_bank_out_bundles(bk.name);
+            ret.insert(sub_bundles.begin(), sub_bundles.end());
+          }
+        }
+      }
+      return ret;
+    }
+
     vector<string> get_in_bundles() const {
       vector<string> outpts;
       for (auto m : port_bundles) {

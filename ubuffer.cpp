@@ -1690,13 +1690,16 @@ void UBuffer::generate_coreir(CodegenOptions& options,
       //Wire stencil valid
       if (options.pass_through_valid) {
         if (has_stencil_valid & (!use_memtile_gen_stencil_valid)) {
-          auto ctrl_wire = def->sel("self." + get_bundle(get_lastest_outpt(bk.name)) + "_extra_ctrl");
+          //a bank can belongs to multiple bundles
+          for (auto bd_name : get_bank_out_bundles(bk.name)) {
+            auto ctrl_wire = def->sel("self." + bd_name + "_extra_ctrl");
 
-          //Chances are there are multiple bank output port connect to the control wire,
-          //Just pick the first one
-          if (ctrl_wire->getSelects().size() == 0) {
-            def->connect(buf->sel("stencil_valid"), ctrl_wire);
-            use_memtile_gen_stencil_valid = true;
+            //Chances are there are multiple bank output port connect to the control wire,
+            //Just pick the first one
+            if (ctrl_wire->getSelects().size() == 0) {
+              def->connect(buf->sel("stencil_valid"), ctrl_wire);
+              use_memtile_gen_stencil_valid = true;
+            }
           }
         }
       }

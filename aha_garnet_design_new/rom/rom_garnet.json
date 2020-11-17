@@ -408,8 +408,8 @@
         "connections":[
           ["smax_776_777_778$scomp$compop.data.in.1","const_p0__777.out"],
           ["smax_776_777_778$max_mux$mux.data.in.1","const_p0__7771.out"],
-          ["smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","const_p1023__775.out"],
-          ["smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","const_p1023__7751.out"],
+          ["smin_hw_input_global_wrapper_stencil_1_775_776$min_mux$mux.data.in.1","const_p1023__775.out"],
+          ["smin_hw_input_global_wrapper_stencil_1_775_776$scomp$compop.data.in.1","const_p1023__7751.out"],
           ["self.clk","rom_curvea0$1$mem.clk"],
           ["rom_curvea0$1$raddr_slice.out","rom_curvea0$1$mem.raddr"],
           ["rom_curvea0$1$readreg$enMux$mux.data.in.0","rom_curvea0$1$mem.rdata"],

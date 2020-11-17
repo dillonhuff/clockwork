@@ -1884,6 +1884,7 @@
           ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55.stencil_valid","self.op_hcompute_grad_x_stencil_read_extra_ctrl"],
           ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55.data_out_0","self.op_hcompute_grad_y_stencil_read.2"],
           ["self.op_hcompute_padded16_global_wrapper_stencil_write.0","self.op_hcompute_grad_y_stencil_read.4"],
+          ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55.stencil_valid","self.op_hcompute_grad_y_stencil_read_extra_ctrl"],
           ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55.data_in_0","self.op_hcompute_padded16_global_wrapper_stencil_write.0"],
           ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55.flush","self.reset"],
           ["ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_clk_en_const.out","ub_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55.clk_en"],
