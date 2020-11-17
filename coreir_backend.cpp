@@ -246,7 +246,9 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
   *verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
-    *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+    string bn = buf.name + "_bank_rd_" + str(b) + "_" + str(i);
+    //*verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[read_addr_" << i << "];" << endl;
+    *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[" << bn << "_ibo" << "];" << endl;
   }
   for (int i = 0; i < impl.bank_writers[b].size(); i++) {
     string bn = buf.name + "_bank_" + str(b) + "_" + str(i);

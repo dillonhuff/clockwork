@@ -1364,8 +1364,8 @@ module cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushF
   logic [15:0] data_out_1_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_1;
-    data_out_0_tmp <= SRAM[read_addr_0];
-    data_out_1_tmp <= SRAM[read_addr_1];
+    data_out_0_tmp <= SRAM[conv_stencil_bank_rd_0_0_ibo];
+    data_out_1_tmp <= SRAM[conv_stencil_bank_rd_0_1_ibo];
     if (conv_stencil_bank_0_0.valid && conv_stencil_bank_0_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -1702,8 +1702,8 @@ module cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushF
   logic [15:0] data_out_1_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_1;
-    data_out_0_tmp <= SRAM[read_addr_0];
-    data_out_1_tmp <= SRAM[read_addr_1];
+    data_out_0_tmp <= SRAM[conv_stencil_bank_rd_1_0_ibo];
+    data_out_1_tmp <= SRAM[conv_stencil_bank_rd_1_1_ibo];
     if (conv_stencil_bank_1_0.valid && conv_stencil_bank_1_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -2040,8 +2040,8 @@ module cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushF
   logic [15:0] data_out_1_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_1;
-    data_out_0_tmp <= SRAM[read_addr_0];
-    data_out_1_tmp <= SRAM[read_addr_1];
+    data_out_0_tmp <= SRAM[conv_stencil_bank_rd_2_0_ibo];
+    data_out_1_tmp <= SRAM[conv_stencil_bank_rd_2_1_ibo];
     if (conv_stencil_bank_2_0.valid && conv_stencil_bank_2_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -3418,7 +3418,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addr
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_input_global_wrapper_stencil_bank_rd_0_0_ibo];
     if (hw_input_global_wrapper_stencil_bank_0_0.valid && hw_input_global_wrapper_stencil_bank_0_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -3600,7 +3600,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addr
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_input_global_wrapper_stencil_bank_rd_1_0_ibo];
     if (hw_input_global_wrapper_stencil_bank_1_0.valid && hw_input_global_wrapper_stencil_bank_1_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -3782,7 +3782,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addr
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_input_global_wrapper_stencil_bank_rd_2_0_ibo];
     if (hw_input_global_wrapper_stencil_bank_2_0.valid && hw_input_global_wrapper_stencil_bank_2_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -3964,7 +3964,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addr
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_input_global_wrapper_stencil_bank_rd_3_0_ibo];
     if (hw_input_global_wrapper_stencil_bank_3_0.valid && hw_input_global_wrapper_stencil_bank_3_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -4146,7 +4146,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addr
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_input_global_wrapper_stencil_bank_rd_4_0_ibo];
     if (hw_input_global_wrapper_stencil_bank_4_0.valid && hw_input_global_wrapper_stencil_bank_4_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -4328,7 +4328,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addr
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_input_global_wrapper_stencil_bank_rd_5_0_ibo];
     if (hw_input_global_wrapper_stencil_bank_5_0.valid && hw_input_global_wrapper_stencil_bank_5_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -4510,7 +4510,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addr
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_input_global_wrapper_stencil_bank_rd_6_0_ibo];
     if (hw_input_global_wrapper_stencil_bank_6_0.valid && hw_input_global_wrapper_stencil_bank_6_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -4692,7 +4692,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addr
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_input_global_wrapper_stencil_bank_rd_7_0_ibo];
     if (hw_input_global_wrapper_stencil_bank_7_0.valid && hw_input_global_wrapper_stencil_bank_7_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -8876,7 +8876,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_0_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_0_0.valid && hw_kernel_global_wrapper_stencil_bank_0_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -9076,7 +9076,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_1_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_1_0.valid && hw_kernel_global_wrapper_stencil_bank_1_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -9276,7 +9276,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_2_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_2_0.valid && hw_kernel_global_wrapper_stencil_bank_2_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -9476,7 +9476,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_3_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_3_0.valid && hw_kernel_global_wrapper_stencil_bank_3_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -9676,7 +9676,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_4_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_4_0.valid && hw_kernel_global_wrapper_stencil_bank_4_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -9876,7 +9876,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_5_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_5_0.valid && hw_kernel_global_wrapper_stencil_bank_5_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -10076,7 +10076,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_6_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_6_0.valid && hw_kernel_global_wrapper_stencil_bank_6_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -10276,7 +10276,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_7_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_7_0.valid && hw_kernel_global_wrapper_stencil_bank_7_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -10476,7 +10476,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_8_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_8_0.valid && hw_kernel_global_wrapper_stencil_bank_8_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -10676,7 +10676,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_add
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_9_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_9_0.valid && hw_kernel_global_wrapper_stencil_bank_9_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -10876,7 +10876,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_10_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_10_0.valid && hw_kernel_global_wrapper_stencil_bank_10_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -11076,7 +11076,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_11_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_11_0.valid && hw_kernel_global_wrapper_stencil_bank_11_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -11276,7 +11276,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_12_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_12_0.valid && hw_kernel_global_wrapper_stencil_bank_12_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -11476,7 +11476,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_13_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_13_0.valid && hw_kernel_global_wrapper_stencil_bank_13_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -11676,7 +11676,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_14_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_14_0.valid && hw_kernel_global_wrapper_stencil_bank_14_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -11876,7 +11876,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_15_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_15_0.valid && hw_kernel_global_wrapper_stencil_bank_15_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -12076,7 +12076,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_16_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_16_0.valid && hw_kernel_global_wrapper_stencil_bank_16_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -12276,7 +12276,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_17_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_17_0.valid && hw_kernel_global_wrapper_stencil_bank_17_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -12476,7 +12476,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_18_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_18_0.valid && hw_kernel_global_wrapper_stencil_bank_18_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -12676,7 +12676,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_19_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_19_0.valid && hw_kernel_global_wrapper_stencil_bank_19_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -12876,7 +12876,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_20_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_20_0.valid && hw_kernel_global_wrapper_stencil_bank_20_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -13076,7 +13076,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_21_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_21_0.valid && hw_kernel_global_wrapper_stencil_bank_21_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -13276,7 +13276,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_22_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_22_0.valid && hw_kernel_global_wrapper_stencil_bank_22_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
@@ -13476,7 +13476,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_23__has_external_ad
   logic [15:0] data_out_0_tmp;
   always @(posedge clk) begin
     chain_ren <= ren_0;
-    data_out_0_tmp <= SRAM[read_addr_0];
+    data_out_0_tmp <= SRAM[hw_kernel_global_wrapper_stencil_bank_rd_23_0_ibo];
     if (hw_kernel_global_wrapper_stencil_bank_23_0.valid && hw_kernel_global_wrapper_stencil_bank_23_0_enable_this_port) begin
       if (!wen_0) begin
         $finish(-1);
