@@ -16748,7 +16748,6 @@ vector<prog> harris_variants() {
 vector<prog> isca_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(unsharp());
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
   test_programs.push_back(pointwise());
@@ -16760,6 +16759,7 @@ vector<prog> isca_programs() {
   test_programs.push_back(strided_conv());
   test_programs.push_back(mini_conv_halide_fixed());
   test_programs.push_back(up_sample());
+  test_programs.push_back(unsharp());
 
 
   return test_programs;

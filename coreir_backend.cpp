@@ -1893,11 +1893,16 @@ bool load_compute_file(CodegenOptions& options,
     CoreIR::Context* context,
     schedule_info& hwinfo) {
   bool found_compute = true;
-  //string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
-  string compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+  string compute_file = "";
+  if (options.rtl_options.use_pipelined_compute_units) {
+    compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+  } else {
+    compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  }
   if (hwinfo.use_dse_compute) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
   }
+  assert(compute_file != "");
   ifstream cfile(compute_file);
   if (!cfile.good()) {
     cout << "No compute unit file: " << compute_file << endl;
