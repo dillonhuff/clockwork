@@ -1208,10 +1208,10 @@ module cgralib_Mem_amber__IDconv_stencil_0__has_external_addrgenTrue__has_flushF
     chain_ren <= ren_1;
     data_out_0_tmp <= SRAM[read_addr_0];
     data_out_1_tmp <= SRAM[read_addr_1];
-    if (wen_0 && conv_stencil_bank_0_0.valid && conv_stencil_bank_0_0_enable_this_port) begin
+    if (conv_stencil_bank_0_0.valid && conv_stencil_bank_0_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
-    if (wen_1 && conv_stencil_bank_0_1.valid && conv_stencil_bank_0_1_enable_this_port) begin
+    if (conv_stencil_bank_0_1.valid && conv_stencil_bank_0_1_enable_this_port) begin
       SRAM[write_addr_1] <= data_in_1;
     end
   end
@@ -1374,10 +1374,10 @@ module cgralib_Mem_amber__IDconv_stencil_1__has_external_addrgenTrue__has_flushF
     chain_ren <= ren_1;
     data_out_0_tmp <= SRAM[read_addr_0];
     data_out_1_tmp <= SRAM[read_addr_1];
-    if (wen_0 && conv_stencil_bank_1_0.valid && conv_stencil_bank_1_0_enable_this_port) begin
+    if (conv_stencil_bank_1_0.valid && conv_stencil_bank_1_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
-    if (wen_1 && conv_stencil_bank_1_1.valid && conv_stencil_bank_1_1_enable_this_port) begin
+    if (conv_stencil_bank_1_1.valid && conv_stencil_bank_1_1_enable_this_port) begin
       SRAM[write_addr_1] <= data_in_1;
     end
   end
@@ -1540,10 +1540,10 @@ module cgralib_Mem_amber__IDconv_stencil_2__has_external_addrgenTrue__has_flushF
     chain_ren <= ren_1;
     data_out_0_tmp <= SRAM[read_addr_0];
     data_out_1_tmp <= SRAM[read_addr_1];
-    if (wen_0 && conv_stencil_bank_2_0.valid && conv_stencil_bank_2_0_enable_this_port) begin
+    if (conv_stencil_bank_2_0.valid && conv_stencil_bank_2_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
-    if (wen_1 && conv_stencil_bank_2_1.valid && conv_stencil_bank_2_1_enable_this_port) begin
+    if (conv_stencil_bank_2_1.valid && conv_stencil_bank_2_1_enable_this_port) begin
       SRAM[write_addr_1] <= data_in_1;
     end
   end
@@ -2815,7 +2815,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_input_global_wrapper_stencil_bank_0_0.valid && hw_input_global_wrapper_stencil_bank_0_0_enable_this_port) begin
+    if (hw_input_global_wrapper_stencil_bank_0_0.valid && hw_input_global_wrapper_stencil_bank_0_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -2902,7 +2902,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_input_global_wrapper_stencil_bank_1_0.valid && hw_input_global_wrapper_stencil_bank_1_0_enable_this_port) begin
+    if (hw_input_global_wrapper_stencil_bank_1_0.valid && hw_input_global_wrapper_stencil_bank_1_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -2989,7 +2989,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_input_global_wrapper_stencil_bank_2_0.valid && hw_input_global_wrapper_stencil_bank_2_0_enable_this_port) begin
+    if (hw_input_global_wrapper_stencil_bank_2_0.valid && hw_input_global_wrapper_stencil_bank_2_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -3076,7 +3076,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_input_global_wrapper_stencil_bank_3_0.valid && hw_input_global_wrapper_stencil_bank_3_0_enable_this_port) begin
+    if (hw_input_global_wrapper_stencil_bank_3_0.valid && hw_input_global_wrapper_stencil_bank_3_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -3163,7 +3163,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_input_global_wrapper_stencil_bank_4_0.valid && hw_input_global_wrapper_stencil_bank_4_0_enable_this_port) begin
+    if (hw_input_global_wrapper_stencil_bank_4_0.valid && hw_input_global_wrapper_stencil_bank_4_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -3250,7 +3250,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_input_global_wrapper_stencil_bank_5_0.valid && hw_input_global_wrapper_stencil_bank_5_0_enable_this_port) begin
+    if (hw_input_global_wrapper_stencil_bank_5_0.valid && hw_input_global_wrapper_stencil_bank_5_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -3337,7 +3337,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_input_global_wrapper_stencil_bank_6_0.valid && hw_input_global_wrapper_stencil_bank_6_0_enable_this_port) begin
+    if (hw_input_global_wrapper_stencil_bank_6_0.valid && hw_input_global_wrapper_stencil_bank_6_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -3424,7 +3424,7 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_7__has_external_addr
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_input_global_wrapper_stencil_bank_7_0.valid && hw_input_global_wrapper_stencil_bank_7_0_enable_this_port) begin
+    if (hw_input_global_wrapper_stencil_bank_7_0.valid && hw_input_global_wrapper_stencil_bank_7_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7513,7 +7513,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_0_0.valid && hw_kernel_global_wrapper_stencil_bank_0_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_0_0.valid && hw_kernel_global_wrapper_stencil_bank_0_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7618,7 +7618,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_1_0.valid && hw_kernel_global_wrapper_stencil_bank_1_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_1_0.valid && hw_kernel_global_wrapper_stencil_bank_1_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7723,7 +7723,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_2_0.valid && hw_kernel_global_wrapper_stencil_bank_2_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_2_0.valid && hw_kernel_global_wrapper_stencil_bank_2_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7828,7 +7828,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_3_0.valid && hw_kernel_global_wrapper_stencil_bank_3_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_3_0.valid && hw_kernel_global_wrapper_stencil_bank_3_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -7933,7 +7933,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_4_0.valid && hw_kernel_global_wrapper_stencil_bank_4_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_4_0.valid && hw_kernel_global_wrapper_stencil_bank_4_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8038,7 +8038,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_5_0.valid && hw_kernel_global_wrapper_stencil_bank_5_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_5_0.valid && hw_kernel_global_wrapper_stencil_bank_5_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8143,7 +8143,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_6_0.valid && hw_kernel_global_wrapper_stencil_bank_6_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_6_0.valid && hw_kernel_global_wrapper_stencil_bank_6_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8248,7 +8248,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_7_0.valid && hw_kernel_global_wrapper_stencil_bank_7_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_7_0.valid && hw_kernel_global_wrapper_stencil_bank_7_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8353,7 +8353,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_8_0.valid && hw_kernel_global_wrapper_stencil_bank_8_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_8_0.valid && hw_kernel_global_wrapper_stencil_bank_8_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8458,7 +8458,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_add
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_9_0.valid && hw_kernel_global_wrapper_stencil_bank_9_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_9_0.valid && hw_kernel_global_wrapper_stencil_bank_9_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8563,7 +8563,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_10_0.valid && hw_kernel_global_wrapper_stencil_bank_10_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_10_0.valid && hw_kernel_global_wrapper_stencil_bank_10_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8668,7 +8668,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_11_0.valid && hw_kernel_global_wrapper_stencil_bank_11_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_11_0.valid && hw_kernel_global_wrapper_stencil_bank_11_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8773,7 +8773,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_12_0.valid && hw_kernel_global_wrapper_stencil_bank_12_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_12_0.valid && hw_kernel_global_wrapper_stencil_bank_12_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8878,7 +8878,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_13_0.valid && hw_kernel_global_wrapper_stencil_bank_13_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_13_0.valid && hw_kernel_global_wrapper_stencil_bank_13_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -8983,7 +8983,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_14_0.valid && hw_kernel_global_wrapper_stencil_bank_14_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_14_0.valid && hw_kernel_global_wrapper_stencil_bank_14_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9088,7 +9088,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_15_0.valid && hw_kernel_global_wrapper_stencil_bank_15_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_15_0.valid && hw_kernel_global_wrapper_stencil_bank_15_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9193,7 +9193,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_16_0.valid && hw_kernel_global_wrapper_stencil_bank_16_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_16_0.valid && hw_kernel_global_wrapper_stencil_bank_16_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9298,7 +9298,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_17_0.valid && hw_kernel_global_wrapper_stencil_bank_17_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_17_0.valid && hw_kernel_global_wrapper_stencil_bank_17_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9403,7 +9403,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_18_0.valid && hw_kernel_global_wrapper_stencil_bank_18_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_18_0.valid && hw_kernel_global_wrapper_stencil_bank_18_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9508,7 +9508,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_19_0.valid && hw_kernel_global_wrapper_stencil_bank_19_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_19_0.valid && hw_kernel_global_wrapper_stencil_bank_19_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9613,7 +9613,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_20_0.valid && hw_kernel_global_wrapper_stencil_bank_20_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_20_0.valid && hw_kernel_global_wrapper_stencil_bank_20_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9718,7 +9718,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_21_0.valid && hw_kernel_global_wrapper_stencil_bank_21_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_21_0.valid && hw_kernel_global_wrapper_stencil_bank_21_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9823,7 +9823,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_22_0.valid && hw_kernel_global_wrapper_stencil_bank_22_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_22_0.valid && hw_kernel_global_wrapper_stencil_bank_22_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
@@ -9928,7 +9928,7 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_23__has_external_ad
   always @(posedge clk) begin
     chain_ren <= ren_0;
     data_out_0_tmp <= SRAM[read_addr_0];
-    if (wen_0 && hw_kernel_global_wrapper_stencil_bank_23_0.valid && hw_kernel_global_wrapper_stencil_bank_23_0_enable_this_port) begin
+    if (hw_kernel_global_wrapper_stencil_bank_23_0.valid && hw_kernel_global_wrapper_stencil_bank_23_0_enable_this_port) begin
       SRAM[write_addr_0] <= data_in_0;
     end
   end
