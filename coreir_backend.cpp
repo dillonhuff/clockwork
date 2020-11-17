@@ -260,14 +260,14 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     //*verilog_collateral_file << tab(2) << "if (wen_" << i << " && " << bundle_name << ") begin" << endl;
     *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
-    out << tab(3) << "if (!wen_" << i << ") begin" << endl;
-    out << tab(4) << "$finish(-1);" << endl;
-    out << tab(3) << "end" << endl;
+    //out << tab(3) << "if (!wen_" << i << ") begin" << endl;
+    //out << tab(4) << "$finish(-1);" << endl;
+    //out << tab(3) << "end" << endl;
 
-    out << tab(3) << "if (write_addr_" << i << " !== " << bn << "_ibo) begin" << endl;
-    out << tab(4) << "$display(\"Error addresses do not match, external addr = %d, ibo = %d\", write_addr_" << i << ", " << bn << "_ibo);" << endl;
-    out << tab(4) << "$finish(-1);" << endl;
-    out << tab(3) << "end" << endl;
+    //out << tab(3) << "if (write_addr_" << i << " !== " << bn << "_ibo) begin" << endl;
+    //out << tab(4) << "$display(\"Error addresses do not match, external addr = %d, ibo = %d\", write_addr_" << i << ", " << bn << "_ibo);" << endl;
+    //out << tab(4) << "$finish(-1);" << endl;
+    //out << tab(3) << "end" << endl;
     //*verilog_collateral_file << tab(3) << "SRAM[write_addr_" << i << "] <= " << "data_in_" << str(i) << ";" << endl;
     *verilog_collateral_file << tab(3) << "SRAM[" << bn + "_ibo" << "] <= " << "data_in_" << str(i) << ";" << endl;
     *verilog_collateral_file << tab(2) << "end" << endl;
@@ -276,11 +276,11 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
   *verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
-    if (i == impl.bank_readers[b].size() - 1) {
-      *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
-    } else {
+    //if (i == impl.bank_readers[b].size() - 1) {
+      //*verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
+    //} else {
       *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
-    }
+    //}
   }
   *verilog_collateral_file << "endmodule" << endl << endl;
 }
@@ -630,7 +630,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
     for (int b = 0; b < num_banks; b++) {
       Values tile_params{{"width", COREMK(c, 16)},
         {"ID", COREMK(c, buf.name + "_" + str(b))},
-        {"has_external_addrgen", COREMK(c, true)},
+        {"has_external_addrgen", COREMK(c, false)},
         {"num_inputs",COREMK(c,bank_writers[b].size())},
         {"num_outputs",COREMK(c,bank_readers[b].size())},
         {"has_read_valid", COREMK(c, true)}};
@@ -652,10 +652,10 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         Wireable* enable = bank_and_port_to_enable[{b, count}];
         Wireable* addr = bank_and_port_to_agen[{b, count}];
-        def->connect(addr,
-            currbank->sel("write_addr_" + str(count)));
-        def->connect(currbank->sel("wen_" + str(count)),
-            enable);
+        //def->connect(addr,
+            //currbank->sel("write_addr_" + str(count)));
+        //def->connect(currbank->sel("wen_" + str(count)),
+            //enable);
         def->connect(
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
@@ -664,12 +664,12 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       for(auto pt : bank_readers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
         auto agen = bank_and_port_output_addrgen[{b, count}];
-        def->connect(
-            bank_and_port_to_read_agen[{b, count}],
-            currbank->sel("read_addr_" + str(count)));
+        //def->connect(
+            //bank_and_port_to_read_agen[{b, count}],
+            //currbank->sel("read_addr_" + str(count)));
 
-        def->connect(currbank->sel("ren_" + str(count)),
-            bank_and_port_to_read_enable[{b, count}]);
+        //def->connect(currbank->sel("ren_" + str(count)),
+            //bank_and_port_to_read_enable[{b, count}]);
       }
     }
 
