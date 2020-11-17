@@ -543,33 +543,33 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
     for (int b = 0; b < num_banks; b++) {
       for(auto pt : bank_writers[b]) {
-        string bundle_name = "bank_" + str(b) + "_" + pt;
-        string port_rep = pt;
-        string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-        op* rep = prg.find_op(op_rep_name);
-        isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+        //string bundle_name = "bank_" + str(b) + "_" + pt;
+        //string port_rep = pt;
+        //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+        //op* rep = prg.find_op(op_rep_name);
+        //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
-        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
-        isl_aff* sched_aff =
-          get_aff(adjusted_buf.schedule.at(pt));
-        auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-        auto en = controller->sel("valid");
-        auto ctrl = controller->sel("d");
+        //int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        //auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+        //isl_aff* sched_aff =
+          //get_aff(adjusted_buf.schedule.at(pt));
+        //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
+        //auto en = controller->sel("valid");
+        //auto ctrl = controller->sel("d");
 
-        auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
-        def->connect(agen->sel("d"),
-            ctrl);
+        //auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
+        //def->connect(agen->sel("d"),
+            //ctrl);
 
-        auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
-        def->connect(bank_sel->sel("d"),
-            ctrl);
+        //auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
+        //def->connect(bank_sel->sel("d"),
+            //ctrl);
 
-        auto ubuffer_port_bank_selector  = delay_by(def, bank_sel->sel("out"), 0);
-          bank_and_port_input_addrgen[{b, count}] = agen;
-          bank_and_port_input_data_valid[{b, count}] =
-            eqConst(def, ubuffer_port_bank_selector, b);
-        bank_and_port_to_agen[{b, count}] = agen->sel("out");
+        //auto ubuffer_port_bank_selector  = delay_by(def, bank_sel->sel("out"), 0);
+          //bank_and_port_input_addrgen[{b, count}] = agen;
+          //bank_and_port_input_data_valid[{b, count}] =
+            //eqConst(def, ubuffer_port_bank_selector, b);
+        //bank_and_port_to_agen[{b, count}] = agen->sel("out");
 
         //Wireable* enable = nullptr;
         //if (inpt_to_bank[pt].size() > 1) {
@@ -589,37 +589,37 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       }
 
       for(auto pt : bank_readers[b]) {
-        string bundle_name = "bank_" + str(b) + "_" + pt;
-        string port_rep = pt;
-        string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-        op* rep = prg.find_op(op_rep_name);
-        isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
+        //string bundle_name = "bank_" + str(b) + "_" + pt;
+        //string port_rep = pt;
+        //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
+        //op* rep = prg.find_op(op_rep_name);
+        //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
-        int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
+        //int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
 
-        isl_aff* sched_aff =
-          get_aff(buf.schedule.at(pt));
-        auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-        auto en = controller->sel("valid");
-        auto ctrl = controller->sel("d");
+        //isl_aff* sched_aff =
+          //get_aff(buf.schedule.at(pt));
+        //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
+        //auto en = controller->sel("valid");
+        //auto ctrl = controller->sel("d");
 
-        auto agen = build_inner_bank_offset(pt, buf, impl, def);
-        def->connect(agen->sel("d"),
-            ctrl);
+        //auto agen = build_inner_bank_offset(pt, buf, impl, def);
+        //def->connect(agen->sel("d"),
+            //ctrl);
 
-        auto bank_sel = build_bank_selector(pt, buf, impl, def);
-        def->connect(bank_sel->sel("d"),
-            ctrl);
+        //auto bank_sel = build_bank_selector(pt, buf, impl, def);
+        //def->connect(bank_sel->sel("d"),
+            //ctrl);
 
-        const int READ_LATENCY = 1;
-        auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
-          bank_and_port_output_addrgen[{b, count}] = agen;
-          bank_and_port_output_data_valid[{b, count}] =
-            eqConst(def, ubuffer_port_bank_selector, b);
+        //const int READ_LATENCY = 1;
+        //auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
+          //bank_and_port_output_addrgen[{b, count}] = agen;
+          //bank_and_port_output_data_valid[{b, count}] =
+            //eqConst(def, ubuffer_port_bank_selector, b);
 
-        bank_and_port_to_read_enable[{b, count}] = en;
-        bank_and_port_to_read_agen[{b, count}] =
-          agen->sel("out");
+        //bank_and_port_to_read_enable[{b, count}] = en;
+        //bank_and_port_to_read_agen[{b, count}] =
+          //agen->sel("out");
       }
     }
 
@@ -664,7 +664,7 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
       for(auto pt : bank_readers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        auto agen = bank_and_port_output_addrgen[{b, count}];
+        //auto agen = bank_and_port_output_addrgen[{b, count}];
         //def->connect(
             //bank_and_port_to_read_agen[{b, count}],
             //currbank->sel("read_addr_" + str(count)));
