@@ -1646,6 +1646,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   //this is the flag to wire stencil valid signal
   bool need_pass_valid = false;
+  maybe<string> last_producer_buf_with_tile;
 
   for (auto op : ops_dft) {
     cout << "Visit op: " << op->name << endl;
@@ -1705,6 +1706,12 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
       assert(buf.is_output_bundle(bundle.second));
 
+      if (last_producer_buf_with_tile.has_value()) {
+        if (buf_name != last_producer_buf_with_tile.get_value()) {
+          need_pass_valid = false;
+        }
+      }
+
       if (prg.is_input(buf_name)) {
 
         //create the op controller for input will remove for garnet test
@@ -1742,10 +1749,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
                     (!contains(buf_name, "clkwrk_dsa"))){
                def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
             }
-          }
-          //Stop at the ubuffer with memory tile inside
-          if (buffers.at(buf_name).contain_memory_tile) {
-            need_pass_valid = false;
+            //Stop at the ubuffer with memory tile inside
+            if (buffers.at(buf_name).contain_memory_tile && !last_producer_buf_with_tile.has_value()) {
+              cout << "Stop wiring stencil valid up from buf: " << buf_name << endl;
+              last_producer_buf_with_tile = buf_name;
+            }
           }
         }
         //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),

@@ -608,6 +608,7 @@
           ["op_hcompute_cim_output_stencil.cim_stencil_op_hcompute_cim_output_stencil_read","cim_stencil.op_hcompute_cim_output_stencil_read"],
           ["op_hcompute_cim_output_stencil.valid_pass_in","cim_stencil.op_hcompute_cim_output_stencil_read_extra_ctrl"],
           ["op_hcompute_cim_stencil.cim_stencil_op_hcompute_cim_stencil_write","cim_stencil.op_hcompute_cim_stencil_write"],
+          ["op_hcompute_cim_stencil.valid_pass_out","cim_stencil.op_hcompute_cim_stencil_write_extra_ctrl"],
           ["self.reset","cim_stencil.reset"],
           ["self.clk","grad_x_stencil.clk"],
           ["op_hcompute_grad_x_stencil.grad_x_stencil_op_hcompute_grad_x_stencil_write","grad_x_stencil.op_hcompute_grad_x_stencil_write"],

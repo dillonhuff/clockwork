@@ -1452,6 +1452,7 @@
           ["op_hcompute_conv_stencil_4.conv_stencil_op_hcompute_conv_stencil_4_write","conv_stencil.op_hcompute_conv_stencil_4_write"],
           ["op_hcompute_conv_stencil_5.conv_stencil_op_hcompute_conv_stencil_5_read","conv_stencil.op_hcompute_conv_stencil_5_read"],
           ["op_hcompute_conv_stencil_5.conv_stencil_op_hcompute_conv_stencil_5_write","conv_stencil.op_hcompute_conv_stencil_5_write"],
+          ["op_hcompute_conv_stencil_5.valid_pass_out","conv_stencil.op_hcompute_conv_stencil_5_write_extra_ctrl"],
           ["op_hcompute_conv_stencil.conv_stencil_op_hcompute_conv_stencil_write","conv_stencil.op_hcompute_conv_stencil_write"],
           ["op_hcompute_hw_output_stencil.conv_stencil_op_hcompute_hw_output_stencil_read","conv_stencil.op_hcompute_hw_output_stencil_read"],
           ["op_hcompute_hw_output_stencil.valid_pass_in","conv_stencil.op_hcompute_hw_output_stencil_read_extra_ctrl"],
