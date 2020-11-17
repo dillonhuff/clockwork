@@ -2454,7 +2454,7 @@ std::string MapperPasses::MemSubstitute::ID = "memsubstitute";
 void MapperPasses::MemSubstitute::setVisitorInfo() {
   Context* c = this->getContext();
   if (c->hasGenerator("cgralib.Mem_amber")) {
-    addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), MemtileReplace);
+    //addVisitorFunction(c->getGenerator("cgralib.Mem_amber"), MemtileReplace);
   }
 
 }
