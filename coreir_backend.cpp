@@ -1673,17 +1673,17 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       if (prg.is_output(buf_name)) {
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         if (options.pass_through_valid) {
-          if (app_contains_memory_tiles(buffers)) {
-            def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
-            need_pass_valid = true;
-          } else {
-            cout << "This app does not have memory tile!" << endl;
+            //def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
+            //need_pass_valid = true;
+          //} else {
+            //cout << "This app does not have memory tile!" << endl;
             //This is the situation does not have memory tile, we need to use affine generator
+
+            //Always use the output controller
             generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
             auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
             def->connect(def->sel(output_en),
                 write_start_wire(def, op->name));
-          }
         }
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
