@@ -804,7 +804,7 @@ void generate_platonic_ubuffer(
     schedule_info& hwinfo) {
   ostream& out = *verilog_collateral_file;
 
-  prg.pretty_print();
+  // prg.pretty_print();
 
   vector<int> bank_factors = cyclic_banking(prg, buf, hwinfo);
 

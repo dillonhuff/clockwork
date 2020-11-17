@@ -3424,10 +3424,6 @@ prog three_level_memory() {
 }
 
 
-#include "app.h"
-#include "ubuffer.h"
-#include "codegen.h"
-#include "prog.h"
 
 prog resnet_layer_gen() {
   prog prg;
