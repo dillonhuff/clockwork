@@ -4159,7 +4159,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     Wireable* delayed_src = nullptr;
     //  delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
 
-    const int SREG_SRAM_THRES = 100;
+    const int SREG_SRAM_THRES = 1000000;
 
 
     if(delay > SREG_SRAM_THRES) {

@@ -291,6 +291,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_reset", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"has_external_addrgen", Const::make(c, false)}});
   cgralib_mem_amber_gen->addDefaultGenArgs({{"use_prebuilt_mem", Const::make(c, false)}});
+  cgralib_mem_amber_gen->addDefaultGenArgs({{"has_read_valid", Const::make(c, false)}});
 
 
   auto CGRALibMemAmberModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
