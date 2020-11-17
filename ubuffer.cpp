@@ -1642,13 +1642,13 @@ void UBuffer::generate_coreir(CodegenOptions& options,
             def->connect(reg->sel("in"), pt2wire.at(pick(inpts)));
           } else {
             reg_in[pick(inpts)] = reg->sel("in");
-            wire2out[pick(outpts)] = reg->sel("out");
           }
         } else {
           def->connect(reg->sel("in"), last_out);
         }
         if (i == bk.maxdelay - 1) {
           def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
+          wire2out[pick(outpts)] = reg->sel("out");
         } else {
           last_out = reg->sel("out");
         }
@@ -1736,6 +1736,13 @@ void UBuffer::generate_coreir(CodegenOptions& options,
 
         vector<string> pt_vec(outpts.begin(), outpts.end());
         sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+                //Sort by bundle name first
+              auto l_bd = get_bundle(l);
+              auto r_bd = get_bundle(r);
+              if (l_bd != r_bd) {
+                return l_bd < r_bd;
+              }
+              //If in same bundle sort by start_addr
               auto l_start = lexminpt(range(access_map.at(l)));
               auto r_start = lexminpt(range(access_map.at(r)));
               return lex_lt_pt(l_start, r_start);
@@ -4285,8 +4292,8 @@ lakeStream emit_top_address_stream(string fname,
     auto ret_sched = pad_to_domain_map(sched, depth);
     string dom_name = domain_name(ret);
     if (depth > 0) {
-      ret = set_domain_name(ret, dom_name + "_S" + to_string(depth));
-      ret_sched = set_domain_name(ret_sched, dom_name + "_S" + to_string(depth));
+      ret = set_domain_name(ret, dom_name + "_s" + to_string(depth));
+      ret_sched = set_domain_name(ret_sched, dom_name + "_s" + to_string(depth));
     }
     cout << "Rewrited output port map: " << str(ret) << endl;
     cout << "Rewrited output port sched: " << str(ret_sched) << endl;
