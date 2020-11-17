@@ -320,7 +320,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
         {"has_reset", c->Bool()},
         {"has_external_addrgen", c->Bool()},
-        {"use_prebuilt_mem", c->Bool()}
+        {"use_prebuilt_mem", c->Bool()},
+        {"has_read_valid", c->Bool()},
     });
 
   cgralib->newTypeGen(
@@ -397,6 +398,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   cgralib_mem_gen->addDefaultGenArgs({{"use_prebuilt_mem", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_flush", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_reset", Const::make(c, false)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"has_external_addrgen", Const::make(c, false)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"has_read_valid", Const::make(c, false)}});
 
 
   auto CGRALibMemModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
