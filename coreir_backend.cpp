@@ -53,8 +53,6 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port,
     schedule_info& hwinfo) {
 
-
-
   assert(verilog_collateral_file != nullptr);
 
   std::ostream& out = *verilog_collateral_file;
@@ -179,6 +177,12 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
       get_aff(adjusted_buf.schedule.at(pt));
 
     out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
+
+    isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
+    isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
+
+    out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
+    out << tab(1) << "logic [15:0] " << bundle_name << "_bank_offset;" << endl;
   }
 
   *verilog_collateral_file << endl;
@@ -4416,6 +4420,33 @@ void generate_M1_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
 
 }
 
+isl_aff* bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl) {
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
+    }
+  }
+
+  coeffs.push_back("0");
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
+  auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+
+  //auto c = def->getContext();
+
+  auto acc_map = to_map(buf.access_map.at(reader));
+
+  auto addr_expr_aff = get_aff(dot(acc_map, bank_map));
+  return addr_expr_aff;
+  //auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+  //auto agen = def->addInstance("bank_selector_" + reader + c->getUnique(), aff_gen_mod);
+  //return agen;
+}
+
 CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
   int bank_stride = 1;
   vector<string> dvs;
@@ -4442,6 +4473,27 @@ CoreIR::Instance* build_bank_selector(const std::string& reader, UBuffer& buf, u
   return agen;
 }
 
+isl_aff* inner_bank_offset_aff(const std::string& reader, UBuffer& buf, ubuffer_impl& impl) {
+  vector<int> extents = extents_by_dimension(buf);
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (!elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= extents.at(d);
+    }
+  }
+
+  coeffs.push_back("0");
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> InnerBank[" + sep_list(coeffs, "", "", " + ") + "]");
+  auto bank_map = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+  cout << "bank map for " << reader << ": " << str(bank_map) << endl;
+  return get_aff(bank_map);
+}
+
+    //isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
 CoreIR::Instance* build_inner_bank_offset(const std::string& reader, UBuffer& buf, ubuffer_impl& impl, CoreIR::ModuleDef* def) {
   vector<int> extents = extents_by_dimension(buf);
   int bank_stride = 1;
