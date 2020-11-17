@@ -5126,6 +5126,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
       new_sched.insert(make_pair(in_op + "_agg2sram", in_sched_vec));
     }
 
+    int out_bd_cnt = 0;
     for ( auto out_bd_name: out_bd_vec) {
       string out_pt_name = pick(port_bundles.at(out_bd_name));
       string out_op = domain_name(to_map(access_map.at(out_pt_name)));
@@ -5135,11 +5136,15 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
       cout << "\t\nout_sched: " << str(out_sched) << endl;
       int out_fetch_ii = get_vector_fetch_loop_ii(out_sched);
       auto out_sched_new = linear_schedule(to_map(out_sched), iis, 0, false);
-      auto out_sched_vec = linear_schedule(to_map(out_sched), iis, -(out_fetch_ii * fetch_width+1), false);
+
+      //The out vectorize schedule recipe
+      int vec_offset = out_bd_cnt * fetch_width/2 - (out_fetch_ii * fetch_width+1);
+      auto out_sched_vec = linear_schedule(to_map(out_sched), iis, vec_offset, false);
       out_sched_vec = pad_one_more_dim_to_sched_map_innermost(out_sched_vec, 0);
       //cout << "\tin_sched vec: " << in_sched_vec << "\t\nout_sched vec: " << out_sched_vec << endl;
       new_sched.insert(make_pair(out_op, out_sched_new));
       new_sched.insert(make_pair(out_op + "_sram2tb", out_sched_vec));
+      out_bd_cnt ++;
     }
 
 
