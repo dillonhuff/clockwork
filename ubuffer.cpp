@@ -1030,6 +1030,11 @@ vector<ConfigMap> emit_lake_addrgen_config(CodegenOptions options, string op_nam
     string buf_name = range_name(map);
     string micro_buf_name = split_at(buf_name, "_").back();
     auto bmap_vec = get_basic_maps(map);
+    sort(bmap_vec.begin(), bmap_vec.end(), [](isl_basic_map* l, isl_basic_map* r) {
+              auto l_start = lexminpt(range(to_map(l)));
+              auto r_start = lexminpt(range(to_map(r)));
+              return lex_lt_pt(l_start, r_start);
+            });
 
     //A pass removing starting addr in multiple bank cases
     //int project_dim;
