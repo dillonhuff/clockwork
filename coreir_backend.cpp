@@ -4093,7 +4093,7 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     Wireable* delayed_src = nullptr;
     //  delay_by(def, "sr_end" + c->getUnique(), src_wire, delay);
 
-    const int SREG_SRAM_THRES = 1;
+    const int SREG_SRAM_THRES = 100;
 
 
     if(delay > SREG_SRAM_THRES) {
@@ -4111,14 +4111,16 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
       def->connect(sreg->sel("data_in_0"),src_wire);
       delayed_src = sreg->sel("data_out_0");
       isl_aff * identity = rdaff(buf.ctx,"{[root,t] -> [( root + t + 1 )]}");
-      isl_aff * shifted_identity = rdaff(buf.ctx, "{[root,t] -> [(root+t + " + str(delay ) + ")]}"); 
+      isl_aff * shifted_identity = rdaff(buf.ctx, "{[root,t] -> [(root+t + " + str(delay  ) + ")]}"); 
       isl_set * domain = rdset(buf.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
       Instance* write_fsm = generate_controller_verilog(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
       Instance* read_fsm = generate_controller_verilog(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
-      def->connect(write_fsm->sel("d")->sel(0),sreg->sel("write_addr_0"));
-      def->connect(read_fsm->sel("d")->sel(0),sreg->sel("read_addr_0"));
-      def->connect(write_fsm->sel("valid"),sreg->sel("wen_0"));
-      def->connect(read_fsm->sel("valid"),sreg->sel("ren_0"));
+      def->connect(write_fsm->sel("d")->sel(1),sreg->sel("write_addr_0"));
+      def->connect(read_fsm->sel("d")->sel(1),sreg->sel("read_addr_0"));
+      //def->connect(write_fsm->sel("valid"),sreg->sel("wen_0"));
+      //def->connect(read_fsm->sel("valid"),sreg->sel("ren_0"));
+      def->connect(one,sreg->sel("wen_0"));
+      def->connect(one,sreg->sel("ren_0"));
       ubuffer_impl impl;
       impl.bank_readers[0] = {"test"};
       impl.bank_writers[0] = {"test_writer"};
