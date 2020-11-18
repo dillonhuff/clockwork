@@ -351,15 +351,9 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     *verilog_collateral_file << tab(2) << "end" << endl;
   }
   *verilog_collateral_file << tab(1) << "end" << endl;
-  //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << bank_readers[b].size() - 1 << "_tmp : chain_data_in;" << endl;
-  //*verilog_collateral_file << tab(1) << "assign chain_data_out = chain_ren ? " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp : 512;" << endl;
   *verilog_collateral_file << tab(1) << "assign chain_data_out = " << "data_out_" << impl.bank_readers[b].size() - 1 << "_tmp;" << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
-    //if (i == impl.bank_readers[b].size() - 1) {
-      //*verilog_collateral_file << tab(1) << "assign data_out_" << i << " = chain_data_out;" << endl;
-    //} else {
-      *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
-    //}
+    *verilog_collateral_file << tab(1) << "assign data_out_" << i << " = data_out_" << i << "_tmp;" << endl;
   }
   *verilog_collateral_file << "endmodule" << endl << endl;
 }
