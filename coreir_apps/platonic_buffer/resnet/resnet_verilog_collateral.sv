@@ -1353,14 +1353,14 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_0__has_external_addr
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(2 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
 module hw_input_global_wrapper_stencil_bank_1_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=1);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -1374,7 +1374,7 @@ module hw_input_global_wrapper_stencil_bank_1_0_ctrl(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==0) begin
+      if(counter[0] ==1) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -1526,14 +1526,14 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_1__has_external_addr
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(3 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
 module hw_input_global_wrapper_stencil_bank_2_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=2);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -1547,7 +1547,7 @@ module hw_input_global_wrapper_stencil_bank_2_0_ctrl(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==0) begin
+      if(counter[0] ==2) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -1699,14 +1699,14 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_2__has_external_addr
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(4 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
 module hw_input_global_wrapper_stencil_bank_3_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=3);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -1720,7 +1720,7 @@ module hw_input_global_wrapper_stencil_bank_3_0_ctrl(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==0) begin
+      if(counter[0] ==3) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -1872,14 +1872,14 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_3__has_external_addr
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(5 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
 module hw_input_global_wrapper_stencil_bank_4_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=4);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -1893,7 +1893,7 @@ module hw_input_global_wrapper_stencil_bank_4_0_ctrl(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==0) begin
+      if(counter[0] ==4) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -2045,14 +2045,14 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_4__has_external_addr
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(6 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
 module hw_input_global_wrapper_stencil_bank_5_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=5);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2066,7 +2066,7 @@ module hw_input_global_wrapper_stencil_bank_5_0_ctrl(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==0) begin
+      if(counter[0] ==5) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -2218,14 +2218,14 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_5__has_external_addr
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(7 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
 module hw_input_global_wrapper_stencil_bank_6_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=6);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2239,7 +2239,7 @@ module hw_input_global_wrapper_stencil_bank_6_0_ctrl(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==0) begin
+      if(counter[0] ==6) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -2391,14 +2391,14 @@ module cgralib_Mem_amber__IDhw_input_global_wrapper_stencil_6__has_external_addr
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(8 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
 module hw_input_global_wrapper_stencil_bank_7_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
   logic [15:0] counter[4:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2412,7 +2412,7 @@ module hw_input_global_wrapper_stencil_bank_7_0_ctrl(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==0) begin
+      if(counter[0] ==7) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -2755,14 +2755,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_0__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(10 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_1_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=0);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2778,7 +2778,7 @@ module hw_kernel_global_wrapper_stencil_bank_1_0_ctrl(input clk, input flush, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==9) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -2946,14 +2946,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_1__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(18 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_2_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=0);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2969,7 +2969,7 @@ module hw_kernel_global_wrapper_stencil_bank_2_0_ctrl(input clk, input flush, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==17) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -3137,14 +3137,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_2__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(3 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_3_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=1);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3160,7 +3160,7 @@ module hw_kernel_global_wrapper_stencil_bank_3_0_ctrl(input clk, input flush, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==2) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -3328,14 +3328,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_3__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(11 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_4_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=1);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3351,7 +3351,7 @@ module hw_kernel_global_wrapper_stencil_bank_4_0_ctrl(input clk, input flush, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==10) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -3519,14 +3519,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_4__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(19 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_5_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=1);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3542,7 +3542,7 @@ module hw_kernel_global_wrapper_stencil_bank_5_0_ctrl(input clk, input flush, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==18) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -3710,14 +3710,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_5__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(4 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_6_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=2);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3733,7 +3733,7 @@ module hw_kernel_global_wrapper_stencil_bank_6_0_ctrl(input clk, input flush, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==3) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -3901,14 +3901,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_6__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(12 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_7_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=2);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3924,7 +3924,7 @@ module hw_kernel_global_wrapper_stencil_bank_7_0_ctrl(input clk, input flush, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==11) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -4092,14 +4092,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_7__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(20 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_8_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=2);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4115,7 +4115,7 @@ module hw_kernel_global_wrapper_stencil_bank_8_0_ctrl(input clk, input flush, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==19) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -4283,14 +4283,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_8__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(5 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_9_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=3);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4306,7 +4306,7 @@ module hw_kernel_global_wrapper_stencil_bank_9_0_ctrl(input clk, input flush, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==4) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -4474,14 +4474,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_9__has_external_add
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(13 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_10_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=3);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4497,7 +4497,7 @@ module hw_kernel_global_wrapper_stencil_bank_10_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==12) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -4665,14 +4665,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_10__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(21 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_11_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=3);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4688,7 +4688,7 @@ module hw_kernel_global_wrapper_stencil_bank_11_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==20) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -4856,14 +4856,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_11__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(6 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_12_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=4);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4879,7 +4879,7 @@ module hw_kernel_global_wrapper_stencil_bank_12_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==5) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -5047,14 +5047,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_12__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(14 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_13_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=4);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5070,7 +5070,7 @@ module hw_kernel_global_wrapper_stencil_bank_13_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==13) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -5238,14 +5238,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_13__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(22 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_14_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=4);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5261,7 +5261,7 @@ module hw_kernel_global_wrapper_stencil_bank_14_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==21) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -5429,14 +5429,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_14__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(7 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_15_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=5);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5452,7 +5452,7 @@ module hw_kernel_global_wrapper_stencil_bank_15_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==6) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -5620,14 +5620,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_15__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(15 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_16_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=5);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5643,7 +5643,7 @@ module hw_kernel_global_wrapper_stencil_bank_16_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==14) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -5811,14 +5811,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_16__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(23 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_17_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=5);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5834,7 +5834,7 @@ module hw_kernel_global_wrapper_stencil_bank_17_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==22) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -6002,14 +6002,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_17__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(8 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_18_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=6);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6025,7 +6025,7 @@ module hw_kernel_global_wrapper_stencil_bank_18_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==7) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -6193,14 +6193,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_18__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(16 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_19_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=6);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6216,7 +6216,7 @@ module hw_kernel_global_wrapper_stencil_bank_19_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==15) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -6384,14 +6384,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_19__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(24 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_20_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=6);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6407,7 +6407,7 @@ module hw_kernel_global_wrapper_stencil_bank_20_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==23) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -6575,14 +6575,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_20__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(9 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_21_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6598,7 +6598,7 @@ module hw_kernel_global_wrapper_stencil_bank_21_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==8) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -6766,14 +6766,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_21__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(17 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_22_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6789,7 +6789,7 @@ module hw_kernel_global_wrapper_stencil_bank_22_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==16) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;
@@ -6957,14 +6957,14 @@ module cgralib_Mem_amber__IDhw_kernel_global_wrapper_stencil_22__has_external_ad
   assign data_out_0 = data_out_0_tmp;
 endmodule
 
-// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(25 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
 module hw_kernel_global_wrapper_stencil_bank_23_0_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
   logic [15:0] counter[5:0];
   logic on;
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6980,7 +6980,7 @@ module hw_kernel_global_wrapper_stencil_bank_23_0_ctrl(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==24) begin
         on <=1;
         on2 <= 1;
         d[0]<= 16'b0;

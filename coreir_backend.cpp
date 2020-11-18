@@ -155,14 +155,38 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     isl_set* restricted_dom = domain(ms);
     //cout << tab(1) << "restricted dom: " << str(restricted_dom) << endl;
 
+    vector<int> lens = extents(restricted_dom);
+    vector<int> min_vals = mins(restricted_dom);
+    isl_point* lmin = lexminpt(restricted_dom);
+    //cout << "lexmin point: " << str(lmin) << endl;
+    //cout << "sched aff   : " << str(sched_aff) << endl;
+    int offset = 0;
+    for (int d = 0; d < num_dims(restricted_dom); d++) {
+      int min = min_vals.at(d);
+      //cout << "Min: " << min << endl;
+      offset += min*to_int(get_coeff(sched_aff, d));
+    }
+    //cout << "Offset: " << offset << endl;
+    isl_aff* normed_sched = add(sched_aff, offset);
+    //cout << "Normed sched: " << str(normed_sched) << endl;
+    vector<string> dvs;
+    vector<string> range_constraints;
+    for (int d = 0; d < num_dims(restricted_dom); d++) {
+      dvs.push_back("d" + str(d));
+      range_constraints.push_back("0 <= " + dvs.back() + " < " + str(lens.at(d)));
+    }
+    string dom_str = curlies(name(restricted_dom) + bracket_list(dvs) + " : " + sep_list(range_constraints, "", "", " and "));
+    isl_set* normed_dom = rdset(prg.ctx, dom_str);
 
     generate_fsm(*verilog_collateral_file,
         options,
         bundle_name + "_ctrl",
         "d",
         "valid",
-        sched_aff,
-        restricted_dom);
+        normed_sched,
+        normed_dom);
+        //sched_aff,
+        //restricted_dom);
         //dom);
 
     //if (buf.name == "conv_stencil") {
@@ -183,44 +207,41 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     isl_aff* sched_aff =
       get_aff(buf.schedule.at(pt));
 
-    isl_aff* ibo = inner_bank_offset_aff(pt, buf, impl);
+    //isl_aff* ibo = inner_bank_offset_aff(pt, buf, impl);
     isl_aff* bank_selector = bank_offset_aff(pt, buf, impl);
-    cout << "Conv stencil bank: " << b << endl;
-    cout << tab(1) << "sched: " << str(sched_aff) << endl;
-    cout << tab(1) << "ibo  : " << str(ibo) << endl;
-    cout << tab(1) << "sel  : " << str(bank_selector) << endl;
-    cout << tab(1) << "bnk  : " << b << endl;
-    cout << tab(1) << "dom  : " << str(dom) << endl;
+    //cout << "Conv stencil bank: " << b << endl;
+    //cout << tab(1) << "sched: " << str(sched_aff) << endl;
+    //cout << tab(1) << "ibo  : " << str(ibo) << endl;
+    //cout << tab(1) << "sel  : " << str(bank_selector) << endl;
+    //cout << tab(1) << "bnk  : " << b << endl;
+    //cout << tab(1) << "dom  : " << str(dom) << endl;
 
     isl_map* sel_map = its(to_map(bank_selector), dom);
-    cout << tab(1) << "sel map: " << str(sel_map) << endl;
+    //cout << tab(1) << "sel map: " << str(sel_map) << endl;
     isl_map* ms = isl_map_fix_si(sel_map, isl_dim_out, 0, b);
-    cout << tab(1) << "sel map after fixing bank # " << str(ms) << endl;
+    //cout << tab(1) << "sel map after fixing bank # " << str(ms) << endl;
     isl_set* restricted_dom = domain(ms);
-    cout << endl;
-    cout << tab(1) << "restricted dom: " << str(restricted_dom) << endl;
+    //cout << endl;
+    //cout << tab(1) << "restricted dom: " << str(restricted_dom) << endl;
     vector<int> lens = extents(restricted_dom);
     vector<int> min_vals = mins(restricted_dom);
     isl_point* lmin = lexminpt(restricted_dom);
-    cout << "lexmin point: " << str(lmin) << endl;
-    cout << "sched aff   : " << str(sched_aff) << endl;
+    //cout << "lexmin point: " << str(lmin) << endl;
+    //cout << "sched aff   : " << str(sched_aff) << endl;
     int offset = 0;
     for (int d = 0; d < num_dims(restricted_dom); d++) {
       int min = min_vals.at(d);
-      cout << "Min: " << min << endl;
+      //cout << "Min: " << min << endl;
       offset += min*to_int(get_coeff(sched_aff, d));
     }
-    cout << "Offset: " << offset << endl;
+    //cout << "Offset: " << offset << endl;
     isl_aff* normed_sched = add(sched_aff, offset);
-    cout << "Normed sched: " << str(normed_sched) << endl;
+    //cout << "Normed sched: " << str(normed_sched) << endl;
     vector<string> dvs;
     vector<string> range_constraints;
     for (int d = 0; d < num_dims(restricted_dom); d++) {
-      //int m= min_vals.at(d);
       dvs.push_back("d" + str(d));
       range_constraints.push_back("0 <= " + dvs.back() + " < " + str(lens.at(d)));
-      //cout << "schedule value at min: " << str(eval(sched_aff, lmin)) << endl;
-      //assert(min == 0);
     }
     string dom_str = curlies(name(restricted_dom) + bracket_list(dvs) + " : " + sep_list(range_constraints, "", "", " and "));
     isl_set* normed_dom = rdset(prg.ctx, dom_str);
