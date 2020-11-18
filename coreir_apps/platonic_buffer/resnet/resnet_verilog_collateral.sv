@@ -1187,7 +1187,7 @@ module hw_input_global_wrapper_stencil_bank_0_0_ctrl(input clk, input flush, inp
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -1360,7 +1360,7 @@ module hw_input_global_wrapper_stencil_bank_1_0_ctrl(input clk, input flush, inp
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=1);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -1533,7 +1533,7 @@ module hw_input_global_wrapper_stencil_bank_2_0_ctrl(input clk, input flush, inp
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=2);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -1706,7 +1706,7 @@ module hw_input_global_wrapper_stencil_bank_3_0_ctrl(input clk, input flush, inp
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=3);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -1879,7 +1879,7 @@ module hw_input_global_wrapper_stencil_bank_4_0_ctrl(input clk, input flush, inp
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=4);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2052,7 +2052,7 @@ module hw_input_global_wrapper_stencil_bank_5_0_ctrl(input clk, input flush, inp
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=5);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2225,7 +2225,7 @@ module hw_input_global_wrapper_stencil_bank_6_0_ctrl(input clk, input flush, inp
   logic on2;
   integer i;
   integer dims = 4;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=6);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2571,7 +2571,7 @@ module hw_kernel_global_wrapper_stencil_bank_0_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2762,7 +2762,7 @@ module hw_kernel_global_wrapper_stencil_bank_1_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -2953,7 +2953,7 @@ module hw_kernel_global_wrapper_stencil_bank_2_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=0);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3144,7 +3144,7 @@ module hw_kernel_global_wrapper_stencil_bank_3_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=1);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3335,7 +3335,7 @@ module hw_kernel_global_wrapper_stencil_bank_4_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=1);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3526,7 +3526,7 @@ module hw_kernel_global_wrapper_stencil_bank_5_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=1);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3717,7 +3717,7 @@ module hw_kernel_global_wrapper_stencil_bank_6_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=2);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -3908,7 +3908,7 @@ module hw_kernel_global_wrapper_stencil_bank_7_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=2);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4099,7 +4099,7 @@ module hw_kernel_global_wrapper_stencil_bank_8_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=2);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4290,7 +4290,7 @@ module hw_kernel_global_wrapper_stencil_bank_9_0_ctrl(input clk, input flush, in
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=3);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4481,7 +4481,7 @@ module hw_kernel_global_wrapper_stencil_bank_10_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=3);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4672,7 +4672,7 @@ module hw_kernel_global_wrapper_stencil_bank_11_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=3);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -4863,7 +4863,7 @@ module hw_kernel_global_wrapper_stencil_bank_12_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=4);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5054,7 +5054,7 @@ module hw_kernel_global_wrapper_stencil_bank_13_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=4);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5245,7 +5245,7 @@ module hw_kernel_global_wrapper_stencil_bank_14_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=4);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5436,7 +5436,7 @@ module hw_kernel_global_wrapper_stencil_bank_15_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=5);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5627,7 +5627,7 @@ module hw_kernel_global_wrapper_stencil_bank_16_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=5);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -5818,7 +5818,7 @@ module hw_kernel_global_wrapper_stencil_bank_17_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=5);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6009,7 +6009,7 @@ module hw_kernel_global_wrapper_stencil_bank_18_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=6);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6200,7 +6200,7 @@ module hw_kernel_global_wrapper_stencil_bank_19_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=6);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6391,7 +6391,7 @@ module hw_kernel_global_wrapper_stencil_bank_20_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=6);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6582,7 +6582,7 @@ module hw_kernel_global_wrapper_stencil_bank_21_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=0 && d[4]<=7);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
@@ -6773,7 +6773,7 @@ module hw_kernel_global_wrapper_stencil_bank_22_0_ctrl(input clk, input flush, i
   logic on2;
   integer i;
   integer dims = 5;
-  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=1 && d[4]<=7);
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       d[0]<= 16'b1010101010101010;
