@@ -4380,8 +4380,9 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
       if (buf.is_out_pt(src) &&
           buf.is_out_pt(dst) &&
           dg.weight(src, dst) == 1 &&
+          shift_registers.in_edges(dst).size() == 0) {
           //dg.out_edges[dst].size() == 0 &&
-          !elem(dst, shift_registers.nodes)) {
+          //!elem(dst, shift_registers.nodes)) {
         shift_registers.add_edge(src, dst, dg.weight(src, dst));
         cout << "Adding out -> out sr: " << src << " -> " << dst << dg.weight(src,dst) << endl;
       }
