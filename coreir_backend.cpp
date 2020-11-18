@@ -125,6 +125,7 @@ struct affine_controller_ctrl {
 };
 
 void instantiate_M3_verilog(
+    CodegenOptions& options,
     const std::string& long_name,
     UBuffer& buf,
     const int b,
@@ -132,6 +133,33 @@ void instantiate_M3_verilog(
     map<int, affine_controller_ctrl> out_port_controllers) {
 
   std::ostream& out = *verilog_collateral_file;
+
+  for (int count = 0; count < (int) in_port_controllers.size(); count++) {
+    string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
+    generate_fsm(*verilog_collateral_file,
+        options,
+        bundle_name + "_ctrl",
+        "d",
+        "valid",
+        in_port_controllers[count].sched,
+        in_port_controllers[count].dom);
+        //normed_sched,
+        //normed_dom);
+  }
+
+  for (int count = 0; count < out_port_controllers.size(); count++) {
+    string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
+    generate_fsm(*verilog_collateral_file,
+        options,
+        bundle_name + "_ctrl",
+        "d",
+        "valid",
+        out_port_controllers[count].sched,
+        out_port_controllers[count].dom);
+        //normed_sched,
+        //normed_dom);
+  }
+
 
   vector<string> port_decls = {};
   port_decls.push_back("input clk");
@@ -284,19 +312,6 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     in_port_controllers[count] = {ibo, normed_sched, normed_dom};
   }
 
-  for (int count = 0; count < (int) in_port_controllers.size(); count++) {
-    string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
-    generate_fsm(*verilog_collateral_file,
-        options,
-        bundle_name + "_ctrl",
-        "d",
-        "valid",
-        in_port_controllers[count].sched,
-        in_port_controllers[count].dom);
-        //normed_sched,
-        //normed_dom);
-  }
-
   for(auto pt : impl.bank_readers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     //string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
@@ -335,20 +350,8 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     out_port_controllers[count] = {ibo, normed_sched, normed_dom};
   }
 
-  for (int count = 0; count < out_port_controllers.size(); count++) {
-    string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
-    generate_fsm(*verilog_collateral_file,
-        options,
-        bundle_name + "_ctrl",
-        "d",
-        "valid",
-        out_port_controllers[count].sched,
-        out_port_controllers[count].dom);
-        //normed_sched,
-        //normed_dom);
-  }
-
   instantiate_M3_verilog(
+      options,
       long_name,
       buf,
       b,
