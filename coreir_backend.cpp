@@ -127,8 +127,8 @@ struct affine_controller_ctrl {
 void instantiate_M3_verilog(
     CodegenOptions& options,
     const std::string& long_name,
-    UBuffer& buf,
-    const int b,
+    //UBuffer& buf,
+    //const int b,
     map<int, affine_controller_ctrl> in_port_controllers,
     map<int, affine_controller_ctrl> out_port_controllers) {
 
@@ -342,8 +342,8 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   instantiate_M3_verilog(
       options,
       long_name,
-      buf,
-      b,
+      //buf,
+      //b,
       in_port_controllers,
       out_port_controllers);
 
