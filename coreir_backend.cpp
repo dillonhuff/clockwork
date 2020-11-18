@@ -250,7 +250,7 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
 
-    auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+    //auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
 
     isl_aff* sched_aff = out_port_controllers[count].sched;
@@ -259,7 +259,8 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
 
-    isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
+    isl_aff* ibo = out_port_controllers[count].access_function;
+    //isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
     out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
@@ -274,7 +275,7 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
 
-    auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
+    //auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
     isl_aff* sched_aff = in_port_controllers[count].sched;
     //isl_aff* sched_aff =
@@ -282,7 +283,8 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
 
-    isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
+    isl_aff* ibo = in_port_controllers[count].access_function;
+    //isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
     out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
