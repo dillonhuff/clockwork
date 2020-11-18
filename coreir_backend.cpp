@@ -124,6 +124,11 @@ struct affine_controller_ctrl {
   isl_set* dom;
 };
 
+struct M3_config {
+  map<int, affine_controller_ctrl> in_port_controllers;
+  map<int, affine_controller_ctrl> out_port_controllers;
+};
+
 affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
 
   if (num_div_dims(unpacked.access_function) == 0) {
@@ -361,7 +366,7 @@ void instantiate_M3_verilog(
 
 }
 
-void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf, prog& prg,
+M3_config instantiate_M3_verilog(CodegenOptions& options, const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf, prog& prg,
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port,
     schedule_info& hwinfo) {
 
@@ -456,11 +461,10 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   instantiate_M3_verilog(
       options,
       long_name,
-      //buf,
-      //b,
       in_port_controllers,
       out_port_controllers);
 
+  return {in_port_controllers, out_port_controllers};
 }
 
 Instance* generate_controller_verilog(CodegenOptions& options, ModuleDef* def, const std::string& name, isl_aff* aff, isl_set* dom) {
@@ -674,6 +678,30 @@ build_ubuffer_to_bank_binding(ubuffer_impl& impl) {
   return ubuffer_port_and_bank_to_bank_port;
 }
 
+void attach_M3_bank_config_metadata(Instance* currbank, M3_config& bank_config) {
+  json tile_config;
+  for (auto pt : bank_config.in_port_controllers) {
+    json port_config;
+    vector<int> dom_lens = extents(pt.second.dom);
+    for (int d = 0; d < (int) dom_lens.size(); d++) {
+      port_config["extent_" + str(d)] = dom_lens.at(d);
+      int ii = to_int(get_coeff(pt.second.sched, d));
+      port_config["ii_" + str(d)] = ii;
+
+      int stride = to_int(get_coeff(pt.second.access_function, d));
+      port_config["stride_" + str(d)] = ii;
+    }
+    port_config["sched_offset"] = to_int(const_coeff(pt.second.sched));
+    port_config["stride_offset"] = to_int(const_coeff(pt.second.access_function));
+
+    tile_config["in_port_" + str(pt.first)] = port_config;
+  }
+  for (auto pt : bank_config.out_port_controllers) {
+    //tile_config[pt.second] = 1;
+  }
+  currbank->getMetaData()["config"] = tile_config;
+}
+
 void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& orig_buf, schedule_info& hwinfo) {
   CoreIR::Context* c = def->getContext();
   for (auto out : orig_buf.get_out_ports()) {
@@ -816,7 +844,8 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       CoreIR::Instance * currbank = def->addInstance("bank_" + str(b), "cgralib.Mem_amber", tile_params);
       def->connect(currbank->sel("chain_chain_en"),zero);
 
-      instantiate_M3_verilog(options, currbank->getModuleRef()->getLongName(), b, impl, buf, prg, ubuffer_port_and_bank_to_bank_port, hwinfo);
+      auto bank_config = instantiate_M3_verilog(options, currbank->getModuleRef()->getLongName(), b, impl, buf, prg, ubuffer_port_and_bank_to_bank_port, hwinfo);
+      attach_M3_bank_config_metadata(currbank, bank_config);
 
       bank_map[b] = currbank;
       def->connect(currbank->sel("clk_en"),one);
@@ -828,27 +857,21 @@ void generate_M3_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, prog& p
       auto currbank = bank_map[b];
       for(auto pt : bank_writers[b]) {
         int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        //Wireable* enable = bank_and_port_to_enable[{b, count}];
-        //Wireable* addr = bank_and_port_to_agen[{b, count}];
-        //def->connect(addr,
-            //currbank->sel("write_addr_" + str(count)));
-        //def->connect(currbank->sel("wen_" + str(count)),
-            //enable);
         def->connect(
             currbank->sel("data_in_" + str(count)),
             def->sel("self." + buf.container_bundle(pt) + "." + str(buf.bundle_offset(pt))));
       }
 
-      for(auto pt : bank_readers[b]) {
-        int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
-        //auto agen = bank_and_port_output_addrgen[{b, count}];
-        //def->connect(
-            //bank_and_port_to_read_agen[{b, count}],
-            //currbank->sel("read_addr_" + str(count)));
+      //for(auto pt : bank_readers[b]) {
+        //int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
+        ////auto agen = bank_and_port_output_addrgen[{b, count}];
+        ////def->connect(
+            ////bank_and_port_to_read_agen[{b, count}],
+            ////currbank->sel("read_addr_" + str(count)));
 
-        //def->connect(currbank->sel("ren_" + str(count)),
-            //bank_and_port_to_read_enable[{b, count}]);
-      }
+        ////def->connect(currbank->sel("ren_" + str(count)),
+            ////bank_and_port_to_read_enable[{b, count}]);
+      //}
     }
 
     for (auto pt : buf.get_out_ports()) {
@@ -4357,21 +4380,6 @@ dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* de
 
 dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
-  //map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
-  //vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
-
-  //cout << "out -> out srs: " << shift_registered_outputs_to_outputs.size() << endl;
-
-  //dgraph dg;
-  //for (auto pt : shift_registered_outputs) {
-    //dg.add_edge(pt.second.first, pt.first, pt.second.second);
-  //}
-  //for (auto pt : shift_registered_outputs_to_outputs) {
-    //dg.add_edge(pt.second.first, pt.first, pt.second.second);
-  //}
-
-  //cout << "DG: ..." << endl;
-  //cout << dg << endl;
 
   dgraph shift_registers;
   for (auto e : dg.out_edges) {
@@ -4381,8 +4389,6 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
           buf.is_out_pt(dst) &&
           dg.weight(src, dst) == 1 &&
           shift_registers.in_edges(dst).size() == 0) {
-          //dg.out_edges[dst].size() == 0 &&
-          //!elem(dst, shift_registers.nodes)) {
         shift_registers.add_edge(src, dst, dg.weight(src, dst));
         cout << "Adding out -> out sr: " << src << " -> " << dst << dg.weight(src,dst) << endl;
       }
