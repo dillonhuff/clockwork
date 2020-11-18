@@ -125,13 +125,89 @@ struct affine_controller_ctrl {
 };
 
 affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
-  assert(num_div_dims(unpacked.access_function) == 0);
 
-  affine_controller_ctrl packed;
-  packed.access_function = unpacked.access_function;
-  packed.sched = unpacked.sched;
-  packed.dom = unpacked.dom;
-  return packed;
+  if (num_div_dims(unpacked.access_function) == 0) {
+    affine_controller_ctrl packed;
+    packed.access_function = unpacked.access_function;
+    packed.sched = unpacked.sched;
+    packed.dom = unpacked.dom;
+    return packed;
+  } else {
+    cout << "Div dims in: " << str(unpacked.access_function) << endl;
+    std::map<int, int> split_dims;
+    for (int d = 0; d < num_div_dims(unpacked.access_function); d++) {
+      auto a = isl_aff_get_div(unpacked.access_function, d);
+      cout << tab(2) << "=== div: " << str(a) << endl;
+      int denom = to_int(isl_aff_get_denominator_val(a));
+      assert(denom == 2);
+      cout << tab(3) << "denom = " << denom << endl;
+      for (int di = 0; di < num_in_dims(a); di++) {
+        if (!is_zero(get_coeff(a, di))) {
+          split_dims[di] = denom;
+        }
+      }
+      //int coeff = to_int(isl_aff_get_coefficient_val(aff, isl_dim_div, d));
+      //auto res = sum_term_numerators(def, a);
+      //auto val = mul(def, shiftr(def, res, 1), coeff);
+      //terms.push_back(val);
+    }
+
+
+    cout << "Need to split dimensions..." << endl;
+    for (auto d : split_dims) {
+      cout << tab(1) << d.first << " -> " << d.second << endl;
+    }
+
+    vector<int> dom_extents = extents(unpacked.dom);
+
+    vector<string> dvars;
+    vector<int> iis;
+    vector<int> ranges;
+    vector<string> sched_terms;
+    vector<string> extent_strs;
+    int n = 0;
+    for (int d = 0; d < num_in_dims(unpacked.access_function); d++) {
+      if (!contains_key(d, split_dims)) {
+        dvars.push_back("d" + str(n));
+        iis.push_back(to_int(get_coeff(unpacked.sched, d)));
+        ranges.push_back(dom_extents.at(d));
+        sched_terms.push_back(str(iis.back()) + "*" + dvars.back());
+        extent_strs.push_back("0 <= " + dvars.back() + " < " + str(ranges.back()));
+
+        n++;
+      } else {
+        dvars.push_back("d" + str(n));
+        int orig_ii = to_int(get_coeff(unpacked.sched, d));
+        iis.push_back(orig_ii * 2);
+        ranges.push_back(dom_extents.at(d) / 2);
+        sched_terms.push_back(str(iis.back()) + "*" + dvars.back());
+        extent_strs.push_back("0 <= " + dvars.back() + " < " + str(ranges.back()));
+        n++;
+
+        dvars.push_back("d" + str(n));
+        iis.push_back(orig_ii);
+        ranges.push_back(2);
+        sched_terms.push_back(str(iis.back()) + "*" + dvars.back());
+        extent_strs.push_back("0 <= " + dvars.back() + " < " + str(ranges.back()));
+        n++;
+      }
+    }
+
+    sched_terms.push_back(str(const_coeff(unpacked.sched)));
+    isl_aff* packed_sched =
+      rdaff(ctx(unpacked.access_function), curlies(name(unpacked.dom) + bracket_list(dvars) + " -> " + sep_list(sched_terms, "[(", ")]", " + ")));
+
+    isl_set* packed_dom =
+      rdset(ctx(unpacked.dom),
+          curlies(name(unpacked.dom) + bracket_list(dvars) + " : " + sep_list(extent_strs, "", "", " and ")));
+    cout << "Orig sched  : " << str(unpacked.sched) << endl;
+    cout << "Packed sched: " << str(packed_sched) << endl;
+    cout << "Orig dom    : " << str(unpacked.dom) << endl;
+    cout << "Packed dom  : " << str(packed_dom) << endl;
+    assert(false);
+
+  }
+
 }
 
 void instantiate_M3_verilog(

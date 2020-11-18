@@ -16748,8 +16748,8 @@ vector<prog> harris_variants() {
 vector<prog> isca_programs() {
   vector<prog> test_programs;
 
-  test_programs.push_back(resnet());
   test_programs.push_back(up_sample());
+  test_programs.push_back(resnet());
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(gaussian());
   test_programs.push_back(unsharp());
