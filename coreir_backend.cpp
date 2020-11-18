@@ -204,19 +204,36 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     isl_point* lmin = lexminpt(restricted_dom);
     cout << "lexmin point: " << str(lmin) << endl;
     cout << "sched aff   : " << str(sched_aff) << endl;
+    int offset = 0;
     for (int d = 0; d < num_dims(restricted_dom); d++) {
       int min = min_vals.at(d);
-      cout << "schedule value at min: " << str(eval(sched_aff, lmin)) << endl;
-      assert(min == 0);
+      cout << "Min: " << min << endl;
+      offset += min*to_int(get_coeff(sched_aff, d));
     }
+    cout << "Offset: " << offset << endl;
+    isl_aff* normed_sched = add(sched_aff, offset);
+    cout << "Normed sched: " << str(normed_sched) << endl;
+    vector<string> dvs;
+    vector<string> range_constraints;
+    for (int d = 0; d < num_dims(restricted_dom); d++) {
+      //int m= min_vals.at(d);
+      dvs.push_back("d" + str(d));
+      range_constraints.push_back("0 <= " + dvs.back() + " < " + str(lens.at(d)));
+      //cout << "schedule value at min: " << str(eval(sched_aff, lmin)) << endl;
+      //assert(min == 0);
+    }
+    string dom_str = curlies(name(restricted_dom) + bracket_list(dvs) + " : " + sep_list(range_constraints, "", "", " and "));
+    isl_set* normed_dom = rdset(prg.ctx, dom_str);
 
     generate_fsm(*verilog_collateral_file,
         options,
         bundle_name + "_ctrl",
         "d",
         "valid",
-        sched_aff,
-        restricted_dom);
+        normed_sched,
+        normed_dom);
+        //sched_aff,
+        //restricted_dom);
         //dom);
   }
 

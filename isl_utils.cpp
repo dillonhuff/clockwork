@@ -3585,6 +3585,8 @@ isl_val* get_coeff(isl_constraint* c, enum isl_dim_type type, int pos) {
 }
 
 isl_val* eval(isl_aff* a, isl_point* p) {
+  //assert(false);
+  //return isl_aff_eval(cpy(a), cpy(p));
   auto ct = ctx(a);
   isl_val* val = zero(ct);
   return val;
