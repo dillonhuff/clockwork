@@ -17131,20 +17131,20 @@ void fpga_asplos_tests() {
 }
 
 void cgra_flow_tests() {
-  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
-  //assert(false);
 
-  vector<prog> M1_test_programs = isca_programs();
-  //vector<prog> M1_test_programs{pointwise()};
+  //vector<prog> M1_test_programs = isca_programs();
+  vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  //assert(false);
+  assert(false);
 
   vector<prog> M3_test_programs = isca_programs();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
   //assert(false);
   
+  vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
+  test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
+  //assert(false);
 
   auto test_programs =
     all_cgra_programs();
