@@ -49,12 +49,6 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
-//void instantiate_M3_verilog(CodegenOptions& options,
-    //const std::string& long_name,
-    //const int b,
-    //ubuffer_impl& impl,
-    //UBuffer& buf,
-    //prog& prg,
 void instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& long_name, int delay, prog& prg,schedule_info& hwinfo) {
 
   assert(verilog_collateral_file != nullptr);
@@ -150,6 +144,26 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
         "valid",
         sched_aff,
         dom);
+
+
+    isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
+    isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
+    if (buf.name == "conv_stencil") {
+      cout << "Conv stencil bank: " << b << endl;
+      cout << tab(1) << "sched: " << str(sched_aff) << endl;
+      cout << tab(1) << "ibo  : " << str(ibo) << endl;
+      cout << tab(1) << "sel  : " << str(bank_selector) << endl;
+      cout << tab(1) << "bnk  : " << b << endl;
+      cout << tab(1) << "dom  : " << str(dom) << endl;
+
+      isl_map* sel_map = its(to_map(bank_selector), dom);
+      cout << tab(1) << "sel map: " << str(sel_map) << endl;
+      isl_map* ms = isl_map_fix_si(sel_map, isl_dim_out, 0, b);
+      cout << tab(1) << "sel map after fixing bank # " << str(sel_map) << endl;
+      assert(false);
+    }
+
+
   }
 
   for(auto pt : impl.bank_readers[b]) {
@@ -179,14 +193,10 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   for(int i = 0; i < impl.bank_writers[b].size(); i++)
   {
     port_decls.push_back("input [15:0] data_in_" + str(i));
-    //port_decls.push_back("input [15:0] write_addr_" + str(i));
-    //port_decls.push_back("input wen_" + str(i));
   }
   for(int i = 0; i < impl.bank_readers[b].size(); i++)
   {
     port_decls.push_back("output logic [15:0] data_out_" + str(i));
-    //port_decls.push_back("input [15:0] read_addr_" + str(i));
-    //port_decls.push_back("input ren_" + str(i));
     port_decls.push_back("output data_out_" + str(i) + "_valid");
   }
   port_decls.push_back("input [15:0] chain_data_in");

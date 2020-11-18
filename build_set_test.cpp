@@ -17130,9 +17130,10 @@ void fpga_asplos_tests() {
 
 void cgra_flow_tests() {
 
-  vector<prog> M3_test_programs = isca_programs();
+  //vector<prog> M3_test_programs = isca_programs();
+  vector<prog> M3_test_programs{resnet()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);
-  //assert(false);
+  assert(false);
   
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{pointwise()};
@@ -18942,6 +18943,19 @@ void test_if_construction() {
 }
 
 void dhuff_playground() {
+  {
+    isl_ctx* ctx = isl_ctx_alloc();
+    isl_map* addr = isl_map_read_from_str(ctx, "{ [c, x, y] -> [c, x, y] }");
+    isl_map* ibo = isl_map_read_from_str(ctx, "{ [c, x, y] -> [x, y] }");
+    isl_map* bank_sel = isl_map_read_from_str(ctx, "{ [c, x, y] -> [c] }");
+    isl_map* sched = isl_map_read_from_str(ctx, "{ [c, x, y] -> [256*c + 28*x + y] : 0 <= c <= 2 and 0 <= x <= 4 and 0 <= y <= 27 }");
+
+    // What is the problem that needs to be solved?
+    // Given: Original address, and schedule and a banking scheme, and a bank ID
+    // Produce: An address domain and schedule for the given bank that fits
+    // an affine controller
+    assert(false);
+  }
   {
     prog prg = resnet_unrolled();
     vector<prog> test_prgs{prg};
