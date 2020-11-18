@@ -124,18 +124,25 @@ struct affine_controller_ctrl {
   isl_set* dom;
 };
 
+affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked) {
+  assert(num_div_dims(unpacked.access_function) == 0);
+
+  affine_controller_ctrl packed;
+  packed.access_function = unpacked.access_function;
+  packed.sched = unpacked.sched;
+  packed.dom = unpacked.dom;
+  return packed;
+}
+
 void instantiate_M3_verilog(
     CodegenOptions& options,
     const std::string& long_name,
-    //UBuffer& buf,
-    //const int b,
     map<int, affine_controller_ctrl> in_port_controllers,
     map<int, affine_controller_ctrl> out_port_controllers) {
 
   std::ostream& out = *verilog_collateral_file;
 
   for (int count = 0; count < (int) in_port_controllers.size(); count++) {
-    //string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
     string bundle_name = long_name + "_wr_" + str(count);
     generate_fsm(*verilog_collateral_file,
         options,
@@ -148,7 +155,6 @@ void instantiate_M3_verilog(
 
   for (int count = 0; count < out_port_controllers.size(); count++) {
     string bundle_name = long_name + "_rd_" + str(count);
-    //string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
     generate_fsm(*verilog_collateral_file,
         options,
         bundle_name + "_ctrl",
@@ -178,7 +184,6 @@ void instantiate_M3_verilog(
 
   *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
   for (int count = 0; count < (int) in_port_controllers.size(); count++) {
-    //string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
     string bundle_name = long_name + "_rd_" + str(count);
 
     isl_aff* sched_aff = out_port_controllers[count].sched;
@@ -197,7 +202,6 @@ void instantiate_M3_verilog(
   }
 
   for (int count = 0; count < (int) in_port_controllers.size(); count++) {
-    //string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
     string bundle_name = long_name + "_wr_" + str(count);
 
     isl_aff* sched_aff = in_port_controllers[count].sched;
@@ -224,7 +228,6 @@ void instantiate_M3_verilog(
 
   *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
   for (int i = 0; i < (int) out_port_controllers.size(); i++) {
-    //string bn = buf.name + "_bank_rd_" + str(b) + "_" + str(i);
     string bn = long_name + "_rd_" + str(i);
     string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
     *verilog_collateral_file << tab(2) << "data_out_" << str(i) << "_tmp <= SRAM[" << bn << "_ibo" << "];" << endl;
@@ -232,7 +235,6 @@ void instantiate_M3_verilog(
   }
 
   for (int i = 0; i < (int) in_port_controllers.size(); i++) {
-    //string bn = buf.name + "_bank_" + str(b) + "_" + str(i);
     string bn = long_name + "_wr_" + str(i);
     string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
 
@@ -298,7 +300,8 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     }
     string dom_str = curlies(name(restricted_dom) + bracket_list(dvs) + " : " + sep_list(range_constraints, "", "", " and "));
     isl_set* normed_dom = rdset(prg.ctx, dom_str);
-    in_port_controllers[count] = {ibo, normed_sched, normed_dom};
+    affine_controller_ctrl ctrl{ibo, normed_sched, normed_dom};
+    in_port_controllers[count] = pack_controller(ctrl);
   }
 
   for(auto pt : impl.bank_readers[b]) {
@@ -336,8 +339,10 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     string dom_str = curlies(name(restricted_dom) + bracket_list(dvs) + " : " + sep_list(range_constraints, "", "", " and "));
     isl_set* normed_dom = rdset(prg.ctx, dom_str);
 
-    out_port_controllers[count] = {ibo, normed_sched, normed_dom};
+    affine_controller_ctrl ctrl{ibo, normed_sched, normed_dom};
+    out_port_controllers[count] = pack_controller(ctrl);
   }
+
 
   instantiate_M3_verilog(
       options,
