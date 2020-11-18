@@ -6543,11 +6543,14 @@ vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
       cout << buf.name << endl;
 
       any_reduce_ops_on_buffer = true;
+      cout << "Found reduce op on " << buf.name << endl;
       break;
     }
   }
 
   if (!any_reduce_ops_on_buffer) {
+    cout << "Out -> Out shift registers for " << buf.name << endl;
+
     for (auto outpt : buf.get_out_ports()) {
       for (auto outpt_src : buf.get_out_ports()) {
 

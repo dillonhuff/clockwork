@@ -4305,7 +4305,7 @@ std::ostream& operator<<(std::ostream& out, dgraph& dg) {
   return out;
 }
 
-dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+dgraph build_shift_register_graph(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
   map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
 
@@ -4321,9 +4321,46 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
 
   cout << "DG: ..." << endl;
   cout << dg << endl;
+  return dg;
+}
+
+dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph dg = build_shift_register_graph(options, def, prg, buf, hwinfo);
+  //map<string,pair<string,int>> shift_registered_outputs = determine_shift_reg_map(prg, buf, hwinfo);
+  //vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
+
+  //cout << "out -> out srs: " << shift_registered_outputs_to_outputs.size() << endl;
+
+  //dgraph dg;
+  //for (auto pt : shift_registered_outputs) {
+    //dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  //}
+  //for (auto pt : shift_registered_outputs_to_outputs) {
+    //dg.add_edge(pt.second.first, pt.first, pt.second.second);
+  //}
+
+  //cout << "DG: ..." << endl;
+  //cout << dg << endl;
 
   dgraph shift_registers;
-  // First make sure all in -> out srs are included
+  for (auto e : dg.out_edges) {
+    string src = e.first;
+    for (auto dst : e.second) {
+      if (buf.is_out_pt(src) &&
+          buf.is_out_pt(dst) &&
+          //dg.out_edges[dst].size() == 0 &&
+          !elem(dst, shift_registers.nodes)) {
+        assert(false);
+        shift_registers.add_edge(src, dst, dg.weight(src, dst));
+      }
+    }
+  }
+
+  if (dg.weights.size() > 1) {
+    assert(false);
+  }
+
+  // Make sure all in -> out srs are included
   for (auto e : dg.out_edges) {
     string src = e.first;
     for (auto dst : e.second) {
