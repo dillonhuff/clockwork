@@ -238,11 +238,6 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   for(auto pt : impl.bank_readers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string bundle_name = buf.name + "_bank_rd_" + str(b) + "_" + str(count);
-    //string port_rep = pt;
-    //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-    //op* rep = prg.find_op(op_rep_name);
-    //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
-
 
     auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
@@ -252,13 +247,13 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
 
     isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
-    isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
+    //isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
     out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
 
     std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
-    std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
+    //std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
     out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
@@ -268,10 +263,6 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   for(auto pt : impl.bank_writers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
     string bundle_name = buf.name + "_bank_" + str(b) + "_" + str(count);
-    //string port_rep = pt;
-    //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-    //op* rep = prg.find_op(op_rep_name);
-    //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
 
     auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
@@ -281,13 +272,13 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
 
     isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
-    isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
+    //isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
     out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
 
     std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
-    std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
+    //std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
     out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
