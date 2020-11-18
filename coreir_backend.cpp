@@ -252,7 +252,8 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
-    out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
+    out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
+    //out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
   }
   for(auto pt : impl.bank_writers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
@@ -280,7 +281,8 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
     std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
-    out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
+    out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
+    //out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
   }
 
   *verilog_collateral_file << endl;
