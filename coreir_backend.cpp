@@ -185,18 +185,30 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     isl_aff* ibo = inner_bank_offset_aff(pt, buf, impl);
     isl_aff* bank_selector = bank_offset_aff(pt, buf, impl);
-    //cout << "Conv stencil bank: " << b << endl;
-    //cout << tab(1) << "sched: " << str(sched_aff) << endl;
-    //cout << tab(1) << "ibo  : " << str(ibo) << endl;
-    //cout << tab(1) << "sel  : " << str(bank_selector) << endl;
-    //cout << tab(1) << "bnk  : " << b << endl;
-    //cout << tab(1) << "dom  : " << str(dom) << endl;
+    cout << "Conv stencil bank: " << b << endl;
+    cout << tab(1) << "sched: " << str(sched_aff) << endl;
+    cout << tab(1) << "ibo  : " << str(ibo) << endl;
+    cout << tab(1) << "sel  : " << str(bank_selector) << endl;
+    cout << tab(1) << "bnk  : " << b << endl;
+    cout << tab(1) << "dom  : " << str(dom) << endl;
 
     isl_map* sel_map = its(to_map(bank_selector), dom);
-    //cout << tab(1) << "sel map: " << str(sel_map) << endl;
+    cout << tab(1) << "sel map: " << str(sel_map) << endl;
     isl_map* ms = isl_map_fix_si(sel_map, isl_dim_out, 0, b);
-    //cout << tab(1) << "sel map after fixing bank # " << str(sel_map) << endl;
+    cout << tab(1) << "sel map after fixing bank # " << str(ms) << endl;
     isl_set* restricted_dom = domain(ms);
+    cout << endl;
+    cout << tab(1) << "restricted dom: " << str(restricted_dom) << endl;
+    vector<int> lens = extents(restricted_dom);
+    vector<int> min_vals = mins(restricted_dom);
+    isl_point* lmin = lexminpt(restricted_dom);
+    cout << "lexmin point: " << str(lmin) << endl;
+    cout << "sched aff   : " << str(sched_aff) << endl;
+    for (int d = 0; d < num_dims(restricted_dom); d++) {
+      int min = min_vals.at(d);
+      cout << "schedule value at min: " << str(eval(sched_aff, lmin)) << endl;
+      assert(min == 0);
+    }
 
     generate_fsm(*verilog_collateral_file,
         options,
