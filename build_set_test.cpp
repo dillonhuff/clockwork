@@ -16752,6 +16752,7 @@ vector<prog> isca_programs() {
   test_programs.push_back(pointwise());
   test_programs.push_back(down_sample());
   test_programs.push_back(harris());
+
   test_programs.push_back(mobilenet_unrolled());
   test_programs.push_back(resnet());
 
@@ -17135,7 +17136,7 @@ void cgra_flow_tests() {
   vector<prog> M1_test_programs = isca_programs();
   //vector<prog> M1_test_programs{pointwise()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  //assert(false);
+  assert(false);
 
   //vector<prog> M3_test_programs{resnet()};
   vector<prog> M3_test_programs = isca_programs();
