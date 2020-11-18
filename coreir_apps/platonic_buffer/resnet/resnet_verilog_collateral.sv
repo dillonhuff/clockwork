@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 module conv_stencil_embarassing_bank_selector(input logic [16*3 - 1 :0] d, output logic [15:0] out);
   logic [15:0] bank_index_0;
@@ -14,6 +15,16 @@ module conv_stencil_op_hcompute_conv_stencil_1_write_fsm(input clk, input flush,
   integer i;
   integer dims = 3;
   assign op_hcompute_conv_stencil_1_write_wen =(on && on2 && op_hcompute_conv_stencil_1_write_ctrl_vars[0]==0 && op_hcompute_conv_stencil_1_write_ctrl_vars[1]<=27 && op_hcompute_conv_stencil_1_write_ctrl_vars[2]<=27);
+=======
+// { op_hcompute_hw_input_global_wrapper_stencil[root, hw_input_global_wrapper_s0_y, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_z] -> [(1 + 240hw_input_global_wrapper_s0_y + 8hw_input_global_wrapper_s0_x + hw_input_global_wrapper_s0_z)] }
+module affine_controller__U0(input clk, input flush, input rst_n, output logic [15:0] d[3:0], output valid );
+  logic [15:0] counter[4:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 4;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=29 && d[2]<=29 && d[3]<=7);
+>>>>>>> origin/tony-m3
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       op_hcompute_conv_stencil_1_write_ctrl_vars[0]<= 16'b1010101010101010;
@@ -22,10 +33,15 @@ module conv_stencil_op_hcompute_conv_stencil_1_write_fsm(input clk, input flush,
       counter[1] <= 16'b0;
       op_hcompute_conv_stencil_1_write_ctrl_vars[2]<= 16'b1010101010101010;
       counter[2] <= 16'b0;
+<<<<<<< HEAD
+=======
+      d[3]<= 16'b1010101010101010;
+      counter[3] <= 16'b0;
+>>>>>>> origin/tony-m3
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==1) begin
+      if(counter[0] ==0) begin
         on <=1;
         on2 <= 1;
         op_hcompute_conv_stencil_1_write_ctrl_vars[0]<= 16'b0;
@@ -34,6 +50,7 @@ module conv_stencil_op_hcompute_conv_stencil_1_write_fsm(input clk, input flush,
         counter [1] <= 16'b0;
         op_hcompute_conv_stencil_1_write_ctrl_vars[2]<= 16'b0;
         counter [2] <= 16'b0;
+<<<<<<< HEAD
       end else begin
         counter[0] <= counter[0] + 1;
         if(counter[1] == 27) begin
@@ -46,16 +63,47 @@ module conv_stencil_op_hcompute_conv_stencil_1_write_fsm(input clk, input flush,
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           op_hcompute_conv_stencil_1_write_ctrl_vars[2] <= op_hcompute_conv_stencil_1_write_ctrl_vars[2] + 1;
+=======
+        d[3]<= 16'b0;
+        counter [3] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 239) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          counter[3]<= 0;
+          d[2]<= 0;
+          d[3]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 7) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          counter[3] <= 0;
+          d[3]<= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else if(counter[3] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          counter[3] <= 0;
+          d[3] <= d[3] + 1;
+>>>>>>> origin/tony-m3
           on2 <= 1;
         end else begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
+<<<<<<< HEAD
+=======
+          counter[3] <= counter[3] + 1;
+>>>>>>> origin/tony-m3
           on2 <= 0;
         end
       end
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_conv_stencil_2[root, conv_s0_y, conv_s0_x] -> [(2 + 28conv_s0_y + conv_s0_x)] }
 module conv_stencil_op_hcompute_conv_stencil_2_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_conv_stencil_2_write_ctrl_vars[2:0], output op_hcompute_conv_stencil_2_write_wen );
   logic [15:0] counter[3:0];
@@ -64,6 +112,16 @@ module conv_stencil_op_hcompute_conv_stencil_2_write_fsm(input clk, input flush,
   integer i;
   integer dims = 3;
   assign op_hcompute_conv_stencil_2_write_wen =(on && on2 && op_hcompute_conv_stencil_2_write_ctrl_vars[0]==0 && op_hcompute_conv_stencil_2_write_ctrl_vars[1]<=27 && op_hcompute_conv_stencil_2_write_ctrl_vars[2]<=27);
+=======
+// { op_hcompute_hw_kernel_global_wrapper_stencil[root, hw_kernel_global_wrapper_s0_y, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_w, hw_kernel_global_wrapper_s0_z] -> [(2 + 72hw_kernel_global_wrapper_s0_y + 24hw_kernel_global_wrapper_s0_x + 8hw_kernel_global_wrapper_s0_w + hw_kernel_global_wrapper_s0_z)] }
+module affine_controller__U7(input clk, input flush, input rst_n, output logic [15:0] d[4:0], output valid );
+  logic [15:0] counter[5:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 5;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=2 && d[2]<=2 && d[3]<=2 && d[4]<=7);
+>>>>>>> origin/tony-m3
   always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
       op_hcompute_conv_stencil_2_write_ctrl_vars[0]<= 16'b1010101010101010;
@@ -72,6 +130,13 @@ module conv_stencil_op_hcompute_conv_stencil_2_write_fsm(input clk, input flush,
       counter[1] <= 16'b0;
       op_hcompute_conv_stencil_2_write_ctrl_vars[2]<= 16'b1010101010101010;
       counter[2] <= 16'b0;
+<<<<<<< HEAD
+=======
+      d[3]<= 16'b1010101010101010;
+      counter[3] <= 16'b0;
+      d[4]<= 16'b1010101010101010;
+      counter[4] <= 16'b0;
+>>>>>>> origin/tony-m3
       on <=0;
       on2 <= 0;
     end else begin
@@ -84,6 +149,7 @@ module conv_stencil_op_hcompute_conv_stencil_2_write_fsm(input clk, input flush,
         counter [1] <= 16'b0;
         op_hcompute_conv_stencil_2_write_ctrl_vars[2]<= 16'b0;
         counter [2] <= 16'b0;
+<<<<<<< HEAD
       end else begin
         counter[0] <= counter[0] + 1;
         if(counter[1] == 27) begin
@@ -96,10 +162,56 @@ module conv_stencil_op_hcompute_conv_stencil_2_write_fsm(input clk, input flush,
           counter[1] <= counter[1] + 1;
           counter[2] <= 0;
           op_hcompute_conv_stencil_2_write_ctrl_vars[2] <= op_hcompute_conv_stencil_2_write_ctrl_vars[2] + 1;
+=======
+        d[3]<= 16'b0;
+        counter [3] <= 16'b0;
+        d[4]<= 16'b0;
+        counter [4] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 71) begin
+          counter[1]<= 0;
+          counter[2]<= 0;
+          counter[3]<= 0;
+          counter[4]<= 0;
+          d[2]<= 0;
+          d[3]<= 0;
+          d[4]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else if(counter[2] == 23) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= 0;
+          counter[3] <= 0;
+          counter[4] <= 0;
+          d[3]<= 0;
+          d[4]<= 0;
+          d[2] <= d[2] + 1;
+          on2 <= 1;
+        end else if(counter[3] == 7) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          counter[3] <= 0;
+          counter[4] <= 0;
+          d[4]<= 0;
+          d[3] <= d[3] + 1;
+>>>>>>> origin/tony-m3
+          on2 <= 1;
+        end else if(counter[4] == 0) begin
+          counter[1] <= counter[1] + 1;
+          counter[2] <= counter[2] + 1;
+          counter[3] <= counter[3] + 1;
+          counter[4] <= 0;
+          d[4] <= d[4] + 1;
           on2 <= 1;
         end else begin
           counter[1] <= counter[1] + 1;
           counter[2] <= counter[2] + 1;
+<<<<<<< HEAD
+=======
+          counter[3] <= counter[3] + 1;
+          counter[4] <= counter[4] + 1;
+>>>>>>> origin/tony-m3
           on2 <= 0;
         end
       end

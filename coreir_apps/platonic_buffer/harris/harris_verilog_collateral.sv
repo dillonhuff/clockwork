@@ -62,6 +62,7 @@ module cim_output_stencil_op_hcompute_cim_output_stencil_write_fsm(input clk, in
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_hw_output_stencil[root, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(405 + 64hw_output_s0_y_yi + hw_output_s0_x_xi)] }
 module cim_output_stencil_op_hcompute_hw_output_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_hw_output_stencil_read_ctrl_vars[2:0], output op_hcompute_hw_output_stencil_read_ren );
   logic [15:0] counter[3:0];
@@ -2538,6 +2539,10 @@ endmodule
 
 // { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(269 + 64lgxy_s1_y + lgxy_s1_x)] }
 module lgxy_stencil_op_hcompute_lgxy_stencil_1_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxy_stencil_1_write_ctrl_vars[2:0], output op_hcompute_lgxy_stencil_1_write_wen );
+=======
+// { op_hcompute_hw_output_stencil[root, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(415 + 64hw_output_s0_y_yi + hw_output_s0_x_xi)] }
+module affine_controller__U7(input clk, input flush, input rst_n, output logic [15:0] d[2:0], output valid );
+>>>>>>> origin/tony-m3
   logic [15:0] counter[3:0];
   logic on;
   logic on2;
@@ -2586,9 +2591,15 @@ module lgxy_stencil_op_hcompute_lgxy_stencil_1_write_fsm(input clk, input flush,
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(273 + 64cim_s0_y + cim_s0_x)] }
 module lgxy_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_cim_stencil_read_ctrl_vars[2:0], output op_hcompute_cim_stencil_read_ren );
   logic [15:0] counter[3:0];
+=======
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -2636,6 +2647,7 @@ module lgxy_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, inp
     end
   end
 endmodule
+<<<<<<< HEAD
 module lgxy_stencil_ub(
 	input clk,
 	input flush,
@@ -2685,6 +2697,43 @@ lgxy_stencil_embarassing_bank_selector lgxy_stencil_lgxy_stencil_op_hcompute_cim
       case( lgxy_stencil_lgxy_stencil_op_hcompute_lgxy_stencil_1_21_bank_selector.out)
         0:bank_0[addr0] <= op_hcompute_lgxy_stencil_1_write[0];
       endcase
+=======
+// { [root, t] -> [(132 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==131) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+>>>>>>> origin/tony-m3
     end
   end
   always @(*) begin
@@ -2697,6 +2746,7 @@ module lgxy_stencil_clkwrk_dsa1_embarassing_bank_selector(input logic [16*2 - 1 
   assign out = 0;
 
 endmodule
+<<<<<<< HEAD
 
 module lgxy_stencil_clkwrk_dsa1_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_22_to_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_32_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_629;
@@ -2709,6 +2759,28 @@ endmodule
 // { op_hcompute_lgxy_stencil[root, lgxy_s0_y, lgxy_s0_x] -> [(268 + 64lgxy_s0_y + lgxy_s0_x)] }
 module lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxy_stencil_write_ctrl_vars[2:0], output op_hcompute_lgxy_stencil_write_wen );
   logic [15:0] counter[3:0];
+=======
+module cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U34__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -2756,9 +2828,15 @@ module lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_fsm(input clk, in
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(269 + 64lgxy_s1_y + lgxy_s1_x)] }
 module lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxy_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgxy_stencil_1_read_ren );
   logic [15:0] counter[3:0];
+=======
+// { [root, t] -> [(67 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -2806,6 +2884,7 @@ module lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_fsm(input clk, i
     end
   end
 endmodule
+<<<<<<< HEAD
 module lgxy_stencil_clkwrk_dsa1_ub(
 	input clk,
 	input flush,
@@ -2879,6 +2958,28 @@ endmodule
 // { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(272 + 64lgyy_s1_y + lgyy_s1_x)] }
 module lgyy_stencil_op_hcompute_lgyy_stencil_1_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgyy_stencil_1_write_ctrl_vars[2:0], output op_hcompute_lgyy_stencil_1_write_wen );
   logic [15:0] counter[3:0];
+=======
+module cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U37__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -2926,9 +3027,15 @@ module lgyy_stencil_op_hcompute_lgyy_stencil_1_write_fsm(input clk, input flush,
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(273 + 64cim_s0_y + cim_s0_x)] }
 module lgyy_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_cim_stencil_read_ctrl_vars[2:0], output op_hcompute_cim_stencil_read_ren );
   logic [15:0] counter[3:0];
+=======
+// { [root, t] -> [(131 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -2976,6 +3083,7 @@ module lgyy_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, inp
     end
   end
 endmodule
+<<<<<<< HEAD
 module lgyy_stencil_ub(
 	input clk,
 	input flush,
@@ -3049,6 +3157,28 @@ endmodule
 // { op_hcompute_lgyy_stencil[root, lgyy_s0_y, lgyy_s0_x] -> [(271 + 64lgyy_s0_y + lgyy_s0_x)] }
 module lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgyy_stencil_write_ctrl_vars[2:0], output op_hcompute_lgyy_stencil_write_wen );
   logic [15:0] counter[3:0];
+=======
+module cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U40__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -3096,9 +3226,15 @@ module lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_fsm(input clk, in
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(272 + 64lgyy_s1_y + lgyy_s1_x)] }
 module lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgyy_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgyy_stencil_1_read_ren );
   logic [15:0] counter[3:0];
+=======
+// { [root, t] -> [(130 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -3146,6 +3282,7 @@ module lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_fsm(input clk, i
     end
   end
 endmodule
+<<<<<<< HEAD
 module lgyy_stencil_clkwrk_dsa2_ub(
 	input clk,
 	input flush,
@@ -4475,6 +4612,28 @@ endmodule
 // { op_hcompute_lxx_stencil[root, lxx_s0_y, lxx_s0_x] -> [(133 + 64lxx_s0_y + lxx_s0_x)] }
 module lxx_stencil_op_hcompute_lxx_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lxx_stencil_write_ctrl_vars[2:0], output op_hcompute_lxx_stencil_write_wen );
   logic [15:0] counter[3:0];
+=======
+module cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U43__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -4522,9 +4681,15 @@ module lxx_stencil_op_hcompute_lxx_stencil_write_fsm(input clk, input flush, inp
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_lgxx_stencil_1[root, lgxx_s1_y, lgxx_s1_x] -> [(265 + 64lgxx_s1_y + lgxx_s1_x)] }
 module lxx_stencil_op_hcompute_lgxx_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxx_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgxx_stencil_1_read_ren );
   logic [15:0] counter[3:0];
+=======
+// { [root, t] -> [(68 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -4572,6 +4737,7 @@ module lxx_stencil_op_hcompute_lgxx_stencil_1_read_fsm(input clk, input flush, i
     end
   end
 endmodule
+<<<<<<< HEAD
 module lxx_stencil_ub(
 	input clk,
 	input flush,
@@ -5228,9 +5394,196 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_24_to_lxy_stencil_op_h
     delay_wire_1495 <= delay_wire_1494;
     delay_wire_1496 <= delay_wire_1495;
     delay_wire_1497 <= delay_wire_1496;
+=======
+module cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U46__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(66 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==65) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U49__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(14 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==13) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_1497;
 endmodule
+<<<<<<< HEAD
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_25_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_1498;
@@ -5636,9 +5989,65 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_26_to_lxy_stencil_op_h
     delay_wire_1693 <= delay_wire_1692;
     delay_wire_1694 <= delay_wire_1693;
     delay_wire_1695 <= delay_wire_1694;
+=======
+module cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U101__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_1695;
 endmodule
+<<<<<<< HEAD
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_27_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_1696;
@@ -5776,9 +6185,48 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_27_to_lxy_stencil_op_h
     delay_wire_1760 <= delay_wire_1759;
     delay_wire_1761 <= delay_wire_1760;
     delay_wire_1762 <= delay_wire_1761;
+=======
+// { [root, t] -> [(133 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==132) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_1762;
 endmodule
+<<<<<<< HEAD
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_28_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_1763;
@@ -5928,9 +6376,65 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_29_to_lxy_stencil_op_h
     delay_wire_1830 <= delay_wire_1829;
     delay_wire_1831 <= delay_wire_1830;
     delay_wire_1832 <= delay_wire_1831;
+=======
+module cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U141__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_1832;
 endmodule
+<<<<<<< HEAD
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_30_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_1833;
@@ -5938,9 +6442,48 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_30_to_lxy_stencil_op_h
   always @(posedge clk) begin
     delay_wire_1833 <= in;
     delay_wire_1834 <= delay_wire_1833;
+=======
+// { [root, t] -> [(132 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==131) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_1834;
 endmodule
+<<<<<<< HEAD
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_1835;
@@ -5957,6 +6500,28 @@ endmodule
 // { op_hcompute_lxy_stencil[root, lxy_s0_y, lxy_s0_x] -> [(137 + 64lxy_s0_y + lxy_s0_x)] }
 module lxy_stencil_op_hcompute_lxy_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lxy_stencil_write_ctrl_vars[2:0], output op_hcompute_lxy_stencil_write_wen );
   logic [15:0] counter[3:0];
+=======
+module cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U144__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -6004,9 +6569,15 @@ module lxy_stencil_op_hcompute_lxy_stencil_write_fsm(input clk, input flush, inp
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(269 + 64lgxy_s1_y + lgxy_s1_x)] }
 module lxy_stencil_op_hcompute_lgxy_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxy_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgxy_stencil_1_read_ren );
   logic [15:0] counter[3:0];
+=======
+// { [root, t] -> [(131 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -6054,6 +6625,7 @@ module lxy_stencil_op_hcompute_lgxy_stencil_1_read_fsm(input clk, input flush, i
     end
   end
 endmodule
+<<<<<<< HEAD
 module lxy_stencil_ub(
 	input clk,
 	input flush,
@@ -6442,9 +7014,1591 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_h
     delay_wire_1967 <= delay_wire_1966;
     delay_wire_1968 <= delay_wire_1967;
     delay_wire_1969 <= delay_wire_1968;
+=======
+module cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U147__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(69 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==68) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U150__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(68 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==67) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U153__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(67 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==66) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U156__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(133 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==132) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U179__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(132 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==131) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U182__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(131 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==130) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U185__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(69 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==68) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U188__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(68 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==67) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U191__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(67 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==66) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U194__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(133 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==132) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U217__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(132 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==131) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U220__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(131 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==130) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U223__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(69 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==68) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U226__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(68 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==67) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U229__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(67 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==66) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U232__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(130 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==129) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+module cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U255__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(66 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==65) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_1969;
 endmodule
+<<<<<<< HEAD
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_12_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_1970;
@@ -6976,9 +9130,103 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_13_to_lyy_stencil_op_h
     delay_wire_2228 <= delay_wire_2227;
     delay_wire_2229 <= delay_wire_2228;
     delay_wire_2230 <= delay_wire_2229;
+=======
+module cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U262__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(132 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==131) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_2230;
 endmodule
+<<<<<<< HEAD
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_14_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_2231;
@@ -7258,9 +9506,103 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_15_to_lyy_stencil_op_h
     delay_wire_2363 <= delay_wire_2362;
     delay_wire_2364 <= delay_wire_2363;
     delay_wire_2365 <= delay_wire_2364;
+=======
+module cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U265__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(68 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==67) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_2365;
 endmodule
+<<<<<<< HEAD
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_16_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_2366;
@@ -7410,9 +9752,65 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_17_to_lyy_stencil_op_h
     delay_wire_2433 <= delay_wire_2432;
     delay_wire_2434 <= delay_wire_2433;
     delay_wire_2435 <= delay_wire_2434;
+=======
+module cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U268__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==0) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_2435;
 endmodule
+<<<<<<< HEAD
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_18_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_2436;
@@ -7420,9 +9818,48 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_18_to_lyy_stencil_op_h
   always @(posedge clk) begin
     delay_wire_2436 <= in;
     delay_wire_2437 <= delay_wire_2436;
+=======
+// { [root, t] -> [(139 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==138) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+          on2 <= 1;
+        end else begin
+          counter[1] <= counter[1] + 1;
+          on2 <= 0;
+        end
+      end
+    end
+>>>>>>> origin/tony-m3
   end
   assign out = delay_wire_2437;
 endmodule
+<<<<<<< HEAD
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_2438;
@@ -7439,6 +9876,28 @@ endmodule
 // { op_hcompute_lyy_stencil[root, lyy_s0_y, lyy_s0_x] -> [(140 + 64lyy_s0_y + lyy_s0_x)] }
 module lyy_stencil_op_hcompute_lyy_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lyy_stencil_write_ctrl_vars[2:0], output op_hcompute_lyy_stencil_write_wen );
   logic [15:0] counter[3:0];
+=======
+module cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U277__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -7486,9 +9945,15 @@ module lyy_stencil_op_hcompute_lyy_stencil_write_fsm(input clk, input flush, inp
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(272 + 64lgyy_s1_y + lgyy_s1_x)] }
 module lyy_stencil_op_hcompute_lgyy_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgyy_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgyy_stencil_1_read_ren );
   logic [15:0] counter[3:0];
+=======
+// { [root, t] -> [(138 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -7536,6 +10001,7 @@ module lyy_stencil_op_hcompute_lgyy_stencil_1_read_fsm(input clk, input flush, i
     end
   end
 endmodule
+<<<<<<< HEAD
 module lyy_stencil_ub(
 	input clk,
 	input flush,
@@ -9421,6 +11887,28 @@ endmodule
 // { op_hcompute_padded16_global_wrapper_stencil[root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x] -> [(1 + 64padded16_global_wrapper_s0_y + padded16_global_wrapper_s0_x)] }
 module padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[2:0], output op_hcompute_padded16_global_wrapper_stencil_write_wen );
   logic [15:0] counter[3:0];
+=======
+module cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U280__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -9456,8 +11944,46 @@ module padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stenc
           on2 <= 1;
         end else if(counter[2] == 0) begin
           counter[1] <= counter[1] + 1;
+<<<<<<< HEAD
           counter[2] <= 0;
           op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[2] <= op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars[2] + 1;
+=======
+          on2 <= 0;
+        end
+      end
+    end
+  end
+endmodule
+// { [root, t] -> [(137 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+  logic on;
+  logic on2;
+  integer i;
+  integer dims = 2;
+  assign valid =(on && on2 && d[0]==0 && d[1]<=65355);
+  always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+      d[0]<= 16'b1010101010101010;
+      counter[0] <= 16'b0;
+      d[1]<= 16'b1010101010101010;
+      counter[1] <= 16'b0;
+      on <=0;
+      on2 <= 0;
+    end else begin
+      if(counter[0] ==136) begin
+        on <=1;
+        on2 <= 1;
+        d[0]<= 16'b0;
+        counter[0] <= counter[0]+1;
+        d[1]<= 16'b0;
+        counter [1] <= 16'b0;
+      end else begin
+        counter[0] <= counter[0] + 1;
+        if(counter[1] == 0) begin
+          counter[1]<= 0;
+          d[1] <= d[1] + 1;
+>>>>>>> origin/tony-m3
           on2 <= 1;
         end else begin
           counter[1] <= counter[1] + 1;
@@ -9468,9 +11994,32 @@ module padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stenc
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(132 + 64grad_x_s0_y + grad_x_s0_x)] }
 module padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_grad_x_stencil_read_ctrl_vars[2:0], output op_hcompute_grad_x_stencil_read_ren );
   logic [15:0] counter[3:0];
+=======
+module cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U283__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+endmodule
+
+// { [root, t] -> [(1 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -9518,9 +12067,15 @@ module padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_fsm(input
     end
   end
 endmodule
+<<<<<<< HEAD
 // { op_hcompute_grad_y_stencil[root, grad_y_s0_y, grad_y_s0_x] -> [(136 + 64grad_y_s0_y + grad_y_s0_x)] }
 module padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_grad_y_stencil_read_ctrl_vars[2:0], output op_hcompute_grad_y_stencil_read_ren );
   logic [15:0] counter[3:0];
+=======
+// { [root, t] -> [(11 + root + t)] }
+module cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl(input clk, input flush, input rst_n, output logic [15:0] d[1:0], output valid );
+  logic [15:0] counter[2:0];
+>>>>>>> origin/tony-m3
   logic on;
   logic on2;
   integer i;
@@ -9568,6 +12123,7 @@ module padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_read_fsm(input
     end
   end
 endmodule
+<<<<<<< HEAD
 module padded16_global_wrapper_stencil_ub(
 	input clk,
 	input flush,
@@ -9705,5 +12261,22 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
   always @(*) begin
   end
 
+=======
+module cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,output logic [15:0] data_out_0,output data_out_0_valid,input [15:0] chain_data_in,output [15:0] chain_data_out); 
+  cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write_ctrl cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write(.clk(clk), .rst_n(rst_n));
+  cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read_ctrl cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read(.clk(clk), .rst_n(rst_n));
+
+  logic [15:0] SRAM [1023:0];
+  logic [15:0] data_out_0_tmp;
+  always @(posedge clk) begin
+    data_out_0_tmp <= SRAM[cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.d[1]];
+    data_out_0_valid <= cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_read.valid;
+    if (cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.valid) begin
+      SRAM[cgralib_Mem_amber__IDsreg__U286__has_external_addrgenFalse__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__num_inputs1__num_outputs1__use_prebuilt_memFalse__width16_fsm_write.d[1]] <= data_in_0;
+    end
+  end
+  assign data_out_0 = data_out_0_tmp;
+  assign chain_data_out = 16'b0;
+>>>>>>> origin/tony-m3
 endmodule
 

@@ -259,14 +259,22 @@ assign out[1] = in[1];
 assign out[0] = in[0];
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_4_write_start_pt__U300 (
+=======
+module op_hcompute_hw_kernel_global_wrapper_stencil_write_start_pt__U12 (
+>>>>>>> origin/tony-m3
     input in,
     output out
 );
 assign out = in;
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_4_write_start_control_vars_pt__U302 (
+=======
+module op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars_pt__U13 (
+>>>>>>> origin/tony-m3
     input [15:0] in [4:0],
     output [15:0] out [4:0]
 );
@@ -277,14 +285,22 @@ assign out[1] = in[1];
 assign out[0] = in[0];
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_4_read_start_pt__U288 (
+=======
+module op_hcompute_hw_kernel_global_wrapper_stencil_read_start_pt__U8 (
+>>>>>>> origin/tony-m3
     input in,
     output out
 );
 assign out = in;
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_4_read_start_control_vars_pt__U289 (
+=======
+module op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_pt__U9 (
+>>>>>>> origin/tony-m3
     input [15:0] in [4:0],
     output [15:0] out [4:0]
 );
@@ -295,14 +311,22 @@ assign out[1] = in[1];
 assign out[0] = in[0];
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_4_exe_start_pt__U290 (
+=======
+module op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_pt__U10 (
+>>>>>>> origin/tony-m3
     input in,
     output out
 );
 assign out = in;
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_4_exe_start_control_vars_pt__U292 (
+=======
+module op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_pt__U11 (
+>>>>>>> origin/tony-m3
     input [15:0] in [4:0],
     output [15:0] out [4:0]
 );
@@ -313,16 +337,26 @@ assign out[1] = in[1];
 assign out[0] = in[0];
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_3_write_start_pt__U248 (
+=======
+module op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U5 (
+>>>>>>> origin/tony-m3
     input in,
     output out
 );
 assign out = in;
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_3_write_start_control_vars_pt__U250 (
     input [15:0] in [4:0],
     output [15:0] out [4:0]
+=======
+module op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_pt__U6 (
+    input [15:0] in [3:0],
+    output [15:0] out [3:0]
+>>>>>>> origin/tony-m3
 );
 assign out[4] = in[4];
 assign out[3] = in[3];
@@ -331,16 +365,26 @@ assign out[1] = in[1];
 assign out[0] = in[0];
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_3_read_start_pt__U236 (
+=======
+module op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U1 (
+>>>>>>> origin/tony-m3
     input in,
     output out
 );
 assign out = in;
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_3_read_start_control_vars_pt__U237 (
     input [15:0] in [4:0],
     output [15:0] out [4:0]
+=======
+module op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_pt__U2 (
+    input [15:0] in [3:0],
+    output [15:0] out [3:0]
+>>>>>>> origin/tony-m3
 );
 assign out[4] = in[4];
 assign out[3] = in[3];
@@ -349,16 +393,26 @@ assign out[1] = in[1];
 assign out[0] = in[0];
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_3_exe_start_pt__U238 (
+=======
+module op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U3 (
+>>>>>>> origin/tony-m3
     input in,
     output out
 );
 assign out = in;
 endmodule
 
+<<<<<<< HEAD
 module op_hcompute_conv_stencil_3_exe_start_control_vars_pt__U240 (
     input [15:0] in [4:0],
     output [15:0] out [4:0]
+=======
+module op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_pt__U4 (
+    input [15:0] in [3:0],
+    output [15:0] out [3:0]
+>>>>>>> origin/tony-m3
 );
 assign out[4] = in[4];
 assign out[3] = in[3];
@@ -2836,7 +2890,11 @@ cu_op_hcompute_hw_input_global_wrapper_stencil op_hcompute_hw_input_global_wrapp
     .hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read(op_hcompute_hw_input_global_wrapper_stencil_hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read),
     .hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write(op_hcompute_hw_input_global_wrapper_stencil_hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write)
 );
+<<<<<<< HEAD
 op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U179 op_hcompute_hw_input_global_wrapper_stencil_exe_start (
+=======
+op_hcompute_hw_input_global_wrapper_stencil_exe_start_pt__U3 op_hcompute_hw_input_global_wrapper_stencil_exe_start (
+>>>>>>> origin/tony-m3
     .in(op_hcompute_hw_input_global_wrapper_stencil_port_controller_valid),
     .out(op_hcompute_hw_input_global_wrapper_stencil_exe_start_out)
 );
@@ -2845,16 +2903,28 @@ assign op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in[3] 
 assign op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in[2] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[2];
 assign op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in[1] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[1];
 assign op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in[0] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[0];
+<<<<<<< HEAD
 op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_pt__U180 op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars (
     .in(op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in),
     .out(op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_out)
 );
 affine_controller__U154 op_hcompute_hw_input_global_wrapper_stencil_port_controller (
+=======
+op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_pt__U4 op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars (
+    .in(op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_in),
+    .out(op_hcompute_hw_input_global_wrapper_stencil_exe_start_control_vars_out)
+);
+affine_controller__U0 op_hcompute_hw_input_global_wrapper_stencil_port_controller (
+>>>>>>> origin/tony-m3
     .clk(clk),
     .valid(op_hcompute_hw_input_global_wrapper_stencil_port_controller_valid),
     .d(op_hcompute_hw_input_global_wrapper_stencil_port_controller_d)
 );
+<<<<<<< HEAD
 op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U177 op_hcompute_hw_input_global_wrapper_stencil_read_start (
+=======
+op_hcompute_hw_input_global_wrapper_stencil_read_start_pt__U1 op_hcompute_hw_input_global_wrapper_stencil_read_start (
+>>>>>>> origin/tony-m3
     .in(op_hcompute_hw_input_global_wrapper_stencil_port_controller_valid),
     .out(hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_en)
 );
@@ -2863,11 +2933,19 @@ assign op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_in[3]
 assign op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_in[2] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[2];
 assign op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_in[1] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[1];
 assign op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_in[0] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[0];
+<<<<<<< HEAD
 op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_pt__U178 op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars (
     .in(op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_in),
     .out(op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_out)
 );
 op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U181 op_hcompute_hw_input_global_wrapper_stencil_write_start (
+=======
+op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_pt__U2 op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars (
+    .in(op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_in),
+    .out(op_hcompute_hw_input_global_wrapper_stencil_read_start_control_vars_out)
+);
+op_hcompute_hw_input_global_wrapper_stencil_write_start_pt__U5 op_hcompute_hw_input_global_wrapper_stencil_write_start (
+>>>>>>> origin/tony-m3
     .in(op_hcompute_hw_input_global_wrapper_stencil_port_controller_valid),
     .out(op_hcompute_hw_input_global_wrapper_stencil_write_start_out)
 );
@@ -2876,7 +2954,11 @@ assign op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in[3
 assign op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in[2] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[2];
 assign op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in[1] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[1];
 assign op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in[0] = op_hcompute_hw_input_global_wrapper_stencil_port_controller_d[0];
+<<<<<<< HEAD
 op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_pt__U182 op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars (
+=======
+op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_pt__U6 op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars (
+>>>>>>> origin/tony-m3
     .in(op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_in),
     .out(op_hcompute_hw_input_global_wrapper_stencil_write_start_control_vars_out)
 );
@@ -2887,7 +2969,11 @@ cu_op_hcompute_hw_kernel_global_wrapper_stencil op_hcompute_hw_kernel_global_wra
     .hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read(op_hcompute_hw_kernel_global_wrapper_stencil_hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read),
     .hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_write(op_hcompute_hw_kernel_global_wrapper_stencil_hw_kernel_global_wrapper_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_write)
 );
+<<<<<<< HEAD
 op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_pt__U32 op_hcompute_hw_kernel_global_wrapper_stencil_exe_start (
+=======
+op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_pt__U10 op_hcompute_hw_kernel_global_wrapper_stencil_exe_start (
+>>>>>>> origin/tony-m3
     .in(op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_valid),
     .out(op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_out)
 );
@@ -2897,16 +2983,24 @@ assign op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_in[3]
 assign op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_in[2] = op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d[2];
 assign op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_in[1] = op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d[1];
 assign op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_in[0] = op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d[0];
+<<<<<<< HEAD
 op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_pt__U33 op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars (
+=======
+op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_pt__U11 op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars (
+>>>>>>> origin/tony-m3
     .in(op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_in),
     .out(op_hcompute_hw_kernel_global_wrapper_stencil_exe_start_control_vars_out)
 );
-affine_controller__U0 op_hcompute_hw_kernel_global_wrapper_stencil_port_controller (
+affine_controller__U7 op_hcompute_hw_kernel_global_wrapper_stencil_port_controller (
     .clk(clk),
     .valid(op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_valid),
     .d(op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d)
 );
+<<<<<<< HEAD
 op_hcompute_hw_kernel_global_wrapper_stencil_read_start_pt__U30 op_hcompute_hw_kernel_global_wrapper_stencil_read_start (
+=======
+op_hcompute_hw_kernel_global_wrapper_stencil_read_start_pt__U8 op_hcompute_hw_kernel_global_wrapper_stencil_read_start (
+>>>>>>> origin/tony-m3
     .in(op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_valid),
     .out(hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read_en)
 );
@@ -2916,11 +3010,19 @@ assign op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_in[3
 assign op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_in[2] = op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d[2];
 assign op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_in[1] = op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d[1];
 assign op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_in[0] = op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d[0];
+<<<<<<< HEAD
 op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_pt__U31 op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars (
     .in(op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_in),
     .out(op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_out)
 );
 op_hcompute_hw_kernel_global_wrapper_stencil_write_start_pt__U34 op_hcompute_hw_kernel_global_wrapper_stencil_write_start (
+=======
+op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_pt__U9 op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars (
+    .in(op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_in),
+    .out(op_hcompute_hw_kernel_global_wrapper_stencil_read_start_control_vars_out)
+);
+op_hcompute_hw_kernel_global_wrapper_stencil_write_start_pt__U12 op_hcompute_hw_kernel_global_wrapper_stencil_write_start (
+>>>>>>> origin/tony-m3
     .in(op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_valid),
     .out(op_hcompute_hw_kernel_global_wrapper_stencil_write_start_out)
 );
@@ -2930,7 +3032,11 @@ assign op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars_in[
 assign op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars_in[2] = op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d[2];
 assign op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars_in[1] = op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d[1];
 assign op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars_in[0] = op_hcompute_hw_kernel_global_wrapper_stencil_port_controller_d[0];
+<<<<<<< HEAD
 op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars_pt__U35 op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars (
+=======
+op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars_pt__U13 op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars (
+>>>>>>> origin/tony-m3
     .in(op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars_in),
     .out(op_hcompute_hw_kernel_global_wrapper_stencil_write_start_control_vars_out)
 );

@@ -49,12 +49,82 @@ using CoreIR::RecordType;
 static int fully_optimizable = 0;
 static int not_fully_optimizable = 0;
 
-void instantiate_M3_verilog(CodegenOptions& options,
-    const std::string& long_name,
-    const int b,
-    ubuffer_impl& impl,
-    UBuffer& buf,
-    prog& prg,
+//void instantiate_M3_verilog(CodegenOptions& options,
+    //const std::string& long_name,
+    //const int b,
+    //ubuffer_impl& impl,
+    //UBuffer& buf,
+    //prog& prg,
+void instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& long_name, int delay, prog& prg,schedule_info& hwinfo) {
+
+  assert(verilog_collateral_file != nullptr);
+
+  std::ostream& out = *verilog_collateral_file;
+
+  isl_aff * identity = rdaff(prg.ctx,"{[root,t] -> [( root + t + 1 )]}");
+  isl_aff * shifted_identity = rdaff(prg.ctx, "{[root,t] -> [(root+t + " + str(delay  ) + ")]}");
+  isl_set * dom = rdset(prg.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
+
+    generate_fsm(*verilog_collateral_file,
+        options,
+        long_name + "_fsm_write_ctrl",
+        "d",
+        "valid",
+        identity,
+        dom);
+
+    generate_fsm(*verilog_collateral_file,
+        options,
+        long_name + "_fsm_read_ctrl",
+        "d",
+        "valid",
+        shifted_identity,
+        dom);
+
+  vector<string> port_decls = {};
+  port_decls.push_back("input clk");
+  port_decls.push_back("input rst_n");
+  port_decls.push_back("input clk_en");
+  port_decls.push_back("input chain_chain_en");
+  port_decls.push_back("input [15:0] data_in_0");
+  port_decls.push_back("output logic [15:0] data_out_0" );
+  port_decls.push_back("output data_out_0_valid");
+  port_decls.push_back("input [15:0] chain_data_in");
+  port_decls.push_back("output [15:0] chain_data_out");
+
+  *verilog_collateral_file << "module " << long_name <<" ("<< sep_list(port_decls,"","",",") <<"); "<< endl;
+
+    string write_name = long_name + "_fsm_write";
+    out << tab(1) << write_name + "_ctrl "<< write_name  << "(.clk(clk), .rst_n(rst_n));" << endl;
+
+    string read_name = long_name + "_fsm_read";
+    out << tab(1) << read_name + "_ctrl " << read_name  << "(.clk(clk), .rst_n(rst_n));" << endl;
+
+  *verilog_collateral_file << endl;
+
+  *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
+    *verilog_collateral_file << tab(1) << "logic [15:0] data_out_0_tmp;" << endl;
+
+  *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
+
+    string bundle_name = read_name + ".valid" ;
+    *verilog_collateral_file << tab(2) << "data_out_0_tmp <= SRAM[" << read_name << ".d[1]" << "];" << endl;
+    out << tab(2) << "data_out_0_valid <= " << bundle_name << ";" << endl;
+
+    bundle_name = write_name + ".valid" ;
+    *verilog_collateral_file << tab(2) << "if (" << bundle_name << ") begin" << endl;
+    *verilog_collateral_file << tab(3) << "SRAM[" << write_name + ".d[1]" << "] <= " << "data_in_0;" << endl;
+    *verilog_collateral_file << tab(2) << "end" << endl;
+
+  *verilog_collateral_file << tab(1) << "end" << endl;
+  *verilog_collateral_file << tab(1) << "assign data_out_0 = data_out_0_tmp;" << endl;
+    *verilog_collateral_file << tab(1) << "assign chain_data_out = 16'b0;" << endl;
+
+  *verilog_collateral_file << "endmodule" << endl << endl;
+}
+
+
+void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf, prog& prg,
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port,
     schedule_info& hwinfo) {
 
@@ -80,36 +150,6 @@ void instantiate_M3_verilog(CodegenOptions& options,
         "valid",
         sched_aff,
         dom);
-
-    //auto agen = build_inner_bank_offset(pt, adjusted_buf, impl, def);
-    //def->connect(agen->sel("d"),
-    //ctrl);
-
-    //auto bank_sel = build_bank_selector(pt, adjusted_buf, impl, def);
-    //def->connect(bank_sel->sel("d"),
-    //ctrl);
-
-    //auto ubuffer_port_bank_selector  = delay_by(def, bank_sel->sel("out"), 0);
-    //bank_and_port_input_addrgen[{b, count}] = agen;
-    //bank_and_port_input_data_valid[{b, count}] =
-    //eqConst(def, ubuffer_port_bank_selector, b);
-    //bank_and_port_to_agen[{b, count}] = agen->sel("out");
-
-    //Wireable* enable = nullptr;
-    //if (inpt_to_bank[pt].size() > 1) {
-    //Wireable* bank_is_selected =
-    //bank_and_port_input_data_valid[{b, count}];
-
-    //enable =
-    //andList(def,
-    //{
-    //en,
-    //bank_is_selected});
-    //} else {
-    //enable = en;
-    //}
-    //assert(enable != nullptr);
-    //bank_and_port_to_enable[{b, count}] = enable;
   }
 
   for(auto pt : impl.bank_readers[b]) {
@@ -129,37 +169,6 @@ void instantiate_M3_verilog(CodegenOptions& options,
         "valid",
         sched_aff,
         dom);
-    //int count = ubuffer_port_and_bank_to_bank_port[{pt, b}];
-    //string bundle_name = "bank_" + str(b) + "_" + str(count) + "_ctrl";
-    //string port_rep = pt;
-    //string op_rep_name = domain_name(to_map(buf.access_map.at(port_rep)));
-    //op* rep = prg.find_op(op_rep_name);
-    //isl_set* dom = to_set(domain(buf.access_map.at(port_rep)));
-
-
-    //isl_aff* sched_aff =
-    //get_aff(buf.schedule.at(pt));
-    //auto controller = generate_controller_verilog(options, def, bundle_name + "_ctrl", sched_aff, dom);
-    //auto en = controller->sel("valid");
-    //auto ctrl = controller->sel("d");
-
-    //auto agen = build_inner_bank_offset(pt, buf, impl, def);
-    //def->connect(agen->sel("d"),
-    //ctrl);
-
-    //auto bank_sel = build_bank_selector(pt, buf, impl, def);
-    //def->connect(bank_sel->sel("d"),
-    //ctrl);
-
-    //const int READ_LATENCY = 1;
-    //auto ubuffer_port_bank_selector = delay_by(def, bank_sel->sel("out"), READ_LATENCY);
-    //bank_and_port_output_addrgen[{b, count}] = agen;
-    //bank_and_port_output_data_valid[{b, count}] =
-    //eqConst(def, ubuffer_port_bank_selector, b);
-
-    //bank_and_port_to_read_enable[{b, count}] = en;
-    //bank_and_port_to_read_agen[{b, count}] =
-    //agen->sel("out");
   }
 
   vector<string> port_decls = {};
@@ -4120,6 +4129,7 @@ dgraph build_shift_registers(CodegenOptions& options, CoreIR::ModuleDef* def, pr
     for (auto dst : e.second) {
       if (buf.is_in_pt(src) && !elem(dst, shift_registers.nodes)) {
         shift_registers.add_edge(src, dst, dg.weight(src, dst));
+        cout << dg.weight(src,dst) << endl;
       }
     }
   }
@@ -4170,42 +4180,69 @@ std::set<string> generate_M1_shift_registers(CodegenOptions& options, CoreIR::Mo
     const int maxd = 1000;
 
     if(delay > SREG_SRAM_THRES) {
-        while(delay > 0)
-        {
+        if(options.rtl_options.target_tile == TARGET_TILE_M1) {
+            while(delay > 0)
+            {
 
-          Values tile_params{{"width", COREMK(c, 16)},
-            {"ID", COREMK(c, "sreg_" + c->getUnique())},
-            {"has_external_addrgen", COREMK(c, true)},
-            {"num_inputs",COREMK(c,1)},
-            {"num_outputs",COREMK(c,1)}};
-          CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
-          def->connect(sreg->sel("clk"),def->sel("self.clk"));
-          def->connect(sreg->sel("clk_en"),one);
-          def->connect(sreg->sel("chain_chain_en"),zero);
-          def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
-          def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
-          def->connect(sreg->sel("data_in_0"),src_wire);
-          delayed_src = sreg->sel("data_out_0");
-          isl_aff * identity = rdaff(buf.ctx,"{[root,t] -> [( root + t + 1 )]}");
-          isl_aff * shifted_identity = rdaff(buf.ctx, "{[root,t] -> [(root+t + " + str(min(delay,maxd)  ) + ")]}");
-          isl_set * domain = rdset(buf.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
-          Instance* write_fsm = generate_controller_verilog(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
-          Instance* read_fsm = generate_controller_verilog(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
-          def->connect(write_fsm->sel("d")->sel(1),sreg->sel("write_addr_0"));
-          def->connect(read_fsm->sel("d")->sel(1),sreg->sel("read_addr_0"));
-          //def->connect(write_fsm->sel("valid"),sreg->sel("wen_0"));
-          //def->connect(read_fsm->sel("valid"),sreg->sel("ren_0"));
-          def->connect(one,sreg->sel("wen_0"));
-          def->connect(one,sreg->sel("ren_0"));
-          ubuffer_impl impl;
-          impl.bank_readers[0] = {"test"};
-          impl.bank_writers[0] = {"test_writer"};
-          instantiate_M1_verilog(sreg->getModuleRef()->getLongName(), 0, impl, buf);
-          src_wire = delayed_src;
+              Values tile_params{{"width", COREMK(c, 16)},
+                {"ID", COREMK(c, "sreg_" + c->getUnique())},
+                {"has_external_addrgen", COREMK(c, true)},
+                {"num_inputs",COREMK(c,1)},
+                {"num_outputs",COREMK(c,1)}};
+              CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+              def->connect(sreg->sel("clk"),def->sel("self.clk"));
+              def->connect(sreg->sel("clk_en"),one);
+              def->connect(sreg->sel("chain_chain_en"),zero);
+              def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+              def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+              def->connect(sreg->sel("data_in_0"),src_wire);
+              delayed_src = sreg->sel("data_out_0");
+              isl_aff * identity = rdaff(buf.ctx,"{[root,t] -> [( root + t + 1 )]}");
+              isl_aff * shifted_identity = rdaff(buf.ctx, "{[root,t] -> [(root+t + " + str(min(delay,maxd)  ) + ")]}");
+              isl_set * domain = rdset(buf.ctx,"{[root,t] : root = 0 and 0 <= t <= 65355 }");
+              Instance* write_fsm = generate_controller_verilog(options, def, "sr_write_fsm" + c->getUnique(), identity , domain);
+              Instance* read_fsm = generate_controller_verilog(options, def, "sr_read_fsm" + c->getUnique(), shifted_identity , domain);
+              def->connect(write_fsm->sel("d")->sel(1),sreg->sel("write_addr_0"));
+              def->connect(read_fsm->sel("d")->sel(1),sreg->sel("read_addr_0"));
+              //def->connect(write_fsm->sel("valid"),sreg->sel("wen_0"));
+              //def->connect(read_fsm->sel("valid"),sreg->sel("ren_0"));
+              def->connect(one,sreg->sel("wen_0"));
+              def->connect(one,sreg->sel("ren_0"));
+              ubuffer_impl impl;
+              impl.bank_readers[0] = {"test"};
+              impl.bank_writers[0] = {"test_writer"};
+              instantiate_M1_verilog(sreg->getModuleRef()->getLongName(), 0, impl, buf);
+              src_wire = delayed_src;
 
-          delay -= maxd;
+              delay -= maxd;
 
-      }
+          }
+        } else {
+            while(delay > 0)
+            {
+
+              Values tile_params{{"width", COREMK(c, 16)},
+                {"ID", COREMK(c, "sreg_" + c->getUnique())},
+                {"has_external_addrgen", COREMK(c, false)},
+                {"num_inputs",COREMK(c,1)},
+                {"num_outputs",COREMK(c,1)}};
+              CoreIR::Instance * sreg = def->addInstance("sreg_" + c->getUnique(), "cgralib.Mem_amber", tile_params);
+              def->connect(sreg->sel("clk"),def->sel("self.clk"));
+              def->connect(sreg->sel("clk_en"),one);
+              def->connect(sreg->sel("chain_chain_en"),zero);
+              def->connect(sreg->sel("chain_data_in"),mkConst(def,16,0));
+              def->connect(sreg->sel("rst_n"),def->sel("self.rst_n"));
+              def->connect(sreg->sel("data_in_0"),src_wire);
+              delayed_src = sreg->sel("data_out_0");
+
+              instantiate_M3_verilog_sreg(options, sreg->getModuleRef()->getLongName(), min(delay,maxd), prg, hwinfo);
+
+              src_wire = delayed_src;
+
+              delay -= maxd;
+
+          }
+        }
       
     
     
