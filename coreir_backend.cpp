@@ -118,6 +118,12 @@ void instantiate_M3_verilog_sreg(CodegenOptions& options, const std::string& lon
 }
 
 
+struct affine_controller_ctrl {
+  isl_aff* access_function;
+  isl_aff* sched;
+  isl_set* dom;
+};
+
 void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_name, const int b, ubuffer_impl& impl, UBuffer& buf, prog& prg,
     map<pair<string, int>, int> ubuffer_port_and_bank_to_bank_port,
     schedule_info& hwinfo) {
@@ -125,6 +131,9 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   assert(verilog_collateral_file != nullptr);
 
   std::ostream& out = *verilog_collateral_file;
+
+  map<int, affine_controller_ctrl> in_port_controllers;
+  map<int, affine_controller_ctrl> out_port_controllers;
 
   for(auto pt : impl.bank_writers[b]) {
     int count = map_find({pt, b}, ubuffer_port_and_bank_to_bank_port);
@@ -171,6 +180,7 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
         "valid",
         normed_sched,
         normed_dom);
+    in_port_controllers[count] = {ibo, normed_sched, normed_dom};
   }
 
   for(auto pt : impl.bank_readers[b]) {
@@ -215,6 +225,7 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
         "valid",
         normed_sched,
         normed_dom);
+    out_port_controllers[count] = {ibo, normed_sched, normed_dom};
   }
 
   vector<string> port_decls = {};
@@ -241,23 +252,22 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
-    isl_aff* sched_aff =
-      get_aff(adjusted_buf.schedule.at(pt));
+
+    isl_aff* sched_aff = out_port_controllers[count].sched;
+    //isl_aff* sched_aff =
+      //get_aff(adjusted_buf.schedule.at(pt));
 
     out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
 
     isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
-    //isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
     out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
 
     std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
-    //std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
     out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
-    //out << tab(1) << "assign " << bundle_name << "_enable_this_port = " << bnk << " == " << b << ";" << endl;
   }
 
   for(auto pt : impl.bank_writers[b]) {
@@ -266,19 +276,18 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
 
     auto adjusted_buf = write_latency_adjusted_buffer(options, prg, buf, hwinfo);
 
-    isl_aff* sched_aff =
-      get_aff(adjusted_buf.schedule.at(pt));
+    isl_aff* sched_aff = in_port_controllers[count].sched;
+    //isl_aff* sched_aff =
+      //get_aff(adjusted_buf.schedule.at(pt));
 
     out << tab(1) << bundle_name + "_ctrl " << bundle_name << "(.clk(clk), .rst_n(rst_n));" << endl;
 
     isl_aff* ibo = inner_bank_offset_aff(pt, adjusted_buf, impl);
-    //isl_aff* bank_selector = bank_offset_aff(pt, adjusted_buf, impl);
 
     out << tab(1) << "logic [15:0] " << bundle_name << "_ibo;" << endl;
     out << tab(1) << "logic " << bundle_name << "_enable_this_port;" << endl;
 
     std::string ibo_str = codegen_verilog(bundle_name + ".d", ibo);
-    //std::string bnk = codegen_verilog(bundle_name + ".d", bank_selector);
 
     out << tab(1) << "assign " << bundle_name << "_ibo = " << ibo_str << ";" << endl;
     out << tab(1) << "assign " << bundle_name << "_enable_this_port = 1;" << endl;
@@ -287,13 +296,11 @@ void instantiate_M3_verilog(CodegenOptions& options, const std::string& long_nam
   *verilog_collateral_file << endl;
 
   *verilog_collateral_file << tab(1) << "logic [15:0] SRAM [1023:0];" << endl;
-  //*verilog_collateral_file << tab(1) << "logic chain_ren;" << endl << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
     *verilog_collateral_file << tab(1) << "logic [15:0] data_out_" << i << "_tmp;" << endl;
   }
 
   *verilog_collateral_file << tab(1) << "always @(posedge clk) begin" << endl;
-  //*verilog_collateral_file << tab(2) << "chain_ren <= " << "ren_" << impl.bank_readers[b].size() - 1 << ";" << endl;
   for (int i = 0; i < impl.bank_readers[b].size(); i++) {
     string bn = buf.name + "_bank_rd_" + str(b) + "_" + str(i);
     string bundle_name = bn + ".valid" + " && " + bn + "_enable_this_port";
