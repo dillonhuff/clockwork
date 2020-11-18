@@ -6,19 +6,13 @@ endmodule
 
 module cim_output_stencil_cim_output_stencil_op_hcompute_hw_output_stencil_46_to_cim_output_stencil_op_hcompute_cim_output_stencil_65_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_3;
-  logic [15:0] delay_wire_4;
-  logic [15:0] delay_wire_5;
-  logic [15:0] delay_wire_6;
   always @(posedge clk) begin
     delay_wire_3 <= in;
-    delay_wire_4 <= delay_wire_3;
-    delay_wire_5 <= delay_wire_4;
-    delay_wire_6 <= delay_wire_5;
   end
-  assign out = delay_wire_6;
+  assign out = delay_wire_3;
 endmodule
 
-// { op_hcompute_cim_output_stencil[root, cim_output_s0_y, cim_output_s0_x] -> [(524 + 64cim_output_s0_y + cim_output_s0_x)] }
+// { op_hcompute_cim_output_stencil[root, cim_output_s0_y, cim_output_s0_x] -> [(404 + 64cim_output_s0_y + cim_output_s0_x)] }
 module cim_output_stencil_op_hcompute_cim_output_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_cim_output_stencil_write_ctrl_vars[2:0], output op_hcompute_cim_output_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -37,7 +31,7 @@ module cim_output_stencil_op_hcompute_cim_output_stencil_write_fsm(input clk, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==523) begin
+      if(counter[0] ==403) begin
         on <=1;
         on2 <= 1;
         op_hcompute_cim_output_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -68,7 +62,7 @@ module cim_output_stencil_op_hcompute_cim_output_stencil_write_fsm(input clk, in
     end
   end
 endmodule
-// { op_hcompute_hw_output_stencil[root, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(526 + 64hw_output_s0_y_yi + hw_output_s0_x_xi)] }
+// { op_hcompute_hw_output_stencil[root, hw_output_s0_y_yi, hw_output_s0_x_xi] -> [(405 + 64hw_output_s0_y_yi + hw_output_s0_x_xi)] }
 module cim_output_stencil_op_hcompute_hw_output_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_hw_output_stencil_read_ctrl_vars[2:0], output op_hcompute_hw_output_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -87,7 +81,7 @@ module cim_output_stencil_op_hcompute_hw_output_stencil_read_fsm(input clk, inpu
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==525) begin
+      if(counter[0] ==404) begin
         on <=1;
         on2 <= 1;
         op_hcompute_hw_output_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -154,30 +148,22 @@ cim_output_stencil_embarassing_bank_selector cim_output_stencil_cim_output_stenc
 
   logic [15:0] addr0;
   assign addr0 = (((((1*op_hcompute_cim_output_stencil_write_ctrl_vars_fsm_out[1])) - 0))*1+((((1*op_hcompute_cim_output_stencil_write_ctrl_vars_fsm_out[2])) - 0))*58);
-  logic [15:0] delay_wire_7;
   always @(posedge clk) begin
-    delay_wire_7 <= addr0;
-  end
-  logic [15:0] delay_wire_8;
-  always @(posedge clk) begin
-    delay_wire_8 <= cim_output_stencil_cim_output_stencil_op_hcompute_cim_output_stencil_65_bank_selector.out;
-  end
-  logic [15:0] delay_wire_9;
-  always @(posedge clk) begin
-    delay_wire_9 <= op_hcompute_cim_output_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_10;
-  always @(posedge clk) begin
-    delay_wire_10 <= op_hcompute_cim_output_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_9) begin
-      case( delay_wire_8)
-        0:bank_0[delay_wire_7] <= delay_wire_10;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_cim_output_stencil_write_wen_fsm_out) begin
+      case( cim_output_stencil_cim_output_stencil_op_hcompute_cim_output_stencil_65_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_cim_output_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -193,6 +179,13 @@ module cim_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_66_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_4;
+  logic [15:0] delay_wire_5;
+  logic [15:0] delay_wire_6;
+  logic [15:0] delay_wire_7;
+  logic [15:0] delay_wire_8;
+  logic [15:0] delay_wire_9;
+  logic [15:0] delay_wire_10;
   logic [15:0] delay_wire_11;
   logic [15:0] delay_wire_12;
   logic [15:0] delay_wire_13;
@@ -317,18 +310,15 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_66_to_cim_stencil_
   logic [15:0] delay_wire_132;
   logic [15:0] delay_wire_133;
   logic [15:0] delay_wire_134;
-  logic [15:0] delay_wire_135;
-  logic [15:0] delay_wire_136;
-  logic [15:0] delay_wire_137;
-  logic [15:0] delay_wire_138;
-  logic [15:0] delay_wire_139;
-  logic [15:0] delay_wire_140;
-  logic [15:0] delay_wire_141;
-  logic [15:0] delay_wire_142;
-  logic [15:0] delay_wire_143;
-  logic [15:0] delay_wire_144;
   always @(posedge clk) begin
-    delay_wire_11 <= in;
+    delay_wire_4 <= in;
+    delay_wire_5 <= delay_wire_4;
+    delay_wire_6 <= delay_wire_5;
+    delay_wire_7 <= delay_wire_6;
+    delay_wire_8 <= delay_wire_7;
+    delay_wire_9 <= delay_wire_8;
+    delay_wire_10 <= delay_wire_9;
+    delay_wire_11 <= delay_wire_10;
     delay_wire_12 <= delay_wire_11;
     delay_wire_13 <= delay_wire_12;
     delay_wire_14 <= delay_wire_13;
@@ -452,21 +442,21 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_66_to_cim_stencil_
     delay_wire_132 <= delay_wire_131;
     delay_wire_133 <= delay_wire_132;
     delay_wire_134 <= delay_wire_133;
-    delay_wire_135 <= delay_wire_134;
-    delay_wire_136 <= delay_wire_135;
-    delay_wire_137 <= delay_wire_136;
-    delay_wire_138 <= delay_wire_137;
-    delay_wire_139 <= delay_wire_138;
-    delay_wire_140 <= delay_wire_139;
-    delay_wire_141 <= delay_wire_140;
-    delay_wire_142 <= delay_wire_141;
-    delay_wire_143 <= delay_wire_142;
-    delay_wire_144 <= delay_wire_143;
   end
-  assign out = delay_wire_144;
+  assign out = delay_wire_134;
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_67_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_135;
+  logic [15:0] delay_wire_136;
+  logic [15:0] delay_wire_137;
+  logic [15:0] delay_wire_138;
+  logic [15:0] delay_wire_139;
+  logic [15:0] delay_wire_140;
+  logic [15:0] delay_wire_141;
+  logic [15:0] delay_wire_142;
+  logic [15:0] delay_wire_143;
+  logic [15:0] delay_wire_144;
   logic [15:0] delay_wire_145;
   logic [15:0] delay_wire_146;
   logic [15:0] delay_wire_147;
@@ -523,21 +513,18 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_67_to_cim_stencil_
   logic [15:0] delay_wire_198;
   logic [15:0] delay_wire_199;
   logic [15:0] delay_wire_200;
-  logic [15:0] delay_wire_201;
-  logic [15:0] delay_wire_202;
-  logic [15:0] delay_wire_203;
-  logic [15:0] delay_wire_204;
-  logic [15:0] delay_wire_205;
-  logic [15:0] delay_wire_206;
-  logic [15:0] delay_wire_207;
-  logic [15:0] delay_wire_208;
-  logic [15:0] delay_wire_209;
-  logic [15:0] delay_wire_210;
-  logic [15:0] delay_wire_211;
-  logic [15:0] delay_wire_212;
-  logic [15:0] delay_wire_213;
   always @(posedge clk) begin
-    delay_wire_145 <= in;
+    delay_wire_135 <= in;
+    delay_wire_136 <= delay_wire_135;
+    delay_wire_137 <= delay_wire_136;
+    delay_wire_138 <= delay_wire_137;
+    delay_wire_139 <= delay_wire_138;
+    delay_wire_140 <= delay_wire_139;
+    delay_wire_141 <= delay_wire_140;
+    delay_wire_142 <= delay_wire_141;
+    delay_wire_143 <= delay_wire_142;
+    delay_wire_144 <= delay_wire_143;
+    delay_wire_145 <= delay_wire_144;
     delay_wire_146 <= delay_wire_145;
     delay_wire_147 <= delay_wire_146;
     delay_wire_148 <= delay_wire_147;
@@ -593,24 +580,24 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_67_to_cim_stencil_
     delay_wire_198 <= delay_wire_197;
     delay_wire_199 <= delay_wire_198;
     delay_wire_200 <= delay_wire_199;
-    delay_wire_201 <= delay_wire_200;
-    delay_wire_202 <= delay_wire_201;
-    delay_wire_203 <= delay_wire_202;
-    delay_wire_204 <= delay_wire_203;
-    delay_wire_205 <= delay_wire_204;
-    delay_wire_206 <= delay_wire_205;
-    delay_wire_207 <= delay_wire_206;
-    delay_wire_208 <= delay_wire_207;
-    delay_wire_209 <= delay_wire_208;
-    delay_wire_210 <= delay_wire_209;
-    delay_wire_211 <= delay_wire_210;
-    delay_wire_212 <= delay_wire_211;
-    delay_wire_213 <= delay_wire_212;
   end
-  assign out = delay_wire_213;
+  assign out = delay_wire_200;
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_68_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_201;
+  logic [15:0] delay_wire_202;
+  logic [15:0] delay_wire_203;
+  logic [15:0] delay_wire_204;
+  logic [15:0] delay_wire_205;
+  logic [15:0] delay_wire_206;
+  logic [15:0] delay_wire_207;
+  logic [15:0] delay_wire_208;
+  logic [15:0] delay_wire_209;
+  logic [15:0] delay_wire_210;
+  logic [15:0] delay_wire_211;
+  logic [15:0] delay_wire_212;
+  logic [15:0] delay_wire_213;
   logic [15:0] delay_wire_214;
   logic [15:0] delay_wire_215;
   logic [15:0] delay_wire_216;
@@ -728,24 +715,21 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_68_to_cim_stencil_
   logic [15:0] delay_wire_328;
   logic [15:0] delay_wire_329;
   logic [15:0] delay_wire_330;
-  logic [15:0] delay_wire_331;
-  logic [15:0] delay_wire_332;
-  logic [15:0] delay_wire_333;
-  logic [15:0] delay_wire_334;
-  logic [15:0] delay_wire_335;
-  logic [15:0] delay_wire_336;
-  logic [15:0] delay_wire_337;
-  logic [15:0] delay_wire_338;
-  logic [15:0] delay_wire_339;
-  logic [15:0] delay_wire_340;
-  logic [15:0] delay_wire_341;
-  logic [15:0] delay_wire_342;
-  logic [15:0] delay_wire_343;
-  logic [15:0] delay_wire_344;
-  logic [15:0] delay_wire_345;
-  logic [15:0] delay_wire_346;
   always @(posedge clk) begin
-    delay_wire_214 <= in;
+    delay_wire_201 <= in;
+    delay_wire_202 <= delay_wire_201;
+    delay_wire_203 <= delay_wire_202;
+    delay_wire_204 <= delay_wire_203;
+    delay_wire_205 <= delay_wire_204;
+    delay_wire_206 <= delay_wire_205;
+    delay_wire_207 <= delay_wire_206;
+    delay_wire_208 <= delay_wire_207;
+    delay_wire_209 <= delay_wire_208;
+    delay_wire_210 <= delay_wire_209;
+    delay_wire_211 <= delay_wire_210;
+    delay_wire_212 <= delay_wire_211;
+    delay_wire_213 <= delay_wire_212;
+    delay_wire_214 <= delay_wire_213;
     delay_wire_215 <= delay_wire_214;
     delay_wire_216 <= delay_wire_215;
     delay_wire_217 <= delay_wire_216;
@@ -862,27 +846,27 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_68_to_cim_stencil_
     delay_wire_328 <= delay_wire_327;
     delay_wire_329 <= delay_wire_328;
     delay_wire_330 <= delay_wire_329;
-    delay_wire_331 <= delay_wire_330;
-    delay_wire_332 <= delay_wire_331;
-    delay_wire_333 <= delay_wire_332;
-    delay_wire_334 <= delay_wire_333;
-    delay_wire_335 <= delay_wire_334;
-    delay_wire_336 <= delay_wire_335;
-    delay_wire_337 <= delay_wire_336;
-    delay_wire_338 <= delay_wire_337;
-    delay_wire_339 <= delay_wire_338;
-    delay_wire_340 <= delay_wire_339;
-    delay_wire_341 <= delay_wire_340;
-    delay_wire_342 <= delay_wire_341;
-    delay_wire_343 <= delay_wire_342;
-    delay_wire_344 <= delay_wire_343;
-    delay_wire_345 <= delay_wire_344;
-    delay_wire_346 <= delay_wire_345;
   end
-  assign out = delay_wire_346;
+  assign out = delay_wire_330;
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_69_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_331;
+  logic [15:0] delay_wire_332;
+  logic [15:0] delay_wire_333;
+  logic [15:0] delay_wire_334;
+  logic [15:0] delay_wire_335;
+  logic [15:0] delay_wire_336;
+  logic [15:0] delay_wire_337;
+  logic [15:0] delay_wire_338;
+  logic [15:0] delay_wire_339;
+  logic [15:0] delay_wire_340;
+  logic [15:0] delay_wire_341;
+  logic [15:0] delay_wire_342;
+  logic [15:0] delay_wire_343;
+  logic [15:0] delay_wire_344;
+  logic [15:0] delay_wire_345;
+  logic [15:0] delay_wire_346;
   logic [15:0] delay_wire_347;
   logic [15:0] delay_wire_348;
   logic [15:0] delay_wire_349;
@@ -996,27 +980,24 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_69_to_cim_stencil_
   logic [15:0] delay_wire_457;
   logic [15:0] delay_wire_458;
   logic [15:0] delay_wire_459;
-  logic [15:0] delay_wire_460;
-  logic [15:0] delay_wire_461;
-  logic [15:0] delay_wire_462;
-  logic [15:0] delay_wire_463;
-  logic [15:0] delay_wire_464;
-  logic [15:0] delay_wire_465;
-  logic [15:0] delay_wire_466;
-  logic [15:0] delay_wire_467;
-  logic [15:0] delay_wire_468;
-  logic [15:0] delay_wire_469;
-  logic [15:0] delay_wire_470;
-  logic [15:0] delay_wire_471;
-  logic [15:0] delay_wire_472;
-  logic [15:0] delay_wire_473;
-  logic [15:0] delay_wire_474;
-  logic [15:0] delay_wire_475;
-  logic [15:0] delay_wire_476;
-  logic [15:0] delay_wire_477;
-  logic [15:0] delay_wire_478;
   always @(posedge clk) begin
-    delay_wire_347 <= in;
+    delay_wire_331 <= in;
+    delay_wire_332 <= delay_wire_331;
+    delay_wire_333 <= delay_wire_332;
+    delay_wire_334 <= delay_wire_333;
+    delay_wire_335 <= delay_wire_334;
+    delay_wire_336 <= delay_wire_335;
+    delay_wire_337 <= delay_wire_336;
+    delay_wire_338 <= delay_wire_337;
+    delay_wire_339 <= delay_wire_338;
+    delay_wire_340 <= delay_wire_339;
+    delay_wire_341 <= delay_wire_340;
+    delay_wire_342 <= delay_wire_341;
+    delay_wire_343 <= delay_wire_342;
+    delay_wire_344 <= delay_wire_343;
+    delay_wire_345 <= delay_wire_344;
+    delay_wire_346 <= delay_wire_345;
+    delay_wire_347 <= delay_wire_346;
     delay_wire_348 <= delay_wire_347;
     delay_wire_349 <= delay_wire_348;
     delay_wire_350 <= delay_wire_349;
@@ -1129,30 +1110,30 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_69_to_cim_stencil_
     delay_wire_457 <= delay_wire_456;
     delay_wire_458 <= delay_wire_457;
     delay_wire_459 <= delay_wire_458;
-    delay_wire_460 <= delay_wire_459;
-    delay_wire_461 <= delay_wire_460;
-    delay_wire_462 <= delay_wire_461;
-    delay_wire_463 <= delay_wire_462;
-    delay_wire_464 <= delay_wire_463;
-    delay_wire_465 <= delay_wire_464;
-    delay_wire_466 <= delay_wire_465;
-    delay_wire_467 <= delay_wire_466;
-    delay_wire_468 <= delay_wire_467;
-    delay_wire_469 <= delay_wire_468;
-    delay_wire_470 <= delay_wire_469;
-    delay_wire_471 <= delay_wire_470;
-    delay_wire_472 <= delay_wire_471;
-    delay_wire_473 <= delay_wire_472;
-    delay_wire_474 <= delay_wire_473;
-    delay_wire_475 <= delay_wire_474;
-    delay_wire_476 <= delay_wire_475;
-    delay_wire_477 <= delay_wire_476;
-    delay_wire_478 <= delay_wire_477;
   end
-  assign out = delay_wire_478;
+  assign out = delay_wire_459;
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_70_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_460;
+  logic [15:0] delay_wire_461;
+  logic [15:0] delay_wire_462;
+  logic [15:0] delay_wire_463;
+  logic [15:0] delay_wire_464;
+  logic [15:0] delay_wire_465;
+  logic [15:0] delay_wire_466;
+  logic [15:0] delay_wire_467;
+  logic [15:0] delay_wire_468;
+  logic [15:0] delay_wire_469;
+  logic [15:0] delay_wire_470;
+  logic [15:0] delay_wire_471;
+  logic [15:0] delay_wire_472;
+  logic [15:0] delay_wire_473;
+  logic [15:0] delay_wire_474;
+  logic [15:0] delay_wire_475;
+  logic [15:0] delay_wire_476;
+  logic [15:0] delay_wire_477;
+  logic [15:0] delay_wire_478;
   logic [15:0] delay_wire_479;
   logic [15:0] delay_wire_480;
   logic [15:0] delay_wire_481;
@@ -1201,30 +1182,27 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_70_to_cim_stencil_
   logic [15:0] delay_wire_524;
   logic [15:0] delay_wire_525;
   logic [15:0] delay_wire_526;
-  logic [15:0] delay_wire_527;
-  logic [15:0] delay_wire_528;
-  logic [15:0] delay_wire_529;
-  logic [15:0] delay_wire_530;
-  logic [15:0] delay_wire_531;
-  logic [15:0] delay_wire_532;
-  logic [15:0] delay_wire_533;
-  logic [15:0] delay_wire_534;
-  logic [15:0] delay_wire_535;
-  logic [15:0] delay_wire_536;
-  logic [15:0] delay_wire_537;
-  logic [15:0] delay_wire_538;
-  logic [15:0] delay_wire_539;
-  logic [15:0] delay_wire_540;
-  logic [15:0] delay_wire_541;
-  logic [15:0] delay_wire_542;
-  logic [15:0] delay_wire_543;
-  logic [15:0] delay_wire_544;
-  logic [15:0] delay_wire_545;
-  logic [15:0] delay_wire_546;
-  logic [15:0] delay_wire_547;
-  logic [15:0] delay_wire_548;
   always @(posedge clk) begin
-    delay_wire_479 <= in;
+    delay_wire_460 <= in;
+    delay_wire_461 <= delay_wire_460;
+    delay_wire_462 <= delay_wire_461;
+    delay_wire_463 <= delay_wire_462;
+    delay_wire_464 <= delay_wire_463;
+    delay_wire_465 <= delay_wire_464;
+    delay_wire_466 <= delay_wire_465;
+    delay_wire_467 <= delay_wire_466;
+    delay_wire_468 <= delay_wire_467;
+    delay_wire_469 <= delay_wire_468;
+    delay_wire_470 <= delay_wire_469;
+    delay_wire_471 <= delay_wire_470;
+    delay_wire_472 <= delay_wire_471;
+    delay_wire_473 <= delay_wire_472;
+    delay_wire_474 <= delay_wire_473;
+    delay_wire_475 <= delay_wire_474;
+    delay_wire_476 <= delay_wire_475;
+    delay_wire_477 <= delay_wire_476;
+    delay_wire_478 <= delay_wire_477;
+    delay_wire_479 <= delay_wire_478;
     delay_wire_480 <= delay_wire_479;
     delay_wire_481 <= delay_wire_480;
     delay_wire_482 <= delay_wire_481;
@@ -1272,33 +1250,33 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_70_to_cim_stencil_
     delay_wire_524 <= delay_wire_523;
     delay_wire_525 <= delay_wire_524;
     delay_wire_526 <= delay_wire_525;
-    delay_wire_527 <= delay_wire_526;
-    delay_wire_528 <= delay_wire_527;
-    delay_wire_529 <= delay_wire_528;
-    delay_wire_530 <= delay_wire_529;
-    delay_wire_531 <= delay_wire_530;
-    delay_wire_532 <= delay_wire_531;
-    delay_wire_533 <= delay_wire_532;
-    delay_wire_534 <= delay_wire_533;
-    delay_wire_535 <= delay_wire_534;
-    delay_wire_536 <= delay_wire_535;
-    delay_wire_537 <= delay_wire_536;
-    delay_wire_538 <= delay_wire_537;
-    delay_wire_539 <= delay_wire_538;
-    delay_wire_540 <= delay_wire_539;
-    delay_wire_541 <= delay_wire_540;
-    delay_wire_542 <= delay_wire_541;
-    delay_wire_543 <= delay_wire_542;
-    delay_wire_544 <= delay_wire_543;
-    delay_wire_545 <= delay_wire_544;
-    delay_wire_546 <= delay_wire_545;
-    delay_wire_547 <= delay_wire_546;
-    delay_wire_548 <= delay_wire_547;
   end
-  assign out = delay_wire_548;
+  assign out = delay_wire_526;
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_71_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_527;
+  logic [15:0] delay_wire_528;
+  logic [15:0] delay_wire_529;
+  logic [15:0] delay_wire_530;
+  logic [15:0] delay_wire_531;
+  logic [15:0] delay_wire_532;
+  logic [15:0] delay_wire_533;
+  logic [15:0] delay_wire_534;
+  logic [15:0] delay_wire_535;
+  logic [15:0] delay_wire_536;
+  logic [15:0] delay_wire_537;
+  logic [15:0] delay_wire_538;
+  logic [15:0] delay_wire_539;
+  logic [15:0] delay_wire_540;
+  logic [15:0] delay_wire_541;
+  logic [15:0] delay_wire_542;
+  logic [15:0] delay_wire_543;
+  logic [15:0] delay_wire_544;
+  logic [15:0] delay_wire_545;
+  logic [15:0] delay_wire_546;
+  logic [15:0] delay_wire_547;
+  logic [15:0] delay_wire_548;
   logic [15:0] delay_wire_549;
   logic [15:0] delay_wire_550;
   logic [15:0] delay_wire_551;
@@ -1342,33 +1320,30 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_71_to_cim_stencil_
   logic [15:0] delay_wire_589;
   logic [15:0] delay_wire_590;
   logic [15:0] delay_wire_591;
-  logic [15:0] delay_wire_592;
-  logic [15:0] delay_wire_593;
-  logic [15:0] delay_wire_594;
-  logic [15:0] delay_wire_595;
-  logic [15:0] delay_wire_596;
-  logic [15:0] delay_wire_597;
-  logic [15:0] delay_wire_598;
-  logic [15:0] delay_wire_599;
-  logic [15:0] delay_wire_600;
-  logic [15:0] delay_wire_601;
-  logic [15:0] delay_wire_602;
-  logic [15:0] delay_wire_603;
-  logic [15:0] delay_wire_604;
-  logic [15:0] delay_wire_605;
-  logic [15:0] delay_wire_606;
-  logic [15:0] delay_wire_607;
-  logic [15:0] delay_wire_608;
-  logic [15:0] delay_wire_609;
-  logic [15:0] delay_wire_610;
-  logic [15:0] delay_wire_611;
-  logic [15:0] delay_wire_612;
-  logic [15:0] delay_wire_613;
-  logic [15:0] delay_wire_614;
-  logic [15:0] delay_wire_615;
-  logic [15:0] delay_wire_616;
   always @(posedge clk) begin
-    delay_wire_549 <= in;
+    delay_wire_527 <= in;
+    delay_wire_528 <= delay_wire_527;
+    delay_wire_529 <= delay_wire_528;
+    delay_wire_530 <= delay_wire_529;
+    delay_wire_531 <= delay_wire_530;
+    delay_wire_532 <= delay_wire_531;
+    delay_wire_533 <= delay_wire_532;
+    delay_wire_534 <= delay_wire_533;
+    delay_wire_535 <= delay_wire_534;
+    delay_wire_536 <= delay_wire_535;
+    delay_wire_537 <= delay_wire_536;
+    delay_wire_538 <= delay_wire_537;
+    delay_wire_539 <= delay_wire_538;
+    delay_wire_540 <= delay_wire_539;
+    delay_wire_541 <= delay_wire_540;
+    delay_wire_542 <= delay_wire_541;
+    delay_wire_543 <= delay_wire_542;
+    delay_wire_544 <= delay_wire_543;
+    delay_wire_545 <= delay_wire_544;
+    delay_wire_546 <= delay_wire_545;
+    delay_wire_547 <= delay_wire_546;
+    delay_wire_548 <= delay_wire_547;
+    delay_wire_549 <= delay_wire_548;
     delay_wire_550 <= delay_wire_549;
     delay_wire_551 <= delay_wire_550;
     delay_wire_552 <= delay_wire_551;
@@ -1411,84 +1386,41 @@ module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_71_to_cim_stencil_
     delay_wire_589 <= delay_wire_588;
     delay_wire_590 <= delay_wire_589;
     delay_wire_591 <= delay_wire_590;
-    delay_wire_592 <= delay_wire_591;
-    delay_wire_593 <= delay_wire_592;
-    delay_wire_594 <= delay_wire_593;
-    delay_wire_595 <= delay_wire_594;
-    delay_wire_596 <= delay_wire_595;
-    delay_wire_597 <= delay_wire_596;
-    delay_wire_598 <= delay_wire_597;
-    delay_wire_599 <= delay_wire_598;
-    delay_wire_600 <= delay_wire_599;
-    delay_wire_601 <= delay_wire_600;
-    delay_wire_602 <= delay_wire_601;
-    delay_wire_603 <= delay_wire_602;
-    delay_wire_604 <= delay_wire_603;
-    delay_wire_605 <= delay_wire_604;
-    delay_wire_606 <= delay_wire_605;
-    delay_wire_607 <= delay_wire_606;
-    delay_wire_608 <= delay_wire_607;
-    delay_wire_609 <= delay_wire_608;
-    delay_wire_610 <= delay_wire_609;
-    delay_wire_611 <= delay_wire_610;
-    delay_wire_612 <= delay_wire_611;
-    delay_wire_613 <= delay_wire_612;
-    delay_wire_614 <= delay_wire_613;
-    delay_wire_615 <= delay_wire_614;
-    delay_wire_616 <= delay_wire_615;
   end
-  assign out = delay_wire_616;
+  assign out = delay_wire_591;
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_72_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_617;
-  logic [15:0] delay_wire_618;
-  logic [15:0] delay_wire_619;
-  logic [15:0] delay_wire_620;
-  logic [15:0] delay_wire_621;
-  logic [15:0] delay_wire_622;
+  logic [15:0] delay_wire_592;
+  logic [15:0] delay_wire_593;
+  logic [15:0] delay_wire_594;
   always @(posedge clk) begin
-    delay_wire_617 <= in;
-    delay_wire_618 <= delay_wire_617;
-    delay_wire_619 <= delay_wire_618;
-    delay_wire_620 <= delay_wire_619;
-    delay_wire_621 <= delay_wire_620;
-    delay_wire_622 <= delay_wire_621;
+    delay_wire_592 <= in;
+    delay_wire_593 <= delay_wire_592;
+    delay_wire_594 <= delay_wire_593;
   end
-  assign out = delay_wire_622;
+  assign out = delay_wire_594;
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_73_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_623;
-  logic [15:0] delay_wire_624;
-  logic [15:0] delay_wire_625;
-  logic [15:0] delay_wire_626;
-  logic [15:0] delay_wire_627;
+  logic [15:0] delay_wire_595;
+  logic [15:0] delay_wire_596;
   always @(posedge clk) begin
-    delay_wire_623 <= in;
-    delay_wire_624 <= delay_wire_623;
-    delay_wire_625 <= delay_wire_624;
-    delay_wire_626 <= delay_wire_625;
-    delay_wire_627 <= delay_wire_626;
+    delay_wire_595 <= in;
+    delay_wire_596 <= delay_wire_595;
   end
-  assign out = delay_wire_627;
+  assign out = delay_wire_596;
 endmodule
 
 module cim_stencil_cim_stencil_op_hcompute_cim_output_stencil_74_to_cim_stencil_op_hcompute_cim_stencil_61_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_628;
-  logic [15:0] delay_wire_629;
-  logic [15:0] delay_wire_630;
-  logic [15:0] delay_wire_631;
+  logic [15:0] delay_wire_597;
   always @(posedge clk) begin
-    delay_wire_628 <= in;
-    delay_wire_629 <= delay_wire_628;
-    delay_wire_630 <= delay_wire_629;
-    delay_wire_631 <= delay_wire_630;
+    delay_wire_597 <= in;
   end
-  assign out = delay_wire_631;
+  assign out = delay_wire_597;
 endmodule
 
-// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(370 + 64cim_s0_y + cim_s0_x)] }
+// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(273 + 64cim_s0_y + cim_s0_x)] }
 module cim_stencil_op_hcompute_cim_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_cim_stencil_write_ctrl_vars[2:0], output op_hcompute_cim_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -1507,7 +1439,7 @@ module cim_stencil_op_hcompute_cim_stencil_write_fsm(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==369) begin
+      if(counter[0] ==272) begin
         on <=1;
         on2 <= 1;
         op_hcompute_cim_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -1538,7 +1470,7 @@ module cim_stencil_op_hcompute_cim_stencil_write_fsm(input clk, input flush, inp
     end
   end
 endmodule
-// { op_hcompute_cim_output_stencil[root, cim_output_s0_y, cim_output_s0_x] -> [(502 + 64cim_output_s0_y + cim_output_s0_x)] }
+// { op_hcompute_cim_output_stencil[root, cim_output_s0_y, cim_output_s0_x] -> [(404 + 64cim_output_s0_y + cim_output_s0_x)] }
 module cim_stencil_op_hcompute_cim_output_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_cim_output_stencil_read_ctrl_vars[2:0], output op_hcompute_cim_output_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -1557,7 +1489,7 @@ module cim_stencil_op_hcompute_cim_output_stencil_read_fsm(input clk, input flus
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==501) begin
+      if(counter[0] ==403) begin
         on <=1;
         on2 <= 1;
         op_hcompute_cim_output_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -1680,30 +1612,22 @@ cim_stencil_bank_selector cim_stencil_cim_stencil_op_hcompute_cim_output_stencil
 
   logic [15:0] addr0;
   assign addr0 = (((((-1 + 1*op_hcompute_cim_stencil_write_ctrl_vars_fsm_out[1])) - -1)>>0)*1+((((-1 + 1*op_hcompute_cim_stencil_write_ctrl_vars_fsm_out[2])) - -1)>>0)*60);
-  logic [15:0] delay_wire_632;
   always @(posedge clk) begin
-    delay_wire_632 <= addr0;
-  end
-  logic [15:0] delay_wire_633;
-  always @(posedge clk) begin
-    delay_wire_633 <= cim_stencil_cim_stencil_op_hcompute_cim_stencil_61_bank_selector.out;
-  end
-  logic [15:0] delay_wire_634;
-  always @(posedge clk) begin
-    delay_wire_634 <= op_hcompute_cim_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_635;
-  always @(posedge clk) begin
-    delay_wire_635 <= op_hcompute_cim_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_634) begin
-      case( delay_wire_633)
-        0:bank_0[delay_wire_632] <= delay_wire_635;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_cim_stencil_write_wen_fsm_out) begin
+      case( cim_stencil_cim_stencil_op_hcompute_cim_stencil_61_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_cim_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -1719,184 +1643,44 @@ module grad_x_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [1
 endmodule
 
 module grad_x_stencil_grad_x_stencil_op_hcompute_lxx_stencil_8_to_grad_x_stencil_op_hcompute_grad_x_stencil_54_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_636;
-  logic [15:0] delay_wire_637;
-  logic [15:0] delay_wire_638;
-  logic [15:0] delay_wire_639;
+  logic [15:0] delay_wire_598;
   always @(posedge clk) begin
-    delay_wire_636 <= in;
-    delay_wire_637 <= delay_wire_636;
-    delay_wire_638 <= delay_wire_637;
-    delay_wire_639 <= delay_wire_638;
+    delay_wire_598 <= in;
   end
-  assign out = delay_wire_639;
+  assign out = delay_wire_598;
 endmodule
 
 module grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stencil_5_to_grad_x_stencil_op_hcompute_grad_x_stencil_54_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_640;
-  logic [15:0] delay_wire_641;
-  logic [15:0] delay_wire_642;
-  logic [15:0] delay_wire_643;
-  logic [15:0] delay_wire_644;
-  logic [15:0] delay_wire_645;
-  logic [15:0] delay_wire_646;
-  logic [15:0] delay_wire_647;
-  logic [15:0] delay_wire_648;
-  logic [15:0] delay_wire_649;
-  logic [15:0] delay_wire_650;
-  logic [15:0] delay_wire_651;
-  logic [15:0] delay_wire_652;
-  logic [15:0] delay_wire_653;
-  logic [15:0] delay_wire_654;
-  logic [15:0] delay_wire_655;
-  logic [15:0] delay_wire_656;
-  logic [15:0] delay_wire_657;
-  logic [15:0] delay_wire_658;
-  logic [15:0] delay_wire_659;
-  logic [15:0] delay_wire_660;
-  logic [15:0] delay_wire_661;
-  logic [15:0] delay_wire_662;
-  logic [15:0] delay_wire_663;
-  logic [15:0] delay_wire_664;
-  logic [15:0] delay_wire_665;
-  logic [15:0] delay_wire_666;
-  logic [15:0] delay_wire_667;
-  logic [15:0] delay_wire_668;
-  logic [15:0] delay_wire_669;
-  logic [15:0] delay_wire_670;
-  logic [15:0] delay_wire_671;
-  logic [15:0] delay_wire_672;
-  logic [15:0] delay_wire_673;
-  logic [15:0] delay_wire_674;
-  logic [15:0] delay_wire_675;
-  logic [15:0] delay_wire_676;
-  logic [15:0] delay_wire_677;
-  logic [15:0] delay_wire_678;
-  logic [15:0] delay_wire_679;
+  logic [15:0] delay_wire_599;
+  logic [15:0] delay_wire_600;
+  logic [15:0] delay_wire_601;
+  logic [15:0] delay_wire_602;
+  logic [15:0] delay_wire_603;
   always @(posedge clk) begin
-    delay_wire_640 <= in;
-    delay_wire_641 <= delay_wire_640;
-    delay_wire_642 <= delay_wire_641;
-    delay_wire_643 <= delay_wire_642;
-    delay_wire_644 <= delay_wire_643;
-    delay_wire_645 <= delay_wire_644;
-    delay_wire_646 <= delay_wire_645;
-    delay_wire_647 <= delay_wire_646;
-    delay_wire_648 <= delay_wire_647;
-    delay_wire_649 <= delay_wire_648;
-    delay_wire_650 <= delay_wire_649;
-    delay_wire_651 <= delay_wire_650;
-    delay_wire_652 <= delay_wire_651;
-    delay_wire_653 <= delay_wire_652;
-    delay_wire_654 <= delay_wire_653;
-    delay_wire_655 <= delay_wire_654;
-    delay_wire_656 <= delay_wire_655;
-    delay_wire_657 <= delay_wire_656;
-    delay_wire_658 <= delay_wire_657;
-    delay_wire_659 <= delay_wire_658;
-    delay_wire_660 <= delay_wire_659;
-    delay_wire_661 <= delay_wire_660;
-    delay_wire_662 <= delay_wire_661;
-    delay_wire_663 <= delay_wire_662;
-    delay_wire_664 <= delay_wire_663;
-    delay_wire_665 <= delay_wire_664;
-    delay_wire_666 <= delay_wire_665;
-    delay_wire_667 <= delay_wire_666;
-    delay_wire_668 <= delay_wire_667;
-    delay_wire_669 <= delay_wire_668;
-    delay_wire_670 <= delay_wire_669;
-    delay_wire_671 <= delay_wire_670;
-    delay_wire_672 <= delay_wire_671;
-    delay_wire_673 <= delay_wire_672;
-    delay_wire_674 <= delay_wire_673;
-    delay_wire_675 <= delay_wire_674;
-    delay_wire_676 <= delay_wire_675;
-    delay_wire_677 <= delay_wire_676;
-    delay_wire_678 <= delay_wire_677;
-    delay_wire_679 <= delay_wire_678;
+    delay_wire_599 <= in;
+    delay_wire_600 <= delay_wire_599;
+    delay_wire_601 <= delay_wire_600;
+    delay_wire_602 <= delay_wire_601;
+    delay_wire_603 <= delay_wire_602;
   end
-  assign out = delay_wire_679;
+  assign out = delay_wire_603;
 endmodule
 
 module grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stencil_5_to_grad_x_stencil_op_hcompute_lxx_stencil_8_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_680;
-  logic [15:0] delay_wire_681;
-  logic [15:0] delay_wire_682;
-  logic [15:0] delay_wire_683;
-  logic [15:0] delay_wire_684;
-  logic [15:0] delay_wire_685;
-  logic [15:0] delay_wire_686;
-  logic [15:0] delay_wire_687;
-  logic [15:0] delay_wire_688;
-  logic [15:0] delay_wire_689;
-  logic [15:0] delay_wire_690;
-  logic [15:0] delay_wire_691;
-  logic [15:0] delay_wire_692;
-  logic [15:0] delay_wire_693;
-  logic [15:0] delay_wire_694;
-  logic [15:0] delay_wire_695;
-  logic [15:0] delay_wire_696;
-  logic [15:0] delay_wire_697;
-  logic [15:0] delay_wire_698;
-  logic [15:0] delay_wire_699;
-  logic [15:0] delay_wire_700;
-  logic [15:0] delay_wire_701;
-  logic [15:0] delay_wire_702;
-  logic [15:0] delay_wire_703;
-  logic [15:0] delay_wire_704;
-  logic [15:0] delay_wire_705;
-  logic [15:0] delay_wire_706;
-  logic [15:0] delay_wire_707;
-  logic [15:0] delay_wire_708;
-  logic [15:0] delay_wire_709;
-  logic [15:0] delay_wire_710;
-  logic [15:0] delay_wire_711;
-  logic [15:0] delay_wire_712;
-  logic [15:0] delay_wire_713;
-  logic [15:0] delay_wire_714;
-  logic [15:0] delay_wire_715;
+  logic [15:0] delay_wire_604;
+  logic [15:0] delay_wire_605;
+  logic [15:0] delay_wire_606;
+  logic [15:0] delay_wire_607;
   always @(posedge clk) begin
-    delay_wire_680 <= in;
-    delay_wire_681 <= delay_wire_680;
-    delay_wire_682 <= delay_wire_681;
-    delay_wire_683 <= delay_wire_682;
-    delay_wire_684 <= delay_wire_683;
-    delay_wire_685 <= delay_wire_684;
-    delay_wire_686 <= delay_wire_685;
-    delay_wire_687 <= delay_wire_686;
-    delay_wire_688 <= delay_wire_687;
-    delay_wire_689 <= delay_wire_688;
-    delay_wire_690 <= delay_wire_689;
-    delay_wire_691 <= delay_wire_690;
-    delay_wire_692 <= delay_wire_691;
-    delay_wire_693 <= delay_wire_692;
-    delay_wire_694 <= delay_wire_693;
-    delay_wire_695 <= delay_wire_694;
-    delay_wire_696 <= delay_wire_695;
-    delay_wire_697 <= delay_wire_696;
-    delay_wire_698 <= delay_wire_697;
-    delay_wire_699 <= delay_wire_698;
-    delay_wire_700 <= delay_wire_699;
-    delay_wire_701 <= delay_wire_700;
-    delay_wire_702 <= delay_wire_701;
-    delay_wire_703 <= delay_wire_702;
-    delay_wire_704 <= delay_wire_703;
-    delay_wire_705 <= delay_wire_704;
-    delay_wire_706 <= delay_wire_705;
-    delay_wire_707 <= delay_wire_706;
-    delay_wire_708 <= delay_wire_707;
-    delay_wire_709 <= delay_wire_708;
-    delay_wire_710 <= delay_wire_709;
-    delay_wire_711 <= delay_wire_710;
-    delay_wire_712 <= delay_wire_711;
-    delay_wire_713 <= delay_wire_712;
-    delay_wire_714 <= delay_wire_713;
-    delay_wire_715 <= delay_wire_714;
+    delay_wire_604 <= in;
+    delay_wire_605 <= delay_wire_604;
+    delay_wire_606 <= delay_wire_605;
+    delay_wire_607 <= delay_wire_606;
   end
-  assign out = delay_wire_715;
+  assign out = delay_wire_607;
 endmodule
 
-// { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(147 + 64grad_x_s0_y + grad_x_s0_x)] }
+// { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(132 + 64grad_x_s0_y + grad_x_s0_x)] }
 module grad_x_stencil_op_hcompute_grad_x_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_grad_x_stencil_write_ctrl_vars[2:0], output op_hcompute_grad_x_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -1915,7 +1699,7 @@ module grad_x_stencil_op_hcompute_grad_x_stencil_write_fsm(input clk, input flus
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==146) begin
+      if(counter[0] ==131) begin
         on <=1;
         on2 <= 1;
         op_hcompute_grad_x_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -1946,7 +1730,7 @@ module grad_x_stencil_op_hcompute_grad_x_stencil_write_fsm(input clk, input flus
     end
   end
 endmodule
-// { op_hcompute_lxx_stencil[root, lxx_s0_y, lxx_s0_x] -> [(149 + 64lxx_s0_y + lxx_s0_x)] }
+// { op_hcompute_lxx_stencil[root, lxx_s0_y, lxx_s0_x] -> [(133 + 64lxx_s0_y + lxx_s0_x)] }
 module grad_x_stencil_op_hcompute_lxx_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lxx_stencil_read_ctrl_vars[2:0], output op_hcompute_lxx_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -1965,7 +1749,7 @@ module grad_x_stencil_op_hcompute_lxx_stencil_read_fsm(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==148) begin
+      if(counter[0] ==132) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lxx_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -1996,7 +1780,7 @@ module grad_x_stencil_op_hcompute_lxx_stencil_read_fsm(input clk, input flush, i
     end
   end
 endmodule
-// { op_hcompute_lxy_stencil[root, lxy_s0_y, lxy_s0_x] -> [(185 + 64lxy_s0_y + lxy_s0_x)] }
+// { op_hcompute_lxy_stencil[root, lxy_s0_y, lxy_s0_x] -> [(137 + 64lxy_s0_y + lxy_s0_x)] }
 module grad_x_stencil_op_hcompute_lxy_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lxy_stencil_read_ctrl_vars[2:0], output op_hcompute_lxy_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -2015,7 +1799,7 @@ module grad_x_stencil_op_hcompute_lxy_stencil_read_fsm(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==184) begin
+      if(counter[0] ==136) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lxy_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -2095,30 +1879,22 @@ grad_x_stencil_bank_selector grad_x_stencil_grad_x_stencil_op_hcompute_lxy_stenc
 
   logic [15:0] addr0;
   assign addr0 = (((((-2 + 1*op_hcompute_grad_x_stencil_write_ctrl_vars_fsm_out[1])) - -2)>>0)*1+((((-2 + 1*op_hcompute_grad_x_stencil_write_ctrl_vars_fsm_out[2])) - -2)>>0)*62);
-  logic [15:0] delay_wire_716;
   always @(posedge clk) begin
-    delay_wire_716 <= addr0;
-  end
-  logic [15:0] delay_wire_717;
-  always @(posedge clk) begin
-    delay_wire_717 <= grad_x_stencil_grad_x_stencil_op_hcompute_grad_x_stencil_54_bank_selector.out;
-  end
-  logic [15:0] delay_wire_718;
-  always @(posedge clk) begin
-    delay_wire_718 <= op_hcompute_grad_x_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_719;
-  always @(posedge clk) begin
-    delay_wire_719 <= op_hcompute_grad_x_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_718) begin
-      case( delay_wire_717)
-        0:bank_0[delay_wire_716] <= delay_wire_719;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_grad_x_stencil_write_wen_fsm_out) begin
+      case( grad_x_stencil_grad_x_stencil_op_hcompute_grad_x_stencil_54_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_grad_x_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -2134,120 +1910,40 @@ module grad_y_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [1
 endmodule
 
 module grad_y_stencil_grad_y_stencil_op_hcompute_lxy_stencil_6_to_grad_y_stencil_op_hcompute_grad_y_stencil_47_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_720;
-  logic [15:0] delay_wire_721;
-  logic [15:0] delay_wire_722;
-  logic [15:0] delay_wire_723;
+  logic [15:0] delay_wire_608;
   always @(posedge clk) begin
-    delay_wire_720 <= in;
-    delay_wire_721 <= delay_wire_720;
-    delay_wire_722 <= delay_wire_721;
-    delay_wire_723 <= delay_wire_722;
+    delay_wire_608 <= in;
   end
-  assign out = delay_wire_723;
+  assign out = delay_wire_608;
 endmodule
 
 module grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stencil_3_to_grad_y_stencil_op_hcompute_grad_y_stencil_47_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_724;
-  logic [15:0] delay_wire_725;
-  logic [15:0] delay_wire_726;
-  logic [15:0] delay_wire_727;
-  logic [15:0] delay_wire_728;
-  logic [15:0] delay_wire_729;
-  logic [15:0] delay_wire_730;
-  logic [15:0] delay_wire_731;
-  logic [15:0] delay_wire_732;
-  logic [15:0] delay_wire_733;
-  logic [15:0] delay_wire_734;
-  logic [15:0] delay_wire_735;
-  logic [15:0] delay_wire_736;
-  logic [15:0] delay_wire_737;
-  logic [15:0] delay_wire_738;
-  logic [15:0] delay_wire_739;
-  logic [15:0] delay_wire_740;
-  logic [15:0] delay_wire_741;
-  logic [15:0] delay_wire_742;
-  logic [15:0] delay_wire_743;
-  logic [15:0] delay_wire_744;
-  logic [15:0] delay_wire_745;
-  logic [15:0] delay_wire_746;
-  logic [15:0] delay_wire_747;
+  logic [15:0] delay_wire_609;
+  logic [15:0] delay_wire_610;
+  logic [15:0] delay_wire_611;
+  logic [15:0] delay_wire_612;
   always @(posedge clk) begin
-    delay_wire_724 <= in;
-    delay_wire_725 <= delay_wire_724;
-    delay_wire_726 <= delay_wire_725;
-    delay_wire_727 <= delay_wire_726;
-    delay_wire_728 <= delay_wire_727;
-    delay_wire_729 <= delay_wire_728;
-    delay_wire_730 <= delay_wire_729;
-    delay_wire_731 <= delay_wire_730;
-    delay_wire_732 <= delay_wire_731;
-    delay_wire_733 <= delay_wire_732;
-    delay_wire_734 <= delay_wire_733;
-    delay_wire_735 <= delay_wire_734;
-    delay_wire_736 <= delay_wire_735;
-    delay_wire_737 <= delay_wire_736;
-    delay_wire_738 <= delay_wire_737;
-    delay_wire_739 <= delay_wire_738;
-    delay_wire_740 <= delay_wire_739;
-    delay_wire_741 <= delay_wire_740;
-    delay_wire_742 <= delay_wire_741;
-    delay_wire_743 <= delay_wire_742;
-    delay_wire_744 <= delay_wire_743;
-    delay_wire_745 <= delay_wire_744;
-    delay_wire_746 <= delay_wire_745;
-    delay_wire_747 <= delay_wire_746;
+    delay_wire_609 <= in;
+    delay_wire_610 <= delay_wire_609;
+    delay_wire_611 <= delay_wire_610;
+    delay_wire_612 <= delay_wire_611;
   end
-  assign out = delay_wire_747;
+  assign out = delay_wire_612;
 endmodule
 
 module grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stencil_3_to_grad_y_stencil_op_hcompute_lxy_stencil_6_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_748;
-  logic [15:0] delay_wire_749;
-  logic [15:0] delay_wire_750;
-  logic [15:0] delay_wire_751;
-  logic [15:0] delay_wire_752;
-  logic [15:0] delay_wire_753;
-  logic [15:0] delay_wire_754;
-  logic [15:0] delay_wire_755;
-  logic [15:0] delay_wire_756;
-  logic [15:0] delay_wire_757;
-  logic [15:0] delay_wire_758;
-  logic [15:0] delay_wire_759;
-  logic [15:0] delay_wire_760;
-  logic [15:0] delay_wire_761;
-  logic [15:0] delay_wire_762;
-  logic [15:0] delay_wire_763;
-  logic [15:0] delay_wire_764;
-  logic [15:0] delay_wire_765;
-  logic [15:0] delay_wire_766;
-  logic [15:0] delay_wire_767;
+  logic [15:0] delay_wire_613;
+  logic [15:0] delay_wire_614;
+  logic [15:0] delay_wire_615;
   always @(posedge clk) begin
-    delay_wire_748 <= in;
-    delay_wire_749 <= delay_wire_748;
-    delay_wire_750 <= delay_wire_749;
-    delay_wire_751 <= delay_wire_750;
-    delay_wire_752 <= delay_wire_751;
-    delay_wire_753 <= delay_wire_752;
-    delay_wire_754 <= delay_wire_753;
-    delay_wire_755 <= delay_wire_754;
-    delay_wire_756 <= delay_wire_755;
-    delay_wire_757 <= delay_wire_756;
-    delay_wire_758 <= delay_wire_757;
-    delay_wire_759 <= delay_wire_758;
-    delay_wire_760 <= delay_wire_759;
-    delay_wire_761 <= delay_wire_760;
-    delay_wire_762 <= delay_wire_761;
-    delay_wire_763 <= delay_wire_762;
-    delay_wire_764 <= delay_wire_763;
-    delay_wire_765 <= delay_wire_764;
-    delay_wire_766 <= delay_wire_765;
-    delay_wire_767 <= delay_wire_766;
+    delay_wire_613 <= in;
+    delay_wire_614 <= delay_wire_613;
+    delay_wire_615 <= delay_wire_614;
   end
-  assign out = delay_wire_767;
+  assign out = delay_wire_615;
 endmodule
 
-// { op_hcompute_grad_y_stencil[root, grad_y_s0_y, grad_y_s0_x] -> [(183 + 64grad_y_s0_y + grad_y_s0_x)] }
+// { op_hcompute_grad_y_stencil[root, grad_y_s0_y, grad_y_s0_x] -> [(136 + 64grad_y_s0_y + grad_y_s0_x)] }
 module grad_y_stencil_op_hcompute_grad_y_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_grad_y_stencil_write_ctrl_vars[2:0], output op_hcompute_grad_y_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -2266,7 +1962,7 @@ module grad_y_stencil_op_hcompute_grad_y_stencil_write_fsm(input clk, input flus
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==182) begin
+      if(counter[0] ==135) begin
         on <=1;
         on2 <= 1;
         op_hcompute_grad_y_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -2297,7 +1993,7 @@ module grad_y_stencil_op_hcompute_grad_y_stencil_write_fsm(input clk, input flus
     end
   end
 endmodule
-// { op_hcompute_lxy_stencil[root, lxy_s0_y, lxy_s0_x] -> [(185 + 64lxy_s0_y + lxy_s0_x)] }
+// { op_hcompute_lxy_stencil[root, lxy_s0_y, lxy_s0_x] -> [(137 + 64lxy_s0_y + lxy_s0_x)] }
 module grad_y_stencil_op_hcompute_lxy_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lxy_stencil_read_ctrl_vars[2:0], output op_hcompute_lxy_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -2316,7 +2012,7 @@ module grad_y_stencil_op_hcompute_lxy_stencil_read_fsm(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==184) begin
+      if(counter[0] ==136) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lxy_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -2347,7 +2043,7 @@ module grad_y_stencil_op_hcompute_lxy_stencil_read_fsm(input clk, input flush, i
     end
   end
 endmodule
-// { op_hcompute_lyy_stencil[root, lyy_s0_y, lyy_s0_x] -> [(205 + 64lyy_s0_y + lyy_s0_x)] }
+// { op_hcompute_lyy_stencil[root, lyy_s0_y, lyy_s0_x] -> [(140 + 64lyy_s0_y + lyy_s0_x)] }
 module grad_y_stencil_op_hcompute_lyy_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lyy_stencil_read_ctrl_vars[2:0], output op_hcompute_lyy_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -2366,7 +2062,7 @@ module grad_y_stencil_op_hcompute_lyy_stencil_read_fsm(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==204) begin
+      if(counter[0] ==139) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lyy_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -2446,30 +2142,22 @@ grad_y_stencil_bank_selector grad_y_stencil_grad_y_stencil_op_hcompute_lyy_stenc
 
   logic [15:0] addr0;
   assign addr0 = (((((-2 + 1*op_hcompute_grad_y_stencil_write_ctrl_vars_fsm_out[1])) - -2)>>0)*1+((((-2 + 1*op_hcompute_grad_y_stencil_write_ctrl_vars_fsm_out[2])) - -2)>>0)*62);
-  logic [15:0] delay_wire_768;
   always @(posedge clk) begin
-    delay_wire_768 <= addr0;
-  end
-  logic [15:0] delay_wire_769;
-  always @(posedge clk) begin
-    delay_wire_769 <= grad_y_stencil_grad_y_stencil_op_hcompute_grad_y_stencil_47_bank_selector.out;
-  end
-  logic [15:0] delay_wire_770;
-  always @(posedge clk) begin
-    delay_wire_770 <= op_hcompute_grad_y_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_771;
-  always @(posedge clk) begin
-    delay_wire_771 <= op_hcompute_grad_y_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_770) begin
-      case( delay_wire_769)
-        0:bank_0[delay_wire_768] <= delay_wire_771;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_grad_y_stencil_write_wen_fsm_out) begin
+      case( grad_y_stencil_grad_y_stencil_op_hcompute_grad_y_stencil_47_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_grad_y_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -2481,132 +2169,28 @@ module lgxx_stencil_embarassing_bank_selector(input logic [16*2 - 1 :0] d, outpu
 endmodule
 
 module lgxx_stencil_lgxx_stencil_op_hcompute_cim_stencil_62_to_lgxx_stencil_op_hcompute_lgxx_stencil_1_33_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_772;
-  logic [15:0] delay_wire_773;
-  logic [15:0] delay_wire_774;
-  logic [15:0] delay_wire_775;
-  logic [15:0] delay_wire_776;
-  logic [15:0] delay_wire_777;
-  logic [15:0] delay_wire_778;
-  logic [15:0] delay_wire_779;
-  logic [15:0] delay_wire_780;
-  logic [15:0] delay_wire_781;
-  logic [15:0] delay_wire_782;
-  logic [15:0] delay_wire_783;
-  logic [15:0] delay_wire_784;
-  logic [15:0] delay_wire_785;
-  logic [15:0] delay_wire_786;
-  logic [15:0] delay_wire_787;
-  logic [15:0] delay_wire_788;
-  logic [15:0] delay_wire_789;
-  logic [15:0] delay_wire_790;
-  logic [15:0] delay_wire_791;
-  logic [15:0] delay_wire_792;
-  logic [15:0] delay_wire_793;
-  logic [15:0] delay_wire_794;
-  logic [15:0] delay_wire_795;
-  logic [15:0] delay_wire_796;
-  logic [15:0] delay_wire_797;
-  logic [15:0] delay_wire_798;
-  logic [15:0] delay_wire_799;
-  logic [15:0] delay_wire_800;
-  logic [15:0] delay_wire_801;
-  logic [15:0] delay_wire_802;
-  logic [15:0] delay_wire_803;
-  logic [15:0] delay_wire_804;
-  logic [15:0] delay_wire_805;
-  logic [15:0] delay_wire_806;
-  logic [15:0] delay_wire_807;
-  logic [15:0] delay_wire_808;
-  logic [15:0] delay_wire_809;
-  logic [15:0] delay_wire_810;
-  logic [15:0] delay_wire_811;
-  logic [15:0] delay_wire_812;
-  logic [15:0] delay_wire_813;
-  logic [15:0] delay_wire_814;
-  logic [15:0] delay_wire_815;
-  logic [15:0] delay_wire_816;
-  logic [15:0] delay_wire_817;
-  logic [15:0] delay_wire_818;
-  logic [15:0] delay_wire_819;
-  logic [15:0] delay_wire_820;
-  logic [15:0] delay_wire_821;
-  logic [15:0] delay_wire_822;
-  logic [15:0] delay_wire_823;
-  logic [15:0] delay_wire_824;
-  logic [15:0] delay_wire_825;
-  logic [15:0] delay_wire_826;
-  logic [15:0] delay_wire_827;
-  logic [15:0] delay_wire_828;
-  logic [15:0] delay_wire_829;
-  logic [15:0] delay_wire_830;
-  logic [15:0] delay_wire_831;
+  logic [15:0] delay_wire_616;
+  logic [15:0] delay_wire_617;
+  logic [15:0] delay_wire_618;
+  logic [15:0] delay_wire_619;
+  logic [15:0] delay_wire_620;
+  logic [15:0] delay_wire_621;
+  logic [15:0] delay_wire_622;
+  logic [15:0] delay_wire_623;
   always @(posedge clk) begin
-    delay_wire_772 <= in;
-    delay_wire_773 <= delay_wire_772;
-    delay_wire_774 <= delay_wire_773;
-    delay_wire_775 <= delay_wire_774;
-    delay_wire_776 <= delay_wire_775;
-    delay_wire_777 <= delay_wire_776;
-    delay_wire_778 <= delay_wire_777;
-    delay_wire_779 <= delay_wire_778;
-    delay_wire_780 <= delay_wire_779;
-    delay_wire_781 <= delay_wire_780;
-    delay_wire_782 <= delay_wire_781;
-    delay_wire_783 <= delay_wire_782;
-    delay_wire_784 <= delay_wire_783;
-    delay_wire_785 <= delay_wire_784;
-    delay_wire_786 <= delay_wire_785;
-    delay_wire_787 <= delay_wire_786;
-    delay_wire_788 <= delay_wire_787;
-    delay_wire_789 <= delay_wire_788;
-    delay_wire_790 <= delay_wire_789;
-    delay_wire_791 <= delay_wire_790;
-    delay_wire_792 <= delay_wire_791;
-    delay_wire_793 <= delay_wire_792;
-    delay_wire_794 <= delay_wire_793;
-    delay_wire_795 <= delay_wire_794;
-    delay_wire_796 <= delay_wire_795;
-    delay_wire_797 <= delay_wire_796;
-    delay_wire_798 <= delay_wire_797;
-    delay_wire_799 <= delay_wire_798;
-    delay_wire_800 <= delay_wire_799;
-    delay_wire_801 <= delay_wire_800;
-    delay_wire_802 <= delay_wire_801;
-    delay_wire_803 <= delay_wire_802;
-    delay_wire_804 <= delay_wire_803;
-    delay_wire_805 <= delay_wire_804;
-    delay_wire_806 <= delay_wire_805;
-    delay_wire_807 <= delay_wire_806;
-    delay_wire_808 <= delay_wire_807;
-    delay_wire_809 <= delay_wire_808;
-    delay_wire_810 <= delay_wire_809;
-    delay_wire_811 <= delay_wire_810;
-    delay_wire_812 <= delay_wire_811;
-    delay_wire_813 <= delay_wire_812;
-    delay_wire_814 <= delay_wire_813;
-    delay_wire_815 <= delay_wire_814;
-    delay_wire_816 <= delay_wire_815;
-    delay_wire_817 <= delay_wire_816;
-    delay_wire_818 <= delay_wire_817;
-    delay_wire_819 <= delay_wire_818;
-    delay_wire_820 <= delay_wire_819;
-    delay_wire_821 <= delay_wire_820;
-    delay_wire_822 <= delay_wire_821;
-    delay_wire_823 <= delay_wire_822;
-    delay_wire_824 <= delay_wire_823;
-    delay_wire_825 <= delay_wire_824;
-    delay_wire_826 <= delay_wire_825;
-    delay_wire_827 <= delay_wire_826;
-    delay_wire_828 <= delay_wire_827;
-    delay_wire_829 <= delay_wire_828;
-    delay_wire_830 <= delay_wire_829;
-    delay_wire_831 <= delay_wire_830;
+    delay_wire_616 <= in;
+    delay_wire_617 <= delay_wire_616;
+    delay_wire_618 <= delay_wire_617;
+    delay_wire_619 <= delay_wire_618;
+    delay_wire_620 <= delay_wire_619;
+    delay_wire_621 <= delay_wire_620;
+    delay_wire_622 <= delay_wire_621;
+    delay_wire_623 <= delay_wire_622;
   end
-  assign out = delay_wire_831;
+  assign out = delay_wire_623;
 endmodule
 
-// { op_hcompute_lgxx_stencil_1[root, lgxx_s1_y, lgxx_s1_x] -> [(297 + 64lgxx_s1_y + lgxx_s1_x)] }
+// { op_hcompute_lgxx_stencil_1[root, lgxx_s1_y, lgxx_s1_x] -> [(265 + 64lgxx_s1_y + lgxx_s1_x)] }
 module lgxx_stencil_op_hcompute_lgxx_stencil_1_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxx_stencil_1_write_ctrl_vars[2:0], output op_hcompute_lgxx_stencil_1_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -2625,7 +2209,7 @@ module lgxx_stencil_op_hcompute_lgxx_stencil_1_write_fsm(input clk, input flush,
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==296) begin
+      if(counter[0] ==264) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgxx_stencil_1_write_ctrl_vars[0]<= 16'b0;
@@ -2656,7 +2240,7 @@ module lgxx_stencil_op_hcompute_lgxx_stencil_1_write_fsm(input clk, input flush,
     end
   end
 endmodule
-// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(355 + 64cim_s0_y + cim_s0_x)] }
+// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(273 + 64cim_s0_y + cim_s0_x)] }
 module lgxx_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_cim_stencil_read_ctrl_vars[2:0], output op_hcompute_cim_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -2675,7 +2259,7 @@ module lgxx_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==354) begin
+      if(counter[0] ==272) begin
         on <=1;
         on2 <= 1;
         op_hcompute_cim_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -2742,30 +2326,22 @@ lgxx_stencil_embarassing_bank_selector lgxx_stencil_lgxx_stencil_op_hcompute_cim
 
   logic [15:0] addr0;
   assign addr0 = (((((-1 + 1*op_hcompute_lgxx_stencil_1_write_ctrl_vars_fsm_out[1])) - -1))*1+((((-1 + 1*op_hcompute_lgxx_stencil_1_write_ctrl_vars_fsm_out[2])) - -1))*60);
-  logic [15:0] delay_wire_832;
   always @(posedge clk) begin
-    delay_wire_832 <= addr0;
-  end
-  logic [15:0] delay_wire_833;
-  always @(posedge clk) begin
-    delay_wire_833 <= lgxx_stencil_lgxx_stencil_op_hcompute_lgxx_stencil_1_33_bank_selector.out;
-  end
-  logic [15:0] delay_wire_834;
-  always @(posedge clk) begin
-    delay_wire_834 <= op_hcompute_lgxx_stencil_1_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_835;
-  always @(posedge clk) begin
-    delay_wire_835 <= op_hcompute_lgxx_stencil_1_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_834) begin
-      case( delay_wire_833)
-        0:bank_0[delay_wire_832] <= delay_wire_835;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_lgxx_stencil_1_write_wen_fsm_out) begin
+      case( lgxx_stencil_lgxx_stencil_op_hcompute_lgxx_stencil_1_33_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_lgxx_stencil_1_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -2777,20 +2353,14 @@ module lgxx_stencil_clkwrk_dsa0_embarassing_bank_selector(input logic [16*2 - 1 
 endmodule
 
 module lgxx_stencil_clkwrk_dsa0_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_34_to_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_44_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_836;
-  logic [15:0] delay_wire_837;
-  logic [15:0] delay_wire_838;
-  logic [15:0] delay_wire_839;
+  logic [15:0] delay_wire_624;
   always @(posedge clk) begin
-    delay_wire_836 <= in;
-    delay_wire_837 <= delay_wire_836;
-    delay_wire_838 <= delay_wire_837;
-    delay_wire_839 <= delay_wire_838;
+    delay_wire_624 <= in;
   end
-  assign out = delay_wire_839;
+  assign out = delay_wire_624;
 endmodule
 
-// { op_hcompute_lgxx_stencil[root, lgxx_s0_y, lgxx_s0_x] -> [(285 + 64lgxx_s0_y + lgxx_s0_x)] }
+// { op_hcompute_lgxx_stencil[root, lgxx_s0_y, lgxx_s0_x] -> [(264 + 64lgxx_s0_y + lgxx_s0_x)] }
 module lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxx_stencil_write_ctrl_vars[2:0], output op_hcompute_lgxx_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -2809,7 +2379,7 @@ module lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write_fsm(input clk, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==284) begin
+      if(counter[0] ==263) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgxx_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -2840,7 +2410,7 @@ module lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_write_fsm(input clk, in
     end
   end
 endmodule
-// { op_hcompute_lgxx_stencil_1[root, lgxx_s1_y, lgxx_s1_x] -> [(287 + 64lgxx_s1_y + lgxx_s1_x)] }
+// { op_hcompute_lgxx_stencil_1[root, lgxx_s1_y, lgxx_s1_x] -> [(265 + 64lgxx_s1_y + lgxx_s1_x)] }
 module lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxx_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgxx_stencil_1_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -2859,7 +2429,7 @@ module lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_1_read_fsm(input clk, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==286) begin
+      if(counter[0] ==264) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgxx_stencil_1_read_ctrl_vars[0]<= 16'b0;
@@ -2926,30 +2496,22 @@ lgxx_stencil_clkwrk_dsa0_embarassing_bank_selector lgxx_stencil_clkwrk_dsa0_lgxx
 
   logic [15:0] addr0;
   assign addr0 = (((((-1 + 1*op_hcompute_lgxx_stencil_write_ctrl_vars_fsm_out[1])) - -1))*1+((((-1 + 1*op_hcompute_lgxx_stencil_write_ctrl_vars_fsm_out[2])) - -1))*60);
-  logic [15:0] delay_wire_840;
   always @(posedge clk) begin
-    delay_wire_840 <= addr0;
-  end
-  logic [15:0] delay_wire_841;
-  always @(posedge clk) begin
-    delay_wire_841 <= lgxx_stencil_clkwrk_dsa0_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_44_bank_selector.out;
-  end
-  logic [15:0] delay_wire_842;
-  always @(posedge clk) begin
-    delay_wire_842 <= op_hcompute_lgxx_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_843;
-  always @(posedge clk) begin
-    delay_wire_843 <= op_hcompute_lgxx_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_842) begin
-      case( delay_wire_841)
-        0:bank_0[delay_wire_840] <= delay_wire_843;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_lgxx_stencil_write_wen_fsm_out) begin
+      case( lgxx_stencil_clkwrk_dsa0_lgxx_stencil_clkwrk_dsa0_op_hcompute_lgxx_stencil_44_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_lgxx_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -2961,60 +2523,20 @@ module lgxy_stencil_embarassing_bank_selector(input logic [16*2 - 1 :0] d, outpu
 endmodule
 
 module lgxy_stencil_lgxy_stencil_op_hcompute_cim_stencil_63_to_lgxy_stencil_op_hcompute_lgxy_stencil_1_21_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_844;
-  logic [15:0] delay_wire_845;
-  logic [15:0] delay_wire_846;
-  logic [15:0] delay_wire_847;
-  logic [15:0] delay_wire_848;
-  logic [15:0] delay_wire_849;
-  logic [15:0] delay_wire_850;
-  logic [15:0] delay_wire_851;
-  logic [15:0] delay_wire_852;
-  logic [15:0] delay_wire_853;
-  logic [15:0] delay_wire_854;
-  logic [15:0] delay_wire_855;
-  logic [15:0] delay_wire_856;
-  logic [15:0] delay_wire_857;
-  logic [15:0] delay_wire_858;
-  logic [15:0] delay_wire_859;
-  logic [15:0] delay_wire_860;
-  logic [15:0] delay_wire_861;
-  logic [15:0] delay_wire_862;
-  logic [15:0] delay_wire_863;
-  logic [15:0] delay_wire_864;
-  logic [15:0] delay_wire_865;
-  logic [15:0] delay_wire_866;
-  logic [15:0] delay_wire_867;
+  logic [15:0] delay_wire_625;
+  logic [15:0] delay_wire_626;
+  logic [15:0] delay_wire_627;
+  logic [15:0] delay_wire_628;
   always @(posedge clk) begin
-    delay_wire_844 <= in;
-    delay_wire_845 <= delay_wire_844;
-    delay_wire_846 <= delay_wire_845;
-    delay_wire_847 <= delay_wire_846;
-    delay_wire_848 <= delay_wire_847;
-    delay_wire_849 <= delay_wire_848;
-    delay_wire_850 <= delay_wire_849;
-    delay_wire_851 <= delay_wire_850;
-    delay_wire_852 <= delay_wire_851;
-    delay_wire_853 <= delay_wire_852;
-    delay_wire_854 <= delay_wire_853;
-    delay_wire_855 <= delay_wire_854;
-    delay_wire_856 <= delay_wire_855;
-    delay_wire_857 <= delay_wire_856;
-    delay_wire_858 <= delay_wire_857;
-    delay_wire_859 <= delay_wire_858;
-    delay_wire_860 <= delay_wire_859;
-    delay_wire_861 <= delay_wire_860;
-    delay_wire_862 <= delay_wire_861;
-    delay_wire_863 <= delay_wire_862;
-    delay_wire_864 <= delay_wire_863;
-    delay_wire_865 <= delay_wire_864;
-    delay_wire_866 <= delay_wire_865;
-    delay_wire_867 <= delay_wire_866;
+    delay_wire_625 <= in;
+    delay_wire_626 <= delay_wire_625;
+    delay_wire_627 <= delay_wire_626;
+    delay_wire_628 <= delay_wire_627;
   end
-  assign out = delay_wire_867;
+  assign out = delay_wire_628;
 endmodule
 
-// { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(333 + 64lgxy_s1_y + lgxy_s1_x)] }
+// { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(269 + 64lgxy_s1_y + lgxy_s1_x)] }
 module lgxy_stencil_op_hcompute_lgxy_stencil_1_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxy_stencil_1_write_ctrl_vars[2:0], output op_hcompute_lgxy_stencil_1_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -3033,7 +2555,7 @@ module lgxy_stencil_op_hcompute_lgxy_stencil_1_write_fsm(input clk, input flush,
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==332) begin
+      if(counter[0] ==268) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgxy_stencil_1_write_ctrl_vars[0]<= 16'b0;
@@ -3064,7 +2586,7 @@ module lgxy_stencil_op_hcompute_lgxy_stencil_1_write_fsm(input clk, input flush,
     end
   end
 endmodule
-// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(355 + 64cim_s0_y + cim_s0_x)] }
+// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(273 + 64cim_s0_y + cim_s0_x)] }
 module lgxy_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_cim_stencil_read_ctrl_vars[2:0], output op_hcompute_cim_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -3083,7 +2605,7 @@ module lgxy_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==354) begin
+      if(counter[0] ==272) begin
         on <=1;
         on2 <= 1;
         op_hcompute_cim_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -3150,30 +2672,22 @@ lgxy_stencil_embarassing_bank_selector lgxy_stencil_lgxy_stencil_op_hcompute_cim
 
   logic [15:0] addr0;
   assign addr0 = (((((-1 + 1*op_hcompute_lgxy_stencil_1_write_ctrl_vars_fsm_out[1])) - -1))*1+((((-1 + 1*op_hcompute_lgxy_stencil_1_write_ctrl_vars_fsm_out[2])) - -1))*60);
-  logic [15:0] delay_wire_868;
   always @(posedge clk) begin
-    delay_wire_868 <= addr0;
-  end
-  logic [15:0] delay_wire_869;
-  always @(posedge clk) begin
-    delay_wire_869 <= lgxy_stencil_lgxy_stencil_op_hcompute_lgxy_stencil_1_21_bank_selector.out;
-  end
-  logic [15:0] delay_wire_870;
-  always @(posedge clk) begin
-    delay_wire_870 <= op_hcompute_lgxy_stencil_1_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_871;
-  always @(posedge clk) begin
-    delay_wire_871 <= op_hcompute_lgxy_stencil_1_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_870) begin
-      case( delay_wire_869)
-        0:bank_0[delay_wire_868] <= delay_wire_871;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_lgxy_stencil_1_write_wen_fsm_out) begin
+      case( lgxy_stencil_lgxy_stencil_op_hcompute_lgxy_stencil_1_21_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_lgxy_stencil_1_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -3185,20 +2699,14 @@ module lgxy_stencil_clkwrk_dsa1_embarassing_bank_selector(input logic [16*2 - 1 
 endmodule
 
 module lgxy_stencil_clkwrk_dsa1_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_22_to_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_32_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_872;
-  logic [15:0] delay_wire_873;
-  logic [15:0] delay_wire_874;
-  logic [15:0] delay_wire_875;
+  logic [15:0] delay_wire_629;
   always @(posedge clk) begin
-    delay_wire_872 <= in;
-    delay_wire_873 <= delay_wire_872;
-    delay_wire_874 <= delay_wire_873;
-    delay_wire_875 <= delay_wire_874;
+    delay_wire_629 <= in;
   end
-  assign out = delay_wire_875;
+  assign out = delay_wire_629;
 endmodule
 
-// { op_hcompute_lgxy_stencil[root, lgxy_s0_y, lgxy_s0_x] -> [(321 + 64lgxy_s0_y + lgxy_s0_x)] }
+// { op_hcompute_lgxy_stencil[root, lgxy_s0_y, lgxy_s0_x] -> [(268 + 64lgxy_s0_y + lgxy_s0_x)] }
 module lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxy_stencil_write_ctrl_vars[2:0], output op_hcompute_lgxy_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -3217,7 +2725,7 @@ module lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_fsm(input clk, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==320) begin
+      if(counter[0] ==267) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgxy_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -3248,7 +2756,7 @@ module lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_write_fsm(input clk, in
     end
   end
 endmodule
-// { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(323 + 64lgxy_s1_y + lgxy_s1_x)] }
+// { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(269 + 64lgxy_s1_y + lgxy_s1_x)] }
 module lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxy_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgxy_stencil_1_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -3267,7 +2775,7 @@ module lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_1_read_fsm(input clk, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==322) begin
+      if(counter[0] ==268) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgxy_stencil_1_read_ctrl_vars[0]<= 16'b0;
@@ -3334,30 +2842,22 @@ lgxy_stencil_clkwrk_dsa1_embarassing_bank_selector lgxy_stencil_clkwrk_dsa1_lgxy
 
   logic [15:0] addr0;
   assign addr0 = (((((-1 + 1*op_hcompute_lgxy_stencil_write_ctrl_vars_fsm_out[1])) - -1))*1+((((-1 + 1*op_hcompute_lgxy_stencil_write_ctrl_vars_fsm_out[2])) - -1))*60);
-  logic [15:0] delay_wire_876;
   always @(posedge clk) begin
-    delay_wire_876 <= addr0;
-  end
-  logic [15:0] delay_wire_877;
-  always @(posedge clk) begin
-    delay_wire_877 <= lgxy_stencil_clkwrk_dsa1_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_32_bank_selector.out;
-  end
-  logic [15:0] delay_wire_878;
-  always @(posedge clk) begin
-    delay_wire_878 <= op_hcompute_lgxy_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_879;
-  always @(posedge clk) begin
-    delay_wire_879 <= op_hcompute_lgxy_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_878) begin
-      case( delay_wire_877)
-        0:bank_0[delay_wire_876] <= delay_wire_879;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_lgxy_stencil_write_wen_fsm_out) begin
+      case( lgxy_stencil_clkwrk_dsa1_lgxy_stencil_clkwrk_dsa1_op_hcompute_lgxy_stencil_32_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_lgxy_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -3369,20 +2869,14 @@ module lgyy_stencil_embarassing_bank_selector(input logic [16*2 - 1 :0] d, outpu
 endmodule
 
 module lgyy_stencil_lgyy_stencil_op_hcompute_cim_stencil_64_to_lgyy_stencil_op_hcompute_lgyy_stencil_1_9_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_880;
-  logic [15:0] delay_wire_881;
-  logic [15:0] delay_wire_882;
-  logic [15:0] delay_wire_883;
+  logic [15:0] delay_wire_630;
   always @(posedge clk) begin
-    delay_wire_880 <= in;
-    delay_wire_881 <= delay_wire_880;
-    delay_wire_882 <= delay_wire_881;
-    delay_wire_883 <= delay_wire_882;
+    delay_wire_630 <= in;
   end
-  assign out = delay_wire_883;
+  assign out = delay_wire_630;
 endmodule
 
-// { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(353 + 64lgyy_s1_y + lgyy_s1_x)] }
+// { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(272 + 64lgyy_s1_y + lgyy_s1_x)] }
 module lgyy_stencil_op_hcompute_lgyy_stencil_1_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgyy_stencil_1_write_ctrl_vars[2:0], output op_hcompute_lgyy_stencil_1_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -3401,7 +2895,7 @@ module lgyy_stencil_op_hcompute_lgyy_stencil_1_write_fsm(input clk, input flush,
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==352) begin
+      if(counter[0] ==271) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgyy_stencil_1_write_ctrl_vars[0]<= 16'b0;
@@ -3432,7 +2926,7 @@ module lgyy_stencil_op_hcompute_lgyy_stencil_1_write_fsm(input clk, input flush,
     end
   end
 endmodule
-// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(355 + 64cim_s0_y + cim_s0_x)] }
+// { op_hcompute_cim_stencil[root, cim_s0_y, cim_s0_x] -> [(273 + 64cim_s0_y + cim_s0_x)] }
 module lgyy_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_cim_stencil_read_ctrl_vars[2:0], output op_hcompute_cim_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -3451,7 +2945,7 @@ module lgyy_stencil_op_hcompute_cim_stencil_read_fsm(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==354) begin
+      if(counter[0] ==272) begin
         on <=1;
         on2 <= 1;
         op_hcompute_cim_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -3518,30 +3012,22 @@ lgyy_stencil_embarassing_bank_selector lgyy_stencil_lgyy_stencil_op_hcompute_cim
 
   logic [15:0] addr0;
   assign addr0 = (((((-1 + 1*op_hcompute_lgyy_stencil_1_write_ctrl_vars_fsm_out[1])) - -1))*1+((((-1 + 1*op_hcompute_lgyy_stencil_1_write_ctrl_vars_fsm_out[2])) - -1))*60);
-  logic [15:0] delay_wire_884;
   always @(posedge clk) begin
-    delay_wire_884 <= addr0;
-  end
-  logic [15:0] delay_wire_885;
-  always @(posedge clk) begin
-    delay_wire_885 <= lgyy_stencil_lgyy_stencil_op_hcompute_lgyy_stencil_1_9_bank_selector.out;
-  end
-  logic [15:0] delay_wire_886;
-  always @(posedge clk) begin
-    delay_wire_886 <= op_hcompute_lgyy_stencil_1_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_887;
-  always @(posedge clk) begin
-    delay_wire_887 <= op_hcompute_lgyy_stencil_1_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_886) begin
-      case( delay_wire_885)
-        0:bank_0[delay_wire_884] <= delay_wire_887;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_lgyy_stencil_1_write_wen_fsm_out) begin
+      case( lgyy_stencil_lgyy_stencil_op_hcompute_lgyy_stencil_1_9_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_lgyy_stencil_1_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -3553,20 +3039,14 @@ module lgyy_stencil_clkwrk_dsa2_embarassing_bank_selector(input logic [16*2 - 1 
 endmodule
 
 module lgyy_stencil_clkwrk_dsa2_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_10_to_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_20_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_888;
-  logic [15:0] delay_wire_889;
-  logic [15:0] delay_wire_890;
-  logic [15:0] delay_wire_891;
+  logic [15:0] delay_wire_631;
   always @(posedge clk) begin
-    delay_wire_888 <= in;
-    delay_wire_889 <= delay_wire_888;
-    delay_wire_890 <= delay_wire_889;
-    delay_wire_891 <= delay_wire_890;
+    delay_wire_631 <= in;
   end
-  assign out = delay_wire_891;
+  assign out = delay_wire_631;
 endmodule
 
-// { op_hcompute_lgyy_stencil[root, lgyy_s0_y, lgyy_s0_x] -> [(341 + 64lgyy_s0_y + lgyy_s0_x)] }
+// { op_hcompute_lgyy_stencil[root, lgyy_s0_y, lgyy_s0_x] -> [(271 + 64lgyy_s0_y + lgyy_s0_x)] }
 module lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgyy_stencil_write_ctrl_vars[2:0], output op_hcompute_lgyy_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -3585,7 +3065,7 @@ module lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_fsm(input clk, in
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==340) begin
+      if(counter[0] ==270) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgyy_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -3616,7 +3096,7 @@ module lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_write_fsm(input clk, in
     end
   end
 endmodule
-// { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(343 + 64lgyy_s1_y + lgyy_s1_x)] }
+// { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(272 + 64lgyy_s1_y + lgyy_s1_x)] }
 module lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgyy_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgyy_stencil_1_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -3635,7 +3115,7 @@ module lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_1_read_fsm(input clk, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==342) begin
+      if(counter[0] ==271) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgyy_stencil_1_read_ctrl_vars[0]<= 16'b0;
@@ -3702,30 +3182,22 @@ lgyy_stencil_clkwrk_dsa2_embarassing_bank_selector lgyy_stencil_clkwrk_dsa2_lgyy
 
   logic [15:0] addr0;
   assign addr0 = (((((-1 + 1*op_hcompute_lgyy_stencil_write_ctrl_vars_fsm_out[1])) - -1))*1+((((-1 + 1*op_hcompute_lgyy_stencil_write_ctrl_vars_fsm_out[2])) - -1))*60);
-  logic [15:0] delay_wire_892;
   always @(posedge clk) begin
-    delay_wire_892 <= addr0;
-  end
-  logic [15:0] delay_wire_893;
-  always @(posedge clk) begin
-    delay_wire_893 <= lgyy_stencil_clkwrk_dsa2_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_20_bank_selector.out;
-  end
-  logic [15:0] delay_wire_894;
-  always @(posedge clk) begin
-    delay_wire_894 <= op_hcompute_lgyy_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_895;
-  always @(posedge clk) begin
-    delay_wire_895 <= op_hcompute_lgyy_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_894) begin
-      case( delay_wire_893)
-        0:bank_0[delay_wire_892] <= delay_wire_895;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_lgyy_stencil_write_wen_fsm_out) begin
+      case( lgyy_stencil_clkwrk_dsa2_lgyy_stencil_clkwrk_dsa2_op_hcompute_lgyy_stencil_20_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_lgyy_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -3741,6 +3213,545 @@ module lxx_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_35_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_632;
+  logic [15:0] delay_wire_633;
+  logic [15:0] delay_wire_634;
+  logic [15:0] delay_wire_635;
+  logic [15:0] delay_wire_636;
+  logic [15:0] delay_wire_637;
+  logic [15:0] delay_wire_638;
+  logic [15:0] delay_wire_639;
+  logic [15:0] delay_wire_640;
+  logic [15:0] delay_wire_641;
+  logic [15:0] delay_wire_642;
+  logic [15:0] delay_wire_643;
+  logic [15:0] delay_wire_644;
+  logic [15:0] delay_wire_645;
+  logic [15:0] delay_wire_646;
+  logic [15:0] delay_wire_647;
+  logic [15:0] delay_wire_648;
+  logic [15:0] delay_wire_649;
+  logic [15:0] delay_wire_650;
+  logic [15:0] delay_wire_651;
+  logic [15:0] delay_wire_652;
+  logic [15:0] delay_wire_653;
+  logic [15:0] delay_wire_654;
+  logic [15:0] delay_wire_655;
+  logic [15:0] delay_wire_656;
+  logic [15:0] delay_wire_657;
+  logic [15:0] delay_wire_658;
+  logic [15:0] delay_wire_659;
+  logic [15:0] delay_wire_660;
+  logic [15:0] delay_wire_661;
+  logic [15:0] delay_wire_662;
+  logic [15:0] delay_wire_663;
+  logic [15:0] delay_wire_664;
+  logic [15:0] delay_wire_665;
+  logic [15:0] delay_wire_666;
+  logic [15:0] delay_wire_667;
+  logic [15:0] delay_wire_668;
+  logic [15:0] delay_wire_669;
+  logic [15:0] delay_wire_670;
+  logic [15:0] delay_wire_671;
+  logic [15:0] delay_wire_672;
+  logic [15:0] delay_wire_673;
+  logic [15:0] delay_wire_674;
+  logic [15:0] delay_wire_675;
+  logic [15:0] delay_wire_676;
+  logic [15:0] delay_wire_677;
+  logic [15:0] delay_wire_678;
+  logic [15:0] delay_wire_679;
+  logic [15:0] delay_wire_680;
+  logic [15:0] delay_wire_681;
+  logic [15:0] delay_wire_682;
+  logic [15:0] delay_wire_683;
+  logic [15:0] delay_wire_684;
+  logic [15:0] delay_wire_685;
+  logic [15:0] delay_wire_686;
+  logic [15:0] delay_wire_687;
+  logic [15:0] delay_wire_688;
+  logic [15:0] delay_wire_689;
+  logic [15:0] delay_wire_690;
+  logic [15:0] delay_wire_691;
+  logic [15:0] delay_wire_692;
+  logic [15:0] delay_wire_693;
+  logic [15:0] delay_wire_694;
+  logic [15:0] delay_wire_695;
+  logic [15:0] delay_wire_696;
+  logic [15:0] delay_wire_697;
+  logic [15:0] delay_wire_698;
+  logic [15:0] delay_wire_699;
+  logic [15:0] delay_wire_700;
+  logic [15:0] delay_wire_701;
+  logic [15:0] delay_wire_702;
+  logic [15:0] delay_wire_703;
+  logic [15:0] delay_wire_704;
+  logic [15:0] delay_wire_705;
+  logic [15:0] delay_wire_706;
+  logic [15:0] delay_wire_707;
+  logic [15:0] delay_wire_708;
+  logic [15:0] delay_wire_709;
+  logic [15:0] delay_wire_710;
+  logic [15:0] delay_wire_711;
+  logic [15:0] delay_wire_712;
+  logic [15:0] delay_wire_713;
+  logic [15:0] delay_wire_714;
+  logic [15:0] delay_wire_715;
+  logic [15:0] delay_wire_716;
+  logic [15:0] delay_wire_717;
+  logic [15:0] delay_wire_718;
+  logic [15:0] delay_wire_719;
+  logic [15:0] delay_wire_720;
+  logic [15:0] delay_wire_721;
+  logic [15:0] delay_wire_722;
+  logic [15:0] delay_wire_723;
+  logic [15:0] delay_wire_724;
+  logic [15:0] delay_wire_725;
+  logic [15:0] delay_wire_726;
+  logic [15:0] delay_wire_727;
+  logic [15:0] delay_wire_728;
+  logic [15:0] delay_wire_729;
+  logic [15:0] delay_wire_730;
+  logic [15:0] delay_wire_731;
+  logic [15:0] delay_wire_732;
+  logic [15:0] delay_wire_733;
+  logic [15:0] delay_wire_734;
+  logic [15:0] delay_wire_735;
+  logic [15:0] delay_wire_736;
+  logic [15:0] delay_wire_737;
+  logic [15:0] delay_wire_738;
+  logic [15:0] delay_wire_739;
+  logic [15:0] delay_wire_740;
+  logic [15:0] delay_wire_741;
+  logic [15:0] delay_wire_742;
+  logic [15:0] delay_wire_743;
+  logic [15:0] delay_wire_744;
+  logic [15:0] delay_wire_745;
+  logic [15:0] delay_wire_746;
+  logic [15:0] delay_wire_747;
+  logic [15:0] delay_wire_748;
+  logic [15:0] delay_wire_749;
+  logic [15:0] delay_wire_750;
+  logic [15:0] delay_wire_751;
+  logic [15:0] delay_wire_752;
+  logic [15:0] delay_wire_753;
+  logic [15:0] delay_wire_754;
+  logic [15:0] delay_wire_755;
+  logic [15:0] delay_wire_756;
+  logic [15:0] delay_wire_757;
+  logic [15:0] delay_wire_758;
+  logic [15:0] delay_wire_759;
+  logic [15:0] delay_wire_760;
+  logic [15:0] delay_wire_761;
+  logic [15:0] delay_wire_762;
+  logic [15:0] delay_wire_763;
+  always @(posedge clk) begin
+    delay_wire_632 <= in;
+    delay_wire_633 <= delay_wire_632;
+    delay_wire_634 <= delay_wire_633;
+    delay_wire_635 <= delay_wire_634;
+    delay_wire_636 <= delay_wire_635;
+    delay_wire_637 <= delay_wire_636;
+    delay_wire_638 <= delay_wire_637;
+    delay_wire_639 <= delay_wire_638;
+    delay_wire_640 <= delay_wire_639;
+    delay_wire_641 <= delay_wire_640;
+    delay_wire_642 <= delay_wire_641;
+    delay_wire_643 <= delay_wire_642;
+    delay_wire_644 <= delay_wire_643;
+    delay_wire_645 <= delay_wire_644;
+    delay_wire_646 <= delay_wire_645;
+    delay_wire_647 <= delay_wire_646;
+    delay_wire_648 <= delay_wire_647;
+    delay_wire_649 <= delay_wire_648;
+    delay_wire_650 <= delay_wire_649;
+    delay_wire_651 <= delay_wire_650;
+    delay_wire_652 <= delay_wire_651;
+    delay_wire_653 <= delay_wire_652;
+    delay_wire_654 <= delay_wire_653;
+    delay_wire_655 <= delay_wire_654;
+    delay_wire_656 <= delay_wire_655;
+    delay_wire_657 <= delay_wire_656;
+    delay_wire_658 <= delay_wire_657;
+    delay_wire_659 <= delay_wire_658;
+    delay_wire_660 <= delay_wire_659;
+    delay_wire_661 <= delay_wire_660;
+    delay_wire_662 <= delay_wire_661;
+    delay_wire_663 <= delay_wire_662;
+    delay_wire_664 <= delay_wire_663;
+    delay_wire_665 <= delay_wire_664;
+    delay_wire_666 <= delay_wire_665;
+    delay_wire_667 <= delay_wire_666;
+    delay_wire_668 <= delay_wire_667;
+    delay_wire_669 <= delay_wire_668;
+    delay_wire_670 <= delay_wire_669;
+    delay_wire_671 <= delay_wire_670;
+    delay_wire_672 <= delay_wire_671;
+    delay_wire_673 <= delay_wire_672;
+    delay_wire_674 <= delay_wire_673;
+    delay_wire_675 <= delay_wire_674;
+    delay_wire_676 <= delay_wire_675;
+    delay_wire_677 <= delay_wire_676;
+    delay_wire_678 <= delay_wire_677;
+    delay_wire_679 <= delay_wire_678;
+    delay_wire_680 <= delay_wire_679;
+    delay_wire_681 <= delay_wire_680;
+    delay_wire_682 <= delay_wire_681;
+    delay_wire_683 <= delay_wire_682;
+    delay_wire_684 <= delay_wire_683;
+    delay_wire_685 <= delay_wire_684;
+    delay_wire_686 <= delay_wire_685;
+    delay_wire_687 <= delay_wire_686;
+    delay_wire_688 <= delay_wire_687;
+    delay_wire_689 <= delay_wire_688;
+    delay_wire_690 <= delay_wire_689;
+    delay_wire_691 <= delay_wire_690;
+    delay_wire_692 <= delay_wire_691;
+    delay_wire_693 <= delay_wire_692;
+    delay_wire_694 <= delay_wire_693;
+    delay_wire_695 <= delay_wire_694;
+    delay_wire_696 <= delay_wire_695;
+    delay_wire_697 <= delay_wire_696;
+    delay_wire_698 <= delay_wire_697;
+    delay_wire_699 <= delay_wire_698;
+    delay_wire_700 <= delay_wire_699;
+    delay_wire_701 <= delay_wire_700;
+    delay_wire_702 <= delay_wire_701;
+    delay_wire_703 <= delay_wire_702;
+    delay_wire_704 <= delay_wire_703;
+    delay_wire_705 <= delay_wire_704;
+    delay_wire_706 <= delay_wire_705;
+    delay_wire_707 <= delay_wire_706;
+    delay_wire_708 <= delay_wire_707;
+    delay_wire_709 <= delay_wire_708;
+    delay_wire_710 <= delay_wire_709;
+    delay_wire_711 <= delay_wire_710;
+    delay_wire_712 <= delay_wire_711;
+    delay_wire_713 <= delay_wire_712;
+    delay_wire_714 <= delay_wire_713;
+    delay_wire_715 <= delay_wire_714;
+    delay_wire_716 <= delay_wire_715;
+    delay_wire_717 <= delay_wire_716;
+    delay_wire_718 <= delay_wire_717;
+    delay_wire_719 <= delay_wire_718;
+    delay_wire_720 <= delay_wire_719;
+    delay_wire_721 <= delay_wire_720;
+    delay_wire_722 <= delay_wire_721;
+    delay_wire_723 <= delay_wire_722;
+    delay_wire_724 <= delay_wire_723;
+    delay_wire_725 <= delay_wire_724;
+    delay_wire_726 <= delay_wire_725;
+    delay_wire_727 <= delay_wire_726;
+    delay_wire_728 <= delay_wire_727;
+    delay_wire_729 <= delay_wire_728;
+    delay_wire_730 <= delay_wire_729;
+    delay_wire_731 <= delay_wire_730;
+    delay_wire_732 <= delay_wire_731;
+    delay_wire_733 <= delay_wire_732;
+    delay_wire_734 <= delay_wire_733;
+    delay_wire_735 <= delay_wire_734;
+    delay_wire_736 <= delay_wire_735;
+    delay_wire_737 <= delay_wire_736;
+    delay_wire_738 <= delay_wire_737;
+    delay_wire_739 <= delay_wire_738;
+    delay_wire_740 <= delay_wire_739;
+    delay_wire_741 <= delay_wire_740;
+    delay_wire_742 <= delay_wire_741;
+    delay_wire_743 <= delay_wire_742;
+    delay_wire_744 <= delay_wire_743;
+    delay_wire_745 <= delay_wire_744;
+    delay_wire_746 <= delay_wire_745;
+    delay_wire_747 <= delay_wire_746;
+    delay_wire_748 <= delay_wire_747;
+    delay_wire_749 <= delay_wire_748;
+    delay_wire_750 <= delay_wire_749;
+    delay_wire_751 <= delay_wire_750;
+    delay_wire_752 <= delay_wire_751;
+    delay_wire_753 <= delay_wire_752;
+    delay_wire_754 <= delay_wire_753;
+    delay_wire_755 <= delay_wire_754;
+    delay_wire_756 <= delay_wire_755;
+    delay_wire_757 <= delay_wire_756;
+    delay_wire_758 <= delay_wire_757;
+    delay_wire_759 <= delay_wire_758;
+    delay_wire_760 <= delay_wire_759;
+    delay_wire_761 <= delay_wire_760;
+    delay_wire_762 <= delay_wire_761;
+    delay_wire_763 <= delay_wire_762;
+  end
+  assign out = delay_wire_763;
+endmodule
+
+module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_36_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_764;
+  logic [15:0] delay_wire_765;
+  logic [15:0] delay_wire_766;
+  logic [15:0] delay_wire_767;
+  logic [15:0] delay_wire_768;
+  logic [15:0] delay_wire_769;
+  logic [15:0] delay_wire_770;
+  logic [15:0] delay_wire_771;
+  logic [15:0] delay_wire_772;
+  logic [15:0] delay_wire_773;
+  logic [15:0] delay_wire_774;
+  logic [15:0] delay_wire_775;
+  logic [15:0] delay_wire_776;
+  logic [15:0] delay_wire_777;
+  logic [15:0] delay_wire_778;
+  logic [15:0] delay_wire_779;
+  logic [15:0] delay_wire_780;
+  logic [15:0] delay_wire_781;
+  logic [15:0] delay_wire_782;
+  logic [15:0] delay_wire_783;
+  logic [15:0] delay_wire_784;
+  logic [15:0] delay_wire_785;
+  logic [15:0] delay_wire_786;
+  logic [15:0] delay_wire_787;
+  logic [15:0] delay_wire_788;
+  logic [15:0] delay_wire_789;
+  logic [15:0] delay_wire_790;
+  logic [15:0] delay_wire_791;
+  logic [15:0] delay_wire_792;
+  logic [15:0] delay_wire_793;
+  logic [15:0] delay_wire_794;
+  logic [15:0] delay_wire_795;
+  logic [15:0] delay_wire_796;
+  logic [15:0] delay_wire_797;
+  logic [15:0] delay_wire_798;
+  logic [15:0] delay_wire_799;
+  logic [15:0] delay_wire_800;
+  logic [15:0] delay_wire_801;
+  logic [15:0] delay_wire_802;
+  logic [15:0] delay_wire_803;
+  logic [15:0] delay_wire_804;
+  logic [15:0] delay_wire_805;
+  logic [15:0] delay_wire_806;
+  logic [15:0] delay_wire_807;
+  logic [15:0] delay_wire_808;
+  logic [15:0] delay_wire_809;
+  logic [15:0] delay_wire_810;
+  logic [15:0] delay_wire_811;
+  logic [15:0] delay_wire_812;
+  logic [15:0] delay_wire_813;
+  logic [15:0] delay_wire_814;
+  logic [15:0] delay_wire_815;
+  logic [15:0] delay_wire_816;
+  logic [15:0] delay_wire_817;
+  logic [15:0] delay_wire_818;
+  logic [15:0] delay_wire_819;
+  logic [15:0] delay_wire_820;
+  logic [15:0] delay_wire_821;
+  logic [15:0] delay_wire_822;
+  logic [15:0] delay_wire_823;
+  logic [15:0] delay_wire_824;
+  logic [15:0] delay_wire_825;
+  logic [15:0] delay_wire_826;
+  logic [15:0] delay_wire_827;
+  logic [15:0] delay_wire_828;
+  logic [15:0] delay_wire_829;
+  logic [15:0] delay_wire_830;
+  logic [15:0] delay_wire_831;
+  logic [15:0] delay_wire_832;
+  logic [15:0] delay_wire_833;
+  logic [15:0] delay_wire_834;
+  logic [15:0] delay_wire_835;
+  logic [15:0] delay_wire_836;
+  logic [15:0] delay_wire_837;
+  logic [15:0] delay_wire_838;
+  logic [15:0] delay_wire_839;
+  logic [15:0] delay_wire_840;
+  logic [15:0] delay_wire_841;
+  logic [15:0] delay_wire_842;
+  logic [15:0] delay_wire_843;
+  logic [15:0] delay_wire_844;
+  logic [15:0] delay_wire_845;
+  logic [15:0] delay_wire_846;
+  logic [15:0] delay_wire_847;
+  logic [15:0] delay_wire_848;
+  logic [15:0] delay_wire_849;
+  logic [15:0] delay_wire_850;
+  logic [15:0] delay_wire_851;
+  logic [15:0] delay_wire_852;
+  logic [15:0] delay_wire_853;
+  logic [15:0] delay_wire_854;
+  logic [15:0] delay_wire_855;
+  logic [15:0] delay_wire_856;
+  logic [15:0] delay_wire_857;
+  logic [15:0] delay_wire_858;
+  logic [15:0] delay_wire_859;
+  logic [15:0] delay_wire_860;
+  logic [15:0] delay_wire_861;
+  logic [15:0] delay_wire_862;
+  logic [15:0] delay_wire_863;
+  logic [15:0] delay_wire_864;
+  logic [15:0] delay_wire_865;
+  logic [15:0] delay_wire_866;
+  logic [15:0] delay_wire_867;
+  logic [15:0] delay_wire_868;
+  logic [15:0] delay_wire_869;
+  logic [15:0] delay_wire_870;
+  logic [15:0] delay_wire_871;
+  logic [15:0] delay_wire_872;
+  logic [15:0] delay_wire_873;
+  logic [15:0] delay_wire_874;
+  logic [15:0] delay_wire_875;
+  logic [15:0] delay_wire_876;
+  logic [15:0] delay_wire_877;
+  logic [15:0] delay_wire_878;
+  logic [15:0] delay_wire_879;
+  logic [15:0] delay_wire_880;
+  logic [15:0] delay_wire_881;
+  logic [15:0] delay_wire_882;
+  logic [15:0] delay_wire_883;
+  logic [15:0] delay_wire_884;
+  logic [15:0] delay_wire_885;
+  logic [15:0] delay_wire_886;
+  logic [15:0] delay_wire_887;
+  logic [15:0] delay_wire_888;
+  logic [15:0] delay_wire_889;
+  logic [15:0] delay_wire_890;
+  logic [15:0] delay_wire_891;
+  logic [15:0] delay_wire_892;
+  logic [15:0] delay_wire_893;
+  logic [15:0] delay_wire_894;
+  always @(posedge clk) begin
+    delay_wire_764 <= in;
+    delay_wire_765 <= delay_wire_764;
+    delay_wire_766 <= delay_wire_765;
+    delay_wire_767 <= delay_wire_766;
+    delay_wire_768 <= delay_wire_767;
+    delay_wire_769 <= delay_wire_768;
+    delay_wire_770 <= delay_wire_769;
+    delay_wire_771 <= delay_wire_770;
+    delay_wire_772 <= delay_wire_771;
+    delay_wire_773 <= delay_wire_772;
+    delay_wire_774 <= delay_wire_773;
+    delay_wire_775 <= delay_wire_774;
+    delay_wire_776 <= delay_wire_775;
+    delay_wire_777 <= delay_wire_776;
+    delay_wire_778 <= delay_wire_777;
+    delay_wire_779 <= delay_wire_778;
+    delay_wire_780 <= delay_wire_779;
+    delay_wire_781 <= delay_wire_780;
+    delay_wire_782 <= delay_wire_781;
+    delay_wire_783 <= delay_wire_782;
+    delay_wire_784 <= delay_wire_783;
+    delay_wire_785 <= delay_wire_784;
+    delay_wire_786 <= delay_wire_785;
+    delay_wire_787 <= delay_wire_786;
+    delay_wire_788 <= delay_wire_787;
+    delay_wire_789 <= delay_wire_788;
+    delay_wire_790 <= delay_wire_789;
+    delay_wire_791 <= delay_wire_790;
+    delay_wire_792 <= delay_wire_791;
+    delay_wire_793 <= delay_wire_792;
+    delay_wire_794 <= delay_wire_793;
+    delay_wire_795 <= delay_wire_794;
+    delay_wire_796 <= delay_wire_795;
+    delay_wire_797 <= delay_wire_796;
+    delay_wire_798 <= delay_wire_797;
+    delay_wire_799 <= delay_wire_798;
+    delay_wire_800 <= delay_wire_799;
+    delay_wire_801 <= delay_wire_800;
+    delay_wire_802 <= delay_wire_801;
+    delay_wire_803 <= delay_wire_802;
+    delay_wire_804 <= delay_wire_803;
+    delay_wire_805 <= delay_wire_804;
+    delay_wire_806 <= delay_wire_805;
+    delay_wire_807 <= delay_wire_806;
+    delay_wire_808 <= delay_wire_807;
+    delay_wire_809 <= delay_wire_808;
+    delay_wire_810 <= delay_wire_809;
+    delay_wire_811 <= delay_wire_810;
+    delay_wire_812 <= delay_wire_811;
+    delay_wire_813 <= delay_wire_812;
+    delay_wire_814 <= delay_wire_813;
+    delay_wire_815 <= delay_wire_814;
+    delay_wire_816 <= delay_wire_815;
+    delay_wire_817 <= delay_wire_816;
+    delay_wire_818 <= delay_wire_817;
+    delay_wire_819 <= delay_wire_818;
+    delay_wire_820 <= delay_wire_819;
+    delay_wire_821 <= delay_wire_820;
+    delay_wire_822 <= delay_wire_821;
+    delay_wire_823 <= delay_wire_822;
+    delay_wire_824 <= delay_wire_823;
+    delay_wire_825 <= delay_wire_824;
+    delay_wire_826 <= delay_wire_825;
+    delay_wire_827 <= delay_wire_826;
+    delay_wire_828 <= delay_wire_827;
+    delay_wire_829 <= delay_wire_828;
+    delay_wire_830 <= delay_wire_829;
+    delay_wire_831 <= delay_wire_830;
+    delay_wire_832 <= delay_wire_831;
+    delay_wire_833 <= delay_wire_832;
+    delay_wire_834 <= delay_wire_833;
+    delay_wire_835 <= delay_wire_834;
+    delay_wire_836 <= delay_wire_835;
+    delay_wire_837 <= delay_wire_836;
+    delay_wire_838 <= delay_wire_837;
+    delay_wire_839 <= delay_wire_838;
+    delay_wire_840 <= delay_wire_839;
+    delay_wire_841 <= delay_wire_840;
+    delay_wire_842 <= delay_wire_841;
+    delay_wire_843 <= delay_wire_842;
+    delay_wire_844 <= delay_wire_843;
+    delay_wire_845 <= delay_wire_844;
+    delay_wire_846 <= delay_wire_845;
+    delay_wire_847 <= delay_wire_846;
+    delay_wire_848 <= delay_wire_847;
+    delay_wire_849 <= delay_wire_848;
+    delay_wire_850 <= delay_wire_849;
+    delay_wire_851 <= delay_wire_850;
+    delay_wire_852 <= delay_wire_851;
+    delay_wire_853 <= delay_wire_852;
+    delay_wire_854 <= delay_wire_853;
+    delay_wire_855 <= delay_wire_854;
+    delay_wire_856 <= delay_wire_855;
+    delay_wire_857 <= delay_wire_856;
+    delay_wire_858 <= delay_wire_857;
+    delay_wire_859 <= delay_wire_858;
+    delay_wire_860 <= delay_wire_859;
+    delay_wire_861 <= delay_wire_860;
+    delay_wire_862 <= delay_wire_861;
+    delay_wire_863 <= delay_wire_862;
+    delay_wire_864 <= delay_wire_863;
+    delay_wire_865 <= delay_wire_864;
+    delay_wire_866 <= delay_wire_865;
+    delay_wire_867 <= delay_wire_866;
+    delay_wire_868 <= delay_wire_867;
+    delay_wire_869 <= delay_wire_868;
+    delay_wire_870 <= delay_wire_869;
+    delay_wire_871 <= delay_wire_870;
+    delay_wire_872 <= delay_wire_871;
+    delay_wire_873 <= delay_wire_872;
+    delay_wire_874 <= delay_wire_873;
+    delay_wire_875 <= delay_wire_874;
+    delay_wire_876 <= delay_wire_875;
+    delay_wire_877 <= delay_wire_876;
+    delay_wire_878 <= delay_wire_877;
+    delay_wire_879 <= delay_wire_878;
+    delay_wire_880 <= delay_wire_879;
+    delay_wire_881 <= delay_wire_880;
+    delay_wire_882 <= delay_wire_881;
+    delay_wire_883 <= delay_wire_882;
+    delay_wire_884 <= delay_wire_883;
+    delay_wire_885 <= delay_wire_884;
+    delay_wire_886 <= delay_wire_885;
+    delay_wire_887 <= delay_wire_886;
+    delay_wire_888 <= delay_wire_887;
+    delay_wire_889 <= delay_wire_888;
+    delay_wire_890 <= delay_wire_889;
+    delay_wire_891 <= delay_wire_890;
+    delay_wire_892 <= delay_wire_891;
+    delay_wire_893 <= delay_wire_892;
+    delay_wire_894 <= delay_wire_893;
+  end
+  assign out = delay_wire_894;
+endmodule
+
+module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_37_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_895;
   logic [15:0] delay_wire_896;
   logic [15:0] delay_wire_897;
   logic [15:0] delay_wire_898;
@@ -3870,15 +3881,9 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_35_to_lxx_stencil_op_h
   logic [15:0] delay_wire_1022;
   logic [15:0] delay_wire_1023;
   logic [15:0] delay_wire_1024;
-  logic [15:0] delay_wire_1025;
-  logic [15:0] delay_wire_1026;
-  logic [15:0] delay_wire_1027;
-  logic [15:0] delay_wire_1028;
-  logic [15:0] delay_wire_1029;
-  logic [15:0] delay_wire_1030;
-  logic [15:0] delay_wire_1031;
   always @(posedge clk) begin
-    delay_wire_896 <= in;
+    delay_wire_895 <= in;
+    delay_wire_896 <= delay_wire_895;
     delay_wire_897 <= delay_wire_896;
     delay_wire_898 <= delay_wire_897;
     delay_wire_899 <= delay_wire_898;
@@ -4007,18 +4012,18 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_35_to_lxx_stencil_op_h
     delay_wire_1022 <= delay_wire_1021;
     delay_wire_1023 <= delay_wire_1022;
     delay_wire_1024 <= delay_wire_1023;
-    delay_wire_1025 <= delay_wire_1024;
-    delay_wire_1026 <= delay_wire_1025;
-    delay_wire_1027 <= delay_wire_1026;
-    delay_wire_1028 <= delay_wire_1027;
-    delay_wire_1029 <= delay_wire_1028;
-    delay_wire_1030 <= delay_wire_1029;
-    delay_wire_1031 <= delay_wire_1030;
   end
-  assign out = delay_wire_1031;
+  assign out = delay_wire_1024;
 endmodule
 
-module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_36_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_38_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_1025;
+  logic [15:0] delay_wire_1026;
+  logic [15:0] delay_wire_1027;
+  logic [15:0] delay_wire_1028;
+  logic [15:0] delay_wire_1029;
+  logic [15:0] delay_wire_1030;
+  logic [15:0] delay_wire_1031;
   logic [15:0] delay_wire_1032;
   logic [15:0] delay_wire_1033;
   logic [15:0] delay_wire_1034;
@@ -4080,6 +4085,80 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_36_to_lxx_stencil_op_h
   logic [15:0] delay_wire_1090;
   logic [15:0] delay_wire_1091;
   logic [15:0] delay_wire_1092;
+  always @(posedge clk) begin
+    delay_wire_1025 <= in;
+    delay_wire_1026 <= delay_wire_1025;
+    delay_wire_1027 <= delay_wire_1026;
+    delay_wire_1028 <= delay_wire_1027;
+    delay_wire_1029 <= delay_wire_1028;
+    delay_wire_1030 <= delay_wire_1029;
+    delay_wire_1031 <= delay_wire_1030;
+    delay_wire_1032 <= delay_wire_1031;
+    delay_wire_1033 <= delay_wire_1032;
+    delay_wire_1034 <= delay_wire_1033;
+    delay_wire_1035 <= delay_wire_1034;
+    delay_wire_1036 <= delay_wire_1035;
+    delay_wire_1037 <= delay_wire_1036;
+    delay_wire_1038 <= delay_wire_1037;
+    delay_wire_1039 <= delay_wire_1038;
+    delay_wire_1040 <= delay_wire_1039;
+    delay_wire_1041 <= delay_wire_1040;
+    delay_wire_1042 <= delay_wire_1041;
+    delay_wire_1043 <= delay_wire_1042;
+    delay_wire_1044 <= delay_wire_1043;
+    delay_wire_1045 <= delay_wire_1044;
+    delay_wire_1046 <= delay_wire_1045;
+    delay_wire_1047 <= delay_wire_1046;
+    delay_wire_1048 <= delay_wire_1047;
+    delay_wire_1049 <= delay_wire_1048;
+    delay_wire_1050 <= delay_wire_1049;
+    delay_wire_1051 <= delay_wire_1050;
+    delay_wire_1052 <= delay_wire_1051;
+    delay_wire_1053 <= delay_wire_1052;
+    delay_wire_1054 <= delay_wire_1053;
+    delay_wire_1055 <= delay_wire_1054;
+    delay_wire_1056 <= delay_wire_1055;
+    delay_wire_1057 <= delay_wire_1056;
+    delay_wire_1058 <= delay_wire_1057;
+    delay_wire_1059 <= delay_wire_1058;
+    delay_wire_1060 <= delay_wire_1059;
+    delay_wire_1061 <= delay_wire_1060;
+    delay_wire_1062 <= delay_wire_1061;
+    delay_wire_1063 <= delay_wire_1062;
+    delay_wire_1064 <= delay_wire_1063;
+    delay_wire_1065 <= delay_wire_1064;
+    delay_wire_1066 <= delay_wire_1065;
+    delay_wire_1067 <= delay_wire_1066;
+    delay_wire_1068 <= delay_wire_1067;
+    delay_wire_1069 <= delay_wire_1068;
+    delay_wire_1070 <= delay_wire_1069;
+    delay_wire_1071 <= delay_wire_1070;
+    delay_wire_1072 <= delay_wire_1071;
+    delay_wire_1073 <= delay_wire_1072;
+    delay_wire_1074 <= delay_wire_1073;
+    delay_wire_1075 <= delay_wire_1074;
+    delay_wire_1076 <= delay_wire_1075;
+    delay_wire_1077 <= delay_wire_1076;
+    delay_wire_1078 <= delay_wire_1077;
+    delay_wire_1079 <= delay_wire_1078;
+    delay_wire_1080 <= delay_wire_1079;
+    delay_wire_1081 <= delay_wire_1080;
+    delay_wire_1082 <= delay_wire_1081;
+    delay_wire_1083 <= delay_wire_1082;
+    delay_wire_1084 <= delay_wire_1083;
+    delay_wire_1085 <= delay_wire_1084;
+    delay_wire_1086 <= delay_wire_1085;
+    delay_wire_1087 <= delay_wire_1086;
+    delay_wire_1088 <= delay_wire_1087;
+    delay_wire_1089 <= delay_wire_1088;
+    delay_wire_1090 <= delay_wire_1089;
+    delay_wire_1091 <= delay_wire_1090;
+    delay_wire_1092 <= delay_wire_1091;
+  end
+  assign out = delay_wire_1092;
+endmodule
+
+module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_39_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_1093;
   logic [15:0] delay_wire_1094;
   logic [15:0] delay_wire_1095;
@@ -4147,76 +4226,8 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_36_to_lxx_stencil_op_h
   logic [15:0] delay_wire_1157;
   logic [15:0] delay_wire_1158;
   logic [15:0] delay_wire_1159;
-  logic [15:0] delay_wire_1160;
-  logic [15:0] delay_wire_1161;
-  logic [15:0] delay_wire_1162;
-  logic [15:0] delay_wire_1163;
-  logic [15:0] delay_wire_1164;
-  logic [15:0] delay_wire_1165;
-  logic [15:0] delay_wire_1166;
   always @(posedge clk) begin
-    delay_wire_1032 <= in;
-    delay_wire_1033 <= delay_wire_1032;
-    delay_wire_1034 <= delay_wire_1033;
-    delay_wire_1035 <= delay_wire_1034;
-    delay_wire_1036 <= delay_wire_1035;
-    delay_wire_1037 <= delay_wire_1036;
-    delay_wire_1038 <= delay_wire_1037;
-    delay_wire_1039 <= delay_wire_1038;
-    delay_wire_1040 <= delay_wire_1039;
-    delay_wire_1041 <= delay_wire_1040;
-    delay_wire_1042 <= delay_wire_1041;
-    delay_wire_1043 <= delay_wire_1042;
-    delay_wire_1044 <= delay_wire_1043;
-    delay_wire_1045 <= delay_wire_1044;
-    delay_wire_1046 <= delay_wire_1045;
-    delay_wire_1047 <= delay_wire_1046;
-    delay_wire_1048 <= delay_wire_1047;
-    delay_wire_1049 <= delay_wire_1048;
-    delay_wire_1050 <= delay_wire_1049;
-    delay_wire_1051 <= delay_wire_1050;
-    delay_wire_1052 <= delay_wire_1051;
-    delay_wire_1053 <= delay_wire_1052;
-    delay_wire_1054 <= delay_wire_1053;
-    delay_wire_1055 <= delay_wire_1054;
-    delay_wire_1056 <= delay_wire_1055;
-    delay_wire_1057 <= delay_wire_1056;
-    delay_wire_1058 <= delay_wire_1057;
-    delay_wire_1059 <= delay_wire_1058;
-    delay_wire_1060 <= delay_wire_1059;
-    delay_wire_1061 <= delay_wire_1060;
-    delay_wire_1062 <= delay_wire_1061;
-    delay_wire_1063 <= delay_wire_1062;
-    delay_wire_1064 <= delay_wire_1063;
-    delay_wire_1065 <= delay_wire_1064;
-    delay_wire_1066 <= delay_wire_1065;
-    delay_wire_1067 <= delay_wire_1066;
-    delay_wire_1068 <= delay_wire_1067;
-    delay_wire_1069 <= delay_wire_1068;
-    delay_wire_1070 <= delay_wire_1069;
-    delay_wire_1071 <= delay_wire_1070;
-    delay_wire_1072 <= delay_wire_1071;
-    delay_wire_1073 <= delay_wire_1072;
-    delay_wire_1074 <= delay_wire_1073;
-    delay_wire_1075 <= delay_wire_1074;
-    delay_wire_1076 <= delay_wire_1075;
-    delay_wire_1077 <= delay_wire_1076;
-    delay_wire_1078 <= delay_wire_1077;
-    delay_wire_1079 <= delay_wire_1078;
-    delay_wire_1080 <= delay_wire_1079;
-    delay_wire_1081 <= delay_wire_1080;
-    delay_wire_1082 <= delay_wire_1081;
-    delay_wire_1083 <= delay_wire_1082;
-    delay_wire_1084 <= delay_wire_1083;
-    delay_wire_1085 <= delay_wire_1084;
-    delay_wire_1086 <= delay_wire_1085;
-    delay_wire_1087 <= delay_wire_1086;
-    delay_wire_1088 <= delay_wire_1087;
-    delay_wire_1089 <= delay_wire_1088;
-    delay_wire_1090 <= delay_wire_1089;
-    delay_wire_1091 <= delay_wire_1090;
-    delay_wire_1092 <= delay_wire_1091;
-    delay_wire_1093 <= delay_wire_1092;
+    delay_wire_1093 <= in;
     delay_wire_1094 <= delay_wire_1093;
     delay_wire_1095 <= delay_wire_1094;
     delay_wire_1096 <= delay_wire_1095;
@@ -4283,18 +4294,18 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_36_to_lxx_stencil_op_h
     delay_wire_1157 <= delay_wire_1156;
     delay_wire_1158 <= delay_wire_1157;
     delay_wire_1159 <= delay_wire_1158;
-    delay_wire_1160 <= delay_wire_1159;
-    delay_wire_1161 <= delay_wire_1160;
-    delay_wire_1162 <= delay_wire_1161;
-    delay_wire_1163 <= delay_wire_1162;
-    delay_wire_1164 <= delay_wire_1163;
-    delay_wire_1165 <= delay_wire_1164;
-    delay_wire_1166 <= delay_wire_1165;
   end
-  assign out = delay_wire_1166;
+  assign out = delay_wire_1159;
 endmodule
 
-module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_37_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_40_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_1160;
+  logic [15:0] delay_wire_1161;
+  logic [15:0] delay_wire_1162;
+  logic [15:0] delay_wire_1163;
+  logic [15:0] delay_wire_1164;
+  logic [15:0] delay_wire_1165;
+  logic [15:0] delay_wire_1166;
   logic [15:0] delay_wire_1167;
   logic [15:0] delay_wire_1168;
   logic [15:0] delay_wire_1169;
@@ -4354,83 +4365,15 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_37_to_lxx_stencil_op_h
   logic [15:0] delay_wire_1223;
   logic [15:0] delay_wire_1224;
   logic [15:0] delay_wire_1225;
-  logic [15:0] delay_wire_1226;
-  logic [15:0] delay_wire_1227;
-  logic [15:0] delay_wire_1228;
-  logic [15:0] delay_wire_1229;
-  logic [15:0] delay_wire_1230;
-  logic [15:0] delay_wire_1231;
-  logic [15:0] delay_wire_1232;
-  logic [15:0] delay_wire_1233;
-  logic [15:0] delay_wire_1234;
-  logic [15:0] delay_wire_1235;
-  logic [15:0] delay_wire_1236;
-  logic [15:0] delay_wire_1237;
-  logic [15:0] delay_wire_1238;
-  logic [15:0] delay_wire_1239;
-  logic [15:0] delay_wire_1240;
-  logic [15:0] delay_wire_1241;
-  logic [15:0] delay_wire_1242;
-  logic [15:0] delay_wire_1243;
-  logic [15:0] delay_wire_1244;
-  logic [15:0] delay_wire_1245;
-  logic [15:0] delay_wire_1246;
-  logic [15:0] delay_wire_1247;
-  logic [15:0] delay_wire_1248;
-  logic [15:0] delay_wire_1249;
-  logic [15:0] delay_wire_1250;
-  logic [15:0] delay_wire_1251;
-  logic [15:0] delay_wire_1252;
-  logic [15:0] delay_wire_1253;
-  logic [15:0] delay_wire_1254;
-  logic [15:0] delay_wire_1255;
-  logic [15:0] delay_wire_1256;
-  logic [15:0] delay_wire_1257;
-  logic [15:0] delay_wire_1258;
-  logic [15:0] delay_wire_1259;
-  logic [15:0] delay_wire_1260;
-  logic [15:0] delay_wire_1261;
-  logic [15:0] delay_wire_1262;
-  logic [15:0] delay_wire_1263;
-  logic [15:0] delay_wire_1264;
-  logic [15:0] delay_wire_1265;
-  logic [15:0] delay_wire_1266;
-  logic [15:0] delay_wire_1267;
-  logic [15:0] delay_wire_1268;
-  logic [15:0] delay_wire_1269;
-  logic [15:0] delay_wire_1270;
-  logic [15:0] delay_wire_1271;
-  logic [15:0] delay_wire_1272;
-  logic [15:0] delay_wire_1273;
-  logic [15:0] delay_wire_1274;
-  logic [15:0] delay_wire_1275;
-  logic [15:0] delay_wire_1276;
-  logic [15:0] delay_wire_1277;
-  logic [15:0] delay_wire_1278;
-  logic [15:0] delay_wire_1279;
-  logic [15:0] delay_wire_1280;
-  logic [15:0] delay_wire_1281;
-  logic [15:0] delay_wire_1282;
-  logic [15:0] delay_wire_1283;
-  logic [15:0] delay_wire_1284;
-  logic [15:0] delay_wire_1285;
-  logic [15:0] delay_wire_1286;
-  logic [15:0] delay_wire_1287;
-  logic [15:0] delay_wire_1288;
-  logic [15:0] delay_wire_1289;
-  logic [15:0] delay_wire_1290;
-  logic [15:0] delay_wire_1291;
-  logic [15:0] delay_wire_1292;
-  logic [15:0] delay_wire_1293;
-  logic [15:0] delay_wire_1294;
-  logic [15:0] delay_wire_1295;
-  logic [15:0] delay_wire_1296;
-  logic [15:0] delay_wire_1297;
-  logic [15:0] delay_wire_1298;
-  logic [15:0] delay_wire_1299;
-  logic [15:0] delay_wire_1300;
   always @(posedge clk) begin
-    delay_wire_1167 <= in;
+    delay_wire_1160 <= in;
+    delay_wire_1161 <= delay_wire_1160;
+    delay_wire_1162 <= delay_wire_1161;
+    delay_wire_1163 <= delay_wire_1162;
+    delay_wire_1164 <= delay_wire_1163;
+    delay_wire_1165 <= delay_wire_1164;
+    delay_wire_1166 <= delay_wire_1165;
+    delay_wire_1167 <= delay_wire_1166;
     delay_wire_1168 <= delay_wire_1167;
     delay_wire_1169 <= delay_wire_1168;
     delay_wire_1170 <= delay_wire_1169;
@@ -4489,590 +4432,47 @@ module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_37_to_lxx_stencil_op_h
     delay_wire_1223 <= delay_wire_1222;
     delay_wire_1224 <= delay_wire_1223;
     delay_wire_1225 <= delay_wire_1224;
-    delay_wire_1226 <= delay_wire_1225;
-    delay_wire_1227 <= delay_wire_1226;
-    delay_wire_1228 <= delay_wire_1227;
-    delay_wire_1229 <= delay_wire_1228;
-    delay_wire_1230 <= delay_wire_1229;
-    delay_wire_1231 <= delay_wire_1230;
-    delay_wire_1232 <= delay_wire_1231;
-    delay_wire_1233 <= delay_wire_1232;
-    delay_wire_1234 <= delay_wire_1233;
-    delay_wire_1235 <= delay_wire_1234;
-    delay_wire_1236 <= delay_wire_1235;
-    delay_wire_1237 <= delay_wire_1236;
-    delay_wire_1238 <= delay_wire_1237;
-    delay_wire_1239 <= delay_wire_1238;
-    delay_wire_1240 <= delay_wire_1239;
-    delay_wire_1241 <= delay_wire_1240;
-    delay_wire_1242 <= delay_wire_1241;
-    delay_wire_1243 <= delay_wire_1242;
-    delay_wire_1244 <= delay_wire_1243;
-    delay_wire_1245 <= delay_wire_1244;
-    delay_wire_1246 <= delay_wire_1245;
-    delay_wire_1247 <= delay_wire_1246;
-    delay_wire_1248 <= delay_wire_1247;
-    delay_wire_1249 <= delay_wire_1248;
-    delay_wire_1250 <= delay_wire_1249;
-    delay_wire_1251 <= delay_wire_1250;
-    delay_wire_1252 <= delay_wire_1251;
-    delay_wire_1253 <= delay_wire_1252;
-    delay_wire_1254 <= delay_wire_1253;
-    delay_wire_1255 <= delay_wire_1254;
-    delay_wire_1256 <= delay_wire_1255;
-    delay_wire_1257 <= delay_wire_1256;
-    delay_wire_1258 <= delay_wire_1257;
-    delay_wire_1259 <= delay_wire_1258;
-    delay_wire_1260 <= delay_wire_1259;
-    delay_wire_1261 <= delay_wire_1260;
-    delay_wire_1262 <= delay_wire_1261;
-    delay_wire_1263 <= delay_wire_1262;
-    delay_wire_1264 <= delay_wire_1263;
-    delay_wire_1265 <= delay_wire_1264;
-    delay_wire_1266 <= delay_wire_1265;
-    delay_wire_1267 <= delay_wire_1266;
-    delay_wire_1268 <= delay_wire_1267;
-    delay_wire_1269 <= delay_wire_1268;
-    delay_wire_1270 <= delay_wire_1269;
-    delay_wire_1271 <= delay_wire_1270;
-    delay_wire_1272 <= delay_wire_1271;
-    delay_wire_1273 <= delay_wire_1272;
-    delay_wire_1274 <= delay_wire_1273;
-    delay_wire_1275 <= delay_wire_1274;
-    delay_wire_1276 <= delay_wire_1275;
-    delay_wire_1277 <= delay_wire_1276;
-    delay_wire_1278 <= delay_wire_1277;
-    delay_wire_1279 <= delay_wire_1278;
-    delay_wire_1280 <= delay_wire_1279;
-    delay_wire_1281 <= delay_wire_1280;
-    delay_wire_1282 <= delay_wire_1281;
-    delay_wire_1283 <= delay_wire_1282;
-    delay_wire_1284 <= delay_wire_1283;
-    delay_wire_1285 <= delay_wire_1284;
-    delay_wire_1286 <= delay_wire_1285;
-    delay_wire_1287 <= delay_wire_1286;
-    delay_wire_1288 <= delay_wire_1287;
-    delay_wire_1289 <= delay_wire_1288;
-    delay_wire_1290 <= delay_wire_1289;
-    delay_wire_1291 <= delay_wire_1290;
-    delay_wire_1292 <= delay_wire_1291;
-    delay_wire_1293 <= delay_wire_1292;
-    delay_wire_1294 <= delay_wire_1293;
-    delay_wire_1295 <= delay_wire_1294;
-    delay_wire_1296 <= delay_wire_1295;
-    delay_wire_1297 <= delay_wire_1296;
-    delay_wire_1298 <= delay_wire_1297;
-    delay_wire_1299 <= delay_wire_1298;
-    delay_wire_1300 <= delay_wire_1299;
   end
-  assign out = delay_wire_1300;
-endmodule
-
-module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_38_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_1301;
-  logic [15:0] delay_wire_1302;
-  logic [15:0] delay_wire_1303;
-  logic [15:0] delay_wire_1304;
-  logic [15:0] delay_wire_1305;
-  logic [15:0] delay_wire_1306;
-  logic [15:0] delay_wire_1307;
-  logic [15:0] delay_wire_1308;
-  logic [15:0] delay_wire_1309;
-  logic [15:0] delay_wire_1310;
-  logic [15:0] delay_wire_1311;
-  logic [15:0] delay_wire_1312;
-  logic [15:0] delay_wire_1313;
-  logic [15:0] delay_wire_1314;
-  logic [15:0] delay_wire_1315;
-  logic [15:0] delay_wire_1316;
-  logic [15:0] delay_wire_1317;
-  logic [15:0] delay_wire_1318;
-  logic [15:0] delay_wire_1319;
-  logic [15:0] delay_wire_1320;
-  logic [15:0] delay_wire_1321;
-  logic [15:0] delay_wire_1322;
-  logic [15:0] delay_wire_1323;
-  logic [15:0] delay_wire_1324;
-  logic [15:0] delay_wire_1325;
-  logic [15:0] delay_wire_1326;
-  logic [15:0] delay_wire_1327;
-  logic [15:0] delay_wire_1328;
-  logic [15:0] delay_wire_1329;
-  logic [15:0] delay_wire_1330;
-  logic [15:0] delay_wire_1331;
-  logic [15:0] delay_wire_1332;
-  logic [15:0] delay_wire_1333;
-  logic [15:0] delay_wire_1334;
-  logic [15:0] delay_wire_1335;
-  logic [15:0] delay_wire_1336;
-  logic [15:0] delay_wire_1337;
-  logic [15:0] delay_wire_1338;
-  logic [15:0] delay_wire_1339;
-  logic [15:0] delay_wire_1340;
-  logic [15:0] delay_wire_1341;
-  logic [15:0] delay_wire_1342;
-  logic [15:0] delay_wire_1343;
-  logic [15:0] delay_wire_1344;
-  logic [15:0] delay_wire_1345;
-  logic [15:0] delay_wire_1346;
-  logic [15:0] delay_wire_1347;
-  logic [15:0] delay_wire_1348;
-  logic [15:0] delay_wire_1349;
-  logic [15:0] delay_wire_1350;
-  logic [15:0] delay_wire_1351;
-  logic [15:0] delay_wire_1352;
-  logic [15:0] delay_wire_1353;
-  logic [15:0] delay_wire_1354;
-  logic [15:0] delay_wire_1355;
-  logic [15:0] delay_wire_1356;
-  logic [15:0] delay_wire_1357;
-  logic [15:0] delay_wire_1358;
-  logic [15:0] delay_wire_1359;
-  logic [15:0] delay_wire_1360;
-  logic [15:0] delay_wire_1361;
-  logic [15:0] delay_wire_1362;
-  logic [15:0] delay_wire_1363;
-  logic [15:0] delay_wire_1364;
-  logic [15:0] delay_wire_1365;
-  logic [15:0] delay_wire_1366;
-  logic [15:0] delay_wire_1367;
-  logic [15:0] delay_wire_1368;
-  logic [15:0] delay_wire_1369;
-  logic [15:0] delay_wire_1370;
-  logic [15:0] delay_wire_1371;
-  logic [15:0] delay_wire_1372;
-  always @(posedge clk) begin
-    delay_wire_1301 <= in;
-    delay_wire_1302 <= delay_wire_1301;
-    delay_wire_1303 <= delay_wire_1302;
-    delay_wire_1304 <= delay_wire_1303;
-    delay_wire_1305 <= delay_wire_1304;
-    delay_wire_1306 <= delay_wire_1305;
-    delay_wire_1307 <= delay_wire_1306;
-    delay_wire_1308 <= delay_wire_1307;
-    delay_wire_1309 <= delay_wire_1308;
-    delay_wire_1310 <= delay_wire_1309;
-    delay_wire_1311 <= delay_wire_1310;
-    delay_wire_1312 <= delay_wire_1311;
-    delay_wire_1313 <= delay_wire_1312;
-    delay_wire_1314 <= delay_wire_1313;
-    delay_wire_1315 <= delay_wire_1314;
-    delay_wire_1316 <= delay_wire_1315;
-    delay_wire_1317 <= delay_wire_1316;
-    delay_wire_1318 <= delay_wire_1317;
-    delay_wire_1319 <= delay_wire_1318;
-    delay_wire_1320 <= delay_wire_1319;
-    delay_wire_1321 <= delay_wire_1320;
-    delay_wire_1322 <= delay_wire_1321;
-    delay_wire_1323 <= delay_wire_1322;
-    delay_wire_1324 <= delay_wire_1323;
-    delay_wire_1325 <= delay_wire_1324;
-    delay_wire_1326 <= delay_wire_1325;
-    delay_wire_1327 <= delay_wire_1326;
-    delay_wire_1328 <= delay_wire_1327;
-    delay_wire_1329 <= delay_wire_1328;
-    delay_wire_1330 <= delay_wire_1329;
-    delay_wire_1331 <= delay_wire_1330;
-    delay_wire_1332 <= delay_wire_1331;
-    delay_wire_1333 <= delay_wire_1332;
-    delay_wire_1334 <= delay_wire_1333;
-    delay_wire_1335 <= delay_wire_1334;
-    delay_wire_1336 <= delay_wire_1335;
-    delay_wire_1337 <= delay_wire_1336;
-    delay_wire_1338 <= delay_wire_1337;
-    delay_wire_1339 <= delay_wire_1338;
-    delay_wire_1340 <= delay_wire_1339;
-    delay_wire_1341 <= delay_wire_1340;
-    delay_wire_1342 <= delay_wire_1341;
-    delay_wire_1343 <= delay_wire_1342;
-    delay_wire_1344 <= delay_wire_1343;
-    delay_wire_1345 <= delay_wire_1344;
-    delay_wire_1346 <= delay_wire_1345;
-    delay_wire_1347 <= delay_wire_1346;
-    delay_wire_1348 <= delay_wire_1347;
-    delay_wire_1349 <= delay_wire_1348;
-    delay_wire_1350 <= delay_wire_1349;
-    delay_wire_1351 <= delay_wire_1350;
-    delay_wire_1352 <= delay_wire_1351;
-    delay_wire_1353 <= delay_wire_1352;
-    delay_wire_1354 <= delay_wire_1353;
-    delay_wire_1355 <= delay_wire_1354;
-    delay_wire_1356 <= delay_wire_1355;
-    delay_wire_1357 <= delay_wire_1356;
-    delay_wire_1358 <= delay_wire_1357;
-    delay_wire_1359 <= delay_wire_1358;
-    delay_wire_1360 <= delay_wire_1359;
-    delay_wire_1361 <= delay_wire_1360;
-    delay_wire_1362 <= delay_wire_1361;
-    delay_wire_1363 <= delay_wire_1362;
-    delay_wire_1364 <= delay_wire_1363;
-    delay_wire_1365 <= delay_wire_1364;
-    delay_wire_1366 <= delay_wire_1365;
-    delay_wire_1367 <= delay_wire_1366;
-    delay_wire_1368 <= delay_wire_1367;
-    delay_wire_1369 <= delay_wire_1368;
-    delay_wire_1370 <= delay_wire_1369;
-    delay_wire_1371 <= delay_wire_1370;
-    delay_wire_1372 <= delay_wire_1371;
-  end
-  assign out = delay_wire_1372;
-endmodule
-
-module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_39_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_1373;
-  logic [15:0] delay_wire_1374;
-  logic [15:0] delay_wire_1375;
-  logic [15:0] delay_wire_1376;
-  logic [15:0] delay_wire_1377;
-  logic [15:0] delay_wire_1378;
-  logic [15:0] delay_wire_1379;
-  logic [15:0] delay_wire_1380;
-  logic [15:0] delay_wire_1381;
-  logic [15:0] delay_wire_1382;
-  logic [15:0] delay_wire_1383;
-  logic [15:0] delay_wire_1384;
-  logic [15:0] delay_wire_1385;
-  logic [15:0] delay_wire_1386;
-  logic [15:0] delay_wire_1387;
-  logic [15:0] delay_wire_1388;
-  logic [15:0] delay_wire_1389;
-  logic [15:0] delay_wire_1390;
-  logic [15:0] delay_wire_1391;
-  logic [15:0] delay_wire_1392;
-  logic [15:0] delay_wire_1393;
-  logic [15:0] delay_wire_1394;
-  logic [15:0] delay_wire_1395;
-  logic [15:0] delay_wire_1396;
-  logic [15:0] delay_wire_1397;
-  logic [15:0] delay_wire_1398;
-  logic [15:0] delay_wire_1399;
-  logic [15:0] delay_wire_1400;
-  logic [15:0] delay_wire_1401;
-  logic [15:0] delay_wire_1402;
-  logic [15:0] delay_wire_1403;
-  logic [15:0] delay_wire_1404;
-  logic [15:0] delay_wire_1405;
-  logic [15:0] delay_wire_1406;
-  logic [15:0] delay_wire_1407;
-  logic [15:0] delay_wire_1408;
-  logic [15:0] delay_wire_1409;
-  logic [15:0] delay_wire_1410;
-  logic [15:0] delay_wire_1411;
-  logic [15:0] delay_wire_1412;
-  logic [15:0] delay_wire_1413;
-  logic [15:0] delay_wire_1414;
-  logic [15:0] delay_wire_1415;
-  logic [15:0] delay_wire_1416;
-  logic [15:0] delay_wire_1417;
-  logic [15:0] delay_wire_1418;
-  logic [15:0] delay_wire_1419;
-  logic [15:0] delay_wire_1420;
-  logic [15:0] delay_wire_1421;
-  logic [15:0] delay_wire_1422;
-  logic [15:0] delay_wire_1423;
-  logic [15:0] delay_wire_1424;
-  logic [15:0] delay_wire_1425;
-  logic [15:0] delay_wire_1426;
-  logic [15:0] delay_wire_1427;
-  logic [15:0] delay_wire_1428;
-  logic [15:0] delay_wire_1429;
-  logic [15:0] delay_wire_1430;
-  logic [15:0] delay_wire_1431;
-  logic [15:0] delay_wire_1432;
-  logic [15:0] delay_wire_1433;
-  logic [15:0] delay_wire_1434;
-  logic [15:0] delay_wire_1435;
-  logic [15:0] delay_wire_1436;
-  logic [15:0] delay_wire_1437;
-  logic [15:0] delay_wire_1438;
-  logic [15:0] delay_wire_1439;
-  logic [15:0] delay_wire_1440;
-  logic [15:0] delay_wire_1441;
-  logic [15:0] delay_wire_1442;
-  logic [15:0] delay_wire_1443;
-  always @(posedge clk) begin
-    delay_wire_1373 <= in;
-    delay_wire_1374 <= delay_wire_1373;
-    delay_wire_1375 <= delay_wire_1374;
-    delay_wire_1376 <= delay_wire_1375;
-    delay_wire_1377 <= delay_wire_1376;
-    delay_wire_1378 <= delay_wire_1377;
-    delay_wire_1379 <= delay_wire_1378;
-    delay_wire_1380 <= delay_wire_1379;
-    delay_wire_1381 <= delay_wire_1380;
-    delay_wire_1382 <= delay_wire_1381;
-    delay_wire_1383 <= delay_wire_1382;
-    delay_wire_1384 <= delay_wire_1383;
-    delay_wire_1385 <= delay_wire_1384;
-    delay_wire_1386 <= delay_wire_1385;
-    delay_wire_1387 <= delay_wire_1386;
-    delay_wire_1388 <= delay_wire_1387;
-    delay_wire_1389 <= delay_wire_1388;
-    delay_wire_1390 <= delay_wire_1389;
-    delay_wire_1391 <= delay_wire_1390;
-    delay_wire_1392 <= delay_wire_1391;
-    delay_wire_1393 <= delay_wire_1392;
-    delay_wire_1394 <= delay_wire_1393;
-    delay_wire_1395 <= delay_wire_1394;
-    delay_wire_1396 <= delay_wire_1395;
-    delay_wire_1397 <= delay_wire_1396;
-    delay_wire_1398 <= delay_wire_1397;
-    delay_wire_1399 <= delay_wire_1398;
-    delay_wire_1400 <= delay_wire_1399;
-    delay_wire_1401 <= delay_wire_1400;
-    delay_wire_1402 <= delay_wire_1401;
-    delay_wire_1403 <= delay_wire_1402;
-    delay_wire_1404 <= delay_wire_1403;
-    delay_wire_1405 <= delay_wire_1404;
-    delay_wire_1406 <= delay_wire_1405;
-    delay_wire_1407 <= delay_wire_1406;
-    delay_wire_1408 <= delay_wire_1407;
-    delay_wire_1409 <= delay_wire_1408;
-    delay_wire_1410 <= delay_wire_1409;
-    delay_wire_1411 <= delay_wire_1410;
-    delay_wire_1412 <= delay_wire_1411;
-    delay_wire_1413 <= delay_wire_1412;
-    delay_wire_1414 <= delay_wire_1413;
-    delay_wire_1415 <= delay_wire_1414;
-    delay_wire_1416 <= delay_wire_1415;
-    delay_wire_1417 <= delay_wire_1416;
-    delay_wire_1418 <= delay_wire_1417;
-    delay_wire_1419 <= delay_wire_1418;
-    delay_wire_1420 <= delay_wire_1419;
-    delay_wire_1421 <= delay_wire_1420;
-    delay_wire_1422 <= delay_wire_1421;
-    delay_wire_1423 <= delay_wire_1422;
-    delay_wire_1424 <= delay_wire_1423;
-    delay_wire_1425 <= delay_wire_1424;
-    delay_wire_1426 <= delay_wire_1425;
-    delay_wire_1427 <= delay_wire_1426;
-    delay_wire_1428 <= delay_wire_1427;
-    delay_wire_1429 <= delay_wire_1428;
-    delay_wire_1430 <= delay_wire_1429;
-    delay_wire_1431 <= delay_wire_1430;
-    delay_wire_1432 <= delay_wire_1431;
-    delay_wire_1433 <= delay_wire_1432;
-    delay_wire_1434 <= delay_wire_1433;
-    delay_wire_1435 <= delay_wire_1434;
-    delay_wire_1436 <= delay_wire_1435;
-    delay_wire_1437 <= delay_wire_1436;
-    delay_wire_1438 <= delay_wire_1437;
-    delay_wire_1439 <= delay_wire_1438;
-    delay_wire_1440 <= delay_wire_1439;
-    delay_wire_1441 <= delay_wire_1440;
-    delay_wire_1442 <= delay_wire_1441;
-    delay_wire_1443 <= delay_wire_1442;
-  end
-  assign out = delay_wire_1443;
-endmodule
-
-module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_40_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_1444;
-  logic [15:0] delay_wire_1445;
-  logic [15:0] delay_wire_1446;
-  logic [15:0] delay_wire_1447;
-  logic [15:0] delay_wire_1448;
-  logic [15:0] delay_wire_1449;
-  logic [15:0] delay_wire_1450;
-  logic [15:0] delay_wire_1451;
-  logic [15:0] delay_wire_1452;
-  logic [15:0] delay_wire_1453;
-  logic [15:0] delay_wire_1454;
-  logic [15:0] delay_wire_1455;
-  logic [15:0] delay_wire_1456;
-  logic [15:0] delay_wire_1457;
-  logic [15:0] delay_wire_1458;
-  logic [15:0] delay_wire_1459;
-  logic [15:0] delay_wire_1460;
-  logic [15:0] delay_wire_1461;
-  logic [15:0] delay_wire_1462;
-  logic [15:0] delay_wire_1463;
-  logic [15:0] delay_wire_1464;
-  logic [15:0] delay_wire_1465;
-  logic [15:0] delay_wire_1466;
-  logic [15:0] delay_wire_1467;
-  logic [15:0] delay_wire_1468;
-  logic [15:0] delay_wire_1469;
-  logic [15:0] delay_wire_1470;
-  logic [15:0] delay_wire_1471;
-  logic [15:0] delay_wire_1472;
-  logic [15:0] delay_wire_1473;
-  logic [15:0] delay_wire_1474;
-  logic [15:0] delay_wire_1475;
-  logic [15:0] delay_wire_1476;
-  logic [15:0] delay_wire_1477;
-  logic [15:0] delay_wire_1478;
-  logic [15:0] delay_wire_1479;
-  logic [15:0] delay_wire_1480;
-  logic [15:0] delay_wire_1481;
-  logic [15:0] delay_wire_1482;
-  logic [15:0] delay_wire_1483;
-  logic [15:0] delay_wire_1484;
-  logic [15:0] delay_wire_1485;
-  logic [15:0] delay_wire_1486;
-  logic [15:0] delay_wire_1487;
-  logic [15:0] delay_wire_1488;
-  logic [15:0] delay_wire_1489;
-  logic [15:0] delay_wire_1490;
-  logic [15:0] delay_wire_1491;
-  logic [15:0] delay_wire_1492;
-  logic [15:0] delay_wire_1493;
-  logic [15:0] delay_wire_1494;
-  logic [15:0] delay_wire_1495;
-  logic [15:0] delay_wire_1496;
-  logic [15:0] delay_wire_1497;
-  logic [15:0] delay_wire_1498;
-  logic [15:0] delay_wire_1499;
-  logic [15:0] delay_wire_1500;
-  logic [15:0] delay_wire_1501;
-  logic [15:0] delay_wire_1502;
-  logic [15:0] delay_wire_1503;
-  logic [15:0] delay_wire_1504;
-  logic [15:0] delay_wire_1505;
-  logic [15:0] delay_wire_1506;
-  logic [15:0] delay_wire_1507;
-  logic [15:0] delay_wire_1508;
-  logic [15:0] delay_wire_1509;
-  logic [15:0] delay_wire_1510;
-  logic [15:0] delay_wire_1511;
-  logic [15:0] delay_wire_1512;
-  logic [15:0] delay_wire_1513;
-  always @(posedge clk) begin
-    delay_wire_1444 <= in;
-    delay_wire_1445 <= delay_wire_1444;
-    delay_wire_1446 <= delay_wire_1445;
-    delay_wire_1447 <= delay_wire_1446;
-    delay_wire_1448 <= delay_wire_1447;
-    delay_wire_1449 <= delay_wire_1448;
-    delay_wire_1450 <= delay_wire_1449;
-    delay_wire_1451 <= delay_wire_1450;
-    delay_wire_1452 <= delay_wire_1451;
-    delay_wire_1453 <= delay_wire_1452;
-    delay_wire_1454 <= delay_wire_1453;
-    delay_wire_1455 <= delay_wire_1454;
-    delay_wire_1456 <= delay_wire_1455;
-    delay_wire_1457 <= delay_wire_1456;
-    delay_wire_1458 <= delay_wire_1457;
-    delay_wire_1459 <= delay_wire_1458;
-    delay_wire_1460 <= delay_wire_1459;
-    delay_wire_1461 <= delay_wire_1460;
-    delay_wire_1462 <= delay_wire_1461;
-    delay_wire_1463 <= delay_wire_1462;
-    delay_wire_1464 <= delay_wire_1463;
-    delay_wire_1465 <= delay_wire_1464;
-    delay_wire_1466 <= delay_wire_1465;
-    delay_wire_1467 <= delay_wire_1466;
-    delay_wire_1468 <= delay_wire_1467;
-    delay_wire_1469 <= delay_wire_1468;
-    delay_wire_1470 <= delay_wire_1469;
-    delay_wire_1471 <= delay_wire_1470;
-    delay_wire_1472 <= delay_wire_1471;
-    delay_wire_1473 <= delay_wire_1472;
-    delay_wire_1474 <= delay_wire_1473;
-    delay_wire_1475 <= delay_wire_1474;
-    delay_wire_1476 <= delay_wire_1475;
-    delay_wire_1477 <= delay_wire_1476;
-    delay_wire_1478 <= delay_wire_1477;
-    delay_wire_1479 <= delay_wire_1478;
-    delay_wire_1480 <= delay_wire_1479;
-    delay_wire_1481 <= delay_wire_1480;
-    delay_wire_1482 <= delay_wire_1481;
-    delay_wire_1483 <= delay_wire_1482;
-    delay_wire_1484 <= delay_wire_1483;
-    delay_wire_1485 <= delay_wire_1484;
-    delay_wire_1486 <= delay_wire_1485;
-    delay_wire_1487 <= delay_wire_1486;
-    delay_wire_1488 <= delay_wire_1487;
-    delay_wire_1489 <= delay_wire_1488;
-    delay_wire_1490 <= delay_wire_1489;
-    delay_wire_1491 <= delay_wire_1490;
-    delay_wire_1492 <= delay_wire_1491;
-    delay_wire_1493 <= delay_wire_1492;
-    delay_wire_1494 <= delay_wire_1493;
-    delay_wire_1495 <= delay_wire_1494;
-    delay_wire_1496 <= delay_wire_1495;
-    delay_wire_1497 <= delay_wire_1496;
-    delay_wire_1498 <= delay_wire_1497;
-    delay_wire_1499 <= delay_wire_1498;
-    delay_wire_1500 <= delay_wire_1499;
-    delay_wire_1501 <= delay_wire_1500;
-    delay_wire_1502 <= delay_wire_1501;
-    delay_wire_1503 <= delay_wire_1502;
-    delay_wire_1504 <= delay_wire_1503;
-    delay_wire_1505 <= delay_wire_1504;
-    delay_wire_1506 <= delay_wire_1505;
-    delay_wire_1507 <= delay_wire_1506;
-    delay_wire_1508 <= delay_wire_1507;
-    delay_wire_1509 <= delay_wire_1508;
-    delay_wire_1510 <= delay_wire_1509;
-    delay_wire_1511 <= delay_wire_1510;
-    delay_wire_1512 <= delay_wire_1511;
-    delay_wire_1513 <= delay_wire_1512;
-  end
-  assign out = delay_wire_1513;
+  assign out = delay_wire_1225;
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_41_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_1514;
-  logic [15:0] delay_wire_1515;
-  logic [15:0] delay_wire_1516;
-  logic [15:0] delay_wire_1517;
-  logic [15:0] delay_wire_1518;
-  logic [15:0] delay_wire_1519;
-  logic [15:0] delay_wire_1520;
-  logic [15:0] delay_wire_1521;
+  logic [15:0] delay_wire_1226;
+  logic [15:0] delay_wire_1227;
+  logic [15:0] delay_wire_1228;
+  logic [15:0] delay_wire_1229;
   always @(posedge clk) begin
-    delay_wire_1514 <= in;
-    delay_wire_1515 <= delay_wire_1514;
-    delay_wire_1516 <= delay_wire_1515;
-    delay_wire_1517 <= delay_wire_1516;
-    delay_wire_1518 <= delay_wire_1517;
-    delay_wire_1519 <= delay_wire_1518;
-    delay_wire_1520 <= delay_wire_1519;
-    delay_wire_1521 <= delay_wire_1520;
+    delay_wire_1226 <= in;
+    delay_wire_1227 <= delay_wire_1226;
+    delay_wire_1228 <= delay_wire_1227;
+    delay_wire_1229 <= delay_wire_1228;
   end
-  assign out = delay_wire_1521;
+  assign out = delay_wire_1229;
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_42_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_1522;
-  logic [15:0] delay_wire_1523;
-  logic [15:0] delay_wire_1524;
-  logic [15:0] delay_wire_1525;
-  logic [15:0] delay_wire_1526;
-  logic [15:0] delay_wire_1527;
+  logic [15:0] delay_wire_1230;
+  logic [15:0] delay_wire_1231;
   always @(posedge clk) begin
-    delay_wire_1522 <= in;
-    delay_wire_1523 <= delay_wire_1522;
-    delay_wire_1524 <= delay_wire_1523;
-    delay_wire_1525 <= delay_wire_1524;
-    delay_wire_1526 <= delay_wire_1525;
-    delay_wire_1527 <= delay_wire_1526;
+    delay_wire_1230 <= in;
+    delay_wire_1231 <= delay_wire_1230;
   end
-  assign out = delay_wire_1527;
+  assign out = delay_wire_1231;
 endmodule
 
 module lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_to_lxx_stencil_op_hcompute_lxx_stencil_7_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_1528;
-  logic [15:0] delay_wire_1529;
-  logic [15:0] delay_wire_1530;
-  logic [15:0] delay_wire_1531;
-  logic [15:0] delay_wire_1532;
-  logic [15:0] delay_wire_1533;
-  logic [15:0] delay_wire_1534;
+  logic [15:0] delay_wire_1232;
+  logic [15:0] delay_wire_1233;
+  logic [15:0] delay_wire_1234;
   always @(posedge clk) begin
-    delay_wire_1528 <= in;
-    delay_wire_1529 <= delay_wire_1528;
-    delay_wire_1530 <= delay_wire_1529;
-    delay_wire_1531 <= delay_wire_1530;
-    delay_wire_1532 <= delay_wire_1531;
-    delay_wire_1533 <= delay_wire_1532;
-    delay_wire_1534 <= delay_wire_1533;
+    delay_wire_1232 <= in;
+    delay_wire_1233 <= delay_wire_1232;
+    delay_wire_1234 <= delay_wire_1233;
   end
-  assign out = delay_wire_1534;
+  assign out = delay_wire_1234;
 endmodule
 
-// { op_hcompute_lxx_stencil[root, lxx_s0_y, lxx_s0_x] -> [(153 + 64lxx_s0_y + lxx_s0_x)] }
+// { op_hcompute_lxx_stencil[root, lxx_s0_y, lxx_s0_x] -> [(133 + 64lxx_s0_y + lxx_s0_x)] }
 module lxx_stencil_op_hcompute_lxx_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lxx_stencil_write_ctrl_vars[2:0], output op_hcompute_lxx_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -5091,7 +4491,7 @@ module lxx_stencil_op_hcompute_lxx_stencil_write_fsm(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==152) begin
+      if(counter[0] ==132) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lxx_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -5122,7 +4522,7 @@ module lxx_stencil_op_hcompute_lxx_stencil_write_fsm(input clk, input flush, inp
     end
   end
 endmodule
-// { op_hcompute_lgxx_stencil_1[root, lgxx_s1_y, lgxx_s1_x] -> [(287 + 64lgxx_s1_y + lgxx_s1_x)] }
+// { op_hcompute_lgxx_stencil_1[root, lgxx_s1_y, lgxx_s1_x] -> [(265 + 64lgxx_s1_y + lgxx_s1_x)] }
 module lxx_stencil_op_hcompute_lgxx_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxx_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgxx_stencil_1_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -5141,7 +4541,7 @@ module lxx_stencil_op_hcompute_lgxx_stencil_1_read_fsm(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==286) begin
+      if(counter[0] ==264) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgxx_stencil_1_read_ctrl_vars[0]<= 16'b0;
@@ -5264,30 +4664,22 @@ lxx_stencil_bank_selector lxx_stencil_lxx_stencil_op_hcompute_lgxx_stencil_1_43_
 
   logic [15:0] addr0;
   assign addr0 = (((((-2 + 1*op_hcompute_lxx_stencil_write_ctrl_vars_fsm_out[1])) - -2)>>0)*1+((((-2 + 1*op_hcompute_lxx_stencil_write_ctrl_vars_fsm_out[2])) - -2)>>0)*62);
-  logic [15:0] delay_wire_1535;
   always @(posedge clk) begin
-    delay_wire_1535 <= addr0;
-  end
-  logic [15:0] delay_wire_1536;
-  always @(posedge clk) begin
-    delay_wire_1536 <= lxx_stencil_lxx_stencil_op_hcompute_lxx_stencil_7_bank_selector.out;
-  end
-  logic [15:0] delay_wire_1537;
-  always @(posedge clk) begin
-    delay_wire_1537 <= op_hcompute_lxx_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_1538;
-  always @(posedge clk) begin
-    delay_wire_1538 <= op_hcompute_lxx_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_1537) begin
-      case( delay_wire_1536)
-        0:bank_0[delay_wire_1535] <= delay_wire_1538;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_lxx_stencil_write_wen_fsm_out) begin
+      case( lxx_stencil_lxx_stencil_op_hcompute_lxx_stencil_7_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_lxx_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -5303,6 +4695,585 @@ module lxy_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_23_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_1235;
+  logic [15:0] delay_wire_1236;
+  logic [15:0] delay_wire_1237;
+  logic [15:0] delay_wire_1238;
+  logic [15:0] delay_wire_1239;
+  logic [15:0] delay_wire_1240;
+  logic [15:0] delay_wire_1241;
+  logic [15:0] delay_wire_1242;
+  logic [15:0] delay_wire_1243;
+  logic [15:0] delay_wire_1244;
+  logic [15:0] delay_wire_1245;
+  logic [15:0] delay_wire_1246;
+  logic [15:0] delay_wire_1247;
+  logic [15:0] delay_wire_1248;
+  logic [15:0] delay_wire_1249;
+  logic [15:0] delay_wire_1250;
+  logic [15:0] delay_wire_1251;
+  logic [15:0] delay_wire_1252;
+  logic [15:0] delay_wire_1253;
+  logic [15:0] delay_wire_1254;
+  logic [15:0] delay_wire_1255;
+  logic [15:0] delay_wire_1256;
+  logic [15:0] delay_wire_1257;
+  logic [15:0] delay_wire_1258;
+  logic [15:0] delay_wire_1259;
+  logic [15:0] delay_wire_1260;
+  logic [15:0] delay_wire_1261;
+  logic [15:0] delay_wire_1262;
+  logic [15:0] delay_wire_1263;
+  logic [15:0] delay_wire_1264;
+  logic [15:0] delay_wire_1265;
+  logic [15:0] delay_wire_1266;
+  logic [15:0] delay_wire_1267;
+  logic [15:0] delay_wire_1268;
+  logic [15:0] delay_wire_1269;
+  logic [15:0] delay_wire_1270;
+  logic [15:0] delay_wire_1271;
+  logic [15:0] delay_wire_1272;
+  logic [15:0] delay_wire_1273;
+  logic [15:0] delay_wire_1274;
+  logic [15:0] delay_wire_1275;
+  logic [15:0] delay_wire_1276;
+  logic [15:0] delay_wire_1277;
+  logic [15:0] delay_wire_1278;
+  logic [15:0] delay_wire_1279;
+  logic [15:0] delay_wire_1280;
+  logic [15:0] delay_wire_1281;
+  logic [15:0] delay_wire_1282;
+  logic [15:0] delay_wire_1283;
+  logic [15:0] delay_wire_1284;
+  logic [15:0] delay_wire_1285;
+  logic [15:0] delay_wire_1286;
+  logic [15:0] delay_wire_1287;
+  logic [15:0] delay_wire_1288;
+  logic [15:0] delay_wire_1289;
+  logic [15:0] delay_wire_1290;
+  logic [15:0] delay_wire_1291;
+  logic [15:0] delay_wire_1292;
+  logic [15:0] delay_wire_1293;
+  logic [15:0] delay_wire_1294;
+  logic [15:0] delay_wire_1295;
+  logic [15:0] delay_wire_1296;
+  logic [15:0] delay_wire_1297;
+  logic [15:0] delay_wire_1298;
+  logic [15:0] delay_wire_1299;
+  logic [15:0] delay_wire_1300;
+  logic [15:0] delay_wire_1301;
+  logic [15:0] delay_wire_1302;
+  logic [15:0] delay_wire_1303;
+  logic [15:0] delay_wire_1304;
+  logic [15:0] delay_wire_1305;
+  logic [15:0] delay_wire_1306;
+  logic [15:0] delay_wire_1307;
+  logic [15:0] delay_wire_1308;
+  logic [15:0] delay_wire_1309;
+  logic [15:0] delay_wire_1310;
+  logic [15:0] delay_wire_1311;
+  logic [15:0] delay_wire_1312;
+  logic [15:0] delay_wire_1313;
+  logic [15:0] delay_wire_1314;
+  logic [15:0] delay_wire_1315;
+  logic [15:0] delay_wire_1316;
+  logic [15:0] delay_wire_1317;
+  logic [15:0] delay_wire_1318;
+  logic [15:0] delay_wire_1319;
+  logic [15:0] delay_wire_1320;
+  logic [15:0] delay_wire_1321;
+  logic [15:0] delay_wire_1322;
+  logic [15:0] delay_wire_1323;
+  logic [15:0] delay_wire_1324;
+  logic [15:0] delay_wire_1325;
+  logic [15:0] delay_wire_1326;
+  logic [15:0] delay_wire_1327;
+  logic [15:0] delay_wire_1328;
+  logic [15:0] delay_wire_1329;
+  logic [15:0] delay_wire_1330;
+  logic [15:0] delay_wire_1331;
+  logic [15:0] delay_wire_1332;
+  logic [15:0] delay_wire_1333;
+  logic [15:0] delay_wire_1334;
+  logic [15:0] delay_wire_1335;
+  logic [15:0] delay_wire_1336;
+  logic [15:0] delay_wire_1337;
+  logic [15:0] delay_wire_1338;
+  logic [15:0] delay_wire_1339;
+  logic [15:0] delay_wire_1340;
+  logic [15:0] delay_wire_1341;
+  logic [15:0] delay_wire_1342;
+  logic [15:0] delay_wire_1343;
+  logic [15:0] delay_wire_1344;
+  logic [15:0] delay_wire_1345;
+  logic [15:0] delay_wire_1346;
+  logic [15:0] delay_wire_1347;
+  logic [15:0] delay_wire_1348;
+  logic [15:0] delay_wire_1349;
+  logic [15:0] delay_wire_1350;
+  logic [15:0] delay_wire_1351;
+  logic [15:0] delay_wire_1352;
+  logic [15:0] delay_wire_1353;
+  logic [15:0] delay_wire_1354;
+  logic [15:0] delay_wire_1355;
+  logic [15:0] delay_wire_1356;
+  logic [15:0] delay_wire_1357;
+  logic [15:0] delay_wire_1358;
+  logic [15:0] delay_wire_1359;
+  logic [15:0] delay_wire_1360;
+  logic [15:0] delay_wire_1361;
+  logic [15:0] delay_wire_1362;
+  logic [15:0] delay_wire_1363;
+  logic [15:0] delay_wire_1364;
+  logic [15:0] delay_wire_1365;
+  logic [15:0] delay_wire_1366;
+  always @(posedge clk) begin
+    delay_wire_1235 <= in;
+    delay_wire_1236 <= delay_wire_1235;
+    delay_wire_1237 <= delay_wire_1236;
+    delay_wire_1238 <= delay_wire_1237;
+    delay_wire_1239 <= delay_wire_1238;
+    delay_wire_1240 <= delay_wire_1239;
+    delay_wire_1241 <= delay_wire_1240;
+    delay_wire_1242 <= delay_wire_1241;
+    delay_wire_1243 <= delay_wire_1242;
+    delay_wire_1244 <= delay_wire_1243;
+    delay_wire_1245 <= delay_wire_1244;
+    delay_wire_1246 <= delay_wire_1245;
+    delay_wire_1247 <= delay_wire_1246;
+    delay_wire_1248 <= delay_wire_1247;
+    delay_wire_1249 <= delay_wire_1248;
+    delay_wire_1250 <= delay_wire_1249;
+    delay_wire_1251 <= delay_wire_1250;
+    delay_wire_1252 <= delay_wire_1251;
+    delay_wire_1253 <= delay_wire_1252;
+    delay_wire_1254 <= delay_wire_1253;
+    delay_wire_1255 <= delay_wire_1254;
+    delay_wire_1256 <= delay_wire_1255;
+    delay_wire_1257 <= delay_wire_1256;
+    delay_wire_1258 <= delay_wire_1257;
+    delay_wire_1259 <= delay_wire_1258;
+    delay_wire_1260 <= delay_wire_1259;
+    delay_wire_1261 <= delay_wire_1260;
+    delay_wire_1262 <= delay_wire_1261;
+    delay_wire_1263 <= delay_wire_1262;
+    delay_wire_1264 <= delay_wire_1263;
+    delay_wire_1265 <= delay_wire_1264;
+    delay_wire_1266 <= delay_wire_1265;
+    delay_wire_1267 <= delay_wire_1266;
+    delay_wire_1268 <= delay_wire_1267;
+    delay_wire_1269 <= delay_wire_1268;
+    delay_wire_1270 <= delay_wire_1269;
+    delay_wire_1271 <= delay_wire_1270;
+    delay_wire_1272 <= delay_wire_1271;
+    delay_wire_1273 <= delay_wire_1272;
+    delay_wire_1274 <= delay_wire_1273;
+    delay_wire_1275 <= delay_wire_1274;
+    delay_wire_1276 <= delay_wire_1275;
+    delay_wire_1277 <= delay_wire_1276;
+    delay_wire_1278 <= delay_wire_1277;
+    delay_wire_1279 <= delay_wire_1278;
+    delay_wire_1280 <= delay_wire_1279;
+    delay_wire_1281 <= delay_wire_1280;
+    delay_wire_1282 <= delay_wire_1281;
+    delay_wire_1283 <= delay_wire_1282;
+    delay_wire_1284 <= delay_wire_1283;
+    delay_wire_1285 <= delay_wire_1284;
+    delay_wire_1286 <= delay_wire_1285;
+    delay_wire_1287 <= delay_wire_1286;
+    delay_wire_1288 <= delay_wire_1287;
+    delay_wire_1289 <= delay_wire_1288;
+    delay_wire_1290 <= delay_wire_1289;
+    delay_wire_1291 <= delay_wire_1290;
+    delay_wire_1292 <= delay_wire_1291;
+    delay_wire_1293 <= delay_wire_1292;
+    delay_wire_1294 <= delay_wire_1293;
+    delay_wire_1295 <= delay_wire_1294;
+    delay_wire_1296 <= delay_wire_1295;
+    delay_wire_1297 <= delay_wire_1296;
+    delay_wire_1298 <= delay_wire_1297;
+    delay_wire_1299 <= delay_wire_1298;
+    delay_wire_1300 <= delay_wire_1299;
+    delay_wire_1301 <= delay_wire_1300;
+    delay_wire_1302 <= delay_wire_1301;
+    delay_wire_1303 <= delay_wire_1302;
+    delay_wire_1304 <= delay_wire_1303;
+    delay_wire_1305 <= delay_wire_1304;
+    delay_wire_1306 <= delay_wire_1305;
+    delay_wire_1307 <= delay_wire_1306;
+    delay_wire_1308 <= delay_wire_1307;
+    delay_wire_1309 <= delay_wire_1308;
+    delay_wire_1310 <= delay_wire_1309;
+    delay_wire_1311 <= delay_wire_1310;
+    delay_wire_1312 <= delay_wire_1311;
+    delay_wire_1313 <= delay_wire_1312;
+    delay_wire_1314 <= delay_wire_1313;
+    delay_wire_1315 <= delay_wire_1314;
+    delay_wire_1316 <= delay_wire_1315;
+    delay_wire_1317 <= delay_wire_1316;
+    delay_wire_1318 <= delay_wire_1317;
+    delay_wire_1319 <= delay_wire_1318;
+    delay_wire_1320 <= delay_wire_1319;
+    delay_wire_1321 <= delay_wire_1320;
+    delay_wire_1322 <= delay_wire_1321;
+    delay_wire_1323 <= delay_wire_1322;
+    delay_wire_1324 <= delay_wire_1323;
+    delay_wire_1325 <= delay_wire_1324;
+    delay_wire_1326 <= delay_wire_1325;
+    delay_wire_1327 <= delay_wire_1326;
+    delay_wire_1328 <= delay_wire_1327;
+    delay_wire_1329 <= delay_wire_1328;
+    delay_wire_1330 <= delay_wire_1329;
+    delay_wire_1331 <= delay_wire_1330;
+    delay_wire_1332 <= delay_wire_1331;
+    delay_wire_1333 <= delay_wire_1332;
+    delay_wire_1334 <= delay_wire_1333;
+    delay_wire_1335 <= delay_wire_1334;
+    delay_wire_1336 <= delay_wire_1335;
+    delay_wire_1337 <= delay_wire_1336;
+    delay_wire_1338 <= delay_wire_1337;
+    delay_wire_1339 <= delay_wire_1338;
+    delay_wire_1340 <= delay_wire_1339;
+    delay_wire_1341 <= delay_wire_1340;
+    delay_wire_1342 <= delay_wire_1341;
+    delay_wire_1343 <= delay_wire_1342;
+    delay_wire_1344 <= delay_wire_1343;
+    delay_wire_1345 <= delay_wire_1344;
+    delay_wire_1346 <= delay_wire_1345;
+    delay_wire_1347 <= delay_wire_1346;
+    delay_wire_1348 <= delay_wire_1347;
+    delay_wire_1349 <= delay_wire_1348;
+    delay_wire_1350 <= delay_wire_1349;
+    delay_wire_1351 <= delay_wire_1350;
+    delay_wire_1352 <= delay_wire_1351;
+    delay_wire_1353 <= delay_wire_1352;
+    delay_wire_1354 <= delay_wire_1353;
+    delay_wire_1355 <= delay_wire_1354;
+    delay_wire_1356 <= delay_wire_1355;
+    delay_wire_1357 <= delay_wire_1356;
+    delay_wire_1358 <= delay_wire_1357;
+    delay_wire_1359 <= delay_wire_1358;
+    delay_wire_1360 <= delay_wire_1359;
+    delay_wire_1361 <= delay_wire_1360;
+    delay_wire_1362 <= delay_wire_1361;
+    delay_wire_1363 <= delay_wire_1362;
+    delay_wire_1364 <= delay_wire_1363;
+    delay_wire_1365 <= delay_wire_1364;
+    delay_wire_1366 <= delay_wire_1365;
+  end
+  assign out = delay_wire_1366;
+endmodule
+
+module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_24_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_1367;
+  logic [15:0] delay_wire_1368;
+  logic [15:0] delay_wire_1369;
+  logic [15:0] delay_wire_1370;
+  logic [15:0] delay_wire_1371;
+  logic [15:0] delay_wire_1372;
+  logic [15:0] delay_wire_1373;
+  logic [15:0] delay_wire_1374;
+  logic [15:0] delay_wire_1375;
+  logic [15:0] delay_wire_1376;
+  logic [15:0] delay_wire_1377;
+  logic [15:0] delay_wire_1378;
+  logic [15:0] delay_wire_1379;
+  logic [15:0] delay_wire_1380;
+  logic [15:0] delay_wire_1381;
+  logic [15:0] delay_wire_1382;
+  logic [15:0] delay_wire_1383;
+  logic [15:0] delay_wire_1384;
+  logic [15:0] delay_wire_1385;
+  logic [15:0] delay_wire_1386;
+  logic [15:0] delay_wire_1387;
+  logic [15:0] delay_wire_1388;
+  logic [15:0] delay_wire_1389;
+  logic [15:0] delay_wire_1390;
+  logic [15:0] delay_wire_1391;
+  logic [15:0] delay_wire_1392;
+  logic [15:0] delay_wire_1393;
+  logic [15:0] delay_wire_1394;
+  logic [15:0] delay_wire_1395;
+  logic [15:0] delay_wire_1396;
+  logic [15:0] delay_wire_1397;
+  logic [15:0] delay_wire_1398;
+  logic [15:0] delay_wire_1399;
+  logic [15:0] delay_wire_1400;
+  logic [15:0] delay_wire_1401;
+  logic [15:0] delay_wire_1402;
+  logic [15:0] delay_wire_1403;
+  logic [15:0] delay_wire_1404;
+  logic [15:0] delay_wire_1405;
+  logic [15:0] delay_wire_1406;
+  logic [15:0] delay_wire_1407;
+  logic [15:0] delay_wire_1408;
+  logic [15:0] delay_wire_1409;
+  logic [15:0] delay_wire_1410;
+  logic [15:0] delay_wire_1411;
+  logic [15:0] delay_wire_1412;
+  logic [15:0] delay_wire_1413;
+  logic [15:0] delay_wire_1414;
+  logic [15:0] delay_wire_1415;
+  logic [15:0] delay_wire_1416;
+  logic [15:0] delay_wire_1417;
+  logic [15:0] delay_wire_1418;
+  logic [15:0] delay_wire_1419;
+  logic [15:0] delay_wire_1420;
+  logic [15:0] delay_wire_1421;
+  logic [15:0] delay_wire_1422;
+  logic [15:0] delay_wire_1423;
+  logic [15:0] delay_wire_1424;
+  logic [15:0] delay_wire_1425;
+  logic [15:0] delay_wire_1426;
+  logic [15:0] delay_wire_1427;
+  logic [15:0] delay_wire_1428;
+  logic [15:0] delay_wire_1429;
+  logic [15:0] delay_wire_1430;
+  logic [15:0] delay_wire_1431;
+  logic [15:0] delay_wire_1432;
+  logic [15:0] delay_wire_1433;
+  logic [15:0] delay_wire_1434;
+  logic [15:0] delay_wire_1435;
+  logic [15:0] delay_wire_1436;
+  logic [15:0] delay_wire_1437;
+  logic [15:0] delay_wire_1438;
+  logic [15:0] delay_wire_1439;
+  logic [15:0] delay_wire_1440;
+  logic [15:0] delay_wire_1441;
+  logic [15:0] delay_wire_1442;
+  logic [15:0] delay_wire_1443;
+  logic [15:0] delay_wire_1444;
+  logic [15:0] delay_wire_1445;
+  logic [15:0] delay_wire_1446;
+  logic [15:0] delay_wire_1447;
+  logic [15:0] delay_wire_1448;
+  logic [15:0] delay_wire_1449;
+  logic [15:0] delay_wire_1450;
+  logic [15:0] delay_wire_1451;
+  logic [15:0] delay_wire_1452;
+  logic [15:0] delay_wire_1453;
+  logic [15:0] delay_wire_1454;
+  logic [15:0] delay_wire_1455;
+  logic [15:0] delay_wire_1456;
+  logic [15:0] delay_wire_1457;
+  logic [15:0] delay_wire_1458;
+  logic [15:0] delay_wire_1459;
+  logic [15:0] delay_wire_1460;
+  logic [15:0] delay_wire_1461;
+  logic [15:0] delay_wire_1462;
+  logic [15:0] delay_wire_1463;
+  logic [15:0] delay_wire_1464;
+  logic [15:0] delay_wire_1465;
+  logic [15:0] delay_wire_1466;
+  logic [15:0] delay_wire_1467;
+  logic [15:0] delay_wire_1468;
+  logic [15:0] delay_wire_1469;
+  logic [15:0] delay_wire_1470;
+  logic [15:0] delay_wire_1471;
+  logic [15:0] delay_wire_1472;
+  logic [15:0] delay_wire_1473;
+  logic [15:0] delay_wire_1474;
+  logic [15:0] delay_wire_1475;
+  logic [15:0] delay_wire_1476;
+  logic [15:0] delay_wire_1477;
+  logic [15:0] delay_wire_1478;
+  logic [15:0] delay_wire_1479;
+  logic [15:0] delay_wire_1480;
+  logic [15:0] delay_wire_1481;
+  logic [15:0] delay_wire_1482;
+  logic [15:0] delay_wire_1483;
+  logic [15:0] delay_wire_1484;
+  logic [15:0] delay_wire_1485;
+  logic [15:0] delay_wire_1486;
+  logic [15:0] delay_wire_1487;
+  logic [15:0] delay_wire_1488;
+  logic [15:0] delay_wire_1489;
+  logic [15:0] delay_wire_1490;
+  logic [15:0] delay_wire_1491;
+  logic [15:0] delay_wire_1492;
+  logic [15:0] delay_wire_1493;
+  logic [15:0] delay_wire_1494;
+  logic [15:0] delay_wire_1495;
+  logic [15:0] delay_wire_1496;
+  logic [15:0] delay_wire_1497;
+  always @(posedge clk) begin
+    delay_wire_1367 <= in;
+    delay_wire_1368 <= delay_wire_1367;
+    delay_wire_1369 <= delay_wire_1368;
+    delay_wire_1370 <= delay_wire_1369;
+    delay_wire_1371 <= delay_wire_1370;
+    delay_wire_1372 <= delay_wire_1371;
+    delay_wire_1373 <= delay_wire_1372;
+    delay_wire_1374 <= delay_wire_1373;
+    delay_wire_1375 <= delay_wire_1374;
+    delay_wire_1376 <= delay_wire_1375;
+    delay_wire_1377 <= delay_wire_1376;
+    delay_wire_1378 <= delay_wire_1377;
+    delay_wire_1379 <= delay_wire_1378;
+    delay_wire_1380 <= delay_wire_1379;
+    delay_wire_1381 <= delay_wire_1380;
+    delay_wire_1382 <= delay_wire_1381;
+    delay_wire_1383 <= delay_wire_1382;
+    delay_wire_1384 <= delay_wire_1383;
+    delay_wire_1385 <= delay_wire_1384;
+    delay_wire_1386 <= delay_wire_1385;
+    delay_wire_1387 <= delay_wire_1386;
+    delay_wire_1388 <= delay_wire_1387;
+    delay_wire_1389 <= delay_wire_1388;
+    delay_wire_1390 <= delay_wire_1389;
+    delay_wire_1391 <= delay_wire_1390;
+    delay_wire_1392 <= delay_wire_1391;
+    delay_wire_1393 <= delay_wire_1392;
+    delay_wire_1394 <= delay_wire_1393;
+    delay_wire_1395 <= delay_wire_1394;
+    delay_wire_1396 <= delay_wire_1395;
+    delay_wire_1397 <= delay_wire_1396;
+    delay_wire_1398 <= delay_wire_1397;
+    delay_wire_1399 <= delay_wire_1398;
+    delay_wire_1400 <= delay_wire_1399;
+    delay_wire_1401 <= delay_wire_1400;
+    delay_wire_1402 <= delay_wire_1401;
+    delay_wire_1403 <= delay_wire_1402;
+    delay_wire_1404 <= delay_wire_1403;
+    delay_wire_1405 <= delay_wire_1404;
+    delay_wire_1406 <= delay_wire_1405;
+    delay_wire_1407 <= delay_wire_1406;
+    delay_wire_1408 <= delay_wire_1407;
+    delay_wire_1409 <= delay_wire_1408;
+    delay_wire_1410 <= delay_wire_1409;
+    delay_wire_1411 <= delay_wire_1410;
+    delay_wire_1412 <= delay_wire_1411;
+    delay_wire_1413 <= delay_wire_1412;
+    delay_wire_1414 <= delay_wire_1413;
+    delay_wire_1415 <= delay_wire_1414;
+    delay_wire_1416 <= delay_wire_1415;
+    delay_wire_1417 <= delay_wire_1416;
+    delay_wire_1418 <= delay_wire_1417;
+    delay_wire_1419 <= delay_wire_1418;
+    delay_wire_1420 <= delay_wire_1419;
+    delay_wire_1421 <= delay_wire_1420;
+    delay_wire_1422 <= delay_wire_1421;
+    delay_wire_1423 <= delay_wire_1422;
+    delay_wire_1424 <= delay_wire_1423;
+    delay_wire_1425 <= delay_wire_1424;
+    delay_wire_1426 <= delay_wire_1425;
+    delay_wire_1427 <= delay_wire_1426;
+    delay_wire_1428 <= delay_wire_1427;
+    delay_wire_1429 <= delay_wire_1428;
+    delay_wire_1430 <= delay_wire_1429;
+    delay_wire_1431 <= delay_wire_1430;
+    delay_wire_1432 <= delay_wire_1431;
+    delay_wire_1433 <= delay_wire_1432;
+    delay_wire_1434 <= delay_wire_1433;
+    delay_wire_1435 <= delay_wire_1434;
+    delay_wire_1436 <= delay_wire_1435;
+    delay_wire_1437 <= delay_wire_1436;
+    delay_wire_1438 <= delay_wire_1437;
+    delay_wire_1439 <= delay_wire_1438;
+    delay_wire_1440 <= delay_wire_1439;
+    delay_wire_1441 <= delay_wire_1440;
+    delay_wire_1442 <= delay_wire_1441;
+    delay_wire_1443 <= delay_wire_1442;
+    delay_wire_1444 <= delay_wire_1443;
+    delay_wire_1445 <= delay_wire_1444;
+    delay_wire_1446 <= delay_wire_1445;
+    delay_wire_1447 <= delay_wire_1446;
+    delay_wire_1448 <= delay_wire_1447;
+    delay_wire_1449 <= delay_wire_1448;
+    delay_wire_1450 <= delay_wire_1449;
+    delay_wire_1451 <= delay_wire_1450;
+    delay_wire_1452 <= delay_wire_1451;
+    delay_wire_1453 <= delay_wire_1452;
+    delay_wire_1454 <= delay_wire_1453;
+    delay_wire_1455 <= delay_wire_1454;
+    delay_wire_1456 <= delay_wire_1455;
+    delay_wire_1457 <= delay_wire_1456;
+    delay_wire_1458 <= delay_wire_1457;
+    delay_wire_1459 <= delay_wire_1458;
+    delay_wire_1460 <= delay_wire_1459;
+    delay_wire_1461 <= delay_wire_1460;
+    delay_wire_1462 <= delay_wire_1461;
+    delay_wire_1463 <= delay_wire_1462;
+    delay_wire_1464 <= delay_wire_1463;
+    delay_wire_1465 <= delay_wire_1464;
+    delay_wire_1466 <= delay_wire_1465;
+    delay_wire_1467 <= delay_wire_1466;
+    delay_wire_1468 <= delay_wire_1467;
+    delay_wire_1469 <= delay_wire_1468;
+    delay_wire_1470 <= delay_wire_1469;
+    delay_wire_1471 <= delay_wire_1470;
+    delay_wire_1472 <= delay_wire_1471;
+    delay_wire_1473 <= delay_wire_1472;
+    delay_wire_1474 <= delay_wire_1473;
+    delay_wire_1475 <= delay_wire_1474;
+    delay_wire_1476 <= delay_wire_1475;
+    delay_wire_1477 <= delay_wire_1476;
+    delay_wire_1478 <= delay_wire_1477;
+    delay_wire_1479 <= delay_wire_1478;
+    delay_wire_1480 <= delay_wire_1479;
+    delay_wire_1481 <= delay_wire_1480;
+    delay_wire_1482 <= delay_wire_1481;
+    delay_wire_1483 <= delay_wire_1482;
+    delay_wire_1484 <= delay_wire_1483;
+    delay_wire_1485 <= delay_wire_1484;
+    delay_wire_1486 <= delay_wire_1485;
+    delay_wire_1487 <= delay_wire_1486;
+    delay_wire_1488 <= delay_wire_1487;
+    delay_wire_1489 <= delay_wire_1488;
+    delay_wire_1490 <= delay_wire_1489;
+    delay_wire_1491 <= delay_wire_1490;
+    delay_wire_1492 <= delay_wire_1491;
+    delay_wire_1493 <= delay_wire_1492;
+    delay_wire_1494 <= delay_wire_1493;
+    delay_wire_1495 <= delay_wire_1494;
+    delay_wire_1496 <= delay_wire_1495;
+    delay_wire_1497 <= delay_wire_1496;
+  end
+  assign out = delay_wire_1497;
+endmodule
+
+module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_25_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_1498;
+  logic [15:0] delay_wire_1499;
+  logic [15:0] delay_wire_1500;
+  logic [15:0] delay_wire_1501;
+  logic [15:0] delay_wire_1502;
+  logic [15:0] delay_wire_1503;
+  logic [15:0] delay_wire_1504;
+  logic [15:0] delay_wire_1505;
+  logic [15:0] delay_wire_1506;
+  logic [15:0] delay_wire_1507;
+  logic [15:0] delay_wire_1508;
+  logic [15:0] delay_wire_1509;
+  logic [15:0] delay_wire_1510;
+  logic [15:0] delay_wire_1511;
+  logic [15:0] delay_wire_1512;
+  logic [15:0] delay_wire_1513;
+  logic [15:0] delay_wire_1514;
+  logic [15:0] delay_wire_1515;
+  logic [15:0] delay_wire_1516;
+  logic [15:0] delay_wire_1517;
+  logic [15:0] delay_wire_1518;
+  logic [15:0] delay_wire_1519;
+  logic [15:0] delay_wire_1520;
+  logic [15:0] delay_wire_1521;
+  logic [15:0] delay_wire_1522;
+  logic [15:0] delay_wire_1523;
+  logic [15:0] delay_wire_1524;
+  logic [15:0] delay_wire_1525;
+  logic [15:0] delay_wire_1526;
+  logic [15:0] delay_wire_1527;
+  logic [15:0] delay_wire_1528;
+  logic [15:0] delay_wire_1529;
+  logic [15:0] delay_wire_1530;
+  logic [15:0] delay_wire_1531;
+  logic [15:0] delay_wire_1532;
+  logic [15:0] delay_wire_1533;
+  logic [15:0] delay_wire_1534;
+  logic [15:0] delay_wire_1535;
+  logic [15:0] delay_wire_1536;
+  logic [15:0] delay_wire_1537;
+  logic [15:0] delay_wire_1538;
   logic [15:0] delay_wire_1539;
   logic [15:0] delay_wire_1540;
   logic [15:0] delay_wire_1541;
@@ -5392,55 +5363,49 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_23_to_lxy_stencil_op_h
   logic [15:0] delay_wire_1625;
   logic [15:0] delay_wire_1626;
   logic [15:0] delay_wire_1627;
-  logic [15:0] delay_wire_1628;
-  logic [15:0] delay_wire_1629;
-  logic [15:0] delay_wire_1630;
-  logic [15:0] delay_wire_1631;
-  logic [15:0] delay_wire_1632;
-  logic [15:0] delay_wire_1633;
-  logic [15:0] delay_wire_1634;
-  logic [15:0] delay_wire_1635;
-  logic [15:0] delay_wire_1636;
-  logic [15:0] delay_wire_1637;
-  logic [15:0] delay_wire_1638;
-  logic [15:0] delay_wire_1639;
-  logic [15:0] delay_wire_1640;
-  logic [15:0] delay_wire_1641;
-  logic [15:0] delay_wire_1642;
-  logic [15:0] delay_wire_1643;
-  logic [15:0] delay_wire_1644;
-  logic [15:0] delay_wire_1645;
-  logic [15:0] delay_wire_1646;
-  logic [15:0] delay_wire_1647;
-  logic [15:0] delay_wire_1648;
-  logic [15:0] delay_wire_1649;
-  logic [15:0] delay_wire_1650;
-  logic [15:0] delay_wire_1651;
-  logic [15:0] delay_wire_1652;
-  logic [15:0] delay_wire_1653;
-  logic [15:0] delay_wire_1654;
-  logic [15:0] delay_wire_1655;
-  logic [15:0] delay_wire_1656;
-  logic [15:0] delay_wire_1657;
-  logic [15:0] delay_wire_1658;
-  logic [15:0] delay_wire_1659;
-  logic [15:0] delay_wire_1660;
-  logic [15:0] delay_wire_1661;
-  logic [15:0] delay_wire_1662;
-  logic [15:0] delay_wire_1663;
-  logic [15:0] delay_wire_1664;
-  logic [15:0] delay_wire_1665;
-  logic [15:0] delay_wire_1666;
-  logic [15:0] delay_wire_1667;
-  logic [15:0] delay_wire_1668;
-  logic [15:0] delay_wire_1669;
-  logic [15:0] delay_wire_1670;
-  logic [15:0] delay_wire_1671;
-  logic [15:0] delay_wire_1672;
-  logic [15:0] delay_wire_1673;
-  logic [15:0] delay_wire_1674;
   always @(posedge clk) begin
-    delay_wire_1539 <= in;
+    delay_wire_1498 <= in;
+    delay_wire_1499 <= delay_wire_1498;
+    delay_wire_1500 <= delay_wire_1499;
+    delay_wire_1501 <= delay_wire_1500;
+    delay_wire_1502 <= delay_wire_1501;
+    delay_wire_1503 <= delay_wire_1502;
+    delay_wire_1504 <= delay_wire_1503;
+    delay_wire_1505 <= delay_wire_1504;
+    delay_wire_1506 <= delay_wire_1505;
+    delay_wire_1507 <= delay_wire_1506;
+    delay_wire_1508 <= delay_wire_1507;
+    delay_wire_1509 <= delay_wire_1508;
+    delay_wire_1510 <= delay_wire_1509;
+    delay_wire_1511 <= delay_wire_1510;
+    delay_wire_1512 <= delay_wire_1511;
+    delay_wire_1513 <= delay_wire_1512;
+    delay_wire_1514 <= delay_wire_1513;
+    delay_wire_1515 <= delay_wire_1514;
+    delay_wire_1516 <= delay_wire_1515;
+    delay_wire_1517 <= delay_wire_1516;
+    delay_wire_1518 <= delay_wire_1517;
+    delay_wire_1519 <= delay_wire_1518;
+    delay_wire_1520 <= delay_wire_1519;
+    delay_wire_1521 <= delay_wire_1520;
+    delay_wire_1522 <= delay_wire_1521;
+    delay_wire_1523 <= delay_wire_1522;
+    delay_wire_1524 <= delay_wire_1523;
+    delay_wire_1525 <= delay_wire_1524;
+    delay_wire_1526 <= delay_wire_1525;
+    delay_wire_1527 <= delay_wire_1526;
+    delay_wire_1528 <= delay_wire_1527;
+    delay_wire_1529 <= delay_wire_1528;
+    delay_wire_1530 <= delay_wire_1529;
+    delay_wire_1531 <= delay_wire_1530;
+    delay_wire_1532 <= delay_wire_1531;
+    delay_wire_1533 <= delay_wire_1532;
+    delay_wire_1534 <= delay_wire_1533;
+    delay_wire_1535 <= delay_wire_1534;
+    delay_wire_1536 <= delay_wire_1535;
+    delay_wire_1537 <= delay_wire_1536;
+    delay_wire_1538 <= delay_wire_1537;
+    delay_wire_1539 <= delay_wire_1538;
     delay_wire_1540 <= delay_wire_1539;
     delay_wire_1541 <= delay_wire_1540;
     delay_wire_1542 <= delay_wire_1541;
@@ -5529,7 +5494,81 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_23_to_lxy_stencil_op_h
     delay_wire_1625 <= delay_wire_1624;
     delay_wire_1626 <= delay_wire_1625;
     delay_wire_1627 <= delay_wire_1626;
-    delay_wire_1628 <= delay_wire_1627;
+  end
+  assign out = delay_wire_1627;
+endmodule
+
+module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_26_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_1628;
+  logic [15:0] delay_wire_1629;
+  logic [15:0] delay_wire_1630;
+  logic [15:0] delay_wire_1631;
+  logic [15:0] delay_wire_1632;
+  logic [15:0] delay_wire_1633;
+  logic [15:0] delay_wire_1634;
+  logic [15:0] delay_wire_1635;
+  logic [15:0] delay_wire_1636;
+  logic [15:0] delay_wire_1637;
+  logic [15:0] delay_wire_1638;
+  logic [15:0] delay_wire_1639;
+  logic [15:0] delay_wire_1640;
+  logic [15:0] delay_wire_1641;
+  logic [15:0] delay_wire_1642;
+  logic [15:0] delay_wire_1643;
+  logic [15:0] delay_wire_1644;
+  logic [15:0] delay_wire_1645;
+  logic [15:0] delay_wire_1646;
+  logic [15:0] delay_wire_1647;
+  logic [15:0] delay_wire_1648;
+  logic [15:0] delay_wire_1649;
+  logic [15:0] delay_wire_1650;
+  logic [15:0] delay_wire_1651;
+  logic [15:0] delay_wire_1652;
+  logic [15:0] delay_wire_1653;
+  logic [15:0] delay_wire_1654;
+  logic [15:0] delay_wire_1655;
+  logic [15:0] delay_wire_1656;
+  logic [15:0] delay_wire_1657;
+  logic [15:0] delay_wire_1658;
+  logic [15:0] delay_wire_1659;
+  logic [15:0] delay_wire_1660;
+  logic [15:0] delay_wire_1661;
+  logic [15:0] delay_wire_1662;
+  logic [15:0] delay_wire_1663;
+  logic [15:0] delay_wire_1664;
+  logic [15:0] delay_wire_1665;
+  logic [15:0] delay_wire_1666;
+  logic [15:0] delay_wire_1667;
+  logic [15:0] delay_wire_1668;
+  logic [15:0] delay_wire_1669;
+  logic [15:0] delay_wire_1670;
+  logic [15:0] delay_wire_1671;
+  logic [15:0] delay_wire_1672;
+  logic [15:0] delay_wire_1673;
+  logic [15:0] delay_wire_1674;
+  logic [15:0] delay_wire_1675;
+  logic [15:0] delay_wire_1676;
+  logic [15:0] delay_wire_1677;
+  logic [15:0] delay_wire_1678;
+  logic [15:0] delay_wire_1679;
+  logic [15:0] delay_wire_1680;
+  logic [15:0] delay_wire_1681;
+  logic [15:0] delay_wire_1682;
+  logic [15:0] delay_wire_1683;
+  logic [15:0] delay_wire_1684;
+  logic [15:0] delay_wire_1685;
+  logic [15:0] delay_wire_1686;
+  logic [15:0] delay_wire_1687;
+  logic [15:0] delay_wire_1688;
+  logic [15:0] delay_wire_1689;
+  logic [15:0] delay_wire_1690;
+  logic [15:0] delay_wire_1691;
+  logic [15:0] delay_wire_1692;
+  logic [15:0] delay_wire_1693;
+  logic [15:0] delay_wire_1694;
+  logic [15:0] delay_wire_1695;
+  always @(posedge clk) begin
+    delay_wire_1628 <= in;
     delay_wire_1629 <= delay_wire_1628;
     delay_wire_1630 <= delay_wire_1629;
     delay_wire_1631 <= delay_wire_1630;
@@ -5576,32 +5615,32 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_23_to_lxy_stencil_op_h
     delay_wire_1672 <= delay_wire_1671;
     delay_wire_1673 <= delay_wire_1672;
     delay_wire_1674 <= delay_wire_1673;
+    delay_wire_1675 <= delay_wire_1674;
+    delay_wire_1676 <= delay_wire_1675;
+    delay_wire_1677 <= delay_wire_1676;
+    delay_wire_1678 <= delay_wire_1677;
+    delay_wire_1679 <= delay_wire_1678;
+    delay_wire_1680 <= delay_wire_1679;
+    delay_wire_1681 <= delay_wire_1680;
+    delay_wire_1682 <= delay_wire_1681;
+    delay_wire_1683 <= delay_wire_1682;
+    delay_wire_1684 <= delay_wire_1683;
+    delay_wire_1685 <= delay_wire_1684;
+    delay_wire_1686 <= delay_wire_1685;
+    delay_wire_1687 <= delay_wire_1686;
+    delay_wire_1688 <= delay_wire_1687;
+    delay_wire_1689 <= delay_wire_1688;
+    delay_wire_1690 <= delay_wire_1689;
+    delay_wire_1691 <= delay_wire_1690;
+    delay_wire_1692 <= delay_wire_1691;
+    delay_wire_1693 <= delay_wire_1692;
+    delay_wire_1694 <= delay_wire_1693;
+    delay_wire_1695 <= delay_wire_1694;
   end
-  assign out = delay_wire_1674;
+  assign out = delay_wire_1695;
 endmodule
 
-module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_24_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_1675;
-  logic [15:0] delay_wire_1676;
-  logic [15:0] delay_wire_1677;
-  logic [15:0] delay_wire_1678;
-  logic [15:0] delay_wire_1679;
-  logic [15:0] delay_wire_1680;
-  logic [15:0] delay_wire_1681;
-  logic [15:0] delay_wire_1682;
-  logic [15:0] delay_wire_1683;
-  logic [15:0] delay_wire_1684;
-  logic [15:0] delay_wire_1685;
-  logic [15:0] delay_wire_1686;
-  logic [15:0] delay_wire_1687;
-  logic [15:0] delay_wire_1688;
-  logic [15:0] delay_wire_1689;
-  logic [15:0] delay_wire_1690;
-  logic [15:0] delay_wire_1691;
-  logic [15:0] delay_wire_1692;
-  logic [15:0] delay_wire_1693;
-  logic [15:0] delay_wire_1694;
-  logic [15:0] delay_wire_1695;
+module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_27_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_1696;
   logic [15:0] delay_wire_1697;
   logic [15:0] delay_wire_1698;
@@ -5669,76 +5708,8 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_24_to_lxy_stencil_op_h
   logic [15:0] delay_wire_1760;
   logic [15:0] delay_wire_1761;
   logic [15:0] delay_wire_1762;
-  logic [15:0] delay_wire_1763;
-  logic [15:0] delay_wire_1764;
-  logic [15:0] delay_wire_1765;
-  logic [15:0] delay_wire_1766;
-  logic [15:0] delay_wire_1767;
-  logic [15:0] delay_wire_1768;
-  logic [15:0] delay_wire_1769;
-  logic [15:0] delay_wire_1770;
-  logic [15:0] delay_wire_1771;
-  logic [15:0] delay_wire_1772;
-  logic [15:0] delay_wire_1773;
-  logic [15:0] delay_wire_1774;
-  logic [15:0] delay_wire_1775;
-  logic [15:0] delay_wire_1776;
-  logic [15:0] delay_wire_1777;
-  logic [15:0] delay_wire_1778;
-  logic [15:0] delay_wire_1779;
-  logic [15:0] delay_wire_1780;
-  logic [15:0] delay_wire_1781;
-  logic [15:0] delay_wire_1782;
-  logic [15:0] delay_wire_1783;
-  logic [15:0] delay_wire_1784;
-  logic [15:0] delay_wire_1785;
-  logic [15:0] delay_wire_1786;
-  logic [15:0] delay_wire_1787;
-  logic [15:0] delay_wire_1788;
-  logic [15:0] delay_wire_1789;
-  logic [15:0] delay_wire_1790;
-  logic [15:0] delay_wire_1791;
-  logic [15:0] delay_wire_1792;
-  logic [15:0] delay_wire_1793;
-  logic [15:0] delay_wire_1794;
-  logic [15:0] delay_wire_1795;
-  logic [15:0] delay_wire_1796;
-  logic [15:0] delay_wire_1797;
-  logic [15:0] delay_wire_1798;
-  logic [15:0] delay_wire_1799;
-  logic [15:0] delay_wire_1800;
-  logic [15:0] delay_wire_1801;
-  logic [15:0] delay_wire_1802;
-  logic [15:0] delay_wire_1803;
-  logic [15:0] delay_wire_1804;
-  logic [15:0] delay_wire_1805;
-  logic [15:0] delay_wire_1806;
-  logic [15:0] delay_wire_1807;
-  logic [15:0] delay_wire_1808;
-  logic [15:0] delay_wire_1809;
   always @(posedge clk) begin
-    delay_wire_1675 <= in;
-    delay_wire_1676 <= delay_wire_1675;
-    delay_wire_1677 <= delay_wire_1676;
-    delay_wire_1678 <= delay_wire_1677;
-    delay_wire_1679 <= delay_wire_1678;
-    delay_wire_1680 <= delay_wire_1679;
-    delay_wire_1681 <= delay_wire_1680;
-    delay_wire_1682 <= delay_wire_1681;
-    delay_wire_1683 <= delay_wire_1682;
-    delay_wire_1684 <= delay_wire_1683;
-    delay_wire_1685 <= delay_wire_1684;
-    delay_wire_1686 <= delay_wire_1685;
-    delay_wire_1687 <= delay_wire_1686;
-    delay_wire_1688 <= delay_wire_1687;
-    delay_wire_1689 <= delay_wire_1688;
-    delay_wire_1690 <= delay_wire_1689;
-    delay_wire_1691 <= delay_wire_1690;
-    delay_wire_1692 <= delay_wire_1691;
-    delay_wire_1693 <= delay_wire_1692;
-    delay_wire_1694 <= delay_wire_1693;
-    delay_wire_1695 <= delay_wire_1694;
-    delay_wire_1696 <= delay_wire_1695;
+    delay_wire_1696 <= in;
     delay_wire_1697 <= delay_wire_1696;
     delay_wire_1698 <= delay_wire_1697;
     delay_wire_1699 <= delay_wire_1698;
@@ -5805,7 +5776,79 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_24_to_lxy_stencil_op_h
     delay_wire_1760 <= delay_wire_1759;
     delay_wire_1761 <= delay_wire_1760;
     delay_wire_1762 <= delay_wire_1761;
-    delay_wire_1763 <= delay_wire_1762;
+  end
+  assign out = delay_wire_1762;
+endmodule
+
+module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_28_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_1763;
+  logic [15:0] delay_wire_1764;
+  logic [15:0] delay_wire_1765;
+  logic [15:0] delay_wire_1766;
+  logic [15:0] delay_wire_1767;
+  logic [15:0] delay_wire_1768;
+  logic [15:0] delay_wire_1769;
+  logic [15:0] delay_wire_1770;
+  logic [15:0] delay_wire_1771;
+  logic [15:0] delay_wire_1772;
+  logic [15:0] delay_wire_1773;
+  logic [15:0] delay_wire_1774;
+  logic [15:0] delay_wire_1775;
+  logic [15:0] delay_wire_1776;
+  logic [15:0] delay_wire_1777;
+  logic [15:0] delay_wire_1778;
+  logic [15:0] delay_wire_1779;
+  logic [15:0] delay_wire_1780;
+  logic [15:0] delay_wire_1781;
+  logic [15:0] delay_wire_1782;
+  logic [15:0] delay_wire_1783;
+  logic [15:0] delay_wire_1784;
+  logic [15:0] delay_wire_1785;
+  logic [15:0] delay_wire_1786;
+  logic [15:0] delay_wire_1787;
+  logic [15:0] delay_wire_1788;
+  logic [15:0] delay_wire_1789;
+  logic [15:0] delay_wire_1790;
+  logic [15:0] delay_wire_1791;
+  logic [15:0] delay_wire_1792;
+  logic [15:0] delay_wire_1793;
+  logic [15:0] delay_wire_1794;
+  logic [15:0] delay_wire_1795;
+  logic [15:0] delay_wire_1796;
+  logic [15:0] delay_wire_1797;
+  logic [15:0] delay_wire_1798;
+  logic [15:0] delay_wire_1799;
+  logic [15:0] delay_wire_1800;
+  logic [15:0] delay_wire_1801;
+  logic [15:0] delay_wire_1802;
+  logic [15:0] delay_wire_1803;
+  logic [15:0] delay_wire_1804;
+  logic [15:0] delay_wire_1805;
+  logic [15:0] delay_wire_1806;
+  logic [15:0] delay_wire_1807;
+  logic [15:0] delay_wire_1808;
+  logic [15:0] delay_wire_1809;
+  logic [15:0] delay_wire_1810;
+  logic [15:0] delay_wire_1811;
+  logic [15:0] delay_wire_1812;
+  logic [15:0] delay_wire_1813;
+  logic [15:0] delay_wire_1814;
+  logic [15:0] delay_wire_1815;
+  logic [15:0] delay_wire_1816;
+  logic [15:0] delay_wire_1817;
+  logic [15:0] delay_wire_1818;
+  logic [15:0] delay_wire_1819;
+  logic [15:0] delay_wire_1820;
+  logic [15:0] delay_wire_1821;
+  logic [15:0] delay_wire_1822;
+  logic [15:0] delay_wire_1823;
+  logic [15:0] delay_wire_1824;
+  logic [15:0] delay_wire_1825;
+  logic [15:0] delay_wire_1826;
+  logic [15:0] delay_wire_1827;
+  logic [15:0] delay_wire_1828;
+  always @(posedge clk) begin
+    delay_wire_1763 <= in;
     delay_wire_1764 <= delay_wire_1763;
     delay_wire_1765 <= delay_wire_1764;
     delay_wire_1766 <= delay_wire_1765;
@@ -5852,147 +5895,7 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_24_to_lxy_stencil_op_h
     delay_wire_1807 <= delay_wire_1806;
     delay_wire_1808 <= delay_wire_1807;
     delay_wire_1809 <= delay_wire_1808;
-  end
-  assign out = delay_wire_1809;
-endmodule
-
-module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_25_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_1810;
-  logic [15:0] delay_wire_1811;
-  logic [15:0] delay_wire_1812;
-  logic [15:0] delay_wire_1813;
-  logic [15:0] delay_wire_1814;
-  logic [15:0] delay_wire_1815;
-  logic [15:0] delay_wire_1816;
-  logic [15:0] delay_wire_1817;
-  logic [15:0] delay_wire_1818;
-  logic [15:0] delay_wire_1819;
-  logic [15:0] delay_wire_1820;
-  logic [15:0] delay_wire_1821;
-  logic [15:0] delay_wire_1822;
-  logic [15:0] delay_wire_1823;
-  logic [15:0] delay_wire_1824;
-  logic [15:0] delay_wire_1825;
-  logic [15:0] delay_wire_1826;
-  logic [15:0] delay_wire_1827;
-  logic [15:0] delay_wire_1828;
-  logic [15:0] delay_wire_1829;
-  logic [15:0] delay_wire_1830;
-  logic [15:0] delay_wire_1831;
-  logic [15:0] delay_wire_1832;
-  logic [15:0] delay_wire_1833;
-  logic [15:0] delay_wire_1834;
-  logic [15:0] delay_wire_1835;
-  logic [15:0] delay_wire_1836;
-  logic [15:0] delay_wire_1837;
-  logic [15:0] delay_wire_1838;
-  logic [15:0] delay_wire_1839;
-  logic [15:0] delay_wire_1840;
-  logic [15:0] delay_wire_1841;
-  logic [15:0] delay_wire_1842;
-  logic [15:0] delay_wire_1843;
-  logic [15:0] delay_wire_1844;
-  logic [15:0] delay_wire_1845;
-  logic [15:0] delay_wire_1846;
-  logic [15:0] delay_wire_1847;
-  logic [15:0] delay_wire_1848;
-  logic [15:0] delay_wire_1849;
-  logic [15:0] delay_wire_1850;
-  logic [15:0] delay_wire_1851;
-  logic [15:0] delay_wire_1852;
-  logic [15:0] delay_wire_1853;
-  logic [15:0] delay_wire_1854;
-  logic [15:0] delay_wire_1855;
-  logic [15:0] delay_wire_1856;
-  logic [15:0] delay_wire_1857;
-  logic [15:0] delay_wire_1858;
-  logic [15:0] delay_wire_1859;
-  logic [15:0] delay_wire_1860;
-  logic [15:0] delay_wire_1861;
-  logic [15:0] delay_wire_1862;
-  logic [15:0] delay_wire_1863;
-  logic [15:0] delay_wire_1864;
-  logic [15:0] delay_wire_1865;
-  logic [15:0] delay_wire_1866;
-  logic [15:0] delay_wire_1867;
-  logic [15:0] delay_wire_1868;
-  logic [15:0] delay_wire_1869;
-  logic [15:0] delay_wire_1870;
-  logic [15:0] delay_wire_1871;
-  logic [15:0] delay_wire_1872;
-  logic [15:0] delay_wire_1873;
-  logic [15:0] delay_wire_1874;
-  logic [15:0] delay_wire_1875;
-  logic [15:0] delay_wire_1876;
-  logic [15:0] delay_wire_1877;
-  logic [15:0] delay_wire_1878;
-  logic [15:0] delay_wire_1879;
-  logic [15:0] delay_wire_1880;
-  logic [15:0] delay_wire_1881;
-  logic [15:0] delay_wire_1882;
-  logic [15:0] delay_wire_1883;
-  logic [15:0] delay_wire_1884;
-  logic [15:0] delay_wire_1885;
-  logic [15:0] delay_wire_1886;
-  logic [15:0] delay_wire_1887;
-  logic [15:0] delay_wire_1888;
-  logic [15:0] delay_wire_1889;
-  logic [15:0] delay_wire_1890;
-  logic [15:0] delay_wire_1891;
-  logic [15:0] delay_wire_1892;
-  logic [15:0] delay_wire_1893;
-  logic [15:0] delay_wire_1894;
-  logic [15:0] delay_wire_1895;
-  logic [15:0] delay_wire_1896;
-  logic [15:0] delay_wire_1897;
-  logic [15:0] delay_wire_1898;
-  logic [15:0] delay_wire_1899;
-  logic [15:0] delay_wire_1900;
-  logic [15:0] delay_wire_1901;
-  logic [15:0] delay_wire_1902;
-  logic [15:0] delay_wire_1903;
-  logic [15:0] delay_wire_1904;
-  logic [15:0] delay_wire_1905;
-  logic [15:0] delay_wire_1906;
-  logic [15:0] delay_wire_1907;
-  logic [15:0] delay_wire_1908;
-  logic [15:0] delay_wire_1909;
-  logic [15:0] delay_wire_1910;
-  logic [15:0] delay_wire_1911;
-  logic [15:0] delay_wire_1912;
-  logic [15:0] delay_wire_1913;
-  logic [15:0] delay_wire_1914;
-  logic [15:0] delay_wire_1915;
-  logic [15:0] delay_wire_1916;
-  logic [15:0] delay_wire_1917;
-  logic [15:0] delay_wire_1918;
-  logic [15:0] delay_wire_1919;
-  logic [15:0] delay_wire_1920;
-  logic [15:0] delay_wire_1921;
-  logic [15:0] delay_wire_1922;
-  logic [15:0] delay_wire_1923;
-  logic [15:0] delay_wire_1924;
-  logic [15:0] delay_wire_1925;
-  logic [15:0] delay_wire_1926;
-  logic [15:0] delay_wire_1927;
-  logic [15:0] delay_wire_1928;
-  logic [15:0] delay_wire_1929;
-  logic [15:0] delay_wire_1930;
-  logic [15:0] delay_wire_1931;
-  logic [15:0] delay_wire_1932;
-  logic [15:0] delay_wire_1933;
-  logic [15:0] delay_wire_1934;
-  logic [15:0] delay_wire_1935;
-  logic [15:0] delay_wire_1936;
-  logic [15:0] delay_wire_1937;
-  logic [15:0] delay_wire_1938;
-  logic [15:0] delay_wire_1939;
-  logic [15:0] delay_wire_1940;
-  logic [15:0] delay_wire_1941;
-  logic [15:0] delay_wire_1942;
-  logic [15:0] delay_wire_1943;
-  always @(posedge clk) begin
-    delay_wire_1810 <= in;
+    delay_wire_1810 <= delay_wire_1809;
     delay_wire_1811 <= delay_wire_1810;
     delay_wire_1812 <= delay_wire_1811;
     delay_wire_1813 <= delay_wire_1812;
@@ -6011,630 +5914,47 @@ module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_25_to_lxy_stencil_op_h
     delay_wire_1826 <= delay_wire_1825;
     delay_wire_1827 <= delay_wire_1826;
     delay_wire_1828 <= delay_wire_1827;
-    delay_wire_1829 <= delay_wire_1828;
-    delay_wire_1830 <= delay_wire_1829;
-    delay_wire_1831 <= delay_wire_1830;
-    delay_wire_1832 <= delay_wire_1831;
-    delay_wire_1833 <= delay_wire_1832;
-    delay_wire_1834 <= delay_wire_1833;
-    delay_wire_1835 <= delay_wire_1834;
-    delay_wire_1836 <= delay_wire_1835;
-    delay_wire_1837 <= delay_wire_1836;
-    delay_wire_1838 <= delay_wire_1837;
-    delay_wire_1839 <= delay_wire_1838;
-    delay_wire_1840 <= delay_wire_1839;
-    delay_wire_1841 <= delay_wire_1840;
-    delay_wire_1842 <= delay_wire_1841;
-    delay_wire_1843 <= delay_wire_1842;
-    delay_wire_1844 <= delay_wire_1843;
-    delay_wire_1845 <= delay_wire_1844;
-    delay_wire_1846 <= delay_wire_1845;
-    delay_wire_1847 <= delay_wire_1846;
-    delay_wire_1848 <= delay_wire_1847;
-    delay_wire_1849 <= delay_wire_1848;
-    delay_wire_1850 <= delay_wire_1849;
-    delay_wire_1851 <= delay_wire_1850;
-    delay_wire_1852 <= delay_wire_1851;
-    delay_wire_1853 <= delay_wire_1852;
-    delay_wire_1854 <= delay_wire_1853;
-    delay_wire_1855 <= delay_wire_1854;
-    delay_wire_1856 <= delay_wire_1855;
-    delay_wire_1857 <= delay_wire_1856;
-    delay_wire_1858 <= delay_wire_1857;
-    delay_wire_1859 <= delay_wire_1858;
-    delay_wire_1860 <= delay_wire_1859;
-    delay_wire_1861 <= delay_wire_1860;
-    delay_wire_1862 <= delay_wire_1861;
-    delay_wire_1863 <= delay_wire_1862;
-    delay_wire_1864 <= delay_wire_1863;
-    delay_wire_1865 <= delay_wire_1864;
-    delay_wire_1866 <= delay_wire_1865;
-    delay_wire_1867 <= delay_wire_1866;
-    delay_wire_1868 <= delay_wire_1867;
-    delay_wire_1869 <= delay_wire_1868;
-    delay_wire_1870 <= delay_wire_1869;
-    delay_wire_1871 <= delay_wire_1870;
-    delay_wire_1872 <= delay_wire_1871;
-    delay_wire_1873 <= delay_wire_1872;
-    delay_wire_1874 <= delay_wire_1873;
-    delay_wire_1875 <= delay_wire_1874;
-    delay_wire_1876 <= delay_wire_1875;
-    delay_wire_1877 <= delay_wire_1876;
-    delay_wire_1878 <= delay_wire_1877;
-    delay_wire_1879 <= delay_wire_1878;
-    delay_wire_1880 <= delay_wire_1879;
-    delay_wire_1881 <= delay_wire_1880;
-    delay_wire_1882 <= delay_wire_1881;
-    delay_wire_1883 <= delay_wire_1882;
-    delay_wire_1884 <= delay_wire_1883;
-    delay_wire_1885 <= delay_wire_1884;
-    delay_wire_1886 <= delay_wire_1885;
-    delay_wire_1887 <= delay_wire_1886;
-    delay_wire_1888 <= delay_wire_1887;
-    delay_wire_1889 <= delay_wire_1888;
-    delay_wire_1890 <= delay_wire_1889;
-    delay_wire_1891 <= delay_wire_1890;
-    delay_wire_1892 <= delay_wire_1891;
-    delay_wire_1893 <= delay_wire_1892;
-    delay_wire_1894 <= delay_wire_1893;
-    delay_wire_1895 <= delay_wire_1894;
-    delay_wire_1896 <= delay_wire_1895;
-    delay_wire_1897 <= delay_wire_1896;
-    delay_wire_1898 <= delay_wire_1897;
-    delay_wire_1899 <= delay_wire_1898;
-    delay_wire_1900 <= delay_wire_1899;
-    delay_wire_1901 <= delay_wire_1900;
-    delay_wire_1902 <= delay_wire_1901;
-    delay_wire_1903 <= delay_wire_1902;
-    delay_wire_1904 <= delay_wire_1903;
-    delay_wire_1905 <= delay_wire_1904;
-    delay_wire_1906 <= delay_wire_1905;
-    delay_wire_1907 <= delay_wire_1906;
-    delay_wire_1908 <= delay_wire_1907;
-    delay_wire_1909 <= delay_wire_1908;
-    delay_wire_1910 <= delay_wire_1909;
-    delay_wire_1911 <= delay_wire_1910;
-    delay_wire_1912 <= delay_wire_1911;
-    delay_wire_1913 <= delay_wire_1912;
-    delay_wire_1914 <= delay_wire_1913;
-    delay_wire_1915 <= delay_wire_1914;
-    delay_wire_1916 <= delay_wire_1915;
-    delay_wire_1917 <= delay_wire_1916;
-    delay_wire_1918 <= delay_wire_1917;
-    delay_wire_1919 <= delay_wire_1918;
-    delay_wire_1920 <= delay_wire_1919;
-    delay_wire_1921 <= delay_wire_1920;
-    delay_wire_1922 <= delay_wire_1921;
-    delay_wire_1923 <= delay_wire_1922;
-    delay_wire_1924 <= delay_wire_1923;
-    delay_wire_1925 <= delay_wire_1924;
-    delay_wire_1926 <= delay_wire_1925;
-    delay_wire_1927 <= delay_wire_1926;
-    delay_wire_1928 <= delay_wire_1927;
-    delay_wire_1929 <= delay_wire_1928;
-    delay_wire_1930 <= delay_wire_1929;
-    delay_wire_1931 <= delay_wire_1930;
-    delay_wire_1932 <= delay_wire_1931;
-    delay_wire_1933 <= delay_wire_1932;
-    delay_wire_1934 <= delay_wire_1933;
-    delay_wire_1935 <= delay_wire_1934;
-    delay_wire_1936 <= delay_wire_1935;
-    delay_wire_1937 <= delay_wire_1936;
-    delay_wire_1938 <= delay_wire_1937;
-    delay_wire_1939 <= delay_wire_1938;
-    delay_wire_1940 <= delay_wire_1939;
-    delay_wire_1941 <= delay_wire_1940;
-    delay_wire_1942 <= delay_wire_1941;
-    delay_wire_1943 <= delay_wire_1942;
   end
-  assign out = delay_wire_1943;
-endmodule
-
-module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_26_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_1944;
-  logic [15:0] delay_wire_1945;
-  logic [15:0] delay_wire_1946;
-  logic [15:0] delay_wire_1947;
-  logic [15:0] delay_wire_1948;
-  logic [15:0] delay_wire_1949;
-  logic [15:0] delay_wire_1950;
-  logic [15:0] delay_wire_1951;
-  logic [15:0] delay_wire_1952;
-  logic [15:0] delay_wire_1953;
-  logic [15:0] delay_wire_1954;
-  logic [15:0] delay_wire_1955;
-  logic [15:0] delay_wire_1956;
-  logic [15:0] delay_wire_1957;
-  logic [15:0] delay_wire_1958;
-  logic [15:0] delay_wire_1959;
-  logic [15:0] delay_wire_1960;
-  logic [15:0] delay_wire_1961;
-  logic [15:0] delay_wire_1962;
-  logic [15:0] delay_wire_1963;
-  logic [15:0] delay_wire_1964;
-  logic [15:0] delay_wire_1965;
-  logic [15:0] delay_wire_1966;
-  logic [15:0] delay_wire_1967;
-  logic [15:0] delay_wire_1968;
-  logic [15:0] delay_wire_1969;
-  logic [15:0] delay_wire_1970;
-  logic [15:0] delay_wire_1971;
-  logic [15:0] delay_wire_1972;
-  logic [15:0] delay_wire_1973;
-  logic [15:0] delay_wire_1974;
-  logic [15:0] delay_wire_1975;
-  logic [15:0] delay_wire_1976;
-  logic [15:0] delay_wire_1977;
-  logic [15:0] delay_wire_1978;
-  logic [15:0] delay_wire_1979;
-  logic [15:0] delay_wire_1980;
-  logic [15:0] delay_wire_1981;
-  logic [15:0] delay_wire_1982;
-  logic [15:0] delay_wire_1983;
-  logic [15:0] delay_wire_1984;
-  logic [15:0] delay_wire_1985;
-  logic [15:0] delay_wire_1986;
-  logic [15:0] delay_wire_1987;
-  logic [15:0] delay_wire_1988;
-  logic [15:0] delay_wire_1989;
-  logic [15:0] delay_wire_1990;
-  logic [15:0] delay_wire_1991;
-  logic [15:0] delay_wire_1992;
-  logic [15:0] delay_wire_1993;
-  logic [15:0] delay_wire_1994;
-  logic [15:0] delay_wire_1995;
-  logic [15:0] delay_wire_1996;
-  logic [15:0] delay_wire_1997;
-  logic [15:0] delay_wire_1998;
-  logic [15:0] delay_wire_1999;
-  logic [15:0] delay_wire_2000;
-  logic [15:0] delay_wire_2001;
-  logic [15:0] delay_wire_2002;
-  logic [15:0] delay_wire_2003;
-  logic [15:0] delay_wire_2004;
-  logic [15:0] delay_wire_2005;
-  logic [15:0] delay_wire_2006;
-  logic [15:0] delay_wire_2007;
-  logic [15:0] delay_wire_2008;
-  logic [15:0] delay_wire_2009;
-  logic [15:0] delay_wire_2010;
-  logic [15:0] delay_wire_2011;
-  logic [15:0] delay_wire_2012;
-  logic [15:0] delay_wire_2013;
-  logic [15:0] delay_wire_2014;
-  logic [15:0] delay_wire_2015;
-  always @(posedge clk) begin
-    delay_wire_1944 <= in;
-    delay_wire_1945 <= delay_wire_1944;
-    delay_wire_1946 <= delay_wire_1945;
-    delay_wire_1947 <= delay_wire_1946;
-    delay_wire_1948 <= delay_wire_1947;
-    delay_wire_1949 <= delay_wire_1948;
-    delay_wire_1950 <= delay_wire_1949;
-    delay_wire_1951 <= delay_wire_1950;
-    delay_wire_1952 <= delay_wire_1951;
-    delay_wire_1953 <= delay_wire_1952;
-    delay_wire_1954 <= delay_wire_1953;
-    delay_wire_1955 <= delay_wire_1954;
-    delay_wire_1956 <= delay_wire_1955;
-    delay_wire_1957 <= delay_wire_1956;
-    delay_wire_1958 <= delay_wire_1957;
-    delay_wire_1959 <= delay_wire_1958;
-    delay_wire_1960 <= delay_wire_1959;
-    delay_wire_1961 <= delay_wire_1960;
-    delay_wire_1962 <= delay_wire_1961;
-    delay_wire_1963 <= delay_wire_1962;
-    delay_wire_1964 <= delay_wire_1963;
-    delay_wire_1965 <= delay_wire_1964;
-    delay_wire_1966 <= delay_wire_1965;
-    delay_wire_1967 <= delay_wire_1966;
-    delay_wire_1968 <= delay_wire_1967;
-    delay_wire_1969 <= delay_wire_1968;
-    delay_wire_1970 <= delay_wire_1969;
-    delay_wire_1971 <= delay_wire_1970;
-    delay_wire_1972 <= delay_wire_1971;
-    delay_wire_1973 <= delay_wire_1972;
-    delay_wire_1974 <= delay_wire_1973;
-    delay_wire_1975 <= delay_wire_1974;
-    delay_wire_1976 <= delay_wire_1975;
-    delay_wire_1977 <= delay_wire_1976;
-    delay_wire_1978 <= delay_wire_1977;
-    delay_wire_1979 <= delay_wire_1978;
-    delay_wire_1980 <= delay_wire_1979;
-    delay_wire_1981 <= delay_wire_1980;
-    delay_wire_1982 <= delay_wire_1981;
-    delay_wire_1983 <= delay_wire_1982;
-    delay_wire_1984 <= delay_wire_1983;
-    delay_wire_1985 <= delay_wire_1984;
-    delay_wire_1986 <= delay_wire_1985;
-    delay_wire_1987 <= delay_wire_1986;
-    delay_wire_1988 <= delay_wire_1987;
-    delay_wire_1989 <= delay_wire_1988;
-    delay_wire_1990 <= delay_wire_1989;
-    delay_wire_1991 <= delay_wire_1990;
-    delay_wire_1992 <= delay_wire_1991;
-    delay_wire_1993 <= delay_wire_1992;
-    delay_wire_1994 <= delay_wire_1993;
-    delay_wire_1995 <= delay_wire_1994;
-    delay_wire_1996 <= delay_wire_1995;
-    delay_wire_1997 <= delay_wire_1996;
-    delay_wire_1998 <= delay_wire_1997;
-    delay_wire_1999 <= delay_wire_1998;
-    delay_wire_2000 <= delay_wire_1999;
-    delay_wire_2001 <= delay_wire_2000;
-    delay_wire_2002 <= delay_wire_2001;
-    delay_wire_2003 <= delay_wire_2002;
-    delay_wire_2004 <= delay_wire_2003;
-    delay_wire_2005 <= delay_wire_2004;
-    delay_wire_2006 <= delay_wire_2005;
-    delay_wire_2007 <= delay_wire_2006;
-    delay_wire_2008 <= delay_wire_2007;
-    delay_wire_2009 <= delay_wire_2008;
-    delay_wire_2010 <= delay_wire_2009;
-    delay_wire_2011 <= delay_wire_2010;
-    delay_wire_2012 <= delay_wire_2011;
-    delay_wire_2013 <= delay_wire_2012;
-    delay_wire_2014 <= delay_wire_2013;
-    delay_wire_2015 <= delay_wire_2014;
-  end
-  assign out = delay_wire_2015;
-endmodule
-
-module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_27_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2016;
-  logic [15:0] delay_wire_2017;
-  logic [15:0] delay_wire_2018;
-  logic [15:0] delay_wire_2019;
-  logic [15:0] delay_wire_2020;
-  logic [15:0] delay_wire_2021;
-  logic [15:0] delay_wire_2022;
-  logic [15:0] delay_wire_2023;
-  logic [15:0] delay_wire_2024;
-  logic [15:0] delay_wire_2025;
-  logic [15:0] delay_wire_2026;
-  logic [15:0] delay_wire_2027;
-  logic [15:0] delay_wire_2028;
-  logic [15:0] delay_wire_2029;
-  logic [15:0] delay_wire_2030;
-  logic [15:0] delay_wire_2031;
-  logic [15:0] delay_wire_2032;
-  logic [15:0] delay_wire_2033;
-  logic [15:0] delay_wire_2034;
-  logic [15:0] delay_wire_2035;
-  logic [15:0] delay_wire_2036;
-  logic [15:0] delay_wire_2037;
-  logic [15:0] delay_wire_2038;
-  logic [15:0] delay_wire_2039;
-  logic [15:0] delay_wire_2040;
-  logic [15:0] delay_wire_2041;
-  logic [15:0] delay_wire_2042;
-  logic [15:0] delay_wire_2043;
-  logic [15:0] delay_wire_2044;
-  logic [15:0] delay_wire_2045;
-  logic [15:0] delay_wire_2046;
-  logic [15:0] delay_wire_2047;
-  logic [15:0] delay_wire_2048;
-  logic [15:0] delay_wire_2049;
-  logic [15:0] delay_wire_2050;
-  logic [15:0] delay_wire_2051;
-  logic [15:0] delay_wire_2052;
-  logic [15:0] delay_wire_2053;
-  logic [15:0] delay_wire_2054;
-  logic [15:0] delay_wire_2055;
-  logic [15:0] delay_wire_2056;
-  logic [15:0] delay_wire_2057;
-  logic [15:0] delay_wire_2058;
-  logic [15:0] delay_wire_2059;
-  logic [15:0] delay_wire_2060;
-  logic [15:0] delay_wire_2061;
-  logic [15:0] delay_wire_2062;
-  logic [15:0] delay_wire_2063;
-  logic [15:0] delay_wire_2064;
-  logic [15:0] delay_wire_2065;
-  logic [15:0] delay_wire_2066;
-  logic [15:0] delay_wire_2067;
-  logic [15:0] delay_wire_2068;
-  logic [15:0] delay_wire_2069;
-  logic [15:0] delay_wire_2070;
-  logic [15:0] delay_wire_2071;
-  logic [15:0] delay_wire_2072;
-  logic [15:0] delay_wire_2073;
-  logic [15:0] delay_wire_2074;
-  logic [15:0] delay_wire_2075;
-  logic [15:0] delay_wire_2076;
-  logic [15:0] delay_wire_2077;
-  logic [15:0] delay_wire_2078;
-  logic [15:0] delay_wire_2079;
-  logic [15:0] delay_wire_2080;
-  logic [15:0] delay_wire_2081;
-  logic [15:0] delay_wire_2082;
-  logic [15:0] delay_wire_2083;
-  logic [15:0] delay_wire_2084;
-  logic [15:0] delay_wire_2085;
-  logic [15:0] delay_wire_2086;
-  always @(posedge clk) begin
-    delay_wire_2016 <= in;
-    delay_wire_2017 <= delay_wire_2016;
-    delay_wire_2018 <= delay_wire_2017;
-    delay_wire_2019 <= delay_wire_2018;
-    delay_wire_2020 <= delay_wire_2019;
-    delay_wire_2021 <= delay_wire_2020;
-    delay_wire_2022 <= delay_wire_2021;
-    delay_wire_2023 <= delay_wire_2022;
-    delay_wire_2024 <= delay_wire_2023;
-    delay_wire_2025 <= delay_wire_2024;
-    delay_wire_2026 <= delay_wire_2025;
-    delay_wire_2027 <= delay_wire_2026;
-    delay_wire_2028 <= delay_wire_2027;
-    delay_wire_2029 <= delay_wire_2028;
-    delay_wire_2030 <= delay_wire_2029;
-    delay_wire_2031 <= delay_wire_2030;
-    delay_wire_2032 <= delay_wire_2031;
-    delay_wire_2033 <= delay_wire_2032;
-    delay_wire_2034 <= delay_wire_2033;
-    delay_wire_2035 <= delay_wire_2034;
-    delay_wire_2036 <= delay_wire_2035;
-    delay_wire_2037 <= delay_wire_2036;
-    delay_wire_2038 <= delay_wire_2037;
-    delay_wire_2039 <= delay_wire_2038;
-    delay_wire_2040 <= delay_wire_2039;
-    delay_wire_2041 <= delay_wire_2040;
-    delay_wire_2042 <= delay_wire_2041;
-    delay_wire_2043 <= delay_wire_2042;
-    delay_wire_2044 <= delay_wire_2043;
-    delay_wire_2045 <= delay_wire_2044;
-    delay_wire_2046 <= delay_wire_2045;
-    delay_wire_2047 <= delay_wire_2046;
-    delay_wire_2048 <= delay_wire_2047;
-    delay_wire_2049 <= delay_wire_2048;
-    delay_wire_2050 <= delay_wire_2049;
-    delay_wire_2051 <= delay_wire_2050;
-    delay_wire_2052 <= delay_wire_2051;
-    delay_wire_2053 <= delay_wire_2052;
-    delay_wire_2054 <= delay_wire_2053;
-    delay_wire_2055 <= delay_wire_2054;
-    delay_wire_2056 <= delay_wire_2055;
-    delay_wire_2057 <= delay_wire_2056;
-    delay_wire_2058 <= delay_wire_2057;
-    delay_wire_2059 <= delay_wire_2058;
-    delay_wire_2060 <= delay_wire_2059;
-    delay_wire_2061 <= delay_wire_2060;
-    delay_wire_2062 <= delay_wire_2061;
-    delay_wire_2063 <= delay_wire_2062;
-    delay_wire_2064 <= delay_wire_2063;
-    delay_wire_2065 <= delay_wire_2064;
-    delay_wire_2066 <= delay_wire_2065;
-    delay_wire_2067 <= delay_wire_2066;
-    delay_wire_2068 <= delay_wire_2067;
-    delay_wire_2069 <= delay_wire_2068;
-    delay_wire_2070 <= delay_wire_2069;
-    delay_wire_2071 <= delay_wire_2070;
-    delay_wire_2072 <= delay_wire_2071;
-    delay_wire_2073 <= delay_wire_2072;
-    delay_wire_2074 <= delay_wire_2073;
-    delay_wire_2075 <= delay_wire_2074;
-    delay_wire_2076 <= delay_wire_2075;
-    delay_wire_2077 <= delay_wire_2076;
-    delay_wire_2078 <= delay_wire_2077;
-    delay_wire_2079 <= delay_wire_2078;
-    delay_wire_2080 <= delay_wire_2079;
-    delay_wire_2081 <= delay_wire_2080;
-    delay_wire_2082 <= delay_wire_2081;
-    delay_wire_2083 <= delay_wire_2082;
-    delay_wire_2084 <= delay_wire_2083;
-    delay_wire_2085 <= delay_wire_2084;
-    delay_wire_2086 <= delay_wire_2085;
-  end
-  assign out = delay_wire_2086;
-endmodule
-
-module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_28_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2087;
-  logic [15:0] delay_wire_2088;
-  logic [15:0] delay_wire_2089;
-  logic [15:0] delay_wire_2090;
-  logic [15:0] delay_wire_2091;
-  logic [15:0] delay_wire_2092;
-  logic [15:0] delay_wire_2093;
-  logic [15:0] delay_wire_2094;
-  logic [15:0] delay_wire_2095;
-  logic [15:0] delay_wire_2096;
-  logic [15:0] delay_wire_2097;
-  logic [15:0] delay_wire_2098;
-  logic [15:0] delay_wire_2099;
-  logic [15:0] delay_wire_2100;
-  logic [15:0] delay_wire_2101;
-  logic [15:0] delay_wire_2102;
-  logic [15:0] delay_wire_2103;
-  logic [15:0] delay_wire_2104;
-  logic [15:0] delay_wire_2105;
-  logic [15:0] delay_wire_2106;
-  logic [15:0] delay_wire_2107;
-  logic [15:0] delay_wire_2108;
-  logic [15:0] delay_wire_2109;
-  logic [15:0] delay_wire_2110;
-  logic [15:0] delay_wire_2111;
-  logic [15:0] delay_wire_2112;
-  logic [15:0] delay_wire_2113;
-  logic [15:0] delay_wire_2114;
-  logic [15:0] delay_wire_2115;
-  logic [15:0] delay_wire_2116;
-  logic [15:0] delay_wire_2117;
-  logic [15:0] delay_wire_2118;
-  logic [15:0] delay_wire_2119;
-  logic [15:0] delay_wire_2120;
-  logic [15:0] delay_wire_2121;
-  logic [15:0] delay_wire_2122;
-  logic [15:0] delay_wire_2123;
-  logic [15:0] delay_wire_2124;
-  logic [15:0] delay_wire_2125;
-  logic [15:0] delay_wire_2126;
-  logic [15:0] delay_wire_2127;
-  logic [15:0] delay_wire_2128;
-  logic [15:0] delay_wire_2129;
-  logic [15:0] delay_wire_2130;
-  logic [15:0] delay_wire_2131;
-  logic [15:0] delay_wire_2132;
-  logic [15:0] delay_wire_2133;
-  logic [15:0] delay_wire_2134;
-  logic [15:0] delay_wire_2135;
-  logic [15:0] delay_wire_2136;
-  logic [15:0] delay_wire_2137;
-  logic [15:0] delay_wire_2138;
-  logic [15:0] delay_wire_2139;
-  logic [15:0] delay_wire_2140;
-  logic [15:0] delay_wire_2141;
-  logic [15:0] delay_wire_2142;
-  logic [15:0] delay_wire_2143;
-  logic [15:0] delay_wire_2144;
-  logic [15:0] delay_wire_2145;
-  logic [15:0] delay_wire_2146;
-  logic [15:0] delay_wire_2147;
-  logic [15:0] delay_wire_2148;
-  logic [15:0] delay_wire_2149;
-  logic [15:0] delay_wire_2150;
-  logic [15:0] delay_wire_2151;
-  logic [15:0] delay_wire_2152;
-  logic [15:0] delay_wire_2153;
-  logic [15:0] delay_wire_2154;
-  logic [15:0] delay_wire_2155;
-  logic [15:0] delay_wire_2156;
-  always @(posedge clk) begin
-    delay_wire_2087 <= in;
-    delay_wire_2088 <= delay_wire_2087;
-    delay_wire_2089 <= delay_wire_2088;
-    delay_wire_2090 <= delay_wire_2089;
-    delay_wire_2091 <= delay_wire_2090;
-    delay_wire_2092 <= delay_wire_2091;
-    delay_wire_2093 <= delay_wire_2092;
-    delay_wire_2094 <= delay_wire_2093;
-    delay_wire_2095 <= delay_wire_2094;
-    delay_wire_2096 <= delay_wire_2095;
-    delay_wire_2097 <= delay_wire_2096;
-    delay_wire_2098 <= delay_wire_2097;
-    delay_wire_2099 <= delay_wire_2098;
-    delay_wire_2100 <= delay_wire_2099;
-    delay_wire_2101 <= delay_wire_2100;
-    delay_wire_2102 <= delay_wire_2101;
-    delay_wire_2103 <= delay_wire_2102;
-    delay_wire_2104 <= delay_wire_2103;
-    delay_wire_2105 <= delay_wire_2104;
-    delay_wire_2106 <= delay_wire_2105;
-    delay_wire_2107 <= delay_wire_2106;
-    delay_wire_2108 <= delay_wire_2107;
-    delay_wire_2109 <= delay_wire_2108;
-    delay_wire_2110 <= delay_wire_2109;
-    delay_wire_2111 <= delay_wire_2110;
-    delay_wire_2112 <= delay_wire_2111;
-    delay_wire_2113 <= delay_wire_2112;
-    delay_wire_2114 <= delay_wire_2113;
-    delay_wire_2115 <= delay_wire_2114;
-    delay_wire_2116 <= delay_wire_2115;
-    delay_wire_2117 <= delay_wire_2116;
-    delay_wire_2118 <= delay_wire_2117;
-    delay_wire_2119 <= delay_wire_2118;
-    delay_wire_2120 <= delay_wire_2119;
-    delay_wire_2121 <= delay_wire_2120;
-    delay_wire_2122 <= delay_wire_2121;
-    delay_wire_2123 <= delay_wire_2122;
-    delay_wire_2124 <= delay_wire_2123;
-    delay_wire_2125 <= delay_wire_2124;
-    delay_wire_2126 <= delay_wire_2125;
-    delay_wire_2127 <= delay_wire_2126;
-    delay_wire_2128 <= delay_wire_2127;
-    delay_wire_2129 <= delay_wire_2128;
-    delay_wire_2130 <= delay_wire_2129;
-    delay_wire_2131 <= delay_wire_2130;
-    delay_wire_2132 <= delay_wire_2131;
-    delay_wire_2133 <= delay_wire_2132;
-    delay_wire_2134 <= delay_wire_2133;
-    delay_wire_2135 <= delay_wire_2134;
-    delay_wire_2136 <= delay_wire_2135;
-    delay_wire_2137 <= delay_wire_2136;
-    delay_wire_2138 <= delay_wire_2137;
-    delay_wire_2139 <= delay_wire_2138;
-    delay_wire_2140 <= delay_wire_2139;
-    delay_wire_2141 <= delay_wire_2140;
-    delay_wire_2142 <= delay_wire_2141;
-    delay_wire_2143 <= delay_wire_2142;
-    delay_wire_2144 <= delay_wire_2143;
-    delay_wire_2145 <= delay_wire_2144;
-    delay_wire_2146 <= delay_wire_2145;
-    delay_wire_2147 <= delay_wire_2146;
-    delay_wire_2148 <= delay_wire_2147;
-    delay_wire_2149 <= delay_wire_2148;
-    delay_wire_2150 <= delay_wire_2149;
-    delay_wire_2151 <= delay_wire_2150;
-    delay_wire_2152 <= delay_wire_2151;
-    delay_wire_2153 <= delay_wire_2152;
-    delay_wire_2154 <= delay_wire_2153;
-    delay_wire_2155 <= delay_wire_2154;
-    delay_wire_2156 <= delay_wire_2155;
-  end
-  assign out = delay_wire_2156;
+  assign out = delay_wire_1828;
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_29_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2157;
-  logic [15:0] delay_wire_2158;
-  logic [15:0] delay_wire_2159;
-  logic [15:0] delay_wire_2160;
-  logic [15:0] delay_wire_2161;
-  logic [15:0] delay_wire_2162;
-  logic [15:0] delay_wire_2163;
-  logic [15:0] delay_wire_2164;
+  logic [15:0] delay_wire_1829;
+  logic [15:0] delay_wire_1830;
+  logic [15:0] delay_wire_1831;
+  logic [15:0] delay_wire_1832;
   always @(posedge clk) begin
-    delay_wire_2157 <= in;
-    delay_wire_2158 <= delay_wire_2157;
-    delay_wire_2159 <= delay_wire_2158;
-    delay_wire_2160 <= delay_wire_2159;
-    delay_wire_2161 <= delay_wire_2160;
-    delay_wire_2162 <= delay_wire_2161;
-    delay_wire_2163 <= delay_wire_2162;
-    delay_wire_2164 <= delay_wire_2163;
+    delay_wire_1829 <= in;
+    delay_wire_1830 <= delay_wire_1829;
+    delay_wire_1831 <= delay_wire_1830;
+    delay_wire_1832 <= delay_wire_1831;
   end
-  assign out = delay_wire_2164;
+  assign out = delay_wire_1832;
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_30_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2165;
-  logic [15:0] delay_wire_2166;
-  logic [15:0] delay_wire_2167;
-  logic [15:0] delay_wire_2168;
-  logic [15:0] delay_wire_2169;
-  logic [15:0] delay_wire_2170;
+  logic [15:0] delay_wire_1833;
+  logic [15:0] delay_wire_1834;
   always @(posedge clk) begin
-    delay_wire_2165 <= in;
-    delay_wire_2166 <= delay_wire_2165;
-    delay_wire_2167 <= delay_wire_2166;
-    delay_wire_2168 <= delay_wire_2167;
-    delay_wire_2169 <= delay_wire_2168;
-    delay_wire_2170 <= delay_wire_2169;
+    delay_wire_1833 <= in;
+    delay_wire_1834 <= delay_wire_1833;
   end
-  assign out = delay_wire_2170;
+  assign out = delay_wire_1834;
 endmodule
 
 module lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_to_lxy_stencil_op_hcompute_lxy_stencil_4_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2171;
-  logic [15:0] delay_wire_2172;
-  logic [15:0] delay_wire_2173;
-  logic [15:0] delay_wire_2174;
-  logic [15:0] delay_wire_2175;
-  logic [15:0] delay_wire_2176;
-  logic [15:0] delay_wire_2177;
+  logic [15:0] delay_wire_1835;
+  logic [15:0] delay_wire_1836;
+  logic [15:0] delay_wire_1837;
   always @(posedge clk) begin
-    delay_wire_2171 <= in;
-    delay_wire_2172 <= delay_wire_2171;
-    delay_wire_2173 <= delay_wire_2172;
-    delay_wire_2174 <= delay_wire_2173;
-    delay_wire_2175 <= delay_wire_2174;
-    delay_wire_2176 <= delay_wire_2175;
-    delay_wire_2177 <= delay_wire_2176;
+    delay_wire_1835 <= in;
+    delay_wire_1836 <= delay_wire_1835;
+    delay_wire_1837 <= delay_wire_1836;
   end
-  assign out = delay_wire_2177;
+  assign out = delay_wire_1837;
 endmodule
 
-// { op_hcompute_lxy_stencil[root, lxy_s0_y, lxy_s0_x] -> [(189 + 64lxy_s0_y + lxy_s0_x)] }
+// { op_hcompute_lxy_stencil[root, lxy_s0_y, lxy_s0_x] -> [(137 + 64lxy_s0_y + lxy_s0_x)] }
 module lxy_stencil_op_hcompute_lxy_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lxy_stencil_write_ctrl_vars[2:0], output op_hcompute_lxy_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -6653,7 +5973,7 @@ module lxy_stencil_op_hcompute_lxy_stencil_write_fsm(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==188) begin
+      if(counter[0] ==136) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lxy_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -6684,7 +6004,7 @@ module lxy_stencil_op_hcompute_lxy_stencil_write_fsm(input clk, input flush, inp
     end
   end
 endmodule
-// { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(323 + 64lgxy_s1_y + lgxy_s1_x)] }
+// { op_hcompute_lgxy_stencil_1[root, lgxy_s1_y, lgxy_s1_x] -> [(269 + 64lgxy_s1_y + lgxy_s1_x)] }
 module lxy_stencil_op_hcompute_lgxy_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgxy_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgxy_stencil_1_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -6703,7 +6023,7 @@ module lxy_stencil_op_hcompute_lgxy_stencil_1_read_fsm(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==322) begin
+      if(counter[0] ==268) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgxy_stencil_1_read_ctrl_vars[0]<= 16'b0;
@@ -6826,30 +6146,22 @@ lxy_stencil_bank_selector lxy_stencil_lxy_stencil_op_hcompute_lgxy_stencil_1_31_
 
   logic [15:0] addr0;
   assign addr0 = (((((-2 + 1*op_hcompute_lxy_stencil_write_ctrl_vars_fsm_out[1])) - -2)>>0)*1+((((-2 + 1*op_hcompute_lxy_stencil_write_ctrl_vars_fsm_out[2])) - -2)>>0)*62);
-  logic [15:0] delay_wire_2178;
   always @(posedge clk) begin
-    delay_wire_2178 <= addr0;
-  end
-  logic [15:0] delay_wire_2179;
-  always @(posedge clk) begin
-    delay_wire_2179 <= lxy_stencil_lxy_stencil_op_hcompute_lxy_stencil_4_bank_selector.out;
-  end
-  logic [15:0] delay_wire_2180;
-  always @(posedge clk) begin
-    delay_wire_2180 <= op_hcompute_lxy_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_2181;
-  always @(posedge clk) begin
-    delay_wire_2181 <= op_hcompute_lxy_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_2180) begin
-      case( delay_wire_2179)
-        0:bank_0[delay_wire_2178] <= delay_wire_2181;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_lxy_stencil_write_wen_fsm_out) begin
+      case( lxy_stencil_lxy_stencil_op_hcompute_lxy_stencil_4_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_lxy_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -6865,6 +6177,625 @@ module lyy_stencil_bank_selector(input logic [16*2 - 1 :0] d, output logic [15:0
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_1838;
+  logic [15:0] delay_wire_1839;
+  logic [15:0] delay_wire_1840;
+  logic [15:0] delay_wire_1841;
+  logic [15:0] delay_wire_1842;
+  logic [15:0] delay_wire_1843;
+  logic [15:0] delay_wire_1844;
+  logic [15:0] delay_wire_1845;
+  logic [15:0] delay_wire_1846;
+  logic [15:0] delay_wire_1847;
+  logic [15:0] delay_wire_1848;
+  logic [15:0] delay_wire_1849;
+  logic [15:0] delay_wire_1850;
+  logic [15:0] delay_wire_1851;
+  logic [15:0] delay_wire_1852;
+  logic [15:0] delay_wire_1853;
+  logic [15:0] delay_wire_1854;
+  logic [15:0] delay_wire_1855;
+  logic [15:0] delay_wire_1856;
+  logic [15:0] delay_wire_1857;
+  logic [15:0] delay_wire_1858;
+  logic [15:0] delay_wire_1859;
+  logic [15:0] delay_wire_1860;
+  logic [15:0] delay_wire_1861;
+  logic [15:0] delay_wire_1862;
+  logic [15:0] delay_wire_1863;
+  logic [15:0] delay_wire_1864;
+  logic [15:0] delay_wire_1865;
+  logic [15:0] delay_wire_1866;
+  logic [15:0] delay_wire_1867;
+  logic [15:0] delay_wire_1868;
+  logic [15:0] delay_wire_1869;
+  logic [15:0] delay_wire_1870;
+  logic [15:0] delay_wire_1871;
+  logic [15:0] delay_wire_1872;
+  logic [15:0] delay_wire_1873;
+  logic [15:0] delay_wire_1874;
+  logic [15:0] delay_wire_1875;
+  logic [15:0] delay_wire_1876;
+  logic [15:0] delay_wire_1877;
+  logic [15:0] delay_wire_1878;
+  logic [15:0] delay_wire_1879;
+  logic [15:0] delay_wire_1880;
+  logic [15:0] delay_wire_1881;
+  logic [15:0] delay_wire_1882;
+  logic [15:0] delay_wire_1883;
+  logic [15:0] delay_wire_1884;
+  logic [15:0] delay_wire_1885;
+  logic [15:0] delay_wire_1886;
+  logic [15:0] delay_wire_1887;
+  logic [15:0] delay_wire_1888;
+  logic [15:0] delay_wire_1889;
+  logic [15:0] delay_wire_1890;
+  logic [15:0] delay_wire_1891;
+  logic [15:0] delay_wire_1892;
+  logic [15:0] delay_wire_1893;
+  logic [15:0] delay_wire_1894;
+  logic [15:0] delay_wire_1895;
+  logic [15:0] delay_wire_1896;
+  logic [15:0] delay_wire_1897;
+  logic [15:0] delay_wire_1898;
+  logic [15:0] delay_wire_1899;
+  logic [15:0] delay_wire_1900;
+  logic [15:0] delay_wire_1901;
+  logic [15:0] delay_wire_1902;
+  logic [15:0] delay_wire_1903;
+  logic [15:0] delay_wire_1904;
+  logic [15:0] delay_wire_1905;
+  logic [15:0] delay_wire_1906;
+  logic [15:0] delay_wire_1907;
+  logic [15:0] delay_wire_1908;
+  logic [15:0] delay_wire_1909;
+  logic [15:0] delay_wire_1910;
+  logic [15:0] delay_wire_1911;
+  logic [15:0] delay_wire_1912;
+  logic [15:0] delay_wire_1913;
+  logic [15:0] delay_wire_1914;
+  logic [15:0] delay_wire_1915;
+  logic [15:0] delay_wire_1916;
+  logic [15:0] delay_wire_1917;
+  logic [15:0] delay_wire_1918;
+  logic [15:0] delay_wire_1919;
+  logic [15:0] delay_wire_1920;
+  logic [15:0] delay_wire_1921;
+  logic [15:0] delay_wire_1922;
+  logic [15:0] delay_wire_1923;
+  logic [15:0] delay_wire_1924;
+  logic [15:0] delay_wire_1925;
+  logic [15:0] delay_wire_1926;
+  logic [15:0] delay_wire_1927;
+  logic [15:0] delay_wire_1928;
+  logic [15:0] delay_wire_1929;
+  logic [15:0] delay_wire_1930;
+  logic [15:0] delay_wire_1931;
+  logic [15:0] delay_wire_1932;
+  logic [15:0] delay_wire_1933;
+  logic [15:0] delay_wire_1934;
+  logic [15:0] delay_wire_1935;
+  logic [15:0] delay_wire_1936;
+  logic [15:0] delay_wire_1937;
+  logic [15:0] delay_wire_1938;
+  logic [15:0] delay_wire_1939;
+  logic [15:0] delay_wire_1940;
+  logic [15:0] delay_wire_1941;
+  logic [15:0] delay_wire_1942;
+  logic [15:0] delay_wire_1943;
+  logic [15:0] delay_wire_1944;
+  logic [15:0] delay_wire_1945;
+  logic [15:0] delay_wire_1946;
+  logic [15:0] delay_wire_1947;
+  logic [15:0] delay_wire_1948;
+  logic [15:0] delay_wire_1949;
+  logic [15:0] delay_wire_1950;
+  logic [15:0] delay_wire_1951;
+  logic [15:0] delay_wire_1952;
+  logic [15:0] delay_wire_1953;
+  logic [15:0] delay_wire_1954;
+  logic [15:0] delay_wire_1955;
+  logic [15:0] delay_wire_1956;
+  logic [15:0] delay_wire_1957;
+  logic [15:0] delay_wire_1958;
+  logic [15:0] delay_wire_1959;
+  logic [15:0] delay_wire_1960;
+  logic [15:0] delay_wire_1961;
+  logic [15:0] delay_wire_1962;
+  logic [15:0] delay_wire_1963;
+  logic [15:0] delay_wire_1964;
+  logic [15:0] delay_wire_1965;
+  logic [15:0] delay_wire_1966;
+  logic [15:0] delay_wire_1967;
+  logic [15:0] delay_wire_1968;
+  logic [15:0] delay_wire_1969;
+  always @(posedge clk) begin
+    delay_wire_1838 <= in;
+    delay_wire_1839 <= delay_wire_1838;
+    delay_wire_1840 <= delay_wire_1839;
+    delay_wire_1841 <= delay_wire_1840;
+    delay_wire_1842 <= delay_wire_1841;
+    delay_wire_1843 <= delay_wire_1842;
+    delay_wire_1844 <= delay_wire_1843;
+    delay_wire_1845 <= delay_wire_1844;
+    delay_wire_1846 <= delay_wire_1845;
+    delay_wire_1847 <= delay_wire_1846;
+    delay_wire_1848 <= delay_wire_1847;
+    delay_wire_1849 <= delay_wire_1848;
+    delay_wire_1850 <= delay_wire_1849;
+    delay_wire_1851 <= delay_wire_1850;
+    delay_wire_1852 <= delay_wire_1851;
+    delay_wire_1853 <= delay_wire_1852;
+    delay_wire_1854 <= delay_wire_1853;
+    delay_wire_1855 <= delay_wire_1854;
+    delay_wire_1856 <= delay_wire_1855;
+    delay_wire_1857 <= delay_wire_1856;
+    delay_wire_1858 <= delay_wire_1857;
+    delay_wire_1859 <= delay_wire_1858;
+    delay_wire_1860 <= delay_wire_1859;
+    delay_wire_1861 <= delay_wire_1860;
+    delay_wire_1862 <= delay_wire_1861;
+    delay_wire_1863 <= delay_wire_1862;
+    delay_wire_1864 <= delay_wire_1863;
+    delay_wire_1865 <= delay_wire_1864;
+    delay_wire_1866 <= delay_wire_1865;
+    delay_wire_1867 <= delay_wire_1866;
+    delay_wire_1868 <= delay_wire_1867;
+    delay_wire_1869 <= delay_wire_1868;
+    delay_wire_1870 <= delay_wire_1869;
+    delay_wire_1871 <= delay_wire_1870;
+    delay_wire_1872 <= delay_wire_1871;
+    delay_wire_1873 <= delay_wire_1872;
+    delay_wire_1874 <= delay_wire_1873;
+    delay_wire_1875 <= delay_wire_1874;
+    delay_wire_1876 <= delay_wire_1875;
+    delay_wire_1877 <= delay_wire_1876;
+    delay_wire_1878 <= delay_wire_1877;
+    delay_wire_1879 <= delay_wire_1878;
+    delay_wire_1880 <= delay_wire_1879;
+    delay_wire_1881 <= delay_wire_1880;
+    delay_wire_1882 <= delay_wire_1881;
+    delay_wire_1883 <= delay_wire_1882;
+    delay_wire_1884 <= delay_wire_1883;
+    delay_wire_1885 <= delay_wire_1884;
+    delay_wire_1886 <= delay_wire_1885;
+    delay_wire_1887 <= delay_wire_1886;
+    delay_wire_1888 <= delay_wire_1887;
+    delay_wire_1889 <= delay_wire_1888;
+    delay_wire_1890 <= delay_wire_1889;
+    delay_wire_1891 <= delay_wire_1890;
+    delay_wire_1892 <= delay_wire_1891;
+    delay_wire_1893 <= delay_wire_1892;
+    delay_wire_1894 <= delay_wire_1893;
+    delay_wire_1895 <= delay_wire_1894;
+    delay_wire_1896 <= delay_wire_1895;
+    delay_wire_1897 <= delay_wire_1896;
+    delay_wire_1898 <= delay_wire_1897;
+    delay_wire_1899 <= delay_wire_1898;
+    delay_wire_1900 <= delay_wire_1899;
+    delay_wire_1901 <= delay_wire_1900;
+    delay_wire_1902 <= delay_wire_1901;
+    delay_wire_1903 <= delay_wire_1902;
+    delay_wire_1904 <= delay_wire_1903;
+    delay_wire_1905 <= delay_wire_1904;
+    delay_wire_1906 <= delay_wire_1905;
+    delay_wire_1907 <= delay_wire_1906;
+    delay_wire_1908 <= delay_wire_1907;
+    delay_wire_1909 <= delay_wire_1908;
+    delay_wire_1910 <= delay_wire_1909;
+    delay_wire_1911 <= delay_wire_1910;
+    delay_wire_1912 <= delay_wire_1911;
+    delay_wire_1913 <= delay_wire_1912;
+    delay_wire_1914 <= delay_wire_1913;
+    delay_wire_1915 <= delay_wire_1914;
+    delay_wire_1916 <= delay_wire_1915;
+    delay_wire_1917 <= delay_wire_1916;
+    delay_wire_1918 <= delay_wire_1917;
+    delay_wire_1919 <= delay_wire_1918;
+    delay_wire_1920 <= delay_wire_1919;
+    delay_wire_1921 <= delay_wire_1920;
+    delay_wire_1922 <= delay_wire_1921;
+    delay_wire_1923 <= delay_wire_1922;
+    delay_wire_1924 <= delay_wire_1923;
+    delay_wire_1925 <= delay_wire_1924;
+    delay_wire_1926 <= delay_wire_1925;
+    delay_wire_1927 <= delay_wire_1926;
+    delay_wire_1928 <= delay_wire_1927;
+    delay_wire_1929 <= delay_wire_1928;
+    delay_wire_1930 <= delay_wire_1929;
+    delay_wire_1931 <= delay_wire_1930;
+    delay_wire_1932 <= delay_wire_1931;
+    delay_wire_1933 <= delay_wire_1932;
+    delay_wire_1934 <= delay_wire_1933;
+    delay_wire_1935 <= delay_wire_1934;
+    delay_wire_1936 <= delay_wire_1935;
+    delay_wire_1937 <= delay_wire_1936;
+    delay_wire_1938 <= delay_wire_1937;
+    delay_wire_1939 <= delay_wire_1938;
+    delay_wire_1940 <= delay_wire_1939;
+    delay_wire_1941 <= delay_wire_1940;
+    delay_wire_1942 <= delay_wire_1941;
+    delay_wire_1943 <= delay_wire_1942;
+    delay_wire_1944 <= delay_wire_1943;
+    delay_wire_1945 <= delay_wire_1944;
+    delay_wire_1946 <= delay_wire_1945;
+    delay_wire_1947 <= delay_wire_1946;
+    delay_wire_1948 <= delay_wire_1947;
+    delay_wire_1949 <= delay_wire_1948;
+    delay_wire_1950 <= delay_wire_1949;
+    delay_wire_1951 <= delay_wire_1950;
+    delay_wire_1952 <= delay_wire_1951;
+    delay_wire_1953 <= delay_wire_1952;
+    delay_wire_1954 <= delay_wire_1953;
+    delay_wire_1955 <= delay_wire_1954;
+    delay_wire_1956 <= delay_wire_1955;
+    delay_wire_1957 <= delay_wire_1956;
+    delay_wire_1958 <= delay_wire_1957;
+    delay_wire_1959 <= delay_wire_1958;
+    delay_wire_1960 <= delay_wire_1959;
+    delay_wire_1961 <= delay_wire_1960;
+    delay_wire_1962 <= delay_wire_1961;
+    delay_wire_1963 <= delay_wire_1962;
+    delay_wire_1964 <= delay_wire_1963;
+    delay_wire_1965 <= delay_wire_1964;
+    delay_wire_1966 <= delay_wire_1965;
+    delay_wire_1967 <= delay_wire_1966;
+    delay_wire_1968 <= delay_wire_1967;
+    delay_wire_1969 <= delay_wire_1968;
+  end
+  assign out = delay_wire_1969;
+endmodule
+
+module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_12_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_1970;
+  logic [15:0] delay_wire_1971;
+  logic [15:0] delay_wire_1972;
+  logic [15:0] delay_wire_1973;
+  logic [15:0] delay_wire_1974;
+  logic [15:0] delay_wire_1975;
+  logic [15:0] delay_wire_1976;
+  logic [15:0] delay_wire_1977;
+  logic [15:0] delay_wire_1978;
+  logic [15:0] delay_wire_1979;
+  logic [15:0] delay_wire_1980;
+  logic [15:0] delay_wire_1981;
+  logic [15:0] delay_wire_1982;
+  logic [15:0] delay_wire_1983;
+  logic [15:0] delay_wire_1984;
+  logic [15:0] delay_wire_1985;
+  logic [15:0] delay_wire_1986;
+  logic [15:0] delay_wire_1987;
+  logic [15:0] delay_wire_1988;
+  logic [15:0] delay_wire_1989;
+  logic [15:0] delay_wire_1990;
+  logic [15:0] delay_wire_1991;
+  logic [15:0] delay_wire_1992;
+  logic [15:0] delay_wire_1993;
+  logic [15:0] delay_wire_1994;
+  logic [15:0] delay_wire_1995;
+  logic [15:0] delay_wire_1996;
+  logic [15:0] delay_wire_1997;
+  logic [15:0] delay_wire_1998;
+  logic [15:0] delay_wire_1999;
+  logic [15:0] delay_wire_2000;
+  logic [15:0] delay_wire_2001;
+  logic [15:0] delay_wire_2002;
+  logic [15:0] delay_wire_2003;
+  logic [15:0] delay_wire_2004;
+  logic [15:0] delay_wire_2005;
+  logic [15:0] delay_wire_2006;
+  logic [15:0] delay_wire_2007;
+  logic [15:0] delay_wire_2008;
+  logic [15:0] delay_wire_2009;
+  logic [15:0] delay_wire_2010;
+  logic [15:0] delay_wire_2011;
+  logic [15:0] delay_wire_2012;
+  logic [15:0] delay_wire_2013;
+  logic [15:0] delay_wire_2014;
+  logic [15:0] delay_wire_2015;
+  logic [15:0] delay_wire_2016;
+  logic [15:0] delay_wire_2017;
+  logic [15:0] delay_wire_2018;
+  logic [15:0] delay_wire_2019;
+  logic [15:0] delay_wire_2020;
+  logic [15:0] delay_wire_2021;
+  logic [15:0] delay_wire_2022;
+  logic [15:0] delay_wire_2023;
+  logic [15:0] delay_wire_2024;
+  logic [15:0] delay_wire_2025;
+  logic [15:0] delay_wire_2026;
+  logic [15:0] delay_wire_2027;
+  logic [15:0] delay_wire_2028;
+  logic [15:0] delay_wire_2029;
+  logic [15:0] delay_wire_2030;
+  logic [15:0] delay_wire_2031;
+  logic [15:0] delay_wire_2032;
+  logic [15:0] delay_wire_2033;
+  logic [15:0] delay_wire_2034;
+  logic [15:0] delay_wire_2035;
+  logic [15:0] delay_wire_2036;
+  logic [15:0] delay_wire_2037;
+  logic [15:0] delay_wire_2038;
+  logic [15:0] delay_wire_2039;
+  logic [15:0] delay_wire_2040;
+  logic [15:0] delay_wire_2041;
+  logic [15:0] delay_wire_2042;
+  logic [15:0] delay_wire_2043;
+  logic [15:0] delay_wire_2044;
+  logic [15:0] delay_wire_2045;
+  logic [15:0] delay_wire_2046;
+  logic [15:0] delay_wire_2047;
+  logic [15:0] delay_wire_2048;
+  logic [15:0] delay_wire_2049;
+  logic [15:0] delay_wire_2050;
+  logic [15:0] delay_wire_2051;
+  logic [15:0] delay_wire_2052;
+  logic [15:0] delay_wire_2053;
+  logic [15:0] delay_wire_2054;
+  logic [15:0] delay_wire_2055;
+  logic [15:0] delay_wire_2056;
+  logic [15:0] delay_wire_2057;
+  logic [15:0] delay_wire_2058;
+  logic [15:0] delay_wire_2059;
+  logic [15:0] delay_wire_2060;
+  logic [15:0] delay_wire_2061;
+  logic [15:0] delay_wire_2062;
+  logic [15:0] delay_wire_2063;
+  logic [15:0] delay_wire_2064;
+  logic [15:0] delay_wire_2065;
+  logic [15:0] delay_wire_2066;
+  logic [15:0] delay_wire_2067;
+  logic [15:0] delay_wire_2068;
+  logic [15:0] delay_wire_2069;
+  logic [15:0] delay_wire_2070;
+  logic [15:0] delay_wire_2071;
+  logic [15:0] delay_wire_2072;
+  logic [15:0] delay_wire_2073;
+  logic [15:0] delay_wire_2074;
+  logic [15:0] delay_wire_2075;
+  logic [15:0] delay_wire_2076;
+  logic [15:0] delay_wire_2077;
+  logic [15:0] delay_wire_2078;
+  logic [15:0] delay_wire_2079;
+  logic [15:0] delay_wire_2080;
+  logic [15:0] delay_wire_2081;
+  logic [15:0] delay_wire_2082;
+  logic [15:0] delay_wire_2083;
+  logic [15:0] delay_wire_2084;
+  logic [15:0] delay_wire_2085;
+  logic [15:0] delay_wire_2086;
+  logic [15:0] delay_wire_2087;
+  logic [15:0] delay_wire_2088;
+  logic [15:0] delay_wire_2089;
+  logic [15:0] delay_wire_2090;
+  logic [15:0] delay_wire_2091;
+  logic [15:0] delay_wire_2092;
+  logic [15:0] delay_wire_2093;
+  logic [15:0] delay_wire_2094;
+  logic [15:0] delay_wire_2095;
+  logic [15:0] delay_wire_2096;
+  logic [15:0] delay_wire_2097;
+  logic [15:0] delay_wire_2098;
+  logic [15:0] delay_wire_2099;
+  logic [15:0] delay_wire_2100;
+  always @(posedge clk) begin
+    delay_wire_1970 <= in;
+    delay_wire_1971 <= delay_wire_1970;
+    delay_wire_1972 <= delay_wire_1971;
+    delay_wire_1973 <= delay_wire_1972;
+    delay_wire_1974 <= delay_wire_1973;
+    delay_wire_1975 <= delay_wire_1974;
+    delay_wire_1976 <= delay_wire_1975;
+    delay_wire_1977 <= delay_wire_1976;
+    delay_wire_1978 <= delay_wire_1977;
+    delay_wire_1979 <= delay_wire_1978;
+    delay_wire_1980 <= delay_wire_1979;
+    delay_wire_1981 <= delay_wire_1980;
+    delay_wire_1982 <= delay_wire_1981;
+    delay_wire_1983 <= delay_wire_1982;
+    delay_wire_1984 <= delay_wire_1983;
+    delay_wire_1985 <= delay_wire_1984;
+    delay_wire_1986 <= delay_wire_1985;
+    delay_wire_1987 <= delay_wire_1986;
+    delay_wire_1988 <= delay_wire_1987;
+    delay_wire_1989 <= delay_wire_1988;
+    delay_wire_1990 <= delay_wire_1989;
+    delay_wire_1991 <= delay_wire_1990;
+    delay_wire_1992 <= delay_wire_1991;
+    delay_wire_1993 <= delay_wire_1992;
+    delay_wire_1994 <= delay_wire_1993;
+    delay_wire_1995 <= delay_wire_1994;
+    delay_wire_1996 <= delay_wire_1995;
+    delay_wire_1997 <= delay_wire_1996;
+    delay_wire_1998 <= delay_wire_1997;
+    delay_wire_1999 <= delay_wire_1998;
+    delay_wire_2000 <= delay_wire_1999;
+    delay_wire_2001 <= delay_wire_2000;
+    delay_wire_2002 <= delay_wire_2001;
+    delay_wire_2003 <= delay_wire_2002;
+    delay_wire_2004 <= delay_wire_2003;
+    delay_wire_2005 <= delay_wire_2004;
+    delay_wire_2006 <= delay_wire_2005;
+    delay_wire_2007 <= delay_wire_2006;
+    delay_wire_2008 <= delay_wire_2007;
+    delay_wire_2009 <= delay_wire_2008;
+    delay_wire_2010 <= delay_wire_2009;
+    delay_wire_2011 <= delay_wire_2010;
+    delay_wire_2012 <= delay_wire_2011;
+    delay_wire_2013 <= delay_wire_2012;
+    delay_wire_2014 <= delay_wire_2013;
+    delay_wire_2015 <= delay_wire_2014;
+    delay_wire_2016 <= delay_wire_2015;
+    delay_wire_2017 <= delay_wire_2016;
+    delay_wire_2018 <= delay_wire_2017;
+    delay_wire_2019 <= delay_wire_2018;
+    delay_wire_2020 <= delay_wire_2019;
+    delay_wire_2021 <= delay_wire_2020;
+    delay_wire_2022 <= delay_wire_2021;
+    delay_wire_2023 <= delay_wire_2022;
+    delay_wire_2024 <= delay_wire_2023;
+    delay_wire_2025 <= delay_wire_2024;
+    delay_wire_2026 <= delay_wire_2025;
+    delay_wire_2027 <= delay_wire_2026;
+    delay_wire_2028 <= delay_wire_2027;
+    delay_wire_2029 <= delay_wire_2028;
+    delay_wire_2030 <= delay_wire_2029;
+    delay_wire_2031 <= delay_wire_2030;
+    delay_wire_2032 <= delay_wire_2031;
+    delay_wire_2033 <= delay_wire_2032;
+    delay_wire_2034 <= delay_wire_2033;
+    delay_wire_2035 <= delay_wire_2034;
+    delay_wire_2036 <= delay_wire_2035;
+    delay_wire_2037 <= delay_wire_2036;
+    delay_wire_2038 <= delay_wire_2037;
+    delay_wire_2039 <= delay_wire_2038;
+    delay_wire_2040 <= delay_wire_2039;
+    delay_wire_2041 <= delay_wire_2040;
+    delay_wire_2042 <= delay_wire_2041;
+    delay_wire_2043 <= delay_wire_2042;
+    delay_wire_2044 <= delay_wire_2043;
+    delay_wire_2045 <= delay_wire_2044;
+    delay_wire_2046 <= delay_wire_2045;
+    delay_wire_2047 <= delay_wire_2046;
+    delay_wire_2048 <= delay_wire_2047;
+    delay_wire_2049 <= delay_wire_2048;
+    delay_wire_2050 <= delay_wire_2049;
+    delay_wire_2051 <= delay_wire_2050;
+    delay_wire_2052 <= delay_wire_2051;
+    delay_wire_2053 <= delay_wire_2052;
+    delay_wire_2054 <= delay_wire_2053;
+    delay_wire_2055 <= delay_wire_2054;
+    delay_wire_2056 <= delay_wire_2055;
+    delay_wire_2057 <= delay_wire_2056;
+    delay_wire_2058 <= delay_wire_2057;
+    delay_wire_2059 <= delay_wire_2058;
+    delay_wire_2060 <= delay_wire_2059;
+    delay_wire_2061 <= delay_wire_2060;
+    delay_wire_2062 <= delay_wire_2061;
+    delay_wire_2063 <= delay_wire_2062;
+    delay_wire_2064 <= delay_wire_2063;
+    delay_wire_2065 <= delay_wire_2064;
+    delay_wire_2066 <= delay_wire_2065;
+    delay_wire_2067 <= delay_wire_2066;
+    delay_wire_2068 <= delay_wire_2067;
+    delay_wire_2069 <= delay_wire_2068;
+    delay_wire_2070 <= delay_wire_2069;
+    delay_wire_2071 <= delay_wire_2070;
+    delay_wire_2072 <= delay_wire_2071;
+    delay_wire_2073 <= delay_wire_2072;
+    delay_wire_2074 <= delay_wire_2073;
+    delay_wire_2075 <= delay_wire_2074;
+    delay_wire_2076 <= delay_wire_2075;
+    delay_wire_2077 <= delay_wire_2076;
+    delay_wire_2078 <= delay_wire_2077;
+    delay_wire_2079 <= delay_wire_2078;
+    delay_wire_2080 <= delay_wire_2079;
+    delay_wire_2081 <= delay_wire_2080;
+    delay_wire_2082 <= delay_wire_2081;
+    delay_wire_2083 <= delay_wire_2082;
+    delay_wire_2084 <= delay_wire_2083;
+    delay_wire_2085 <= delay_wire_2084;
+    delay_wire_2086 <= delay_wire_2085;
+    delay_wire_2087 <= delay_wire_2086;
+    delay_wire_2088 <= delay_wire_2087;
+    delay_wire_2089 <= delay_wire_2088;
+    delay_wire_2090 <= delay_wire_2089;
+    delay_wire_2091 <= delay_wire_2090;
+    delay_wire_2092 <= delay_wire_2091;
+    delay_wire_2093 <= delay_wire_2092;
+    delay_wire_2094 <= delay_wire_2093;
+    delay_wire_2095 <= delay_wire_2094;
+    delay_wire_2096 <= delay_wire_2095;
+    delay_wire_2097 <= delay_wire_2096;
+    delay_wire_2098 <= delay_wire_2097;
+    delay_wire_2099 <= delay_wire_2098;
+    delay_wire_2100 <= delay_wire_2099;
+  end
+  assign out = delay_wire_2100;
+endmodule
+
+module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_13_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_2101;
+  logic [15:0] delay_wire_2102;
+  logic [15:0] delay_wire_2103;
+  logic [15:0] delay_wire_2104;
+  logic [15:0] delay_wire_2105;
+  logic [15:0] delay_wire_2106;
+  logic [15:0] delay_wire_2107;
+  logic [15:0] delay_wire_2108;
+  logic [15:0] delay_wire_2109;
+  logic [15:0] delay_wire_2110;
+  logic [15:0] delay_wire_2111;
+  logic [15:0] delay_wire_2112;
+  logic [15:0] delay_wire_2113;
+  logic [15:0] delay_wire_2114;
+  logic [15:0] delay_wire_2115;
+  logic [15:0] delay_wire_2116;
+  logic [15:0] delay_wire_2117;
+  logic [15:0] delay_wire_2118;
+  logic [15:0] delay_wire_2119;
+  logic [15:0] delay_wire_2120;
+  logic [15:0] delay_wire_2121;
+  logic [15:0] delay_wire_2122;
+  logic [15:0] delay_wire_2123;
+  logic [15:0] delay_wire_2124;
+  logic [15:0] delay_wire_2125;
+  logic [15:0] delay_wire_2126;
+  logic [15:0] delay_wire_2127;
+  logic [15:0] delay_wire_2128;
+  logic [15:0] delay_wire_2129;
+  logic [15:0] delay_wire_2130;
+  logic [15:0] delay_wire_2131;
+  logic [15:0] delay_wire_2132;
+  logic [15:0] delay_wire_2133;
+  logic [15:0] delay_wire_2134;
+  logic [15:0] delay_wire_2135;
+  logic [15:0] delay_wire_2136;
+  logic [15:0] delay_wire_2137;
+  logic [15:0] delay_wire_2138;
+  logic [15:0] delay_wire_2139;
+  logic [15:0] delay_wire_2140;
+  logic [15:0] delay_wire_2141;
+  logic [15:0] delay_wire_2142;
+  logic [15:0] delay_wire_2143;
+  logic [15:0] delay_wire_2144;
+  logic [15:0] delay_wire_2145;
+  logic [15:0] delay_wire_2146;
+  logic [15:0] delay_wire_2147;
+  logic [15:0] delay_wire_2148;
+  logic [15:0] delay_wire_2149;
+  logic [15:0] delay_wire_2150;
+  logic [15:0] delay_wire_2151;
+  logic [15:0] delay_wire_2152;
+  logic [15:0] delay_wire_2153;
+  logic [15:0] delay_wire_2154;
+  logic [15:0] delay_wire_2155;
+  logic [15:0] delay_wire_2156;
+  logic [15:0] delay_wire_2157;
+  logic [15:0] delay_wire_2158;
+  logic [15:0] delay_wire_2159;
+  logic [15:0] delay_wire_2160;
+  logic [15:0] delay_wire_2161;
+  logic [15:0] delay_wire_2162;
+  logic [15:0] delay_wire_2163;
+  logic [15:0] delay_wire_2164;
+  logic [15:0] delay_wire_2165;
+  logic [15:0] delay_wire_2166;
+  logic [15:0] delay_wire_2167;
+  logic [15:0] delay_wire_2168;
+  logic [15:0] delay_wire_2169;
+  logic [15:0] delay_wire_2170;
+  logic [15:0] delay_wire_2171;
+  logic [15:0] delay_wire_2172;
+  logic [15:0] delay_wire_2173;
+  logic [15:0] delay_wire_2174;
+  logic [15:0] delay_wire_2175;
+  logic [15:0] delay_wire_2176;
+  logic [15:0] delay_wire_2177;
+  logic [15:0] delay_wire_2178;
+  logic [15:0] delay_wire_2179;
+  logic [15:0] delay_wire_2180;
+  logic [15:0] delay_wire_2181;
   logic [15:0] delay_wire_2182;
   logic [15:0] delay_wire_2183;
   logic [15:0] delay_wire_2184;
@@ -6914,6 +6845,142 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_h
   logic [15:0] delay_wire_2228;
   logic [15:0] delay_wire_2229;
   logic [15:0] delay_wire_2230;
+  always @(posedge clk) begin
+    delay_wire_2101 <= in;
+    delay_wire_2102 <= delay_wire_2101;
+    delay_wire_2103 <= delay_wire_2102;
+    delay_wire_2104 <= delay_wire_2103;
+    delay_wire_2105 <= delay_wire_2104;
+    delay_wire_2106 <= delay_wire_2105;
+    delay_wire_2107 <= delay_wire_2106;
+    delay_wire_2108 <= delay_wire_2107;
+    delay_wire_2109 <= delay_wire_2108;
+    delay_wire_2110 <= delay_wire_2109;
+    delay_wire_2111 <= delay_wire_2110;
+    delay_wire_2112 <= delay_wire_2111;
+    delay_wire_2113 <= delay_wire_2112;
+    delay_wire_2114 <= delay_wire_2113;
+    delay_wire_2115 <= delay_wire_2114;
+    delay_wire_2116 <= delay_wire_2115;
+    delay_wire_2117 <= delay_wire_2116;
+    delay_wire_2118 <= delay_wire_2117;
+    delay_wire_2119 <= delay_wire_2118;
+    delay_wire_2120 <= delay_wire_2119;
+    delay_wire_2121 <= delay_wire_2120;
+    delay_wire_2122 <= delay_wire_2121;
+    delay_wire_2123 <= delay_wire_2122;
+    delay_wire_2124 <= delay_wire_2123;
+    delay_wire_2125 <= delay_wire_2124;
+    delay_wire_2126 <= delay_wire_2125;
+    delay_wire_2127 <= delay_wire_2126;
+    delay_wire_2128 <= delay_wire_2127;
+    delay_wire_2129 <= delay_wire_2128;
+    delay_wire_2130 <= delay_wire_2129;
+    delay_wire_2131 <= delay_wire_2130;
+    delay_wire_2132 <= delay_wire_2131;
+    delay_wire_2133 <= delay_wire_2132;
+    delay_wire_2134 <= delay_wire_2133;
+    delay_wire_2135 <= delay_wire_2134;
+    delay_wire_2136 <= delay_wire_2135;
+    delay_wire_2137 <= delay_wire_2136;
+    delay_wire_2138 <= delay_wire_2137;
+    delay_wire_2139 <= delay_wire_2138;
+    delay_wire_2140 <= delay_wire_2139;
+    delay_wire_2141 <= delay_wire_2140;
+    delay_wire_2142 <= delay_wire_2141;
+    delay_wire_2143 <= delay_wire_2142;
+    delay_wire_2144 <= delay_wire_2143;
+    delay_wire_2145 <= delay_wire_2144;
+    delay_wire_2146 <= delay_wire_2145;
+    delay_wire_2147 <= delay_wire_2146;
+    delay_wire_2148 <= delay_wire_2147;
+    delay_wire_2149 <= delay_wire_2148;
+    delay_wire_2150 <= delay_wire_2149;
+    delay_wire_2151 <= delay_wire_2150;
+    delay_wire_2152 <= delay_wire_2151;
+    delay_wire_2153 <= delay_wire_2152;
+    delay_wire_2154 <= delay_wire_2153;
+    delay_wire_2155 <= delay_wire_2154;
+    delay_wire_2156 <= delay_wire_2155;
+    delay_wire_2157 <= delay_wire_2156;
+    delay_wire_2158 <= delay_wire_2157;
+    delay_wire_2159 <= delay_wire_2158;
+    delay_wire_2160 <= delay_wire_2159;
+    delay_wire_2161 <= delay_wire_2160;
+    delay_wire_2162 <= delay_wire_2161;
+    delay_wire_2163 <= delay_wire_2162;
+    delay_wire_2164 <= delay_wire_2163;
+    delay_wire_2165 <= delay_wire_2164;
+    delay_wire_2166 <= delay_wire_2165;
+    delay_wire_2167 <= delay_wire_2166;
+    delay_wire_2168 <= delay_wire_2167;
+    delay_wire_2169 <= delay_wire_2168;
+    delay_wire_2170 <= delay_wire_2169;
+    delay_wire_2171 <= delay_wire_2170;
+    delay_wire_2172 <= delay_wire_2171;
+    delay_wire_2173 <= delay_wire_2172;
+    delay_wire_2174 <= delay_wire_2173;
+    delay_wire_2175 <= delay_wire_2174;
+    delay_wire_2176 <= delay_wire_2175;
+    delay_wire_2177 <= delay_wire_2176;
+    delay_wire_2178 <= delay_wire_2177;
+    delay_wire_2179 <= delay_wire_2178;
+    delay_wire_2180 <= delay_wire_2179;
+    delay_wire_2181 <= delay_wire_2180;
+    delay_wire_2182 <= delay_wire_2181;
+    delay_wire_2183 <= delay_wire_2182;
+    delay_wire_2184 <= delay_wire_2183;
+    delay_wire_2185 <= delay_wire_2184;
+    delay_wire_2186 <= delay_wire_2185;
+    delay_wire_2187 <= delay_wire_2186;
+    delay_wire_2188 <= delay_wire_2187;
+    delay_wire_2189 <= delay_wire_2188;
+    delay_wire_2190 <= delay_wire_2189;
+    delay_wire_2191 <= delay_wire_2190;
+    delay_wire_2192 <= delay_wire_2191;
+    delay_wire_2193 <= delay_wire_2192;
+    delay_wire_2194 <= delay_wire_2193;
+    delay_wire_2195 <= delay_wire_2194;
+    delay_wire_2196 <= delay_wire_2195;
+    delay_wire_2197 <= delay_wire_2196;
+    delay_wire_2198 <= delay_wire_2197;
+    delay_wire_2199 <= delay_wire_2198;
+    delay_wire_2200 <= delay_wire_2199;
+    delay_wire_2201 <= delay_wire_2200;
+    delay_wire_2202 <= delay_wire_2201;
+    delay_wire_2203 <= delay_wire_2202;
+    delay_wire_2204 <= delay_wire_2203;
+    delay_wire_2205 <= delay_wire_2204;
+    delay_wire_2206 <= delay_wire_2205;
+    delay_wire_2207 <= delay_wire_2206;
+    delay_wire_2208 <= delay_wire_2207;
+    delay_wire_2209 <= delay_wire_2208;
+    delay_wire_2210 <= delay_wire_2209;
+    delay_wire_2211 <= delay_wire_2210;
+    delay_wire_2212 <= delay_wire_2211;
+    delay_wire_2213 <= delay_wire_2212;
+    delay_wire_2214 <= delay_wire_2213;
+    delay_wire_2215 <= delay_wire_2214;
+    delay_wire_2216 <= delay_wire_2215;
+    delay_wire_2217 <= delay_wire_2216;
+    delay_wire_2218 <= delay_wire_2217;
+    delay_wire_2219 <= delay_wire_2218;
+    delay_wire_2220 <= delay_wire_2219;
+    delay_wire_2221 <= delay_wire_2220;
+    delay_wire_2222 <= delay_wire_2221;
+    delay_wire_2223 <= delay_wire_2222;
+    delay_wire_2224 <= delay_wire_2223;
+    delay_wire_2225 <= delay_wire_2224;
+    delay_wire_2226 <= delay_wire_2225;
+    delay_wire_2227 <= delay_wire_2226;
+    delay_wire_2228 <= delay_wire_2227;
+    delay_wire_2229 <= delay_wire_2228;
+    delay_wire_2230 <= delay_wire_2229;
+  end
+  assign out = delay_wire_2230;
+endmodule
+
+module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_14_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_2231;
   logic [15:0] delay_wire_2232;
   logic [15:0] delay_wire_2233;
@@ -6982,76 +7049,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_h
   logic [15:0] delay_wire_2296;
   logic [15:0] delay_wire_2297;
   logic [15:0] delay_wire_2298;
-  logic [15:0] delay_wire_2299;
-  logic [15:0] delay_wire_2300;
-  logic [15:0] delay_wire_2301;
-  logic [15:0] delay_wire_2302;
-  logic [15:0] delay_wire_2303;
-  logic [15:0] delay_wire_2304;
-  logic [15:0] delay_wire_2305;
-  logic [15:0] delay_wire_2306;
-  logic [15:0] delay_wire_2307;
-  logic [15:0] delay_wire_2308;
-  logic [15:0] delay_wire_2309;
-  logic [15:0] delay_wire_2310;
-  logic [15:0] delay_wire_2311;
-  logic [15:0] delay_wire_2312;
-  logic [15:0] delay_wire_2313;
-  logic [15:0] delay_wire_2314;
-  logic [15:0] delay_wire_2315;
-  logic [15:0] delay_wire_2316;
-  logic [15:0] delay_wire_2317;
   always @(posedge clk) begin
-    delay_wire_2182 <= in;
-    delay_wire_2183 <= delay_wire_2182;
-    delay_wire_2184 <= delay_wire_2183;
-    delay_wire_2185 <= delay_wire_2184;
-    delay_wire_2186 <= delay_wire_2185;
-    delay_wire_2187 <= delay_wire_2186;
-    delay_wire_2188 <= delay_wire_2187;
-    delay_wire_2189 <= delay_wire_2188;
-    delay_wire_2190 <= delay_wire_2189;
-    delay_wire_2191 <= delay_wire_2190;
-    delay_wire_2192 <= delay_wire_2191;
-    delay_wire_2193 <= delay_wire_2192;
-    delay_wire_2194 <= delay_wire_2193;
-    delay_wire_2195 <= delay_wire_2194;
-    delay_wire_2196 <= delay_wire_2195;
-    delay_wire_2197 <= delay_wire_2196;
-    delay_wire_2198 <= delay_wire_2197;
-    delay_wire_2199 <= delay_wire_2198;
-    delay_wire_2200 <= delay_wire_2199;
-    delay_wire_2201 <= delay_wire_2200;
-    delay_wire_2202 <= delay_wire_2201;
-    delay_wire_2203 <= delay_wire_2202;
-    delay_wire_2204 <= delay_wire_2203;
-    delay_wire_2205 <= delay_wire_2204;
-    delay_wire_2206 <= delay_wire_2205;
-    delay_wire_2207 <= delay_wire_2206;
-    delay_wire_2208 <= delay_wire_2207;
-    delay_wire_2209 <= delay_wire_2208;
-    delay_wire_2210 <= delay_wire_2209;
-    delay_wire_2211 <= delay_wire_2210;
-    delay_wire_2212 <= delay_wire_2211;
-    delay_wire_2213 <= delay_wire_2212;
-    delay_wire_2214 <= delay_wire_2213;
-    delay_wire_2215 <= delay_wire_2214;
-    delay_wire_2216 <= delay_wire_2215;
-    delay_wire_2217 <= delay_wire_2216;
-    delay_wire_2218 <= delay_wire_2217;
-    delay_wire_2219 <= delay_wire_2218;
-    delay_wire_2220 <= delay_wire_2219;
-    delay_wire_2221 <= delay_wire_2220;
-    delay_wire_2222 <= delay_wire_2221;
-    delay_wire_2223 <= delay_wire_2222;
-    delay_wire_2224 <= delay_wire_2223;
-    delay_wire_2225 <= delay_wire_2224;
-    delay_wire_2226 <= delay_wire_2225;
-    delay_wire_2227 <= delay_wire_2226;
-    delay_wire_2228 <= delay_wire_2227;
-    delay_wire_2229 <= delay_wire_2228;
-    delay_wire_2230 <= delay_wire_2229;
-    delay_wire_2231 <= delay_wire_2230;
+    delay_wire_2231 <= in;
     delay_wire_2232 <= delay_wire_2231;
     delay_wire_2233 <= delay_wire_2232;
     delay_wire_2234 <= delay_wire_2233;
@@ -7119,30 +7118,30 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_11_to_lyy_stencil_op_h
     delay_wire_2296 <= delay_wire_2295;
     delay_wire_2297 <= delay_wire_2296;
     delay_wire_2298 <= delay_wire_2297;
-    delay_wire_2299 <= delay_wire_2298;
-    delay_wire_2300 <= delay_wire_2299;
-    delay_wire_2301 <= delay_wire_2300;
-    delay_wire_2302 <= delay_wire_2301;
-    delay_wire_2303 <= delay_wire_2302;
-    delay_wire_2304 <= delay_wire_2303;
-    delay_wire_2305 <= delay_wire_2304;
-    delay_wire_2306 <= delay_wire_2305;
-    delay_wire_2307 <= delay_wire_2306;
-    delay_wire_2308 <= delay_wire_2307;
-    delay_wire_2309 <= delay_wire_2308;
-    delay_wire_2310 <= delay_wire_2309;
-    delay_wire_2311 <= delay_wire_2310;
-    delay_wire_2312 <= delay_wire_2311;
-    delay_wire_2313 <= delay_wire_2312;
-    delay_wire_2314 <= delay_wire_2313;
-    delay_wire_2315 <= delay_wire_2314;
-    delay_wire_2316 <= delay_wire_2315;
-    delay_wire_2317 <= delay_wire_2316;
   end
-  assign out = delay_wire_2317;
+  assign out = delay_wire_2298;
 endmodule
 
-module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_12_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_15_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_2299;
+  logic [15:0] delay_wire_2300;
+  logic [15:0] delay_wire_2301;
+  logic [15:0] delay_wire_2302;
+  logic [15:0] delay_wire_2303;
+  logic [15:0] delay_wire_2304;
+  logic [15:0] delay_wire_2305;
+  logic [15:0] delay_wire_2306;
+  logic [15:0] delay_wire_2307;
+  logic [15:0] delay_wire_2308;
+  logic [15:0] delay_wire_2309;
+  logic [15:0] delay_wire_2310;
+  logic [15:0] delay_wire_2311;
+  logic [15:0] delay_wire_2312;
+  logic [15:0] delay_wire_2313;
+  logic [15:0] delay_wire_2314;
+  logic [15:0] delay_wire_2315;
+  logic [15:0] delay_wire_2316;
+  logic [15:0] delay_wire_2317;
   logic [15:0] delay_wire_2318;
   logic [15:0] delay_wire_2319;
   logic [15:0] delay_wire_2320;
@@ -7191,6 +7190,79 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_12_to_lyy_stencil_op_h
   logic [15:0] delay_wire_2363;
   logic [15:0] delay_wire_2364;
   logic [15:0] delay_wire_2365;
+  always @(posedge clk) begin
+    delay_wire_2299 <= in;
+    delay_wire_2300 <= delay_wire_2299;
+    delay_wire_2301 <= delay_wire_2300;
+    delay_wire_2302 <= delay_wire_2301;
+    delay_wire_2303 <= delay_wire_2302;
+    delay_wire_2304 <= delay_wire_2303;
+    delay_wire_2305 <= delay_wire_2304;
+    delay_wire_2306 <= delay_wire_2305;
+    delay_wire_2307 <= delay_wire_2306;
+    delay_wire_2308 <= delay_wire_2307;
+    delay_wire_2309 <= delay_wire_2308;
+    delay_wire_2310 <= delay_wire_2309;
+    delay_wire_2311 <= delay_wire_2310;
+    delay_wire_2312 <= delay_wire_2311;
+    delay_wire_2313 <= delay_wire_2312;
+    delay_wire_2314 <= delay_wire_2313;
+    delay_wire_2315 <= delay_wire_2314;
+    delay_wire_2316 <= delay_wire_2315;
+    delay_wire_2317 <= delay_wire_2316;
+    delay_wire_2318 <= delay_wire_2317;
+    delay_wire_2319 <= delay_wire_2318;
+    delay_wire_2320 <= delay_wire_2319;
+    delay_wire_2321 <= delay_wire_2320;
+    delay_wire_2322 <= delay_wire_2321;
+    delay_wire_2323 <= delay_wire_2322;
+    delay_wire_2324 <= delay_wire_2323;
+    delay_wire_2325 <= delay_wire_2324;
+    delay_wire_2326 <= delay_wire_2325;
+    delay_wire_2327 <= delay_wire_2326;
+    delay_wire_2328 <= delay_wire_2327;
+    delay_wire_2329 <= delay_wire_2328;
+    delay_wire_2330 <= delay_wire_2329;
+    delay_wire_2331 <= delay_wire_2330;
+    delay_wire_2332 <= delay_wire_2331;
+    delay_wire_2333 <= delay_wire_2332;
+    delay_wire_2334 <= delay_wire_2333;
+    delay_wire_2335 <= delay_wire_2334;
+    delay_wire_2336 <= delay_wire_2335;
+    delay_wire_2337 <= delay_wire_2336;
+    delay_wire_2338 <= delay_wire_2337;
+    delay_wire_2339 <= delay_wire_2338;
+    delay_wire_2340 <= delay_wire_2339;
+    delay_wire_2341 <= delay_wire_2340;
+    delay_wire_2342 <= delay_wire_2341;
+    delay_wire_2343 <= delay_wire_2342;
+    delay_wire_2344 <= delay_wire_2343;
+    delay_wire_2345 <= delay_wire_2344;
+    delay_wire_2346 <= delay_wire_2345;
+    delay_wire_2347 <= delay_wire_2346;
+    delay_wire_2348 <= delay_wire_2347;
+    delay_wire_2349 <= delay_wire_2348;
+    delay_wire_2350 <= delay_wire_2349;
+    delay_wire_2351 <= delay_wire_2350;
+    delay_wire_2352 <= delay_wire_2351;
+    delay_wire_2353 <= delay_wire_2352;
+    delay_wire_2354 <= delay_wire_2353;
+    delay_wire_2355 <= delay_wire_2354;
+    delay_wire_2356 <= delay_wire_2355;
+    delay_wire_2357 <= delay_wire_2356;
+    delay_wire_2358 <= delay_wire_2357;
+    delay_wire_2359 <= delay_wire_2358;
+    delay_wire_2360 <= delay_wire_2359;
+    delay_wire_2361 <= delay_wire_2360;
+    delay_wire_2362 <= delay_wire_2361;
+    delay_wire_2363 <= delay_wire_2362;
+    delay_wire_2364 <= delay_wire_2363;
+    delay_wire_2365 <= delay_wire_2364;
+  end
+  assign out = delay_wire_2365;
+endmodule
+
+module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_16_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_2366;
   logic [15:0] delay_wire_2367;
   logic [15:0] delay_wire_2368;
@@ -7257,77 +7329,8 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_12_to_lyy_stencil_op_h
   logic [15:0] delay_wire_2429;
   logic [15:0] delay_wire_2430;
   logic [15:0] delay_wire_2431;
-  logic [15:0] delay_wire_2432;
-  logic [15:0] delay_wire_2433;
-  logic [15:0] delay_wire_2434;
-  logic [15:0] delay_wire_2435;
-  logic [15:0] delay_wire_2436;
-  logic [15:0] delay_wire_2437;
-  logic [15:0] delay_wire_2438;
-  logic [15:0] delay_wire_2439;
-  logic [15:0] delay_wire_2440;
-  logic [15:0] delay_wire_2441;
-  logic [15:0] delay_wire_2442;
-  logic [15:0] delay_wire_2443;
-  logic [15:0] delay_wire_2444;
-  logic [15:0] delay_wire_2445;
-  logic [15:0] delay_wire_2446;
-  logic [15:0] delay_wire_2447;
-  logic [15:0] delay_wire_2448;
-  logic [15:0] delay_wire_2449;
-  logic [15:0] delay_wire_2450;
-  logic [15:0] delay_wire_2451;
-  logic [15:0] delay_wire_2452;
   always @(posedge clk) begin
-    delay_wire_2318 <= in;
-    delay_wire_2319 <= delay_wire_2318;
-    delay_wire_2320 <= delay_wire_2319;
-    delay_wire_2321 <= delay_wire_2320;
-    delay_wire_2322 <= delay_wire_2321;
-    delay_wire_2323 <= delay_wire_2322;
-    delay_wire_2324 <= delay_wire_2323;
-    delay_wire_2325 <= delay_wire_2324;
-    delay_wire_2326 <= delay_wire_2325;
-    delay_wire_2327 <= delay_wire_2326;
-    delay_wire_2328 <= delay_wire_2327;
-    delay_wire_2329 <= delay_wire_2328;
-    delay_wire_2330 <= delay_wire_2329;
-    delay_wire_2331 <= delay_wire_2330;
-    delay_wire_2332 <= delay_wire_2331;
-    delay_wire_2333 <= delay_wire_2332;
-    delay_wire_2334 <= delay_wire_2333;
-    delay_wire_2335 <= delay_wire_2334;
-    delay_wire_2336 <= delay_wire_2335;
-    delay_wire_2337 <= delay_wire_2336;
-    delay_wire_2338 <= delay_wire_2337;
-    delay_wire_2339 <= delay_wire_2338;
-    delay_wire_2340 <= delay_wire_2339;
-    delay_wire_2341 <= delay_wire_2340;
-    delay_wire_2342 <= delay_wire_2341;
-    delay_wire_2343 <= delay_wire_2342;
-    delay_wire_2344 <= delay_wire_2343;
-    delay_wire_2345 <= delay_wire_2344;
-    delay_wire_2346 <= delay_wire_2345;
-    delay_wire_2347 <= delay_wire_2346;
-    delay_wire_2348 <= delay_wire_2347;
-    delay_wire_2349 <= delay_wire_2348;
-    delay_wire_2350 <= delay_wire_2349;
-    delay_wire_2351 <= delay_wire_2350;
-    delay_wire_2352 <= delay_wire_2351;
-    delay_wire_2353 <= delay_wire_2352;
-    delay_wire_2354 <= delay_wire_2353;
-    delay_wire_2355 <= delay_wire_2354;
-    delay_wire_2356 <= delay_wire_2355;
-    delay_wire_2357 <= delay_wire_2356;
-    delay_wire_2358 <= delay_wire_2357;
-    delay_wire_2359 <= delay_wire_2358;
-    delay_wire_2360 <= delay_wire_2359;
-    delay_wire_2361 <= delay_wire_2360;
-    delay_wire_2362 <= delay_wire_2361;
-    delay_wire_2363 <= delay_wire_2362;
-    delay_wire_2364 <= delay_wire_2363;
-    delay_wire_2365 <= delay_wire_2364;
-    delay_wire_2366 <= delay_wire_2365;
+    delay_wire_2366 <= in;
     delay_wire_2367 <= delay_wire_2366;
     delay_wire_2368 <= delay_wire_2367;
     delay_wire_2369 <= delay_wire_2368;
@@ -7393,810 +7396,47 @@ module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_12_to_lyy_stencil_op_h
     delay_wire_2429 <= delay_wire_2428;
     delay_wire_2430 <= delay_wire_2429;
     delay_wire_2431 <= delay_wire_2430;
-    delay_wire_2432 <= delay_wire_2431;
-    delay_wire_2433 <= delay_wire_2432;
-    delay_wire_2434 <= delay_wire_2433;
-    delay_wire_2435 <= delay_wire_2434;
-    delay_wire_2436 <= delay_wire_2435;
-    delay_wire_2437 <= delay_wire_2436;
-    delay_wire_2438 <= delay_wire_2437;
-    delay_wire_2439 <= delay_wire_2438;
-    delay_wire_2440 <= delay_wire_2439;
-    delay_wire_2441 <= delay_wire_2440;
-    delay_wire_2442 <= delay_wire_2441;
-    delay_wire_2443 <= delay_wire_2442;
-    delay_wire_2444 <= delay_wire_2443;
-    delay_wire_2445 <= delay_wire_2444;
-    delay_wire_2446 <= delay_wire_2445;
-    delay_wire_2447 <= delay_wire_2446;
-    delay_wire_2448 <= delay_wire_2447;
-    delay_wire_2449 <= delay_wire_2448;
-    delay_wire_2450 <= delay_wire_2449;
-    delay_wire_2451 <= delay_wire_2450;
-    delay_wire_2452 <= delay_wire_2451;
   end
-  assign out = delay_wire_2452;
-endmodule
-
-module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_13_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2453;
-  logic [15:0] delay_wire_2454;
-  logic [15:0] delay_wire_2455;
-  logic [15:0] delay_wire_2456;
-  logic [15:0] delay_wire_2457;
-  logic [15:0] delay_wire_2458;
-  logic [15:0] delay_wire_2459;
-  logic [15:0] delay_wire_2460;
-  logic [15:0] delay_wire_2461;
-  logic [15:0] delay_wire_2462;
-  logic [15:0] delay_wire_2463;
-  logic [15:0] delay_wire_2464;
-  logic [15:0] delay_wire_2465;
-  logic [15:0] delay_wire_2466;
-  logic [15:0] delay_wire_2467;
-  logic [15:0] delay_wire_2468;
-  logic [15:0] delay_wire_2469;
-  logic [15:0] delay_wire_2470;
-  logic [15:0] delay_wire_2471;
-  logic [15:0] delay_wire_2472;
-  logic [15:0] delay_wire_2473;
-  logic [15:0] delay_wire_2474;
-  logic [15:0] delay_wire_2475;
-  logic [15:0] delay_wire_2476;
-  logic [15:0] delay_wire_2477;
-  logic [15:0] delay_wire_2478;
-  logic [15:0] delay_wire_2479;
-  logic [15:0] delay_wire_2480;
-  logic [15:0] delay_wire_2481;
-  logic [15:0] delay_wire_2482;
-  logic [15:0] delay_wire_2483;
-  logic [15:0] delay_wire_2484;
-  logic [15:0] delay_wire_2485;
-  logic [15:0] delay_wire_2486;
-  logic [15:0] delay_wire_2487;
-  logic [15:0] delay_wire_2488;
-  logic [15:0] delay_wire_2489;
-  logic [15:0] delay_wire_2490;
-  logic [15:0] delay_wire_2491;
-  logic [15:0] delay_wire_2492;
-  logic [15:0] delay_wire_2493;
-  logic [15:0] delay_wire_2494;
-  logic [15:0] delay_wire_2495;
-  logic [15:0] delay_wire_2496;
-  logic [15:0] delay_wire_2497;
-  logic [15:0] delay_wire_2498;
-  logic [15:0] delay_wire_2499;
-  logic [15:0] delay_wire_2500;
-  logic [15:0] delay_wire_2501;
-  logic [15:0] delay_wire_2502;
-  logic [15:0] delay_wire_2503;
-  logic [15:0] delay_wire_2504;
-  logic [15:0] delay_wire_2505;
-  logic [15:0] delay_wire_2506;
-  logic [15:0] delay_wire_2507;
-  logic [15:0] delay_wire_2508;
-  logic [15:0] delay_wire_2509;
-  logic [15:0] delay_wire_2510;
-  logic [15:0] delay_wire_2511;
-  logic [15:0] delay_wire_2512;
-  logic [15:0] delay_wire_2513;
-  logic [15:0] delay_wire_2514;
-  logic [15:0] delay_wire_2515;
-  logic [15:0] delay_wire_2516;
-  logic [15:0] delay_wire_2517;
-  logic [15:0] delay_wire_2518;
-  logic [15:0] delay_wire_2519;
-  logic [15:0] delay_wire_2520;
-  logic [15:0] delay_wire_2521;
-  logic [15:0] delay_wire_2522;
-  logic [15:0] delay_wire_2523;
-  logic [15:0] delay_wire_2524;
-  logic [15:0] delay_wire_2525;
-  logic [15:0] delay_wire_2526;
-  logic [15:0] delay_wire_2527;
-  logic [15:0] delay_wire_2528;
-  logic [15:0] delay_wire_2529;
-  logic [15:0] delay_wire_2530;
-  logic [15:0] delay_wire_2531;
-  logic [15:0] delay_wire_2532;
-  logic [15:0] delay_wire_2533;
-  logic [15:0] delay_wire_2534;
-  logic [15:0] delay_wire_2535;
-  logic [15:0] delay_wire_2536;
-  logic [15:0] delay_wire_2537;
-  logic [15:0] delay_wire_2538;
-  logic [15:0] delay_wire_2539;
-  logic [15:0] delay_wire_2540;
-  logic [15:0] delay_wire_2541;
-  logic [15:0] delay_wire_2542;
-  logic [15:0] delay_wire_2543;
-  logic [15:0] delay_wire_2544;
-  logic [15:0] delay_wire_2545;
-  logic [15:0] delay_wire_2546;
-  logic [15:0] delay_wire_2547;
-  logic [15:0] delay_wire_2548;
-  logic [15:0] delay_wire_2549;
-  logic [15:0] delay_wire_2550;
-  logic [15:0] delay_wire_2551;
-  logic [15:0] delay_wire_2552;
-  logic [15:0] delay_wire_2553;
-  logic [15:0] delay_wire_2554;
-  logic [15:0] delay_wire_2555;
-  logic [15:0] delay_wire_2556;
-  logic [15:0] delay_wire_2557;
-  logic [15:0] delay_wire_2558;
-  logic [15:0] delay_wire_2559;
-  logic [15:0] delay_wire_2560;
-  logic [15:0] delay_wire_2561;
-  logic [15:0] delay_wire_2562;
-  logic [15:0] delay_wire_2563;
-  logic [15:0] delay_wire_2564;
-  logic [15:0] delay_wire_2565;
-  logic [15:0] delay_wire_2566;
-  logic [15:0] delay_wire_2567;
-  logic [15:0] delay_wire_2568;
-  logic [15:0] delay_wire_2569;
-  logic [15:0] delay_wire_2570;
-  logic [15:0] delay_wire_2571;
-  logic [15:0] delay_wire_2572;
-  logic [15:0] delay_wire_2573;
-  logic [15:0] delay_wire_2574;
-  logic [15:0] delay_wire_2575;
-  logic [15:0] delay_wire_2576;
-  logic [15:0] delay_wire_2577;
-  logic [15:0] delay_wire_2578;
-  logic [15:0] delay_wire_2579;
-  logic [15:0] delay_wire_2580;
-  logic [15:0] delay_wire_2581;
-  logic [15:0] delay_wire_2582;
-  logic [15:0] delay_wire_2583;
-  logic [15:0] delay_wire_2584;
-  logic [15:0] delay_wire_2585;
-  logic [15:0] delay_wire_2586;
-  always @(posedge clk) begin
-    delay_wire_2453 <= in;
-    delay_wire_2454 <= delay_wire_2453;
-    delay_wire_2455 <= delay_wire_2454;
-    delay_wire_2456 <= delay_wire_2455;
-    delay_wire_2457 <= delay_wire_2456;
-    delay_wire_2458 <= delay_wire_2457;
-    delay_wire_2459 <= delay_wire_2458;
-    delay_wire_2460 <= delay_wire_2459;
-    delay_wire_2461 <= delay_wire_2460;
-    delay_wire_2462 <= delay_wire_2461;
-    delay_wire_2463 <= delay_wire_2462;
-    delay_wire_2464 <= delay_wire_2463;
-    delay_wire_2465 <= delay_wire_2464;
-    delay_wire_2466 <= delay_wire_2465;
-    delay_wire_2467 <= delay_wire_2466;
-    delay_wire_2468 <= delay_wire_2467;
-    delay_wire_2469 <= delay_wire_2468;
-    delay_wire_2470 <= delay_wire_2469;
-    delay_wire_2471 <= delay_wire_2470;
-    delay_wire_2472 <= delay_wire_2471;
-    delay_wire_2473 <= delay_wire_2472;
-    delay_wire_2474 <= delay_wire_2473;
-    delay_wire_2475 <= delay_wire_2474;
-    delay_wire_2476 <= delay_wire_2475;
-    delay_wire_2477 <= delay_wire_2476;
-    delay_wire_2478 <= delay_wire_2477;
-    delay_wire_2479 <= delay_wire_2478;
-    delay_wire_2480 <= delay_wire_2479;
-    delay_wire_2481 <= delay_wire_2480;
-    delay_wire_2482 <= delay_wire_2481;
-    delay_wire_2483 <= delay_wire_2482;
-    delay_wire_2484 <= delay_wire_2483;
-    delay_wire_2485 <= delay_wire_2484;
-    delay_wire_2486 <= delay_wire_2485;
-    delay_wire_2487 <= delay_wire_2486;
-    delay_wire_2488 <= delay_wire_2487;
-    delay_wire_2489 <= delay_wire_2488;
-    delay_wire_2490 <= delay_wire_2489;
-    delay_wire_2491 <= delay_wire_2490;
-    delay_wire_2492 <= delay_wire_2491;
-    delay_wire_2493 <= delay_wire_2492;
-    delay_wire_2494 <= delay_wire_2493;
-    delay_wire_2495 <= delay_wire_2494;
-    delay_wire_2496 <= delay_wire_2495;
-    delay_wire_2497 <= delay_wire_2496;
-    delay_wire_2498 <= delay_wire_2497;
-    delay_wire_2499 <= delay_wire_2498;
-    delay_wire_2500 <= delay_wire_2499;
-    delay_wire_2501 <= delay_wire_2500;
-    delay_wire_2502 <= delay_wire_2501;
-    delay_wire_2503 <= delay_wire_2502;
-    delay_wire_2504 <= delay_wire_2503;
-    delay_wire_2505 <= delay_wire_2504;
-    delay_wire_2506 <= delay_wire_2505;
-    delay_wire_2507 <= delay_wire_2506;
-    delay_wire_2508 <= delay_wire_2507;
-    delay_wire_2509 <= delay_wire_2508;
-    delay_wire_2510 <= delay_wire_2509;
-    delay_wire_2511 <= delay_wire_2510;
-    delay_wire_2512 <= delay_wire_2511;
-    delay_wire_2513 <= delay_wire_2512;
-    delay_wire_2514 <= delay_wire_2513;
-    delay_wire_2515 <= delay_wire_2514;
-    delay_wire_2516 <= delay_wire_2515;
-    delay_wire_2517 <= delay_wire_2516;
-    delay_wire_2518 <= delay_wire_2517;
-    delay_wire_2519 <= delay_wire_2518;
-    delay_wire_2520 <= delay_wire_2519;
-    delay_wire_2521 <= delay_wire_2520;
-    delay_wire_2522 <= delay_wire_2521;
-    delay_wire_2523 <= delay_wire_2522;
-    delay_wire_2524 <= delay_wire_2523;
-    delay_wire_2525 <= delay_wire_2524;
-    delay_wire_2526 <= delay_wire_2525;
-    delay_wire_2527 <= delay_wire_2526;
-    delay_wire_2528 <= delay_wire_2527;
-    delay_wire_2529 <= delay_wire_2528;
-    delay_wire_2530 <= delay_wire_2529;
-    delay_wire_2531 <= delay_wire_2530;
-    delay_wire_2532 <= delay_wire_2531;
-    delay_wire_2533 <= delay_wire_2532;
-    delay_wire_2534 <= delay_wire_2533;
-    delay_wire_2535 <= delay_wire_2534;
-    delay_wire_2536 <= delay_wire_2535;
-    delay_wire_2537 <= delay_wire_2536;
-    delay_wire_2538 <= delay_wire_2537;
-    delay_wire_2539 <= delay_wire_2538;
-    delay_wire_2540 <= delay_wire_2539;
-    delay_wire_2541 <= delay_wire_2540;
-    delay_wire_2542 <= delay_wire_2541;
-    delay_wire_2543 <= delay_wire_2542;
-    delay_wire_2544 <= delay_wire_2543;
-    delay_wire_2545 <= delay_wire_2544;
-    delay_wire_2546 <= delay_wire_2545;
-    delay_wire_2547 <= delay_wire_2546;
-    delay_wire_2548 <= delay_wire_2547;
-    delay_wire_2549 <= delay_wire_2548;
-    delay_wire_2550 <= delay_wire_2549;
-    delay_wire_2551 <= delay_wire_2550;
-    delay_wire_2552 <= delay_wire_2551;
-    delay_wire_2553 <= delay_wire_2552;
-    delay_wire_2554 <= delay_wire_2553;
-    delay_wire_2555 <= delay_wire_2554;
-    delay_wire_2556 <= delay_wire_2555;
-    delay_wire_2557 <= delay_wire_2556;
-    delay_wire_2558 <= delay_wire_2557;
-    delay_wire_2559 <= delay_wire_2558;
-    delay_wire_2560 <= delay_wire_2559;
-    delay_wire_2561 <= delay_wire_2560;
-    delay_wire_2562 <= delay_wire_2561;
-    delay_wire_2563 <= delay_wire_2562;
-    delay_wire_2564 <= delay_wire_2563;
-    delay_wire_2565 <= delay_wire_2564;
-    delay_wire_2566 <= delay_wire_2565;
-    delay_wire_2567 <= delay_wire_2566;
-    delay_wire_2568 <= delay_wire_2567;
-    delay_wire_2569 <= delay_wire_2568;
-    delay_wire_2570 <= delay_wire_2569;
-    delay_wire_2571 <= delay_wire_2570;
-    delay_wire_2572 <= delay_wire_2571;
-    delay_wire_2573 <= delay_wire_2572;
-    delay_wire_2574 <= delay_wire_2573;
-    delay_wire_2575 <= delay_wire_2574;
-    delay_wire_2576 <= delay_wire_2575;
-    delay_wire_2577 <= delay_wire_2576;
-    delay_wire_2578 <= delay_wire_2577;
-    delay_wire_2579 <= delay_wire_2578;
-    delay_wire_2580 <= delay_wire_2579;
-    delay_wire_2581 <= delay_wire_2580;
-    delay_wire_2582 <= delay_wire_2581;
-    delay_wire_2583 <= delay_wire_2582;
-    delay_wire_2584 <= delay_wire_2583;
-    delay_wire_2585 <= delay_wire_2584;
-    delay_wire_2586 <= delay_wire_2585;
-  end
-  assign out = delay_wire_2586;
-endmodule
-
-module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_14_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2587;
-  logic [15:0] delay_wire_2588;
-  logic [15:0] delay_wire_2589;
-  logic [15:0] delay_wire_2590;
-  logic [15:0] delay_wire_2591;
-  logic [15:0] delay_wire_2592;
-  logic [15:0] delay_wire_2593;
-  logic [15:0] delay_wire_2594;
-  logic [15:0] delay_wire_2595;
-  logic [15:0] delay_wire_2596;
-  logic [15:0] delay_wire_2597;
-  logic [15:0] delay_wire_2598;
-  logic [15:0] delay_wire_2599;
-  logic [15:0] delay_wire_2600;
-  logic [15:0] delay_wire_2601;
-  logic [15:0] delay_wire_2602;
-  logic [15:0] delay_wire_2603;
-  logic [15:0] delay_wire_2604;
-  logic [15:0] delay_wire_2605;
-  logic [15:0] delay_wire_2606;
-  logic [15:0] delay_wire_2607;
-  logic [15:0] delay_wire_2608;
-  logic [15:0] delay_wire_2609;
-  logic [15:0] delay_wire_2610;
-  logic [15:0] delay_wire_2611;
-  logic [15:0] delay_wire_2612;
-  logic [15:0] delay_wire_2613;
-  logic [15:0] delay_wire_2614;
-  logic [15:0] delay_wire_2615;
-  logic [15:0] delay_wire_2616;
-  logic [15:0] delay_wire_2617;
-  logic [15:0] delay_wire_2618;
-  logic [15:0] delay_wire_2619;
-  logic [15:0] delay_wire_2620;
-  logic [15:0] delay_wire_2621;
-  logic [15:0] delay_wire_2622;
-  logic [15:0] delay_wire_2623;
-  logic [15:0] delay_wire_2624;
-  logic [15:0] delay_wire_2625;
-  logic [15:0] delay_wire_2626;
-  logic [15:0] delay_wire_2627;
-  logic [15:0] delay_wire_2628;
-  logic [15:0] delay_wire_2629;
-  logic [15:0] delay_wire_2630;
-  logic [15:0] delay_wire_2631;
-  logic [15:0] delay_wire_2632;
-  logic [15:0] delay_wire_2633;
-  logic [15:0] delay_wire_2634;
-  logic [15:0] delay_wire_2635;
-  logic [15:0] delay_wire_2636;
-  logic [15:0] delay_wire_2637;
-  logic [15:0] delay_wire_2638;
-  logic [15:0] delay_wire_2639;
-  logic [15:0] delay_wire_2640;
-  logic [15:0] delay_wire_2641;
-  logic [15:0] delay_wire_2642;
-  logic [15:0] delay_wire_2643;
-  logic [15:0] delay_wire_2644;
-  logic [15:0] delay_wire_2645;
-  logic [15:0] delay_wire_2646;
-  logic [15:0] delay_wire_2647;
-  logic [15:0] delay_wire_2648;
-  logic [15:0] delay_wire_2649;
-  logic [15:0] delay_wire_2650;
-  logic [15:0] delay_wire_2651;
-  logic [15:0] delay_wire_2652;
-  logic [15:0] delay_wire_2653;
-  logic [15:0] delay_wire_2654;
-  logic [15:0] delay_wire_2655;
-  logic [15:0] delay_wire_2656;
-  logic [15:0] delay_wire_2657;
-  logic [15:0] delay_wire_2658;
-  always @(posedge clk) begin
-    delay_wire_2587 <= in;
-    delay_wire_2588 <= delay_wire_2587;
-    delay_wire_2589 <= delay_wire_2588;
-    delay_wire_2590 <= delay_wire_2589;
-    delay_wire_2591 <= delay_wire_2590;
-    delay_wire_2592 <= delay_wire_2591;
-    delay_wire_2593 <= delay_wire_2592;
-    delay_wire_2594 <= delay_wire_2593;
-    delay_wire_2595 <= delay_wire_2594;
-    delay_wire_2596 <= delay_wire_2595;
-    delay_wire_2597 <= delay_wire_2596;
-    delay_wire_2598 <= delay_wire_2597;
-    delay_wire_2599 <= delay_wire_2598;
-    delay_wire_2600 <= delay_wire_2599;
-    delay_wire_2601 <= delay_wire_2600;
-    delay_wire_2602 <= delay_wire_2601;
-    delay_wire_2603 <= delay_wire_2602;
-    delay_wire_2604 <= delay_wire_2603;
-    delay_wire_2605 <= delay_wire_2604;
-    delay_wire_2606 <= delay_wire_2605;
-    delay_wire_2607 <= delay_wire_2606;
-    delay_wire_2608 <= delay_wire_2607;
-    delay_wire_2609 <= delay_wire_2608;
-    delay_wire_2610 <= delay_wire_2609;
-    delay_wire_2611 <= delay_wire_2610;
-    delay_wire_2612 <= delay_wire_2611;
-    delay_wire_2613 <= delay_wire_2612;
-    delay_wire_2614 <= delay_wire_2613;
-    delay_wire_2615 <= delay_wire_2614;
-    delay_wire_2616 <= delay_wire_2615;
-    delay_wire_2617 <= delay_wire_2616;
-    delay_wire_2618 <= delay_wire_2617;
-    delay_wire_2619 <= delay_wire_2618;
-    delay_wire_2620 <= delay_wire_2619;
-    delay_wire_2621 <= delay_wire_2620;
-    delay_wire_2622 <= delay_wire_2621;
-    delay_wire_2623 <= delay_wire_2622;
-    delay_wire_2624 <= delay_wire_2623;
-    delay_wire_2625 <= delay_wire_2624;
-    delay_wire_2626 <= delay_wire_2625;
-    delay_wire_2627 <= delay_wire_2626;
-    delay_wire_2628 <= delay_wire_2627;
-    delay_wire_2629 <= delay_wire_2628;
-    delay_wire_2630 <= delay_wire_2629;
-    delay_wire_2631 <= delay_wire_2630;
-    delay_wire_2632 <= delay_wire_2631;
-    delay_wire_2633 <= delay_wire_2632;
-    delay_wire_2634 <= delay_wire_2633;
-    delay_wire_2635 <= delay_wire_2634;
-    delay_wire_2636 <= delay_wire_2635;
-    delay_wire_2637 <= delay_wire_2636;
-    delay_wire_2638 <= delay_wire_2637;
-    delay_wire_2639 <= delay_wire_2638;
-    delay_wire_2640 <= delay_wire_2639;
-    delay_wire_2641 <= delay_wire_2640;
-    delay_wire_2642 <= delay_wire_2641;
-    delay_wire_2643 <= delay_wire_2642;
-    delay_wire_2644 <= delay_wire_2643;
-    delay_wire_2645 <= delay_wire_2644;
-    delay_wire_2646 <= delay_wire_2645;
-    delay_wire_2647 <= delay_wire_2646;
-    delay_wire_2648 <= delay_wire_2647;
-    delay_wire_2649 <= delay_wire_2648;
-    delay_wire_2650 <= delay_wire_2649;
-    delay_wire_2651 <= delay_wire_2650;
-    delay_wire_2652 <= delay_wire_2651;
-    delay_wire_2653 <= delay_wire_2652;
-    delay_wire_2654 <= delay_wire_2653;
-    delay_wire_2655 <= delay_wire_2654;
-    delay_wire_2656 <= delay_wire_2655;
-    delay_wire_2657 <= delay_wire_2656;
-    delay_wire_2658 <= delay_wire_2657;
-  end
-  assign out = delay_wire_2658;
-endmodule
-
-module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_15_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2659;
-  logic [15:0] delay_wire_2660;
-  logic [15:0] delay_wire_2661;
-  logic [15:0] delay_wire_2662;
-  logic [15:0] delay_wire_2663;
-  logic [15:0] delay_wire_2664;
-  logic [15:0] delay_wire_2665;
-  logic [15:0] delay_wire_2666;
-  logic [15:0] delay_wire_2667;
-  logic [15:0] delay_wire_2668;
-  logic [15:0] delay_wire_2669;
-  logic [15:0] delay_wire_2670;
-  logic [15:0] delay_wire_2671;
-  logic [15:0] delay_wire_2672;
-  logic [15:0] delay_wire_2673;
-  logic [15:0] delay_wire_2674;
-  logic [15:0] delay_wire_2675;
-  logic [15:0] delay_wire_2676;
-  logic [15:0] delay_wire_2677;
-  logic [15:0] delay_wire_2678;
-  logic [15:0] delay_wire_2679;
-  logic [15:0] delay_wire_2680;
-  logic [15:0] delay_wire_2681;
-  logic [15:0] delay_wire_2682;
-  logic [15:0] delay_wire_2683;
-  logic [15:0] delay_wire_2684;
-  logic [15:0] delay_wire_2685;
-  logic [15:0] delay_wire_2686;
-  logic [15:0] delay_wire_2687;
-  logic [15:0] delay_wire_2688;
-  logic [15:0] delay_wire_2689;
-  logic [15:0] delay_wire_2690;
-  logic [15:0] delay_wire_2691;
-  logic [15:0] delay_wire_2692;
-  logic [15:0] delay_wire_2693;
-  logic [15:0] delay_wire_2694;
-  logic [15:0] delay_wire_2695;
-  logic [15:0] delay_wire_2696;
-  logic [15:0] delay_wire_2697;
-  logic [15:0] delay_wire_2698;
-  logic [15:0] delay_wire_2699;
-  logic [15:0] delay_wire_2700;
-  logic [15:0] delay_wire_2701;
-  logic [15:0] delay_wire_2702;
-  logic [15:0] delay_wire_2703;
-  logic [15:0] delay_wire_2704;
-  logic [15:0] delay_wire_2705;
-  logic [15:0] delay_wire_2706;
-  logic [15:0] delay_wire_2707;
-  logic [15:0] delay_wire_2708;
-  logic [15:0] delay_wire_2709;
-  logic [15:0] delay_wire_2710;
-  logic [15:0] delay_wire_2711;
-  logic [15:0] delay_wire_2712;
-  logic [15:0] delay_wire_2713;
-  logic [15:0] delay_wire_2714;
-  logic [15:0] delay_wire_2715;
-  logic [15:0] delay_wire_2716;
-  logic [15:0] delay_wire_2717;
-  logic [15:0] delay_wire_2718;
-  logic [15:0] delay_wire_2719;
-  logic [15:0] delay_wire_2720;
-  logic [15:0] delay_wire_2721;
-  logic [15:0] delay_wire_2722;
-  logic [15:0] delay_wire_2723;
-  logic [15:0] delay_wire_2724;
-  logic [15:0] delay_wire_2725;
-  logic [15:0] delay_wire_2726;
-  logic [15:0] delay_wire_2727;
-  logic [15:0] delay_wire_2728;
-  logic [15:0] delay_wire_2729;
-  always @(posedge clk) begin
-    delay_wire_2659 <= in;
-    delay_wire_2660 <= delay_wire_2659;
-    delay_wire_2661 <= delay_wire_2660;
-    delay_wire_2662 <= delay_wire_2661;
-    delay_wire_2663 <= delay_wire_2662;
-    delay_wire_2664 <= delay_wire_2663;
-    delay_wire_2665 <= delay_wire_2664;
-    delay_wire_2666 <= delay_wire_2665;
-    delay_wire_2667 <= delay_wire_2666;
-    delay_wire_2668 <= delay_wire_2667;
-    delay_wire_2669 <= delay_wire_2668;
-    delay_wire_2670 <= delay_wire_2669;
-    delay_wire_2671 <= delay_wire_2670;
-    delay_wire_2672 <= delay_wire_2671;
-    delay_wire_2673 <= delay_wire_2672;
-    delay_wire_2674 <= delay_wire_2673;
-    delay_wire_2675 <= delay_wire_2674;
-    delay_wire_2676 <= delay_wire_2675;
-    delay_wire_2677 <= delay_wire_2676;
-    delay_wire_2678 <= delay_wire_2677;
-    delay_wire_2679 <= delay_wire_2678;
-    delay_wire_2680 <= delay_wire_2679;
-    delay_wire_2681 <= delay_wire_2680;
-    delay_wire_2682 <= delay_wire_2681;
-    delay_wire_2683 <= delay_wire_2682;
-    delay_wire_2684 <= delay_wire_2683;
-    delay_wire_2685 <= delay_wire_2684;
-    delay_wire_2686 <= delay_wire_2685;
-    delay_wire_2687 <= delay_wire_2686;
-    delay_wire_2688 <= delay_wire_2687;
-    delay_wire_2689 <= delay_wire_2688;
-    delay_wire_2690 <= delay_wire_2689;
-    delay_wire_2691 <= delay_wire_2690;
-    delay_wire_2692 <= delay_wire_2691;
-    delay_wire_2693 <= delay_wire_2692;
-    delay_wire_2694 <= delay_wire_2693;
-    delay_wire_2695 <= delay_wire_2694;
-    delay_wire_2696 <= delay_wire_2695;
-    delay_wire_2697 <= delay_wire_2696;
-    delay_wire_2698 <= delay_wire_2697;
-    delay_wire_2699 <= delay_wire_2698;
-    delay_wire_2700 <= delay_wire_2699;
-    delay_wire_2701 <= delay_wire_2700;
-    delay_wire_2702 <= delay_wire_2701;
-    delay_wire_2703 <= delay_wire_2702;
-    delay_wire_2704 <= delay_wire_2703;
-    delay_wire_2705 <= delay_wire_2704;
-    delay_wire_2706 <= delay_wire_2705;
-    delay_wire_2707 <= delay_wire_2706;
-    delay_wire_2708 <= delay_wire_2707;
-    delay_wire_2709 <= delay_wire_2708;
-    delay_wire_2710 <= delay_wire_2709;
-    delay_wire_2711 <= delay_wire_2710;
-    delay_wire_2712 <= delay_wire_2711;
-    delay_wire_2713 <= delay_wire_2712;
-    delay_wire_2714 <= delay_wire_2713;
-    delay_wire_2715 <= delay_wire_2714;
-    delay_wire_2716 <= delay_wire_2715;
-    delay_wire_2717 <= delay_wire_2716;
-    delay_wire_2718 <= delay_wire_2717;
-    delay_wire_2719 <= delay_wire_2718;
-    delay_wire_2720 <= delay_wire_2719;
-    delay_wire_2721 <= delay_wire_2720;
-    delay_wire_2722 <= delay_wire_2721;
-    delay_wire_2723 <= delay_wire_2722;
-    delay_wire_2724 <= delay_wire_2723;
-    delay_wire_2725 <= delay_wire_2724;
-    delay_wire_2726 <= delay_wire_2725;
-    delay_wire_2727 <= delay_wire_2726;
-    delay_wire_2728 <= delay_wire_2727;
-    delay_wire_2729 <= delay_wire_2728;
-  end
-  assign out = delay_wire_2729;
-endmodule
-
-module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_16_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2730;
-  logic [15:0] delay_wire_2731;
-  logic [15:0] delay_wire_2732;
-  logic [15:0] delay_wire_2733;
-  logic [15:0] delay_wire_2734;
-  logic [15:0] delay_wire_2735;
-  logic [15:0] delay_wire_2736;
-  logic [15:0] delay_wire_2737;
-  logic [15:0] delay_wire_2738;
-  logic [15:0] delay_wire_2739;
-  logic [15:0] delay_wire_2740;
-  logic [15:0] delay_wire_2741;
-  logic [15:0] delay_wire_2742;
-  logic [15:0] delay_wire_2743;
-  logic [15:0] delay_wire_2744;
-  logic [15:0] delay_wire_2745;
-  logic [15:0] delay_wire_2746;
-  logic [15:0] delay_wire_2747;
-  logic [15:0] delay_wire_2748;
-  logic [15:0] delay_wire_2749;
-  logic [15:0] delay_wire_2750;
-  logic [15:0] delay_wire_2751;
-  logic [15:0] delay_wire_2752;
-  logic [15:0] delay_wire_2753;
-  logic [15:0] delay_wire_2754;
-  logic [15:0] delay_wire_2755;
-  logic [15:0] delay_wire_2756;
-  logic [15:0] delay_wire_2757;
-  logic [15:0] delay_wire_2758;
-  logic [15:0] delay_wire_2759;
-  logic [15:0] delay_wire_2760;
-  logic [15:0] delay_wire_2761;
-  logic [15:0] delay_wire_2762;
-  logic [15:0] delay_wire_2763;
-  logic [15:0] delay_wire_2764;
-  logic [15:0] delay_wire_2765;
-  logic [15:0] delay_wire_2766;
-  logic [15:0] delay_wire_2767;
-  logic [15:0] delay_wire_2768;
-  logic [15:0] delay_wire_2769;
-  logic [15:0] delay_wire_2770;
-  logic [15:0] delay_wire_2771;
-  logic [15:0] delay_wire_2772;
-  logic [15:0] delay_wire_2773;
-  logic [15:0] delay_wire_2774;
-  logic [15:0] delay_wire_2775;
-  logic [15:0] delay_wire_2776;
-  logic [15:0] delay_wire_2777;
-  logic [15:0] delay_wire_2778;
-  logic [15:0] delay_wire_2779;
-  logic [15:0] delay_wire_2780;
-  logic [15:0] delay_wire_2781;
-  logic [15:0] delay_wire_2782;
-  logic [15:0] delay_wire_2783;
-  logic [15:0] delay_wire_2784;
-  logic [15:0] delay_wire_2785;
-  logic [15:0] delay_wire_2786;
-  logic [15:0] delay_wire_2787;
-  logic [15:0] delay_wire_2788;
-  logic [15:0] delay_wire_2789;
-  logic [15:0] delay_wire_2790;
-  logic [15:0] delay_wire_2791;
-  logic [15:0] delay_wire_2792;
-  logic [15:0] delay_wire_2793;
-  logic [15:0] delay_wire_2794;
-  logic [15:0] delay_wire_2795;
-  logic [15:0] delay_wire_2796;
-  logic [15:0] delay_wire_2797;
-  logic [15:0] delay_wire_2798;
-  logic [15:0] delay_wire_2799;
-  always @(posedge clk) begin
-    delay_wire_2730 <= in;
-    delay_wire_2731 <= delay_wire_2730;
-    delay_wire_2732 <= delay_wire_2731;
-    delay_wire_2733 <= delay_wire_2732;
-    delay_wire_2734 <= delay_wire_2733;
-    delay_wire_2735 <= delay_wire_2734;
-    delay_wire_2736 <= delay_wire_2735;
-    delay_wire_2737 <= delay_wire_2736;
-    delay_wire_2738 <= delay_wire_2737;
-    delay_wire_2739 <= delay_wire_2738;
-    delay_wire_2740 <= delay_wire_2739;
-    delay_wire_2741 <= delay_wire_2740;
-    delay_wire_2742 <= delay_wire_2741;
-    delay_wire_2743 <= delay_wire_2742;
-    delay_wire_2744 <= delay_wire_2743;
-    delay_wire_2745 <= delay_wire_2744;
-    delay_wire_2746 <= delay_wire_2745;
-    delay_wire_2747 <= delay_wire_2746;
-    delay_wire_2748 <= delay_wire_2747;
-    delay_wire_2749 <= delay_wire_2748;
-    delay_wire_2750 <= delay_wire_2749;
-    delay_wire_2751 <= delay_wire_2750;
-    delay_wire_2752 <= delay_wire_2751;
-    delay_wire_2753 <= delay_wire_2752;
-    delay_wire_2754 <= delay_wire_2753;
-    delay_wire_2755 <= delay_wire_2754;
-    delay_wire_2756 <= delay_wire_2755;
-    delay_wire_2757 <= delay_wire_2756;
-    delay_wire_2758 <= delay_wire_2757;
-    delay_wire_2759 <= delay_wire_2758;
-    delay_wire_2760 <= delay_wire_2759;
-    delay_wire_2761 <= delay_wire_2760;
-    delay_wire_2762 <= delay_wire_2761;
-    delay_wire_2763 <= delay_wire_2762;
-    delay_wire_2764 <= delay_wire_2763;
-    delay_wire_2765 <= delay_wire_2764;
-    delay_wire_2766 <= delay_wire_2765;
-    delay_wire_2767 <= delay_wire_2766;
-    delay_wire_2768 <= delay_wire_2767;
-    delay_wire_2769 <= delay_wire_2768;
-    delay_wire_2770 <= delay_wire_2769;
-    delay_wire_2771 <= delay_wire_2770;
-    delay_wire_2772 <= delay_wire_2771;
-    delay_wire_2773 <= delay_wire_2772;
-    delay_wire_2774 <= delay_wire_2773;
-    delay_wire_2775 <= delay_wire_2774;
-    delay_wire_2776 <= delay_wire_2775;
-    delay_wire_2777 <= delay_wire_2776;
-    delay_wire_2778 <= delay_wire_2777;
-    delay_wire_2779 <= delay_wire_2778;
-    delay_wire_2780 <= delay_wire_2779;
-    delay_wire_2781 <= delay_wire_2780;
-    delay_wire_2782 <= delay_wire_2781;
-    delay_wire_2783 <= delay_wire_2782;
-    delay_wire_2784 <= delay_wire_2783;
-    delay_wire_2785 <= delay_wire_2784;
-    delay_wire_2786 <= delay_wire_2785;
-    delay_wire_2787 <= delay_wire_2786;
-    delay_wire_2788 <= delay_wire_2787;
-    delay_wire_2789 <= delay_wire_2788;
-    delay_wire_2790 <= delay_wire_2789;
-    delay_wire_2791 <= delay_wire_2790;
-    delay_wire_2792 <= delay_wire_2791;
-    delay_wire_2793 <= delay_wire_2792;
-    delay_wire_2794 <= delay_wire_2793;
-    delay_wire_2795 <= delay_wire_2794;
-    delay_wire_2796 <= delay_wire_2795;
-    delay_wire_2797 <= delay_wire_2796;
-    delay_wire_2798 <= delay_wire_2797;
-    delay_wire_2799 <= delay_wire_2798;
-  end
-  assign out = delay_wire_2799;
+  assign out = delay_wire_2431;
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_17_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2800;
-  logic [15:0] delay_wire_2801;
-  logic [15:0] delay_wire_2802;
-  logic [15:0] delay_wire_2803;
-  logic [15:0] delay_wire_2804;
-  logic [15:0] delay_wire_2805;
-  logic [15:0] delay_wire_2806;
-  logic [15:0] delay_wire_2807;
+  logic [15:0] delay_wire_2432;
+  logic [15:0] delay_wire_2433;
+  logic [15:0] delay_wire_2434;
+  logic [15:0] delay_wire_2435;
   always @(posedge clk) begin
-    delay_wire_2800 <= in;
-    delay_wire_2801 <= delay_wire_2800;
-    delay_wire_2802 <= delay_wire_2801;
-    delay_wire_2803 <= delay_wire_2802;
-    delay_wire_2804 <= delay_wire_2803;
-    delay_wire_2805 <= delay_wire_2804;
-    delay_wire_2806 <= delay_wire_2805;
-    delay_wire_2807 <= delay_wire_2806;
+    delay_wire_2432 <= in;
+    delay_wire_2433 <= delay_wire_2432;
+    delay_wire_2434 <= delay_wire_2433;
+    delay_wire_2435 <= delay_wire_2434;
   end
-  assign out = delay_wire_2807;
+  assign out = delay_wire_2435;
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_18_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2808;
-  logic [15:0] delay_wire_2809;
-  logic [15:0] delay_wire_2810;
-  logic [15:0] delay_wire_2811;
-  logic [15:0] delay_wire_2812;
-  logic [15:0] delay_wire_2813;
+  logic [15:0] delay_wire_2436;
+  logic [15:0] delay_wire_2437;
   always @(posedge clk) begin
-    delay_wire_2808 <= in;
-    delay_wire_2809 <= delay_wire_2808;
-    delay_wire_2810 <= delay_wire_2809;
-    delay_wire_2811 <= delay_wire_2810;
-    delay_wire_2812 <= delay_wire_2811;
-    delay_wire_2813 <= delay_wire_2812;
+    delay_wire_2436 <= in;
+    delay_wire_2437 <= delay_wire_2436;
   end
-  assign out = delay_wire_2813;
+  assign out = delay_wire_2437;
 endmodule
 
 module lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_to_lyy_stencil_op_hcompute_lyy_stencil_2_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2814;
-  logic [15:0] delay_wire_2815;
-  logic [15:0] delay_wire_2816;
-  logic [15:0] delay_wire_2817;
-  logic [15:0] delay_wire_2818;
-  logic [15:0] delay_wire_2819;
-  logic [15:0] delay_wire_2820;
+  logic [15:0] delay_wire_2438;
+  logic [15:0] delay_wire_2439;
+  logic [15:0] delay_wire_2440;
   always @(posedge clk) begin
-    delay_wire_2814 <= in;
-    delay_wire_2815 <= delay_wire_2814;
-    delay_wire_2816 <= delay_wire_2815;
-    delay_wire_2817 <= delay_wire_2816;
-    delay_wire_2818 <= delay_wire_2817;
-    delay_wire_2819 <= delay_wire_2818;
-    delay_wire_2820 <= delay_wire_2819;
+    delay_wire_2438 <= in;
+    delay_wire_2439 <= delay_wire_2438;
+    delay_wire_2440 <= delay_wire_2439;
   end
-  assign out = delay_wire_2820;
+  assign out = delay_wire_2440;
 endmodule
 
-// { op_hcompute_lyy_stencil[root, lyy_s0_y, lyy_s0_x] -> [(209 + 64lyy_s0_y + lyy_s0_x)] }
+// { op_hcompute_lyy_stencil[root, lyy_s0_y, lyy_s0_x] -> [(140 + 64lyy_s0_y + lyy_s0_x)] }
 module lyy_stencil_op_hcompute_lyy_stencil_write_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lyy_stencil_write_ctrl_vars[2:0], output op_hcompute_lyy_stencil_write_wen );
   logic [15:0] counter[3:0];
   logic on;
@@ -8215,7 +7455,7 @@ module lyy_stencil_op_hcompute_lyy_stencil_write_fsm(input clk, input flush, inp
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==208) begin
+      if(counter[0] ==139) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lyy_stencil_write_ctrl_vars[0]<= 16'b0;
@@ -8246,7 +7486,7 @@ module lyy_stencil_op_hcompute_lyy_stencil_write_fsm(input clk, input flush, inp
     end
   end
 endmodule
-// { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(343 + 64lgyy_s1_y + lgyy_s1_x)] }
+// { op_hcompute_lgyy_stencil_1[root, lgyy_s1_y, lgyy_s1_x] -> [(272 + 64lgyy_s1_y + lgyy_s1_x)] }
 module lyy_stencil_op_hcompute_lgyy_stencil_1_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_lgyy_stencil_1_read_ctrl_vars[2:0], output op_hcompute_lgyy_stencil_1_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -8265,7 +7505,7 @@ module lyy_stencil_op_hcompute_lgyy_stencil_1_read_fsm(input clk, input flush, i
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==342) begin
+      if(counter[0] ==271) begin
         on <=1;
         on2 <= 1;
         op_hcompute_lgyy_stencil_1_read_ctrl_vars[0]<= 16'b0;
@@ -8388,30 +7628,22 @@ lyy_stencil_bank_selector lyy_stencil_lyy_stencil_op_hcompute_lgyy_stencil_1_19_
 
   logic [15:0] addr0;
   assign addr0 = (((((-2 + 1*op_hcompute_lyy_stencil_write_ctrl_vars_fsm_out[1])) - -2)>>0)*1+((((-2 + 1*op_hcompute_lyy_stencil_write_ctrl_vars_fsm_out[2])) - -2)>>0)*62);
-  logic [15:0] delay_wire_2821;
   always @(posedge clk) begin
-    delay_wire_2821 <= addr0;
-  end
-  logic [15:0] delay_wire_2822;
-  always @(posedge clk) begin
-    delay_wire_2822 <= lyy_stencil_lyy_stencil_op_hcompute_lyy_stencil_2_bank_selector.out;
-  end
-  logic [15:0] delay_wire_2823;
-  always @(posedge clk) begin
-    delay_wire_2823 <= op_hcompute_lyy_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_2824;
-  always @(posedge clk) begin
-    delay_wire_2824 <= op_hcompute_lyy_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_2823) begin
-      case( delay_wire_2822)
-        0:bank_0[delay_wire_2821] <= delay_wire_2824;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_lyy_stencil_write_wen_fsm_out) begin
+      case( lyy_stencil_lyy_stencil_op_hcompute_lyy_stencil_2_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_lyy_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule
@@ -8427,6 +7659,740 @@ module padded16_global_wrapper_stencil_bank_selector(input logic [16*2 - 1 :0] d
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_2441;
+  logic [15:0] delay_wire_2442;
+  logic [15:0] delay_wire_2443;
+  logic [15:0] delay_wire_2444;
+  logic [15:0] delay_wire_2445;
+  logic [15:0] delay_wire_2446;
+  logic [15:0] delay_wire_2447;
+  logic [15:0] delay_wire_2448;
+  logic [15:0] delay_wire_2449;
+  logic [15:0] delay_wire_2450;
+  logic [15:0] delay_wire_2451;
+  logic [15:0] delay_wire_2452;
+  logic [15:0] delay_wire_2453;
+  logic [15:0] delay_wire_2454;
+  logic [15:0] delay_wire_2455;
+  logic [15:0] delay_wire_2456;
+  logic [15:0] delay_wire_2457;
+  logic [15:0] delay_wire_2458;
+  logic [15:0] delay_wire_2459;
+  logic [15:0] delay_wire_2460;
+  logic [15:0] delay_wire_2461;
+  logic [15:0] delay_wire_2462;
+  logic [15:0] delay_wire_2463;
+  logic [15:0] delay_wire_2464;
+  logic [15:0] delay_wire_2465;
+  logic [15:0] delay_wire_2466;
+  logic [15:0] delay_wire_2467;
+  logic [15:0] delay_wire_2468;
+  logic [15:0] delay_wire_2469;
+  logic [15:0] delay_wire_2470;
+  logic [15:0] delay_wire_2471;
+  logic [15:0] delay_wire_2472;
+  logic [15:0] delay_wire_2473;
+  logic [15:0] delay_wire_2474;
+  logic [15:0] delay_wire_2475;
+  logic [15:0] delay_wire_2476;
+  logic [15:0] delay_wire_2477;
+  logic [15:0] delay_wire_2478;
+  logic [15:0] delay_wire_2479;
+  logic [15:0] delay_wire_2480;
+  logic [15:0] delay_wire_2481;
+  logic [15:0] delay_wire_2482;
+  logic [15:0] delay_wire_2483;
+  logic [15:0] delay_wire_2484;
+  logic [15:0] delay_wire_2485;
+  logic [15:0] delay_wire_2486;
+  logic [15:0] delay_wire_2487;
+  logic [15:0] delay_wire_2488;
+  logic [15:0] delay_wire_2489;
+  logic [15:0] delay_wire_2490;
+  logic [15:0] delay_wire_2491;
+  logic [15:0] delay_wire_2492;
+  logic [15:0] delay_wire_2493;
+  logic [15:0] delay_wire_2494;
+  logic [15:0] delay_wire_2495;
+  logic [15:0] delay_wire_2496;
+  logic [15:0] delay_wire_2497;
+  logic [15:0] delay_wire_2498;
+  logic [15:0] delay_wire_2499;
+  logic [15:0] delay_wire_2500;
+  logic [15:0] delay_wire_2501;
+  logic [15:0] delay_wire_2502;
+  logic [15:0] delay_wire_2503;
+  logic [15:0] delay_wire_2504;
+  logic [15:0] delay_wire_2505;
+  logic [15:0] delay_wire_2506;
+  logic [15:0] delay_wire_2507;
+  logic [15:0] delay_wire_2508;
+  logic [15:0] delay_wire_2509;
+  logic [15:0] delay_wire_2510;
+  logic [15:0] delay_wire_2511;
+  logic [15:0] delay_wire_2512;
+  logic [15:0] delay_wire_2513;
+  logic [15:0] delay_wire_2514;
+  logic [15:0] delay_wire_2515;
+  logic [15:0] delay_wire_2516;
+  logic [15:0] delay_wire_2517;
+  logic [15:0] delay_wire_2518;
+  logic [15:0] delay_wire_2519;
+  logic [15:0] delay_wire_2520;
+  logic [15:0] delay_wire_2521;
+  logic [15:0] delay_wire_2522;
+  logic [15:0] delay_wire_2523;
+  logic [15:0] delay_wire_2524;
+  logic [15:0] delay_wire_2525;
+  logic [15:0] delay_wire_2526;
+  logic [15:0] delay_wire_2527;
+  logic [15:0] delay_wire_2528;
+  logic [15:0] delay_wire_2529;
+  logic [15:0] delay_wire_2530;
+  logic [15:0] delay_wire_2531;
+  logic [15:0] delay_wire_2532;
+  logic [15:0] delay_wire_2533;
+  logic [15:0] delay_wire_2534;
+  logic [15:0] delay_wire_2535;
+  logic [15:0] delay_wire_2536;
+  logic [15:0] delay_wire_2537;
+  logic [15:0] delay_wire_2538;
+  logic [15:0] delay_wire_2539;
+  logic [15:0] delay_wire_2540;
+  logic [15:0] delay_wire_2541;
+  logic [15:0] delay_wire_2542;
+  logic [15:0] delay_wire_2543;
+  logic [15:0] delay_wire_2544;
+  logic [15:0] delay_wire_2545;
+  logic [15:0] delay_wire_2546;
+  logic [15:0] delay_wire_2547;
+  logic [15:0] delay_wire_2548;
+  logic [15:0] delay_wire_2549;
+  logic [15:0] delay_wire_2550;
+  logic [15:0] delay_wire_2551;
+  logic [15:0] delay_wire_2552;
+  logic [15:0] delay_wire_2553;
+  logic [15:0] delay_wire_2554;
+  logic [15:0] delay_wire_2555;
+  logic [15:0] delay_wire_2556;
+  logic [15:0] delay_wire_2557;
+  logic [15:0] delay_wire_2558;
+  logic [15:0] delay_wire_2559;
+  logic [15:0] delay_wire_2560;
+  logic [15:0] delay_wire_2561;
+  logic [15:0] delay_wire_2562;
+  logic [15:0] delay_wire_2563;
+  logic [15:0] delay_wire_2564;
+  logic [15:0] delay_wire_2565;
+  logic [15:0] delay_wire_2566;
+  logic [15:0] delay_wire_2567;
+  logic [15:0] delay_wire_2568;
+  logic [15:0] delay_wire_2569;
+  always @(posedge clk) begin
+    delay_wire_2441 <= in;
+    delay_wire_2442 <= delay_wire_2441;
+    delay_wire_2443 <= delay_wire_2442;
+    delay_wire_2444 <= delay_wire_2443;
+    delay_wire_2445 <= delay_wire_2444;
+    delay_wire_2446 <= delay_wire_2445;
+    delay_wire_2447 <= delay_wire_2446;
+    delay_wire_2448 <= delay_wire_2447;
+    delay_wire_2449 <= delay_wire_2448;
+    delay_wire_2450 <= delay_wire_2449;
+    delay_wire_2451 <= delay_wire_2450;
+    delay_wire_2452 <= delay_wire_2451;
+    delay_wire_2453 <= delay_wire_2452;
+    delay_wire_2454 <= delay_wire_2453;
+    delay_wire_2455 <= delay_wire_2454;
+    delay_wire_2456 <= delay_wire_2455;
+    delay_wire_2457 <= delay_wire_2456;
+    delay_wire_2458 <= delay_wire_2457;
+    delay_wire_2459 <= delay_wire_2458;
+    delay_wire_2460 <= delay_wire_2459;
+    delay_wire_2461 <= delay_wire_2460;
+    delay_wire_2462 <= delay_wire_2461;
+    delay_wire_2463 <= delay_wire_2462;
+    delay_wire_2464 <= delay_wire_2463;
+    delay_wire_2465 <= delay_wire_2464;
+    delay_wire_2466 <= delay_wire_2465;
+    delay_wire_2467 <= delay_wire_2466;
+    delay_wire_2468 <= delay_wire_2467;
+    delay_wire_2469 <= delay_wire_2468;
+    delay_wire_2470 <= delay_wire_2469;
+    delay_wire_2471 <= delay_wire_2470;
+    delay_wire_2472 <= delay_wire_2471;
+    delay_wire_2473 <= delay_wire_2472;
+    delay_wire_2474 <= delay_wire_2473;
+    delay_wire_2475 <= delay_wire_2474;
+    delay_wire_2476 <= delay_wire_2475;
+    delay_wire_2477 <= delay_wire_2476;
+    delay_wire_2478 <= delay_wire_2477;
+    delay_wire_2479 <= delay_wire_2478;
+    delay_wire_2480 <= delay_wire_2479;
+    delay_wire_2481 <= delay_wire_2480;
+    delay_wire_2482 <= delay_wire_2481;
+    delay_wire_2483 <= delay_wire_2482;
+    delay_wire_2484 <= delay_wire_2483;
+    delay_wire_2485 <= delay_wire_2484;
+    delay_wire_2486 <= delay_wire_2485;
+    delay_wire_2487 <= delay_wire_2486;
+    delay_wire_2488 <= delay_wire_2487;
+    delay_wire_2489 <= delay_wire_2488;
+    delay_wire_2490 <= delay_wire_2489;
+    delay_wire_2491 <= delay_wire_2490;
+    delay_wire_2492 <= delay_wire_2491;
+    delay_wire_2493 <= delay_wire_2492;
+    delay_wire_2494 <= delay_wire_2493;
+    delay_wire_2495 <= delay_wire_2494;
+    delay_wire_2496 <= delay_wire_2495;
+    delay_wire_2497 <= delay_wire_2496;
+    delay_wire_2498 <= delay_wire_2497;
+    delay_wire_2499 <= delay_wire_2498;
+    delay_wire_2500 <= delay_wire_2499;
+    delay_wire_2501 <= delay_wire_2500;
+    delay_wire_2502 <= delay_wire_2501;
+    delay_wire_2503 <= delay_wire_2502;
+    delay_wire_2504 <= delay_wire_2503;
+    delay_wire_2505 <= delay_wire_2504;
+    delay_wire_2506 <= delay_wire_2505;
+    delay_wire_2507 <= delay_wire_2506;
+    delay_wire_2508 <= delay_wire_2507;
+    delay_wire_2509 <= delay_wire_2508;
+    delay_wire_2510 <= delay_wire_2509;
+    delay_wire_2511 <= delay_wire_2510;
+    delay_wire_2512 <= delay_wire_2511;
+    delay_wire_2513 <= delay_wire_2512;
+    delay_wire_2514 <= delay_wire_2513;
+    delay_wire_2515 <= delay_wire_2514;
+    delay_wire_2516 <= delay_wire_2515;
+    delay_wire_2517 <= delay_wire_2516;
+    delay_wire_2518 <= delay_wire_2517;
+    delay_wire_2519 <= delay_wire_2518;
+    delay_wire_2520 <= delay_wire_2519;
+    delay_wire_2521 <= delay_wire_2520;
+    delay_wire_2522 <= delay_wire_2521;
+    delay_wire_2523 <= delay_wire_2522;
+    delay_wire_2524 <= delay_wire_2523;
+    delay_wire_2525 <= delay_wire_2524;
+    delay_wire_2526 <= delay_wire_2525;
+    delay_wire_2527 <= delay_wire_2526;
+    delay_wire_2528 <= delay_wire_2527;
+    delay_wire_2529 <= delay_wire_2528;
+    delay_wire_2530 <= delay_wire_2529;
+    delay_wire_2531 <= delay_wire_2530;
+    delay_wire_2532 <= delay_wire_2531;
+    delay_wire_2533 <= delay_wire_2532;
+    delay_wire_2534 <= delay_wire_2533;
+    delay_wire_2535 <= delay_wire_2534;
+    delay_wire_2536 <= delay_wire_2535;
+    delay_wire_2537 <= delay_wire_2536;
+    delay_wire_2538 <= delay_wire_2537;
+    delay_wire_2539 <= delay_wire_2538;
+    delay_wire_2540 <= delay_wire_2539;
+    delay_wire_2541 <= delay_wire_2540;
+    delay_wire_2542 <= delay_wire_2541;
+    delay_wire_2543 <= delay_wire_2542;
+    delay_wire_2544 <= delay_wire_2543;
+    delay_wire_2545 <= delay_wire_2544;
+    delay_wire_2546 <= delay_wire_2545;
+    delay_wire_2547 <= delay_wire_2546;
+    delay_wire_2548 <= delay_wire_2547;
+    delay_wire_2549 <= delay_wire_2548;
+    delay_wire_2550 <= delay_wire_2549;
+    delay_wire_2551 <= delay_wire_2550;
+    delay_wire_2552 <= delay_wire_2551;
+    delay_wire_2553 <= delay_wire_2552;
+    delay_wire_2554 <= delay_wire_2553;
+    delay_wire_2555 <= delay_wire_2554;
+    delay_wire_2556 <= delay_wire_2555;
+    delay_wire_2557 <= delay_wire_2556;
+    delay_wire_2558 <= delay_wire_2557;
+    delay_wire_2559 <= delay_wire_2558;
+    delay_wire_2560 <= delay_wire_2559;
+    delay_wire_2561 <= delay_wire_2560;
+    delay_wire_2562 <= delay_wire_2561;
+    delay_wire_2563 <= delay_wire_2562;
+    delay_wire_2564 <= delay_wire_2563;
+    delay_wire_2565 <= delay_wire_2564;
+    delay_wire_2566 <= delay_wire_2565;
+    delay_wire_2567 <= delay_wire_2566;
+    delay_wire_2568 <= delay_wire_2567;
+    delay_wire_2569 <= delay_wire_2568;
+  end
+  assign out = delay_wire_2569;
+endmodule
+
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_56_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_2570;
+  always @(posedge clk) begin
+    delay_wire_2570 <= in;
+  end
+  assign out = delay_wire_2570;
+endmodule
+
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_57_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_2571;
+  logic [15:0] delay_wire_2572;
+  logic [15:0] delay_wire_2573;
+  logic [15:0] delay_wire_2574;
+  logic [15:0] delay_wire_2575;
+  logic [15:0] delay_wire_2576;
+  logic [15:0] delay_wire_2577;
+  logic [15:0] delay_wire_2578;
+  logic [15:0] delay_wire_2579;
+  logic [15:0] delay_wire_2580;
+  logic [15:0] delay_wire_2581;
+  logic [15:0] delay_wire_2582;
+  logic [15:0] delay_wire_2583;
+  logic [15:0] delay_wire_2584;
+  logic [15:0] delay_wire_2585;
+  logic [15:0] delay_wire_2586;
+  logic [15:0] delay_wire_2587;
+  logic [15:0] delay_wire_2588;
+  logic [15:0] delay_wire_2589;
+  logic [15:0] delay_wire_2590;
+  logic [15:0] delay_wire_2591;
+  logic [15:0] delay_wire_2592;
+  logic [15:0] delay_wire_2593;
+  logic [15:0] delay_wire_2594;
+  logic [15:0] delay_wire_2595;
+  logic [15:0] delay_wire_2596;
+  logic [15:0] delay_wire_2597;
+  logic [15:0] delay_wire_2598;
+  logic [15:0] delay_wire_2599;
+  logic [15:0] delay_wire_2600;
+  logic [15:0] delay_wire_2601;
+  logic [15:0] delay_wire_2602;
+  logic [15:0] delay_wire_2603;
+  logic [15:0] delay_wire_2604;
+  logic [15:0] delay_wire_2605;
+  logic [15:0] delay_wire_2606;
+  logic [15:0] delay_wire_2607;
+  logic [15:0] delay_wire_2608;
+  logic [15:0] delay_wire_2609;
+  logic [15:0] delay_wire_2610;
+  logic [15:0] delay_wire_2611;
+  logic [15:0] delay_wire_2612;
+  logic [15:0] delay_wire_2613;
+  logic [15:0] delay_wire_2614;
+  logic [15:0] delay_wire_2615;
+  logic [15:0] delay_wire_2616;
+  logic [15:0] delay_wire_2617;
+  logic [15:0] delay_wire_2618;
+  logic [15:0] delay_wire_2619;
+  logic [15:0] delay_wire_2620;
+  logic [15:0] delay_wire_2621;
+  logic [15:0] delay_wire_2622;
+  logic [15:0] delay_wire_2623;
+  logic [15:0] delay_wire_2624;
+  logic [15:0] delay_wire_2625;
+  logic [15:0] delay_wire_2626;
+  logic [15:0] delay_wire_2627;
+  logic [15:0] delay_wire_2628;
+  logic [15:0] delay_wire_2629;
+  logic [15:0] delay_wire_2630;
+  logic [15:0] delay_wire_2631;
+  logic [15:0] delay_wire_2632;
+  logic [15:0] delay_wire_2633;
+  logic [15:0] delay_wire_2634;
+  logic [15:0] delay_wire_2635;
+  always @(posedge clk) begin
+    delay_wire_2571 <= in;
+    delay_wire_2572 <= delay_wire_2571;
+    delay_wire_2573 <= delay_wire_2572;
+    delay_wire_2574 <= delay_wire_2573;
+    delay_wire_2575 <= delay_wire_2574;
+    delay_wire_2576 <= delay_wire_2575;
+    delay_wire_2577 <= delay_wire_2576;
+    delay_wire_2578 <= delay_wire_2577;
+    delay_wire_2579 <= delay_wire_2578;
+    delay_wire_2580 <= delay_wire_2579;
+    delay_wire_2581 <= delay_wire_2580;
+    delay_wire_2582 <= delay_wire_2581;
+    delay_wire_2583 <= delay_wire_2582;
+    delay_wire_2584 <= delay_wire_2583;
+    delay_wire_2585 <= delay_wire_2584;
+    delay_wire_2586 <= delay_wire_2585;
+    delay_wire_2587 <= delay_wire_2586;
+    delay_wire_2588 <= delay_wire_2587;
+    delay_wire_2589 <= delay_wire_2588;
+    delay_wire_2590 <= delay_wire_2589;
+    delay_wire_2591 <= delay_wire_2590;
+    delay_wire_2592 <= delay_wire_2591;
+    delay_wire_2593 <= delay_wire_2592;
+    delay_wire_2594 <= delay_wire_2593;
+    delay_wire_2595 <= delay_wire_2594;
+    delay_wire_2596 <= delay_wire_2595;
+    delay_wire_2597 <= delay_wire_2596;
+    delay_wire_2598 <= delay_wire_2597;
+    delay_wire_2599 <= delay_wire_2598;
+    delay_wire_2600 <= delay_wire_2599;
+    delay_wire_2601 <= delay_wire_2600;
+    delay_wire_2602 <= delay_wire_2601;
+    delay_wire_2603 <= delay_wire_2602;
+    delay_wire_2604 <= delay_wire_2603;
+    delay_wire_2605 <= delay_wire_2604;
+    delay_wire_2606 <= delay_wire_2605;
+    delay_wire_2607 <= delay_wire_2606;
+    delay_wire_2608 <= delay_wire_2607;
+    delay_wire_2609 <= delay_wire_2608;
+    delay_wire_2610 <= delay_wire_2609;
+    delay_wire_2611 <= delay_wire_2610;
+    delay_wire_2612 <= delay_wire_2611;
+    delay_wire_2613 <= delay_wire_2612;
+    delay_wire_2614 <= delay_wire_2613;
+    delay_wire_2615 <= delay_wire_2614;
+    delay_wire_2616 <= delay_wire_2615;
+    delay_wire_2617 <= delay_wire_2616;
+    delay_wire_2618 <= delay_wire_2617;
+    delay_wire_2619 <= delay_wire_2618;
+    delay_wire_2620 <= delay_wire_2619;
+    delay_wire_2621 <= delay_wire_2620;
+    delay_wire_2622 <= delay_wire_2621;
+    delay_wire_2623 <= delay_wire_2622;
+    delay_wire_2624 <= delay_wire_2623;
+    delay_wire_2625 <= delay_wire_2624;
+    delay_wire_2626 <= delay_wire_2625;
+    delay_wire_2627 <= delay_wire_2626;
+    delay_wire_2628 <= delay_wire_2627;
+    delay_wire_2629 <= delay_wire_2628;
+    delay_wire_2630 <= delay_wire_2629;
+    delay_wire_2631 <= delay_wire_2630;
+    delay_wire_2632 <= delay_wire_2631;
+    delay_wire_2633 <= delay_wire_2632;
+    delay_wire_2634 <= delay_wire_2633;
+    delay_wire_2635 <= delay_wire_2634;
+  end
+  assign out = delay_wire_2635;
+endmodule
+
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_58_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_2636;
+  logic [15:0] delay_wire_2637;
+  logic [15:0] delay_wire_2638;
+  logic [15:0] delay_wire_2639;
+  logic [15:0] delay_wire_2640;
+  logic [15:0] delay_wire_2641;
+  logic [15:0] delay_wire_2642;
+  logic [15:0] delay_wire_2643;
+  logic [15:0] delay_wire_2644;
+  logic [15:0] delay_wire_2645;
+  logic [15:0] delay_wire_2646;
+  logic [15:0] delay_wire_2647;
+  logic [15:0] delay_wire_2648;
+  logic [15:0] delay_wire_2649;
+  logic [15:0] delay_wire_2650;
+  logic [15:0] delay_wire_2651;
+  logic [15:0] delay_wire_2652;
+  logic [15:0] delay_wire_2653;
+  logic [15:0] delay_wire_2654;
+  logic [15:0] delay_wire_2655;
+  logic [15:0] delay_wire_2656;
+  logic [15:0] delay_wire_2657;
+  logic [15:0] delay_wire_2658;
+  logic [15:0] delay_wire_2659;
+  logic [15:0] delay_wire_2660;
+  logic [15:0] delay_wire_2661;
+  logic [15:0] delay_wire_2662;
+  logic [15:0] delay_wire_2663;
+  logic [15:0] delay_wire_2664;
+  logic [15:0] delay_wire_2665;
+  logic [15:0] delay_wire_2666;
+  logic [15:0] delay_wire_2667;
+  logic [15:0] delay_wire_2668;
+  logic [15:0] delay_wire_2669;
+  logic [15:0] delay_wire_2670;
+  logic [15:0] delay_wire_2671;
+  logic [15:0] delay_wire_2672;
+  logic [15:0] delay_wire_2673;
+  logic [15:0] delay_wire_2674;
+  logic [15:0] delay_wire_2675;
+  logic [15:0] delay_wire_2676;
+  logic [15:0] delay_wire_2677;
+  logic [15:0] delay_wire_2678;
+  logic [15:0] delay_wire_2679;
+  logic [15:0] delay_wire_2680;
+  logic [15:0] delay_wire_2681;
+  logic [15:0] delay_wire_2682;
+  logic [15:0] delay_wire_2683;
+  logic [15:0] delay_wire_2684;
+  logic [15:0] delay_wire_2685;
+  logic [15:0] delay_wire_2686;
+  logic [15:0] delay_wire_2687;
+  logic [15:0] delay_wire_2688;
+  logic [15:0] delay_wire_2689;
+  logic [15:0] delay_wire_2690;
+  logic [15:0] delay_wire_2691;
+  logic [15:0] delay_wire_2692;
+  logic [15:0] delay_wire_2693;
+  logic [15:0] delay_wire_2694;
+  logic [15:0] delay_wire_2695;
+  logic [15:0] delay_wire_2696;
+  logic [15:0] delay_wire_2697;
+  logic [15:0] delay_wire_2698;
+  logic [15:0] delay_wire_2699;
+  logic [15:0] delay_wire_2700;
+  logic [15:0] delay_wire_2701;
+  logic [15:0] delay_wire_2702;
+  logic [15:0] delay_wire_2703;
+  logic [15:0] delay_wire_2704;
+  logic [15:0] delay_wire_2705;
+  logic [15:0] delay_wire_2706;
+  logic [15:0] delay_wire_2707;
+  logic [15:0] delay_wire_2708;
+  logic [15:0] delay_wire_2709;
+  logic [15:0] delay_wire_2710;
+  logic [15:0] delay_wire_2711;
+  logic [15:0] delay_wire_2712;
+  logic [15:0] delay_wire_2713;
+  logic [15:0] delay_wire_2714;
+  logic [15:0] delay_wire_2715;
+  logic [15:0] delay_wire_2716;
+  logic [15:0] delay_wire_2717;
+  logic [15:0] delay_wire_2718;
+  logic [15:0] delay_wire_2719;
+  logic [15:0] delay_wire_2720;
+  logic [15:0] delay_wire_2721;
+  logic [15:0] delay_wire_2722;
+  logic [15:0] delay_wire_2723;
+  logic [15:0] delay_wire_2724;
+  logic [15:0] delay_wire_2725;
+  logic [15:0] delay_wire_2726;
+  logic [15:0] delay_wire_2727;
+  logic [15:0] delay_wire_2728;
+  logic [15:0] delay_wire_2729;
+  logic [15:0] delay_wire_2730;
+  logic [15:0] delay_wire_2731;
+  logic [15:0] delay_wire_2732;
+  logic [15:0] delay_wire_2733;
+  logic [15:0] delay_wire_2734;
+  logic [15:0] delay_wire_2735;
+  logic [15:0] delay_wire_2736;
+  logic [15:0] delay_wire_2737;
+  logic [15:0] delay_wire_2738;
+  logic [15:0] delay_wire_2739;
+  logic [15:0] delay_wire_2740;
+  logic [15:0] delay_wire_2741;
+  logic [15:0] delay_wire_2742;
+  logic [15:0] delay_wire_2743;
+  logic [15:0] delay_wire_2744;
+  logic [15:0] delay_wire_2745;
+  logic [15:0] delay_wire_2746;
+  logic [15:0] delay_wire_2747;
+  logic [15:0] delay_wire_2748;
+  logic [15:0] delay_wire_2749;
+  logic [15:0] delay_wire_2750;
+  logic [15:0] delay_wire_2751;
+  logic [15:0] delay_wire_2752;
+  logic [15:0] delay_wire_2753;
+  logic [15:0] delay_wire_2754;
+  logic [15:0] delay_wire_2755;
+  logic [15:0] delay_wire_2756;
+  logic [15:0] delay_wire_2757;
+  logic [15:0] delay_wire_2758;
+  logic [15:0] delay_wire_2759;
+  logic [15:0] delay_wire_2760;
+  logic [15:0] delay_wire_2761;
+  logic [15:0] delay_wire_2762;
+  logic [15:0] delay_wire_2763;
+  logic [15:0] delay_wire_2764;
+  logic [15:0] delay_wire_2765;
+  logic [15:0] delay_wire_2766;
+  always @(posedge clk) begin
+    delay_wire_2636 <= in;
+    delay_wire_2637 <= delay_wire_2636;
+    delay_wire_2638 <= delay_wire_2637;
+    delay_wire_2639 <= delay_wire_2638;
+    delay_wire_2640 <= delay_wire_2639;
+    delay_wire_2641 <= delay_wire_2640;
+    delay_wire_2642 <= delay_wire_2641;
+    delay_wire_2643 <= delay_wire_2642;
+    delay_wire_2644 <= delay_wire_2643;
+    delay_wire_2645 <= delay_wire_2644;
+    delay_wire_2646 <= delay_wire_2645;
+    delay_wire_2647 <= delay_wire_2646;
+    delay_wire_2648 <= delay_wire_2647;
+    delay_wire_2649 <= delay_wire_2648;
+    delay_wire_2650 <= delay_wire_2649;
+    delay_wire_2651 <= delay_wire_2650;
+    delay_wire_2652 <= delay_wire_2651;
+    delay_wire_2653 <= delay_wire_2652;
+    delay_wire_2654 <= delay_wire_2653;
+    delay_wire_2655 <= delay_wire_2654;
+    delay_wire_2656 <= delay_wire_2655;
+    delay_wire_2657 <= delay_wire_2656;
+    delay_wire_2658 <= delay_wire_2657;
+    delay_wire_2659 <= delay_wire_2658;
+    delay_wire_2660 <= delay_wire_2659;
+    delay_wire_2661 <= delay_wire_2660;
+    delay_wire_2662 <= delay_wire_2661;
+    delay_wire_2663 <= delay_wire_2662;
+    delay_wire_2664 <= delay_wire_2663;
+    delay_wire_2665 <= delay_wire_2664;
+    delay_wire_2666 <= delay_wire_2665;
+    delay_wire_2667 <= delay_wire_2666;
+    delay_wire_2668 <= delay_wire_2667;
+    delay_wire_2669 <= delay_wire_2668;
+    delay_wire_2670 <= delay_wire_2669;
+    delay_wire_2671 <= delay_wire_2670;
+    delay_wire_2672 <= delay_wire_2671;
+    delay_wire_2673 <= delay_wire_2672;
+    delay_wire_2674 <= delay_wire_2673;
+    delay_wire_2675 <= delay_wire_2674;
+    delay_wire_2676 <= delay_wire_2675;
+    delay_wire_2677 <= delay_wire_2676;
+    delay_wire_2678 <= delay_wire_2677;
+    delay_wire_2679 <= delay_wire_2678;
+    delay_wire_2680 <= delay_wire_2679;
+    delay_wire_2681 <= delay_wire_2680;
+    delay_wire_2682 <= delay_wire_2681;
+    delay_wire_2683 <= delay_wire_2682;
+    delay_wire_2684 <= delay_wire_2683;
+    delay_wire_2685 <= delay_wire_2684;
+    delay_wire_2686 <= delay_wire_2685;
+    delay_wire_2687 <= delay_wire_2686;
+    delay_wire_2688 <= delay_wire_2687;
+    delay_wire_2689 <= delay_wire_2688;
+    delay_wire_2690 <= delay_wire_2689;
+    delay_wire_2691 <= delay_wire_2690;
+    delay_wire_2692 <= delay_wire_2691;
+    delay_wire_2693 <= delay_wire_2692;
+    delay_wire_2694 <= delay_wire_2693;
+    delay_wire_2695 <= delay_wire_2694;
+    delay_wire_2696 <= delay_wire_2695;
+    delay_wire_2697 <= delay_wire_2696;
+    delay_wire_2698 <= delay_wire_2697;
+    delay_wire_2699 <= delay_wire_2698;
+    delay_wire_2700 <= delay_wire_2699;
+    delay_wire_2701 <= delay_wire_2700;
+    delay_wire_2702 <= delay_wire_2701;
+    delay_wire_2703 <= delay_wire_2702;
+    delay_wire_2704 <= delay_wire_2703;
+    delay_wire_2705 <= delay_wire_2704;
+    delay_wire_2706 <= delay_wire_2705;
+    delay_wire_2707 <= delay_wire_2706;
+    delay_wire_2708 <= delay_wire_2707;
+    delay_wire_2709 <= delay_wire_2708;
+    delay_wire_2710 <= delay_wire_2709;
+    delay_wire_2711 <= delay_wire_2710;
+    delay_wire_2712 <= delay_wire_2711;
+    delay_wire_2713 <= delay_wire_2712;
+    delay_wire_2714 <= delay_wire_2713;
+    delay_wire_2715 <= delay_wire_2714;
+    delay_wire_2716 <= delay_wire_2715;
+    delay_wire_2717 <= delay_wire_2716;
+    delay_wire_2718 <= delay_wire_2717;
+    delay_wire_2719 <= delay_wire_2718;
+    delay_wire_2720 <= delay_wire_2719;
+    delay_wire_2721 <= delay_wire_2720;
+    delay_wire_2722 <= delay_wire_2721;
+    delay_wire_2723 <= delay_wire_2722;
+    delay_wire_2724 <= delay_wire_2723;
+    delay_wire_2725 <= delay_wire_2724;
+    delay_wire_2726 <= delay_wire_2725;
+    delay_wire_2727 <= delay_wire_2726;
+    delay_wire_2728 <= delay_wire_2727;
+    delay_wire_2729 <= delay_wire_2728;
+    delay_wire_2730 <= delay_wire_2729;
+    delay_wire_2731 <= delay_wire_2730;
+    delay_wire_2732 <= delay_wire_2731;
+    delay_wire_2733 <= delay_wire_2732;
+    delay_wire_2734 <= delay_wire_2733;
+    delay_wire_2735 <= delay_wire_2734;
+    delay_wire_2736 <= delay_wire_2735;
+    delay_wire_2737 <= delay_wire_2736;
+    delay_wire_2738 <= delay_wire_2737;
+    delay_wire_2739 <= delay_wire_2738;
+    delay_wire_2740 <= delay_wire_2739;
+    delay_wire_2741 <= delay_wire_2740;
+    delay_wire_2742 <= delay_wire_2741;
+    delay_wire_2743 <= delay_wire_2742;
+    delay_wire_2744 <= delay_wire_2743;
+    delay_wire_2745 <= delay_wire_2744;
+    delay_wire_2746 <= delay_wire_2745;
+    delay_wire_2747 <= delay_wire_2746;
+    delay_wire_2748 <= delay_wire_2747;
+    delay_wire_2749 <= delay_wire_2748;
+    delay_wire_2750 <= delay_wire_2749;
+    delay_wire_2751 <= delay_wire_2750;
+    delay_wire_2752 <= delay_wire_2751;
+    delay_wire_2753 <= delay_wire_2752;
+    delay_wire_2754 <= delay_wire_2753;
+    delay_wire_2755 <= delay_wire_2754;
+    delay_wire_2756 <= delay_wire_2755;
+    delay_wire_2757 <= delay_wire_2756;
+    delay_wire_2758 <= delay_wire_2757;
+    delay_wire_2759 <= delay_wire_2758;
+    delay_wire_2760 <= delay_wire_2759;
+    delay_wire_2761 <= delay_wire_2760;
+    delay_wire_2762 <= delay_wire_2761;
+    delay_wire_2763 <= delay_wire_2762;
+    delay_wire_2764 <= delay_wire_2763;
+    delay_wire_2765 <= delay_wire_2764;
+    delay_wire_2766 <= delay_wire_2765;
+  end
+  assign out = delay_wire_2766;
+endmodule
+
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_59_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_2767;
+  logic [15:0] delay_wire_2768;
+  logic [15:0] delay_wire_2769;
+  logic [15:0] delay_wire_2770;
+  logic [15:0] delay_wire_2771;
+  logic [15:0] delay_wire_2772;
+  logic [15:0] delay_wire_2773;
+  logic [15:0] delay_wire_2774;
+  logic [15:0] delay_wire_2775;
+  logic [15:0] delay_wire_2776;
+  logic [15:0] delay_wire_2777;
+  logic [15:0] delay_wire_2778;
+  logic [15:0] delay_wire_2779;
+  logic [15:0] delay_wire_2780;
+  logic [15:0] delay_wire_2781;
+  logic [15:0] delay_wire_2782;
+  logic [15:0] delay_wire_2783;
+  logic [15:0] delay_wire_2784;
+  logic [15:0] delay_wire_2785;
+  logic [15:0] delay_wire_2786;
+  logic [15:0] delay_wire_2787;
+  logic [15:0] delay_wire_2788;
+  logic [15:0] delay_wire_2789;
+  logic [15:0] delay_wire_2790;
+  logic [15:0] delay_wire_2791;
+  logic [15:0] delay_wire_2792;
+  logic [15:0] delay_wire_2793;
+  logic [15:0] delay_wire_2794;
+  logic [15:0] delay_wire_2795;
+  logic [15:0] delay_wire_2796;
+  logic [15:0] delay_wire_2797;
+  logic [15:0] delay_wire_2798;
+  logic [15:0] delay_wire_2799;
+  logic [15:0] delay_wire_2800;
+  logic [15:0] delay_wire_2801;
+  logic [15:0] delay_wire_2802;
+  logic [15:0] delay_wire_2803;
+  logic [15:0] delay_wire_2804;
+  logic [15:0] delay_wire_2805;
+  logic [15:0] delay_wire_2806;
+  logic [15:0] delay_wire_2807;
+  logic [15:0] delay_wire_2808;
+  logic [15:0] delay_wire_2809;
+  logic [15:0] delay_wire_2810;
+  logic [15:0] delay_wire_2811;
+  logic [15:0] delay_wire_2812;
+  logic [15:0] delay_wire_2813;
+  logic [15:0] delay_wire_2814;
+  logic [15:0] delay_wire_2815;
+  logic [15:0] delay_wire_2816;
+  logic [15:0] delay_wire_2817;
+  logic [15:0] delay_wire_2818;
+  logic [15:0] delay_wire_2819;
+  logic [15:0] delay_wire_2820;
+  logic [15:0] delay_wire_2821;
+  logic [15:0] delay_wire_2822;
+  logic [15:0] delay_wire_2823;
+  logic [15:0] delay_wire_2824;
   logic [15:0] delay_wire_2825;
   logic [15:0] delay_wire_2826;
   logic [15:0] delay_wire_2827;
@@ -8436,9 +8402,91 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
   logic [15:0] delay_wire_2831;
   logic [15:0] delay_wire_2832;
   logic [15:0] delay_wire_2833;
+  always @(posedge clk) begin
+    delay_wire_2767 <= in;
+    delay_wire_2768 <= delay_wire_2767;
+    delay_wire_2769 <= delay_wire_2768;
+    delay_wire_2770 <= delay_wire_2769;
+    delay_wire_2771 <= delay_wire_2770;
+    delay_wire_2772 <= delay_wire_2771;
+    delay_wire_2773 <= delay_wire_2772;
+    delay_wire_2774 <= delay_wire_2773;
+    delay_wire_2775 <= delay_wire_2774;
+    delay_wire_2776 <= delay_wire_2775;
+    delay_wire_2777 <= delay_wire_2776;
+    delay_wire_2778 <= delay_wire_2777;
+    delay_wire_2779 <= delay_wire_2778;
+    delay_wire_2780 <= delay_wire_2779;
+    delay_wire_2781 <= delay_wire_2780;
+    delay_wire_2782 <= delay_wire_2781;
+    delay_wire_2783 <= delay_wire_2782;
+    delay_wire_2784 <= delay_wire_2783;
+    delay_wire_2785 <= delay_wire_2784;
+    delay_wire_2786 <= delay_wire_2785;
+    delay_wire_2787 <= delay_wire_2786;
+    delay_wire_2788 <= delay_wire_2787;
+    delay_wire_2789 <= delay_wire_2788;
+    delay_wire_2790 <= delay_wire_2789;
+    delay_wire_2791 <= delay_wire_2790;
+    delay_wire_2792 <= delay_wire_2791;
+    delay_wire_2793 <= delay_wire_2792;
+    delay_wire_2794 <= delay_wire_2793;
+    delay_wire_2795 <= delay_wire_2794;
+    delay_wire_2796 <= delay_wire_2795;
+    delay_wire_2797 <= delay_wire_2796;
+    delay_wire_2798 <= delay_wire_2797;
+    delay_wire_2799 <= delay_wire_2798;
+    delay_wire_2800 <= delay_wire_2799;
+    delay_wire_2801 <= delay_wire_2800;
+    delay_wire_2802 <= delay_wire_2801;
+    delay_wire_2803 <= delay_wire_2802;
+    delay_wire_2804 <= delay_wire_2803;
+    delay_wire_2805 <= delay_wire_2804;
+    delay_wire_2806 <= delay_wire_2805;
+    delay_wire_2807 <= delay_wire_2806;
+    delay_wire_2808 <= delay_wire_2807;
+    delay_wire_2809 <= delay_wire_2808;
+    delay_wire_2810 <= delay_wire_2809;
+    delay_wire_2811 <= delay_wire_2810;
+    delay_wire_2812 <= delay_wire_2811;
+    delay_wire_2813 <= delay_wire_2812;
+    delay_wire_2814 <= delay_wire_2813;
+    delay_wire_2815 <= delay_wire_2814;
+    delay_wire_2816 <= delay_wire_2815;
+    delay_wire_2817 <= delay_wire_2816;
+    delay_wire_2818 <= delay_wire_2817;
+    delay_wire_2819 <= delay_wire_2818;
+    delay_wire_2820 <= delay_wire_2819;
+    delay_wire_2821 <= delay_wire_2820;
+    delay_wire_2822 <= delay_wire_2821;
+    delay_wire_2823 <= delay_wire_2822;
+    delay_wire_2824 <= delay_wire_2823;
+    delay_wire_2825 <= delay_wire_2824;
+    delay_wire_2826 <= delay_wire_2825;
+    delay_wire_2827 <= delay_wire_2826;
+    delay_wire_2828 <= delay_wire_2827;
+    delay_wire_2829 <= delay_wire_2828;
+    delay_wire_2830 <= delay_wire_2829;
+    delay_wire_2831 <= delay_wire_2830;
+    delay_wire_2832 <= delay_wire_2831;
+    delay_wire_2833 <= delay_wire_2832;
+  end
+  assign out = delay_wire_2833;
+endmodule
+
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_60_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_2834;
   logic [15:0] delay_wire_2835;
   logic [15:0] delay_wire_2836;
+  always @(posedge clk) begin
+    delay_wire_2834 <= in;
+    delay_wire_2835 <= delay_wire_2834;
+    delay_wire_2836 <= delay_wire_2835;
+  end
+  assign out = delay_wire_2836;
+endmodule
+
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_48_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_2837;
   logic [15:0] delay_wire_2838;
   logic [15:0] delay_wire_2839;
@@ -8559,20 +8607,23 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
   logic [15:0] delay_wire_2954;
   logic [15:0] delay_wire_2955;
   logic [15:0] delay_wire_2956;
+  logic [15:0] delay_wire_2957;
+  logic [15:0] delay_wire_2958;
+  logic [15:0] delay_wire_2959;
+  logic [15:0] delay_wire_2960;
+  logic [15:0] delay_wire_2961;
+  logic [15:0] delay_wire_2962;
+  logic [15:0] delay_wire_2963;
+  logic [15:0] delay_wire_2964;
+  logic [15:0] delay_wire_2965;
+  logic [15:0] delay_wire_2966;
+  logic [15:0] delay_wire_2967;
+  logic [15:0] delay_wire_2968;
+  logic [15:0] delay_wire_2969;
+  logic [15:0] delay_wire_2970;
+  logic [15:0] delay_wire_2971;
   always @(posedge clk) begin
-    delay_wire_2825 <= in;
-    delay_wire_2826 <= delay_wire_2825;
-    delay_wire_2827 <= delay_wire_2826;
-    delay_wire_2828 <= delay_wire_2827;
-    delay_wire_2829 <= delay_wire_2828;
-    delay_wire_2830 <= delay_wire_2829;
-    delay_wire_2831 <= delay_wire_2830;
-    delay_wire_2832 <= delay_wire_2831;
-    delay_wire_2833 <= delay_wire_2832;
-    delay_wire_2834 <= delay_wire_2833;
-    delay_wire_2835 <= delay_wire_2834;
-    delay_wire_2836 <= delay_wire_2835;
-    delay_wire_2837 <= delay_wire_2836;
+    delay_wire_2837 <= in;
     delay_wire_2838 <= delay_wire_2837;
     delay_wire_2839 <= delay_wire_2838;
     delay_wire_2840 <= delay_wire_2839;
@@ -8692,36 +8743,26 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
     delay_wire_2954 <= delay_wire_2953;
     delay_wire_2955 <= delay_wire_2954;
     delay_wire_2956 <= delay_wire_2955;
-  end
-  assign out = delay_wire_2956;
-endmodule
-
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_56_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2957;
-  logic [15:0] delay_wire_2958;
-  logic [15:0] delay_wire_2959;
-  logic [15:0] delay_wire_2960;
-  always @(posedge clk) begin
-    delay_wire_2957 <= in;
+    delay_wire_2957 <= delay_wire_2956;
     delay_wire_2958 <= delay_wire_2957;
     delay_wire_2959 <= delay_wire_2958;
     delay_wire_2960 <= delay_wire_2959;
+    delay_wire_2961 <= delay_wire_2960;
+    delay_wire_2962 <= delay_wire_2961;
+    delay_wire_2963 <= delay_wire_2962;
+    delay_wire_2964 <= delay_wire_2963;
+    delay_wire_2965 <= delay_wire_2964;
+    delay_wire_2966 <= delay_wire_2965;
+    delay_wire_2967 <= delay_wire_2966;
+    delay_wire_2968 <= delay_wire_2967;
+    delay_wire_2969 <= delay_wire_2968;
+    delay_wire_2970 <= delay_wire_2969;
+    delay_wire_2971 <= delay_wire_2970;
   end
-  assign out = delay_wire_2960;
+  assign out = delay_wire_2971;
 endmodule
 
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_57_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_2961;
-  logic [15:0] delay_wire_2962;
-  logic [15:0] delay_wire_2963;
-  logic [15:0] delay_wire_2964;
-  logic [15:0] delay_wire_2965;
-  logic [15:0] delay_wire_2966;
-  logic [15:0] delay_wire_2967;
-  logic [15:0] delay_wire_2968;
-  logic [15:0] delay_wire_2969;
-  logic [15:0] delay_wire_2970;
-  logic [15:0] delay_wire_2971;
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_49_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_2972;
   logic [15:0] delay_wire_2973;
   logic [15:0] delay_wire_2974;
@@ -8779,80 +8820,6 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
   logic [15:0] delay_wire_3026;
   logic [15:0] delay_wire_3027;
   logic [15:0] delay_wire_3028;
-  always @(posedge clk) begin
-    delay_wire_2961 <= in;
-    delay_wire_2962 <= delay_wire_2961;
-    delay_wire_2963 <= delay_wire_2962;
-    delay_wire_2964 <= delay_wire_2963;
-    delay_wire_2965 <= delay_wire_2964;
-    delay_wire_2966 <= delay_wire_2965;
-    delay_wire_2967 <= delay_wire_2966;
-    delay_wire_2968 <= delay_wire_2967;
-    delay_wire_2969 <= delay_wire_2968;
-    delay_wire_2970 <= delay_wire_2969;
-    delay_wire_2971 <= delay_wire_2970;
-    delay_wire_2972 <= delay_wire_2971;
-    delay_wire_2973 <= delay_wire_2972;
-    delay_wire_2974 <= delay_wire_2973;
-    delay_wire_2975 <= delay_wire_2974;
-    delay_wire_2976 <= delay_wire_2975;
-    delay_wire_2977 <= delay_wire_2976;
-    delay_wire_2978 <= delay_wire_2977;
-    delay_wire_2979 <= delay_wire_2978;
-    delay_wire_2980 <= delay_wire_2979;
-    delay_wire_2981 <= delay_wire_2980;
-    delay_wire_2982 <= delay_wire_2981;
-    delay_wire_2983 <= delay_wire_2982;
-    delay_wire_2984 <= delay_wire_2983;
-    delay_wire_2985 <= delay_wire_2984;
-    delay_wire_2986 <= delay_wire_2985;
-    delay_wire_2987 <= delay_wire_2986;
-    delay_wire_2988 <= delay_wire_2987;
-    delay_wire_2989 <= delay_wire_2988;
-    delay_wire_2990 <= delay_wire_2989;
-    delay_wire_2991 <= delay_wire_2990;
-    delay_wire_2992 <= delay_wire_2991;
-    delay_wire_2993 <= delay_wire_2992;
-    delay_wire_2994 <= delay_wire_2993;
-    delay_wire_2995 <= delay_wire_2994;
-    delay_wire_2996 <= delay_wire_2995;
-    delay_wire_2997 <= delay_wire_2996;
-    delay_wire_2998 <= delay_wire_2997;
-    delay_wire_2999 <= delay_wire_2998;
-    delay_wire_3000 <= delay_wire_2999;
-    delay_wire_3001 <= delay_wire_3000;
-    delay_wire_3002 <= delay_wire_3001;
-    delay_wire_3003 <= delay_wire_3002;
-    delay_wire_3004 <= delay_wire_3003;
-    delay_wire_3005 <= delay_wire_3004;
-    delay_wire_3006 <= delay_wire_3005;
-    delay_wire_3007 <= delay_wire_3006;
-    delay_wire_3008 <= delay_wire_3007;
-    delay_wire_3009 <= delay_wire_3008;
-    delay_wire_3010 <= delay_wire_3009;
-    delay_wire_3011 <= delay_wire_3010;
-    delay_wire_3012 <= delay_wire_3011;
-    delay_wire_3013 <= delay_wire_3012;
-    delay_wire_3014 <= delay_wire_3013;
-    delay_wire_3015 <= delay_wire_3014;
-    delay_wire_3016 <= delay_wire_3015;
-    delay_wire_3017 <= delay_wire_3016;
-    delay_wire_3018 <= delay_wire_3017;
-    delay_wire_3019 <= delay_wire_3018;
-    delay_wire_3020 <= delay_wire_3019;
-    delay_wire_3021 <= delay_wire_3020;
-    delay_wire_3022 <= delay_wire_3021;
-    delay_wire_3023 <= delay_wire_3022;
-    delay_wire_3024 <= delay_wire_3023;
-    delay_wire_3025 <= delay_wire_3024;
-    delay_wire_3026 <= delay_wire_3025;
-    delay_wire_3027 <= delay_wire_3026;
-    delay_wire_3028 <= delay_wire_3027;
-  end
-  assign out = delay_wire_3028;
-endmodule
-
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_58_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_3029;
   logic [15:0] delay_wire_3030;
   logic [15:0] delay_wire_3031;
@@ -8930,65 +8897,65 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
   logic [15:0] delay_wire_3103;
   logic [15:0] delay_wire_3104;
   logic [15:0] delay_wire_3105;
-  logic [15:0] delay_wire_3106;
-  logic [15:0] delay_wire_3107;
-  logic [15:0] delay_wire_3108;
-  logic [15:0] delay_wire_3109;
-  logic [15:0] delay_wire_3110;
-  logic [15:0] delay_wire_3111;
-  logic [15:0] delay_wire_3112;
-  logic [15:0] delay_wire_3113;
-  logic [15:0] delay_wire_3114;
-  logic [15:0] delay_wire_3115;
-  logic [15:0] delay_wire_3116;
-  logic [15:0] delay_wire_3117;
-  logic [15:0] delay_wire_3118;
-  logic [15:0] delay_wire_3119;
-  logic [15:0] delay_wire_3120;
-  logic [15:0] delay_wire_3121;
-  logic [15:0] delay_wire_3122;
-  logic [15:0] delay_wire_3123;
-  logic [15:0] delay_wire_3124;
-  logic [15:0] delay_wire_3125;
-  logic [15:0] delay_wire_3126;
-  logic [15:0] delay_wire_3127;
-  logic [15:0] delay_wire_3128;
-  logic [15:0] delay_wire_3129;
-  logic [15:0] delay_wire_3130;
-  logic [15:0] delay_wire_3131;
-  logic [15:0] delay_wire_3132;
-  logic [15:0] delay_wire_3133;
-  logic [15:0] delay_wire_3134;
-  logic [15:0] delay_wire_3135;
-  logic [15:0] delay_wire_3136;
-  logic [15:0] delay_wire_3137;
-  logic [15:0] delay_wire_3138;
-  logic [15:0] delay_wire_3139;
-  logic [15:0] delay_wire_3140;
-  logic [15:0] delay_wire_3141;
-  logic [15:0] delay_wire_3142;
-  logic [15:0] delay_wire_3143;
-  logic [15:0] delay_wire_3144;
-  logic [15:0] delay_wire_3145;
-  logic [15:0] delay_wire_3146;
-  logic [15:0] delay_wire_3147;
-  logic [15:0] delay_wire_3148;
-  logic [15:0] delay_wire_3149;
-  logic [15:0] delay_wire_3150;
-  logic [15:0] delay_wire_3151;
-  logic [15:0] delay_wire_3152;
-  logic [15:0] delay_wire_3153;
-  logic [15:0] delay_wire_3154;
-  logic [15:0] delay_wire_3155;
-  logic [15:0] delay_wire_3156;
-  logic [15:0] delay_wire_3157;
-  logic [15:0] delay_wire_3158;
-  logic [15:0] delay_wire_3159;
-  logic [15:0] delay_wire_3160;
-  logic [15:0] delay_wire_3161;
-  logic [15:0] delay_wire_3162;
   always @(posedge clk) begin
-    delay_wire_3029 <= in;
+    delay_wire_2972 <= in;
+    delay_wire_2973 <= delay_wire_2972;
+    delay_wire_2974 <= delay_wire_2973;
+    delay_wire_2975 <= delay_wire_2974;
+    delay_wire_2976 <= delay_wire_2975;
+    delay_wire_2977 <= delay_wire_2976;
+    delay_wire_2978 <= delay_wire_2977;
+    delay_wire_2979 <= delay_wire_2978;
+    delay_wire_2980 <= delay_wire_2979;
+    delay_wire_2981 <= delay_wire_2980;
+    delay_wire_2982 <= delay_wire_2981;
+    delay_wire_2983 <= delay_wire_2982;
+    delay_wire_2984 <= delay_wire_2983;
+    delay_wire_2985 <= delay_wire_2984;
+    delay_wire_2986 <= delay_wire_2985;
+    delay_wire_2987 <= delay_wire_2986;
+    delay_wire_2988 <= delay_wire_2987;
+    delay_wire_2989 <= delay_wire_2988;
+    delay_wire_2990 <= delay_wire_2989;
+    delay_wire_2991 <= delay_wire_2990;
+    delay_wire_2992 <= delay_wire_2991;
+    delay_wire_2993 <= delay_wire_2992;
+    delay_wire_2994 <= delay_wire_2993;
+    delay_wire_2995 <= delay_wire_2994;
+    delay_wire_2996 <= delay_wire_2995;
+    delay_wire_2997 <= delay_wire_2996;
+    delay_wire_2998 <= delay_wire_2997;
+    delay_wire_2999 <= delay_wire_2998;
+    delay_wire_3000 <= delay_wire_2999;
+    delay_wire_3001 <= delay_wire_3000;
+    delay_wire_3002 <= delay_wire_3001;
+    delay_wire_3003 <= delay_wire_3002;
+    delay_wire_3004 <= delay_wire_3003;
+    delay_wire_3005 <= delay_wire_3004;
+    delay_wire_3006 <= delay_wire_3005;
+    delay_wire_3007 <= delay_wire_3006;
+    delay_wire_3008 <= delay_wire_3007;
+    delay_wire_3009 <= delay_wire_3008;
+    delay_wire_3010 <= delay_wire_3009;
+    delay_wire_3011 <= delay_wire_3010;
+    delay_wire_3012 <= delay_wire_3011;
+    delay_wire_3013 <= delay_wire_3012;
+    delay_wire_3014 <= delay_wire_3013;
+    delay_wire_3015 <= delay_wire_3014;
+    delay_wire_3016 <= delay_wire_3015;
+    delay_wire_3017 <= delay_wire_3016;
+    delay_wire_3018 <= delay_wire_3017;
+    delay_wire_3019 <= delay_wire_3018;
+    delay_wire_3020 <= delay_wire_3019;
+    delay_wire_3021 <= delay_wire_3020;
+    delay_wire_3022 <= delay_wire_3021;
+    delay_wire_3023 <= delay_wire_3022;
+    delay_wire_3024 <= delay_wire_3023;
+    delay_wire_3025 <= delay_wire_3024;
+    delay_wire_3026 <= delay_wire_3025;
+    delay_wire_3027 <= delay_wire_3026;
+    delay_wire_3028 <= delay_wire_3027;
+    delay_wire_3029 <= delay_wire_3028;
     delay_wire_3030 <= delay_wire_3029;
     delay_wire_3031 <= delay_wire_3030;
     delay_wire_3032 <= delay_wire_3031;
@@ -9065,68 +9032,68 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
     delay_wire_3103 <= delay_wire_3102;
     delay_wire_3104 <= delay_wire_3103;
     delay_wire_3105 <= delay_wire_3104;
-    delay_wire_3106 <= delay_wire_3105;
-    delay_wire_3107 <= delay_wire_3106;
-    delay_wire_3108 <= delay_wire_3107;
-    delay_wire_3109 <= delay_wire_3108;
-    delay_wire_3110 <= delay_wire_3109;
-    delay_wire_3111 <= delay_wire_3110;
-    delay_wire_3112 <= delay_wire_3111;
-    delay_wire_3113 <= delay_wire_3112;
-    delay_wire_3114 <= delay_wire_3113;
-    delay_wire_3115 <= delay_wire_3114;
-    delay_wire_3116 <= delay_wire_3115;
-    delay_wire_3117 <= delay_wire_3116;
-    delay_wire_3118 <= delay_wire_3117;
-    delay_wire_3119 <= delay_wire_3118;
-    delay_wire_3120 <= delay_wire_3119;
-    delay_wire_3121 <= delay_wire_3120;
-    delay_wire_3122 <= delay_wire_3121;
-    delay_wire_3123 <= delay_wire_3122;
-    delay_wire_3124 <= delay_wire_3123;
-    delay_wire_3125 <= delay_wire_3124;
-    delay_wire_3126 <= delay_wire_3125;
-    delay_wire_3127 <= delay_wire_3126;
-    delay_wire_3128 <= delay_wire_3127;
-    delay_wire_3129 <= delay_wire_3128;
-    delay_wire_3130 <= delay_wire_3129;
-    delay_wire_3131 <= delay_wire_3130;
-    delay_wire_3132 <= delay_wire_3131;
-    delay_wire_3133 <= delay_wire_3132;
-    delay_wire_3134 <= delay_wire_3133;
-    delay_wire_3135 <= delay_wire_3134;
-    delay_wire_3136 <= delay_wire_3135;
-    delay_wire_3137 <= delay_wire_3136;
-    delay_wire_3138 <= delay_wire_3137;
-    delay_wire_3139 <= delay_wire_3138;
-    delay_wire_3140 <= delay_wire_3139;
-    delay_wire_3141 <= delay_wire_3140;
-    delay_wire_3142 <= delay_wire_3141;
-    delay_wire_3143 <= delay_wire_3142;
-    delay_wire_3144 <= delay_wire_3143;
-    delay_wire_3145 <= delay_wire_3144;
-    delay_wire_3146 <= delay_wire_3145;
-    delay_wire_3147 <= delay_wire_3146;
-    delay_wire_3148 <= delay_wire_3147;
-    delay_wire_3149 <= delay_wire_3148;
-    delay_wire_3150 <= delay_wire_3149;
-    delay_wire_3151 <= delay_wire_3150;
-    delay_wire_3152 <= delay_wire_3151;
-    delay_wire_3153 <= delay_wire_3152;
-    delay_wire_3154 <= delay_wire_3153;
-    delay_wire_3155 <= delay_wire_3154;
-    delay_wire_3156 <= delay_wire_3155;
-    delay_wire_3157 <= delay_wire_3156;
-    delay_wire_3158 <= delay_wire_3157;
-    delay_wire_3159 <= delay_wire_3158;
-    delay_wire_3160 <= delay_wire_3159;
-    delay_wire_3161 <= delay_wire_3160;
-    delay_wire_3162 <= delay_wire_3161;
   end
-  assign out = delay_wire_3162;
+  assign out = delay_wire_3105;
 endmodule
 
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_59_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_50_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_3106;
+  logic [15:0] delay_wire_3107;
+  logic [15:0] delay_wire_3108;
+  logic [15:0] delay_wire_3109;
+  logic [15:0] delay_wire_3110;
+  logic [15:0] delay_wire_3111;
+  logic [15:0] delay_wire_3112;
+  logic [15:0] delay_wire_3113;
+  logic [15:0] delay_wire_3114;
+  logic [15:0] delay_wire_3115;
+  logic [15:0] delay_wire_3116;
+  logic [15:0] delay_wire_3117;
+  logic [15:0] delay_wire_3118;
+  logic [15:0] delay_wire_3119;
+  logic [15:0] delay_wire_3120;
+  logic [15:0] delay_wire_3121;
+  logic [15:0] delay_wire_3122;
+  logic [15:0] delay_wire_3123;
+  logic [15:0] delay_wire_3124;
+  logic [15:0] delay_wire_3125;
+  logic [15:0] delay_wire_3126;
+  logic [15:0] delay_wire_3127;
+  logic [15:0] delay_wire_3128;
+  logic [15:0] delay_wire_3129;
+  logic [15:0] delay_wire_3130;
+  logic [15:0] delay_wire_3131;
+  logic [15:0] delay_wire_3132;
+  logic [15:0] delay_wire_3133;
+  logic [15:0] delay_wire_3134;
+  logic [15:0] delay_wire_3135;
+  logic [15:0] delay_wire_3136;
+  logic [15:0] delay_wire_3137;
+  logic [15:0] delay_wire_3138;
+  logic [15:0] delay_wire_3139;
+  logic [15:0] delay_wire_3140;
+  logic [15:0] delay_wire_3141;
+  logic [15:0] delay_wire_3142;
+  logic [15:0] delay_wire_3143;
+  logic [15:0] delay_wire_3144;
+  logic [15:0] delay_wire_3145;
+  logic [15:0] delay_wire_3146;
+  logic [15:0] delay_wire_3147;
+  logic [15:0] delay_wire_3148;
+  logic [15:0] delay_wire_3149;
+  logic [15:0] delay_wire_3150;
+  logic [15:0] delay_wire_3151;
+  logic [15:0] delay_wire_3152;
+  logic [15:0] delay_wire_3153;
+  logic [15:0] delay_wire_3154;
+  logic [15:0] delay_wire_3155;
+  logic [15:0] delay_wire_3156;
+  logic [15:0] delay_wire_3157;
+  logic [15:0] delay_wire_3158;
+  logic [15:0] delay_wire_3159;
+  logic [15:0] delay_wire_3160;
+  logic [15:0] delay_wire_3161;
+  logic [15:0] delay_wire_3162;
   logic [15:0] delay_wire_3163;
   logic [15:0] delay_wire_3164;
   logic [15:0] delay_wire_3165;
@@ -9197,8 +9164,71 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
   logic [15:0] delay_wire_3230;
   logic [15:0] delay_wire_3231;
   logic [15:0] delay_wire_3232;
+  logic [15:0] delay_wire_3233;
+  logic [15:0] delay_wire_3234;
+  logic [15:0] delay_wire_3235;
+  logic [15:0] delay_wire_3236;
+  logic [15:0] delay_wire_3237;
+  logic [15:0] delay_wire_3238;
   always @(posedge clk) begin
-    delay_wire_3163 <= in;
+    delay_wire_3106 <= in;
+    delay_wire_3107 <= delay_wire_3106;
+    delay_wire_3108 <= delay_wire_3107;
+    delay_wire_3109 <= delay_wire_3108;
+    delay_wire_3110 <= delay_wire_3109;
+    delay_wire_3111 <= delay_wire_3110;
+    delay_wire_3112 <= delay_wire_3111;
+    delay_wire_3113 <= delay_wire_3112;
+    delay_wire_3114 <= delay_wire_3113;
+    delay_wire_3115 <= delay_wire_3114;
+    delay_wire_3116 <= delay_wire_3115;
+    delay_wire_3117 <= delay_wire_3116;
+    delay_wire_3118 <= delay_wire_3117;
+    delay_wire_3119 <= delay_wire_3118;
+    delay_wire_3120 <= delay_wire_3119;
+    delay_wire_3121 <= delay_wire_3120;
+    delay_wire_3122 <= delay_wire_3121;
+    delay_wire_3123 <= delay_wire_3122;
+    delay_wire_3124 <= delay_wire_3123;
+    delay_wire_3125 <= delay_wire_3124;
+    delay_wire_3126 <= delay_wire_3125;
+    delay_wire_3127 <= delay_wire_3126;
+    delay_wire_3128 <= delay_wire_3127;
+    delay_wire_3129 <= delay_wire_3128;
+    delay_wire_3130 <= delay_wire_3129;
+    delay_wire_3131 <= delay_wire_3130;
+    delay_wire_3132 <= delay_wire_3131;
+    delay_wire_3133 <= delay_wire_3132;
+    delay_wire_3134 <= delay_wire_3133;
+    delay_wire_3135 <= delay_wire_3134;
+    delay_wire_3136 <= delay_wire_3135;
+    delay_wire_3137 <= delay_wire_3136;
+    delay_wire_3138 <= delay_wire_3137;
+    delay_wire_3139 <= delay_wire_3138;
+    delay_wire_3140 <= delay_wire_3139;
+    delay_wire_3141 <= delay_wire_3140;
+    delay_wire_3142 <= delay_wire_3141;
+    delay_wire_3143 <= delay_wire_3142;
+    delay_wire_3144 <= delay_wire_3143;
+    delay_wire_3145 <= delay_wire_3144;
+    delay_wire_3146 <= delay_wire_3145;
+    delay_wire_3147 <= delay_wire_3146;
+    delay_wire_3148 <= delay_wire_3147;
+    delay_wire_3149 <= delay_wire_3148;
+    delay_wire_3150 <= delay_wire_3149;
+    delay_wire_3151 <= delay_wire_3150;
+    delay_wire_3152 <= delay_wire_3151;
+    delay_wire_3153 <= delay_wire_3152;
+    delay_wire_3154 <= delay_wire_3153;
+    delay_wire_3155 <= delay_wire_3154;
+    delay_wire_3156 <= delay_wire_3155;
+    delay_wire_3157 <= delay_wire_3156;
+    delay_wire_3158 <= delay_wire_3157;
+    delay_wire_3159 <= delay_wire_3158;
+    delay_wire_3160 <= delay_wire_3159;
+    delay_wire_3161 <= delay_wire_3160;
+    delay_wire_3162 <= delay_wire_3161;
+    delay_wire_3163 <= delay_wire_3162;
     delay_wire_3164 <= delay_wire_3163;
     delay_wire_3165 <= delay_wire_3164;
     delay_wire_3166 <= delay_wire_3165;
@@ -9268,19 +9298,7 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
     delay_wire_3230 <= delay_wire_3229;
     delay_wire_3231 <= delay_wire_3230;
     delay_wire_3232 <= delay_wire_3231;
-  end
-  assign out = delay_wire_3232;
-endmodule
-
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_60_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3233;
-  logic [15:0] delay_wire_3234;
-  logic [15:0] delay_wire_3235;
-  logic [15:0] delay_wire_3236;
-  logic [15:0] delay_wire_3237;
-  logic [15:0] delay_wire_3238;
-  always @(posedge clk) begin
-    delay_wire_3233 <= in;
+    delay_wire_3233 <= delay_wire_3232;
     delay_wire_3234 <= delay_wire_3233;
     delay_wire_3235 <= delay_wire_3234;
     delay_wire_3236 <= delay_wire_3235;
@@ -9290,7 +9308,7 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
   assign out = delay_wire_3238;
 endmodule
 
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_48_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_51_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
   logic [15:0] delay_wire_3239;
   logic [15:0] delay_wire_3240;
   logic [15:0] delay_wire_3241;
@@ -9298,169 +9316,6 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
   logic [15:0] delay_wire_3243;
   logic [15:0] delay_wire_3244;
   logic [15:0] delay_wire_3245;
-  logic [15:0] delay_wire_3246;
-  logic [15:0] delay_wire_3247;
-  logic [15:0] delay_wire_3248;
-  logic [15:0] delay_wire_3249;
-  logic [15:0] delay_wire_3250;
-  logic [15:0] delay_wire_3251;
-  logic [15:0] delay_wire_3252;
-  logic [15:0] delay_wire_3253;
-  logic [15:0] delay_wire_3254;
-  logic [15:0] delay_wire_3255;
-  logic [15:0] delay_wire_3256;
-  logic [15:0] delay_wire_3257;
-  logic [15:0] delay_wire_3258;
-  logic [15:0] delay_wire_3259;
-  logic [15:0] delay_wire_3260;
-  logic [15:0] delay_wire_3261;
-  logic [15:0] delay_wire_3262;
-  logic [15:0] delay_wire_3263;
-  logic [15:0] delay_wire_3264;
-  logic [15:0] delay_wire_3265;
-  logic [15:0] delay_wire_3266;
-  logic [15:0] delay_wire_3267;
-  logic [15:0] delay_wire_3268;
-  logic [15:0] delay_wire_3269;
-  logic [15:0] delay_wire_3270;
-  logic [15:0] delay_wire_3271;
-  logic [15:0] delay_wire_3272;
-  logic [15:0] delay_wire_3273;
-  logic [15:0] delay_wire_3274;
-  logic [15:0] delay_wire_3275;
-  logic [15:0] delay_wire_3276;
-  logic [15:0] delay_wire_3277;
-  logic [15:0] delay_wire_3278;
-  logic [15:0] delay_wire_3279;
-  logic [15:0] delay_wire_3280;
-  logic [15:0] delay_wire_3281;
-  logic [15:0] delay_wire_3282;
-  logic [15:0] delay_wire_3283;
-  logic [15:0] delay_wire_3284;
-  logic [15:0] delay_wire_3285;
-  logic [15:0] delay_wire_3286;
-  logic [15:0] delay_wire_3287;
-  logic [15:0] delay_wire_3288;
-  logic [15:0] delay_wire_3289;
-  logic [15:0] delay_wire_3290;
-  logic [15:0] delay_wire_3291;
-  logic [15:0] delay_wire_3292;
-  logic [15:0] delay_wire_3293;
-  logic [15:0] delay_wire_3294;
-  logic [15:0] delay_wire_3295;
-  logic [15:0] delay_wire_3296;
-  logic [15:0] delay_wire_3297;
-  logic [15:0] delay_wire_3298;
-  logic [15:0] delay_wire_3299;
-  logic [15:0] delay_wire_3300;
-  logic [15:0] delay_wire_3301;
-  logic [15:0] delay_wire_3302;
-  logic [15:0] delay_wire_3303;
-  logic [15:0] delay_wire_3304;
-  logic [15:0] delay_wire_3305;
-  logic [15:0] delay_wire_3306;
-  logic [15:0] delay_wire_3307;
-  logic [15:0] delay_wire_3308;
-  logic [15:0] delay_wire_3309;
-  logic [15:0] delay_wire_3310;
-  logic [15:0] delay_wire_3311;
-  logic [15:0] delay_wire_3312;
-  logic [15:0] delay_wire_3313;
-  logic [15:0] delay_wire_3314;
-  logic [15:0] delay_wire_3315;
-  logic [15:0] delay_wire_3316;
-  logic [15:0] delay_wire_3317;
-  logic [15:0] delay_wire_3318;
-  logic [15:0] delay_wire_3319;
-  logic [15:0] delay_wire_3320;
-  logic [15:0] delay_wire_3321;
-  logic [15:0] delay_wire_3322;
-  logic [15:0] delay_wire_3323;
-  logic [15:0] delay_wire_3324;
-  logic [15:0] delay_wire_3325;
-  logic [15:0] delay_wire_3326;
-  logic [15:0] delay_wire_3327;
-  logic [15:0] delay_wire_3328;
-  logic [15:0] delay_wire_3329;
-  logic [15:0] delay_wire_3330;
-  logic [15:0] delay_wire_3331;
-  logic [15:0] delay_wire_3332;
-  logic [15:0] delay_wire_3333;
-  logic [15:0] delay_wire_3334;
-  logic [15:0] delay_wire_3335;
-  logic [15:0] delay_wire_3336;
-  logic [15:0] delay_wire_3337;
-  logic [15:0] delay_wire_3338;
-  logic [15:0] delay_wire_3339;
-  logic [15:0] delay_wire_3340;
-  logic [15:0] delay_wire_3341;
-  logic [15:0] delay_wire_3342;
-  logic [15:0] delay_wire_3343;
-  logic [15:0] delay_wire_3344;
-  logic [15:0] delay_wire_3345;
-  logic [15:0] delay_wire_3346;
-  logic [15:0] delay_wire_3347;
-  logic [15:0] delay_wire_3348;
-  logic [15:0] delay_wire_3349;
-  logic [15:0] delay_wire_3350;
-  logic [15:0] delay_wire_3351;
-  logic [15:0] delay_wire_3352;
-  logic [15:0] delay_wire_3353;
-  logic [15:0] delay_wire_3354;
-  logic [15:0] delay_wire_3355;
-  logic [15:0] delay_wire_3356;
-  logic [15:0] delay_wire_3357;
-  logic [15:0] delay_wire_3358;
-  logic [15:0] delay_wire_3359;
-  logic [15:0] delay_wire_3360;
-  logic [15:0] delay_wire_3361;
-  logic [15:0] delay_wire_3362;
-  logic [15:0] delay_wire_3363;
-  logic [15:0] delay_wire_3364;
-  logic [15:0] delay_wire_3365;
-  logic [15:0] delay_wire_3366;
-  logic [15:0] delay_wire_3367;
-  logic [15:0] delay_wire_3368;
-  logic [15:0] delay_wire_3369;
-  logic [15:0] delay_wire_3370;
-  logic [15:0] delay_wire_3371;
-  logic [15:0] delay_wire_3372;
-  logic [15:0] delay_wire_3373;
-  logic [15:0] delay_wire_3374;
-  logic [15:0] delay_wire_3375;
-  logic [15:0] delay_wire_3376;
-  logic [15:0] delay_wire_3377;
-  logic [15:0] delay_wire_3378;
-  logic [15:0] delay_wire_3379;
-  logic [15:0] delay_wire_3380;
-  logic [15:0] delay_wire_3381;
-  logic [15:0] delay_wire_3382;
-  logic [15:0] delay_wire_3383;
-  logic [15:0] delay_wire_3384;
-  logic [15:0] delay_wire_3385;
-  logic [15:0] delay_wire_3386;
-  logic [15:0] delay_wire_3387;
-  logic [15:0] delay_wire_3388;
-  logic [15:0] delay_wire_3389;
-  logic [15:0] delay_wire_3390;
-  logic [15:0] delay_wire_3391;
-  logic [15:0] delay_wire_3392;
-  logic [15:0] delay_wire_3393;
-  logic [15:0] delay_wire_3394;
-  logic [15:0] delay_wire_3395;
-  logic [15:0] delay_wire_3396;
-  logic [15:0] delay_wire_3397;
-  logic [15:0] delay_wire_3398;
-  logic [15:0] delay_wire_3399;
-  logic [15:0] delay_wire_3400;
-  logic [15:0] delay_wire_3401;
-  logic [15:0] delay_wire_3402;
-  logic [15:0] delay_wire_3403;
-  logic [15:0] delay_wire_3404;
-  logic [15:0] delay_wire_3405;
-  logic [15:0] delay_wire_3406;
-  logic [15:0] delay_wire_3407;
-  logic [15:0] delay_wire_3408;
   always @(posedge clk) begin
     delay_wire_3239 <= in;
     delay_wire_3240 <= delay_wire_3239;
@@ -9469,1433 +9324,98 @@ module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompu
     delay_wire_3243 <= delay_wire_3242;
     delay_wire_3244 <= delay_wire_3243;
     delay_wire_3245 <= delay_wire_3244;
-    delay_wire_3246 <= delay_wire_3245;
+  end
+  assign out = delay_wire_3245;
+endmodule
+
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_52_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_3246;
+  logic [15:0] delay_wire_3247;
+  logic [15:0] delay_wire_3248;
+  logic [15:0] delay_wire_3249;
+  logic [15:0] delay_wire_3250;
+  always @(posedge clk) begin
+    delay_wire_3246 <= in;
     delay_wire_3247 <= delay_wire_3246;
     delay_wire_3248 <= delay_wire_3247;
     delay_wire_3249 <= delay_wire_3248;
     delay_wire_3250 <= delay_wire_3249;
-    delay_wire_3251 <= delay_wire_3250;
+  end
+  assign out = delay_wire_3250;
+endmodule
+
+module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_53_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
+  logic [15:0] delay_wire_3251;
+  logic [15:0] delay_wire_3252;
+  logic [15:0] delay_wire_3253;
+  logic [15:0] delay_wire_3254;
+  logic [15:0] delay_wire_3255;
+  logic [15:0] delay_wire_3256;
+  always @(posedge clk) begin
+    delay_wire_3251 <= in;
     delay_wire_3252 <= delay_wire_3251;
     delay_wire_3253 <= delay_wire_3252;
     delay_wire_3254 <= delay_wire_3253;
     delay_wire_3255 <= delay_wire_3254;
     delay_wire_3256 <= delay_wire_3255;
-    delay_wire_3257 <= delay_wire_3256;
-    delay_wire_3258 <= delay_wire_3257;
-    delay_wire_3259 <= delay_wire_3258;
-    delay_wire_3260 <= delay_wire_3259;
-    delay_wire_3261 <= delay_wire_3260;
-    delay_wire_3262 <= delay_wire_3261;
-    delay_wire_3263 <= delay_wire_3262;
-    delay_wire_3264 <= delay_wire_3263;
-    delay_wire_3265 <= delay_wire_3264;
-    delay_wire_3266 <= delay_wire_3265;
-    delay_wire_3267 <= delay_wire_3266;
-    delay_wire_3268 <= delay_wire_3267;
-    delay_wire_3269 <= delay_wire_3268;
-    delay_wire_3270 <= delay_wire_3269;
-    delay_wire_3271 <= delay_wire_3270;
-    delay_wire_3272 <= delay_wire_3271;
-    delay_wire_3273 <= delay_wire_3272;
-    delay_wire_3274 <= delay_wire_3273;
-    delay_wire_3275 <= delay_wire_3274;
-    delay_wire_3276 <= delay_wire_3275;
-    delay_wire_3277 <= delay_wire_3276;
-    delay_wire_3278 <= delay_wire_3277;
-    delay_wire_3279 <= delay_wire_3278;
-    delay_wire_3280 <= delay_wire_3279;
-    delay_wire_3281 <= delay_wire_3280;
-    delay_wire_3282 <= delay_wire_3281;
-    delay_wire_3283 <= delay_wire_3282;
-    delay_wire_3284 <= delay_wire_3283;
-    delay_wire_3285 <= delay_wire_3284;
-    delay_wire_3286 <= delay_wire_3285;
-    delay_wire_3287 <= delay_wire_3286;
-    delay_wire_3288 <= delay_wire_3287;
-    delay_wire_3289 <= delay_wire_3288;
-    delay_wire_3290 <= delay_wire_3289;
-    delay_wire_3291 <= delay_wire_3290;
-    delay_wire_3292 <= delay_wire_3291;
-    delay_wire_3293 <= delay_wire_3292;
-    delay_wire_3294 <= delay_wire_3293;
-    delay_wire_3295 <= delay_wire_3294;
-    delay_wire_3296 <= delay_wire_3295;
-    delay_wire_3297 <= delay_wire_3296;
-    delay_wire_3298 <= delay_wire_3297;
-    delay_wire_3299 <= delay_wire_3298;
-    delay_wire_3300 <= delay_wire_3299;
-    delay_wire_3301 <= delay_wire_3300;
-    delay_wire_3302 <= delay_wire_3301;
-    delay_wire_3303 <= delay_wire_3302;
-    delay_wire_3304 <= delay_wire_3303;
-    delay_wire_3305 <= delay_wire_3304;
-    delay_wire_3306 <= delay_wire_3305;
-    delay_wire_3307 <= delay_wire_3306;
-    delay_wire_3308 <= delay_wire_3307;
-    delay_wire_3309 <= delay_wire_3308;
-    delay_wire_3310 <= delay_wire_3309;
-    delay_wire_3311 <= delay_wire_3310;
-    delay_wire_3312 <= delay_wire_3311;
-    delay_wire_3313 <= delay_wire_3312;
-    delay_wire_3314 <= delay_wire_3313;
-    delay_wire_3315 <= delay_wire_3314;
-    delay_wire_3316 <= delay_wire_3315;
-    delay_wire_3317 <= delay_wire_3316;
-    delay_wire_3318 <= delay_wire_3317;
-    delay_wire_3319 <= delay_wire_3318;
-    delay_wire_3320 <= delay_wire_3319;
-    delay_wire_3321 <= delay_wire_3320;
-    delay_wire_3322 <= delay_wire_3321;
-    delay_wire_3323 <= delay_wire_3322;
-    delay_wire_3324 <= delay_wire_3323;
-    delay_wire_3325 <= delay_wire_3324;
-    delay_wire_3326 <= delay_wire_3325;
-    delay_wire_3327 <= delay_wire_3326;
-    delay_wire_3328 <= delay_wire_3327;
-    delay_wire_3329 <= delay_wire_3328;
-    delay_wire_3330 <= delay_wire_3329;
-    delay_wire_3331 <= delay_wire_3330;
-    delay_wire_3332 <= delay_wire_3331;
-    delay_wire_3333 <= delay_wire_3332;
-    delay_wire_3334 <= delay_wire_3333;
-    delay_wire_3335 <= delay_wire_3334;
-    delay_wire_3336 <= delay_wire_3335;
-    delay_wire_3337 <= delay_wire_3336;
-    delay_wire_3338 <= delay_wire_3337;
-    delay_wire_3339 <= delay_wire_3338;
-    delay_wire_3340 <= delay_wire_3339;
-    delay_wire_3341 <= delay_wire_3340;
-    delay_wire_3342 <= delay_wire_3341;
-    delay_wire_3343 <= delay_wire_3342;
-    delay_wire_3344 <= delay_wire_3343;
-    delay_wire_3345 <= delay_wire_3344;
-    delay_wire_3346 <= delay_wire_3345;
-    delay_wire_3347 <= delay_wire_3346;
-    delay_wire_3348 <= delay_wire_3347;
-    delay_wire_3349 <= delay_wire_3348;
-    delay_wire_3350 <= delay_wire_3349;
-    delay_wire_3351 <= delay_wire_3350;
-    delay_wire_3352 <= delay_wire_3351;
-    delay_wire_3353 <= delay_wire_3352;
-    delay_wire_3354 <= delay_wire_3353;
-    delay_wire_3355 <= delay_wire_3354;
-    delay_wire_3356 <= delay_wire_3355;
-    delay_wire_3357 <= delay_wire_3356;
-    delay_wire_3358 <= delay_wire_3357;
-    delay_wire_3359 <= delay_wire_3358;
-    delay_wire_3360 <= delay_wire_3359;
-    delay_wire_3361 <= delay_wire_3360;
-    delay_wire_3362 <= delay_wire_3361;
-    delay_wire_3363 <= delay_wire_3362;
-    delay_wire_3364 <= delay_wire_3363;
-    delay_wire_3365 <= delay_wire_3364;
-    delay_wire_3366 <= delay_wire_3365;
-    delay_wire_3367 <= delay_wire_3366;
-    delay_wire_3368 <= delay_wire_3367;
-    delay_wire_3369 <= delay_wire_3368;
-    delay_wire_3370 <= delay_wire_3369;
-    delay_wire_3371 <= delay_wire_3370;
-    delay_wire_3372 <= delay_wire_3371;
-    delay_wire_3373 <= delay_wire_3372;
-    delay_wire_3374 <= delay_wire_3373;
-    delay_wire_3375 <= delay_wire_3374;
-    delay_wire_3376 <= delay_wire_3375;
-    delay_wire_3377 <= delay_wire_3376;
-    delay_wire_3378 <= delay_wire_3377;
-    delay_wire_3379 <= delay_wire_3378;
-    delay_wire_3380 <= delay_wire_3379;
-    delay_wire_3381 <= delay_wire_3380;
-    delay_wire_3382 <= delay_wire_3381;
-    delay_wire_3383 <= delay_wire_3382;
-    delay_wire_3384 <= delay_wire_3383;
-    delay_wire_3385 <= delay_wire_3384;
-    delay_wire_3386 <= delay_wire_3385;
-    delay_wire_3387 <= delay_wire_3386;
-    delay_wire_3388 <= delay_wire_3387;
-    delay_wire_3389 <= delay_wire_3388;
-    delay_wire_3390 <= delay_wire_3389;
-    delay_wire_3391 <= delay_wire_3390;
-    delay_wire_3392 <= delay_wire_3391;
-    delay_wire_3393 <= delay_wire_3392;
-    delay_wire_3394 <= delay_wire_3393;
-    delay_wire_3395 <= delay_wire_3394;
-    delay_wire_3396 <= delay_wire_3395;
-    delay_wire_3397 <= delay_wire_3396;
-    delay_wire_3398 <= delay_wire_3397;
-    delay_wire_3399 <= delay_wire_3398;
-    delay_wire_3400 <= delay_wire_3399;
-    delay_wire_3401 <= delay_wire_3400;
-    delay_wire_3402 <= delay_wire_3401;
-    delay_wire_3403 <= delay_wire_3402;
-    delay_wire_3404 <= delay_wire_3403;
-    delay_wire_3405 <= delay_wire_3404;
-    delay_wire_3406 <= delay_wire_3405;
-    delay_wire_3407 <= delay_wire_3406;
-    delay_wire_3408 <= delay_wire_3407;
   end
-  assign out = delay_wire_3408;
-endmodule
-
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_49_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3409;
-  logic [15:0] delay_wire_3410;
-  logic [15:0] delay_wire_3411;
-  logic [15:0] delay_wire_3412;
-  logic [15:0] delay_wire_3413;
-  logic [15:0] delay_wire_3414;
-  logic [15:0] delay_wire_3415;
-  logic [15:0] delay_wire_3416;
-  logic [15:0] delay_wire_3417;
-  logic [15:0] delay_wire_3418;
-  logic [15:0] delay_wire_3419;
-  logic [15:0] delay_wire_3420;
-  logic [15:0] delay_wire_3421;
-  logic [15:0] delay_wire_3422;
-  logic [15:0] delay_wire_3423;
-  logic [15:0] delay_wire_3424;
-  logic [15:0] delay_wire_3425;
-  logic [15:0] delay_wire_3426;
-  logic [15:0] delay_wire_3427;
-  logic [15:0] delay_wire_3428;
-  logic [15:0] delay_wire_3429;
-  logic [15:0] delay_wire_3430;
-  logic [15:0] delay_wire_3431;
-  logic [15:0] delay_wire_3432;
-  logic [15:0] delay_wire_3433;
-  logic [15:0] delay_wire_3434;
-  logic [15:0] delay_wire_3435;
-  logic [15:0] delay_wire_3436;
-  logic [15:0] delay_wire_3437;
-  logic [15:0] delay_wire_3438;
-  logic [15:0] delay_wire_3439;
-  logic [15:0] delay_wire_3440;
-  logic [15:0] delay_wire_3441;
-  logic [15:0] delay_wire_3442;
-  logic [15:0] delay_wire_3443;
-  logic [15:0] delay_wire_3444;
-  logic [15:0] delay_wire_3445;
-  logic [15:0] delay_wire_3446;
-  logic [15:0] delay_wire_3447;
-  logic [15:0] delay_wire_3448;
-  logic [15:0] delay_wire_3449;
-  logic [15:0] delay_wire_3450;
-  logic [15:0] delay_wire_3451;
-  logic [15:0] delay_wire_3452;
-  logic [15:0] delay_wire_3453;
-  logic [15:0] delay_wire_3454;
-  logic [15:0] delay_wire_3455;
-  logic [15:0] delay_wire_3456;
-  logic [15:0] delay_wire_3457;
-  logic [15:0] delay_wire_3458;
-  logic [15:0] delay_wire_3459;
-  logic [15:0] delay_wire_3460;
-  logic [15:0] delay_wire_3461;
-  logic [15:0] delay_wire_3462;
-  logic [15:0] delay_wire_3463;
-  logic [15:0] delay_wire_3464;
-  logic [15:0] delay_wire_3465;
-  logic [15:0] delay_wire_3466;
-  logic [15:0] delay_wire_3467;
-  logic [15:0] delay_wire_3468;
-  logic [15:0] delay_wire_3469;
-  logic [15:0] delay_wire_3470;
-  logic [15:0] delay_wire_3471;
-  logic [15:0] delay_wire_3472;
-  logic [15:0] delay_wire_3473;
-  logic [15:0] delay_wire_3474;
-  logic [15:0] delay_wire_3475;
-  logic [15:0] delay_wire_3476;
-  logic [15:0] delay_wire_3477;
-  logic [15:0] delay_wire_3478;
-  logic [15:0] delay_wire_3479;
-  logic [15:0] delay_wire_3480;
-  logic [15:0] delay_wire_3481;
-  logic [15:0] delay_wire_3482;
-  logic [15:0] delay_wire_3483;
-  logic [15:0] delay_wire_3484;
-  logic [15:0] delay_wire_3485;
-  logic [15:0] delay_wire_3486;
-  logic [15:0] delay_wire_3487;
-  logic [15:0] delay_wire_3488;
-  logic [15:0] delay_wire_3489;
-  logic [15:0] delay_wire_3490;
-  logic [15:0] delay_wire_3491;
-  logic [15:0] delay_wire_3492;
-  logic [15:0] delay_wire_3493;
-  logic [15:0] delay_wire_3494;
-  logic [15:0] delay_wire_3495;
-  logic [15:0] delay_wire_3496;
-  logic [15:0] delay_wire_3497;
-  logic [15:0] delay_wire_3498;
-  logic [15:0] delay_wire_3499;
-  logic [15:0] delay_wire_3500;
-  logic [15:0] delay_wire_3501;
-  logic [15:0] delay_wire_3502;
-  logic [15:0] delay_wire_3503;
-  logic [15:0] delay_wire_3504;
-  logic [15:0] delay_wire_3505;
-  logic [15:0] delay_wire_3506;
-  logic [15:0] delay_wire_3507;
-  logic [15:0] delay_wire_3508;
-  logic [15:0] delay_wire_3509;
-  logic [15:0] delay_wire_3510;
-  logic [15:0] delay_wire_3511;
-  logic [15:0] delay_wire_3512;
-  logic [15:0] delay_wire_3513;
-  logic [15:0] delay_wire_3514;
-  logic [15:0] delay_wire_3515;
-  logic [15:0] delay_wire_3516;
-  logic [15:0] delay_wire_3517;
-  logic [15:0] delay_wire_3518;
-  logic [15:0] delay_wire_3519;
-  logic [15:0] delay_wire_3520;
-  logic [15:0] delay_wire_3521;
-  logic [15:0] delay_wire_3522;
-  logic [15:0] delay_wire_3523;
-  logic [15:0] delay_wire_3524;
-  logic [15:0] delay_wire_3525;
-  logic [15:0] delay_wire_3526;
-  logic [15:0] delay_wire_3527;
-  logic [15:0] delay_wire_3528;
-  logic [15:0] delay_wire_3529;
-  logic [15:0] delay_wire_3530;
-  logic [15:0] delay_wire_3531;
-  logic [15:0] delay_wire_3532;
-  logic [15:0] delay_wire_3533;
-  logic [15:0] delay_wire_3534;
-  logic [15:0] delay_wire_3535;
-  logic [15:0] delay_wire_3536;
-  logic [15:0] delay_wire_3537;
-  logic [15:0] delay_wire_3538;
-  logic [15:0] delay_wire_3539;
-  logic [15:0] delay_wire_3540;
-  logic [15:0] delay_wire_3541;
-  logic [15:0] delay_wire_3542;
-  logic [15:0] delay_wire_3543;
-  logic [15:0] delay_wire_3544;
-  logic [15:0] delay_wire_3545;
-  logic [15:0] delay_wire_3546;
-  logic [15:0] delay_wire_3547;
-  logic [15:0] delay_wire_3548;
-  logic [15:0] delay_wire_3549;
-  logic [15:0] delay_wire_3550;
-  logic [15:0] delay_wire_3551;
-  logic [15:0] delay_wire_3552;
-  logic [15:0] delay_wire_3553;
-  logic [15:0] delay_wire_3554;
-  logic [15:0] delay_wire_3555;
-  logic [15:0] delay_wire_3556;
-  logic [15:0] delay_wire_3557;
-  logic [15:0] delay_wire_3558;
-  logic [15:0] delay_wire_3559;
-  logic [15:0] delay_wire_3560;
-  logic [15:0] delay_wire_3561;
-  logic [15:0] delay_wire_3562;
-  logic [15:0] delay_wire_3563;
-  logic [15:0] delay_wire_3564;
-  logic [15:0] delay_wire_3565;
-  logic [15:0] delay_wire_3566;
-  logic [15:0] delay_wire_3567;
-  logic [15:0] delay_wire_3568;
-  logic [15:0] delay_wire_3569;
-  logic [15:0] delay_wire_3570;
-  logic [15:0] delay_wire_3571;
-  logic [15:0] delay_wire_3572;
-  logic [15:0] delay_wire_3573;
-  logic [15:0] delay_wire_3574;
-  logic [15:0] delay_wire_3575;
-  logic [15:0] delay_wire_3576;
-  logic [15:0] delay_wire_3577;
-  always @(posedge clk) begin
-    delay_wire_3409 <= in;
-    delay_wire_3410 <= delay_wire_3409;
-    delay_wire_3411 <= delay_wire_3410;
-    delay_wire_3412 <= delay_wire_3411;
-    delay_wire_3413 <= delay_wire_3412;
-    delay_wire_3414 <= delay_wire_3413;
-    delay_wire_3415 <= delay_wire_3414;
-    delay_wire_3416 <= delay_wire_3415;
-    delay_wire_3417 <= delay_wire_3416;
-    delay_wire_3418 <= delay_wire_3417;
-    delay_wire_3419 <= delay_wire_3418;
-    delay_wire_3420 <= delay_wire_3419;
-    delay_wire_3421 <= delay_wire_3420;
-    delay_wire_3422 <= delay_wire_3421;
-    delay_wire_3423 <= delay_wire_3422;
-    delay_wire_3424 <= delay_wire_3423;
-    delay_wire_3425 <= delay_wire_3424;
-    delay_wire_3426 <= delay_wire_3425;
-    delay_wire_3427 <= delay_wire_3426;
-    delay_wire_3428 <= delay_wire_3427;
-    delay_wire_3429 <= delay_wire_3428;
-    delay_wire_3430 <= delay_wire_3429;
-    delay_wire_3431 <= delay_wire_3430;
-    delay_wire_3432 <= delay_wire_3431;
-    delay_wire_3433 <= delay_wire_3432;
-    delay_wire_3434 <= delay_wire_3433;
-    delay_wire_3435 <= delay_wire_3434;
-    delay_wire_3436 <= delay_wire_3435;
-    delay_wire_3437 <= delay_wire_3436;
-    delay_wire_3438 <= delay_wire_3437;
-    delay_wire_3439 <= delay_wire_3438;
-    delay_wire_3440 <= delay_wire_3439;
-    delay_wire_3441 <= delay_wire_3440;
-    delay_wire_3442 <= delay_wire_3441;
-    delay_wire_3443 <= delay_wire_3442;
-    delay_wire_3444 <= delay_wire_3443;
-    delay_wire_3445 <= delay_wire_3444;
-    delay_wire_3446 <= delay_wire_3445;
-    delay_wire_3447 <= delay_wire_3446;
-    delay_wire_3448 <= delay_wire_3447;
-    delay_wire_3449 <= delay_wire_3448;
-    delay_wire_3450 <= delay_wire_3449;
-    delay_wire_3451 <= delay_wire_3450;
-    delay_wire_3452 <= delay_wire_3451;
-    delay_wire_3453 <= delay_wire_3452;
-    delay_wire_3454 <= delay_wire_3453;
-    delay_wire_3455 <= delay_wire_3454;
-    delay_wire_3456 <= delay_wire_3455;
-    delay_wire_3457 <= delay_wire_3456;
-    delay_wire_3458 <= delay_wire_3457;
-    delay_wire_3459 <= delay_wire_3458;
-    delay_wire_3460 <= delay_wire_3459;
-    delay_wire_3461 <= delay_wire_3460;
-    delay_wire_3462 <= delay_wire_3461;
-    delay_wire_3463 <= delay_wire_3462;
-    delay_wire_3464 <= delay_wire_3463;
-    delay_wire_3465 <= delay_wire_3464;
-    delay_wire_3466 <= delay_wire_3465;
-    delay_wire_3467 <= delay_wire_3466;
-    delay_wire_3468 <= delay_wire_3467;
-    delay_wire_3469 <= delay_wire_3468;
-    delay_wire_3470 <= delay_wire_3469;
-    delay_wire_3471 <= delay_wire_3470;
-    delay_wire_3472 <= delay_wire_3471;
-    delay_wire_3473 <= delay_wire_3472;
-    delay_wire_3474 <= delay_wire_3473;
-    delay_wire_3475 <= delay_wire_3474;
-    delay_wire_3476 <= delay_wire_3475;
-    delay_wire_3477 <= delay_wire_3476;
-    delay_wire_3478 <= delay_wire_3477;
-    delay_wire_3479 <= delay_wire_3478;
-    delay_wire_3480 <= delay_wire_3479;
-    delay_wire_3481 <= delay_wire_3480;
-    delay_wire_3482 <= delay_wire_3481;
-    delay_wire_3483 <= delay_wire_3482;
-    delay_wire_3484 <= delay_wire_3483;
-    delay_wire_3485 <= delay_wire_3484;
-    delay_wire_3486 <= delay_wire_3485;
-    delay_wire_3487 <= delay_wire_3486;
-    delay_wire_3488 <= delay_wire_3487;
-    delay_wire_3489 <= delay_wire_3488;
-    delay_wire_3490 <= delay_wire_3489;
-    delay_wire_3491 <= delay_wire_3490;
-    delay_wire_3492 <= delay_wire_3491;
-    delay_wire_3493 <= delay_wire_3492;
-    delay_wire_3494 <= delay_wire_3493;
-    delay_wire_3495 <= delay_wire_3494;
-    delay_wire_3496 <= delay_wire_3495;
-    delay_wire_3497 <= delay_wire_3496;
-    delay_wire_3498 <= delay_wire_3497;
-    delay_wire_3499 <= delay_wire_3498;
-    delay_wire_3500 <= delay_wire_3499;
-    delay_wire_3501 <= delay_wire_3500;
-    delay_wire_3502 <= delay_wire_3501;
-    delay_wire_3503 <= delay_wire_3502;
-    delay_wire_3504 <= delay_wire_3503;
-    delay_wire_3505 <= delay_wire_3504;
-    delay_wire_3506 <= delay_wire_3505;
-    delay_wire_3507 <= delay_wire_3506;
-    delay_wire_3508 <= delay_wire_3507;
-    delay_wire_3509 <= delay_wire_3508;
-    delay_wire_3510 <= delay_wire_3509;
-    delay_wire_3511 <= delay_wire_3510;
-    delay_wire_3512 <= delay_wire_3511;
-    delay_wire_3513 <= delay_wire_3512;
-    delay_wire_3514 <= delay_wire_3513;
-    delay_wire_3515 <= delay_wire_3514;
-    delay_wire_3516 <= delay_wire_3515;
-    delay_wire_3517 <= delay_wire_3516;
-    delay_wire_3518 <= delay_wire_3517;
-    delay_wire_3519 <= delay_wire_3518;
-    delay_wire_3520 <= delay_wire_3519;
-    delay_wire_3521 <= delay_wire_3520;
-    delay_wire_3522 <= delay_wire_3521;
-    delay_wire_3523 <= delay_wire_3522;
-    delay_wire_3524 <= delay_wire_3523;
-    delay_wire_3525 <= delay_wire_3524;
-    delay_wire_3526 <= delay_wire_3525;
-    delay_wire_3527 <= delay_wire_3526;
-    delay_wire_3528 <= delay_wire_3527;
-    delay_wire_3529 <= delay_wire_3528;
-    delay_wire_3530 <= delay_wire_3529;
-    delay_wire_3531 <= delay_wire_3530;
-    delay_wire_3532 <= delay_wire_3531;
-    delay_wire_3533 <= delay_wire_3532;
-    delay_wire_3534 <= delay_wire_3533;
-    delay_wire_3535 <= delay_wire_3534;
-    delay_wire_3536 <= delay_wire_3535;
-    delay_wire_3537 <= delay_wire_3536;
-    delay_wire_3538 <= delay_wire_3537;
-    delay_wire_3539 <= delay_wire_3538;
-    delay_wire_3540 <= delay_wire_3539;
-    delay_wire_3541 <= delay_wire_3540;
-    delay_wire_3542 <= delay_wire_3541;
-    delay_wire_3543 <= delay_wire_3542;
-    delay_wire_3544 <= delay_wire_3543;
-    delay_wire_3545 <= delay_wire_3544;
-    delay_wire_3546 <= delay_wire_3545;
-    delay_wire_3547 <= delay_wire_3546;
-    delay_wire_3548 <= delay_wire_3547;
-    delay_wire_3549 <= delay_wire_3548;
-    delay_wire_3550 <= delay_wire_3549;
-    delay_wire_3551 <= delay_wire_3550;
-    delay_wire_3552 <= delay_wire_3551;
-    delay_wire_3553 <= delay_wire_3552;
-    delay_wire_3554 <= delay_wire_3553;
-    delay_wire_3555 <= delay_wire_3554;
-    delay_wire_3556 <= delay_wire_3555;
-    delay_wire_3557 <= delay_wire_3556;
-    delay_wire_3558 <= delay_wire_3557;
-    delay_wire_3559 <= delay_wire_3558;
-    delay_wire_3560 <= delay_wire_3559;
-    delay_wire_3561 <= delay_wire_3560;
-    delay_wire_3562 <= delay_wire_3561;
-    delay_wire_3563 <= delay_wire_3562;
-    delay_wire_3564 <= delay_wire_3563;
-    delay_wire_3565 <= delay_wire_3564;
-    delay_wire_3566 <= delay_wire_3565;
-    delay_wire_3567 <= delay_wire_3566;
-    delay_wire_3568 <= delay_wire_3567;
-    delay_wire_3569 <= delay_wire_3568;
-    delay_wire_3570 <= delay_wire_3569;
-    delay_wire_3571 <= delay_wire_3570;
-    delay_wire_3572 <= delay_wire_3571;
-    delay_wire_3573 <= delay_wire_3572;
-    delay_wire_3574 <= delay_wire_3573;
-    delay_wire_3575 <= delay_wire_3574;
-    delay_wire_3576 <= delay_wire_3575;
-    delay_wire_3577 <= delay_wire_3576;
-  end
-  assign out = delay_wire_3577;
-endmodule
-
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_50_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3578;
-  logic [15:0] delay_wire_3579;
-  logic [15:0] delay_wire_3580;
-  logic [15:0] delay_wire_3581;
-  logic [15:0] delay_wire_3582;
-  logic [15:0] delay_wire_3583;
-  logic [15:0] delay_wire_3584;
-  logic [15:0] delay_wire_3585;
-  logic [15:0] delay_wire_3586;
-  logic [15:0] delay_wire_3587;
-  logic [15:0] delay_wire_3588;
-  logic [15:0] delay_wire_3589;
-  logic [15:0] delay_wire_3590;
-  logic [15:0] delay_wire_3591;
-  logic [15:0] delay_wire_3592;
-  logic [15:0] delay_wire_3593;
-  logic [15:0] delay_wire_3594;
-  logic [15:0] delay_wire_3595;
-  logic [15:0] delay_wire_3596;
-  logic [15:0] delay_wire_3597;
-  logic [15:0] delay_wire_3598;
-  logic [15:0] delay_wire_3599;
-  logic [15:0] delay_wire_3600;
-  logic [15:0] delay_wire_3601;
-  logic [15:0] delay_wire_3602;
-  logic [15:0] delay_wire_3603;
-  logic [15:0] delay_wire_3604;
-  logic [15:0] delay_wire_3605;
-  logic [15:0] delay_wire_3606;
-  logic [15:0] delay_wire_3607;
-  logic [15:0] delay_wire_3608;
-  logic [15:0] delay_wire_3609;
-  logic [15:0] delay_wire_3610;
-  logic [15:0] delay_wire_3611;
-  logic [15:0] delay_wire_3612;
-  logic [15:0] delay_wire_3613;
-  logic [15:0] delay_wire_3614;
-  logic [15:0] delay_wire_3615;
-  logic [15:0] delay_wire_3616;
-  logic [15:0] delay_wire_3617;
-  logic [15:0] delay_wire_3618;
-  logic [15:0] delay_wire_3619;
-  logic [15:0] delay_wire_3620;
-  logic [15:0] delay_wire_3621;
-  logic [15:0] delay_wire_3622;
-  logic [15:0] delay_wire_3623;
-  logic [15:0] delay_wire_3624;
-  logic [15:0] delay_wire_3625;
-  logic [15:0] delay_wire_3626;
-  logic [15:0] delay_wire_3627;
-  logic [15:0] delay_wire_3628;
-  logic [15:0] delay_wire_3629;
-  logic [15:0] delay_wire_3630;
-  logic [15:0] delay_wire_3631;
-  logic [15:0] delay_wire_3632;
-  logic [15:0] delay_wire_3633;
-  logic [15:0] delay_wire_3634;
-  logic [15:0] delay_wire_3635;
-  logic [15:0] delay_wire_3636;
-  logic [15:0] delay_wire_3637;
-  logic [15:0] delay_wire_3638;
-  logic [15:0] delay_wire_3639;
-  logic [15:0] delay_wire_3640;
-  logic [15:0] delay_wire_3641;
-  logic [15:0] delay_wire_3642;
-  logic [15:0] delay_wire_3643;
-  logic [15:0] delay_wire_3644;
-  logic [15:0] delay_wire_3645;
-  logic [15:0] delay_wire_3646;
-  logic [15:0] delay_wire_3647;
-  logic [15:0] delay_wire_3648;
-  logic [15:0] delay_wire_3649;
-  logic [15:0] delay_wire_3650;
-  logic [15:0] delay_wire_3651;
-  logic [15:0] delay_wire_3652;
-  logic [15:0] delay_wire_3653;
-  logic [15:0] delay_wire_3654;
-  logic [15:0] delay_wire_3655;
-  logic [15:0] delay_wire_3656;
-  logic [15:0] delay_wire_3657;
-  logic [15:0] delay_wire_3658;
-  logic [15:0] delay_wire_3659;
-  logic [15:0] delay_wire_3660;
-  logic [15:0] delay_wire_3661;
-  logic [15:0] delay_wire_3662;
-  logic [15:0] delay_wire_3663;
-  logic [15:0] delay_wire_3664;
-  logic [15:0] delay_wire_3665;
-  logic [15:0] delay_wire_3666;
-  logic [15:0] delay_wire_3667;
-  logic [15:0] delay_wire_3668;
-  logic [15:0] delay_wire_3669;
-  logic [15:0] delay_wire_3670;
-  logic [15:0] delay_wire_3671;
-  logic [15:0] delay_wire_3672;
-  logic [15:0] delay_wire_3673;
-  logic [15:0] delay_wire_3674;
-  logic [15:0] delay_wire_3675;
-  logic [15:0] delay_wire_3676;
-  logic [15:0] delay_wire_3677;
-  logic [15:0] delay_wire_3678;
-  logic [15:0] delay_wire_3679;
-  logic [15:0] delay_wire_3680;
-  logic [15:0] delay_wire_3681;
-  logic [15:0] delay_wire_3682;
-  logic [15:0] delay_wire_3683;
-  logic [15:0] delay_wire_3684;
-  logic [15:0] delay_wire_3685;
-  logic [15:0] delay_wire_3686;
-  logic [15:0] delay_wire_3687;
-  logic [15:0] delay_wire_3688;
-  logic [15:0] delay_wire_3689;
-  logic [15:0] delay_wire_3690;
-  logic [15:0] delay_wire_3691;
-  logic [15:0] delay_wire_3692;
-  logic [15:0] delay_wire_3693;
-  logic [15:0] delay_wire_3694;
-  logic [15:0] delay_wire_3695;
-  logic [15:0] delay_wire_3696;
-  logic [15:0] delay_wire_3697;
-  logic [15:0] delay_wire_3698;
-  logic [15:0] delay_wire_3699;
-  logic [15:0] delay_wire_3700;
-  logic [15:0] delay_wire_3701;
-  logic [15:0] delay_wire_3702;
-  logic [15:0] delay_wire_3703;
-  logic [15:0] delay_wire_3704;
-  logic [15:0] delay_wire_3705;
-  logic [15:0] delay_wire_3706;
-  logic [15:0] delay_wire_3707;
-  logic [15:0] delay_wire_3708;
-  logic [15:0] delay_wire_3709;
-  logic [15:0] delay_wire_3710;
-  logic [15:0] delay_wire_3711;
-  logic [15:0] delay_wire_3712;
-  logic [15:0] delay_wire_3713;
-  logic [15:0] delay_wire_3714;
-  logic [15:0] delay_wire_3715;
-  logic [15:0] delay_wire_3716;
-  logic [15:0] delay_wire_3717;
-  logic [15:0] delay_wire_3718;
-  logic [15:0] delay_wire_3719;
-  logic [15:0] delay_wire_3720;
-  logic [15:0] delay_wire_3721;
-  logic [15:0] delay_wire_3722;
-  logic [15:0] delay_wire_3723;
-  logic [15:0] delay_wire_3724;
-  logic [15:0] delay_wire_3725;
-  logic [15:0] delay_wire_3726;
-  logic [15:0] delay_wire_3727;
-  logic [15:0] delay_wire_3728;
-  logic [15:0] delay_wire_3729;
-  logic [15:0] delay_wire_3730;
-  logic [15:0] delay_wire_3731;
-  logic [15:0] delay_wire_3732;
-  logic [15:0] delay_wire_3733;
-  logic [15:0] delay_wire_3734;
-  logic [15:0] delay_wire_3735;
-  logic [15:0] delay_wire_3736;
-  logic [15:0] delay_wire_3737;
-  logic [15:0] delay_wire_3738;
-  logic [15:0] delay_wire_3739;
-  logic [15:0] delay_wire_3740;
-  logic [15:0] delay_wire_3741;
-  logic [15:0] delay_wire_3742;
-  logic [15:0] delay_wire_3743;
-  logic [15:0] delay_wire_3744;
-  logic [15:0] delay_wire_3745;
-  always @(posedge clk) begin
-    delay_wire_3578 <= in;
-    delay_wire_3579 <= delay_wire_3578;
-    delay_wire_3580 <= delay_wire_3579;
-    delay_wire_3581 <= delay_wire_3580;
-    delay_wire_3582 <= delay_wire_3581;
-    delay_wire_3583 <= delay_wire_3582;
-    delay_wire_3584 <= delay_wire_3583;
-    delay_wire_3585 <= delay_wire_3584;
-    delay_wire_3586 <= delay_wire_3585;
-    delay_wire_3587 <= delay_wire_3586;
-    delay_wire_3588 <= delay_wire_3587;
-    delay_wire_3589 <= delay_wire_3588;
-    delay_wire_3590 <= delay_wire_3589;
-    delay_wire_3591 <= delay_wire_3590;
-    delay_wire_3592 <= delay_wire_3591;
-    delay_wire_3593 <= delay_wire_3592;
-    delay_wire_3594 <= delay_wire_3593;
-    delay_wire_3595 <= delay_wire_3594;
-    delay_wire_3596 <= delay_wire_3595;
-    delay_wire_3597 <= delay_wire_3596;
-    delay_wire_3598 <= delay_wire_3597;
-    delay_wire_3599 <= delay_wire_3598;
-    delay_wire_3600 <= delay_wire_3599;
-    delay_wire_3601 <= delay_wire_3600;
-    delay_wire_3602 <= delay_wire_3601;
-    delay_wire_3603 <= delay_wire_3602;
-    delay_wire_3604 <= delay_wire_3603;
-    delay_wire_3605 <= delay_wire_3604;
-    delay_wire_3606 <= delay_wire_3605;
-    delay_wire_3607 <= delay_wire_3606;
-    delay_wire_3608 <= delay_wire_3607;
-    delay_wire_3609 <= delay_wire_3608;
-    delay_wire_3610 <= delay_wire_3609;
-    delay_wire_3611 <= delay_wire_3610;
-    delay_wire_3612 <= delay_wire_3611;
-    delay_wire_3613 <= delay_wire_3612;
-    delay_wire_3614 <= delay_wire_3613;
-    delay_wire_3615 <= delay_wire_3614;
-    delay_wire_3616 <= delay_wire_3615;
-    delay_wire_3617 <= delay_wire_3616;
-    delay_wire_3618 <= delay_wire_3617;
-    delay_wire_3619 <= delay_wire_3618;
-    delay_wire_3620 <= delay_wire_3619;
-    delay_wire_3621 <= delay_wire_3620;
-    delay_wire_3622 <= delay_wire_3621;
-    delay_wire_3623 <= delay_wire_3622;
-    delay_wire_3624 <= delay_wire_3623;
-    delay_wire_3625 <= delay_wire_3624;
-    delay_wire_3626 <= delay_wire_3625;
-    delay_wire_3627 <= delay_wire_3626;
-    delay_wire_3628 <= delay_wire_3627;
-    delay_wire_3629 <= delay_wire_3628;
-    delay_wire_3630 <= delay_wire_3629;
-    delay_wire_3631 <= delay_wire_3630;
-    delay_wire_3632 <= delay_wire_3631;
-    delay_wire_3633 <= delay_wire_3632;
-    delay_wire_3634 <= delay_wire_3633;
-    delay_wire_3635 <= delay_wire_3634;
-    delay_wire_3636 <= delay_wire_3635;
-    delay_wire_3637 <= delay_wire_3636;
-    delay_wire_3638 <= delay_wire_3637;
-    delay_wire_3639 <= delay_wire_3638;
-    delay_wire_3640 <= delay_wire_3639;
-    delay_wire_3641 <= delay_wire_3640;
-    delay_wire_3642 <= delay_wire_3641;
-    delay_wire_3643 <= delay_wire_3642;
-    delay_wire_3644 <= delay_wire_3643;
-    delay_wire_3645 <= delay_wire_3644;
-    delay_wire_3646 <= delay_wire_3645;
-    delay_wire_3647 <= delay_wire_3646;
-    delay_wire_3648 <= delay_wire_3647;
-    delay_wire_3649 <= delay_wire_3648;
-    delay_wire_3650 <= delay_wire_3649;
-    delay_wire_3651 <= delay_wire_3650;
-    delay_wire_3652 <= delay_wire_3651;
-    delay_wire_3653 <= delay_wire_3652;
-    delay_wire_3654 <= delay_wire_3653;
-    delay_wire_3655 <= delay_wire_3654;
-    delay_wire_3656 <= delay_wire_3655;
-    delay_wire_3657 <= delay_wire_3656;
-    delay_wire_3658 <= delay_wire_3657;
-    delay_wire_3659 <= delay_wire_3658;
-    delay_wire_3660 <= delay_wire_3659;
-    delay_wire_3661 <= delay_wire_3660;
-    delay_wire_3662 <= delay_wire_3661;
-    delay_wire_3663 <= delay_wire_3662;
-    delay_wire_3664 <= delay_wire_3663;
-    delay_wire_3665 <= delay_wire_3664;
-    delay_wire_3666 <= delay_wire_3665;
-    delay_wire_3667 <= delay_wire_3666;
-    delay_wire_3668 <= delay_wire_3667;
-    delay_wire_3669 <= delay_wire_3668;
-    delay_wire_3670 <= delay_wire_3669;
-    delay_wire_3671 <= delay_wire_3670;
-    delay_wire_3672 <= delay_wire_3671;
-    delay_wire_3673 <= delay_wire_3672;
-    delay_wire_3674 <= delay_wire_3673;
-    delay_wire_3675 <= delay_wire_3674;
-    delay_wire_3676 <= delay_wire_3675;
-    delay_wire_3677 <= delay_wire_3676;
-    delay_wire_3678 <= delay_wire_3677;
-    delay_wire_3679 <= delay_wire_3678;
-    delay_wire_3680 <= delay_wire_3679;
-    delay_wire_3681 <= delay_wire_3680;
-    delay_wire_3682 <= delay_wire_3681;
-    delay_wire_3683 <= delay_wire_3682;
-    delay_wire_3684 <= delay_wire_3683;
-    delay_wire_3685 <= delay_wire_3684;
-    delay_wire_3686 <= delay_wire_3685;
-    delay_wire_3687 <= delay_wire_3686;
-    delay_wire_3688 <= delay_wire_3687;
-    delay_wire_3689 <= delay_wire_3688;
-    delay_wire_3690 <= delay_wire_3689;
-    delay_wire_3691 <= delay_wire_3690;
-    delay_wire_3692 <= delay_wire_3691;
-    delay_wire_3693 <= delay_wire_3692;
-    delay_wire_3694 <= delay_wire_3693;
-    delay_wire_3695 <= delay_wire_3694;
-    delay_wire_3696 <= delay_wire_3695;
-    delay_wire_3697 <= delay_wire_3696;
-    delay_wire_3698 <= delay_wire_3697;
-    delay_wire_3699 <= delay_wire_3698;
-    delay_wire_3700 <= delay_wire_3699;
-    delay_wire_3701 <= delay_wire_3700;
-    delay_wire_3702 <= delay_wire_3701;
-    delay_wire_3703 <= delay_wire_3702;
-    delay_wire_3704 <= delay_wire_3703;
-    delay_wire_3705 <= delay_wire_3704;
-    delay_wire_3706 <= delay_wire_3705;
-    delay_wire_3707 <= delay_wire_3706;
-    delay_wire_3708 <= delay_wire_3707;
-    delay_wire_3709 <= delay_wire_3708;
-    delay_wire_3710 <= delay_wire_3709;
-    delay_wire_3711 <= delay_wire_3710;
-    delay_wire_3712 <= delay_wire_3711;
-    delay_wire_3713 <= delay_wire_3712;
-    delay_wire_3714 <= delay_wire_3713;
-    delay_wire_3715 <= delay_wire_3714;
-    delay_wire_3716 <= delay_wire_3715;
-    delay_wire_3717 <= delay_wire_3716;
-    delay_wire_3718 <= delay_wire_3717;
-    delay_wire_3719 <= delay_wire_3718;
-    delay_wire_3720 <= delay_wire_3719;
-    delay_wire_3721 <= delay_wire_3720;
-    delay_wire_3722 <= delay_wire_3721;
-    delay_wire_3723 <= delay_wire_3722;
-    delay_wire_3724 <= delay_wire_3723;
-    delay_wire_3725 <= delay_wire_3724;
-    delay_wire_3726 <= delay_wire_3725;
-    delay_wire_3727 <= delay_wire_3726;
-    delay_wire_3728 <= delay_wire_3727;
-    delay_wire_3729 <= delay_wire_3728;
-    delay_wire_3730 <= delay_wire_3729;
-    delay_wire_3731 <= delay_wire_3730;
-    delay_wire_3732 <= delay_wire_3731;
-    delay_wire_3733 <= delay_wire_3732;
-    delay_wire_3734 <= delay_wire_3733;
-    delay_wire_3735 <= delay_wire_3734;
-    delay_wire_3736 <= delay_wire_3735;
-    delay_wire_3737 <= delay_wire_3736;
-    delay_wire_3738 <= delay_wire_3737;
-    delay_wire_3739 <= delay_wire_3738;
-    delay_wire_3740 <= delay_wire_3739;
-    delay_wire_3741 <= delay_wire_3740;
-    delay_wire_3742 <= delay_wire_3741;
-    delay_wire_3743 <= delay_wire_3742;
-    delay_wire_3744 <= delay_wire_3743;
-    delay_wire_3745 <= delay_wire_3744;
-  end
-  assign out = delay_wire_3745;
-endmodule
-
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_51_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3746;
-  logic [15:0] delay_wire_3747;
-  logic [15:0] delay_wire_3748;
-  logic [15:0] delay_wire_3749;
-  logic [15:0] delay_wire_3750;
-  logic [15:0] delay_wire_3751;
-  logic [15:0] delay_wire_3752;
-  logic [15:0] delay_wire_3753;
-  logic [15:0] delay_wire_3754;
-  logic [15:0] delay_wire_3755;
-  logic [15:0] delay_wire_3756;
-  logic [15:0] delay_wire_3757;
-  logic [15:0] delay_wire_3758;
-  logic [15:0] delay_wire_3759;
-  logic [15:0] delay_wire_3760;
-  logic [15:0] delay_wire_3761;
-  logic [15:0] delay_wire_3762;
-  logic [15:0] delay_wire_3763;
-  logic [15:0] delay_wire_3764;
-  logic [15:0] delay_wire_3765;
-  logic [15:0] delay_wire_3766;
-  logic [15:0] delay_wire_3767;
-  logic [15:0] delay_wire_3768;
-  logic [15:0] delay_wire_3769;
-  logic [15:0] delay_wire_3770;
-  logic [15:0] delay_wire_3771;
-  logic [15:0] delay_wire_3772;
-  logic [15:0] delay_wire_3773;
-  logic [15:0] delay_wire_3774;
-  logic [15:0] delay_wire_3775;
-  logic [15:0] delay_wire_3776;
-  logic [15:0] delay_wire_3777;
-  logic [15:0] delay_wire_3778;
-  logic [15:0] delay_wire_3779;
-  logic [15:0] delay_wire_3780;
-  logic [15:0] delay_wire_3781;
-  logic [15:0] delay_wire_3782;
-  logic [15:0] delay_wire_3783;
-  logic [15:0] delay_wire_3784;
-  logic [15:0] delay_wire_3785;
-  logic [15:0] delay_wire_3786;
-  logic [15:0] delay_wire_3787;
-  always @(posedge clk) begin
-    delay_wire_3746 <= in;
-    delay_wire_3747 <= delay_wire_3746;
-    delay_wire_3748 <= delay_wire_3747;
-    delay_wire_3749 <= delay_wire_3748;
-    delay_wire_3750 <= delay_wire_3749;
-    delay_wire_3751 <= delay_wire_3750;
-    delay_wire_3752 <= delay_wire_3751;
-    delay_wire_3753 <= delay_wire_3752;
-    delay_wire_3754 <= delay_wire_3753;
-    delay_wire_3755 <= delay_wire_3754;
-    delay_wire_3756 <= delay_wire_3755;
-    delay_wire_3757 <= delay_wire_3756;
-    delay_wire_3758 <= delay_wire_3757;
-    delay_wire_3759 <= delay_wire_3758;
-    delay_wire_3760 <= delay_wire_3759;
-    delay_wire_3761 <= delay_wire_3760;
-    delay_wire_3762 <= delay_wire_3761;
-    delay_wire_3763 <= delay_wire_3762;
-    delay_wire_3764 <= delay_wire_3763;
-    delay_wire_3765 <= delay_wire_3764;
-    delay_wire_3766 <= delay_wire_3765;
-    delay_wire_3767 <= delay_wire_3766;
-    delay_wire_3768 <= delay_wire_3767;
-    delay_wire_3769 <= delay_wire_3768;
-    delay_wire_3770 <= delay_wire_3769;
-    delay_wire_3771 <= delay_wire_3770;
-    delay_wire_3772 <= delay_wire_3771;
-    delay_wire_3773 <= delay_wire_3772;
-    delay_wire_3774 <= delay_wire_3773;
-    delay_wire_3775 <= delay_wire_3774;
-    delay_wire_3776 <= delay_wire_3775;
-    delay_wire_3777 <= delay_wire_3776;
-    delay_wire_3778 <= delay_wire_3777;
-    delay_wire_3779 <= delay_wire_3778;
-    delay_wire_3780 <= delay_wire_3779;
-    delay_wire_3781 <= delay_wire_3780;
-    delay_wire_3782 <= delay_wire_3781;
-    delay_wire_3783 <= delay_wire_3782;
-    delay_wire_3784 <= delay_wire_3783;
-    delay_wire_3785 <= delay_wire_3784;
-    delay_wire_3786 <= delay_wire_3785;
-    delay_wire_3787 <= delay_wire_3786;
-  end
-  assign out = delay_wire_3787;
-endmodule
-
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_52_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3788;
-  logic [15:0] delay_wire_3789;
-  logic [15:0] delay_wire_3790;
-  logic [15:0] delay_wire_3791;
-  logic [15:0] delay_wire_3792;
-  logic [15:0] delay_wire_3793;
-  logic [15:0] delay_wire_3794;
-  logic [15:0] delay_wire_3795;
-  logic [15:0] delay_wire_3796;
-  logic [15:0] delay_wire_3797;
-  logic [15:0] delay_wire_3798;
-  logic [15:0] delay_wire_3799;
-  logic [15:0] delay_wire_3800;
-  logic [15:0] delay_wire_3801;
-  logic [15:0] delay_wire_3802;
-  logic [15:0] delay_wire_3803;
-  logic [15:0] delay_wire_3804;
-  logic [15:0] delay_wire_3805;
-  logic [15:0] delay_wire_3806;
-  logic [15:0] delay_wire_3807;
-  logic [15:0] delay_wire_3808;
-  logic [15:0] delay_wire_3809;
-  logic [15:0] delay_wire_3810;
-  logic [15:0] delay_wire_3811;
-  logic [15:0] delay_wire_3812;
-  logic [15:0] delay_wire_3813;
-  logic [15:0] delay_wire_3814;
-  logic [15:0] delay_wire_3815;
-  logic [15:0] delay_wire_3816;
-  logic [15:0] delay_wire_3817;
-  logic [15:0] delay_wire_3818;
-  logic [15:0] delay_wire_3819;
-  logic [15:0] delay_wire_3820;
-  logic [15:0] delay_wire_3821;
-  logic [15:0] delay_wire_3822;
-  logic [15:0] delay_wire_3823;
-  logic [15:0] delay_wire_3824;
-  logic [15:0] delay_wire_3825;
-  logic [15:0] delay_wire_3826;
-  logic [15:0] delay_wire_3827;
-  always @(posedge clk) begin
-    delay_wire_3788 <= in;
-    delay_wire_3789 <= delay_wire_3788;
-    delay_wire_3790 <= delay_wire_3789;
-    delay_wire_3791 <= delay_wire_3790;
-    delay_wire_3792 <= delay_wire_3791;
-    delay_wire_3793 <= delay_wire_3792;
-    delay_wire_3794 <= delay_wire_3793;
-    delay_wire_3795 <= delay_wire_3794;
-    delay_wire_3796 <= delay_wire_3795;
-    delay_wire_3797 <= delay_wire_3796;
-    delay_wire_3798 <= delay_wire_3797;
-    delay_wire_3799 <= delay_wire_3798;
-    delay_wire_3800 <= delay_wire_3799;
-    delay_wire_3801 <= delay_wire_3800;
-    delay_wire_3802 <= delay_wire_3801;
-    delay_wire_3803 <= delay_wire_3802;
-    delay_wire_3804 <= delay_wire_3803;
-    delay_wire_3805 <= delay_wire_3804;
-    delay_wire_3806 <= delay_wire_3805;
-    delay_wire_3807 <= delay_wire_3806;
-    delay_wire_3808 <= delay_wire_3807;
-    delay_wire_3809 <= delay_wire_3808;
-    delay_wire_3810 <= delay_wire_3809;
-    delay_wire_3811 <= delay_wire_3810;
-    delay_wire_3812 <= delay_wire_3811;
-    delay_wire_3813 <= delay_wire_3812;
-    delay_wire_3814 <= delay_wire_3813;
-    delay_wire_3815 <= delay_wire_3814;
-    delay_wire_3816 <= delay_wire_3815;
-    delay_wire_3817 <= delay_wire_3816;
-    delay_wire_3818 <= delay_wire_3817;
-    delay_wire_3819 <= delay_wire_3818;
-    delay_wire_3820 <= delay_wire_3819;
-    delay_wire_3821 <= delay_wire_3820;
-    delay_wire_3822 <= delay_wire_3821;
-    delay_wire_3823 <= delay_wire_3822;
-    delay_wire_3824 <= delay_wire_3823;
-    delay_wire_3825 <= delay_wire_3824;
-    delay_wire_3826 <= delay_wire_3825;
-    delay_wire_3827 <= delay_wire_3826;
-  end
-  assign out = delay_wire_3827;
-endmodule
-
-module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_53_to_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3828;
-  logic [15:0] delay_wire_3829;
-  logic [15:0] delay_wire_3830;
-  logic [15:0] delay_wire_3831;
-  logic [15:0] delay_wire_3832;
-  logic [15:0] delay_wire_3833;
-  logic [15:0] delay_wire_3834;
-  logic [15:0] delay_wire_3835;
-  logic [15:0] delay_wire_3836;
-  logic [15:0] delay_wire_3837;
-  logic [15:0] delay_wire_3838;
-  logic [15:0] delay_wire_3839;
-  logic [15:0] delay_wire_3840;
-  logic [15:0] delay_wire_3841;
-  logic [15:0] delay_wire_3842;
-  logic [15:0] delay_wire_3843;
-  logic [15:0] delay_wire_3844;
-  logic [15:0] delay_wire_3845;
-  logic [15:0] delay_wire_3846;
-  logic [15:0] delay_wire_3847;
-  logic [15:0] delay_wire_3848;
-  logic [15:0] delay_wire_3849;
-  logic [15:0] delay_wire_3850;
-  logic [15:0] delay_wire_3851;
-  logic [15:0] delay_wire_3852;
-  logic [15:0] delay_wire_3853;
-  logic [15:0] delay_wire_3854;
-  logic [15:0] delay_wire_3855;
-  logic [15:0] delay_wire_3856;
-  logic [15:0] delay_wire_3857;
-  logic [15:0] delay_wire_3858;
-  logic [15:0] delay_wire_3859;
-  logic [15:0] delay_wire_3860;
-  logic [15:0] delay_wire_3861;
-  logic [15:0] delay_wire_3862;
-  logic [15:0] delay_wire_3863;
-  logic [15:0] delay_wire_3864;
-  logic [15:0] delay_wire_3865;
-  logic [15:0] delay_wire_3866;
-  logic [15:0] delay_wire_3867;
-  logic [15:0] delay_wire_3868;
-  always @(posedge clk) begin
-    delay_wire_3828 <= in;
-    delay_wire_3829 <= delay_wire_3828;
-    delay_wire_3830 <= delay_wire_3829;
-    delay_wire_3831 <= delay_wire_3830;
-    delay_wire_3832 <= delay_wire_3831;
-    delay_wire_3833 <= delay_wire_3832;
-    delay_wire_3834 <= delay_wire_3833;
-    delay_wire_3835 <= delay_wire_3834;
-    delay_wire_3836 <= delay_wire_3835;
-    delay_wire_3837 <= delay_wire_3836;
-    delay_wire_3838 <= delay_wire_3837;
-    delay_wire_3839 <= delay_wire_3838;
-    delay_wire_3840 <= delay_wire_3839;
-    delay_wire_3841 <= delay_wire_3840;
-    delay_wire_3842 <= delay_wire_3841;
-    delay_wire_3843 <= delay_wire_3842;
-    delay_wire_3844 <= delay_wire_3843;
-    delay_wire_3845 <= delay_wire_3844;
-    delay_wire_3846 <= delay_wire_3845;
-    delay_wire_3847 <= delay_wire_3846;
-    delay_wire_3848 <= delay_wire_3847;
-    delay_wire_3849 <= delay_wire_3848;
-    delay_wire_3850 <= delay_wire_3849;
-    delay_wire_3851 <= delay_wire_3850;
-    delay_wire_3852 <= delay_wire_3851;
-    delay_wire_3853 <= delay_wire_3852;
-    delay_wire_3854 <= delay_wire_3853;
-    delay_wire_3855 <= delay_wire_3854;
-    delay_wire_3856 <= delay_wire_3855;
-    delay_wire_3857 <= delay_wire_3856;
-    delay_wire_3858 <= delay_wire_3857;
-    delay_wire_3859 <= delay_wire_3858;
-    delay_wire_3860 <= delay_wire_3859;
-    delay_wire_3861 <= delay_wire_3860;
-    delay_wire_3862 <= delay_wire_3861;
-    delay_wire_3863 <= delay_wire_3862;
-    delay_wire_3864 <= delay_wire_3863;
-    delay_wire_3865 <= delay_wire_3864;
-    delay_wire_3866 <= delay_wire_3865;
-    delay_wire_3867 <= delay_wire_3866;
-    delay_wire_3868 <= delay_wire_3867;
-  end
-  assign out = delay_wire_3868;
+  assign out = delay_wire_3256;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_48_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_58_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3869;
-  logic [15:0] delay_wire_3870;
-  logic [15:0] delay_wire_3871;
-  logic [15:0] delay_wire_3872;
-  logic [15:0] delay_wire_3873;
-  logic [15:0] delay_wire_3874;
-  logic [15:0] delay_wire_3875;
-  logic [15:0] delay_wire_3876;
-  logic [15:0] delay_wire_3877;
-  logic [15:0] delay_wire_3878;
-  logic [15:0] delay_wire_3879;
-  logic [15:0] delay_wire_3880;
-  logic [15:0] delay_wire_3881;
-  logic [15:0] delay_wire_3882;
-  logic [15:0] delay_wire_3883;
-  logic [15:0] delay_wire_3884;
-  logic [15:0] delay_wire_3885;
-  logic [15:0] delay_wire_3886;
-  logic [15:0] delay_wire_3887;
-  logic [15:0] delay_wire_3888;
-  logic [15:0] delay_wire_3889;
-  logic [15:0] delay_wire_3890;
-  logic [15:0] delay_wire_3891;
-  logic [15:0] delay_wire_3892;
-  logic [15:0] delay_wire_3893;
-  logic [15:0] delay_wire_3894;
-  logic [15:0] delay_wire_3895;
-  logic [15:0] delay_wire_3896;
-  logic [15:0] delay_wire_3897;
-  logic [15:0] delay_wire_3898;
-  logic [15:0] delay_wire_3899;
-  logic [15:0] delay_wire_3900;
-  logic [15:0] delay_wire_3901;
-  logic [15:0] delay_wire_3902;
-  logic [15:0] delay_wire_3903;
-  logic [15:0] delay_wire_3904;
+  logic [15:0] delay_wire_3257;
+  logic [15:0] delay_wire_3258;
+  logic [15:0] delay_wire_3259;
+  logic [15:0] delay_wire_3260;
   always @(posedge clk) begin
-    delay_wire_3869 <= in;
-    delay_wire_3870 <= delay_wire_3869;
-    delay_wire_3871 <= delay_wire_3870;
-    delay_wire_3872 <= delay_wire_3871;
-    delay_wire_3873 <= delay_wire_3872;
-    delay_wire_3874 <= delay_wire_3873;
-    delay_wire_3875 <= delay_wire_3874;
-    delay_wire_3876 <= delay_wire_3875;
-    delay_wire_3877 <= delay_wire_3876;
-    delay_wire_3878 <= delay_wire_3877;
-    delay_wire_3879 <= delay_wire_3878;
-    delay_wire_3880 <= delay_wire_3879;
-    delay_wire_3881 <= delay_wire_3880;
-    delay_wire_3882 <= delay_wire_3881;
-    delay_wire_3883 <= delay_wire_3882;
-    delay_wire_3884 <= delay_wire_3883;
-    delay_wire_3885 <= delay_wire_3884;
-    delay_wire_3886 <= delay_wire_3885;
-    delay_wire_3887 <= delay_wire_3886;
-    delay_wire_3888 <= delay_wire_3887;
-    delay_wire_3889 <= delay_wire_3888;
-    delay_wire_3890 <= delay_wire_3889;
-    delay_wire_3891 <= delay_wire_3890;
-    delay_wire_3892 <= delay_wire_3891;
-    delay_wire_3893 <= delay_wire_3892;
-    delay_wire_3894 <= delay_wire_3893;
-    delay_wire_3895 <= delay_wire_3894;
-    delay_wire_3896 <= delay_wire_3895;
-    delay_wire_3897 <= delay_wire_3896;
-    delay_wire_3898 <= delay_wire_3897;
-    delay_wire_3899 <= delay_wire_3898;
-    delay_wire_3900 <= delay_wire_3899;
-    delay_wire_3901 <= delay_wire_3900;
-    delay_wire_3902 <= delay_wire_3901;
-    delay_wire_3903 <= delay_wire_3902;
-    delay_wire_3904 <= delay_wire_3903;
+    delay_wire_3257 <= in;
+    delay_wire_3258 <= delay_wire_3257;
+    delay_wire_3259 <= delay_wire_3258;
+    delay_wire_3260 <= delay_wire_3259;
   end
-  assign out = delay_wire_3904;
+  assign out = delay_wire_3260;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_50_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_55_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3905;
-  logic [15:0] delay_wire_3906;
-  logic [15:0] delay_wire_3907;
-  logic [15:0] delay_wire_3908;
-  logic [15:0] delay_wire_3909;
-  logic [15:0] delay_wire_3910;
-  logic [15:0] delay_wire_3911;
-  logic [15:0] delay_wire_3912;
-  logic [15:0] delay_wire_3913;
-  logic [15:0] delay_wire_3914;
-  logic [15:0] delay_wire_3915;
-  logic [15:0] delay_wire_3916;
-  logic [15:0] delay_wire_3917;
-  logic [15:0] delay_wire_3918;
-  logic [15:0] delay_wire_3919;
-  logic [15:0] delay_wire_3920;
-  logic [15:0] delay_wire_3921;
-  logic [15:0] delay_wire_3922;
-  logic [15:0] delay_wire_3923;
-  logic [15:0] delay_wire_3924;
-  logic [15:0] delay_wire_3925;
-  logic [15:0] delay_wire_3926;
-  logic [15:0] delay_wire_3927;
-  logic [15:0] delay_wire_3928;
-  logic [15:0] delay_wire_3929;
-  logic [15:0] delay_wire_3930;
-  logic [15:0] delay_wire_3931;
-  logic [15:0] delay_wire_3932;
-  logic [15:0] delay_wire_3933;
-  logic [15:0] delay_wire_3934;
-  logic [15:0] delay_wire_3935;
-  logic [15:0] delay_wire_3936;
-  logic [15:0] delay_wire_3937;
-  logic [15:0] delay_wire_3938;
-  logic [15:0] delay_wire_3939;
-  logic [15:0] delay_wire_3940;
+  logic [15:0] delay_wire_3261;
+  logic [15:0] delay_wire_3262;
+  logic [15:0] delay_wire_3263;
+  logic [15:0] delay_wire_3264;
   always @(posedge clk) begin
-    delay_wire_3905 <= in;
-    delay_wire_3906 <= delay_wire_3905;
-    delay_wire_3907 <= delay_wire_3906;
-    delay_wire_3908 <= delay_wire_3907;
-    delay_wire_3909 <= delay_wire_3908;
-    delay_wire_3910 <= delay_wire_3909;
-    delay_wire_3911 <= delay_wire_3910;
-    delay_wire_3912 <= delay_wire_3911;
-    delay_wire_3913 <= delay_wire_3912;
-    delay_wire_3914 <= delay_wire_3913;
-    delay_wire_3915 <= delay_wire_3914;
-    delay_wire_3916 <= delay_wire_3915;
-    delay_wire_3917 <= delay_wire_3916;
-    delay_wire_3918 <= delay_wire_3917;
-    delay_wire_3919 <= delay_wire_3918;
-    delay_wire_3920 <= delay_wire_3919;
-    delay_wire_3921 <= delay_wire_3920;
-    delay_wire_3922 <= delay_wire_3921;
-    delay_wire_3923 <= delay_wire_3922;
-    delay_wire_3924 <= delay_wire_3923;
-    delay_wire_3925 <= delay_wire_3924;
-    delay_wire_3926 <= delay_wire_3925;
-    delay_wire_3927 <= delay_wire_3926;
-    delay_wire_3928 <= delay_wire_3927;
-    delay_wire_3929 <= delay_wire_3928;
-    delay_wire_3930 <= delay_wire_3929;
-    delay_wire_3931 <= delay_wire_3930;
-    delay_wire_3932 <= delay_wire_3931;
-    delay_wire_3933 <= delay_wire_3932;
-    delay_wire_3934 <= delay_wire_3933;
-    delay_wire_3935 <= delay_wire_3934;
-    delay_wire_3936 <= delay_wire_3935;
-    delay_wire_3937 <= delay_wire_3936;
-    delay_wire_3938 <= delay_wire_3937;
-    delay_wire_3939 <= delay_wire_3938;
-    delay_wire_3940 <= delay_wire_3939;
+    delay_wire_3261 <= in;
+    delay_wire_3262 <= delay_wire_3261;
+    delay_wire_3263 <= delay_wire_3262;
+    delay_wire_3264 <= delay_wire_3263;
   end
-  assign out = delay_wire_3940;
+  assign out = delay_wire_3264;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_51_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_60_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3941;
-  logic [15:0] delay_wire_3942;
-  logic [15:0] delay_wire_3943;
-  logic [15:0] delay_wire_3944;
-  logic [15:0] delay_wire_3945;
-  logic [15:0] delay_wire_3946;
-  logic [15:0] delay_wire_3947;
-  logic [15:0] delay_wire_3948;
-  logic [15:0] delay_wire_3949;
-  logic [15:0] delay_wire_3950;
-  logic [15:0] delay_wire_3951;
-  logic [15:0] delay_wire_3952;
-  logic [15:0] delay_wire_3953;
-  logic [15:0] delay_wire_3954;
-  logic [15:0] delay_wire_3955;
-  logic [15:0] delay_wire_3956;
-  logic [15:0] delay_wire_3957;
-  logic [15:0] delay_wire_3958;
-  logic [15:0] delay_wire_3959;
-  logic [15:0] delay_wire_3960;
-  logic [15:0] delay_wire_3961;
-  logic [15:0] delay_wire_3962;
-  logic [15:0] delay_wire_3963;
-  logic [15:0] delay_wire_3964;
-  logic [15:0] delay_wire_3965;
-  logic [15:0] delay_wire_3966;
-  logic [15:0] delay_wire_3967;
-  logic [15:0] delay_wire_3968;
-  logic [15:0] delay_wire_3969;
-  logic [15:0] delay_wire_3970;
-  logic [15:0] delay_wire_3971;
-  logic [15:0] delay_wire_3972;
-  logic [15:0] delay_wire_3973;
-  logic [15:0] delay_wire_3974;
-  logic [15:0] delay_wire_3975;
-  logic [15:0] delay_wire_3976;
+  logic [15:0] delay_wire_3265;
+  logic [15:0] delay_wire_3266;
+  logic [15:0] delay_wire_3267;
+  logic [15:0] delay_wire_3268;
   always @(posedge clk) begin
-    delay_wire_3941 <= in;
-    delay_wire_3942 <= delay_wire_3941;
-    delay_wire_3943 <= delay_wire_3942;
-    delay_wire_3944 <= delay_wire_3943;
-    delay_wire_3945 <= delay_wire_3944;
-    delay_wire_3946 <= delay_wire_3945;
-    delay_wire_3947 <= delay_wire_3946;
-    delay_wire_3948 <= delay_wire_3947;
-    delay_wire_3949 <= delay_wire_3948;
-    delay_wire_3950 <= delay_wire_3949;
-    delay_wire_3951 <= delay_wire_3950;
-    delay_wire_3952 <= delay_wire_3951;
-    delay_wire_3953 <= delay_wire_3952;
-    delay_wire_3954 <= delay_wire_3953;
-    delay_wire_3955 <= delay_wire_3954;
-    delay_wire_3956 <= delay_wire_3955;
-    delay_wire_3957 <= delay_wire_3956;
-    delay_wire_3958 <= delay_wire_3957;
-    delay_wire_3959 <= delay_wire_3958;
-    delay_wire_3960 <= delay_wire_3959;
-    delay_wire_3961 <= delay_wire_3960;
-    delay_wire_3962 <= delay_wire_3961;
-    delay_wire_3963 <= delay_wire_3962;
-    delay_wire_3964 <= delay_wire_3963;
-    delay_wire_3965 <= delay_wire_3964;
-    delay_wire_3966 <= delay_wire_3965;
-    delay_wire_3967 <= delay_wire_3966;
-    delay_wire_3968 <= delay_wire_3967;
-    delay_wire_3969 <= delay_wire_3968;
-    delay_wire_3970 <= delay_wire_3969;
-    delay_wire_3971 <= delay_wire_3970;
-    delay_wire_3972 <= delay_wire_3971;
-    delay_wire_3973 <= delay_wire_3972;
-    delay_wire_3974 <= delay_wire_3973;
-    delay_wire_3975 <= delay_wire_3974;
-    delay_wire_3976 <= delay_wire_3975;
+    delay_wire_3265 <= in;
+    delay_wire_3266 <= delay_wire_3265;
+    delay_wire_3267 <= delay_wire_3266;
+    delay_wire_3268 <= delay_wire_3267;
   end
-  assign out = delay_wire_3976;
+  assign out = delay_wire_3268;
 endmodule
 
 module padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_52_to_padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_56_sr(input clk, input flush, input rst_n, input logic [15:0] in, output logic [15:0] out);
-  logic [15:0] delay_wire_3977;
-  logic [15:0] delay_wire_3978;
-  logic [15:0] delay_wire_3979;
-  logic [15:0] delay_wire_3980;
-  logic [15:0] delay_wire_3981;
-  logic [15:0] delay_wire_3982;
-  logic [15:0] delay_wire_3983;
-  logic [15:0] delay_wire_3984;
-  logic [15:0] delay_wire_3985;
-  logic [15:0] delay_wire_3986;
-  logic [15:0] delay_wire_3987;
-  logic [15:0] delay_wire_3988;
-  logic [15:0] delay_wire_3989;
-  logic [15:0] delay_wire_3990;
-  logic [15:0] delay_wire_3991;
-  logic [15:0] delay_wire_3992;
-  logic [15:0] delay_wire_3993;
-  logic [15:0] delay_wire_3994;
-  logic [15:0] delay_wire_3995;
-  logic [15:0] delay_wire_3996;
-  logic [15:0] delay_wire_3997;
-  logic [15:0] delay_wire_3998;
-  logic [15:0] delay_wire_3999;
-  logic [15:0] delay_wire_4000;
-  logic [15:0] delay_wire_4001;
-  logic [15:0] delay_wire_4002;
-  logic [15:0] delay_wire_4003;
-  logic [15:0] delay_wire_4004;
-  logic [15:0] delay_wire_4005;
-  logic [15:0] delay_wire_4006;
-  logic [15:0] delay_wire_4007;
-  logic [15:0] delay_wire_4008;
-  logic [15:0] delay_wire_4009;
-  logic [15:0] delay_wire_4010;
-  logic [15:0] delay_wire_4011;
-  logic [15:0] delay_wire_4012;
+  logic [15:0] delay_wire_3269;
+  logic [15:0] delay_wire_3270;
+  logic [15:0] delay_wire_3271;
+  logic [15:0] delay_wire_3272;
   always @(posedge clk) begin
-    delay_wire_3977 <= in;
-    delay_wire_3978 <= delay_wire_3977;
-    delay_wire_3979 <= delay_wire_3978;
-    delay_wire_3980 <= delay_wire_3979;
-    delay_wire_3981 <= delay_wire_3980;
-    delay_wire_3982 <= delay_wire_3981;
-    delay_wire_3983 <= delay_wire_3982;
-    delay_wire_3984 <= delay_wire_3983;
-    delay_wire_3985 <= delay_wire_3984;
-    delay_wire_3986 <= delay_wire_3985;
-    delay_wire_3987 <= delay_wire_3986;
-    delay_wire_3988 <= delay_wire_3987;
-    delay_wire_3989 <= delay_wire_3988;
-    delay_wire_3990 <= delay_wire_3989;
-    delay_wire_3991 <= delay_wire_3990;
-    delay_wire_3992 <= delay_wire_3991;
-    delay_wire_3993 <= delay_wire_3992;
-    delay_wire_3994 <= delay_wire_3993;
-    delay_wire_3995 <= delay_wire_3994;
-    delay_wire_3996 <= delay_wire_3995;
-    delay_wire_3997 <= delay_wire_3996;
-    delay_wire_3998 <= delay_wire_3997;
-    delay_wire_3999 <= delay_wire_3998;
-    delay_wire_4000 <= delay_wire_3999;
-    delay_wire_4001 <= delay_wire_4000;
-    delay_wire_4002 <= delay_wire_4001;
-    delay_wire_4003 <= delay_wire_4002;
-    delay_wire_4004 <= delay_wire_4003;
-    delay_wire_4005 <= delay_wire_4004;
-    delay_wire_4006 <= delay_wire_4005;
-    delay_wire_4007 <= delay_wire_4006;
-    delay_wire_4008 <= delay_wire_4007;
-    delay_wire_4009 <= delay_wire_4008;
-    delay_wire_4010 <= delay_wire_4009;
-    delay_wire_4011 <= delay_wire_4010;
-    delay_wire_4012 <= delay_wire_4011;
+    delay_wire_3269 <= in;
+    delay_wire_3270 <= delay_wire_3269;
+    delay_wire_3271 <= delay_wire_3270;
+    delay_wire_3272 <= delay_wire_3271;
   end
-  assign out = delay_wire_4012;
+  assign out = delay_wire_3272;
 endmodule
 
 // { op_hcompute_padded16_global_wrapper_stencil[root, padded16_global_wrapper_s0_y, padded16_global_wrapper_s0_x] -> [(1 + 64padded16_global_wrapper_s0_y + padded16_global_wrapper_s0_x)] }
@@ -10948,7 +9468,7 @@ module padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stenc
     end
   end
 endmodule
-// { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(133 + 64grad_x_s0_y + grad_x_s0_x)] }
+// { op_hcompute_grad_x_stencil[root, grad_x_s0_y, grad_x_s0_x] -> [(132 + 64grad_x_s0_y + grad_x_s0_x)] }
 module padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_grad_x_stencil_read_ctrl_vars[2:0], output op_hcompute_grad_x_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -10967,7 +9487,7 @@ module padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_fsm(input
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==132) begin
+      if(counter[0] ==131) begin
         on <=1;
         on2 <= 1;
         op_hcompute_grad_x_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -10998,7 +9518,7 @@ module padded16_global_wrapper_stencil_op_hcompute_grad_x_stencil_read_fsm(input
     end
   end
 endmodule
-// { op_hcompute_grad_y_stencil[root, grad_y_s0_y, grad_y_s0_x] -> [(169 + 64grad_y_s0_y + grad_y_s0_x)] }
+// { op_hcompute_grad_y_stencil[root, grad_y_s0_y, grad_y_s0_x] -> [(136 + 64grad_y_s0_y + grad_y_s0_x)] }
 module padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_read_fsm(input clk, input flush, input rst_n, output logic [15:0] op_hcompute_grad_y_stencil_read_ctrl_vars[2:0], output op_hcompute_grad_y_stencil_read_ren );
   logic [15:0] counter[3:0];
   logic on;
@@ -11017,7 +9537,7 @@ module padded16_global_wrapper_stencil_op_hcompute_grad_y_stencil_read_fsm(input
       on <=0;
       on2 <= 0;
     end else begin
-      if(counter[0] ==168) begin
+      if(counter[0] ==135) begin
         on <=1;
         on2 <= 1;
         op_hcompute_grad_y_stencil_read_ctrl_vars[0]<= 16'b0;
@@ -11167,30 +9687,22 @@ padded16_global_wrapper_stencil_bank_selector padded16_global_wrapper_stencil_pa
 
   logic [15:0] addr0;
   assign addr0 = (((((-3 + 1*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars_fsm_out[1])) - -3)>>0)*1+((((-3 + 1*op_hcompute_padded16_global_wrapper_stencil_write_ctrl_vars_fsm_out[2])) - -3)>>0)*64);
-  logic [15:0] delay_wire_4013;
   always @(posedge clk) begin
-    delay_wire_4013 <= addr0;
-  end
-  logic [15:0] delay_wire_4014;
-  always @(posedge clk) begin
-    delay_wire_4014 <= padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_bank_selector.out;
-  end
-  logic [15:0] delay_wire_4015;
-  always @(posedge clk) begin
-    delay_wire_4015 <= op_hcompute_padded16_global_wrapper_stencil_write_wen_fsm_out;
-  end
-  logic [15:0] delay_wire_4016;
-  always @(posedge clk) begin
-    delay_wire_4016 <= op_hcompute_padded16_global_wrapper_stencil_write[0];
   end
   always @(posedge clk) begin
-    if (delay_wire_4015) begin
-      case( delay_wire_4014)
-        0:bank_0[delay_wire_4013] <= delay_wire_4016;
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+  end
+  always @(posedge clk) begin
+    if (op_hcompute_padded16_global_wrapper_stencil_write_wen_fsm_out) begin
+      case( padded16_global_wrapper_stencil_padded16_global_wrapper_stencil_op_hcompute_padded16_global_wrapper_stencil_0_bank_selector.out)
+        0:bank_0[addr0] <= op_hcompute_padded16_global_wrapper_stencil_write[0];
       endcase
     end
   end
-  always @(posedge clk) begin
+  always @(*) begin
   end
 
 endmodule

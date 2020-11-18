@@ -17132,11 +17132,12 @@ void fpga_asplos_tests() {
 
 void cgra_flow_tests() {
 
-  //vector<prog> M1_test_programs = isca_programs();
-  vector<prog> M1_test_programs{gaussian()};
+  vector<prog> M1_test_programs = isca_programs();
+  //vector<prog> M1_test_programs{gaussian()};
   test_codegen(M1_test_programs, compile_for_CGRA_M1_mem);
-  assert(false);
+  //assert(false);
 
+  cout << "====== DONE with M1, starting M3..." << endl;
   vector<prog> M3_test_programs = isca_programs();
   //vector<prog> M3_test_programs{up_sample(), resnet()};
   test_codegen(M3_test_programs, compile_for_CGRA_M3_mem);

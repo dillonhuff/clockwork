@@ -2819,7 +2819,7 @@ void generate_coreir(CodegenOptions& options,
     for (auto c : counts) {
       cout << tab(1) << c.first << " -> " << c.second << endl;
     }
-    assert(false);
+    //assert(false);
     if(!saveToFile(ns, prg.name + "_post_mapping.json", prg_mod)) {
       cout << "Could not save ubuffer coreir" << endl;
       context->die();
